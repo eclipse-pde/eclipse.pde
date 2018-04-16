@@ -16,6 +16,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 /**
@@ -23,6 +24,8 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
  * indirect plug-in dependencies
  */
 public class DynamicPluginProjectReferences implements IDynamicReferenceProvider {
+
+	public static State state;
 
 	public DynamicPluginProjectReferences() {
 		super();
@@ -35,7 +38,25 @@ public class DynamicPluginProjectReferences implements IDynamicReferenceProvider
 		if (javaProject != null) {
 			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(javaProject.getProject());
 			if (model != null) {
-				return new RequiredPluginsClasspathContainer(model).getAllProjectDependencies();
+				List<IProject> allProj = new RequiredPluginsClasspathContainer(model).getAllProjectDependencies();
+				BundleDescription currentBundle = model.getBundleDescription();
+				if (state == null) {
+					state = StateObjectFactory.defaultFactory.createState(true);
+				}
+				if (state != null) {
+					BundleDescription[] bundlePrereq = state.getStateHelper()
+							.getPrerequisites(new BundleDescription[] { currentBundle });
+					for (BundleDescription bundle : bundlePrereq) {
+						if (bundle.equals(currentBundle))
+							continue;
+						IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
+						IProject project = root.getProject(bundle.getName());
+						if (project.exists() && !allProj.contains(project)) {
+							allProj.add(project);
+						}
+					}
+				}
+				return allProj;
 			}
 		}
 		return Collections.emptyList();
