@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2009, 2017 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2009, 2018 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
@@ -290,7 +290,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		fCategoryViewer.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, transfers, new DragSourceListener() {
 			@Override
 			public void dragStart(DragSourceEvent event) {
-				IStructuredSelection ssel = (IStructuredSelection) fCategoryViewer.getSelection();
+				IStructuredSelection ssel = fCategoryViewer.getStructuredSelection();
 				if (ssel == null || ssel.isEmpty()
 						|| !(ssel.getFirstElement() instanceof SiteFeatureAdapter
 								|| ssel.getFirstElement() instanceof SiteBundleAdapter
@@ -301,7 +301,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 
 			@Override
 			public void dragSetData(DragSourceEvent event) {
-				IStructuredSelection ssel = (IStructuredSelection) fCategoryViewer.getSelection();
+				IStructuredSelection ssel = fCategoryViewer.getStructuredSelection();
 				event.data = ssel.toArray();
 			}
 
@@ -529,7 +529,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	}
 
 	private boolean handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection) fCategoryViewer.getSelection();
+		IStructuredSelection ssel = fCategoryViewer.getStructuredSelection();
 		Iterator<?> iterator = ssel.iterator();
 		boolean success = true;
 		Set<?> removedCategories = new HashSet<>();

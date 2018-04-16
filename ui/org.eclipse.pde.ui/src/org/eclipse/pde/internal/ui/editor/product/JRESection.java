@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,8 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.iproduct.*;
@@ -118,7 +119,7 @@ public class JRESection extends PDESection {
 		fEEsCombo.addItem("", 0); //$NON-NLS-1$
 		fEEsCombo.addSelectionChangedListener(event -> {
 			if (!fBlockChanges) {
-				Object selection = ((IStructuredSelection) event.getSelection()).getFirstElement();
+				Object selection = event.getStructuredSelection().getFirstElement();
 				setEE(selection instanceof IExecutionEnvironment ? (IExecutionEnvironment) selection : null);
 				fEEButton.setEnabled(selection instanceof IExecutionEnvironment);
 			}

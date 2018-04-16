@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -227,7 +227,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(), new Action() {
 			@Override
 			public void run() {
-				IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+				IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 				if (selection.size() == 1) {
 					Object element = selection.getFirstElement();
 					if (element instanceof IPluginModelBase) {
@@ -386,14 +386,14 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	}
 
 	private Object getSelectedObject() {
-		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 		if (selection.isEmpty() || selection.size() != 1)
 			return null;
 		return selection.getFirstElement();
 	}
 
 	private void fillContextMenu(IMenuManager manager) {
-		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 
 		boolean allowRefactoring = false;
 		if (selection.size() == 1) {
@@ -486,7 +486,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	}
 
 	public boolean isShowInApplicable() {
-		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 		if (selection.isEmpty())
 			return false;
 		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
@@ -615,7 +615,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	}
 
 	private void handleSelectDependencies() {
-		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 		if (selection.size() == 0)
 			return;
 
@@ -865,7 +865,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	protected IShowInSource getShowInSource() {
 		return () -> {
 			ArrayList<IResource> resourceList = new ArrayList<>();
-			IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+			IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 			IStructuredSelection resources;
 			if (selection.isEmpty()) {
 				resources = null;

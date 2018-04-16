@@ -457,7 +457,7 @@ public class TargetContentsGroup {
 
 		fSelectButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			if (!fTree.getSelection().isEmpty()) {
-				Object[] selected = ((IStructuredSelection) fTree.getSelection()).toArray();
+				Object[] selected = fTree.getStructuredSelection().toArray();
 				for (Object selectedObject : selected) {
 					fTree.setChecked(selectedObject, true);
 				}
@@ -467,7 +467,7 @@ public class TargetContentsGroup {
 
 		fDeselectButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			if (!fTree.getSelection().isEmpty()) {
-				Object[] selected = ((IStructuredSelection) fTree.getSelection()).toArray();
+				Object[] selected = fTree.getStructuredSelection().toArray();
 				for (Object selectedObject : selected) {
 					fTree.setChecked(selectedObject, false);
 				}
@@ -846,7 +846,7 @@ public class TargetContentsGroup {
 
 	private void updateButtons() {
 		if (fTargetDefinition != null && !fTree.getSelection().isEmpty()) {
-			Object[] selection = ((IStructuredSelection) fTree.getSelection()).toArray();
+			Object[] selection = fTree.getStructuredSelection().toArray();
 			boolean hasResolveBundle = false;
 			boolean hasParent = false;
 			boolean allSelected = true;

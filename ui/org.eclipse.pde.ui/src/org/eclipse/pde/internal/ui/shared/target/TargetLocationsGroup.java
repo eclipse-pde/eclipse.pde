@@ -294,7 +294,7 @@ public class TargetLocationsGroup {
 	}
 
 	private void handleEdit() {
-		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 		for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 			Object currentSelection = iterator.next();
 			if (currentSelection instanceof ITargetLocation) {
@@ -356,7 +356,7 @@ public class TargetLocationsGroup {
 		// TODO Contains custom code to remove individual IUWrappers
 		// TODO Contains custom code to force re-resolve if IUBundleContainer removed
 
-		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 		ITargetLocation[] containers = fTarget.getTargetLocations();
 		if (!selection.isEmpty() && containers != null && containers.length > 0) {
 			List<Object> toRemove = new ArrayList<>();
@@ -409,7 +409,7 @@ public class TargetLocationsGroup {
 
 	private void handleUpdate() {
 		// TODO Only IUWrapper children are added to the map for special update processing
-		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 		Map<ITargetLocation, Set<Object>> toUpdate = new HashMap<>();
 		for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 			Object currentSelection = iterator.next();
@@ -472,7 +472,7 @@ public class TargetLocationsGroup {
 
 	private void updateButtons() {
 
-		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 		if (selection.isEmpty()) {
 			fRemoveButton.setEnabled(false);
 			fUpdateButton.setEnabled(false);

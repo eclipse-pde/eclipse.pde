@@ -247,7 +247,7 @@ public class FeatureBlock {
 
 		private void handleRemovePlugin() {
 			// Any changes here need to be reflected in the SWT.DEL key remove handling
-			IStructuredSelection selection = (IStructuredSelection) fTree.getSelection();
+			IStructuredSelection selection = fTree.getStructuredSelection();
 			int index = fAdditionalPlugins.indexOf(selection.getFirstElement());
 			fAdditionalPlugins.removeAll(selection.toList());
 			fTree.remove(selection.toArray());
@@ -859,21 +859,18 @@ public class FeatureBlock {
 					@Override
 					public void done(IJobChangeEvent event) {
 						if (event.getResult().isOK()) {
-							getDisplay().asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									fTree.getControl().setRedraw(false);
-									fTree.removeFilter(fSelectedOnlyFilter);
-									fTree.restoreLeafCheckState();
-									try {
-										if (fLaunchConfig.getAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, false)) {
-											fTree.addFilter(fSelectedOnlyFilter);
-										}
-									} catch (CoreException e) {
-
+							getDisplay().asyncExec(() -> {
+								fTree.getControl().setRedraw(false);
+								fTree.removeFilter(fSelectedOnlyFilter);
+								fTree.restoreLeafCheckState();
+								try {
+									if (fLaunchConfig.getAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, false)) {
+										fTree.addFilter(fSelectedOnlyFilter);
 									}
-									fTree.getControl().setRedraw(true);
+								} catch (CoreException e) {
+
 								}
+								fTree.getControl().setRedraw(true);
 							});
 						}
 					}
@@ -904,12 +901,9 @@ public class FeatureBlock {
 		fTree.getTree().setHeaderVisible(true);
 		fTree.setLabelProvider(new FeatureTreeLabelProvider());
 		fTree.setContentProvider(new PluginContentProvider());
-		fTree.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				updateCounter();
-				fTab.updateLaunchConfigurationDialog();
-			}
+		fTree.addCheckStateListener(event -> {
+			updateCounter();
+			fTab.updateLaunchConfigurationDialog();
 		});
 		String[] items = new String[] {PDEUIMessages.FeatureBlock_default, PDEUIMessages.FeatureBlock_WorkspaceResolutionLabel, PDEUIMessages.FeatureBlock_ExternalResolutionLabel};
 		ComboBoxCellEditor cellEditor = new ComboBoxCellEditor(fTree.getTree(), items);
@@ -917,32 +911,25 @@ public class FeatureBlock {
 		fTree.setCellEditors(new CellEditor[] {null, cellEditor});
 		fTree.setColumnProperties(new String[] {null, PROPERTY_RESOLUTION});
 		fTree.setCellModifier(new LocationCellModifier());
-		fTree.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				ISelection selection = event.getSelection();
-				if (selection == null || !(selection instanceof IStructuredSelection)) {
-					return;
-				}
-				Object element = ((IStructuredSelection) selection).getFirstElement();
-				fTree.setChecked(element, !fTree.getChecked(element));
-				fTab.updateLaunchConfigurationDialog();
+		fTree.addDoubleClickListener(event -> {
+			ISelection selection = event.getSelection();
+			if (selection == null || !(selection instanceof IStructuredSelection)) {
+				return;
 			}
+			Object element = ((IStructuredSelection) selection).getFirstElement();
+			fTree.setChecked(element, !fTree.getChecked(element));
+			fTab.updateLaunchConfigurationDialog();
 		});
-		fTree.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) fTree.getSelection();
-				boolean allPlugins = true;
-				for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
-					Object element = iterator.next();
-					if (!(element instanceof PluginLaunchModel)) {
-						allPlugins = false;
-					}
+		fTree.addSelectionChangedListener(event -> {
+			IStructuredSelection selection = (IStructuredSelection) fTree.getSelection();
+			boolean allPlugins = true;
+			for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
+				Object element = iterator.next();
+				if (!(element instanceof PluginLaunchModel)) {
+					allPlugins = false;
 				}
-				fRemovePluginButton.setEnabled(allPlugins);
 			}
+			fRemovePluginButton.setEnabled(allPlugins);
 		});
 		fTree.getTree().addKeyListener(new KeyAdapter() {
 			@Override

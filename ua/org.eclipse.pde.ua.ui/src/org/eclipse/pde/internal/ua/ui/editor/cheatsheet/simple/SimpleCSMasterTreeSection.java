@@ -821,8 +821,8 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 	}
 
 	private ISimpleCSObject getCurrentSelection() {
-		ISelection selection = fTreeViewer.getSelection();
-		Object object = ((IStructuredSelection) selection).getFirstElement();
+		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
+		Object object = selection.getFirstElement();
 		return (ISimpleCSObject) object;
 	}
 

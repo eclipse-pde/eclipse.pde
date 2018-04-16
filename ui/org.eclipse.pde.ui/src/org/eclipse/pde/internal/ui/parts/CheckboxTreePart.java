@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Martin Karpisek.
+ * Copyright (c) 2016, 2018 Martin Karpisek and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class CheckboxTreePart extends StructuredViewerPart {
 		filteredTree = new FilteredCheckboxTree(parent, toolkit, style);
 		CheckboxTreeViewer treeViewer = filteredTree.getCheckboxTreeViewer();
 		treeViewer.addSelectionChangedListener(event -> {
-			CheckboxTreePart.this.selectionChanged((IStructuredSelection) event.getSelection());
+			CheckboxTreePart.this.selectionChanged(event.getStructuredSelection());
 		});
 		treeViewer.addCheckStateListener(event -> {
 			elementChecked(event.getElement(), event.getChecked());

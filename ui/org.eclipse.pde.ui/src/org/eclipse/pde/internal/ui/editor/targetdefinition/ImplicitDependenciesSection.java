@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,16 +104,12 @@ public class ImplicitDependenciesSection extends SectionPart {
 		Table table = toolkit.createTable(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fViewer = new TableViewer(table);
-		fViewer.setContentProvider(new IStructuredContentProvider() {
-
-			@Override
-			public Object[] getElements(Object inputElement) {
-				NameVersionDescriptor[] bundles = getTarget().getImplicitDependencies();
-				if (bundles == null) {
-					return new NameVersionDescriptor[0];
-				}
-				return bundles;
+		fViewer.setContentProvider((IStructuredContentProvider) inputElement -> {
+			NameVersionDescriptor[] bundles = getTarget().getImplicitDependencies();
+			if (bundles == null) {
+				return new NameVersionDescriptor[0];
 			}
+			return bundles;
 		});
 		fViewer.setLabelProvider(new StyledBundleLabelProvider(true, false));
 		fViewer.setComparator(new ViewerComparator() {
@@ -125,18 +121,10 @@ public class ImplicitDependenciesSection extends SectionPart {
 			}
 		});
 		fViewer.setInput(getTarget());
-		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateButtons();
-			}
-		});
-		fViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				Object object = ((IStructuredSelection) event.getSelection()).getFirstElement();
-				ManifestEditor.openPluginEditor(((NameVersionDescriptor) object).getId());
-			}
+		fViewer.addSelectionChangedListener(event -> updateButtons());
+		fViewer.addDoubleClickListener(event -> {
+			Object object = ((IStructuredSelection) event.getSelection()).getFirstElement();
+			ManifestEditor.openPluginEditor(((NameVersionDescriptor) object).getId());
 		});
 	}
 

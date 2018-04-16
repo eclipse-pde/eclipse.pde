@@ -409,14 +409,13 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
-		ISelection selection = fExtensionTree.getSelection();
-		final IStructuredSelection ssel = (IStructuredSelection) selection;
-		if (ssel.size() == 1) {
-			Object object = ssel.getFirstElement();
+		IStructuredSelection selection = fExtensionTree.getStructuredSelection();
+		if (selection.size() == 1) {
+			Object object = selection.getFirstElement();
 			if (object instanceof IPluginParent) {
 				IPluginParent parent = (IPluginParent) object;
 				if (parent.getModel().getUnderlyingResource() != null) {
-					boolean removeEnabled = !fFilteredTree.isFiltered() || isRemoveEnabled(ssel);
+					boolean removeEnabled = !fFilteredTree.isFiltered() || isRemoveEnabled(selection);
 					fillContextMenu(getPage(), parent, manager, false, removeEnabled);
 					manager.add(new Separator());
 				}
@@ -428,7 +427,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 				actionGroup.fillContextMenu(manager);
 				manager.add(new Separator());
 			}
-		} else if (ssel.size() > 1) {
+		} else if (selection.size() > 1) {
 			// Add delete action
 			Action delAction = new Action() {
 				@Override
@@ -449,10 +448,10 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			delAction.setText(PDEUIMessages.ExtensionsSection_Remove);
 			manager.add(delAction);
 			manager.add(new Separator());
-			delAction.setEnabled(isEditable() && isRemoveEnabled(ssel));
+			delAction.setEnabled(isEditable() && isRemoveEnabled(selection));
 		}
-		if (ssel.size() > 0) {
-			if (ExtensionsFilterUtil.isFilterRelatedEnabled(ssel)) {
+		if (selection.size() > 0) {
+			if (ExtensionsFilterUtil.isFilterRelatedEnabled(selection)) {
 				manager.add(fFilterRelatedAction);
 			}
 		}
@@ -475,7 +474,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		}
 
 		manager.add(new Separator());
-		if (ssel.size() < 2) { // only cut things when the selection is one
+		if (selection.size() < 2) { // only cut things when the selection is one
 			getPage().getPDEEditor().getContributor().addClipboardActions(manager);
 		}
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager, false);
@@ -550,7 +549,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	}
 
 	private void handleDelete() {
-		IStructuredSelection sel = (IStructuredSelection) fExtensionTree.getSelection();
+		IStructuredSelection sel = fExtensionTree.getStructuredSelection();
 		if (sel.isEmpty())
 			return;
 		for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
@@ -681,7 +680,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	}
 
 	private void handleEdit() {
-		final IStructuredSelection selection = (IStructuredSelection) fExtensionTree.getSelection();
+		final IStructuredSelection selection = fExtensionTree.getStructuredSelection();
 		ArrayList<?> editorWizards = getEditorWizards(selection);
 		if (editorWizards == null)
 			return;
@@ -862,7 +861,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		}
 		Object changeObject = event.getChangedObjects()[0];
 		if (changeObject instanceof IPluginBase && event.getChangeType() == IModelChangedEvent.CHANGE && event.getChangedProperty().equals(IExtensions.P_EXTENSION_ORDER)) {
-			IStructuredSelection sel = (IStructuredSelection) fExtensionTree.getSelection();
+			IStructuredSelection sel = fExtensionTree.getStructuredSelection();
 			IPluginExtension extension = (IPluginExtension) sel.getFirstElement();
 			fExtensionTree.refresh();
 			fExtensionTree.setSelection(new StructuredSelection(extension));
@@ -911,7 +910,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 				fExtensionTree.remove(pobj);
 			} else {
 				if (event.getChangedProperty().equals(IPluginParent.P_SIBLING_ORDER)) {
-					IStructuredSelection sel = (IStructuredSelection) fExtensionTree.getSelection();
+					IStructuredSelection sel = fExtensionTree.getStructuredSelection();
 					IPluginObject child = (IPluginObject) sel.getFirstElement();
 					fExtensionTree.refresh(child.getParent());
 					fExtensionTree.setSelection(new StructuredSelection(child));
@@ -1302,7 +1301,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	}
 
 	private void handleMove(boolean up) {
-		IStructuredSelection sel = (IStructuredSelection) fExtensionTree.getSelection();
+		IStructuredSelection sel = fExtensionTree.getStructuredSelection();
 		IPluginObject object = (IPluginObject) sel.getFirstElement();
 		if (object instanceof IPluginElement) {
 			IPluginParent parent = (IPluginParent) object.getParent();
@@ -1332,12 +1331,13 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 
 	private void updateButtons(Object item) {
 		if (fExpandAction != null) {
-			fExpandAction.setEnabled(ToggleExpandStateAction.isExpandable((IStructuredSelection) fExtensionTree.getSelection()));
+			fExpandAction.setEnabled(ToggleExpandStateAction.isExpandable(fExtensionTree.getStructuredSelection()));
 		}
 		if (fFilterRelatedAction != null) {
 			boolean filterRelatedEnabled = false;
 			if (fExtensionTree != null) {
-				filterRelatedEnabled = ExtensionsFilterUtil.isFilterRelatedEnabled((IStructuredSelection) fExtensionTree.getSelection());
+				filterRelatedEnabled = ExtensionsFilterUtil
+						.isFilterRelatedEnabled(fExtensionTree.getStructuredSelection());
 			}
 			fFilterRelatedAction.setEnabled(filterRelatedEnabled);
 		}
@@ -2031,7 +2031,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	}
 
 	private boolean isSingleSelection() {
-		IStructuredSelection selection = (IStructuredSelection) fExtensionTree.getSelection();
+		IStructuredSelection selection = fExtensionTree.getStructuredSelection();
 		return selection.size() == 1;
 	}
 

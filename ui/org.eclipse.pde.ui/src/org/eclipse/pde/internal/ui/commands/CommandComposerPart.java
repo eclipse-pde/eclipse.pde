@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2015 IBM Corporation and others.
+ *  Copyright (c) 2006, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -190,7 +190,7 @@ public class CommandComposerPart implements ISelectionChangedListener {
 		if (fPC != null)
 			selectionObject = fPC;
 		else if (event.getSelection() instanceof IStructuredSelection)
-			selectionObject = (((IStructuredSelection) event.getSelection()).getFirstElement());
+			selectionObject = event.getStructuredSelection().getFirstElement();
 		if (selectionObject != null && selectionObject.equals(fCommandDetails.getCommand()))
 			return;
 		fCommandDetails.showDetailsFor(selectionObject);

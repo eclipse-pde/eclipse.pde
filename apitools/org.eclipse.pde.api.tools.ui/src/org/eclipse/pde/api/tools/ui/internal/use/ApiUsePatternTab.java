@@ -172,7 +172,7 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 		});
 		this.viewer.setLabelProvider(new Labels());
 		this.viewer.setContentProvider(ArrayContentProvider.getInstance());
-		this.viewer.addSelectionChangedListener(event -> updateButtons((IStructuredSelection) event.getSelection()));
+		this.viewer.addSelectionChangedListener(event -> updateButtons(event.getStructuredSelection()));
 		this.viewer.addDoubleClickListener(event -> doEdit());
 		TableColumn column = null;
 		for (String columnname : columnnames) {

@@ -234,7 +234,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		fCategoryViewer.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, transfers, new DragSourceListener() {
 			@Override
 			public void dragStart(DragSourceEvent event) {
-				IStructuredSelection ssel = (IStructuredSelection) fCategoryViewer.getSelection();
+				IStructuredSelection ssel = fCategoryViewer.getStructuredSelection();
 				if (ssel == null || ssel.isEmpty() || !(ssel.getFirstElement() instanceof SiteFeatureAdapter)) {
 					event.doit = false;
 				}
@@ -242,7 +242,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 
 			@Override
 			public void dragSetData(DragSourceEvent event) {
-				IStructuredSelection ssel = (IStructuredSelection) fCategoryViewer.getSelection();
+				IStructuredSelection ssel = fCategoryViewer.getStructuredSelection();
 				event.data = ssel.toArray();
 			}
 
@@ -373,7 +373,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	}
 
 	private boolean handleRemove() {
-		IStructuredSelection ssel = (IStructuredSelection) fCategoryViewer.getSelection();
+		IStructuredSelection ssel = fCategoryViewer.getStructuredSelection();
 		Iterator<?> iterator = ssel.iterator();
 		boolean success = true;
 		Set<?> removedCategories = new HashSet<>();
@@ -528,7 +528,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		if (!isEditable()) {
 			return;
 		}
-		IStructuredSelection sel = (IStructuredSelection) fCategoryViewer.getSelection();
+		IStructuredSelection sel = fCategoryViewer.getStructuredSelection();
 		fCategoryTreePart.setButtonEnabled(BUTTON_BUILD_FEATURE, getFeaturesFromSelection(sel).length > 0);
 		int featureCount = fModel.getSite().getFeatures().length;
 		fCategoryTreePart.setButtonEnabled(BUTTON_BUILD_ALL, featureCount > 0);
@@ -582,7 +582,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	}
 
 	private void handleBuild() {
-		IStructuredSelection sel = (IStructuredSelection) fCategoryViewer.getSelection();
+		IStructuredSelection sel = fCategoryViewer.getStructuredSelection();
 		((SiteEditor) getPage().getPDEEditor()).handleBuild(getFeaturesFromSelection(sel));
 	}
 
@@ -622,7 +622,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	}
 
 	private void handleImportEnvironment() {
-		IStructuredSelection sel = (IStructuredSelection) fCategoryViewer.getSelection();
+		IStructuredSelection sel = fCategoryViewer.getStructuredSelection();
 		final ISiteFeature[] selectedFeatures = getFeaturesFromSelection(sel);
 		BusyIndicator.showWhile(fCategoryTreePart.getControl().getDisplay(), () -> new SynchronizePropertiesAction(selectedFeatures, getModel()).run());
 	}

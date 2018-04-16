@@ -26,7 +26,6 @@ import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -124,7 +123,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 
 		fTableViewer = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		fTableViewer.addSelectionChangedListener(
-				event -> doSelectionChanged(((IStructuredSelection) event.getSelection()).toArray()));
+				event -> doSelectionChanged(event.getStructuredSelection().toArray()));
 		fTableViewer.addDoubleClickListener(event -> okPressed());
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -103,7 +103,8 @@ public abstract class WizardTreeSelectionPage extends BaseWizardSelectionPage {
 		setDescriptionText(""); //$NON-NLS-1$
 		setSelectedNode(null);
 
-		WizardCollectionElement selectedCategory = (WizardCollectionElement) getSingleSelection((IStructuredSelection) selectionEvent.getSelection());
+		WizardCollectionElement selectedCategory = (WizardCollectionElement) getSingleSelection(
+				selectionEvent.getStructuredSelection());
 
 		if (selectedCategory == null)
 			wizardSelectionViewer.setInput(null);
@@ -114,7 +115,7 @@ public abstract class WizardTreeSelectionPage extends BaseWizardSelectionPage {
 	private void handleWizardSelection(SelectionChangedEvent selectionEvent) {
 		setErrorMessage(null);
 
-		WizardElement currentSelection = (WizardElement) getSingleSelection((IStructuredSelection) selectionEvent.getSelection());
+		WizardElement currentSelection = (WizardElement) getSingleSelection(selectionEvent.getStructuredSelection());
 
 		// If no single selection, clear and return
 		if (currentSelection == null) {

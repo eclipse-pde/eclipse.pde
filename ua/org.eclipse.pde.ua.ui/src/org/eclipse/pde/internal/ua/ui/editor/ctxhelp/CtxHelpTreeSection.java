@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -342,10 +342,8 @@ public class CtxHelpTreeSection extends TreeSection {
 			return;
 		}
 
-		IStructuredSelection selection = (IStructuredSelection) fTree
-				.getSelection();
-		CtxHelpObject firstSelectedObject = (CtxHelpObject) selection
-				.getFirstElement();
+		IStructuredSelection selection = fTree.getStructuredSelection();
+		CtxHelpObject firstSelectedObject = (CtxHelpObject) selection.getFirstElement();
 
 		// Add Context
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_CONTEXT, true);
@@ -406,8 +404,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
-		IStructuredSelection selection = (IStructuredSelection) fTree
-				.getSelection();
+		IStructuredSelection selection = fTree.getStructuredSelection();
 		Object object = selection.getFirstElement();
 		// Has to be null or a CtxHelpObject object
 		CtxHelpObject firstSelectedObject = (CtxHelpObject) object;
@@ -621,8 +618,7 @@ public class CtxHelpTreeSection extends TreeSection {
 		boolean cutAction = actionId.equals(ActionFactory.CUT.getId());
 
 		if (cutAction || actionId.equals(ActionFactory.DELETE.getId())) {
-			updateRemoveActionWithSelection((IStructuredSelection) fTree
-					.getSelection());
+			updateRemoveActionWithSelection(fTree.getStructuredSelection());
 			fRemoveObjectAction.run();
 			return !cutAction;
 		}
@@ -698,8 +694,7 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	@Override
 	protected void buttonSelected(int index) {
-		IStructuredSelection selection = (IStructuredSelection) fTree
-				.getSelection();
+		IStructuredSelection selection = fTree.getStructuredSelection();
 		Object object = selection.getFirstElement();
 		CtxHelpObject firstSelectedObject = (CtxHelpObject) object;
 		switch (index) {
@@ -736,7 +731,7 @@ public class CtxHelpTreeSection extends TreeSection {
 	 *            F_DOWN_FLAG
 	 */
 	private void handleMoveAction(int positionFlag) {
-		IStructuredSelection sel = (IStructuredSelection) fTree.getSelection();
+		IStructuredSelection sel = fTree.getStructuredSelection();
 
 		Object object = sel.getFirstElement();
 		if (object == null) {

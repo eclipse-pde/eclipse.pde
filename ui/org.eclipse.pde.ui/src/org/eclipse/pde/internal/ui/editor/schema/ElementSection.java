@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -176,14 +176,14 @@ public class ElementSection extends TreeSection {
 				addCompositor(ISchemaCompositor.SEQUENCE);
 				break;
 			case 4 :
-				final ISelection selection = fTreeViewer.getSelection();
-				handleDelete((IStructuredSelection) selection);
+			final IStructuredSelection selection = fTreeViewer.getStructuredSelection();
+				handleDelete(selection);
 				break;
 		}
 	}
 
 	private void addCompositor(int kind) {
-		Object selection = ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
+		Object selection = fTreeViewer.getStructuredSelection().getFirstElement();
 		ISchemaElement sourceElement = null;
 		Object current = selection;
 		while (current instanceof ISchemaCompositor)
@@ -209,7 +209,7 @@ public class ElementSection extends TreeSection {
 		boolean cut = actionId.equals(ActionFactory.CUT.getId());
 		if (cut || actionId.equals(ActionFactory.DELETE.getId())) {
 			// Get the current selection
-			IStructuredSelection sel = (IStructuredSelection) fTreeViewer.getSelection();
+			IStructuredSelection sel = fTreeViewer.getStructuredSelection();
 			// Get the first selected object
 			Object selectedObject = sel.getFirstElement();
 			// Ensure we have a selection
@@ -248,8 +248,8 @@ public class ElementSection extends TreeSection {
 
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
-		final ISelection selection = fTreeViewer.getSelection();
-		final Object object = ((IStructuredSelection) selection).getFirstElement();
+		final IStructuredSelection selection = fTreeViewer.getStructuredSelection();
+		final Object object = selection.getFirstElement();
 
 		MenuManager submenu = new MenuManager(PDEUIMessages.Menus_new_label);
 		if (object == null) {
@@ -312,7 +312,7 @@ public class ElementSection extends TreeSection {
 					Action deleteAction = new Action() {
 						@Override
 						public void run() {
-							handleDelete((IStructuredSelection) selection);
+							handleDelete(selection);
 						}
 					};
 					deleteAction.setText(PDEUIMessages.Actions_delete_label);
@@ -473,7 +473,7 @@ public class ElementSection extends TreeSection {
 	}
 
 	private void handleNewAttribute() {
-		Object object = ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
+		Object object = fTreeViewer.getStructuredSelection().getFirstElement();
 		if (object != null) {
 			SchemaElement element = null;
 			if (object instanceof SchemaElement)
@@ -611,7 +611,7 @@ public class ElementSection extends TreeSection {
 	private void updateButtons() {
 		if (!fSchema.isEditable())
 			return;
-		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 		ISchemaObject sobject = (ISchemaObject) selection.getFirstElement();
 
 		boolean canAddAttribute = false;

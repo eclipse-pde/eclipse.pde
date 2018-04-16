@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2011, 2015 IBM Corporation and others.
+ *  Copyright (c) 2011, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.ui.editor.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -43,7 +42,7 @@ public class FilterRelatedExtensionsAction extends Action {
 
 	@Override
 	public void run() {
-		String filterPattern = ExtensionsFilterUtil.getFilterRelatedPattern((IStructuredSelection) fExtensionTree.getSelection());
+		String filterPattern = ExtensionsFilterUtil.getFilterRelatedPattern(fExtensionTree.getStructuredSelection());
 		Text filterControl = fFilteredTree.getFilterControl();
 		if (filterControl != null && filterPattern.length() > 0) {
 			fSection.setBypassFilterDelay(true); // force immediate job run

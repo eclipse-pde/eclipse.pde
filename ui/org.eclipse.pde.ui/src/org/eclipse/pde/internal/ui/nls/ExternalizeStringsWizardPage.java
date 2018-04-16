@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -334,7 +334,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 			@Override
 			public Object[] getElements(Object inputElement) {
 				if (fInputViewer.getSelection() instanceof IStructuredSelection) {
-					Object selection = ((IStructuredSelection) fInputViewer.getSelection()).getFirstElement();
+					Object selection = fInputViewer.getStructuredSelection().getFirstElement();
 					if (selection instanceof ModelChangeFile) {
 						ModelChangeFile cf = (ModelChangeFile) selection;
 						return (cf).getModel().getChangesInFile(cf.getFile()).toArray();
@@ -392,7 +392,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 	private void handleSelectionChanged(SelectionChangedEvent event) {
 		if (!(event.getSelection() instanceof IStructuredSelection))
 			return;
-		Object selection = (((IStructuredSelection) event.getSelection()).getFirstElement());
+		Object selection = (event.getStructuredSelection().getFirstElement());
 		if (selection == null) {
 			fCurrSelection = null;
 			fSourceViewer.setDocument(fEmptyDoc);

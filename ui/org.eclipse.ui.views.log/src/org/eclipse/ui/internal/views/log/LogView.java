@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -344,7 +344,7 @@ public class LogView extends ViewPart implements ILogListener {
 		Action action = new Action(Messages.LogView_copy) {
 			@Override
 			public void run() {
-				copyToClipboard(fFilteredTree.getViewer().getSelection());
+				copyToClipboard(fFilteredTree.getViewer().getStructuredSelection());
 			}
 		};
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
@@ -553,7 +553,7 @@ public class LogView extends ViewPart implements ILogListener {
 		fFilteredTree.getViewer().setLabelProvider(fLabelProvider = new LogViewLabelProvider(this));
 		fLabelProvider.connect(this);
 		fFilteredTree.getViewer().addSelectionChangedListener(e -> {
-			handleSelectionChanged(e.getSelection());
+			handleSelectionChanged(e.getStructuredSelection());
 			if (fPropertiesAction.isEnabled())
 				((EventDetailsDialogAction) fPropertiesAction).resetSelection();
 		});
@@ -736,7 +736,8 @@ public class LogView extends ViewPart implements ILogListener {
 					in = new BufferedReader(
 							new InputStreamReader(new FileInputStream(fInputFile), StandardCharsets.UTF_8));
 				} else {
-					String selectedEntryAsString = selectionToString(fFilteredTree.getViewer().getSelection());
+					String selectedEntryAsString = selectionToString(
+							fFilteredTree.getViewer().getStructuredSelection());
 					in = new BufferedReader(new StringReader(selectedEntryAsString));
 				}
 				copy(in, out);
@@ -1120,34 +1121,31 @@ public class LogView extends ViewPart implements ILogListener {
 		}
 	}
 
-	private void handleSelectionChanged(ISelection selection) {
+	private void handleSelectionChanged(IStructuredSelection selection) {
 		updateStatus(selection);
 		updateSelectionStack(selection);
-		fCopyAction.setEnabled((!selection.isEmpty()) && ((IStructuredSelection) selection).getFirstElement() != null);
+		fCopyAction.setEnabled((!selection.isEmpty()) && selection.getFirstElement() != null);
 		fPropertiesAction.setEnabled(!selection.isEmpty());
 		fExportLogEntryAction.setEnabled(!selection.isEmpty());
 	}
 
-	private void updateSelectionStack(ISelection selection) {
+	private void updateSelectionStack(IStructuredSelection selection) {
 		fSelectedStack = null;
-		if (selection instanceof IStructuredSelection) {
-			Object firstObject = ((IStructuredSelection) selection).getFirstElement();
-			if (firstObject instanceof LogEntry) {
-				String stack = ((LogEntry) firstObject).getStack();
-				if (stack != null && stack.length() > 0) {
-					fSelectedStack = stack;
-				}
+		Object firstObject = selection.getFirstElement();
+		if (firstObject instanceof LogEntry) {
+			String stack = ((LogEntry) firstObject).getStack();
+			if (stack != null && stack.length() > 0) {
+				fSelectedStack = stack;
 			}
 		}
-
 	}
 
-	private void updateStatus(ISelection selection) {
+	private void updateStatus(IStructuredSelection selection) {
 		IStatusLineManager status = getViewSite().getActionBars().getStatusLineManager();
 		if (selection.isEmpty())
 			status.setMessage(null);
 		else {
-			Object element = ((IStructuredSelection) selection).getFirstElement();
+			Object element = selection.getFirstElement();
 			status.setMessage(((LogViewLabelProvider) fFilteredTree.getViewer().getLabelProvider()).getColumnText(element, 0));
 		}
 	}
@@ -1156,12 +1154,12 @@ public class LogView extends ViewPart implements ILogListener {
 	 * Converts selected log view element to string.
 	 * @return textual log entry representation or null if selection doesn't contain log entry
 	 */
-	private static String selectionToString(ISelection selection) {
+	private static String selectionToString(IStructuredSelection selection) {
 		String textVersion = null;
 		try (StringWriter writer = new StringWriter(); PrintWriter pwriter = new PrintWriter(writer)) {
 			if (selection.isEmpty())
 				return null;
-			AbstractEntry entry = (AbstractEntry) ((IStructuredSelection) selection).getFirstElement();
+			AbstractEntry entry = (AbstractEntry) selection.getFirstElement();
 			entry.write(pwriter);
 			pwriter.flush();
 			textVersion = writer.toString();
@@ -1174,7 +1172,7 @@ public class LogView extends ViewPart implements ILogListener {
 	/**
 	 * Copies selected element to clipboard.
 	 */
-	private void copyToClipboard(ISelection selection) {
+	private void copyToClipboard(IStructuredSelection selection) {
 		String textVersion = selectionToString(selection);
 		if ((textVersion != null) && (textVersion.trim().length() > 0)) {
 			// set the clipboard contents
@@ -1319,7 +1317,7 @@ public class LogView extends ViewPart implements ILogListener {
 					return;
 				}
 
-				ISelection selection = fFilteredTree.getViewer().getSelection();
+				IStructuredSelection selection = fFilteredTree.getViewer().getStructuredSelection();
 				String textVersion = selectionToString(selection);
 				event.data = textVersion;
 			}

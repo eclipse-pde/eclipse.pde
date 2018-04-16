@@ -176,7 +176,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 		tree.setLayoutData(gd);
 		tree.addKeyListener(KeyListener.keyPressedAdapter(e -> {
 			if (e.character == SWT.DEL && e.stateMask == 0) {
-				handleRemove((IStructuredSelection) fViewer.getSelection());
+				handleRemove(fViewer.getStructuredSelection());
 			}
 		}));
 		fViewer = new TreeViewer(tree);
@@ -199,7 +199,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 			ApiUIPlugin.log(e);
 		}
 		fViewer.addSelectionChangedListener(event -> {
-			IStructuredSelection ss = (IStructuredSelection) event.getSelection();
+			IStructuredSelection ss = event.getStructuredSelection();
 			int size = ss.size();
 			fRemoveButton.setEnabled(size > 0);
 			if (size == 1) {
@@ -237,13 +237,13 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 		Composite bcomp = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_VERTICAL, 0, 0);
 		fEditButton = SWTFactory.createPushButton(bcomp, PropertiesMessages.ApiFiltersPropertyPage_edit_button, null, SWT.LEFT);
 		fEditButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-			IStructuredSelection ss = (IStructuredSelection) fViewer.getSelection();
+			IStructuredSelection ss = fViewer.getStructuredSelection();
 			handleEdit((IApiProblemFilter) ss.getFirstElement());
 		}));
 		fEditButton.setEnabled(false);
 		fRemoveButton = SWTFactory.createPushButton(bcomp, PropertiesMessages.ApiFiltersPropertyPage_57, null, SWT.LEFT);
 		fRemoveButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-			IStructuredSelection ss = (IStructuredSelection) fViewer.getSelection();
+			IStructuredSelection ss = fViewer.getStructuredSelection();
 			handleRemove(ss);
 		}));
 		fRemoveButton.setEnabled(false);

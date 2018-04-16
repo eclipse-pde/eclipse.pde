@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -238,8 +238,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		if (!fModel.isEditable()) {
 			return;
 		}
-		Object object = ((IStructuredSelection) fTreeViewer.getSelection())
-				.getFirstElement();
+		Object object = fTreeViewer.getStructuredSelection().getFirstElement();
 		ICompCSObject csObject = (ICompCSObject) object;
 		boolean canAddTask = false;
 		boolean canAddGroup = false;
@@ -281,8 +280,8 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	private void handleAddTaskAction() {
 
-		ISelection sel = fTreeViewer.getSelection();
-		Object object = ((IStructuredSelection) sel).getFirstElement();
+		IStructuredSelection sel = fTreeViewer.getStructuredSelection();
+		Object object = sel.getFirstElement();
 		if (object == null) {
 			return;
 		}
@@ -302,8 +301,8 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	private void handleAddGroupAction() {
 
-		ISelection sel = fTreeViewer.getSelection();
-		Object object = ((IStructuredSelection) sel).getFirstElement();
+		IStructuredSelection sel = fTreeViewer.getStructuredSelection();
+		Object object = sel.getFirstElement();
 		if (object == null) {
 			return;
 		}
@@ -319,8 +318,8 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	private void handleMoveTaskObjectAction(int positionFlag) {
 
-		ISelection sel = fTreeViewer.getSelection();
-		Object object = ((IStructuredSelection) sel).getFirstElement();
+		IStructuredSelection sel = fTreeViewer.getStructuredSelection();
+		Object object = sel.getFirstElement();
 		if (object == null) {
 			return;
 		} else if (object instanceof ICompCSTaskObject) {
@@ -513,8 +512,8 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		// Get the current selection
-		ISelection selection = fTreeViewer.getSelection();
-		Object object = ((IStructuredSelection) selection).getFirstElement();
+		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
+		Object object = selection.getFirstElement();
 		// Do blind cast - has to be a composite CS object
 		// Could be null
 		ICompCSObject csObject = (ICompCSObject) object;
@@ -577,8 +576,8 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	private void handleDeleteAction() {
 
-		ISelection sel = fTreeViewer.getSelection();
-		Object object = ((IStructuredSelection) sel).getFirstElement();
+		IStructuredSelection sel = fTreeViewer.getStructuredSelection();
+		Object object = sel.getFirstElement();
 		if (object != null) {
 			if (object instanceof ICompCSTaskObject) {
 				ICompCSTaskObject taskObject = (ICompCSTaskObject) object;

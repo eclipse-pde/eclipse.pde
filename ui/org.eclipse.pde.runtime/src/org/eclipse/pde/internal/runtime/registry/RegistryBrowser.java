@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -297,7 +297,7 @@ public class RegistryBrowser extends ViewPart {
 
 	private void hookDoubleClickAction() {
 		fTreeViewer.addDoubleClickListener(event -> {
-			IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+			IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 			if (selection.size() == 1) {
 				Object obj = selection.getFirstElement();
 				if (obj instanceof Bundle)
@@ -588,7 +588,7 @@ public class RegistryBrowser extends ViewPart {
 	}
 
 	private boolean isBundleSelected() {
-		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 		if (selection != null) {
 			Object[] elements = selection.toArray();
 			for (int i = 0; i < elements.length; i++) {
@@ -603,7 +603,7 @@ public class RegistryBrowser extends ViewPart {
 
 	private List<Bundle> getSelectedBundles() {
 		List<Bundle> bundles = new ArrayList<>();
-		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 		if (selection != null) {
 			Object[] elements = selection.toArray();
 			for (Object element : elements) {

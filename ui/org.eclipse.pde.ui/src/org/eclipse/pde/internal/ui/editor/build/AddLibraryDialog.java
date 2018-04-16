@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2016 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -131,8 +131,8 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 		libraryViewer.setContentProvider(new TableContentProvider());
 		libraryViewer.setLabelProvider(new TableLabelProvider());
 		libraryViewer.addSelectionChangedListener(e -> {
-			ISelection sel = e.getSelection();
-			IPluginLibrary obj = (IPluginLibrary) ((IStructuredSelection) sel).getFirstElement();
+			IStructuredSelection sel = e.getStructuredSelection();
+			IPluginLibrary obj = (IPluginLibrary) sel.getFirstElement();
 			text.setText(obj != null ? obj.getName() : ""); //$NON-NLS-1$
 		});
 		libraryViewer.setInput(model);
@@ -140,9 +140,6 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 		return container;
 	}
 
-	/*
-	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);

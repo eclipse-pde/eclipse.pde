@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
-
-import org.eclipse.jdt.core.IJavaProject;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -108,7 +106,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		createMessageArea(composite);
 
 		fTableViewer = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		fTableViewer.addSelectionChangedListener(event -> doSelectionChanged(((IStructuredSelection) event.getSelection()).toArray()));
+		fTableViewer.addSelectionChangedListener(event -> doSelectionChanged(event.getStructuredSelection().toArray()));
 		fTableViewer.addDoubleClickListener(event -> okPressed());
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
