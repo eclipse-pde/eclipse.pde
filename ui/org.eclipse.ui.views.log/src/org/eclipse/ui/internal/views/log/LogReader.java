@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,8 @@ class LogReader {
 	private static final int TEXT_STATE = 60;
 	private static final int UNKNOWN_STATE = 70;
 
-	public static LogSession parseLogFile(File file, long maxLogTailSizeInMegaByte, List entries, IMemento memento) {
+	public static LogSession parseLogFile(File file, long maxLogTailSizeInMegaByte, List<LogEntry> entries,
+			IMemento memento) {
 		if (!file.exists())
 			return null;
 
@@ -41,7 +42,7 @@ class LogReader {
 				&& memento.getInteger(LogView.P_LOG_LIMIT).intValue() == 0)
 			return null;
 
-		ArrayList parents = new ArrayList();
+		ArrayList<LogEntry> parents = new ArrayList<>();
 		LogEntry current = null;
 		LogSession session = null;
 		int writerState = UNKNOWN_STATE;
@@ -125,7 +126,7 @@ class LogReader {
 							int depth = entry.processSubEntry(line);
 							setNewParent(parents, entry, depth);
 							current = entry;
-							LogEntry parent = (LogEntry) parents.get(depth - 1);
+							LogEntry parent = parents.get(depth - 1);
 							parent.addChild(entry);
 						} catch (ParseException pe) {
 							//do nothing, just toss the bad entry
@@ -164,7 +165,7 @@ class LogReader {
 		return currentSession;
 	}
 
-	public static LogSession parseLogFile(File file, List entries, IMemento memento) {
+	public static LogSession parseLogFile(File file, List<LogEntry> entries, IMemento memento) {
 		return parseLogFile(file, ONE_MEGA_BYTE_IN_BYTES, entries, memento);
 	}
 
@@ -208,7 +209,7 @@ class LogReader {
 	/**
 	 * Adds entry to the list if it's not filtered. Removes entries exceeding the count limit.
 	 */
-	private static void addEntry(LogEntry entry, List entries, IMemento memento) {
+	private static void addEntry(LogEntry entry, List<LogEntry> entries, IMemento memento) {
 
 		if (isLogged(entry, memento)) {
 			entries.add(entry);
@@ -242,7 +243,7 @@ class LogReader {
 		return false;
 	}
 
-	private static void setNewParent(ArrayList parents, LogEntry entry, int depth) {
+	private static void setNewParent(ArrayList<LogEntry> parents, LogEntry entry, int depth) {
 		if (depth + 1 > parents.size())
 			parents.add(entry);
 		else

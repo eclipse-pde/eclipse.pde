@@ -872,10 +872,10 @@ public class LogView extends ViewPart implements ILogListener {
 			return Messages.LogView_WorkspaceLogFile;
 		}
 
-		Map<?, ?> sources = LogFilesManager.getLogSources();
+		Map<String, String> sources = LogFilesManager.getLogSources();
 		if (sources.containsValue(path)) {
-			for (Entry<?, ?> entry : sources.entrySet()) {
-				String key = (String) entry.getKey();
+			for (Entry<String, String> entry : sources.entrySet()) {
+				String key = entry.getKey();
 				if (entry.getValue().equals(path)) {
 					return NLS.bind(Messages.LogView_LogFileTitle, new String[] {key, path});
 				}
@@ -1474,7 +1474,7 @@ public class LogView extends ViewPart implements ILogListener {
 		}
 	}
 
-	private Comparator getDefaultComparator() {
+	private Comparator<Object> getDefaultComparator() {
 		return Policy.getComparator();
 	}
 

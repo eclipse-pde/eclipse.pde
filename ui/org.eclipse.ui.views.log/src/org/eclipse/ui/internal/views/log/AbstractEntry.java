@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,9 +42,6 @@ public abstract class AbstractEntry extends PlatformObject implements IWorkbench
 		}
 	}
 
-	/**
-	 * @see IWorkbenchAdapter#getChildren(Object)
-	 */
 	@Override
 	public Object[] getChildren(Object parent) {
 		return children.toArray();
@@ -66,25 +63,16 @@ public abstract class AbstractEntry extends PlatformObject implements IWorkbench
 		return children.size();
 	}
 
-	/**
-	 * @see IWorkbenchAdapter#getImageDescriptor(Object)
-	 */
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		return null;
 	}
 
-	/**
-	 * @see IWorkbenchAdapter#getLabel(Object)
-	 */
 	@Override
 	public String getLabel(Object o) {
 		return null;
 	}
 
-	/**
-	 * @see IWorkbenchAdapter#getParent(Object)
-	 */
 	@Override
 	public Object getParent(Object o) {
 		return parent;
