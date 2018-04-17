@@ -61,7 +61,7 @@ public class UpdateUnitVersions extends AbstractHandler {
 			if (rootNode == null)
 				return null;
 			List<Node> locationsNode = rootNode.getChildNodesByTag(ITargetConstants.LOCATIONS_TAG);
-			if (locationsNode == null || locationsNode.size() == 0)
+			if (locationsNode == null || locationsNode.isEmpty())
 				return null;
 
 			int offsetChange = 0;
@@ -91,7 +91,7 @@ public class UpdateUnitVersions extends AbstractHandler {
 							break;
 						}
 					}
-					if (versions == null || versions.size() == 0) {
+					if (versions == null || versions.isEmpty()) {
 						continue;
 					}
 					Collections.sort(versions, (v1, v2) -> (new Version(v2)).compareTo(new Version(v1)));

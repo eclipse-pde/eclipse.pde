@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -315,7 +315,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * the page complete, thereby allowing users to flip to the next page.
 	 */
 	protected void resetPageState() {
-		if (pages.size() == 0)
+		if (pages.isEmpty())
 			return;
 		WizardPage firstPage = pages.get(0).page;
 		IWizardContainer container = firstPage.getWizard().getContainer();

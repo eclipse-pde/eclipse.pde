@@ -616,7 +616,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 	private void handleSelectDependencies() {
 		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
-		if (selection.size() == 0)
+		if (selection.isEmpty())
 			return;
 
 		IPluginModelBase[] models = new IPluginModelBase[selection.size()];

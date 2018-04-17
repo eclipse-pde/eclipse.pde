@@ -1087,9 +1087,10 @@ public class TargetContentsGroup {
 				}
 			}
 
-			if (included.size() == 0) {
+			if (included.isEmpty()) {
 				fTargetDefinition.setIncluded(new NameVersionDescriptor[0]);
-			} else if (included.size() == 0 || included.size() - missingCount == fTargetDefinition.getAllFeatures().length + fTargetDefinition.getOtherBundles().length) {
+			} else if (included.isEmpty() || included.size() - missingCount == fTargetDefinition.getAllFeatures().length
+					+ fTargetDefinition.getOtherBundles().length) {
 				fTargetDefinition.setIncluded(null);
 			} else {
 				fTargetDefinition.setIncluded(included.toArray(new NameVersionDescriptor[included.size()]));
@@ -1125,7 +1126,7 @@ public class TargetContentsGroup {
 				}
 			}
 
-			if (included.size() == 0) {
+			if (included.isEmpty()) {
 				fTargetDefinition.setIncluded(new NameVersionDescriptor[0]);
 			} else if (included.size() == fAllBundles.size() + fMissing.size()) {
 				fTargetDefinition.setIncluded(null);

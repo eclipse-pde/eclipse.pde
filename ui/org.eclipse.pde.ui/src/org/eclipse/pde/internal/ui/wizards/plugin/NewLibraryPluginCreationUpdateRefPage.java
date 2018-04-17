@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,7 +73,7 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 	}
 
 	private void computeSelected(Collection<?> initialSelection) {
-		if (initialSelection == null || initialSelection.size() == 0)
+		if (initialSelection == null || initialSelection.isEmpty())
 			return;
 		Set<IPluginModelBase> selected = new HashSet<>();
 		Iterator<?> iter = initialSelection.iterator();

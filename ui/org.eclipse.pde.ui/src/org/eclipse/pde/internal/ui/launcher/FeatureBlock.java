@@ -214,7 +214,7 @@ public class FeatureBlock {
 					featureModels.add(model.getModel(true));
 				}
 			}
-			if (featureModels.size() == 0) {
+			if (featureModels.isEmpty()) {
 				MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.FeatureSelectionDialog_title, PDEUIMessages.FeatureBlock_AllFeatureSelected);
 				return;
 			}
@@ -253,7 +253,7 @@ public class FeatureBlock {
 			fTree.remove(selection.toArray());
 			List<?> input = (List<?>) fTree.getInput();
 			input.removeAll(selection.toList());
-			if (fAdditionalPlugins.size() == 0) {
+			if (fAdditionalPlugins.isEmpty()) {
 				fTree.remove(fAdditionalPluginsParentElement);
 				input.remove(fAdditionalPluginsParentElement);
 				fRemovePluginButton.setEnabled(false);
@@ -947,7 +947,7 @@ public class FeatureBlock {
 							input.remove(element);
 						}
 					}
-					if (fAdditionalPlugins.size() == 0) {
+					if (fAdditionalPlugins.isEmpty()) {
 						fTree.remove(fAdditionalPluginsParentElement);
 						input.remove(fAdditionalPluginsParentElement);
 						fRemovePluginButton.setEnabled(false);

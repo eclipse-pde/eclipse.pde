@@ -53,7 +53,7 @@ public class AttributeValueCompletionProcessor extends DelegateProcessor {
 		if (rootNode == null)
 			return new ICompletionProposal[] {};
 		List<Node> locationsNode = rootNode.getChildNodesByTag(ITargetConstants.LOCATIONS_TAG);
-		if (locationsNode == null || locationsNode.size() == 0)
+		if (locationsNode == null || locationsNode.isEmpty())
 			return new ICompletionProposal[] {};
 		Node locationNode = null;
 		for (Node u : locationsNode.get(0).getChildNodesByTag(ITargetConstants.LOCATION_TAG)) {

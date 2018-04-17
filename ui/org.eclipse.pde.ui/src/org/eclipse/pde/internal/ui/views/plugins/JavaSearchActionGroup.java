@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,7 +110,7 @@ public class JavaSearchActionGroup extends ActionGroup {
 
 	private void handleJavaSearch(final boolean add) {
 		IStructuredSelection selection = (IStructuredSelection) getContext().getSelection();
-		if (selection.size() == 0)
+		if (selection.isEmpty())
 			return;
 
 		ArrayList<IPluginModelBase> result = new ArrayList<>();
@@ -121,7 +121,7 @@ public class JavaSearchActionGroup extends ActionGroup {
 				result.add(model);
 			}
 		}
-		if (result.size() == 0)
+		if (result.isEmpty())
 			return;
 		final IPluginModelBase[] array = result.toArray(new IPluginModelBase[result.size()]);
 

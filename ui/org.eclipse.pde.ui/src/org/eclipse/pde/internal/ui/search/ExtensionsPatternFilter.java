@@ -214,7 +214,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 	@Override
 	public Object[] filter(Viewer viewer, Object parent, Object[] elements) {
 		if (parent != null && parent instanceof BundlePlugin) {
-			if (fFoundAnyElementsCache.size() == 0 && fSearchPattern != null && fSearchPattern.length() > 0) {
+			if (fFoundAnyElementsCache.isEmpty() && fSearchPattern != null && fSearchPattern.length() > 0) {
 				BundlePlugin pluginPlugin = (BundlePlugin) parent;
 				doFilter(viewer, pluginPlugin, pluginPlugin.getExtensions(), false);
 			}

@@ -865,7 +865,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	}
 
 	private void validateSourceEntries(ArrayList<IBuildEntry> sourceEntries, IBuildEntry srcExcludes, IClasspathEntry[] cpes) {
-		if (sourceEntries == null || sourceEntries.size() == 0)
+		if (sourceEntries == null || sourceEntries.isEmpty())
 			return;
 		String[] unlisted = PDEBuilderHelper.getUnlistedClasspaths(sourceEntries, fProject, cpes);
 		List<String> excludeList = new ArrayList<>(0);

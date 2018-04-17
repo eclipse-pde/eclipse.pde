@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,17 +38,11 @@ public class ConvertJarsAction implements IObjectActionDelegate {
 		super();
 	}
 
-	/**
-	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
-	 */
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		workbench = targetPart.getSite().getWorkbenchWindow().getWorkbench();
 	}
 
-	/**
-	 * @see IActionDelegate#run(IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 		Map<Manifest, Object> filesMap = new HashMap<>();
@@ -93,15 +87,12 @@ public class ConvertJarsAction implements IObjectActionDelegate {
 		dialog.open();
 	}
 
-	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection s) {
 		boolean enabled = true;
 		if (s instanceof IStructuredSelection) {
 			selection = (IStructuredSelection) s;
-			if (selection.size() == 0)
+			if (selection.isEmpty())
 				return;
 			Iterator<?> i = selection.iterator();
 			while (i.hasNext()) {

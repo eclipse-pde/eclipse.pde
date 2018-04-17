@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -408,7 +408,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			ArrayList<SourceFolder> sourceFolders = outputFolder.getSourceFolders();
 			ArrayList<String> outputFolderLibs = new ArrayList<>(outputFolder.getLibs());
 
-			if (sourceFolders.size() == 0) {
+			if (sourceFolders.isEmpty()) {
 				if (!outputFolder.isLibrary()) {
 					// report error - invalid output folder
 					for (String libName : outputFolderLibs) {
@@ -421,7 +421,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 						prepareError(PROPERTY_OUTPUT_PREFIX + libName, outputFolder.getToken(), message, PDEMarkerFactory.B_REMOVAL, fOututLibSeverity, CompilerFlags.P_BUILD_OUTPUT_LIBRARY,PDEMarkerFactory.CAT_OTHER);
 					}
 				} else {
-					if (outputFolderLibs.size() == 0) {
+					if (outputFolderLibs.isEmpty()) {
 						//class folder does not have an output.<library> entry, only continue if we have a plugin model for the project
 						IPluginModelBase model = PluginRegistry.findModel(fProject);
 						if (model != null) {
@@ -542,7 +542,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 					prepareError(PROPERTY_SOURCE_PREFIX + libName, sourceFolder.getToken(), message, PDEMarkerFactory.B_REMOVAL, fSrcLibSeverity,CompilerFlags.P_BUILD_SOURCE_LIBRARY, PDEMarkerFactory.CAT_OTHER);
 				}
 			} else {
-				if (outputFolder.getLibs().size() == 0 && sourceFolder.getLibs().size() == 1) {
+				if (outputFolder.getLibs().isEmpty() && sourceFolder.getLibs().size() == 1) {
 					//error - missing output folder
 
 					String libName = sourceFolder.getLibs().get(0);

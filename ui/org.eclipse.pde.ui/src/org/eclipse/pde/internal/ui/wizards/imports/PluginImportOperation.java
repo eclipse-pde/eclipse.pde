@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -300,7 +300,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			}
 			String symbolicName = model.getBundleDescription().getSymbolicName();
 			ArrayList<IPluginModelBase> plugins = workspacePluginMap.get(symbolicName);
-			if (plugins == null || plugins.size() == 0) {
+			if (plugins == null || plugins.isEmpty()) {
 				continue;
 			}
 			if (!conflictingPlugins.containsAll(plugins)) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -332,7 +332,7 @@ public class BuildState {
 	 *         removed, or an empty array, never <code>null</code>
 	 */
 	public IDelta[] getBreakingChanges() {
-		if (this.breakingChanges == null || this.breakingChanges.size() == 0) {
+		if (this.breakingChanges == null || this.breakingChanges.isEmpty()) {
 			return EMPTY_DELTAS;
 		}
 		HashSet<IDelta> collector = new HashSet<>();
@@ -348,7 +348,7 @@ public class BuildState {
 	 *         removed, or an empty array, never <code>null</code>
 	 */
 	public IDelta[] getCompatibleChanges() {
-		if (this.compatibleChanges == null || this.compatibleChanges.size() == 0) {
+		if (this.compatibleChanges == null || this.compatibleChanges.isEmpty()) {
 			return EMPTY_DELTAS;
 		}
 		HashSet<IDelta> collector = new HashSet<>();

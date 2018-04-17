@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,30 +26,21 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 	}
 
 	public void manage(ILaunch launch) {
-		if (managedLaunches.size() == 0)
+		if (managedLaunches.isEmpty())
 			hookListener(true);
 		if (!managedLaunches.contains(launch))
 			managedLaunches.add(launch);
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch)
-	 */
 	@Override
 	public void launchRemoved(ILaunch launch) {
 		update(launch, true);
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch)
-	 */
 	@Override
 	public void launchAdded(ILaunch launch) {
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch)
-	 */
 	@Override
 	public void launchChanged(ILaunch launch) {
 	}
@@ -58,7 +49,7 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 		if (managedLaunches.contains(launch)) {
 			if (remove || launch.isTerminated()) {
 				managedLaunches.remove(launch);
-				if (managedLaunches.size() == 0) {
+				if (managedLaunches.isEmpty()) {
 					hookListener(false);
 				}
 			}
@@ -104,9 +95,6 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 		hookListener(false);
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent)
-	 */
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (DebugEvent event : events) {

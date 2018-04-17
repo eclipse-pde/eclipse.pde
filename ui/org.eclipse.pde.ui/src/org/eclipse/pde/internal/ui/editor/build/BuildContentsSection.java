@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2016 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -55,9 +55,6 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 			return new Object[0];
 		}
 
-		/**
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-		 */
 		@Override
 		public Object[] getChildren(Object parent) {
 			try {
@@ -88,9 +85,6 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 			return new Object[0];
 		}
 
-		/**
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-		 */
 		@Override
 		public Object getParent(Object element) {
 			if (element != null && element instanceof IResource) {
@@ -99,9 +93,6 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 			return null;
 		}
 
-		/**
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-		 */
 		@Override
 		public boolean hasChildren(Object element) {
 			if (element instanceof IFolder)
@@ -289,7 +280,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 					}
 				}
 			}
-			if (fileExt.size() == 0)
+			if (fileExt.isEmpty())
 				return;
 			try {
 				IResource[] members = fBundleRoot.members();

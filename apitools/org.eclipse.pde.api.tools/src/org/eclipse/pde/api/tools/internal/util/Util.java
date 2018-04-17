@@ -2564,7 +2564,7 @@ public final class Util {
 						}
 					}
 				}
-				if (reexportedComponents == null || reexportedComponents.size() == 0) {
+				if (reexportedComponents == null || reexportedComponents.isEmpty()) {
 					return null;
 				}
 				return reexportedComponents.toArray(new IApiComponent[reexportedComponents.size()]);

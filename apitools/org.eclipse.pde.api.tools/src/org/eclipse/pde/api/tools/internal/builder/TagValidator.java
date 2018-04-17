@@ -130,7 +130,7 @@ public class TagValidator extends Validator {
 	 * @param tags
 	 */
 	private void validateTags(ASTNode node, List<TagElement> tags) {
-		if (tags.size() == 0) {
+		if (tags.isEmpty()) {
 			return;
 		}
 		switch (node.getNodeType()) {

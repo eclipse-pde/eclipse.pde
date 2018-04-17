@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2017 IBM Corporation and others.
+ *  Copyright (c) 2005, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -161,8 +161,8 @@ public class CompositeManifestHeader extends ManifestHeader {
 
 	public boolean isEmpty() {
 		if (fSort)
-			return fElementMap == null || fElementMap.size() == 0;
-		return fManifestElements == null || fManifestElements.size() == 0;
+			return fElementMap == null || fElementMap.isEmpty();
+		return fManifestElements == null || fManifestElements.isEmpty();
 	}
 
 	public boolean hasElement(String name) {
@@ -334,7 +334,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 			return null;
 		} else if (fManifestElements == null) {
 			return null;
-		} else if (fManifestElements.size() == 0) {
+		} else if (fManifestElements.isEmpty()) {
 			return null;
 		}
 		// Remove the element

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,7 +117,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	@Override
 	public IDSImplementation getImplementation() {
 		ArrayList<IDocumentElementNode> childNodesList = getChildNodesList(IDSImplementation.class, true);
-		if (childNodesList.size() == 0) {
+		if (childNodesList.isEmpty()) {
 			return null;
 		}
 		return (IDSImplementation) childNodesList.get(0);
@@ -156,7 +156,7 @@ public class DSComponent extends DSObject implements IDSComponent {
 	@Override
 	public IDSService getService() {
 		ArrayList<IDocumentElementNode> childNodesList = getChildNodesList(IDSService.class, true);
-		if (childNodesList.size() == 0) {
+		if (childNodesList.isEmpty()) {
 			return null;
 		}
 		return (IDSService) childNodesList.get(0);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -220,7 +220,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 				for (int i = 0; i < usedkeys.size(); i++)
 					allKeys.remove(usedkeys.get(i));
 
-				if (allKeys.size() == 0)
+				if (allKeys.isEmpty())
 					return;
 
 				// scan properties file for keys referencing other keys
@@ -239,7 +239,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 						String akey = '%' + allKeys.get(j) + '%';
 						if (entry.indexOf(akey) != -1)
 							allKeys.remove(allKeys.get(j--));
-						if (allKeys.size() == 0)
+						if (allKeys.isEmpty())
 							return;
 					}
 				}

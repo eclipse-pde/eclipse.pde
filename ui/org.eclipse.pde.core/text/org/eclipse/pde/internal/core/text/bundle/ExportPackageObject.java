@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2017 IBM Corporation and others.
+ *  Copyright (c) 2005, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -68,7 +68,7 @@ public class ExportPackageObject extends PackageObject {
 			setDirective(ICoreConstants.INTERNAL_DIRECTIVE, null);
 			setDirective(ICoreConstants.FRIENDS_DIRECTIVE, null);
 		} else {
-			if (fFriends.size() == 0)
+			if (fFriends.isEmpty())
 				setDirective(ICoreConstants.INTERNAL_DIRECTIVE, "true"); //$NON-NLS-1$
 			else {
 				Iterator<String> iter = fFriends.keySet().iterator();
@@ -98,7 +98,7 @@ public class ExportPackageObject extends PackageObject {
 		boolean hasInternalChanged = false;
 		fFriends.remove(friend.getName());
 		setDirective(ICoreConstants.FRIENDS_DIRECTIVE, null);
-		if (fFriends.size() == 0) {
+		if (fFriends.isEmpty()) {
 			setDirective(ICoreConstants.INTERNAL_DIRECTIVE, "true"); //$NON-NLS-1$
 			hasInternalChanged = true;
 		} else {

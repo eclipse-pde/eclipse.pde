@@ -255,7 +255,7 @@ public class FeatureImportWizardPage extends WizardPage {
 				if (curr != null && !items.contains(curr))
 					items.add(curr);
 			}
-			if (items.size() == 0)
+			if (items.isEmpty())
 				items.add(""); //$NON-NLS-1$
 			dropItems = items.toArray(new String[items.size()]);
 		}

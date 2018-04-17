@@ -795,7 +795,7 @@ public class ReferenceExtractor extends ClassVisitor {
 							}
 							catchLabelInfo.location.setLineNumber(currentLineNumber);
 						}
-						if (remaingEntriesTemp.size() == 0) {
+						if (remaingEntriesTemp.isEmpty()) {
 							remainingCatchLabelInfos = null;
 						} else {
 							remainingCatchLabelInfos = remaingEntriesTemp;

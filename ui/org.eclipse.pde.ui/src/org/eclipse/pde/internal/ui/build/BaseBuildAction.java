@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -149,13 +149,13 @@ public abstract class BaseBuildAction extends AbstractHandler {
 
 	public static void setDefaultValues(IFile generatedFile) {
 		try {
-			List<?> configs = AntLaunchShortcut.findExistingLaunchConfigurations(generatedFile);
+			List<ILaunchConfiguration> configs = AntLaunchShortcut.findExistingLaunchConfigurations(generatedFile);
 			ILaunchConfigurationWorkingCopy launchCopy;
-			if (configs.size() == 0) {
+			if (configs.isEmpty()) {
 				ILaunchConfiguration config = AntLaunchShortcut.createDefaultLaunchConfiguration(generatedFile);
 				launchCopy = config.getWorkingCopy();
 			} else {
-				launchCopy = ((ILaunchConfiguration) configs.get(0)).getWorkingCopy();
+				launchCopy = configs.get(0).getWorkingCopy();
 			}
 			if (launchCopy == null)
 				return;

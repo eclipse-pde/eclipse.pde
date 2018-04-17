@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -207,7 +207,7 @@ public class UseReportConverter extends HTMLConvertor {
 
 		@Override
 		public void endVisitMember(IMemberDescriptor referencedMember) {
-			if (this.currentmember.children.size() == 0) {
+			if (this.currentmember.children.isEmpty()) {
 				TreeMap<IMemberDescriptor, Member> map = this.currentreport.children.get(this.currenttype);
 				map.remove(referencedMember);
 			}

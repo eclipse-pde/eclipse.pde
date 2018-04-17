@@ -288,7 +288,7 @@ public class LogView extends ViewPart implements ILogListener {
 		IMenuListener listener = manager -> {
 			manager.add(fCopyAction);
 			manager.add(new Separator(LOG_ENTRY_GROUP));
-			clearAction.setEnabled(!(elements.size() == 0 && groups.size() == 0));
+			clearAction.setEnabled(!(elements.isEmpty() && groups.isEmpty()));
 			manager.add(clearAction);
 			manager.add(fDeleteLogAction);
 			manager.add(fOpenLogAction);

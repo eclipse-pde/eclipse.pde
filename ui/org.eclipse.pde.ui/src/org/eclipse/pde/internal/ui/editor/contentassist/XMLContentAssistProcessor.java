@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -274,7 +274,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		// Get all the applicable extension points
 		ArrayList<ISchemaObject> allExtensionPoints = getAllExtensionPoints(F_EXTENSION_ATTRIBUTE_POINT_VALUE);
 		// Ensure we found extension points
-		if ((allExtensionPoints == null) || (allExtensionPoints.size() == 0)) {
+		if ((allExtensionPoints == null) || (allExtensionPoints.isEmpty())) {
 			return null;
 		}
 		// If there is no current attribute value, then the applicable extension
@@ -301,7 +301,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		// Get all avaliable extensions with point attribute values
 		ArrayList<ISchemaObject> allExtensionPoints = getAllExtensionPoints(F_EXTENSION_POINT_AND_VALUE);
 		// Ensure we found extension points
-		if ((allExtensionPoints == null) || (allExtensionPoints.size() == 0)) {
+		if ((allExtensionPoints == null) || (allExtensionPoints.isEmpty())) {
 			// Return the current proposal list without extension points
 			return convertListToProposal(filteredProposalList, node, offset);
 		}
@@ -727,7 +727,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	 */
 	private void updateExternalExtPointTypes(int newVType) {
 		// Ensure we have proposals
-		if (fExternalExtPoints.size() == 0) {
+		if (fExternalExtPoints.isEmpty()) {
 			return;
 		}
 		// Get the first proposal

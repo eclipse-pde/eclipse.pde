@@ -209,7 +209,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 				containers.add(getTargetPlatformService().newFeatureLocation(location.getPath(), ((IFeatureModel) element).getFeature().getId(), version));
 			}
 		}
-		if (containers.size() == 0) {
+		if (containers.isEmpty()) {
 			return null;
 		}
 		return containers.toArray(new ITargetLocation[containers.size()]);

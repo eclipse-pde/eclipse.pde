@@ -99,7 +99,7 @@ public class ApiScope implements IApiScope {
 
 	@Override
 	public IApiElement[] getApiElements() {
-		if (this.elements == null || this.elements.size() == 0) {
+		if (this.elements == null || this.elements.isEmpty()) {
 			return NO_ELEMENTS;
 		}
 		return this.elements.toArray(new IApiElement[this.elements.size()]);
