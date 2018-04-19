@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
@@ -38,7 +37,7 @@ public class DynamicPluginProjectReferences implements IDynamicReferenceProvider
 		if (javaProject != null) {
 			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(javaProject.getProject());
 			if (model != null) {
-				List<IProject> allProj = new RequiredPluginsClasspathContainer(model).getAllProjectDependencies();
+				List<IProject> allProj = new ArrayList<>();
 				BundleDescription currentBundle = model.getBundleDescription();
 				if (state == null) {
 					state = StateObjectFactory.defaultFactory.createState(true);
