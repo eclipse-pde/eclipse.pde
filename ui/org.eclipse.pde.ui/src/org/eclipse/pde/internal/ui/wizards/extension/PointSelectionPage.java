@@ -50,7 +50,7 @@ import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Image;
@@ -221,10 +221,10 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	@Override
 	public void createControl(Composite parent) {
 		// tab folder
-		final TabFolder tabFolder = new TabFolder(parent, SWT.FLAT);
-		TabItem firstTab = new TabItem(tabFolder, SWT.NULL);
+		final CTabFolder tabFolder = new CTabFolder(parent, SWT.FLAT);
+		CTabItem firstTab = new CTabItem(tabFolder, SWT.NULL);
 		firstTab.setText(PDEUIMessages.PointSelectionPage_tab1);
-		TabItem secondTab = new TabItem(tabFolder, SWT.NULL);
+		CTabItem secondTab = new CTabItem(tabFolder, SWT.NULL);
 		secondTab.setText(PDEUIMessages.PointSelectionPage_tab2);
 		secondTab.setControl(createWizardsPage(tabFolder));
 		tabFolder.addSelectionListener(widgetSelectedAdapter(e -> updateTabSelection(tabFolder.getSelectionIndex())));
