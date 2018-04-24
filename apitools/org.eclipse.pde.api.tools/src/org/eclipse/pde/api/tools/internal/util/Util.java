@@ -2977,22 +2977,5 @@ public final class Util {
 		return type;
 	}
 
-	public static boolean updateVersionFrom10to9(byte[] bytes) {
-		if (bytes.length >= 8) {
-			if (bytes[7] == 54) {
-				bytes[7] = 53;
-				return true;
-			}
-		}
-		return false;
-	}
 
-	public static void updateVersionFrom9to10(byte[] bytes) {
-		if (bytes.length >= 8) {
-			if (bytes[7] == 53) {
-				bytes[7] = 54;
-			}
-		}
-
-	}
 }
