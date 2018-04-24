@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import junit.framework.TestCase;
+import org.eclipse.core.filebuffers.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.TargetPlatform;
@@ -279,5 +280,17 @@ public abstract class AbstractTargetTest extends TestCase {
 			list.add(bundle.getBundleInfo());
 		}
 		return list;
+	}
+
+	public static ITextFileBuffer getTextFileBufferFromFile(File file) {
+		try {
+			IPath path = Path.fromOSString(file.getAbsolutePath());
+			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+			manager.connect(path, LocationKind.LOCATION, null);
+			return manager.getTextFileBuffer(path, LocationKind.LOCATION);
+		} catch (CoreException e) {
+			fail("Unable to retrive target definition file");
+		}
+		return null;
 	}
 }

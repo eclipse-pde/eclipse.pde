@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.target;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import org.eclipse.core.filebuffers.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.ITargetDefinition;
@@ -102,12 +103,22 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	}
 
 	@Override
-	protected InputStream getInputStream() throws CoreException {
+	protected ITextFileBuffer getTextFileBuffer() throws CoreException {
+		File file = getFile();
 		try {
-			return new BufferedInputStream(new FileInputStream(getFile()));
+			if (!file.exists()) {
+				file.getParentFile().mkdirs();
+				file.createNewFile();
+			}
 		} catch (FileNotFoundException e) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LocalTargetHandle_1, e));
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LocalTargetHandle_5, e));
 		}
+		IPath path = Path.fromOSString(getFile().getAbsolutePath());
+		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+		manager.connect(path, LocationKind.LOCATION, null);
+		return manager.getTextFileBuffer(path, LocationKind.LOCATION);
 	}
 
 	@Override
@@ -164,30 +175,9 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 		P2TargetUtils.deleteProfile(this);
 	}
 
-	protected OutputStream getOutputStream() throws CoreException {
-		try {
-			File file = getFile();
-			if (!file.exists()) {
-				file.getParentFile().mkdirs();
-				file.createNewFile();
-			}
-			return new BufferedOutputStream(new FileOutputStream(file));
-		} catch (FileNotFoundException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LocalTargetHandle_1, e));
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LocalTargetHandle_5, e));
-		}
-	}
-
 	@Override
 	void save(ITargetDefinition definition) throws CoreException {
-		OutputStream stream = getOutputStream();
-		((TargetDefinition) definition).write(stream);
-		try {
-			stream.close();
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.LocalTargetHandle_4, getFile().getName()), e));
-		}
+		((TargetDefinition) definition).write(getTextFileBuffer());
 	}
 
 	@Override

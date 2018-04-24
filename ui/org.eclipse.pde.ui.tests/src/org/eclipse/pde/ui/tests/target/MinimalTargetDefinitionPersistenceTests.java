@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import java.io.*;
+import java.io.File;
 import java.net.*;
 import java.util.HashSet;
 import java.util.Set;
 import junit.framework.TestCase;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -34,6 +35,15 @@ import org.osgi.framework.ServiceReference;
  *
  */
 public class MinimalTargetDefinitionPersistenceTests extends TestCase {
+	protected File tempFile;
+
+	@Override
+	protected void tearDown() throws Exception {
+		if (tempFile != null) {
+			tempFile.delete();
+		}
+		super.tearDown();
+	}
 
 	protected void assertTargetDefinitionsEqual(ITargetDefinition targetA, ITargetDefinition targetB) {
 		assertTrue("Target content not equal", ((TargetDefinition) targetA).isContentEqual(targetB));
@@ -172,11 +182,11 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 */
 	public void testPersistEmptyDefinition() throws Exception {
 		ITargetDefinition definitionA = getTargetService().newTarget();
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		TargetDefinitionPersistenceHelper.persistXML(definitionA, outputStream);
+		tempFile = File.createTempFile("targetDefinition", null);
+		ITextFileBuffer fileBuffer = AbstractTargetTest.getTextFileBufferFromFile(tempFile);
+		TargetDefinitionPersistenceHelper.persistXML(definitionA, fileBuffer);
 		ITargetDefinition definitionB = getTargetService().newTarget();
-		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-		TargetDefinitionPersistenceHelper.initFromXML(definitionB, inputStream);
+		TargetDefinitionPersistenceHelper.initFromXML(definitionB, fileBuffer);
 		assertTargetDefinitionsEqual(definitionA, definitionB);
 	}
 
@@ -193,9 +203,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 				.getEntry("/tests/targets/target-files/" + name + ".trgt");
 		File file = new File(FileLocator.toFileURL(url).getFile());
 		ITargetDefinition target = getTargetService().newTarget();
-		try (FileInputStream stream = new FileInputStream(file)) {
-			TargetDefinitionPersistenceHelper.initFromXML(target, stream);
-		}
+		TargetDefinitionPersistenceHelper.initFromXML(target, AbstractTargetTest.getTextFileBufferFromFile(file));
 		return target;
 	}
 

@@ -12,14 +12,19 @@ package org.eclipse.pde.genericeditor.extension.tests;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Scanner;
 
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
@@ -41,14 +46,15 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 		ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		ITargetDefinition targetDefinition = service.newTarget();
 		targetDefinition.setName("test");
-		ByteArrayOutputStream expectedOutput = new ByteArrayOutputStream();
-		TargetDefinitionPersistenceHelper.persistXML(targetDefinition, expectedOutput);
+		tempFile = File.createTempFile("targetDefinition", null);
+		ITextFileBuffer buffer = getTextFileBufferFromFile(tempFile);
+		TargetDefinitionPersistenceHelper.persistXML(targetDefinition, buffer);
+		String expectedOutput = readFile(tempFile.toPath(), StandardCharsets.UTF_8);
 
-		ByteArrayOutputStream actualOutput = new ByteArrayOutputStream();
 		targetDefinition.setProgramArguments(null);
-		TargetDefinitionPersistenceHelper.persistXML(targetDefinition, actualOutput);
-		assertEquals(expectedOutput.toString(StandardCharsets.UTF_8.toString()),
-				actualOutput.toString(StandardCharsets.UTF_8.toString()));
+		TargetDefinitionPersistenceHelper.persistXML(targetDefinition, buffer);
+		String actualOutput = readFile(tempFile.toPath(), StandardCharsets.UTF_8);
+		assertEquals(expectedOutput, actualOutput);
 	}
 
 	@Test
@@ -56,18 +62,18 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 		ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		ITargetDefinition targetDefinition = service.newTarget();
 		targetDefinition.setOS("test_os");
-		ByteArrayOutputStream actualOutput = new ByteArrayOutputStream();
-		TargetDefinitionPersistenceHelper.persistXML(targetDefinition, actualOutput);
 		confirmMatch(targetDefinition, "IndentingTestCaseTarget.txt");
 	}
 
 	@Test
 	public void testCommentsAndWhitespacePersists() throws Exception {
-		InputStream inputStream = FrameworkUtil.getBundle(this.getClass())
-				.getEntry("testing-files/target-files/PersistTestCaseTarget.txt").openStream();
+		URL url = FrameworkUtil.getBundle(this.getClass())
+				.getEntry("testing-files/target-files/PersistTestCaseTarget.txt");
+		File inputFile = new File(FileLocator.toFileURL(url).getFile());
 		ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		ITargetDefinition targetDefinition = service.newTarget();
-		TargetDefinitionPersistenceHelper.initFromXML(targetDefinition, inputStream);
+		ITextFileBuffer buffer = getTextFileBufferFromFile(inputFile);
+		TargetDefinitionPersistenceHelper.initFromXML(targetDefinition, buffer);
 		confirmMatch(targetDefinition, "PersistTestCaseTarget.txt");
 	}
 
@@ -117,10 +123,10 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 				Arrays.fill(chars, ' ');
 				result.replace("\t", new String(chars));
 			}
-			ByteArrayOutputStream actualOutput = new ByteArrayOutputStream();
-			TargetDefinitionPersistenceHelper.persistXML(targetDefinition, actualOutput);
-
-			assertEqualStringIgnoreDelim(result, actualOutput.toString(StandardCharsets.UTF_8.toString()));
+			tempFile = File.createTempFile("targetDefinition", null);
+			ITextFileBuffer buffer = getTextFileBufferFromFile(tempFile);
+			TargetDefinitionPersistenceHelper.persistXML(targetDefinition, buffer);
+			assertEquals(result, readFile(tempFile.toPath(), StandardCharsets.UTF_8));
 		} catch (IOException e) {
 		}
 	}
@@ -147,5 +153,10 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 		targetDefinition.setIncluded(restrictions);
 		targetDefinition.setTargetLocations(new ITargetLocation[] { dirContainer, profileContainer, featureContainer,
 				restrictedProfileContainer, siteContainer });
+	}
+
+	static String readFile(Path path, Charset encoding) throws IOException {
+		byte[] encoded = Files.readAllBytes(path);
+		return new String(encoded, encoding);
 	}
 }

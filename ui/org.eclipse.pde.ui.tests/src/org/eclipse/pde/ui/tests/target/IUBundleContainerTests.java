@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import java.io.*;
+import java.io.File;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
@@ -38,6 +38,15 @@ import org.xml.sax.helpers.DefaultHandler;
  * Tests for the IU bundle container
  */
 public class IUBundleContainerTests extends AbstractTargetTest {
+	protected File tempFile;
+
+	@Override
+	protected void tearDown() throws Exception {
+		if (tempFile != null) {
+			tempFile.delete();
+		}
+		super.tearDown();
+	}
 
 	/**
 	 * Returns the metadata repository at the specified location.
@@ -250,12 +259,11 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		IUBundleContainer container = createContainer(unitIds);
 		ITargetDefinition target = getTargetService().newTarget();
 		target.setTargetLocations(new ITargetLocation[]{container});
-
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		TargetDefinitionPersistenceHelper.persistXML(target, outputStream);
+		tempFile = File.createTempFile("targetDefinition", null);
+		ITextFileBuffer fileBuffer = getTextFileBufferFromFile(tempFile);
+		TargetDefinitionPersistenceHelper.persistXML(target, fileBuffer);
 		ITargetDefinition definitionB = getTargetService().newTarget();
-		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-		TargetDefinitionPersistenceHelper.initFromXML(definitionB, inputStream);
+		TargetDefinitionPersistenceHelper.initFromXML(definitionB, fileBuffer);
 		assertTrue("Target content not equal",((TargetDefinition)target).isContentEqual(definitionB));
 
 		// resolve the restored target and ensure bundles are correct
@@ -510,12 +518,12 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	public void deserializationTest(IUBundleContainer location) throws Exception {
 		ITargetDefinition td = getTargetService().newTarget();
 		td.setTargetLocations(new ITargetLocation[] {location});
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		TargetDefinitionPersistenceHelper.persistXML(td, out);
-		String xml = new String(out.toByteArray());
+		tempFile = File.createTempFile("targetDefinition", null);
+		ITextFileBuffer fileBuffer = getTextFileBufferFromFile(tempFile);
+		TargetDefinitionPersistenceHelper.persistXML(td, fileBuffer);
 		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		parser.setErrorHandler(new DefaultHandler());
-		Document doc = parser.parse(new InputSource(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))));
+		Document doc = parser.parse(new InputSource(fileBuffer.getFileStore().openInputStream(0, null)));
 
 		ITargetDefinition definition = getTargetService().newTarget();
 		Element root = doc.getDocumentElement();

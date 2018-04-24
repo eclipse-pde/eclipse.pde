@@ -10,18 +10,21 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
+import static org.junit.Assert.assertArrayEquals;
+
+import java.io.File;
+import java.net.*;
+import java.nio.file.Files;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
 
 /**
  * Tests the persistence of target definitions.  Tests memento creation, reading of old target files, and writing of the model.
@@ -43,18 +46,47 @@ public class TargetDefinitionPersistenceTests extends MinimalTargetDefinitionPer
 		ITargetDefinition definitionA = getTargetService().newTarget();
 		initComplexDefiniton(definitionA);
 
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		TargetDefinitionPersistenceHelper.persistXML(definitionA, outputStream);
+		tempFile = File.createTempFile("targetDefinition", null);
+		ITextFileBuffer fileBuffer = AbstractTargetTest.getTextFileBufferFromFile(tempFile);
+		TargetDefinitionPersistenceHelper.persistXML(definitionA, fileBuffer);
 		ITargetDefinition definitionB = getTargetService().newTarget();
-		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-		TargetDefinitionPersistenceHelper.initFromXML(definitionB, inputStream);
+		TargetDefinitionPersistenceHelper.initFromXML(definitionB, fileBuffer);
 
 		assertTargetDefinitionsEqual(definitionA, definitionB);
 	}
 
 	/**
-	 * Tests that a complex workspace file based target definition can be
-	 * serialized to xml, then deserialized without any loss of data.
+	 * Tests that a target definition file with a non system default line delimiters
+	 * can be deserialized and serialized back to xml without having it's line
+	 * delimiters changed.
+	 *
+	 * @throws Exception
+	 */
+	public void testPersistLineDelimiters() throws Exception {
+		String lineSeparator = System.getProperty("line.separator");
+		URL url;
+		if (!lineSeparator.equals("\n")) {
+			url = PDETestsPlugin.getBundleContext().getBundle()
+					.getEntry("/tests/targets/target-files/unixLineDelimiters.trgt");
+		} else {
+			url = PDETestsPlugin.getBundleContext().getBundle()
+					.getEntry("/tests/targets/target-files/windowsLineDelimiters.trgt");
+		}
+		File file = new File(FileLocator.toFileURL(url).getFile());
+		byte[] f1 = Files.readAllBytes(file.toPath());
+
+		ITextFileBuffer fileBuffer = AbstractTargetTest.getTextFileBufferFromFile(file);
+		ITargetDefinition target = getTargetService().newTarget();
+		TargetDefinitionPersistenceHelper.initFromXML(target, fileBuffer);
+		TargetDefinitionPersistenceHelper.persistXML(target, fileBuffer);
+		byte[] f2 = Files.readAllBytes(fileBuffer.getFileStore().toLocalFile(0, null).toPath());
+
+		assertArrayEquals(f1, f2);
+	}
+
+	/**
+	 * Tests that a complex workspace file based target definition can be serialized
+	 * to xml, then deserialized without any loss of data.
 	 *
 	 * @throws Exception
 	 */

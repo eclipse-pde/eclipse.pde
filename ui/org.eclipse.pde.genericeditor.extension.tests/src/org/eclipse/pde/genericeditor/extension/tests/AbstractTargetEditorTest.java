@@ -11,18 +11,27 @@
 package org.eclipse.pde.genericeditor.extension.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -38,6 +47,7 @@ public class AbstractTargetEditorTest {
 
 	static TargetDefinitionContentAssist contentAssist = new TargetDefinitionContentAssist();
 	private IProject project;
+	protected File tempFile;
 
 	protected void checkProposals(String[] expectedProposals, ICompletionProposal[] actualProposals, int offset) {
 		assertEquals("Proposal lengths are not equal at offset " + offset + ". Actual: "
@@ -76,6 +86,9 @@ public class AbstractTargetEditorTest {
 
 	@After
 	public void tearDown() throws Exception {
+		if (tempFile != null) {
+			tempFile.delete();
+		}
 		if (project != null) {
 			project.delete(true, new NullProgressMonitor());
 		}
@@ -97,5 +110,17 @@ public class AbstractTargetEditorTest {
 		builder.setLength(builder.length() - 2);
 		builder.append(']');
 		return builder.toString();
+	}
+
+	public static ITextFileBuffer getTextFileBufferFromFile(File file) {
+		try {
+			IPath path = Path.fromOSString(file.getAbsolutePath());
+			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+			manager.connect(path, LocationKind.LOCATION, null);
+			return manager.getTextFileBuffer(path, LocationKind.LOCATION);
+		} catch (CoreException e) {
+			fail("Unable to retrive target definition file");
+		}
+		return null;
 	}
 }

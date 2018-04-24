@@ -12,12 +12,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 import javax.xml.parsers.*;
 import javax.xml.transform.TransformerException;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -743,10 +745,12 @@ public class TargetDefinition implements ITargetDefinition {
 	/**
 	 * Build contents from the given stream.
 	 *
-	 * @param stream input stream
-	 * @throws CoreException if an error occurs
+	 * @param input
+	 *                  input file buffer
+	 * @throws CoreException
+	 *                           if an error occurs
 	 */
-	void setContents(InputStream stream) throws CoreException {
+	void setContents(ITextFileBuffer input) throws CoreException {
 		try {
 			fArch = null;
 			fContainers = null;
@@ -762,7 +766,7 @@ public class TargetDefinition implements ITargetDefinition {
 			fSequenceNumber = 0;
 			fDocument = null;
 			fRoot = null;
-			TargetDefinitionPersistenceHelper.initFromXML(this, stream);
+			TargetDefinitionPersistenceHelper.initFromXML(this, input);
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			setDocument(createNewDocument());
 			abort(Messages.TargetDefinition_0, e);
@@ -772,17 +776,14 @@ public class TargetDefinition implements ITargetDefinition {
 	/**
 	 * Persists contents to the given stream.
 	 *
-	 * @param stream output stream
-	 * @throws CoreException if an error occurs
+	 * @param output
+	 *                   output file buffer
+	 * @throws CoreException
+	 *                           if an error occurs
 	 */
-	void write(OutputStream stream) throws CoreException {
+	void write(ITextFileBuffer output) throws CoreException {
 		try {
-			if (fContainers != null && fContainers.length != 0) {
-				Element containersElement = TargetDefinitionDocumentTools.getChildElement(fRoot,
-						TargetDefinitionPersistenceHelper.LOCATIONS);
-				serializeBundleContainers(fContainers, containersElement);
-			}
-			TargetDefinitionPersistenceHelper.persistXML(this, stream);
+			TargetDefinitionPersistenceHelper.persistXML(this, output);
 		} catch (IOException | ParserConfigurationException | TransformerException | SAXException e) {
 			abort(Messages.TargetDefinition_3, e);
 		}

@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core.target;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import org.eclipse.core.filebuffers.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -355,10 +356,22 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	@Override
 	public void copyTargetDefinition(ITargetDefinition from, ITargetDefinition to) throws CoreException {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		((TargetDefinition) from).write(outputStream);
-		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
-		((TargetDefinition) to).setContents(inputStream);
+		File tempFile = null;
+		try {
+			tempFile = File.createTempFile("targetDefinition", null); //$NON-NLS-1$
+			IPath path = Path.fromOSString(tempFile.getAbsolutePath());
+			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+			manager.connect(path, LocationKind.LOCATION, null);
+			ITextFileBuffer holdFileBuffer = manager.getTextFileBuffer(path, LocationKind.LOCATION);
+			((TargetDefinition) from).write(holdFileBuffer);
+			((TargetDefinition) to).setContents(holdFileBuffer);
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getLocalizedMessage()));
+		} finally {
+			if (tempFile != null) {
+				tempFile.delete();
+			}
+		}
 	}
 
 	@Override
@@ -368,14 +381,10 @@ public class TargetPlatformService implements ITargetPlatformService {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetPlatformService_2, targetExtensionId)));
 		}
 		String path = elem.getAttribute("definition"); //$NON-NLS-1$
-		String symbolicName = elem.getDeclaringExtension().getContributor().getName();
-		URL url = TargetDefinitionManager.getResourceURL(symbolicName, path);
-		if (url != null) {
-			try {
-				((TargetDefinition) definition).setContents(new BufferedInputStream(url.openStream()));
-			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetPlatformService_3, path), e));
-			}
+		if (path != null) {
+			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+			ITextFileBuffer fileBuffer = manager.getTextFileBuffer(Path.fromOSString(path), LocationKind.LOCATION);
+			((TargetDefinition) definition).setContents(fileBuffer);
 		} else {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetPlatformService_4, path)));
 		}

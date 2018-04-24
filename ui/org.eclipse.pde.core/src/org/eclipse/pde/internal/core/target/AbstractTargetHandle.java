@@ -11,11 +11,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
-
-import java.io.InputStream;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  * Common implementation of target handles.
@@ -28,7 +27,7 @@ public abstract class AbstractTargetHandle implements ITargetHandle {
 	public ITargetDefinition getTargetDefinition() throws CoreException {
 		TargetDefinition definition = new TargetDefinition(this);
 		if (exists()) {
-			definition.setContents(getInputStream());
+			definition.setContents(getTextFileBuffer());
 		}
 		return definition;
 	}
@@ -36,10 +35,11 @@ public abstract class AbstractTargetHandle implements ITargetHandle {
 	/**
 	 * Returns an input stream of the target definition's contents.
 	 *
-	 * @return stream of content
-	 * @throws CoreException if an error occurs
+	 * @return file buffer of content
+	 * @throws CoreException
+	 *                           if an error occurs
 	 */
-	protected abstract InputStream getInputStream() throws CoreException;
+	protected abstract ITextFileBuffer getTextFileBuffer() throws CoreException;
 
 	/**
 	 * Deletes the underlying target definition.

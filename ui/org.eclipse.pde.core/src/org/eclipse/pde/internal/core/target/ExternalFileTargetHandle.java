@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import java.io.File;
+import java.net.URI;
+import org.eclipse.core.filebuffers.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
-
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URI;
-import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.PDECore;
 
 /**
  * A handle to a target stored in a remote file (outside workspace) and accessed using its URI.
@@ -43,14 +40,22 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 	}
 
 	private URI fURI;
-	private File fFile;
+	private ITextFileBuffer fFileBuffer;
 
 	/**
 	 * Constructs a new target handle to the remote file, based on its URI.
 	 */
 	protected ExternalFileTargetHandle(URI uri) {
 		fURI = uri;
-		fFile = URIUtil.toFile(fURI);
+		File file = URIUtil.toFile(fURI);
+		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+		IPath path = Path.fromOSString(file.getAbsolutePath());
+		try {
+			manager.connect(path, LocationKind.LOCATION, null);
+			fFileBuffer = manager.getTextFileBuffer(path, LocationKind.LOCATION);
+		} catch (CoreException e) {
+			fFileBuffer = null;
+		}
 	}
 
 	@Override
@@ -59,29 +64,19 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 	}
 
 	@Override
-	protected InputStream getInputStream() throws CoreException {
-		try {
-			return fURI.toURL().openStream();
-		} catch (MalformedURLException e) {
-		} catch (IOException e) {
-		}
-		return null;
+	protected ITextFileBuffer getTextFileBuffer() throws CoreException {
+		return fFileBuffer;
 	}
 
 	@Override
 	void save(ITargetDefinition definition) throws CoreException {
-		try {
-			OutputStream stream = new BufferedOutputStream(new FileOutputStream(fFile));
-			((TargetDefinition) definition).write(stream);
-			stream.close();
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.LocalTargetHandle_4, fFile.getName()), e));
-		}
+		((TargetDefinition) definition).write(getTextFileBuffer());
 	}
 
 	@Override
 	public boolean exists() {
-		return fFile != null && fFile.exists();
+		return fFileBuffer != null && fFileBuffer.getFileStore() != null
+				&& fFileBuffer.getFileStore().fetchInfo() != null && fFileBuffer.getFileStore().fetchInfo().exists();
 	}
 
 	@Override

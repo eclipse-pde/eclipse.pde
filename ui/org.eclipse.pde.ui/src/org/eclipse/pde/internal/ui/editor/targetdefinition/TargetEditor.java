@@ -13,12 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -93,8 +95,8 @@ public class TargetEditor extends FormEditor {
 	protected void pageChange(int newPageIndex) {
 		try {
 			if (newPageIndex != fSourceTabIndex && getCurrentPage() == fSourceTabIndex) {
-				InputStream stream = new ByteArrayInputStream(fTargetDocument.get().getBytes(StandardCharsets.UTF_8));
-				TargetDefinitionPersistenceHelper.initFromXML(getTarget(), stream);
+				ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+				TargetDefinitionPersistenceHelper.initFromXML(getTarget(), manager.getTextFileBuffer(fTargetDocument));
 				if (!getTarget().isResolved()) {
 					getTargetChangedListener().contentsChanged(getTarget(), this, true, false);
 				}
@@ -525,11 +527,11 @@ public class TargetEditor extends FormEditor {
 	}
 
 	private void updateTextualEditor() {
+		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		fTargetDocument.removeDocumentListener(fTargetDocumentListener);
-		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		try {
-			TargetDefinitionPersistenceHelper.persistXML(getTarget(), byteArrayOutputStream);
-			fTargetDocument.set(new String(byteArrayOutputStream.toByteArray()));
+			TargetDefinitionPersistenceHelper.persistXML(getTarget(), manager.getTextFileBuffer(fTargetDocument));
+			fTextualEditor.getDocumentProvider().resetDocument(getEditorInput());
 		} catch (CoreException | ParserConfigurationException | TransformerException | IOException | SAXException e) {
 			PDEPlugin.log(e);
 		}

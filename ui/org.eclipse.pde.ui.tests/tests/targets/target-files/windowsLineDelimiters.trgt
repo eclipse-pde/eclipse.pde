@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.2"?><target name="Windows Line Delimiters">
+
+   <location useDefault="true"/>
+
+   <content useAllPlugins="true">
+      <plugins>
+      </plugins>
+      <features>
+      </features>
+      <extraLocations>
+         <location path="${workspace_loc}/stuff"/>
+         <location path="${eclipse_home}/dropins"/>
+      </extraLocations>
+   </content>
+</target>

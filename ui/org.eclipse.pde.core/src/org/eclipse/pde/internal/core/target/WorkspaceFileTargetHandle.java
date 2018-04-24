@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import org.eclipse.core.filebuffers.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -73,8 +74,21 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	}
 
 	@Override
-	protected InputStream getInputStream() throws CoreException {
-		return fFile.getContents();
+	protected ITextFileBuffer getTextFileBuffer() throws CoreException {
+		if (!fFile.exists()) {
+			fFile.create(new ByteArrayInputStream(new byte[0]), false, null);
+		} else {
+			// validate edit
+			if (fFile.isReadOnly()) {
+				IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] { fFile }, null);
+				if (!status.isOK()) {
+					throw new CoreException(status);
+				}
+			}
+		}
+		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+		manager.connect(fFile.getFullPath(), LocationKind.IFILE, null);
+		return manager.getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 	}
 
 	@Override
@@ -106,21 +120,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 
 	@Override
 	public void save(ITargetDefinition definition) throws CoreException {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		((TargetDefinition) definition).write(outputStream);
-		ByteArrayInputStream stream = new ByteArrayInputStream(outputStream.toByteArray());
-		if (!fFile.exists()) {
-			fFile.create(stream, false, null);
-		} else {
-			// validate edit
-			if (fFile.isReadOnly()) {
-				IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {fFile}, null);
-				if (!status.isOK()) {
-					throw new CoreException(status);
-				}
-			}
-			fFile.setContents(stream, true, false, null);
-		}
+		((TargetDefinition) definition).write(getTextFileBuffer());
 	}
 
 	@Override
