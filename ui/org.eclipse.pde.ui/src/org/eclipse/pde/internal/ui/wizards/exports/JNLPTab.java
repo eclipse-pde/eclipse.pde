@@ -111,6 +111,9 @@ public class JNLPTab {
 	}
 
 	protected void saveSettings(IDialogSettings settings) {
+		if (fButton.isDisposed()) {
+			return;
+		}
 		settings.put(S_JNLP, fButton.getSelection());
 		settings.put(S_URL, fURLText.getText());
 		settings.put(S_JRE, fVersionText.getText());
