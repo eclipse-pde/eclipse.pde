@@ -322,7 +322,6 @@ public class ClassFileComparator {
 				}
 			}
 		} else if (superinterfacesSet2 == null) {
-			logMoreInformation(Util.getDescriptorName(type1), superinterfacesSet1, superinterfacesSet2);
 			this.addDelta(getElementType(this.type1), IDelta.CHANGED, IDelta.CONTRACTED_SUPERINTERFACES_SET, this.currentDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, this.type1.getName(), Util.getDescriptorName(type1));
 		} else {
 			Set<String> names2 = new HashSet<>();
@@ -340,7 +339,6 @@ public class ClassFileComparator {
 				}
 			}
 			if (contracted) {
-				logMoreInformation(Util.getDescriptorName(type1), superinterfacesSet1, superinterfacesSet2);
 				this.addDelta(getElementType(this.type1), IDelta.CHANGED, IDelta.CONTRACTED_SUPERINTERFACES_SET, this.currentDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, this.type1.getName(), Util.getDescriptorName(type1));
 				return;
 			}
@@ -399,21 +397,6 @@ public class ClassFileComparator {
 						}
 					}
 				}
-			}
-		}
-	}
-
-	private void logMoreInformation(String string, Set<IApiType> superinterfacesSet1, Set<IApiType> superinterfacesSet2) {
-		// Debug code for bug 531005
-		if ("org.eclipse.ui.views.properties.PropertySheet".equals(string)) {//$NON-NLS-1$
-
-			ApiPlugin.logInfoMessage("superSet1"); //$NON-NLS-1$
-			for (IApiType type : superinterfacesSet1) {
-				ApiPlugin.logInfoMessage(type.getName());
-			}
-			ApiPlugin.logInfoMessage("superSet2"); //$NON-NLS-1$
-			for (IApiType type : superinterfacesSet2) {
-				ApiPlugin.logInfoMessage(type.getName());
 			}
 		}
 	}
