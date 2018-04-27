@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -281,7 +281,7 @@ public class NLSFragmentGenerator {
 		fragmentData.setPluginVersion(incrementRelease(plugin.getPluginBase().getVersion()));
 		fragmentData.setName(pluginName(plugin, locale) + " Fragment"); //$NON-NLS-1$
 		fragmentData.setProvider(EMPTY_STRING);
-		fragmentData.setSimple(true);
+		fragmentData.setSimple(false);
 
 		if (!(plugin instanceof ExternalPluginModelBase)) {
 			fragmentData.setSourceFolderName("src"); //$NON-NLS-1$
