@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-     Copyright (c) 2005, 2015 IBM Corporation and others.
+     Copyright (c) 2005, 2018 IBM Corporation and others.
      All rights reserved. This program and the accompanying materials
      are made available under the terms of the Eclipse Public License v1.0
      which accompanies this distribution, and is available at
@@ -2267,14 +2267,14 @@
         point="org.eclipse.ui.ide.projectConfigurators">
      <projectConfigurator
            class="org.eclipse.pde.internal.ui.wizards.BundleProjectConfigurator"
-           label="Eclipse Plugin/OSGi Bundle">
+           label="%projectConfigurator.label.bundle">
         <activeWhen>
            <hasFile path="META-INF/MANIFEST.MF"/>
          </activeWhen>
      </projectConfigurator>
      <projectConfigurator
            class="org.eclipse.pde.internal.ui.wizards.FeatureProjectConfigurator"
-           label="Eclipse Feature">
+           label="%projectConfigurator.label.feature">
         <activeWhen>
            <hasFile path="feature.xml"/>
         </activeWhen>
