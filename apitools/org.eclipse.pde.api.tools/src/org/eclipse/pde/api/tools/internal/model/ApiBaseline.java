@@ -233,6 +233,45 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		}
 	}
 
+	private static Properties getJavaProfilePropertiesForVMPackage(String ee) {
+		Bundle osgiBundle = Platform.getBundle("org.eclipse.pde.api.tools"); //$NON-NLS-1$
+		if (osgiBundle == null) {
+			return null;
+		}
+		URL systemPackageProfile = osgiBundle.getEntry("system_packages" + File.separator + ee.replace('/', '_') + "-systempackages.profile"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (systemPackageProfile != null) {
+			return getPropertiesFromURL(systemPackageProfile);
+
+		}
+		return null;
+	}
+
+	private static Properties getPropertiesFromURL(URL profileURL) {
+		InputStream is = null;
+		try {
+			profileURL = FileLocator.resolve(profileURL);
+			URLConnection openConnection = profileURL.openConnection();
+			openConnection.setUseCaches(false);
+			is = openConnection.getInputStream();
+			if (is != null) {
+				Properties profile = new Properties();
+				profile.load(is);
+				return profile;
+			}
+		} catch (IOException e) {
+			ApiPlugin.log(e);
+		} finally {
+			try {
+				if (is != null) {
+					is.close();
+				}
+			} catch (IOException e) {
+				ApiPlugin.log(e);
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Returns the property file for the given environment or <code>null</code>.
 	 *
@@ -246,28 +285,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		}
 		URL profileURL = osgiBundle.getEntry(ee.replace('/', '_') + ".profile"); //$NON-NLS-1$
 		if (profileURL != null) {
-			InputStream is = null;
-			try {
-				profileURL = FileLocator.resolve(profileURL);
-				URLConnection openConnection = profileURL.openConnection();
-				openConnection.setUseCaches(false);
-				is = openConnection.getInputStream();
-				if (is != null) {
-					Properties profile = new Properties();
-					profile.load(is);
-					return profile;
-				}
-			} catch (IOException e) {
-				ApiPlugin.log(e);
-			} finally {
-				try {
-					if (is != null) {
-						is.close();
-					}
-				} catch (IOException e) {
-					ApiPlugin.log(e);
-				}
-			}
+			return getPropertiesFromURL(profileURL);
 		}
 		return null;
 	}
@@ -285,7 +303,14 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		if (value == null) {
 			// If the profile is JavaSE-10, hard-coding the VM packages for now.
 			String id = description.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL);
-			if ("JavaSE-10".equalsIgnoreCase(id)) { //$NON-NLS-1$
+			Properties javaProfilePropertiesForVMPackage = getJavaProfilePropertiesForVMPackage(id);
+			if (javaProfilePropertiesForVMPackage != null) {
+				value = javaProfilePropertiesForVMPackage.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
+			}
+			if (value == null) {
+				// TODO remove this backup
+				IStatus result = new Status(1, "org.eclipse.pde.api.tools", "hardcoding packages"); //$NON-NLS-1$ //$NON-NLS-2$
+				ApiPlugin.log(result);
 				// calculated via
 				// org.eclipse.osgi.storage.Storage.calculateVMPackages
 				value = "com.oracle.awt,com.oracle.net,com.oracle.nio,com.oracle.tools.packager,com.sun.jarsigner,com.sun.java.accessibility.util,com.sun.javadoc,com.sun.javafx.tools.packager,com.sun.javafx.tools.packager.bundlers,com.sun.javafx.tools.resource,com.sun.jdi,com.sun.jdi.connect,com.sun.jdi.connect.spi,com.sun.jdi.event,com.sun.jdi.request,com.sun.management,com.sun.net.httpserver,com.sun.net.httpserver.spi,com.sun.nio.file,com.sun.nio.sctp,com.sun.security.auth,com.sun.security.auth.callback,com.sun.security.auth.login,com.sun.security.auth.module,com.sun.security.jgss,com.sun.source.doctree,com.sun.source.tree,com.sun.source.util,com.sun.tools.attach,com.sun.tools.attach.spi,com.sun.tools.javac,com.sun.tools.javadoc,com.sun.tools.jconsole,javafx.animation,javafx.application,javafx.beans,javafx.beans.binding,javafx.beans.property,javafx.beans.property.adapter,javafx.beans.value,javafx.collections,javafx.collections.transformation,javafx.concurrent,javafx.css,javafx.css.converter,javafx.embed.swing,javafx.event,javafx.fxml,javafx.geometry,javafx.print,javafx.scene,javafx.scene.canvas,javafx.scene.chart,javafx.scene.control,javafx.scene.control.cell,javafx.scene.control.skin,javafx.scene.effect,javafx.scene.image,javafx.scene.input,javafx.scene.layout,javafx.scene.media,javafx.scene.paint,javafx.scene.shape,javafx.scene.text,javafx.scene.transform,javafx.scene.web,javafx.stage,javafx.util,javafx.util.converter,javax.accessibility,javax.activation,javax.activity,javax.annotation,javax.annotation.processing,javax.crypto,javax.crypto.interfaces,javax.crypto.spec,javax.imageio,javax.imageio.event,javax.imageio.metadata,javax.imageio.plugins.bmp,javax.imageio.plugins.jpeg,javax.imageio.plugins.tiff,javax.imageio.spi,javax.imageio.stream,javax.jnlp,javax.jws,javax.jws.soap,javax.lang.model,javax.lang.model.element,javax.lang.model.type,javax.lang.model.util,javax.management,javax.management.loading,javax.management.modelmbean,javax.management.monitor,javax.management.openmbean,javax.management.relation,javax.management.remote,javax.management.remote.rmi,javax.management.timer,javax.naming,javax.naming.directory,javax.naming.event,javax.naming.ldap,javax.naming.spi,javax.net,javax.net.ssl,javax.print,javax.print.attribute,javax.print.attribute.standard,javax.print.event,javax.rmi,javax.rmi.CORBA,javax.rmi.ssl,javax.script,javax.security.auth,javax.security.auth.callback,javax.security.auth.kerberos,javax.security.auth.login,javax.security.auth.spi,javax.security.auth.x500,javax.security.cert,javax.security.sasl,javax.smartcardio,javax.sound.midi,javax.sound.midi.spi,javax.sound.sampled,javax.sound.sampled.spi,javax.sql,javax.sql.rowset,javax.sql.rowset.serial,javax.sql.rowset.spi,javax.swing,javax.swing.border,javax.swing.colorchooser,javax.swing.event,javax.swing.filechooser,javax.swing.plaf,javax.swing.plaf.basic,javax.swing.plaf.metal,javax.swing.plaf.multi,javax.swing.plaf.nimbus,javax.swing.plaf.synth,javax.swing.table,javax.swing.text,javax.swing.text.html,javax.swing.text.html.parser,javax.swing.text.rtf,javax.swing.tree,javax.swing.undo,javax.tools,javax.transaction,javax.transaction.xa,javax.xml,javax.xml.bind,javax.xml.bind.annotation,javax.xml.bind.annotation.adapters,javax.xml.bind.attachment,javax.xml.bind.helpers,javax.xml.bind.util,javax.xml.catalog,javax.xml.crypto,javax.xml.crypto.dom,javax.xml.crypto.dsig,javax.xml.crypto.dsig.dom,javax.xml.crypto.dsig.keyinfo,javax.xml.crypto.dsig.spec,javax.xml.datatype,javax.xml.namespace,javax.xml.parsers,javax.xml.soap,javax.xml.stream,javax.xml.stream.events,javax.xml.stream.util,javax.xml.transform,javax.xml.transform.dom,javax.xml.transform.sax,javax.xml.transform.stax,javax.xml.transform.stream,javax.xml.validation,javax.xml.ws,javax.xml.ws.handler,javax.xml.ws.handler.soap,javax.xml.ws.http,javax.xml.ws.soap,javax.xml.ws.spi,javax.xml.ws.spi.http,javax.xml.ws.wsaddressing,javax.xml.xpath,jdk.dynalink,jdk.dynalink.beans,jdk.dynalink.linker,jdk.dynalink.linker.support,jdk.dynalink.support,jdk.incubator.http,jdk.javadoc.doclet,jdk.jfr,jdk.jfr.consumer,jdk.jshell,jdk.jshell.execution,jdk.jshell.spi,jdk.jshell.tool,jdk.management.cmm,jdk.management.jfr,jdk.management.resource,jdk.nashorn.api.scripting,jdk.nashorn.api.tree,jdk.net,jdk.packager.services,jdk.packager.services.singleton,jdk.security.jarsigner,netscape.javascript,org.ietf.jgss,org.omg.CORBA,org.omg.CORBA.DynAnyPackage,org.omg.CORBA.ORBPackage,org.omg.CORBA.TypeCodePackage,org.omg.CORBA.portable,org.omg.CORBA_2_3,org.omg.CORBA_2_3.portable,org.omg.CosNaming,org.omg.CosNaming.NamingContextExtPackage,org.omg.CosNaming.NamingContextPackage,org.omg.Dynamic,org.omg.DynamicAny,org.omg.DynamicAny.DynAnyFactoryPackage,org.omg.DynamicAny.DynAnyPackage,org.omg.IOP,org.omg.IOP.CodecFactoryPackage,org.omg.IOP.CodecPackage,org.omg.Messaging,org.omg.PortableInterceptor,org.omg.PortableInterceptor.ORBInitInfoPackage,org.omg.PortableServer,org.omg.PortableServer.CurrentPackage,org.omg.PortableServer.POAManagerPackage,org.omg.PortableServer.POAPackage,org.omg.PortableServer.ServantLocatorPackage,org.omg.PortableServer.portable,org.omg.SendingContext,org.omg.stub.java.rmi,org.w3c.dom,org.w3c.dom.bootstrap,org.w3c.dom.css,org.w3c.dom.events,org.w3c.dom.html,org.w3c.dom.ls,org.w3c.dom.ranges,org.w3c.dom.stylesheets,org.w3c.dom.traversal,org.w3c.dom.views,org.w3c.dom.xpath,org.xml.sax,org.xml.sax.ext,org.xml.sax.helpers,sun.misc,sun.reflect"; //$NON-NLS-1$
