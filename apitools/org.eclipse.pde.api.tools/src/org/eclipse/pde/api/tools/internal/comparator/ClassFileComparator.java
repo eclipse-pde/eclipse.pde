@@ -329,10 +329,13 @@ public class ClassFileComparator {
 			for (Iterator<IApiType> iterator = superinterfacesSet2.iterator(); iterator.hasNext();) {
 				names2.add(iterator.next().getName());
 			}
-			boolean contracted = false;
+			Set<String> names1 = new HashSet<>();
 			for (Iterator<IApiType> iterator = superinterfacesSet1.iterator(); iterator.hasNext();) {
-				IApiType superInterfaceType = iterator.next();
-				if (!names2.remove(superInterfaceType.getName())) {
+				names1.add(iterator.next().getName());
+			}
+			boolean contracted = false;
+			for (String name : names1) {
+				if (!names2.remove(name)) {
 					contracted = true;
 				}
 			}
