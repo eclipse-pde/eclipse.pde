@@ -234,11 +234,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 
 	private static Properties getJavaProfilePropertiesForVMPackage(String ee) {
-		Bundle osgiBundle = Platform.getBundle("org.eclipse.pde.api.tools"); //$NON-NLS-1$
-		if (osgiBundle == null) {
+		Bundle apitoolsBundle = Platform.getBundle("org.eclipse.pde.api.tools"); //$NON-NLS-1$
+		if (apitoolsBundle == null) {
 			return null;
 		}
-		URL systemPackageProfile = osgiBundle.getEntry("system_packages" + File.separator + ee.replace('/', '_') + "-systempackages.profile"); //$NON-NLS-1$ //$NON-NLS-2$
+		URL systemPackageProfile = apitoolsBundle.getEntry("system_packages" + '/' + ee.replace('/', '_') + "-systempackages.profile"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (systemPackageProfile != null) {
 			return getPropertiesFromURL(systemPackageProfile);
 
