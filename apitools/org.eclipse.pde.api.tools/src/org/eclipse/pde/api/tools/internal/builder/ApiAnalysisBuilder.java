@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -686,8 +686,19 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @since 1.1
 	 */
 	boolean hasFatalProblems(IProject project) throws CoreException {
+		boolean hasFatalProblem = false;
 		IMarker[] problems = project.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
-		if (problems.length > 0) {
+		for (IMarker iMarker : problems) {
+			Object att = iMarker.getAttribute(IMarker.SEVERITY);
+			if (att != null && att instanceof Integer) {
+				if (((Integer) att).intValue() == IMarker.SEVERITY_ERROR) {
+					hasFatalProblem = true;
+					break;
+				}
+			}
+		}
+
+		if (hasFatalProblem) {
 			cleanupMarkers(project);
 			IApiProblem problem = ApiProblemFactory.newFatalProblem(Path.EMPTY.toString(), new String[] { project.getName() }, IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM);
 			createMarkerForProblem(IApiProblem.CATEGORY_FATAL_PROBLEM, IApiMarkerConstants.FATAL_PROBLEM_MARKER, problem);
