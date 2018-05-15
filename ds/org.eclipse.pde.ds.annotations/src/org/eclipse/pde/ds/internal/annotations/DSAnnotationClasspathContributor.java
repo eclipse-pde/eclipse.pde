@@ -76,10 +76,15 @@ public class DSAnnotationClasspathContributor implements IClasspathContributor {
 							}
 
 							try {
-								URL fileURL = FileLocator.toFileURL(bundle.getEntry(jarDir + "/annotations.jar")); //$NON-NLS-1$
+								URL entryUrl = bundle.getEntry(jarDir + "/annotations.jar");
+								if (entryUrl == null) {
+									Activator.log(new IllegalStateException(
+											"Missing " + bundle.getSymbolicName() + "/" + jarDir + "/annotations.jar")); //$NON-NLS-1$
+									return Collections.emptyList();
+								}
+								URL fileURL = FileLocator.toFileURL(entryUrl); // $NON-NLS-1$
 								if ("file".equals(fileURL.getProtocol())) { //$NON-NLS-1$
-									URL srcFileURL = FileLocator.toFileURL(bundle.getEntry(jarDir + "/annotationssrc.zip")); //$NON-NLS-1$
-									IPath srcPath = "file".equals(srcFileURL.getProtocol()) ? new Path(srcFileURL.getPath()) : null; //$NON-NLS-1$
+									IPath srcPath = getSrcPath(bundle, jarDir);
 									IClasspathEntry entry = JavaCore.newLibraryEntry(new Path(fileURL.getPath()), srcPath, Path.ROOT, ANNOTATION_ACCESS_RULES, DS_ATTRS, false);
 									return Collections.singletonList(entry);
 								}
@@ -93,6 +98,18 @@ public class DSAnnotationClasspathContributor implements IClasspathContributor {
 		}
 
 		return Collections.emptyList();
+	}
+
+	private IPath getSrcPath(Bundle bundle, String jarDir) throws IOException {
+		URL srcEntry = bundle.getEntry(jarDir + "/annotationssrc.zip");
+		if (srcEntry == null) {
+			Activator.log(new IllegalStateException(
+					"Missing " + bundle.getSymbolicName() + "/" + jarDir + "/annotationssrc.zip")); //$NON-NLS-1$
+			return null;
+		}
+		URL srcFileURL = FileLocator.toFileURL(srcEntry); // $NON-NLS-1$
+		IPath srcPath = "file".equals(srcFileURL.getProtocol()) ? new Path(srcFileURL.getPath()) : null; //$NON-NLS-1$
+		return srcPath;
 	}
 
 	@Override
