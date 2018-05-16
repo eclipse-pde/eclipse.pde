@@ -42,7 +42,7 @@ public class DynamicPluginProjectReferences implements IDynamicReferenceProvider
 				if (state == null) {
 					state = StateObjectFactory.defaultFactory.createState(true);
 				}
-				if (state != null) {
+				if (state != null && currentBundle != null) {
 					BundleDescription[] bundlePrereq = state.getStateHelper()
 							.getPrerequisites(new BundleDescription[] { currentBundle });
 					for (BundleDescription bundle : bundlePrereq) {
