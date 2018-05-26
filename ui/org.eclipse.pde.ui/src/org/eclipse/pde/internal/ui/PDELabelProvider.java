@@ -485,15 +485,11 @@ public class PDELabelProvider extends SharedLabelProvider {
 				return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
 			case ResolverError.MISSING_EXECUTION_ENVIRONMENT :
 				return get(PDEPluginImages.DESC_JAVA_LIB_OBJ);
-			case ResolverError.MISSING_FRAGMENT_HOST :
-			case ResolverError.MISSING_REQUIRE_BUNDLE :
-			case ResolverError.PROVIDE_BUNDLE_PERMISSION :
-			case ResolverError.REQUIRE_BUNDLE_PERMISSION :
-			case ResolverError.REQUIRE_BUNDLE_USES_CONFLICT :
-			case ResolverError.HOST_BUNDLE_PERMISSION :
-				return get(PDEPluginImages.DESC_PLUGIN_OBJ);
+			case ResolverError.FRAGMENT_BUNDLE_PERMISSION :
+			case ResolverError.FRAGMENT_CONFLICT :
+				return get(PDEPluginImages.DESC_FRAGMENT_OBJ);
 		}
-		return null;
+		return get(PDEPluginImages.DESC_PLUGIN_OBJ);
 	}
 
 	private Image getObjectImage(ExecutionEnvironment environment) {
