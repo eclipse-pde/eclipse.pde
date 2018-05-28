@@ -221,12 +221,45 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		if (isJUnit5(args)) {
 			//change the classloader so that the test classes in testplugin are discoverable
 			//by junit5 framework  see bug 520811
-			Thread.currentThread().setContextClassLoader(getPluginClassLoader(testRunner.getfTestPluginName()));
+			if (runAsJUnit5(args))
+				Thread.currentThread().setContextClassLoader(getPluginClassLoader2(testRunner.getfTestPluginName()));
+			else
+				Thread.currentThread().setContextClassLoader(getPluginClassLoader(testRunner.getfTestPluginName()));
 		}
 		testRunner.run();
 		if (isJUnit5(args)) {
 			Thread.currentThread().setContextClassLoader(currentTCCL);
 		}
+	}
+
+	private static ClassLoader getPluginClassLoader2(String getfTestPluginName) {
+		Bundle bundle = Platform.getBundle(getfTestPluginName);
+		if (bundle == null) {
+			throw new IllegalArgumentException("Bundle \"" + getfTestPluginName + "\" not found. Possible causes include missing dependencies, too restrictive version ranges, or a non-matching required execution environment."); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		final String pluginId = getfTestPluginName;
+		List<String> engines = new ArrayList<String>();
+		Bundle bund = FrameworkUtil.getBundle(RemotePluginTestRunner.class);
+		Bundle[] bundles = bund.getBundleContext().getBundles();
+		for (Bundle iBundle : bundles) {
+			try {
+				BundleWiring bundleWiring = Platform.getBundle(iBundle.getSymbolicName()).adapt(BundleWiring.class);
+				Collection<String> listResources = bundleWiring.listResources("META-INF/services", "org.junit.platform.engine.TestEngine", BundleWiring.LISTRESOURCES_LOCAL); //$NON-NLS-1$//$NON-NLS-2$
+				if (!listResources.isEmpty())
+					engines.add(iBundle.getSymbolicName());
+			} catch (Exception e) {
+				// check the next bundle
+			}
+		}
+		engines.add(pluginId);
+		List<Bundle> platformEngineBundles = new ArrayList<Bundle>();
+		for (Iterator<String> iterator = engines.iterator(); iterator.hasNext();) {
+			String string = iterator.next();
+			Bundle bundle2 = Platform.getBundle(string);
+			platformEngineBundles.add(bundle2);
+		}
+
+		return new MultiBundleClassLoader2(platformEngineBundles);
 	}
 
 	private static ClassLoader getPluginClassLoader(String getfTestPluginName) {
@@ -299,7 +332,19 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		return new MultiBundleClassLoader(platformEngineBundles);
 	}
 
+	private static boolean runAsJUnit5(String[] args) {
+		for (String string : args) {
+			if (string.equalsIgnoreCase("-runasjunit5")) { //$NON-NLS-1$
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private static boolean isJUnit5(String[] args) {
+		if (runAsJUnit5(args) == true)
+			return true;
+		
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("org.eclipse.jdt.internal.junit5.runner.JUnit5TestLoader")) //$NON-NLS-1$
 				return true;
