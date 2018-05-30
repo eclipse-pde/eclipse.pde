@@ -891,7 +891,7 @@ public class PublishingTests extends P2TestCase {
 
 		IMetadataRepository finalRepo = loadMetadataRepository(
 				"file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString());
-		getIU(finalRepo, "a.jre.javase");
+		// getIU(finalRepo, "a.jre.javase");
 		IInstallableUnit productIu = getIU(finalRepo, "headless.product");
 		assertFalse(productIu.getVersion().toString().equals("1.0.0.qualifier")); // bug 246060, should be a timestamp
 		// check up to the date on the timestamp, don't worry about hours/mins
