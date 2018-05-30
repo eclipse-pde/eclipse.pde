@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Karsten Thoms - Bug#535325
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.*;
@@ -67,15 +67,17 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 			File[] files = site.listFiles();
 			SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
 			List<TargetBundle> bundles = new ArrayList<>(files.length);
-			for (File file : files) {
+			Arrays.stream(files).parallel().forEach(file -> {
 				try {
 					TargetBundle rb = new TargetBundle(file);
-					bundles.add(rb);
+					synchronized (bundles) {
+						bundles.add(rb);
+					}
 				} catch (CoreException e) {
 					// Ignore non-bundle files
 				}
 				localMonitor.split(1);
-			}
+			});
 			return bundles.toArray(new TargetBundle[bundles.size()]);
 		}
 		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.DirectoryBundleContainer_1, dir.toString())));
@@ -92,15 +94,17 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 		File[] files = site.listFiles();
 		SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
 		List<TargetFeature> features = new ArrayList<>(files.length);
-		for (File file : files) {
+		Arrays.stream(files).parallel().forEach(file -> {
 			try {
 				TargetFeature rf = new TargetFeature(file);
-				features.add(rf);
+				synchronized (features) {
+					features.add(rf);
+				}
 			} catch (CoreException e) {
-				// ignore non-feature files
+				// Ignore non-feature files
 			}
 			localMonitor.split(1);
-		}
+		});
 		return features.toArray(new TargetFeature[features.size()]);
 	}
 
