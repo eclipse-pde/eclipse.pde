@@ -2245,10 +2245,15 @@
          <enabledWhen>
             <with
                   variable="activePart">
-               <test
-                     forcePluginActivation="true"
-                     property="org.eclipse.ui.views.log.jdt.hasSelectedStack">
-               </test>
+               <and>
+                  <instanceof
+                        value="org.eclipse.ui.internal.views.log.LogView">
+                  </instanceof>
+                  <test
+                        forcePluginActivation="true"
+                        property="org.eclipse.ui.views.log.jdt.hasSelectedStack">
+                  </test>
+               </and>
             </with>
          </enabledWhen>
       </handler>
