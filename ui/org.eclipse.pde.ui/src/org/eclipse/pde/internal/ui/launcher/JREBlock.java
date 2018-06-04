@@ -158,7 +158,6 @@ public class JREBlock {
 		composite.setLayoutData(gd);
 
 		fJavawButton = new Button(composite, SWT.RADIO);
-		fJavawButton.setText(PDEUIMessages.BasicLauncherTab_javaExecDefault); //
 		fJavawButton.addSelectionListener(fListener);
 
 		fJavaButton = new Button(composite, SWT.RADIO);
@@ -185,6 +184,8 @@ public class JREBlock {
 
 	private void initializeJRESection(ILaunchConfiguration config) throws CoreException {
 		String javaCommand = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, "javaw"); //$NON-NLS-1$
+		String javawText = NLS.bind(PDEUIMessages.BasicLauncherTab_javaExecDefault, javaCommand);
+		fJavawButton.setText(javawText);
 		fJavawButton.setSelection(javaCommand.equals("javaw")); //$NON-NLS-1$
 		fJavaButton.setSelection(!fJavawButton.getSelection());
 
