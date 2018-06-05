@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Text;
 
 public class SamplePart {
 
-	private Text txtInput;
 	private TableViewer tableViewer;
 
 	@Inject
@@ -28,7 +27,7 @@ public class SamplePart {
 	public void createComposite(Composite parent) {
 		parent.setLayout(new GridLayout(1, false));
 
-		txtInput = new Text(parent, SWT.BORDER);
+		Text txtInput = new Text(parent, SWT.BORDER);
 		txtInput.setMessage("Enter text to mark part as dirty");
 		txtInput.addModifyListener(e -> part.setDirty(true));
 		txtInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
