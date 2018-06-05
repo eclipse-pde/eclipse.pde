@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2018 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 240737
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 265931
  *     Simon Scholz <simon.scholz@vogella.com> - bug 440275
+ *     Karsten Thoms <karsten.thoms@itemis.de> - bug 535554
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -140,9 +141,9 @@ public class PluginConfigurationSection extends TableSection {
 	 */
 	private static String getBundlesWithStartLevels() {
 		StringBuilder buffer = new StringBuilder();
+		buffer.append("org.apache.felix.scr@1:start,"); //$NON-NLS-1$
 		buffer.append("org.eclipse.core.runtime@start,"); //$NON-NLS-1$
 		buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
-		buffer.append("org.eclipse.equinox.ds@2:start,"); //$NON-NLS-1$
 		buffer.append("org.eclipse.equinox.event@2:start,"); //$NON-NLS-1$
 		buffer.append("org.eclipse.equinox.simpleconfigurator@1:start,"); //$NON-NLS-1$
 		return buffer.toString();
