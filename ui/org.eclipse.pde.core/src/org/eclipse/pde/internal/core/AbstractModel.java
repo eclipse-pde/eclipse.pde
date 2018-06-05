@@ -67,7 +67,7 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 		if (lineDelimiter.equals(lineSeparator))
 			return string;
 
-		return string.replaceAll(lineSeparator, lineDelimiter);
+		return string.replace(lineSeparator, lineDelimiter);
 	}
 
 	public AbstractModel() {
