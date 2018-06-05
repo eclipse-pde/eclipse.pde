@@ -75,7 +75,13 @@ public class TargetPlatformHelper {
 	 */
 	public static String getDefaultBundleList() {
 		StringBuilder buffer = new StringBuilder();
-		if (getTargetVersion() > 3.1) {
+		double targetVersion = getTargetVersion();
+		if (targetVersion >= 3.8) {
+			buffer.append("org.apache.felix.scr@1:start,"); //$NON-NLS-1$
+			buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
+			buffer.append("org.eclipse.equinox.event@2:start,"); //$NON-NLS-1$
+			buffer.append("org.eclipse.core.runtime@start"); //$NON-NLS-1$
+		} else if (targetVersion > 3.1) {
 			buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
 			buffer.append("org.eclipse.update.configurator@3:start,"); //$NON-NLS-1$
 			buffer.append("org.eclipse.core.runtime@start"); //$NON-NLS-1$
