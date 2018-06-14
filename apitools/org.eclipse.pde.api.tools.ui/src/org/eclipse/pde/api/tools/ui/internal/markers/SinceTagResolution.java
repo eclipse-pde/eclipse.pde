@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,11 +42,11 @@ public class SinceTagResolution implements IMarkerResolution2 {
 	@Override
 	public String getDescription() {
 		if (IApiProblem.SINCE_TAG_INVALID == this.kind) {
-			return NLS.bind(MarkerMessages.SinceTagResolution_invalid0, this.newVersionValue);
+			return NLS.bind(MarkerMessages.SinceTagResolution_change_since_tag, this.newVersionValue);
 		} else if (IApiProblem.SINCE_TAG_MALFORMED == this.kind) {
-			return NLS.bind(MarkerMessages.SinceTagResolution_malformed0, this.newVersionValue);
+			return NLS.bind(MarkerMessages.SinceTagResolution_change_since_tag, this.newVersionValue);
 		} else {
-			return NLS.bind(MarkerMessages.SinceTagResolution_missing0, this.newVersionValue);
+			return NLS.bind(MarkerMessages.SinceTagResolution_add_since_tag, this.newVersionValue);
 		}
 	}
 
@@ -58,11 +58,11 @@ public class SinceTagResolution implements IMarkerResolution2 {
 	@Override
 	public String getLabel() {
 		if (IApiProblem.SINCE_TAG_INVALID == this.kind) {
-			return NLS.bind(MarkerMessages.SinceTagResolution_invalid1, this.newVersionValue);
+			return NLS.bind(MarkerMessages.SinceTagResolution_change_since_tag, this.newVersionValue);
 		} else if (IApiProblem.SINCE_TAG_MALFORMED == this.kind) {
-			return NLS.bind(MarkerMessages.SinceTagResolution_malformed1, this.newVersionValue);
+			return NLS.bind(MarkerMessages.SinceTagResolution_change_since_tag, this.newVersionValue);
 		} else {
-			return NLS.bind(MarkerMessages.SinceTagResolution_missing1, this.newVersionValue);
+			return NLS.bind(MarkerMessages.SinceTagResolution_add_since_tag, this.newVersionValue);
 		}
 	}
 
@@ -70,11 +70,11 @@ public class SinceTagResolution implements IMarkerResolution2 {
 	public void run(final IMarker marker) {
 		String title = null;
 		if (IApiProblem.SINCE_TAG_INVALID == this.kind) {
-			title = NLS.bind(MarkerMessages.SinceTagResolution_invalid2, this.newVersionValue);
+			title = NLS.bind(MarkerMessages.SinceTagResolution_change_since_tag, this.newVersionValue);
 		} else if (IApiProblem.SINCE_TAG_MALFORMED == this.kind) {
-			title = NLS.bind(MarkerMessages.SinceTagResolution_malformed2, this.newVersionValue);
+			title = NLS.bind(MarkerMessages.SinceTagResolution_change_since_tag, this.newVersionValue);
 		} else {
-			title = NLS.bind(MarkerMessages.SinceTagResolution_missing2, this.newVersionValue);
+			title = NLS.bind(MarkerMessages.SinceTagResolution_add_since_tag, this.newVersionValue);
 		}
 		UIJob job = new UIJob(title) {
 			@Override

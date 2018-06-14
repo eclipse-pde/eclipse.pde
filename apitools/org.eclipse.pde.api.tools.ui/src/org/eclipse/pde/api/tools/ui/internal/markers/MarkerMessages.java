@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,17 +62,10 @@ public class MarkerMessages extends NLS {
 	public static String RemoveUnsupportedAnnotationOperation_remove_unsupported_annotations;
 	public static String RemoveUnsupportedTagOperation_removeing_unsupported_tag;
 
-	public static String SinceTagResolution_missing0;
-	public static String SinceTagResolution_missing1;
-	public static String SinceTagResolution_missing2;
+	public static String SinceTagResolution_add_since_tag;
 
-	public static String SinceTagResolution_malformed0;
-	public static String SinceTagResolution_malformed1;
-	public static String SinceTagResolution_malformed2;
 
-	public static String SinceTagResolution_invalid0;
-	public static String SinceTagResolution_invalid1;
-	public static String SinceTagResolution_invalid2;
+	public static String SinceTagResolution_change_since_tag;
 
 	public static String UnknownAnnotationResolution_0;
 	public static String UnknownAnnotationResolution_1;
