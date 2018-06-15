@@ -1,0 +1,4 @@
+# Debugging options for the org.eclipse.ui.smartimport plugin.
+
+# Turn on debugging for the org.eclipse.ui.smartimport plugin.
+org.eclipse.ui.smartimport/debug=false
