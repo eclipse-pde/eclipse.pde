@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -187,6 +187,10 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 			String modAllSystem = "--add-modules=ALL-SYSTEM"; //$NON-NLS-1$
 			if (!vmArguments.contains(modAllSystem))
 				vmArguments.add(modAllSystem);
+		}
+		//  if element is a test class annotated with @RunWith(JUnitPlatform.class, we add this in program arguments
+		if (configuration.getAttribute(JUnitLaunchConfigurationConstants.ATTR_RUN_WITH_JUNIT_PLATFORM_ANNOTATION, false)) {
+			programArgs.add("-runasjunit5"); //$NON-NLS-1$
 		}
 	}
 
