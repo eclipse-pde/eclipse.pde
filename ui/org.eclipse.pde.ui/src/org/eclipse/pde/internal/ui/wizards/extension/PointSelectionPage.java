@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.extension;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -23,6 +24,8 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.internal.text.html.HTMLPrinter;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardNode;
@@ -53,6 +56,7 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -614,7 +618,31 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	private void setPointDescriptionText(String text) {
 		if (fPointDescBrowser != null) {
 			StringBuilder desc = new StringBuilder();
-			HTMLPrinter.insertPageProlog(desc, 0, TextUtil.getJavaDocStyleSheerURL());
+
+			ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
+			Color fgcolor = colorRegistry.get(JFacePreferences.INFORMATION_FOREGROUND_COLOR);
+			if (fgcolor == null) {
+				fgcolor = JFaceColors.getInformationViewerForegroundColor(Display.getDefault());
+			}
+			Color bgcolor = colorRegistry.get(JFacePreferences.INFORMATION_BACKGROUND_COLOR);
+			if (bgcolor == null) {
+				bgcolor = JFaceColors.getInformationViewerForegroundColor(Display.getDefault());
+			}
+
+			StringBuilder stylesheet = new StringBuilder();
+			String line;
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(TextUtil.getJavaDocStyleSheerURL().openStream()))) {
+				while ((line = br.readLine()) != null) {
+					stylesheet.append('\n');
+					stylesheet.append(line);
+				}
+			} catch (IOException e) {
+				// continue, and attempt to render without stylesheet
+				stylesheet.setLength(0);
+			}
+
+			HTMLPrinter.insertPageProlog(desc, 0, fgcolor.getRGB(), bgcolor.getRGB(),
+					stylesheet.length() > 0 ? stylesheet.substring(1) : ""); //$NON-NLS-1$
 			desc.append(text);
 			HTMLPrinter.addPageEpilog(desc);
 			fPointDescBrowser.setText(desc.toString());
