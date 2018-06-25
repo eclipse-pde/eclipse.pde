@@ -1595,7 +1595,8 @@ public class PublishingTests extends P2TestCase {
 			assertTrue(e.getMessage().indexOf("A problem occured while invoking the director") > -1);
 		}
 
-		assertLogContainsLines(buildFolder.getFile("director.log"), new String[] { "Installation failed.",
+		assertLogContainsLines(buildFolder.getFile("director.log"), new String[] {
+				"Cannot complete the install because one or more required items could not be found.",
 				"Missing requirement: rcp.product 1.0.0.I10232 (uid.product 1.0.0.I10232) requires 'foo; bar [1.0.0,1.0.0]' but it could not be found" });
 	}
 
