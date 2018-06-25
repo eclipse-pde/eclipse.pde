@@ -372,7 +372,8 @@ public class PublishingTests extends P2TestCase {
 		runProductBuild(buildFolder);
 		assertLogContainsLine(buildFolder.getFile("tmp/eclipse/configuration/config.ini"),
 				"bundle_1.0.0.jar@1\\:start");
-		assertLogContainsLine(buildFolder.getFile("director.log"), "Installing foo 1.0.0");
+		assertLogContainsLine(buildFolder.getFile("director.log"),
+				"Add request for foo 1.0.0 (foo 1.0.0) is satisfiable");
 	}
 
 	protected File findExecutableFeature(File base) throws Exception {
