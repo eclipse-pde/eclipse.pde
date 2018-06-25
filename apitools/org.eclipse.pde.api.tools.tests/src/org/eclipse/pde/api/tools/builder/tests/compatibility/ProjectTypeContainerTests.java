@@ -94,7 +94,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	protected IPackageFragment[] getAllPackages() throws CoreException {
 		IJavaProject project = JavaCore.create(getEnv().getProject("bundle.a")); //$NON-NLS-1$
 		IPackageFragmentRoot[] roots = project.getAllPackageFragmentRoots();
-		List<IPackageFragment> pkgs = new ArrayList<IPackageFragment>();
+		List<IPackageFragment> pkgs = new ArrayList<>();
 		for (int i = 0; i < roots.length; i++) {
 			IPackageFragmentRoot root = roots[i];
 			if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
@@ -128,7 +128,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	 */
 	protected Set<String> getAllPackageNames() {
 		// build expected list
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 		set.add("a"); //$NON-NLS-1$
 		set.add("a.annotations"); //$NON-NLS-1$
 		set.add("a.bundles"); //$NON-NLS-1$
@@ -162,7 +162,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 
 	protected Set<String> collectAllTypeNames() throws CoreException {
 		IPackageFragment[] allPackages = getAllPackages();
-		Set<String> names = new HashSet<String>();
+		Set<String> names = new HashSet<>();
 		for (int i = 0; i < allPackages.length; i++) {
 			IPackageFragment pkg = allPackages[i];
 			ICompilationUnit[] units = pkg.getCompilationUnits();
@@ -237,8 +237,8 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	 * @throws CoreException
 	 */
 	public void testVisitor() throws CoreException {
-		final Set<String> pkgNames = new HashSet<String>();
-		final Set<String> typeNames = new HashSet<String>();
+		final Set<String> pkgNames = new HashSet<>();
+		final Set<String> typeNames = new HashSet<>();
 		ApiTypeContainerVisitor visitor = new ApiTypeContainerVisitor() {
 			@Override
 			public boolean visitPackage(String packageName) {

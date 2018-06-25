@@ -29,7 +29,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IMetadata;
 public class TestCompositeSearchReporter implements IApiSearchReporter {
 
 	private SearchTest test = null;
-	ArrayList<IApiSearchReporter> reporters = new ArrayList<IApiSearchReporter>(2);
+	ArrayList<IApiSearchReporter> reporters = new ArrayList<>(2);
 	int testreporteridx = 0;
 
 	/**

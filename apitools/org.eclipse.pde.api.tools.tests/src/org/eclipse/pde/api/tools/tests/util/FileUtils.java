@@ -67,7 +67,7 @@ public class FileUtils {
 	 */
 	public static void addJavaFiles(File dir, List<File> collection) throws IOException {
 		File[] files = dir.listFiles();
-		List<File> subDirs = new ArrayList<File>(2);
+		List<File> subDirs = new ArrayList<>(2);
 		for (int i = 0; i < files.length; i++) {
 			if (files[i].isFile()) {
 				collection.add(files[i]);

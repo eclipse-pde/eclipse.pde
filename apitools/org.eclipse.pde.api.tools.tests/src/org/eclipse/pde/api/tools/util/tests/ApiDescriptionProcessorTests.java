@@ -263,7 +263,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 */
 	private void createTagChanges(CompositeChange projectchange, IJavaProject project, File cxml) {
 		try {
-			HashMap<IFile, Set<TextEdit>> map = new HashMap<IFile, Set<TextEdit>>();
+			HashMap<IFile, Set<TextEdit>> map = new HashMap<>();
 			ApiDescriptionProcessor.collectTagUpdates(project, cxml, map);
 			IFile file = null;
 			TextFileChange change = null;

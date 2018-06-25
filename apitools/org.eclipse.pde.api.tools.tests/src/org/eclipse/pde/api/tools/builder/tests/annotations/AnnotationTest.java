@@ -68,7 +68,7 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 	 * @return all of the child test classes of this class
 	 */
 	private static Class<?>[] getAllTestClasses() {
-		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+		ArrayList<Class<?>> classes = new ArrayList<>();
 		classes.add(InvalidAnnotationAnnotationsTests.class);
 		classes.add(ValidAnnotationAnnotationsTests.class);
 		classes.add(InvalidClassAnnotationsTests.class);

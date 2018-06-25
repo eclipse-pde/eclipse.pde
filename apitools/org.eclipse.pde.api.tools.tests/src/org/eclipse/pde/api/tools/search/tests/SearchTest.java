@@ -40,7 +40,7 @@ public abstract class SearchTest extends TestCase {
 	static final String BASELINE_NAME = "default_baseline"; //$NON-NLS-1$
 	static final String SCOPE_NAME = "default_scope"; //$NON-NLS-1$
 	static final IPath TEST_SRC_ROOT = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE);
-	static final HashSet<String> DEFAULT_SCOPE_PROJECTS = new HashSet<String>();
+	static final HashSet<String> DEFAULT_SCOPE_PROJECTS = new HashSet<>();
 	static final String P1_NAME = "a.b.c.P1"; //$NON-NLS-1$
 	static final String P2_NAME = "x.y.z.P2"; //$NON-NLS-1$
 	static final String P3_NAME = "l.m.n.P3"; //$NON-NLS-1$
@@ -149,7 +149,7 @@ public abstract class SearchTest extends TestCase {
 		}
 		// MY fix it
 		final FilteredElements excludedElements = Util.initializeRegexFilterList(getExcludeFilePath(filename), baseline, false);
-		final HashSet<String> result = new HashSet<String>(excludedElements.getExactMatches());
+		final HashSet<String> result = new HashSet<>(excludedElements.getExactMatches());
 		result.addAll(excludedElements.getPartialMatches());
 		return result;
 	}

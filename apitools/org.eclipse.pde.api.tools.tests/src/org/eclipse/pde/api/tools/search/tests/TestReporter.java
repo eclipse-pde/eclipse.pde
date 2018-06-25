@@ -143,10 +143,10 @@ public class TestReporter implements IApiSearchReporter {
 				this.references = null;
 			}
 		} else {
-			this.references = new HashMap<String, ArrayList<Integer>>(names.length);
+			this.references = new HashMap<>(names.length);
 			ArrayList<Integer> ints = null;
 			for (int i = 0; i < names.length; i++) {
-				ints = new ArrayList<Integer>(referencekinds[i].length);
+				ints = new ArrayList<>(referencekinds[i].length);
 				this.references.put(names[i], ints);
 				for (int j = 0; j < referencekinds[i].length; j++) {
 					ints.add(referencekinds[i][j]);
@@ -162,7 +162,7 @@ public class TestReporter implements IApiSearchReporter {
 	 */
 	void setExpectedNotSearched(String[] elements) {
 		if (elements != null) {
-			this.notsearched = new HashSet<String>(elements.length);
+			this.notsearched = new HashSet<>(elements.length);
 			for (int i = 0; i < elements.length; i++) {
 				this.notsearched.add(elements[i]);
 			}

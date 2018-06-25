@@ -163,7 +163,7 @@ public class ProjectUtils {
 	public static IJavaProject createPluginProject(String projectName, String[] additionalNatures) throws CoreException {
 		String[] resolvednatures = additionalNatures;
 		if (additionalNatures != null) {
-			ArrayList<String> natures = new ArrayList<String>(Arrays.asList(additionalNatures));
+			ArrayList<String> natures = new ArrayList<>(Arrays.asList(additionalNatures));
 			if (!natures.contains(IBundleProjectDescription.PLUGIN_NATURE)) {
 				// need to always set this one first, in case others depend on
 				// it, like API Tools does
@@ -321,7 +321,7 @@ public class ProjectUtils {
 	 */
 	public static void removeFromClasspath(IJavaProject project, IClasspathEntry entry) throws JavaModelException {
 		IClasspathEntry[] oldEntries = project.getRawClasspath();
-		ArrayList<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
+		ArrayList<IClasspathEntry> entries = new ArrayList<>();
 		for (int i = 0; i < oldEntries.length; i++) {
 			if (!oldEntries[i].equals(entry)) {
 				entries.add(oldEntries[i]);
@@ -400,7 +400,7 @@ public class ProjectUtils {
 		IBundleProjectDescription description = getBundleProjectService().getDescription(project);
 		IPackageExportDescription[] exports = description.getPackageExports();
 		if (exports != null) {
-			List<IPackageExportDescription> list = new ArrayList<IPackageExportDescription>();
+			List<IPackageExportDescription> list = new ArrayList<>();
 			for (int i = 0; i < exports.length; i++) {
 				if (!packagename.equals(exports[i].getName())) {
 					list.add(exports[i]);
@@ -432,7 +432,7 @@ public class ProjectUtils {
 		IBundleProjectService service = getBundleProjectService();
 		IBundleProjectDescription description = service.getDescription(project);
 		IPackageExportDescription[] exports = description.getPackageExports();
-		List<IPackageExportDescription> list = new ArrayList<IPackageExportDescription>();
+		List<IPackageExportDescription> list = new ArrayList<>();
 		if (exports != null) {
 			for (int i = 0; i < exports.length; i++) {
 				list.add(exports[i]);

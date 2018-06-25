@@ -63,11 +63,11 @@ public class ApiBaselineTests extends TestCase {
 		if (fBaseline == null) {
 			fBaseline = TestSuiteHelper.createTestingBaseline(TEST_PLUGINS);
 			assertNotNull("the testing baseline should exist", fBaseline); //$NON-NLS-1$
-			List<IRequiredComponentDescription> reqs = new ArrayList<IRequiredComponentDescription>();
+			List<IRequiredComponentDescription> reqs = new ArrayList<>();
 			reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", new BundleVersionRange(Util.EMPTY_STRING))); //$NON-NLS-1$
 			validateComponent(fBaseline, COMPONENT_A, "A Plug-in", _1_0_0, "J2SE-1.5", reqs); //$NON-NLS-1$ //$NON-NLS-2$
 
-			reqs = new ArrayList<IRequiredComponentDescription>();
+			reqs = new ArrayList<>();
 			reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", new BundleVersionRange(Util.EMPTY_STRING))); //$NON-NLS-1$
 			reqs.add(new RequiredComponentDescription(COMPONENT_A, new BundleVersionRange(Util.EMPTY_STRING)));
 			validateComponent(fBaseline, COMPONENT_B, "B Plug-in", _1_0_0, "J2SE-1.4", reqs); //$NON-NLS-1$ //$NON-NLS-2$

@@ -155,7 +155,7 @@ public class BadClassfileTests extends TestCase {
 
 			@Override
 			protected List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
-				ArrayList<IApiTypeContainer> containers = new ArrayList<IApiTypeContainer>();
+				ArrayList<IApiTypeContainer> containers = new ArrayList<>();
 				containers.add(BadClassfileTests.this.container);
 				return containers;
 			}

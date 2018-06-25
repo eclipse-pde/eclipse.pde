@@ -73,7 +73,7 @@ public class TestSuiteHelper {
 	 * @since 1.0.400
 	 */
 	public static String[] getCompilerOptions() {
-		ArrayList<String> args = new ArrayList<String>();
+		ArrayList<String> args = new ArrayList<>();
 		if (ProjectUtils.isJava8Compatible()) {
 			args.add("-1.8"); //$NON-NLS-1$
 		} else {
@@ -96,8 +96,8 @@ public class TestSuiteHelper {
 		IApiBaseline baseline = newApiBaseline(name, eeFile);
 		// create a component for each jar/directory in the folder
 		File[] files = rootDirectory.listFiles();
-		List<IApiComponent> components = new ArrayList<IApiComponent>();
-		Set<String> requiredComponents = new HashSet<String>();
+		List<IApiComponent> components = new ArrayList<>();
+		Set<String> requiredComponents = new HashSet<>();
 		for (int i = 0; i < files.length; i++) {
 			File bundle = files[i];
 			IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
@@ -346,8 +346,8 @@ public class TestSuiteHelper {
 			IApiBaseline baseline = newApiBaseline(name, eeFile);
 			// create a component for each jar/directory in the folder
 			File[] files = file.listFiles();
-			List<IApiComponent> components = new ArrayList<IApiComponent>();
-			Set<String> requiredComponents = new HashSet<String>();
+			List<IApiComponent> components = new ArrayList<>();
+			Set<String> requiredComponents = new HashSet<>();
 			for (int i = 0; i < files.length; i++) {
 				File bundle = files[i];
 				if (!bundle.getName().equals("CVS")) { //$NON-NLS-1$
@@ -517,7 +517,7 @@ public class TestSuiteHelper {
 		PrintWriter outWriter = new PrintWriter(out);
 		StringWriter err = new StringWriter();
 		PrintWriter errWriter = new PrintWriter(err);
-		List<String> cmd = new ArrayList<String>();
+		List<String> cmd = new ArrayList<>();
 		cmd.add("-noExit"); //$NON-NLS-1$
 		for (int i = 0, max = compileroptions.length; i < max; i++) {
 			cmd.add(compileroptions[i]);
@@ -556,7 +556,7 @@ public class TestSuiteHelper {
 		PrintWriter outWriter = new PrintWriter(out);
 		StringWriter err = new StringWriter();
 		PrintWriter errWriter = new PrintWriter(err);
-		List<String> cmd = new ArrayList<String>();
+		List<String> cmd = new ArrayList<>();
 		cmd.add("-noExit"); //$NON-NLS-1$
 		for (int i = 0, max = compilerOptions.length; i < max; i++) {
 			cmd.add(compilerOptions[i]);
@@ -565,7 +565,7 @@ public class TestSuiteHelper {
 			cmd.add("-d"); //$NON-NLS-1$
 			cmd.add(destinationPath);
 		}
-		Set<String> directories = new HashSet<String>();
+		Set<String> directories = new HashSet<>();
 		for (int i = 0, max = sourceFilePaths.length; i < max; i++) {
 			String sourceFilePath = sourceFilePaths[i];
 			File file = new File(sourceFilePath);

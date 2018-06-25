@@ -36,7 +36,7 @@ public class TestRequestor implements IApiSearchRequestor {
 
 	private IApiBaseline scopebaseline = null;
 	private int searchmask = 0;
-	private HashSet<String> excluded = new HashSet<String>();
+	private HashSet<String> excluded = new HashSet<>();
 	private SearchTest test = null;
 	private IApiScope scope = null;
 
@@ -231,7 +231,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	 */
 	void setExcludedElements(HashSet<String> excluded) {
 		if(excluded == null) {
-			this.excluded = new HashSet<String>();
+			this.excluded = new HashSet<>();
 		}
 		else {
 			this.excluded = excluded;

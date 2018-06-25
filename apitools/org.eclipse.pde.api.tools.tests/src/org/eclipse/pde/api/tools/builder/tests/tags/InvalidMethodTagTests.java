@@ -75,7 +75,7 @@ public class InvalidMethodTagTests extends TagTest {
 	 * @return all of the child test classes of this class
 	 */
 	private static Class<?>[] getAllTestClasses() {
-		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+		ArrayList<Class<?>> classes = new ArrayList<>();
 		classes.add(InvalidAnnotationMethodTagTests.class);
 		classes.add(InvalidEnumMethodTagTests.class);
 		classes.add(InvalidClassMethodTagTests.class);

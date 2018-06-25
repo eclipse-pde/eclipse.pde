@@ -444,7 +444,7 @@ public class UtilTests extends TestCase {
 				return null;
 			}
 		}
-		List<IApiComponent> allComponents = new ArrayList<IApiComponent>();
+		List<IApiComponent> allComponents = new ArrayList<>();
 		String[] componentNames = new String[] {
 				"org.eclipse.swt", //$NON-NLS-1$
 				"org.eclipse.equinox.simpleconfigurator.manipulator", //$NON-NLS-1$

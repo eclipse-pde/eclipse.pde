@@ -65,9 +65,9 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * Modified files for each build so that we can undo the changes
 	 * incrementally rather than recreating the workspace for each test.
 	 */
-	private List<IPath> fAdded = new ArrayList<IPath>();
-	private List<IPath> fChanged = new ArrayList<IPath>();
-	private List<IPath> fRemoved = new ArrayList<IPath>();
+	private List<IPath> fAdded = new ArrayList<>();
+	private List<IPath> fChanged = new ArrayList<>();
+	private List<IPath> fRemoved = new ArrayList<>();
 
 	@Override
 	public IPath addProject(String projectName, String compliance) throws UnsupportedOperationException {
@@ -110,7 +110,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 			if ((AbstractCompilerTest.getPossibleComplianceLevels() & requiredComplianceFlag) == 0) {
 				throw new RuntimeException("This test requires a " + compliance + " JRE"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			HashMap<String, String> options = new HashMap<String, String>();
+			HashMap<String, String> options = new HashMap<>();
 			options.put(JavaCore.COMPILER_COMPLIANCE, compilerVersion);
 			options.put(JavaCore.COMPILER_SOURCE, compilerVersion);
 			options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, compilerVersion);
@@ -418,7 +418,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	public IMarker[] getMarkersFor(IPath path, String additionalMarkerType) {
 		IResource resource = getResource(path);
 		try {
-			List<Object> problems = new ArrayList<Object>();
+			List<Object> problems = new ArrayList<>();
 			addToList(problems, getAllUsageMarkers(resource));
 			addToList(problems, getAllCompatibilityMarkers(resource));
 			addToList(problems, getAllApiBaselineMarkers(resource));
@@ -497,7 +497,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	@Override
 	public ApiProblem[] getProblemsFor(IPath path, String additionalMarkerType) {
 		IMarker[] markers = getMarkersFor(path, additionalMarkerType);
-		ArrayList<ApiProblem> problems = new ArrayList<ApiProblem>();
+		ArrayList<ApiProblem> problems = new ArrayList<>();
 		for (int i = 0; i < markers.length; i++) {
 			problems.add(new ApiProblem(markers[i]));
 		}

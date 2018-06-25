@@ -73,7 +73,7 @@ public abstract class DeltaTestSetup extends TestCase {
 	 */
 	protected IDelta[] collectLeaves(IDelta delta) {
 		assertTrue("Should not be NO_DELTA", delta != ApiComparator.NO_DELTA); //$NON-NLS-1$
-		List<IDelta> leaves = new ArrayList<IDelta>();
+		List<IDelta> leaves = new ArrayList<>();
 		collect0(delta, leaves);
 		int size = leaves.size();
 		if (size == 0) {

@@ -310,7 +310,7 @@ public class ApiDescriptionTests extends TestCase {
 		IPackageDescriptor intPkgDesc = Factory.packageDescriptor("a.b.c.internal"); //$NON-NLS-1$
 		ElementDescription intPkg = new ElementDescription(intPkgDesc, VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
 
-		final List<ElementDescription> visitOrder = new ArrayList<ElementDescription>();
+		final List<ElementDescription> visitOrder = new ArrayList<>();
 		visitOrder.add(defPkg); // start def
 			visitOrder.add(B); //start B
 				visitOrder.add(m1); visitOrder.add(m1); //start / end m1
@@ -425,7 +425,7 @@ public class ApiDescriptionTests extends TestCase {
 		// compare the original and restore settings
 
 		// build expected visit order from original
-		final List<ElementDescription> visitOrder = new ArrayList<ElementDescription>();
+		final List<ElementDescription> visitOrder = new ArrayList<>();
 		ApiDescriptionVisitor visitor = new ApiDescriptionVisitor() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#visitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
@@ -513,7 +513,7 @@ public class ApiDescriptionTests extends TestCase {
 		IPackageDescriptor intPkgDesc = Factory.packageDescriptor("a.b.c.internal"); //$NON-NLS-1$
 		ElementDescription intPkg = new ElementDescription(intPkgDesc, VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
 
-		final List<ElementDescription> visitOrder = new ArrayList<ElementDescription>();
+		final List<ElementDescription> visitOrder = new ArrayList<>();
 		visitOrder.add(defPkg); // start def
 			visitOrder.add(B); //start B
 				visitOrder.add(m1); visitOrder.add(m1); //start / end m1
@@ -586,7 +586,7 @@ public class ApiDescriptionTests extends TestCase {
 		ElementDescription intPkg = new ElementDescription(Factory.packageDescriptor("a.b.c.internal"), VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 		//ElementDescription intPkgForFriend = new ElementDescription("a.friend", Factory.packageDescriptor("a.b.c.internal"), VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
 
-		final List<ElementDescription> visitOrder = new ArrayList<ElementDescription>();
+		final List<ElementDescription> visitOrder = new ArrayList<>();
 		visitOrder.add(defPkg); // start def
 		visitOrder.add(defPkg); // end def
 		visitOrder.add(abcPkg); // start a.b.c

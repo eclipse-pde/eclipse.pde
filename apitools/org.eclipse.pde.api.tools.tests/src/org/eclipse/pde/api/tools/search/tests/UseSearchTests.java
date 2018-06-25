@@ -34,7 +34,7 @@ public class UseSearchTests extends SearchTest {
 	static IPath TMP_PATH = TestSuiteHelper.getUserDirectoryPath().append("use-search-tests"); //$NON-NLS-1$
 	static IPath XML_PATH = TMP_PATH.append("xml"); //$NON-NLS-1$
 	static IPath HTML_PATH = TMP_PATH.append("html"); //$NON-NLS-1$
-	final HashMap<String, HashSet<String>> usedprojects = new HashMap<String, HashSet<String>>();
+	final HashMap<String, HashSet<String>> usedprojects = new HashMap<>();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.search.tests.SearchTest#tearDown()
@@ -113,7 +113,7 @@ public class UseSearchTests extends SearchTest {
 		else {
 			HashSet<String> names = null;
 			for (int i = 0; i < projects.length; i++) {
-				names = new HashSet<String>(projects[i].length);
+				names = new HashSet<>(projects[i].length);
 				for (int j = 0; j < projects[i].length; j++) {
 					names.add(projects[i][j]);
 				}

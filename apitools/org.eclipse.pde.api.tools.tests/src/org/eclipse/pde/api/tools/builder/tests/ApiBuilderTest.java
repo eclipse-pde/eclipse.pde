@@ -262,7 +262,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			printProblems();
 		}
 		IMarker[] rootProblems = getEnv().getMarkers();
-		Hashtable<IPath, IPath> actual = new Hashtable<IPath, IPath>(rootProblems.length * 2 + 1);
+		Hashtable<IPath, IPath> actual = new Hashtable<>(rootProblems.length * 2 + 1);
 		for (int i = 0; i < rootProblems.length; i++) {
 			IPath culprit = rootProblems[i].getResource().getFullPath();
 			actual.put(culprit, culprit);
@@ -447,7 +447,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		String[][] args = getExpectedMessageArgs();
 		if (args != null) {
 			// compare messages
-			ArrayList<String> messages = new ArrayList<String>();
+			ArrayList<String> messages = new ArrayList<>();
 			for (int i = 0; i < length; i++) {
 				messages.add(problems[i].getMessage());
 			}
@@ -468,7 +468,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			}
 		} else {
 			// compare id's
-			ArrayList<Integer> messages = new ArrayList<Integer>();
+			ArrayList<Integer> messages = new ArrayList<>();
 			for (int i = 0; i < length; i++) {
 				messages.add(Integer.valueOf(problems[i].getProblemId()));
 			}
@@ -477,7 +477,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			}
 		}
 		if (fLineMappings != null) {
-			ArrayList<LineMapping> mappings = new ArrayList<LineMapping>(Arrays.asList(fLineMappings));
+			ArrayList<LineMapping> mappings = new ArrayList<>(Arrays.asList(fLineMappings));
 			for (int i = 0; i < problems.length; i++) {
 				assertTrue("Missing expected problem line mapping: " + problems[i], mappings.remove(new LineMapping(problems[i]))); //$NON-NLS-1$
 			}
@@ -1094,7 +1094,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * @return all of the child test classes of this class
 	 */
 	private static Class<?>[] getAllTestClasses() {
-		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+		ArrayList<Class<?>> classes = new ArrayList<>();
 		classes.add(CompatibilityTest.class);
 		classes.add(UsageTest.class);
 		classes.add(LeakTest.class);

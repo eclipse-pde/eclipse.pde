@@ -101,7 +101,7 @@ public class ApiTypeContainerTests extends TestCase {
 	 */
 	protected void doTestPackageNames(IApiTypeContainer container) throws CoreException {
 		String[] packageNames = container.getPackageNames();
-		Set<String> knownNames = new HashSet<String>();
+		Set<String> knownNames = new HashSet<>();
 		knownNames.add(""); //$NON-NLS-1$
 		knownNames.add("a"); //$NON-NLS-1$
 		knownNames.add("a.b.c"); //$NON-NLS-1$
@@ -137,11 +137,11 @@ public class ApiTypeContainerTests extends TestCase {
 	 * @throws CoreException
 	 */
 	protected void doTestVisitPackages(IApiTypeContainer container) throws CoreException {
-		final List<String> expectedPkgOrder = new ArrayList<String>();
+		final List<String> expectedPkgOrder = new ArrayList<>();
 		expectedPkgOrder.add(""); //$NON-NLS-1$
 		expectedPkgOrder.add("a"); //$NON-NLS-1$
 		expectedPkgOrder.add("a.b.c"); //$NON-NLS-1$
-		final List<String> visit = new ArrayList<String>();
+		final List<String> visit = new ArrayList<>();
 		ApiTypeContainerVisitor visitor = new ApiTypeContainerVisitor() {
 			@Override
 			public boolean visitPackage(String packageName) {
@@ -191,27 +191,27 @@ public class ApiTypeContainerTests extends TestCase {
 	 * @throws CoreException
 	 */
 	protected void doTestVisitClassFiles(IApiTypeContainer container) throws CoreException {
-		final Map<String, List<String>> expectedTypes = new HashMap<String, List<String>>();
-		final List<String> expectedPkgOrder = new ArrayList<String>();
+		final Map<String, List<String>> expectedTypes = new HashMap<>();
+		final List<String> expectedPkgOrder = new ArrayList<>();
 		expectedPkgOrder.add(""); //$NON-NLS-1$
-			List<String> cf = new ArrayList<String>();
+			List<String> cf = new ArrayList<>();
 			cf.add("DefA"); //$NON-NLS-1$
 			cf.add("DefB"); //$NON-NLS-1$
 			expectedTypes.put("", cf); //$NON-NLS-1$
 		expectedPkgOrder.add("a"); //$NON-NLS-1$
-			cf = new ArrayList<String>();
+			cf = new ArrayList<>();
 			cf.add("a.ClassA"); //$NON-NLS-1$
 			cf.add("a.ClassB"); //$NON-NLS-1$
 			cf.add("a.ClassB$InsideB"); //$NON-NLS-1$
 			expectedTypes.put("a", cf); //$NON-NLS-1$
 		expectedPkgOrder.add("a.b.c"); //$NON-NLS-1$
-			cf = new ArrayList<String>();
+			cf = new ArrayList<>();
 			cf.add("a.b.c.ClassC"); //$NON-NLS-1$
 			cf.add("a.b.c.ClassD"); //$NON-NLS-1$
 			cf.add("a.b.c.InterfaceC"); //$NON-NLS-1$
 			expectedTypes.put("a.b.c", cf); //$NON-NLS-1$
-		final List<String> visit = new ArrayList<String>();
-		final Map<String, List<String>> visitTypes = new HashMap<String, List<String>>();
+		final List<String> visit = new ArrayList<>();
+		final Map<String, List<String>> visitTypes = new HashMap<>();
 		ApiTypeContainerVisitor visitor = new ApiTypeContainerVisitor() {
 			@Override
 			public boolean visitPackage(String packageName) {
@@ -223,7 +223,7 @@ public class ApiTypeContainerTests extends TestCase {
 				assertTrue("Should not visit types", visit.get(visit.size() - 1).equals(packageName)); //$NON-NLS-1$
 				List<String> types = visitTypes.get(packageName);
 				if (types == null) {
-					types = new ArrayList<String>();
+					types = new ArrayList<>();
 					visitTypes.put(packageName, types);
 				}
 				types.add(classFile.getTypeName());

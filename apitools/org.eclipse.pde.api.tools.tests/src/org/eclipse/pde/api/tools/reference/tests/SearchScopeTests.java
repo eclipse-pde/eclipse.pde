@@ -45,12 +45,12 @@ public class SearchScopeTests extends TestCase {
 		IApiComponent componentB = profile.getApiComponent("component.b"); //$NON-NLS-1$
 		IApiComponent[] components = new IApiComponent[]{componentA, componentB};
 		IApiTypeContainer scope = Factory.newScope(components);
-		Collection<String> expectedPackages = new HashSet<String>();
-		Collection<String> expectedTypes = new HashSet<String>();
+		Collection<String> expectedPackages = new HashSet<>();
+		Collection<String> expectedTypes = new HashSet<>();
 		visit(componentA, expectedPackages, expectedTypes);
 		visit(componentB, expectedPackages, expectedTypes);
-		Collection<String> actualPackages = new HashSet<String>();
-		Collection<String> actualTypes = new HashSet<String>();
+		Collection<String> actualPackages = new HashSet<>();
+		Collection<String> actualTypes = new HashSet<>();
 		visit(scope, actualPackages, actualTypes);
 		assertEquals("Different packages", expectedPackages, actualPackages); //$NON-NLS-1$
 		assertEquals("Different types", expectedTypes, actualTypes); //$NON-NLS-1$
@@ -93,12 +93,12 @@ public class SearchScopeTests extends TestCase {
 		IPackageDescriptor pkg = Factory.packageDescriptor("component.a"); //$NON-NLS-1$
 		IReferenceTypeDescriptor type = pkg.getType("A"); //$NON-NLS-1$
 		IApiTypeContainer scope = Factory.newTypeScope(componentA, new IReferenceTypeDescriptor[]{type});
-		Collection<String> expectedPackages = new HashSet<String>();
+		Collection<String> expectedPackages = new HashSet<>();
 		expectedPackages.add("component.a"); //$NON-NLS-1$
-		Collection<String> expectedTypes = new HashSet<String>();
+		Collection<String> expectedTypes = new HashSet<>();
 		expectedTypes.add("component.a.A"); //$NON-NLS-1$
-		Collection<String> actualPackages = new HashSet<String>();
-		Collection<String> actualTypes = new HashSet<String>();
+		Collection<String> actualPackages = new HashSet<>();
+		Collection<String> actualTypes = new HashSet<>();
 		visit(scope, actualPackages, actualTypes);
 		assertEquals("Different packages", expectedPackages, actualPackages); //$NON-NLS-1$
 		assertEquals("Different types", expectedTypes, actualTypes); //$NON-NLS-1$
@@ -112,17 +112,17 @@ public class SearchScopeTests extends TestCase {
 	public void testVisitSpecificTypes() throws CoreException {
 		IApiBaseline profile = TestSuiteHelper.createTestingBaseline("test-plugins"); //$NON-NLS-1$
 		IApiComponent componentA = profile.getApiComponent("component.a"); //$NON-NLS-1$
-		Collection<String> expectedPackages = new HashSet<String>();
+		Collection<String> expectedPackages = new HashSet<>();
 		expectedPackages.add("a.b.c"); //$NON-NLS-1$
 		expectedPackages.add("component.a"); //$NON-NLS-1$
-		Collection<String> expectedTypes = new HashSet<String>();
+		Collection<String> expectedTypes = new HashSet<>();
 		IReferenceTypeDescriptor one = Factory.typeDescriptor("a.b.c.Generics"); //$NON-NLS-1$
 		IReferenceTypeDescriptor two = Factory.typeDescriptor("component.a.NoExtendClass"); //$NON-NLS-1$
 		expectedTypes.add(one.getQualifiedName());
 		expectedTypes.add(two.getQualifiedName());
 		IApiTypeContainer scope = Factory.newTypeScope(componentA, new IReferenceTypeDescriptor[]{one, two});
-		Collection<String> actualPackages = new HashSet<String>();
-		Collection<String> actualTypes = new HashSet<String>();
+		Collection<String> actualPackages = new HashSet<>();
+		Collection<String> actualTypes = new HashSet<>();
 		visit(scope, actualPackages, actualTypes);
 		assertEquals("Different packages", expectedPackages, actualPackages); //$NON-NLS-1$
 		assertEquals("Different types", expectedTypes, actualTypes); //$NON-NLS-1$

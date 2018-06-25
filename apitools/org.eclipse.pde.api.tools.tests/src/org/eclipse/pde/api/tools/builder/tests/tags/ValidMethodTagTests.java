@@ -61,7 +61,7 @@ public class ValidMethodTagTests extends InvalidMethodTagTests {
 	 * @return all of the child test classes of this class
 	 */
 	private static Class<?>[] getAllTestClasses() {
-		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+		ArrayList<Class<?>> classes = new ArrayList<>();
 		classes.add(ValidClassMethodTagTests.class);
 		classes.add(ValidInterfaceMethodTagTests.class);
 		classes.add(ValidEnumMethodTagTests.class);

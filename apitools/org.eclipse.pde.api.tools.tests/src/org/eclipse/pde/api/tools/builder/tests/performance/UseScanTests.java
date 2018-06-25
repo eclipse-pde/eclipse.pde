@@ -89,7 +89,7 @@ public class UseScanTests extends PerformanceTestCase {
 		ITargetDefinition definition = service.getWorkspaceTargetDefinition();
 		IApiBaseline fBaseline = createBaseline(definition, new NullProgressMonitor());
 
-		Set<IApiComponent> scope = new HashSet<IApiComponent>();
+		Set<IApiComponent> scope = new HashSet<>();
 		// add equinox and eclipse core components
 		IApiComponent[] components = fBaseline.getApiComponents();
 		for (int i = 0; i < components.length; i++) {
@@ -102,7 +102,7 @@ public class UseScanTests extends PerformanceTestCase {
 			}
 		}
 		// add equinox and eclipse core ids
-		final Set<String> ids = new HashSet<String>();
+		final Set<String> ids = new HashSet<>();
 		for (IApiComponent s : scope) {
 			try {
 				String id = s.toString().substring(0, s.toString().indexOf("_")); //$NON-NLS-1$
@@ -130,7 +130,7 @@ public class UseScanTests extends PerformanceTestCase {
 		definition.resolve(localmonitor.split(2));
 		localmonitor.split(1);
 		TargetBundle[] bundles = definition.getBundles();
-		List<IApiComponent> components = new ArrayList<IApiComponent>();
+		List<IApiComponent> components = new ArrayList<>();
 		IApiBaseline profile = ApiModelFactory.newApiBaseline(definition.getName());
 		localmonitor.setWorkRemaining(bundles.length);
 		for (int i = 0; i < bundles.length; i++) {

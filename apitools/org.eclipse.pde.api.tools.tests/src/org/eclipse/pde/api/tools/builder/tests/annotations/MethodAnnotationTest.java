@@ -61,7 +61,7 @@ public abstract class MethodAnnotationTest extends AnnotationTest {
 	 * @return all of the child test classes of this class
 	 */
 	private static Class<?>[] getAllTestClasses() {
-		ArrayList<Class<?>> tests = new ArrayList<Class<?>>();
+		ArrayList<Class<?>> tests = new ArrayList<>();
 		tests.add(ValidDefaultMethodAnnotationTests.class);
 		tests.add(InvalidInterfaceMethodAnnotationTests.class);
 		tests.add(ValidInterfaceMethodAnnotationTests.class);

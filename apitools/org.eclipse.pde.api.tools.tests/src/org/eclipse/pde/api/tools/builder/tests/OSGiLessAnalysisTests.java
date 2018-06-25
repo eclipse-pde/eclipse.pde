@@ -43,7 +43,7 @@ public class OSGiLessAnalysisTests extends TestCase {
 		assertNotNull("Missing API component test.bundle.a", component); //$NON-NLS-1$
 		analyzer.analyzeComponent(null, null, null, baseline, component, new BuildContext(), new NullProgressMonitor());
 		IApiProblem[] problems = analyzer.getProblems();
-		Set<Integer> expectedIds = new HashSet<Integer>();
+		Set<Integer> expectedIds = new HashSet<>();
 		expectedIds.add(ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY,
 																		IDelta.FIELD_ELEMENT_TYPE,
 																		IDelta.CHANGED,

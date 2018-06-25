@@ -65,7 +65,7 @@ public abstract class TagTest extends ApiBuilderTest {
 	 * @return all of the child test classes of this class
 	 */
 	private static Class<?>[] getAllTestClasses() {
-		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+		ArrayList<Class<?>> classes = new ArrayList<>();
 		classes.add(InvalidClassTagTests.class);
 		classes.add(ValidClassTagTests.class);
 		classes.add(InvalidInterfaceTagTests.class);

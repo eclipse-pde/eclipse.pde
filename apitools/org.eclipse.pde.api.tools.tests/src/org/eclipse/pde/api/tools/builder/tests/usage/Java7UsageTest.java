@@ -168,7 +168,7 @@ public abstract class Java7UsageTest extends ApiBuilderTest {
 	 * @return all of the child test classes of this class
 	 */
 	private static Class<?>[] getAllTestClasses() {
-		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+		ArrayList<Class<?>> classes = new ArrayList<>();
 		classes.add(Java7MethodUsageTests.class);
 		classes.add(Java7FieldUsageTests.class);
 		classes.add(Java7ClassUsageTests.class);
