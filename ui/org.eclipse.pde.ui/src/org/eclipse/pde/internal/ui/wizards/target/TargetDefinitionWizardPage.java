@@ -33,11 +33,10 @@ public class TargetDefinitionWizardPage extends PDEWizardNewFileCreationPage {
 	private Button fEmptyButton;
 	private Button fDefaultButton;
 	private Button fCurrentTPButton;
-	private Button fExistingTargetButton;
 	private Combo fTargets;
 	private String[] fTargetIds;
 
-	private static String EXTENSION = "target"; //$NON-NLS-1$
+	private static final String EXTENSION = "target"; //$NON-NLS-1$
 
 	public TargetDefinitionWizardPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
@@ -62,7 +61,7 @@ public class TargetDefinitionWizardPage extends PDEWizardNewFileCreationPage {
 		fEmptyButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_1, 2);
 		fDefaultButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_2, 2);
 		fCurrentTPButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_3, 2);
-		fExistingTargetButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_4, 1);
+		Button fExistingTargetButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_4, 1);
 		fExistingTargetButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			boolean enabled = fExistingTargetButton.getSelection();
 			fTargets.setEnabled(enabled);
