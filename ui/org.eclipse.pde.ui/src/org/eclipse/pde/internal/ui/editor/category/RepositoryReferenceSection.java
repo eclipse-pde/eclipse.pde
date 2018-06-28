@@ -62,7 +62,7 @@ public class RepositoryReferenceSection extends TableSection {
 			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
 			fLocation.setLayoutData(data);
 			DropTarget target = new DropTarget(fLocation, DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK);
-			target.setTransfer(new Transfer[] {URLTransfer.getInstance(), FileTransfer.getInstance()});
+			target.setTransfer(URLTransfer.getInstance(), FileTransfer.getInstance());
 			target.addDropListener(new TextURLDropAdapter(fLocation, true));
 			fLocation.addModifyListener(e -> validate());
 
