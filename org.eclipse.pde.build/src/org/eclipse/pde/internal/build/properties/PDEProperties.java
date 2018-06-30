@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *****************************************/
@@ -12,8 +12,7 @@ package org.eclipse.pde.internal.build.properties;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.ant.core.IAntPropertyValueProvider;
@@ -51,7 +50,14 @@ public class PDEProperties implements IAntPropertyValueProvider {
 					BundleHelper.getDefault().getLog().log(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.WARNING_PLUGIN_ALTERED, NLS.bind(Messages.exception_missing_pdebuild_folder, antPropertyName), null));
 				} else {
 					try {
-						result = new File(FileLocator.toFileURL(foundEntry).toURI()).getAbsolutePath();
+						URL fileURL = FileLocator.toFileURL(foundEntry);
+						URI uri = URIUtil.toURI(fileURL);
+						File file = URIUtil.toFile(uri);
+						if (file == null) {
+							BundleHelper.getDefault().getLog().log(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.WARNING_PLUGIN_ALTERED, NLS.bind(Messages.exception_missing_pdebuild_folder, antPropertyName), null));
+							return null;
+						}
+						result = file.getAbsolutePath();
 					} catch (URISyntaxException e) {
 						BundleHelper.getDefault().getLog().log(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_MALFORMED_URL, e.getMessage(), e));
 						return null;
