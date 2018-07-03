@@ -46,7 +46,7 @@ public class UpdateUnitVersions extends AbstractHandler {
 
 		// Logic placed in a CompletableFuture so that the progress monitors of the
 		// cache update jobs are shown
-		CompletableFuture<String> nonBlockingResult = CompletableFuture.supplyAsync(() -> {
+		return CompletableFuture.supplyAsync(() -> {
 			if (document == null) {
 				return null;
 			}
@@ -125,7 +125,6 @@ public class UpdateUnitVersions extends AbstractHandler {
 			}
 			return documentText;
 		});
-		return nonBlockingResult;
 	}
 
 	private void updateCache(LocationNode locationNode) throws InterruptedException {
