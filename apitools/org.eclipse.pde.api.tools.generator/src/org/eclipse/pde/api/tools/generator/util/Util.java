@@ -56,8 +56,7 @@ public class Util {
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator"); //$NON-NLS-1$
 
 	public static boolean contains(char[] name, char[][] names) {
-		for (int i = 0, max = names.length; i < max; i++) {
-			char[] currentName = names[i];
+		for (char[] currentName : names) {
 			if (CharOperation.equals(currentName, name)) {
 				return true;
 			}
@@ -244,29 +243,19 @@ public class Util {
 	}
 
 	public static void write(String rootDirName, String subDirName, String fileName, String contents) {
-		BufferedWriter writer = null;
-		try {
-			File rootDir = new File(rootDirName);
-			rootDir.mkdirs();
-			File subDir = new File(rootDir, subDirName);
-			subDir.mkdirs();
-			String fname = fileName;
-			if (fname.indexOf('/') != -1) {
-				fname = fname.replace('/', '_');
-			}
-			writer = new BufferedWriter(new FileWriter(new File(subDir, fname)));
+		File rootDir = new File(rootDirName);
+		rootDir.mkdirs();
+		File subDir = new File(rootDir, subDirName);
+		subDir.mkdirs();
+		String fname = fileName;
+		if (fname.indexOf('/') != -1) {
+			fname = fname.replace('/', '_');
+		}
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File(subDir, fname)))) {
 			writer.write(contents);
 			writer.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
 		}
 	}
 
@@ -393,8 +382,7 @@ public class Util {
 
 	private static void collectAllFiles(File root, ArrayList<File> collector, FileFilter fileFilter) {
 		File[] files = root.listFiles(fileFilter);
-		for (int i = 0; i < files.length; i++) {
-			final File currentFile = files[i];
+		for (final File currentFile : files) {
 			if (currentFile.isDirectory()) {
 				collectAllFiles(currentFile, collector, fileFilter);
 			} else {
@@ -404,7 +392,7 @@ public class Util {
 	}
 
 	public static File[] getAllFiles(File root, FileFilter fileFilter) {
-		ArrayList<File> files = new ArrayList<File>();
+		ArrayList<File> files = new ArrayList<>();
 		if (root.isDirectory()) {
 			collectAllFiles(root, files, fileFilter);
 			// get the jmods

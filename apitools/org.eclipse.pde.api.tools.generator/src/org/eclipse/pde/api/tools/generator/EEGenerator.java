@@ -16,7 +16,6 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -36,6 +35,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
@@ -299,14 +299,13 @@ public class EEGenerator {
 		}
 		public void addType(Type type) {
 			if (this.types == null) {
-				this.types = new ArrayList<Type>();
+				this.types = new ArrayList<>();
 			}
 			this.types.add(type);
 		}
 		public void collectTypes(Map<String, Type> result) {
 			Collections.sort(this.types);
-			for (Iterator<Type> iterator2 = this.types.iterator(); iterator2.hasNext();) {
-				Type type = iterator2.next();
+			for (Type type : this.types) {
 				String typeName = new String(type.name);
 				result.put(typeName, type);
 			}
@@ -359,8 +358,7 @@ public class EEGenerator {
 				return;
 			}
 			Collections.sort(this.types);
-			for (Iterator<Type> iterator2 = this.types.iterator(); iterator2.hasNext();) {
-				Type type = iterator2.next();
+			for (Type type : this.types) {
 				StringBuilder buffer = new StringBuilder(this.name.replace('.', '/'));
 				String simpleName = type.getSimpleName();
 				buffer.append('/').append(simpleName.replace('.', '$'));
@@ -453,11 +451,11 @@ public class EEGenerator {
 				String property = allProperties.getProperty(OTHER_PACKAGES);
 				if (property != null && property.length() != 0) {
 					String[] packages = property.split(","); //$NON-NLS-1$
-					for (int i = 0, max = packages.length; i < max; i++) {
+					for (String package1 : packages) {
 						if (knownPackages == null) {
-							knownPackages = new LinkedHashSet<String>();
+							knownPackages = new LinkedHashSet<>();
 						}
-						knownPackages.add(packages[i]);
+						knownPackages.add(package1);
 					}
 				} else {
 					knownPackages = Collections.emptySet();
@@ -471,10 +469,8 @@ public class EEGenerator {
 			if (fileName == null) {
 				return Collections.emptySet();
 			}
-			Set<String> values = new HashSet<String>();
-			LineNumberReader reader = null;
-			try {
-				reader = new LineNumberReader(new BufferedReader(new FileReader(fileName)));
+			Set<String> values = new HashSet<>();
+			try (LineNumberReader reader = new LineNumberReader(new BufferedReader(new FileReader(fileName)))) {
 				String line;
 				while ((line = reader.readLine()) != null) {
 					String trimmedLine = line.trim();
@@ -485,14 +481,6 @@ public class EEGenerator {
 				}
 			} catch (IOException e) {
 				// ignore
-			} finally {
-				if (reader != null) {
-					try {
-						reader.close();
-					} catch (IOException e) {
-						// ignore
-					}
-				}
 			}
 			return values;
 		}
@@ -530,7 +518,7 @@ public class EEGenerator {
 				this.blackList.add(typeName);
 				return;
 			}
-			this.blackList = new TreeSet<String>();
+			this.blackList = new TreeSet<>();
 			this.blackList.add(typeName);
 		}
 
@@ -564,21 +552,11 @@ public class EEGenerator {
 						return;
 					}
 				}
-				BufferedWriter writer = null;
-				try {
-					writer = new BufferedWriter(new FileWriter(docType));
+				try (BufferedWriter writer = new BufferedWriter(new FileWriter(docType))) {
 					writer.write(contents);
 					writer.flush();
 				} catch (IOException e) {
 					e.printStackTrace();
-				} finally {
-					if (writer != null) {
-						try {
-							writer.close();
-						} catch (IOException e) {
-							// ignore
-						}
-					}
 				}
 			}
 		}
@@ -594,13 +572,12 @@ public class EEGenerator {
 		}
 
 		public Map<String, Type> getAllTypes() {
-			Map<String, Type> result = new LinkedHashMap<String, Type>();
+			Map<String, Type> result = new LinkedHashMap<>();
 			Set<String> keySet = this.data.keySet();
 			String[] sortedKeys = new String[keySet.size()];
 			keySet.toArray(sortedKeys);
 			Arrays.sort(sortedKeys);
-			for (int i = 0, max = sortedKeys.length; i < max; i++) {
-				String key = sortedKeys[i];
+			for (String key : sortedKeys) {
 				Package package1 = this.data.get(key);
 				if (package1 != null) {
 					package1.collectTypes(result);
@@ -631,24 +608,18 @@ public class EEGenerator {
 			try {
 				String zipFileEntryName = typeName.replace('.', '/') + ".class"; //$NON-NLS-1$
 				loop: for (int i = 0, max = this.allFiles.length; i < max; i++) {
-					ZipFile zipFile = new ZipFile(allFiles[i]);
 					if (allFiles[i].toString().endsWith(".jmod") && !zipFileEntryName.startsWith("classes/")) { //$NON-NLS-1$ //$NON-NLS-2$
 						zipFileEntryName = "classes/" + zipFileEntryName; //$NON-NLS-1$
 					}
-					try {
+					try (ZipFile zipFile = new ZipFile(allFiles[i])) {
 						ZipEntry zipEntry = zipFile.getEntry(zipFileEntryName);
 						if (zipEntry == null) {
 							continue loop;
 						}
-						InputStream inputStream = new BufferedInputStream(zipFile.getInputStream(zipEntry));
-						try {
+						try (InputStream inputStream = new BufferedInputStream(zipFile.getInputStream(zipEntry))) {
 							classFileBytes = Util.getInputStreamAsByteArray(inputStream, -1);
 							break loop;
-						} finally {
-							inputStream.close();
 						}
-					} finally {
-						zipFile.close();
 					}
 				}
 			} catch (ZipException e) {
@@ -677,22 +648,10 @@ public class EEGenerator {
 			if (profileCache != null) {
 				File docType = new File(profileCache, typeName);
 				if (docType.exists()) {
-					BufferedInputStream stream = null;
-					try {
-						stream = new BufferedInputStream(new FileInputStream(docType));
+					try (BufferedInputStream stream = new BufferedInputStream(new FileInputStream(docType))) {
 						return Util.getInputStreamAsCharArray(stream, -1, null);
-					} catch (FileNotFoundException e) {
-						e.printStackTrace();
 					} catch (IOException e) {
 						e.printStackTrace();
-					} finally {
-						if (stream != null) {
-							try {
-								stream.close();
-							} catch (IOException e) {
-								// ignore
-							}
-						}
 					}
 				}
 			}
@@ -740,11 +699,10 @@ public class EEGenerator {
 		private Set<String> initializeBlackList() {
 			File cacheRoot = getCacheRoot();
 			File blackListFile = new File(cacheRoot, BLACK_LIST_NAME);
-			Set<String> values = new TreeSet<String>();
+			Set<String> values = new TreeSet<>();
 			if (blackListFile.exists()) {
-				LineNumberReader reader = null;
-				try {
-					reader = new LineNumberReader(new BufferedReader(new FileReader(blackListFile)));
+				try (LineNumberReader reader = new LineNumberReader(
+						new BufferedReader(new FileReader(blackListFile)))) {
 					String line;
 					while ((line = reader.readLine()) != null) {
 						String trimmedLine = line.trim();
@@ -756,14 +714,6 @@ public class EEGenerator {
 					}
 				} catch (IOException e) {
 					// ignore
-				} finally {
-					if (reader != null) {
-						try {
-							reader.close();
-						} catch (IOException e) {
-							// ignore
-						}
-					}
 				}
 			}
 			return values;
@@ -781,13 +731,9 @@ public class EEGenerator {
 				System.out.println("Profile : " + pname); //$NON-NLS-1$
 			}
 			long time = System.currentTimeMillis();
-			this.allFiles = Util.getAllFiles(new File(this.JRElib), new FileFilter() {
-				@Override
-				public boolean accept(File pathname) {
-					return pathname.isDirectory() || pathname.getName().toLowerCase().endsWith(".jar") //$NON-NLS-1$
-							|| pathname.getName().toLowerCase().endsWith(".jmod"); //$NON-NLS-1$
-				}
-			});
+			this.allFiles = Util.getAllFiles(new File(this.JRElib),
+					pathname -> pathname.isDirectory() || pathname.getName().toLowerCase().endsWith(".jar") //$NON-NLS-1$
+							|| pathname.getName().toLowerCase().endsWith(".jmod")); //$NON-NLS-1$
 			if (allFiles == null) {
 				System.err.println("No jar files to proceed"); //$NON-NLS-1$
 				return;
@@ -804,11 +750,10 @@ public class EEGenerator {
 			Map<String, Type> allVisibleTypes = new LinkedHashMap<>();
 			Map<String, Type> allTypes = new LinkedHashMap<>();
 			this.totalSize = 0;
-			for (int i = 0, max = allFiles.length; i < max; i++) {
-				File currentFile = allFiles[i];
+			for (File currentFile : allFiles) {
 				this.totalSize += currentFile.length();
-				ZipFile zipFile = new ZipFile(currentFile);
-				try {
+
+				try (ZipFile zipFile = new ZipFile(currentFile)) {
 					for (Enumeration<? extends ZipEntry> enumeration = zipFile.entries(); enumeration.hasMoreElements();) {
 						ZipEntry zipEntry = enumeration.nextElement();
 						if (!zipEntry.getName().endsWith(".class")) //$NON-NLS-1$
@@ -843,12 +788,10 @@ public class EEGenerator {
 							}
 						}
 					}
-				} finally {
-					zipFile.close();
 				}
 			}
 			// list all results
-			List<Type> visibleTypes = new ArrayList<Type>();
+			List<Type> visibleTypes = new ArrayList<>();
 			visibleTypes.addAll(allVisibleTypes.values());
 			// check transitive closure to make sure all methods/fields from
 			// superclass are visible when resolving fields/methods
@@ -876,7 +819,7 @@ public class EEGenerator {
 					superclassName = superclass.getSuperclassName();
 				}
 			}
-			List<Type> isInDoc = new ArrayList<Type>();
+			List<Type> isInDoc = new ArrayList<>();
 			ZipFile docZip = null;
 			if (this.JREdoc != null) {
 				try {
@@ -896,9 +839,8 @@ public class EEGenerator {
 					docZip.close();
 				}
 			}
-			HashMap<String, Package> typesPerPackage = new LinkedHashMap<String, Package>();
-			for (Iterator<Type> iterator = isInDoc.iterator(); iterator.hasNext();) {
-				Type type = iterator.next();
+			HashMap<String, Package> typesPerPackage = new LinkedHashMap<>();
+			for (Type type : isInDoc) {
 				String packageName = type.getPackage();
 				Package package1 = typesPerPackage.get(packageName);
 				if (package1 == null) {
@@ -950,19 +892,13 @@ public class EEGenerator {
 			File cacheRoot = getCacheRoot();
 			File blackListFile = new File(cacheRoot, BLACK_LIST_NAME);
 			if (!blackListFile.exists()) {
-				PrintWriter writer = null;
-				try {
-					writer = new PrintWriter(new BufferedWriter(new FileWriter(blackListFile)));
+				try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(blackListFile)));) {
 					for (Iterator<String> iterator = this.blackList.iterator(); iterator.hasNext();) {
 						writer.println(iterator.next());
 					}
 					writer.flush();
 				} catch (IOException e) {
 					// ignore
-				} finally {
-					if (writer != null) {
-						writer.close();
-					}
 				}
 			}
 		}
@@ -972,8 +908,7 @@ public class EEGenerator {
 			String[] sortedKeys = new String[keySet.size()];
 			keySet.toArray(sortedKeys);
 			Arrays.sort(sortedKeys);
-			for (int i = 0, max = sortedKeys.length; i < max; i++) {
-				String key = sortedKeys[i];
+			for (String key : sortedKeys) {
 				Package package1 = packageMap.get(key);
 				if (package1 != null) {
 					package1.persistXML(document, xmlElement, OSGiProfileName);
@@ -988,8 +923,7 @@ public class EEGenerator {
 			String[] sortedKeys = new String[keySet.size()];
 			keySet.toArray(sortedKeys);
 			Arrays.sort(sortedKeys);
-			for (int i = 0, max = sortedKeys.length; i < max; i++) {
-				String key = sortedKeys[i];
+			for (String key : sortedKeys) {
 				Package package1 = packageMap.get(key);
 				if (package1 != null) {
 					package1.persistAsClassStubsForZip(zipOutputStream, info);
@@ -1078,7 +1012,7 @@ public class EEGenerator {
 
 		public StubClass(int acc, String className2, String superName2, String[] interfaces2) {
 			this.access = acc;
-			this.pool = new LinkedHashMap<String, Integer>();
+			this.pool = new LinkedHashMap<>();
 			this.classNameIndex = getIndex(className2);
 			this.superNameIndex = superName2 != null ? getIndex(superName2) : -1;
 			if (interfaces2 != null) {
@@ -1091,14 +1025,14 @@ public class EEGenerator {
 
 		public void addField(String fieldName) {
 			if (this.fields == null) {
-				this.fields = new ArrayList<StubField>();
+				this.fields = new ArrayList<>();
 			}
 			this.fields.add(new StubField(getIndex(fieldName)));
 		}
 
 		public StubMethod addMethod(String methodName, String desc) {
 			if (this.methods == null) {
-				this.methods = new ArrayList<StubMethod>();
+				this.methods = new ArrayList<>();
 			}
 			StubMethod method = new StubMethod(getIndex(methodName), getIndex(desc));
 			this.methods.add(method);
@@ -1107,12 +1041,11 @@ public class EEGenerator {
 
 		public byte[] getBytes() {
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-			DataOutputStream outputStream = new DataOutputStream(byteArrayOutputStream);
-			try {
+
+			try (DataOutputStream outputStream = new DataOutputStream(byteArrayOutputStream)) {
 				outputStream.writeShort(CURRENT_VERSION);
 				outputStream.writeShort(this.poolIndex);
-				for (Iterator<Map.Entry<String, Integer>> iterator = this.pool.entrySet().iterator(); iterator.hasNext();) {
-					Map.Entry<String, Integer> next = iterator.next();
+				for (Entry<String, Integer> next : this.pool.entrySet()) {
 					outputStream.writeUTF(next.getKey());
 					outputStream.writeShort(next.getValue().intValue());
 				}
@@ -1140,12 +1073,6 @@ public class EEGenerator {
 				outputStream.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
-			} finally {
-				try {
-					outputStream.close();
-				} catch (IOException e) {
-					// ignore
-				}
 			}
 			this.pool = null;
 			this.fields = null;
@@ -1195,11 +1122,6 @@ public class EEGenerator {
 			return (this.flags & IGNORE_CLASS_FILE) != 0;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.ClassAdapter#visit(int, int, java.lang.String,
-		 * java.lang.String, java.lang.String, java.lang.String[])
-		 */
 		@Override
 		public void visit(int version, int access, String className, String signature, String superName, String[] interfaces) {
 			this.name = className;
@@ -1211,12 +1133,6 @@ public class EEGenerator {
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.objectweb.asm.ClassAdapter#visitAttribute(org.objectweb.asm.Attribute
-		 * )
-		 */
 		@Override
 		public void visitAttribute(Attribute attr) {
 			if ("Synthetic".equals(attr.type)) { //$NON-NLS-1$
@@ -1228,11 +1144,6 @@ public class EEGenerator {
 		public void visitEnd() {
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.ClassAdapter#visitField(int, java.lang.String,
-		 * java.lang.String, java.lang.String, java.lang.Object)
-		 */
 		@Override
 		public FieldVisitor visitField(int access, String fieldName, String desc, String signature, Object value) {
 			if (type.getField(fieldName) == null) {
@@ -1242,11 +1153,6 @@ public class EEGenerator {
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.ClassAdapter#visitInnerClass(java.lang.String,
-		 * java.lang.String, java.lang.String, int)
-		 */
 		@Override
 		public void visitInnerClass(String innerClassName, String outerName, String innerName, int access) {
 			if (this.name.equals(innerClassName) && (outerName == null)) {
@@ -1255,12 +1161,6 @@ public class EEGenerator {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.ClassAdapter#visitMethod(int,
-		 * java.lang.String, java.lang.String, java.lang.String,
-		 * java.lang.String[])
-		 */
 		@Override
 		public MethodVisitor visitMethod(int access, String methodName, String desc, String signature, String[] exceptions) {
 			if ("<clinit>".equals(methodName)) { //$NON-NLS-1$
@@ -1358,22 +1258,15 @@ public class EEGenerator {
 		}
 
 		public static Type newType(ProfileInfo info, IClassFileReader reader, String docZipFileName, String docURL, String docRoot) {
-			int startingIndex = 0;
 			IInnerClassesAttribute innerClassesAttribute = reader.getInnerClassesAttribute();
 			if (innerClassesAttribute != null) {
 				// search the right entry
 				IInnerClassesAttributeEntry[] entries = innerClassesAttribute.getInnerClassAttributesEntries();
-				for (int i = 0, max = entries.length; i < max; i++) {
-					IInnerClassesAttributeEntry entry = entries[i];
+				for (IInnerClassesAttributeEntry entry : entries) {
 					char[] innerClassName = entry.getInnerClassName();
 					if (innerClassName != null) {
 						if (CharOperation.equals(reader.getClassName(), innerClassName)) {
 							int accessFlags2 = entry.getAccessFlags();
-							if (entry.getOuterClassName() != null) {
-								if (!isStatic(accessFlags2)) {
-									startingIndex = 1;
-								}
-							}
 							if (isPrivate(accessFlags2)) {
 								return null;
 							}
@@ -1381,7 +1274,7 @@ public class EEGenerator {
 					}
 				}
 			}
-			return new Type(info, startingIndex, reader, docZipFileName, docURL, docRoot);
+			return new Type(reader, docZipFileName);
 		}
 
 		Set<Field> fields;
@@ -1392,7 +1285,7 @@ public class EEGenerator {
 		char[] superclassName;
 		char[][] superinterfacesNames;
 
-		private Type(ProfileInfo info, int startingIndex, IClassFileReader reader, String docZipFileName, String docURL, String docRoot) {
+		private Type(IClassFileReader reader, String docZipFileName) {
 			ZipFile docZip = null;
 			try {
 				if (docZipFileName != null) {
@@ -1414,8 +1307,8 @@ public class EEGenerator {
 					this.superclassName = scname;
 				}
 				char[][] interfaceNames = CharOperation.deepCopy(reader.getInterfaceNames());
-				for (int i = 0, max = interfaceNames.length; i < max; i++) {
-					CharOperation.replace(interfaceNames[i], '/', '.');
+				for (char[] interfaceName : interfaceNames) {
+					CharOperation.replace(interfaceName, '/', '.');
 				}
 				this.superinterfacesNames = interfaceNames;
 				this.modifiers = reader.getAccessFlags();
@@ -1425,7 +1318,7 @@ public class EEGenerator {
 					IFieldInfo fieldInfo = fieldInfos[i];
 					if (isVisibleField(this.modifiers, fieldInfo.getAccessFlags())) {
 						if (fields == null) {
-							this.fields = new HashSet<Field>();
+							this.fields = new HashSet<>();
 						}
 						Field field = new Field(fieldInfo.getName(), fieldInfo.getDescriptor());
 						fields.add(field);
@@ -1436,12 +1329,10 @@ public class EEGenerator {
 				}
 				IMethodInfo[] methodInfos = reader.getMethodInfos();
 				length = methodInfos.length;
-				for (int i = 0, max = methodInfos.length; i < max; i++) {
-					IMethodInfo methodInfo = methodInfos[i];
+				for (IMethodInfo methodInfo : methodInfos) {
 					IClassFileAttribute[] attributes = methodInfo.getAttributes();
 					ISignatureAttribute signatureAttribute = null;
-					for (int j = 0, max2 = attributes.length; j < max2; j++) {
-						IClassFileAttribute currentAttribute = attributes[j];
+					for (IClassFileAttribute currentAttribute : attributes) {
 						if (CharOperation.equals(currentAttribute.getAttributeName(), IAttributeNamesConstants.SIGNATURE)) {
 							signatureAttribute = (ISignatureAttribute) currentAttribute;
 							break;
@@ -1456,7 +1347,7 @@ public class EEGenerator {
 					int accessFlags = methodInfo.getAccessFlags();
 					if (isVisibleMethod(this.modifiers, accessFlags)) {
 						if (methods == null) {
-							this.methods = new HashSet<Method>();
+							this.methods = new HashSet<>();
 						}
 						Method method = new Method(accessFlags, methodInfo.getName(), methodInfo.getDescriptor(), signatureAttribute == null ? null : signature);
 						methods.add(method);
@@ -1481,13 +1372,13 @@ public class EEGenerator {
 
 		public void addField(Field f) {
 			if (this.fields == null) {
-				this.fields = new HashSet<Field>();
+				this.fields = new HashSet<>();
 			}
 			this.fields.add(f);
 		}
 		public void addMethod(Method m) {
 			if (this.methods == null) {
-				this.methods = new HashSet<Method>();
+				this.methods = new HashSet<>();
 			}
 			this.methods.add(m);
 		}
@@ -1515,8 +1406,7 @@ public class EEGenerator {
 				return null;
 			}
 			Field fieldToFind = new Field(fname.toCharArray(), null);
-			for (Iterator<Field> iterator = this.fields.iterator(); iterator.hasNext();) {
-				Field currentField = iterator.next();
+			for (Field currentField : this.fields) {
 				if (fieldToFind.equals(currentField)) {
 					return currentField;
 				}
@@ -1538,8 +1428,7 @@ public class EEGenerator {
 				return null;
 			}
 			Method methodToFind = new Method(0, selector.toCharArray(), signature.toCharArray(), null);
-			for (Iterator<Method> iterator = this.methods.iterator(); iterator.hasNext();) {
-				Method currentMethod = iterator.next();
+			for (Method currentMethod : this.methods) {
 				if (methodToFind.equals(currentMethod)) {
 					return currentMethod;
 				}
@@ -1586,16 +1475,16 @@ public class EEGenerator {
 				Field[] allFields = new Field[this.fields.size()];
 				this.fields.toArray(allFields);
 				Arrays.sort(allFields);
-				for (int i = 0, max = allFields.length; i < max; i++) {
-					allFields[i].persistXML(document, type, OSGiProfileName);
+				for (Field allField : allFields) {
+					allField.persistXML(document, type, OSGiProfileName);
 				}
 			}
 			if (this.methods != null) {
 				Method[] allMethods = new Method[this.methods.size()];
 				this.methods.toArray(allMethods);
 				Arrays.sort(allMethods);
-				for (int i = 0, max = allMethods.length; i < max; i++) {
-					allMethods[i].persistXML(document, type, OSGiProfileName);
+				for (Method allMethod : allMethods) {
+					allMethod.persistXML(document, type, OSGiProfileName);
 				}
 			}
 		}
@@ -1609,8 +1498,7 @@ public class EEGenerator {
 				Field[] allFields = new Field[this.fields.size()];
 				this.fields.toArray(allFields);
 				Arrays.sort(allFields);
-				for (int i = 0, max = allFields.length; i < max; i++) {
-					Field field = allFields[i];
+				for (Field field : allFields) {
 					buffer.append("\t") //$NON-NLS-1$
 					.append(field).append(Util.LINE_SEPARATOR);
 				}
@@ -1619,8 +1507,7 @@ public class EEGenerator {
 				Method[] allMethods = new Method[this.methods.size()];
 				this.methods.toArray(allMethods);
 				Arrays.sort(allMethods);
-				for (int i = 0, max = allMethods.length; i < max; i++) {
-					Method method = allMethods[i];
+				for (Method method : allMethods) {
 					buffer.append("\t").append(method).append(Util.LINE_SEPARATOR); //$NON-NLS-1$
 				}
 			}
@@ -1655,7 +1542,7 @@ public class EEGenerator {
 				"OSGi_Minimum-1.1", //$NON-NLS-1$
 				"OSGi_Minimum-1.2" //$NON-NLS-1$
 		};
-		ACCEPTED_EEs = new TreeSet<String>();
+		ACCEPTED_EEs = new TreeSet<>();
 		for (String ee : ees) {
 			ACCEPTED_EEs.add(ee);
 		}
@@ -1671,7 +1558,7 @@ public class EEGenerator {
 		return String.valueOf(buffer);
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		EEGenerator generator = new EEGenerator();
 		generator.configure(args);
 		if (!generator.isInitialized()) {
@@ -1756,7 +1643,7 @@ public class EEGenerator {
 				case EEs:
 					String listOfEEs = currentArg;
 					StringTokenizer tokenizer = new StringTokenizer(listOfEEs, ","); //$NON-NLS-1$
-					List<String> list = new ArrayList<String>();
+				List<String> list = new ArrayList<>();
 					while (tokenizer.hasMoreTokens()) {
 						String currentEE = tokenizer.nextToken().trim();
 						if (ACCEPTED_EEs.contains(currentEE)) {
@@ -1808,7 +1695,7 @@ public class EEGenerator {
 				}
 			}
 		}
-		List<ProfileInfo> infos = new ArrayList<EEGenerator.ProfileInfo>();
+		List<ProfileInfo> infos = new ArrayList<>();
 		for (String EE : EEToGenerate) {
 			// Retrieve all properties for each EE
 			// JRELIB, OSGI_PROFILE, JRE_DOC, JRE_URL, CACHE, WHITE_LIST
