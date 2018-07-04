@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 Red Hat Inc. and others
+ * Copyright (c) 2016, 2018 Red Hat Inc. and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.genericeditor.target.extension.p2;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -45,7 +46,12 @@ public class P2Fetcher {
 		List<UnitNode> units = new ArrayList<>();
 		IQueryResult<IInstallableUnit> result = null;
 		try {
-			String uri = repositoryLocation;
+			URI uri;
+			try {
+				uri = new URI(repositoryLocation);
+			} catch (URISyntaxException e) {
+				return units;
+			}
 			BundleContext context = FrameworkUtil.getBundle(P2Fetcher.class).getBundleContext();
 			ServiceReference<IProvisioningAgentProvider> sr = context
 					.getServiceReference(IProvisioningAgentProvider.class);
@@ -60,7 +66,7 @@ public class P2Fetcher {
 			}
 			IMetadataRepositoryManager manager = (IMetadataRepositoryManager) agent
 					.getService(IMetadataRepositoryManager.SERVICE_NAME);
-			IMetadataRepository repository = manager.loadRepository(new URI(uri), null);
+			IMetadataRepository repository = manager.loadRepository(uri, null);
 			result = repository.query(QueryUtil.createLatestIUQuery(), null);
 
 			Iterator<IInstallableUnit> iterator = result.iterator();
