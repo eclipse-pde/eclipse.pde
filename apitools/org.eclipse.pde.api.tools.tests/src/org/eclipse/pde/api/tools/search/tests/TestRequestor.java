@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,33 +40,20 @@ public class TestRequestor implements IApiSearchRequestor {
 	private SearchTest test = null;
 	private IApiScope scope = null;
 
-	/**
-	 * Constructor
-	 * @param
-	 */
 	public TestRequestor(SearchTest test) {
 		this.test = test;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptComponent(org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent)
-	 */
 	@Override
 	public boolean acceptComponent(IApiComponent component) {
 		return encloses(component);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptContainer(org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer)
-	 */
 	@Override
 	public boolean acceptContainer(IApiTypeContainer container) {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptMember(org.eclipse.pde.api.tools.internal.provisional.model.IApiMember)
-	 */
 	@Override
 	public boolean acceptMember(IApiMember member) {
 		return encloses(member);
@@ -87,9 +74,6 @@ public class TestRequestor implements IApiSearchRequestor {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptReference(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
-	 */
 	@Override
 	public boolean acceptReference(IReference reference) {
 		try {
@@ -122,17 +106,11 @@ public class TestRequestor implements IApiSearchRequestor {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#getReferenceKinds()
-	 */
 	@Override
 	public int getReferenceKinds() {
 		return IReference.MASK_REF_ALL & ~IReference.REF_CONSTANTPOOL;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#getScope()
-	 */
 	@Override
 	public IApiScope getScope() {
 		if(this.scopebaseline == null) {
@@ -187,24 +165,16 @@ public class TestRequestor implements IApiSearchRequestor {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#includesAPI()
-	 */
 	@Override
 	public boolean includesAPI() {
 		return (this.searchmask & INCLUDE_API) > 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#includesInternal()
-	 */
 	@Override
 	public boolean includesInternal() {
 		return (this.searchmask & INCLUDE_INTERNAL) > 0;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#includesIllegalUse()
-	 */
+
 	@Override
 	public boolean includesIllegalUse() {
 		return (this.searchmask & INCLUDE_ILLEGAL_USE) > 0;

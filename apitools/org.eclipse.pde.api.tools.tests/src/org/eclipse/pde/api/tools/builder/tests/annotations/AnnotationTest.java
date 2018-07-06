@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 IBM Corporation and others.
+ * Copyright (c) 2013, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -27,6 +24,9 @@ import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Root test for annotation tests
@@ -140,23 +140,11 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 		return suite;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance
-	 * ()
-	 */
 	@Override
 	protected String getTestCompliance() {
 		return JavaCore.VERSION_1_5;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions
-	 * ()
-	 */
 	@Override
 	protected void setBuilderOptions() {
 		// only care about unsupported tags

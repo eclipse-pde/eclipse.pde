@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.compatibility;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+
+import junit.framework.Test;
 
 /**
  * Tests that the builder correctly reports compatibility problems
@@ -36,17 +36,10 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 */
 	protected static String PACKAGE_PREFIX = "a.classes.constructors."; //$NON-NLS-1$
 
-	/**
-	 * Constructor
-	 * @param name
-	 */
 	public ClassCompatibilityConstructorTests(String name) {
 		super(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("constructors"); //$NON-NLS-1$
@@ -59,9 +52,6 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 		return buildTestSuite(ClassCompatibilityConstructorTests.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
-	 */
 	@Override
 	protected int getDefaultProblemId() {
 		return ApiProblemFactory.createProblemId(
@@ -71,9 +61,6 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 				IDelta.CONSTRUCTOR);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
-	 */
 	@Override
 	protected String getTestingProjectName() {
 		return "classcompat"; //$NON-NLS-1$

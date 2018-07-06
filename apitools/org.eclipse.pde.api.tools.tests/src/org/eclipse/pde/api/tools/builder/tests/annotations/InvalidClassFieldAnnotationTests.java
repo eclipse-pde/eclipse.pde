@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.annotations;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
-/**
- *
- */
+import junit.framework.Test;
+
 public class InvalidClassFieldAnnotationTests extends FieldAnnotationTest {
 
 	/**
@@ -36,12 +33,6 @@ public class InvalidClassFieldAnnotationTests extends FieldAnnotationTest {
 		return buildTestSuite(InvalidClassFieldAnnotationTests.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.annotations.FieldAnnotationTest
-	 * #getTestSourcePath()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("class"); //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,17 +36,10 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	 */
 	protected static String PACKAGE_PREFIX = "a.constructors."; //$NON-NLS-1$
 
-	/**
-	 * Constructor
-	 * @param name
-	 */
 	public ConstructorCompatibilityTests(String name) {
 		super(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("constructors"); //$NON-NLS-1$
@@ -59,9 +52,6 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		return buildTestSuite(ConstructorCompatibilityTests.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
-	 */
 	@Override
 	protected int getDefaultProblemId() {
 		return 0;
@@ -82,9 +72,6 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 				flags);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
-	 */
 	@Override
 	protected String getTestingProjectName() {
 		return "constcompat"; //$NON-NLS-1$

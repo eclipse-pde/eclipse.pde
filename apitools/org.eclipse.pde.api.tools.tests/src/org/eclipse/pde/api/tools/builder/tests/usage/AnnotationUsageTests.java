@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) Aug 22, 2013 IBM Corporation and others.
+ * Copyright (c) Aug 22, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+
+import junit.framework.Test;
 
 /**
  * Tests using restricted annotations
@@ -27,41 +27,20 @@ public class AnnotationUsageTests extends UsageTest {
 
 	static final String RESTRICTED_ANNOTATION_NAME = "NoRefAnnotation"; //$NON-NLS-1$
 
-	/**
-	 * @param name
-	 */
 	public AnnotationUsageTests(String name) {
 		super(name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId
-	 * ()
-	 */
 	@Override
 	protected int getDefaultProblemId() {
 		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_REFERENCE, IApiProblem.ANNOTATION);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#getTestSourcePath
-	 * ()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("annotation"); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance
-	 * ()
-	 */
 	@Override
 	protected String getTestCompliance() {
 		return JavaCore.VERSION_1_5;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+
+import junit.framework.Test;
 
 /**
  * Tests a variety of restricted constructor usages, where the callee has noreference restrictions
@@ -28,17 +28,10 @@ public class ConstructorUsageTests extends UsageTest {
 
 	private static int pid = -1;
 
-	/**
-	 * Constructor
-	 * @param name
-	 */
 	public ConstructorUsageTests(String name) {
 		super(name);
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
-	 */
 	@Override
 	protected int getDefaultProblemId() {
 		if(pid == -1) {
@@ -55,9 +48,6 @@ public class ConstructorUsageTests extends UsageTest {
 		return buildTestSuite(ConstructorUsageTests.class);
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#getTestSourcePath()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("method"); //$NON-NLS-1$

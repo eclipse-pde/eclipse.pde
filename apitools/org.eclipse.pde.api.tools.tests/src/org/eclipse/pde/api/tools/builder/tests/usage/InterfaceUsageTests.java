@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+
+import junit.framework.Test;
 
 /**
  * Tests a variety of interface uses, where the callee has API restrictions
@@ -26,18 +26,10 @@ public class InterfaceUsageTests extends UsageTest {
 
 	protected static final String INTERFACE_NAME = "InterfaceUsageInterface"; //$NON-NLS-1$
 
-	/**
-	 * Constructor
-	 *
-	 * @param name
-	 */
 	public InterfaceUsageTests(String name) {
 		super(name);
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
-	 */
 	@Override
 	protected int getDefaultProblemId() {
 		return -1;
@@ -47,9 +39,6 @@ public class InterfaceUsageTests extends UsageTest {
 		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, kind, flags);
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#getTestSourcePath()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("interface"); //$NON-NLS-1$

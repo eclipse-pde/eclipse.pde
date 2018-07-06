@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
+
+import junit.framework.Test;
 
 /**
  * These tests are incremental builder tests that add / remove / change
@@ -37,10 +37,6 @@ public class DependentUsageTests extends UsageTest {
 	static final IPath XYZ_PATH = new Path("/usagetests/src/x/y/z/"); //$NON-NLS-1$
 	static final IPath MPPATH = new Path("/refproject/src/pack/multi/part"); //$NON-NLS-1$
 
-	/**
-	 * Constructor
-	 * @param name
-	 */
 	public DependentUsageTests(String name) {
 		super(name);
 	}
@@ -49,9 +45,6 @@ public class DependentUsageTests extends UsageTest {
 		return buildTestSuite(DependentUsageTests.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
-	 */
 	@Override
 	protected int getDefaultProblemId() {
 		return 0;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,12 @@ package org.eclipse.pde.api.tools.model.tests;
 import java.io.File;
 import java.util.List;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.test.OrderedTestSuite;
+
+import junit.framework.Test;
 
 /**
  * This class tests the class file scanner and the class file visitor
@@ -60,37 +60,21 @@ public class ClassFileScannerTests extends ScannerTest {
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.tests.ScannerTest#getWorkspaceRoot()
-	 */
 	@Override
 	protected IPath getWorkspaceRoot() {
 		return WORKSPACE_ROOT;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.tests.ScannerTest#getPackageName()
-	 */
 	@Override
 	protected String getPackageName() {
 		return "classes"; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.tests.ScannerTest#getSourcePath()
-	 */
 	@Override
 	protected IPath getSourcePath() {
 		return ROOT_PATH;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.tests.ScannerTest#doCompile()
-	 */
 	@Override
 	protected boolean doCompile() {
 		boolean result = true;

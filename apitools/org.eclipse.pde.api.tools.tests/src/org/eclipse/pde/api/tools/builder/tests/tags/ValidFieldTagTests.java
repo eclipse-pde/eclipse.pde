@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,11 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests valid tags on fields in classes, interfaces, enum and annotations
@@ -26,11 +26,6 @@ import org.eclipse.jdt.core.tests.junit.extension.TestCase;
  */
 public class ValidFieldTagTests extends InvalidFieldTagTests {
 
-	/**
-	 * Constructor
-	 *
-	 * @param name
-	 */
 	public ValidFieldTagTests(String name) {
 		super(name);
 	}
@@ -96,12 +91,6 @@ public class ValidFieldTagTests extends InvalidFieldTagTests {
 		return suite;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath
-	 * ()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("valid"); //$NON-NLS-1$

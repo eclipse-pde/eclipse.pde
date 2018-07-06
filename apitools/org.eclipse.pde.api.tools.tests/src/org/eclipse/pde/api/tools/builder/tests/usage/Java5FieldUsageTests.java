@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
-import junit.framework.Test;
-
 import org.eclipse.jdt.core.JavaCore;
+
+import junit.framework.Test;
 
 /**
  * Tests field usage to Java 5 fields elements
@@ -23,10 +23,6 @@ public class Java5FieldUsageTests extends FieldUsageTests {
 
 	protected static final String FIELD_ENUM_NAME = "FieldUsageEnum"; //$NON-NLS-1$
 
-	/**
-	 * Constructor
-	 * @param name
-	 */
 	public Java5FieldUsageTests(String name) {
 		super(name);
 	}
@@ -38,9 +34,6 @@ public class Java5FieldUsageTests extends FieldUsageTests {
 		return buildTestSuite(Java5FieldUsageTests.class);
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
-	 */
 	@Override
 	protected String getTestCompliance() {
 		return JavaCore.VERSION_1_5;

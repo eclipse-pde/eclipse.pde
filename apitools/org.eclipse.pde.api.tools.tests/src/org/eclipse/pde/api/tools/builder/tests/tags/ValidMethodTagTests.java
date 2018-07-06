@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,11 +14,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests valid javadoc tags on methods in classes, interfaces, enums and
@@ -28,11 +28,6 @@ import org.eclipse.jdt.core.tests.junit.extension.TestCase;
  */
 public class ValidMethodTagTests extends InvalidMethodTagTests {
 
-	/**
-	 * Constructor
-	 *
-	 * @param name
-	 */
 	public ValidMethodTagTests(String name) {
 		super(name);
 	}
@@ -46,12 +41,6 @@ public class ValidMethodTagTests extends InvalidMethodTagTests {
 		return suite;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath
-	 * ()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("valid"); //$NON-NLS-1$

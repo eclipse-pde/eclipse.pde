@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.pde.api.tools.builder.tests.compatibility;
 
 import java.io.File;
-
-import junit.framework.Test;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -30,6 +28,8 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
+
+import junit.framework.Test;
 
 /**
  * Tests for splitting plug-ins across releases
@@ -59,12 +59,6 @@ public class BundleVersionTests extends ApiBuilderTest {
 		super(name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions
-	 * ()
-	 */
 	@Override
 	protected void setBuilderOptions() {
 		enableUnsupportedTagOptions(false);
@@ -85,7 +79,8 @@ public class BundleVersionTests extends ApiBuilderTest {
 	}
 
 	/*
-	 * (non-Javadoc) Ensure a baseline has been created to compare against.
+	 * Ensure a baseline has been created to compare against.
+	 * 
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#setUp()
 	 */
 	@Override
@@ -97,34 +92,16 @@ public class BundleVersionTests extends ApiBuilderTest {
 		super.setUp();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId
-	 * ()
-	 */
 	@Override
 	protected int getDefaultProblemId() {
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestSourcePath
-	 * ()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return new Path(""); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestingProjectName
-	 * ()
-	 */
 	@Override
 	protected String getTestingProjectName() {
 		return "bundleversions"; //$NON-NLS-1$

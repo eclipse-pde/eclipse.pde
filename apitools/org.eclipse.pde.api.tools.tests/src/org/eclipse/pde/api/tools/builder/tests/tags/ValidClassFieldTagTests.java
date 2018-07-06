@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.tags;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
+
+import junit.framework.Test;
 
 /**
  * Tests valid use of the @noreference tag on fields in classes
@@ -21,10 +21,6 @@ import org.eclipse.core.runtime.IPath;
  */
 public class ValidClassFieldTagTests extends ValidFieldTagTests {
 
-	/**
-	 * Constructor
-	 * @param name
-	 */
 	public ValidClassFieldTagTests(String name) {
 		super(name);
 	}
@@ -36,9 +32,6 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 		return buildTestSuite(ValidClassFieldTagTests.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.tags.ValidJavadocTagFieldTests#getTestSourcePath()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("class"); //$NON-NLS-1$

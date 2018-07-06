@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,9 +32,6 @@ public class TestCompositeSearchReporter implements IApiSearchReporter {
 	ArrayList<IApiSearchReporter> reporters = new ArrayList<>(2);
 	int testreporteridx = 0;
 
-	/**
-	 * Constructor
-	 */
 	public TestCompositeSearchReporter(SearchTest test, IApiSearchReporter[] reporters) {
 		this.test = test;
 		if(reporters != null) {
@@ -52,9 +49,6 @@ public class TestCompositeSearchReporter implements IApiSearchReporter {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportNotSearched(org.eclipse.pde.api.tools.internal.provisional.model.IApiElement[])
-	 */
 	@Override
 	public void reportNotSearched(IApiElement[] elements) {
 		if(this.testreporteridx > this.reporters.size()) {
@@ -70,9 +64,6 @@ public class TestCompositeSearchReporter implements IApiSearchReporter {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportResults(org.eclipse.pde.api.tools.internal.provisional.model.IApiElement, org.eclipse.pde.api.tools.internal.provisional.builder.IReference[])
-	 */
 	@Override
 	public void reportResults(IApiElement element, IReference[] references) {
 		if(this.testreporteridx > this.reporters.size()) {
@@ -88,16 +79,10 @@ public class TestCompositeSearchReporter implements IApiSearchReporter {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportMetadata(org.eclipse.pde.api.tools.internal.provisional.search.IMetadata)
-	 */
 	@Override
 	public void reportMetadata(IMetadata data) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportCounts()
-	 */
 	@Override
 	public void reportCounts() {
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,6 @@ package org.eclipse.pde.api.tools.builder.tests.performance;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IPath;
@@ -27,6 +24,9 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.test.performance.Dimension;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test the performance of an incremental build of the Debug Core plug-in when a
@@ -40,11 +40,6 @@ public class IncrementalBuildTests extends PerformanceTest {
 	protected static final String CHANGED = "changed"; //$NON-NLS-1$
 	protected static final String REVERT = "revert"; //$NON-NLS-1$
 
-	/**
-	 * Constructor
-	 *
-	 * @param name
-	 */
 	public IncrementalBuildTests(String name) {
 		super(name);
 	}
@@ -101,21 +96,11 @@ public class IncrementalBuildTests extends PerformanceTest {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.performance.PerformanceTest#
-	 * getBaselineLocation()
-	 */
 	@Override
 	protected String getBaselineLocation() {
 		return getTestSourcePath().append("bin-baseline.zip").toOSString(); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.performance.PerformanceTest#
-	 * getWorkspaceLocation()
-	 */
 	@Override
 	protected String getWorkspaceLocation() {
 		return getTestSourcePath().append("source-ws.zip").toOSString(); //$NON-NLS-1$

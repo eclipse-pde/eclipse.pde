@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.tags;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
+
+import junit.framework.Test;
 
 /**
  * Tests invalid Javadoc tags on interface methods
@@ -22,17 +22,10 @@ import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
  */
 public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 
-	/**
-	 * Constructor
-	 * @param name
-	 */
 	public InvalidInterfaceMethodTagTests(String name) {
 		super(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("interface"); //$NON-NLS-1$

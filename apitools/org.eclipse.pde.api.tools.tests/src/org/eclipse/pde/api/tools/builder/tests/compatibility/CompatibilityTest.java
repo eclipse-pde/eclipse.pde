@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,6 @@ package org.eclipse.pde.api.tools.builder.tests.compatibility;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.jar.JarFile;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -31,6 +28,9 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 /**
  * Base class for binary compatibility tests
  *
@@ -38,32 +38,15 @@ import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
  */
 public abstract class CompatibilityTest extends ApiBuilderTest {
 
-	/**
-	 * Constructor
-	 *
-	 * @param name
-	 */
 	public CompatibilityTest(String name) {
 		super(name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath
-	 * ()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return new Path("compat"); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions
-	 * ()
-	 */
 	@Override
 	protected void setBuilderOptions() {
 		enableUnsupportedTagOptions(false);
@@ -145,7 +128,8 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	}
 
 	/*
-	 * (non-Javadoc) Ensure a baseline has been created to compare against.
+	 * Ensure a baseline has been created to compare against.
+	 * 
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#setUp()
 	 */
 	@Override

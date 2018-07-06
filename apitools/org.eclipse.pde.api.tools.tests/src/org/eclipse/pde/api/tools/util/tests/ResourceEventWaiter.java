@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,9 +43,6 @@ public class ResourceEventWaiter extends AbstractApiEventWaiter implements IReso
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-	 */
 	@Override
 	public synchronized void resourceChanged(IResourceChangeEvent event) {
 		if(accept(event)) {
@@ -55,9 +52,6 @@ public class ResourceEventWaiter extends AbstractApiEventWaiter implements IReso
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.util.tests.AbstractApiEventWaiter#unregister()
-	 */
 	@Override
 	protected void unregister() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);

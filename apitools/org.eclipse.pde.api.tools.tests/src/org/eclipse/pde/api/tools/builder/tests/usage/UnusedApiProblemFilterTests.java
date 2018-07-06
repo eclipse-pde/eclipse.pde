@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,11 +42,6 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	private IPath fRootPath = super.getTestSourcePath().append("filters"); //$NON-NLS-1$
 	private IPath fFiltersPath = new Path("/usagetests/.settings/.api_filters"); //$NON-NLS-1$
 
-	/**
-	 * Constructor
-	 *
-	 * @param name
-	 */
 	public UnusedApiProblemFilterTests(String name) {
 		super(name);
 	}
@@ -67,18 +62,12 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		assertStubBaseline(BASELINE);
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		removeBaseline(BASELINE);
@@ -99,24 +88,12 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#setBuilderOptions
-	 * ()
-	 */
 	@Override
 	protected void setBuilderOptions() {
 		super.setBuilderOptions();
 		enableLeakOptions(true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#getTestSourcePath
-	 * ()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return fRootPath;
@@ -145,12 +122,6 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		return buildTestSuite(UnusedApiProblemFilterTests.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId
-	 * ()
-	 */
 	@Override
 	protected int getDefaultProblemId() {
 		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.METHOD, IApiProblem.UNUSED_PROBLEM_FILTERS, IApiProblem.NO_FLAGS);

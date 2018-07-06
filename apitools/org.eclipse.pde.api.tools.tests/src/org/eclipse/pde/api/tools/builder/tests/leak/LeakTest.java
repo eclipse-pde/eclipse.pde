@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,19 +37,10 @@ public abstract class LeakTest extends ApiBuilderTest {
 	protected final String TESTING_INTERNAL_CLASS_NAME = "internal"; //$NON-NLS-1$
 	protected final String TESTING_INTERNAL_INTERFACE_NAME = "Iinternal"; //$NON-NLS-1$
 
-	/**
-	 * Constructor
-	 */
 	public LeakTest(String name) {
 		super(name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions
-	 * ()
-	 */
 	@Override
 	protected void setBuilderOptions() {
 		enableUnsupportedTagOptions(false);
@@ -62,23 +53,11 @@ public abstract class LeakTest extends ApiBuilderTest {
 		enableVersionNumberOptions(false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath
-	 * ()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return new Path("leak"); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName
-	 * ()
-	 */
 	@Override
 	protected String getTestingProjectName() {
 		return "leakproject"; //$NON-NLS-1$
@@ -181,10 +160,6 @@ public abstract class LeakTest extends ApiBuilderTest {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		ApiTestingEnvironment env = getEnv();
@@ -200,10 +175,6 @@ public abstract class LeakTest extends ApiBuilderTest {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();

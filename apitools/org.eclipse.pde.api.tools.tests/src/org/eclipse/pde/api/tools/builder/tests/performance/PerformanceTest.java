@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,32 +46,15 @@ import junit.framework.TestSuite;
  */
 public abstract class PerformanceTest extends ApiBuilderTest {
 
-	/**
-	 * Constructor
-	 *
-	 * @param name
-	 */
 	public PerformanceTest(String name) {
 		super(name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath
-	 * ()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("perf"); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions
-	 * ()
-	 */
 	@Override
 	protected void setBuilderOptions() {
 		enableUnsupportedTagOptions(true);
@@ -136,30 +119,19 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId
-	 * ()
-	 */
 	@Override
 	protected int getDefaultProblemId() {
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName
-	 * ()
-	 */
 	@Override
 	protected String getTestingProjectName() {
 		return "dummy"; //$NON-NLS-1$
 	}
 
 	/*
-	 * (non-Javadoc) Ensure a baseline has been created to compare against.
+	 * Ensure a baseline has been created to compare against.
+	 * 
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#setUp()
 	 */
 	@Override

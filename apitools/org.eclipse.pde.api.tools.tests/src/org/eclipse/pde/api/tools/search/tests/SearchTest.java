@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.HashSet;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -27,6 +25,8 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
 import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
+
+import junit.framework.TestCase;
 
 /**
  * General Search test, which contains utility methods, etc for search tests
@@ -163,10 +163,6 @@ public abstract class SearchTest extends TestCase {
 		fail(message);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -174,10 +170,6 @@ public abstract class SearchTest extends TestCase {
 		TEST_REPORTER = new TestReporter(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		if (this.baseline != null) {

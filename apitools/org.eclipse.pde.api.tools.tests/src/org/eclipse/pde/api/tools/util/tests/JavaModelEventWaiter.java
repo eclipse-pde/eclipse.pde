@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,9 +45,6 @@ public class JavaModelEventWaiter extends AbstractApiEventWaiter implements IEle
 		JavaCore.addElementChangedListener(this, ElementChangedEvent.POST_CHANGE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.IElementChangedListener#elementChanged(org.eclipse.jdt.core.ElementChangedEvent)
-	 */
 	@Override
 	public synchronized void elementChanged(ElementChangedEvent event) {
 		if(accept(event)) {
@@ -57,9 +54,6 @@ public class JavaModelEventWaiter extends AbstractApiEventWaiter implements IEle
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.util.tests.AbstractApiEventWaiter#unregister()
-	 */
 	@Override
 	public void unregister() {
 		JavaCore.removeElementChangedListener(this);

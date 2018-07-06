@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -26,6 +23,9 @@ import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the builder to make sure it correctly finds and reports unsupported tag
@@ -38,9 +38,6 @@ public abstract class TagTest extends ApiBuilderTest {
 	protected static IPath WORKSPACE_PATH = new Path("src/a/b/c"); //$NON-NLS-1$
 	protected static IPath WORKSPACE_PATH_DEFAULT = new Path("src"); //$NON-NLS-1$
 
-	/**
-	 * Constructor
-	 */
 	public TagTest(String name) {
 		super(name);
 	}
@@ -228,10 +225,6 @@ public abstract class TagTest extends ApiBuilderTest {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		ApiTestingEnvironment env = getEnv();
@@ -247,10 +240,6 @@ public abstract class TagTest extends ApiBuilderTest {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.annotations;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
+
+import junit.framework.Test;
 
 /**
  * Tests valid use of annotations on enums
@@ -37,11 +37,6 @@ public class ValidEnumAnnotationsTests extends InvalidEnumAnnotationsTests {
 		return buildTestSuite(ValidEnumAnnotationsTests.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.annotations.
-	 * InvalidClassAnnotationsTests#getTestSourcePath()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("valid"); //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,9 +104,6 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			this.message = problem.getMessage();
 		}
 
-		/**
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof LineMapping) {
@@ -116,17 +113,11 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			return super.equals(obj);
 		}
 
-		/**
-		 * @see java.lang.Object#hashCode()
-		 */
 		@Override
 		public int hashCode() {
 			return this.linenumber | this.problemid | (this.message == null ? 0 : this.message.hashCode());
 		}
 
-		/**
-		 * @see java.lang.Object#toString()
-		 */
 		@Override
 		public String toString() {
 			StringBuilder buffer = new StringBuilder();

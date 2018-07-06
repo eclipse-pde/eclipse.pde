@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,21 +30,10 @@ public class ClassExtendsLeak extends LeakTest {
 	protected final String TESTING_INTERNAL_PROTECTED_FIELD_CLASS_NAME = "internalprotectedfield"; //$NON-NLS-1$
 	private int pid = -1;
 
-	/**
-	 * Constructor
-	 *
-	 * @param name
-	 */
 	public ClassExtendsLeak(String name) {
 		super(name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId
-	 * ()
-	 */
 	@Override
 	protected int getDefaultProblemId() {
 		if (pid == -1) {
@@ -53,11 +42,6 @@ public class ClassExtendsLeak extends LeakTest {
 		return pid;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.tags.InvalidFieldTagTests#
-	 * getTestSourcePath()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("class"); //$NON-NLS-1$
@@ -70,12 +54,6 @@ public class ClassExtendsLeak extends LeakTest {
 		return buildTestSuite(ClassExtendsLeak.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance
-	 * ()
-	 */
 	@Override
 	protected String getTestCompliance() {
 		return JavaCore.VERSION_1_5;

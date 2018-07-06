@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,13 +78,6 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 		String[] expectedtags = null;
 		boolean processed = false;
 
-		/**
-		 * Constructor
-		 *
-		 * @param type
-		 * @param membername
-		 * @param signature
-		 */
 		public ChangeVisitor(String type, String innertypename, String membername, String signature, String[] expectedtags) {
 			this.type = type;
 			this.membername = membername;
@@ -93,12 +86,6 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 			this.innertypename = innertypename;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .FieldDeclaration)
-		 */
 		@Override
 		public boolean visit(FieldDeclaration node) {
 			if (signature != null) {
@@ -119,12 +106,6 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .MethodDeclaration)
-		 */
 		@Override
 		public boolean visit(MethodDeclaration node) {
 			if (node.getName().getFullyQualifiedName().equals(membername)) {
@@ -139,12 +120,6 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .TypeDeclaration)
-		 */
 		@Override
 		public boolean visit(TypeDeclaration node) {
 			if (membername == null && signature == null) {
@@ -198,10 +173,6 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	private static IPath ROOT_PATH = TestSuiteHelper.getPluginDirectoryPath().append("test-source").append("javadoc"); //$NON-NLS-1$ //$NON-NLS-2$
 	private static File componentxml = new File(ROOT_PATH.append("component.xml").toOSString()); //$NON-NLS-1$
 
-	/*
-	 * (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -224,10 +195,6 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 		performRefactoring(refactoring);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();

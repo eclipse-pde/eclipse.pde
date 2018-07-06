@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,19 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.tags;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
+
+import junit.framework.Test;
 
 /**
  * Tests that the builder accepts valid tags on enums
  */
 public class ValidEnumTagTests extends InvalidEnumTagTests {
 
-	/**
-	 * Constructor
-	 * @param name
-	 */
 	public ValidEnumTagTests(String name) {
 		super(name);
 	}
@@ -34,9 +30,6 @@ public class ValidEnumTagTests extends InvalidEnumTagTests {
 		return buildTestSuite(ValidEnumTagTests.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().append("valid"); //$NON-NLS-1$

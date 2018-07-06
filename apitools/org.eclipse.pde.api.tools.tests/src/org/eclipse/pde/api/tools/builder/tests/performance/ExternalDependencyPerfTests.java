@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,22 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.performance;
 
-import junit.framework.Test;
-
 import org.eclipse.pde.api.tools.apiusescan.tests.ExternalDependencyTestUtils;
+
+import junit.framework.Test;
 
 public class ExternalDependencyPerfTests extends PerformanceTest {
 
-	/**
-	 * @param name
-	 */
 	public ExternalDependencyPerfTests(String name) {
 		super(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.performance.PerformanceTest#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		enableExternalDependencyCheckOptions(true);
@@ -37,9 +31,6 @@ public class ExternalDependencyPerfTests extends PerformanceTest {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.performance.PerformanceTest#getWorkspaceLocation()
-	 */
 	@Override
 	protected String getWorkspaceLocation() {
 		return getTestSourcePath().append("source-ws.zip").toOSString(); //$NON-NLS-1$

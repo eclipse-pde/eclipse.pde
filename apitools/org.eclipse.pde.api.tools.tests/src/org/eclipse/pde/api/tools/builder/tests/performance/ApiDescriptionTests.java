@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.performance;
 
-import junit.framework.Test;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
@@ -21,6 +19,8 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.test.performance.Dimension;
 
+import junit.framework.Test;
+
 /**
  * Performance tests for API descriptions
  *
@@ -28,20 +28,10 @@ import org.eclipse.test.performance.Dimension;
  */
 public class ApiDescriptionTests extends PerformanceTest {
 
-	/**
-	 * Constructor
-	 *
-	 * @param name
-	 */
 	public ApiDescriptionTests(String name) {
 		super(name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.performance.PerformanceTest#
-	 * getWorkspaceLocation()
-	 */
 	@Override
 	protected String getWorkspaceLocation() {
 		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("perf").append("jdtui-source.zip").toOSString(); //$NON-NLS-1$ //$NON-NLS-2$

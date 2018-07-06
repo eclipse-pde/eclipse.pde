@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.tests;
 
+import org.eclipse.pde.api.tools.builder.tests.performance.PerformanceTest;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
-import org.eclipse.pde.api.tools.builder.tests.performance.PerformanceTest;
 
 
 /**
@@ -30,9 +30,7 @@ public class ApiToolsPerformanceTestSuite extends TestSuite {
 		return new ApiToolsPerformanceTestSuite();
 	}
 
-	/**
-	 * Constructor
-	 */
+
 	public ApiToolsPerformanceTestSuite() {
 		addTest(PerformanceTest.suite());
 	}
