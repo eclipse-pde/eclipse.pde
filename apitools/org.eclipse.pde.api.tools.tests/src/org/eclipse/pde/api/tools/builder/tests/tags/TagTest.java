@@ -107,14 +107,14 @@ public abstract class TagTest extends ApiBuilderTest {
 			Class<?> clazz = classes[i];
 			Method suiteMethod;
 			try {
-				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]); //$NON-NLS-1$
+				suiteMethod = clazz.getDeclaredMethod("suite"); //$NON-NLS-1$
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				continue;
 			}
 			Object test;
 			try {
-				test = suiteMethod.invoke(null, new Object[0]);
+				test = suiteMethod.invoke(null);
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 				continue;
@@ -135,12 +135,6 @@ public abstract class TagTest extends ApiBuilderTest {
 		return suite;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions
-	 * ()
-	 */
 	@Override
 	protected void setBuilderOptions() {
 		// only care about unsupported tags

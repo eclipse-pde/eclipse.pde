@@ -1123,14 +1123,14 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			Class<?> clazz = classes[i];
 			Method suiteMethod;
 			try {
-				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]); //$NON-NLS-1$
+				suiteMethod = clazz.getDeclaredMethod("suite"); //$NON-NLS-1$
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				continue;
 			}
 			Object test;
 			try {
-				test = suiteMethod.invoke(clazz, new Object[0]);
+				test = suiteMethod.invoke(clazz);
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 				continue;

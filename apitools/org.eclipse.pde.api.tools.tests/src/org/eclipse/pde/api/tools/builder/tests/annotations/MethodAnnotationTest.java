@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) Apr 2, 2014 IBM Corporation and others.
+ * Copyright (c) 2014, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,15 +14,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Abstract class for method annotation tests
@@ -31,9 +31,6 @@ import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
  */
 public abstract class MethodAnnotationTest extends AnnotationTest {
 
-	/**
-	 * @param name
-	 */
 	public MethodAnnotationTest(String name) {
 		super(name);
 	}
@@ -94,14 +91,14 @@ public abstract class MethodAnnotationTest extends AnnotationTest {
 			Class<?> clazz = classes[i];
 			Method suiteMethod;
 			try {
-				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]); //$NON-NLS-1$
+				suiteMethod = clazz.getDeclaredMethod("suite"); //$NON-NLS-1$
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				continue;
 			}
 			Object test;
 			try {
-				test = suiteMethod.invoke(null, new Object[0]);
+				test = suiteMethod.invoke(null);
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 				continue;
