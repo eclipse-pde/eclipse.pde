@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 			((IRegistryEventListener)listener).removed(ext);
 		}
 
-		public void createServiceEvent(int type, ServiceReference ref) {
+		public void createServiceEvent(int type, ServiceReference<?> ref) {
 			assertTrue(listener instanceof ServiceListener);
 			((ServiceListener)listener).serviceChanged(new ServiceEvent(type, ref));
 		}
@@ -66,7 +66,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 	protected MockFramework mockFramework = new MockFramework();
 
 	protected org.osgi.framework.Bundle testBundle;
-	protected ServiceReference testServiceReference;
+	protected ServiceReference<?> testServiceReference;
 
 	protected IExtensionPoint testExtPoint;
 	protected org.osgi.framework.Bundle testExtPointBundle;
@@ -84,7 +84,8 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 
 	public AbstractRegistryModelTest() {
 		testBundle = PDETestsPlugin.getBundleContext().getBundle();
-		org.osgi.framework.ServiceRegistration registration = PDETestsPlugin.getBundleContext().registerService(getClass().getName(), this, null);
+		org.osgi.framework.ServiceRegistration<?> registration = PDETestsPlugin.getBundleContext()
+				.registerService(getClass().getName(), this, null);
 		testServiceReference = registration.getReference();
 
 		testExtPoint = Platform.getExtensionRegistry().getExtensionPoint(TEST_EXT_POINT);

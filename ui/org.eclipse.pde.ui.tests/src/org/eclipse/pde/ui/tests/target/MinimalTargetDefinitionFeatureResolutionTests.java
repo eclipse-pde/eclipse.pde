@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 IBM Corporation and others.
+ * Copyright (c) 2016, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class MinimalTargetDefinitionFeatureResolutionTests extends AbstractTarge
 		assertNull(directoryContainer.getFeatures());
 
 		IFeatureModel[] expectedFeatures = PDECore.getDefault().getFeatureModelManager().getModels();
-		Set expectedIDs = new HashSet();
+		Set<String> expectedIDs = new HashSet<>();
 		for (IFeatureModel expectedFeature : expectedFeatures) {
 			expectedIDs.add(expectedFeature.getFeature().getId());
 		}
@@ -67,7 +67,7 @@ public class MinimalTargetDefinitionFeatureResolutionTests extends AbstractTarge
 		assertNull(profileContainer.getFeatures());
 
 		IFeatureModel[] expectedFeatures = PDECore.getDefault().getFeatureModelManager().getModels();
-		Set expectedIDs = new HashSet();
+		Set<String> expectedIDs = new HashSet<>();
 		for (IFeatureModel expectedFeature : expectedFeatures) {
 			expectedIDs.add(expectedFeature.getFeature().getId());
 		}
@@ -95,7 +95,7 @@ public class MinimalTargetDefinitionFeatureResolutionTests extends AbstractTarge
 		definition.setTargetLocations(new ITargetLocation[] { container });
 		definition.resolve(null);
 
-		List expected = new ArrayList();
+		List<String> expected = new ArrayList<>();
 		expected.add("org.eclipse.jdt");
 		expected.add("org.eclipse.jdt.launching");
 		expected.add("org.eclipse.jdt.launching.source");
@@ -133,9 +133,7 @@ public class MinimalTargetDefinitionFeatureResolutionTests extends AbstractTarge
 				}
 			}
 		}
-		Iterator iterator = expected.iterator();
-		while (iterator.hasNext()) {
-			String name = (String) iterator.next();
+		for (String name : expected) {
 			System.err.println("Missing: " + name);
 		}
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
@@ -151,7 +149,7 @@ public class MinimalTargetDefinitionFeatureResolutionTests extends AbstractTarge
 		definition.setTargetLocations(new ITargetLocation[] { container });
 		definition.resolve(null);
 
-		List expected = new ArrayList();
+		List<String> expected = new ArrayList<>();
 		expected.add("org.eclipse.jdt");
 		expected.add("org.eclipse.jdt.launching");
 		// 2 versions of JUnit
@@ -182,9 +180,7 @@ public class MinimalTargetDefinitionFeatureResolutionTests extends AbstractTarge
 				}
 			}
 		}
-		Iterator iterator = expected.iterator();
-		while (iterator.hasNext()) {
-			String name = (String) iterator.next();
+		for (String name : expected) {
 			System.err.println("Missing: " + name);
 		}
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
@@ -199,7 +195,7 @@ public class MinimalTargetDefinitionFeatureResolutionTests extends AbstractTarge
 		definition.setTargetLocations(new ITargetLocation[] { container });
 		definition.resolve(null);
 
-		List expected = new ArrayList();
+		List<String> expected = new ArrayList<>();
 		expected.add("org.eclipse.jdt");
 		expected.add("org.eclipse.jdt.launching");
 		// 2 versions of JUnit
@@ -231,9 +227,7 @@ public class MinimalTargetDefinitionFeatureResolutionTests extends AbstractTarge
 				}
 			}
 		}
-		Iterator iterator = expected.iterator();
-		while (iterator.hasNext()) {
-			String name = (String) iterator.next();
+		for (String name : expected) {
 			System.err.println("Missing: " + name);
 		}
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
@@ -281,7 +275,7 @@ public class MinimalTargetDefinitionFeatureResolutionTests extends AbstractTarge
 		definition.setTargetLocations(new ITargetLocation[] { container });
 		definition.resolve(null);
 
-		List expected = new ArrayList();
+		List<String> expected = new ArrayList<>();
 		expected.add("org.eclipse.jdt");
 		expected.add("org.eclipse.jdt.launching");
 		// 2 versions of JUnit
@@ -312,9 +306,7 @@ public class MinimalTargetDefinitionFeatureResolutionTests extends AbstractTarge
 				}
 			}
 		}
-		Iterator iterator = expected.iterator();
-		while (iterator.hasNext()) {
-			String name = (String) iterator.next();
+		for (String name : expected) {
 			System.err.println("Missing: " + name);
 		}
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());

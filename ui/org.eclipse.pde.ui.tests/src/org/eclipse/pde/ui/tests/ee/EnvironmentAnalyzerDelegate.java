@@ -30,7 +30,7 @@ public class EnvironmentAnalyzerDelegate implements IExecutionEnvironmentAnalyze
 	public CompatibleEnvironment[] analyze(IVMInstall vm, IProgressMonitor monitor) throws CoreException {
 		if (!(vm instanceof IVMInstall2))
 			return new CompatibleEnvironment[0];
-		ArrayList result = new ArrayList();
+		ArrayList<CompatibleEnvironment> result = new ArrayList<>();
 		IVMInstall2 vm2 = (IVMInstall2) vm;
 		String javaVersion = vm2.getJavaVersion();
 		if (javaVersion != null) {
@@ -45,7 +45,7 @@ public class EnvironmentAnalyzerDelegate implements IExecutionEnvironmentAnalyze
 				result.add(new CompatibleEnvironment(env, true));
 			}
 		}
-		return (CompatibleEnvironment[])result.toArray(new CompatibleEnvironment[result.size()]);
+		return result.toArray(new CompatibleEnvironment[result.size()]);
 
 	}
 

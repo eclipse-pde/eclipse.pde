@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2017 IBM Corporation and others.
+ * Copyright (c) 2012, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,12 @@
 package org.eclipse.pde.ui.tests.util;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import junit.framework.TestCase;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.project.*;
 import org.eclipse.pde.internal.core.PDECore;
@@ -36,7 +38,7 @@ public class TestBundleCreator extends TestCase {
 	public static void createPlugins(File root, int count) throws CoreException {
 		IWorkspace ws = ResourcesPlugin.getWorkspace();
 		IBundleProjectService service = PDECore.getDefault().acquireService(IBundleProjectService.class);
-		List projects = new ArrayList();
+		List<IProject> projects = new ArrayList<>();
 
 		// Disable building until the end
 		try {
@@ -59,12 +61,12 @@ public class TestBundleCreator extends TestCase {
 
 			// Add required bundle for each of the previously created bundles
 
-			List requiredBundles = new ArrayList();
+			List<IRequiredBundleDescription> requiredBundles = new ArrayList<>();
 			for (int j = 1; j < Math.max(j, 200); j++) {
 				IRequiredBundleDescription req = service.newRequiredBundle(TEST_BUNDLE_NAME + Integer.toString(j), null, false, false);
 				requiredBundles.add(req);
 			}
-			description.setRequiredBundles((IRequiredBundleDescription[]) requiredBundles.toArray(new IRequiredBundleDescription[requiredBundles.size()]));
+			description.setRequiredBundles(requiredBundles.toArray(new IRequiredBundleDescription[requiredBundles.size()]));
 
 			//			service.newPackageImport(name, range, optional);
 			//			description.setPackageImports(imports)
@@ -88,9 +90,8 @@ public class TestBundleCreator extends TestCase {
 		info.signingInfo = null;
 		info.qualifier = "v" + System.currentTimeMillis();
 		info.destinationDirectory = root.getAbsolutePath();
-		List bundles = new ArrayList();
-		for (Iterator iterator = projects.iterator(); iterator.hasNext();) {
-			IProject proj = (IProject) iterator.next();
+		List<IPluginModelBase> bundles = new ArrayList<>();
+		for (IProject proj : projects) {
 			bundles.add(PluginRegistry.findModel(proj));
 		}
 		info.items = bundles.toArray();
@@ -103,8 +104,7 @@ public class TestBundleCreator extends TestCase {
 		}
 
 		// Delete all the projects
-		for (Iterator iterator = projects.iterator(); iterator.hasNext();) {
-			IProject proj = (IProject) iterator.next();
+		for (IProject proj : projects) {
 			proj.delete(true, true, null);
 		}
 

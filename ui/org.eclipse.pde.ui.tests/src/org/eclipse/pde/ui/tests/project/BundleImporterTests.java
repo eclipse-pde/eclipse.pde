@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 IBM Corporation and others.
+ * Copyright (c) 2011, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,11 +37,12 @@ public class BundleImporterTests extends TestCase {
 		String expectedURL = "scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.jdt.core";
 		ModelEntry plugin = PluginRegistry.findEntry(bundleId);
 		IPluginModelBase[] models = new IPluginModelBase[] { plugin.getModel()};
-		Map descMap = ((BundleProjectService) BundleProjectService.getDefault()).getImportDescriptions(models);
+		Map<IBundleImporter, ScmUrlImportDescription[]> descMap = ((BundleProjectService) BundleProjectService
+				.getDefault()).getImportDescriptions(models);
 		assertEquals(1, descMap.size());
 		IBundleImporter	importer = (IBundleImporter) descMap.keySet().toArray()[0];
 		assertEquals(CVS_IMPORTER, importer.getId());
-		ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) descMap.get(importer);
+		ScmUrlImportDescription[] descriptions = descMap.get(importer);
 		assertEquals(1, descriptions.length);
 		ScmUrlImportDescription description = descriptions[0];
 		assertTrue("Incorrect URL Length: " + description.getUrl(),description.getUrl().length() >= expectedURL.length());

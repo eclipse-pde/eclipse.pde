@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Sonatype, Inc.
+ * Copyright (c) 2011, 2018 Sonatype, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.ui.tests.classpathresolver;
 
 import java.util.*;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
@@ -20,10 +21,10 @@ import org.eclipse.pde.core.IBundleClasspathResolver;
 public class TestBundleClasspathResolver implements IBundleClasspathResolver {
 
 	@Override
-	public Map getAdditionalClasspathEntries(IJavaProject javaProject) {
-		Map result = new LinkedHashMap();
+	public Map<IPath, Collection<IPath>> getAdditionalClasspathEntries(IJavaProject javaProject) {
+		Map<IPath, Collection<IPath>> result = new LinkedHashMap<>();
 
-		List paths = new ArrayList();
+		List<IPath> paths = new ArrayList<>();
 
 		paths.add(javaProject.getProject().getFolder("cpe").getLocation());
 
@@ -33,8 +34,8 @@ public class TestBundleClasspathResolver implements IBundleClasspathResolver {
 	}
 
 	@Override
-	public Collection getAdditionalSourceEntries(IJavaProject javaProject) {
-		List result = new ArrayList();
+	public Collection<IRuntimeClasspathEntry> getAdditionalSourceEntries(IJavaProject javaProject) {
+		List<IRuntimeClasspathEntry> result = new ArrayList<>();
 
 		IRuntimeClasspathEntry entry = JavaRuntime.newArchiveRuntimeClasspathEntry(javaProject.getProject().getFolder("cpe").getLocation());
 		entry.setSourceAttachmentPath(entry.getPath());

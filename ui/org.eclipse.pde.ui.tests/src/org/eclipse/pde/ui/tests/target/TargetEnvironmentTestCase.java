@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2017 IBM Corporation and others.
+ *  Copyright (c) 2006, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -39,32 +39,32 @@ public class TargetEnvironmentTestCase extends TestCase {
 	}
 
 	public void testEnvironmentDictionarySize() {
-		Dictionary dictionary = TargetPlatformHelper.getTargetEnvironment();
+		Dictionary<String, String> dictionary = TargetPlatformHelper.getTargetEnvironment();
 		assertEquals(6, dictionary.size());
 	}
 
 	public void testDictionaryOS() {
-		Dictionary dictionary = TargetPlatformHelper.getTargetEnvironment();
+		Dictionary<String, String> dictionary = TargetPlatformHelper.getTargetEnvironment();
 		assertEquals(Platform.getOS(), dictionary.get("osgi.os"));
 	}
 
 	public void testDictionaryWS() {
-		Dictionary dictionary = TargetPlatformHelper.getTargetEnvironment();
+		Dictionary<String, String> dictionary = TargetPlatformHelper.getTargetEnvironment();
 		assertEquals(Platform.getWS(), dictionary.get("osgi.ws"));
 	}
 
 	public void testDictionaryArch() {
-		Dictionary dictionary = TargetPlatformHelper.getTargetEnvironment();
+		Dictionary<String, String> dictionary = TargetPlatformHelper.getTargetEnvironment();
 		assertEquals(Platform.getOSArch(), dictionary.get("osgi.arch"));
 	}
 
 	public void testDictionaryNL() {
-		Dictionary dictionary = TargetPlatformHelper.getTargetEnvironment();
+		Dictionary<String, String> dictionary = TargetPlatformHelper.getTargetEnvironment();
 		assertEquals(Platform.getNL(), dictionary.get("osgi.nl"));
 	}
 
 	public void testResolveOptional() {
-		Dictionary dictionary = TargetPlatformHelper.getTargetEnvironment();
+		Dictionary<String, String> dictionary = TargetPlatformHelper.getTargetEnvironment();
 		assertTrue("true".equals(dictionary.get("osgi.resolveOptional")));
 	}
 
@@ -73,7 +73,7 @@ public class TargetEnvironmentTestCase extends TestCase {
 	 */
 	@SuppressWarnings("deprecation")
 	public void testStateEEProperties() {
-		Dictionary[] platformProps = TargetPlatformHelper.getState().getPlatformProperties();
+		Dictionary<?, ?>[] platformProps = TargetPlatformHelper.getState().getPlatformProperties();
 
 		String[] profiles = TargetPlatformHelper.getKnownExecutionEnvironments();
 		for (String profile : profiles) {
@@ -85,7 +85,7 @@ public class TargetEnvironmentTestCase extends TestCase {
 					String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
 					if (systemPackages != null){
 						boolean foundSystemPackage = false;
-						for (Dictionary platformProp : platformProps) {
+						for (Dictionary<?, ?> platformProp : platformProps) {
 							if (systemPackages.equals(platformProp.get(Constants.FRAMEWORK_SYSTEMPACKAGES))){
 								foundSystemPackage = true;
 								break;
@@ -98,7 +98,7 @@ public class TargetEnvironmentTestCase extends TestCase {
 					String ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
 					if (ee != null){
 						boolean foundEE = false;
-						for (Dictionary platformProp : platformProps) {
+						for (Dictionary<?, ?> platformProp : platformProps) {
 							if (ee.equals(platformProp.get(Constants.FRAMEWORK_EXECUTIONENVIRONMENT))){
 								foundEE = true;
 								break;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 IBM Corporation and others.
+ * Copyright (c) 2016, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -282,7 +282,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 
 		NameVersionDescriptor[] infos = target.getImplicitDependencies();
 		assertEquals("Wrong number of implicit dependencies", 2, infos.length);
-		Set set = new HashSet();
+		Set<String> set = new HashSet<>();
 		for (NameVersionDescriptor info : infos) {
 			set.add(info.getId());
 		}
@@ -563,7 +563,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 * @throws CoreException
 	 *             if something goes wrong
 	 */
-	protected void validateTypeAndLocation(ITargetLocation container, Class clazz, String rawLocation)
+	protected void validateTypeAndLocation(ITargetLocation container, Class<?> clazz, String rawLocation)
 			throws CoreException {
 		assertTrue(clazz.isInstance(container));
 		assertEquals(rawLocation, container.getLocation(false));

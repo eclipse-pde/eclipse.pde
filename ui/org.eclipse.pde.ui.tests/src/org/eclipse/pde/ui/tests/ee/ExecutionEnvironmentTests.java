@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -180,12 +180,12 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 			IJavaProject project = ProjectUtils.createPluginProject("no.env", null);
 			assertTrue("Project was not created", project.exists());
 
-			Hashtable options = JavaCore.getOptions();
-			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, (String) options.get(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM));
-			validateOption(project, JavaCore.COMPILER_SOURCE, (String) options.get(JavaCore.COMPILER_SOURCE));
-			validateOption(project, JavaCore.COMPILER_COMPLIANCE, (String) options.get(JavaCore.COMPILER_COMPLIANCE));
-			validateOption(project, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, (String) options.get(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER));
-			validateOption(project, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, (String) options.get(JavaCore.COMPILER_PB_ENUM_IDENTIFIER));
+			Hashtable<String, String> options = JavaCore.getOptions();
+			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, options.get(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM));
+			validateOption(project, JavaCore.COMPILER_SOURCE, options.get(JavaCore.COMPILER_SOURCE));
+			validateOption(project, JavaCore.COMPILER_COMPLIANCE, options.get(JavaCore.COMPILER_COMPLIANCE));
+			validateOption(project, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, options.get(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER));
+			validateOption(project, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, options.get(JavaCore.COMPILER_PB_ENUM_IDENTIFIER));
 
 			validateSystemLibrary(project, JavaRuntime.newDefaultJREContainerPath());
 		} finally {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -134,10 +134,10 @@ public abstract class AbstractTargetTest extends TestCase {
 		URL zipURL = PDETestsPlugin.getBundleContext().getBundle().getEntry(archivePath);
 		Path zipPath = new Path(new File(FileLocator.toFileURL(zipURL).getFile()).getAbsolutePath());
 		try (ZipFile zipFile = new ZipFile(zipPath.toFile())) {
-			Enumeration entries = zipFile.entries();
+			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 			IPath parent = location.removeLastSegments(1);
 			while (entries.hasMoreElements()) {
-				ZipEntry entry = (ZipEntry) entries.nextElement();
+				ZipEntry entry = entries.nextElement();
 				if (!entry.isDirectory()) {
 					IPath entryPath = parent.append(entry.getName());
 					File dir = entryPath.removeLastSegments(1).toFile();
@@ -237,11 +237,9 @@ public abstract class AbstractTargetTest extends TestCase {
 	 * @param infos bundles
 	 * @return bundle symbolic names
 	 */
-	protected Set collectAllSymbolicNames(List infos) {
-		Set set = new HashSet(infos.size());
-		Iterator iterator = infos.iterator();
-		while (iterator.hasNext()) {
-			BundleInfo info = (BundleInfo) iterator.next();
+	protected Set<String> collectAllSymbolicNames(List<BundleInfo> infos) {
+		Set<String> set = new HashSet<>(infos.size());
+		for (BundleInfo info : infos) {
 			set.add(info.getSymbolicName());
 		}
 		return set;
@@ -254,12 +252,12 @@ public abstract class AbstractTargetTest extends TestCase {
 	 * @param target target definition
 	 * @return all BundleInfos
 	 */
-	protected List getAllBundleInfos(ITargetDefinition target) throws Exception {
+	protected List<BundleInfo> getAllBundleInfos(ITargetDefinition target) throws Exception {
 		if (!target.isResolved()) {
 			target.resolve(null);
 		}
 		TargetBundle[] bundles = target.getBundles();
-		List list = new ArrayList(bundles.length);
+		List<BundleInfo> list = new ArrayList<>(bundles.length);
 		for (TargetBundle bundle : bundles) {
 			list.add(bundle.getBundleInfo());
 		}
@@ -273,9 +271,9 @@ public abstract class AbstractTargetTest extends TestCase {
 	 * @return included bundles
 	 * @throws Exception
 	 */
-	protected List getBundleInfos(ITargetLocation container) throws Exception {
+	protected List<BundleInfo> getBundleInfos(ITargetLocation container) throws Exception {
 		TargetBundle[] bundles = container.getBundles();
-		List list = new ArrayList(bundles.length);
+		List<BundleInfo> list = new ArrayList<>(bundles.length);
 		for (TargetBundle bundle : bundles) {
 			list.add(bundle.getBundleInfo());
 		}
