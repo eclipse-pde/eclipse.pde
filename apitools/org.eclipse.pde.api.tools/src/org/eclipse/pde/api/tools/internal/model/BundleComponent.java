@@ -20,6 +20,7 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -727,8 +728,9 @@ public class BundleComponent extends Component {
 	 * @param parent the parent directory to extract to
 	 * @throws IOException if the {@link ZipFile} cannot be read or extraction
 	 *             fails to write the file(s)
+	 * @throws IOException, CoreException
 	 */
-	void extractDirectory(ZipFile zip, String pathprefix, File parent) throws IOException {
+	void extractDirectory(ZipFile zip, String pathprefix, File parent) throws IOException, CoreException {
 		Enumeration<? extends ZipEntry> entries = zip.entries();
 		String prefix = (pathprefix == null ? Util.EMPTY_STRING : pathprefix);
 		ZipEntry entry = null;
@@ -736,7 +738,12 @@ public class BundleComponent extends Component {
 		while (entries.hasMoreElements()) {
 			entry = entries.nextElement();
 			if (entry.getName().startsWith(prefix)) {
+				String parentDirCanonicalPath = parent.getCanonicalPath();
 				file = new File(parent, entry.getName());
+				String destCanonicalPath = file.getCanonicalPath();
+				if (!destCanonicalPath.startsWith(parentDirCanonicalPath + File.separator)) {
+					throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format("Entry is outside of the target dir: : {0}", entry.getName()), null)); //$NON-NLS-1$
+				}
 				if (entry.isDirectory()) {
 					file.mkdir();
 					continue;

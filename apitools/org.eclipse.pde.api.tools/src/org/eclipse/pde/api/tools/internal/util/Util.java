@@ -36,6 +36,7 @@ import java.nio.charset.CodingErrorAction;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -2013,8 +2014,10 @@ public final class Util {
 	/**
 	 * Unzip the contents of the given zip in the given directory (create it if
 	 * it doesn't exist)
+	 *
+	 * @throws IOException, CoreException
 	 */
-	public static void unzip(String zipPath, String destDirPath) throws IOException {
+	public static void unzip(String zipPath, String destDirPath) throws IOException, CoreException {
 		byte[] buf = new byte[8192];
 		File destDir = new File(destDirPath);
 		try (InputStream zipIn = new FileInputStream(zipPath); ZipInputStream zis = new ZipInputStream(new BufferedInputStream(zipIn));) {
@@ -2035,7 +2038,12 @@ public final class Util {
 				// create directory for a file
 				new File(destDir, fileDir).mkdirs();
 				// write file
+				String destDirCanonicalPath = destDir.getCanonicalPath();
 				File outFile = new File(destDir, filePath);
+				String outFileCanonicalPath = outFile.getCanonicalPath();
+				if (!outFileCanonicalPath.startsWith(destDirCanonicalPath + File.separator)) {
+					throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format("Entry is outside of the target dir: : {0}", filePath), null)); //$NON-NLS-1$
+				}
 				try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outFile))) {
 					int n = 0;
 					while ((n = zis.read(buf)) >= 0) {
