@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.nls;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -443,15 +444,29 @@ public class NLSFragmentGenerator {
 	}
 
 	private void createParents(IProject fragmentProject, IPath parent) throws CoreException {
+		try {
 		String[] segments = parent.segments();
 		String path = ""; //$NON-NLS-1$
-
+		File dest = fragmentProject.getFullPath().toFile();
+		String destCanonicalPath = dest.getCanonicalPath();
 		for (String segment : segments) {
 			path += SLASH + segment;
 			IFolder folder = fragmentProject.getFolder(path);
+			File file = folder.getFullPath().toFile();
+			String canonicalFilePath = file.getCanonicalPath();
+			if (!canonicalFilePath.startsWith(destCanonicalPath + File.separator)) {
+				throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(),
+						MessageFormat.format("Entry is outside of the target dir: : {0}", file.getName()), null)); //$NON-NLS-1$
+			}
 			if (!folder.exists()) {
 				folder.create(true, true, getProgressMonitor());
 			}
+		}
+		}
+		catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(),
+					MessageFormat.format("IOException while processing: {0}", fragmentProject.getName()), //$NON-NLS-1$
+					null));
 		}
 	}
 
