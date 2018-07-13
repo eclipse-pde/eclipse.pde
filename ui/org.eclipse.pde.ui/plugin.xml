@@ -1730,17 +1730,12 @@
                 class="org.eclipse.pde.internal.ui.views.imagebrowser.SaveToWorkspace"
                 commandId="org.eclipse.pde.ui.imagebrowser.saveToWorkspace">
              <enabledWhen>
-             <and>
              <with
                    variable="activePart">
                 <instanceof
                       value="org.eclipse.pde.internal.ui.views.imagebrowser.ImageBrowserView">
                 </instanceof>
              </with>
-             <test
-                   property="org.eclipse.pde.ui.imagebrowser.exists">
-             </test>
-             </and>
              </enabledWhen>
           </handler>
        </extension>
@@ -1936,17 +1931,6 @@
                          definitionId="org.eclipse.pde.ui.pluginFile">
                    </reference>
                 </visibleWhen>
-             </command>
-          </menuContribution>
-          <menuContribution
-                allPopups="false"
-                locationURI="toolbar:org.eclipse.pde.ui.ImageBrowserView">
-             <command
-                   commandId="org.eclipse.pde.ui.imagebrowser.saveToWorkspace"
-                   disabledIcon="platform:/plugin/org.eclipse.ui/icons/full/dtool16/save_edit.png"
-                   icon="platform:/plugin/org.eclipse.ui/icons/full/etool16/save_edit.png"
-                   label="%command.saveImageToWorkspace.label"
-                   style="push">
              </command>
           </menuContribution>
        </extension>
@@ -2170,16 +2154,6 @@
          </description>
       </locationProvider>
    </extension>
-    <extension
-          point="org.eclipse.core.expressions.propertyTesters">
-       <propertyTester
-             class="org.eclipse.pde.internal.ui.views.imagebrowser.ActiveImagePropertyTester"
-             id="org.eclipse.pde.ui.imagebrowser.activeImagePropertyTester"
-             namespace="org.eclipse.pde.ui.imagebrowser"
-             properties="exists"
-             type="java.lang.Object">
-       </propertyTester>
-    </extension>
     <extension
           point="org.eclipse.ui.trace.traceComponents">
        <component

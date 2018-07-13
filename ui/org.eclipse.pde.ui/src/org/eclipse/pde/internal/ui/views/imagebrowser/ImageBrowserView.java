@@ -17,8 +17,12 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.*;
 import java.util.List;
+import org.eclipse.core.commands.*;
+import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.RowLayoutFactory;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.*;
@@ -31,10 +35,12 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -43,6 +49,7 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class ImageBrowserView extends ViewPart implements IImageTarget {
 
+	private static final String COMMAND_SAVE_TO_WORKSPACE = "org.eclipse.pde.ui.imagebrowser.saveToWorkspace"; //$NON-NLS-1$
 	protected final static String VIEW_ID = "org.eclipse.pde.ui.ImageBrowserView"; //$NON-NLS-1$
 
 	private final UpdateUI mUIJob = new UpdateUI();
@@ -74,6 +81,8 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	private PageNavigationControl pageNavigationControl;
 
 	private ImageElement imageElement;
+
+	private Action saveAction;
 
 	public ImageBrowserView() {
 		// create default filters
@@ -256,6 +265,23 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 		// set original selection
 		sourceCombo.setSelection(new StructuredSelection(sourceComboInput.get(0)), true);
+		ImageDescriptor image = PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_ETOOL_SAVE_EDIT);
+		saveAction = new Action(PDEUIMessages.ImageBrowserView_SaveActionName, image) {
+
+			@Override
+			public void run() {
+				IHandlerService handlerService = getSite().getService(IHandlerService.class);
+				try {
+					handlerService.executeCommand(COMMAND_SAVE_TO_WORKSPACE, null);
+				} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
+					PDEPlugin.log(e);
+				}
+			}
+		};
+		saveAction.setEnabled(false);
+		getViewSite().getActionBars().getToolBarManager().add(saveAction);
+
 	}
 
 	/*-
@@ -518,6 +544,8 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 				lblHeight.setText(NLS.bind(PDEUIMessages.ImageBrowserView_Pixels, Integer.toString(((ImageElement) data).getImageData().height)));
 
 				imageElement = (ImageElement) data;
+				saveAction.setEnabled(true);
+				getViewSite().getActionBars().getToolBarManager().update(true);
 			}
 		}
 

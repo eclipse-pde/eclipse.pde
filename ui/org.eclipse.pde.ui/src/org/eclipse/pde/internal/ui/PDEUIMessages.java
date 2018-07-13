@@ -487,6 +487,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String ImageBrowserView_Reference;
 
+	public static String ImageBrowserView_SaveActionName;
+
 	public static String ImageBrowserView_Show;
 
 	public static String ImageBrowserView_Source;
