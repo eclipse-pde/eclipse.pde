@@ -117,7 +117,9 @@ public class TargetDefinitionPersistenceHelper {
 				TextUtilities.getDefaultLineDelimiter(output.getDocument()));
 		bytes = strContent.getBytes(encoding);
 
-		output.getFileStore().openOutputStream(0, null).write(bytes);
+		try (OutputStream stream = output.getFileStore().openOutputStream(0, null)) {
+			stream.write(bytes);
+		}
 	}
 
 	/**

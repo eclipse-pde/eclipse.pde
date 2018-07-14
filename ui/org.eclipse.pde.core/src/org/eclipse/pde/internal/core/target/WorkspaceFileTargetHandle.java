@@ -15,8 +15,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import org.eclipse.core.filebuffers.*;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
@@ -121,6 +120,9 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	@Override
 	public void save(ITargetDefinition definition) throws CoreException {
 		((TargetDefinition) definition).write(getTextFileBuffer());
+		if (fFile.exists()) {
+			fFile.refreshLocal(IResource.DEPTH_ZERO, null);
+		}
 	}
 
 	@Override
