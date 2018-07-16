@@ -40,6 +40,7 @@ import org.junit.Test;
 import org.osgi.framework.FrameworkUtil;
 
 public class Bug531602FormattingTests extends AbstractTargetEditorTest {
+	private static final String TEST_FILE_LINE_SEPERATOR = "\n";
 
 	@Test
 	public void testSettingNullPersists() throws Exception {
@@ -112,6 +113,8 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 		StringAsserts.assertEqualStringIgnoreDelim(actual, expected);
 	}
 	private void confirmMatch(ITargetDefinition targetDefinition, String expectedDefinitionPath) throws Exception {
+		String lineSeparator = System.getProperty("line.separator");
+		boolean requireReplaceLineSeparator = !lineSeparator.equals(TEST_FILE_LINE_SEPERATOR);
 		try (Scanner s = new Scanner(FrameworkUtil.getBundle(this.getClass())
 				.getEntry("testing-files/target-files/" + expectedDefinitionPath).openStream()).useDelimiter("\\A")) {
 			String result = s.hasNext() ? s.next() : "";
@@ -126,7 +129,11 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 			tempFile = File.createTempFile("targetDefinition", null);
 			ITextFileBuffer buffer = getTextFileBufferFromFile(tempFile);
 			TargetDefinitionPersistenceHelper.persistXML(targetDefinition, buffer);
-			assertEquals(result, readFile(tempFile.toPath(), StandardCharsets.UTF_8));
+			String fileContent = readFile(tempFile.toPath(), StandardCharsets.UTF_8);
+			if (requireReplaceLineSeparator) {
+				fileContent = fileContent.replace(TEST_FILE_LINE_SEPERATOR, lineSeparator);
+			}
+			assertEquals(result, fileContent);
 		} catch (IOException e) {
 		}
 	}
