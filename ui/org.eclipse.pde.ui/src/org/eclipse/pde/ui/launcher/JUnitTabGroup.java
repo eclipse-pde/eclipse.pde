@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.*;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
+import org.eclipse.jdt.internal.junit.launcher.AssertionVMArg;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 /**
  * Creates and initializes the tabs for the Plug-in JUnit test launch configuration.
@@ -27,6 +31,21 @@ public class JUnitTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 		ILaunchConfigurationTab[] tabs = null;
 		tabs = new ILaunchConfigurationTab[] {new TestTab(), new PluginJUnitMainTab(), new JavaArgumentsTab(), new PluginsTab(), new ConfigurationTab(true), new TracingTab(), new EnvironmentTab(), new CommonTab()};
 		setTabs(tabs);
+	}
+
+	@Override
+	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+		super.setDefaults(configuration);
+
+		String vmArgs;
+		try {
+			vmArgs = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""); //$NON-NLS-1$
+		} catch (CoreException e) {
+			vmArgs = ""; //$NON-NLS-1$
+		}
+		vmArgs = AssertionVMArg.enableAssertInArgString(vmArgs);
+		if (vmArgs.length() > 0)
+			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
 	}
 
 }
