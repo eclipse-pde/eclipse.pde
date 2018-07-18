@@ -131,7 +131,7 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 			TargetDefinitionPersistenceHelper.persistXML(targetDefinition, buffer);
 			String fileContent = readFile(tempFile.toPath(), StandardCharsets.UTF_8);
 			if (requireReplaceLineSeparator) {
-				fileContent = fileContent.replace(TEST_FILE_LINE_SEPERATOR, lineSeparator);
+				fileContent = fileContent.replace(lineSeparator, TEST_FILE_LINE_SEPERATOR);
 			}
 			assertEquals(result, fileContent);
 		} catch (IOException e) {
