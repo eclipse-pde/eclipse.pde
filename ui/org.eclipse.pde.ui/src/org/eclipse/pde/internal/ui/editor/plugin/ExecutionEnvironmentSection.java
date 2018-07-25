@@ -332,7 +332,8 @@ public class ExecutionEnvironmentSection extends TableSection {
 		if (inputContext != null) {
 			return inputContext.getLineDelimiter();
 		}
-		return System.getProperty("line.separator"); //$NON-NLS-1$
+		return Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null,
+				null);
 	}
 
 	private Object[] getEnvironments() {

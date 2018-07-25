@@ -19,6 +19,7 @@ import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.JavaUI;
@@ -625,7 +626,8 @@ public class ExportPackageSection extends TableSection {
 		if (inputContext != null) {
 			return inputContext.getLineDelimiter();
 		}
-		return System.getProperty("line.separator"); //$NON-NLS-1$
+		return Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null,
+				null);
 	}
 
 	private IBundle getBundle() {

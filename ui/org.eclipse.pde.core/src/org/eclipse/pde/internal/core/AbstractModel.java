@@ -14,10 +14,11 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.*;
 import javax.xml.parsers.*;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.filebuffers.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.pde.core.*;
 import org.xml.sax.SAXException;
 
@@ -36,17 +37,15 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 	private Exception fException;
 
 	protected static String getLineDelimiterPreference(IFile file) {
-		IScopeContext[] scopeContext;
-		if (file != null && file.getProject() != null) {
-			// project preference
-			scopeContext = new IScopeContext[] {new ProjectScope(file.getProject())};
-			String lineDelimiter = Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null, scopeContext);
-			if (lineDelimiter != null)
-				return lineDelimiter;
+		if (file != null) {
+			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+			ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
+			if (buffer != null) {
+				return TextUtilities.getDefaultLineDelimiter(buffer.getDocument());
+			}
 		}
-		// workspace preference
-		scopeContext = new IScopeContext[] {InstanceScope.INSTANCE};
-		return Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null, scopeContext);
+		return Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null,
+				null);
 	}
 
 	/**

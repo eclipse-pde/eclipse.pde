@@ -60,7 +60,9 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			if (header instanceof ImportPackageHeader) {
 				packages = ((ImportPackageHeader) header).getPackages();
 			} else if (header != null && header.getValue() != null) {
-				header = new ImportPackageHeader(Constants.IMPORT_PACKAGE, header.getValue(), bundle, System.getProperty("line.separator")); //$NON-NLS-1$
+				header = new ImportPackageHeader(Constants.IMPORT_PACKAGE, header.getValue(), bundle,
+						Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR,
+								null, null));
 				packages = ((ImportPackageHeader) header).getPackages();
 			}
 
@@ -68,7 +70,9 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			if (header instanceof ExportPackageHeader) {
 				exportedPackages = ((ExportPackageHeader) header).getPackageNames();
 			} else if (header != null && header.getValue() != null) {
-				header = new ExportPackageHeader(Constants.EXPORT_PACKAGE, header.getValue(), bundle, System.getProperty("line.seperator")); //$NON-NLS-1$
+				header = new ExportPackageHeader(Constants.EXPORT_PACKAGE, header.getValue(), bundle,
+						Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR,
+								null, null));
 				exportedPackages = ((ExportPackageHeader) header).getPackageNames();
 			}
 		}

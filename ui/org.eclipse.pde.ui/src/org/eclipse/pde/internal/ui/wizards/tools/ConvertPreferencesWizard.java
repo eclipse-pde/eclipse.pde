@@ -15,13 +15,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
+import org.eclipse.core.filebuffers.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.*;
@@ -98,9 +99,10 @@ public class ConvertPreferencesWizard extends Wizard {
 			File prefsFile = page.getPreferencesFile();
 			if (prefsFile != null) {
 				String sourceFilePath = prefsFile.getAbsolutePath();
-				String errorFilePath = sourceFilePath;
+				String errorFilePath = page.getPluginCustomizeFile().getFullPath().toString();
 				if (prefsFile.exists()) {
 					try {
+						String lineSeparator = getLineSeparatorFromFile(errorFilePath);
 						BufferedReader in = new BufferedReader(new FileReader(sourceFilePath));
 						// Build properties from the EPF file, ignoring any scope strings.
 						LinkedHashMap<String, String> properties = new LinkedHashMap<>();
@@ -111,12 +113,12 @@ public class ConvertPreferencesWizard extends Wizard {
 							while ((line1 = in.readLine()) != null) {
 								if (line1.startsWith("#")) {//$NON-NLS-1$
 									comment = (comment == null) ? line1 : comment.concat(line1);
-									comment = comment.concat(System.lineSeparator());
+									comment = comment.concat(lineSeparator);
 									continue;
 								}
 								if (line1.equals("")) {//$NON-NLS-1$
-									comment = (comment != null) ? comment.concat(System.lineSeparator())
-											: "".concat(System.lineSeparator());//$NON-NLS-1$
+									comment = (comment != null) ? comment.concat(lineSeparator)
+											: "".concat(lineSeparator);//$NON-NLS-1$
 									continue;
 								}
 								// ignore any lines that don't start with a separator
@@ -163,12 +165,12 @@ public class ConvertPreferencesWizard extends Wizard {
 									while ((line = existingFile.readLine()) != null) {
 										if (line.startsWith("#")) {//$NON-NLS-1$
 											comment = (comment == null) ? line : comment.concat(line);
-											comment = comment.concat(System.lineSeparator());
+											comment = comment.concat(lineSeparator);
 											continue;
 										}
 										if (line.equals("")) {//$NON-NLS-1$
-											comment = (comment != null) ? comment.concat(System.lineSeparator())
-													: "".concat(System.lineSeparator());//$NON-NLS-1$
+											comment = (comment != null) ? comment.concat(lineSeparator)
+													: "".concat(lineSeparator);//$NON-NLS-1$
 											continue;
 										}
 										int index = line.indexOf('=');
@@ -180,7 +182,7 @@ public class ConvertPreferencesWizard extends Wizard {
 												if (comment != null)
 													out.append(comment);
 												out.append(line);
-												out.append('\n');
+												out.append(lineSeparator);
 												comment = null;
 											}
 											else {
@@ -195,7 +197,7 @@ public class ConvertPreferencesWizard extends Wizard {
 												// get the value from epf file
 												Object value = properties.get(key);
 												out.append(key + "=" + value); //$NON-NLS-1$
-												out.append('\n');
+												out.append(lineSeparator);
 												properties.remove(key);
 												comment = null;
 											}
@@ -217,7 +219,7 @@ public class ConvertPreferencesWizard extends Wizard {
 									out.append(comment);
 								String value = entry.getValue();
 								out.append(key + "=" + value); //$NON-NLS-1$
-								out.append('\n');
+								out.append(lineSeparator);
 							}
 							// now write the (possibly merged) values from the string builder to the file
 							InputStream resultStream = new ByteArrayInputStream(out.toString().getBytes());
@@ -248,6 +250,31 @@ public class ConvertPreferencesWizard extends Wizard {
 				page.setErrorMessage(PDEUIMessages.ConvertPreferencesWizard_errorNoFileSpecified);
 			}
 		};
+	}
+
+	private String getLineSeparatorFromFile(String filePath) throws CoreException {
+		IPath path = Path.fromOSString(filePath);
+		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
+		ITextFileBuffer buffer = manager.getTextFileBuffer(path, LocationKind.LOCATION);
+
+		Boolean pathNeededConnection = buffer == null;
+		if (pathNeededConnection) {
+			manager.connect(path, LocationKind.LOCATION, null);
+			buffer = manager.getTextFileBuffer(path, LocationKind.LOCATION);
+		}
+
+		String lineSeparator;
+		if (buffer != null) {
+			lineSeparator = TextUtilities.getDefaultLineDelimiter(buffer.getDocument());
+		} else {
+			lineSeparator = System.lineSeparator();
+		}
+
+		if (pathNeededConnection) {
+			manager.disconnect(path, LocationKind.LOCATION, null);
+		}
+
+		return lineSeparator;
 	}
 
 	public String getPreferencesFilePath() {

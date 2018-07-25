@@ -422,7 +422,8 @@ public abstract class InputContext {
 				return TextUtilities.getDefaultLineDelimiter(document);
 			}
 		}
-		return System.getProperty("line.separator"); //$NON-NLS-1$
+		return Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null,
+				null);
 	}
 
 	private void updateInput(IEditorInput newInput) throws CoreException {
