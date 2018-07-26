@@ -11,8 +11,10 @@
 package org.eclipse.pde.ui.tests.ee;
 
 import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.jdt.launching.environments.*;
 
@@ -44,6 +46,26 @@ public class EnvironmentAnalyzerDelegate implements IExecutionEnvironmentAnalyze
 			if (javaVersion.startsWith("1.3")) {
 				result.add(new CompatibleEnvironment(env, true));
 			}
+
+			// for > java 10
+			if (result.isEmpty()) {
+				List<String> allVersions = JavaCore.getAllVersions();
+				for (int i = allVersions.size() - 1; i >= 0; i--) {
+					String string = allVersions.get(i);
+					int parseInt = -1;
+					try {
+						parseInt = Integer.parseInt(string);
+					} catch (NumberFormatException e) {
+					}
+					if (parseInt > 10) {
+						if (javaVersion.startsWith(string)) {
+							result.add(new CompatibleEnvironment(env, false));
+							break;
+						}
+					}
+				}
+			}
+
 		}
 		return result.toArray(new CompatibleEnvironment[result.size()]);
 
