@@ -23,6 +23,7 @@ import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.p2.metadata.InstallableUnit;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
@@ -143,6 +144,38 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	public void testResolveRequiredFeatures() throws Exception {
 		String[] bundles = new String[]{"bundle.a1", "bundle.a2", "bundle.a3", "bundle.b1", "bundle.b2", "bundle.b3"};
 		doResolutionTest(new String[]{"feature.b.feature.group"}, bundles);
+	}
+
+	/**
+	 * P2TargetUtils should not consume much memory if all target definitions
+	 * are deleted
+	 */
+	public void testSynchronizerLeak() throws Exception {
+		ITargetPlatformService service = getTargetService();
+		URI[] uris = new URI[] { getURI("/tests/sites/site.a.b") };
+
+		long bundleCount = 0;
+		long memoryLimit = usedMemory() + 200_000_000;
+		for (int i = 0; i < 1000; i++) {
+			ITargetDefinition target = service.newTarget();
+			try {
+				IInstallableUnit[] units = new IInstallableUnit[10000];
+				for (int m = 0; m < units.length; m++) {
+					InstallableUnit unit = new InstallableUnit();
+					unit.setId("bundle.a" + (bundleCount++));
+					units[m] = unit;
+				}
+				IUBundleContainer container = createContainer(units, uris, 0);
+				target.setTargetLocations(new ITargetLocation[] { container });
+			} finally {
+				// Free up memory and disk used by target
+				service.deleteTarget(target.getHandle());
+				P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
+			}
+			// If we omit this assertion, further tests won't be executed due
+			// to VM fatal error
+			assertTrue("Memory should not be consumed if all targets are deleted", usedMemory() < memoryLimit);
+		}
 	}
 
 	/**
@@ -555,4 +588,10 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		String actualValue = xml.substring(start, start + String.valueOf(expectedValue).length()) ;
 		assertEquals(String.valueOf(expectedValue), actualValue);
 	}
+
+	private long usedMemory() {
+		System.gc();
+		return Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+	}
+
 }

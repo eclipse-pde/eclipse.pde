@@ -113,7 +113,7 @@ public class P2TargetUtils {
 	/**
 	 * Table mapping {@link ITargetDefinition} to synchronizer (P2TargetUtils) instance.
 	 */
-	private static Map<ITargetDefinition, P2TargetUtils> synchronizers = new HashMap<>();
+	private static Map<ITargetDefinition, P2TargetUtils> synchronizers = new WeakHashMap<>();
 
 	/**
 	 * Table mapping of  ITargetDefinition and IFileArtifactRepository
