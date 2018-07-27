@@ -589,7 +589,7 @@ public class ClassExtendsLeak extends LeakTest {
 
 	private void x34(boolean inc) {
 		int pid = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE,
-				IApiProblem.API_LEAK, IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_TYPE);
+				IApiProblem.API_LEAK, IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_CLASS_TYPE);
 		setExpectedProblemIds(new int[] { pid });
 		String typename = "test34"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] { { "classNoExtend", typename } }); //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -456,13 +456,23 @@ public interface IApiProblem {
 
 	/**
 	 * Constant representing the value of an API leak {@link IApiProblem} by
-	 * extending a no extend type <br>
+	 * extending a no extend class type <br>
 	 * Value is: <code>15</code>
 	 *
 	 * @see #getFlags()
 	 * @see #CATEGORY_USAGE
 	 */
-	public static final int LEAK_BY_EXTENDING_NO_EXTEND_TYPE = 15;
+	public static final int LEAK_BY_EXTENDING_NO_EXTEND_CLASS_TYPE = 15;
+
+	/**
+	 * Constant representing the value of an API leak {@link IApiProblem} by
+	 * extending a no extend interface type <br>
+	 * Value is: <code>16</code>
+	 *
+	 * @see #getFlags()
+	 * @see #CATEGORY_USAGE
+	 */
+	public static final int LEAK_BY_EXTENDING_NO_EXTEND_INTERFACE_TYPE = 16;
 
 	/**
 	 * Constant representing the value of a default API profile

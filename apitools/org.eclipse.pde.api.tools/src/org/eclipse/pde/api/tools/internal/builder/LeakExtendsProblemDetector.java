@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Flags;
+import org.eclipse.pde.api.tools.internal.model.ApiType;
 import org.eclipse.pde.api.tools.internal.model.MethodKey;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
@@ -79,8 +80,16 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 						IApiAnnotations annotationsSource = member.getApiComponent().getApiDescription().resolveAnnotations(sourceMember.getHandle());
 						if (annotationsSource != null && !RestrictionModifiers.isExtendRestriction(annotationsSource.getRestrictions())) {
 							if (!Flags.isFinal(sourceMember.getModifiers())) {
-								problemFlags = IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_TYPE;
-								return true;
+								if (sourceMember instanceof ApiType) {
+									if (((ApiType) sourceMember).isClass()) {
+										problemFlags = IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_CLASS_TYPE;
+										return true;
+									}
+									if (((ApiType) sourceMember).isInterface()) {
+										problemFlags = IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_INTERFACE_TYPE;
+										return true;
+									}
+								}
 							}
 						}
 					}

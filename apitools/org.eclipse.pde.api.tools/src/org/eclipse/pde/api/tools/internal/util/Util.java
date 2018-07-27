@@ -2817,7 +2817,8 @@ public final class Util {
 
 				case IApiProblem.API_LEAK: {
 				switch (problemFlag) {
-					case IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_TYPE:
+					case IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_CLASS_TYPE:
+					case IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_INTERFACE_TYPE:
 					case IApiProblem.LEAK_EXTENDS:
 						return IApiProblemTypes.LEAK_EXTEND;
 					case IApiProblem.LEAK_IMPLEMENTS:

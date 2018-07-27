@@ -343,7 +343,7 @@ public class InterfaceExtendsLeak extends LeakTest {
 
 	private void x13(boolean inc) {
 		int pid = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE,
-				IApiProblem.API_LEAK, IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_TYPE);
+				IApiProblem.API_LEAK, IApiProblem.LEAK_BY_EXTENDING_NO_EXTEND_INTERFACE_TYPE);
 		setExpectedProblemIds(new int[] { pid });
 		String typename = "Etest13"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] { { "interfaceNoExtend", typename } }); //$NON-NLS-1$
