@@ -29,6 +29,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEStorageDocumentProvider;
+import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.text.edits.*;
 import org.eclipse.ui.*;
@@ -422,8 +423,7 @@ public abstract class InputContext {
 				return TextUtilities.getDefaultLineDelimiter(document);
 			}
 		}
-		return Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null,
-				null);
+		return TextUtil.getDefaultLineDelimiter();
 	}
 
 	private void updateInput(IEditorInput newInput) throws CoreException {

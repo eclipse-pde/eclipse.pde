@@ -147,4 +147,8 @@ public abstract class TextUtil {
 		return value;
 	}
 
+	public static String getDefaultLineDelimiter() {
+		return Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null,
+				null);
+	}
 }

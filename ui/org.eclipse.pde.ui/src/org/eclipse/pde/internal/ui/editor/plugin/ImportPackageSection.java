@@ -41,8 +41,7 @@ import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.parts.ConditionalListSelectionDialog;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.search.dependencies.UnusedDependenciesAction;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
-import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
+import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -766,8 +765,7 @@ public class ImportPackageSection extends TableSection {
 		if (inputContext != null) {
 			return inputContext.getLineDelimiter();
 		}
-		return Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null,
-				null);
+		return TextUtil.getDefaultLineDelimiter();
 	}
 
 	private IBundle getBundle() {

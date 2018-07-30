@@ -25,6 +25,7 @@ import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.osgi.framework.Constants;
 
 public class GatherUnusedDependenciesOperation implements IRunnableWithProgress {
@@ -61,8 +62,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 				packages = ((ImportPackageHeader) header).getPackages();
 			} else if (header != null && header.getValue() != null) {
 				header = new ImportPackageHeader(Constants.IMPORT_PACKAGE, header.getValue(), bundle,
-						Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR,
-								null, null));
+						TextUtil.getDefaultLineDelimiter());
 				packages = ((ImportPackageHeader) header).getPackages();
 			}
 
@@ -71,8 +71,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 				exportedPackages = ((ExportPackageHeader) header).getPackageNames();
 			} else if (header != null && header.getValue() != null) {
 				header = new ExportPackageHeader(Constants.EXPORT_PACKAGE, header.getValue(), bundle,
-						Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR,
-								null, null));
+						TextUtil.getDefaultLineDelimiter());
 				exportedPackages = ((ExportPackageHeader) header).getPackageNames();
 			}
 		}

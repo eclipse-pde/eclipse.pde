@@ -34,6 +34,7 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.parts.EditableTablePart;
 import org.eclipse.pde.internal.ui.parts.TablePart;
+import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -332,8 +333,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 		if (inputContext != null) {
 			return inputContext.getLineDelimiter();
 		}
-		return Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null,
-				null);
+		return TextUtil.getDefaultLineDelimiter();
 	}
 
 	private Object[] getEnvironments() {
