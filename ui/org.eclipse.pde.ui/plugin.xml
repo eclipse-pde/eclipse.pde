@@ -1664,6 +1664,7 @@
                 </enablement>
                 <overrides id="org.eclipse.jdt.ui.text.correction.DefaultClasspathFixProcessor"/>
                 <overrides id="org.eclipse.jdt.junit.JUnitClasspathFixProcessor"/>
+                <overrides id="org.eclipse.jdt.ui.text.correction.DefaultModulepathFixProcessor"/>
           </classpathFixProcessor>
        </extension>
        <extension
