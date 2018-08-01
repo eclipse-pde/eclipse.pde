@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.ui.internal.preferences;
 import java.awt.Checkbox;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 
@@ -700,6 +701,11 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	 * Listing of all of the {@link Combo}s added to the block
 	 */
 	private ArrayList<Combo> fCombos = new ArrayList<>();
+
+	/**
+	 * Map of combo and label
+	 */
+	private HashMap<Combo, Label> fComboLabelMap = new HashMap<>();
 
 	/**
 	 * Listing of all of the {@link Checkbox}es added to the block
@@ -1459,6 +1465,10 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 		combo.select(data.getSelection(key.getStoredValue(fLookupOrder, false, fManager)));
 		fCombos.add(combo);
 		addHighlight(parent, lbl, combo);
+		if (org.eclipse.jface.util.Util.isMac()) {
+			fComboLabelMap.put(combo, lbl);
+		}
+
 	}
 
 	/**
@@ -1627,6 +1637,12 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 				}
 			}
 			control.setFocus();
+			if (org.eclipse.jface.util.Util.isMac()) {
+				Label labelControl = fComboLabelMap.get(control);
+				if (labelControl != null && control instanceof Combo) {
+					highlight(control.getParent(), labelControl, (Combo) control, ConfigurationBlock.HIGHLIGHT_FOCUS);
+				}
+			}
 		}
 	}
 

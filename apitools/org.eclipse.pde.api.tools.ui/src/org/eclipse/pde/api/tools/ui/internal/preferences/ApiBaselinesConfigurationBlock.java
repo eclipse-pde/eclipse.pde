@@ -241,6 +241,10 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	 * Listing of all of the {@link Combo}s added to the block
 	 */
 	private Combo fCombo = null;
+	/**
+	 * Listing of the label in the block
+	 */
+	private Label fLabel = null;
 
 	/**
 	 * The context of settings locations to search for values in
@@ -405,6 +409,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 		combo.addSelectionListener(selectionlistener);
 		combo.select(data.getSelection(key.getStoredValue(fLookupOrder, false, fManager)));
 		addHighlight(parent, lbl, combo);
+		fLabel = lbl;
 		return combo;
 	}
 
@@ -441,6 +446,13 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	public void selectOption() {
 		if (fCombo != null && !fCombo.isDisposed()) {
 			fCombo.setFocus();
+			if (fLabel != null && !fLabel.isDisposed()) {
+				if (org.eclipse.jface.util.Util.isMac()) {
+					if (fLabel != null) {
+						highlight(fCombo.getParent(), fLabel, fCombo, ConfigurationBlock.HIGHLIGHT_FOCUS);
+					}
+				}
+			}
 		}
 	}
 }
