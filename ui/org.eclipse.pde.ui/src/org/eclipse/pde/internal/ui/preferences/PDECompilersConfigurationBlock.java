@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
@@ -285,6 +286,10 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 * are used if changes are made
 	 */
 	private HashMap<Integer, HashSet<Control>> fControlMap = new HashMap<>(3);
+	/**
+	 * Map of combo and label
+	 */
+	private HashMap<Combo, Label> fComboLabelMap = new HashMap<>();
 
 	/**
 	 * Listing of all of the {@link ExpandableComposite}s in the block
@@ -601,6 +606,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		fMainComp.getParent().dispose();
 		fExpComps.clear();
 		fControlMap.clear();
+		fComboLabelMap.clear();
 	}
 
 	/**
@@ -640,6 +646,8 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		}
 		controls.add(combo);
 		addHighlight(parent, lbl, combo);
+		if (Util.isMac())
+			fComboLabelMap.put(combo, lbl);
 	}
 
 	/**
@@ -1023,6 +1031,12 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 				expandable.setExpanded(true);
 			}
 			curr.setFocus();
+			if (Util.isMac()) {
+				Label labelControl = fComboLabelMap.get(curr);
+				if (labelControl != null && curr instanceof Combo) {
+					highlight(curr.getParent(), labelControl, (Combo) curr, ConfigurationBlock.HIGHLIGHT_FOCUS);
+				}
+			}
 		}
 	}
 
