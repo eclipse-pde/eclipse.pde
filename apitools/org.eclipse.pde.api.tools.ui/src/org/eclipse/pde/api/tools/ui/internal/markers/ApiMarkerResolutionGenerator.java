@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 						new FilterProblemWithCommentResolution(marker) };
 			}
 			case IApiMarkerConstants.COMPATIBILITY_MARKER_ID: {
-			if (hasExplainProblemResolution(marker)) {
+			if (ApiMarkerResolutionGenerator.hasExplainProblemResolution(marker)) {
 				return new IMarkerResolution[] { new ProblemExplainIncompatibilityResolution(marker),
 						new FilterProblemResolution(marker), new FilterProblemWithCommentResolution(marker),
 						new ConfigureProblemSeverityForAPIToolsResolution(marker) };
@@ -161,7 +161,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 		return Util.isApiProblemMarker(marker);
 	}
 
-	public boolean hasExplainProblemResolution(IMarker marker) {
+	public static boolean hasExplainProblemResolution(IMarker marker) {
 		int id = ApiProblemFactory.getProblemId(marker);
 		if (id > -1) {
 			if( id == ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.CLASS_ELEMENT_TYPE, IDelta.ADDED, IDelta.FIELD)

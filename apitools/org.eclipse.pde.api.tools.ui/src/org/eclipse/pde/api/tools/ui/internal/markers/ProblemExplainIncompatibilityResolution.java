@@ -105,7 +105,9 @@ public class ProblemExplainIncompatibilityResolution extends WorkbenchMarkerReso
 			try {
 				if (Util.isApiProblemMarker(markers[i]) && !fBackingMarker.equals(markers[i])
 						&& !markers[i].getType().equals(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER)) {
-					mset.add(markers[i]);
+					if (ApiMarkerResolutionGenerator.hasExplainProblemResolution(markers[i])) {
+						mset.add(markers[i]);
+					}
 				}
 			} catch (CoreException ce) {
 				// do nothing just don't add the filter
