@@ -55,17 +55,14 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 	}
 
 	private String getContents() {
-		StringWriter swriter = new StringWriter();
-		PrintWriter writer = new PrintWriter(swriter);
-		setLoaded(true);
-		save(writer);
-		writer.flush();
-		try {
-			swriter.close();
+		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
+			setLoaded(true);
+			save(writer);
+			writer.flush();
+			return swriter.toString();
 		} catch (IOException e) {
-			// Ignore
+			return "";
 		}
-		return swriter.toString();
 	}
 
 	@Override
@@ -118,21 +115,16 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 	@Override
 	public void load() throws CoreException {
 		if (fFile.exists()) {
-			InputStream stream = null;
-			try {
-				stream = new BufferedInputStream(fFile.getContents(true));
-				try {
-					if (stream.available() > 0)
-						load(stream, false);
-					else {
-						// if we have an empty file, then mark as loaded so
-						// users changes will be saved
-						setLoaded(true);
-						stream.close();
-					}
-				} catch (IOException e) {
+			try (InputStream stream = new BufferedInputStream(fFile.getContents(true));) {
+				if (stream.available() > 0)
+					load(stream, false);
+				else {
+					// if we have an empty file, then mark as loaded so
+					// users changes will be saved
+					setLoaded(true);
+					stream.close();
 				}
-			} catch (CoreException e) {
+			} catch (IOException | CoreException e) {
 			}
 		}
 	}

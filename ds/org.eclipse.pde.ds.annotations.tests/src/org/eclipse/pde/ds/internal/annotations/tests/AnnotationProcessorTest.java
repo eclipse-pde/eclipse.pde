@@ -37,15 +37,12 @@ public abstract class AnnotationProcessorTest extends TestBase {
 		assertTrue("Missing component descriptor!", dsFile.exists());
 
 		ByteArrayOutputStream buf = new ByteArrayOutputStream();
-		InputStream src = dsFile.getContents();
-		try {
+		try (InputStream src = dsFile.getContents()) {
 			byte[] bytes = new byte[4096];
 			int c;
 			while ((c = src.read(bytes)) != -1) {
 				buf.write(bytes, 0, c);
 			}
-		} finally {
-			src.close();
 		}
 
 		dsModel = new DSModel(new Document(buf.toString(dsFile.getCharset())), false);

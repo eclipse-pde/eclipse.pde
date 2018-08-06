@@ -363,15 +363,15 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 			}
 
 			// Write the current model into a String as raw XML
-			StringWriter swriter = new StringWriter();
-			PrintWriter writer = new PrintWriter(swriter);
-			fModel.getCompCS().write("", writer); //$NON-NLS-1$
-			writer.flush();
-			swriter.close();
-			// Launch in the cheat sheet view
-			OpenCheatSheetAction openAction = new OpenCheatSheetAction(
-					input.getName(), input.getName(), swriter.toString(), url);
-			openAction.run();
+			try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
+				fModel.getCompCS().write("", writer); //$NON-NLS-1$
+				writer.flush();
+				swriter.close();
+				// Launch in the cheat sheet view
+				OpenCheatSheetAction openAction = new OpenCheatSheetAction(input.getName(), input.getName(),
+						swriter.toString(), url);
+				openAction.run();
+			}
 		} catch (IOException e) {
 			PDEUserAssistanceUIPlugin.logException(e);
 		} catch (CoreException e) {

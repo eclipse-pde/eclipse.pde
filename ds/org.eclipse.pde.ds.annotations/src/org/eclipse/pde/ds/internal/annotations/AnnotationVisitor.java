@@ -1387,19 +1387,18 @@ public class AnnotationVisitor extends ASTVisitor {
 		// because our classloader (with DSPropery visible) will be on top of the stack
 		// yay for Java serialization, *sigh*
 		IDocumentElementNode clone = null;
-		try {
+		try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
 			// Serialize
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			ObjectOutputStream out = new ObjectOutputStream(bout);
-			out.writeObject(node);
-			out.flush();
-			out.close();
+			try (ObjectOutputStream out = new ObjectOutputStream(bout)) {
+				out.writeObject(node);
+				out.flush();
+			}
 			byte[] bytes = bout.toByteArray();
 			// Deserialize
-			ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
-			ObjectInputStream in = new ObjectInputStream(bin);
-			clone = (IDocumentElementNode) in.readObject();
-			in.close();
+			try (ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
+					ObjectInputStream in = new ObjectInputStream(bin)) {
+				clone = (IDocumentElementNode) in.readObject();
+			}
 			// Reconnect
 			clone.reconnect(obj, obj.getSharedModel());
 		} catch (IOException e) {
@@ -1435,8 +1434,7 @@ public class AnnotationVisitor extends ASTVisitor {
 
 	private String normalizePropertyElemBody(String content) {
 		StringBuilder buf = new StringBuilder(content.length());
-		BufferedReader reader = new BufferedReader(new StringReader(content));
-		try {
+		try (BufferedReader reader = new BufferedReader(new StringReader(content))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				String trimmed = line.trim();
@@ -1453,12 +1451,6 @@ public class AnnotationVisitor extends ASTVisitor {
 		} catch (IOException e) {
 			if (debug.isDebugging()) {
 				debug.trace("Error reading property element body.", e); //$NON-NLS-1$
-			}
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException e) {
-				// ignore
 			}
 		}
 

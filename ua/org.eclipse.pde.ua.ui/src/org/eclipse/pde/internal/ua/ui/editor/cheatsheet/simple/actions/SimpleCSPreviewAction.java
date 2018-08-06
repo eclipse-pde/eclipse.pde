@@ -48,10 +48,9 @@ public class SimpleCSPreviewAction extends Action {
 		// Get the editor input
 		// Could be IFileEditorInput (File in workpspace - e.g. Package Explorer View)
 		// Could be IStorageEditorInput (File not in workpsace - e.g. CVS Repositories View)
-		try {
+		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
 			// Write the current model into a String as raw XML
-			StringWriter swriter = new StringWriter();
-			PrintWriter writer = new PrintWriter(swriter);
+
 			fDataModelObject.write("", writer); //$NON-NLS-1$
 			writer.flush();
 			swriter.close();

@@ -121,11 +121,8 @@ public class AllDSAnnotationsTests {
 				continue;
 			}
 
-			InputStream src = bundle.getEntry(entry).openStream();
-			try {
+			try (InputStream src = bundle.getEntry(entry).openStream()){
 				Files.copy(src, target, StandardCopyOption.REPLACE_EXISTING);
-			} finally {
-				src.close();
 			}
 		}
 	}

@@ -246,8 +246,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			return null;
 		}
 
-		ObjectInputStream in = new ObjectInputStream(new FileInputStream(stateFile));
-		try {
+		try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(stateFile))) {
 			ProjectState state = (ProjectState) in.readObject();
 
 			if (debug.isDebugging()) {
@@ -261,8 +260,6 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			IOException ex = new IOException("Unable to deserialize project state."); //$NON-NLS-1$
 			ex.initCause(e);
 			throw ex;
-		} finally {
-			in.close();
 		}
 	}
 
@@ -444,11 +441,8 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			}
 		}
 
-		ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(stateFile));
-		try {
+		try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(stateFile))) {
 			out.writeObject(state);
-		} finally {
-			out.close();
 		}
 	}
 
