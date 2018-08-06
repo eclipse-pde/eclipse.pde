@@ -664,9 +664,8 @@ public class UtilTests extends TestCase {
 
 	public void testPluginXmlDecoding() {
 		InputStream stream = UtilTests.class.getResourceAsStream("plugin.xml.zip"); //$NON-NLS-1$
-		ZipInputStream inputStream = new ZipInputStream(new BufferedInputStream(stream));
 		String s = null;
-		try {
+		try (ZipInputStream inputStream = new ZipInputStream(new BufferedInputStream(stream))) {
 			ZipEntry zEntry;
 			while ((zEntry = inputStream.getNextEntry()) != null) {
 				// if it is empty directory, continue
@@ -677,14 +676,6 @@ public class UtilTests extends TestCase {
 			}
 		} catch (IOException e) {
 			// ignore
-		} finally {
-			try {
-				if (inputStream != null) {
-					inputStream.close();
-				}
-			} catch (IOException ioe) {
-				// ignore
-			}
 		}
 		assertNotNull("Should not be null", s); //$NON-NLS-1$
 		try {

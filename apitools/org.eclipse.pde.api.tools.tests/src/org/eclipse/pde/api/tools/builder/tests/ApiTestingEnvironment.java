@@ -640,14 +640,8 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	private void updateWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) throws Exception {
 		IFile file = getWorkspace().getRoot().getFile(workspaceLocation);
 		File replacement = replacementLocation.toFile();
-		FileInputStream stream = null;
-		try {
-			stream = new FileInputStream(replacement);
+		try (FileInputStream stream = new FileInputStream(replacement);) {
 			file.setContents(stream, false, true, null);
-		} finally {
-			if (stream != null) {
-				stream.close();
-			}
 		}
 	}
 
@@ -663,14 +657,8 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	private void createWorkspaceFile(IPath workspaceLocation, IPath replacementLocation) throws Exception {
 		IFile file = getWorkspace().getRoot().getFile(workspaceLocation);
 		File replacement = replacementLocation.toFile();
-		FileInputStream stream = null;
-		try {
-			stream = new FileInputStream(replacement);
+		try (FileInputStream stream = new FileInputStream(replacement)) {
 			file.create(stream, false, null);
-		} finally {
-			if (stream != null) {
-				stream.close();
-			}
 		}
 	}
 

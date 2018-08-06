@@ -397,16 +397,9 @@ public class ApiDescriptionTests extends TestCase {
 		File descfile = new File(file, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
 		String readXML = null;
 		if (descfile.exists()) {
-			FileInputStream stream = null;
-			try {
-				 stream = new FileInputStream(descfile);
+			try (FileInputStream stream = new FileInputStream(descfile)) {
 				char[] charArray = Util.getInputStreamAsCharArray(stream, -1, StandardCharsets.UTF_8);
 				 readXML = new String(charArray);
-			}
-			finally {
-				if(stream != null) {
-					stream.close();
-				}
 			}
 		}
 		IApiDescription settings = new ApiDescription(null);

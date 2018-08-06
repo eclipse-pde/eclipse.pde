@@ -39,7 +39,6 @@ import org.eclipse.jdt.core.compiler.batch.BatchCompiler;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.model.ApiType;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
@@ -414,10 +413,9 @@ public class TestSuiteHelper {
 		if (eePath == null) {
 			// generate a fake 1.8 ee file
 			File fakeEEFile = null;
-			PrintWriter writer = null;
 			try {
 				fakeEEFile = Util.createTempFile("eefile", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
-				writer = new PrintWriter(new BufferedWriter(new FileWriter(fakeEEFile)));
+				try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(fakeEEFile)))) {
 				writer.print("-Djava.home="); //$NON-NLS-1$
 				writer.println(System.getProperty("java.home")); //$NON-NLS-1$
 				writer.print("-Dee.bootclasspath="); //$NON-NLS-1$
@@ -425,12 +423,9 @@ public class TestSuiteHelper {
 				writer.println("-Dee.language.level=1.8"); //$NON-NLS-1$
 				writer.println("-Dee.class.library.level=JavaSE-1.8"); //$NON-NLS-1$
 				writer.flush();
+				}
 			} catch (IOException e) {
 				// ignore
-			} finally {
-				if (writer != null) {
-					writer.close();
-				}
 			}
 			fakeEEFile.deleteOnExit();
 			eePath = fakeEEFile.getAbsolutePath();
@@ -671,41 +666,22 @@ public class TestSuiteHelper {
 			}
 		} else {
 			byte[] bytes = null;
-			BufferedInputStream inputStream = null;
-			try {
-				inputStream = new BufferedInputStream(new FileInputStream(f));
+			try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(f))) {
 				bytes = Util.getInputStreamAsByteArray(inputStream, -1);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
-			} finally {
-				if (inputStream != null) {
-					try {
-						inputStream.close();
-					} catch (IOException e) {
-						ApiPlugin.log(e);
-					}
-				}
 			}
 			if (bytes != null) {
-				BufferedOutputStream outputStream = null;
-				try {
-					outputStream = new BufferedOutputStream(new FileOutputStream(new File(dest, f.getName())));
+				try (BufferedOutputStream outputStream = new BufferedOutputStream(
+						new FileOutputStream(new File(dest, f.getName())))) {
 					outputStream.write(bytes);
 					outputStream.flush();
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
 					e.printStackTrace();
-				} finally {
-					if (outputStream != null) {
-						try {
-							outputStream.close();
-						} catch (IOException e) {
-							ApiPlugin.log(e);
-						}
-					}
 				}
 			}
 		}

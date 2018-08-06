@@ -40,22 +40,12 @@ public class DecodeBuildState {
 			return;
 		}
 		BuildState state = null;
-		DataInputStream inputStream = null;
-		try {
-			inputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+		try (DataInputStream inputStream = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
 			state = BuildState.read(inputStream);
 		} catch (FileNotFoundException e) {
 			ApiPlugin.log(e);
 		} catch (IOException e) {
 			ApiPlugin.log(e);
-		} finally {
-			if (inputStream != null) {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
 		}
 		if (state != null) {
 			printBuildState(state);
@@ -64,33 +54,33 @@ public class DecodeBuildState {
 
 	private static void printBuildState(BuildState state) {
 		StringWriter stringWriter = new StringWriter();
-		PrintWriter writer = new PrintWriter(stringWriter);
-		writer.println("Breaking changes"); //$NON-NLS-1$
-		IDelta[] breakingChanges = state.getBreakingChanges();
-		int length = breakingChanges.length;
-		if (length != 0) {
-			for (int i = 0; i < length; i++) {
-				IDelta delta = breakingChanges[i];
-				writer.println(delta);
-				writer.println(delta.getMessage());
+		try (PrintWriter writer = new PrintWriter(stringWriter)) {
+			writer.println("Breaking changes"); //$NON-NLS-1$
+			IDelta[] breakingChanges = state.getBreakingChanges();
+			int length = breakingChanges.length;
+			if (length != 0) {
+				for (int i = 0; i < length; i++) {
+					IDelta delta = breakingChanges[i];
+					writer.println(delta);
+					writer.println(delta.getMessage());
+				}
+			} else {
+				writer.println("No breaking changes"); //$NON-NLS-1$
 			}
-		} else {
-			writer.println("No breaking changes"); //$NON-NLS-1$
-		}
-		writer.println("Compatible changes"); //$NON-NLS-1$
-		IDelta[] compatibleChanges = state.getCompatibleChanges();
-		length = compatibleChanges.length;
-		if (length != 0) {
-			for (int i = 0; i < length; i++) {
-				IDelta delta = compatibleChanges[i];
-				writer.println(delta);
-				writer.println(delta.getMessage());
+			writer.println("Compatible changes"); //$NON-NLS-1$
+			IDelta[] compatibleChanges = state.getCompatibleChanges();
+			length = compatibleChanges.length;
+			if (length != 0) {
+				for (int i = 0; i < length; i++) {
+					IDelta delta = compatibleChanges[i];
+					writer.println(delta);
+					writer.println(delta.getMessage());
+				}
+			} else {
+				writer.println("No compatible changes"); //$NON-NLS-1$
 			}
-		} else {
-			writer.println("No compatible changes"); //$NON-NLS-1$
+			writer.flush();
 		}
-		writer.flush();
-		writer.close();
 		System.out.println("Build state:" + String.valueOf(stringWriter.getBuffer())); //$NON-NLS-1$
 	}
 

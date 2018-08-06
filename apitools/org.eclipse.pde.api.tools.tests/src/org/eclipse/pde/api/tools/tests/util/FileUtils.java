@@ -142,11 +142,8 @@ public class FileUtils {
 	 * @throws IOException
 	 */
 	public static void createFile(String path, String contents) throws IOException {
-		FileOutputStream output = new FileOutputStream(path);
-		try {
+		try (FileOutputStream output = new FileOutputStream(path)) {
 			output.write(contents.getBytes());
-		} finally {
-			output.close();
 		}
 	}
 
@@ -281,9 +278,7 @@ public class FileUtils {
 			return null;
 		}
 		StringBuilder sourceContentBuffer = new StringBuilder();
-		FileInputStream input = null;
-		input = new FileInputStream(sourceFile);
-		try {
+		try (FileInputStream input = new FileInputStream(sourceFile)) {
 			int read;
 			do {
 				read = input.read();
@@ -291,8 +286,6 @@ public class FileUtils {
 					sourceContentBuffer.append((char) read);
 				}
 			} while (read != -1);
-			input.close();
-		} finally {
 			input.close();
 		}
 		return sourceContentBuffer.toString();
@@ -306,25 +299,12 @@ public class FileUtils {
 	 */
 	public static void writeToFile(String contents, String destinationFilePath) {
 		File destFile = new File(destinationFilePath);
-		PrintWriter writer = null;
-		FileOutputStream output = null;
-		try {
-			output = new FileOutputStream(destFile);
-			writer = new PrintWriter(output);
+		try (FileOutputStream output = new FileOutputStream(destFile); PrintWriter writer = new PrintWriter(output);) {
 			writer.print(contents);
 			writer.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
-		} finally {
-			if (writer != null) {
-				writer.close();
-			} else if (output != null) {
-				try {
-					output.close();
-				} catch (IOException e2) {
-				}
-			}
 		}
 	}
 
@@ -337,19 +317,13 @@ public class FileUtils {
 	 * @throws IOException
 	 */
 	public static void zip(File rootDir, String zipPath) throws IOException {
-		ZipOutputStream zip = null;
-		try {
-			File zipFile = new File(zipPath);
-			if (zipFile.exists()) {
-				Util.delete(zipFile);
-			}
-			zip = new ZipOutputStream(new FileOutputStream(zipFile));
+		File zipFile = new File(zipPath);
+		if (zipFile.exists()) {
+			Util.delete(zipFile);
+		}
+		try (ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(zipFile))) {
 			zip(rootDir, zip, rootDir.getPath().length() + 1); // 1 for last
 																// slash
-		} finally {
-			if (zip != null) {
-				zip.close();
-			}
 		}
 	}
 
@@ -444,41 +418,26 @@ public class FileUtils {
 				}
 			}
 		} else {
-			FileInputStream in = null;
-			FileOutputStream out = null;
-			try {
-				in = new FileInputStream(source);
+			try (FileInputStream in = new FileInputStream(source)) {
 				File destFile = new File(dest, source.getName());
 				if (destFile.exists()) {
 					if (!Util.delete(destFile)) {
 						throw new IOException(destFile + " is in use"); //$NON-NLS-1$
 					}
 				}
-				out = new FileOutputStream(destFile);
-				int bufferLength = 1024;
-				byte[] buffer = new byte[bufferLength];
-				int read = 0;
-				while (read != -1) {
-					read = in.read(buffer, 0, bufferLength);
-					if (read != -1) {
-						out.write(buffer, 0, read);
+				try (FileOutputStream out = new FileOutputStream(destFile)) {
+					int bufferLength = 1024;
+					byte[] buffer = new byte[bufferLength];
+					int read = 0;
+					while (read != -1) {
+						read = in.read(buffer, 0, bufferLength);
+						if (read != -1) {
+							out.write(buffer, 0, read);
+						}
 					}
 				}
 			} catch (IOException e) {
 				throw new Error(e.toString());
-			} finally {
-				if (in != null) {
-					try {
-						in.close();
-					} catch (IOException e) {
-					}
-				}
-				if (out != null) {
-					try {
-						out.close();
-					} catch (IOException e) {
-					}
-				}
 			}
 		}
 	}
