@@ -70,7 +70,6 @@ public class ConvertSchemaToHTML extends Task {
 		IPluginExtensionPoint[] extPoints = model.getPluginBase().getExtensionPoints();
 		for (IPluginExtensionPoint extPoint : extPoints) {
 			String schemaLocation = extPoint.getSchema();
-			PrintWriter out = null;
 
 			if (schemaLocation == null || schemaLocation.equals("")) //$NON-NLS-1$
 				continue;
@@ -104,13 +103,13 @@ public class ConvertSchemaToHTML extends Task {
 				if (id.indexOf('.') == -1)
 					id = pluginID + "." + id; //$NON-NLS-1$
 				File file = new File(directory, id.replace('.', '_') + ".html"); //$NON-NLS-1$
-				out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8), true);
+				try (PrintWriter out = new PrintWriter(
+						new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8), true)) {
 				fTransformer.transform(schema, out, cssURL, SchemaTransformer.BUILD);
+				}
 			} catch (Exception e) {
 				throw new BuildException(e);
 			} finally {
-				if (out != null)
-					out.close();
 				if (schema != null)
 					schema.dispose();
 			}

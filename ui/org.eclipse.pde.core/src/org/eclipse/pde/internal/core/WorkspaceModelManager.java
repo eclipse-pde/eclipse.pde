@@ -234,22 +234,14 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 
 	protected void loadModel(IModel model, boolean reload) {
 		IFile file = (IFile) model.getUnderlyingResource();
-		InputStream stream = null;
-		try {
-			stream = new BufferedInputStream(file.getContents(true));
+		try (InputStream stream = new BufferedInputStream(file.getContents(true));) {
+
 			if (reload)
 				model.reload(stream, false);
 			else
 				model.load(stream, false);
-		} catch (CoreException e) {
+		} catch (CoreException | IOException e) {
 			PDECore.logException(e);
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e) {
-				PDECore.log(e);
-			}
 		}
 	}
 

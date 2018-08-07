@@ -261,31 +261,19 @@ class ExternalLibraryCache {
 	 * @throws IOException
 	 */
 	private File extractJar(File fJarFile, String libName, File fTargetFile) throws IOException {
-		JarFile f = new JarFile(fJarFile);
-		InputStream in = null;
-		try {
+		try (JarFile f = new JarFile(fJarFile)) {
 			ZipEntry libEntry = f.getEntry(libName);
 			if (libEntry == null || libEntry.isDirectory()) {
 				return null;
 			}
 			fTargetFile.getParentFile().mkdirs();
-			in = f.getInputStream(libEntry);
+			try (InputStream in = f.getInputStream(libEntry)) {
 			if (in == null)
 				throw new IOException();
 
 			CoreUtility.readFile(in, fTargetFile);
+			}
 			return fTargetFile;
-		} finally {
-			try {
-				f.close();
-			} catch (Exception e) {
-			}
-			try {
-				if (in != null) {
-					in.close();
-				}
-			} catch (Exception e) {
-			}
 		}
 	}
 

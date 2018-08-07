@@ -38,8 +38,7 @@ public class CoreUtility {
 	 * @exception IOException
 	 */
 	public static void readFile(InputStream in, File file) throws IOException {
-		FileOutputStream fos = new FileOutputStream(file);
-		try {
+		try (FileOutputStream fos = new FileOutputStream(file)) {
 			byte buffer[] = new byte[1024];
 			int count;
 			try {
@@ -47,8 +46,6 @@ public class CoreUtility {
 					fos.write(buffer, 0, count);
 				}
 			} finally {
-				fos.close();
-				fos = null;
 				in.close();
 				in = null;
 			}
@@ -204,23 +201,12 @@ public class CoreUtility {
 	}
 
 	public static boolean jarContainsResource(File file, String resource, boolean directory) {
-		ZipFile jarFile = null;
-		try {
-			jarFile = new ZipFile(file, ZipFile.OPEN_READ);
+		try (ZipFile jarFile = new ZipFile(file, ZipFile.OPEN_READ);) {
 			ZipEntry resourceEntry = jarFile.getEntry(resource);
 			if (resourceEntry != null)
 				return directory ? resourceEntry.isDirectory() : true;
-		} catch (IOException e) {
+		} catch (IOException | FactoryConfigurationError e) {
 			PDECore.logException(e);
-		} catch (FactoryConfigurationError e) {
-			PDECore.logException(e);
-		} finally {
-			try {
-				if (jarFile != null)
-					jarFile.close();
-			} catch (IOException e2) {
-				PDECore.logException(e2);
-			}
 		}
 		return false;
 	}
@@ -274,11 +260,8 @@ public class CoreUtility {
 	}
 
 	public static org.eclipse.jface.text.Document getTextDocument(InputStream in) {
-		ByteArrayOutputStream output = null;
 		String result = null;
-		try {
-			output = new ByteArrayOutputStream();
-
+		try (ByteArrayOutputStream output = new ByteArrayOutputStream();) {
 			byte buffer[] = new byte[1024];
 			int count;
 			while ((count = in.read(buffer, 0, buffer.length)) > 0) {
@@ -286,20 +269,10 @@ public class CoreUtility {
 			}
 
 			result = output.toString("UTF-8"); //$NON-NLS-1$
-			output.close();
-			output = null;
 			in.close();
 			in = null;
 		} catch (IOException e) {
 			// close open streams
-			if (output != null) {
-				try {
-					output.close();
-				} catch (IOException ee) {
-					PDECore.logException(ee);
-				}
-			}
-
 			try {
 				in.close();
 			} catch (IOException ee) {

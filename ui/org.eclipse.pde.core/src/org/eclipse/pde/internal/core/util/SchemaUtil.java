@@ -53,13 +53,13 @@ public class SchemaUtil {
 	}
 
 	public static void parseURL(URL url, DefaultHandler handler) {
-		InputStream input = null;
 		URLConnection connection = null;
 		try {
 			connection = getURLConnection(url);
-			input = connection.getInputStream();
-			SAXParserWrapper parser = new SAXParserWrapper();
-			parser.parse(input, handler);
+			try (InputStream input = connection.getInputStream()) {
+				SAXParserWrapper parser = new SAXParserWrapper();
+				parser.parse(input, handler);
+			}
 		} catch (MalformedURLException e) {
 			// Ignore
 			// Caused when URL is null
@@ -77,8 +77,6 @@ public class SchemaUtil {
 			PDECore.logException(e);
 		} finally {
 			try {
-				if (input != null)
-					input.close();
 				if (connection instanceof JarURLConnection) {
 					// https://bugs.eclipse.org/bugs/show_bug.cgi?id=326263
 					((JarURLConnection) connection).getJarFile().close();

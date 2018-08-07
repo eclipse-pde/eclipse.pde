@@ -114,9 +114,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		DefaultSAXParser.parse(file, reporter);
 		reporter.validateContent(monitor);
 
-		StringWriter swriter = new StringWriter();
-		PrintWriter writer = new PrintWriter(swriter);
-		try {
+		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
 			boolean generateDoc = CompilerFlags.getBoolean(file.getProject(), CompilerFlags.S_CREATE_DOCS);
 			if (reporter.getDocumentRoot() != null && reporter.getErrorCount() == 0 && generateDoc) {
 				ensureFoldersExist(file.getProject(), getDocLocation(file));
@@ -139,14 +137,8 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 					outputFile.setContents(target, true, false, monitor);
 				}
 			}
-		} catch (CoreException e) {
+		} catch (CoreException | IOException e) {
 			PDECore.logException(e);
-		} finally {
-			writer.close();
-			try {
-				swriter.close();
-			} catch (IOException e1) {
-			}
 		}
 		monitor.subTask(PDECoreMessages.Builders_updating);
 		monitor.done();

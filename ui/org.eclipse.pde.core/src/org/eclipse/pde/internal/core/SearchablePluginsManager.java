@@ -376,18 +376,17 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 			IFile file = project.getFile(PROXY_FILE_NAME);
 			Properties properties = new Properties();
 			properties.setProperty(KEY, propertyToSave);
-			try {
-				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			try (ByteArrayOutputStream outStream = new ByteArrayOutputStream()) {
 				properties.store(outStream, ""); //$NON-NLS-1$
 				outStream.flush();
 				outStream.close();
-				ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
-				if (file.exists()) {
-					file.setContents(inStream, true, false, new NullProgressMonitor());
-				} else {
-					file.create(inStream, true, new NullProgressMonitor());
+				try (ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray())) {
+					if (file.exists()) {
+						file.setContents(inStream, true, false, new NullProgressMonitor());
+					} else {
+						file.create(inStream, true, new NullProgressMonitor());
+					}
 				}
-				inStream.close();
 			} catch (IOException e) {
 				PDECore.log(e);
 			} catch (CoreException e) {

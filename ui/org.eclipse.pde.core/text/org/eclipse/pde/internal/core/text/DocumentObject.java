@@ -518,23 +518,22 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	@Override
 	public IDocumentElementNode clone(IDocumentElementNode node) {
 		IDocumentElementNode clone = null;
-		try {
+		try (ByteArrayOutputStream bout = new ByteArrayOutputStream()) {
 			// Serialize
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			ObjectOutputStream out = new ObjectOutputStream(bout);
-			out.writeObject(node);
-			out.flush();
-			out.close();
+
+			try (ObjectOutputStream out = new ObjectOutputStream(bout)) {
+				out.writeObject(node);
+				out.flush();
+			}
 			byte[] bytes = bout.toByteArray();
 			// Deserialize
-			ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
-			ObjectInputStream in = new ObjectInputStream(bin);
-			clone = (IDocumentElementNode) in.readObject();
-			in.close();
+			try (ByteArrayInputStream bin = new ByteArrayInputStream(bytes);
+					ObjectInputStream in = new ObjectInputStream(bin)) {
+				clone = (IDocumentElementNode) in.readObject();
+			}
 			// Reconnect
 			clone.reconnect(this, fModel);
 		} catch (IOException e) {
-			clone = null;
 		} catch (ClassNotFoundException e) {
 		}
 

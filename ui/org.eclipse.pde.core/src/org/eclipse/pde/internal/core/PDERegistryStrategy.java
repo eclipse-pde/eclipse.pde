@@ -199,7 +199,8 @@ public class PDERegistryStrategy extends RegistryStrategy {
 			} else {
 				// Archived bundle, need to extract the file
 				jfile = new ZipFile(input, ZipFile.OPEN_READ);
-				String fileName = (base.isFragmentModel()) ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
+				String fileName = (base.isFragmentModel()) ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR
+						: ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
 				ZipEntry entry = jfile.getEntry(fileName);
 				if (entry != null) {
 					is = jfile.getInputStream(entry);

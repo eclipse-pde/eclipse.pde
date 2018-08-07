@@ -42,20 +42,11 @@ public class ExternalFeatureModelManager {
 	public static IFeatureModel createModel(File manifest) throws CoreException {
 		ExternalFeatureModel model = new ExternalFeatureModel();
 		model.setInstallLocation(manifest.getParent());
-		InputStream stream = null;
-		try {
-			stream = new BufferedInputStream(new FileInputStream(manifest));
+		try (InputStream stream = new BufferedInputStream(new FileInputStream(manifest))) {
 			model.load(stream, false);
 			return model;
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetFeature_FileDoesNotExist, manifest)));
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 	}
 

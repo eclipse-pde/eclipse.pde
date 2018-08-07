@@ -44,21 +44,11 @@ public class TargetPlatformHelper {
 		if (!iniFile.exists())
 			return null;
 		Properties pini = new Properties();
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(iniFile);
+		try (FileInputStream fis = new FileInputStream(iniFile)) {
 			pini.load(fis);
-			fis.close();
 			return pini;
 		} catch (IOException e) {
 			PDECore.logException(e);
-		} finally {
-			try {
-				if (fis != null)
-					fis.close();
-			} catch (IOException e) {
-				PDECore.logException(e);
-			}
 		}
 		return null;
 	}
@@ -585,11 +575,10 @@ public class TargetPlatformHelper {
 //		if (Platform.getOS().equals(Platform.OS_MACOSX))
 //			installDirectory = new File(installDirectory, "Eclipse.app/Contents/MacOS"); //$NON-NLS-1$
 		File eclipseIniFile = new File(installDirectory, "eclipse.ini"); //$NON-NLS-1$
-		BufferedReader in = null;
 		StringBuilder result = new StringBuilder();
 		if (eclipseIniFile.exists()) {
-			try {
-				in = new BufferedReader(new FileReader(eclipseIniFile));
+			try (BufferedReader in = new BufferedReader(new FileReader(eclipseIniFile))) {
+
 				String str;
 				boolean vmargs = false;
 				while ((str = in.readLine()) != null) {
@@ -604,13 +593,6 @@ public class TargetPlatformHelper {
 				}
 			} catch (IOException e) {
 				PDECore.log(e);
-			} finally {
-				if (in != null)
-					try {
-						in.close();
-					} catch (IOException e) {
-						PDECore.log(e);
-					}
 			}
 		}
 		return result.toString();

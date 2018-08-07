@@ -372,20 +372,17 @@ public class Schema extends PlatformObject implements ISchema {
 
 	public void load() {
 		URLConnection connection = null;
-		InputStream input = null;
 		try {
 			connection = SchemaUtil.getURLConnection(fURL);
-			input = connection.getInputStream();
-			load(input);
+			try (InputStream input = connection.getInputStream()) {
+				load(input);
+			}
 		} catch (FileNotFoundException e) {
 			fLoaded = false;
 		} catch (IOException e) {
 			PDECore.logException(e);
 		} finally {
 			try {
-				if (input != null) {
-					input.close();
-				}
 				if (connection instanceof JarURLConnection) {
 					((JarURLConnection) connection).getJarFile().close();
 				}

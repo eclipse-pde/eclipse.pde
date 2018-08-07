@@ -55,16 +55,14 @@ public class WorkspaceSiteModel extends AbstractSiteModel implements IEditableMo
 	}
 
 	public String getContents() {
-		StringWriter swriter = new StringWriter();
-		PrintWriter writer = new PrintWriter(swriter);
-		setLoaded(true);
-		save(writer);
-		writer.flush();
-		try {
-			swriter.close();
+		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
+			setLoaded(true);
+			save(writer);
+			writer.flush();
+			return swriter.toString();
 		} catch (IOException e) {
+			return ""; //$NON-NLS-1$
 		}
-		return swriter.toString();
 	}
 
 	public IFile getFile() {
@@ -104,24 +102,14 @@ public class WorkspaceSiteModel extends AbstractSiteModel implements IEditableMo
 	@Override
 	public void load() {
 		if (fFile.exists()) {
-			InputStream stream = null;
-			try {
-				stream = new BufferedInputStream(fFile.getContents(true));
-				try {
+			try (InputStream stream = new BufferedInputStream(fFile.getContents(true));) {
 					if (stream.available() > 0)
 						load(stream, false);
 					else {
 						// if we have an empty file, then mark as loaded so users changes will be saved
 						setLoaded(true);
 					}
-				} catch (IOException e) {
-				}
-			} catch (CoreException e) {
-			} finally {
-				try {
-					stream.close();
-				} catch (IOException e) {
-				}
+			} catch (CoreException | IOException e) {
 			}
 		} else {
 			this.site = new Site();
@@ -132,15 +120,13 @@ public class WorkspaceSiteModel extends AbstractSiteModel implements IEditableMo
 
 	@Override
 	public void save() {
-		try {
-			String contents = fixLineDelimiter(getContents(), fFile);
-			ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));
+		String contents = fixLineDelimiter(getContents(), fFile);
+		try (ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8))) {
 			if (fFile.exists()) {
 				fFile.setContents(stream, false, false, null);
 			} else {
 				fFile.create(stream, false, null);
 			}
-			stream.close();
 		} catch (CoreException e) {
 			PDECore.logException(e);
 		} catch (IOException e) {

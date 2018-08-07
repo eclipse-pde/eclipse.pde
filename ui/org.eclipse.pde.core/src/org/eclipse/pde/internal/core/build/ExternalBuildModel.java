@@ -15,7 +15,6 @@ import java.io.*;
 import java.net.URL;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
 
 public class ExternalBuildModel extends BuildModel {
 
@@ -38,7 +37,6 @@ public class ExternalBuildModel extends BuildModel {
 
 	@Override
 	public void load() {
-		InputStream stream = null;
 		try {
 			URL url = null;
 			File file = new File(getInstallLocation());
@@ -47,19 +45,13 @@ public class ExternalBuildModel extends BuildModel {
 			} else {
 				url = new URL("file:" + file.getAbsolutePath() + IPath.SEPARATOR + ICoreConstants.BUILD_FILENAME_DESCRIPTOR); //$NON-NLS-1$
 			}
-			stream = url.openStream();
-			load(stream, false);
+			try (InputStream stream = url.openStream()) {
+				load(stream, false);
+			}
 		} catch (IOException e) {
 			fBuild = new Build();
 			fBuild.setModel(this);
 			setLoaded(true);
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e) {
-				PDECore.logException(e);
-			}
 		}
 	}
 

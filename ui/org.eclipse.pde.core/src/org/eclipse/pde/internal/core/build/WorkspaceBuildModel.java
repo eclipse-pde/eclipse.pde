@@ -37,17 +37,14 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 	}
 
 	public String getContents() {
-		StringWriter swriter = new StringWriter();
-		PrintWriter writer = new PrintWriter(swriter);
-		save(writer);
-		writer.flush();
-		try {
-			swriter.close();
-			writer.close();
+		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
+			save(writer);
+			writer.flush();
+			return swriter.toString();
 		} catch (IOException e) {
 			PDECore.logException(e);
+			return ""; //$NON-NLS-1$
 		}
-		return swriter.toString();
 	}
 
 	@Override
@@ -68,19 +65,10 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 	@Override
 	public void load() {
 		if (fUnderlyingResource.exists()) {
-			InputStream stream = null;
-			try {
-				stream = fUnderlyingResource.getContents(true);
+			try (InputStream stream = fUnderlyingResource.getContents(true)) {
 				load(stream, false);
 			} catch (Exception e) {
 				PDECore.logException(e);
-			} finally {
-				try {
-					if (stream != null)
-						stream.close();
-				} catch (IOException e) {
-					PDECore.logException(e);
-				}
 			}
 		} else {
 			fBuild = new Build();
@@ -103,27 +91,16 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 	public void save() {
 		if (fUnderlyingResource == null)
 			return;
-		ByteArrayInputStream stream = null;
-		try {
-			String contents = fixLineDelimiter(getContents(), fUnderlyingResource);
-			stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.ISO_8859_1));
+		String contents = fixLineDelimiter(getContents(), fUnderlyingResource);
+		try (ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.ISO_8859_1))) {
 			if (fUnderlyingResource.exists()) {
 				fUnderlyingResource.setContents(stream, false, false, null);
 			} else {
 				fUnderlyingResource.create(stream, false, null);
 			}
 			stream.close();
-		} catch (CoreException e) {
+		} catch (CoreException | IOException e) {
 			PDECore.logException(e);
-		} catch (IOException e) {
-			PDECore.logException(e);
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e) {
-				PDECore.logException(e);
-			}
 		}
 	}
 

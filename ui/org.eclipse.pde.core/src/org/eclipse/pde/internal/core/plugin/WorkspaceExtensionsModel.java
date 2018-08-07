@@ -61,16 +61,14 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 	}
 
 	public String getContents() {
-		StringWriter swriter = new StringWriter();
-		PrintWriter writer = new PrintWriter(swriter);
-		save(writer);
-		writer.flush();
-		try {
-			swriter.close();
+		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
+			save(writer);
+			writer.flush();
+			return swriter.toString();
 		} catch (IOException e) {
 			PDECore.logException(e);
+			return ""; //$NON-NLS-1$
 		}
-		return swriter.toString();
 	}
 
 	@Override
@@ -119,25 +117,17 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 	public void save() {
 		if (fUnderlyingResource == null)
 			return;
-		ByteArrayInputStream stream = null;
-		try {
-			String contents = fixLineDelimiter(getContents(), fUnderlyingResource);
-			stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));
+		String contents = fixLineDelimiter(getContents(), fUnderlyingResource);
+		try (ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8))) {
+
 			if (fUnderlyingResource.exists()) {
 				fUnderlyingResource.setContents(stream, false, false, null);
 			} else {
 				fUnderlyingResource.create(stream, false, null);
 				adjustBuildPropertiesFile(fUnderlyingResource);
 			}
-		} catch (CoreException e) {
+		} catch (CoreException | IOException e) {
 			PDECore.logException(e);
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e) {
-				PDECore.logException(e);
-			}
 		}
 	}
 

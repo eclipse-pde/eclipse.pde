@@ -168,23 +168,9 @@ public class XMLPrintHandler {
 	}
 
 	public static void writeFile(Document doc, File file) throws IOException {
-		Writer writer = null;
-		OutputStream out = null;
-		try {
-			out = new FileOutputStream(file);
-			writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+		try (OutputStream out = new FileOutputStream(file);
+				Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8)) {
 			XMLPrintHandler.printNode(writer, doc, "UTF-8", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		} finally {
-			try {
-				if (writer != null)
-					writer.close();
-			} catch (IOException e1) {
-			}
-			try {
-				if (out != null)
-					out.close();
-			} catch (IOException e1) {
-			}
 		}
 	}
 

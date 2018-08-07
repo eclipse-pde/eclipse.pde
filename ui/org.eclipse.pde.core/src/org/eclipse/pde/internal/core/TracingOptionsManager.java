@@ -91,29 +91,18 @@ public class TracingOptionsManager {
 			return false;
 
 		File pluginLocation = new File(location);
-		InputStream stream = null;
-		ZipFile jarFile = null;
-		try {
-			if (pluginLocation.isDirectory())
-				return new File(pluginLocation, ICoreConstants.OPTIONS_FILENAME).exists();
-
-			jarFile = new ZipFile(pluginLocation, ZipFile.OPEN_READ);
+		if (pluginLocation.isDirectory())
+			return new File(pluginLocation, ICoreConstants.OPTIONS_FILENAME).exists();
+		try (ZipFile jarFile = new ZipFile(pluginLocation, ZipFile.OPEN_READ)) {
 			ZipEntry manifestEntry = jarFile.getEntry(ICoreConstants.OPTIONS_FILENAME);
 			if (manifestEntry != null) {
-				stream = jarFile.getInputStream(manifestEntry);
+				try (InputStream stream = jarFile.getInputStream(manifestEntry)) {
+					return stream != null;
+				}
 			}
-		} catch (FileNotFoundException e) {
 		} catch (IOException e) {
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-				if (jarFile != null)
-					jarFile.close();
-			} catch (IOException e) {
-			}
 		}
-		return stream != null;
+		return false;
 	}
 
 	public synchronized void reset() {
@@ -121,20 +110,11 @@ public class TracingOptionsManager {
 	}
 
 	private void save(String fileName, Properties properties) {
-		FileOutputStream stream = null;
-		try {
-			stream = new FileOutputStream(fileName);
+		try (FileOutputStream stream = new FileOutputStream(fileName);) {
 			properties.store(stream, "Master Tracing Options"); //$NON-NLS-1$
 			stream.flush();
 		} catch (IOException e) {
 			PDECore.logException(e);
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e) {
-				PDECore.logException(e);
-			}
 		}
 	}
 

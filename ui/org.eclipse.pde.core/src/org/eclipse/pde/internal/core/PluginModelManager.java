@@ -746,9 +746,7 @@ public class PluginModelManager implements IModelProviderListener {
 	private void saveExternalPluginList(URL[] urls) {
 		File dir = new File(PDECore.getDefault().getStateLocation().toOSString());
 		File saveLocation = new File(dir, fExternalPluginListFile);
-		FileWriter fileWriter = null;
-		try {
-			fileWriter = new FileWriter(saveLocation, false);
+		try (FileWriter fileWriter = new FileWriter(saveLocation, false)) {
 			fileWriter.write("# List of external plug-in models previously loaded. Timestamp: " + System.currentTimeMillis() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			for (URL url : urls) {
 				fileWriter.write(url.toString());
@@ -757,13 +755,6 @@ public class PluginModelManager implements IModelProviderListener {
 			fileWriter.flush();
 		} catch (IOException e) {
 			PDECore.log(e);
-		} finally {
-			if (fileWriter != null) {
-				try {
-					fileWriter.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 	}
 
@@ -787,10 +778,8 @@ public class PluginModelManager implements IModelProviderListener {
 			return !newExternal.isEmpty();
 		}
 
-		BufferedReader reader = null;
-		try {
-			Set<String> previousExternal = new HashSet<>();
-			reader = new BufferedReader(new FileReader(saveLocation));
+		Set<String> previousExternal = new HashSet<>();
+		try (BufferedReader reader = new BufferedReader(new FileReader(saveLocation));) {
 			while (reader.ready()) {
 				String url = reader.readLine();
 				if (url != null && !url.trim().isEmpty() && !url.startsWith("#")) { //$NON-NLS-1$
@@ -811,13 +800,6 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 		} catch (IOException e) {
 			PDECore.log(e);
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 		return false;
 	}

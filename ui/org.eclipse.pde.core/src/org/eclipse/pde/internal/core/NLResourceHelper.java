@@ -25,22 +25,13 @@ public class NLResourceHelper {
 	private String fNLFileBasePath;
 
 	public NLResourceHelper(String name, URL[] locations) {
-		InputStream stream = null;
-		try {
-			stream = getResourceStream(name, locations);
+		try (InputStream stream = getResourceStream(name, locations);) {
 			if (stream != null) {
 				bundle = new PropertyResourceBundle(stream);
 				stream.close();
 			}
 		} catch (IOException e) {
 			PDECore.logException(e);
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e) {
-				PDECore.logException(e);
-			}
 		}
 	}
 

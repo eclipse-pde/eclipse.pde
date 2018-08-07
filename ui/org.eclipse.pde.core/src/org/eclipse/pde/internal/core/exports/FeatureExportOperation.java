@@ -93,11 +93,10 @@ public class FeatureExportOperation extends Job {
 				createFeature(featureID, fFeatureLocation, fInfo.items, null, null, null);
 				ExternalFeatureModel model = new ExternalFeatureModel();
 				model.setInstallLocation(fFeatureLocation);
-				InputStream stream = null;
-
-				stream = new BufferedInputStream(new FileInputStream(new File(fFeatureLocation + File.separator + ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)));
-				model.load(stream, true);
-				stream.close();
+				try (InputStream stream = new BufferedInputStream(new FileInputStream(
+						new File(fFeatureLocation + File.separator + ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)))) {
+					model.load(stream, true);
+				}
 				doExport(model, null, subMonitor.split(20));
 
 			} else {
@@ -223,20 +222,12 @@ public class FeatureExportOperation extends Job {
 	}
 
 	protected void createPostProcessingFile(File file) {
-		FileOutputStream stream = null;
-		try {
-			stream = new FileOutputStream(file);
+		try (FileOutputStream stream = new FileOutputStream(file);) {
 			Properties prop = new Properties();
 			prop.put("*", "updateJar"); //$NON-NLS-1$ //$NON-NLS-2$
 			prop.store(stream, ""); //$NON-NLS-1$
 			stream.flush();
 		} catch (IOException e) {
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e) {
-			}
 		}
 	}
 

@@ -131,19 +131,11 @@ public class JavaElementChangeListener implements IElementChangedListener {
 				fTable.remove(id);
 		}
 
-		FileOutputStream stream = null;
-		try {
-			stream = new FileOutputStream(new File(getDirectory(), FILENAME));
+		try (FileOutputStream stream = new FileOutputStream(new File(getDirectory(), FILENAME))) {
 			fTable.store(stream, "Cached timestamps"); //$NON-NLS-1$
 			stream.flush();
 		} catch (IOException e) {
 			PDECore.logException(e);
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e1) {
-			}
 		}
 	}
 
@@ -156,20 +148,11 @@ public class JavaElementChangeListener implements IElementChangedListener {
 	}
 
 	private void load() {
-		FileInputStream is = null;
-		try {
-			File file = new File(getDirectory(), FILENAME);
-			if (file.exists() && file.isFile()) {
-				is = new FileInputStream(file);
+		File file = new File(getDirectory(), FILENAME);
+		if (file.exists() && file.isFile()) {
+			try (FileInputStream is = new FileInputStream(file)) {
 				fTable.load(is);
-			}
-		} catch (IOException e) {
-		} finally {
-			try {
-				if (is != null) {
-					is.close();
-				}
-			} catch (IOException e1) {
+			} catch (IOException e) {
 			}
 		}
 	}

@@ -69,23 +69,16 @@ public class TargetWeaver {
 						if (path != null && path.length() > 0) {
 							File file = new File(path);
 							if (file.exists()) {
-								BufferedInputStream stream = null;
-								try {
-									stream = new BufferedInputStream(new FileInputStream(file));
+								try (BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file));) {
 									fgDevProperties.load(stream);
 								} catch (FileNotFoundException e) {
 									PDECore.log(e);
 								} catch (IOException e) {
 									PDECore.log(e);
-								} finally {
-									if (stream != null)
-										stream.close();
 								}
 							}
 						}
 					} catch (MalformedURLException e) {
-						PDECore.log(e);
-					} catch (IOException e) {
 						PDECore.log(e);
 					}
 				}

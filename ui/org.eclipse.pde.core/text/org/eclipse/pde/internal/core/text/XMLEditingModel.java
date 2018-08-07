@@ -84,16 +84,14 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 		if (isResourceFile() == false) {
 			return;
 		}
-		try {
-			IFile file = (IFile) getUnderlyingResource();
-			String contents = getContents();
-			ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));
+		IFile file = (IFile) getUnderlyingResource();
+		String contents = getContents();
+		try (ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8))) {
 			if (file.exists()) {
 				file.setContents(stream, false, false, null);
 			} else {
 				file.create(stream, false, null);
 			}
-			stream.close();
 		} catch (CoreException e) {
 			PDECore.logException(e);
 		} catch (IOException e) {
@@ -139,16 +137,14 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 	}
 
 	public String getContents() {
-		StringWriter swriter = new StringWriter();
-		PrintWriter writer = new PrintWriter(swriter);
-		setLoaded(true);
-		save(writer);
-		writer.flush();
-		try {
-			swriter.close();
+		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
+			setLoaded(true);
+			save(writer);
+			writer.flush();
+			return swriter.toString();
 		} catch (IOException e) {
+			return ""; //$NON-NLS-1$
 		}
-		return swriter.toString();
 	}
 
 	@Override

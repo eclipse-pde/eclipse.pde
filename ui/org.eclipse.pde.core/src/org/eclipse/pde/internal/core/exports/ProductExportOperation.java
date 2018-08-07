@@ -433,11 +433,9 @@ public class ProductExportOperation extends FeatureExportOperation {
 			return null;
 
 		File plist = null;
-		InputStream in = null;
 		String location = fFeatureLocation;
 
-		try {
-			in = url.openStream();
+		try (InputStream in = url.openStream()) {
 			File dir = new File(location, ECLIPSE_APP_CONTENTS);
 			dir.mkdirs();
 			plist = new File(dir, "Info.plist"); //$NON-NLS-1$
@@ -446,11 +444,6 @@ public class ProductExportOperation extends FeatureExportOperation {
 		} catch (IOException e) {
 			// nothing to do
 		} finally {
-			try {
-				if (in != null)
-					in.close();
-			} catch (IOException e) {
-			}
 		}
 		return null;
 	}

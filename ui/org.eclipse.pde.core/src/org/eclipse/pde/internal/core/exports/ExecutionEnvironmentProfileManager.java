@@ -88,20 +88,11 @@ public class ExecutionEnvironmentProfileManager {
 					Properties properties = env.getProfileProperties();
 					if (properties != null) {
 						File profile = new File(dir, path);
-						OutputStream stream = null;
-						try {
+						try (OutputStream stream = new BufferedOutputStream(new FileOutputStream(profile));) {
 							fgCustomCount++;
-							stream = new BufferedOutputStream(new FileOutputStream(profile));
 							properties.store(stream, null);
 						} catch (IOException e) {
 							PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.ExecutionEnvironmentProfileManager_0, env.getId()), e));
-						} finally {
-							try {
-								if (stream != null)
-									stream.close();
-							} catch (IOException e) {
-								PDECore.logException(e);
-							}
 						}
 					}
 				}

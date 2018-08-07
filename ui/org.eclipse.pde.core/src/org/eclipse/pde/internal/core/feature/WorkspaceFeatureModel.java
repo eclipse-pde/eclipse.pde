@@ -65,17 +65,16 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEdit
 	}
 
 	public String getContents() {
-		StringWriter swriter = new StringWriter();
-		PrintWriter writer = new PrintWriter(swriter);
-		setLoaded(true);
-		save(writer);
-		writer.flush();
-		try {
-			swriter.close();
+		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
+			setLoaded(true);
+			save(writer);
+			writer.flush();
+			return swriter.toString();
 		} catch (IOException e) {
 			PDECore.logException(e);
+			return ""; //$NON-NLS-1$
 		}
-		return swriter.toString();
+
 	}
 
 	public IFile getFile() {
@@ -118,9 +117,7 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEdit
 		if (file == null)
 			return;
 		if (file.exists()) {
-			InputStream stream = null;
-			try {
-				stream = new BufferedInputStream(file.getContents(true));
+			try (InputStream stream = new BufferedInputStream(file.getContents(true))) {
 				if (stream.available() > 0)
 					load(stream, false);
 				else {
@@ -131,13 +128,6 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEdit
 				PDECore.logException(e);
 			} catch (IOException e) {
 				PDECore.logException(e);
-			} finally {
-				try {
-					if (stream != null)
-						stream.close();
-				} catch (IOException e) {
-					PDECore.logException(e);
-				}
 			}
 		} else {
 			this.feature = new Feature();
@@ -150,24 +140,15 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEdit
 	public void save() {
 		if (file == null)
 			return;
-		ByteArrayInputStream stream = null;
-		try {
-			String contents = fixLineDelimiter(getContents(), file);
-			stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));
+		String contents = fixLineDelimiter(getContents(), file);
+		try (ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));) {
 			if (file.exists()) {
 				file.setContents(stream, false, false, null);
 			} else {
 				file.create(stream, false, null);
 			}
-		} catch (CoreException e) {
+		} catch (CoreException | IOException e) {
 			PDECore.logException(e);
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e) {
-				PDECore.logException(e);
-			}
 		}
 	}
 

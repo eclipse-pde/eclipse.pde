@@ -198,11 +198,11 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 */
 	private void recreateSchemaPreviewFileContents(File schemaPreviewFile, ISchema schema) throws IOException {
 		SchemaTransformer transformer = new SchemaTransformer();
-		OutputStream os = new FileOutputStream(schemaPreviewFile);
-		PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8), true);
-		transformer.transform(schema, printWriter);
-		os.flush();
-		os.close();
+		try (OutputStream os = new FileOutputStream(schemaPreviewFile)) {
+			PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8), true);
+			transformer.transform(schema, printWriter);
+			os.flush();
+		}
 	}
 
 	/**

@@ -10,12 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
+import java.io.*;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.util.SAXParserWrapper;
@@ -24,22 +20,16 @@ import org.xml.sax.SAXException;
 public class DefaultSAXParser {
 
 	public static void parse(IFile file, XMLErrorReporter reporter) {
-		InputStream stream = null;
 		SAXParserWrapper parser = null;
 		try {
 			parser = new SAXParserWrapper();
-			stream = new BufferedInputStream(file.getContents());
+			try (InputStream stream = new BufferedInputStream(file.getContents())) {
 			parser.parse(stream, reporter);
+			}
 		} catch (CoreException e) {
 		} catch (SAXException e) {
 		} catch (IOException e) {
 		} catch (ParserConfigurationException e) {
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e1) {
-			}
 		}
 	}
 

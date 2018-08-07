@@ -289,19 +289,10 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		if (configIni.isFile()) {
 			// Read config.ini
 			Properties configProps = new Properties();
-			FileInputStream fis = null;
-			try {
-				fis = new FileInputStream(configIni);
+			try (FileInputStream fis = new FileInputStream(configIni)) {
 				configProps.load(fis);
-				fis.close();
 			} catch (IOException e) {
 				PDECore.log(e);
-			} finally {
-				try {
-					if (fis != null)
-						fis.close();
-				} catch (IOException e) {
-				}
 			}
 
 			String p2Area = configProps.getProperty(PROP_AGENT_DATA_AREA);
