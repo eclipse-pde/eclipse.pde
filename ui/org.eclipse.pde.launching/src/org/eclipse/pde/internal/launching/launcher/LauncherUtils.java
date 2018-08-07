@@ -301,20 +301,11 @@ public class LauncherUtils {
 	public static final void shutdown() {
 		if (fLastRun == null)
 			return;
-		FileOutputStream stream = null;
-		try {
-			stream = new FileOutputStream(new File(getDirectory(), FILE_NAME));
+		try (FileOutputStream stream = new FileOutputStream(new File(getDirectory(), FILE_NAME))) {
 			fLastRun.store(stream, "Cached timestamps"); //$NON-NLS-1$
 			stream.flush();
-			stream.close();
 		} catch (IOException e) {
 			PDECore.logException(e);
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e1) {
-			}
 		}
 	}
 
@@ -329,22 +320,15 @@ public class LauncherUtils {
 	private static Properties getLastRun() {
 		if (fLastRun == null) {
 			fLastRun = new Properties();
-			FileInputStream fis = null;
 			try {
 				File file = new File(getDirectory(), FILE_NAME);
 				if (file.exists()) {
-					fis = new FileInputStream(file);
+					try (FileInputStream fis = new FileInputStream(file)) {
 					fLastRun.load(fis);
-					fis.close();
+					}
 				}
 			} catch (IOException e) {
 				PDECore.logException(e);
-			} finally {
-				try {
-					if (fis != null)
-						fis.close();
-				} catch (IOException e1) {
-				}
 			}
 		}
 		return fLastRun;

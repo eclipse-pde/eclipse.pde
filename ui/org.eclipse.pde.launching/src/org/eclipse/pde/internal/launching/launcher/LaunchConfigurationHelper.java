@@ -268,21 +268,13 @@ public class LaunchConfigurationHelper {
 		Properties properties = new Properties();
 		File templateFile = new File(templateLoc);
 		if (templateFile.exists() && templateFile.isFile()) {
-			FileInputStream stream = null;
-			try {
-				stream = new FileInputStream(templateFile);
+			try (FileInputStream stream = new FileInputStream(templateFile)) {
+
 				properties.load(stream);
 			} catch (Exception e) {
 				String message = e.getMessage();
 				if (message != null)
 					throw new CoreException(new Status(IStatus.ERROR, PDELaunchingPlugin.getPluginId(), IStatus.ERROR, message, e));
-			} finally {
-				if (stream != null) {
-					try {
-						stream.close();
-					} catch (IOException e) {
-					}
-				}
 			}
 		}
 		return properties;
@@ -466,11 +458,9 @@ public class LaunchConfigurationHelper {
 	}
 
 	public static void save(File file, Properties properties) {
-		try {
-			FileOutputStream stream = new FileOutputStream(file);
+		try (FileOutputStream stream = new FileOutputStream(file)) {
 			properties.store(stream, "Configuration File"); //$NON-NLS-1$
 			stream.flush();
-			stream.close();
 		} catch (IOException e) {
 			PDECore.logException(e);
 		}
