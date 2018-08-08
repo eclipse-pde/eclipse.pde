@@ -153,13 +153,10 @@ public class ManifestStructureCreator extends StructureCreator {
 	private static String readString(InputStream is, String encoding) {
 		if (is == null)
 			return null;
-		BufferedReader reader = null;
-		try {
-			StringBuilder buffer = new StringBuilder();
-			char[] part = new char[2048];
-			int read = 0;
-			reader = new BufferedReader(new InputStreamReader(is, encoding));
-
+		StringBuilder buffer = new StringBuilder();
+		char[] part = new char[2048];
+		int read = 0;
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, encoding))) {
 			while ((read = reader.read(part)) != -1)
 				buffer.append(part, 0, read);
 
@@ -167,14 +164,6 @@ public class ManifestStructureCreator extends StructureCreator {
 
 		} catch (IOException ex) {
 			// NeedWork
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException ex) {
-					// silently ignored
-				}
-			}
 		}
 		return null;
 	}

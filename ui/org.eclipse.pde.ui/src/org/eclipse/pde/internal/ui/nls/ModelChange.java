@@ -99,16 +99,13 @@ public class ModelChange {
 
 	public Properties getProperties() {
 		if (fProperties == null || fReloadProperties) {
-			try {
-				fProperties = new Properties();
-				IFile propertiesFile = getPropertiesFile();
-				if (propertiesFile != null && propertiesFile.exists()) {
-					InputStream stream = propertiesFile.getContents();
+			fProperties = new Properties();
+			IFile propertiesFile = getPropertiesFile();
+			if (propertiesFile != null && propertiesFile.exists()) {
+				try (InputStream stream = propertiesFile.getContents()) {
 					fProperties.load(stream);
-					stream.close();
+				} catch (IOException | CoreException e) {
 				}
-			} catch (CoreException e) {
-			} catch (IOException e) {
 			}
 			fReloadProperties = false;
 		}

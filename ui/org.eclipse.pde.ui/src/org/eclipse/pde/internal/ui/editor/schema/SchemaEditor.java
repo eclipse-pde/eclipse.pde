@@ -216,9 +216,7 @@ public class SchemaEditor extends MultiSourceEditor {
 			return false;
 		}
 		// Open the jar archive
-		ZipFile zipFile = null;
-		try {
-			zipFile = new ZipFile(jarFile);
+		try (ZipFile zipFile = new ZipFile(jarFile);) {
 			// Ensure the schema file exists in the jar archive
 			if ((schemaJarFileEntry == null) || zipFile.getEntry(schemaJarFileEntry) == null) {
 				return false;
@@ -231,14 +229,6 @@ public class SchemaEditor extends MultiSourceEditor {
 			PDEPlugin.log(e);
 		} catch (IOException e) {
 			PDEPlugin.log(e);
-		} finally {
-			if (zipFile != null) {
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-					PDEPlugin.log(e);
-				}
-			}
 		}
 		return false;
 	}

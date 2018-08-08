@@ -146,12 +146,8 @@ public class SampleEditor extends EditorPart {
 		} else
 			selection = new StructuredSelection();
 		final ILaunchShortcut fshortcut = shortcut;
-		BusyIndicator.showWhile(form.getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				fshortcut.launch(selection, debug ? ILaunchManager.DEBUG_MODE : ILaunchManager.RUN_MODE);
-			}
-		});
+		BusyIndicator.showWhile(form.getDisplay(),
+				() -> fshortcut.launch(selection, debug ? ILaunchManager.DEBUG_MODE : ILaunchManager.RUN_MODE));
 	}
 
 	private Properties loadContent() {
@@ -159,11 +155,11 @@ public class SampleEditor extends EditorPart {
 		Properties properties = new Properties();
 		try {
 			IStorage storage = input.getStorage();
-			InputStream is = storage.getContents();
-			properties.load(is);
-			is.close();
-		} catch (IOException e) {
-			PDEPlugin.logException(e);
+			try (InputStream is = storage.getContents()) {
+				properties.load(is);
+			} catch (IOException e) {
+				PDEPlugin.logException(e);
+			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}

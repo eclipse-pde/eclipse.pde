@@ -63,9 +63,7 @@ public class PluginImportHelper {
 	 * @throws CoreException
 	 */
 	public static void extractArchive(File file, IPath dstPath, Set<IPath> collectedPackages, IProgressMonitor monitor) throws CoreException {
-		ZipFile zipFile = null;
-		try {
-			zipFile = new ZipFile(file);
+		try (ZipFile zipFile = new ZipFile(file)) {
 			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
 
 			// If the caller wants to have package names collected, scan the zip file for package structures
@@ -79,13 +77,6 @@ public class PluginImportHelper {
 		} catch (IOException e) {
 			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
 			throw new CoreException(status);
-		} finally {
-			if (zipFile != null) {
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 	}
 
@@ -100,9 +91,7 @@ public class PluginImportHelper {
 	 * @since 3.4
 	 */
 	public static void extractFolderFromArchive(File file, IPath folderPath, IPath dstPath, Set<IPath> collectedPackages, IProgressMonitor monitor) throws CoreException {
-		ZipFile zipFile = null;
-		try {
-			zipFile = new ZipFile(file);
+		try (ZipFile zipFile = new ZipFile(file)) {
 			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
 			ArrayList<Object> collected = new ArrayList<>();
 			collectResourcesFromFolder(provider, provider.getRoot(), folderPath, collected);
@@ -113,13 +102,6 @@ public class PluginImportHelper {
 		} catch (IOException e) {
 			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
 			throw new CoreException(status);
-		} finally {
-			if (zipFile != null) {
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 	}
 
@@ -135,9 +117,7 @@ public class PluginImportHelper {
 	 * @throws CoreException if there is a problem extracting source from the zip
 	 */
 	public static void extractJavaSourceFromArchive(File file, List<IPath> excludeFolders, IPath dstPath, Set<IPath> collectedPackages, IProgressMonitor monitor) throws CoreException {
-		ZipFile zipFile = null;
-		try {
-			zipFile = new ZipFile(file);
+		try (ZipFile zipFile = new ZipFile(file);) {
 			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
 			ArrayList<Object> collected = new ArrayList<>();
 			collectJavaSourceFromRoot(provider, excludeFolders, collected);
@@ -148,13 +128,6 @@ public class PluginImportHelper {
 		} catch (IOException e) {
 			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
 			throw new CoreException(status);
-		} finally {
-			if (zipFile != null) {
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 	}
 
@@ -213,9 +186,7 @@ public class PluginImportHelper {
 
 	public static String[] getTopLevelResources(File file) {
 		ArrayList<String> result = new ArrayList<>();
-		ZipFile zipFile = null;
-		try {
-			zipFile = new ZipFile(file);
+		try (ZipFile zipFile = new ZipFile(file)) {
 			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
 			List<?> children = provider.getChildren(provider.getRoot());
 			if (children != null && !children.isEmpty()) {
@@ -234,13 +205,6 @@ public class PluginImportHelper {
 				}
 			}
 		} catch (IOException e) {
-		} finally {
-			if (zipFile != null) {
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 		return result.toArray(new String[result.size()]);
 	}

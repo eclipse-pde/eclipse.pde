@@ -422,14 +422,14 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	private void writeFile(IFile file, StringWriter swriter) {
-		try {
-			ByteArrayInputStream stream = new ByteArrayInputStream(swriter.toString().getBytes(StandardCharsets.UTF_8));
+		try (ByteArrayInputStream stream = new ByteArrayInputStream(
+				swriter.toString().getBytes(StandardCharsets.UTF_8))) {
+
 			if (file.exists()) {
 				file.setContents(stream, false, false, null);
 			} else {
 				file.create(stream, false, null);
 			}
-			stream.close();
 			swriter.close();
 		} catch (Exception e) {
 			PDEPlugin.logException(e);

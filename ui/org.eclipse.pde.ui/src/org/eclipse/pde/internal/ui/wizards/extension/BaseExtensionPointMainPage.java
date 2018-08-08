@@ -206,8 +206,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		section.setDescription(PDEUIMessages.BaseExtensionPoint_sections_copyright);
 		schema.addDocumentSection(section);
 		StringWriter swriter = new StringWriter();
-		try {
-			PrintWriter writer = new PrintWriter(swriter, true);
+		try (PrintWriter writer = new PrintWriter(swriter, true)) {
 			schema.save(writer);
 			swriter.close();
 		} catch (IOException e) {

@@ -142,11 +142,9 @@ public class SampleStandbyContent implements IStandbyContentPart {
 				continue;
 			IFile pfile = project.getFile("sample.properties"); //$NON-NLS-1$
 			if (pfile.exists()) {
-				try {
-					InputStream is = pfile.getContents();
+				try (InputStream is = pfile.getContents()) {
 					Properties prop = new Properties();
 					prop.load(is);
-					is.close();
 					String id = prop.getProperty("id"); //$NON-NLS-1$
 					if (id != null && id.equals(sid)) {
 						//match
@@ -154,9 +152,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 						if (res != null)
 							items.add(res);
 					}
-				} catch (IOException e) {
-					PDEPlugin.logException(e);
-				} catch (CoreException e) {
+				} catch (IOException | CoreException e) {
 					PDEPlugin.logException(e);
 				}
 			}

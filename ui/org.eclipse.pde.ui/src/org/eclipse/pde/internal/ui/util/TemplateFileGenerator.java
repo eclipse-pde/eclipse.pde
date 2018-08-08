@@ -184,19 +184,10 @@ public class TemplateFileGenerator implements IVariableProvider {
 				return;
 			String templateDirectory = file.substring(exclamation + 1); // "/some/path/"
 			IPath path = new Path(templateDirectory);
-			ZipFile zipFile = null;
-			try {
-				zipFile = new ZipFile(pluginJar);
+			try (ZipFile zipFile = new ZipFile(pluginJar)) {
 				generateFiles(zipFile, path, fProject, true, false, monitor);
 			} catch (ZipException ze) {
 			} catch (IOException ioe) {
-			} finally {
-				if (zipFile != null) {
-					try {
-						zipFile.close();
-					} catch (IOException e) {
-					}
-				}
 			}
 
 		}
@@ -237,17 +228,9 @@ public class TemplateFileGenerator implements IVariableProvider {
 				if (isOkToCreateFile(member)) {
 					if (firstLevel)
 						binary = false;
-					InputStream in = null;
-					try {
-						in = new FileInputStream(member);
+					try (InputStream in = new FileInputStream(member);) {
 						copyFile(member.getName(), in, dst, binary, monitor);
 					} catch (IOException ioe) {
-					} finally {
-						if (in != null)
-							try {
-								in.close();
-							} catch (IOException ioe2) {
-							}
 					}
 				}
 			}
@@ -260,15 +243,12 @@ public class TemplateFileGenerator implements IVariableProvider {
 		monitor.subTask(targetFileName);
 		IFile dstFile = dst.getFile(new Path(targetFileName));
 
-		try {
-			InputStream stream = getProcessedStream(fileName, input, binary);
+		try (InputStream stream = getProcessedStream(fileName, input, binary)) {
 			if (dstFile.exists()) {
 				dstFile.setContents(stream, true, true, monitor);
 			} else {
 				dstFile.create(stream, true, monitor);
 			}
-			stream.close();
-
 		} catch (IOException e) {
 		}
 	}
@@ -328,17 +308,9 @@ public class TemplateFileGenerator implements IVariableProvider {
 				if (isOkToCreateFile(new File(path.toFile(), name))) {
 					if (firstLevel)
 						binary = false;
-					InputStream in = null;
-					try {
-						in = zipFile.getInputStream(zipEnry);
+					try (InputStream in = zipFile.getInputStream(zipEnry)) {
 						copyFile(name, in, dst, binary, monitor);
 					} catch (IOException ioe) {
-					} finally {
-						if (in != null)
-							try {
-								in.close();
-							} catch (IOException ioe2) {
-							}
 					}
 				}
 			}

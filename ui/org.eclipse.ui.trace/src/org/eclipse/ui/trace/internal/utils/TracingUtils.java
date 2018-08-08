@@ -110,22 +110,11 @@ public class TracingUtils {
 			URL optionsFile = bundle.getEntry(TracingConstants.OPTIONS_FILENAME);
 			if (optionsFile != null) {
 				// read the file
-				InputStream optionsFileInStream = null;
-				try {
-					optionsFileInStream = optionsFile.openStream();
+				try (InputStream optionsFileInStream = optionsFile.openStream()) {
 					optionsProperties.load(optionsFileInStream);
 				} catch (IOException ioEx) {
 					// couldn't read the .options file - can't do anything other than to log the exception
 					TracingUIActivator.getDefault().logException(ioEx);
-				} finally {
-					if (optionsFileInStream != null) {
-						try {
-							optionsFileInStream.close();
-						} catch (IOException ioEx) {
-							// can't do anything other than to log the exception
-							TracingUIActivator.getDefault().logException(ioEx);
-						}
-					}
 				}
 			}
 		}

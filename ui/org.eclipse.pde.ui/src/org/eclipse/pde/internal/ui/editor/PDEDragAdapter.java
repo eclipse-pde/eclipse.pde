@@ -158,35 +158,29 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 
 	protected Object createTextualRepresentation() {
 		String textualRepresentation = null;
-		StringWriter stringWriter = new StringWriter();
-		PrintWriter printWriter = new PrintWriter(stringWriter);
-		boolean firstIteration = true;
-		Object[] sourceObjects = getSourceObjects();
-		// Serialize each source object to text
-		for (Object object : sourceObjects) {
-			if (object instanceof IWritable) {
-				if ((firstIteration == false) && (object instanceof IWritableDelimiter)) {
-					// Add a customized delimiter in between all serialized
-					// objects to format the text representation
-					((IWritableDelimiter) object).writeDelimeter(printWriter);
+		try (StringWriter stringWriter = new StringWriter(); PrintWriter printWriter = new PrintWriter(stringWriter)) {
+			boolean firstIteration = true;
+			Object[] sourceObjects = getSourceObjects();
+			// Serialize each source object to text
+			for (Object object : sourceObjects) {
+				if (object instanceof IWritable) {
+					if ((firstIteration == false) && (object instanceof IWritableDelimiter)) {
+						// Add a customized delimiter in between all serialized
+						// objects to format the text representation
+						((IWritableDelimiter) object).writeDelimeter(printWriter);
+					}
+					// Write the textual representation of the object
+					((IWritable) object).write("", printWriter); //$NON-NLS-1$
+				} else if (object instanceof String) {
+					// Delimiter is always a newline
+					printWriter.println((String) object);
 				}
-				// Write the textual representation of the object
-				((IWritable) object).write("", printWriter); //$NON-NLS-1$
-			} else if (object instanceof String) {
-				// Delimiter is always a newline
-				printWriter.println((String) object);
+				firstIteration = false;
 			}
-			firstIteration = false;
-		}
-		// Flush the writer
-		printWriter.flush();
-		// Get the String representation
-		textualRepresentation = stringWriter.toString();
-		// Close the print writer
-		printWriter.close();
-		// Close the string writer
-		try {
-			stringWriter.close();
+			// Flush the writer
+			printWriter.flush();
+			// Get the String representation
+			textualRepresentation = stringWriter.toString();
 		} catch (IOException e) {
 			// Ignore
 		}

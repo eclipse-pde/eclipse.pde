@@ -113,12 +113,9 @@ public class SiteInputContext extends XMLInputContext {
 			return;
 		if (editableModel.isDirty() == false)
 			return;
-		try {
-			StringWriter swriter = new StringWriter();
-			PrintWriter writer = new PrintWriter(swriter);
+		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
 			editableModel.save(writer);
 			writer.flush();
-			swriter.close();
 			String content = swriter.toString();
 			content = AbstractModel.fixLineDelimiter(content, (IFile) ((IModel) getModel()).getUnderlyingResource());
 			doc.set(content);
@@ -132,14 +129,11 @@ public class SiteInputContext extends XMLInputContext {
 		ISiteModel model = (ISiteModel) getModel();
 		boolean cleanModel = true;
 		String text = doc.get();
-		InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
-		try {
+
+		try (InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8))) {
 			model.reload(stream, false);
 		} catch (CoreException e) {
 			cleanModel = false;
-		}
-		try {
-			stream.close();
 		} catch (IOException e) {
 		}
 		return cleanModel;

@@ -231,17 +231,9 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 			} else {
 				if (firstLevel)
 					binary = false;
-				InputStream in = null;
-				try {
-					in = new FileInputStream(member);
+				try (InputStream in = new FileInputStream(member);) {
 					copyFile(member.getName(), in, dst, binary, monitor);
 				} catch (IOException ioe) {
-				} finally {
-					if (in != null)
-						try {
-							in.close();
-						} catch (IOException ioe2) {
-						}
 				}
 			}
 		}
@@ -252,15 +244,12 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 		monitor.subTask(fileName);
 		IFile dstFile = dst.getFile(new Path(fileName));
 
-		try {
-			InputStream stream = getProcessedStream(fileName, input, binary);
+		try (InputStream stream = getProcessedStream(fileName, input, binary)) {
 			if (dstFile.exists()) {
 				dstFile.setContents(stream, true, true, monitor);
 			} else {
 				dstFile.create(stream, true, monitor);
 			}
-			stream.close();
-
 		} catch (IOException e) {
 		}
 	}

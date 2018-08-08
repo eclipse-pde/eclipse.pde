@@ -12,8 +12,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -421,12 +420,15 @@ public abstract class PDEFormPage extends FormPage {
 	}
 
 	private String getStackTrace(Throwable throwable) {
-		StringWriter swriter = new StringWriter();
-		PrintWriter pwriter = new PrintWriter(swriter);
-		throwable.printStackTrace(pwriter);
-		pwriter.flush();
-		pwriter.close();
-		return swriter.toString();
+		try (StringWriter swriter = new StringWriter(); PrintWriter pwriter = new PrintWriter(swriter)) {
+			throwable.printStackTrace(pwriter);
+			pwriter.flush();
+			pwriter.close();
+			return swriter.toString();
+		} catch (IOException e) {
+			return ""; //$NON-NLS-1$
+		}
+
 	}
 
 	/**

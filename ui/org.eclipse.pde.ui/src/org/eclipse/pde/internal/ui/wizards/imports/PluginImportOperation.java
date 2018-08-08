@@ -595,9 +595,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			// Use the package locations map to put files that belong in the package directory structure into the proper source directory
 			if (isJARd(model)) {
 				SubMonitor iterationMonitor = subMonitor.split(1);
-				ZipFile zip = null;
-				try {
-					zip = new ZipFile(new File(model.getInstallLocation()));
+				try (ZipFile zip = new ZipFile(new File(model.getInstallLocation()))) {
 					ZipFileStructureProvider provider = new ZipFileStructureProvider(zip);
 					Map<IPath, List<Object>> collected = new HashMap<>();
 					PluginImportHelper.collectBinaryFiles(provider, provider.getRoot(), packageLocations, collected);
@@ -609,10 +607,6 @@ public class PluginImportOperation extends WorkspaceJob {
 						PluginImportHelper.importContent(provider.getRoot(), destination, provider,
 								entry.getValue(), iterationMonitor.split(1));
 
-					}
-				} finally {
-					if (zip != null) {
-						zip.close();
 					}
 				}
 			} else {

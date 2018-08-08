@@ -724,19 +724,17 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 		File tmpFile = File.createTempFile(prefix, suffix);
 		tmpFile.deleteOnExit();
-		FileOutputStream fos = new FileOutputStream(tmpFile);
-		FileInputStream fis = new FileInputStream(file);
-		byte[] cbuffer = new byte[1024];
-		int read = 0;
+		try (FileOutputStream fos = new FileOutputStream(tmpFile); FileInputStream fis = new FileInputStream(file)) {
+			byte[] cbuffer = new byte[1024];
+			int read = 0;
 
-		while (read != -1) {
-			read = fis.read(cbuffer);
-			if (read != -1)
-				fos.write(cbuffer, 0, read);
+			while (read != -1) {
+				read = fis.read(cbuffer);
+				if (read != -1)
+					fos.write(cbuffer, 0, read);
+			}
+			fos.flush();
 		}
-		fos.flush();
-		fos.close();
-		fis.close();
 		tmpFile.setReadOnly();
 		return tmpFile;
 	}

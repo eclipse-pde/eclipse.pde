@@ -119,12 +119,9 @@ public class SchemaInputContext extends XMLInputContext {
 		IEditable editableModel = (IEditable) getModel();
 		if (editableModel.isDirty() == false)
 			return;
-		try {
-			StringWriter swriter = new StringWriter();
-			PrintWriter writer = new PrintWriter(swriter);
+		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
 			editableModel.save(writer);
 			writer.flush();
-			swriter.close();
 			String content = swriter.toString();
 
 			if (getInput() instanceof IFileEditorInput) {
@@ -160,12 +157,11 @@ public class SchemaInputContext extends XMLInputContext {
 			return getModel() == null;
 		}
 		String text = doc.get();
-		InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
-		schema.reload(stream);
-		if (schema instanceof IEditable)
-			((IEditable) schema).setDirty(false);
-		try {
-			stream.close();
+		try (InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8))) {
+			schema.reload(stream);
+			if (schema instanceof IEditable) {
+				((IEditable) schema).setDirty(false);
+			}
 		} catch (IOException e) {
 		}
 		return true;

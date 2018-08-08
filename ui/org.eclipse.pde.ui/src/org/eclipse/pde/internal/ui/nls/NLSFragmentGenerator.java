@@ -342,8 +342,7 @@ public class NLSFragmentGenerator {
 			final String installLocation = plugin.getInstallLocation();
 			//Case 1a: External plug-in is a jar file
 			if (new File(installLocation).isFile()) {
-				ZipFile zf = new ZipFile(installLocation);
-				try {
+				try (ZipFile zf = new ZipFile(installLocation)) {
 					for (Enumeration<?> e = zf.entries(); e.hasMoreElements();) {
 						worked();
 
@@ -367,8 +366,6 @@ public class NLSFragmentGenerator {
 							file.create(zf.getInputStream(zfe), false, getProgressMonitor());
 						}
 					}
-				} finally {
-					zf.close();
 				}
 			}
 			//Case 1b: External plug-in has a folder structure

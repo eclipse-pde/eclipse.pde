@@ -58,10 +58,8 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 		Object[] objects = (Object[]) data;
 		int count = objects.length;
 
-		try {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			ObjectOutputStream objectOut = new ObjectOutputStream(out);
-
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+				ObjectOutputStream objectOut = new ObjectOutputStream(out)) {
 			//write the number of resources
 			objectOut.writeInt(count);
 
@@ -70,9 +68,6 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 				objectOut.writeObject(object);
 			}
 
-			//cleanup
-			objectOut.close();
-			out.close();
 			byte[] bytes = out.toByteArray();
 			super.javaToNative(bytes, transferData);
 		} catch (IOException e) {
@@ -87,19 +82,14 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 		byte[] bytes = (byte[]) super.nativeToJava(transferData);
 		if (bytes == null)
 			return null;
-		try {
-			ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes));
-
+		try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
 			int count = in.readInt();
 			Object[] objects = new Object[count];
 			for (int i = 0; i < count; i++) {
 				objects[i] = in.readObject();
 			}
-			in.close();
 			return objects;
-		} catch (ClassNotFoundException e) {
-			return null;
-		} catch (IOException e) {
+		} catch (ClassNotFoundException | IOException e) {
 			return null;
 		}
 	}

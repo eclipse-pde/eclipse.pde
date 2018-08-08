@@ -114,20 +114,20 @@ public class ShowDescriptionAction extends Action {
 	}
 
 	private void showSchemaDocument() {
-		try {
-			fPreviewFile = getTempPreviewFile();
-			if (fPreviewFile == null)
-				return;
+		fPreviewFile = getTempPreviewFile();
+		if (fPreviewFile == null)
+			return;
 
-			SchemaTransformer transformer = new SchemaTransformer();
-			OutputStream os = new FileOutputStream(fPreviewFile);
-			PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8), true);
+		SchemaTransformer transformer = new SchemaTransformer();
+		try (OutputStream os = new FileOutputStream(fPreviewFile);
+				PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8), true)) {
 			transformer.transform(fSchema, printWriter);
 			os.flush();
 			os.close();
 			showURL(fPreviewFile, fForceExternal);
 			// Associate the generated preview file with the schema file
-			// to enable automatic preview file updates on schema file changes
+			// to enable automatic preview file updates on schema file
+			// changes
 			linkPreviewFileToSchemaFile();
 		} catch (IOException e) {
 			PDEPlugin.logException(e);

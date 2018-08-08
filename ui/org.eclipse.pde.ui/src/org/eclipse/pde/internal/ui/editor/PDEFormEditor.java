@@ -777,32 +777,28 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 			if (ssel.isEmpty())
 				return;
 			objects = ssel.toArray();
-			StringWriter writer = new StringWriter();
-			PrintWriter pwriter = new PrintWriter(writer);
-			Class<? extends Object> objClass = null;
-			for (int i = 0; i < objects.length; i++) {
-				Object obj = objects[i];
-				if (objClass == null)
-					objClass = obj.getClass();
-				else if (objClass.equals(obj.getClass()) == false)
-					return;
-				if (obj instanceof IWritable) {
-					// Add a customized delimiter in between all serialized
-					// objects to format the text representation
-					if ((i != 0) && (obj instanceof IWritableDelimiter)) {
-						((IWritableDelimiter) obj).writeDelimeter(pwriter);
+			try (StringWriter writer = new StringWriter(); PrintWriter pwriter = new PrintWriter(writer)) {
+				Class<? extends Object> objClass = null;
+				for (int i = 0; i < objects.length; i++) {
+					Object obj = objects[i];
+					if (objClass == null)
+						objClass = obj.getClass();
+					else if (objClass.equals(obj.getClass()) == false)
+						return;
+					if (obj instanceof IWritable) {
+						// Add a customized delimiter in between all serialized
+						// objects to format the text representation
+						if ((i != 0) && (obj instanceof IWritableDelimiter)) {
+							((IWritableDelimiter) obj).writeDelimeter(pwriter);
+						}
+						((IWritable) obj).write("", pwriter); //$NON-NLS-1$
+					} else if (obj instanceof String) {
+						// Delimiter is always a newline
+						pwriter.println((String) obj);
 					}
-					((IWritable) obj).write("", pwriter); //$NON-NLS-1$
-				} else if (obj instanceof String) {
-					// Delimiter is always a newline
-					pwriter.println((String) obj);
 				}
-			}
-			pwriter.flush();
-			textVersion = writer.toString();
-			try {
-				pwriter.close();
-				writer.close();
+				pwriter.flush();
+				textVersion = writer.toString();
 			} catch (IOException e) {
 			}
 		} else if (selection instanceof ITextSelection) {

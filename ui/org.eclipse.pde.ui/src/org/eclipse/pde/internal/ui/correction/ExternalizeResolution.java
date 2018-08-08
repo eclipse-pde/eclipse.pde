@@ -128,16 +128,13 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 	private void checkPropertiesFile(IFile file) {
 		if (!file.exists()) {
 			String propertiesFileComment = ExternalizeStringsOperation.getPropertiesFileComment(file);
-			ByteArrayInputStream pStream = new ByteArrayInputStream(propertiesFileComment.getBytes());
-			try {
+			try (ByteArrayInputStream pStream = new ByteArrayInputStream(propertiesFileComment.getBytes())) {
 				IContainer container = file.getParent();
 				if (!container.exists())
 					// project will exists, therefore we can assume if !IContainer.exist(), the object is an IFolder
 					CoreUtility.createFolder((IFolder) container);
 				file.create(pStream, true, new NullProgressMonitor());
-				pStream.close();
-			} catch (CoreException e1) {
-			} catch (IOException e) {
+			} catch (CoreException | IOException e1) {
 			}
 		}
 	}

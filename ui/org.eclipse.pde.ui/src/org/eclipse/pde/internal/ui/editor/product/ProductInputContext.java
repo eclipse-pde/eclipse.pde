@@ -82,12 +82,9 @@ public class ProductInputContext extends UTF8InputContext {
 		IEditable editableModel = (IEditable) getModel();
 		if (editableModel.isDirty() == false)
 			return;
-		try {
-			StringWriter swriter = new StringWriter();
-			PrintWriter writer = new PrintWriter(swriter);
+		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
 			editableModel.save(writer);
 			writer.flush();
-			swriter.close();
 			String content = swriter.toString();
 			content = AbstractModel.fixLineDelimiter(content, (IFile) ((IModel) getModel()).getUnderlyingResource());
 			doc.set(content);

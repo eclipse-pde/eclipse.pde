@@ -61,11 +61,11 @@ public class EditorUtilities {
 			IPath path = getFullPath(new Path(imagePath), product);
 			URL url = new URL(path.toString());
 			ImageLoader loader = new ImageLoader();
-			InputStream stream = url.openStream();
-			ImageData[] idata = loader.load(stream);
-			stream.close();
-			if (idata != null && idata.length > 0)
-				return idata;
+			try (InputStream stream = url.openStream()) {
+				ImageData[] idata = loader.load(stream);
+				if (idata != null && idata.length > 0)
+					return idata;
+			}
 			message = PDEUIMessages.EditorUtilities_noImageData;
 		} catch (SWTException e) {
 			message = PDEUIMessages.EditorUtilities_pathNotValidImage;

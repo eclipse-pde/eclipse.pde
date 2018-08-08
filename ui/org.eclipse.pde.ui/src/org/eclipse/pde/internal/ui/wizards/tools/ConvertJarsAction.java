@@ -12,7 +12,6 @@
 package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -51,34 +50,27 @@ public class ConvertJarsAction implements IObjectActionDelegate {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		while (i.hasNext()) {
 			IPackageFragmentRoot pfr = (IPackageFragmentRoot) i.next();
-			JarFile file = null;
 			try {
 				projectSelection.add(pfr.getJavaProject().getProject());
 				IClasspathEntry rawClasspathEntry = pfr.getRawClasspathEntry();
 				IPath path = rawClasspathEntry.getPath();
 				IFile iFile = root.getFile(path);
 				if (iFile.exists()) {
-					file = new JarFile(iFile.getLocation().toString());
-					if (!filesMap.containsKey(file.getManifest())) {
-						filesMap.put(file.getManifest(), iFile);
+					try (JarFile file = new JarFile(iFile.getLocation().toString())) {
+						if (!filesMap.containsKey(file.getManifest())) {
+							filesMap.put(file.getManifest(), iFile);
+						}
 					}
 				} else {
 					String pathStr = path.toString();
-					file = new JarFile(pathStr);
-					if (!filesMap.containsKey(file.getManifest())) {
-						filesMap.put(file.getManifest(), new File(file.getName()));
+					try (JarFile file = new JarFile(pathStr)) {
+						if (!filesMap.containsKey(file.getManifest())) {
+							filesMap.put(file.getManifest(), new File(file.getName()));
+						}
 					}
 				}
 			} catch (Exception e) {
 				PDEPlugin.logException(e);
-			} finally {
-				if (file != null) {
-					try {
-						file.close();
-					} catch (IOException e) {
-						PDEPlugin.logException(e);
-					}
-				}
 			}
 		}
 		NewLibraryPluginProjectWizard wizard = new NewLibraryPluginProjectWizard(filesMap.values(), projectSelection);

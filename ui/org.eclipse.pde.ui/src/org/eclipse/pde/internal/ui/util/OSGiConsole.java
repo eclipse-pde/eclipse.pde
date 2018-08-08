@@ -55,17 +55,12 @@ public class OSGiConsole extends IOConsole {
 	@Override
 	protected void init() {
 		super.init();
-		IOConsoleOutputStream info = newOutputStream(); // create a stream to write info message to
-		try {
+		// create a stream to write info message to
+		try (IOConsoleOutputStream info = newOutputStream()) {
 			info.write(PDEUIMessages.OSGiConsoleFactory_title);
 			info.write('\n');
 		} catch (IOException e) {
-		} finally {
-			try {
-				info.close();
-			} catch (IOException e) {
-				PDEPlugin.log(e);
-			}
+			PDEPlugin.log(e);
 		}
 
 		BundleContext context = PDEPlugin.getDefault().getBundle().getBundleContext();

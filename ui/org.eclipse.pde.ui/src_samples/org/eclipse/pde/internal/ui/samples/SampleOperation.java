@@ -153,17 +153,16 @@ public class SampleOperation implements IRunnableWithProgress {
 	private IFile createSampleManifest(IProject project, IConfigurationElement config, IProgressMonitor monitor) throws CoreException {
 		IFile file = project.getFile(SAMPLE_PROPERTIES);
 		if (!file.exists()) {
-			try {
-				ByteArrayOutputStream out = new ByteArrayOutputStream();
+			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 				Properties properties = new Properties();
 				createSampleManifestContent(config.getAttribute("name"), properties); //$NON-NLS-1$
 				properties.store(out, ""); //$NON-NLS-1$
 				out.flush();
 				String contents = out.toString();
-				out.close();
-				ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));
-				file.create(stream, true, monitor);
-				stream.close();
+				try (ByteArrayInputStream stream = new ByteArrayInputStream(
+						contents.getBytes(StandardCharsets.UTF_8))) {
+					file.create(stream, true, monitor);
+				}
 			} catch (IOException e) {
 			}
 		}

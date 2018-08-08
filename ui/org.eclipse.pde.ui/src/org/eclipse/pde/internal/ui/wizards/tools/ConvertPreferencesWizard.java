@@ -103,11 +103,10 @@ public class ConvertPreferencesWizard extends Wizard {
 				if (prefsFile.exists()) {
 					try {
 						String lineSeparator = getLineSeparatorFromFile(errorFilePath);
-						BufferedReader in = new BufferedReader(new FileReader(sourceFilePath));
 						// Build properties from the EPF file, ignoring any scope strings.
 						LinkedHashMap<String, String> properties = new LinkedHashMap<>();
 						HashMap<String, String> mapKeyCommentPreference = new HashMap<>();
-						try {
+						try (BufferedReader in = new BufferedReader(new FileReader(sourceFilePath))) {
 							String comment = null;
 							String line1;
 							while ((line1 = in.readLine()) != null) {
@@ -137,8 +136,6 @@ public class ConvertPreferencesWizard extends Wizard {
 									}
 								}
 							}
-						} finally {
-							in.close();
 						}
 						monitor.worked(50);
 
@@ -158,8 +155,8 @@ public class ConvertPreferencesWizard extends Wizard {
 
 							// merging old and new content
 							if (!fOverwrite) {
-								BufferedReader existingFile = new BufferedReader(new InputStreamReader(customizationFile.getContents()));
-								try {
+								try (BufferedReader existingFile = new BufferedReader(
+										new InputStreamReader(customizationFile.getContents()))) {
 									String line;
 									String comment = null;
 									while ((line = existingFile.readLine()) != null) {
@@ -206,8 +203,6 @@ public class ConvertPreferencesWizard extends Wizard {
 											PDEPlugin.log("    " + line); //$NON-NLS-1$
 										}
 									}
-								} finally {
-									existingFile.close();
 								}
 							}
 							monitor.worked(20);

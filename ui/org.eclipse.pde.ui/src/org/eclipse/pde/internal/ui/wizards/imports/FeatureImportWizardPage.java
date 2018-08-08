@@ -506,10 +506,8 @@ public class FeatureImportWizardPage extends WizardPage {
 		model.setInstallLocation(dir.getAbsolutePath());
 		IStatus status = null;
 
-		InputStream stream = null;
+		try (InputStream stream = new BufferedInputStream(new FileInputStream(manifest))) {
 
-		try {
-			stream = new BufferedInputStream(new FileInputStream(manifest));
 			model.load(stream, false);
 			if (!model.isValid()) {
 				status = new Status(IStatus.WARNING, IPDEUIConstants.PLUGIN_ID, IStatus.OK, NLS.bind(PDEUIMessages.FeatureImportWizardPage_importHasInvalid, dir), null);
@@ -517,12 +515,6 @@ public class FeatureImportWizardPage extends WizardPage {
 		} catch (Exception e) {
 			// Errors in the file
 			status = new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.OK, e.getMessage(), e);
-		}
-		if (stream != null) {
-			try {
-				stream.close();
-			} catch (IOException e) {
-			}
 		}
 		if (status == null)
 			result.add(model);

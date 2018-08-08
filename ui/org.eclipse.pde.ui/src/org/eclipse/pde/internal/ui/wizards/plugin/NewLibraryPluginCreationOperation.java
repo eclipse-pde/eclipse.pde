@@ -63,18 +63,9 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		String jarName = jarFile.getName();
 		IFile file = project.getFile(jarName);
 		monitor.subTask(NLS.bind(PDEUIMessages.NewProjectCreationOperation_copyingJar, jarName));
-		InputStream in = null;
-		try {
-			in = new FileInputStream(jarFile);
+		try (InputStream in = new FileInputStream(jarFile)) {
 			file.create(in, true, monitor);
-		} catch (FileNotFoundException fnfe) {
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException ioe) {
-				}
-			}
+		} catch (IOException fnfe) {
 		}
 	}
 
@@ -83,7 +74,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		for (IResource resource : resources) {
 			if (resource instanceof IFile) {
 				if (".project".equals(resource.getName()) //$NON-NLS-1$
-						|| ".classpath".equals(resource
+						|| ".classpath".equals(resource //$NON-NLS-1$
 								.getName()) || ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR.equals(resource.getName()) || ICoreConstants.BUILD_FILENAME_DESCRIPTOR.equals(resource.getName())) {
 					continue;
 				}
@@ -192,20 +183,15 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			return false;
 		if (PDEProject.getFragmentXml(other).exists())
 			return false;
-		try {
-			InputStream is = PDEProject.getManifest(other).getContents();
-			try {
-				Manifest mf = new Manifest(is);
-				if (mf.getMainAttributes().getValue(Constants.FRAGMENT_HOST) != null)
-					return false;
-			} finally {
-				is.close();
-			}
-		} catch (IOException e) {
-			// assume "not a fragment"
-		} catch (CoreException e) {
+
+		try (InputStream is = PDEProject.getManifest(other).getContents()) {
+			Manifest mf = new Manifest(is);
+			if (mf.getMainAttributes().getValue(Constants.FRAGMENT_HOST) != null)
+				return false;
+		} catch (IOException | CoreException e) {
 			// assume "not a fragment"
 		}
+
 		return true;
 	}
 
@@ -237,9 +223,8 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 					if (path == null) {
 						path = cpe.getPath().toString();
 					}
-					JarFile jarFile = null;
-					try {
-						jarFile = new JarFile(path);
+				try (JarFile jarFile = new JarFile(path)) {
+
 						if (manifests.contains(jarFile.getManifest())) {
 							if (refIndex < 0) {
 								// allocate slot
@@ -252,14 +237,6 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 						}
 					} catch (IOException e) {
 						PDEPlugin.log(e);
-					} finally {
-						if (jarFile != null) {
-							try {
-								jarFile.close();
-							} catch (IOException e) {
-								PDEPlugin.log(e);
-							}
-						}
 					}
 					break;
 				default :
@@ -364,19 +341,14 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 	}
 
 	private void importJar(File jar, IResource destination, IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
-		ZipFile input = null;
-		try {
-			try {
-				input = new ZipFile(jar);
-				ZipFileStructureProvider provider = new ZipFileStructureProvider(input);
-				ImportOperation op = new ImportOperation(destination.getFullPath(), provider.getRoot(), provider, pathString -> IOverwriteQuery.ALL);
-				op.run(monitor);
-			} finally {
-				if (input != null)
-					input.close();
-			}
+		try (ZipFile input = new ZipFile(jar);) {
+			ZipFileStructureProvider provider = new ZipFileStructureProvider(input);
+			ImportOperation op = new ImportOperation(destination.getFullPath(), provider.getRoot(), provider,
+					pathString -> IOverwriteQuery.ALL);
+			op.run(monitor);
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.OK, NLS.bind(PDEUIMessages.NewProjectCreationOperation_errorImportingJar, jar), e));
+			throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.OK,
+					NLS.bind(PDEUIMessages.NewProjectCreationOperation_errorImportingJar, jar), e));
 		}
 	}
 
