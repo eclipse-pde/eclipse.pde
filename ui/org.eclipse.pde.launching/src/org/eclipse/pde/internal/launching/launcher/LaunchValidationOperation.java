@@ -101,6 +101,7 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 		File location = new File(model.getInstallLocation());
 		String filename = ee.replace('/', '_') + ".profile"; //$NON-NLS-1$
 		InputStream is = null;
+		ZipFile zipFile = null;
 		try {
 			// find the input stream to the profile properties file
 			if (location.isDirectory()) {
@@ -108,7 +109,8 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 				if (file.exists())
 					is = new FileInputStream(file);
 			} else {
-				try (ZipFile zipFile = new ZipFile(location, ZipFile.OPEN_READ)) {
+				try {
+					zipFile = new ZipFile(location, ZipFile.OPEN_READ);
 					ZipEntry entry = zipFile.getEntry(filename);
 					if (entry != null)
 						is = zipFile.getInputStream(entry);
@@ -127,6 +129,12 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 			if (is != null)
 				try {
 					is.close();
+				} catch (IOException e) {
+					// nothing to do
+				}
+			if (zipFile != null)
+				try {
+					zipFile.close();
 				} catch (IOException e) {
 					// nothing to do
 				}
