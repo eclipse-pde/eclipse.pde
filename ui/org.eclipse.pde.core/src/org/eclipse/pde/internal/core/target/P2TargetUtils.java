@@ -966,7 +966,7 @@ public class P2TargetUtils {
 		IPhaseSet phases = createPhaseSet();
 		IEngine engine = getEngine();
 		IStatus result = engine.perform(plan, phases, subMonitor.split(100));
-		if (!result.isOK()) {
+		if (result.getSeverity() == IStatus.ERROR || result.getSeverity() == IStatus.CANCEL) {
 			throw new CoreException(result);
 		}
 
@@ -1183,7 +1183,7 @@ public class P2TargetUtils {
 		// execute the provisioning plan
 		IPhaseSet phases = createPhaseSet();
 		IStatus result = engine.perform(plan, phases, subMonitor.split(50));
-		if (!result.isOK()) {
+		if (result.getSeverity() == IStatus.ERROR || result.getSeverity() == IStatus.CANCEL) {
 			throw new CoreException(result);
 		}
 	}
