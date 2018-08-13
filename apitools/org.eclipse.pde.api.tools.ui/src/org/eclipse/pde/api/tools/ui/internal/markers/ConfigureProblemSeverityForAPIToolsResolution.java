@@ -174,11 +174,14 @@ public class ConfigureProblemSeverityForAPIToolsResolution extends WorkbenchMark
 	@Override
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
 		HashSet<IMarker> mset = new HashSet<>(markers.length);
+		int id = ApiProblemFactory.getProblemId(fBackingMarker);
 		for (int i = 0; i < markers.length; i++) {
 			try {
 				if (Util.isApiProblemMarker(markers[i]) && !fBackingMarker.equals(markers[i])
 						&& !markers[i].getType().equals(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER)) {
-					mset.add(markers[i]);
+					if (ApiProblemFactory.getProblemId(markers[i]) == id) {
+						mset.add(markers[i]);
+					}
 				}
 			} catch (CoreException ce) {
 				// do nothing just don't add the filter

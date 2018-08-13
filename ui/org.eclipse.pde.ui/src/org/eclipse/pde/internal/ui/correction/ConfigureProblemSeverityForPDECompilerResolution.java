@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 IBM Corporation and others.
+ * Copyright (c) 2017, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,7 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import com.ibm.icu.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -149,6 +148,20 @@ public class ConfigureProblemSeverityForPDECompilerResolution extends AbstractMa
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public IMarker[] findOtherMarkers(IMarker[] markers) {
+		HashSet<IMarker> mset = new HashSet<>(markers.length);
+		for (IMarker iMarker : markers) {
+			if (iMarker.equals(marker))
+				continue;
+			String str = iMarker.getAttribute(PDEMarkerFactory.compilerKey, ""); //$NON-NLS-1$
+			if (str.equals(id))
+				mset.add(iMarker);
+		}
+		int size = mset.size();
+		return mset.toArray(new IMarker[size]);
 	}
 
 	@Override
