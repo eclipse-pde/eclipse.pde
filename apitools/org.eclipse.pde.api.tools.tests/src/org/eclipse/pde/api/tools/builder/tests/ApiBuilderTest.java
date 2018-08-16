@@ -1057,10 +1057,6 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		super.setUp();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.tests.builder.BuilderTests#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		resetBuilderOptions();

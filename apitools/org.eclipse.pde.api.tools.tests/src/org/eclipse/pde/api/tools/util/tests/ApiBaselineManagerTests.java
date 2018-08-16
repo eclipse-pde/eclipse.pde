@@ -95,12 +95,6 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			this.remove = remove;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .FieldDeclaration)
-		 */
 		@Override
 		public boolean visit(FieldDeclaration node) {
 			if (signature != null) {
@@ -120,12 +114,6 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .MethodDeclaration)
-		 */
 		@Override
 		public boolean visit(MethodDeclaration node) {
 			if (name.equals(node.getName().getFullyQualifiedName())) {
@@ -136,12 +124,6 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
-		 * .TypeDeclaration)
-		 */
 		@Override
 		public boolean visit(TypeDeclaration node) {
 			if (name.equals(node.getName().getFullyQualifiedName())) {
@@ -851,20 +833,12 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		return JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject(TESTING_PLUGIN_PROJECT_NAME));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		createProject(TESTING_PLUGIN_PROJECT_NAME, new String[] { TESTING_PACKAGE });
 		setPackageToApi(getTestingProject(), TESTING_PACKAGE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		deleteProject(TESTING_PLUGIN_PROJECT_NAME);

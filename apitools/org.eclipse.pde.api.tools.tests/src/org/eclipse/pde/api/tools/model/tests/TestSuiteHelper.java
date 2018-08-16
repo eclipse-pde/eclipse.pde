@@ -296,12 +296,6 @@ public class TestSuiteHelper {
 				return 0;
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * @see
-			 * org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent
-			 * #getExternalDependencies()
-			 */
 			@Override
 			public IReferenceCollection getExternalDependencies() {
 				if (fReferences == null) {

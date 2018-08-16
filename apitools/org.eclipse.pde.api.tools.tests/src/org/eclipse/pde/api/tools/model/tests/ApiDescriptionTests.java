@@ -417,17 +417,11 @@ public class ApiDescriptionTests extends TestCase {
 		// build expected visit order from original
 		final List<ElementDescription> visitOrder = new ArrayList<>();
 		ApiDescriptionVisitor visitor = new ApiDescriptionVisitor() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#visitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
-			 */
 			@Override
 			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 				visitOrder.add(new ElementDescription(null, element, description.getVisibility(), description.getRestrictions()));
 				return super.visitElement(element, description);
 			}
-			/* (non-Javadoc)
-			 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#endVisitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
-			 */
 			@Override
 			public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 				visitOrder.add(new ElementDescription(null, element, description.getVisibility(), description.getRestrictions()));
@@ -438,9 +432,6 @@ public class ApiDescriptionTests extends TestCase {
 
 		// now visit the restored version and compare order
 		visitor = new ApiDescriptionVisitor() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#visitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
-			 */
 			@Override
 			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
@@ -451,9 +442,6 @@ public class ApiDescriptionTests extends TestCase {
 				return true;
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#endVisitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
-			 */
 			@Override
 			public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);

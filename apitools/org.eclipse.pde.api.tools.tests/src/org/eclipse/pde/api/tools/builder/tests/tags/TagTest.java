@@ -169,23 +169,11 @@ public abstract class TagTest extends ApiBuilderTest {
 		return array;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath
-	 * ()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return new Path("tags"); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName
-	 * ()
-	 */
 	@Override
 	protected String getTestingProjectName() {
 		return "tagproject"; //$NON-NLS-1$
