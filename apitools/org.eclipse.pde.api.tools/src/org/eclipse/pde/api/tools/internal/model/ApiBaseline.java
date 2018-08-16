@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -394,12 +393,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 					allComponents.add(component);
 				}
 			} else {
-				TreeSet<IApiComponent> allComponents = new TreeSet<>(new Comparator<IApiComponent>() {
-					@Override
-					public int compare(IApiComponent comp1, IApiComponent comp2) {
-						return new Version(comp2.getVersion()).compareTo(new Version(comp1.getVersion()));
-			        	}
-				});
+				TreeSet<IApiComponent> allComponents = new TreeSet<>(
+						(comp1, comp2) -> new Version(comp2.getVersion()).compareTo(new Version(comp1.getVersion())));
 				allComponents.add(comp);
 				allComponents.add(component);
 				fAllComponentsById.put(component.getSymbolicName(), allComponents);

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2010, 2015 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2010, 2018 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
@@ -237,30 +237,27 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 
 	@Override
 	protected Comparator<Object> getItemsComparator() {
-		return new Comparator<Object>() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				String id1 = null;
-				String id2 = null;
+		return (o1, o2) -> {
+			String id1 = null;
+			String id2 = null;
 
-				if (o1 instanceof IUPackage) {
-					id1 = ((IUPackage) o1).getId();
-				} else if (o1 instanceof IInstallableUnit) {
-					id1 = ((IInstallableUnit) o1).getId();
-				} else {
-					return 0;
-				}
-
-				if (o2 instanceof IUPackage) {
-					id2 = ((IUPackage) o2).getId();
-				} else if (o2 instanceof IInstallableUnit) {
-					id2 = ((IInstallableUnit) o2).getId();
-				} else {
-					return 0;
-				}
-
-				return id1.compareTo(id2);
+			if (o1 instanceof IUPackage) {
+				id1 = ((IUPackage) o1).getId();
+			} else if (o1 instanceof IInstallableUnit) {
+				id1 = ((IInstallableUnit) o1).getId();
+			} else {
+				return 0;
 			}
+
+			if (o2 instanceof IUPackage) {
+				id2 = ((IUPackage) o2).getId();
+			} else if (o2 instanceof IInstallableUnit) {
+				id2 = ((IInstallableUnit) o2).getId();
+			} else {
+				return 0;
+			}
+
+			return id1.compareTo(id2);
 		};
 	}
 

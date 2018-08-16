@@ -402,17 +402,20 @@ public class UseReportConverter extends HTMLConvertor {
 				return compare(((Type) o1).desc, ((Type) o2).desc);
 			}
 			if (o1 instanceof IReferenceTypeDescriptor && o2 instanceof IReferenceTypeDescriptor) {
-				return ((IReferenceTypeDescriptor) o1).getQualifiedName().compareTo(((IReferenceTypeDescriptor) o2).getQualifiedName());
+				return ((IReferenceTypeDescriptor) o1).getQualifiedName()
+						.compareTo(((IReferenceTypeDescriptor) o2).getQualifiedName());
 			}
 			if (o1 instanceof IMethodDescriptor && o2 instanceof IMethodDescriptor) {
 				try {
-					return Signatures.getQualifiedMethodSignature((IMethodDescriptor) o1).compareTo(Signatures.getQualifiedMethodSignature((IMethodDescriptor) o2));
+					return Signatures.getQualifiedMethodSignature((IMethodDescriptor) o1)
+							.compareTo(Signatures.getQualifiedMethodSignature((IMethodDescriptor) o2));
 				} catch (CoreException ce) {
 					return -1;
 				}
 			}
 			if (o1 instanceof IFieldDescriptor && o2 instanceof IFieldDescriptor) {
-				return Signatures.getQualifiedFieldSignature((IFieldDescriptor) o1).compareTo(Signatures.getQualifiedFieldSignature((IFieldDescriptor) o2));
+				return Signatures.getQualifiedFieldSignature((IFieldDescriptor) o1)
+						.compareTo(Signatures.getQualifiedFieldSignature((IFieldDescriptor) o2));
 			}
 			if (o1 instanceof IComponentDescriptor && o2 instanceof IComponentDescriptor) {
 				return ((IComponentDescriptor) o1).getId().compareTo(((IComponentDescriptor) o2).getId());

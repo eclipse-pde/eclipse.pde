@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -344,14 +343,8 @@ public class APIFreezeReportConversionTask extends Task {
 		for (Map.Entry<String, List<Entry>> entry : entries.entrySet()) {
 			allEntries.add(entry);
 		}
-		Collections.sort(allEntries, new Comparator<Object>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public int compare(Object o1, Object o2) {
-				Map.Entry<String, List<Entry>> entry1 = (Map.Entry<String, List<Entry>>) o1;
-				Map.Entry<String, List<Entry>> entry2 = (Map.Entry<String, List<Entry>>) o2;
-				return entry1.getKey().compareTo(entry2.getKey());
-			}
+		Collections.sort(allEntries, (o1, o2) -> {
+			return o1.getKey().compareTo(o2.getKey());
 		});
 		for (Map.Entry<String, List<Entry>> mapEntry : allEntries) {
 			String key = mapEntry.getKey();
@@ -364,26 +357,21 @@ public class APIFreezeReportConversionTask extends Task {
 				dumpResolverErrorSummary(buffer, componentName, resolverErrors.get(componentName));
 			}
 			List<Entry> values = mapEntry.getValue();
-			Collections.sort(values, new Comparator<Object>() {
-				@Override
-				public int compare(Object o1, Object o2) {
-					Entry entry1 = (Entry) o1;
-					Entry entry2 = (Entry) o2;
-					String typeName1 = entry1.typeName;
-					String typeName2 = entry2.typeName;
-					if (typeName1 == null) {
-						if (typeName2 == null) {
-							return entry1.key.compareTo(entry2.key);
-						}
-						return -1;
-					} else if (typeName2 == null) {
-						return 1;
+			Collections.sort(values, (entry1, entry2) -> {
+				String typeName1 = entry1.typeName;
+				String typeName2 = entry2.typeName;
+				if (typeName1 == null) {
+					if (typeName2 == null) {
+						return entry1.key.compareTo(entry2.key);
 					}
-					if (!typeName1.equals(typeName2)) {
-						return typeName1.compareTo(typeName2);
-					}
-					return entry1.key.compareTo(entry2.key);
+					return -1;
+				} else if (typeName2 == null) {
+					return 1;
 				}
+				if (!typeName1.equals(typeName2)) {
+					return typeName1.compareTo(typeName2);
+				}
+				return entry1.key.compareTo(entry2.key);
 			});
 			if (debug) {
 				System.out.println("Entries for " + key); //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Ecliptical Software Inc. and others.
+ * Copyright (c) 2017, 2018 Ecliptical Software Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -167,13 +167,8 @@ public class AnnotationVisitor extends ASTVisitor {
 		PRIMITIVE_TYPE_MAP = Collections.unmodifiableMap(map);
 	}
 
-	private static final Comparator<IDSReference> REF_NAME_COMPARATOR = new Comparator<IDSReference>() {
-
-		@Override
-		public int compare(IDSReference o1, IDSReference o2) {
-			return o1.getReferenceName().compareTo(o2.getReferenceName());
-		}
-	};
+	private static final Comparator<IDSReference> REF_NAME_COMPARATOR = (o1, o2) -> o1.getReferenceName()
+			.compareTo(o2.getReferenceName());
 
 	private static final Debug debug = AnnotationProcessor.debug;
 

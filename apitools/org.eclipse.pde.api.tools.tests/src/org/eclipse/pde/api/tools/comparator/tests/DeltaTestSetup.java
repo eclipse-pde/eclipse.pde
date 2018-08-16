@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.comparator.tests;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -82,21 +81,18 @@ public abstract class DeltaTestSetup extends TestCase {
 
 		IDelta[] result = new IDelta[size];
 		leaves.toArray(result);
-		Arrays.sort(result, new Comparator<IDelta>() {
-			@Override
-			public int compare(IDelta delta, IDelta delta2) {
-				int kind = delta.getKind();
-				int kind2 = delta2.getKind();
-				if (kind == kind2) {
-					int flags = delta.getFlags();
-					int flags2 = delta2.getFlags();
-					if (flags == flags2) {
-						return delta.getKey().compareTo(delta2.getKey());
-					}
-					return flags - flags2;
+		Arrays.sort(result, (delta1, delta2) -> {
+			int kind = delta1.getKind();
+			int kind2 = delta2.getKind();
+			if (kind == kind2) {
+				int flags = delta1.getFlags();
+				int flags2 = delta2.getFlags();
+				if (flags == flags2) {
+					return delta1.getKey().compareTo(delta2.getKey());
 				}
-				return kind - kind2;
+				return flags - flags2;
 			}
+			return kind - kind2;
 		});
 		String unknownMessageStart = BuilderMessages.ApiProblemFactory_problem_message_not_found;
 		unknownMessageStart = unknownMessageStart.substring(0, unknownMessageStart.lastIndexOf('{'));

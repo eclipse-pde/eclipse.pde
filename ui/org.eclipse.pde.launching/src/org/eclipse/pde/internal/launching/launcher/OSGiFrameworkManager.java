@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,15 +56,12 @@ public class OSGiFrameworkManager implements IRegistryChangeListener {
 	}
 
 	private IConfigurationElement[] orderElements(IConfigurationElement[] elems) {
-		Arrays.sort(elems, new Comparator<IConfigurationElement>() {
-			@Override
-			public int compare(IConfigurationElement o1, IConfigurationElement o2) {
-				String name1 = o1.getAttribute(ATT_NAME);
-				String name2 = o2.getAttribute(ATT_NAME);
-				if (name1 != null)
-					return name1.compareToIgnoreCase(name2);
-				return 1;
-			}
+		Arrays.sort(elems, (o1, o2) -> {
+			String name1 = o1.getAttribute(ATT_NAME);
+			String name2 = o2.getAttribute(ATT_NAME);
+			if (name1 != null)
+				return name1.compareToIgnoreCase(name2);
+			return 1;
 		});
 		return elems;
 	}

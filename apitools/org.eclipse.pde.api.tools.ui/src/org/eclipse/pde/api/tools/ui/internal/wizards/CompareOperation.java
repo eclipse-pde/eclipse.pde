@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.api.tools.ui.internal.wizards;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -122,16 +121,13 @@ public class CompareOperation extends Job {
 		if (workspaceBaseline == null) {
 			return scope;
 		}
-		Arrays.sort(selected, new Comparator<Object>() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				if (o1 instanceof IJavaElement && o2 instanceof IJavaElement) {
-					IJavaElement element = (IJavaElement) o1;
-					IJavaElement element2 = (IJavaElement) o2;
-					return element.getElementType() - element2.getElementType();
-				}
-				return 0;
+		Arrays.sort(selected, (o1, o2) -> {
+			if (o1 instanceof IJavaElement && o2 instanceof IJavaElement) {
+				IJavaElement element = (IJavaElement) o1;
+				IJavaElement element2 = (IJavaElement) o2;
+				return element.getElementType() - element2.getElementType();
 			}
+			return 0;
 		});
 		int length = selected.length;
 		for (int i = 0; i < length; i++) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 IBM Corporation and others.
+ * Copyright (c) 2011, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -284,14 +284,8 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 		}
 		List<Map.Entry<String, IApiProblem[]>> allEntries = new ArrayList<>();
 		allEntries.addAll(entrySet);
-		Collections.sort(allEntries, new Comparator<Object>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public int compare(Object o1, Object o2) {
-				Map.Entry<String, IApiProblem[]> entry1 = (Map.Entry<String, IApiProblem[]>) o1;
-				Map.Entry<String, IApiProblem[]> entry2 = (Map.Entry<String, IApiProblem[]>) o2;
-				return entry1.getKey().compareTo(entry2.getKey());
-			}
+		Collections.sort(allEntries, (entry1, entry2) -> {
+			return entry1.getKey().compareTo(entry2.getKey());
 		});
 		Summary[] summaries = new Summary[size];
 		int i = 0;
