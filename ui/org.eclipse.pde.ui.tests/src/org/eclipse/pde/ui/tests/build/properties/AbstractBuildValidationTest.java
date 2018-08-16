@@ -54,17 +54,14 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 		doUnZip(PDETestsPlugin.getDefault().getStateLocation().removeLastSegments(2), "/tests/build.properties/build.properties.tests.zip");
 
 		projectFile = PDETestsPlugin.getDefault().getStateLocation().removeLastSegments(3).toFile();
-		File[] projects = projectFile.listFiles(new FileFilter() {
-
-			@Override
-			public boolean accept(File pathname) {
-				int index = pathname.getName().lastIndexOf('.');
-				if (index > 1 && pathname.isDirectory()) { // look out for "CVS" files in the workspace
-					return true;
-				}
-				return false;
+		File[] projects = projectFile.listFiles((FileFilter) pathname -> {
+			int index = pathname.getName().lastIndexOf('.');
+			if (index > 1 && pathname.isDirectory()) { // look out for "CVS"
+														// files in the
+														// workspace
+				return true;
 			}
-
+			return false;
 		});
 		for (File projectFileName : projects) {
 			IProject project = findProject(projectFileName.getName());

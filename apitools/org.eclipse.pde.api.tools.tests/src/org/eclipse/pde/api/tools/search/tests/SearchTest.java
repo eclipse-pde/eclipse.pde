@@ -94,20 +94,17 @@ public abstract class SearchTest extends TestCase {
 			fail("The baseline test directory must exist"); //$NON-NLS-1$
 		}
 		IApiBaseline base = ApiModelFactory.newApiBaseline(name, Util.getEEDescriptionFile());
-		File[] jars = file.listFiles(new FileFilter() {
-			@Override
-			public boolean accept(File pathname) {
-				String name = pathname.getName();
-				if (Util.isArchive(name)) {
-					if (projectnames != null) {
-						IPath path = new Path(pathname.getAbsolutePath());
-						return projectnames.contains(path.removeFileExtension().lastSegment());
-					} else {
-						return true;
-					}
+		File[] jars = file.listFiles((FileFilter) pathname -> {
+			String name1 = pathname.getName();
+			if (Util.isArchive(name1)) {
+				if (projectnames != null) {
+					IPath path = new Path(pathname.getAbsolutePath());
+					return projectnames.contains(path.removeFileExtension().lastSegment());
+				} else {
+					return true;
 				}
-				return false;
 			}
+			return false;
 		});
 		IApiComponent[] components = new IApiComponent[jars.length];
 		for (int i = 0; i < jars.length; i++) {

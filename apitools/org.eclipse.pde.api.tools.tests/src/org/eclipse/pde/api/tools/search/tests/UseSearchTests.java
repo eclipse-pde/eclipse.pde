@@ -49,12 +49,7 @@ public class UseSearchTests extends SearchTest {
 	private void assertXMLReport(IPath reportroot){
 		File root = reportroot.toFile();
 		assertTrue("the report root must exist", root.exists()); //$NON-NLS-1$
-		File[] files = root.listFiles(new FileFilter(){
-			@Override
-			public boolean accept(File pathname) {
-				return pathname.isDirectory();
-			}
-		});
+		File[] files = root.listFiles((FileFilter) pathname -> pathname.isDirectory());
 		int flength = files.length;
 		int epsize = this.usedprojects.size();
 		assertEquals("the used project roots must be the same as we are expecting", flength, epsize); //$NON-NLS-1$

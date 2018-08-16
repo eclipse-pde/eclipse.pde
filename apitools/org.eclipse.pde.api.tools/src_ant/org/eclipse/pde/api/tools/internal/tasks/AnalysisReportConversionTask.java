@@ -12,13 +12,11 @@ package org.eclipse.pde.api.tools.internal.tasks;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -323,13 +321,10 @@ public class AnalysisReportConversionTask extends Task {
 			} else {
 				writer.println(MessageFormat.format(Messages.fullReportTask_indexheader, Messages.fullReportTask_apiBundleSummary));
 			}
-			Arrays.sort(summaries, new Comparator<Object>() {
-				@Override
-				public int compare(Object o1, Object o2) {
-					Summary summary1 = (Summary) o1;
-					Summary summary2 = (Summary) o2;
-					return summary1.componentID.compareTo(summary2.componentID);
-				}
+			Arrays.sort(summaries, (o1, o2) -> {
+				Summary summary1 = o1;
+				Summary summary2 = o2;
+				return summary1.componentID.compareTo(summary2.componentID);
 			});
 			for (int i = 0, max = summaries.length; i < max; i++) {
 				dumpIndexEntry(i, writer, summaries[i]);
@@ -473,12 +468,7 @@ public class AnalysisReportConversionTask extends Task {
 		}
 		try {
 			// retrieve all xml reports
-			File[] allFiles = Util.getAllFiles(reportsRoot, new FileFilter() {
-				@Override
-				public boolean accept(File pathname) {
-					return pathname.isDirectory() || pathname.getName().endsWith(".xml"); //$NON-NLS-1$
-				}
-			});
+			File[] allFiles = Util.getAllFiles(reportsRoot, pathname -> pathname.isDirectory() || pathname.getName().endsWith(".xml")); //$NON-NLS-1$
 			if (allFiles != null) {
 				int length = allFiles.length;
 				List<Summary> summariesList = new ArrayList<>(length);
