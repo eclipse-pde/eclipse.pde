@@ -60,7 +60,7 @@ public class FilterStoreTests extends AbstractApiTest {
 		// Import the test .api_filters file
 		File xmlsrc = XML_LOC.append(".api_filters").toFile(); //$NON-NLS-1$
 		assertTrue("the filter xml dir must exist", xmlsrc.exists()); //$NON-NLS-1$
-		assertTrue("the filter xml dir must be a file", !xmlsrc.isDirectory()); //$NON-NLS-1$
+		assertFalse("the filter xml dir must be a file", xmlsrc.isDirectory()); //$NON-NLS-1$
 		assertNotNull("no project", project); //$NON-NLS-1$
 		IProject project2 = project.getProject();
 		IPath settings = project2.getFullPath().append(".settings"); //$NON-NLS-1$

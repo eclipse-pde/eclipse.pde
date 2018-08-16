@@ -287,7 +287,7 @@ public class ApiBaselineTests extends TestCase {
 				return;
 			}
 		}
-		assertTrue("Missing prerequisite bundle", false); //$NON-NLS-1$
+		fail("Missing prerequisite bundle"); //$NON-NLS-1$
 	}
 
 	/**

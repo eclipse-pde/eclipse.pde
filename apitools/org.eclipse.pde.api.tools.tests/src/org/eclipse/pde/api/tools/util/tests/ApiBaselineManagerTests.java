@@ -202,7 +202,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 */
 	public void testGetWorkspaceComponent() {
 		IApiBaseline baseline = getWorkspaceBaseline();
-		assertTrue("the workspace baseline must not be null", baseline != null); //$NON-NLS-1$
+		assertNotNull("the workspace baseline must not be null", baseline); //$NON-NLS-1$
 	}
 
 	/**
@@ -210,7 +210,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 */
 	public void testAddBaseline() {
 		IApiBaseline baseline = getTestBaseline(ADDTEST);
-		assertTrue("the test baseline must have been created", baseline != null); //$NON-NLS-1$
+		assertNotNull("the test baseline must have been created", baseline); //$NON-NLS-1$
 		assertTrue("the testadd baseline must be in the manager", fPMmanager.removeApiBaseline(ADDTEST)); //$NON-NLS-1$
 	}
 
@@ -219,9 +219,9 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 */
 	public void testRemoveBaseline() {
 		IApiBaseline baseline = getTestBaseline("removetest"); //$NON-NLS-1$
-		assertTrue("the testremove baseline must exist", baseline != null); //$NON-NLS-1$
+		assertNotNull("the testremove baseline must exist", baseline); //$NON-NLS-1$
 		baseline = fPMmanager.getApiBaseline("removetest"); //$NON-NLS-1$
-		assertTrue("the testremove baseline must be in the manager", baseline != null); //$NON-NLS-1$
+		assertNotNull("the testremove baseline must be in the manager", baseline); //$NON-NLS-1$
 		assertTrue("the testremove baseline should have been removed", fPMmanager.removeApiBaseline("removetest")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
@@ -231,10 +231,10 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	public void testSetDefaultBaseline() {
 		try {
 			IApiBaseline baseline = getTestBaseline(TESTDEFAULT);
-			assertTrue("the testdefault baseline must exist", baseline != null); //$NON-NLS-1$
+			assertNotNull("the testdefault baseline must exist", baseline); //$NON-NLS-1$
 			fPMmanager.setDefaultApiBaseline(TESTDEFAULT);
 			baseline = fPMmanager.getDefaultApiBaseline();
-			assertTrue("the default baseline must be the testdefault baseline", baseline != null); //$NON-NLS-1$
+			assertNotNull("the default baseline must be the testdefault baseline", baseline); //$NON-NLS-1$
 		} finally {
 			fPMmanager.removeApiBaseline(TESTDEFAULT);
 		}
@@ -249,7 +249,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			fPMmanager.addApiBaseline(getTestBaseline(TESTDEFAULT));
 			fPMmanager.addApiBaseline(getTestBaseline(THREE));
 			IApiBaseline[] baselines = fPMmanager.getApiBaselines();
-			assertTrue("there should be three baselines", baselines.length == 3); //$NON-NLS-1$
+			assertEquals("there should be three baselines", 3, baselines.length); //$NON-NLS-1$
 		} finally {
 			fPMmanager.removeApiBaseline(ADDTEST);
 			fPMmanager.removeApiBaseline(TESTDEFAULT);
@@ -266,11 +266,11 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			fPMmanager.addApiBaseline(getTestBaseline(TESTDEFAULT));
 			fPMmanager.addApiBaseline(getTestBaseline(THREE));
 			IApiBaseline[] baselines = fPMmanager.getApiBaselines();
-			assertTrue("there should be three baselines", baselines.length == 3); //$NON-NLS-1$
+			assertEquals("there should be three baselines", 3, baselines.length); //$NON-NLS-1$
 			assertTrue("the testadd baseline should have been removed", fPMmanager.removeApiBaseline(ADDTEST)); //$NON-NLS-1$
 			assertTrue("the testdefault baseline should have been removed", fPMmanager.removeApiBaseline(TESTDEFAULT)); //$NON-NLS-1$
 			assertTrue("the three baseline should have been removed", fPMmanager.removeApiBaseline(THREE)); //$NON-NLS-1$
-			assertTrue("There sould be no more baselines", fPMmanager.getApiBaselines().length == 0); //$NON-NLS-1$
+			assertEquals("There sould be no more baselines", 0, fPMmanager.getApiBaselines().length); //$NON-NLS-1$
 		} finally {
 			fPMmanager.removeApiBaseline(ADDTEST);
 			fPMmanager.removeApiBaseline(TESTDEFAULT);
@@ -345,7 +345,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		assertNotNull("the testing project api description must exist", desc); //$NON-NLS-1$
 		IApiAnnotations annot = desc.resolveAnnotations(Factory.typeDescriptor(packagename + "." + sourcename)); //$NON-NLS-1$
 		assertNotNull("the annotations for " + packagename + "." + sourcename + " cannot be null", annot); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		assertTrue("there must be a noinstantiate setting for TestClass1", annot.getRestrictions() == restriction); //$NON-NLS-1$
+		assertEquals("there must be a noinstantiate setting for TestClass1", annot.getRestrictions(), restriction); //$NON-NLS-1$
 	}
 
 	/**

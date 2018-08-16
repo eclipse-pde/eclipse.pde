@@ -249,7 +249,7 @@ public class VersionTest extends CompatibilityTest {
 			fullBuild();
 		}
 		ApiProblem[] problems = getEnv().getProblemsFor(MANIFEST_PATH, null);
-		assertTrue("No problem expected", problems.length == 0); //$NON-NLS-1$
+		assertEquals("No problem expected", 0, problems.length); //$NON-NLS-1$
 	}
 
 	public void testIgnoreFalseMinorIncI() throws Exception {
@@ -283,7 +283,7 @@ public class VersionTest extends CompatibilityTest {
 			fullBuild();
 		}
 		ApiProblem[] problems = getEnv().getProblemsFor(MANIFEST_PATH, null);
-		assertTrue("No problem expected", problems.length == 0); //$NON-NLS-1$
+		assertEquals("No problem expected", 0, problems.length); //$NON-NLS-1$
 	}
 
 	public void testIgnoreFalseMajorIncI() throws Exception {

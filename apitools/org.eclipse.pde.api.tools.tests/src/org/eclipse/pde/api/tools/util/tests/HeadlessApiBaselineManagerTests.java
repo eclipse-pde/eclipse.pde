@@ -91,7 +91,7 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 		fManager.addApiBaseline(baseline);
 		boolean result = fManager.removeApiBaseline("test2"); //$NON-NLS-1$
 		assertTrue("the baseline test2 should have been removed from the manager", result); //$NON-NLS-1$
-		assertTrue("There should only be 0 baselines left", fManager.getApiBaselines().length == 0); //$NON-NLS-1$
+		assertEquals("There should only be 0 baselines left", 0, fManager.getApiBaselines().length); //$NON-NLS-1$
 	}
 
 	/**
@@ -188,11 +188,10 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 	public void testStop() {
 		try {
 			fManager.stop();
-			assertTrue("There should be no api baselines in the manager", fManager.getApiBaselines().length == 0); //$NON-NLS-1$
+			assertEquals("There should be no api baselines in the manager", 0, fManager.getApiBaselines().length); //$NON-NLS-1$
 			//stop it again to free the memory from the map
 			fManager.stop();
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}

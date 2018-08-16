@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.util.tests;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -86,13 +85,9 @@ public class UtilTests extends TestCase {
 		File root = new File(SRC_LOC.toOSString());
 		assertTrue("The test source  directory must exist", root.exists()); //$NON-NLS-1$
 		assertTrue("The source location should be a directory", root.isDirectory()); //$NON-NLS-1$
-		File[] files = Util.getAllFiles(root, new FileFilter() {
-			@Override
-			public boolean accept(File pathname) {
-				return pathname.getAbsolutePath().endsWith("TestClass1.java"); //$NON-NLS-1$
-			}
-		});
-		assertTrue("There should be only one file in the test source directory named 'TestClass1.java'", files.length == 1); //$NON-NLS-1$
+		File[] files = Util.getAllFiles(root, pathname -> pathname.getAbsolutePath().endsWith("TestClass1.java")); //$NON-NLS-1$
+		assertEquals("There should be only one file in the test source directory named 'TestClass1.java'", files.length, //$NON-NLS-1$
+				1);
 	}
 
 	/**
@@ -106,7 +101,7 @@ public class UtilTests extends TestCase {
 	 * Tests that the isClassFile method works as expected when passed an invalid name (not *.class)
 	 */
 	public void testIsNotClassfile() {
-		assertTrue("Test.notclass is not a classfile", !Util.isClassFile("Test.notclass")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse("Test.notclass is not a classfile", Util.isClassFile("Test.notclass")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -151,7 +146,7 @@ public class UtilTests extends TestCase {
 	 * name (*.notzip)
 	 */
 	public void testisNotArchive() {
-		assertTrue("Test.notzip is not an archive", !Util.isArchive("Test.notzip")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse("Test.notzip is not an archive", Util.isArchive("Test.notzip")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
@@ -166,7 +161,7 @@ public class UtilTests extends TestCase {
 		assertEquals("wrong value", 4, Util.getFragmentNumber("org.test 1.0.0.0")); //$NON-NLS-1$ //$NON-NLS-2$
 		try {
 			Util.getFragmentNumber((String) null);
-			assertTrue(false);
+			fail();
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
@@ -184,7 +179,7 @@ public class UtilTests extends TestCase {
 	public void testSinceTagVersion() {
 		try {
 			new SinceTagVersion(null);
-			assertTrue("Should not reach there", false); //$NON-NLS-1$
+			fail("Should not reach there"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// expected exception
 		}
@@ -681,7 +676,7 @@ public class UtilTests extends TestCase {
 		try {
 			Util.parseDocument(s);
 		} catch(CoreException ce) {
-			assertTrue("Should not happen", false); //$NON-NLS-1$
+			fail("Should not happen"); //$NON-NLS-1$
 		}
 	}
 

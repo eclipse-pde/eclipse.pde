@@ -381,7 +381,7 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 		assertTrue("Not extend restrictions", RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Should not be compatible", !DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertFalse("Should not be compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
 
 	/**
@@ -424,7 +424,8 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertTrue("Implement restrictions", !RestrictionModifiers.isImplementRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
+		assertFalse("Implement restrictions", //$NON-NLS-1$
+				RestrictionModifiers.isImplementRestriction(child.getCurrentRestrictions()));
 		assertEquals("Wrong flag", IDelta.FIELD, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
@@ -478,7 +479,7 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 		assertTrue("Not extend restrictions", RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Method Add not compatible", !DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertFalse("Method Add not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.METHOD_MOVED_UP, child.getFlags()); //$NON-NLS-1$
@@ -827,7 +828,7 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.SUPER_INTERFACE_WITH_METHODS, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Method Add not compatible", !DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertFalse("Method Add not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.CHANGED, child.getKind()); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.EXPANDED_SUPERINTERFACES_SET, child.getFlags()); //$NON-NLS-1$
@@ -936,7 +937,7 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Method Add compatible", !DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertFalse("Method Add compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 		child = allLeavesDeltas[1];
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.METHOD_MOVED_UP, child.getFlags()); //$NON-NLS-1$

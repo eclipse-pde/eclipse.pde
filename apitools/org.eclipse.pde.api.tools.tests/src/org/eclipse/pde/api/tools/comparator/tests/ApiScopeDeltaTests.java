@@ -190,7 +190,7 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 		}
 		try {
 			ApiComparator.compare(scope, before, VisibilityModifiers.API, true, null);
-			assertFalse("Should not be there", true); //$NON-NLS-1$
+			fail("Should not be there"); //$NON-NLS-1$
 		} catch (CoreException e) {
 			// should fail to visit a method
 		}
@@ -211,7 +211,7 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 		scope.addElement(after);
 		IDelta delta = ApiComparator.compare(scope, before, VisibilityModifiers.API, false, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Not NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertEquals("Not NO_DELTA", ApiComparator.NO_DELTA, delta); //$NON-NLS-1$
 	}
 
 	/**
@@ -229,13 +229,13 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 		scope.addElement(after);
 		try {
 			ApiComparator.compare((IApiScope) null, before, VisibilityModifiers.API, false, null);
-			assertFalse("Should not be there", true); //$NON-NLS-1$
+			fail("Should not be there"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// expected as scope is null
 		}
 		try {
 			ApiComparator.compare(scope, null, VisibilityModifiers.API, false, null);
-			assertFalse("Should not be there", true); //$NON-NLS-1$
+			fail("Should not be there"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// expected as scope is null
 		}

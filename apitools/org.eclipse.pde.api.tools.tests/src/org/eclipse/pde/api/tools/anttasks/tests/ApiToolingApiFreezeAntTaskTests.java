@@ -77,7 +77,7 @@ public class ApiToolingApiFreezeAntTaskTests extends AntRunnerTestCase {
 	public void test4() throws Exception {
 		try {
 			runTaskAndVerify("test4"); //$NON-NLS-1$
-			assertTrue("Should not be there", false); //$NON-NLS-1$
+			fail("Should not be there"); //$NON-NLS-1$
 		} catch (Exception e) {
 			assertEquals("Wrong exception", "org.apache.tools.ant.BuildException", e.getClass().getCanonicalName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}

@@ -16,8 +16,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -26,6 +24,8 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
+
+import junit.framework.TestCase;
 
 public abstract class DeltaTestSetup extends TestCase {
 	protected static final String AFTER = "after"; //$NON-NLS-1$
@@ -183,7 +183,7 @@ public abstract class DeltaTestSetup extends TestCase {
 			after = TestSuiteHelper.createTestingBaseline(AFTER, getBaseLineFolder(AFTER));
 		} catch (CoreException e) {
 			e.printStackTrace();
-			assertTrue("Should not happen", false); //$NON-NLS-1$
+			fail("Should not happen"); //$NON-NLS-1$
 		}
 		return after;
 	}
@@ -197,7 +197,7 @@ public abstract class DeltaTestSetup extends TestCase {
 			before = TestSuiteHelper.createTestingBaseline(BEFORE, getBaseLineFolder(BEFORE));
 		} catch (CoreException e) {
 			e.printStackTrace();
-			assertTrue("Should not happen", false); //$NON-NLS-1$
+			fail("Should not happen"); //$NON-NLS-1$
 		}
 		return before;
 	}

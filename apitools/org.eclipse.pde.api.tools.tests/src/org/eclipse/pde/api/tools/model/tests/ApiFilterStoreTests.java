@@ -62,7 +62,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		// Import the test .api_filters file
 		File xmlsrc = XML_LOC.append(".api_filters").toFile(); //$NON-NLS-1$
 		assertTrue("the filter xml dir must exist", xmlsrc.exists()); //$NON-NLS-1$
-		assertTrue("the filter xml dir must be a file", !xmlsrc.isDirectory()); //$NON-NLS-1$
+		assertFalse("the filter xml dir must be a file", xmlsrc.isDirectory()); //$NON-NLS-1$
 		assertNotNull("no project", project); //$NON-NLS-1$
 		IProject project2 = project.getProject();
 		IPath settings = project2.getFullPath().append(".settings"); //$NON-NLS-1$
@@ -91,7 +91,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		IResource resource = project.findMember(new Path("src/x/y/z/C4.java")); //$NON-NLS-1$
 		assertNotNull("the resource src/x/y/z/C4.java must exist", resource); //$NON-NLS-1$
 		IApiProblemFilter[] filters = store.getFilters(resource);
-		assertTrue("There should be 1 filter for src/x/y/z/C4.java", filters.length == 1); //$NON-NLS-1$
+		assertEquals("There should be 1 filter for src/x/y/z/C4.java", 1, filters.length); //$NON-NLS-1$
 		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS);
 		assertTrue("the usage problem for src/x/y/z/C4.java should be filtered", store.isFiltered(problem)); //$NON-NLS-1$
 
@@ -99,7 +99,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		resource = project.findMember(new Path("src/x/C1.java")); //$NON-NLS-1$
 		assertNotNull("the resource src/x/C1.java must exist", resource); //$NON-NLS-1$
 		filters = store.getFilters(resource);
-		assertTrue("there should be 2 filters for src/x/C1.java", filters.length == 2); //$NON-NLS-1$
+		assertEquals("there should be 2 filters for src/x/C1.java", 2, filters.length); //$NON-NLS-1$
 		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, 4, IDelta.REMOVED, IDelta.FIELD);
 		assertTrue("the removed binary problem for src/x/C1.java should be filtered", store.isFiltered(problem)); //$NON-NLS-1$
 		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, 4, IDelta.CHANGED, IDelta.VARARGS_TO_ARRAY);
@@ -109,7 +109,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		resource = project.findMember(new Path("src/x/y/C3.java")); //$NON-NLS-1$
 		assertNotNull("the resource src/x/y/C3.java must exist"); //$NON-NLS-1$
 		filters = store.getFilters(resource);
-		assertTrue("there should be 2 filters for src/x/y/C3.java", filters.length == 2); //$NON-NLS-1$
+		assertEquals("there should be 2 filters for src/x/y/C3.java", 2, filters.length); //$NON-NLS-1$
 		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_VERSION, 7, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS);
 		assertTrue("the major version problem for src/x/y/C3.java should be filtered", store.isFiltered(problem)); //$NON-NLS-1$
 		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_VERSION, 7, IApiProblem.MINOR_VERSION_CHANGE, IApiProblem.NO_FLAGS);
@@ -119,7 +119,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		resource = project.findMember(new Path("META-INF/MANIFEST.MF")); //$NON-NLS-1$
 		assertNotNull("the resource META-INF/MANIFEST.MF must exist", resource); //$NON-NLS-1$
 		filters = store.getFilters(resource);
-		assertTrue("there should be 3 filters for META-INF/MANIFEST.MF", filters.length == 3); //$NON-NLS-1$
+		assertEquals("there should be 3 filters for META-INF/MANIFEST.MF", 3, filters.length); //$NON-NLS-1$
 		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_SINCETAGS, 7, IApiProblem.SINCE_TAG_MISSING, IApiProblem.NO_FLAGS);
 		assertTrue("the missing since tag problem should be filtered for META-INF/MANIFEST.MF", store.isFiltered(problem)); //$NON-NLS-1$
 		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_SINCETAGS, 7, IApiProblem.SINCE_TAG_MALFORMED, IApiProblem.NO_FLAGS);

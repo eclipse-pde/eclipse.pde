@@ -57,7 +57,7 @@ public class UseSearchTests extends SearchTest {
 		});
 		int flength = files.length;
 		int epsize = this.usedprojects.size();
-		assertTrue("the used project roots must be the same as we are expecting", flength == epsize); //$NON-NLS-1$
+		assertEquals("the used project roots must be the same as we are expecting", flength, epsize); //$NON-NLS-1$
 		assertFalse("The files list should be not be greater than the expected used projects", flength > epsize); //$NON-NLS-1$
 		assertFalse("The files list should be not be less than the expected used projects", flength < epsize); //$NON-NLS-1$
 		HashSet<String> names = null;

@@ -57,9 +57,9 @@ public class SignaturesTests extends TestCase {
 	 */
 	public void testIsQualifiedSignature() {
 		assertTrue("should return true", Signatures.isQualifiedSignature("(Ljava/lang/Object;Ljava/lang/Exception;)V")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("should return false", !Signatures.isQualifiedSignature("(IJCQObject;IJCQException;IJC)I")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse("should return false", Signatures.isQualifiedSignature("(IJCQObject;IJCQException;IJC)I")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue("should return true", Signatures.isQualifiedSignature("(IJCLjava.lang.Object;IJCLjava.lang.Exception;IJC)I")); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("should return false", !Signatures.isQualifiedSignature("([IJC[[[QObject;IJCQException;IJC)I")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse("should return false", Signatures.isQualifiedSignature("([IJC[[[QObject;IJCQException;IJC)I")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -263,8 +263,10 @@ public class SignaturesTests extends TestCase {
 		assertTrue("Signatures should match", Signatures.matchesSignatures("(ILjava.util.List<Ljava.lang.String;>;)V;", "(ILjava.util.List<Ljava.lang.String;>;)V;")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertTrue("Signatures should match", Signatures.matchesSignatures("(ILjava.lang.String;)V;", "(IQString;)V;")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertTrue("Signatures should match", Signatures.matchesSignatures("(ILjava.util.List<Ljava.lang.String;>;)V;", "(ILjava.util.List<QString;>;)V;")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		assertTrue("Signatures should not match", !Signatures.matchesSignatures("(ILjava.lang.String;)V;", "(Ljava.lang.String;I)V;")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		assertTrue("Signatures should not match", !Signatures.matchesSignatures("(ILjava.util.List<Ljava.lang.String;>;)V;", "(ILjava.util.List;)V;")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertFalse("Signatures should not match", //$NON-NLS-1$
+				Signatures.matchesSignatures("(ILjava.lang.String;)V;", "(Ljava.lang.String;I)V;")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse("Signatures should not match", //$NON-NLS-1$
+				Signatures.matchesSignatures("(ILjava.util.List<Ljava.lang.String;>;)V;", "(ILjava.util.List;)V;")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void testMatchesInnerClasses() {

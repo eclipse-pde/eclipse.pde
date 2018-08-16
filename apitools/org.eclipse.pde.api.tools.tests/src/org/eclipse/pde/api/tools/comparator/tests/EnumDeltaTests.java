@@ -98,7 +98,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 2, allLeavesDeltas.length); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertTrue("Is visible", !Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
@@ -127,7 +127,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 2, allLeavesDeltas.length); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertTrue("Is visible", !Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.CONSTRUCTOR, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
@@ -195,7 +195,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertTrue("Is visible", !Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
@@ -218,7 +218,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertTrue("Is visible", !Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
+		assertFalse("Is visible", Util.isVisible(child.getNewModifiers())); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$

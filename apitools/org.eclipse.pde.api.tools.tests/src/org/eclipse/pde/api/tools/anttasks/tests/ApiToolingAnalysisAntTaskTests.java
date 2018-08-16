@@ -47,7 +47,7 @@ public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 		properties.put("report_location", buildFolder.getLocation().toOSString()); //$NON-NLS-1$
 		try {
 			runAntScript(buildXMLPath, new String[] { "run" }, buildFolder.getLocation().toOSString(), properties); //$NON-NLS-1$
-			assertFalse("An exception must occur", true); //$NON-NLS-1$
+			fail("An exception must occur"); //$NON-NLS-1$
 		} catch (Exception e) {
 			checkBuildException(e);
 		}
@@ -61,7 +61,7 @@ public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 		properties.put("report_location", buildFolder.getLocation().toOSString()); //$NON-NLS-1$
 		try {
 			runAntScript(buildXMLPath, new String[] { "run" }, buildFolder.getLocation().toOSString(), properties); //$NON-NLS-1$
-			assertFalse("An exception must occur", true); //$NON-NLS-1$
+			fail("An exception must occur"); //$NON-NLS-1$
 		} catch (Exception e) {
 			checkBuildException(e);
 		}
@@ -75,7 +75,7 @@ public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 		properties.put("report_location", buildFolder.getLocation().toOSString()); //$NON-NLS-1$
 		try {
 			runAntScript(buildXMLPath, new String[] { "run" }, buildFolder.getLocation().toOSString(), properties); //$NON-NLS-1$
-			assertFalse("An exception must occur", true); //$NON-NLS-1$
+			fail("An exception must occur"); //$NON-NLS-1$
 		} catch (Exception e) {
 			checkBuildException(e);
 		}

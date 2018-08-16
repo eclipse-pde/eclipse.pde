@@ -144,7 +144,7 @@ public class ApiTypeContainerTests extends TestCase {
 			}
 			@Override
 			public void visit(String packageName, IApiTypeRoot classFile) {
-				assertTrue("Should not visit types", false); //$NON-NLS-1$
+				fail("Should not visit types"); //$NON-NLS-1$
 			}
 			@Override
 			public void endVisitPackage(String packageName) {
@@ -152,7 +152,7 @@ public class ApiTypeContainerTests extends TestCase {
 			}
 			@Override
 			public void end(String packageName, IApiTypeRoot classFile) {
-				assertTrue("Should not visit types", false); //$NON-NLS-1$
+				fail("Should not visit types"); //$NON-NLS-1$
 			}
 		};
 		container.accept(visitor);

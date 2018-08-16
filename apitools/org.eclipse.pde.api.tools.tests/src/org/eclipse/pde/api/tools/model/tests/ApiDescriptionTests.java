@@ -609,7 +609,7 @@ public class ApiDescriptionTests extends TestCase {
 		String tName = Signatures.getTypeName(typename);
 		IReferenceTypeDescriptor type = Factory.packageDescriptor(packageName).getType(tName);
 		IApiAnnotations description = fManifest.resolveAnnotations(type);
-		assertTrue("The description must be null", description == null); //$NON-NLS-1$
+		assertNull("The description must be null", description); //$NON-NLS-1$
 	}
 
 	/**

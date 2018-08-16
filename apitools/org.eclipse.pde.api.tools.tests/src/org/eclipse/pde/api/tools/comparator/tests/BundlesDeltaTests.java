@@ -151,7 +151,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		deployBundles("test6"); //$NON-NLS-1$
 		try {
 			ApiComparator.compare(getBeforeState(), null, VisibilityModifiers.ALL_VISIBILITIES, false, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
@@ -164,7 +164,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		deployBundles("test7"); //$NON-NLS-1$
 		try {
 			ApiComparator.compare((IApiBaseline)null, getAfterState(), VisibilityModifiers.ALL_VISIBILITIES, false, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
@@ -222,40 +222,40 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 
 		try {
 			ApiComparator.compare(referenceComponent, component, null, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
 		try {
 			ApiComparator.compare(referenceComponent, component, beforeState, null, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
 		try {
 			ApiComparator.compare(referenceComponent, component, beforeState, null, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
 		try {
 			ApiComparator.compare(referenceComponent, component, null, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 		try {
 			ApiComparator.compare(referenceComponent, component, null, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 		try {
 			ApiComparator.compare(referenceComponent, component, beforeState, null, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
@@ -263,14 +263,14 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		try {
 			classFile = component.findTypeRoot("Zork"); //$NON-NLS-1$
 		} catch (CoreException e) {
-			assertTrue("Should not happen", false); //$NON-NLS-1$
+			fail("Should not happen"); //$NON-NLS-1$
 		}
 		assertNull("No class file", classFile); //$NON-NLS-1$
 
 		try {
 			classFile = component.findTypeRoot("X"); //$NON-NLS-1$
 		} catch (CoreException e) {
-			assertTrue("Should not happen", false); //$NON-NLS-1$
+			fail("Should not happen"); //$NON-NLS-1$
 		}
 		assertNotNull("No class file", classFile); //$NON-NLS-1$
 
@@ -278,130 +278,130 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		try {
 			referenceClassFile = referenceComponent.findTypeRoot("X"); //$NON-NLS-1$
 		} catch (CoreException e) {
-			assertTrue("Should not happen", false); //$NON-NLS-1$
+			fail("Should not happen"); //$NON-NLS-1$
 		}
 		assertNotNull("No class file", referenceClassFile); //$NON-NLS-1$
 
 		try {
 			ApiComparator.compare(null, classFile, component, referenceComponent, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 		try {
 			ApiComparator.compare(classFile, (IApiTypeRoot)null, component, referenceComponent, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 		try {
 			ApiComparator.compare(null, component, referenceComponent, null, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
 		try {
 			ApiComparator.compare(referenceClassFile, (IApiTypeRoot)null, referenceComponent, null, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
 		delta = ApiComparator.compare(classFile, component, referenceComponent, null, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Not NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertEquals("Not NO_DELTA", ApiComparator.NO_DELTA, delta); //$NON-NLS-1$
 
 		try {
 			ApiComparator.compare(null, classFile, referenceComponent, component, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
 		try {
 			ApiComparator.compare(referenceClassFile, classFile, null, component, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
 		try {
 			ApiComparator.compare(referenceClassFile, classFile, referenceComponent, null, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
 		try {
 			ApiComparator.compare(referenceClassFile, classFile, referenceComponent, component, null, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
 		try {
 			ApiComparator.compare(referenceClassFile, classFile, referenceComponent, component, beforeState, null, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
 		delta = ApiComparator.compare(referenceClassFile, classFile, referenceComponent, component, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Not NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertEquals("Not NO_DELTA", ApiComparator.NO_DELTA, delta); //$NON-NLS-1$
 
 		delta = ApiComparator.compare(beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, true, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Not NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertEquals("Not NO_DELTA", ApiComparator.NO_DELTA, delta); //$NON-NLS-1$
 
 		delta = ApiComparator.compare(beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, true, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Not NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertEquals("Not NO_DELTA", ApiComparator.NO_DELTA, delta); //$NON-NLS-1$
 
 		delta = ApiComparator.compare(referenceComponent, component, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Not NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertEquals("Not NO_DELTA", ApiComparator.NO_DELTA, delta); //$NON-NLS-1$
 
 		try {
 			ApiComparator.compare((IApiComponent) null, beforeState,VisibilityModifiers.ALL_VISIBILITIES, true, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
 		try {
 			ApiComparator.compare(component, null,VisibilityModifiers.ALL_VISIBILITIES, true, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 
 		delta = ApiComparator.compare(component, beforeState, VisibilityModifiers.ALL_VISIBILITIES, true, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Not NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertEquals("Not NO_DELTA", ApiComparator.NO_DELTA, delta); //$NON-NLS-1$
 
 		try {
 			ApiComparator.compare(null, null, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 		try {
 			ApiComparator.compare(classFile, component, null, null, beforeState, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 		try {
 			ApiComparator.compare(classFile, component, referenceComponent, null, null, afterState, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
 		try {
 			ApiComparator.compare(classFile, component, referenceComponent, null, beforeState, null, VisibilityModifiers.ALL_VISIBILITIES, null);
-			assertFalse("Should not be reached", true); //$NON-NLS-1$
+			fail("Should not be reached"); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// ignore
 		}
@@ -472,7 +472,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 		assertNotNull("No p.X2", classFile); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(classFile, refApiComponent, apiComponent, null, beforeState, afterState, VisibilityModifiers.API, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Wrong delta", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		assertEquals("Wrong delta", ApiComparator.NO_DELTA, delta); //$NON-NLS-1$
 	}
 	/**
 	 * Remove internal type in non API package
