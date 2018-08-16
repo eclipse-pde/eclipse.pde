@@ -19,9 +19,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescrip
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * Tests for element descriptors.
@@ -29,10 +27,6 @@ import junit.framework.TestSuite;
  * @since 1.0.0
  */
 public class ElementDescriptorTests extends TestCase {
-
-	public static Test suite() {
-		return new TestSuite(ElementDescriptorTests.class);
-	}
 
 	public ElementDescriptorTests() {
 		super();

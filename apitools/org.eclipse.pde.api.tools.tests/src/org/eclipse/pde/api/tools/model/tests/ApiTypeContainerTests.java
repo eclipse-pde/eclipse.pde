@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,10 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.model.ArchiveApiTypeContainer;
@@ -30,16 +26,14 @@ import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisi
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 
+import junit.framework.TestCase;
+
 /**
  * Tests the class file containers
  *
  * @since 1.0.0
  */
 public class ApiTypeContainerTests extends TestCase {
-
-	public static Test suite() {
-		return new TestSuite(ApiTypeContainerTests.class);
-	}
 
 	public ApiTypeContainerTests() {
 		super();

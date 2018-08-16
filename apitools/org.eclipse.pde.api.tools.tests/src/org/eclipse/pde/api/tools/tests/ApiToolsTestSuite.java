@@ -65,32 +65,32 @@ public class ApiToolsTestSuite extends TestSuite {
 	}
 
 	public ApiToolsTestSuite() {
-		addTest(new TestSuite(ApiDescriptionTests.class));
-		addTest(new TestSuite(SearchEngineTests.class));
-		addTest(new TestSuite(SkippedComponentTests.class));
-		addTest(new TestSuite(UseSearchTests.class));
-		addTest(new TestSuite(HeadlessApiBaselineManagerTests.class));
-		addTest(new TestSuite(TagScannerTests.class));
-		addTest(new TestSuite(ComponentManifestTests.class));
-		addTest(new TestSuite(UtilTests.class));
-		addTest(new TestSuite(SignaturesTests.class));
-		addTest(new TestSuite(ApiBaselineTests.class));
-		addTest(new TestSuite(ApiTypeContainerTests.class));
+		addTestSuite(ApiDescriptionTests.class);
+		addTestSuite(SearchEngineTests.class);
+		addTestSuite(SkippedComponentTests.class);
+		addTestSuite(UseSearchTests.class);
+		addTestSuite(HeadlessApiBaselineManagerTests.class);
+		addTestSuite(TagScannerTests.class);
+		addTestSuite(ComponentManifestTests.class);
+		addTestSuite(UtilTests.class);
+		addTestSuite(SignaturesTests.class);
+		addTestSuite(ApiBaselineTests.class);
+		addTestSuite(ApiTypeContainerTests.class);
 		addTest(ClassFileScannerTests.suite());
 		if (ProjectUtils.isJava8Compatible()) {
 			addTest(Java8ClassfileScannerTests.suite());
 		}
-		addTest(new TestSuite(ElementDescriptorTests.class));
-		addTest(new TestSuite(SearchScopeTests.class));
-		addTest(new TestSuite(ApiProblemTests.class));
-		addTest(new TestSuite(ApiProblemFactoryTests.class));
-		addTest(new TestSuite(ApiFilterTests.class));
-		addTest(new TestSuite(TarEntryTests.class));
-		addTest(new TestSuite(TarExceptionTests.class));
-		addTest(new TestSuite(OSGiLessAnalysisTests.class));
-		addTest(new TestSuite(ApiModelCacheTests.class));
-		addTest(new TestSuite(BadClassfileTests.class));
-		addTest(new TestSuite(CRCTests.class));
+		addTestSuite(ElementDescriptorTests.class);
+		addTestSuite(SearchScopeTests.class);
+		addTestSuite(ApiProblemTests.class);
+		addTestSuite(ApiProblemFactoryTests.class);
+		addTestSuite(ApiFilterTests.class);
+		addTestSuite(TarEntryTests.class);
+		addTestSuite(TarExceptionTests.class);
+		addTestSuite(OSGiLessAnalysisTests.class);
+		addTestSuite(ApiModelCacheTests.class);
+		addTestSuite(BadClassfileTests.class);
+		addTestSuite(CRCTests.class);
 		addTest(new AllDeltaTests());
 	}
 }

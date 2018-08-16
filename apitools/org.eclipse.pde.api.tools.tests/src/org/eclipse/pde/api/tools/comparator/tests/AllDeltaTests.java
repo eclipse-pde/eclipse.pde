@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,10 @@
 package org.eclipse.pde.api.tools.comparator.tests;
 
 
+import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
-import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 /**
  * Test suite for all of the API tools test
@@ -36,18 +36,18 @@ public class AllDeltaTests extends TestSuite {
 	 * Constructor
 	 */
 	public AllDeltaTests() {
-		addTest(new TestSuite(FieldDeltaTests.class));
-		addTest(new TestSuite(InterfaceDeltaTests.class));
-		addTest(new TestSuite(ClassDeltaTests.class));
-		addTest(new TestSuite(AnnotationDeltaTests.class));
-		addTest(new TestSuite(EnumDeltaTests.class));
-		addTest(new TestSuite(MethodDeltaTests.class));
-		addTest(new TestSuite(MixedTypesDeltaTests.class));
-		addTest(new TestSuite(BundlesDeltaTests.class));
-		addTest(new TestSuite(RestrictionsDeltaTests.class));
-		addTest(new TestSuite(ApiScopeDeltaTests.class));
+		addTestSuite(FieldDeltaTests.class);
+		addTestSuite(InterfaceDeltaTests.class);
+		addTestSuite(ClassDeltaTests.class);
+		addTestSuite(AnnotationDeltaTests.class);
+		addTestSuite(EnumDeltaTests.class);
+		addTestSuite(MethodDeltaTests.class);
+		addTestSuite(MixedTypesDeltaTests.class);
+		addTestSuite(BundlesDeltaTests.class);
+		addTestSuite(RestrictionsDeltaTests.class);
+		addTestSuite(ApiScopeDeltaTests.class);
 		if (ProjectUtils.isJava8Compatible()) {
-			addTest(new TestSuite(Java8DeltaTests.class));
+			addTestSuite(Java8DeltaTests.class);
 		}
 	}
 }

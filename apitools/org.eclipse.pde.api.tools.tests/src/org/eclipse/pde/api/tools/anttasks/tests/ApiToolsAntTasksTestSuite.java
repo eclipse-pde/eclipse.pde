@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,9 +34,9 @@ public class ApiToolsAntTasksTestSuite extends TestSuite {
 	 * Constructor
 	 */
 	public ApiToolsAntTasksTestSuite() {
-		addTest(new TestSuite(ApiToolingAnalysisAntTaskTests.class));
-		addTest(new TestSuite(ApiToolingCompareAntTaskTests.class));
-		addTest(new TestSuite(ApiToolingApiuseAntTaskTests.class));
-		addTest(new TestSuite(ApiToolingApiFreezeAntTaskTests.class));
+		addTestSuite(ApiToolingAnalysisAntTaskTests.class);
+		addTestSuite(ApiToolingCompareAntTaskTests.class);
+		addTestSuite(ApiToolingApiuseAntTaskTests.class);
+		addTestSuite(ApiToolingApiFreezeAntTaskTests.class);
 	}
 }

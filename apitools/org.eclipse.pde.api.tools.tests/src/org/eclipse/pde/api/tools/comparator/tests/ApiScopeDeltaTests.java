@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.api.tools.comparator.tests;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
@@ -32,13 +29,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
  * Delta tests using api scope
  */
 public class ApiScopeDeltaTests extends DeltaTestSetup {
-
-	public static Test suite() {
-		return new TestSuite(ApiScopeDeltaTests.class);
-		// TestSuite suite = new TestSuite(EnumDeltaTests.class.getName());
-		// suite.addTest(new EnumDeltaTests("test13"));
-		// return suite;
-	}
 
 	public ApiScopeDeltaTests(String name) {
 		super(name);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.api.tools.comparator.tests;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
@@ -24,13 +21,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
  * Delta tests for mixed types (conversion from interface to other types, and so on)
  */
 public class MixedTypesDeltaTests extends DeltaTestSetup {
-
-	public static Test suite() {
-		return new TestSuite(MixedTypesDeltaTests.class);
-//		TestSuite suite = new TestSuite(MixedTypesDeltaTests.class.getName());
-//		suite.addTest(new MixedTypesDeltaTests("test6"));
-//		return suite;
-	}
 
 	public MixedTypesDeltaTests(String name) {
 		super(name);

@@ -43,14 +43,14 @@ public class ApiToolsPluginTestSuite extends TestSuite {
 	}
 
 	public ApiToolsPluginTestSuite() {
-		addTest(new TestSuite(ProjectCreationTests.class));
-		addTest(new TestSuite(ApiDescriptionProcessorTests.class));
-		addTest(new TestSuite(PreferencesTests.class));
-		addTest(new TestSuite(ApiBaselineManagerTests.class));
-		addTest(new TestSuite(ApiFilterStoreTests.class));
-		addTest(new TestSuite(FilterStoreTests.class));
-		addTest(new TestSuite(ApiProblemTests.class));
-		addTest(new TestSuite(TargetAsBaselineTests.class));
+		addTestSuite(ProjectCreationTests.class);
+		addTestSuite(ApiDescriptionProcessorTests.class);
+		addTestSuite(PreferencesTests.class);
+		addTestSuite(ApiBaselineManagerTests.class);
+		addTestSuite(ApiFilterStoreTests.class);
+		addTestSuite(FilterStoreTests.class);
+		addTestSuite(ApiProblemTests.class);
+		addTestSuite(TargetAsBaselineTests.class);
 		addTest(ApiBuilderTest.suite());
 		addTest(ApiToolsAntTasksTestSuite.suite());
 		//addTest(ExternalDependencyTestSuite.suite());

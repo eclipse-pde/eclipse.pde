@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,20 +20,10 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
  * Delta tests for method
  */
 public class MethodDeltaTests extends DeltaTestSetup {
-
-	public static Test suite() {
-		return new TestSuite(MethodDeltaTests.class);
-//		TestSuite suite = new TestSuite(MethodDeltaTests.class.getName());
-//		suite.addTest(new MethodDeltaTests("test126"));
-//		return suite;
-	}
 
 	public MethodDeltaTests(String name) {
 		super(name);

@@ -23,18 +23,12 @@ import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescript
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * @since 1.0.0
  */
 public class ComponentManifestTests extends TestCase {
-
-	public static Test suite() {
-		return new TestSuite(ComponentManifestTests.class);
-	}
 
 	public ComponentManifestTests() {
 		super();
