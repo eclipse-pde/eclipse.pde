@@ -21,9 +21,8 @@ import org.eclipse.pde.api.tools.util.tests.ApiDescriptionProcessorTests;
 import org.eclipse.pde.api.tools.util.tests.PreferencesTests;
 import org.eclipse.pde.api.tools.util.tests.ProjectCreationTests;
 import org.eclipse.pde.api.tools.util.tests.TargetAsBaselineTests;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 
 /**
@@ -31,28 +30,12 @@ import junit.framework.TestSuite;
  *
  * @since 1.0.0
  */
-public class ApiToolsPluginTestSuite extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+		ProjectCreationTests.class, ApiDescriptionProcessorTests.class, PreferencesTests.class,
+		ApiBaselineManagerTests.class, ApiFilterStoreTests.class, FilterStoreTests.class, ApiProblemTests.class,
+		TargetAsBaselineTests.class, ApiBuilderTest.class, ApiToolsAntTasksTestSuite.class
+})
+public class ApiToolsPluginTestSuite {
 
-	/**
-	 * Returns the suite.  This is required to
-	 * use the JUnit Launcher.
-	 * @return the test
-	 */
-	public static Test suite() {
-		return new ApiToolsPluginTestSuite();
-	}
-
-	public ApiToolsPluginTestSuite() {
-		addTestSuite(ProjectCreationTests.class);
-		addTestSuite(ApiDescriptionProcessorTests.class);
-		addTestSuite(PreferencesTests.class);
-		addTestSuite(ApiBaselineManagerTests.class);
-		addTestSuite(ApiFilterStoreTests.class);
-		addTestSuite(FilterStoreTests.class);
-		addTestSuite(ApiProblemTests.class);
-		addTestSuite(TargetAsBaselineTests.class);
-		addTest(ApiBuilderTest.suite());
-		addTest(ApiToolsAntTasksTestSuite.suite());
-		//addTest(ExternalDependencyTestSuite.suite());
-	}
 }

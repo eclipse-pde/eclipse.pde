@@ -11,27 +11,17 @@
 package org.eclipse.pde.api.tools.tests;
 
 import org.eclipse.pde.api.tools.builder.tests.performance.PerformanceTest;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 
 /**
  * Performance test suite that is run as a JUnit plug-in test
  */
-public class ApiToolsPerformanceTestSuite extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+		PerformanceTest.class
+})
+public class ApiToolsPerformanceTestSuite {
 
-	/**
-	 * Returns the suite.  This is required to
-	 * use the JUnit Launcher.
-	 * @return the test
-	 */
-	public static Test suite() {
-		return new ApiToolsPerformanceTestSuite();
-	}
-
-
-	public ApiToolsPerformanceTestSuite() {
-		addTest(PerformanceTest.suite());
-	}
 }

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.anttasks.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 
 /**
@@ -19,24 +19,10 @@ import junit.framework.TestSuite;
  *
  * @since 1.0.0
  */
-public class ApiToolsAntTasksTestSuite extends TestSuite {
-
-	/**
-	 * Returns the suite.  This is required to
-	 * use the JUnit Launcher.
-	 * @return the test
-	 */
-	public static Test suite() {
-		return new ApiToolsAntTasksTestSuite();
-	}
-
-	/**
-	 * Constructor
-	 */
-	public ApiToolsAntTasksTestSuite() {
-		addTestSuite(ApiToolingAnalysisAntTaskTests.class);
-		addTestSuite(ApiToolingCompareAntTaskTests.class);
-		addTestSuite(ApiToolingApiuseAntTaskTests.class);
-		addTestSuite(ApiToolingApiFreezeAntTaskTests.class);
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+		ApiToolingAnalysisAntTaskTests.class, ApiToolingCompareAntTaskTests.class, ApiToolingApiuseAntTaskTests.class,
+		ApiToolingApiFreezeAntTaskTests.class
+})
+public class ApiToolsAntTasksTestSuite {
 }

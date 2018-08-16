@@ -31,15 +31,13 @@ import org.eclipse.pde.api.tools.reference.tests.SearchScopeTests;
 import org.eclipse.pde.api.tools.search.tests.SearchEngineTests;
 import org.eclipse.pde.api.tools.search.tests.SkippedComponentTests;
 import org.eclipse.pde.api.tools.search.tests.UseSearchTests;
-import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.api.tools.util.tests.HeadlessApiBaselineManagerTests;
 import org.eclipse.pde.api.tools.util.tests.SignaturesTests;
 import org.eclipse.pde.api.tools.util.tests.TarEntryTests;
 import org.eclipse.pde.api.tools.util.tests.TarExceptionTests;
 import org.eclipse.pde.api.tools.util.tests.UtilTests;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Test suite for all of the API tools test
@@ -53,44 +51,16 @@ import junit.framework.TestSuite;
  *
  * @since 1.0.0
  */
-public class ApiToolsTestSuite extends TestSuite {
-
-	/**
-	 * Returns the suite.  This is required to
-	 * use the JUnit Launcher.
-	 * @return the test
-	 */
-	public static Test suite() {
-		return new ApiToolsTestSuite();
-	}
-
-	public ApiToolsTestSuite() {
-		addTestSuite(ApiDescriptionTests.class);
-		addTestSuite(SearchEngineTests.class);
-		addTestSuite(SkippedComponentTests.class);
-		addTestSuite(UseSearchTests.class);
-		addTestSuite(HeadlessApiBaselineManagerTests.class);
-		addTestSuite(TagScannerTests.class);
-		addTestSuite(ComponentManifestTests.class);
-		addTestSuite(UtilTests.class);
-		addTestSuite(SignaturesTests.class);
-		addTestSuite(ApiBaselineTests.class);
-		addTestSuite(ApiTypeContainerTests.class);
-		addTest(ClassFileScannerTests.suite());
-		if (ProjectUtils.isJava8Compatible()) {
-			addTest(Java8ClassfileScannerTests.suite());
-		}
-		addTestSuite(ElementDescriptorTests.class);
-		addTestSuite(SearchScopeTests.class);
-		addTestSuite(ApiProblemTests.class);
-		addTestSuite(ApiProblemFactoryTests.class);
-		addTestSuite(ApiFilterTests.class);
-		addTestSuite(TarEntryTests.class);
-		addTestSuite(TarExceptionTests.class);
-		addTestSuite(OSGiLessAnalysisTests.class);
-		addTestSuite(ApiModelCacheTests.class);
-		addTestSuite(BadClassfileTests.class);
-		addTestSuite(CRCTests.class);
-		addTest(new AllDeltaTests());
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+		ApiDescriptionTests.class, SearchEngineTests.class, SkippedComponentTests.class, UseSearchTests.class,
+		HeadlessApiBaselineManagerTests.class, TagScannerTests.class, ComponentManifestTests.class, UtilTests.class,
+		SignaturesTests.class, ApiBaselineTests.class, ApiTypeContainerTests.class, ClassFileScannerTests.class,
+		Java8ClassfileScannerTests.class, ElementDescriptorTests.class, SearchScopeTests.class, ApiProblemTests.class,
+		ApiProblemFactoryTests.class, ApiFilterTests.class, TarEntryTests.class, TarExceptionTests.class,
+		OSGiLessAnalysisTests.class, ApiModelCacheTests.class, BadClassfileTests.class,
+	CRCTests.class,
+	AllDeltaTests.class
+})
+public class ApiToolsTestSuite {
 }

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.apiusescan.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 
 /**
@@ -19,22 +19,10 @@ import junit.framework.TestSuite;
  *
  * @since 1.0.0
  */
-public class ExternalDependencyTestSuite extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+		ReferenceCountTests.class, ExternalDependencyProblemMarkerTests.class
+})
+public class ExternalDependencyTestSuite {
 
-	/**
-	 * Returns the suite.  This is required to
-	 * use the JUnit Launcher.
-	 * @return the test
-	 */
-	public static Test suite() {
-		return new ExternalDependencyTestSuite();
-	}
-
-	/**
-	 * Constructor
-	 */
-	public ExternalDependencyTestSuite() {
-		addTestSuite(ReferenceCountTests.class);
-		addTestSuite(ExternalDependencyProblemMarkerTests.class);
-	}
 }

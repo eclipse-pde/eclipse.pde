@@ -11,43 +11,19 @@
 package org.eclipse.pde.api.tools.comparator.tests;
 
 
-import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Test suite for all of the API tools test
  *
  * @since 1.0.0
  */
-public class AllDeltaTests extends TestSuite {
-
-	/**
-	 * Returns the suite.  This is required to
-	 * use the JUnit Launcher.
-	 * @return the test
-	 */
-	public static Test suite() {
-		return new AllDeltaTests();
-	}
-
-	/**
-	 * Constructor
-	 */
-	public AllDeltaTests() {
-		addTestSuite(FieldDeltaTests.class);
-		addTestSuite(InterfaceDeltaTests.class);
-		addTestSuite(ClassDeltaTests.class);
-		addTestSuite(AnnotationDeltaTests.class);
-		addTestSuite(EnumDeltaTests.class);
-		addTestSuite(MethodDeltaTests.class);
-		addTestSuite(MixedTypesDeltaTests.class);
-		addTestSuite(BundlesDeltaTests.class);
-		addTestSuite(RestrictionsDeltaTests.class);
-		addTestSuite(ApiScopeDeltaTests.class);
-		if (ProjectUtils.isJava8Compatible()) {
-			addTestSuite(Java8DeltaTests.class);
-		}
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+		FieldDeltaTests.class, InterfaceDeltaTests.class, ClassDeltaTests.class, AnnotationDeltaTests.class,
+		EnumDeltaTests.class, MethodDeltaTests.class, MixedTypesDeltaTests.class, BundlesDeltaTests.class,
+		RestrictionsDeltaTests.class, ApiScopeDeltaTests.class, Java8DeltaTests.class
+})
+public class AllDeltaTests {
 }
