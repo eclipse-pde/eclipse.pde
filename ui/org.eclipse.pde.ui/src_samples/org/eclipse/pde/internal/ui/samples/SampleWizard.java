@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -47,15 +47,14 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 
 		private int openDialog(final String file) {
 			final int[] result = {IDialogConstants.CANCEL_ID};
-			getShell().getDisplay().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					String title = PDEUIMessages.SampleWizard_title;
-					String msg = NLS.bind(PDEUIMessages.SampleWizard_overwrite, file);
-					String[] options = {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.CANCEL_LABEL};
-					MessageDialog dialog = new MessageDialog(getShell(), title, null, msg, MessageDialog.QUESTION, options, 0);
-					result[0] = dialog.open();
-				}
+			getShell().getDisplay().syncExec(() -> {
+				String title = PDEUIMessages.SampleWizard_title;
+				String msg = NLS.bind(PDEUIMessages.SampleWizard_overwrite, file);
+				String[] options = { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL,
+						IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.CANCEL_LABEL };
+				MessageDialog dialog = new MessageDialog(getShell(), title, null, msg, MessageDialog.QUESTION, options,
+						0);
+				result[0] = dialog.open();
 			});
 			return result[0];
 		}

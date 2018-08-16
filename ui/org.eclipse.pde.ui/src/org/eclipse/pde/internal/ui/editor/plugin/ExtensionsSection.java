@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,8 +54,6 @@ import org.eclipse.pde.ui.IExtensionEditorWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.BidiUtil;
 import org.eclipse.swt.widgets.*;
@@ -277,13 +275,10 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		fFilteredTree.createUIListenerEntryFilter(this);
 		final Text filterText = fFilteredTree.getFilterControl();
 		if (filterText != null) {
-			filterText.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					StructuredViewer viewer = getStructuredViewerPart().getViewer();
-					IStructuredSelection ssel = viewer.getStructuredSelection();
-					updateButtons(ssel.size() != 1 ? null : ssel);
-				}
+			filterText.addModifyListener(e -> {
+				StructuredViewer viewer = getStructuredViewerPart().getViewer();
+				IStructuredSelection ssel = viewer.getStructuredSelection();
+				updateButtons(ssel.size() != 1 ? null : ssel);
 			});
 		}
 	}
@@ -641,21 +636,19 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 
 	private void handleNew() {
 		final IProject project = getPage().getPDEEditor().getCommonProject();
-		BusyIndicator.showWhile(fExtensionTree.getTree().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				((ManifestEditor) getPage().getEditor()).ensurePluginContextPresence();
-				NewExtensionWizard wizard = new NewExtensionWizard(project, (IPluginModelBase) getPage().getModel(), (ManifestEditor) getPage().getPDEEditor()) {
-					@Override
-					public boolean performFinish() {
-						return super.performFinish();
-					}
-				};
-				WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
-				dialog.create();
-				SWTUtil.setDialogSize(dialog, 500, 500);
-				dialog.open();
-			}
+		BusyIndicator.showWhile(fExtensionTree.getTree().getDisplay(), () -> {
+			((ManifestEditor) getPage().getEditor()).ensurePluginContextPresence();
+			NewExtensionWizard wizard = new NewExtensionWizard(project, (IPluginModelBase) getPage().getModel(),
+					(ManifestEditor) getPage().getPDEEditor()) {
+				@Override
+				public boolean performFinish() {
+					return super.performFinish();
+				}
+			};
+			WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+			dialog.create();
+			SWTUtil.setDialogSize(dialog, 500, 500);
+			dialog.open();
 		});
 	}
 
@@ -665,14 +658,11 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		try {
 			final IExtensionEditorWizard wizard = (IExtensionEditorWizard) element.createExecutableExtension("class"); //$NON-NLS-1$
 			wizard.init(project, model, selection);
-			BusyIndicator.showWhile(fExtensionTree.getTree().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
-					dialog.create();
-					SWTUtil.setDialogSize(dialog, 500, 500);
-					dialog.open();
-				}
+			BusyIndicator.showWhile(fExtensionTree.getTree().getDisplay(), () -> {
+				WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+				dialog.create();
+				SWTUtil.setDialogSize(dialog, 500, 500);
+				dialog.open();
 			});
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -691,14 +681,11 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			IProject project = getPage().getPDEEditor().getCommonProject();
 			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 			final ExtensionEditorWizard wizard = new ExtensionEditorWizard(project, model, selection);
-			BusyIndicator.showWhile(fExtensionTree.getTree().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
-					dialog.create();
-					SWTUtil.setDialogSize(dialog, 500, 500);
-					dialog.open();
-				}
+			BusyIndicator.showWhile(fExtensionTree.getTree().getDisplay(), () -> {
+				WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+				dialog.create();
+				SWTUtil.setDialogSize(dialog, 500, 500);
+				dialog.open();
 			});
 		}
 	}

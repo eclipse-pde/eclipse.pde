@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@
 package org.eclipse.pde.internal.ui.parts;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -52,13 +50,10 @@ public class FormBrowser {
 		ftext.marginWidth = 2;
 		ftext.marginHeight = 2;
 		ftext.setHyperlinkSettings(toolkit.getHyperlinkGroup());
-		formText.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				if (toolkit != null) {
-					toolkit.dispose();
-					toolkit = null;
-				}
+		formText.addDisposeListener(e -> {
+			if (toolkit != null) {
+				toolkit.dispose();
+				toolkit = null;
 			}
 		});
 		if (text != null)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -62,27 +62,24 @@ public class ShowSampleAction extends Action implements IIntroAction {
 		if (sampleId == null)
 			return;
 
-		Runnable r = new Runnable() {
-			@Override
-			public void run() {
-				if (!ensureSampleFeaturePresent())
-					return;
+		Runnable r = () -> {
+			if (!ensureSampleFeaturePresent())
+				return;
 
-				SampleWizard wizard = new SampleWizard();
-				try {
-					wizard.setInitializationData(null, "class", sampleId); //$NON-NLS-1$
-					wizard.setSampleEditorNeeded(false);
-					wizard.setSwitchPerspective(false);
-					wizard.setSelectRevealEnabled(false);
-					wizard.setActivitiesEnabled(false);
-					WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
-					dialog.create();
-					if (dialog.open() == Window.OK) {
-						switchToSampleStandby(wizard);
-					}
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
+			SampleWizard wizard = new SampleWizard();
+			try {
+				wizard.setInitializationData(null, "class", sampleId); //$NON-NLS-1$
+				wizard.setSampleEditorNeeded(false);
+				wizard.setSwitchPerspective(false);
+				wizard.setSelectRevealEnabled(false);
+				wizard.setActivitiesEnabled(false);
+				WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+				dialog.create();
+				if (dialog.open() == Window.OK) {
+					switchToSampleStandby(wizard);
 				}
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
 			}
 		};
 
@@ -171,28 +168,25 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	 * was installed successfully, and <code>false</code> otherwise.
 	 */
 	private boolean downloadFeature() {
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					SubMonitor sub = SubMonitor.convert(monitor, PDEUIMessages.ShowSampleAction_installing, 100);
-					InstallOperation operation = createInstallOperation(sub.split(10));
-					operation.resolveModal(sub.split(20));
-					IStatus status = operation.getResolutionResult();
-					if (status.getSeverity() == IStatus.CANCEL) {
-						throw new InterruptedException();
-					} else if (!(status.isOK() || status.getSeverity() == IStatus.INFO)) {
-						throw new CoreException(status);
-					}
-					ProvisioningJob job = operation.getProvisioningJob(null);
-					status = job.runModal(sub.split(70));
-					if (!(status.isOK() || status.getSeverity() == IStatus.INFO)) {
-						throw new CoreException(status);
-					}
-					applyConfiguration();
-				} catch (Exception e) {
-					throw new InvocationTargetException(e);
+		IRunnableWithProgress op = monitor -> {
+			try {
+				SubMonitor sub = SubMonitor.convert(monitor, PDEUIMessages.ShowSampleAction_installing, 100);
+				InstallOperation operation = createInstallOperation(sub.split(10));
+				operation.resolveModal(sub.split(20));
+				IStatus status = operation.getResolutionResult();
+				if (status.getSeverity() == IStatus.CANCEL) {
+					throw new InterruptedException();
+				} else if (!(status.isOK() || status.getSeverity() == IStatus.INFO)) {
+					throw new CoreException(status);
 				}
+				ProvisioningJob job = operation.getProvisioningJob(null);
+				status = job.runModal(sub.split(70));
+				if (!(status.isOK() || status.getSeverity() == IStatus.INFO)) {
+					throw new CoreException(status);
+				}
+				applyConfiguration();
+			} catch (Exception e) {
+				throw new InvocationTargetException(e);
 			}
 		};
 		try {

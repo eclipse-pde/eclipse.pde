@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,14 +16,12 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.TreeSet;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
@@ -38,7 +36,7 @@ import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -63,12 +61,7 @@ public class FragmentContentPage extends ContentPage {
 	private Combo fEEChoice;
 	private final static String NO_EXECUTION_ENVIRONMENT = PDEUIMessages.PluginContentPage_noEE;
 
-	protected ModifyListener listener = new ModifyListener() {
-		@Override
-		public void modifyText(ModifyEvent e) {
-			validatePage();
-		}
-	};
+	protected ModifyListener listener = e -> validatePage();
 
 	public FragmentContentPage(String pageName, IProjectProvider provider, NewProjectCreationPage page, AbstractFieldData data) {
 		super(pageName, provider, page, data);
@@ -221,13 +214,9 @@ public class FragmentContentPage extends ContentPage {
 		fExeEnvButton = new Button(container, SWT.PUSH);
 		fExeEnvButton.setLayoutData(new GridData());
 		fExeEnvButton.setText(PDEUIMessages.NewProjectCreationPage_environmentsButton);
-		fExeEnvButton.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
-						new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, null).open(); //$NON-NLS-1$
-			}
-		});
+		fExeEnvButton.addListener(SWT.Selection,
+				event -> PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
+						new String[] { "org.eclipse.jdt.debug.ui.jreProfiles" }, null).open());
 	}
 
 	private Text createPluginIdContainer(Composite parent, final boolean validateRange, int span) {
@@ -240,14 +229,13 @@ public class FragmentContentPage extends ContentPage {
 			// If the PDE models are not initialized, initialize with option to cancel
 			if (!PDECore.getDefault().areModelsInitialized()) {
 				try {
-					getContainer().run(true, true, new IRunnableWithProgress() {
-						@Override
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							// Target reloaded method clears existing models (which don't exist currently) and inits them with a progress monitor
-							PDECore.getDefault().getModelManager().targetReloaded(monitor);
-							if (monitor.isCanceled()) {
-								throw new InterruptedException();
-							}
+					getContainer().run(true, true, monitor -> {
+						// Target reloaded method clears existing models (which
+						// don't exist currently) and inits them with a progress
+						// monitor
+						PDECore.getDefault().getModelManager().targetReloaded(monitor);
+						if (monitor.isCanceled()) {
+							throw new InterruptedException();
 						}
 					});
 				} catch (InvocationTargetException ex) {
@@ -256,23 +244,20 @@ public class FragmentContentPage extends ContentPage {
 				}
 			}
 
-			BusyIndicator.showWhile(pluginText.getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					PluginSelectionDialog dialog = new PluginSelectionDialog(pluginText.getShell(), false, false);
-					dialog.create();
-					if (dialog.open() == Window.OK) {
-						IPluginModel model = (IPluginModel) dialog.getFirstResult();
-						IPlugin plugin = model.getPlugin();
-						String version = computeInitialPluginVersion(plugin.getVersion());
-						if (validateRange) {
-							fVersionPart.setVersion(version);
-							fVersionPart.preloadFields();
-						} else {
-							fPluginVersion.setText(version);
-						}
-						pluginText.setText(plugin.getId());
+			BusyIndicator.showWhile(pluginText.getDisplay(), () -> {
+				PluginSelectionDialog dialog = new PluginSelectionDialog(pluginText.getShell(), false, false);
+				dialog.create();
+				if (dialog.open() == Window.OK) {
+					IPluginModel model = (IPluginModel) dialog.getFirstResult();
+					IPlugin plugin = model.getPlugin();
+					String version = computeInitialPluginVersion(plugin.getVersion());
+					if (validateRange) {
+						fVersionPart.setVersion(version);
+						fVersionPart.preloadFields();
+					} else {
+						fPluginVersion.setText(version);
 					}
+					pluginText.setText(plugin.getId());
 				}
 			});
 		}));
@@ -325,14 +310,13 @@ public class FragmentContentPage extends ContentPage {
 				// If the PDE models are not initialized, initialize with option to cancel
 				if (!PDECore.getDefault().areModelsInitialized()) {
 					try {
-						getContainer().run(true, true, new IRunnableWithProgress() {
-							@Override
-							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-								// Target reloaded method clears existing models (which don't exist currently) and inits them with a progress monitor
-								PDECore.getDefault().getModelManager().targetReloaded(monitor);
-								if (monitor.isCanceled()) {
-									throw new InterruptedException();
-								}
+						getContainer().run(true, true, monitor -> {
+							// Target reloaded method clears existing models
+							// (which don't exist currently) and inits them with
+							// a progress monitor
+							PDECore.getDefault().getModelManager().targetReloaded(monitor);
+							if (monitor.isCanceled()) {
+								throw new InterruptedException();
 							}
 						});
 					} catch (InvocationTargetException e) {

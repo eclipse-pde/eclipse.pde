@@ -124,16 +124,8 @@ public abstract class WizardTreeSelectionPage extends BaseWizardSelectionPage {
 			return;
 		}
 		final WizardElement finalSelection = currentSelection;
-		/*
-			BusyIndicator.showWhile(categoryTreeViewer.getControl().getDisplay(), new Runnable() {
-				public void run() {
-				*/
 		setSelectedNode(createWizardNode(finalSelection));
 		setDescriptionText(finalSelection.getDescription());
-		/*
-				}
-			});
-		*/
 	}
 
 	protected void initializeViewers() {

@@ -33,7 +33,6 @@ import org.eclipse.pde.internal.ui.refactoring.PDERefactor;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -167,25 +166,22 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 				return change.equals(fErrorElement);
 			}
 		};
-		fModifyListener = new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				String localization = fLocalizationText.getText();
-				if (StringHelper.isValidLocalization(localization)) {
-					setEnabled(fLocalizationText, true);
-					setPageComplete(hasCheckedElements());
-					setErrorMessage(null);
-					if (fCurrSelection instanceof ModelChange) {
-						((ModelChange) fCurrSelection).setBundleLocalization(fLocalizationText.getText());
-					} else if (fCurrSelection instanceof ModelChangeFile) {
-						((ModelChangeFile) fCurrSelection).getModel().setBundleLocalization(fLocalizationText.getText());
-					}
-				} else {
-					setEnabled(fLocalizationText, false);
-					fLocalizationText.setEditable(true);
-					setPageComplete(false);
-					setErrorMessage(PDEUIMessages.ExternalizeStringsWizardPage_badLocalizationError);
+		fModifyListener = e -> {
+			String localization = fLocalizationText.getText();
+			if (StringHelper.isValidLocalization(localization)) {
+				setEnabled(fLocalizationText, true);
+				setPageComplete(hasCheckedElements());
+				setErrorMessage(null);
+				if (fCurrSelection instanceof ModelChange) {
+					((ModelChange) fCurrSelection).setBundleLocalization(fLocalizationText.getText());
+				} else if (fCurrSelection instanceof ModelChangeFile) {
+					((ModelChangeFile) fCurrSelection).getModel().setBundleLocalization(fLocalizationText.getText());
 				}
+			} else {
+				setEnabled(fLocalizationText, false);
+				fLocalizationText.setEditable(true);
+				setPageComplete(false);
+				setErrorMessage(PDEUIMessages.ExternalizeStringsWizardPage_badLocalizationError);
 			}
 		};
 		fColorManager = ColorManager.getDefault();
@@ -240,18 +236,8 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 250;
 		fInputViewer.getTree().setLayoutData(gd);
-		fInputViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleSelectionChanged(event);
-			}
-		});
-		fInputViewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				setPageComplete(hasCheckedElements());
-			}
-		});
+		fInputViewer.addSelectionChangedListener(event -> handleSelectionChanged(event));
+		fInputViewer.addCheckStateListener(event -> setPageComplete(hasCheckedElements()));
 		fInputViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 
 		Composite buttonComposite = new Composite(fileComposite, SWT.NONE);
@@ -330,35 +316,23 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		fPropertiesViewer.setCellEditors(createCellEditors());
 		fPropertiesViewer.setColumnProperties(TABLE_PROPERTIES);
 		fPropertiesViewer.setCellModifier(new ExternalizeStringsCellModifier());
-		fPropertiesViewer.setContentProvider(new IStructuredContentProvider() {
-			@Override
-			public Object[] getElements(Object inputElement) {
-				if (fInputViewer.getSelection() instanceof IStructuredSelection) {
-					Object selection = fInputViewer.getStructuredSelection().getFirstElement();
-					if (selection instanceof ModelChangeFile) {
-						ModelChangeFile cf = (ModelChangeFile) selection;
-						return (cf).getModel().getChangesInFile(cf.getFile()).toArray();
-					}
+		fPropertiesViewer.setContentProvider((IStructuredContentProvider) inputElement -> {
+			if (fInputViewer.getSelection() instanceof IStructuredSelection) {
+				Object selection = fInputViewer.getStructuredSelection().getFirstElement();
+				if (selection instanceof ModelChangeFile) {
+					ModelChangeFile cf = (ModelChangeFile) selection;
+					return (cf).getModel().getChangesInFile(cf.getFile()).toArray();
 				}
-				return new Object[0];
 			}
-
+			return new Object[0];
 		});
 		fPropertiesViewer.setLabelProvider(new ExternalizeStringsLabelProvider());
-		fPropertiesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				handlePropertySelection();
-			}
-		});
-		fPropertiesViewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				Object element = event.getElement();
-				if (element instanceof ModelChangeElement) {
-					((ModelChangeElement) element).setExternalized(event.getChecked());
-					fPropertiesViewer.update(element, null);
-				}
+		fPropertiesViewer.addSelectionChangedListener(event -> handlePropertySelection());
+		fPropertiesViewer.addCheckStateListener(event -> {
+			Object element = event.getElement();
+			if (element instanceof ModelChangeElement) {
+				((ModelChangeElement) element).setExternalized(event.getChecked());
+				fPropertiesViewer.update(element, null);
 			}
 		});
 		fPropertiesViewer.setInput(new Object());

@@ -38,8 +38,6 @@ import org.eclipse.pde.internal.ui.shared.target.Messages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -190,20 +188,18 @@ public class FeatureImportWizardPage extends WizardPage {
 			handleReload();
 		}));
 
-		fDropLocation.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				// If the text is a combo item, immediately try to resolve, otherwise wait in case they type more
-				boolean isItem = false;
-				String[] items = fDropLocation.getItems();
-				for (String item : items) {
-					if (fDropLocation.getText().equals(item)) {
-						isItem = true;
-						break;
-					}
+		fDropLocation.addModifyListener(e -> {
+			// If the text is a combo item, immediately try to resolve,
+			// otherwise wait in case they type more
+			boolean isItem = false;
+			String[] items = fDropLocation.getItems();
+			for (String item : items) {
+				if (fDropLocation.getText().equals(item)) {
+					isItem = true;
+					break;
 				}
-				locationChanged(isItem ? 0 : TYPING_DELAY);
 			}
+			locationChanged(isItem ? 0 : TYPING_DELAY);
 		});
 
 		fBrowseButton.addSelectionListener(widgetSelectedAdapter(e -> {
@@ -404,23 +400,17 @@ public class FeatureImportWizardPage extends WizardPage {
 		});
 		fFeatureViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fFeatureViewer.setComparator(ListUtil.FEATURE_COMPARATOR);
-		fFeatureViewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
+		fFeatureViewer.addCheckStateListener(event -> {
+			updateCounter();
+			dialogChanged();
+		});
+		fFeatureViewer.addDoubleClickListener(event -> {
+			IStructuredSelection selection = fFeatureViewer.getStructuredSelection();
+			if (!selection.isEmpty()) {
+				Object selected = selection.getFirstElement();
+				fFeatureViewer.setChecked(selected, !fFeatureViewer.getChecked(selected));
 				updateCounter();
 				dialogChanged();
-			}
-		});
-		fFeatureViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection selection = fFeatureViewer.getStructuredSelection();
-				if (!selection.isEmpty()) {
-					Object selected = selection.getFirstElement();
-					fFeatureViewer.setChecked(selected, !fFeatureViewer.getChecked(selected));
-					updateCounter();
-					dialogChanged();
-				}
 			}
 		});
 
@@ -445,24 +435,21 @@ public class FeatureImportWizardPage extends WizardPage {
 	public IFeatureModel[] getModels() {
 		final IPath home = getDropLocation();
 		final boolean useRuntimeLocation = fRuntimeLocationButton.getSelection() || TargetPlatform.getLocation().equals(fDropLocation.getText().trim());
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				monitor.beginTask(PDEUIMessages.FeatureImportWizard_messages_updating, IProgressMonitor.UNKNOWN);
-				ArrayList<IFeatureModel> result = new ArrayList<>();
-				if (useRuntimeLocation) {
-					IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
-					for (IFeatureModel model : allModels)
-						if (model.getUnderlyingResource() == null)
-							result.add(model);
-				} else {
-					MultiStatus errors = doLoadFeatures(result, createPath(home));
-					if (errors != null && errors.getChildren().length > 0)
-						PDEPlugin.log(errors);
-				}
-				fModels = result.toArray(new IFeatureModel[result.size()]);
-				monitor.done();
+		IRunnableWithProgress runnable = monitor -> {
+			monitor.beginTask(PDEUIMessages.FeatureImportWizard_messages_updating, IProgressMonitor.UNKNOWN);
+			ArrayList<IFeatureModel> result = new ArrayList<>();
+			if (useRuntimeLocation) {
+				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
+				for (IFeatureModel model : allModels)
+					if (model.getUnderlyingResource() == null)
+						result.add(model);
+			} else {
+				MultiStatus errors = doLoadFeatures(result, createPath(home));
+				if (errors != null && errors.getChildren().length > 0)
+					PDEPlugin.log(errors);
 			}
+			fModels = result.toArray(new IFeatureModel[result.size()]);
+			monitor.done();
 		};
 
 		IProgressService pservice = PlatformUI.getWorkbench().getProgressService();

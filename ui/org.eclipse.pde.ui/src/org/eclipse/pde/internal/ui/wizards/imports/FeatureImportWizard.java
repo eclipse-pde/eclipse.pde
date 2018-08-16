@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -37,16 +37,10 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 		setWindowTitle(PDEUIMessages.FeatureImportWizard_title);
 	}
 
-	/*
-	 * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
-	 */
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 	}
 
-	/*
-	 * @see org.eclipse.jface.wizard.IWizard#addPages
-	 */
 	@Override
 	public void addPages() {
 		setNeedsProgressMonitor(false);
@@ -63,9 +57,6 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 		return setting;
 	}
 
-	/*
-	 * @see Wizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		IFeatureModel[] models = fPage.getSelectedModels();
@@ -123,18 +114,15 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 			final String message = NLS.bind(PDEUIMessages.FeatureImportWizard_messages_exists, project.getName());
 			final int[] result = {IReplaceQuery.CANCEL};
 
-			Display.getDefault().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					ReplaceDialog dialog = new ReplaceDialog(Display.getDefault().getActiveShell(), message);
-					int retVal = dialog.open();
-					if (retVal >= 0) {
-						result[0] = RETURNCODES[retVal];
-						if (retVal == 1) {
-							yesToAll = 1;
-						} else if (retVal == 3) {
-							yesToAll = -1;
-						}
+			Display.getDefault().syncExec(() -> {
+				ReplaceDialog dialog = new ReplaceDialog(Display.getDefault().getActiveShell(), message);
+				int retVal = dialog.open();
+				if (retVal >= 0) {
+					result[0] = RETURNCODES[retVal];
+					if (retVal == 1) {
+						yesToAll = 1;
+					} else if (retVal == 3) {
+						yesToAll = -1;
 					}
 				}
 			});

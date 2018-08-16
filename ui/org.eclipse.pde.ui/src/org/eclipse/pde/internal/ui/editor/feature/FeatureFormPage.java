@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -179,23 +179,13 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		else if (href.equals("synchronize")) { //$NON-NLS-1$ {
 			getEditor().setActivePage(FeatureReferencePage.PAGE_ID);
 			final FeatureEditorContributor contributor = (FeatureEditorContributor) getPDEEditor().getContributor();
-			BusyIndicator.showWhile(e.display, new Runnable() {
-				@Override
-				public void run() {
-					contributor.getSynchronizeAction().run();
-				}
-			});
+			BusyIndicator.showWhile(e.display, () -> contributor.getSynchronizeAction().run());
 		} else if (href.equals("export")) { //$NON-NLS-1$
 			((FeatureEditor) getPDEEditor()).getFeatureExportAction().run();
 		} else if (href.equals("siteProject")) { //$NON-NLS-1$
 			getEditor().doSave(null);
 			final FeatureEditorContributor contributor = (FeatureEditorContributor) getPDEEditor().getContributor();
-			BusyIndicator.showWhile(e.display, new Runnable() {
-				@Override
-				public void run() {
-					contributor.getNewSiteAction().run();
-				}
-			});
+			BusyIndicator.showWhile(e.display, () -> contributor.getNewSiteAction().run());
 		}
 	}
 

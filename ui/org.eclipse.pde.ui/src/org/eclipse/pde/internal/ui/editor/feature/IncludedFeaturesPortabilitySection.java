@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -162,12 +162,9 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IP
 
 			@Override
 			public void browseButtonSelected(FormEntry entry) {
-				BusyIndicator.showWhile(fOsText.getText().getDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						Choice[] choices = getOSChoices();
-						openPortabilityChoiceDialog(IEnvironment.P_OS, fOsText, choices);
-					}
+				BusyIndicator.showWhile(fOsText.getText().getDisplay(), () -> {
+					Choice[] choices = getOSChoices();
+					openPortabilityChoiceDialog(IEnvironment.P_OS, fOsText, choices);
 				});
 			}
 
@@ -188,12 +185,9 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IP
 
 			@Override
 			public void browseButtonSelected(FormEntry entry) {
-				BusyIndicator.showWhile(fWsText.getText().getDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						Choice[] choices = getWSChoices();
-						openPortabilityChoiceDialog(IEnvironment.P_WS, fWsText, choices);
-					}
+				BusyIndicator.showWhile(fWsText.getText().getDisplay(), () -> {
+					Choice[] choices = getWSChoices();
+					openPortabilityChoiceDialog(IEnvironment.P_WS, fWsText, choices);
 				});
 			}
 
@@ -215,12 +209,9 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IP
 
 			@Override
 			public void browseButtonSelected(FormEntry entry) {
-				BusyIndicator.showWhile(fNlText.getText().getDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						Choice[] choices = getNLChoices();
-						openPortabilityChoiceDialog(IEnvironment.P_NL, fNlText, choices);
-					}
+				BusyIndicator.showWhile(fNlText.getText().getDisplay(), () -> {
+					Choice[] choices = getNLChoices();
+					openPortabilityChoiceDialog(IEnvironment.P_NL, fNlText, choices);
 				});
 			}
 
@@ -241,12 +232,9 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IP
 
 			@Override
 			public void browseButtonSelected(FormEntry entry) {
-				BusyIndicator.showWhile(fArchText.getText().getDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						Choice[] choices = getArchChoices();
-						openPortabilityChoiceDialog(IEnvironment.P_ARCH, fArchText, choices);
-					}
+				BusyIndicator.showWhile(fArchText.getText().getDisplay(), () -> {
+					Choice[] choices = getArchChoices();
+					openPortabilityChoiceDialog(IEnvironment.P_ARCH, fArchText, choices);
 				});
 			}
 

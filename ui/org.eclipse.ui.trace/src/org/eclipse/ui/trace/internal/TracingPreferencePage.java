@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 IBM Corporation and others.
+ * Copyright (c) 2011, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -312,18 +312,15 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).applyTo(tracingOutputFileButton);
 		// add the 'tracing file' input field
 		tracingFileText = new Text(outputComp, SWT.SINGLE | SWT.BORDER);
-		tracingFileText.addListener(SWT.Verify, new Listener() {
+		tracingFileText.addListener(SWT.Verify, e -> {
 
-			public void handleEvent(Event e) {
-
-				String newInput = TracingPreferencePage.this.getInput(e);
-				if ((newInput == null) || newInput.equals(TracingConstants.EMPTY_STRING)) {
-					TracingPreferencePage.this.setValid(false);
-					TracingPreferencePage.this.setErrorMessage(Messages.tracingFileInvalid);
-				} else {
-					TracingPreferencePage.this.setValid(true);
-					TracingPreferencePage.this.setErrorMessage(null);
-				}
+			String newInput = TracingPreferencePage.this.getInput(e);
+			if ((newInput == null) || newInput.equals(TracingConstants.EMPTY_STRING)) {
+				TracingPreferencePage.this.setValid(false);
+				TracingPreferencePage.this.setErrorMessage(Messages.tracingFileInvalid);
+			} else {
+				TracingPreferencePage.this.setValid(true);
+				TracingPreferencePage.this.setErrorMessage(null);
 			}
 		});
 		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(tracingFileText);
@@ -360,13 +357,8 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		// add the 'max count' input field
 		maximumFileCountSpinner = new Spinner(detailsComp, SWT.SINGLE | SWT.BORDER);
 		maximumFileCountSpinner.setValues(10, 10, 100, 0, 5, 10);
-		maximumFileCountSpinner.addListener(SWT.Verify, new Listener() {
-
-			public void handleEvent(Event e) {
-
-				TracingPreferencePage.this.verifyIntInput(e, Messages.tracingFileInvalidMaxCount);
-			}
-		});
+		maximumFileCountSpinner.addListener(SWT.Verify,
+				e -> TracingPreferencePage.this.verifyIntInput(e, Messages.tracingFileInvalidMaxCount));
 		GridDataFactory.fillDefaults().applyTo(maximumFileCountSpinner);
 
 		Label spacer = new Label(detailsComp, SWT.NONE);
@@ -379,13 +371,8 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		// add the 'max size' input field
 		maximumFileSizeSpinner = new Spinner(detailsComp, SWT.SINGLE | SWT.BORDER);
 		maximumFileSizeSpinner.setValues(100, 100, 10000, 0, 100, 1000);
-		maximumFileSizeSpinner.addListener(SWT.Verify, new Listener() {
-
-			public void handleEvent(Event e) {
-
-				TracingPreferencePage.this.verifyIntInput(e, Messages.tracingFileInvalidMaxSize);
-			}
-		});
+		maximumFileSizeSpinner.addListener(SWT.Verify,
+				e -> TracingPreferencePage.this.verifyIntInput(e, Messages.tracingFileInvalidMaxSize));
 		GridDataFactory.fillDefaults().applyTo(maximumFileSizeSpinner);
 
 

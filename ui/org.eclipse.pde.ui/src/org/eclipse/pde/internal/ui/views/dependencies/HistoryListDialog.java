@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2016 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -27,8 +27,6 @@ import org.eclipse.pde.internal.ui.parts.StatusInfo;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -145,12 +143,7 @@ public class HistoryListDialog extends StatusDialog {
 		fHistoryViewer = new TableViewer(table);
 		final DependenciesLabelProvider labelProvider = new DependenciesLabelProvider(false);
 		fHistoryViewer.setLabelProvider(labelProvider);
-		fHistoryViewer.getControl().addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				labelProvider.dispose();
-			}
-		});
+		fHistoryViewer.getControl().addDisposeListener(e -> labelProvider.dispose());
 		fHistoryViewer.setContentProvider(new ContentProvider());
 		fHistoryViewer.setInput(PDECore.getDefault().getModelManager());
 		fHistoryViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
@@ -163,22 +156,19 @@ public class HistoryListDialog extends StatusDialog {
 		}
 		fHistoryViewer.setSelection(sel);
 
-		fHistoryViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				StatusInfo status = new StatusInfo();
-				IStructuredSelection selection = fHistoryViewer.getStructuredSelection();
-				List<?> selected = selection.toList();
-				if (selected.size() != 1) {
-					status.setError(""); //$NON-NLS-1$
-					fResult = null;
-				} else {
-					fResult = (String) selected.get(0);
-				}
-				fRemoveButton.setEnabled(fHistoryList.size() > selected.size() && selected.size() != 0);
-				fHistoryStatus = status;
-				updateStatus(status);
+		fHistoryViewer.addSelectionChangedListener(event -> {
+			StatusInfo status = new StatusInfo();
+			IStructuredSelection selection = fHistoryViewer.getStructuredSelection();
+			List<?> selected = selection.toList();
+			if (selected.size() != 1) {
+				status.setError(""); //$NON-NLS-1$
+				fResult = null;
+			} else {
+				fResult = (String) selected.get(0);
 			}
+			fRemoveButton.setEnabled(fHistoryList.size() > selected.size() && selected.size() != 0);
+			fHistoryStatus = status;
+			updateStatus(status);
 		});
 		return fHistoryViewer.getControl();
 	}

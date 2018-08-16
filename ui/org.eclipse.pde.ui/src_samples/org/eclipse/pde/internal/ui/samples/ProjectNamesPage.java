@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,8 +19,6 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -97,12 +95,7 @@ public class ProjectNamesPage extends WizardPage {
 		label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 		final Text text = new Text(container, SWT.SINGLE | SWT.BORDER);
 		text.setText(projectName);
-		text.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				validateEntries();
-			}
-		});
+		text.addModifyListener(e -> validateEntries());
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 

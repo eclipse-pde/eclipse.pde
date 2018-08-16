@@ -11,8 +11,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -46,11 +44,9 @@ public class $wizardPageClassName$ extends WizardNewFileCreationPage {
 		fileSelectionArea.setLayout(fileSelectionLayout);
 		
 		editor = new FileFieldEditor("fileSelect","Select File: ",fileSelectionArea); //$NON-NLS-1$ //$NON-NLS-2$
-		editor.getTextControl(fileSelectionArea).addModifyListener(new ModifyListener(){
-			public void modifyText(ModifyEvent e) {
-				IPath path = new Path($wizardPageClassName$.this.editor.getStringValue());
-				setFileName(path.lastSegment());
-			}
+		editor.getTextControl(fileSelectionArea).addModifyListener(e -> {
+			IPath path = new Path($wizardPageClassName$.this.editor.getStringValue());
+			setFileName(path.lastSegment());
 		});
 %if wizardFileFilters == "All"
 		String[] extensions = new String[] { "*.*" }; //$NON-NLS-1$

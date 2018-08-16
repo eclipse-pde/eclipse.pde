@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ifeature.*;
@@ -31,7 +31,6 @@ import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -163,12 +162,7 @@ public class InfoSection extends PDESection {
 		Label label = toolkit.createLabel(page, PDEUIMessages.FeatureEditor_InfoSection_url);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		fUrlText = toolkit.createText(page, null, SWT.SINGLE);
-		fUrlText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				infoModified();
-			}
-		});
+		fUrlText.addModifyListener(e -> infoModified());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fUrlText.setLayoutData(gd);
 		label = toolkit.createLabel(page, PDEUIMessages.FeatureEditor_InfoSection_text);
@@ -179,12 +173,7 @@ public class InfoSection extends PDESection {
 		fSourceViewer = new SourceViewer(page, null, styles);
 		fSourceViewer.configure(fSourceConfiguration);
 		fSourceViewer.setDocument(fDocument);
-		fSourceViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateSelection(event.getSelection());
-			}
-		});
+		fSourceViewer.addSelectionChangedListener(event -> updateSelection(event.getSelection()));
 		StyledText styledText = fSourceViewer.getTextWidget();
 		styledText.setFont(JFaceResources.getTextFont());
 		styledText.setMenu(getPage().getPDEEditor().getContextMenu());

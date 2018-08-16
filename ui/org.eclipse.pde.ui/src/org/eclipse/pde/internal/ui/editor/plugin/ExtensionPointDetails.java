@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -181,20 +180,18 @@ public class ExtensionPointDetails extends PDEDetails {
 						return false;
 					}
 				});
-				dialog.setValidator(new ISelectionStatusValidator() {
-					@Override
-					public IStatus validate(Object[] selection) {
-						IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor().getAggregateModel();
-						String pluginName = model.getPluginBase().getId();
+				dialog.setValidator(selection -> {
+					IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor().getAggregateModel();
+					String pluginName = model.getPluginBase().getId();
 
-						if (selection == null || selection.length != 1 || !(selection[0] instanceof IFile))
-							return new Status(IStatus.ERROR, pluginName, IStatus.ERROR, PDEUIMessages.ManifestEditor_ExtensionPointDetails_validate_errorStatus, null);
-						IFile file = (IFile) selection[0];
-						String ext = file.getFullPath().getFileExtension();
-						if ("exsd".equals(ext) || "mxsd".equals(ext)) //$NON-NLS-1$ //$NON-NLS-2$
-							return new Status(IStatus.OK, pluginName, IStatus.OK, "", null); //$NON-NLS-1$
+					if (selection == null || selection.length != 1 || !(selection[0] instanceof IFile))
 						return new Status(IStatus.ERROR, pluginName, IStatus.ERROR, PDEUIMessages.ManifestEditor_ExtensionPointDetails_validate_errorStatus, null);
-					}
+					IFile file = (IFile) selection[0];
+					String ext = file.getFullPath().getFileExtension();
+					if ("exsd".equals(ext) || "mxsd".equals(ext)) //$NON-NLS-1$ //$NON-NLS-2$
+						return new Status(IStatus.OK, pluginName, IStatus.OK, "", null); //$NON-NLS-1$
+					return new Status(IStatus.ERROR, pluginName, IStatus.ERROR,
+							PDEUIMessages.ManifestEditor_ExtensionPointDetails_validate_errorStatus, null);
 				});
 				dialog.setDoubleClickSelects(true);
 				dialog.setStatusLineAboveButtons(true);
@@ -342,31 +339,25 @@ public class ExtensionPointDetails extends PDEDetails {
 		final IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
 
 		Display d = ww.getShell().getDisplay();
-		d.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					String editorId = IPDEUIConstants.SCHEMA_EDITOR_ID;
-					ww.getActivePage().openEditor(new FileEditorInput(file), editorId);
-				} catch (PartInitException e) {
-					PDEPlugin.logException(e);
-				}
+		d.asyncExec(() -> {
+			try {
+				String editorId = IPDEUIConstants.SCHEMA_EDITOR_ID;
+				ww.getActivePage().openEditor(new FileEditorInput(file), editorId);
+			} catch (PartInitException e) {
+				PDEPlugin.logException(e);
 			}
 		});
 	}
 
 	private void generateSchema() {
 		final IProject project = getPage().getPDEEditor().getCommonProject();
-		BusyIndicator.showWhile(getPage().getPartControl().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				NewSchemaFileWizard wizard = new NewSchemaFileWizard(project, fInput, true);
-				WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
-				dialog.create();
-				SWTUtil.setDialogSize(dialog, 400, 450);
-				if (dialog.open() == Window.OK)
-					update();
-			}
+		BusyIndicator.showWhile(getPage().getPartControl().getDisplay(), () -> {
+			NewSchemaFileWizard wizard = new NewSchemaFileWizard(project, fInput, true);
+			WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+			dialog.create();
+			SWTUtil.setDialogSize(dialog, 400, 450);
+			if (dialog.open() == Window.OK)
+				update();
 		});
 	}
 

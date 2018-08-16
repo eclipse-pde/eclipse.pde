@@ -433,17 +433,14 @@ public class AnnotationVisitor extends ASTVisitor {
 					final IDocument doc = document;
 					final CoreException[] ex = new CoreException[1];
 					final CountDownLatch latch = new CountDownLatch(1);
-					bufferManager.execute(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								performEdit(doc, edit);
-							} catch (CoreException e) {
-								ex[0] = e;
-							}
-
-							latch.countDown();
+					bufferManager.execute(() -> {
+						try {
+							performEdit(doc, edit);
+						} catch (CoreException e) {
+							ex[0] = e;
 						}
+
+						latch.countDown();
 					});
 
 					try {

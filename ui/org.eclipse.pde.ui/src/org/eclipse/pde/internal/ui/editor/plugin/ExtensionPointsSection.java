@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2017 IBM Corporation and others.
+ * Copyright (c) 2003, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -274,15 +274,13 @@ public class ExtensionPointsSection extends TableSection {
 	private void handleNew() {
 		IFile file = ((IFileEditorInput) getPage().getPDEEditor().getEditorInput()).getFile();
 		final IProject project = file.getProject();
-		BusyIndicator.showWhile(pointTable.getTable().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				NewExtensionPointWizard wizard = new NewExtensionPointWizard(project, (IPluginModelBase) getPage().getModel(), (ManifestEditor) getPage().getPDEEditor());
-				WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
-				dialog.create();
-				SWTUtil.setDialogSize(dialog, 400, 450);
-				dialog.open();
-			}
+		BusyIndicator.showWhile(pointTable.getTable().getDisplay(), () -> {
+			NewExtensionPointWizard wizard = new NewExtensionPointWizard(project,
+					(IPluginModelBase) getPage().getModel(), (ManifestEditor) getPage().getPDEEditor());
+			WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
+			dialog.create();
+			SWTUtil.setDialogSize(dialog, 400, 450);
+			dialog.open();
 		});
 	}
 

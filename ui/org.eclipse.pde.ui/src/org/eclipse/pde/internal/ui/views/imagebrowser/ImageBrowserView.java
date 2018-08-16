@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012, 2017 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2018 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -126,12 +126,9 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		SWTFactory.createLabel(sourceComp, PDEUIMessages.ImageBrowserView_Source, 1);
 		sourceCombo = new ComboViewer(SWTFactory.createCombo(sourceComp, SWT.READ_ONLY, 1, null));
 		sourceCombo.setContentProvider(ArrayContentProvider.getInstance());
-		sourceCombo.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				page = 0; // reset to 1st page
-				scanImages();
-			}
+		sourceCombo.addSelectionChangedListener(event -> {
+			page = 0; // reset to 1st page
+			scanImages();
 		});
 
 		ArrayList<Object> sourceComboInput = new ArrayList<>();
@@ -180,12 +177,9 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		spinMaxImages.setMinimum(1);
 		spinMaxImages.setSelection(250);
 		spinMaxImages.setLayoutData(GridDataFactory.fillDefaults().create());
-		spinMaxImages.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				page = 0; // reset to 1st page
-				scanImages();
-			}
+		spinMaxImages.addModifyListener(e -> {
+			page = 0; // reset to 1st page
+			scanImages();
 		});
 
 		Composite filterComp = SWTFactory.createComposite(topComp, 2, 1, SWT.NONE, 0, 0);
@@ -195,25 +189,22 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		txtFilter = SWTFactory.createText(filterComp, SWT.BORDER | SWT.SEARCH, 1);
 		((GridData) txtFilter.getLayoutData()).widthHint = 200;
 		txtFilter.setToolTipText(PDEUIMessages.ImageBrowserView_FilterTooltip);
-		txtFilter.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				String pattern = txtFilter.getText();
-				pattern = pattern.trim();
-				// we match begging and end, user does not have to type *debug*
-				String STAR = "*"; //$NON-NLS-1$
-				if (!pattern.startsWith(STAR)) {
-					pattern = STAR + pattern;
-				}
-				if (!pattern.endsWith(STAR)) {
-					pattern += STAR;
-				}
-				mFilters.remove(textPatternFilter);
-				textPatternFilter = new StringFilter(pattern);
-				mFilters.add(textPatternFilter);
-				page = 0; // reset to 1st page
-				scanImages();
+		txtFilter.addModifyListener(e -> {
+			String pattern = txtFilter.getText();
+			pattern = pattern.trim();
+			// we match begging and end, user does not have to type *debug*
+			String STAR = "*"; //$NON-NLS-1$
+			if (!pattern.startsWith(STAR)) {
+				pattern = STAR + pattern;
 			}
+			if (!pattern.endsWith(STAR)) {
+				pattern += STAR;
+			}
+			mFilters.remove(textPatternFilter);
+			textPatternFilter = new StringFilter(pattern);
+			mFilters.add(textPatternFilter);
+			page = 0; // reset to 1st page
+			scanImages();
 		});
 
 		scrolledComposite = new ScrolledComposite(composite, SWT.BORDER | SWT.V_SCROLL);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,12 +104,9 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 					// If there were errors when running the ant scripts, inform the user where the logs can be found.
 					final File logLocation = new File(info.destinationDirectory, "logs.zip"); //$NON-NLS-1$
 					if (logLocation.exists()) {
-						PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-							@Override
-							public void run() {
-								AntErrorDialog dialog = new AntErrorDialog(logLocation);
-								dialog.open();
-							}
+						PlatformUI.getWorkbench().getDisplay().syncExec(() -> {
+							AntErrorDialog dialog = new AntErrorDialog(logLocation);
+							dialog.open();
 						});
 					}
 				} else if (event.getResult().isOK() && installAfterExport) {

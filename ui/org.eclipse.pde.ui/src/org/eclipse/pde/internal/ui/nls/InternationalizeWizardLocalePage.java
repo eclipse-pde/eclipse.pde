@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,8 +30,6 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -207,42 +205,23 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 	}
 
 	private void addViewerListeners() {
-		fAvailableListViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				handleAdd();
-			}
+		fAvailableListViewer.addDoubleClickListener(event -> handleAdd());
+
+		fSelectedListViewer.addDoubleClickListener(event -> handleRemove());
+
+		fAvailableListViewer.addSelectionChangedListener(event -> {
+			if (!fBlockSelectionListeners)
+				updateSelectionBasedEnablement(event.getSelection(), true);
 		});
 
-		fSelectedListViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				handleRemove();
-			}
+		fSelectedListViewer.addSelectionChangedListener(event -> {
+			if (!fBlockSelectionListeners)
+				updateSelectionBasedEnablement(event.getSelection(), false);
 		});
 
-		fAvailableListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				if (!fBlockSelectionListeners)
-					updateSelectionBasedEnablement(event.getSelection(), true);
-			}
-		});
-
-		fSelectedListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				if (!fBlockSelectionListeners)
-					updateSelectionBasedEnablement(event.getSelection(), false);
-			}
-		});
-
-		fFilterText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fFilterJob.cancel();
-				fFilterJob.schedule(200);
-			}
+		fFilterText.addModifyListener(e -> {
+			fFilterJob.cancel();
+			fFilterJob.schedule(200);
 		});
 
 	}

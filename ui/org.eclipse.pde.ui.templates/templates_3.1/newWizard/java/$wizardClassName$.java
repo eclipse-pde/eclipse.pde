@@ -56,15 +56,13 @@ public class $wizardClassName$ extends Wizard implements INewWizard {
 	public boolean performFinish() {
 		final String containerName = page.getContainerName();
 		final String fileName = page.getFileName();
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				try {
-					doFinish(containerName, fileName, monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
+		IRunnableWithProgress op = monitor -> {
+			try {
+				doFinish(containerName, fileName, monitor);
+			} catch (CoreException e) {
+				throw new InvocationTargetException(e);
+			} finally {
+				monitor.done();
 			}
 		};
 		try {
@@ -111,14 +109,12 @@ public class $wizardClassName$ extends Wizard implements INewWizard {
 		}
 		monitor.worked(1);
 		monitor.setTaskName("Opening file for editing...");
-		getShell().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				IWorkbenchPage page =
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-				try {
-					IDE.openEditor(page, file, true);
-				} catch (PartInitException e) {
-				}
+		getShell().getDisplay().asyncExec(() -> {
+			IWorkbenchPage page =
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			try {
+				IDE.openEditor(page, file, true);
+			} catch (PartInitException e) {
 			}
 		});
 		monitor.worked(1);

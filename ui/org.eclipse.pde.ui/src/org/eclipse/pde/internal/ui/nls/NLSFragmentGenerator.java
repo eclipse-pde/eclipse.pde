@@ -20,7 +20,6 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -145,20 +144,13 @@ public class NLSFragmentGenerator {
 		try {
 			final Map<String, Object> overwrites = promptForOverwrite(plugins, locales);
 
-			container.run(false, false, new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					setProgressMonitor(monitor);
-					try {
-						internationalizePlugins(plugins, locales, overwrites);
-					} catch (final Exception ex) {
-						Display.getDefault().syncExec(new Runnable() {
-							@Override
-							public void run() {
-								PDEPlugin.logException(ex, ex.getMessage(), PDEUIMessages.InternationalizeWizard_NLSFragmentGenerator_errorMessage);
-							}
-						});
-					}
+			container.run(false, false, monitor -> {
+				setProgressMonitor(monitor);
+				try {
+					internationalizePlugins(plugins, locales, overwrites);
+				} catch (final Exception ex) {
+					Display.getDefault().syncExec(() -> PDEPlugin.logException(ex, ex.getMessage(),
+							PDEUIMessages.InternationalizeWizard_NLSFragmentGenerator_errorMessage));
 				}
 			});
 		} catch (Exception e) {
@@ -375,7 +367,8 @@ public class NLSFragmentGenerator {
 					public void visit(File file) throws CoreException, FileNotFoundException {
 						worked();
 
-						String relativePath = file.getAbsolutePath().substring(installLocation.length()).replaceAll(File.separator, SLASH);
+						String relativePath = file.getAbsolutePath().substring(installLocation.length())
+								.replaceAll(File.separator, SLASH);
 						String[] segments = relativePath.split(SLASH);
 						IPath path = Path.fromPortableString(join(SLASH, segments, 0, segments.length - 1));
 						String resourceName = segments[segments.length - 1];
@@ -408,25 +401,23 @@ public class NLSFragmentGenerator {
 		else {
 			final IProject project = plugin.getUnderlyingResource().getProject();
 
-			project.accept(new IResourceVisitor() {
-				@Override
-				public boolean visit(IResource resource) throws CoreException {
-					worked();
+			project.accept(resource -> {
+				worked();
 
-					IPath parent = resource.getFullPath().removeLastSegments(1).removeFirstSegments(1);
-					if (propertiesFilter.include(resource)) {
-						String segment = localeSpecificName(resource.getFullPath().lastSegment(), locale);
-						IPath fragmentResource = fragmentProject.getFullPath().append(parent).append(segment);
+				IPath parent = resource.getFullPath().removeLastSegments(1).removeFirstSegments(1);
+				if (propertiesFilter.include(resource)) {
+					String segment = localeSpecificName(resource.getFullPath().lastSegment(), locale);
+					IPath fragmentResource = fragmentProject.getFullPath().append(parent).append(segment);
 
-						createParents(fragmentProject, parent);
-						resource.copy(fragmentResource, true, getProgressMonitor());
-					} else if (resourceFilter.include(resource)) {
-						IPath target = localeResourceFolder.getFullPath().append(parent).append(resource.getFullPath().lastSegment());
-						createParents(fragmentProject, target.removeLastSegments(1).removeFirstSegments(1));
-						resource.copy(target, true, getProgressMonitor());
-					}
-					return true;
+					createParents(fragmentProject, parent);
+					resource.copy(fragmentResource, true, getProgressMonitor());
+				} else if (resourceFilter.include(resource)) {
+					IPath target = localeResourceFolder.getFullPath().append(parent)
+							.append(resource.getFullPath().lastSegment());
+					createParents(fragmentProject, target.removeLastSegments(1).removeFirstSegments(1));
+					resource.copy(target, true, getProgressMonitor());
 				}
+				return true;
 			});
 		}
 

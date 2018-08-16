@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -208,24 +208,22 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	}
 
 	private void handleNew() {
-		BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), new Runnable() {
-			@Override
-			public void run() {
-				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
-				ArrayList<IFeatureModel> newModels = new ArrayList<>();
-				for (IFeatureModel model : allModels) {
-					if (canAdd(model))
-						newModels.add(model);
-				}
-				IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
-				FeatureSelectionDialog dialog = new FeatureSelectionDialog(fIncludesViewer.getTable().getShell(), candidateModels, true);
-				if (dialog.open() == Window.OK) {
-					Object[] models = dialog.getResult();
-					try {
-						doAdd(models);
-					} catch (CoreException e) {
-						PDEPlugin.log(e);
-					}
+		BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), () -> {
+			IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
+			ArrayList<IFeatureModel> newModels = new ArrayList<>();
+			for (IFeatureModel model : allModels) {
+				if (canAdd(model))
+					newModels.add(model);
+			}
+			IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
+			FeatureSelectionDialog dialog = new FeatureSelectionDialog(fIncludesViewer.getTable().getShell(),
+					candidateModels, true);
+			if (dialog.open() == Window.OK) {
+				Object[] models = dialog.getResult();
+				try {
+					doAdd(models);
+				} catch (CoreException e) {
+					PDEPlugin.log(e);
 				}
 			}
 		});
@@ -315,21 +313,11 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					handleDelete();
-				}
-			});
+			BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), () -> handleDelete());
 			return true;
 		}
 		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
-			BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), new Runnable() {
-				@Override
-				public void run() {
-					handleSelectAll();
-				}
-			});
+			BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), () -> handleSelectAll());
 			return true;
 		}
 		if (actionId.equals(ActionFactory.CUT.getId())) {
@@ -395,12 +383,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		fDeleteAction = new Action() {
 			@Override
 			public void run() {
-				BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), new Runnable() {
-					@Override
-					public void run() {
-						handleDelete();
-					}
-				});
+				BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), () -> handleDelete());
 			}
 		};
 		fDeleteAction.setEnabled(model.isEditable());
@@ -410,18 +393,15 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 
 	@Override
 	public void modelsChanged(final IFeatureModelDelta delta) {
-		getSection().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (getSection().isDisposed()) {
-					return;
-				}
-				IFeatureModel[] added = delta.getAdded();
-				IFeatureModel[] removed = delta.getRemoved();
-				IFeatureModel[] changed = delta.getChanged();
-				if (hasModels(added) || hasModels(removed) || hasModels(changed))
-					markStale();
+		getSection().getDisplay().asyncExec(() -> {
+			if (getSection().isDisposed()) {
+				return;
 			}
+			IFeatureModel[] added = delta.getAdded();
+			IFeatureModel[] removed = delta.getRemoved();
+			IFeatureModel[] changed = delta.getChanged();
+			if (hasModels(added) || hasModels(removed) || hasModels(changed))
+				markStale();
 		});
 	}
 

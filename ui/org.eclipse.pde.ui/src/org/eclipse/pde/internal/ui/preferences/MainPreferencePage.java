@@ -31,8 +31,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.BaseBlock;
 import org.eclipse.pde.internal.ui.shared.target.TargetStatus;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -214,12 +212,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 
 		fTestPluginPatternText = new Text(testGroup, SWT.BORDER | SWT.SINGLE);
 		// add some listeners for regex syntax checking
-		fTestPluginPatternText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateOKStatus();
-			}
-		});
+		fTestPluginPatternText.addModifyListener(e -> updateOKStatus());
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 200;

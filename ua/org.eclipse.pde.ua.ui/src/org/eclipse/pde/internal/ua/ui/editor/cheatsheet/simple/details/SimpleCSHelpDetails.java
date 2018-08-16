@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,8 +25,6 @@ import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.util.FileExtensionsFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -201,30 +199,27 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		});
 		// Attribute: href
 		// Attribute: contextId
-		fHelpText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				// Block UI updates
-				if (fBlockListeners) {
-					return;
-				}
-				// Ensure data object is defined
-				if (fHelpObject == null) {
-					return;
-				}
-				String selection = fHelpCombo.getSelection();
-				if (selection.equals(F_HELP_CONTEXT_ID)) {
-					// Help context ID was selected, save the field contents
-					// as such
-					fHelpObject.setContextId(fHelpText.getText());
-				} else {
-					// Help document link was selected, save the field contents
-					// as such
-					fHelpObject.setHref(fHelpText.getText());
-				}
-				// Update tooltip
-				fHelpText.setToolTipText(fHelpText.getText());
+		fHelpText.addModifyListener(e -> {
+			// Block UI updates
+			if (fBlockListeners) {
+				return;
 			}
+			// Ensure data object is defined
+			if (fHelpObject == null) {
+				return;
+			}
+			String selection = fHelpCombo.getSelection();
+			if (selection.equals(F_HELP_CONTEXT_ID)) {
+				// Help context ID was selected, save the field contents
+				// as such
+				fHelpObject.setContextId(fHelpText.getText());
+			} else {
+				// Help document link was selected, save the field contents
+				// as such
+				fHelpObject.setHref(fHelpText.getText());
+			}
+			// Update tooltip
+			fHelpText.setToolTipText(fHelpText.getText());
 		});
 
 		fHelpBrowse.addSelectionListener(new SelectionAdapter() {

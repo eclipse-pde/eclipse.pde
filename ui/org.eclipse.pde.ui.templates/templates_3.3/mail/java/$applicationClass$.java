@@ -31,11 +31,9 @@ public class $applicationClass$ implements IApplication {
 			return;
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		final Display display = workbench.getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				if (!display.isDisposed())
-					workbench.close();
-			}
+		display.syncExec(() -> {
+			if (!display.isDisposed())
+				workbench.close();
 		});
 	}
 }

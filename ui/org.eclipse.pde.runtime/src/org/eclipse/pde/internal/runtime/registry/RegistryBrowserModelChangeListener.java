@@ -22,12 +22,7 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 
 	@Override
 	public void modelChanged(final ModelChangeDelta[] delta) {
-		fRegistryBrowser.getSite().getWorkbenchWindow().getWorkbench().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				update(delta);
-			}
-		});
+		fRegistryBrowser.getSite().getWorkbenchWindow().getWorkbench().getDisplay().asyncExec(() -> update(delta));
 	}
 
 	private boolean topLevelElement(Object object) {

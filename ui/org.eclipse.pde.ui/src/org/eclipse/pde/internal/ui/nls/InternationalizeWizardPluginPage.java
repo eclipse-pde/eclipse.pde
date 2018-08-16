@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,8 +34,6 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -185,12 +183,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		fTemplateText = new Text(comp, SWT.BORDER);
 		fTemplateText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fTemplateText.setText(template != null ? template : NLSFragmentGenerator.PLUGIN_NAME_MACRO + ".nl1"); //$NON-NLS-1$
-		fTemplateText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				pageChanged();
-			}
-		});
+		fTemplateText.addModifyListener(e -> pageChanged());
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
@@ -366,42 +359,23 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	}
 
 	private void addViewerListeners() {
-		fAvailableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				handleAdd();
-			}
+		fAvailableViewer.addDoubleClickListener(event -> handleAdd());
+
+		fSelectedViewer.addDoubleClickListener(event -> handleRemove());
+
+		fAvailableViewer.addSelectionChangedListener(event -> {
+			if (!fBlockSelectionListeners)
+				updateSelectionBasedEnablement(event.getSelection(), true);
 		});
 
-		fSelectedViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				handleRemove();
-			}
+		fSelectedViewer.addSelectionChangedListener(event -> {
+			if (!fBlockSelectionListeners)
+				updateSelectionBasedEnablement(event.getSelection(), false);
 		});
 
-		fAvailableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				if (!fBlockSelectionListeners)
-					updateSelectionBasedEnablement(event.getSelection(), true);
-			}
-		});
-
-		fSelectedViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				if (!fBlockSelectionListeners)
-					updateSelectionBasedEnablement(event.getSelection(), false);
-			}
-		});
-
-		fFilterText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				fFilterJob.cancel();
-				fFilterJob.schedule(200);
-			}
+		fFilterText.addModifyListener(e -> {
+			fFilterJob.cancel();
+			fFilterJob.schedule(200);
 		});
 
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2015 IBM Corporation and others.
+ *  Copyright (c) 2003, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.context;
-
-import org.eclipse.core.resources.IFile;
 
 import java.util.*;
 import org.eclipse.core.resources.*;
@@ -207,20 +205,17 @@ public abstract class InputContextManager implements IResourceChangeListener {
 		IResourceDelta delta = event.getDelta();
 
 		try {
-			delta.accept(new IResourceDeltaVisitor() {
-				@Override
-				public boolean visit(IResourceDelta delta) {
-					int kind = delta.getKind();
-					IResource resource = delta.getResource();
-					if (resource instanceof IFile) {
-						if (kind == IResourceDelta.ADDED)
-							asyncStructureChanged((IFile) resource, true);
-						else if (kind == IResourceDelta.REMOVED)
-							asyncStructureChanged((IFile) resource, false);
-						return false;
-					}
-					return true;
+			delta.accept(delta1 -> {
+				int kind = delta1.getKind();
+				IResource resource = delta1.getResource();
+				if (resource instanceof IFile) {
+					if (kind == IResourceDelta.ADDED)
+						asyncStructureChanged((IFile) resource, true);
+					else if (kind == IResourceDelta.REMOVED)
+						asyncStructureChanged((IFile) resource, false);
+					return false;
 				}
+				return true;
 			});
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -233,12 +228,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 		Shell shell = editor.getEditorSite().getShell();
 		Display display = shell != null ? shell.getDisplay() : Display.getDefault();
 
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				structureChanged(file, added);
-			}
-		});
+		display.asyncExec(() -> structureChanged(file, added));
 	}
 
 	protected void structureChanged(IFile file, boolean added) {

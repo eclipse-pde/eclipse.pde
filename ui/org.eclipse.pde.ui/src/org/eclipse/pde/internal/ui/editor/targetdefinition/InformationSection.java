@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
-import org.eclipse.pde.core.target.ITargetDefinition;
-
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.validation.ControlValidationUtility;
 import org.eclipse.pde.internal.ui.editor.validation.TextValidator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
@@ -76,13 +73,10 @@ public class InformationSection extends SectionPart {
 
 		fNameText = toolkit.createText(client, getTarget().getName());
 		fNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fNameText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				String value = fNameText.getText().trim();
-				getTarget().setName(value.length() > 0 ? value : null);
-				markDirty();
-			}
+		fNameText.addModifyListener(e -> {
+			String value = fNameText.getText().trim();
+			getTarget().setName(value.length() > 0 ? value : null);
+			markDirty();
 		});
 
 		fNameTextValidator = new TextValidator(fPage.getManagedForm(), fNameText, null, true) {
