@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.util.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.preferences.DefaultScope;
@@ -25,7 +24,6 @@ import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Tests for the severity preferences
@@ -38,11 +36,7 @@ public class PreferencesTests extends AbstractApiTest {
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("The instance node must exist", inode); //$NON-NLS-1$
 		inode.put(IApiProblemTypes.ILLEGAL_INSTANTIATE, ApiPlugin.VALUE_ERROR);
-		try {
-			inode.flush();
-		} catch (BackingStoreException e1) {
-			fail(e1.getMessage());
-		}
+		inode.flush();
 
 		createProject(TESTING_PROJECT_NAME, null);
 
