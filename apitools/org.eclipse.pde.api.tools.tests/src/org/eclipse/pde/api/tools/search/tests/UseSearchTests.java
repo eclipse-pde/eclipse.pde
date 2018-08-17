@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.search.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.util.HashMap;
@@ -22,6 +28,8 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.XmlSearchReporter;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * Tests the API use specific implementations of {@link IApiSearchReporter}
@@ -37,7 +45,8 @@ public class UseSearchTests extends SearchTest {
 	final HashMap<String, HashSet<String>> usedprojects = new HashMap<>();
 
 	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		scrubReportLocation(TMP_PATH.toFile());
 		super.tearDown();
 	}
@@ -62,12 +71,12 @@ public class UseSearchTests extends SearchTest {
 			assertNotNull("the expeced set of using project names should exist", names); //$NON-NLS-1$
 			projects = files[i].listFiles();
 			assertTrue("the only files should be the folders for the projects using ["+files[i].getName()+"]", projects.length == names.size()); //$NON-NLS-1$ //$NON-NLS-2$
-			for (int j = 0; j < projects.length; j++) {
-				if(!projects[j].isDirectory()) {
-					reportFailure("Unexpected non-folder entry found: ["+projects[j].getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+			for (File project : projects) {
+				if (!project.isDirectory()) {
+					reportFailure("Unexpected non-folder entry found: [" + project.getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				if(!names.remove(projects[j].getName())) {
-					reportFailure("Unexpected folder entry in the report location: ["+projects[j].getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
+				if (!names.remove(project.getName())) {
+					reportFailure("Unexpected folder entry in the report location: [" + project.getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			assertTrue("All of the using projects should have been detected", names.isEmpty()); //$NON-NLS-1$
@@ -129,9 +138,10 @@ public class UseSearchTests extends SearchTest {
 	}
 
 	/**
-	 * Tests that the XML reporter is generating XMl files at the correct location,
-	 * with no components excluded from the search
+	 * Tests that the XML reporter is generating XMl files at the correct
+	 * location, with no components excluded from the search
 	 */
+	@Test
 	public void testSearchXmlReporterNoExclusions() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
@@ -156,6 +166,7 @@ public class UseSearchTests extends SearchTest {
 	 * Tests that the XML reporter is generating XMl files at the correct location,
 	 * with no components excluded from the search
 	 */
+	@Test
 	public void testSearchXmlReporterNoExclusionsWithDebug() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {

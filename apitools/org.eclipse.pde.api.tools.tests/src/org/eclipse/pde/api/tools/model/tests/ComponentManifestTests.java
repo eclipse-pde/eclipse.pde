@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,22 +26,13 @@ import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @since 1.0.0
  */
-public class ComponentManifestTests extends TestCase {
-
-	public ComponentManifestTests() {
-		super();
-	}
-
-	public ComponentManifestTests(String name) {
-		super(name);
-	}
-
+public class ComponentManifestTests {
+	@Test
 	public void testComponentManifest() throws CoreException {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-manifests"); //$NON-NLS-1$
@@ -78,6 +73,7 @@ public class ComponentManifestTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testReExport() throws CoreException {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-manifests"); //$NON-NLS-1$
@@ -91,8 +87,7 @@ public class ComponentManifestTests extends TestCase {
 			boolean debugCoreExport = false;
 			boolean others = false;
 			IRequiredComponentDescription[] requiredComponents = component.getRequiredComponents();
-			for (int i = 0; i < requiredComponents.length; i++) {
-				IRequiredComponentDescription description = requiredComponents[i];
+			for (IRequiredComponentDescription description : requiredComponents) {
 				if (description.getId().equals("org.eclipse.debug.core")) { //$NON-NLS-1$
 					debugCoreExport = description.isExported();
 				} else {

@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 
 import org.eclipse.core.resources.IProject;
@@ -32,6 +38,9 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 import org.eclipse.pde.api.tools.tests.util.FileUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests the {@link org.eclipse.pde.api.tools.internal.FilterStore} which does not
@@ -46,8 +55,8 @@ public class FilterStoreTests extends AbstractApiTest {
 
 	private BundleComponent fComponent = null;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		createProject(TESTING_PLUGIN_PROJECT_NAME, null);
 		File projectSrc = SRC_LOC.toFile();
 		assertTrue("the filter source dir must exist", projectSrc.exists()); //$NON-NLS-1$
@@ -69,8 +78,8 @@ public class FilterStoreTests extends AbstractApiTest {
 		assertNotNull("the .api_filters file must exist in the testing project", filters); //$NON-NLS-1$
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		deleteProject(TESTING_PLUGIN_PROJECT_NAME);
 	}
 
@@ -90,6 +99,7 @@ public class FilterStoreTests extends AbstractApiTest {
 		return (FilterStore)getComponent().getFilterStore();
 	}
 
+	@Test
 	public void testBogus(){
 		assertNull(null);
 	}
@@ -97,6 +107,7 @@ public class FilterStoreTests extends AbstractApiTest {
 	/**
 	 * Tests that a filter store can be correctly annotated from a persisted version
 	 */
+	@Test
 	public void testFilterStoreValidity() {
 		try {
 			FilterStore store = getFilterStore();
@@ -140,6 +151,7 @@ public class FilterStoreTests extends AbstractApiTest {
 	/**
 	 * Tests that asking the store if it filters an invalid problem will return 'false'
 	 */
+	@Test
 	public void testNonExistantProblem() {
 		try {
 			FilterStore store = getFilterStore();
@@ -155,6 +167,7 @@ public class FilterStoreTests extends AbstractApiTest {
 	/**
 	 * tests adding then removing an api problem filter
 	 */
+	@Test
 	public void testAddRemoveFromFilter() {
 		try {
 			BundleComponent component = getComponent();
@@ -176,6 +189,7 @@ public class FilterStoreTests extends AbstractApiTest {
 	/**
 	 * tests adding then rmeoving a filter using the method that accepts an api problem
 	 */
+	@Test
 	public void testAddRemoveFromProblem() {
 		try {
 			BundleComponent component = getComponent();

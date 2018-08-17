@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.util.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
@@ -69,6 +75,9 @@ import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests the {@link ApiBaselineManager} without the framework running
@@ -200,6 +209,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Tests trying to get the workspace baseline without the framework running
 	 */
+	@Test
 	public void testGetWorkspaceComponent() {
 		IApiBaseline baseline = getWorkspaceBaseline();
 		assertNotNull("the workspace baseline must not be null", baseline); //$NON-NLS-1$
@@ -208,6 +218,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Tests that an API baseline can be added and retrieved successfully
 	 */
+	@Test
 	public void testAddBaseline() {
 		IApiBaseline baseline = getTestBaseline(ADDTEST);
 		assertNotNull("the test baseline must have been created", baseline); //$NON-NLS-1$
@@ -217,6 +228,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Tests that an API baseline can be added/removed successfully
 	 */
+	@Test
 	public void testRemoveBaseline() {
 		IApiBaseline baseline = getTestBaseline("removetest"); //$NON-NLS-1$
 		assertNotNull("the testremove baseline must exist", baseline); //$NON-NLS-1$
@@ -228,6 +240,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Tests that the default baseline can be set/retrieved
 	 */
+	@Test
 	public void testSetDefaultBaseline() {
 		try {
 			IApiBaseline baseline = getTestBaseline(TESTDEFAULT);
@@ -243,6 +256,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Tests that all baselines added to the manager can be retrieved
 	 */
+	@Test
 	public void testGetAllBaselines() {
 		try {
 			fPMmanager.addApiBaseline(getTestBaseline(ADDTEST));
@@ -260,6 +274,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Tests that all of the baselines have been removed
 	 */
+	@Test
 	public void testCleanUpMmanager() {
 		try {
 			fPMmanager.addApiBaseline(getTestBaseline(ADDTEST));
@@ -352,6 +367,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * Tests that closing an API aware project causes the workspace description
 	 * to be updated
 	 */
+	@Test
 	public void testWPUpdateProjectClosed() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
@@ -367,6 +383,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * Tests that opening an API aware project causes the workspace description
 	 * to be updated
 	 */
+	@Test
 	public void testWPUpdateProjectOpen() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
@@ -385,6 +402,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * workspace description to be updated This test adds
 	 * <code>a.b.c.TestClass1</code> to the plug-in project
 	 */
+	@Test
 	public void testWPUpdateSourceAdded() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
@@ -398,6 +416,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * Tests that removing a source file from an API aware project causes the
 	 * workspace description to be updated
 	 */
+	@Test
 	public void testWPUpdateSourceRemoved() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
@@ -454,6 +473,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 *
 	 * This test adds a @noinstantiate tag to the source file TestClass2
 	 */
+	@Test
 	public void testWPUpdateSourceTypeChanged() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
@@ -479,6 +499,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 *
 	 * This test adds a @noinstantiate tag to an inner class in TestClass3
 	 */
+	@Test
 	public void testWPUpdateSourceInnerTypeChanged() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
@@ -502,6 +523,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 *
 	 * This test adds a @noextend tag to the method foo() in TestClass1
 	 */
+	@Test
 	public void testWPUpdateSourceMethodChanged() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
@@ -524,6 +546,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 *
 	 * This test adds a @noextend tag to the field 'field' in TestField9
 	 */
+	@Test
 	public void testWPUpdateSourceFieldChanged() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
@@ -545,6 +568,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 *
 	 * This test removes a @noextend tag to the method foo() in TestClass1
 	 */
+	@Test
 	public void testWPUpdateSourceMethodRemoveTag() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
@@ -566,6 +590,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 *
 	 * This test removes a @noinstantiate tag to an inner class in TestClass3
 	 */
+	@Test
 	public void testWPUpdateSourceTypeRemoveTag() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
@@ -587,6 +612,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 *
 	 * This test adds a @noextend tag to the field 'field' in TestField9
 	 */
+	@Test
 	public void testWPUpdateSourceFieldRemoveTag() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
@@ -612,6 +638,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * @throws InvocationTargetException
 	 * @throws CoreException
 	 */
+	@Test
 	public void testWPUpdateLibraryAddedToClasspath() throws Exception {
 		IFolder folder = null;
 		try {
@@ -638,6 +665,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Tests removing a library from the classpath of a project
 	 */
+	@Test
 	public void testWPUpdateLibraryRemovedFromClasspath() throws Exception {
 		IPath libPath = null;
 		try {
@@ -676,6 +704,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * Tests that changing the output folder settings for a project cause the
 	 * class file containers to be updated
 	 */
+	@Test
 	public void testWPUpdateDefaultOutputFolderChanged() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
@@ -694,6 +723,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * Tests that the output folder settings for a source folder cause the class
 	 * file containers to be updated
 	 */
+	@Test
 	public void testWPUpdateOutputFolderSrcFolderChanged() throws Exception {
 		IJavaProject project = getTestingProject();
 		IApiComponent component = getWorkspaceBaseline().getApiComponent(project.getElementName());
@@ -718,6 +748,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Tests that adding a package does not update the workspace baseline
 	 */
+	@Test
 	public void testWPUpdatePackageAdded() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
@@ -736,6 +767,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * removes the a.b.c package being used in all tests thus far, and should be
 	 * run last
 	 */
+	@Test
 	public void testWPUpdatePackageRemoved() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
@@ -758,6 +790,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * Tests that an exported package addition in the PDE model is reflected in
 	 * the workspace api baseline
 	 */
+	@Test
 	public void testWPUpdateExportPackageAdded() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
@@ -776,6 +809,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * Tests that changing a directive to x-internal on an exported package
 	 * causes the workspace api baseline to be updated
 	 */
+	@Test
 	public void testWPUPdateExportPackageDirectiveChangedToInternal() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
@@ -796,6 +830,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * Tests that an exported package removal in the PDE model is reflected in
 	 * the workspace api baseline
 	 */
+	@Test
 	public void testWPUpdateExportPackageRemoved() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
@@ -833,14 +868,14 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		return JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject(TESTING_PLUGIN_PROJECT_NAME));
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		createProject(TESTING_PLUGIN_PROJECT_NAME, new String[] { TESTING_PACKAGE });
 		setPackageToApi(getTestingProject(), TESTING_PACKAGE);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		deleteProject(TESTING_PLUGIN_PROJECT_NAME);
 		getWorkspaceBaseline().dispose();
 	}

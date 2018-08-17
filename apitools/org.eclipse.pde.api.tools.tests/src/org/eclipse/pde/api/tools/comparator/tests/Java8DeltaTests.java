@@ -10,22 +10,24 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.comparator.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.junit.Test;
 
 /**
  * Delta tests for java 8
  */
 
 public class Java8DeltaTests extends DeltaTestSetup {
-
-	public Java8DeltaTests(String name) {
-		super(name);
-	}
 
 	@Override
 	public String getTestRoot() {
@@ -35,6 +37,7 @@ public class Java8DeltaTests extends DeltaTestSetup {
 	/**
 	 * Check change Anonymous class gets turned into a lambda expression
 	 */
+	@Test
 	public void test1() {
 		deployBundles("test1"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -52,6 +55,7 @@ public class Java8DeltaTests extends DeltaTestSetup {
 	/**
 	 * Check delta in Method call -> method reference
 	 */
+	@Test
 	public void test2() {
 		deployBundles("test2"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -68,6 +72,7 @@ public class Java8DeltaTests extends DeltaTestSetup {
 	/**
 	 * Check Interface method becomes a default method
 	 */
+	@Test
 	public void test3() {
 		deployBundles("test3"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -95,6 +100,7 @@ public class Java8DeltaTests extends DeltaTestSetup {
 	/**
 	 * Check if default method addition in an interface is not compatible
 	 */
+	@Test
 	public void test4() {
 		deployBundles("test4"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -112,6 +118,7 @@ public class Java8DeltaTests extends DeltaTestSetup {
 	/**
 	 * Check if non-default method addition in an interface is non-compatible
 	 */
+	@Test
 	public void test5() {
 		deployBundles("test5"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -129,6 +136,7 @@ public class Java8DeltaTests extends DeltaTestSetup {
 	/**
 	 * Check if public static method addition in an interface is compatible
 	 */
+	@Test
 	public void test6() {
 		deployBundles("test6"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();

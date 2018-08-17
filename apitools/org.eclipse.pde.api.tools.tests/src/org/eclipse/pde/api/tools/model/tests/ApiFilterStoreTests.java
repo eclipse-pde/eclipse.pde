@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 
 import org.eclipse.core.resources.IProject;
@@ -36,6 +42,9 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 import org.eclipse.pde.api.tools.tests.util.FileUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests the {@link ApiFilterStore} and {@link ApiProblemFilter}s
@@ -48,8 +57,8 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	private static final IPath XML_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-xml"); //$NON-NLS-1$
 	private static final IPath PLUGIN_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-plugins"); //$NON-NLS-1$
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		createProject(TESTING_PLUGIN_PROJECT_NAME, null);
 		File projectSrc = SRC_LOC.toFile();
 		assertTrue("the filter source dir must exist", projectSrc.exists()); //$NON-NLS-1$
@@ -71,8 +80,8 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		assertNotNull("the .api_filters file must exist in the testing project", filters); //$NON-NLS-1$
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		deleteProject(TESTING_PLUGIN_PROJECT_NAME);
 	}
 
@@ -131,6 +140,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	/**
 	 * Tests that a filter store can be correctly annotated from a persisted version
 	 */
+	@Test
 	public void testAnnotateStoreFromLocalFile() {
 		IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 		assertNotNull("the testing project api component must exist", component); //$NON-NLS-1$
@@ -145,6 +155,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	/**
 	 * Tests that asking the store if it filters an invalid problem will return 'false'
 	 */
+	@Test
 	public void testNonExistantProblem() {
 		IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 		assertNotNull("the testing project api component must exist", component); //$NON-NLS-1$
@@ -164,6 +175,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	/**
 	 * tests removing an api problem filter
 	 */
+	@Test
 	public void testRemoveFilter() {
 		try {
 			IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
@@ -185,6 +197,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	/**
 	 * tests adding a filter using the method that accepts a filter
 	 */
+	@Test
 	public void testAddFilterFromFilter() {
 		try {
 			IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
@@ -208,6 +221,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	/**
 	 * tests adding a filter using the method that accepts an api problem
 	 */
+	@Test
 	public void testAddFilterFromProblem() {
 		try {
 			IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
@@ -231,6 +245,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	/**
 	 * Tests that a filter store will not be annotated from a bundle
 	 */
+	@Test
 	public void testAnnotateStoreFromBundle() {
 		try {
 			IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();

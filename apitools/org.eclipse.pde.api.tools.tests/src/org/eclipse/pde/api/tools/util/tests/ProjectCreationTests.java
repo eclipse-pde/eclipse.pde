@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.util.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 
 import org.eclipse.core.resources.IFile;
@@ -30,6 +36,9 @@ import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.core.project.IPackageExportDescription;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Creates the {@link IJavaProject} used for testing in the target workspace
@@ -52,23 +61,22 @@ public class ProjectCreationTests extends AbstractApiTest {
 		JAVADOC_READ_SRC_DIR = getSourceDirectory(new Path("a").append("b").append("c")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		createProject(TESTING_PROJECT_NAME, null);
 		IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
 		assertNotNull("The java project must have been created", project); //$NON-NLS-1$
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		deleteProject(TESTING_PROJECT_NAME);
 	}
 
 	/**
 	 * Tests importing the java source for the Javadoc tag update tests
 	 */
+	@Test
 	public void testImportJavadocTestSource() {
 		try {
 			File dest = new File(JAVADOC_SRC_DIR);
@@ -89,6 +97,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	/**
 	 * Tests importing the java source for the javadoc tag reading tests
 	 */
+	@Test
 	public void testImportClassesTestSource() {
 		try {
 			File dest = new File(JAVADOC_READ_SRC_DIR);
@@ -106,6 +115,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	/**
 	 * Tests the creation of a plugin project
 	 */
+	@Test
 	public void testCreatePluginProject() {
 		try {
 			IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
@@ -161,6 +171,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	/**
 	 * Tests adding an exported package to a plugin project
 	 */
+	@Test
 	public void testAddRawExportedPackage() throws CoreException {
 		String packagename = "org.eclipse.apitools.test"; //$NON-NLS-1$
 		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
@@ -173,6 +184,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	/**
 	 * Tests adding an exported package that has the x-internal directive set
 	 */
+	@Test
 	public void testAddInternalExportedPackage() throws CoreException {
 		String packagename = "org.eclipse.apitools.test.internal"; //$NON-NLS-1$
 		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
@@ -185,6 +197,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	/**
 	 * Tests adding an exported package with 4 friends (x-friends directive)
 	 */
+	@Test
 	public void testAddExternalPackageWithFriends() throws CoreException {
 		String packagename = "org.eclipse.apitools.test.4friends"; //$NON-NLS-1$
 		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
@@ -198,6 +211,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	/**
 	 * Tests adding more than one exported package
 	 */
+	@Test
 	public void testAddMultipleExportedPackages() throws CoreException {
 		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IProject project = jproject.getProject();
@@ -211,6 +225,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	/**
 	 * Tests removing an exported package
 	 */
+	@Test
 	public void testRemoveExistingExportedPackage() throws CoreException {
 		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IProject project = jproject.getProject();
@@ -228,6 +243,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	/**
 	 * Tests trying to remove a package that does not exist in the header
 	 */
+	@Test
 	public void testRemoveNonExistingExportedPackage() throws CoreException {
 		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IProject project = jproject.getProject();

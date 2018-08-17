@@ -10,6 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.comparator.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
@@ -18,15 +25,12 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.junit.Test;
 
 /**
  * Delta tests for class
  */
 public class BundlesDeltaTests extends DeltaTestSetup {
-
-	public BundlesDeltaTests(String name) {
-		super(name);
-	}
 
 	@Override
 	public String getTestRoot() {
@@ -36,6 +40,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	/**
 	 * Change bundle symbolic name
 	 */
+	@Test
 	public void test1() {
 		deployBundles("test1"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.ALL_VISIBILITIES, false, null);
@@ -57,6 +62,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	/**
 	 * Addition of EE
 	 */
+	@Test
 	public void test2() {
 		deployBundles("test2"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.ALL_VISIBILITIES, false, null);
@@ -78,6 +84,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	/**
 	 * Removing EEs
 	 */
+	@Test
 	public void test3() {
 		deployBundles("test3"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.ALL_VISIBILITIES, false, null);
@@ -94,6 +101,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	/**
 	 * Changing EEs
 	 */
+	@Test
 	public void test4() {
 		deployBundles("test4"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.ALL_VISIBILITIES, false, null);
@@ -120,6 +128,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	/**
 	 * Changing EEs
 	 */
+	@Test
 	public void test5() {
 		deployBundles("test5"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.ALL_VISIBILITIES, false, null);
@@ -147,32 +156,25 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	/**
 	 * Test null profile
 	 */
+	@Test(expected = IllegalArgumentException.class)
 	public void test6() {
 		deployBundles("test6"); //$NON-NLS-1$
-		try {
-			ApiComparator.compare(getBeforeState(), null, VisibilityModifiers.ALL_VISIBILITIES, false, null);
-			fail("Should not be reached"); //$NON-NLS-1$
-		} catch (IllegalArgumentException e) {
-			// ignore
-		}
+		ApiComparator.compare(getBeforeState(), null, VisibilityModifiers.ALL_VISIBILITIES, false, null);
 	}
 
 	/**
 	 * Test null baseline
 	 */
+	@Test(expected = IllegalArgumentException.class)
 	public void test7() {
 		deployBundles("test7"); //$NON-NLS-1$
-		try {
-			ApiComparator.compare((IApiBaseline)null, getAfterState(), VisibilityModifiers.ALL_VISIBILITIES, false, null);
-			fail("Should not be reached"); //$NON-NLS-1$
-		} catch (IllegalArgumentException e) {
-			// ignore
-		}
+		ApiComparator.compare((IApiBaseline) null, getAfterState(), VisibilityModifiers.ALL_VISIBILITIES, false, null);
 	}
 
 	/**
 	 * Test null components
 	 */
+	@Test
 	public void test8() {
 		deployBundles("test8"); //$NON-NLS-1$
 		IApiBaseline beforeState = getBeforeState();
@@ -410,6 +412,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	/**
 	 * Removing EEs
 	 */
+	@Test
 	public void test9() {
 		deployBundles("test9"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.ALL_VISIBILITIES, false, null);
@@ -435,6 +438,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	/**
 	 * Removed api packages - bug 225473
 	 */
+	@Test
 	public void test10() {
 		deployBundles("test10"); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(getBeforeState(), getAfterState(), VisibilityModifiers.API, false, null);
@@ -455,6 +459,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	/**
 	 * Add type in non API package
 	 */
+	@Test
 	public void test11() {
 		deployBundles("test11"); //$NON-NLS-1$
 		IApiBaseline beforeState = getBeforeState();
@@ -477,6 +482,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	/**
 	 * Remove internal type in non API package
 	 */
+	@Test
 	public void test12() {
 		deployBundles("test12"); //$NON-NLS-1$
 		IApiBaseline beforeState = getBeforeState();
@@ -498,6 +504,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	/**
 	 * Change major version
 	 */
+	@Test
 	public void test13() {
 		deployBundles("test13"); //$NON-NLS-1$
 		IApiBaseline beforeState = getBeforeState();
@@ -519,6 +526,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	/**
 	 * Change minor version
 	 */
+	@Test
 	public void test14() {
 		deployBundles("test14"); //$NON-NLS-1$
 		IApiBaseline beforeState = getBeforeState();
@@ -541,6 +549,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	/**
 	 * Test if diff is returned using org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator.compare(IApiComponent, IApiBaseline, int, boolean)
 	 */
+	@Test
 	public void test15() {
 		deployBundles("test15"); //$NON-NLS-1$
 		IApiBaseline beforeState = getBeforeState();
@@ -555,6 +564,7 @@ public class BundlesDeltaTests extends DeltaTestSetup {
 	/**
 	 * Test if diff is returned using org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator.compare(IApiComponent, IApiBaseline, int, boolean)
 	 */
+	@Test
 	public void test16() {
 		deployBundles("test16"); //$NON-NLS-1$
 		IApiBaseline beforeState = getBeforeState();

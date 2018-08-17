@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.util.tests;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 
 import org.eclipse.core.runtime.CoreException;
@@ -22,11 +25,13 @@ import org.eclipse.pde.api.tools.tests.AbstractApiTest;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TargetAsBaselineTests extends AbstractApiTest {
 	ITargetDefinition definition;
 
-	@Override
+	@Before
 	public void setUp() {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-plugins"); //$NON-NLS-1$
@@ -45,6 +50,7 @@ public class TargetAsBaselineTests extends AbstractApiTest {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testLoadTarget() throws CoreException {
 		IApiBaseline baseline = ApiModelFactory.newApiBaselineFromTarget(getClass().getName(), definition, null);
 		assertTrue("This baseline should appear to be from a target definition", ApiModelFactory.isDerivedFromTarget(baseline)); //$NON-NLS-1$
@@ -57,6 +63,7 @@ public class TargetAsBaselineTests extends AbstractApiTest {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testCheckStale() throws CoreException {
 		IApiBaseline baseline = ApiModelFactory.newApiBaselineFromTarget(getClass().getName(), definition, null);
 		assertTrue(ApiModelFactory.isDerivedFromTarget(baseline));

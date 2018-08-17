@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.anttasks.tests;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.Properties;
 
@@ -19,6 +22,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -31,6 +35,7 @@ public class ApiToolingCompareAntTaskTests extends AntRunnerTestCase {
 		return "apitooling.compare/"; //$NON-NLS-1$
 	}
 
+	@Test
 	public void test1() throws Exception {
 		runTaskAndVerify("test1"); //$NON-NLS-1$
 	}
@@ -65,10 +70,12 @@ public class ApiToolingCompareAntTaskTests extends AntRunnerTestCase {
 		assertTrue("org.example.rcpmail should be present", found); //$NON-NLS-1$
 	}
 
+	@Test
 	public void test2() throws Exception {
 		runTaskAndVerify("test2"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void test3() throws Exception {
 		runTaskAndVerify("test3"); //$NON-NLS-1$
 	}

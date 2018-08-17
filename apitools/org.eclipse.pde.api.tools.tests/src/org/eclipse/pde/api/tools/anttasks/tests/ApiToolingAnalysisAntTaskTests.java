@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.anttasks.tests;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Properties;
 
 import org.eclipse.core.resources.IFolder;
+import org.junit.Test;
 
 public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 	@Override
@@ -25,6 +30,7 @@ public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 		return super.newTest(getTestResourcesFolder() + resources);
 	}
 
+	@Test
 	public void test1() throws Exception {
 		IFolder buildFolder = newTest("test1"); //$NON-NLS-1$
 		String buildXMLPath = buildFolder.getFile("build.xml").getLocation().toOSString(); //$NON-NLS-1$
@@ -39,6 +45,7 @@ public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 		assertTrue("report.xml file must be there", folder.getFile("report.xml").exists()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Test
 	public void test2() throws Exception {
 		IFolder buildFolder = newTest("test2"); //$NON-NLS-1$
 		String buildXMLPath = buildFolder.getFile("build.xml").getLocation().toOSString(); //$NON-NLS-1$
@@ -53,6 +60,7 @@ public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 		}
 	}
 
+	@Test
 	public void test3() throws Exception {
 		IFolder buildFolder = newTest("test3"); //$NON-NLS-1$
 		String buildXMLPath = buildFolder.getFile("build.xml").getLocation().toOSString(); //$NON-NLS-1$
@@ -67,6 +75,7 @@ public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 		}
 	}
 
+	@Test
 	public void test4() throws Exception {
 		IFolder buildFolder = newTest("test4"); //$NON-NLS-1$
 		String buildXMLPath = buildFolder.getFile("build.xml").getLocation().toOSString(); //$NON-NLS-1$
@@ -84,6 +93,7 @@ public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 	/**
 	 * Test for with just Exclude list
 	 */
+	@Test
 	public void test5() throws Exception {
 		IFolder buildFolder = newTest("test5"); //$NON-NLS-1$
 		String buildXMLPath = buildFolder.getFile("build.xml").getLocation().toOSString(); //$NON-NLS-1$
@@ -103,6 +113,7 @@ public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 	/**
 	 * Test for with just Include list
 	 */
+	@Test
 	public void test6() throws Exception {
 		IFolder buildFolder = newTest("test6"); //$NON-NLS-1$
 		String buildXMLPath = buildFolder.getFile("build.xml").getLocation().toOSString(); //$NON-NLS-1$
@@ -120,6 +131,7 @@ public class ApiToolingAnalysisAntTaskTests extends AntRunnerTestCase {
 	/**
 	 * Test for with both Exclude and Include list
 	 */
+	@Test
 	public void test7() throws Exception {
 		IFolder buildFolder = newTest("test7"); //$NON-NLS-1$
 		String buildXMLPath = buildFolder.getFile("build.xml").getLocation().toOSString(); //$NON-NLS-1$

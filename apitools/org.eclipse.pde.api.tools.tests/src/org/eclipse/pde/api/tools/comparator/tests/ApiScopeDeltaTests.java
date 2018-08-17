@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.comparator.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
@@ -24,15 +29,12 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiScope;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.junit.Test;
 
 /**
  * Delta tests using api scope
  */
 public class ApiScopeDeltaTests extends DeltaTestSetup {
-
-	public ApiScopeDeltaTests(String name) {
-		super(name);
-	}
 
 	@Override
 	public String getTestRoot() {
@@ -42,6 +44,7 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 	/**
 	 * Use api scope
 	 */
+	@Test
 	public void test1() throws CoreException {
 		deployBundles("test1"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -68,6 +71,7 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 	/**
 	 * Use api scope
 	 */
+	@Test
 	public void test2() throws CoreException {
 		deployBundles("test2"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -95,6 +99,7 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 	/**
 	 * Use api scope
 	 */
+	@Test
 	public void test3() throws CoreException {
 		deployBundles("test3"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -105,8 +110,8 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
 		ApiScope scope = new ApiScope();
 		IApiComponent[] apiComponents = after.getApiComponents();
-		for (int i = 0, max = apiComponents.length; i < max; i++) {
-			IApiTypeContainer[] apiTypeContainers = apiComponents[i].getApiTypeContainers();
+		for (IApiComponent apiComponent : apiComponents) {
+			IApiTypeContainer[] apiTypeContainers = apiComponent.getApiTypeContainers();
 			for (int j = 0; j < apiTypeContainers.length; j++) {
 				IApiTypeContainer iApiTypeContainer = apiTypeContainers[j];
 				scope.addElement(iApiTypeContainer);
@@ -126,6 +131,7 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 	/**
 	 * Use api scope
 	 */
+	@Test
 	public void test4() throws CoreException {
 		deployBundles("test4"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -137,8 +143,8 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 		ApiScope scope = new ApiScope();
 		IApiComponent[] apiComponents = after.getApiComponents();
 		IApiTypeRoot root = null;
-		for (int i = 0, max = apiComponents.length; i < max; i++) {
-			IApiTypeRoot findTypeRoot = apiComponents[i].findTypeRoot("p.X"); //$NON-NLS-1$
+		for (IApiComponent apiComponent : apiComponents) {
+			IApiTypeRoot findTypeRoot = apiComponent.findTypeRoot("p.X"); //$NON-NLS-1$
 			if (findTypeRoot != null) {
 				root = findTypeRoot;
 				break;
@@ -161,6 +167,7 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 	/**
 	 * Use api scope
 	 */
+	@Test
 	public void test5() throws CoreException {
 		deployBundles("test5"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -174,8 +181,8 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 		assertEquals("Not empty", 0, apiElement.length); //$NON-NLS-1$
 		IApiComponent[] apiComponents = after.getApiComponents();
 		IApiTypeRoot root = null;
-		for (int i = 0, max = apiComponents.length; i < max; i++) {
-			IApiTypeRoot findTypeRoot = apiComponents[i].findTypeRoot("p.X"); //$NON-NLS-1$
+		for (IApiComponent apiComponent : apiComponents) {
+			IApiTypeRoot findTypeRoot = apiComponent.findTypeRoot("p.X"); //$NON-NLS-1$
 			if (findTypeRoot != null) {
 				root = findTypeRoot;
 				break;
@@ -199,6 +206,7 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 	/**
 	 * Use api scope
 	 */
+	@Test
 	public void test6() throws CoreException {
 		deployBundles("test6"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -217,6 +225,7 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 	/**
 	 * Use api scope
 	 */
+	@Test
 	public void test7() throws CoreException {
 		deployBundles("test7"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();

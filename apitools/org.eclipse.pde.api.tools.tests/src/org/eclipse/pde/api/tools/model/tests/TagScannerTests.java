@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -33,10 +39,9 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
+import org.junit.Test;
 
 import com.ibm.icu.text.MessageFormat;
-
-import junit.framework.TestCase;
 
 /**
  * Class tests that the tag scanner for the API tools correctly scans source for
@@ -44,7 +49,7 @@ import junit.framework.TestCase;
  *
  * @since 1.0.0
  */
-public class TagScannerTests extends TestCase {
+public class TagScannerTests {
 
 	private static final IPath SRC_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-source"); //$NON-NLS-1$
 	private static final IPath BIN_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-classes"); //$NON-NLS-1$
@@ -133,6 +138,7 @@ public class TagScannerTests extends TestCase {
 	 * resolved if a backing class file is provided (via an
 	 * {@link IApiTypeContainer})
 	 */
+	@Test
 	public void testBug212276() {
 		DirectoryApiTypeContainer container = new DirectoryApiTypeContainer(null, BIN_LOC.toOSString());
 		IApiDescription manifest = newDescription();
@@ -160,6 +166,7 @@ public class TagScannerTests extends TestCase {
 	 * found and is required to resolve a method signature, an exception is
 	 * thrown.
 	 */
+	@Test
 	public void testMissingClassfile() {
 		IApiTypeContainer container = new IApiTypeContainer() {
 			@Override
@@ -228,6 +235,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that a source file with one type which has javadoc tags is scanned
 	 * correctly. Scans the file <code>TestClass1</code>
 	 */
+	@Test
 	public void testSingleTypeDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestClass1.java", manifest); //$NON-NLS-1$
@@ -242,6 +250,7 @@ public class TagScannerTests extends TestCase {
 	 * contains one inner static type with tags is scanned correctly. Scans the
 	 * file <code>TestClass2</code>
 	 */
+	@Test
 	public void testSingleInnerStaticTypeDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestClass2.java", manifest); //$NON-NLS-1$
@@ -260,6 +269,7 @@ public class TagScannerTests extends TestCase {
 	 * contains one inner static type with tags is scanned correctly. Scans the
 	 * file <code>TestClass3</code>
 	 */
+	@Test
 	public void testSingleInnerTypeDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestClass3.java", manifest); //$NON-NLS-1$
@@ -277,6 +287,7 @@ public class TagScannerTests extends TestCase {
 	 * contains more than one nested inner static type with tags is scanned
 	 * correctly. Scans the file <code>TestClass4</code>
 	 */
+	@Test
 	public void testMultiNestedInnerTypeDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestClass4.java", manifest); //$NON-NLS-1$
@@ -297,6 +308,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that a source file with more than one type which has javadoc tags
 	 * Scans the file <code>TestClass5</code>
 	 */
+	@Test
 	public void testMultiTypeDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestClass5.java", manifest); //$NON-NLS-1$
@@ -316,6 +328,7 @@ public class TagScannerTests extends TestCase {
 	 * contains more than one inner type with tags is scanned correctly. Scans
 	 * the file <code>TestClass6</code>
 	 */
+	@Test
 	public void testMultiInnerTypeDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestClass6.java", manifest); //$NON-NLS-1$
@@ -344,6 +357,7 @@ public class TagScannerTests extends TestCase {
 	 *
 	 * @since 1.0.400
 	 */
+	@Test
 	public void testMultiInnerTypeAnnotations() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestClass8.java", manifest); //$NON-NLS-1$
@@ -370,6 +384,7 @@ public class TagScannerTests extends TestCase {
 	 * and contains more than one inner type with tags is scanned correctly.
 	 * Scans the file <code>TestClass7</code>
 	 */
+	@Test
 	public void testMultiTypeMultiInnerTypeDefatulPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestClass7.java", manifest); //$NON-NLS-1$
@@ -409,6 +424,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that a source file with one interface declaration is scanned
 	 * correctly. Scans the file <code>TestInterface1</code>
 	 */
+	@Test
 	public void testInterfaceDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestInterface1.java", manifest); //$NON-NLS-1$
@@ -422,6 +438,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that a source file with more than one interface declaration is
 	 * scanned correctly. Scans the file <code>TestInterface2</code>
 	 */
+	@Test
 	public void testMultiInterfaceDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestInterface2.java", manifest); //$NON-NLS-1$
@@ -441,6 +458,7 @@ public class TagScannerTests extends TestCase {
 	 * nested interface is scanned correctly. Scans the file
 	 * <code>TestInterface3</code>
 	 */
+	@Test
 	public void testSingleInnerInterfaceDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestInterface3.java", manifest); //$NON-NLS-1$
@@ -459,6 +477,7 @@ public class TagScannerTests extends TestCase {
 	 * interfaces are scanned correctly. Scans the file
 	 * <code>TestInterface4</code>
 	 */
+	@Test
 	public void testMultiInnerInterfaceDefaultPackage() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestInterface4.java", manifest); //$NON-NLS-1$
@@ -485,6 +504,7 @@ public class TagScannerTests extends TestCase {
 	 *
 	 * @since 1.0.400
 	 */
+	@Test
 	public void testMultiInnerInterfaceAnnotations() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestInterface5.java", manifest); //$NON-NLS-1$
@@ -508,6 +528,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that source tags are added/collected properly for fields in a base
 	 * public class. Scans the file <code>TestField1</code>
 	 */
+	@Test
 	public void testFieldBaseClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField1.java", manifest); //$NON-NLS-1$
@@ -524,6 +545,7 @@ public class TagScannerTests extends TestCase {
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=434444
 	 */
+	@Test
 	public void testFieldBaseClassInheritedNotSupported() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField7.java", manifest); //$NON-NLS-1$
@@ -539,6 +561,7 @@ public class TagScannerTests extends TestCase {
 	 *
 	 * @since 1.0.400
 	 */
+	@Test
 	public void testFieldNoReference() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField10.java", manifest); //$NON-NLS-1$
@@ -555,6 +578,7 @@ public class TagScannerTests extends TestCase {
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=434444
 	 */
+	@Test
 	public void testFieldBaseClassInheritedNotSupported2() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField8.java", manifest); //$NON-NLS-1$
@@ -572,6 +596,7 @@ public class TagScannerTests extends TestCase {
 	 *
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=434444
 	 */
+	@Test
 	public void testFieldBaseClassInheritedNotSupported3() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField11.java", manifest); //$NON-NLS-1$
@@ -585,6 +610,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that source tags are added/collected properly for fields in an
 	 * inner class. Scans the file <code>TestField2</code>
 	 */
+	@Test
 	public void testFieldInnerClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField2.java", manifest); //$NON-NLS-1$
@@ -601,6 +627,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that source tags are added/collected properly for fields in a
 	 * static inner class. Scans the file <code>TestField3</code>
 	 */
+	@Test
 	public void testFieldStaticInnerClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField3.java", manifest); //$NON-NLS-1$
@@ -618,6 +645,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that source tags are added/collected properly for fields in
 	 * multiple inner classes. Scans the file <code>TestField4</code>
 	 */
+	@Test
 	public void testFieldMultiInnerClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField4.java", manifest); //$NON-NLS-1$
@@ -642,6 +670,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that source tags are added/collected properly for fields in an
 	 * outer class. Scans the file <code>TestField5</code>
 	 */
+	@Test
 	public void testFieldOuterClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField5.java", manifest); //$NON-NLS-1$
@@ -653,6 +682,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that source tags are added/collected properly for fields in an
 	 * anonymous class. Scans the file <code>TestField6</code>
 	 */
+	@Test
 	public void testFieldAnonymousClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField6.java", manifest); //$NON-NLS-1$
@@ -666,6 +696,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that source tags are added/collected properly for methods in a base
 	 * public class. Scans the file <code>TestMethod1</code>
 	 */
+	@Test
 	public void testMethodBaseClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod1.java", manifest); //$NON-NLS-1$
@@ -687,6 +718,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that annotations are added/collected properly for methods in a base
 	 * public class. Scans the file <code>TestMethod22</code>
 	 */
+	@Test
 	public void testMethodBaseClassAnnotations() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod22.java", manifest); //$NON-NLS-1$
@@ -709,6 +741,7 @@ public class TagScannerTests extends TestCase {
 	 * public class with a single Object parameter. Scans the file
 	 * <code>TestMethod7</code>
 	 */
+	@Test
 	public void testMethodSingleParam() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod7.java", manifest); //$NON-NLS-1$
@@ -723,6 +756,7 @@ public class TagScannerTests extends TestCase {
 	 * public class with a single primitive parameter. Scans the file
 	 * <code>TestMethod8</code>
 	 */
+	@Test
 	public void testMethodSinglePrimitiveParam() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod8.java", manifest); //$NON-NLS-1$
@@ -737,6 +771,7 @@ public class TagScannerTests extends TestCase {
 	 * public class with primitive parameters. Scans the file
 	 * <code>TestMethod9</code>
 	 */
+	@Test
 	public void testMethodPrimitiveParams() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod9.java", manifest); //$NON-NLS-1$
@@ -756,6 +791,7 @@ public class TagScannerTests extends TestCase {
 	 * public class with Object parameters. Scans the file
 	 * <code>TestMethod10</code>
 	 */
+	@Test
 	public void testMethodObjectParams() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod10.java", manifest); //$NON-NLS-1$
@@ -774,6 +810,7 @@ public class TagScannerTests extends TestCase {
 	 * public class with primitive array parameters. Scans the file
 	 * <code>TestMethod11</code>
 	 */
+	@Test
 	public void testMethodPrimitiveArrayParams() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod11.java", manifest); //$NON-NLS-1$
@@ -792,6 +829,7 @@ public class TagScannerTests extends TestCase {
 	 * public class with Object array parameters. Scans the file
 	 * <code>TestMethod12</code>
 	 */
+	@Test
 	public void testMethodObjectArrayParams() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod12.java", manifest); //$NON-NLS-1$
@@ -810,6 +848,7 @@ public class TagScannerTests extends TestCase {
 	 * public class with a mix of parameters. Scans the file
 	 * <code>TestMethod13</code>
 	 */
+	@Test
 	public void testMethodMixedParams() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod13.java", manifest); //$NON-NLS-1$
@@ -828,6 +867,7 @@ public class TagScannerTests extends TestCase {
 	 * public class with an Object return type. Scans the file
 	 * <code>TestMethod14</code>
 	 */
+	@Test
 	public void testMethodObjectReturn() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod14.java", manifest); //$NON-NLS-1$
@@ -846,6 +886,7 @@ public class TagScannerTests extends TestCase {
 	 * public class with a primitive return type. Scans the file
 	 * <code>TestMethod15</code>
 	 */
+	@Test
 	public void testMethodPrimitiveReturn() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod15.java", manifest); //$NON-NLS-1$
@@ -864,6 +905,7 @@ public class TagScannerTests extends TestCase {
 	 * public class with a primitive array return type. Scans the file
 	 * <code>TestMethod17</code>
 	 */
+	@Test
 	public void testMethodPrimitiveArrayReturn() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod17.java", manifest); //$NON-NLS-1$
@@ -882,6 +924,7 @@ public class TagScannerTests extends TestCase {
 	 * public class with an Object array return type. Scans the file
 	 * <code>TestMethod16</code>
 	 */
+	@Test
 	public void testMethodObjectArrayReturn() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod16.java", manifest); //$NON-NLS-1$
@@ -899,6 +942,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that source tags are added/collected properly for methods in an
 	 * inner class. Scans the file <code>TestMethod2</code>
 	 */
+	@Test
 	public void testMethodInnerClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod2.java", manifest); //$NON-NLS-1$
@@ -915,6 +959,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that source tags are added/collected properly for methods in a
 	 * static inner class. Scans the file <code>TestMethod3</code>
 	 */
+	@Test
 	public void testMethodStaticInnerClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod3.java", manifest); //$NON-NLS-1$
@@ -936,6 +981,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that source tags are added/collected properly for methods in
 	 * multiple inner classes. Scans the file <code>TestMethod4</code>
 	 */
+	@Test
 	public void testMethodMultiInnerClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod4.java", manifest); //$NON-NLS-1$
@@ -984,6 +1030,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that source tags are added/collected properly for methods in an
 	 * outer class. Scans the file <code>TestMethod5</code>
 	 */
+	@Test
 	public void testMethodOuterClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod5.java", manifest); //$NON-NLS-1$
@@ -1002,6 +1049,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that source tags are added/collected properly for methods in an
 	 * anonymous class. Scans the file <code>TestMethod6</code>
 	 */
+	@Test
 	public void testMethodAnonymousClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod6.java", manifest); //$NON-NLS-1$
@@ -1015,6 +1063,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that a method properly inherits restrictions. Restrictions are not
 	 * inherited. Scans the file <code>TestMethod18</code>
 	 */
+	@Test
 	public void testMethodInheritValidRestriction() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod18.java", manifest); //$NON-NLS-1$
@@ -1034,6 +1083,7 @@ public class TagScannerTests extends TestCase {
 	 * case the parent tags cannot be inherited, expected result is 'no
 	 * restriction' Scans the file <code>TestMethod19</code>
 	 */
+	@Test
 	public void testMethodInheritInvalidRestrictionClass() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod19.java", manifest); //$NON-NLS-1$
@@ -1053,6 +1103,7 @@ public class TagScannerTests extends TestCase {
 	 * case the parent tags cannot be inherited, expected result is 'no
 	 * restriction' Scans the file <code>TestField20</code>
 	 */
+	@Test
 	public void testMethodInheritInvalidRestrictionInterface() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestMethod20.java", manifest); //$NON-NLS-1$
@@ -1070,6 +1121,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that a restriction on a @noreference constructor inside an enum
 	 * class. https://bugs.eclipse.org/bugs/show_bug.cgi?id=253055
 	 */
+	@Test
 	public void testEnumMethodWithNoReference() {
 		IApiDescription manifest = newDescription();
 		Map<String, String> options = JavaCore.getDefaultOptions();
@@ -1083,6 +1135,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that invalid Javadoc tags do not get leaked into the API
 	 * description https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
 	 */
+	@Test
 	public void testInterfaceWithBadTags() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/InvalidTagScanInterface.java", manifest); //$NON-NLS-1$
@@ -1095,6 +1148,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that invalid Javadoc tags do not get leaked into the API
 	 * description https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
 	 */
+	@Test
 	public void testClassWithBadTags1() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/InvalidTagScanClass1.java", manifest); //$NON-NLS-1$
@@ -1107,6 +1161,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that invalid Javadoc tags do not get leaked into the API
 	 * description https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
 	 */
+	@Test
 	public void testClassWithBadTags2() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/InvalidTagScanClass2.java", manifest); //$NON-NLS-1$
@@ -1119,6 +1174,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that invalid Javadoc tags do not get leaked into the API
 	 * description https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
 	 */
+	@Test
 	public void testClassWithBadTags3() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/InvalidTagScanClass3.java", manifest); //$NON-NLS-1$
@@ -1131,6 +1187,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that invalid Javadoc tags do not get leaked into the API
 	 * description https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
 	 */
+	@Test
 	public void testMethodWithBadTags1() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/InvalidTagScanMethod1.java", manifest); //$NON-NLS-1$
@@ -1142,6 +1199,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that invalid Javadoc tags do not get leaked into the API
 	 * description https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
 	 */
+	@Test
 	public void testMethodWithBadTags2() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/InvalidTagScanMethod2.java", manifest); //$NON-NLS-1$
@@ -1153,6 +1211,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that invalid Javadoc tags do not get leaked into the API
 	 * description https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
 	 */
+	@Test
 	public void testMethodWithBadTags3() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/InvalidTagScanMethod3.java", manifest); //$NON-NLS-1$
@@ -1164,6 +1223,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that invalid Javadoc tags do not get leaked into the API
 	 * description https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
 	 */
+	@Test
 	public void testFieldWithBadTags1() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/InvalidTagScanField1.java", manifest); //$NON-NLS-1$
@@ -1175,6 +1235,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that invalid Javadoc tags do not get leaked into the API
 	 * description https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
 	 */
+	@Test
 	public void testFieldWithBadTags2() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/InvalidTagScanField2.java", manifest); //$NON-NLS-1$
@@ -1186,6 +1247,7 @@ public class TagScannerTests extends TestCase {
 	 * Tests that invalid Javadoc tags do not get leaked into the API
 	 * description https://bugs.eclipse.org/bugs/show_bug.cgi?id=255222
 	 */
+	@Test
 	public void testFieldWithBadTags3() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/InvalidTagScanField3.java", manifest); //$NON-NLS-1$
@@ -1199,6 +1261,7 @@ public class TagScannerTests extends TestCase {
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=427495
 	 */
+	@Test
 	public void testJava8InterfaceMethod1() throws Exception {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestJava8DefaultMethod1.java", manifest); //$NON-NLS-1$
@@ -1216,6 +1279,7 @@ public class TagScannerTests extends TestCase {
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=427495
 	 */
+	@Test
 	public void testJava8InterfaceMethod2() throws Exception {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestJava8DefaultMethod2.java", manifest); //$NON-NLS-1$
@@ -1228,11 +1292,13 @@ public class TagScannerTests extends TestCase {
 	}
 
 	/**
-	 * Tests default methods annotate API descriptions with @noreference and @nooverride
+	 * Tests default methods annotate API descriptions with @noreference
+	 * and @nooverride
 	 *
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=427495
 	 */
+	@Test
 	public void testJava8InterfaceMethod3() throws Exception {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestJava8DefaultMethod3.java", manifest); //$NON-NLS-1$
@@ -1252,6 +1318,7 @@ public class TagScannerTests extends TestCase {
 	 * @throws Exception
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=484268
 	 */
+	@Test
 	public void testGenericMethodWithBounds() throws Exception {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestGenericMethod1.java", manifest); //$NON-NLS-1$

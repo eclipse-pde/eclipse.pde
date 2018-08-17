@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.anttasks.tests;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;
 import java.util.Properties;
-
-import junit.framework.TestCase;
 
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.IFolder;
@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
-public abstract class AntRunnerTestCase extends TestCase {
+public abstract class AntRunnerTestCase {
 	public static final String PROJECT_NAME = "pde.apitools"; //$NON-NLS-1$
 
 	private static final String BUILD_EXCEPTION_CLASS_NAME = "org.apache.tools.ant.BuildException"; //$NON-NLS-1$
@@ -162,7 +162,7 @@ public abstract class AntRunnerTestCase extends TestCase {
 			while (e.hasMoreElements()) {
 				String key = (String) e.nextElement();
 				String value = additionalProperties.getProperty(key);
-				if (value.length() > 0) {
+				if (!value.isEmpty()) {
 					args[idx++] = "-D" + key + "=" + additionalProperties.getProperty(key); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					args[idx++] = ""; //$NON-NLS-1$
@@ -170,8 +170,8 @@ public abstract class AntRunnerTestCase extends TestCase {
 			}
 		}
 
-		for (int i = 0; i < targets.length; i++) {
-			args[idx++] = targets[i];
+		for (String target : targets) {
+			args[idx++] = target;
 		}
 		return args;
 	}

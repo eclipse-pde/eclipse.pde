@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor;
@@ -18,27 +22,19 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescript
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests for element descriptors.
  *
  * @since 1.0.0
  */
-public class ElementDescriptorTests extends TestCase {
-
-	public ElementDescriptorTests() {
-		super();
-	}
-
-	public ElementDescriptorTests(String name) {
-		super(name);
-	}
+public class ElementDescriptorTests {
 
 	/**
 	 * Tests equality of default package
 	 */
+	@Test
 	public void testDefaultPackageEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor(""); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor(""); //$NON-NLS-1$
@@ -49,6 +45,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests non-equality of different packages
 	 */
+	@Test
 	public void testPackageNonEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("d.e.f"); //$NON-NLS-1$
@@ -58,6 +55,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests equality of non-default package
 	 */
+	@Test
 	public void testNonDefaultPackageEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
@@ -68,6 +66,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests equality of types in the default package
 	 */
+	@Test
 	public void testTypeDefaultPackageEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor(""); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor(""); //$NON-NLS-1$
@@ -79,6 +78,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests equality of inner types in the default package
 	 */
+	@Test
 	public void testInnerTypeDefaultPackageEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor(""); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor(""); //$NON-NLS-1$
@@ -93,6 +93,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests equality of inner types in non-default package
 	 */
+	@Test
 	public void testInnerTypeNonDefaultPackageEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
@@ -106,6 +107,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests package retrieval
 	 */
+	@Test
 	public void testInnerTypePackage() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IReferenceTypeDescriptor type1 = pkg1.getType("A"); //$NON-NLS-1$
@@ -116,6 +118,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests non-equality of inner types in non-default package
 	 */
+	@Test
 	public void testInnerTypeNonDefaultPackageNonEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("d.e.f"); //$NON-NLS-1$
@@ -129,6 +132,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests equality of inner types in non-default package
 	 */
+	@Test
 	public void testDeepInnerTypeNonDefaultPackageEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
@@ -144,6 +148,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests non-equality of different types
 	 */
+	@Test
 	public void testTypeNonEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("d.e.f"); //$NON-NLS-1$
@@ -155,6 +160,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests equality of types in non-default package
 	 */
+	@Test
 	public void testTypeNonDefaultPackageEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
@@ -166,6 +172,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests package retrieval
 	 */
+	@Test
 	public void testTypePackage() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IReferenceTypeDescriptor type1 = pkg1.getType("A"); //$NON-NLS-1$
@@ -175,6 +182,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests equality of fields
 	 */
+	@Test
 	public void testFieldEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
@@ -188,6 +196,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests package retrieval
 	 */
+	@Test
 	public void testFieldPackage() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IReferenceTypeDescriptor type1 = pkg1.getType("A"); //$NON-NLS-1$
@@ -198,6 +207,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests non-equality of fields
 	 */
+	@Test
 	public void testFieldNonEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
@@ -211,6 +221,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests equality of methods without parameters
 	 */
+	@Test
 	public void testMethodNoParamsEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
@@ -224,6 +235,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests equality of methods with parameters
 	 */
+	@Test
 	public void testMethodParamsEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
@@ -239,6 +251,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests non-equality of methods with parameters= types
 	 */
+	@Test
 	public void testMethodParamsNonEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
@@ -254,6 +267,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests non-equality of methods with different number of parameters
 	 */
+	@Test
 	public void testMethodDiffParamsNonEq() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IPackageDescriptor pkg2 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
@@ -269,6 +283,7 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests package retrieval
 	 */
+	@Test
 	public void testMethodPackage() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		IReferenceTypeDescriptor type1 = pkg1.getType("A"); //$NON-NLS-1$
@@ -280,12 +295,14 @@ public class ElementDescriptorTests extends TestCase {
 	/**
 	 * Tests reference type signature generation
 	 */
+	@Test
 	public void testTypeSignature() {
 		IPackageDescriptor pkg1 = Factory.packageDescriptor("java.lang"); //$NON-NLS-1$
 		IReferenceTypeDescriptor type1 = pkg1.getType("Object"); //$NON-NLS-1$
 		assertEquals("Wrong signature", "Ljava.lang.Object;", type1.getSignature()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Test
 	public void testComponent() {
 		IComponentDescriptor descriptor = Factory.componentDescriptor("com.mycomponent"); //$NON-NLS-1$
 		assertEquals("Wrong id", "com.mycomponent", descriptor.getId()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -294,6 +311,7 @@ public class ElementDescriptorTests extends TestCase {
 		assertEquals("Wrong element type", IElementDescriptor.COMPONENT, descriptor.getElementType()); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testComponentVersion() {
 		IComponentDescriptor descriptor = Factory.componentDescriptor("com.mycomponent", "1.2.3"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("Wrong version", "1.2.3", descriptor.getVersion()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -305,6 +323,7 @@ public class ElementDescriptorTests extends TestCase {
 		assertEquals(descriptor, descriptor2);
 	}
 
+	@Test
 	public void testComponentsNotEqual() {
 		IComponentDescriptor descriptor = Factory.componentDescriptor("com.mycomponent", "1.2.3"); //$NON-NLS-1$ //$NON-NLS-2$
 		IComponentDescriptor descriptor2 = Factory.componentDescriptor("com.mycomponent", "2.2.3"); //$NON-NLS-1$ //$NON-NLS-2$

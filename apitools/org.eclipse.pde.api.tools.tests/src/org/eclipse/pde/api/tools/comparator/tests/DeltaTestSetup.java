@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.comparator.tests;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,10 +28,10 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
+import org.junit.After;
+import org.junit.Before;
 
-import junit.framework.TestCase;
-
-public abstract class DeltaTestSetup extends TestCase {
+public abstract class DeltaTestSetup {
 	protected static final String AFTER = "after"; //$NON-NLS-1$
 
 	protected static final String BEFORE = "before"; //$NON-NLS-1$
@@ -46,10 +51,6 @@ public abstract class DeltaTestSetup extends TestCase {
 
 	static {
 		WORKSPACE_ROOT = TestSuiteHelper.getPluginDirectoryPath().append(WORKSPACE_NAME);
-	}
-
-	public DeltaTestSetup(String name) {
-		super(name);
 	}
 
 	private void collect0(IDelta delta, List<IDelta> collect) {
@@ -96,8 +97,7 @@ public abstract class DeltaTestSetup extends TestCase {
 		});
 		String unknownMessageStart = BuilderMessages.ApiProblemFactory_problem_message_not_found;
 		unknownMessageStart = unknownMessageStart.substring(0, unknownMessageStart.lastIndexOf('{'));
-		for (int i = 0, max = result.length; i < max; i++) {
-			IDelta leafDelta = result[i];
+		for (IDelta leafDelta : result) {
 			String message = leafDelta.getMessage();
 			assertNotNull("No message", message); //$NON-NLS-1$
 			if (DEBUG) {
@@ -200,15 +200,14 @@ public abstract class DeltaTestSetup extends TestCase {
 
 	public abstract String getTestRoot();
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		// create workspace root
 		new File(WORKSPACE_ROOT.toOSString()).mkdirs();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		//clean up
 		if(this.after != null) {
 			this.after.dispose();
@@ -218,6 +217,5 @@ public abstract class DeltaTestSetup extends TestCase {
 		}
 		// remove workspace root
 		assertTrue(TestSuiteHelper.delete(new File(WORKSPACE_ROOT.toOSString())));
-		super.tearDown();
 	}
 }

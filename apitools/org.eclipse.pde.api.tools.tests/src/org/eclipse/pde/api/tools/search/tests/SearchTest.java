@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.search.tests;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.util.HashSet;
@@ -25,15 +27,15 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
 import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * General Search test, which contains utility methods, etc for search tests
  *
  * @since 1.0.1
  */
-public abstract class SearchTest extends TestCase {
+public abstract class SearchTest {
 
 	static final String TEST_SOURCE = "test-search"; //$NON-NLS-1$
 	static final String BASELINE_DIR_NAME = "baseline"; //$NON-NLS-1$
@@ -160,21 +162,19 @@ public abstract class SearchTest extends TestCase {
 		fail(message);
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		TEST_REQUESTOR = new TestRequestor(this);
 		TEST_REPORTER = new TestReporter(this);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		if (this.baseline != null) {
 			this.baseline.dispose();
 		}
 		if (this.scope != null) {
 			this.scope.dispose();
 		}
-		super.tearDown();
 	}
 }

@@ -10,20 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.util.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotNull;
 
 import org.eclipse.pde.api.tools.internal.util.TarException;
+import org.junit.Test;
 
 /**
  * Tests creating {@link org.eclipse.pde.api.tools.internal.util.TarException}s
  *
  * @since 1.0.1
  */
-public class TarExceptionTests extends TestCase {
+public class TarExceptionTests {
 
 	/**
 	 * Creates new {@link TarException}s
 	 */
+	@Test
 	public void testCreateTarExceptions() {
 		TarException exception = new TarException();
 		assertNotNull("should be a new object created", exception); //$NON-NLS-1$

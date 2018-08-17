@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -39,15 +44,14 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests API manifest implementation.
  *
  * @since 1.0.0
  */
-public class ApiDescriptionTests extends TestCase {
+public class ApiDescriptionTests {
 
 	private IApiDescription fManifest = buildManifest();
 
@@ -216,60 +220,39 @@ public class ApiDescriptionTests extends TestCase {
 	/**
 	 * Tests visiting types in the manually created manifest
 	 */
+	@Test
 	public void testVisitTypes() {
 		IApiDescription manifest = buildManifest();
 		doVisitTypes(manifest);
 	}
 
 	/**
-	 * Tests restoring API settings from component XML. These settings are not quite
-	 * as rich as we have in the usual baseline (no notion of SPI package, etc).
+	 * Tests restoring API settings from component XML. These settings are not
+	 * quite as rich as we have in the usual baseline (no notion of SPI package,
+	 * etc).
 	 *
 	 * We expect a component with the following information:
 	 *
-	 * default package: API
-	 * 		class A
-	 * 		class B 		- @noinstantiate
-	 * 			method m1 	- @noextend
-	 * 		class C 		- @noinstantiate @noextend
-	 * 		class D 		- @noreference
-	 * 			field f1 	- @noreference
-	 * 		interface IA
-	 * 		interface IB 	- @noimplement
-	 * package a.b.c: API
-	 * 		class A 		- @noinstantiate @noextend
-	 * 			method m2 	- @noreference
-	 * 		class B
-	 * 		class C			- @noextend
-	 * 		class D 		- @noinstantiate
-	 * 			field f2 	- @noreference
-	 * 		interface IC 	- @noimplement
-	 * 		interface ID
-	 * package a.b.c.spi: API
-	 * 		class SpiA
-	 * 		class SpiB 		- @noextend
-	 * 			method m3
-	 * 		class SpiC 		- @noinstantiate
-	 * 			field f4	- @noreference
-	 * 			method m4	- @noextend
-	 * 		class SpiD 		- @noextend @noinstantiate
-	 * 		class SpiE 		- @noreference
-	 * 			field f3
-	 * 		interface ISpiA
-	 * 		interface ISpiB - @noimplement
-	 * package a.b.c.internal: PRIVATE
-	 * 		class PA
-	 * 		class PB
-	 * 		class PC
-	 * 		class PD
+	 * default package: API class A class B - @noinstantiate method m1
+	 * - @noextend class C - @noinstantiate @noextend class D - @noreference
+	 * field f1 - @noreference interface IA interface IB - @noimplement package
+	 * a.b.c: API class A - @noinstantiate @noextend method m2 - @noreference
+	 * class B class C - @noextend class D - @noinstantiate field f2
+	 * - @noreference interface IC - @noimplement interface ID package
+	 * a.b.c.spi: API class SpiA class SpiB - @noextend method m3 class SpiC
+	 * - @noinstantiate field f4 - @noreference method m4 - @noextend class SpiD
+	 * - @noextend @noinstantiate class SpiE - @noreference field f3 interface
+	 * ISpiA interface ISpiB - @noimplement package a.b.c.internal: PRIVATE
+	 * class PA class PB class PC class PD
 	 *
-	 * package a.b.c.internal has API visibility for component "a.friend"
-	 * class D has SPI visibility for component "a.friend"
+	 * package a.b.c.internal has API visibility for component "a.friend" class
+	 * D has SPI visibility for component "a.friend"
 	 *
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 * @throws CoreException
 	 */
+	@Test
 	public void testRestoreFromXML() throws FileNotFoundException, IOException, CoreException {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-xml"); //$NON-NLS-1$
@@ -382,12 +365,13 @@ public class ApiDescriptionTests extends TestCase {
 	}
 
 	/**
-	 * Reads XML from disk, annotates settings, then persists and re-creates settings
-	 * to ensure we read/write equivalent XML.
+	 * Reads XML from disk, annotates settings, then persists and re-creates
+	 * settings to ensure we read/write equivalent XML.
 	 *
 	 * @throws CoreException
 	 * @throws IOException
 	 */
+	@Test
 	public void testPersistRestoreXML() throws CoreException, IOException {
 		// read XML into API settings
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
@@ -556,6 +540,7 @@ public class ApiDescriptionTests extends TestCase {
 	/**
 	 * Tests visiting packages
 	 */
+	@Test
 	public void testVisitPackages() {
 		ElementDescription defPkg = new ElementDescription(Factory.packageDescriptor(""), VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 		ElementDescription abcPkg = new ElementDescription(Factory.packageDescriptor("a.b.c"), VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
@@ -600,9 +585,11 @@ public class ApiDescriptionTests extends TestCase {
 	}
 
 	/**
-	 * Test for bug 209335, where an element is not in the component map for an {@link ApiDescription},
-	 * and not performing an insertion for missing elements throws an NPE
+	 * Test for bug 209335, where an element is not in the component map for an
+	 * {@link ApiDescription}, and not performing an insertion for missing
+	 * elements throws an NPE
 	 */
+	@Test
 	public void test209335() {
 		String typename = "x.y.z.209335"; //$NON-NLS-1$
 		String packageName = Signatures.getPackageName(typename);
@@ -629,9 +616,10 @@ public class ApiDescriptionTests extends TestCase {
 	}
 
 	/**
-	 * Tests API description: A = API with no restrictions.
-	 * Note that 'A' has not been added to the manifest
+	 * Tests API description: A = API with no restrictions. Note that 'A' has
+	 * not been added to the manifest
 	 */
+	@Test
 	public void testADefPkg() {
 		resolveType("A", VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
@@ -639,6 +627,7 @@ public class ApiDescriptionTests extends TestCase {
 	/**
 	 * Tests API description: B = API with no instantiate.
 	 */
+	@Test
 	public void testBDefPkg() {
 		resolveType("B", VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
 	}
@@ -646,6 +635,7 @@ public class ApiDescriptionTests extends TestCase {
 	/**
 	 * Tests API description: C = API with no instantiate, no subclass.
 	 */
+	@Test
 	public void testCDefPkg() {
 		resolveType("C", VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
 	}
@@ -653,14 +643,16 @@ public class ApiDescriptionTests extends TestCase {
 	/**
 	 * Tests API description: D = API with no reference.
 	 */
+	@Test
 	public void testDDefPkg() {
 		resolveType("D", VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$
 	}
 
 	/**
-	 * Tests API description: IA = API with no restrictions.
-	 * Note that this type is not explicitly in the manifest.
+	 * Tests API description: IA = API with no restrictions. Note that this type
+	 * is not explicitly in the manifest.
 	 */
+	@Test
 	public void testIADefPkg() {
 		resolveType("IA", VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
@@ -668,6 +660,7 @@ public class ApiDescriptionTests extends TestCase {
 	/**
 	 * Tests API description: IB = API with no implement.
 	 */
+	@Test
 	public void testIBDefPkg() {
 		resolveType("IB", VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT); //$NON-NLS-1$
 	}
@@ -675,14 +668,16 @@ public class ApiDescriptionTests extends TestCase {
 	/**
 	 * Tests API description: a.b.c.A = API with no instantiate, no subclass.
 	 */
+	@Test
 	public void testAApiPkg() {
 		resolveType("a.b.c.A", VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE | RestrictionModifiers.NO_EXTEND); //$NON-NLS-1$
 	}
 
 	/**
-	 * Tests API description: a.b.c.B = API with no restrictions.
-	 * Note that this type is not explicitly in the manifest.
+	 * Tests API description: a.b.c.B = API with no restrictions. Note that this
+	 * type is not explicitly in the manifest.
 	 */
+	@Test
 	public void testBApiPkg() {
 		resolveType("a.b.c.B", VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
@@ -690,6 +685,7 @@ public class ApiDescriptionTests extends TestCase {
 	/**
 	 * Tests API description: a.b.c.C = API with no subclass.
 	 */
+	@Test
 	public void testCApiPkg() {
 		resolveType("a.b.c.C", VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND); //$NON-NLS-1$
 	}
@@ -697,6 +693,7 @@ public class ApiDescriptionTests extends TestCase {
 	/**
 	 * Tests API description: a.b.c.D = API with no instantiate.
 	 */
+	@Test
 	public void testDApiPkg() {
 		resolveType("a.b.c.D", VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
 	}
@@ -704,22 +701,25 @@ public class ApiDescriptionTests extends TestCase {
 	/**
 	 * Tests API description: a.b.c.IC = API with no implement.
 	 */
+	@Test
 	public void testICApiPkg() {
 		resolveType("a.b.c.IC", VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT); //$NON-NLS-1$
 	}
 
 	/**
-	 * Tests API description: a.b.c.ID = API with no restrictions.
-	 * Note that this type is not explicitly in the manifest.
+	 * Tests API description: a.b.c.ID = API with no restrictions. Note that
+	 * this type is not explicitly in the manifest.
 	 */
+	@Test
 	public void testIDApiPkg() {
 		resolveType("a.b.c.ID", VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
 
 	/**
-	 * Tests API description: a.b.c.spi.SpiA = SPI with no restrictions.
-	 * Note that this type is not explicitly in the manifest.
+	 * Tests API description: a.b.c.spi.SpiA = SPI with no restrictions. Note
+	 * that this type is not explicitly in the manifest.
 	 */
+	@Test
 	public void testASpiPkg() {
 		resolveType("a.b.c.spi.SpiA", VisibilityModifiers.SPI, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
@@ -727,6 +727,7 @@ public class ApiDescriptionTests extends TestCase {
 	/**
 	 * Tests API description: a.b.c.spi.SpiB = SPI with no subclass.
 	 */
+	@Test
 	public void testBSpiPkg() {
 		resolveType("a.b.c.spi.SpiB", VisibilityModifiers.SPI, RestrictionModifiers.NO_EXTEND); //$NON-NLS-1$
 	}
@@ -734,13 +735,16 @@ public class ApiDescriptionTests extends TestCase {
 	/**
 	 * Tests API description: a.b.c.spi.SpiC = SPI with no instantiate.
 	 */
+	@Test
 	public void testCSpiPkg() {
 		resolveType("a.b.c.spi.SpiC", VisibilityModifiers.SPI, RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
 	}
 
 	/**
-	 * Tests API description: a.b.c.spi.SpiD = SPI with no instantiate, no subclass.
+	 * Tests API description: a.b.c.spi.SpiD = SPI with no instantiate, no
+	 * subclass.
 	 */
+	@Test
 	public void testDSpiPkg() {
 		resolveType("a.b.c.spi.SpiD", VisibilityModifiers.SPI, RestrictionModifiers.NO_INSTANTIATE | RestrictionModifiers.NO_EXTEND); //$NON-NLS-1$
 	}
@@ -748,14 +752,16 @@ public class ApiDescriptionTests extends TestCase {
 	/**
 	 * Tests API description: a.b.c.spi.SpiD = SPI with no reference.
 	 */
+	@Test
 	public void testESpiPkg() {
 		resolveType("a.b.c.spi.SpiE", VisibilityModifiers.SPI, RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$
 	}
 
 	/**
-	 * Tests API description: a.b.c.spi.ISpiA = SPI with no restrictions.
-	 * Note this type is not explicitly in the manifest.
+	 * Tests API description: a.b.c.spi.ISpiA = SPI with no restrictions. Note
+	 * this type is not explicitly in the manifest.
 	 */
+	@Test
 	public void testIASpiPkg() {
 		resolveType("a.b.c.spi.ISpiA", VisibilityModifiers.SPI, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
@@ -763,6 +769,7 @@ public class ApiDescriptionTests extends TestCase {
 	/**
 	 * Tests API description: a.b.c.spi.ISpiB = SPI with no implement.
 	 */
+	@Test
 	public void testIBSpiPkg() {
 		resolveType("a.b.c.spi.ISpiB", VisibilityModifiers.SPI, RestrictionModifiers.NO_IMPLEMENT); //$NON-NLS-1$
 	}
@@ -771,6 +778,7 @@ public class ApiDescriptionTests extends TestCase {
 	 * Tests API description: a.b.c.internal.A = Private with no restrictions.
 	 * Note this type is not in the manifest explicitly.
 	 */
+	@Test
 	public void testAInternalPkg() {
 		resolveType("a.b.c.internal.PA", VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
@@ -779,13 +787,16 @@ public class ApiDescriptionTests extends TestCase {
 	 * Tests API description: a.b.c.internal.B = Private with no restrictions.
 	 * Note this type is not in the manifest explicitly.
 	 */
+	@Test
 	public void testBInternalPkg() {
 		resolveType("a.b.c.internal.PB", VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
 
 	/**
-	 * tests that a binary bundle with no .api_description file has no API description
+	 * tests that a binary bundle with no .api_description file has no API
+	 * description
 	 */
+	@Test
 	public void testBinaryHasNoApiDescription() throws CoreException {
 		IApiBaseline profile = TestSuiteHelper.createTestingBaseline("test-plugins"); //$NON-NLS-1$
 		IApiComponent componentA = profile.getApiComponent("component.a"); //$NON-NLS-1$
@@ -793,8 +804,10 @@ public class ApiDescriptionTests extends TestCase {
 	}
 
 	/**
-	 * tests that a binary bundle with an .api_description file has an API description
+	 * tests that a binary bundle with an .api_description file has an API
+	 * description
 	 */
+	@Test
 	public void testBinaryHasApiDescription() throws CoreException {
 		IApiBaseline profile = TestSuiteHelper.createTestingBaseline("test-plugins-with-desc"); //$NON-NLS-1$
 		IApiComponent componentA = profile.getApiComponent("component.a"); //$NON-NLS-1$

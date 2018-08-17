@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.problems.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
@@ -19,6 +25,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
+import org.junit.Test;
 
 /**
  * Tests various aspects of the {@link ApiProblemFactory}
@@ -41,6 +48,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 * @throws Exception
 	 * @since 1.0.400
 	 */
+	@Test
 	public void testGethashcode1() throws Exception {
 		IApiProblem problem = ApiProblemFactory.newApiUsageProblem("", "x.y.z.myclazz", //$NON-NLS-1$ //$NON-NLS-2$
 				new String[] { "foo" }, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_EXTEND); //$NON-NLS-1$
@@ -56,6 +64,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 * @throws Exception
 	 * @since 1.0.400
 	 */
+	@Test
 	public void testGethashcode2() throws Exception {
 		IApiProblem problem = ApiProblemFactory.newApiUsageProblem("", null, //$NON-NLS-1$
 				new String[] { "foo" }, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_EXTEND); //$NON-NLS-1$
@@ -74,6 +83,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 * @throws Exception
 	 * @since 1.0.400
 	 */
+	@Test
 	public void testGethashcode3() throws Exception {
 		IApiProblem problem = ApiProblemFactory.newApiUsageProblem("", "null", //$NON-NLS-1$ //$NON-NLS-2$
 				new String[] { "foo" }, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_EXTEND); //$NON-NLS-1$
@@ -84,6 +94,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	/**
 	 * Tests that creating an {@link IApiProblem} does not fail
 	 */
+	@Test
 	public void testCreateProblem() {
 		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.METHOD, IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS);
 		assertNotNull("a new problem should have been created with null attributes", problem); //$NON-NLS-1$
@@ -96,6 +107,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 * Tests creating a new {@link IApiProblem} using the usage specialized
 	 * factory method
 	 */
+	@Test
 	public void tesCreateUsageProblem() {
 		IApiProblem problem = ApiProblemFactory.newApiUsageProblem(null, null, null, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
 		assertNotNull("a new problem should have been created with null attributes", problem); //$NON-NLS-1$
@@ -108,6 +120,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 * Tests creating a new {@link IApiProblem} using the since tag specialized
 	 * factory method
 	 */
+	@Test
 	public void testCreateSincetagProblem() {
 		IApiProblem problem = ApiProblemFactory.newApiSinceTagProblem(null, null, null, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
 		assertNotNull("a new problem should have been created with null attributes", problem); //$NON-NLS-1$
@@ -120,6 +133,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 * Tests creating a new {@link IApiProblem} using the version number
 	 * specialized factory method
 	 */
+	@Test
 	public void testCreateVersionProblem() {
 		IApiProblem problem = ApiProblemFactory.newApiVersionNumberProblem(null, null, null, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT);
 		assertNotNull("a new problem should have been created with null attributes", problem); //$NON-NLS-1$
@@ -134,6 +148,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 *
 	 * @since 1.1
 	 */
+	@Test
 	public void testCreateFatalProblem() {
 		IApiProblem problem = ApiProblemFactory.newFatalProblem(null, null, IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM);
 		assertNotNull("a new problem should have been created with null attributes", problem); //$NON-NLS-1$
@@ -145,6 +160,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	/**
 	 * Test getting version number problem messages
 	 */
+	@Test
 	public void testGetVersionMessages() {
 		IApiProblem problem = ApiProblemFactory.newApiVersionNumberProblem("", null, //$NON-NLS-1$
 				new String[] { "1", "2" }, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.MAJOR_VERSION_CHANGE); //$NON-NLS-1$ //$NON-NLS-2$
@@ -170,6 +186,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	/**
 	 * Tests getting API usage problem messages
 	 */
+	@Test
 	public void testGetUsageMessages() {
 		IApiProblem problem = ApiProblemFactory.newApiUsageProblem("", null, //$NON-NLS-1$
 				new String[] { "foo" }, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_EXTEND); //$NON-NLS-1$
@@ -191,6 +208,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	/**
 	 * Tests getting (some of) the binary messages
 	 */
+	@Test
 	public void testGetBinaryMessages() {
 		IApiProblem problem = ApiProblemFactory.newApiProblem(null, null, new String[] {
 				"X", "X()" }, null, null, -1, -1, -1, //$NON-NLS-1$ //$NON-NLS-2$
@@ -205,6 +223,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	/**
 	 * Tests getting since tag problem messages
 	 */
+	@Test
 	public void testGetSinceTagMessages() {
 		IApiProblem problem = ApiProblemFactory.newApiSinceTagProblem("", //$NON-NLS-1$
 				null, new String[] { "A", "B", "C" }, null, null, -1, -1, -1, IElementDescriptor.RESOURCE, IApiProblem.SINCE_TAG_INVALID); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -220,6 +239,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	/**
 	 * Tests that the custom message for a constructor parameter can be acquired
 	 */
+	@Test
 	public void testGetLeakConstructorParamMessage() {
 		IApiProblem problem = ApiProblemFactory.newApiUsageProblem("", //$NON-NLS-1$
 				null, new String[] { "fooconstructor" }, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.API_LEAK, IApiProblem.LEAK_CONSTRUCTOR_PARAMETER); //$NON-NLS-1$
@@ -231,6 +251,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 * {@link ApiProblemFactory#newApiComponentResolutionProblem(String, String[], String[], Object[], int, int)}
 	 * method
 	 */
+	@Test
 	public void testCreateComponentresolutionProblem() {
 		IApiProblem problem = ApiProblemFactory.newApiComponentResolutionProblem("", //$NON-NLS-1$
 				null, null, null, IElementDescriptor.COMPONENT, IApiProblem.API_COMPONENT_RESOLUTION);
@@ -242,6 +263,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	 * Tests outliers of the
 	 * {@link ApiProblemFactory#getProblemMessageId(int, int, int, int)} method
 	 */
+	@Test
 	public void testGetProblemMessageId() {
 		int id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_API_BASELINE, -1, -1, -1);
 		assertEquals("The returned id should be 0", 0, id); //$NON-NLS-1$
@@ -282,6 +304,7 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 	/**
 	 * Tests the {@link ApiProblemFactory#getProblemSeverityId(IApiProblem)}
 	 */
+	@Test
 	public void testGetProblemSeverityId() {
 		IApiProblem problem = ApiProblemFactory.newApiComponentResolutionProblem("", null, null, null, IElementDescriptor.COMPONENT, IApiProblem.API_COMPONENT_RESOLUTION); //$NON-NLS-1$
 		assertEquals("the problem id should be: " + IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT, IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT, ApiProblemFactory.getProblemSeverityId(problem)); //$NON-NLS-1$

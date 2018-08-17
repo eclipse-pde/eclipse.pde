@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,23 +29,14 @@ import org.eclipse.pde.api.tools.internal.model.DirectoryApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests the class file containers
  *
  * @since 1.0.0
  */
-public class ApiTypeContainerTests extends TestCase {
-
-	public ApiTypeContainerTests() {
-		super();
-	}
-
-	public ApiTypeContainerTests(String name) {
-		super(name);
-	}
+public class ApiTypeContainerTests {
 
 	/**
 	 * Builds a sample archive on sample.jar
@@ -74,6 +69,7 @@ public class ApiTypeContainerTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testArchivePackageNames() throws CoreException {
 		doTestPackageNames(buildArchiveContainer());
 	}
@@ -83,6 +79,7 @@ public class ApiTypeContainerTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testDirectoryPackageNames() throws CoreException {
 		doTestPackageNames(buildDirectoryContainer());
 	}
@@ -100,8 +97,8 @@ public class ApiTypeContainerTests extends TestCase {
 		knownNames.add("a"); //$NON-NLS-1$
 		knownNames.add("a.b.c"); //$NON-NLS-1$
 		assertEquals("Wrong number of packages", 3, packageNames.length); //$NON-NLS-1$
-		for (int i = 0; i < packageNames.length; i++) {
-			assertTrue("Missing package " + packageNames[i], knownNames.remove(packageNames[i])); //$NON-NLS-1$
+		for (String packageName : packageNames) {
+			assertTrue("Missing package " + packageName, knownNames.remove(packageName)); //$NON-NLS-1$
 		}
 		assertTrue("Should be no left over packages", knownNames.isEmpty()); //$NON-NLS-1$
 	}
@@ -111,6 +108,7 @@ public class ApiTypeContainerTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testArchiveVistPackages() throws CoreException {
 		doTestVisitPackages(buildArchiveContainer());
 	}
@@ -120,6 +118,7 @@ public class ApiTypeContainerTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testDirectoryVistPackages() throws CoreException {
 		doTestVisitPackages(buildDirectoryContainer());
 	}
@@ -165,6 +164,7 @@ public class ApiTypeContainerTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testArchiveVisitClassFiles() throws CoreException {
 		doTestVisitClassFiles(buildArchiveContainer());
 	}
@@ -174,6 +174,7 @@ public class ApiTypeContainerTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testDirectoryVisitClassFiles() throws CoreException {
 		doTestVisitClassFiles(buildDirectoryContainer());
 	}

@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,21 +46,21 @@ import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
 import org.eclipse.pde.api.tools.internal.provisional.search.IMetadata;
-
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that our framework properly handles bad class files. I.e. class files
  * that are not well-formed
  */
-public class BadClassfileTests extends TestCase {
+public class BadClassfileTests {
 
 	IPath source = null;
 	DirectoryApiTypeContainer container = null;
 	String CLASSFILE = "nobytecodes"; //$NON-NLS-1$
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		if (source == null) {
 			source = TestSuiteHelper.getPluginDirectoryPath().append("test-classes").append("bad"); //$NON-NLS-1$ //$NON-NLS-2$
 			container = new DirectoryApiTypeContainer(null, source.toOSString());
@@ -76,8 +80,10 @@ public class BadClassfileTests extends TestCase {
 	/**
 	 * Tests trying to get the structure for a bad classfile
 	 *
-	 * @throws Exception if something bad happens
+	 * @throws Exception
+	 *             if something bad happens
 	 */
+	@Test
 	public void testClassfileScanner() throws Exception {
 		writePreamble("testClassfileScanner()"); //$NON-NLS-1$
 		IApiTypeRoot root = container.findTypeRoot(CLASSFILE);
@@ -90,6 +96,7 @@ public class BadClassfileTests extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testSearchEngine() throws Exception {
 		writePreamble("testSearchEngine()"); //$NON-NLS-1$
 		final Component component = new Component(null) {
@@ -256,6 +263,7 @@ public class BadClassfileTests extends TestCase {
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner}
 	 * handles bad class files
 	 */
+	@Test
 	public void testTagScanner() throws Exception {
 		writePreamble("testTagScanner()"); //$NON-NLS-1$
 		CompilationUnit unit = new CompilationUnit(TestSuiteHelper.getPluginDirectoryPath().append("test-classes") //$NON-NLS-1$

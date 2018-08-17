@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.CRCVisitor;
@@ -20,15 +21,17 @@ import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
+import org.junit.Test;
 
 /**
  * Tests CRC codes for API descriptions
  */
-public class CRCTests extends TestCase {
+public class CRCTests {
 
 	/**
 	 * Test that a CRC code for a type's API description is the same for equivalent descriptions.
 	 */
+	@Test
 	public void testCRCEqual() {
 		ApiDescription description = new ApiDescription("test.component"); //$NON-NLS-1$
 		IReferenceTypeDescriptor type = Factory.typeDescriptor("org.eclipse.debug.core.SomeClass"); //$NON-NLS-1$
@@ -64,6 +67,7 @@ public class CRCTests extends TestCase {
 	/**
 	 * Test that a CRC changes when annotations for a method in a type have changed.
 	 */
+	@Test
 	public void testCRCModified() {
 		ApiDescription description = new ApiDescription("test.component"); //$NON-NLS-1$
 		IReferenceTypeDescriptor type = Factory.typeDescriptor("org.eclipse.debug.core.SomeClass"); //$NON-NLS-1$

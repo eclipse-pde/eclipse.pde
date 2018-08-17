@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.anttasks.tests;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
@@ -21,6 +25,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -53,6 +58,7 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 
 	}
 
+	@Test
 	public void test1() throws Exception {
 		IFolder reportFolder = runTaskAndVerify("test1"); //$NON-NLS-1$
 		InputSource is = new InputSource(reportFolder.getFile("not_searched.xml").getContents()); //$NON-NLS-1$
@@ -70,42 +76,44 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 		}
 	}
 
+	@Test
 	public void test2() throws Exception {
 		IFolder reportFolder = runTaskAndVerify("test2"); //$NON-NLS-1$
 		IResource[] members = reportFolder.members();
 		boolean valid = false;
 		boolean validDir = false;
-		for (int index = 0; index < members.length; index++) {
-			if (!members[index].getLocation().toFile().isDirectory()) {
+		for (IResource member : members) {
+			if (!member.getLocation().toFile().isDirectory()) {
 				continue;
 			}
-			valid = members[index].getName().startsWith("org.example"); //$NON-NLS-1$
-			assertTrue(members[index].getName() + " should have been filtered out", valid); //$NON-NLS-1$
-			File[] dirs = members[index].getLocation().toFile().listFiles();
-			for (int i = 0; i < dirs.length; i++) {
-				validDir = dirs[i].getName().startsWith("org.example"); //$NON-NLS-1$
-				assertTrue(dirs[i].getName() + " should have been filtered out", validDir); //$NON-NLS-1$
+			valid = member.getName().startsWith("org.example"); //$NON-NLS-1$
+			assertTrue(member.getName() + " should have been filtered out", valid); //$NON-NLS-1$
+			File[] dirs = member.getLocation().toFile().listFiles();
+			for (File dir : dirs) {
+				validDir = dir.getName().startsWith("org.example"); //$NON-NLS-1$
+				assertTrue(dir.getName() + " should have been filtered out", validDir); //$NON-NLS-1$
 			}
 		}
 		assertTrue("None of the example plug-ins were scanned", valid); //$NON-NLS-1$
 		assertTrue("None of the example plug-ins were scanned", validDir); //$NON-NLS-1$
 	}
 
+	@Test
 	public void test3() throws Exception {
 		IFolder reportFolder = runTaskAndVerify("test3"); //$NON-NLS-1$
 		IResource[] members = reportFolder.members();
 		boolean valid = false;
 		boolean validDir = false;
-		for (int index = 0; index < members.length; index++) {
-			if (!members[index].getLocation().toFile().isDirectory()) {
+		for (IResource member : members) {
+			if (!member.getLocation().toFile().isDirectory()) {
 				continue;
 			}
-			valid = members[index].getName().startsWith("org.example"); //$NON-NLS-1$
-			assertTrue(members[index].getName() + " should have been filtered out", valid); //$NON-NLS-1$
-			File[] dirs = members[index].getLocation().toFile().listFiles();
-			for (int i = 0; i < dirs.length; i++) {
-				validDir = dirs[i].getName().startsWith("org.example"); //$NON-NLS-1$
-				assertTrue(dirs[i].getName() + " should have been filtered out", validDir); //$NON-NLS-1$
+			valid = member.getName().startsWith("org.example"); //$NON-NLS-1$
+			assertTrue(member.getName() + " should have been filtered out", valid); //$NON-NLS-1$
+			File[] dirs = member.getLocation().toFile().listFiles();
+			for (File dir : dirs) {
+				validDir = dir.getName().startsWith("org.example"); //$NON-NLS-1$
+				assertTrue(dir.getName() + " should have been filtered out", validDir); //$NON-NLS-1$
 			}
 		}
 		assertTrue("None of the example plug-ins were scanned", valid); //$NON-NLS-1$
@@ -117,21 +125,22 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testIllegalUse() throws Exception {
 		IFolder reportFolder = runTaskAndVerify("testIllegalUse"); //$NON-NLS-1$
 		IResource[] members = reportFolder.members();
 		boolean valid = false;
 		boolean validDir = false;
-		for (int index = 0; index < members.length; index++) {
-			if (!members[index].getLocation().toFile().isDirectory()) {
+		for (IResource member : members) {
+			if (!member.getLocation().toFile().isDirectory()) {
 				continue;
 			}
-			valid = members[index].getName().startsWith("org.eclipse.osgi"); //$NON-NLS-1$
-			assertTrue(members[index].getName() + " should have been filtered out", valid); //$NON-NLS-1$
-			File[] dirs = members[index].getLocation().toFile().listFiles();
-			for (int i = 0; i < dirs.length; i++) {
-				validDir = dirs[i].getName().startsWith("org.example.test.illegaluse"); //$NON-NLS-1$
-				assertTrue(dirs[i].getName() + " should have been filtered out", validDir); //$NON-NLS-1$
+			valid = member.getName().startsWith("org.eclipse.osgi"); //$NON-NLS-1$
+			assertTrue(member.getName() + " should have been filtered out", valid); //$NON-NLS-1$
+			File[] dirs = member.getLocation().toFile().listFiles();
+			for (File dir : dirs) {
+				validDir = dir.getName().startsWith("org.example.test.illegaluse"); //$NON-NLS-1$
+				assertTrue(dir.getName() + " should have been filtered out", validDir); //$NON-NLS-1$
 			}
 		}
 		// This test is not working properly, see Bug 405302
@@ -144,12 +153,13 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testIllegalUseFiltered() throws Exception {
 		IFolder reportFolder = runTaskAndVerify("testIllegalUseFiltered"); //$NON-NLS-1$
 		IResource[] members = reportFolder.members();
-		for (int index = 0; index < members.length; index++) {
-			if (members[index].getLocation().toFile().isDirectory()) {
-				fail(members[index].getName() + " should have been filtered using a .api_filters file"); //$NON-NLS-1$
+		for (IResource member : members) {
+			if (member.getLocation().toFile().isDirectory()) {
+				fail(member.getName() + " should have been filtered using a .api_filters file"); //$NON-NLS-1$
 			}
 		}
 	}

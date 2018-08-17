@@ -10,21 +10,23 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.comparator.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.junit.Test;
 
 /**
  * Delta tests for annotation
  */
 public class AnnotationDeltaTests extends DeltaTestSetup {
-
-	public AnnotationDeltaTests(String name) {
-		super(name);
-	}
 
 	@Override
 	public String getTestRoot() {
@@ -34,6 +36,7 @@ public class AnnotationDeltaTests extends DeltaTestSetup {
 	/**
 	 * Add element to annotation type
 	 */
+	@Test
 	public void test1() {
 		deployBundles("test1"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -56,6 +59,7 @@ public class AnnotationDeltaTests extends DeltaTestSetup {
 	/**
 	 * remove element to annotation type
 	 */
+	@Test
 	public void test2() {
 		deployBundles("test2"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -78,6 +82,7 @@ public class AnnotationDeltaTests extends DeltaTestSetup {
 	/**
 	 * Add element to annotation type
 	 */
+	@Test
 	public void test3() {
 		deployBundles("test3"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -100,6 +105,7 @@ public class AnnotationDeltaTests extends DeltaTestSetup {
 	/**
 	 * Add elements with all different types
 	 */
+	@Test
 	public void test4() {
 		deployBundles("test4"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -171,6 +177,7 @@ public class AnnotationDeltaTests extends DeltaTestSetup {
 	/**
 	 * Add elements with all different types (array)
 	 */
+	@Test
 	public void test5() {
 		deployBundles("test5"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -253,6 +260,7 @@ public class AnnotationDeltaTests extends DeltaTestSetup {
 	/**
 	 * Changed default values
 	 */
+	@Test
 	public void test6() {
 		deployBundles("test6"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -330,6 +338,7 @@ public class AnnotationDeltaTests extends DeltaTestSetup {
 	/**
 	 * Remove method with default value
 	 */
+	@Test
 	public void test7() {
 		deployBundles("test7"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -352,6 +361,7 @@ public class AnnotationDeltaTests extends DeltaTestSetup {
 	/**
 	 * Remove method with no default value
 	 */
+	@Test
 	public void test8() {
 		deployBundles("test8"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -374,6 +384,7 @@ public class AnnotationDeltaTests extends DeltaTestSetup {
 	/**
 	 * Add a field
 	 */
+	@Test
 	public void test9() {
 		deployBundles("test9"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -395,6 +406,7 @@ public class AnnotationDeltaTests extends DeltaTestSetup {
 	/**
 	 * Added deprecation
 	 */
+	@Test
 	public void test10() {
 		deployBundles("test10"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -416,6 +428,7 @@ public class AnnotationDeltaTests extends DeltaTestSetup {
 	/**
 	 * Removed deprecation
 	 */
+	@Test
 	public void test11() {
 		deployBundles("test11"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();

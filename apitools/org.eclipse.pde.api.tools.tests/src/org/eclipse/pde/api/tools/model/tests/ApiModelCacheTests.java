@@ -10,26 +10,30 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.api.tools.internal.model.ApiModelCache;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * Tests the {@link ApiModelCache}
  *
  * @since 1.0.2
  */
-public class ApiModelCacheTests extends TestCase {
+public class ApiModelCacheTests {
 
 	static final String TEST_COMP_ID = "testcomp-id"; //$NON-NLS-1$
 	static final String TEST_BASELINE_ID = "testbaseline-id"; //$NON-NLS-1$
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		ApiModelCache.getCache().flushCaches();
-		super.tearDown();
 	}
 
 	/**
@@ -56,6 +60,7 @@ public class ApiModelCacheTests extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testAddRemoveElementHandleInfo() throws Exception {
 		String typename = "testtype1"; //$NON-NLS-1$
 		cacheType(typename);
@@ -68,11 +73,12 @@ public class ApiModelCacheTests extends TestCase {
 	}
 
 	/**
-	 * Tests aching / removing {@link IApiElement}s using String identifiers instead
-	 * of {@link IApiElement} handles
+	 * Tests aching / removing {@link IApiElement}s using String identifiers
+	 * instead of {@link IApiElement} handles
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testAddRemoveElementStringInfo() throws Exception {
 		String typename = "testtype2"; //$NON-NLS-1$
 		cacheType(typename);
@@ -85,10 +91,12 @@ public class ApiModelCacheTests extends TestCase {
 	}
 
 	/**
-	 * Tests trying to remove a non-existent type from the cache with cached types
+	 * Tests trying to remove a non-existent type from the cache with cached
+	 * types
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testRemoveNonExistentType() throws Exception {
 		cacheType("testtype2"); //$NON-NLS-1$
 		cacheType("testtype1"); //$NON-NLS-1$
@@ -99,10 +107,12 @@ public class ApiModelCacheTests extends TestCase {
 	}
 
 	/**
-	 * Tests trying to remove a non-existent type from the cache when nothing has been cached yet
+	 * Tests trying to remove a non-existent type from the cache when nothing
+	 * has been cached yet
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testRemoveNonExistentTypeEmptyCache() throws Exception {
 		String typename = "testtype3"; //$NON-NLS-1$
 		IApiElement element = ApiModelCache.getCache().getElementInfo(TEST_BASELINE_ID, TEST_COMP_ID, typename, IApiElement.TYPE);
@@ -111,10 +121,12 @@ public class ApiModelCacheTests extends TestCase {
 	}
 
 	/**
-	 * Tests adding some member types to the cache and removing them via the root type
+	 * Tests adding some member types to the cache and removing them via the
+	 * root type
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testAddRemoveMemerTypeStringInfo() throws Exception {
 		String roottypename = "a.b.c.testee1"; //$NON-NLS-1$
 		cacheType("a.b.c.testee1"); //$NON-NLS-1$
@@ -135,10 +147,12 @@ public class ApiModelCacheTests extends TestCase {
 	}
 
 	/**
-	 * Tests adding some member types to the cache and removing them via the root type
+	 * Tests adding some member types to the cache and removing them via the
+	 * root type
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testAddRemoveMemerTypeElementInfo() throws Exception {
 		String roottypename = "a.b.c.testee1"; //$NON-NLS-1$
 		cacheType("a.b.c.testee1"); //$NON-NLS-1$

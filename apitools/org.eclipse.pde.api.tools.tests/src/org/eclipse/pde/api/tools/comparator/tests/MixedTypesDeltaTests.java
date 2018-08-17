@@ -10,21 +10,22 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.comparator.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.junit.Test;
 
 /**
  * Delta tests for mixed types (conversion from interface to other types, and so on)
  */
 public class MixedTypesDeltaTests extends DeltaTestSetup {
-
-	public MixedTypesDeltaTests(String name) {
-		super(name);
-	}
 
 	@Override
 	public String getTestRoot() {
@@ -34,6 +35,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 	/**
 	 * From interface to enum
 	 */
+	@Test
 	public void test1() {
 		deployBundles("test1"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -56,6 +58,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 	/**
 	 * From interface to class
 	 */
+	@Test
 	public void test2() {
 		deployBundles("test2"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -78,6 +81,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 	/**
 	 * From interface to annotation
 	 */
+	@Test
 	public void test3() {
 		deployBundles("test3"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -100,6 +104,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 	/**
 	 * From class to interface
 	 */
+	@Test
 	public void test4() {
 		deployBundles("test4"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -122,6 +127,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 	/**
 	 * From class to enum
 	 */
+	@Test
 	public void test5() {
 		deployBundles("test5"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -144,6 +150,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 	/**
 	 * From class to annotation
 	 */
+	@Test
 	public void test6() {
 		deployBundles("test6"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -166,6 +173,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 	/**
 	 * From annotation to class
 	 */
+	@Test
 	public void test7() {
 		deployBundles("test7"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -188,6 +196,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 	/**
 	 * From annotation to enum
 	 */
+	@Test
 	public void test8() {
 		deployBundles("test8"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -210,6 +219,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 	/**
 	 * From annotation to interface
 	 */
+	@Test
 	public void test9() {
 		deployBundles("test9"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -232,6 +242,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 	/**
 	 * From enum to interface
 	 */
+	@Test
 	public void test10() {
 		deployBundles("test10"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -254,6 +265,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 	/**
 	 * From enum to class
 	 */
+	@Test
 	public void test11() {
 		deployBundles("test11"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -276,6 +288,7 @@ public class MixedTypesDeltaTests extends DeltaTestSetup {
 	/**
 	 * From enum to annotation
 	 */
+	@Test
 	public void test12() {
 		deployBundles("test12"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();

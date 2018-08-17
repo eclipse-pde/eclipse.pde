@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashSet;
 import java.util.Set;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -27,14 +29,16 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
+import org.junit.Test;
 
 /**
  * Tests the base analyzer without OSGi present
  *
  * @since 1.0
  */
-public class OSGiLessAnalysisTests extends TestCase {
+public class OSGiLessAnalysisTests {
 
+	@Test
 	public void testAnalyzer() throws CoreException {
 		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("baseline", new Path("test-analyzer-1")); //$NON-NLS-1$ //$NON-NLS-2$
 		IApiBaseline current = TestSuiteHelper.createTestingBaseline("current", new Path("test-analyzer-2")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -61,8 +65,8 @@ public class OSGiLessAnalysisTests extends TestCase {
 																		IApiProblem.MAJOR_VERSION_CHANGE,
 																		IApiProblem.NO_FLAGS));
 		assertEquals("Wrong number of problems", 4, problems.length); //$NON-NLS-1$
-		for (int i = 0; i < problems.length; i++) {
-			expectedIds.remove(Integer.valueOf(problems[i].getId()));
+		for (IApiProblem problem : problems) {
+			expectedIds.remove(Integer.valueOf(problem.getId()));
 		}
 		assertTrue("Did not find expected problems", expectedIds.isEmpty()); //$NON-NLS-1$
 		baseline.dispose();

@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.util.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -18,6 +22,9 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -26,10 +33,8 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class PreferencesTests extends AbstractApiTest {
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws Exception {
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("The instance node must exist", inode); //$NON-NLS-1$
 		inode.put(IApiProblemTypes.ILLEGAL_INSTANTIATE, ApiPlugin.VALUE_ERROR);
@@ -54,15 +59,15 @@ public class PreferencesTests extends AbstractApiTest {
 		}
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		deleteProject(TESTING_PROJECT_NAME);
 	}
 
 	/**
 	 * tests that the default preferences are set of the ApiPlugin
 	 */
+	@Test
 	public void testGetDefaultSeverity() {
 		IEclipsePreferences dnode = DefaultScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("the default node must exist", dnode); //$NON-NLS-1$
@@ -73,6 +78,7 @@ public class PreferencesTests extends AbstractApiTest {
 	/**
 	 * Tests getting a default value from the getSeverityLevel() method is correct
 	 */
+	@Test
 	public void testGetSeverityReturnsDefault() {
 		int value = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_IMPLEMENT, null);
 		assertEquals("The default value for RESTRICTION_NOIMPLEMENT should be 'Warning'", ApiPlugin.SEVERITY_WARNING, value); //$NON-NLS-1$
@@ -81,6 +87,7 @@ public class PreferencesTests extends AbstractApiTest {
 	/**
 	 * Tests that getting a set value the getSeverityLevel() method is correct
 	 */
+	@Test
 	public void testGetNonDefaultValue() {
 		int value = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_INSTANTIATE, null);
 		assertEquals("The value for RESTRICTION_NOINSTANTIATE should be 'Error'", ApiPlugin.SEVERITY_ERROR, value); //$NON-NLS-1$
@@ -90,6 +97,7 @@ public class PreferencesTests extends AbstractApiTest {
 	 * Tests that getting a set value the getSeverityLevel() method is correct for project
 	 * specific settings
 	 */
+	@Test
 	public void testGetProjectSpecificValue() {
 		int value = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_REFERENCE, getTestingJavaProject(TESTING_PROJECT_NAME).getProject());
 		assertEquals("The value for RESTRICTION_NOREFERENCE should be 'Ignore'", ApiPlugin.SEVERITY_IGNORE, value); //$NON-NLS-1$
@@ -99,6 +107,7 @@ public class PreferencesTests extends AbstractApiTest {
 	 * Tests that getting a default value the getSeverityLevel() method is correct for project
 	 * specific settings
 	 */
+	@Test
 	public void testGetDefaultProjectSpecificValue() {
 		int value = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.ILLEGAL_EXTEND, getTestingJavaProject(TESTING_PROJECT_NAME).getProject());
 		assertEquals("The value for RESTRICTION_NOEXTEND should be 'Warning'", ApiPlugin.SEVERITY_WARNING, value); //$NON-NLS-1$

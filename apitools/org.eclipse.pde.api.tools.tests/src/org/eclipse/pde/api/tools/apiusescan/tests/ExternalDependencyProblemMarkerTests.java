@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.apiusescan.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -23,13 +24,15 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ExternalDependencyProblemMarkerTests extends TestCase {
+public class ExternalDependencyProblemMarkerTests {
 
 	private IJavaProject fProject;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		IProject setupProject = ExternalDependencyTestUtils.setupProject();
 		if (setupProject == null) {
 			fail("Unable to setup the project. Can not run the test cases"); //$NON-NLS-1$
@@ -43,9 +46,9 @@ public class ExternalDependencyProblemMarkerTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testMissingType() {
 		try {
-
 			IType type = fProject.findType("tests.apiusescan.coretestproject.IConstants"); //$NON-NLS-1$
 			type.rename("IConstants1", true, null); //$NON-NLS-1$
 			IProject project = fProject.getProject();
@@ -68,6 +71,7 @@ public class ExternalDependencyProblemMarkerTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testMissingMethod() {
 		try {
 			IType type = fProject.findType("tests.apiusescan.coretestproject.ITestInterface"); //$NON-NLS-1$
@@ -95,6 +99,7 @@ public class ExternalDependencyProblemMarkerTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testMissingField() {
 		try {
 			IType type = fProject.findType("tests.apiusescan.coretestproject.TestInterfaceImpl"); //$NON-NLS-1$
@@ -122,6 +127,7 @@ public class ExternalDependencyProblemMarkerTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testMissingInnerType() {
 		try {
 			IType type = fProject.findType("tests.apiusescan.coretestproject.ClassWithInnerType.InnerType"); //$NON-NLS-1$

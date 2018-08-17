@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +34,8 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
-
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test creation of states and components.
@@ -45,7 +51,7 @@ import junit.framework.TestCase;
  *
  * @since 1.0.0
  */
-public class ApiBaselineTests extends TestCase {
+public class ApiBaselineTests {
 
 	static final String _1_0_0 = "1.0.0"; //$NON-NLS-1$
 	static final String COMPONENT_B = "component.b"; //$NON-NLS-1$
@@ -54,7 +60,7 @@ public class ApiBaselineTests extends TestCase {
 
 	IApiBaseline fBaseline = null;
 
-	@Override
+	@Before
 	public void setUp() throws Exception {
 		if (fBaseline == null) {
 			fBaseline = TestSuiteHelper.createTestingBaseline(TEST_PLUGINS);
@@ -76,6 +82,7 @@ public class ApiBaselineTests extends TestCase {
 	 * @throws FileNotFoundException
 	 * @throws CoreException
 	 */
+	@Test
 	public void testResolvePackage() throws FileNotFoundException, CoreException {
 		assertNotNull("the testing baseline should exist", fBaseline); //$NON-NLS-1$
 		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_B), COMPONENT_A);
@@ -90,6 +97,7 @@ public class ApiBaselineTests extends TestCase {
 	 * @throws FileNotFoundException
 	 * @throws CoreException
 	 */
+	@Test
 	public void testResolvePackageWithinComponent() throws FileNotFoundException, CoreException {
 		assertNotNull("the testing baseline should exist", fBaseline); //$NON-NLS-1$
 		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_A), "a.b.c"); //$NON-NLS-1$
@@ -104,6 +112,7 @@ public class ApiBaselineTests extends TestCase {
 	 * @throws FileNotFoundException
 	 * @throws CoreException
 	 */
+	@Test
 	public void testResolveJavaLangPackage() throws FileNotFoundException, CoreException {
 		assertNotNull("the testing baseline should exist", fBaseline); //$NON-NLS-1$
 		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_B), "java.lang"); //$NON-NLS-1$
@@ -118,6 +127,7 @@ public class ApiBaselineTests extends TestCase {
 	 * @throws FileNotFoundException
 	 * @throws CoreException
 	 */
+	@Test
 	public void testResolveSystemPackage() throws FileNotFoundException, CoreException {
 		assertNotNull("the testing baseline should exist", fBaseline); //$NON-NLS-1$
 		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_B), "org.w3c.dom"); //$NON-NLS-1$
@@ -132,6 +142,7 @@ public class ApiBaselineTests extends TestCase {
 	 * @throws FileNotFoundException
 	 * @throws CoreException
 	 */
+	@Test
 	public void testFindJavaLangObject() throws FileNotFoundException, CoreException {
 		assertNotNull("the testing baseline should exist", fBaseline); //$NON-NLS-1$
 		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_B), "java.lang"); //$NON-NLS-1$
@@ -183,6 +194,7 @@ public class ApiBaselineTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testNestedJarComponent() throws CoreException {
 		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("test-nested-jars"); //$NON-NLS-1$
 		IApiComponent component = baseline.getApiComponent(COMPONENT_A);
@@ -214,6 +226,7 @@ public class ApiBaselineTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testXFriendsDirective() throws CoreException {
 		IApiComponent component = fBaseline.getApiComponent(COMPONENT_A);
 		assertNotNull("Missing component.a", component); //$NON-NLS-1$
@@ -230,6 +243,7 @@ public class ApiBaselineTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testXInternalDirective() throws CoreException {
 		IApiComponent component = fBaseline.getApiComponent(COMPONENT_A);
 		assertNotNull("Missing component.a", component); //$NON-NLS-1$
@@ -246,6 +260,7 @@ public class ApiBaselineTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testUsesDirective() throws CoreException {
 		IApiComponent component = fBaseline.getApiComponent(COMPONENT_A);
 		assertNotNull("Missing component.a", component); //$NON-NLS-1$
@@ -262,6 +277,7 @@ public class ApiBaselineTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testNotExported() throws CoreException {
 		IApiComponent component = fBaseline.getApiComponent(COMPONENT_A);
 		assertNotNull("Missing component.a", component); //$NON-NLS-1$
@@ -277,6 +293,7 @@ public class ApiBaselineTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testPrerequisites() throws CoreException {
 		IApiComponent component = fBaseline.getApiComponent(COMPONENT_A);
 		IApiComponent[] prerequisiteComponents = fBaseline.getPrerequisiteComponents(new IApiComponent[] { component });
@@ -295,12 +312,12 @@ public class ApiBaselineTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testDependents() throws CoreException {
 		IApiComponent component = fBaseline.getApiComponent(COMPONENT_A);
 		IApiComponent[] dependents = fBaseline.getDependentComponents(new IApiComponent[] { component });
 		assertEquals("Wrong number of dependents", 2, dependents.length); //$NON-NLS-1$
-		for (int i = 0; i < dependents.length; i++) {
-			IApiComponent apiComponent = dependents[i];
+		for (IApiComponent apiComponent : dependents) {
 			if (apiComponent.getSymbolicName().equals(COMPONENT_B)) {
 				// done
 				return;
@@ -312,6 +329,7 @@ public class ApiBaselineTests extends TestCase {
 	/**
 	 * Tests getting the location from an 'old' baseline
 	 */
+	@Test
 	public void testGetLocation() throws Exception {
 		assertNull("The location must be null", fBaseline.getLocation()); //$NON-NLS-1$
 		fBaseline.setLocation("new_loc"); //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.search.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
 import org.junit.Assert;
+import org.junit.Test;
 
 
 /**
@@ -43,6 +51,7 @@ public class SkippedComponentTests extends SearchTest {
 	/**
 	 * Tests the {@link SkippedComponent#equals(Object)} method
 	 */
+	@Test
 	public void testEquals() {
 		try {
 			IApiComponent tcomp = getTestingComponent();
@@ -61,6 +70,7 @@ public class SkippedComponentTests extends SearchTest {
 	/**
 	 * Tests the {@link SkippedComponent#hashCode()} method
 	 */
+	@Test
 	public void testHashCode() {
 		try {
 			IApiComponent tcomp = getTestingComponent();
@@ -77,6 +87,7 @@ public class SkippedComponentTests extends SearchTest {
 	/**
 	 * Tests the {@link SkippedComponent#getComponentId()} method
 	 */
+	@Test
 	public void testGetComponentId() {
 		try {
 			IApiComponent tcomp = getTestingComponent();
@@ -95,6 +106,7 @@ public class SkippedComponentTests extends SearchTest {
 	/**
 	 * Tests the {@link SkippedComponent#wasExcluded()} method
 	 */
+	@Test
 	public void testWasExcluded() {
 		try {
 			IApiComponent tcomp = getTestingComponent();
@@ -112,6 +124,7 @@ public class SkippedComponentTests extends SearchTest {
 	/**
 	 * Tests the {@link SkippedComponent#hasResolutionErrors()} method
 	 */
+	@Test
 	public void testHasResolutionErrors() {
 		try {
 			IApiComponent tcomp = getTestingComponent();
@@ -129,6 +142,7 @@ public class SkippedComponentTests extends SearchTest {
 	/**
 	 * Tests the {@link SkippedComponent#getAncestor(int)} method
 	 */
+	@Test
 	public void testGetAncestor() {
 		try {
 			IApiComponent tcomp = getTestingComponent();
@@ -144,6 +158,7 @@ public class SkippedComponentTests extends SearchTest {
 	/**
 	 * Tests the {@link SkippedComponent#getApiComponent()} method
 	 */
+	@Test
 	public void testGetApiComponent() {
 		try {
 			IApiComponent tcomp = getTestingComponent();
@@ -159,6 +174,7 @@ public class SkippedComponentTests extends SearchTest {
 	/**
 	 * Tests the {@link SkippedComponent#getName()} method
 	 */
+	@Test
 	public void testGetName() {
 		try {
 			IApiComponent tcomp = getTestingComponent();
@@ -174,6 +190,7 @@ public class SkippedComponentTests extends SearchTest {
 	/**
 	 * Tests the {@link SkippedComponent#getParent()} method
 	 */
+	@Test
 	public void testGetParent() {
 		try {
 			IApiComponent tcomp = getTestingComponent();
@@ -189,6 +206,7 @@ public class SkippedComponentTests extends SearchTest {
 	/**
 	 * Tests the {@link SkippedComponent#getType()} method
 	 */
+	@Test
 	public void testGetType() {
 		try {
 			IApiComponent tcomp = getTestingComponent();
@@ -204,6 +222,7 @@ public class SkippedComponentTests extends SearchTest {
 	/**
 	 * Tests the {@link SkippedComponent#getVersion()} method
 	 */
+	@Test
 	public void testGetVersion() {
 		try {
 			IApiComponent tcomp = getTestingComponent();
@@ -219,6 +238,7 @@ public class SkippedComponentTests extends SearchTest {
 	/**
 	 * Tests the {@link SkippedComponent#getErrors()} method
 	 */
+	@Test
 	public void testGetErrors() {
 		try {
 			IApiComponent tcomp = getTestingComponent();
@@ -234,6 +254,7 @@ public class SkippedComponentTests extends SearchTest {
 	/**
 	 * Tests the {@link SkippedComponent#getErrorDetails()} method
 	 */
+	@Test
 	public void testGetErrorDetails() {
 		try {
 			IApiComponent tcomp = getTestingComponent();

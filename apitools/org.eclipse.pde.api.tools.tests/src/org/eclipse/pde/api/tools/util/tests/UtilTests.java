@@ -10,6 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.util.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -38,15 +45,14 @@ import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 import org.eclipse.pde.api.tools.internal.util.SinceTagVersion;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests the methods in our utility class: {@link Util}
  *
  * @since 1.0.0
  */
-public class UtilTests extends TestCase {
+public class UtilTests {
 
 	private static final IPath SRC_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test_source"); //$NON-NLS-1$
 	static final IPath SRC_LOC_SEARCH = TestSuiteHelper.getPluginDirectoryPath().append("test-search"); //$NON-NLS-1$
@@ -66,14 +72,9 @@ public class UtilTests extends TestCase {
 	/**
 	 * Tests that passing an illegal argument when creating a new {@link SinceTagVersion} throws an exception
 	 */
+	@Test(expected = IllegalArgumentException.class)
 	public void testIllegalArgSinceTagVersion() {
-		try {
-			new SinceTagVersion(null);
-			fail("creating a since tag version with a null value should have thrown an exception"); //$NON-NLS-1$
-		}
-		catch(IllegalArgumentException iae) {
-
-		}
+		new SinceTagVersion(null);
 	}
 
 	/**
@@ -93,6 +94,7 @@ public class UtilTests extends TestCase {
 	/**
 	 * Tests that the isClassFile method works as expected when passed a valid name (*.class)
 	 */
+	@Test
 	public void testIsClassfile() {
 		assertTrue("Test.class is a class file", Util.isClassFile("Test.class")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -100,6 +102,7 @@ public class UtilTests extends TestCase {
 	/**
 	 * Tests that the isClassFile method works as expected when passed an invalid name (not *.class)
 	 */
+	@Test
 	public void testIsNotClassfile() {
 		assertFalse("Test.notclass is not a classfile", Util.isClassFile("Test.notclass")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -108,6 +111,7 @@ public class UtilTests extends TestCase {
 	 * Tests that the isArchive method works as expected when passed a valid archive
 	 * name (*.zip or *.jar)
 	 */
+	@Test
 	public void testIsArchive() {
 		assertTrue("Test.zip is an archive", Util.isArchive("Test.zip")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue("Test.jar is an archive", Util.isArchive("Test.jar")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -118,6 +122,7 @@ public class UtilTests extends TestCase {
 	/**
 	 * Tests that the isTGZFile method works as expected
 	 */
+	@Test
 	public void testIsTar() {
 		assertTrue("Test.tar.gz is an archive", Util.isTGZFile("Test.tar.gz")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue("Test.tar.gz is an archive", Util.isTGZFile("Test.TAR.GZ")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -132,6 +137,7 @@ public class UtilTests extends TestCase {
 	/**
 	 * Tests that the isZipJarFile method works as expected
 	 */
+	@Test
 	public void testIsJar() {
 		assertTrue("Test.tar.gz is an archive", Util.isZipJarFile("Test.zip")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue("Test.tar.gz is an archive", Util.isZipJarFile("Test.ZIP")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -145,6 +151,7 @@ public class UtilTests extends TestCase {
 	 * Tests that the isArchive method works as expected when passed an invalid archive
 	 * name (*.notzip)
 	 */
+	@Test
 	public void testisNotArchive() {
 		assertFalse("Test.notzip is not an archive", Util.isArchive("Test.notzip")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -153,6 +160,7 @@ public class UtilTests extends TestCase {
 	 * Test org.eclipse.pde.api.tools.internal.util.Util.getFragmentNumber(String)
 	 * org.eclipse.pde.api.tools.internal.util.Util.isGreatherVersion(String, String)
 	 */
+	@Test
 	public void testGetFragmentNumber() {
 		assertEquals("wrong value", 2, Util.getFragmentNumber("org.eclipse.core.filesystem 1.0")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("wrong value", 2, Util.getFragmentNumber("1.0")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -172,10 +180,12 @@ public class UtilTests extends TestCase {
 	/*
 	 * Test org.eclipse.pde.api.tools.internal.util.Util.isGreatherVersion(String, String)
 	 */
+	@Test
 	public void testIsGreatherVersion() {
 		assertEquals("wrong value", 1, 1); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testSinceTagVersion() {
 		try {
 			new SinceTagVersion(null);
@@ -305,6 +315,7 @@ public class UtilTests extends TestCase {
 		assertEquals("wrong postfix string", " as private method", sinceTagVersion.postfixString()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Test
 	public void testRegexExcludeList() {
 		String line = "R:org\\.eclipse\\.swt[a-zA-Z_0-9\\.]*"; //$NON-NLS-1$
 		class LocalApiComponent implements IApiComponent {
@@ -649,6 +660,8 @@ public class UtilTests extends TestCase {
 		assertFalse("Wrong result", excludedElements.containsPartialMatch("org.eclipse.jdt.core")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertFalse("Wrong result", excludedElements.containsExactMatch("org.eclipse.jdt.core")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
+	@Test
 	public void testRegexExcludeList2() {
 		FilteredElements excludedElements = new FilteredElements();
 		assertEquals("Wrong size", 0, excludedElements.getPartialMatches().size()); //$NON-NLS-1$
@@ -657,6 +670,7 @@ public class UtilTests extends TestCase {
 		assertFalse("Wrong result", excludedElements.containsExactMatch("org.eclipse.jdt.core")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Test
 	public void testPluginXmlDecoding() {
 		InputStream stream = UtilTests.class.getResourceAsStream("plugin.xml.zip"); //$NON-NLS-1$
 		String s = null;
@@ -681,18 +695,17 @@ public class UtilTests extends TestCase {
 	}
 
 	/**
-	 * Tests that the utility method for reading in include/exclude regex tests throws an exception
-	 * when the file doesn't exist.
+	 * Tests that the utility method for reading in include/exclude regex tests
+	 * throws an exception when the file doesn't exist.
 	 *
-	 * The regex parsing is tested more extensively in {@link org.eclipse.pde.api.tools.search.tests.SearchEngineTests}
+	 * The regex parsing is tested more extensively in
+	 * {@link org.eclipse.pde.api.tools.search.tests.SearchEngineTests}
+	 *
+	 * @throws CoreException
 	 */
-	public void testInitializeRegexFilterList(){
+	@Test(expected = CoreException.class)
+	public void testInitializeRegexFilterList() throws CoreException {
 		File bogus = new File(SRC_LOC.toFile(), "DOES_NOT_EXIST"); //$NON-NLS-1$
-		try {
-			Util.initializeRegexFilterList(bogus.getAbsolutePath(), null, false);
-			fail("Util.initializeRegexFilterList should throw Core Exception for missing file"); //$NON-NLS-1$
-		} catch (CoreException e){
-			// Must hit here
-		}
+		Util.initializeRegexFilterList(bogus.getAbsolutePath(), null, false);
 	}
 }

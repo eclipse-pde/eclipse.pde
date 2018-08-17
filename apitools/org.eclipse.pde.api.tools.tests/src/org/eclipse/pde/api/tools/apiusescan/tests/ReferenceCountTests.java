@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.apiusescan.tests;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -23,14 +26,16 @@ import org.eclipse.pde.api.tools.internal.search.IReferenceCollection;
 import org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor;
 import org.eclipse.pde.api.tools.internal.search.UseScanManager;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ReferenceCountTests extends TestCase {
+public class ReferenceCountTests {
 
 	private IApiBaseline fBaseline;
 	private UseScanManager fUseScanManager;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		IProject setupProject = ExternalDependencyTestUtils.setupProject();
 		if (setupProject == null) {
 			fail("Unable to setup the project. Can not run the test cases"); //$NON-NLS-1$
@@ -40,6 +45,7 @@ public class ReferenceCountTests extends TestCase {
 		fBaseline = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 	}
 
+	@Test
 	public void testReferenceCountReportAll() {
 		String location = ExternalDependencyTestUtils.setupReport("reportAll", true); //$NON-NLS-1$
 		if (location == null) {
@@ -66,6 +72,7 @@ public class ReferenceCountTests extends TestCase {
 		fUseScanManager.clearCache();
 	}
 
+	@Test
 	public void testReferenceCountReportOne() {
 		String location = ExternalDependencyTestUtils.setupReport("reportOne", false); //$NON-NLS-1$
 		if (location == null) {
@@ -82,6 +89,7 @@ public class ReferenceCountTests extends TestCase {
 		verifyReferenceCount(apiComponent, apiUseTpes, expectedResult);
 	}
 
+	@Test
 	public void testReferenceCountReportTwo() {
 		String location = ExternalDependencyTestUtils.setupReport("reportTwo", false);		 //$NON-NLS-1$
 		if (location == null) {
@@ -99,6 +107,7 @@ public class ReferenceCountTests extends TestCase {
 		verifyReferenceCount(apiComponent, apiUseTpes, expectedResult);
 	}
 
+	@Test
 	public void testCacheSize() {
 		fUseScanManager.clearCache();
 		fUseScanManager.setCacheSize(15);

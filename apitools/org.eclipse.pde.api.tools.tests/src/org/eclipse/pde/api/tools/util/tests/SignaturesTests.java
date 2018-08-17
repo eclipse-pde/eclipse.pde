@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.util.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.model.ApiField;
 import org.eclipse.pde.api.tools.internal.model.ApiMethod;
 import org.eclipse.pde.api.tools.internal.model.ApiType;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Test class for the {@link Signatures} utility class
@@ -25,15 +28,12 @@ import junit.framework.TestCase;
  * @since 1.0.0
  */
 @SuppressWarnings("nls")
-public class SignaturesTests extends TestCase {
-
-	public SignaturesTests(String name) {
-		super(name);
-	}
+public class SignaturesTests {
 
 	/**
 	 * Tests the {@link Signatures#dequalifySignature(String)} method
 	 */
+	@Test
 	public void testDequalifySignatures() {
 		assertEquals("Wrong conversion", "(QObject;QException;)V", Signatures.dequalifySignature("(Ljava/lang/Object;Ljava/lang/Exception;)V")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertEquals("Wrong conversion", "(QObject;QException;)QException;", Signatures.dequalifySignature("(Ljava/lang/Object;Ljava/lang/Exception;)Ljava/lang/Exception;")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -55,6 +55,7 @@ public class SignaturesTests extends TestCase {
 	/**
 	 * Tests the {@link Signatures#isQualifiedSignature(String)} method
 	 */
+	@Test
 	public void testIsQualifiedSignature() {
 		assertTrue("should return true", Signatures.isQualifiedSignature("(Ljava/lang/Object;Ljava/lang/Exception;)V")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertFalse("should return false", Signatures.isQualifiedSignature("(IJCQObject;IJCQException;IJC)I")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -65,6 +66,7 @@ public class SignaturesTests extends TestCase {
 	/**
 	 * Tests the {@link Signatures#processMethodSignature(org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod)} method
 	 */
+	@Test
 	public void testProcessMethodSignature() {
 		ApiType type = new ApiType(null, "Parent", "Lx.y.z.Parent;", null, Flags.AccPublic, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		ApiMethod method = type.addMethod("m1", "()V;", null, Flags.AccPublic, null); //$NON-NLS-1$ //$NON-NLS-2$
@@ -83,6 +85,7 @@ public class SignaturesTests extends TestCase {
 	 * Tests the {@link Signatures#getMethodName(org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod)} method
 	 * @throws Exception
 	 */
+	@Test
 	public void testGetMethodName() throws Exception {
 		ApiType type = new ApiType(null, "Parent", "Lx.y.z.Parent;", null, Flags.AccPublic, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		ApiMethod method = type.addMethod("m1", "()V;", null, Flags.AccPublic, null); //$NON-NLS-1$ //$NON-NLS-2$
@@ -95,6 +98,7 @@ public class SignaturesTests extends TestCase {
 	 * Tests the {@link Signatures#getMethodSignature(org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod)} method
 	 * @throws Exception
 	 */
+	@Test
 	public void testGetMethodSignature() throws Exception {
 		ApiType type = new ApiType(null, "Parent", "Lx.y.z.Parent;", null, Flags.AccPublic, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		ApiMethod method = type.addMethod("m1", "()V;", null, Flags.AccPublic, null); //$NON-NLS-1$ //$NON-NLS-2$
@@ -113,6 +117,7 @@ public class SignaturesTests extends TestCase {
 	 * Tests the {@link Signatures#getQualifiedMethodSignature(org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod)} method
 	 * @throws Exception
 	 */
+	@Test
 	public void testGetQualifiedMethodSignature() throws Exception {
 		ApiType type = new ApiType(null, "Parent", "Lx.y.z.Parent;", null, Flags.AccPublic, null, null);  //$NON-NLS-1$//$NON-NLS-2$
 		ApiMethod method = type.addMethod("m1", "()V;", null, Flags.AccPublic, null); //$NON-NLS-1$ //$NON-NLS-2$
@@ -139,6 +144,7 @@ public class SignaturesTests extends TestCase {
 	 * Tests the {@link Signatures#getQualifiedMethodSignature(org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor, boolean)} method
 	 * @throws Exception
 	 */
+	@Test
 	public void testGetQualifiedMethodSignature2() throws Exception {
 		ApiType type = new ApiType(null, "x.y.z.Parent", "Lx.y.z.Parent;", null, Flags.AccPublic, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		ApiMethod method = type.addMethod("m1", "()V;", null, Flags.AccPublic, null); //$NON-NLS-1$ //$NON-NLS-2$
@@ -153,6 +159,7 @@ public class SignaturesTests extends TestCase {
 	/**
 	 * Tests the {@link Signatures#getTypeSignature(String, String, boolean)} method
 	 */
+	@Test
 	public void testGetTypeSignature() {
 		ApiType type = new ApiType(null, "Parent", "Lx.y.z.Parent;", null, Flags.AccPublic, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("Wrong type signature returned", "Parent", Signatures.getTypeSignature(type.getSignature(), type.getGenericSignature(), false)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -168,6 +175,7 @@ public class SignaturesTests extends TestCase {
 	/**
 	 * Tests the {@link Signatures#getTypeSignature(org.eclipse.pde.api.tools.internal.provisional.model.IApiType)} method
 	 */
+	@Test
 	public void testGetTypeSignature2() {
 		ApiType type = new ApiType(null, "Parent", "Lx.y.z.Parent;", null, Flags.AccPublic, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("Wrong type signature returned", "Parent", Signatures.getTypeSignature(type)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -182,6 +190,7 @@ public class SignaturesTests extends TestCase {
 	/**
 	 * Tests the {@link Signatures#getQualifiedTypeSignature(org.eclipse.pde.api.tools.internal.provisional.model.IApiType)} method
 	 */
+	@Test
 	public void testGetQualifiedTypeSignature() {
 		ApiType type = new ApiType(null, "Parent", "Lx.y.z.Parent;", null, Flags.AccPublic, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("Wrong type signature returned", "x.y.z.Parent", Signatures.getQualifiedTypeSignature(type)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -210,6 +219,7 @@ public class SignaturesTests extends TestCase {
 	 * Tests the {@link Signatures#appendTypeParameters(StringBuilder, String[])}
 	 * method
 	 */
+	@Test
 	public void testAppendTypeParameters() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Type"); //$NON-NLS-1$
@@ -224,6 +234,7 @@ public class SignaturesTests extends TestCase {
 	/**
 	 * Tests the {@link Signatures#getComma()} method
 	 */
+	@Test
 	public void testGetComma() {
 		assertEquals("Incorrect comma returned", ", ", Signatures.getComma()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -231,6 +242,7 @@ public class SignaturesTests extends TestCase {
 	/**
 	 * Tests the {@link Signatures#getGT()} method
 	 */
+	@Test
 	public void testGetGT() {
 		assertEquals("Incorrect '>' returned", ">", Signatures.getGT()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -238,6 +250,7 @@ public class SignaturesTests extends TestCase {
 	/**
 	 * Tests the {@link Signatures#getLT()} method
 	 */
+	@Test
 	public void testGetLT() {
 		assertEquals("Incorrect '<' returned", "<", Signatures.getLT()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -245,6 +258,7 @@ public class SignaturesTests extends TestCase {
 	/**
 	 * Tests the {@link Signatures#getTypeName(String)} method
 	 */
+	@Test
 	public void testGetTypeName() {
 		assertEquals("Wrong type name returned", "Clazz", Signatures.getTypeName("Clazz")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertEquals("Wrong type name returned", "Clazz", Signatures.getTypeName("a.Clazz")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -257,6 +271,7 @@ public class SignaturesTests extends TestCase {
 	/**
 	 * Tests the {@link Signatures#matchesSignatures(String, String)} method
 	 */
+	@Test
 	public void testMatchesSignatures() {
 		assertTrue("Signatures should match", Signatures.matchesSignatures("()V;", "()V;")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertTrue("Signatures should match", Signatures.matchesSignatures("(ILjava.lang.String;)V;", "(ILjava.lang.String;)V;")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -269,27 +284,32 @@ public class SignaturesTests extends TestCase {
 				Signatures.matchesSignatures("(ILjava.util.List<Ljava.lang.String;>;)V;", "(ILjava.util.List;)V;")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Test
 	public void testMatchesInnerClasses() {
 		assertTrue("Signatures should match", Signatures.matchesSignatures("(QInnerMost;)V", "(Lmy.package.Class$InnerMost;)V"));
 		assertTrue("Signatures should match", Signatures.matchesSignatures("(QInnerMost;)V", "(Lmy.package.Class$Inner$InnerMost;)V"));
 	}
 
+	@Test
 	public void testMatchesArgumentPackages() {
 		assertTrue("Same packages should match", Signatures.matchesSignatures("(Lmy.package.Class;)V", "(Lmy.package.Class;)V"));
 		assertFalse("Differing packages should not match", Signatures.matchesSignatures("(Lmy.package.Class;)V", "(Lother.package.Class;)V"));
 		assertFalse("Differing packages should not match", Signatures.matchesSignatures("(Lmy.package.Class$InnerMost;)V", "(Lother.package.Class$InnerMost;)V"));
 	}
 
+	@Test
 	public void testMatchesGenericsBug456945_ex1() {
 		// This is the example from bug 456945
 		assertTrue("Signatures should match", Signatures.matchesSignatures("(QIterable<+QCharSequence;>;QIAcceptor<QResult;>;)V", "(Ljava.lang.Iterable<+Ljava.lang.CharSequence;>;Lorg.eclipse.xtext.util.IAcceptor<Lorg.eclipse.xtext.xbase.compiler.CompilationTestHelper$Result;>;)V"));
 	}
 
+	@Test
 	public void testMatchesGenericsBug456945_ex2() {
 		// Modified example that included parameterized return type
 		assertTrue("Wildcard signatures should match", Signatures.matchesSignatures("(QIterable<+QCharSequence;>;QIAcceptor<QResult;>;)QT;", "(Ljava.lang.Iterable<+Ljava.lang.CharSequence;>;Lorg.eclipse.xtext.util.IAcceptor<Lorg.eclipse.xtext.xbase.compiler.CompilationTestHelper$Result;>;)TT;"));
 	}
 
+	@Test
 	public void testMatchesGenericsBug334281_c1() {
 		// Example from bug 334281 comment 1
 		assertTrue("Wildcard signatures should match", Signatures.matchesSignatures("(QClass<+QITmfEvent;>;QTmfTimeRange;JII)V", "(Ljava.lang.Class<+Lorg.eclipse.linuxtools.tmf.core.event.ITmfEvent;>;Lorg.eclipse.linuxtools.tmf.core.timestamp.TmfTimeRange;JII)V"));
@@ -297,11 +317,13 @@ public class SignaturesTests extends TestCase {
 		assertTrue("Array wildcard signatures should match", Signatures.matchesSignatures("(QClass<[+QITmfEvent;>;QTmfTimeRange;JII)V", "(Ljava.lang.Class<[+Lorg.eclipse.linuxtools.tmf.core.event.ITmfEvent;>;Lorg.eclipse.linuxtools.tmf.core.timestamp.TmfTimeRange;JII)V"));
 	}
 
+	@Test
 	public void testMatchesMismatchedGenericTypes() {
 		assertFalse("Different generic type names should not match", Signatures.matchesSignatures("(QIterable<QCharSequence;>;)V", "(QList<QCharSequence;>;)V"));
 	}
 
 	/** Tests the {@link Signatures#matches(String, String)} method */
+	@Test
 	public void testTypeMatches() {
 		assertTrue("Signatures should match", Signatures.matches("I", "I"));
 		assertTrue("Signatures should match", Signatures.matches("QClass;", "Ljava.lang.Class;"));
@@ -324,6 +346,7 @@ public class SignaturesTests extends TestCase {
 	/**
 	 * Tests the {@link Signatures#getPackageName(String)} method
 	 */
+	@Test
 	public void testGetPackageName() {
 		String pname = Signatures.getPackageName("a.b.c.Type"); //$NON-NLS-1$
 		assertEquals("The package name should be 'a.b.c'", "a.b.c", pname); //$NON-NLS-1$ //$NON-NLS-2$
@@ -334,6 +357,7 @@ public class SignaturesTests extends TestCase {
 	/**
 	 * Tests the {@link Signatures#getFieldSignature(org.eclipse.pde.api.tools.internal.provisional.model.IApiField)} method
 	 */
+	@Test
 	public void testGetFieldSignature() {
 		ApiType type = new ApiType(null, "Parent", "Lx.y.z.Parent;", null, Flags.AccPublic, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		ApiField field = type.addField("f1", "f1", null, Flags.AccPublic, null); //$NON-NLS-1$ //$NON-NLS-2$
@@ -343,6 +367,7 @@ public class SignaturesTests extends TestCase {
 	/**
 	 * Tests the {@link Signatures#getQualifiedFieldSignature(org.eclipse.pde.api.tools.internal.provisional.model.IApiField)} method
 	 */
+	@Test
 	public void testGetQualifiedFieldSignature() throws Exception {
 		ApiType type = new ApiType(null, "Parent", "Lx.y.z.Parent;", null, Flags.AccPublic, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		ApiField field = type.addField("f1", "f1", null, Flags.AccPublic, null);  //$NON-NLS-1$//$NON-NLS-2$
@@ -361,6 +386,7 @@ public class SignaturesTests extends TestCase {
 	/**
 	 * Tests the {@link Signatures#getPrimaryTypeName(String)} method
 	 */
+	@Test
 	public void testGetPrimaryTypeName() {
 		assertEquals("the type name x.y.z should have been returned", "x.y.z.Type", Signatures.getPrimaryTypeName("x.y.z.Type$Member")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertEquals("the type name x.y.z should have been returned", "x.y.z.Type", Signatures.getPrimaryTypeName("x.y.z.Type")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -370,6 +396,7 @@ public class SignaturesTests extends TestCase {
 	/**
 	 * Tests the {@link Signatures#getSimpleTypeName(String)} method
 	 */
+	@Test
 	public void testGetSimpleTypeName() {
 		assertEquals("the type name Type should have been returned", "Type", Signatures.getSimpleTypeName("a.b.c.Type")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertEquals("the type name Type$Member should have been returned", "Type$Member", Signatures.getSimpleTypeName("a.b.c.Type$Member")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

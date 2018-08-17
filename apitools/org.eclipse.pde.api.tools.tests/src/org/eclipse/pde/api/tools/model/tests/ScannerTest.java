@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
@@ -22,15 +25,14 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
-
-import junit.framework.TestCase;
+import org.junit.Before;
 
 /**
  * Root class for testing scanning classfiles
  *
  * @since 1.0.400
  */
-public abstract class ScannerTest extends TestCase {
+public abstract class ScannerTest {
 
 	private static DirectoryApiTypeContainer container = null;
 
@@ -62,8 +64,8 @@ public abstract class ScannerTest extends TestCase {
 	 */
 	protected abstract boolean doCompile();
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		IPath root = getWorkspaceRoot();
 		File file = root.toFile();
 		if (!file.exists()) {
@@ -74,12 +76,6 @@ public abstract class ScannerTest extends TestCase {
 			assertTrue("The test workspace failed to compile", doCompile()); //$NON-NLS-1$
 			container = new DirectoryApiTypeContainer(null, root.append(getPackageName()).toOSString());
 		}
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-
 	}
 
 	/**

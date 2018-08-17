@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.search.tests;
 
+import static org.junit.Assert.fail;
+
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
+import org.junit.Test;
 
 /**
  * Tests the {@link org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine}
@@ -22,8 +25,10 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
 public class SearchEngineTests extends SearchTest {
 
 	/**
-	 * Tests the the engine properly aborts with invalid <code>null</code> arguments
+	 * Tests the the engine properly aborts with invalid <code>null</code>
+	 * arguments
 	 */
+	@Test
 	public void testNullArguments() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
@@ -39,9 +44,10 @@ public class SearchEngineTests extends SearchTest {
 	}
 
 	/**
-	 * Tests that the search engine properly reports matches
-	 * when the scope and baseline are one-in-the-same
+	 * Tests that the search engine properly reports matches when the scope and
+	 * baseline are one-in-the-same
 	 */
+	@Test
 	public void testSearchNoSeparateScope() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
@@ -59,9 +65,11 @@ public class SearchEngineTests extends SearchTest {
 	}
 
 	/**
-	 * Tests that the search engine properly reports matches when the scope and baseline
-	 * are not the same {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline}
+	 * Tests that the search engine properly reports matches when the scope and
+	 * baseline are not the same
+	 * {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline}
 	 */
+	@Test
 	public void testSearchSeparateScope() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
@@ -82,6 +90,7 @@ public class SearchEngineTests extends SearchTest {
 	/**
 	 * Tests that an entry in the exclude file is honored
 	 */
+	@Test
 	public void testSearchExcludeOne() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
@@ -103,6 +112,7 @@ public class SearchEngineTests extends SearchTest {
 	/**
 	 * Tests that all elements that appear in the exclude file are left out
 	 */
+	@Test
 	public void testSearchExcludeAll() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
@@ -123,6 +133,7 @@ public class SearchEngineTests extends SearchTest {
 	/**
 	 * Tests that a RegEx entry in the exclude file is honored (R:a.b.c.*)
 	 */
+	@Test
 	public void testExcludeRegexOne() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
@@ -144,6 +155,7 @@ public class SearchEngineTests extends SearchTest {
 	/**
 	 * Tests that a RegEx entry will cover all the proper matches (R:*.P*)
 	 */
+	@Test
 	public void testExcludeRegexAll() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
@@ -164,6 +176,7 @@ public class SearchEngineTests extends SearchTest {
 	/**
 	 * Tests searching for API only
 	 */
+	@Test
 	public void testSearchApiOnly() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
@@ -184,6 +197,7 @@ public class SearchEngineTests extends SearchTest {
 	/**
 	 * Tests searching for internal references only
 	 */
+	@Test
 	public void testSearchInternalOnly() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
@@ -204,6 +218,7 @@ public class SearchEngineTests extends SearchTest {
 	/**
 	 * Search with tracing on (causing the console to have content)
 	 */
+	@Test
 	public void testSearchWithDebugOn() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {
@@ -223,9 +238,11 @@ public class SearchEngineTests extends SearchTest {
 	}
 
 	/**
-	 * Tests that the search engine properly reports matches when the scope and baseline
-	 * are not the same {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline}
+	 * Tests that the search engine properly reports matches when the scope and
+	 * baseline are not the same
+	 * {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline}
 	 */
+	@Test
 	public void testBadRegex() {
 		ApiSearchEngine engine = new ApiSearchEngine();
 		try {

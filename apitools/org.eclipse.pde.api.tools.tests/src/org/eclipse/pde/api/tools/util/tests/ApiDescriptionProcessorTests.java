@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.util.tests;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -49,6 +53,9 @@ import org.eclipse.pde.api.tools.ui.internal.wizards.ApiToolingSetupRefactoring;
 import org.eclipse.pde.api.tools.ui.internal.wizards.WizardMessages;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -173,9 +180,8 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	private static IPath ROOT_PATH = TestSuiteHelper.getPluginDirectoryPath().append("test-source").append("javadoc"); //$NON-NLS-1$ //$NON-NLS-2$
 	private static File componentxml = new File(ROOT_PATH.append("component.xml").toOSString()); //$NON-NLS-1$
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		createProject(TESTING_PROJECT_NAME, null);
 		IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
 		assertNotNull("The java project must have been created", project); //$NON-NLS-1$
@@ -195,9 +201,8 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 		performRefactoring(refactoring);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		deleteProject(TESTING_PROJECT_NAME);
 	}
 
@@ -210,6 +215,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * <li>a jar file containing the component.xml file</li>
 	 * </ol>
 	 */
+	@Test
 	public void testSerializeComponentXml() {
 		String xml = ApiDescriptionProcessor.serializeComponentXml(new File(ROOT_PATH.toOSString()));
 		assertNotNull("The component xml file must exist and be parsable from a root directory", xml); //$NON-NLS-1$
@@ -288,6 +294,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the addition of a javadoc tag to a class. Uses
 	 * <code>JavadocTestClass1</code>
 	 */
+	@Test
 	public void testProcessClassAddition() throws Exception {
 		processUpdatedItem("JavadocTestClass1", null, null, null, new String[] { "@noinstantiate" }); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -296,6 +303,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the addition of a javadoc tag to a class that does not have a
 	 * javadoc section yet Uses <code>JavadocTestClass7</code>
 	 */
+	@Test
 	public void testProcessClassAdditionNoDocElement() throws Exception {
 		processUpdatedItem("JavadocTestClass7", null, null, null, new String[] { //$NON-NLS-1$
 		"@noextend", "@noinstantiate" }); //$NON-NLS-1$ //$NON-NLS-2$
@@ -305,6 +313,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the addition of a javadoc tag to a method that does not have a
 	 * javadoc section yet Uses <code>JavadocTestClass7</code>
 	 */
+	@Test
 	public void testProcessMethodAdditionNoDocElement() throws Exception {
 		processUpdatedItem("JavadocTestClass7", null, "m1", "()V", new String[] { "@nooverride" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
@@ -313,6 +322,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the addition of a javadoc tag to a field that does not have a
 	 * javadoc section yet Uses <code>JavadocTestClass7</code>
 	 */
+	@Test
 	public void testProcessFieldAdditionNoDocElement() throws Exception {
 		processUpdatedItem("JavadocTestClass7", null, "f1", null, new String[] { "@noreference" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
@@ -321,6 +331,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the addition of a javadoc tag to an inner class. Uses
 	 * <code>JavadocTestClass2</code>
 	 */
+	@Test
 	public void testProcessInnerClassAddition() throws Exception {
 		processUpdatedItem("JavadocTestClass2", "Inner", null, null, new String[] { "@noinstantiate" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
@@ -329,6 +340,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the addition of a javadoc tags to methods. Uses
 	 * <code>JavadocTestClass3</code>
 	 */
+	@Test
 	public void testProcessMethodAddition() throws Exception {
 		processUpdatedItem("JavadocTestClass3", null, "m1", "()V", new String[] { "@nooverride" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		processUpdatedItem("JavadocTestClass3", null, "m2", "()V", new String[] { "@noreference" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -338,6 +350,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the addition of a javadoc tags to fields. Uses
 	 * <code>JavadocTestClass4</code>
 	 */
+	@Test
 	public void testProcessFieldAddition() throws Exception {
 		processUpdatedItem("JavadocTestClass4", null, "f1", null, new String[] { "@noreference" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		processUpdatedItem("JavadocTestClass4", null, "f2", null, new String[] { "@noreference" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -347,6 +360,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the addition of a javadoc tags to methods in inner classes. Uses
 	 * <code>JavadocTestClass6</code>
 	 */
+	@Test
 	public void testProcessInnerMethodAddition() throws Exception {
 		processUpdatedItem("JavadocTestClass6", "Inner2", "m1", "()V", new String[] { "@nooverride" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		processUpdatedItem("JavadocTestClass6", "Inner2", "m2", "()V", new String[] { "@noreference" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
@@ -356,6 +370,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the addition of a javadoc tags to fields in inner classes. Uses
 	 * <code>JavadocTestClass5</code>
 	 */
+	@Test
 	public void testProcessInnerFieldAddition() throws Exception {
 		processUpdatedItem("JavadocTestClass5", "Inner2", "f1", null, new String[] { "@noreference" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		processUpdatedItem("JavadocTestClass5", "Inner2", "f2", null, new String[] { "@noreference" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -367,6 +382,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * (https://bugs.eclipse.org/bugs/show_bug.cgi?id=210786) Uses
 	 * <code>JavadocTestClass8</code>
 	 */
+	@Test
 	public void testProcessSubclassAttribute() throws Exception {
 		processUpdatedItem("JavadocTestClass8", null, null, null, new String[] { "@noextend" }); //$NON-NLS-1$ //$NON-NLS-2$
 	}

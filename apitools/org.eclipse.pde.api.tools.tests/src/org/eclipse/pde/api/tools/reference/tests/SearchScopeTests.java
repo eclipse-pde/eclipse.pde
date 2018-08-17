@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.reference.tests;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collection;
 import java.util.HashSet;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -25,13 +25,14 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
+import org.junit.Test;
 
 /**
  * Tests search scopes.
  *
  * @since 1.0.0
  */
-public class SearchScopeTests extends TestCase {
+public class SearchScopeTests {
 
 	/**
 	 * Tests that visiting a scope with whole components is the same as visiting
@@ -39,6 +40,7 @@ public class SearchScopeTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testVisitEntireComponentsScope() throws CoreException {
 		IApiBaseline profile = TestSuiteHelper.createTestingBaseline("test-plugins"); //$NON-NLS-1$
 		IApiComponent componentA = profile.getApiComponent("component.a"); //$NON-NLS-1$
@@ -87,6 +89,7 @@ public class SearchScopeTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testVisitTypeScope() throws CoreException {
 		IApiBaseline profile = TestSuiteHelper.createTestingBaseline("test-plugins"); //$NON-NLS-1$
 		IApiComponent componentA = profile.getApiComponent("component.a"); //$NON-NLS-1$
@@ -109,6 +112,7 @@ public class SearchScopeTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testVisitSpecificTypes() throws CoreException {
 		IApiBaseline profile = TestSuiteHelper.createTestingBaseline("test-plugins"); //$NON-NLS-1$
 		IApiComponent componentA = profile.getApiComponent("component.a"); //$NON-NLS-1$

@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.comparator.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaProcessor;
@@ -17,15 +22,12 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.junit.Test;
 
 /**
  * Delta tests for enum
  */
 public class EnumDeltaTests extends DeltaTestSetup {
-
-	public EnumDeltaTests(String name) {
-		super(name);
-	}
 
 	@Override
 	public String getTestRoot() {
@@ -35,6 +37,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 	/**
 	 * delete enum constant
 	 */
+	@Test
 	public void test1() {
 		deployBundles("test1"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -57,6 +60,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 	/**
 	 * rename enum constant = remove + add
 	 */
+	@Test
 	public void test2() {
 		deployBundles("test2"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -84,6 +88,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 	/**
 	 * Add enum constant arguments
 	 */
+	@Test
 	public void test3() {
 		deployBundles("test3"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -113,6 +118,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 	/**
 	 * Change enum constant arguments
 	 */
+	@Test
 	public void test4() {
 		deployBundles("test4"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -142,6 +148,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 	/**
 	 * Add new enum constant
 	 */
+	@Test
 	public void test5() {
 		deployBundles("test5"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -164,6 +171,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 	/**
 	 * Add new enum constant
 	 */
+	@Test
 	public void test6() {
 		deployBundles("test6"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -181,6 +189,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 	/**
 	 * Added non visible method
 	 */
+	@Test
 	public void test7() {
 		deployBundles("test7"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -204,6 +213,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 	/**
 	 * Added non visible method
 	 */
+	@Test
 	public void test8() {
 		deployBundles("test8"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -223,9 +233,11 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
+
 	/**
 	 * Added @noreference to an existing enum constant
 	 */
+	@Test
 	public void test9() {
 		deployBundles("test9"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -245,9 +257,11 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
+
 	/**
 	 * Added @noreference to a new enum constant
 	 */
+	@Test
 	public void test10() {
 		deployBundles("test10"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -260,9 +274,11 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertNotNull("No delta", delta); //$NON-NLS-1$
 		assertTrue("Wrong delta", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
 	}
+
 	/**
 	 * Added @noreference to a new enum constant
 	 */
+	@Test
 	public void test11() {
 		deployBundles("test11"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -282,9 +298,11 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
+	
 	/**
 	 * Removed @noreference to a new enum constant
 	 */
+	@Test
 	public void test12() {
 		deployBundles("test12"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -304,9 +322,11 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
+	
 	/**
 	 * Decrease access for an enum type
 	 */
+	@Test
 	public void test13() {
 		deployBundles("test13"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -326,9 +346,11 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
+	
 	/**
 	 * Added deprecation
 	 */
+	@Test
 	public void test14() {
 		deployBundles("test14"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -347,9 +369,11 @@ public class EnumDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.ENUM_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
+	
 	/**
 	 * Removed deprecation
 	 */
+	@Test
 	public void test15() {
 		deployBundles("test15"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
@@ -372,6 +396,7 @@ public class EnumDeltaTests extends DeltaTestSetup {
 	/**
 	 * Add field to enum
 	 */
+	@Test
 	public void test16() {
 		deployBundles("test16"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();

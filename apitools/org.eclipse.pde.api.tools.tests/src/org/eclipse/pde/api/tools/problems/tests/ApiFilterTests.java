@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,24 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.problems.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests the {@link org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter} class
  *
  * @since 1.0.1
  */
-public class ApiFilterTests extends TestCase {
+public class ApiFilterTests {
 
 	/**
 	 * Tests the {@link ApiProblemFilter#toString()} method
 	 */
+	@Test
 	public void testToString() {
 		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem("", null, null, IElementDescriptor.RESOURCE, IApiProblem.API_BASELINE_MISSING); //$NON-NLS-1$
 		ApiProblemFilter filter = new ApiProblemFilter("comp.id", problem, null); //$NON-NLS-1$
@@ -37,6 +41,7 @@ public class ApiFilterTests extends TestCase {
 	/**
 	 * Tests the {@link ApiProblemFilter#equals(Object)} method
 	 */
+	@Test
 	public void testEquals() {
 		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem("path", new String[] {"one"}, new String[] {"one"}, IElementDescriptor.RESOURCE, IApiProblem.API_BASELINE_MISSING); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		IApiProblemFilter filter1 = new ApiProblemFilter("comp.id", problem, null); //$NON-NLS-1$
@@ -56,6 +61,7 @@ public class ApiFilterTests extends TestCase {
 	/**
 	 * Tests the {@link ApiProblemFilter#clone()} method
 	 */
+	@Test
 	public void testClone() {
 		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem("path", new String[] {"one"}, new String[] {"one"}, IElementDescriptor.RESOURCE, IApiProblem.API_BASELINE_MISSING); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		ApiProblemFilter filter1 = new ApiProblemFilter("comp.id", problem, null); //$NON-NLS-1$
