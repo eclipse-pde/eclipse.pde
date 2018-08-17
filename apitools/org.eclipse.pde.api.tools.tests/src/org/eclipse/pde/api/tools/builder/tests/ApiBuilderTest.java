@@ -1062,6 +1062,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		resetBuilderOptions();
 		fProblems = null;
 		fMessageArgs = null;
+		this.debugRequestor.clearResult();
 		super.tearDown();
 	}
 
