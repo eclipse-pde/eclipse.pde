@@ -15,8 +15,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -129,17 +129,15 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 	}
 
 	/**
-	 * Tests that calling the saving(..) method on the manager in headless mode does not fail
+	 * Tests that calling the saving(..) method on the manager in headless mode
+	 * does not fail
+	 * 
+	 * @throws CoreException
 	 */
 	@Test
-	public void testSavingCall() {
-		if(!ApiPlugin.isRunningInFramework()) {
-			try {
-				fManager.saving(null);
-			}
-			catch(Exception e) {
-				fail(e.getMessage());
-			}
+	public void testSavingCall() throws CoreException {
+		if (!ApiPlugin.isRunningInFramework()) {
+			fManager.saving(null);
 		}
 	}
 
@@ -149,28 +147,20 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 	 */
 	@Test
 	public void testDoneSavingCall() {
-		if(!ApiPlugin.isRunningInFramework()) {
-			try {
-				fManager.doneSaving(null);
-			}
-			catch(Exception e) {
-				fail(e.getMessage());
-			}
+		if (!ApiPlugin.isRunningInFramework()) {
+			fManager.doneSaving(null);
 		}
 	}
 
 	/**
 	 * Tests that calling preparingToSave(..) does not fail in headless mode
+	 *
+	 * @throws CoreException
 	 */
 	@Test
-	public void testPreparingToSave() {
-		if(!ApiPlugin.isRunningInFramework()) {
-			try {
-				fManager.prepareToSave(null);
-			}
-			catch(Exception e) {
-				fail(e.getMessage());
-			}
+	public void testPreparingToSave() throws CoreException {
+		if (!ApiPlugin.isRunningInFramework()) {
+			fManager.prepareToSave(null);
 		}
 	}
 
@@ -179,13 +169,8 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 	 */
 	@Test
 	public void testRollback() {
-		if(!ApiPlugin.isRunningInFramework()) {
-			try {
-				fManager.rollback(null);
-			}
-			catch(Exception e) {
-				fail(e.getMessage());
-			}
+		if (!ApiPlugin.isRunningInFramework()) {
+			fManager.rollback(null);
 		}
 	}
 
@@ -208,13 +193,9 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 	 */
 	@Test
 	public void testStop() {
-		try {
-			fManager.stop();
-			assertEquals("There should be no api baselines in the manager", 0, fManager.getApiBaselines().length); //$NON-NLS-1$
-			//stop it again to free the memory from the map
-			fManager.stop();
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+		fManager.stop();
+		assertEquals("There should be no api baselines in the manager", 0, fManager.getApiBaselines().length); //$NON-NLS-1$
+		// stop it again to free the memory from the map
+		fManager.stop();
 	}
 }

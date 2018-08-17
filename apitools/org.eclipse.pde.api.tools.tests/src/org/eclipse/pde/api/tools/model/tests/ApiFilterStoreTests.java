@@ -14,9 +14,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -138,132 +139,131 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	}
 
 	/**
-	 * Tests that a filter store can be correctly annotated from a persisted version
+	 * Tests that a filter store can be correctly annotated from a persisted
+	 * version
+	 *
+	 * @throws CoreException
 	 */
 	@Test
-	public void testAnnotateStoreFromLocalFile() {
+	public void testAnnotateStoreFromLocalFile() throws CoreException {
 		IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 		assertNotNull("the testing project api component must exist", component); //$NON-NLS-1$
-		try {
-			assertFilterStore(component.getFilterStore(), 4);
-		}
-		catch(CoreException e) {
-			fail(e.getMessage());
-		}
+		assertFilterStore(component.getFilterStore(), 4);
 	}
 
 	/**
-	 * Tests that asking the store if it filters an invalid problem will return 'false'
+	 * Tests that asking the store if it filters an invalid problem will return
+	 * 'false'
+	 *
+	 * @throws CoreException
 	 */
 	@Test
-	public void testNonExistantProblem() {
+	public void testNonExistantProblem() throws CoreException {
 		IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 		assertNotNull("the testing project api component must exist", component); //$NON-NLS-1$
-		try {
-			IApiFilterStore store = component.getFilterStore();
-			IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
-			IResource resource = project.findMember(new Path("src/x/y/z/C4.java")); //$NON-NLS-1$
-			assertNotNull("the resource src/x/y/z/C4.java must exist", resource); //$NON-NLS-1$
-			IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, 0, IApiProblem.MINOR_VERSION_CHANGE, IDelta.ADDED);
-			assertFalse("the bogus problem should not be filtered", store.isFiltered(problem)); //$NON-NLS-1$
-		}
-		catch (CoreException e) {
-			fail(e.getMessage());
-		}
+		IApiFilterStore store = component.getFilterStore();
+		IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
+		IResource resource = project.findMember(new Path("src/x/y/z/C4.java")); //$NON-NLS-1$
+		assertNotNull("the resource src/x/y/z/C4.java must exist", resource); //$NON-NLS-1$
+		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
+				null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, 0, IApiProblem.MINOR_VERSION_CHANGE,
+				IDelta.ADDED);
+		assertFalse("the bogus problem should not be filtered", store.isFiltered(problem)); //$NON-NLS-1$
 	}
 
 	/**
 	 * tests removing an api problem filter
+	 *
+	 * @throws CoreException
 	 */
 	@Test
-	public void testRemoveFilter() {
-		try {
-			IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
-			assertNotNull("the testing project api component must exist", component); //$NON-NLS-1$
-			IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
-			IResource resource = project.findMember(new Path("src/x/y/z/C4.java")); //$NON-NLS-1$
-			assertNotNull("the resource src/x/y/z/C4.java must exist", resource); //$NON-NLS-1$
-			IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
-			IApiFilterStore store;
-			store = component.getFilterStore();
-			store.removeFilters(new IApiProblemFilter[] {ApiProblemFactory.newProblemFilter(component.getSymbolicName(), problem, null)});
-			assertFalse("src/x/y/z/C4.java should not have a filter", store.isFiltered(problem)); //$NON-NLS-1$
-		}
-		catch (CoreException e) {
-			fail(e.getMessage());
-		}
+	public void testRemoveFilter() throws CoreException {
+		IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
+		assertNotNull("the testing project api component must exist", component); //$NON-NLS-1$
+		IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
+		IResource resource = project.findMember(new Path("src/x/y/z/C4.java")); //$NON-NLS-1$
+		assertNotNull("the resource src/x/y/z/C4.java must exist", resource); //$NON-NLS-1$
+		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
+				null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT,
+				IApiProblem.NO_FLAGS);
+		IApiFilterStore store;
+		store = component.getFilterStore();
+		store.removeFilters(new IApiProblemFilter[] {
+				ApiProblemFactory.newProblemFilter(component.getSymbolicName(), problem, null) });
+		assertFalse("src/x/y/z/C4.java should not have a filter", store.isFiltered(problem)); //$NON-NLS-1$
 	}
 
 	/**
 	 * tests adding a filter using the method that accepts a filter
+	 *
+	 * @throws CoreException
 	 */
 	@Test
-	public void testAddFilterFromFilter() {
-		try {
-			IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
-			assertNotNull("the testing project api component must exist", component); //$NON-NLS-1$
-			IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
-			IResource resource = project.findMember(new Path("src/x/y/z/C4.java")); //$NON-NLS-1$
-			assertNotNull("the resource src/x/y/z/C4.java must exist", resource); //$NON-NLS-1$
-			IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
-			IApiFilterStore store;
-			store = component.getFilterStore();
-			store.addFilters(new IApiProblemFilter[] {ApiProblemFactory.newProblemFilter(component.getSymbolicName(), problem, null)});
-			assertTrue("src/x/y/z/C4.java should have a filter", store.isFiltered(problem)); //$NON-NLS-1$
-			store.removeFilters(new IApiProblemFilter[] {ApiProblemFactory.newProblemFilter(component.getSymbolicName(), problem, null)});
-			assertFalse("src/x/y/z/C4.java should not have a filter", store.isFiltered(problem)); //$NON-NLS-1$
-		}
-		catch(CoreException ce) {
-			fail(ce.getMessage());
-		}
+	public void testAddFilterFromFilter() throws CoreException {
+		IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
+		assertNotNull("the testing project api component must exist", component); //$NON-NLS-1$
+		IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
+		IResource resource = project.findMember(new Path("src/x/y/z/C4.java")); //$NON-NLS-1$
+		assertNotNull("the resource src/x/y/z/C4.java must exist", resource); //$NON-NLS-1$
+		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
+				null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT,
+				IApiProblem.NO_FLAGS);
+		IApiFilterStore store;
+		store = component.getFilterStore();
+		store.addFilters(new IApiProblemFilter[] {
+				ApiProblemFactory.newProblemFilter(component.getSymbolicName(), problem, null) });
+		assertTrue("src/x/y/z/C4.java should have a filter", store.isFiltered(problem)); //$NON-NLS-1$
+		store.removeFilters(new IApiProblemFilter[] {
+				ApiProblemFactory.newProblemFilter(component.getSymbolicName(), problem, null) });
+		assertFalse("src/x/y/z/C4.java should not have a filter", store.isFiltered(problem)); //$NON-NLS-1$
 	}
 
 	/**
 	 * tests adding a filter using the method that accepts an api problem
+	 *
+	 * @throws CoreException
 	 */
 	@Test
-	public void testAddFilterFromProblem() {
-		try {
-			IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
-			assertNotNull("the testing project api component must exist", component); //$NON-NLS-1$
-			IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
-			IResource resource = project.findMember(new Path("src/x/y/z/C4.java")); //$NON-NLS-1$
-			assertNotNull("the resource src/x/y/z/C4.java must exist", resource); //$NON-NLS-1$
-			IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
-			IApiFilterStore store;
-			store = component.getFilterStore();
-			store.addFiltersFor(new IApiProblem[] {problem});
-			assertTrue("src/x/y/z/C4.java should have a filter", store.isFiltered(problem)); //$NON-NLS-1$
-			store.removeFilters(new IApiProblemFilter[] {ApiProblemFactory.newProblemFilter(component.getSymbolicName(), problem, null)});
-			assertFalse("src/x/y/z/C4.java should not have a filter", store.isFiltered(problem)); //$NON-NLS-1$
-		}
-		catch(CoreException ce) {
-			fail(ce.getMessage());
-		}
+	public void testAddFilterFromProblem() throws CoreException {
+		IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
+		assertNotNull("the testing project api component must exist", component); //$NON-NLS-1$
+		IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
+		IResource resource = project.findMember(new Path("src/x/y/z/C4.java")); //$NON-NLS-1$
+		assertNotNull("the resource src/x/y/z/C4.java must exist", resource); //$NON-NLS-1$
+		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
+				null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT,
+				IApiProblem.NO_FLAGS);
+		IApiFilterStore store;
+		store = component.getFilterStore();
+		store.addFiltersFor(new IApiProblem[] { problem });
+		assertTrue("src/x/y/z/C4.java should have a filter", store.isFiltered(problem)); //$NON-NLS-1$
+		store.removeFilters(new IApiProblemFilter[] {
+				ApiProblemFactory.newProblemFilter(component.getSymbolicName(), problem, null) });
+		assertFalse("src/x/y/z/C4.java should not have a filter", store.isFiltered(problem)); //$NON-NLS-1$
 	}
 
 	/**
 	 * Tests that a filter store will not be annotated from a bundle
+	 *
+	 * @throws IOException
+	 * @throws InvocationTargetException
+	 * @throws CoreException
 	 */
 	@Test
-	public void testAnnotateStoreFromBundle() {
-		try {
-			IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
-			FileUtils.importFileFromDirectory(PLUGIN_LOC.append("component_c_1.0.0.jar").toFile(), project.getFullPath(), new NullProgressMonitor()); //$NON-NLS-1$
-			IResource res = project.findMember("component_c_1.0.0.jar"); //$NON-NLS-1$
-			assertNotNull("the jar should exist in the project dir", res); //$NON-NLS-1$
-			IResource jar = project.findMember("component_c_1.0.0.jar"); //$NON-NLS-1$
-			assertNotNull("the component_c jar cannot be null", jar); //$NON-NLS-1$
-			IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
-			IApiComponent component = ApiModelFactory.newApiComponent(profile, jar.getLocation().toOSString());
-			profile.addApiComponents(new IApiComponent[] { component });
-			assertNotNull("the new component cannot be null", component); //$NON-NLS-1$
-			IApiFilterStore store = component.getFilterStore();
-			assertFalse("the new filter store must not be an instance of ApiFilterStore", store instanceof ApiFilterStore); //$NON-NLS-1$
-			assertTrue("the new filter store must be an instance of FilterStore", store instanceof FilterStore); //$NON-NLS-1$
-		}
-		catch(Exception e) {
-			fail(e.getMessage());
-		}
+	public void testAnnotateStoreFromBundle() throws InvocationTargetException, IOException, CoreException {
+		IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
+		FileUtils.importFileFromDirectory(PLUGIN_LOC.append("component_c_1.0.0.jar").toFile(), project.getFullPath(), //$NON-NLS-1$
+				new NullProgressMonitor());
+		IResource res = project.findMember("component_c_1.0.0.jar"); //$NON-NLS-1$
+		assertNotNull("the jar should exist in the project dir", res); //$NON-NLS-1$
+		IResource jar = project.findMember("component_c_1.0.0.jar"); //$NON-NLS-1$
+		assertNotNull("the component_c jar cannot be null", jar); //$NON-NLS-1$
+		IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
+		IApiComponent component = ApiModelFactory.newApiComponent(profile, jar.getLocation().toOSString());
+		profile.addApiComponents(new IApiComponent[] { component });
+		assertNotNull("the new component cannot be null", component); //$NON-NLS-1$
+		IApiFilterStore store = component.getFilterStore();
+		assertFalse("the new filter store must not be an instance of ApiFilterStore", store instanceof ApiFilterStore); //$NON-NLS-1$
+		assertTrue("the new filter store must be an instance of FilterStore", store instanceof FilterStore); //$NON-NLS-1$
 	}
 }

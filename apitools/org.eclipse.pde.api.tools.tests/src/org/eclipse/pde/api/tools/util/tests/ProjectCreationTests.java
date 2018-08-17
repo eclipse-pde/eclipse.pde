@@ -14,9 +14,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -28,6 +29,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
@@ -75,61 +77,61 @@ public class ProjectCreationTests extends AbstractApiTest {
 
 	/**
 	 * Tests importing the java source for the Javadoc tag update tests
+	 *
+	 * @throws IOException
+	 * @throws InvocationTargetException
+	 * @throws JavaModelException
 	 */
 	@Test
-	public void testImportJavadocTestSource() {
-		try {
-			File dest = new File(JAVADOC_SRC_DIR);
-			assertTrue("the source dir must exist", dest.exists()); //$NON-NLS-1$
-			assertTrue("the source dir must be a directory", dest.isDirectory()); //$NON-NLS-1$
-			IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
-			IPackageFragmentRoot srcroot = project.getPackageFragmentRoot(ProjectUtils.SRC_FOLDER);
-			assertNotNull("the srcroot for the test java project must not be null", srcroot); //$NON-NLS-1$
-			FileUtils.importFilesFromDirectory(dest, project.getPath().append(srcroot.getPath()).append("javadoc"), new NullProgressMonitor()); //$NON-NLS-1$
-			// try to look up a file to test if it worked
-			IType type = project.findType("javadoc.JavadocTestClass1", new NullProgressMonitor()); //$NON-NLS-1$
-			assertNotNull("the JavadocTestClass1 type should exist in the javadoc package", type); //$NON-NLS-1$
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+	public void testImportJavadocTestSource() throws InvocationTargetException, IOException, JavaModelException {
+		File dest = new File(JAVADOC_SRC_DIR);
+		assertTrue("the source dir must exist", dest.exists()); //$NON-NLS-1$
+		assertTrue("the source dir must be a directory", dest.isDirectory()); //$NON-NLS-1$
+		IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
+		IPackageFragmentRoot srcroot = project.getPackageFragmentRoot(ProjectUtils.SRC_FOLDER);
+		assertNotNull("the srcroot for the test java project must not be null", srcroot); //$NON-NLS-1$
+		FileUtils.importFilesFromDirectory(dest, project.getPath().append(srcroot.getPath()).append("javadoc"), //$NON-NLS-1$
+				new NullProgressMonitor());
+		// try to look up a file to test if it worked
+		IType type = project.findType("javadoc.JavadocTestClass1", new NullProgressMonitor()); //$NON-NLS-1$
+		assertNotNull("the JavadocTestClass1 type should exist in the javadoc package", type); //$NON-NLS-1$
 	}
 
 	/**
 	 * Tests importing the java source for the javadoc tag reading tests
+	 *
+	 * @throws IOException
+	 * @throws InvocationTargetException
 	 */
 	@Test
-	public void testImportClassesTestSource() {
-		try {
-			File dest = new File(JAVADOC_READ_SRC_DIR);
-			assertTrue("the source dir must exist", dest.exists()); //$NON-NLS-1$
-			assertTrue("the source dir must be a directory", dest.isDirectory()); //$NON-NLS-1$
-			IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
-			IPackageFragmentRoot srcroot = project.getPackageFragmentRoot(ProjectUtils.SRC_FOLDER);
-			assertNotNull("the srcroot for the test java project must not be null", srcroot); //$NON-NLS-1$
-			FileUtils.importFilesFromDirectory(dest, project.getPath().append(srcroot.getPath()).append("a").append("b").append("c"), new NullProgressMonitor()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+	public void testImportClassesTestSource() throws InvocationTargetException, IOException {
+		File dest = new File(JAVADOC_READ_SRC_DIR);
+		assertTrue("the source dir must exist", dest.exists()); //$NON-NLS-1$
+		assertTrue("the source dir must be a directory", dest.isDirectory()); //$NON-NLS-1$
+		IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
+		IPackageFragmentRoot srcroot = project.getPackageFragmentRoot(ProjectUtils.SRC_FOLDER);
+		assertNotNull("the srcroot for the test java project must not be null", srcroot); //$NON-NLS-1$
+		FileUtils.importFilesFromDirectory(dest,
+				project.getPath().append(srcroot.getPath()).append("a").append("b").append("c"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				new NullProgressMonitor());
 	}
 
 	/**
 	 * Tests the creation of a plugin project
+	 *
+	 * @throws CoreException
 	 */
 	@Test
-	public void testCreatePluginProject() {
-		try {
-			IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
-			IProject project = jproject.getProject();
-			assertTrue("project must have the PDE nature", project.hasNature(PDE.PLUGIN_NATURE)); //$NON-NLS-1$
-			assertTrue("project must have the java nature", project.hasNature(JavaCore.NATURE_ID)); //$NON-NLS-1$
-			assertTrue("project must have additional nature for API Tools", project.hasNature(ApiPlugin.NATURE_ID)); //$NON-NLS-1$
-			IFile file = project.getFile("build.properties"); //$NON-NLS-1$
-			assertTrue("the build.properties file must exist", file.exists()); //$NON-NLS-1$
-			file = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
-			assertTrue("the MANIFEST.MF file must exist", file.exists()); //$NON-NLS-1$
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+	public void testCreatePluginProject() throws CoreException {
+		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
+		IProject project = jproject.getProject();
+		assertTrue("project must have the PDE nature", project.hasNature(PDE.PLUGIN_NATURE)); //$NON-NLS-1$
+		assertTrue("project must have the java nature", project.hasNature(JavaCore.NATURE_ID)); //$NON-NLS-1$
+		assertTrue("project must have additional nature for API Tools", project.hasNature(ApiPlugin.NATURE_ID)); //$NON-NLS-1$
+		IFile file = project.getFile("build.properties"); //$NON-NLS-1$
+		assertTrue("the build.properties file must exist", file.exists()); //$NON-NLS-1$
+		file = project.getFile(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+		assertTrue("the MANIFEST.MF file must exist", file.exists()); //$NON-NLS-1$
 	}
 
 	/**

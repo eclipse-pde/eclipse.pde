@@ -52,11 +52,7 @@ public class PreferencesTests extends AbstractApiTest {
 		IEclipsePreferences eprefs = scope.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("The ApiPlugin section for project settings should be available", eprefs); //$NON-NLS-1$
 		eprefs.put(IApiProblemTypes.ILLEGAL_REFERENCE, ApiPlugin.VALUE_IGNORE);
-		try {
-			eprefs.flush();
-		} catch (BackingStoreException e) {
-			fail(e.getMessage());
-		}
+		eprefs.flush();
 	}
 
 	@After

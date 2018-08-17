@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.tests;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -171,24 +170,20 @@ public class AbstractApiTest {
 	 * Deletes a project with the given name
 	 *
 	 * @param name
+	 * @throws CoreException
 	 */
-	protected void deleteProject(String name) {
+	protected void deleteProject(String name) throws CoreException {
 		if (name == null) {
 			return;
 		}
 		getWorkspaceBaseline().dispose();
-		try {
-			IProject pro = getProject(name);
-			if (pro.exists()) {
-				ResourceEventWaiter waiter = new ResourceEventWaiter(new Path(name), IResourceChangeEvent.POST_CHANGE, IResourceDelta.CHANGED, 0);
-				pro.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
-				Object obj = waiter.waitForEvent();
-				assertNotNull("the project delete event did not arrive", obj); //$NON-NLS-1$
-			}
-		} catch (Exception e) {
-			System.err.println("tearDown failed"); //$NON-NLS-1$
-			e.printStackTrace();
-			fail(e.getMessage());
+		IProject pro = getProject(name);
+		if (pro.exists()) {
+			ResourceEventWaiter waiter = new ResourceEventWaiter(new Path(name), IResourceChangeEvent.POST_CHANGE,
+					IResourceDelta.CHANGED, 0);
+			pro.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			Object obj = waiter.waitForEvent();
+			assertNotNull("the project delete event did not arrive", obj); //$NON-NLS-1$
 		}
 	}
 
