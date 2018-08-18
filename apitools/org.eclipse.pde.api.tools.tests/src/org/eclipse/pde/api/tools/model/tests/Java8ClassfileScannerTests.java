@@ -18,13 +18,16 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  * Tests reading JJava 8 classfiles and extracting specific references
  *
  * @since 1.0.400
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class Java8ClassfileScannerTests extends ScannerTest {
 
 	private static IPath WORKSPACE_ROOT = TestSuiteHelper.getPluginDirectoryPath().append("test_classes_workspace_java8"); //$NON-NLS-1$
@@ -60,7 +63,7 @@ public class Java8ClassfileScannerTests extends ScannerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testStaticMethodRef() throws Exception {
+	public void test1StaticMethodRef() throws Exception {
 		List<IReference> refs = getRefSet("test1"); //$NON-NLS-1$
 		IReference ref = findMemberReference("invokedynamic.test1", "m1", "invokedynamic.test1$MR", "mrCompare", IReference.REF_VIRTUALMETHOD, refs); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		assertNotNull("There should be a ref for invokedynamic.test1$MR#mrCompare", ref); //$NON-NLS-1$
@@ -72,7 +75,7 @@ public class Java8ClassfileScannerTests extends ScannerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testInstanceMethodRef() throws Exception {
+	public void test2InstanceMethodRef() throws Exception {
 		List<IReference> refs = getRefSet("test2"); //$NON-NLS-1$
 		IReference ref = findMemberReference("invokedynamic.test2", "m1", "invokedynamic.test2$MR", "mrCompare", IReference.REF_VIRTUALMETHOD, refs); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		assertNotNull("There should be a ref for invokedynamic.test2$MR#mrCompare", ref); //$NON-NLS-1$
@@ -85,7 +88,7 @@ public class Java8ClassfileScannerTests extends ScannerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testArbitraryObjectMethodRef() throws Exception {
+	public void test3ArbitraryObjectMethodRef() throws Exception {
 		List<IReference> refs = getRefSet("test3"); //$NON-NLS-1$
 		IReference ref = findMemberReference("invokedynamic.test3", "m1", "java.lang.String", "compareToIgnoreCase", IReference.REF_VIRTUALMETHOD, refs); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		assertNotNull("There should be a ref for String#compareToIgnoreCase", ref); //$NON-NLS-1$
@@ -97,7 +100,7 @@ public class Java8ClassfileScannerTests extends ScannerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testConstructorMethodRef() throws Exception {
+	public void test4ConstructorMethodRef() throws Exception {
 		List<IReference> refs = getRefSet("test4"); //$NON-NLS-1$
 		IReference ref = findMemberReference("invokedynamic.test4", "m1", "java.util.HashSet", "<init>", IReference.REF_VIRTUALMETHOD, refs); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		assertNotNull("There should be a ref for HashSet#<init>", ref); //$NON-NLS-1$
@@ -109,7 +112,7 @@ public class Java8ClassfileScannerTests extends ScannerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testCleanup() throws Exception {
+	public void test5Cleanup() throws Exception {
 		cleanUp();
 		// remove workspace root
 		assertTrue(TestSuiteHelper.delete(new File(WORKSPACE_ROOT.toOSString())));
