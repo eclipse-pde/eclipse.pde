@@ -24,6 +24,7 @@
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
             allowPrototypes="true"
+            allowCommandLine="true"
             delegate="org.eclipse.pde.launching.EclipseApplicationLaunchConfiguration"
             delegateDescription="%PDELaunchDelegate.description"
             delegateName="%PDELaunchDelegate.name"
@@ -35,6 +36,7 @@
             sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer">
       </launchConfigurationType>
       <launchConfigurationType
+            allowCommandLine="true"
             delegate="org.eclipse.pde.launching.JUnitLaunchConfigurationDelegate"
             delegateDescription="%JUnitPluginLaunchDelegate.description"
             delegateName="%JUnitPluginLaunchDelegate.name"

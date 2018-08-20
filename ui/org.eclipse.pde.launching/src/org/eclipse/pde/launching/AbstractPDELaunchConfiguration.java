@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2017 IBM Corporation and others.
+ *  Copyright (c) 2005, 2018 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -51,9 +51,53 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	@Deprecated
 	public static boolean shouldVMAddModuleSystem = false;
 
+	private static final String PDE_LAUNCH_SHOW_COMMAND = "pde.launch.showcommandline"; //$NON-NLS-1$
+
 	@Override
 	protected boolean isLaunchProblem(IMarker problemMarker) throws CoreException {
 		return super.isLaunchProblem(problemMarker) && (problemMarker.getType().equals(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER) || problemMarker.getType().equals(PDEMarkerFactory.MARKER_ID));
+	}
+
+	@Override
+	public String showCommandLine(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		String commandLine = ""; //$NON-NLS-1$
+		launch.setAttribute(PDE_LAUNCH_SHOW_COMMAND, "true"); //$NON-NLS-1$
+		try {
+			fConfigDir = null;
+			SubMonitor subMonitor = SubMonitor.convert(monitor, 4);
+			try {
+				preLaunchCheck(configuration, launch, subMonitor.split(2));
+			} catch (CoreException e) {
+				if (e.getStatus().getSeverity() == IStatus.CANCEL) {
+					subMonitor.setCanceled(true);
+					return commandLine;
+				}
+				throw e;
+			}
+
+			VMRunnerConfiguration runnerConfig = new VMRunnerConfiguration(getMainClass(), getClasspath(configuration));
+			IVMInstall launcher = VMHelper.createLauncher(configuration);
+			boolean isModular = JavaRuntime.isModularJava(launcher);
+			runnerConfig.setVMArguments(updateVMArgumentWithAddModuleSystem(getVMArguments(configuration), isModular));
+			runnerConfig.setProgramArguments(getProgramArguments(configuration));
+			runnerConfig.setWorkingDirectory(getWorkingDirectory(configuration).getAbsolutePath());
+			runnerConfig.setEnvironment(getEnvironment(configuration));
+			runnerConfig.setVMSpecificAttributesMap(getVMSpecificAttributesMap(configuration));
+
+			subMonitor.worked(1);
+
+			setDefaultSourceLocator(configuration);
+			manageLaunch(launch);
+			IVMRunner runner = getVMRunner(configuration, mode);
+			if (runner != null)
+				commandLine = runner.showCommandLine(runnerConfig, launch, subMonitor);
+			else
+				subMonitor.setCanceled(true);
+
+		} catch (final CoreException e) {
+			throw e;
+		}
+		return commandLine;
 	}
 
 	@Override
@@ -304,14 +348,22 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 *
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		String attribute = launch.getAttribute(PDE_LAUNCH_SHOW_COMMAND);
+		boolean isShowCommand = false;
+		if (attribute != null) {
+			isShowCommand = attribute.equals("true"); //$NON-NLS-1$
+		}
 		boolean autoValidate = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
 		SubMonitor subMonitor = SubMonitor.convert(monitor, autoValidate ? 3 : 4);
-		if (autoValidate) {
-			validatePluginDependencies(configuration, subMonitor.split(1));
+		if (isShowCommand == false) {
+			if (autoValidate) {
+				validatePluginDependencies(configuration, subMonitor.split(1));
+			}
+			validateProjectDependencies(configuration, subMonitor.split(1));
+			LauncherUtils.setLastLaunchMode(launch.getLaunchMode());
+			clear(configuration, subMonitor.split(1));
 		}
-		validateProjectDependencies(configuration, subMonitor.split(1));
-		LauncherUtils.setLastLaunchMode(launch.getLaunchMode());
-		clear(configuration, subMonitor.split(1));
+		launch.setAttribute(PDE_LAUNCH_SHOW_COMMAND, "false"); //$NON-NLS-1$
 		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());
 		synchronizeManifests(configuration, subMonitor.split(1));
 	}

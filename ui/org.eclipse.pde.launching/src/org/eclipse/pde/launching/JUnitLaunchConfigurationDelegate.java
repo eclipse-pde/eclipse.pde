@@ -59,6 +59,8 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	// key is a model, value is startLevel:autoStart
 	private Map<IPluginModelBase, String> fModels;
 
+	private static final String PDE_JUNIT_SHOW_COMMAND = "pde.junit.showcommandline"; //$NON-NLS-1$
+
 	@Override
 	public IVMRunner getVMRunner(ILaunchConfiguration configuration, String mode) throws CoreException {
 		IVMInstall launcher = VMHelper.createLauncher(configuration);
@@ -194,6 +196,11 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		}
 	}
 
+	@Override
+	public String showCommandLine(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		launch.setAttribute(PDE_JUNIT_SHOW_COMMAND, "true"); //$NON-NLS-1$
+		return super.showCommandLine(configuration, mode, launch, monitor);
+	}
 	/**
 	 * Returns the application to launch plug-in tests with
 	 *
@@ -399,14 +406,21 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 				fModels.put(model, "default:default"); //$NON-NLS-1$
 			}
 		}
-
+		String attribute = launch.getAttribute(PDE_JUNIT_SHOW_COMMAND);
+		boolean isShowCommand = false;
+		if (attribute != null) {
+			isShowCommand = attribute.equals("true"); //$NON-NLS-1$
+		}
 		boolean autoValidate = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
 		SubMonitor subMonitor = SubMonitor.convert(monitor, autoValidate ? 3 : 4);
-		if (autoValidate)
-			validatePluginDependencies(configuration, subMonitor.split(1));
-		validateProjectDependencies(configuration, subMonitor.split(1));
-		LauncherUtils.setLastLaunchMode(launch.getLaunchMode());
-		clear(configuration, subMonitor.split(1));
+		if (isShowCommand == false) {
+			if (autoValidate)
+				validatePluginDependencies(configuration, subMonitor.split(1));
+			validateProjectDependencies(configuration, subMonitor.split(1));
+			LauncherUtils.setLastLaunchMode(launch.getLaunchMode());
+			clear(configuration, subMonitor.split(1));
+		}
+		launch.setAttribute(PDE_JUNIT_SHOW_COMMAND, "false"); //$NON-NLS-1$
 		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigurationDirectory(configuration).toString());
 		synchronizeManifests(configuration, subMonitor.split(1));
 	}
