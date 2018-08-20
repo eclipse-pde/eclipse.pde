@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2018 IBM Corporation and others.
+ * Copyright (c) 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.Iterator;
@@ -25,14 +22,15 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
-import org.junit.Before;
+
+import junit.framework.TestCase;
 
 /**
  * Root class for testing scanning classfiles
  *
  * @since 1.0.400
  */
-public abstract class ScannerTest {
+public abstract class ScannerTest extends TestCase {
 
 	private static DirectoryApiTypeContainer container = null;
 
@@ -64,8 +62,13 @@ public abstract class ScannerTest {
 	 */
 	protected abstract boolean doCompile();
 
-	@Before
-	public void setUp() throws Exception {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see junit.framework.TestCase#setUp()
+	 */
+	@Override
+	protected void setUp() throws Exception {
 		IPath root = getWorkspaceRoot();
 		File file = root.toFile();
 		if (!file.exists()) {
@@ -76,6 +79,17 @@ public abstract class ScannerTest {
 			assertTrue("The test workspace failed to compile", doCompile()); //$NON-NLS-1$
 			container = new DirectoryApiTypeContainer(null, root.append(getPackageName()).toOSString());
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+
 	}
 
 	/**
