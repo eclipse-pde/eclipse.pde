@@ -95,6 +95,13 @@ public class Bundle extends BundleObject implements IBundle {
 		return fDocumentHeaders.get(key);
 	}
 
+	@Override
+	public Map<String, IManifestHeader> getManifestHeaders() {
+		HeaderMap<String, IManifestHeader> copy = new HeaderMap<>();
+		copy.putAll(fDocumentHeaders);
+		return copy;
+	}
+
 	/**
 	 * @return a map containing all key/value pairs of manifest headers as strings, values may be empty strings, but not <code>null</code>
 	 */

@@ -141,6 +141,13 @@ public class Bundle implements IBundle {
 		return fDocumentHeaders.get(key);
 	}
 
+	@Override
+	public Map<String, IManifestHeader> getManifestHeaders() {
+		HeaderMap<String, IManifestHeader> copy = new HeaderMap<>();
+		copy.putAll(fDocumentHeaders);
+		return copy;
+	}
+
 	public Map<String, IManifestHeader> getHeaders() {
 		return fDocumentHeaders;
 	}

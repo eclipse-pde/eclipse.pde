@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ibundle;
 
+import java.util.Map;
+
 public interface IBundle {
 
 	/**
@@ -62,5 +64,7 @@ public interface IBundle {
 	 * @return localization header value or the default value
 	 */
 	String getLocalization();
+
+	Map<String, IManifestHeader> getManifestHeaders();
 
 }
