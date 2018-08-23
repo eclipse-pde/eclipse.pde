@@ -634,7 +634,6 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				validateBinIncludes(binIncludes, node.getNodeValue());
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -662,7 +661,6 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
