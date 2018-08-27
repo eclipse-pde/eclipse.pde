@@ -4,10 +4,13 @@ import org.eclipse.pde.internal.ui.util.StringMatcher;
 import org.eclipse.pde.internal.ui.views.imagebrowser.ImageElement;
 
 /*******************************************************************************
- * Copyright (c) 2015 QNX Sosftware Systems and others All rights reserved. This
+s
+s This
  * program and the accompanying materials are made available under the terms of
- * the Eclipse Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/epl-v10.html
+ * the Eclipse Public License 2.0 which accompanies this distribution, and is
+t https://www.eclipse.org/legal/epl-2.0/
+t
+t SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Alena Laskavaia - initial API and implementation
  *******************************************************************************/
