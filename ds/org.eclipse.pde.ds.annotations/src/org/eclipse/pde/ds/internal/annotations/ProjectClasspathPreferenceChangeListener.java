@@ -48,7 +48,6 @@ public class ProjectClasspathPreferenceChangeListener implements IPreferenceChan
 		scope = new ProjectScope(project.getProject());
 		scope.getNode(Activator.PLUGIN_ID).addPreferenceChangeListener(this);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE);
-		requestClasspathUpdate();
 	}
 
 	@Override
@@ -66,6 +65,8 @@ public class ProjectClasspathPreferenceChangeListener implements IPreferenceChan
 				return Status.OK_STATUS;
 			};
 		};
+		job.setSystem(true);
+		job.setRule(project.getProject());
 
 		Display display = Display.getCurrent();
 		if (display != null) {
