@@ -97,12 +97,9 @@ public class MethodUsageTests extends UsageTest {
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(26, pids[0], args[0]),
-				new LineMapping(27, pids[1], args[1]),
-				new LineMapping(37, pids[2], args[2]),
-				new LineMapping(38, pids[3], args[3]),
-				new LineMapping(49, pids[4], args[4]),
-				new LineMapping(50, pids[5], args[5])
+				new LineMapping(29, pids[0], args[0]), new LineMapping(30, pids[1], args[1]),
+				new LineMapping(40, pids[2], args[2]), new LineMapping(41, pids[3], args[3]),
+				new LineMapping(52, pids[4], args[4]), new LineMapping(53, pids[5], args[5])
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -140,10 +137,8 @@ public class MethodUsageTests extends UsageTest {
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(22, pids[0], args[0]),
-				new LineMapping(30, pids[1], args[1]),
-				new LineMapping(39, pids[2], args[2]),
-				new LineMapping(49, pids[3], args[3])
+				new LineMapping(25, pids[0], args[0]), new LineMapping(33, pids[1], args[1]),
+				new LineMapping(42, pids[2], args[2]), new LineMapping(52, pids[3], args[3])
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -189,14 +184,10 @@ public class MethodUsageTests extends UsageTest {
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(23, pids[0], args[0]),
-				new LineMapping(25, pids[1], args[1]),
-				new LineMapping(33, pids[2], args[2]),
-				new LineMapping(35, pids[3], args[3]),
-				new LineMapping(44, pids[4], args[4]),
-				new LineMapping(46, pids[5], args[5]),
-				new LineMapping(56, pids[6], args[6]),
-				new LineMapping(58, pids[7], args[7])
+				new LineMapping(26, pids[0], args[0]), new LineMapping(28, pids[1], args[1]),
+				new LineMapping(36, pids[2], args[2]), new LineMapping(38, pids[3], args[3]),
+				new LineMapping(47, pids[4], args[4]), new LineMapping(49, pids[5], args[5]),
+				new LineMapping(59, pids[6], args[6]), new LineMapping(61, pids[7], args[7])
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -238,12 +229,9 @@ public class MethodUsageTests extends UsageTest {
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(27, pids[0], args[0]),
-				new LineMapping(28, pids[1], args[1]),
-				new LineMapping(38, pids[2], args[2]),
-				new LineMapping(39, pids[3], args[3]),
-				new LineMapping(50, pids[4], args[4]),
-				new LineMapping(51, pids[5], args[5])
+				new LineMapping(30, pids[0], args[0]), new LineMapping(31, pids[1], args[1]),
+				new LineMapping(41, pids[2], args[2]), new LineMapping(42, pids[3], args[3]),
+				new LineMapping(53, pids[4], args[4]), new LineMapping(54, pids[5], args[5])
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -274,7 +262,7 @@ public class MethodUsageTests extends UsageTest {
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(21, pids[0], args[0]),
+				new LineMapping(24, pids[0], args[0]),
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -305,7 +293,7 @@ public class MethodUsageTests extends UsageTest {
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(21, pids[0], args[0]),
+				new LineMapping(24, pids[0], args[0]),
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -336,7 +324,7 @@ public class MethodUsageTests extends UsageTest {
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(18, pids[0], args[0]),
+				new LineMapping(21, pids[0], args[0]),
 		});
 		deployUsageTest(typename, inc);
 	}

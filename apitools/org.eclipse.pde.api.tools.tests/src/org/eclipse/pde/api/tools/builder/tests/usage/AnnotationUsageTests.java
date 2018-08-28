@@ -75,7 +75,8 @@ public class AnnotationUsageTests extends UsageTest {
 		String typename = "test1"; //$NON-NLS-1$
 		int problemid = getDefaultProblemId();
 		setExpectedProblemIds(new int[] { problemid });
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(15, problemid, new String[] { RESTRICTED_ANNOTATION_NAME }) });
+		setExpectedLineMappings(
+				new LineMapping[] { new LineMapping(18, problemid, new String[] { RESTRICTED_ANNOTATION_NAME }) });
 		setExpectedMessageArgs(new String[][] { { RESTRICTED_ANNOTATION_NAME } });
 		deployUsageTest(typename, inc);
 	}
@@ -103,7 +104,8 @@ public class AnnotationUsageTests extends UsageTest {
 		String typename = "test2"; //$NON-NLS-1$
 		int problemid = getDefaultProblemId();
 		setExpectedProblemIds(new int[] { problemid });
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(17, problemid, new String[] { RESTRICTED_ANNOTATION_NAME }) });
+		setExpectedLineMappings(
+				new LineMapping[] { new LineMapping(20, problemid, new String[] { RESTRICTED_ANNOTATION_NAME }) });
 		setExpectedMessageArgs(new String[][] { { RESTRICTED_ANNOTATION_NAME } });
 		deployUsageTest(typename, inc);
 	}
@@ -131,7 +133,8 @@ public class AnnotationUsageTests extends UsageTest {
 		String typename = "test3"; //$NON-NLS-1$
 		int problemid = getDefaultProblemId();
 		setExpectedProblemIds(new int[] { problemid });
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(17, problemid, new String[] { RESTRICTED_ANNOTATION_NAME }) });
+		setExpectedLineMappings(
+				new LineMapping[] { new LineMapping(20, problemid, new String[] { RESTRICTED_ANNOTATION_NAME }) });
 		setExpectedMessageArgs(new String[][] { { RESTRICTED_ANNOTATION_NAME } });
 		deployUsageTest(typename, inc);
 	}
@@ -159,7 +162,8 @@ public class AnnotationUsageTests extends UsageTest {
 		String typename = "test4"; //$NON-NLS-1$
 		int problemid = getDefaultProblemId();
 		setExpectedProblemIds(new int[] { problemid });
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(17, problemid, new String[] { RESTRICTED_ANNOTATION_NAME }) });
+		setExpectedLineMappings(
+				new LineMapping[] { new LineMapping(20, problemid, new String[] { RESTRICTED_ANNOTATION_NAME }) });
 		setExpectedMessageArgs(new String[][] { { RESTRICTED_ANNOTATION_NAME } });
 		deployUsageTest(typename, inc);
 	}
@@ -188,7 +192,8 @@ public class AnnotationUsageTests extends UsageTest {
 		String typename = "test5"; //$NON-NLS-1$
 		int problemid = getDefaultProblemId();
 		setExpectedProblemIds(new int[] { problemid });
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(18, problemid, new String[] { RESTRICTED_ANNOTATION_NAME }) });
+		setExpectedLineMappings(
+				new LineMapping[] { new LineMapping(21, problemid, new String[] { RESTRICTED_ANNOTATION_NAME }) });
 		setExpectedMessageArgs(new String[][] { { RESTRICTED_ANNOTATION_NAME } });
 		deployUsageTest(typename, inc);
 	}
@@ -217,7 +222,8 @@ public class AnnotationUsageTests extends UsageTest {
 		String typename = "test6"; //$NON-NLS-1$
 		int problemid = getDefaultProblemId();
 		setExpectedProblemIds(new int[] { problemid });
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(18, problemid, new String[] { RESTRICTED_ANNOTATION_NAME }) });
+		setExpectedLineMappings(
+				new LineMapping[] { new LineMapping(21, problemid, new String[] { RESTRICTED_ANNOTATION_NAME }) });
 		setExpectedMessageArgs(new String[][] { { RESTRICTED_ANNOTATION_NAME } });
 		deployUsageTest(typename, inc);
 	}
@@ -246,7 +252,8 @@ public class AnnotationUsageTests extends UsageTest {
 		String typename = "test7"; //$NON-NLS-1$
 		int problemid = getDefaultProblemId();
 		setExpectedProblemIds(new int[] { problemid });
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(18, problemid, new String[] { RESTRICTED_ANNOTATION_NAME }) });
+		setExpectedLineMappings(
+				new LineMapping[] { new LineMapping(21, problemid, new String[] { RESTRICTED_ANNOTATION_NAME }) });
 		setExpectedMessageArgs(new String[][] { { RESTRICTED_ANNOTATION_NAME } });
 		deployUsageTest(typename, inc);
 	}
@@ -275,7 +282,8 @@ public class AnnotationUsageTests extends UsageTest {
 		String typename = "test8"; //$NON-NLS-1$
 		int problemid = getDefaultProblemId();
 		setExpectedProblemIds(new int[] { problemid });
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(20, problemid, new String[] { RESTRICTED_ANNOTATION_NAME }) });
+		setExpectedLineMappings(
+				new LineMapping[] { new LineMapping(23, problemid, new String[] { RESTRICTED_ANNOTATION_NAME }) });
 		setExpectedMessageArgs(new String[][] { { RESTRICTED_ANNOTATION_NAME } });
 		deployUsageTest(typename, inc);
 	}
@@ -303,7 +311,8 @@ public class AnnotationUsageTests extends UsageTest {
 		String typename = "test9"; //$NON-NLS-1$
 		int problemid = getDefaultProblemId();
 		setExpectedProblemIds(new int[] { problemid });
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(18, problemid, new String[] { RESTRICTED_ANNOTATION_NAME }) });
+		setExpectedLineMappings(
+				new LineMapping[] { new LineMapping(21, problemid, new String[] { RESTRICTED_ANNOTATION_NAME }) });
 		setExpectedMessageArgs(new String[][] { { RESTRICTED_ANNOTATION_NAME } });
 		deployUsageTest(typename, inc);
 	}

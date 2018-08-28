@@ -85,15 +85,11 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(25, pids[0], args[0]),
-				new LineMapping(27, pids[1], args[1]),
-				new LineMapping(28, pids[2], args[2]),
-				new LineMapping(37, pids[3], args[3]),
-				new LineMapping(39, pids[4], args[4]),
-				new LineMapping(40, pids[5], args[5]),
-				new LineMapping(50, pids[6], args[6]),
-				new LineMapping(52, pids[7], args[7]),
-				new LineMapping(53, pids[8], args[8])
+				new LineMapping(28, pids[0], args[0]), new LineMapping(30, pids[1], args[1]),
+				new LineMapping(31, pids[2], args[2]), new LineMapping(40, pids[3], args[3]),
+				new LineMapping(42, pids[4], args[4]), new LineMapping(43, pids[5], args[5]),
+				new LineMapping(53, pids[6], args[6]), new LineMapping(55, pids[7], args[7]),
+				new LineMapping(56, pids[8], args[8])
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -132,12 +128,9 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(26, pids[0], args[0]),
-				new LineMapping(28, pids[1], args[1]),
-				new LineMapping(38, pids[2], args[2]),
-				new LineMapping(40, pids[3], args[3]),
-				new LineMapping(51, pids[4], args[4]),
-				new LineMapping(53, pids[5], args[5])
+				new LineMapping(29, pids[0], args[0]), new LineMapping(31, pids[1], args[1]),
+				new LineMapping(41, pids[2], args[2]), new LineMapping(43, pids[3], args[3]),
+				new LineMapping(54, pids[4], args[4]), new LineMapping(56, pids[5], args[5])
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -171,9 +164,8 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(25, pids[0], args[0]),
-				new LineMapping(34, pids[1], args[1]),
-				new LineMapping(44, pids[2], args[2])
+				new LineMapping(28, pids[0], args[0]), new LineMapping(37, pids[1], args[1]),
+				new LineMapping(47, pids[2], args[2])
 		});
 		deployUsageTest(typename, inc);
 	}

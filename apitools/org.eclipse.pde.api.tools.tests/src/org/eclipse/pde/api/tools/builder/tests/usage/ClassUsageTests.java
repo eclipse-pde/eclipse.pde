@@ -342,8 +342,8 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {localId, indId});
 		String typename = "testC11"; //$NON-NLS-1$
 		setExpectedLineMappings(new LineMapping[] {
-			new LineMapping(29, localId, new String[] {"local1", "x.y.z.testC11.method1()", "INoImpl2"}), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			new LineMapping(31, indId, new String[] {"local2", "x.y.z.testC11.method1()", "INoImpl5", "INoImpl2"}) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				new LineMapping(32, localId, new String[] { "local1", "x.y.z.testC11.method1()", "INoImpl2" }), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				new LineMapping(34, indId, new String[] { "local2", "x.y.z.testC11.method1()", "INoImpl5", "INoImpl2" }) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		});
 		setExpectedMessageArgs(new String[][] {
 				{"local1", "x.y.z.testC11.method1()", "INoImpl2"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -382,7 +382,8 @@ public class ClassUsageTests extends UsageTest {
 		int indId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.INDIRECT_LOCAL_REFERENCE);
 		setExpectedProblemIds(new int[] {indId});
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(24, indId, new String[] {"local2", "x.y.z.testC12.method1()", "INoImpl5", "INoImpl2"}), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				new LineMapping(27, indId,
+						new String[] { "local2", "x.y.z.testC12.method1()", "INoImpl5", "INoImpl2" }), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			});
 		setExpectedMessageArgs(new String[][] {
 				{"local2", "x.y.z.testC12.method1()", "INoImpl5", "INoImpl2"} //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -420,7 +421,7 @@ public class ClassUsageTests extends UsageTest {
 		int indId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.ANONYMOUS_TYPE);
 		setExpectedProblemIds(new int[] {indId});
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(25, indId, new String[] {"x.y.z.testC13.testC13()", "INoImpl2"}) //$NON-NLS-1$ //$NON-NLS-2$
+				new LineMapping(28, indId, new String[] { "x.y.z.testC13.testC13()", "INoImpl2" }) //$NON-NLS-1$ //$NON-NLS-2$
 			});
 		setExpectedMessageArgs(new String[][] {
 				{"x.y.z.testC13.testC13()", "INoImpl2"} //$NON-NLS-1$ //$NON-NLS-2$
@@ -610,9 +611,9 @@ public class ClassUsageTests extends UsageTest {
 				{"inner", "x.y.z.testA7.m3()", CLASS_NAME} //$NON-NLS-1$ //$NON-NLS-2$
 		});
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(21, getExpectedProblemIds()[0], getExpectedMessageArgs()[0]),
-				new LineMapping(28, getExpectedProblemIds()[1], getExpectedMessageArgs()[1]),
-				new LineMapping(35, getExpectedProblemIds()[2], getExpectedMessageArgs()[2])
+				new LineMapping(24, getExpectedProblemIds()[0], getExpectedMessageArgs()[0]),
+				new LineMapping(31, getExpectedProblemIds()[1], getExpectedMessageArgs()[1]),
+				new LineMapping(38, getExpectedProblemIds()[2], getExpectedMessageArgs()[2])
 		});
 		String typename = "testA7"; //$NON-NLS-1$
 		deployUsageTest(typename, inc);

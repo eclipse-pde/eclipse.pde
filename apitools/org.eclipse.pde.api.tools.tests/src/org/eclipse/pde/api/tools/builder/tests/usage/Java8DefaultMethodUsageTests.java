@@ -80,7 +80,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(20, pids[0], args[0])
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(23, pids[0], args[0])
 
 		});
 		deployUsageTest(typename, inc);
@@ -113,7 +113,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(22, pids[0], args[0])
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(25, pids[0], args[0])
 
 		});
 		deployUsageTest(typename, inc);
@@ -146,7 +146,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(21, pids[0], args[0])
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(24, pids[0], args[0])
 
 		});
 		deployUsageTest(typename, inc);
@@ -180,7 +180,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(22, pids[0], args[0])
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(25, pids[0], args[0])
 
 		});
 		deployUsageTest(typename, inc);
@@ -211,7 +211,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(21, pids[0], args[0]) });
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(24, pids[0], args[0]) });
 		deployUsageTest(typename, inc);
 	}
 
@@ -242,7 +242,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(22, pids[0], args[0]) });
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(25, pids[0], args[0]) });
 		deployUsageTest(typename, inc);
 	}
 
@@ -273,7 +273,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(23, pids[0], args[0]) });
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(26, pids[0], args[0]) });
 		deployUsageTest(typename, inc);
 	}
 
@@ -306,7 +306,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(20, pids[0], args[0])
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(23, pids[0], args[0])
 
 		});
 		deployUsageTest(typename, inc);
@@ -339,7 +339,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(22, pids[0], args[0])
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(25, pids[0], args[0])
 
 		});
 		deployUsageTest(typename, inc);
@@ -372,7 +372,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(21, pids[0], args[0])
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(24, pids[0], args[0])
 
 		});
 		deployUsageTest(typename, inc);
@@ -406,7 +406,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(22, pids[0], args[0])
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(25, pids[0], args[0])
 
 		});
 		deployUsageTest(typename, inc);
@@ -437,7 +437,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(21, pids[0], args[0]) });
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(24, pids[0], args[0]) });
 		deployUsageTest(typename, inc);
 	}
 
@@ -468,7 +468,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(22, pids[0], args[0]) });
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(25, pids[0], args[0]) });
 		deployUsageTest(typename, inc);
 	}
 
@@ -499,7 +499,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(23, pids[0], args[0]) });
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(26, pids[0], args[0]) });
 		deployUsageTest(typename, inc);
 	}
 
@@ -564,7 +564,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(22, pids[0], args[0])
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(25, pids[0], args[0])
 
 		});
 		deployUsageTest(typename, inc);
@@ -601,7 +601,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(22, pids[0], args[0])
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(25, pids[0], args[0])
 
 		});
 		deployUsageTest(typename, inc);
@@ -638,7 +638,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(23, pids[0], args[0])
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(26, pids[0], args[0])
 
 		});
 		deployUsageTest(typename, inc);
@@ -675,7 +675,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] { new LineMapping(22, pids[0], args[0])
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(25, pids[0], args[0])
 
 		});
 		deployUsageTest(typename, inc);

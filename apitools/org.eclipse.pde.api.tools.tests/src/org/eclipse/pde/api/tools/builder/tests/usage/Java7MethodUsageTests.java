@@ -89,12 +89,9 @@ public class Java7MethodUsageTests extends Java7UsageTest {
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(22, pids[0], args[0]),
-				new LineMapping(23, pids[1], args[1]),
-				new LineMapping(26, pids[2], args[2]),
-				new LineMapping(27, pids[3], args[3]),
-				new LineMapping(30, pids[4], args[4]),
-				new LineMapping(31, pids[5], args[5])
+				new LineMapping(25, pids[0], args[0]), new LineMapping(26, pids[1], args[1]),
+				new LineMapping(29, pids[2], args[2]), new LineMapping(30, pids[3], args[3]),
+				new LineMapping(33, pids[4], args[4]), new LineMapping(34, pids[5], args[5])
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -127,7 +124,7 @@ public class Java7MethodUsageTests extends Java7UsageTest {
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(23, pids[0], args[0])
+				new LineMapping(26, pids[0], args[0])
 		});
 		deployUsageTest(typename, inc);
 	}

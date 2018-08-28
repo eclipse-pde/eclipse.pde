@@ -80,9 +80,8 @@ public class Java8ConsRefInstantiateUsageTests extends Java8UsageTest {
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(30, pids[0], args[0]),
-				new LineMapping(32, pids[1], args[1]),
-				new LineMapping(34, pids[2], args[2])
+				new LineMapping(33, pids[0], args[0]), new LineMapping(35, pids[1], args[1]),
+				new LineMapping(37, pids[2], args[2])
 
 		});
 
@@ -122,9 +121,8 @@ public class Java8ConsRefInstantiateUsageTests extends Java8UsageTest {
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(30, pids[0], args[0]),
-				new LineMapping(32, pids[1], args[1]),
-				new LineMapping(34, pids[2], args[2])
+				new LineMapping(33, pids[0], args[0]), new LineMapping(35, pids[1], args[1]),
+				new LineMapping(37, pids[2], args[2])
 
 		});
 

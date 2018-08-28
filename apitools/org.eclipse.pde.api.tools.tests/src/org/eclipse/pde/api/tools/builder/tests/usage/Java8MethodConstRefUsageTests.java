@@ -86,11 +86,9 @@ public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(31, pids[0], args[0]),
-				new LineMapping(34, pids[1], args[1]),
-				new LineMapping(36, pids[2], args[2]),
-				new LineMapping(38, pids[3], args[3]),
-				new LineMapping(40, pids[4], args[4]),
+				new LineMapping(34, pids[0], args[0]), new LineMapping(37, pids[1], args[1]),
+				new LineMapping(39, pids[2], args[2]), new LineMapping(41, pids[3], args[3]),
+				new LineMapping(43, pids[4], args[4]),
 
 		});
 
@@ -128,9 +126,8 @@ public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(27, pids[0], args[0]),
-				new LineMapping(29, pids[1], args[1]),
-				new LineMapping(31, pids[2], args[2]),
+				new LineMapping(30, pids[0], args[0]), new LineMapping(32, pids[1], args[1]),
+				new LineMapping(34, pids[2], args[2]),
 
 
 		});
@@ -176,11 +173,9 @@ public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(31, pids[0], args[0]),
-				new LineMapping(34, pids[1], args[1]),
-				new LineMapping(36, pids[2], args[2]),
-				new LineMapping(38, pids[3], args[3]),
-				new LineMapping(40, pids[4], args[4]),
+				new LineMapping(34, pids[0], args[0]), new LineMapping(37, pids[1], args[1]),
+				new LineMapping(39, pids[2], args[2]), new LineMapping(41, pids[3], args[3]),
+				new LineMapping(43, pids[4], args[4]),
 
 		});
 
@@ -217,9 +212,8 @@ public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(27, pids[0], args[0]),
-				new LineMapping(29, pids[1], args[1]),
-				new LineMapping(31, pids[2], args[2]),
+				new LineMapping(30, pids[0], args[0]), new LineMapping(32, pids[1], args[1]),
+				new LineMapping(34, pids[2], args[2]),
 
 		});
 
