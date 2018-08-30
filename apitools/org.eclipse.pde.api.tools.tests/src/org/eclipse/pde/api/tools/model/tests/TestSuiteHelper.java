@@ -27,7 +27,6 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -59,6 +58,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.junit.Assert;
+import org.osgi.framework.Bundle;
 
 /**
  * Helper methods to set up baselines, etc.
@@ -100,8 +100,7 @@ public class TestSuiteHelper {
 		File[] files = rootDirectory.listFiles();
 		List<IApiComponent> components = new ArrayList<>();
 		Set<String> requiredComponents = new HashSet<>();
-		for (int i = 0; i < files.length; i++) {
-			File bundle = files[i];
+		for (File bundle : files) {
 			IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
 			if (component != null) {
 				components.add(component);
@@ -110,8 +109,7 @@ public class TestSuiteHelper {
 		}
 		// collect required components
 		IApiComponent[] base = components.toArray(new IApiComponent[components.size()]);
-		for (int i = 0; i < base.length; i++) {
-			IApiComponent component = base[i];
+		for (IApiComponent component : base) {
 			addAllRequired(baseline, requiredComponents, component, components);
 		}
 
@@ -344,8 +342,7 @@ public class TestSuiteHelper {
 			File[] files = file.listFiles();
 			List<IApiComponent> components = new ArrayList<>();
 			Set<String> requiredComponents = new HashSet<>();
-			for (int i = 0; i < files.length; i++) {
-				File bundle = files[i];
+			for (File bundle : files) {
 				if (!bundle.getName().equals("CVS")) { //$NON-NLS-1$
 					// ignore CVS folder
 					IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
@@ -357,8 +354,7 @@ public class TestSuiteHelper {
 			}
 			// collect required components
 			IApiComponent[] base = components.toArray(new IApiComponent[components.size()]);
-			for (int i = 0; i < base.length; i++) {
-				IApiComponent component = base[i];
+			for (IApiComponent component : base) {
 				addAllRequired(baseline, requiredComponents, component, components);
 			}
 
@@ -436,9 +432,12 @@ public class TestSuiteHelper {
 	/**
 	 * Returns a file to the root of the specified bundle or <code>null</code>
 	 * if none. Searches for plug-ins based on the "requiredBundles" system
-	 * property.
+	 * property. If "requiredBundles" is not set, failback to resolution of
+	 * plugin running under current Platform (using OSGi), if active and
+	 * available.
 	 *
-	 * @param bundleName symbolic name
+	 * @param bundleName
+	 *            symbolic name
 	 * @return bundle root or <code>null</code>
 	 */
 	public static File getBundle(String bundleName) {
@@ -448,11 +447,19 @@ public class TestSuiteHelper {
 			if (bundlesRoot.exists() && bundlesRoot.isDirectory()) {
 				File[] bundles = bundlesRoot.listFiles();
 				String key = bundleName + "_"; //$NON-NLS-1$
-				for (int i = 0; i < bundles.length; i++) {
-					File file = bundles[i];
+				for (File file : bundles) {
 					if (file.getName().startsWith(key)) {
 						return file;
 					}
+				}
+			}
+		} else {
+			Bundle bundle = Platform.getBundle(bundleName);
+			if (bundle != null) {
+				try {
+					return FileLocator.getBundleFile(bundle);
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 		}
@@ -471,8 +478,7 @@ public class TestSuiteHelper {
 		IRequiredComponentDescription[] descriptions = component.getRequiredComponents();
 		boolean error = false;
 		StringBuilder buffer = null;
-		for (int i = 0; i < descriptions.length; i++) {
-			IRequiredComponentDescription description = descriptions[i];
+		for (IRequiredComponentDescription description : descriptions) {
 			if (!done.contains(description.getId())) {
 				File bundle = getBundle(description.getId());
 				if (bundle == null) {
@@ -511,8 +517,8 @@ public class TestSuiteHelper {
 		PrintWriter errWriter = new PrintWriter(err);
 		List<String> cmd = new ArrayList<>();
 		cmd.add("-noExit"); //$NON-NLS-1$
-		for (int i = 0, max = compileroptions.length; i < max; i++) {
-			cmd.add(compileroptions[i]);
+		for (String compileroption : compileroptions) {
+			cmd.add(compileroption);
 		}
 		if (destinationpath != null) {
 			cmd.add("-d"); //$NON-NLS-1$
@@ -550,16 +556,15 @@ public class TestSuiteHelper {
 		PrintWriter errWriter = new PrintWriter(err);
 		List<String> cmd = new ArrayList<>();
 		cmd.add("-noExit"); //$NON-NLS-1$
-		for (int i = 0, max = compilerOptions.length; i < max; i++) {
-			cmd.add(compilerOptions[i]);
+		for (String compilerOption : compilerOptions) {
+			cmd.add(compilerOption);
 		}
 		if (destinationPath != null) {
 			cmd.add("-d"); //$NON-NLS-1$
 			cmd.add(destinationPath);
 		}
 		Set<String> directories = new HashSet<>();
-		for (int i = 0, max = sourceFilePaths.length; i < max; i++) {
-			String sourceFilePath = sourceFilePaths[i];
+		for (String sourceFilePath : sourceFilePaths) {
 			File file = new File(sourceFilePath);
 			if (!file.exists()) {
 				continue;
@@ -577,8 +582,7 @@ public class TestSuiteHelper {
 			StringBuilder classpathEntry = new StringBuilder();
 			int length = directories.size();
 			int counter = 0;
-			for (Iterator<String> iterator = directories.iterator(); iterator.hasNext();) {
-				String path = iterator.next();
+			for (String path : directories) {
 				classpathEntry.append(path);
 				if (counter < length - 1) {
 					classpathEntry.append(File.pathSeparatorChar);
@@ -649,8 +653,7 @@ public class TestSuiteHelper {
 				return;
 			}
 			File[] files = f.listFiles();
-			for (int i = 0, max = files.length; i < max; i++) {
-				File file = files[i];
+			for (File file : files) {
 				if (file.isDirectory()) {
 					String name = file.getName();
 					if ("CVS".equals(name)) { //$NON-NLS-1$

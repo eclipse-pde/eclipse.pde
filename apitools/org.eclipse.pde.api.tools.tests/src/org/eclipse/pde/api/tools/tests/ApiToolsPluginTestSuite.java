@@ -16,6 +16,7 @@ package org.eclipse.pde.api.tools.tests;
 
 import org.eclipse.pde.api.tools.anttasks.tests.ApiToolsAntTasksTestSuite;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
+import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.model.tests.ApiFilterStoreTests;
 import org.eclipse.pde.api.tools.model.tests.FilterStoreTests;
 import org.eclipse.pde.api.tools.problems.tests.ApiProblemTests;
@@ -24,6 +25,7 @@ import org.eclipse.pde.api.tools.util.tests.ApiDescriptionProcessorTests;
 import org.eclipse.pde.api.tools.util.tests.PreferencesTests;
 import org.eclipse.pde.api.tools.util.tests.ProjectCreationTests;
 import org.eclipse.pde.api.tools.util.tests.TargetAsBaselineTests;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -40,5 +42,10 @@ import org.junit.runners.Suite;
 		TargetAsBaselineTests.class, ApiBuilderTest.class, ApiToolsAntTasksTestSuite.class
 })
 public class ApiToolsPluginTestSuite {
+
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+		ApiTestingEnvironment.setTargetPlatform();
+	}
 
 }

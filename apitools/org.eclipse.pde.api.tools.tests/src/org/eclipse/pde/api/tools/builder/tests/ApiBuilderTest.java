@@ -63,6 +63,7 @@ import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+import org.junit.BeforeClass;
 import org.osgi.service.prefs.BackingStoreException;
 
 import junit.framework.Test;
@@ -156,6 +157,11 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		return (ApiTestingEnvironment) env;
 	}
 
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+		ApiTestingEnvironment.setTargetPlatform();
+	}
+
 	/**
 	 * Verifies that the workspace has no problems.
 	 */
@@ -213,8 +219,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		StringBuilder buffer = new StringBuilder();
 		ApiProblem[] problems = allSortedApiProblems(roots);
 		if (problems != null) {
-			for (int i = 0, length = problems.length; i < length; i++) {
-				buffer.append(problems[i] + "\n"); //$NON-NLS-1$
+			for (ApiProblem problem : problems) {
+				buffer.append(problem + "\n"); //$NON-NLS-1$
 			}
 		}
 		String actual = buffer.toString();
@@ -257,14 +263,14 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		}
 		IMarker[] rootProblems = getEnv().getMarkers();
 		Hashtable<IPath, IPath> actual = new Hashtable<>(rootProblems.length * 2 + 1);
-		for (int i = 0; i < rootProblems.length; i++) {
-			IPath culprit = rootProblems[i].getResource().getFullPath();
+		for (IMarker rootProblem : rootProblems) {
+			IPath culprit = rootProblem.getResource().getFullPath();
 			actual.put(culprit, culprit);
 		}
 
-		for (int i = 0; i < expected.length; i++) {
-			if (!actual.containsKey(expected[i])) {
-				assertTrue("missing expected problem with " + expected[i].toString(), false); //$NON-NLS-1$
+		for (IPath element : expected) {
+			if (!actual.containsKey(element)) {
+				assertTrue("missing expected problem with " + element.toString(), false); //$NON-NLS-1$
 			}
 		}
 
@@ -272,8 +278,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			for (Enumeration<IPath> e = actual.elements(); e.hasMoreElements();) {
 				IPath path = e.nextElement();
 				boolean found = false;
-				for (int i = 0; i < expected.length; ++i) {
-					if (path.equals(expected[i])) {
+				for (IPath element : expected) {
+					if (path.equals(element)) {
 						found = true;
 						break;
 					}
@@ -305,8 +311,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		File dir = path.toFile();
 		assertTrue("Test data directory does not exist: " + path.toOSString(), dir.exists()); //$NON-NLS-1$
 		File[] files = dir.listFiles();
-		for (int i = 0; i < files.length; i++) {
-			File file = files[i];
+		for (File file : files) {
 			if (file.isDirectory() && !file.getName().equals("CVS")) { //$NON-NLS-1$
 				createExistingProject(file, importfiles, usetestcompliance);
 			}
@@ -330,8 +335,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		componentDir.mkdirs();
 		IResource[] members = project.members();
 		// copy root files and manifest
-		for (int i = 0; i < members.length; i++) {
-			IResource res = members[i];
+		for (IResource res : members) {
 			if (res.getType() == IResource.FILE) {
 				FileUtils.copyFile(componentDir, (IFile) res);
 			} else if (res.getType() == IResource.FOLDER) {
@@ -398,12 +402,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 					iterator.remove();
 				}
 			}
-			ImportOperation operation = new ImportOperation(project.getFullPath(), importSource, FileSystemStructureProvider.INSTANCE, new IOverwriteQuery() {
-				@Override
-				public String queryOverwrite(String pathString) {
-					return IOverwriteQuery.ALL;
-				}
-			}, filesToImport);
+			ImportOperation operation = new ImportOperation(project.getFullPath(), importSource, FileSystemStructureProvider.INSTANCE, pathString -> IOverwriteQuery.ALL, filesToImport);
 			operation.setOverwriteResources(true);
 			operation.setCreateContainerStructure(false);
 			operation.run(new NullProgressMonitor());
@@ -466,14 +465,14 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			for (int i = 0; i < length; i++) {
 				messages.add(Integer.valueOf(problems[i].getProblemId()));
 			}
-			for (int i = 0; i < expectedProblemIds.length; i++) {
-				assertTrue("Missing expected problem: " + expectedProblemIds[i], messages.remove(Integer.valueOf(expectedProblemIds[i]))); //$NON-NLS-1$
+			for (int expectedProblemId : expectedProblemIds) {
+				assertTrue("Missing expected problem: " + expectedProblemId, messages.remove(Integer.valueOf(expectedProblemId))); //$NON-NLS-1$
 			}
 		}
 		if (fLineMappings != null) {
 			ArrayList<LineMapping> mappings = new ArrayList<>(Arrays.asList(fLineMappings));
-			for (int i = 0; i < problems.length; i++) {
-				assertTrue("Missing expected problem line mapping: " + problems[i], mappings.remove(new LineMapping(problems[i]))); //$NON-NLS-1$
+			for (ApiProblem problem : problems) {
+				assertTrue("Missing expected problem line mapping: " + problem, mappings.remove(new LineMapping(problem))); //$NON-NLS-1$
 			}
 			if (mappings.size() > 0) {
 				StringBuilder buffer = new StringBuilder();
@@ -586,10 +585,10 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			printProblemsFor(root);
 		}
 		IMarker[] markers = getEnv().getMarkersFor(root);
-		for (int i = 0; i < problemids.length; i++) {
+		for (int problemid : problemids) {
 			boolean found = false;
 			for (int j = 0; j < markers.length; j++) {
-				if (getProblemId(markers[j]) == problemids[i]) {
+				if (getProblemId(markers[j]) == problemid) {
 					found = true;
 					markers[j] = null;
 					break;
@@ -598,12 +597,12 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			if (!found) {
 				printProblemsFor(root);
 			}
-			assertTrue("problem not found: " + problemids[i], found); //$NON-NLS-1$
+			assertTrue("problem not found: " + problemid, found); //$NON-NLS-1$
 		}
-		for (int i = 0; i < markers.length; i++) {
-			if (markers[i] != null) {
+		for (IMarker marker : markers) {
+			if (marker != null) {
 				printProblemsFor(root);
-				assertTrue("unexpected problem: " + markers[i].toString(), false); //$NON-NLS-1$
+				assertTrue("unexpected problem: " + marker.toString(), false); //$NON-NLS-1$
 			}
 		}
 	}
@@ -643,8 +642,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	protected ApiProblem[] allSortedApiProblems(IPath[] roots) {
 		ApiProblem[] allProblems = null;
 		ApiProblem[] problems = null;
-		for (int i = 0, max = roots.length; i < max; i++) {
-			problems = (ApiProblem[]) getEnv().getProblemsFor(roots[i]);
+		for (IPath root : roots) {
+			problems = (ApiProblem[]) getEnv().getProblemsFor(root);
 			int length = problems.length;
 			if (problems.length != 0) {
 				if (allProblems == null) {
@@ -721,9 +720,9 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	@Override
 	protected void printProblemsFor(IPath[] roots) {
-		for (int i = 0; i < roots.length; i++) {
+		for (IPath root : roots) {
 			/* get the leaf problems for this type */
-			System.out.println(arrayToString(getEnv().getProblemsFor(roots[i])));
+			System.out.println(arrayToString(getEnv().getProblemsFor(root)));
 			System.out.println();
 		}
 	}
@@ -789,8 +788,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		inode.put(IApiProblemTypes.UNUSED_PROBLEM_FILTERS, ApiPlugin.VALUE_WARNING);
 
 		// compatibilities
-		for (int i = 0, max = ApiPlugin.AllCompatibilityKeys.length; i < max; i++) {
-			inode.put(ApiPlugin.AllCompatibilityKeys[i], ApiPlugin.VALUE_ERROR);
+		for (String allCompatibilityKey : ApiPlugin.AllCompatibilityKeys) {
+			inode.put(allCompatibilityKey, ApiPlugin.VALUE_ERROR);
 		}
 
 		// version management
@@ -960,8 +959,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	protected void enableCompatibilityOptions(boolean enabled) {
 		String value = enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE;
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
-		for (int i = 0, max = ApiPlugin.AllCompatibilityKeys.length; i < max; i++) {
-			inode.put(ApiPlugin.AllCompatibilityKeys[i], value);
+		for (String allCompatibilityKey : ApiPlugin.AllCompatibilityKeys) {
+			inode.put(allCompatibilityKey, value);
 		}
 		try {
 			inode.flush();
@@ -1107,8 +1106,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		TestCase.RUN_ONLY_ID = null;
 
 		/* tests */
-		for (int i = 0, length = classes.length; i < length; i++) {
-			Class<?> clazz = classes[i];
+		for (Class<?> clazz : classes) {
 			Method suiteMethod;
 			try {
 				suiteMethod = clazz.getDeclaredMethod("suite"); //$NON-NLS-1$

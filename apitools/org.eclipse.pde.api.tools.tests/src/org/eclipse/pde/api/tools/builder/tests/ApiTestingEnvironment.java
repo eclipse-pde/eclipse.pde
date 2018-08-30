@@ -15,11 +15,14 @@ package org.eclipse.pde.api.tools.builder.tests;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -27,9 +30,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -41,7 +47,15 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetLocation;
+import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
+import org.eclipse.pde.core.target.TargetBundle;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.target.DirectoryBundleContainer;
+import org.osgi.framework.Bundle;
 
 /**
  * Environment used to test the {@link ApiAnalysisBuilder}. This environment
@@ -71,6 +85,11 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	private List<IPath> fAdded = new ArrayList<>();
 	private List<IPath> fChanged = new ArrayList<>();
 	private List<IPath> fRemoved = new ArrayList<>();
+
+	public ApiTestingEnvironment() throws Exception {
+		super();
+		setTargetPlatform();
+	}
 
 	@Override
 	public IPath addProject(String projectName, String compliance) throws UnsupportedOperationException {
@@ -478,8 +497,8 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		if (objects.length == 0) {
 			return;
 		}
-		for (int i = 0; i < objects.length; i++) {
-			list.add(objects[i]);
+		for (Object object : objects) {
+			list.add(object);
 		}
 	}
 
@@ -501,8 +520,8 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	public ApiProblem[] getProblemsFor(IPath path, String additionalMarkerType) {
 		IMarker[] markers = getMarkersFor(path, additionalMarkerType);
 		ArrayList<ApiProblem> problems = new ArrayList<>();
-		for (int i = 0; i < markers.length; i++) {
-			problems.add(new ApiProblem(markers[i]));
+		for (IMarker marker : markers) {
+			problems.add(new ApiProblem(marker));
 		}
 		return problems.toArray(new ApiProblem[problems.size()]);
 	}
@@ -554,9 +573,9 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		super.resetWorkspace();
 		// clean up any left over projects from other tests
 		IProject[] projects = getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
+		for (IProject project : projects) {
 			try {
-				projects[i].delete(true, new NullProgressMonitor());
+				project.delete(true, new NullProgressMonitor());
 			} catch (CoreException ce) {
 				// help with debugging
 				ce.printStackTrace();
@@ -724,5 +743,49 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 */
 	public void setRevert(boolean revert) {
 		fRevert = revert;
+	}
+
+	public static void setTargetPlatform() throws CoreException, InterruptedException, IOException {
+		ITargetPlatformService tpService = PDECore.getDefault().acquireService(ITargetPlatformService.class);
+		if (tpService.getWorkspaceTargetDefinition() != null
+				&& tpService.getWorkspaceTargetDefinition().getBundles() == null) {
+			Job job = new LoadTargetDefinitionJob(tpService.getWorkspaceTargetDefinition());
+			job.schedule();
+			job.join();
+		}
+		boolean coreRuntimeFound = false;
+		for (TargetBundle bundle : tpService.getWorkspaceTargetDefinition().getBundles()) {
+			if ("org.eclipse.core.runtime".equals(bundle.getBundleInfo().getSymbolicName())) { //$NON-NLS-1$
+				coreRuntimeFound = true;
+			}
+		}
+		if (!coreRuntimeFound) {
+			ITargetDefinition targetDef = tpService.newTarget();
+			targetDef.setName("Current bundles target platform"); //$NON-NLS-1$
+			Bundle[] bundles = Platform.getBundle("org.eclipse.core.runtime").getBundleContext().getBundles(); //$NON-NLS-1$
+			List<ITargetLocation> bundleContainers = new ArrayList<>();
+			Set<File> locations = new HashSet<>();
+			for (Bundle bundle : bundles) {
+				File loc = FileLocator.getBundleFile(bundle);
+				File parentFile = loc.getParentFile();
+				boolean hasMultiplePluginFolders = Arrays.stream(parentFile.listFiles()).filter(File::isDirectory)
+						.filter(file -> new File(file, "META-INF/MANIFEST.MF").isFile()).count() > 1; //$NON-NLS-1$
+				if (!hasMultiplePluginFolders && !locations.contains(parentFile)) {
+					bundleContainers.add(new DirectoryBundleContainer(loc.getParent()));
+					locations.add(parentFile);
+				}
+			}
+			targetDef.setTargetLocations(bundleContainers.toArray(new ITargetLocation[bundleContainers.size()]));
+			targetDef.setArch(Platform.getOSArch());
+			targetDef.setOS(Platform.getOS());
+			targetDef.setWS(Platform.getWS());
+			targetDef.setNL(Platform.getNL());
+			// targetDef.setJREContainer()
+			tpService.saveTargetDefinition(targetDef);
+
+			Job job = new LoadTargetDefinitionJob(targetDef);
+			job.schedule();
+			job.join();
+		}
 	}
 }

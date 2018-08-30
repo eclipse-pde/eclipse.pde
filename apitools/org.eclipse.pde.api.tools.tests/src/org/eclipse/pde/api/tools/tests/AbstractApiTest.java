@@ -150,9 +150,9 @@ public class AbstractApiTest {
 		assertTrue("the src root must have been created", root.exists()); //$NON-NLS-1$
 		if (packages != null) {
 			IPackageFragment fragment = null;
-			for (int i = 0; i < packages.length; i++) {
-				fragment = root.createPackageFragment(packages[i], true, new NullProgressMonitor());
-				assertNotNull("the package fragment " + packages[i] + " cannot be null", fragment); //$NON-NLS-1$ //$NON-NLS-2$
+			for (String package1 : packages) {
+				fragment = root.createPackageFragment(package1, true, new NullProgressMonitor());
+				assertNotNull("the package fragment " + package1 + " cannot be null", fragment); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
