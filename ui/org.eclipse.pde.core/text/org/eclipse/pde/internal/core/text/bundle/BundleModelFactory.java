@@ -41,7 +41,7 @@ public class BundleModelFactory implements IBundleModelFactory {
 			newLine = TextUtilities.getDefaultLineDelimiter(((BundleModel) fModel).getDocument());
 		else
 			// use consistent line endings, see bug 506157
-			newLine = ManifestUtils.MANIFEST_LINE_SEPARATOR;
+			newLine = "\n";
 
 		if (key.equalsIgnoreCase(Constants.BUNDLE_ACTIVATOR)) {
 			header = new BundleActivatorHeader(key, value, bundle, newLine);
