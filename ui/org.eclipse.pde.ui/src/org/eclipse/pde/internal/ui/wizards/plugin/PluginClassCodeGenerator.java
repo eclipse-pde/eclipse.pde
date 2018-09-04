@@ -109,26 +109,12 @@ public class PluginClassCodeGenerator {
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
 
-		writer.println("\t/*"); //$NON-NLS-1$
-		writer.println("\t * (non-Javadoc)"); //$NON-NLS-1$
-		if (fPluginData.isUIPlugin())
-			writer.println("\t * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)"); //$NON-NLS-1$
-		else
-			writer.println("\t * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)"); //$NON-NLS-1$
-		writer.println("\t */"); //$NON-NLS-1$
 		writer.println("\tpublic void start(BundleContext context) throws Exception {"); //$NON-NLS-1$
 		writer.println("\t\tsuper.start(context);"); //$NON-NLS-1$
 		writer.println("\t\tplugin = this;"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
 
-		writer.println("\t/*"); //$NON-NLS-1$
-		writer.println("\t * (non-Javadoc)"); //$NON-NLS-1$
-		if (fPluginData.isUIPlugin())
-			writer.println("\t * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)"); //$NON-NLS-1$
-		else
-			writer.println("\t * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)"); //$NON-NLS-1$
-		writer.println("\t */"); //$NON-NLS-1$
 		writer.println("\tpublic void stop(BundleContext context) throws Exception {"); //$NON-NLS-1$
 		writer.println("\t\tplugin = null;"); //$NON-NLS-1$
 		writer.println("\t\tsuper.stop(context);"); //$NON-NLS-1$
@@ -175,18 +161,10 @@ public class PluginClassCodeGenerator {
 		writer.println("\t\treturn context;"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
-		writer.println("\t/*"); //$NON-NLS-1$
-		writer.println("\t * (non-Javadoc)"); //$NON-NLS-1$
-		writer.println("\t * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)"); //$NON-NLS-1$
-		writer.println("\t */"); //$NON-NLS-1$
 		writer.println("\tpublic void start(BundleContext bundleContext) throws Exception {"); //$NON-NLS-1$
 		writer.println("\t\t" + className + ".context = bundleContext;"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
-		writer.println("\t/*"); //$NON-NLS-1$
-		writer.println("\t * (non-Javadoc)"); //$NON-NLS-1$
-		writer.println("\t * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)"); //$NON-NLS-1$
-		writer.println("\t */"); //$NON-NLS-1$
 		writer.println("\tpublic void stop(BundleContext bundleContext) throws Exception {"); //$NON-NLS-1$
 		writer.println("\t\t" + className + ".context = null;"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t}"); //$NON-NLS-1$
