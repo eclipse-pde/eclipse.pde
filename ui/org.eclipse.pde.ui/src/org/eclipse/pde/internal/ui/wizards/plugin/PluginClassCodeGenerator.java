@@ -108,13 +108,13 @@ public class PluginClassCodeGenerator {
 		writer.println("\tpublic " + className + "() {"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
-
+		writer.println("\t@Override");//$NON-NLS-1$
 		writer.println("\tpublic void start(BundleContext context) throws Exception {"); //$NON-NLS-1$
 		writer.println("\t\tsuper.start(context);"); //$NON-NLS-1$
 		writer.println("\t\tplugin = this;"); //$NON-NLS-1$
 		writer.println("\t}"); //$NON-NLS-1$
 		writer.println();
-
+		writer.println("\t@Override");//$NON-NLS-1$
 		writer.println("\tpublic void stop(BundleContext context) throws Exception {"); //$NON-NLS-1$
 		writer.println("\t\tplugin = null;"); //$NON-NLS-1$
 		writer.println("\t\tsuper.stop(context);"); //$NON-NLS-1$
