@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
-import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
-
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.Set;
@@ -29,10 +27,11 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -87,7 +86,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		gd.horizontalSpan = span;
 		gd.widthHint = 400;
 		text.setLayoutData(gd);
-		text.setBackground(null);
+		text.setBackground(parent.getBackground());
 		text.addHyperlinkListener(this);
 	}
 
