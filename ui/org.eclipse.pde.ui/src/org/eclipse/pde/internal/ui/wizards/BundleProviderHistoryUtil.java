@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -78,5 +78,10 @@ public class BundleProviderHistoryUtil {
 		if (items != null && items.length > 0) {
 			settings.put(S_PROVIDERS, items);
 		}
+		String text2 = combo.getText();
+		if (text2 != null && text2.isEmpty() && !text.isEmpty()) {
+			combo.setText(text);
+		}
+
 	}
 }
