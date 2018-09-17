@@ -79,7 +79,8 @@ public class ClasspathComputer {
 		if (!clear) {
 			IClasspathEntry[] entries = JavaCore.create(project).getRawClasspath();
 			for (IClasspathEntry entry : entries) {
-				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE
+						|| entry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
 					if (paths.add(entry.getPath()))
 						result.add(updateTestAttribute(isTestPlugin, entry));
 				}
