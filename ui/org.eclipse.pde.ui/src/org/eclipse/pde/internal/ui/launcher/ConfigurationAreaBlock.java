@@ -95,7 +95,7 @@ public class ConfigurationAreaBlock extends BaseBlock {
 		if (useDefaultArea)
 			fLocationText.setEnabled(true);
 
-		fClearConfig.setSelection(configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false));
+		fClearConfig.setSelection(configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, true));
 
 		if (useDefaultArea) {
 			fLastEnteredConfigArea = DEFAULT_DIR + fLastKnownConfigName;
@@ -118,7 +118,7 @@ public class ConfigurationAreaBlock extends BaseBlock {
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration, boolean isJUnit) {
-		configuration.setAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, isJUnit);
+		configuration.setAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, true);
 
 		boolean useDefaultArea = !isJUnit || LaunchArgumentsHelper.getDefaultJUnitWorkspaceIsContainer();
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, useDefaultArea);
