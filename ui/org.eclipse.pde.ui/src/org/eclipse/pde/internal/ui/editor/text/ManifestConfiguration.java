@@ -253,7 +253,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		if (fSourcePage != null && fSourcePage.isEditable()) {
 			if (fContentAssistant == null) {
-				fContentAssistant = new ContentAssistant();
+				fContentAssistant = new ContentAssistant(true);
 				fContentAssistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 				fContentAssistantProcessor = new ManifestContentAssistProcessor(fSourcePage);
 				fContentAssistant.setContentAssistProcessor(fContentAssistantProcessor, IDocument.DEFAULT_CONTENT_TYPE);
