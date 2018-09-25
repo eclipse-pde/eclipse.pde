@@ -157,12 +157,7 @@ public class ApiType extends ApiMember implements IApiType {
 	public List<IReference> extractReferences(int referenceMask, IProgressMonitor monitor) throws CoreException {
 		HashSet<Reference> references = new HashSet<>();
 		ReferenceExtractor extractor = new ReferenceExtractor(this, references, referenceMask);
-		byte[] bytes = ((AbstractApiTypeRoot) fStorage).getContents();
-		boolean updated = Util.updateVersionFrom11to10(bytes);
-		ClassReader reader = new ClassReader(bytes);
-		if (updated) {
-			Util.updateVersionFrom10to11(bytes);
-		}
+		ClassReader reader = new ClassReader(((AbstractApiTypeRoot) fStorage).getContents());
 		reader.accept(extractor, ClassReader.SKIP_FRAMES);
 		return new LinkedList<>(references);
 	}
