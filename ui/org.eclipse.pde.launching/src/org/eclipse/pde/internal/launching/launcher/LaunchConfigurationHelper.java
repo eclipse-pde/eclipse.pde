@@ -164,6 +164,9 @@ public class LaunchConfigurationHelper {
 			// Add bundles.txt as p2 config data
 			if (bundlesTxt != null) {
 				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
+				if (bundles.get("org.eclipse.update.configurator") != null) { //$NON-NLS-1$
+					properties.setProperty("org.eclipse.update.reconcile", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			}
 
 			// Make the p2 data area in the configuration area itself, rather than a sibling of the configuration
