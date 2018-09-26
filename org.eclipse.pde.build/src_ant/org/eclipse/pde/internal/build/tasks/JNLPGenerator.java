@@ -333,26 +333,8 @@ public class JNLPGenerator extends DefaultHandler {
 		if (arch == null)
 			return null;
 
-		if ("x86".equals(arch)) //$NON-NLS-1$
-			return "x86"; //$NON-NLS-1$
-
-		if ("PA_RISC".equals(arch)) //$NON-NLS-1$
-			return "PA_RISC"; //$NON-NLS-1$
-
-		if ("ppc".equals(arch)) //$NON-NLS-1$
-			return "ppc"; //$NON-NLS-1$
-
-		if ("sparc".equals(arch)) //$NON-NLS-1$
-			return "sparc"; //$NON-NLS-1$
-
 		if ("x86_64".equals(arch))//$NON-NLS-1$
 			return "x86_64"; //$NON-NLS-1$
-
-		if ("ia64".equals(arch)) //$NON-NLS-1$
-			return "ia64"; //$NON-NLS-1$
-
-		if ("ia64_32".equals(arch)) //$NON-NLS-1$
-			return "ia64_32"; //$NON-NLS-1$
 
 		return arch;
 	}
