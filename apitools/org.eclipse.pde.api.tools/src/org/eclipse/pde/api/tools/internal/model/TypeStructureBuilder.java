@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -57,7 +57,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 	 *            unknown
 	 */
 	TypeStructureBuilder(ClassVisitor cv, IApiComponent component, IApiTypeRoot file) {
-		super(Opcodes.ASM6, cv);
+		super(Opcodes.ASM7_EXPERIMENTAL, cv);
 		fComponent = component;
 		fFile = file;
 	}
@@ -154,7 +154,8 @@ public class TypeStructureBuilder extends ClassVisitor {
 			}
 		}
 		final ApiMethod method = fType.addMethod(name, desc, signature, laccess, names);
-		return new MethodVisitor(Opcodes.ASM6, super.visitMethod(laccess, name, desc, signature, exceptions)) {
+		return new MethodVisitor(Opcodes.ASM7_EXPERIMENTAL,
+				super.visitMethod(laccess, name, desc, signature, exceptions)) {
 			@Override
 			public AnnotationVisitor visitAnnotation(String sig, boolean visible) {
 				if (visible && "Ljava/lang/invoke/MethodHandle$PolymorphicSignature;".equals(sig)) { //$NON-NLS-1$
@@ -189,7 +190,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 		int traceCount = 0;
 
 		public AnnotationDefaultVisitor(ApiMethod method) {
-			super(Opcodes.ASM6);
+			super(Opcodes.ASM7_EXPERIMENTAL);
 			this.method = method;
 		}
 
@@ -307,7 +308,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 		String typeName;
 
 		public EnclosingMethodSetter(ClassVisitor cv, String typeName) {
-			super(Opcodes.ASM6, cv);
+			super(Opcodes.ASM7_EXPERIMENTAL, cv);
 			this.typeName = typeName.replace('.', '/');
 		}
 
@@ -340,7 +341,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 		protected EnclosingMethodSetter setter;
 
 		public TypeNameFinder(MethodVisitor mv, EnclosingMethodSetter enclosingMethodSetter) {
-			super(Opcodes.ASM6, mv);
+			super(Opcodes.ASM7_EXPERIMENTAL, mv);
 			this.setter = enclosingMethodSetter;
 		}
 

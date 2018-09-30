@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,7 +32,7 @@ final class SignatureDecoder extends SignatureVisitor {
 	SignatureDescriptor signatureDescriptor;
 
 	public SignatureDecoder(SignatureDescriptor signatureDescriptor) {
-		super(Opcodes.ASM6);
+		super(Opcodes.ASM7_EXPERIMENTAL);
 		this.signatureDescriptor = signatureDescriptor;
 	}
 
