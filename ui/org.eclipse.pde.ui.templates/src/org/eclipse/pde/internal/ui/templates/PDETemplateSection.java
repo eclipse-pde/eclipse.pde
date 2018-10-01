@@ -117,7 +117,7 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 		IPluginReference[] dep = new IPluginReference[5];
 		dep[0] = new PluginReference("org.eclipse.core.runtime"); //$NON-NLS-1$
 		dep[1] = new PluginReference("org.eclipse.ui"); //$NON-NLS-1$
-		dep[2] = new PluginReference("org.eclipse.equinox.ds"); //$NON-NLS-1$
+		dep[2] = new PluginReference("org.apache.felix.scr"); //$NON-NLS-1$
 		dep[3] = new PluginReference("org.eclipse.equinox.util"); //$NON-NLS-1$
 		dep[4] = new PluginReference("org.eclipse.equinox.event"); //$NON-NLS-1$
 		return dep;
