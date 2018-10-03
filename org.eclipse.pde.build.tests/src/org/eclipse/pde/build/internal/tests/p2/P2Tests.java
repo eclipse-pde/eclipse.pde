@@ -202,7 +202,7 @@ public class P2Tests extends P2TestCase {
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		String repoLocation = "file:" + repo.getLocation().toOSString();
 		properties.put("product", productFile.getLocation().toOSString());
-		properties.put("configs", "win32,win32,x86");
+		properties.put("configs", "win32,win32,x86_64");
 		properties.put("generate.p2.metadata", "true");
 		properties.put("p2.metadata.repo", repoLocation);
 		properties.put("p2.artifact.repo", repoLocation);
@@ -220,11 +220,11 @@ public class P2Tests extends P2TestCase {
 		IMetadataRepository repository = loadMetadataRepository(repoLocation);
 		assertNotNull(repository);
 
-		IInstallableUnit iu = getIU(repository, "toolingrcp.product.config.win32.win32.x86");
+		IInstallableUnit iu = getIU(repository, "toolingrcp.product.config.win32.win32.x86_64");
 		ArrayList<IInstallableUnit> requiredIUs = new ArrayList<>();
-		IInstallableUnit rootFileCU = getIU(repository, "toolingrcp.product.rootfiles.win32.win32.x86");
+		IInstallableUnit rootFileCU = getIU(repository, "toolingrcp.product.rootfiles.win32.win32.x86_64");
 		requiredIUs.add(rootFileCU);
-		requiredIUs.add(getIU(repository, "rcp.product.rootfiles.win32.win32.x86"));
+		requiredIUs.add(getIU(repository, "rcp.product.rootfiles.win32.win32.x86_64"));
 
 		assertTouchpoint(rootFileCU, "configure", "setLauncherName");
 		iu = getIU(repository, "toolingrcp.product.rootfiles");
@@ -244,7 +244,7 @@ public class P2Tests extends P2TestCase {
 		properties.put("p2.director.iu", "rcp.product");
 		properties.put("os", "win32");
 		properties.put("ws", "win32");
-		properties.put("arch", "x86");
+		properties.put("arch", "x86_64");
 		properties.put("equinoxLauncherJar",
 				FileLocator.getBundleFile(Platform.getBundle("org.eclipse.equinox.launcher")).getAbsolutePath());
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),

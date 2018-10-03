@@ -335,8 +335,7 @@ public class Utils {
 			BundleInfo[] bundles = manipulator
 					.loadConfiguration(BundleHelper.getDefault().getBundle().getBundleContext(), null);
 			// find a fragment for a platform we aren't
-			String id = "org.eclipse.equinox.launcher.win32.win32.x86"
-					+ (Platform.getOSArch().equals("x86") ? "_64" : "");
+			String id = "org.eclipse.equinox.launcher.win32.win32.x86_64";
 			for (int i = 0; i < bundles.length; i++) {
 				if (bundles[i].getSymbolicName().equals(id)) {
 					URI location = bundles[i].getLocation();

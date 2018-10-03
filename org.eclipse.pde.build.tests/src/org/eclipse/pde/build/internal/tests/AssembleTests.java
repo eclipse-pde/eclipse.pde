@@ -72,14 +72,14 @@ public class AssembleTests extends PDETestCase {
 
 		Utils.generateFeature(buildFolder, "sdk", null,
 				new String[] { "org.eclipse.swt;unpack=\"false\"",
-						"org.eclipse.swt.win32.win32.x86;unpack=\"false\";os=\"win32\";ws=\"win32\";arch=\"x86\"",
-						"org.eclipse.swt.gtk.linux.x86;unpack=\"false\";os=\"linux\";ws=\"gtk\";arch=\"x86\"" });
+						"org.eclipse.swt.win32.win32.x86_64;unpack=\"false\";os=\"win32\";ws=\"win32\";arch=\"x86_64\"",
+						"org.eclipse.swt.gtk.linux.x86_64;unpack=\"false\";os=\"linux\";ws=\"gtk\";arch=\"x86_64\"" });
 
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("topLevelElementId", "sdk");
 		if (!executable.equals(new File((String) buildProperties.get("baseLocation"))))
 			buildProperties.put("pluginPath", executable.getAbsolutePath());
-		buildProperties.put("configs", "*,*,* & win32, win32, x86 & linux, gtk, x86");
+		buildProperties.put("configs", "*,*,* & win32, win32, x86_64 & linux, gtk, x86_64");
 
 		Utils.storeBuildProperties(buildFolder, buildProperties);
 
@@ -99,26 +99,26 @@ public class AssembleTests extends PDETestCase {
 
 		Utils.generateFeature(buildFolder, "sdk", null,
 				new String[] { "org.eclipse.swt;unpack=\"false\"",
-						"org.eclipse.swt.win32.win32.x86;unpack=\"false\";os=\"win32\";ws=\"win32\";arch=\"x86\"",
-						"org.eclipse.swt.gtk.linux.x86;unpack=\"false\";os=\"linux\";ws=\"gtk\";arch=\"x86\"" });
+						"org.eclipse.swt.win32.win32.x86_64;unpack=\"false\";os=\"win32\";ws=\"win32\";arch=\"x86_64\"",
+						"org.eclipse.swt.gtk.linux.x86_64;unpack=\"false\";os=\"linux\";ws=\"gtk\";arch=\"x86_64\"" });
 
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("topLevelElementId", "sdk");
 		if (!executable.equals(new File((String) buildProperties.get("baseLocation"))))
 			buildProperties.put("pluginPath", executable.getAbsolutePath());
-		buildProperties.put("configs", "*,*,* & win32, win32, x86 & linux, gtk, x86");
+		buildProperties.put("configs", "*,*,* & win32, win32, x86_64 & linux, gtk, x86_64");
 
 		Utils.storeBuildProperties(buildFolder, buildProperties);
 
 		runBuild(buildFolder);
 
-		String[] log = new String[] { "preAssemble", "defaultAssemble", "assemble.sdk.win32.win32.x86",
-				"defaultAssemble", "postAssemble", "prePackage", "defaultAssemble", "assemble.sdk.win32.win32.x86",
+		String[] log = new String[] { "preAssemble", "defaultAssemble", "assemble.sdk.win32.win32.x86_64",
+				"defaultAssemble", "postAssemble", "prePackage", "defaultAssemble", "assemble.sdk.win32.win32.x86_64",
 				"defaultAssemble", "postPackage" };
 		assertLogContainsLines(buildFolder.getFile("log.log"), log);
 
 		assertResourceFile(buildFolder, "I.TestBuild/sdk-TestBuild.zip");
-		assertResourceFile(buildFolder, "I.TestBuild/sdk-TestBuild-linux.gtk.x86.zip");
+		assertResourceFile(buildFolder, "I.TestBuild/sdk-TestBuild-linux.gtk.x86_64.zip");
 		assertResourceFile(buildFolder, "I.TestBuild/MyCustomName.zip");
 	}
 
