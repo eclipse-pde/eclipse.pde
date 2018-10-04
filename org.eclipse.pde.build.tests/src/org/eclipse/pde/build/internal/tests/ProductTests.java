@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which accompanies this distribution,
@@ -245,13 +245,9 @@ public class ProductTests extends PDETestCase {
 		FilenameFilter filter = (dir, name) -> name.startsWith("org.eclipse.equinox.executable");
 		File[] files = new File(executable, "features").listFiles(filter);
 
-		File win32Exe = new File(files[0], "bin/win32/win32/x86/launcher.exe");
-		assertTrue(win32Exe.exists());
 		File win64Exe = new File(files[0], "bin/win32/win32/x86_64/launcher.exe");
 		assertTrue(win64Exe.exists());
 
-		IFile win32File = buildFolder.getFile("win32.exe");
-		win32File.create(new BufferedInputStream(new FileInputStream(win32Exe)), IResource.FORCE, null);
 		IFile win64File = buildFolder.getFile("win64.exe");
 		win64File.create(new BufferedInputStream(new FileInputStream(win64Exe)), IResource.FORCE, null);
 
@@ -266,7 +262,6 @@ public class ProductTests extends PDETestCase {
 		try (PrintStream newErr = new PrintStream(
 				new FileOutputStream(buildFolder.getLocation().toOSString() + "/out.out"))) {
 			System.setErr(newErr);
-			IconExe.main(new String[] { win32File.getLocation().toOSString(), icoFile.getLocation().toOSString() });
 			IconExe.main(new String[] { win64File.getLocation().toOSString(), icoFile.getLocation().toOSString() });
 			System.setErr(oldErr);
 		}
@@ -330,7 +325,8 @@ public class ProductTests extends PDETestCase {
 
 		IFile product = buildFolder.getFile("foo.product");
 		Utils.generateProduct(product, null, "1.0.0", null, new String[] { "A",
-				"org.eclipse.equinox.simpleconfigurator", "org.eclipse.swt", "org.eclipse.swt.gtk.linux.x86" }, false);
+				"org.eclipse.equinox.simpleconfigurator", "org.eclipse.swt", "org.eclipse.swt.gtk.linux.x86_64" },
+				false);
 
 		IFolder A1 = Utils.createFolder(buildFolder, "plugins/A1");
 		IFolder A2 = Utils.createFolder(buildFolder, "plugins/A2");
@@ -343,7 +339,7 @@ public class ProductTests extends PDETestCase {
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", product.getLocation().toOSString());
 		properties.put("includeLaunchers", "false");
-		properties.put("configs", "win32,win32,x86 & linux,gtk,x86");
+		properties.put("configs", "win32,win32,x86_64 & linux,gtk,x86_64");
 		// properties.put("archivesFormat", "win32,win32,x86-folder");
 		if (!executable.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", executable.getAbsolutePath());
@@ -352,7 +348,7 @@ public class ProductTests extends PDETestCase {
 		runProductBuild(buildFolder);
 
 		IFolder tmp = Utils.createFolder(buildFolder, "tmp");
-		FileUtils.unzipFile(buildFolder.getFile("I.TestBuild/eclipse-win32.win32.x86.zip").getLocation().toFile(),
+		FileUtils.unzipFile(buildFolder.getFile("I.TestBuild/eclipse-win32.win32.x86_64.zip").getLocation().toFile(),
 				tmp.getLocation().toFile());
 
 		File file = buildFolder.getFolder("tmp/eclipse/plugins").getLocation().toFile();
@@ -366,7 +362,7 @@ public class ProductTests extends PDETestCase {
 		assertLogContainsLine(info, bundleString);
 		boolean swtNotThere = true;
 		try {
-			assertLogContainsLine(info, "org.eclipse.swt.gtk.linux.x86");
+			assertLogContainsLine(info, "org.eclipse.swt.gtk.linux.x86_64");
 			swtNotThere = false;
 		} catch (AssertionFailedError e) {
 			// good
@@ -374,9 +370,9 @@ public class ProductTests extends PDETestCase {
 		assertTrue(swtNotThere);
 
 		IFile gtkInfo = buildFolder.getFile("gtk.info");
-		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-linux.gtk.x86.zip",
+		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-linux.gtk.x86_64.zip",
 				"eclipse/configuration/org.eclipse.equinox.simpleconfigurator/bundles.info", gtkInfo);
-		assertLogContainsLine(gtkInfo, "org.eclipse.swt.gtk.linux.x86");
+		assertLogContainsLine(gtkInfo, "org.eclipse.swt.gtk.linux.x86_64");
 	}
 
 	public void testBug271373() throws Exception {
@@ -581,7 +577,7 @@ public class ProductTests extends PDETestCase {
 		Utils.generateBundle(a, "A");
 		Attributes manifestAdditions = new Attributes();
 		manifestAdditions.put(new Attributes.Name("Eclipse-PlatformFilter"),
-				"(& (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86))");
+				"(& (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86_64))");
 		Utils.generateBundleManifest(a, "A", "1.0.0", manifestAdditions);
 		Utils.generatePluginBuildProperties(a, null);
 		Utils.writeBuffer(a.getFile("src/a.java"), new StringBuffer("class A {}"));
@@ -605,7 +601,7 @@ public class ProductTests extends PDETestCase {
 		buildProperties.put("product", product.getLocation().toOSString());
 		buildProperties.put("filteredDependencies", "true");
 		buildProperties.put("pluginPath", executable.getAbsolutePath());
-		buildProperties.put("configs", "win32, win32, x86");
+		buildProperties.put("configs", "win32, win32, x86_64");
 		// buildProperties.put("archivesFormat", "win32,win32,x86 - folder");
 
 		Utils.storeBuildProperties(buildFolder, buildProperties);
@@ -615,6 +611,6 @@ public class ProductTests extends PDETestCase {
 		Set<String> entries = new HashSet<>();
 		entries.add("eclipse/plugins/A_1.0.0.jar");
 		entries.add("eclipse/rcp.exe");
-		assertZipContents(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip", entries);
+		assertZipContents(buildFolder, "I.TestBuild/eclipse-win32.win32.x86_64.zip", entries);
 	}
 }

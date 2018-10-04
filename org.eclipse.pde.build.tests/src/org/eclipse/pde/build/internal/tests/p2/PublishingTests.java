@@ -1195,13 +1195,13 @@ public class PublishingTests extends P2TestCase {
 
 		IFile productFile = buildFolder.getFile("rcp.product");
 		Utils.generateProduct(productFile, "rcp.product", "1.0.0.qualifier", new String[] { OSGI, EQUINOX_COMMON,
-				"org.eclipse.swt", "org.eclipse.swt.win32.win32.x86", "org.eclipse.swt.gtk.linux.x86" }, false);
+				"org.eclipse.swt", "org.eclipse.swt.win32.win32.x86_64", "org.eclipse.swt.gtk.linux.x86_64" }, false);
 		Properties p2Inf = new Properties(); // bug 268223
 		p2Inf.put("org.eclipse.pde.build.append.startlevels", "false");
 		Utils.storeProperties(buildFolder.getFile("p2.inf"), p2Inf);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
-		properties.put("configs", "win32,win32,x86");
+		properties.put("configs", "win32,win32,x86_64");
 		if (!executable.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", executable.getAbsolutePath());
 		properties.put("product", productFile.getLocation().toOSString());
@@ -1227,7 +1227,7 @@ public class PublishingTests extends P2TestCase {
 		assertNull(getIU(metadata, "toolingorg.eclipse.equinox.common", false));
 
 		// bug 271141
-		assertFalse(buildFolder.getFile("I.TestBuild/eclipse-win32.win32.x86.zip").exists());
+		assertFalse(buildFolder.getFile("I.TestBuild/eclipse-win32.win32.x86_64.zip").exists());
 		assertFalse(buildFolder.getFolder("finalRepo").exists());
 	}
 
@@ -1519,7 +1519,7 @@ public class PublishingTests extends P2TestCase {
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		if (!executable.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", executable.getAbsolutePath());
-		properties.put("configs", "win32,win32,x86");
+		properties.put("configs", "win32,win32,x86_64");
 		properties.put("product", productFile.getLocation().toOSString());
 		properties.put("filteredDependencyCheck", "true");
 		properties.put("p2.gathering", "true");
@@ -1539,8 +1539,8 @@ public class PublishingTests extends P2TestCase {
 				.append("      <p2.mirror destination=\"" + finalRepo.getLocation().toOSString() + "\"			\n");
 		customBuffer
 				.append("                 source=\"${p2.build.repo}\" >											\n");
-		customBuffer
-				.append("          <slicingOptions platformFilter=\"win32,win32,x86\" 							\n");
+		customBuffer.append(
+				"          <slicingOptions platformFilter=\"win32,win32,x86_64\" 							\n");
 		customBuffer
 				.append("                          followStrict=\"true\" /> 									\n");
 		customBuffer
@@ -1556,14 +1556,14 @@ public class PublishingTests extends P2TestCase {
 		runProductBuild(buildFolder);
 
 		assertResourceFile(finalRepo, "binary/f_root_1.0.0");
-		assertResourceFile(finalRepo, "binary/rcp.product_root.win32.win32.x86_1.0.0");
+		assertResourceFile(finalRepo, "binary/rcp.product_root.win32.win32.x86_64_1.0.0");
 		assertResourceFile(finalRepo, "features/f_1.0.0.jar");
 
 		HashSet<String> entries = new HashSet<>();
 		entries.add("eclipse/eclipse.exe");
 		entries.add("eclipse/features/f_1.0.0/feature.xml");
 		entries.add("eclipse/sub/important.txt");
-		assertZipContents(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip", entries);
+		assertZipContents(buildFolder, "I.TestBuild/eclipse-win32.win32.x86_64.zip", entries);
 	}
 
 	public void testDirectorLogging() throws Exception {

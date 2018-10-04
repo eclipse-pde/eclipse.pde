@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which accompanies this distribution,
@@ -43,13 +43,13 @@ public class AssembleTests extends PDETestCase {
 		assertNotNull(executable);
 
 		Utils.generateFeature(buildFolder, "sdk", null, new String[] { "org.eclipse.swt;unpack=\"false\"",
-				"org.eclipse.swt.win32.win32.x86;unpack=\"false\";os=\"win32\";ws=\"win32\";arch=\"x86\"" });
+				"org.eclipse.swt.win32.win32.x86_64;unpack=\"false\";os=\"win32\";ws=\"win32\";arch=\"x86_64\"" });
 
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("topLevelElementId", "sdk");
 		if (!executable.equals(new File((String) buildProperties.get("baseLocation"))))
 			buildProperties.put("pluginPath", executable.getAbsolutePath());
-		buildProperties.put("configs", "win32, win32, x86");
+		buildProperties.put("configs", "win32, win32, x86_64");
 
 		Utils.storeBuildProperties(buildFolder, buildProperties);
 		Utils.generateAllElements(buildFolder, "sdk");
@@ -59,8 +59,8 @@ public class AssembleTests extends PDETestCase {
 		String[] log = new String[] { "post.gather.bin.parts", "eclipse.base: " + buildLocation + "/tmp/eclipse",
 				"post.jarUp", "plugins: " + buildLocation + "/tmp/eclipse/plugins",
 				"features: " + buildLocation + "/tmp/eclipse/features", "pre.archive",
-				"rootFolder: " + buildLocation + "/tmp/eclipse/win32.win32.x86/eclipse",
-				"archiveFullPath: " + buildLocation + "/I.TestBuild/eclipse-win32.win32.x86.zip" };
+				"rootFolder: " + buildLocation + "/tmp/eclipse/win32.win32.x86_64/eclipse",
+				"archiveFullPath: " + buildLocation + "/I.TestBuild/eclipse-win32.win32.x86_64.zip" };
 		assertLogContainsLines(buildFolder.getFile("log.log"), log);
 	}
 
@@ -86,8 +86,8 @@ public class AssembleTests extends PDETestCase {
 		runBuild(buildFolder);
 
 		assertResourceFile(buildFolder, "I.TestBuild/sdk-TestBuild.zip");
-		assertResourceFile(buildFolder, "I.TestBuild/sdk-TestBuild-linux.gtk.x86.zip");
-		assertResourceFile(buildFolder, "I.TestBuild/sdk-TestBuild-win32.win32.x86.zip");
+		assertResourceFile(buildFolder, "I.TestBuild/sdk-TestBuild-linux.gtk.x86_64.zip");
+		assertResourceFile(buildFolder, "I.TestBuild/sdk-TestBuild-win32.win32.x86_64.zip");
 	}
 
 	public void testBug179612_custom() throws Exception {
@@ -129,7 +129,7 @@ public class AssembleTests extends PDETestCase {
 		// base location,
 		// jar them up in the build and assert they still verify
 		Utils.generateFeature(buildFolder, "sdk", null, new String[] { "org.eclipse.pde.build;unpack=\"false\"",
-				"org.eclipse.equinox.launcher.win32.win32.x86;unpack=\"false\"" });
+				"org.eclipse.equinox.launcher.win32.win32.x86_64;unpack=\"false\"" });
 
 		File executable = Utils.findExecutable();
 		assertNotNull(executable);
@@ -158,14 +158,14 @@ public class AssembleTests extends PDETestCase {
 
 		Utils.generateFeature(buildFolder, "sdk", null,
 				new String[] { "org.eclipse.swt;unpack=\"false\"",
-						"org.eclipse.swt.win32.win32.x86;unpack=\"false\";os=\"win32\";ws=\"win32\";arch=\"x86\"",
-						"org.eclipse.swt.gtk.linux.x86;unpack=\"false\";os=\"linux\";ws=\"gtk\";arch=\"x86\"" });
+						"org.eclipse.swt.win32.win32.x86_64;unpack=\"false\";os=\"win32\";ws=\"win32\";arch=\"x86_64\"",
+						"org.eclipse.swt.gtk.linux.x86_64;unpack=\"false\";os=\"linux\";ws=\"gtk\";arch=\"x86_64\"" });
 
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("topLevelElementId", "sdk");
 		if (!executable.equals(new File((String) buildProperties.get("baseLocation"))))
 			buildProperties.put("pluginPath", executable.getAbsolutePath());
-		buildProperties.put("configs", "win32, win32, x86 & linux, gtk, x86");
+		buildProperties.put("configs", "win32, win32, x86_64 & linux, gtk, x86_64");
 		buildProperties.put("archivesFormat", "group,group,group-folder");
 		buildProperties.put("groupConfigurations", "true");
 
