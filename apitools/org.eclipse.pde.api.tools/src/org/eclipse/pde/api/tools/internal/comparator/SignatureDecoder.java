@@ -32,7 +32,7 @@ final class SignatureDecoder extends SignatureVisitor {
 	SignatureDescriptor signatureDescriptor;
 
 	public SignatureDecoder(SignatureDescriptor signatureDescriptor) {
-		super(Opcodes.ASM7_EXPERIMENTAL);
+		super(Opcodes.ASM6);
 		this.signatureDescriptor = signatureDescriptor;
 	}
 
