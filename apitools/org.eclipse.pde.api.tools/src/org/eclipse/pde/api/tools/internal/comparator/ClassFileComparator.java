@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -200,6 +200,31 @@ public class ClassFileComparator {
 		}
 		if (superclassList1 == null) {
 			if (superclassList2 != null) {
+				// If superclassList2 has 1 abstract method and current class don't have method
+				// implemented, then breaking change
+				for (IApiType iApiType : superclassList2) {
+					IApiMethod[] methods = iApiType.getMethods();
+					for (IApiMethod iMethod : methods) {
+						boolean isAbstractMethod = Flags.isAbstract(iMethod.getModifiers());
+						if (isAbstractMethod) {
+							boolean isBreakingChange = false;
+							IApiMethod meth = this.type2.getMethod(iMethod.getName(), iMethod.getSignature());
+							if(meth == null) {
+								isBreakingChange = true;
+							}
+							if(meth !=null) {
+								isBreakingChange= Flags.isSynthetic(meth.getModifiers());
+							}
+							if (isBreakingChange) {
+								this.addDelta(getElementType(this.type1), IDelta.ADDED, IDelta.SUPERCLASS_BREAKING,
+										this.currentDescriptorRestrictions, this.type1.getModifiers(),
+										this.type2.getModifiers(), this.type1, this.type1.getName(),
+										Util.getDescriptorName(type1));
+								return;
+							}
+						}
+					}
+				}
 				// this means the direct super class of descriptor1 is
 				// java.lang.Object
 				this.addDelta(getElementType(this.type1), IDelta.ADDED, IDelta.SUPERCLASS, this.currentDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, this.type1.getName(), Util.getDescriptorName(type1));
@@ -282,6 +307,34 @@ public class ClassFileComparator {
 		}
 		if (superinterfacesSet1 == null) {
 			if (superinterfacesSet2 != null) {
+				if (this.type1.isClass()) {
+					for (IApiType iApiType : superinterfacesSet2) {
+						IApiMethod[] methods = iApiType.getMethods();
+						for (IApiMethod iMethod : methods) {
+
+							boolean defMethod = iMethod.isDefaultMethod();
+							if (defMethod == false) {
+								boolean isBreakingChange = false;
+								IApiMethod meth = this.type2.getMethod(iMethod.getName(), iMethod.getSignature());
+								if (meth == null) {
+									isBreakingChange = true;
+								}
+								if(meth !=null) {
+									isBreakingChange = Flags.isSynthetic(meth.getModifiers());
+								}
+								if (isBreakingChange) {
+									this.addDelta(getElementType(this.type1), IDelta.ADDED,
+											IDelta.EXPANDED_SUPERINTERFACES_SET_BREAKING,
+											this.currentDescriptorRestrictions, this.type1.getModifiers(),
+											this.type2.getModifiers(), this.type1, this.type1.getName(),
+											Util.getDescriptorName(type1));
+									return;
+								}
+							}
+						}
+					}
+				}
+
 				this.addDelta(getElementType(this.type1), IDelta.CHANGED, IDelta.EXPANDED_SUPERINTERFACES_SET, this.currentDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, this.type1.getName(), Util.getDescriptorName(type1));
 				if (this.type1.isInterface()) {
 					for (Iterator<IApiType> iterator = superinterfacesSet2.iterator(); iterator.hasNext();) {
@@ -346,6 +399,37 @@ public class ClassFileComparator {
 				return;
 			}
 			if (names2.size() > 0) {
+				if (this.type1.isClass()) {
+					for (IApiType apiType : superinterfacesSet2) {
+						String name = apiType.getName();
+						if (names2.contains(name)) {
+							IApiMethod[] methods = apiType.getMethods();
+							for (IApiMethod iMethod : methods) {
+								boolean defMethod = iMethod.isDefaultMethod();
+								if (defMethod == false) {
+									boolean isBreakingChange = false;
+									IApiMethod meth = this.type2.getMethod(iMethod.getName(), iMethod.getSignature());
+									if (meth == null) {
+										isBreakingChange = true;
+									}
+									if(meth !=null) {
+										isBreakingChange = Flags.isSynthetic(meth.getModifiers());
+									}
+									if (isBreakingChange) {
+										this.addDelta(getElementType(this.type1), IDelta.CHANGED,
+												IDelta.EXPANDED_SUPERINTERFACES_SET_BREAKING,
+												this.currentDescriptorRestrictions, this.type1.getModifiers(),
+												this.type2.getModifiers(), this.type1, this.type1.getName(),
+												Util.getDescriptorName(type1));
+										return;
+									}
+								}
+							}
+
+						}
+					}
+				}
+
 				this.addDelta(getElementType(this.type1), IDelta.CHANGED, IDelta.EXPANDED_SUPERINTERFACES_SET, this.currentDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, this.type1.getName(), Util.getDescriptorName(type1));
 				if (this.type1.isInterface()) {
 					for (Iterator<String> iterator = names2.iterator(); iterator.hasNext();) {

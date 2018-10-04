@@ -465,6 +465,10 @@ public class DeltaProcessor {
 					case IDelta.TYPE_PARAMETER:
 					case IDelta.RESTRICTIONS:
 						return !Util.isVisible(newModifiers);
+
+					case IDelta.SUPERCLASS_BREAKING:
+					case IDelta.EXPANDED_SUPERINTERFACES_SET_BREAKING:
+						return false;
 					default:
 						break;
 				}
@@ -492,6 +496,7 @@ public class DeltaProcessor {
 					case IDelta.TYPE_PARAMETER:
 					case IDelta.SUPERCLASS:
 						return !Util.isVisible(delta.getOldModifiers());
+
 					default:
 						break;
 				}
@@ -515,6 +520,8 @@ public class DeltaProcessor {
 						return true;
 					case IDelta.DECREASE_ACCESS:
 						return (Flags.isProtected(delta.getOldModifiers()) && RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions()));
+					case IDelta.EXPANDED_SUPERINTERFACES_SET_BREAKING:
+						return false;
 					default:
 						break;
 				}

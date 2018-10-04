@@ -767,6 +767,7 @@ public class ApiProblemFactory {
 										return 133;
 									default:
 										break;
+
 								}
 								break;
 							}
@@ -795,6 +796,10 @@ public class ApiProblemFactory {
 								return 32;
 							case IDelta.TYPE_ARGUMENT:
 								return 106;
+							case IDelta.EXPANDED_SUPERINTERFACES_SET_BREAKING:
+								return 51;
+							case IDelta.SUPERCLASS_BREAKING:
+								return 53;
 							default:
 								break;
 						}
@@ -875,6 +880,9 @@ public class ApiProblemFactory {
 								return 85;
 							case IDelta.TYPE_ARGUMENT:
 								return 124;
+							case IDelta.EXPANDED_SUPERINTERFACES_SET_BREAKING:
+								return 51;
+
 							default:
 								break;
 						}
@@ -1099,7 +1107,7 @@ public class ApiProblemFactory {
 				break;
 			}
 			case IApiProblem.CATEGORY_COMPATIBILITY: {
-				return Util.getDeltaPrefererenceKey(problem.getElementKind(), problem.getKind(), problem.getFlags());
+				return  Util.getDeltaPrefererenceKey(problem.getElementKind(), problem.getKind(), problem.getFlags());
 			}
 			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM: {
 				switch (problem.getKind()) {

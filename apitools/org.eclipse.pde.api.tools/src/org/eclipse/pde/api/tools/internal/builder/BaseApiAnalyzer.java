@@ -1936,13 +1936,23 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 									fPendingDeltaInfos.add(delta);
 									break;
 								}
+								case IDelta.SUPERCLASS: {
+									// add to build state but dont add marker
+									this.fBuildState.addCompatibleChange(delta);
+									break;
+								}
+
 								default:
 									break;
 							}
 							break;
 						}
 						case IDelta.CHANGED: {
-							if (flags == IDelta.INCREASE_ACCESS) {
+						if (flags == IDelta.EXPANDED_SUPERINTERFACES_SET) {
+							// add to build state but dont add marker
+							this.fBuildState.addCompatibleChange(delta);
+						}
+						if (flags == IDelta.INCREASE_ACCESS) {
 								if (ApiPlugin.DEBUG_API_ANALYZER) {
 									String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
 									System.out.println(deltaDetails + " is compatible"); //$NON-NLS-1$
@@ -1979,6 +1989,25 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 								}
 								fPendingDeltaInfos.add(delta);
 							}
+							break;
+						}
+						case IDelta.EXPANDED_SUPERINTERFACES_SET_BREAKING:
+						case IDelta.SUPERCLASS_BREAKING:{
+							//just add in state but dont add as marker
+							fBuildState.addBreakingChange(delta);
+							break;
+						}
+						default:
+							break;
+					}
+					break;
+				}
+				case IDelta.CHANGED: {
+					// if public, we always want to check @since tags
+					switch (flags) {
+						case IDelta.EXPANDED_SUPERINTERFACES_SET_BREAKING:{
+							//just add in state but dont add as marker
+							fBuildState.addBreakingChange(delta);
 							break;
 						}
 						default:

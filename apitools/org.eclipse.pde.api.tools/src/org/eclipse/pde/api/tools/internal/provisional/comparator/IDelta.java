@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -250,8 +250,8 @@ public interface IDelta {
 	 */
 	public static final int EXECUTION_ENVIRONMENT = 13;
 	/**
-	 * Delta kind flag that denotes an interface has been added to the current
-	 * set of super-interfaces. <br>
+	 * Delta kind flag that denotes an interface has been added to the current set
+	 * of super-interfaces and this change is a non-breaking change. <br>
 	 * Applies to kinds:
 	 * <ul>
 	 * <li>{@link #CHANGED}</li>
@@ -260,6 +260,18 @@ public interface IDelta {
 	 * @see #getFlags()
 	 */
 	public static final int EXPANDED_SUPERINTERFACES_SET = 15;
+	/**
+	 * Delta kind flag that denotes an interface has been added to the current set
+	 * of super-interfaces that is a breaking change <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #CHANGED}</li>
+	 * </ul>
+	 *
+	 * @see #getFlags()
+	 */
+	public static final int EXPANDED_SUPERINTERFACES_SET_BREAKING = 42;
+
 	/**
 	 * Delta kind flag that denotes a field has been added or removed. <br>
 	 * Applies to kinds:
@@ -497,7 +509,7 @@ public interface IDelta {
 	 */
 	public static final int STATIC_TO_NON_STATIC = 38;
 	/**
-	 * Delta kind flag that denotes a super-class has been added, or removed. <br>
+	 * Delta kind flag that denotes a super-class has been added ( non-breaking change), or removed. <br>
 	 * Applies to kinds:
 	 * <ul>
 	 * <li>{@link #ADDED}</li>
@@ -507,6 +519,16 @@ public interface IDelta {
 	 * @see #getFlags()
 	 */
 	public static final int SUPERCLASS = 39;
+	/**
+	 * Delta kind flag that denotes a super-class has been added that is a breaking change <br>
+	 * Applies to kinds:
+	 * <ul>
+	 * <li>{@link #ADDED}</li>
+	 * </ul>
+	 *
+	 * @see #getFlags()
+	 */
+	public static final int SUPERCLASS_BREAKING = 43;
 	/**
 	 * Delta kind flag that denotes the synchronized keyword has been removed. <br>
 	 * Applies to kinds:

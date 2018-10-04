@@ -368,8 +368,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY,
 						IDelta.INTERFACE_ELEMENT_TYPE,
-						IDelta.ADDED,
-						IDelta.SUPER_INTERFACE_WITH_METHODS)
+						IDelta.ADDED, IDelta.SUPER_INTERFACE_WITH_METHODS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
