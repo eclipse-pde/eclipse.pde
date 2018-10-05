@@ -293,16 +293,21 @@ public class TypeStructureBuilder extends ClassVisitor {
 						return o1.getName().compareTo(o2.getName());
 					}
 				});
-				for (IVMInstall ivmInstall : compatibleVMs) {
-					if (ivmInstall instanceof AbstractVMInstall) {
-						String javaVersion = ((AbstractVMInstall) ivmInstall).getJavaVersion();
-						if (javaVersion.equals("11")) { //$NON-NLS-1$
-							useExperimental = true;
+				for (int i = 0; i < compatibleVMs.length; i++) {
+					if (compatibleVMs[i] instanceof AbstractVMInstall) {
+						AbstractVMInstall ivmInstall = (AbstractVMInstall) compatibleVMs[i];
+						String javaVersion = ivmInstall.getJavaVersion();
+						if (i == 0) {
+							useExperimental = javaVersion.equals("11"); //$NON-NLS-1$
 						}
-						break; // take the 1st one
+						boolean strictlyCompatible = env.isStrictlyCompatible(ivmInstall);
+						// if strictly compatible, then take that value
+						if (strictlyCompatible) {
+							useExperimental = javaVersion.equals("11"); //$NON-NLS-1$
+							break;
+						}
 					}
 				}
-
 			}
 
 		} catch (Exception e1) {
