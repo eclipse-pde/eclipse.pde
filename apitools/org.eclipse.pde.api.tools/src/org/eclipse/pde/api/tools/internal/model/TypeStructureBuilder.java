@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2018 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@ package org.eclipse.pde.api.tools.internal.model;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +23,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
+import org.eclipse.jdt.launching.AbstractVMInstall;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.model.StubArchiveApiTypeContainer.ArchiveApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -44,6 +51,22 @@ public class TypeStructureBuilder extends ClassVisitor {
 	IApiComponent fComponent;
 	IApiTypeRoot fFile;
 
+	/**
+	 * Builds a type structure for a class file. Note that if an API component
+	 * is not specified, then some operations on the resulting {@link IApiType}
+	 * will not be available (navigating super types, member types, etc). This
+	 * constructor uses ASM7_EXPERIMENTAL
+	 *
+	 * @param useExperimental
+	 * @param cv class file visitor
+	 * @param component originating API component or <code>null</code> if
+	 *            unknown
+	 */
+	TypeStructureBuilder(boolean useExperimental, ClassVisitor cv, IApiComponent component, IApiTypeRoot file) {
+		super(Opcodes.ASM7_EXPERIMENTAL, cv);
+		fComponent = component;
+		fFile = file;
+	}
 	/**
 	 * Builds a type structure for a class file. Note that if an API component
 	 * is not specified, then some operations on the resulting {@link IApiType}
@@ -254,7 +277,45 @@ public class TypeStructureBuilder extends ClassVisitor {
 	 * @return
 	 */
 	public static IApiType buildTypeStructure(byte[] bytes, IApiComponent component, IApiTypeRoot file) {
-		TypeStructureBuilder visitor = new TypeStructureBuilder(new ClassNode(), component, file);
+		boolean useExperimental = false;
+		try {
+			String[] executionEnvironments = component.getExecutionEnvironments();
+			if (executionEnvironments.length == 1) {
+				String string = executionEnvironments[0];
+				IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+				IExecutionEnvironment env = manager.getEnvironment(string);
+				IVMInstall[] compatibleVMs = env.getCompatibleVMs();
+				Arrays.sort(compatibleVMs, new Comparator<IVMInstall>() {
+					@Override
+					public int compare(IVMInstall o1, IVMInstall o2) {
+						return o1.getName().compareTo(o2.getName());
+					}
+				});
+				for (int i = 0; i < compatibleVMs.length; i++) {
+					if (compatibleVMs[i] instanceof AbstractVMInstall) {
+						AbstractVMInstall ivmInstall = (AbstractVMInstall) compatibleVMs[i];
+						String javaVersion = ivmInstall.getJavaVersion();
+						if (i == 0) {
+							useExperimental = javaVersion.equals("11"); //$NON-NLS-1$
+						}
+						boolean strictlyCompatible = env.isStrictlyCompatible(ivmInstall);
+						// if strictly compatible, then take that value
+						if (strictlyCompatible) {
+							useExperimental = javaVersion.equals("11"); //$NON-NLS-1$
+							break;
+						}
+					}
+				}
+			}
+
+		} catch (Exception e1) {
+			// do nothing
+		}
+		// Till ASM7 is incorporated, use ASM7_EXPERIMENTAL to
+		// avoidOperationUnsupportedException if Java 11 is on build path. If
+		// not Java
+		// 11 then use ASM6
+		TypeStructureBuilder visitor = useExperimental ? new TypeStructureBuilder(useExperimental, new ClassNode(), component, file) : new TypeStructureBuilder(new ClassNode(), component, file);
 		try {
 			ClassReader classReader = new ClassReader(bytes);
 			classReader.accept(visitor, ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES);
