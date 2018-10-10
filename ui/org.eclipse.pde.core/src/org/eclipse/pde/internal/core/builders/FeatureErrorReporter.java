@@ -18,11 +18,11 @@ package org.eclipse.pde.internal.core.builders;
 import java.util.Arrays;
 import java.util.HashSet;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -47,7 +47,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	}
 
 	@Override
-	public void validateContent(IProgressMonitor monitor) {
+	protected void validate(IProgressMonitor monitor) {
 		fMonitor = monitor;
 		Element element = getDocumentRoot();
 		if (element == null)
@@ -389,7 +389,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 		if (severity != CompilerFlags.IGNORE) {
 			IPluginModelBase model = PluginRegistry.findModel(id);
 			if (model == null || !model.isEnabled() || (isFragment && !model.isFragmentModel()) || (!isFragment && model.isFragmentModel())) {
-				IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Feature_reference, id), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
+				VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Feature_reference, id), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
 				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.F_UNRESOLVED_PLUGINS);
 			}
 		}
@@ -400,7 +400,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 		if (severity != CompilerFlags.IGNORE) {
 			IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().findFeatureModels(attr.getValue());
 			if (models.length == 0) {
-				IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Feature_freference, attr.getValue()), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
+				VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Feature_freference, attr.getValue()), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
 				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.F_UNRESOLVED_FEATURES);
 			}
 		}
@@ -434,7 +434,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 				String unpackValue = "true".equals(unpack) ? "jar" : "dir"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				if (value != null && !value.equalsIgnoreCase(unpackValue)) {
 					String message = NLS.bind(PDECoreMessages.Builders_Feature_mismatchUnpackBundleShape, (new String[] {"unpack=" + unpack, parent.getAttribute("id"), "Eclipse-BundleShape: " + value})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					IMarker marker = report(message, getLine(parent), severity, PDEMarkerFactory.CAT_OTHER);
+					VirtualMarker marker = report(message, getLine(parent), severity, PDEMarkerFactory.CAT_OTHER);
 					addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.F_UNRESOLVED_PLUGINS);
 				}
 			}
@@ -442,7 +442,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 
 		if ("true".equals(unpack) && !CoreUtility.guessUnpack(pModel.getBundleDescription())) {//$NON-NLS-1$
 			String message = NLS.bind(PDECoreMessages.Builders_Feature_missingUnpackFalse, (new String[] {parent.getAttribute("id"), "unpack=\"false\""})); //$NON-NLS-1$ //$NON-NLS-2$
-			IMarker marker = report(message, getLine(parent), severity, PDEMarkerFactory.CAT_OTHER);
+			VirtualMarker marker = report(message, getLine(parent), severity, PDEMarkerFactory.CAT_OTHER);
 			addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.F_UNRESOLVED_PLUGINS);
 		}
 	}

@@ -17,16 +17,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.w3c.dom.*;
 
-public class ManifestErrorReporter extends XMLErrorReporter {
+public abstract class ManifestErrorReporter extends XMLErrorReporter {
 
 	/**
 	 * @param file
@@ -38,17 +37,17 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	protected void reportIllegalElement(Element element, int severity) {
 		Node parent = element.getParentNode();
 		if (parent == null || parent instanceof org.w3c.dom.Document) {
-			IMarker marker = report(PDECoreMessages.Builders_Manifest_illegalRoot, getLine(element), severity, PDEMarkerFactory.CAT_FATAL);
+			VirtualMarker marker = report(PDECoreMessages.Builders_Manifest_illegalRoot, getLine(element), severity, PDEMarkerFactory.CAT_FATAL);
 			addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,CompilerFlags.P_UNKNOWN_ELEMENT);
 		} else {
-			IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_child, new String[] {element.getNodeName(), parent.getNodeName()}), getLine(element), severity, PDEMarkerFactory.P_ILLEGAL_XML_NODE, element, null, PDEMarkerFactory.CAT_FATAL);
+			VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_child, new String[] {element.getNodeName(), parent.getNodeName()}), getLine(element), severity, PDEMarkerFactory.P_ILLEGAL_XML_NODE, element, null, PDEMarkerFactory.CAT_FATAL);
 			addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,CompilerFlags.P_UNKNOWN_ELEMENT);
 		}
 	}
 
 	protected void reportMissingRequiredAttribute(Element element, String attName, int severity) {
 		String message = NLS.bind(PDECoreMessages.Builders_Manifest_missingRequired, (new String[] {attName, element.getNodeName()})); //
-		IMarker marker = report(message, getLine(element), severity, PDEMarkerFactory.CAT_FATAL);
+		VirtualMarker marker = report(message, getLine(element), severity, PDEMarkerFactory.CAT_FATAL);
 		addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_NO_REQUIRED_ATT);
 	}
 
@@ -63,7 +62,7 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 
 	protected void reportUnknownAttribute(Element element, String attName, int severity) {
 		String message = NLS.bind(PDECoreMessages.Builders_Manifest_attribute, attName);
-		IMarker marker = report(message, getLine(element, attName), severity, PDEMarkerFactory.P_ILLEGAL_XML_NODE, element, attName, PDEMarkerFactory.CAT_OTHER);
+		VirtualMarker marker = report(message, getLine(element, attName), severity, PDEMarkerFactory.P_ILLEGAL_XML_NODE, element, attName, PDEMarkerFactory.CAT_OTHER);
 		addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_UNKNOWN_ATTRIBUTE);
 	}
 
@@ -180,16 +179,13 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	protected void reportDeprecatedAttribute(Element element, Attr attr) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
 		if (severity != CompilerFlags.IGNORE) {
-			IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_attribute, attr.getName()), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_DEPRECATION);
+			VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_attribute, attr.getName()), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_DEPRECATION);
 			addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_DEPRECATED);
 		}
 	}
-	protected void addMarkerAttribute(IMarker marker, String attr, String value) {
+	protected void addMarkerAttribute(VirtualMarker marker, String attr, String value) {
 		if (marker != null)
-			try {
-				marker.setAttribute(attr, value);
-			} catch (CoreException e) {
-			}
+			marker.setAttribute(attr, value);
 	}
 
 }

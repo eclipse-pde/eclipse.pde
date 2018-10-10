@@ -37,6 +37,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.text.build.BuildEntry;
@@ -1105,14 +1106,12 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				lineNum = getLineNumber(buildEntry, bp.fEntryToken);
 
 			if (lineNum > 0) {
-				IMarker marker = report(bp.fMessage, lineNum, bp.fFixId, bp.fEntryName, bp.fEntryToken, bp.fSeverity, bp.fCategory);
+				VirtualMarker marker = report(bp.fMessage, lineNum, bp.fFixId, bp.fEntryName, bp.fEntryToken,
+						bp.fSeverity, bp.fCategory);
 				addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,bp.fCompilerKey);
 				if (marker != null && bp.attributes != null) {
 					for (String attribute : bp.attributes.keySet()) {
-						try {
-							marker.setAttribute(attribute, bp.attributes.get(attribute));
-						} catch (CoreException e) {
-						}
+						marker.setAttribute(attribute, bp.attributes.get(attribute));
 					}
 				}
 			}
@@ -1205,14 +1204,11 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	 * @param category
 	 * @return a new marker or <code>null</code>
 	 */
-	private IMarker report(String message, int line, int problemID, String buildEntry, String buildToken, int severity, String category) {
-		IMarker marker = report(message, line, severity, problemID, category);
+	private VirtualMarker report(String message, int line, int problemID, String buildEntry, String buildToken, int severity, String category) {
+		VirtualMarker marker = report(message, line, severity, problemID, category);
 		if (marker != null) {
-			try {
-				marker.setAttribute(PDEMarkerFactory.BK_BUILD_ENTRY, buildEntry);
-				marker.setAttribute(PDEMarkerFactory.BK_BUILD_TOKEN, buildToken);
-			} catch (CoreException e) {
-			}
+			marker.setAttribute(PDEMarkerFactory.BK_BUILD_ENTRY, buildEntry);
+			marker.setAttribute(PDEMarkerFactory.BK_BUILD_TOKEN, buildToken);
 		}
 		return marker;
 	}
@@ -1229,11 +1225,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		}
 		return false;
 	}
-	protected void addMarkerAttribute(IMarker marker, String attr, String value) {
+
+	protected void addMarkerAttribute(VirtualMarker marker, String attr, String value) {
 		if (marker != null)
-			try {
-				marker.setAttribute(attr, value);
-			} catch (CoreException e) {
-			}
+			marker.setAttribute(attr, value);
 	}
 }

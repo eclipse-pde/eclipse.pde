@@ -18,13 +18,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
 
 public class JarManifestErrorReporter extends ErrorReporter {
 	/**
@@ -187,15 +187,13 @@ public class JarManifestErrorReporter extends ErrorReporter {
 			}
 			if (header != null) {
 				// lingering header, line not terminated
-				IMarker marker = report(PDECoreMessages.BundleErrorReporter_noLineTermination, l, CompilerFlags.ERROR, PDEMarkerFactory.M_NO_LINE_TERMINATION, PDEMarkerFactory.CAT_FATAL);
-				try {
-					if (marker != null) {
-						// Check whether last line is purely whitespace, and add this information to the marker.
-						IRegion lineInfo = document.getLineInformation(document.getNumberOfLines() - 1);
-						String line = document.get(lineInfo.getOffset(), lineInfo.getLength());
-						marker.setAttribute(PDEMarkerFactory.ATTR_HAS_CONTENT, !line.matches("\\s+")); //$NON-NLS-1$
-					}
-				} catch (CoreException e) {
+				VirtualMarker marker = report(PDECoreMessages.BundleErrorReporter_noLineTermination, l, CompilerFlags.ERROR, PDEMarkerFactory.M_NO_LINE_TERMINATION, PDEMarkerFactory.CAT_FATAL);
+				if (marker != null) {
+					// Check whether last line is purely whitespace, and add
+					// this information to the marker.
+					IRegion lineInfo = document.getLineInformation(document.getNumberOfLines() - 1);
+					String line = document.get(lineInfo.getOffset(), lineInfo.getLength());
+					marker.setAttribute(PDEMarkerFactory.ATTR_HAS_CONTENT, !line.matches("\\s+")); //$NON-NLS-1$
 				}
 				return;
 			}

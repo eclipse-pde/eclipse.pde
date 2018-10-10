@@ -13,13 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.build.properties;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertNotEquals;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.PropertyResourceBundle;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
+import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -147,5 +150,24 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		} else {
 			fail("Could not build the project '" + project.getName() + "'");
 		}
+	}
+
+	public void testIncrementalMarkers() throws Exception {
+		IProject project = findProject("org.eclipse.pde.tests.build.properties.1");
+		setPreferences(project, CompilerFlags.ERROR);
+		if (!buildProject(project)) {
+			fail("Could not build the project '" + project.getName() + "'");
+		}
+
+		IResource buildProperty = project.findMember("build.properties");
+		IMarker[] initialMarkers = buildProperty.findMarkers(PDEMarkerFactory.MARKER_ID, false, IResource.DEPTH_ZERO);
+		assertNotEquals(0, initialMarkers.length);
+
+		if (!buildProject(project)) {
+			fail("Could not build the project '" + project.getName() + "'");
+		}
+
+		IMarker[] markersAfterBuild = buildProperty.findMarkers(PDEMarkerFactory.MARKER_ID, false, IResource.DEPTH_ZERO);
+		assertArrayEquals("validation should not have recreated unchanged markers", initialMarkers, markersAfterBuild);
 	}
 }

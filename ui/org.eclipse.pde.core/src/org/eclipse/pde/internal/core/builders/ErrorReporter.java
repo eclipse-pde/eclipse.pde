@@ -20,40 +20,25 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
 
 public abstract class ErrorReporter {
 
-	protected static final String[] BOOLEAN_VALUES = new String[] {"true", "false"}; //$NON-NLS-1$ //$NON-NLS-2$
+	protected static final String[] BOOLEAN_VALUES = new String[] { "true", "false" }; //$NON-NLS-1$ //$NON-NLS-2$
 
-	private int fErrorCount;
-	protected IFile fFile;
+	protected final IFile fFile;
 	protected IProject fProject;
-	private PDEMarkerFactory fMarkerFactory;
+
+	private final IncrementalErrorReporter fErrorReporter;
 
 	public ErrorReporter(IFile file) {
-		fErrorCount = 0;
 		fFile = file;
-		if (fFile != null) {
-			fProject = fFile.getProject();
-		}
+		fErrorReporter = new IncrementalErrorReporter(file);
+		fProject = file.getProject();
 	}
 
-	protected IMarker addMarker(String message, int lineNumber, int severity, int problemID, String category) {
-		try {
-			IMarker marker = getMarkerFactory().createMarker(fFile, problemID, category);
-			marker.setAttribute(IMarker.MESSAGE, message);
-			marker.setAttribute(IMarker.SEVERITY, severity);
-			if (lineNumber == -1)
-				lineNumber = 1;
-			marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-			if (severity == IMarker.SEVERITY_ERROR) {
-				fErrorCount += 1;
-			}
-			return marker;
-		} catch (CoreException e) {
-			PDECore.logException(e);
-		}
-		return null;
+	protected VirtualMarker addMarker(String message, int lineNumber, int severity, int problemID, String category) {
+		return fErrorReporter.addMarker(message, lineNumber, severity, problemID, category);
 	}
 
 	protected IDocument createDocument(IFile file) {
@@ -77,26 +62,13 @@ public abstract class ErrorReporter {
 	}
 
 	public int getErrorCount() {
-		return fErrorCount;
-	}
-
-	private PDEMarkerFactory getMarkerFactory() {
-		if (fMarkerFactory == null)
-			fMarkerFactory = new PDEMarkerFactory();
-		return fMarkerFactory;
-	}
-
-	private void removeFileMarkers() {
-		try {
-			fFile.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO);
-			fFile.deleteMarkers(PDEMarkerFactory.MARKER_ID, false, IResource.DEPTH_ZERO);
-		} catch (CoreException e) {
-			PDECore.logException(e);
-		}
+		return fErrorReporter.getErrorCount();
 	}
 
 	/**
-	 * Return a new marker with the provided attributes.  May return <code>null</code> if no marker should be created because of severity settings.
+	 * Return a new marker with the provided attributes. May return
+	 * <code>null</code> if no marker should be created because of severity
+	 * settings.
 	 *
 	 * @param message
 	 * @param line
@@ -105,7 +77,7 @@ public abstract class ErrorReporter {
 	 * @param category
 	 * @return a new marker or <code>null</code>
 	 */
-	public IMarker report(String message, int line, int severity, int problemID, String category) {
+	public VirtualMarker report(String message, int line, int severity, int problemID, String category) {
 		if (severity == CompilerFlags.ERROR)
 			return addMarker(message, line, IMarker.SEVERITY_ERROR, problemID, category);
 		else if (severity == CompilerFlags.WARNING)
@@ -113,11 +85,11 @@ public abstract class ErrorReporter {
 		return null;
 	}
 
-	public IMarker report(String message, int line, int severity, String category) {
+	public VirtualMarker report(String message, int line, int severity, String category) {
 		return report(message, line, severity, PDEMarkerFactory.M_ONLY_CONFIG_SEV, category);
 	}
 
-	protected IMarker report(String message, int line, String compilerFlag, int problemID, String category) {
+	protected VirtualMarker report(String message, int line, String compilerFlag, int problemID, String category) {
 		int severity = CompilerFlags.getFlag(fProject, compilerFlag);
 		if (severity != CompilerFlags.IGNORE) {
 			return report(message, line, severity, problemID, category);
@@ -125,13 +97,13 @@ public abstract class ErrorReporter {
 		return null;
 	}
 
-	protected IMarker report(String message, int line, String compilerFlag, String category) {
+	protected VirtualMarker report(String message, int line, String compilerFlag, String category) {
 		return report(message, line, compilerFlag, PDEMarkerFactory.M_ONLY_CONFIG_SEV, category);
 	}
 
-	public void validateContent(IProgressMonitor monitor) {
-		removeFileMarkers();
+	public final void validateContent(IProgressMonitor monitor) {
 		validate(monitor);
+		fErrorReporter.applyMarkers();
 	}
 
 	protected abstract void validate(IProgressMonitor monitor);

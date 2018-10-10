@@ -26,7 +26,7 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 	}
 
 	@Override
-	public void validateContent(IProgressMonitor monitor) {
+	public void validate(IProgressMonitor monitor) {
 		fMonitor = monitor;
 		Element root = getDocumentRoot();
 		if (root == null)

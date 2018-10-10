@@ -18,11 +18,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.IncludedSchemaDescriptor;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
@@ -90,7 +89,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 	}
 
 	@Override
-	public void validateContent(IProgressMonitor monitor) {
+	public void validate(IProgressMonitor monitor) {
 		List<String> elements = new ArrayList<>();
 		Element element = getDocumentRoot();
 		if (element != null) {
@@ -181,7 +180,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 								if (tagName.endsWith("/")) { //$NON-NLS-1$
 									tagName = getTagName(tagName.substring(0, tagName.length() - 1));
 									if (forbiddenEndTag(tagName)) {
-										IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Schema_forbiddenEndTag, tagName), lineNumber, flag, PDEMarkerFactory.CAT_OTHER);
+										VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Schema_forbiddenEndTag, tagName), lineNumber, flag, PDEMarkerFactory.CAT_OTHER);
 										addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.S_OPEN_TAGS);
 										errorReported = true;
 									}
@@ -202,7 +201,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 										}
 									}
 									if (stack.isEmpty() && !found) {
-										IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Schema_noMatchingStartTag, tagName), lineNumber, flag, PDEMarkerFactory.CAT_OTHER);
+										VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Schema_noMatchingStartTag, tagName), lineNumber, flag, PDEMarkerFactory.CAT_OTHER);
 										addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.S_OPEN_TAGS);
 										errorReported = true;
 									}
@@ -222,7 +221,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 					if (!stack.isEmpty()) {
 						StackEntry entry = stack.pop();
 						if (!optionalEndTag(entry.tag)) {
-							IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Schema_noMatchingEndTag, entry.tag), entry.line, flag, PDEMarkerFactory.CAT_OTHER);
+							VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Schema_noMatchingEndTag, entry.tag), entry.line, flag, PDEMarkerFactory.CAT_OTHER);
 							addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.S_OPEN_TAGS);
 						}
 					}
@@ -232,12 +231,9 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 		}
 	}
 
-	private void addMarkerAttribute(IMarker marker, String attr, String value) {
+	private void addMarkerAttribute(VirtualMarker marker, String attr, String value) {
 		if (marker != null)
-			try {
-				marker.setAttribute(attr, value);
-			} catch (CoreException e) {
-			}
+			marker.setAttribute(attr, value);
 	}
 	private String getTagName(String text) {
 		StringTokenizer tokenizer = new StringTokenizer(text);

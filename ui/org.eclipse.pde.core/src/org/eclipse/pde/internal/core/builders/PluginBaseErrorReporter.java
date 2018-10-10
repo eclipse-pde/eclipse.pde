@@ -14,12 +14,12 @@
 package org.eclipse.pde.internal.core.builders;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
 import org.w3c.dom.*;
 
 public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
@@ -29,7 +29,7 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 	}
 
 	@Override
-	public void validateContent(IProgressMonitor monitor) {
+	public void validate(IProgressMonitor monitor) {
 		Element element = getDocumentRoot();
 		if (element == null)
 			return;
@@ -157,14 +157,14 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 		if (severity != CompilerFlags.IGNORE) {
 			IPluginModelBase model = PluginRegistry.findModel(attr.getValue());
 			if (model == null || !model.isEnabled()) {
-				IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_dependency, attr.getValue()), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_FATAL);
+				VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_dependency, attr.getValue()), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_FATAL);
 				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_UNRESOLVED_IMPORTS);
 			}
 		}
 	}
 
 	private void reportDeprecatedElement(Element element, int severity) {
-		IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_3_0, element.getNodeName()), getLine(element), severity, PDEMarkerFactory.CAT_DEPRECATION);
+		VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_3_0, element.getNodeName()), getLine(element), severity, PDEMarkerFactory.CAT_DEPRECATION);
 		addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_DEPRECATED);
 	}
 

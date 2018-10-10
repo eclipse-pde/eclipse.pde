@@ -25,6 +25,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
@@ -58,7 +59,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	}
 
 	@Override
-	public void validateContent(IProgressMonitor monitor) {
+	public void validate(IProgressMonitor monitor) {
 		Element element = getDocumentRoot();
 		if (element == null)
 			return;
@@ -113,7 +114,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (!PDECore.getDefault().getExtensionsRegistry().hasExtensionPoint(pointID)) {
 			int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNRESOLVED_EX_POINTS);
 			if (severity != CompilerFlags.IGNORE) {
-				IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_ex_point, pointID), getLine(element, "point"), severity, PDEMarkerFactory.CAT_OTHER); //$NON-NLS-1$
+				VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_ex_point, pointID), getLine(element, "point"), severity, PDEMarkerFactory.CAT_OTHER); //$NON-NLS-1$
 				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_UNRESOLVED_EX_POINTS);
 			}
 		} else {
@@ -133,7 +134,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		Element childElement = result.getElement();
 		String allowedOccurrences = Integer.toString(result.getAllowedOccurrences());
 		String message = NLS.bind(PDECoreMessages.ExtensionsErrorReporter_maxOccurrence, new String[] {allowedOccurrences, childElement.getNodeName()});
-		IMarker marker = report(message, getLine(childElement), severity, PDEMarkerFactory.P_ILLEGAL_XML_NODE, childElement, null, PDEMarkerFactory.CAT_FATAL);
+		VirtualMarker marker = report(message, getLine(childElement), severity, PDEMarkerFactory.P_ILLEGAL_XML_NODE, childElement, null, PDEMarkerFactory.CAT_FATAL);
 		addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.P_UNKNOWN_ELEMENT);
 	}
 
@@ -146,7 +147,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		ISchemaElement childElement = result.getSchemaElement();
 		String allowedOccurrences = Integer.toString(result.getAllowedOccurrences());
 		String message = NLS.bind(PDECoreMessages.ExtensionsErrorReporter_minOccurrence, new String[] {allowedOccurrences, childElement.getName()});
-		IMarker marker = report(message, getLine(parentElement), severity, PDEMarkerFactory.CAT_FATAL);
+		VirtualMarker marker = report(message, getLine(parentElement), severity, PDEMarkerFactory.CAT_FATAL);
 		addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.P_UNKNOWN_ELEMENT);
 	}
 
@@ -235,7 +236,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				String point = element.getAttribute("point"); //$NON-NLS-1$
 				if (point == null)
 					return; // should never come to this...
-				IMarker marker =report(NLS.bind(PDECoreMessages.Builders_Manifest_internal_rootElement, point), getLine(element, "point"), severity, PDEMarkerFactory.CAT_DEPRECATION); //$NON-NLS-1$
+				VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_internal_rootElement, point), getLine(element, "point"), severity, PDEMarkerFactory.CAT_DEPRECATION); //$NON-NLS-1$
 				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_INTERNAL);
 			}
 		}
@@ -427,7 +428,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			if (errorMessage != null) {
 				severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_RESOURCE);
 				if (severity != CompilerFlags.IGNORE) {
-					IMarker marker = report(NLS.bind(errorMessage, schemaValue), getLine(element), severity, PDEMarkerFactory.CAT_OTHER);
+					VirtualMarker marker = report(NLS.bind(errorMessage, schemaValue), getLine(element), severity, PDEMarkerFactory.CAT_OTHER);
 					addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_UNKNOWN_RESOURCE);
 				}
 			}
@@ -442,12 +443,12 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			return;
 		String value = attr.getValue();
 		if (!value.startsWith("%")) { //$NON-NLS-1$
-			IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_non_ext_attribute, attr.getName()), getLine(element, attr.getName()), severity, PDEMarkerFactory.P_UNTRANSLATED_NODE, element, attr.getName(), PDEMarkerFactory.CAT_NLS);
+			VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_non_ext_attribute, attr.getName()), getLine(element, attr.getName()), severity, PDEMarkerFactory.P_UNTRANSLATED_NODE, element, attr.getName(), PDEMarkerFactory.CAT_NLS);
 			addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_NOT_EXTERNALIZED);
 		} else if (fModel instanceof AbstractNLModel) {
 			NLResourceHelper helper = ((AbstractNLModel) fModel).getNLResourceHelper();
 			if (helper == null || !helper.resourceExists(value)) {
-				IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1), PDEManager.getBundleLocalization(fModel).concat(".properties")), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_NLS); //$NON-NLS-1$
+				VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1), PDEManager.getBundleLocalization(fModel).concat(".properties")), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_NLS); //$NON-NLS-1$
 				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_NOT_EXTERNALIZED);
 			}
 		}
@@ -461,12 +462,12 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (value == null)
 			return;
 		if (!value.startsWith("%")) { //$NON-NLS-1$
-			IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_non_ext_element, element.getNodeName()), getLine(element), severity, PDEMarkerFactory.P_UNTRANSLATED_NODE, element, null, PDEMarkerFactory.CAT_NLS);
+			VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_non_ext_element, element.getNodeName()), getLine(element), severity, PDEMarkerFactory.P_UNTRANSLATED_NODE, element, null, PDEMarkerFactory.CAT_NLS);
 			addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_NOT_EXTERNALIZED);
 		} else if (fModel instanceof AbstractNLModel) {
 			NLResourceHelper helper = ((AbstractNLModel) fModel).getNLResourceHelper();
 			if (helper == null || !helper.resourceExists(value)) {
-				IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1), PDEManager.getBundleLocalization(fModel).concat(".properties")), getLine(element), severity, PDEMarkerFactory.CAT_NLS); //$NON-NLS-1$
+				VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1), PDEManager.getBundleLocalization(fModel).concat(".properties")), getLine(element), severity, PDEMarkerFactory.CAT_NLS); //$NON-NLS-1$
 				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_NOT_EXTERNALIZED);
 			}
 		}
@@ -475,7 +476,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	protected void validateResourceAttribute(Element element, Attr attr) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_RESOURCE);
 		if (severity != CompilerFlags.IGNORE && !resourceExists(attr.getValue())) {
-			IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_resource, (new String[] {attr.getValue(), attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
+			VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_resource, (new String[] {attr.getValue(), attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
 			addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_UNKNOWN_RESOURCE);
 		}
 	}
@@ -563,7 +564,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (severity != CompilerFlags.IGNORE && javaProject.isOpen()) {
 			onClasspath = PDEJavaHelper.isOnClasspath(value, javaProject);
 			if (!onClasspath) {
-				IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_class, (new String[] {value, attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.P_UNKNOWN_CLASS, element, attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue(), PDEMarkerFactory.CAT_FATAL);
+				VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_class, (new String[] {value, attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.P_UNKNOWN_CLASS, element, attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue(), PDEMarkerFactory.CAT_FATAL);
 				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_UNKNOWN_CLASS);
 			}
 		}
@@ -578,7 +579,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				return;
 			// only check if we're discouraged if there is something on the classpath
 			if (onClasspath && PDEJavaHelper.isDiscouraged(value, javaProject, desc)) {
-				IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_discouragedClass, (new String[] {value, attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.M_DISCOURAGED_CLASS, element, attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue(), PDEMarkerFactory.CAT_OTHER);
+				VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_discouragedClass, (new String[] {value, attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.M_DISCOURAGED_CLASS, element, attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue(), PDEMarkerFactory.CAT_OTHER);
 				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_DISCOURAGED_CLASS);
 			}
 		}
@@ -607,7 +608,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			if (value != null && basedOn != null && value.length() > 0 && basedOn.length() > 0) {
 				Map<?, ?> attributes = PDESchemaHelper.getValidAttributes(attInfo);
 				if (!attributes.containsKey(value)) { // report error if we are missing something
-					IMarker marker = report(NLS.bind(PDECoreMessages.ExtensionsErrorReporter_unknownIdentifier, (new String[] {attr.getValue(), attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
+					VirtualMarker marker = report(NLS.bind(PDECoreMessages.ExtensionsErrorReporter_unknownIdentifier, (new String[] {attr.getValue(), attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
 					addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.P_UNKNOWN_IDENTIFIER);
 				}
 			}
@@ -616,20 +617,20 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
 	protected void reportUnusedAttribute(Element element, String attName, int severity) {
 		String message = NLS.bind(PDECoreMessages.Builders_Manifest_unused_attribute, attName);
-		IMarker marker =report(message, getLine(element, attName), severity, PDEMarkerFactory.CAT_OTHER);
+		VirtualMarker marker = report(message, getLine(element, attName), severity, PDEMarkerFactory.CAT_OTHER);
 		addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_DEPRECATED);
 	}
 
 	protected void reportUnusedElement(Element element, int severity) {
 		Node parent = element.getParentNode();
-		IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_unused_element, (new String[] {element.getNodeName(), parent.getNodeName()})), getLine(element), severity, PDEMarkerFactory.CAT_OTHER);
+		VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_unused_element, (new String[] {element.getNodeName(), parent.getNodeName()})), getLine(element), severity, PDEMarkerFactory.CAT_OTHER);
 		addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_DEPRECATED);
 	}
 
 	protected void reportDeprecatedElement(Element element) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
 		if (severity != CompilerFlags.IGNORE) {
-			IMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_element, element.getNodeName()), getLine(element), severity, PDEMarkerFactory.CAT_DEPRECATION);
+			VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_element, element.getNodeName()), getLine(element), severity, PDEMarkerFactory.CAT_DEPRECATION);
 			addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_DEPRECATED);
 		}
 	}
@@ -645,7 +646,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				message = NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_rootElementSuggestion, point, suggestion);
 			else
 				message = NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_rootElement, point);
-			IMarker marker = report(message, getLine(element, "point"), severity, PDEMarkerFactory.CAT_DEPRECATION); //$NON-NLS-1$
+			VirtualMarker marker = report(message, getLine(element, "point"), severity, PDEMarkerFactory.CAT_DEPRECATION); //$NON-NLS-1$
 			addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_DEPRECATED);
 		}
 	}

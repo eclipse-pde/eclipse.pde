@@ -88,7 +88,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		UpdateSiteErrorReporter reporter = new UpdateSiteErrorReporter(file);
 		DefaultSAXParser.parse(file, reporter);
 		if (reporter.getErrorCount() == 0) {
-			reporter.validateContent(monitor);
+			reporter.validate(monitor);
 		}
 		monitor.subTask(PDECoreMessages.Builders_updating);
 		monitor.done();

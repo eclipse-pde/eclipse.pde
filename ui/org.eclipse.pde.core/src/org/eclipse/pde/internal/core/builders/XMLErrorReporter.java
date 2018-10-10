@@ -24,12 +24,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
 import org.w3c.dom.*;
 import org.w3c.dom.Document;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class XMLErrorReporter extends DefaultHandler {
+public abstract class XMLErrorReporter extends DefaultHandler {
 
 	public static final char F_ATT_PREFIX = '@';
 	public static final char F_ATT_VALUE_PREFIX = '!';
@@ -48,9 +49,7 @@ public class XMLErrorReporter extends DefaultHandler {
 
 	protected IProject fProject;
 
-	private int fErrorCount;
-
-	private PDEMarkerFactory fMarkerFactory;
+	private final IncrementalErrorReporter fErrorReporter;
 
 	private org.w3c.dom.Document fXMLDocument;
 
@@ -71,6 +70,8 @@ public class XMLErrorReporter extends DefaultHandler {
 	private double fSchemaVersion = 2.1;
 
 	public XMLErrorReporter(IFile file) {
+		fErrorReporter = new IncrementalErrorReporter(file);
+
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		try {
 			fFile = file;
@@ -81,7 +82,6 @@ public class XMLErrorReporter extends DefaultHandler {
 			fFindReplaceAdapter = new FindReplaceDocumentAdapter(fTextDocument);
 			fOffsetTable = new HashMap<>();
 			fElementStack = new Stack<>();
-			removeFileMarkers();
 		} catch (CoreException e) {
 			PDECore.log(e);
 		}
@@ -91,27 +91,8 @@ public class XMLErrorReporter extends DefaultHandler {
 		return fFile;
 	}
 
-	private IMarker addMarker(String message, int lineNumber, int severity, int fixId, String category) {
-		try {
-			IMarker marker = getMarkerFactory().createMarker(fFile, fixId, category);
-			marker.setAttribute(IMarker.MESSAGE, message);
-			marker.setAttribute(IMarker.SEVERITY, severity);
-			if (lineNumber == -1)
-				lineNumber = 1;
-			marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-			if (severity == IMarker.SEVERITY_ERROR)
-				fErrorCount += 1;
-			return marker;
-		} catch (CoreException e) {
-			PDECore.logException(e);
-		}
-		return null;
-	}
-
-	private PDEMarkerFactory getMarkerFactory() {
-		if (fMarkerFactory == null)
-			fMarkerFactory = new PDEMarkerFactory();
-		return fMarkerFactory;
+	private VirtualMarker addMarker(String message, int lineNumber, int severity, int fixId, String category) {
+		return fErrorReporter.addMarker(message, lineNumber, severity, fixId, category);
 	}
 
 	private void addMarker(SAXParseException e, int severity) {
@@ -131,27 +112,15 @@ public class XMLErrorReporter extends DefaultHandler {
 	}
 
 	public int getErrorCount() {
-		return fErrorCount;
+		return fErrorReporter.getErrorCount();
 	}
 
-	private void removeFileMarkers() {
-		try {
-			fFile.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO);
-			fFile.deleteMarkers(PDEMarkerFactory.MARKER_ID, false, IResource.DEPTH_ZERO);
-		} catch (CoreException e) {
-			PDECore.logException(e);
-		}
-	}
-
-	public IMarker report(String message, int line, int severity, int fixId, Element element, String attrName,
+	public VirtualMarker report(String message, int line, int severity, int fixId, Element element, String attrName,
 			String category) {
-		IMarker marker = report(message, line, severity, fixId, category);
+		VirtualMarker marker = report(message, line, severity, fixId, category);
 		if (marker == null)
 			return null;
-		try {
-			marker.setAttribute(PDEMarkerFactory.MPK_LOCATION_PATH, generateLocationPath(element, attrName));
-		} catch (CoreException e) {
-		}
+		marker.setAttribute(PDEMarkerFactory.MPK_LOCATION_PATH, generateLocationPath(element, attrName));
 		return marker;
 	}
 
@@ -185,7 +154,7 @@ public class XMLErrorReporter extends DefaultHandler {
 		return sb.toString();
 	}
 
-	public IMarker report(String message, int line, int severity, int fixId, String category) {
+	public VirtualMarker report(String message, int line, int severity, int fixId, String category) {
 		if (severity == CompilerFlags.ERROR)
 			return addMarker(message, line, IMarker.SEVERITY_ERROR, fixId, category);
 		if (severity == CompilerFlags.WARNING)
@@ -193,7 +162,7 @@ public class XMLErrorReporter extends DefaultHandler {
 		return null;
 	}
 
-	public IMarker report(String message, int line, int severity, String category) {
+	public VirtualMarker report(String message, int line, int severity, String category) {
 		return report(message, line, severity, PDEMarkerFactory.M_ONLY_CONFIG_SEV, category);
 	}
 
@@ -392,9 +361,12 @@ public class XMLErrorReporter extends DefaultHandler {
 		return getLine(element);
 	}
 
-	public void validateContent(IProgressMonitor monitor) {
-
+	public final void validateContent(IProgressMonitor monitor) {
+		validate(monitor);
+		fErrorReporter.applyMarkers();
 	}
+
+	protected abstract void validate(IProgressMonitor monitor);
 
 	public Element getDocumentRoot() {
 		if (fRootElement != null)
