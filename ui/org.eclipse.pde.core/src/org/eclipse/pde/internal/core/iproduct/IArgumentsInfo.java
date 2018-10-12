@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2016 IBM Corporation and others.
+ *  Copyright (c) 2005, 2018 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -42,11 +42,6 @@ public interface IArgumentsInfo extends IProductObject {
 	public static final int L_ARGS_ARCH_ALL = 0;
 	public static final int L_ARGS_ARCH_X86 = 1;
 	public static final int L_ARGS_ARCH_X86_64 = 2;
-	public static final int L_ARGS_ARCH_PPC = 3;
-	public static final int L_ARGS_ARCH_IA_64 = 4;
-	public static final int L_ARGS_ARCH_IA_64_32 = 5;
-	public static final int L_ARGS_ARCH_PA_RISC = 6;
-	public static final int L_ARGS_ARCH_SPARC = 7;
 
 	void setProgramArguments(String args, int platform);
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2016 IBM Corporation and others.
+ *  Copyright (c) 2005, 2018 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -49,11 +49,6 @@ public class ArgumentsSection extends PDESection {
 		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ALL] = PDEUIMessages.ArgumentsSection_allArch;
 		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ARCH_X86] = Platform.ARCH_X86;
 		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ARCH_X86_64] = Platform.ARCH_X86_64;
-		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ARCH_PPC] = Platform.ARCH_PPC;
-		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ARCH_IA_64] = Platform.ARCH_IA64;
-		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ARCH_IA_64_32] = Platform.ARCH_IA64_32;
-		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ARCH_PA_RISC] = Platform.ARCH_PA_RISC;
-		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ARCH_SPARC] = Platform.ARCH_SPARC;
 	}
 
 	private FormEntry fVMArgs;

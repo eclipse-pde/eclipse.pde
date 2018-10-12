@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2016 IBM Corporation and others.
+ *  Copyright (c) 2005, 2018 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -126,16 +126,6 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 				archIndex = L_ARGS_ARCH_X86;
 			} else if (Platform.ARCH_X86_64.equals(arch)) {
 				archIndex = L_ARGS_ARCH_X86_64;
-			} else if (Platform.ARCH_PPC.equals(arch)) {
-				archIndex = L_ARGS_ARCH_PPC;
-			} else if (Platform.ARCH_IA64.equals(arch)) {
-				archIndex = L_ARGS_ARCH_IA_64;
-			} else if (Platform.ARCH_IA64_32.equals(arch)) {
-				archIndex = L_ARGS_ARCH_IA_64_32;
-			} else if (Platform.ARCH_PA_RISC.equals(arch)) {
-				archIndex = L_ARGS_ARCH_PA_RISC;
-			} else if (Platform.ARCH_SPARC.equals(arch)) {
-				archIndex = L_ARGS_ARCH_SPARC;
 			}
 		}
 		String archArgsAllPlatforms = archIndex > 0 ? getProgramArguments(L_ARGS_ALL, archIndex) : ""; //$NON-NLS-1$
@@ -225,16 +215,6 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 				archIndex = L_ARGS_ARCH_X86;
 			} else if (Platform.ARCH_X86_64.equals(arch)) {
 				archIndex = L_ARGS_ARCH_X86_64;
-			} else if (Platform.ARCH_PPC.equals(arch)) {
-				archIndex = L_ARGS_ARCH_PPC;
-			} else if (Platform.ARCH_IA64.equals(arch)) {
-				archIndex = L_ARGS_ARCH_IA_64;
-			} else if (Platform.ARCH_IA64_32.equals(arch)) {
-				archIndex = L_ARGS_ARCH_IA_64_32;
-			} else if (Platform.ARCH_PA_RISC.equals(arch)) {
-				archIndex = L_ARGS_ARCH_PA_RISC;
-			} else if (Platform.ARCH_SPARC.equals(arch)) {
-				archIndex = L_ARGS_ARCH_SPARC;
 			}
 		}
 
@@ -304,16 +284,6 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 							parentArgs[L_ARGS_ARCH_X86] = getText(arch).trim();
 						} else if (arch.getNodeName().equals(P_ARGS_ARCH_X86_64)) {
 							parentArgs[L_ARGS_ARCH_X86_64] = getText(arch).trim();
-						} else if (arch.getNodeName().equals(P_ARGS_ARCH_PPC)) {
-							parentArgs[L_ARGS_ARCH_PPC] = getText(arch).trim();
-						} else if (arch.getNodeName().equals(P_ARGS_ARCH_IA_64)) {
-							parentArgs[L_ARGS_ARCH_IA_64] = getText(arch).trim();
-						} else if (arch.getNodeName().equals(P_ARGS_ARCH_IA_64_32)) {
-							parentArgs[L_ARGS_ARCH_IA_64_32] = getText(arch).trim();
-						} else if (arch.getNodeName().equals(P_ARGS_ARCH_PA_RISC)) {
-							parentArgs[L_ARGS_ARCH_PA_RISC] = getText(arch).trim();
-						} else if (arch.getNodeName().equals(P_ARGS_ARCH_SPARC)) {
-							parentArgs[L_ARGS_ARCH_SPARC] = getText(arch).trim();
 						}
 					}
 				}
@@ -424,21 +394,6 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 		}
 		if (args[L_ARGS_ARCH_X86_64].length() > 0) {
 			writer.println(indent + "   " + "<" + P_ARGS_ARCH_X86_64 + ">" + getWritableString(args[L_ARGS_ARCH_X86_64]) + "</" + P_ARGS_ARCH_X86_64 + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 		}
-		}
-		if (args[L_ARGS_ARCH_PPC].length() > 0) {
-			writer.println(indent + "   " + "<" + P_ARGS_ARCH_PPC + ">" + getWritableString(args[L_ARGS_ARCH_PPC]) + "</" + P_ARGS_ARCH_PPC + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 		}
-		}
-		if (args[L_ARGS_ARCH_IA_64].length() > 0) {
-			writer.println(indent + "   " + "<" + P_ARGS_ARCH_IA_64 + ">" + getWritableString(args[L_ARGS_ARCH_IA_64]) + "</" + P_ARGS_ARCH_IA_64 + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 		}
-		}
-		if (args[L_ARGS_ARCH_IA_64_32].length() > 0) {
-			writer.println(indent + "   " + "<" + P_ARGS_ARCH_IA_64_32 + ">" + getWritableString(args[L_ARGS_ARCH_IA_64_32]) + "</" + P_ARGS_ARCH_IA_64_32 + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 		}
-		}
-		if (args[L_ARGS_ARCH_PA_RISC].length() > 0) {
-			writer.println(indent + "   " + "<" + P_ARGS_ARCH_PA_RISC + ">" + getWritableString(args[L_ARGS_ARCH_PA_RISC]) + "</" + P_ARGS_ARCH_PA_RISC + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 		}
-		}
-		if (args[L_ARGS_ARCH_SPARC].length() > 0) {
-			writer.println(indent + "   " + "<" + P_ARGS_ARCH_SPARC + ">" + getWritableString(args[L_ARGS_ARCH_SPARC]) + "</" + P_ARGS_ARCH_SPARC + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ 		}
 		}
 	}
 }
