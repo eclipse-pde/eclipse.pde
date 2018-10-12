@@ -101,7 +101,8 @@ public class PropertiesSection extends TableSection {
 
 		private String[] COMBO_OSLABELS = new String[] { PDEUIMessages.PropertiesSection_All, Platform.OS_LINUX,
 				Platform.OS_MACOSX, Platform.OS_WIN32 };
-		private String[] COMBO_ARCHLABELS = new String[] {PDEUIMessages.PropertiesSection_All, Platform.ARCH_X86, Platform.ARCH_X86_64, Platform.ARCH_PPC, Platform.ARCH_IA64, Platform.ARCH_IA64_32, Platform.ARCH_PA_RISC, Platform.ARCH_SPARC};
+		private String[] COMBO_ARCHLABELS = new String[] { PDEUIMessages.PropertiesSection_All, Platform.ARCH_X86,
+				Platform.ARCH_X86_64 };
 
 		public PropertyDialog(Shell shell, IConfigurationProperty property, Set<String> existingNames) {
 			super(shell);

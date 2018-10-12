@@ -28,11 +28,6 @@ public interface IArgumentsInfo extends IProductObject {
 
 	public static final String P_ARGS_ARCH_X86 = "argsX86"; //$NON-NLS-1$
 	public static final String P_ARGS_ARCH_X86_64 = "argsX86_64"; //$NON-NLS-1$
-	public static final String P_ARGS_ARCH_PPC = "argsPPC"; //$NON-NLS-1$
-	public static final String P_ARGS_ARCH_IA_64 = "argsIA_64"; //$NON-NLS-1$
-	public static final String P_ARGS_ARCH_IA_64_32 = "argsIA_64_32"; //$NON-NLS-1$
-	public static final String P_ARGS_ARCH_PA_RISC = "argsPA_RISC"; //$NON-NLS-1$
-	public static final String P_ARGS_ARCH_SPARC = "argsSPARC"; //$NON-NLS-1$
 
 	public static final int L_ARGS_ALL = 0;
 	public static final int L_ARGS_LINUX = 1;
