@@ -189,7 +189,7 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 				continue;
 			activitiesToEnable.add(id);
 		}
-		HashSet<String> set = new HashSet<String>(workbenchActivitySupport.getActivityManager().getEnabledActivityIds());
+		HashSet<String> set = new HashSet<>(workbenchActivitySupport.getActivityManager().getEnabledActivityIds());
 		set.addAll(activitiesToEnable);
 		workbenchActivitySupport.setEnabledActivityIds(set);
 	}
