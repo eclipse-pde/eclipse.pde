@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -57,6 +57,8 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 				return MarkerMessages.VersionNumberingResolution_minorNoNewAPI0;
 			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE:
 				return MarkerMessages.VersionNumberingResolution_reexportedMajor0;
+			case IApiProblem.MINOR_VERSION_CHANGE_EXECUTION_ENV_CHANGED:
+				return MarkerMessages.VersionNumberingResolution_breeMinor;
 			default:
 				// reexported minor
 				return MarkerMessages.VersionNumberingResolution_reexportedMinor0;
