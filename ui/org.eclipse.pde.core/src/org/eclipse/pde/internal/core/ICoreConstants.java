@@ -475,6 +475,10 @@ public interface ICoreConstants {
 	 * same id
 	 */
 	public static final String WORKSPACE_PLUGINS_OVERRIDE_TARGET = "workspace_plugins_override_target"; //$NON-NLS-1$
+	/**
+	 * Boolean preference whether API analysis has been disabled
+	 */
+	public static final String DISABLE_API_ANALYSIS_BUILDER = "Preferences.MainPage.disableAPIAnalysisBuilder";//$NON-NLS-1$
 
 	/**
 	 * Explicit preference value for {@link #WORKSPACE_TARGET_HANDLE} when the user chooses no

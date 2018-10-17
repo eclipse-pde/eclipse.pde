@@ -30,9 +30,11 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(IPreferenceConstants.EDITOR_FOLDING_ENABLED, false);
 		store.setDefault(IPreferenceConstants.SHOW_TARGET_STATUS, false);
 		store.setDefault(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET, true);
+		store.setDefault(IPreferenceConstants.DISABLE_API_ANALYSIS_BUILDER, false);
 		store.setDefault(IPreferenceConstants.TEST_PLUGIN_PATTERN, IPreferenceConstants.TEST_PLUGIN_PATTERN_DEFAULTVALUE);
 		PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
 		prefs.setDefault(ICoreConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET, true);
+		prefs.setDefault(ICoreConstants.DISABLE_API_ANALYSIS_BUILDER, false);
 		prefs.setDefault(ICoreConstants.TEST_PLUGIN_PATTERN, IPreferenceConstants.TEST_PLUGIN_PATTERN_DEFAULTVALUE);
 	}
 

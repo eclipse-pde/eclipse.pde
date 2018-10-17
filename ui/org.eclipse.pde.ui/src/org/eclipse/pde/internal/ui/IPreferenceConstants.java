@@ -40,6 +40,10 @@ public interface IPreferenceConstants extends ILaunchingPreferenceConstants {
 	 * bundle for the same bundle id
 	 */
 	public static final String WORKSPACE_PLUGINS_OVERRIDE_TARGET = "Preferences.MainPage.workspacePluginsOverrideTarget";//$NON-NLS-1$
+	/**
+	 * Boolean preference whether API analysis has been disabled
+	 */
+	public static final String DISABLE_API_ANALYSIS_BUILDER = "Preferences.MainPage.disableAPIAnalysisBuilder";//$NON-NLS-1$
 
 
 	// Editor Outline

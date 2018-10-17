@@ -73,6 +73,9 @@ import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
@@ -335,6 +338,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
+		PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
+		boolean disableAPIAnalysisBuilder = prefs.getBoolean(ICoreConstants.DISABLE_API_ANALYSIS_BUILDER);
+		if (disableAPIAnalysisBuilder) {
+			return NO_PROJECTS;
+		}
 		this.currentproject = getProject();
 		if (buildDisabled || shouldAbort(this.currentproject)) {
 			return NO_PROJECTS;
@@ -740,6 +748,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param monitor
 	 */
 	void buildAll(IApiBaseline baseline, IApiBaseline wbaseline, IProgressMonitor monitor) throws CoreException {
+		PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
+		boolean disableAPIAnalysisBuilder = prefs.getBoolean(ICoreConstants.DISABLE_API_ANALYSIS_BUILDER);
+		if (disableAPIAnalysisBuilder) {
+			return;
+		}
 		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 4);
 		try {
 			BuildState.setLastBuiltState(this.currentproject, null);

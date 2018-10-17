@@ -18,14 +18,17 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
@@ -135,6 +138,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 	private Button fAddToJavaSearch;
 	private Button fShowTargetStatus;
 	private Button fAlwaysPreferWorkspace;
+	private Button fDisableAPIAnalysisBuilder;
 
 	private Text fRuntimeWorkspaceLocation;
 	private Button fRuntimeWorkspaceLocationRadio;
@@ -187,6 +191,13 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fAlwaysPreferWorkspace.setText(PDEUIMessages.MainPreferencePage_WorkspacePluginsOverrideTarget);
 		fAlwaysPreferWorkspace.setSelection(store.getBoolean(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET));
 		fAlwaysPreferWorkspace.setToolTipText(PDEUIMessages.MainPreferencePage_WorkspacePluginsOverrideTargetTooltip);
+
+
+		fDisableAPIAnalysisBuilder = new Button(optionComp, SWT.CHECK);
+		fDisableAPIAnalysisBuilder.setText(PDEUIMessages.MainPreferencePage_DisableAPIAnalysisBuilder);
+		fDisableAPIAnalysisBuilder.setSelection(store.getBoolean(IPreferenceConstants.DISABLE_API_ANALYSIS_BUILDER));
+		fDisableAPIAnalysisBuilder.setToolTipText(PDEUIMessages.MainPreferencePage_WorkspacePluginsOverrideTargetTooltip);
+
 
 		Composite pathComposite = new Composite(optionComp, SWT.NONE);
 		pathComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
@@ -346,6 +357,26 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 			TargetStatus.refreshTargetStatus();
 		}
 
+
+		boolean disableAPIAnalysisBuilder = fDisableAPIAnalysisBuilder.getSelection();
+		if (store.getBoolean(IPreferenceConstants.DISABLE_API_ANALYSIS_BUILDER) != disableAPIAnalysisBuilder) {
+			store.setValue(IPreferenceConstants.DISABLE_API_ANALYSIS_BUILDER, fDisableAPIAnalysisBuilder.getSelection());
+			PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
+			prefs.setValue(ICoreConstants.DISABLE_API_ANALYSIS_BUILDER, fDisableAPIAnalysisBuilder.getSelection());
+			IProject[] projects = BuildJob.getApiProjects();
+			if (projects != null) {
+				String message = PDEUIMessages.MainPreferencePage_askFullRebuild;
+				int userInput = MessageDialog.open(MessageDialog.QUESTION, this.getShell(),
+						PDEUIMessages.MainPreferencePage_settingChanged, message, SWT.NONE,
+						PDEUIMessages.MainPreferencePage_build, PDEUIMessages.MainPreferencePage_notNow);
+				if (Window.OK == userInput) {
+					BuildJob.getBuildJob(projects).schedule();
+
+				}
+			}
+
+		}
+
 		PDEPlugin.getDefault().getPreferenceManager().savePluginPreferences();
 
 		PDEPreferencesManager launchingStore = PDELaunchingPlugin.getDefault().getPreferenceManager();
@@ -403,4 +434,5 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 	@Override
 	public void init(IWorkbench workbench) {
 	}
+
 }

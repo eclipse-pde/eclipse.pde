@@ -518,6 +518,14 @@ public class PDEUIMessages extends NLS {
 
 	public static String LibrarySection_addDialogButton;
 
+	public static String MainPreferencePage_askFullRebuild;
+
+	public static String MainPreferencePage_settingChanged;
+
+	public static String MainPreferencePage_build;
+
+	public static String MainPreferencePage_notNow;
+
 	public static String MainPreferencePage_addToJavaSearch;
 	public static String MainPreferencePage_junitWorkspace_asContainer;
 
@@ -550,6 +558,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String MainPreferencePage_WorkspacePluginsOverrideTarget;
 	public static String MainPreferencePage_WorkspacePluginsOverrideTargetTooltip;
+	public static String MainPreferencePage_DisableAPIAnalysisBuilder;
 
 	public static String MainPreferencePage_test_plugin_pattern_group;
 	public static String MainPreferencePage_test_plugin_pattern_label;
@@ -2831,6 +2840,12 @@ public class PDEUIMessages extends NLS {
 	public static String RequiredExecutionEnvironmentSection_dialogMessage;
 
 	public static String BuildExecutionEnvironmentSection_configure;
+
+	public static String BuildJob_buildingProjects;
+
+	public static String BuildJob_buildingProject;
+
+	public static String BuildJob_building;
 
 	public static String ExecutionEnvironmentSection_updateClasspath;
 
