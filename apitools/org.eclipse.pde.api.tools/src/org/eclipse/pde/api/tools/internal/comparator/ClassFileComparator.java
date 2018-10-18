@@ -317,6 +317,19 @@ public class ClassFileComparator {
 								boolean isBreakingChange = false;
 								IApiMethod meth = this.type2.getMethod(iMethod.getName(), iMethod.getSignature());
 								if (meth == null) {
+									// check in superclasses
+									List<IApiType> superclassList = getSuperclassList(this.type2);
+									if (superclassList != null) {
+										for (IApiType apiType : superclassList) {
+											meth = apiType.getMethod(iMethod.getName(),
+													iMethod.getSignature());
+											if (meth != null) {
+												break;
+											}
+										}
+									}
+								}
+								if (meth == null) {
 									isBreakingChange = true;
 								}
 								if(meth !=null) {
@@ -409,6 +422,18 @@ public class ClassFileComparator {
 								if (defMethod == false) {
 									boolean isBreakingChange = false;
 									IApiMethod meth = this.type2.getMethod(iMethod.getName(), iMethod.getSignature());
+									if (meth == null) {
+										// check in superclasses
+										List<IApiType> superclassList = getSuperclassList(this.type2);
+										if (superclassList != null) {
+											for (IApiType type : superclassList) {
+												meth = type.getMethod(iMethod.getName(), iMethod.getSignature());
+												if (meth != null) {
+													break;
+												}
+											}
+										}
+									}
 									if (meth == null) {
 										isBreakingChange = true;
 									}
