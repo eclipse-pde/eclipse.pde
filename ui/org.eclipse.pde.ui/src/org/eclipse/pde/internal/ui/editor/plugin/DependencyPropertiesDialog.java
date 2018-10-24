@@ -137,6 +137,11 @@ public class DependencyPropertiesDialog extends StatusDialog {
 	}
 
 	@Override
+	protected boolean isResizable() {
+		return true;
+	}
+
+	@Override
 	protected void okPressed() {
 		fOptional = (fOptionalButton == null) ? false : fOptionalButton.getSelection();
 		fExported = (fReexportButton == null) ? false : fReexportButton.getSelection();
