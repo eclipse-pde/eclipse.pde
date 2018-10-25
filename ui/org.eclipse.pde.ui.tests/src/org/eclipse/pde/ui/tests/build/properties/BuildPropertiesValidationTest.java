@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 IBM Corporation and others.
+ * Copyright (c) 2010, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -125,6 +125,22 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		if (buildProject(project)) {
 			IResource buildProperty = project.findMember("build.properties");
 			PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
+
+			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
+			verifyQuickFixes(buildProperty, expectedValues);
+		} else {
+			fail("Could not build the project '" + project.getName() + "'");
+		}
+	}
+
+	// Bug 540442
+	public void testTestSource() throws CoreException, BackingStoreException, IOException {
+		IProject project = findProject("org.eclipse.pde.tests.build.properties.11");
+		setPreferences(project, CompilerFlags.ERROR);
+		if (buildProject(project)) {
+			IResource buildProperty = project.findMember("build.properties");
+			PropertyResourceBundle expectedValues = new PropertyResourceBundle(
+					new FileInputStream(buildProperty.getLocation().toFile()));
 
 			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
 			verifyQuickFixes(buildProperty, expectedValues);

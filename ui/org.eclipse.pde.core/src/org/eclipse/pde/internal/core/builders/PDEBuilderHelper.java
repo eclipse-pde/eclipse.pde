@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2012 IBM Corporation and others.
+ *  Copyright (c) 2007, 2018 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -29,7 +29,7 @@ public class PDEBuilderHelper {
 		String[] unlisted = new String[cpes.length];
 		int index = 0;
 		for (IClasspathEntry entry : cpes) {
-			if (entry.getEntryKind() != IClasspathEntry.CPE_SOURCE)
+			if (entry.getEntryKind() != IClasspathEntry.CPE_SOURCE || entry.isTest())
 				continue;
 			IPath path = entry.getPath();
 			boolean found = false;
