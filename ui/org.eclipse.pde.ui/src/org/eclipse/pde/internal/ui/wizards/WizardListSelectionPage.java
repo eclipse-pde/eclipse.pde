@@ -92,6 +92,9 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage im
 		initializeViewer();
 		wizardSelectionViewer.setInput(wizardElements);
 		wizardSelectionViewer.addSelectionChangedListener(this);
+		if (wizardElements.size() > 0) {
+			wizardSelectionViewer.setSelection(new StructuredSelection(wizardSelectionViewer.getElementAt(0)), true);
+		}
 		Dialog.applyDialogFont(container);
 		setControl(container);
 	}

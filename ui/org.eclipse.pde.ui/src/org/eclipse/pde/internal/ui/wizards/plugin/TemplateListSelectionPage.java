@@ -113,7 +113,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 			setDescriptionEnabled(fUseTemplate.getSelection());
 			getContainer().updateButtons();
 		}));
-		fUseTemplate.setSelection(true);
+		fUseTemplate.setSelection(false);
 	}
 
 	@Override
@@ -193,6 +193,8 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 				wizardSelectionViewer.getControl().setEnabled(true);
 
 			} else {
+				wizardSelectionViewer.getControl().setEnabled(false);
+				fUseTemplate.setSelection(false);
 				fUseTemplate.setEnabled(true);
 			}
 			wizardSelectionViewer.refresh();
