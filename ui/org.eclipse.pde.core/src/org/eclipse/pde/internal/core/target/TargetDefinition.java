@@ -362,9 +362,7 @@ public class TargetDefinition implements ITargetDefinition {
 				// containers. A synchronizer may be shared among several containers, do we
 				// keep track of the synchronizers processed.
 				for (ITargetLocation container : containers) {
-					if (subMonitor.isCanceled()) {
-						return Status.CANCEL_STATUS;
-					}
+					subMonitor.checkCanceled();
 					subMonitor.subTask(Messages.TargetDefinition_4);
 					P2TargetUtils synchronizer = container.getAdapter(P2TargetUtils.class);
 					if (synchronizer != null && !seen.contains(synchronizer)) {
@@ -379,20 +377,17 @@ public class TargetDefinition implements ITargetDefinition {
 				}
 				synchronizerNumContainerMap.clear();
 				if (!status.isOK()) {
-					return fResolutionStatus = status;
-				}
-				if (subMonitor.isCanceled()) {
-					return Status.CANCEL_STATUS;
+					fResolutionStatus = status;
+					return fResolutionStatus;
 				}
 				for (ITargetLocation container : containers) {
-					if (subMonitor.isCanceled()) {
-						return Status.CANCEL_STATUS;
-					}
+					subMonitor.checkCanceled();
 					subMonitor.subTask(Messages.TargetDefinition_4);
 					P2TargetUtils synchronizer = container.getAdapter(P2TargetUtils.class);
 					int totalWork = 5;
-					if (synchronizer == null)
+					if (synchronizer == null) {
 						totalWork = 100;
+					}
 					IStatus s = container.resolve(this, subMonitor.split(totalWork));
 					if (!s.isOK()) {
 						status.add(s);
@@ -400,12 +395,14 @@ public class TargetDefinition implements ITargetDefinition {
 				}
 			}
 			if (status.isOK()) {
-				return fResolutionStatus = Status.OK_STATUS;
+				fResolutionStatus = Status.OK_STATUS;
+				return fResolutionStatus;
 			}
-			if (subMonitor.isCanceled()) {
-				return Status.CANCEL_STATUS;
-			}
-			return fResolutionStatus = status;
+			subMonitor.checkCanceled();
+			fResolutionStatus = status;
+			return fResolutionStatus;
+		} catch (OperationCanceledException e) {
+			return Status.CANCEL_STATUS;
 		} finally {
 			// keep a list of resolved targets with key as handle
 			TargetPlatformHelper.addTargetDefinitionMap(this);
