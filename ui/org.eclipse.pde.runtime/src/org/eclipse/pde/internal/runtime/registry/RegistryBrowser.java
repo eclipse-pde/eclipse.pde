@@ -586,7 +586,7 @@ public class RegistryBrowser extends ViewPart {
 		}
 
 		if (tree == null)
-			return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] {"0", "0", type})); //$NON-NLS-1$ //$NON-NLS-2$
+			return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] { "0", "0", type })); //$NON-NLS-1$ //$NON-NLS-2$
 		return NLS.bind(PDERuntimeMessages.RegistryView_titleSummary, (new String[] {Integer.toString(tree.getItemCount()), Integer.toString(total), type}));
 	}
 
@@ -685,7 +685,7 @@ public class RegistryBrowser extends ViewPart {
 
 		if (fDrillDownAdapter.canGoHome())
 			return;
-		fTreeViewer.add(parent, object);
+		fTreeViewer.refresh();
 		updateTitle();
 	}
 
@@ -695,7 +695,7 @@ public class RegistryBrowser extends ViewPart {
 
 		if (fDrillDownAdapter.canGoHome())
 			return;
-		fTreeViewer.remove(object);
+		fTreeViewer.refresh();
 		updateTitle();
 	}
 
