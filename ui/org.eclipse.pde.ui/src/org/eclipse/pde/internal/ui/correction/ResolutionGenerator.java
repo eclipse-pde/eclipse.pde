@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -88,7 +88,7 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 			case PDEMarkerFactory.M_UNECESSARY_DEP :
 				return new IMarkerResolution[] {new RemoveRequireBundleResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker.getAttribute("bundleId", null))}; //$NON-NLS-1$
 			case PDEMarkerFactory.M_MISSING_EXPORT_PKGS :
-				return new IMarkerResolution[] {new AddExportPackageMarkerResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker.getAttribute("packages", null))}; //$NON-NLS-1$
+				return new IMarkerResolution[] { new AddExportPackageMarkerResolution(marker,AbstractPDEMarkerResolution.CREATE_TYPE, marker.getAttribute("packages", null)) }; //$NON-NLS-1$
 			case PDEMarkerFactory.B_REMOVE_SLASH_FILE_ENTRY :
 				return new IMarkerResolution[] {new RemoveSeperatorBuildEntryResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
 			case PDEMarkerFactory.B_APPEND_SLASH_FOLDER_ENTRY :
