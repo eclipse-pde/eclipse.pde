@@ -34,7 +34,9 @@ public class OSGiEventAdminTemplateWizard extends NewPluginTemplateWizard {
 
 	@Override
 	public String[] getImportPackages() {
-		return new String[] {"org.osgi.framework;version=\"1.3.0\"", "org.osgi.service.event;version=\"1.2.0\""}; //$NON-NLS-1$ //$NON-NLS-2$
+		return new String[] {"org.osgi.framework;version=\"1.3.0\"", //$NON-NLS-1$
+				"org.osgi.service.event;version=\"1.2.0\"", //$NON-NLS-1$
+				"org.osgi.service.component.annotations;version=\"1.2.0\";resolution:=\"optional\"" }; //$NON-NLS-1$
 	}
 
 	@Override
