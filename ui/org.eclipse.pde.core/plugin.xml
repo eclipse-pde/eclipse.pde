@@ -125,8 +125,7 @@
          id="org.eclipse.pde.ManifestBuilder"
          name="%builders.manifestBuilder.name"
          point="org.eclipse.core.resources.builders">
-      <builder
-            callOnEmptyDelta="true">
+      <builder>
          <run
                class="org.eclipse.pde.internal.core.builders.ManifestConsistencyChecker">
          </run>
@@ -137,8 +136,7 @@
          id="org.eclipse.pde.SchemaBuilder"
          name="%builders.schemaBuilder.name"
          point="org.eclipse.core.resources.builders">
-      <builder
-            callOnEmptyDelta="true">
+      <builder>
          <run
                class="org.eclipse.pde.internal.core.builders.ExtensionPointSchemaBuilder">
          </run>
@@ -148,8 +146,7 @@
          id="org.eclipse.pde.FeatureBuilder"
          name="%builders.featureBuilder.name"
          point="org.eclipse.core.resources.builders">
-      <builder
-            callOnEmptyDelta="true">
+      <builder>
          <run
                class="org.eclipse.pde.internal.core.builders.FeatureConsistencyChecker">
          </run>
@@ -159,8 +156,7 @@
          id="org.eclipse.pde.UpdateSiteBuilder"
          name="%builders.siteBuilder.name"
          point="org.eclipse.core.resources.builders">
-      <builder
-            callOnEmptyDelta="true">
+      <builder>
          <run
                class="org.eclipse.pde.internal.core.builders.UpdateSiteBuilder">
          </run>
