@@ -57,7 +57,8 @@ public class RepositoryCache {
 	 *            repository URL
 	 * @param flush
 	 *            whether a flush is needed
-	 * @return list of IUs available in the 'repo' repository
+	 * @return list of IUs available in the 'repo' repository. Never
+	 *         <code>null</code>.
 	 */
 	public List<UnitNode> fetchP2UnitsFromRepo(String repo, boolean flush) {
 		if ((flush) || (cache.get(repo) == null)) {

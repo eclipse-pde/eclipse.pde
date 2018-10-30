@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.genericeditor.target.extension.p2;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -89,9 +90,8 @@ public class P2Fetcher {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			return Collections.emptyList();
 		}
-
-		return null;
 	}
 
 }
