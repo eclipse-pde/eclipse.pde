@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.builders;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -29,7 +30,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.builders.PDEBuilderHelper;
 import org.eclipse.pde.internal.ds.core.Activator;
 import org.eclipse.pde.internal.ds.core.Messages;
 
@@ -154,6 +158,12 @@ public class DSBuilder extends IncrementalProjectBuilder {
 		reporter.validateContent(monitor);
 		monitor.subTask(Messages.DSBuilder_updating);
 		monitor.done();
+	}
+
+	@Override
+	public ISchedulingRule getRule(int kind, Map<String, String> args) {
+		return new MultiRule(Arrays.stream(getProject().getWorkspace().getRoot().getProjects())
+				.filter(PDEBuilderHelper::isPDEProject).toArray(ISchedulingRule[]::new));
 	}
 
 }
