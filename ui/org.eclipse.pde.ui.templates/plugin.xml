@@ -460,7 +460,7 @@
             id="org.eclipse.pde.ui.pluginContent.OSGiSimpleLogService"
             name="%pluginContent.OSGiSimpleLogService.name"
             pureOSGi="true"
-            requiresActivator="true"
+            requiresActivator="false"
             ui-content="false">
          <description>
             %pluginContent.OSGiSimpleLogService.description

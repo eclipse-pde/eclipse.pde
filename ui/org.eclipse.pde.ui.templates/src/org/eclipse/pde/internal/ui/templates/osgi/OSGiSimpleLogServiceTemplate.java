@@ -16,13 +16,17 @@ package org.eclipse.pde.internal.ui.templates.osgi;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.ui.templates.*;
+import org.eclipse.pde.ui.IFieldData;
 
 public class OSGiSimpleLogServiceTemplate extends PDETemplateSection {
 
 	public static final String START_LOG_MESSAGE = "startLogMessage"; //$NON-NLS-1$
 	public static final String STOP_LOG_MESSAGE = "stopLogMessage"; //$NON-NLS-1$
+
+	private String packageName;
 
 	public OSGiSimpleLogServiceTemplate() {
 		setPageCount(1);
@@ -46,7 +50,8 @@ public class OSGiSimpleLogServiceTemplate extends PDETemplateSection {
 
 	@Override
 	protected void updateModel(IProgressMonitor monitor) {
-		// do nothing
+		setManifestHeader("Service-Component", "OSGI-INF/*.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+		setManifestHeader("Bundle-ActivationPolicy", "lazy"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
@@ -69,4 +74,27 @@ public class OSGiSimpleLogServiceTemplate extends PDETemplateSection {
 		return new IPluginReference[0];
 	}
 
+	@Override
+	protected void initializeFields(IFieldData data) {
+		// In a new project wizard, we don't know this yet - the
+		// model has not been created
+		String id = data.getId();
+		this.packageName = getFormattedPackageName(id);
+		initializeOption(KEY_PACKAGE_NAME, packageName);
+	}
+
+	@Override
+	public void initializeFields(IPluginModelBase model) {
+		String id = model.getPluginBase().getId();
+		this.packageName = getFormattedPackageName(id);
+		initializeOption(KEY_PACKAGE_NAME, packageName);
+	}
+
+	@Override
+	public String getStringOption(String name) {
+		if (name.equals(KEY_PACKAGE_NAME)) {
+			return packageName;
+		}
+		return super.getStringOption(name);
+	}
 }
