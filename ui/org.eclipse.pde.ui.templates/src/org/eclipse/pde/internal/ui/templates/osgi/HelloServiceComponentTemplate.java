@@ -54,7 +54,8 @@ public class HelloServiceComponentTemplate extends PDETemplateSection {
 
 	@Override
 	protected void updateModel(IProgressMonitor monitor) { // do nothing
-		setManifestHeader("Service-Component", "OSGI-INF/*.xml"); //$NON-NLS-1$ //$NON-NLS-2$]
+		setManifestHeader("Service-Component", "OSGI-INF/*.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+		setManifestHeader("Bundle-ActivationPolicy", "lazy"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override

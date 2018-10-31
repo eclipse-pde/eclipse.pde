@@ -3,10 +3,14 @@ package $packageName$;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.osgi.service.component.annotations.*;
+
+@Component
 public class DictionaryServiceImpl implements DictionaryService {
 
 	private List<Dictionary> fDictionaries = new ArrayList<>();
 	
+	@Reference
 	@Override
     public void registerDictionary(Dictionary dictionary) {
     	fDictionaries.add(dictionary);
