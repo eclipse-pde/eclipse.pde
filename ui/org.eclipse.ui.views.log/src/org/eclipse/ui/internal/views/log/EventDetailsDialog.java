@@ -683,9 +683,9 @@ public class EventDetailsDialog extends TrayDialog {
 		label.setText(Messages.EventDetailsDialog_message);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
-		msgText = new Text(textContainer, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP | SWT.BORDER);
+		msgText = new Text(textContainer, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		msgText.setEditable(false);
-		gd = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING | GridData.GRAB_VERTICAL);
+		gd = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		gd.grabExcessVerticalSpace = true;
 		msgText.setLayoutData(gd);
