@@ -621,6 +621,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String CreateManifestClassResolution_label;
 
+	public static String CreateModuleInfoPDEAction_mod_info_not_in_sync;
+
+	public static String CreateModuleInfoPDEAction_sync_issue;
+
 	public static String ElementSection_missingRefElement;
 
 	public static String ExternalizeResolution_attrib;

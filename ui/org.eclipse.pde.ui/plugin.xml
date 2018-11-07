@@ -2263,4 +2263,29 @@
         </activeWhen>
      </projectConfigurator>
   </extension>
+    <extension
+        point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="org.eclipse.jdt.ui.create.module.info">
+       	 <visibility>
+        	<and>
+            <objectState 
+	            name="projectNature" 
+	            value="org.eclipse.pde.PluginNature"/>
+	        <objectState
+	        	name="open"
+	        	value="true"/>
+            </and>
+       	 </visibility>
+         <action
+            label="%create.module.info.label.pde"
+            class="org.eclipse.pde.internal.ui.editor.actions.CreateModuleInfoPDEAction"
+            menubarPath="org.eclipse.ui.projectConfigure/additions"
+            enablesFor="1"
+            id="org.eclipse.jdt.ui.create.module.info.action">
+      	</action>
+      </objectContribution>
+  </extension>
 </plugin>
