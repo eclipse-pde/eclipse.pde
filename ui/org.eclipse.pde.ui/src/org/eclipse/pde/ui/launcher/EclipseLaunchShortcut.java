@@ -229,6 +229,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		wc.setAttribute(IPDELauncherConstants.ASKCLEAR, true);
 		wc.setAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, true);
 		wc.setAttribute(IPDELauncherConstants.TRACING_CHECKED, IPDELauncherConstants.TRACING_NONE);
+		wc.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, true);
 		wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, fApplicationName == null);
 		if (fApplicationName != null) {
 			String product = getProduct(fApplicationName);
