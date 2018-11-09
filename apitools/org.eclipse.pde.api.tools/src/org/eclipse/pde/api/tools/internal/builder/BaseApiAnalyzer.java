@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -2362,6 +2362,41 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			System.out.println("Checking if the default API baseline is set"); //$NON-NLS-1$
 		}
 		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem(Path.EMPTY.toString(), new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { Integer.valueOf(IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID) }, IElementDescriptor.RESOURCE, IApiProblem.API_BASELINE_MISSING);
+		addProblem(problem);
+	}
+
+	/**
+	 * Checks to see if the baseline set in the workspace has at least 1 matching
+	 * project in the workspace
+	 */
+	public void checkBaselineMismatch(IApiBaseline baseline, IApiBaseline workspaceBaseline) {
+		if (baseline == null || workspaceBaseline == null) {
+			return;
+		}
+		int severityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE,
+				null);
+		if (severityLevel == ApiPlugin.SEVERITY_IGNORE) {
+			return;
+		}
+		IApiComponent[] workspacesComponents = workspaceBaseline.getApiComponents();
+		boolean found = false;
+		for (IApiComponent iApiComponent : workspacesComponents) {
+			if (iApiComponent instanceof ProjectComponent) {
+				IApiComponent apiComponent = baseline.getApiComponent(iApiComponent.getSymbolicName());
+				if (apiComponent != null) {
+					found = true;
+					break;
+				}
+			}
+		}
+		if (found) {
+			return;
+		}
+
+		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem(Path.EMPTY.toString(),
+				new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID },
+				new Object[] { Integer.valueOf(IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID) },
+				IElementDescriptor.RESOURCE, IApiProblem.API_BASELINE_MISMATCH);
 		addProblem(problem);
 	}
 

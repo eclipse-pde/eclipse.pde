@@ -486,6 +486,15 @@ public interface IApiProblem {
 	 * @see #CATEGORY_API_BASELINE
 	 */
 	public static final int API_BASELINE_MISSING = 1;
+	/**
+	 * Constant representing possible API baseline mismatch {@link IApiProblem}
+	 * kind. <br>
+	 * Value is: <code>2</code>
+	 *
+	 * @see #getKind()
+	 * @see #CATEGORY_API_BASELINE
+	 */
+	public static final int API_BASELINE_MISMATCH = 2;
 
 	/**
 	 * Constant representing the value of a API component resolution

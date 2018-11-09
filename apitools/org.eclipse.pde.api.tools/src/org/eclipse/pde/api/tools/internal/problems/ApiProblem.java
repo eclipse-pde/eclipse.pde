@@ -441,6 +441,7 @@ public class ApiProblem implements IApiProblem {
 	public static String getApiBaselineProblemKindName(int kind) {
 		switch (kind) {
 			case IApiProblem.API_BASELINE_MISSING:
+			case IApiProblem.API_BASELINE_MISMATCH:
 				return "API_BASELINE_MISSING"; //$NON-NLS-1$
 			default:
 				return Util.UNKNOWN_KIND;

@@ -583,6 +583,8 @@ public class ApiProblemFactory {
 				switch (kind) {
 					case IApiProblem.API_BASELINE_MISSING:
 						return 1;
+					case IApiProblem.API_BASELINE_MISMATCH:
+						return 57;
 					default:
 						break;
 				}
@@ -1023,6 +1025,7 @@ public class ApiProblemFactory {
 			case IApiProblem.CATEGORY_API_BASELINE: {
 				switch (problem.getKind()) {
 					case IApiProblem.API_BASELINE_MISSING:
+					case IApiProblem.API_BASELINE_MISMATCH:
 						return IApiProblemTypes.MISSING_DEFAULT_API_BASELINE;
 					default:
 						break;

@@ -781,6 +781,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					}
 				}
 				if (apiComponent != null) {
+					if (getAnalyzer() instanceof BaseApiAnalyzer) {
+						((BaseApiAnalyzer)getAnalyzer()).checkBaselineMismatch(baseline, wbaseline);
+					}
 					getAnalyzer().analyzeComponent(this.buildstate, null, null, baseline, apiComponent, new BuildContext(), localMonitor.split(1));
 					localMonitor.split(1);
 					createMarkers();
@@ -904,9 +907,25 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					}
 				}
 			}
-			IMarker marker = resource.createMarker(type);
+			IMarker marker = null;
+			if (problem.getKind() == IApiProblem.API_BASELINE_MISMATCH
+					&& category == IApiProblem.CATEGORY_API_BASELINE) {
+				// need a workspace marker
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				IMarker[] findMarkers = root.findMarkers(type, false, IResource.DEPTH_ZERO);
+				if (findMarkers.length == 0) {
+					marker = root.createMarker(type);
+				}
+				else {
+					marker = findMarkers[0];
+				}
+			} else {
+				marker = resource.createMarker(type);
+			}
+
 			int line = problem.getLineNumber();
-			switch (category) {
+			switch (category)
+				{
 				case IApiProblem.CATEGORY_VERSION:
 				case IApiProblem.CATEGORY_API_BASELINE:
 				case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION:
