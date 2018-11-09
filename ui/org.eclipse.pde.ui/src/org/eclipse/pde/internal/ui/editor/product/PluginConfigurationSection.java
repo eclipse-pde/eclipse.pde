@@ -144,7 +144,7 @@ public class PluginConfigurationSection extends TableSection {
 	 */
 	private static String getBundlesWithStartLevels() {
 		StringBuilder buffer = new StringBuilder();
-		buffer.append("org.apache.felix.scr@1:start,"); //$NON-NLS-1$
+		buffer.append("org.apache.felix.scr@2:start,"); //$NON-NLS-1$
 		buffer.append("org.eclipse.core.runtime@start,"); //$NON-NLS-1$
 		buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
 		buffer.append("org.eclipse.equinox.event@2:start,"); //$NON-NLS-1$
