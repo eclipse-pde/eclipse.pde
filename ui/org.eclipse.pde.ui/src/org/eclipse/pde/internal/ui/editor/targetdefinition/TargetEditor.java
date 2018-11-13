@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -292,23 +293,16 @@ public class TargetEditor extends FormEditor {
 					public void linkActivated(HyperlinkEvent e) {
 						IEditorPart editorPart = TargetEditor.this;
 						IWorkbenchPage page = editorPart.getSite().getPage();
-						if (TargetEditor.this.isDirty())
+						if (TargetEditor.this.isDirty()) {
 							page.saveEditor(editorPart, true);
-						LoadTargetDefinitionJob.load(getTarget());
-						hyperlink.setText(PDEUIMessages.AbstractTargetPage_reloadTarget);
-						for (Hyperlink link : arrayHyperLink) {
-							if (link != null && link.isDisposed())
-								continue;
-							link.setText(PDEUIMessages.AbstractTargetPage_reloadTarget);
 						}
-						// update other target editors ( if any)
-						for (Object value : WorkspaceFileTargetHandle.mapFileTarget.values()) {
-							if (value instanceof TargetEditor) {
-								TargetEditor tarEditor = (TargetEditor) value;
-								if (!tarEditor.equals(TargetEditor.this)) {
-									tarEditor.updateHyperlinkText(PDEUIMessages.AbstractTargetPage_setTarget);
-								}
-							}
+						ITargetDefinition target = getTarget();
+						LoadTargetDefinitionJob.load(target);
+						try {
+							updateTargetEditors(target.getHandle());
+						} catch (CoreException ce) {
+							PDEPlugin.log(ce);
+							hyperlink.setText(PDEUIMessages.AbstractTargetPage_reloadTarget);
 						}
 					}
 
@@ -649,9 +643,38 @@ public class TargetEditor extends FormEditor {
 
 	public void updateHyperlinkText(String s) {
 		for (Hyperlink hyperlink : arrayHyperLink) {
-			if (hyperlink != null && hyperlink.isDisposed())
+			if (hyperlink == null || hyperlink.isDisposed()) {
 				continue;
+			}
 			hyperlink.setText(s);
+		}
+		updateTextualEditor();
+	}
+
+	public static void updateTargetEditors(ITargetHandle targetHandle) throws CoreException {
+		String targetMemento = targetHandle.getMemento();
+		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+		for (IWorkbenchWindow window : windows) {
+			IWorkbenchPage[] pages = window.getPages();
+			for (IWorkbenchPage page : pages) {
+				IEditorReference[] references = page.getEditorReferences();
+				for (IEditorReference reference : references) {
+					IEditorPart editor = reference.getEditor(false);
+					if (editor instanceof TargetEditor) {
+						TargetEditor targetEditor = (TargetEditor) editor;
+						ITargetDefinition target = targetEditor.getTarget();
+						if (target == null) {
+							continue;
+						}
+						ITargetHandle handle = target.getHandle();
+						String memento = handle.getMemento();
+						boolean isCurrent = Objects.equals(memento, targetMemento);
+						String label = isCurrent ? PDEUIMessages.AbstractTargetPage_reloadTarget
+								: PDEUIMessages.AbstractTargetPage_setTarget;
+						targetEditor.updateHyperlinkText(label);
+					}
+				}
+			}
 		}
 	}
 
