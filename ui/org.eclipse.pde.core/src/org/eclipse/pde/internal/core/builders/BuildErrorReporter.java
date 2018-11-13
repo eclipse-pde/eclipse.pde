@@ -22,6 +22,7 @@ import java.io.FilenameFilter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.*;
 import org.eclipse.core.resources.*;
@@ -627,7 +628,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	// if we're defining fragments, make sure they have entries in plugin.xml
 	private void validateFragmentContributions(IBuildEntry binIncludes) {
 		try {
-			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(PDEProject.getPluginXml(fProject).getContents());
+			DocumentBuilder newDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			newDocumentBuilder.setErrorHandler(new PDEErrorHandler());
+			Document doc = newDocumentBuilder.parse(PDEProject.getPluginXml(fProject).getContents());
 			XPath xpath = XPathFactory.newInstance().newXPath();
 			NodeList list = (NodeList) xpath.evaluate("/plugin/extension[@point='org.eclipse.e4.workbench.model']/fragment/@uri", doc, XPathConstants.NODESET); //$NON-NLS-1$
 			for (int i = 0; i < list.getLength(); i++) {
@@ -641,7 +644,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	// if we're defining an application, make sure it has entries in plugin.xml
 	private void validateApplicationContributions(IBuildEntry binIncludes) {
 		try {
-			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(PDEProject.getPluginXml(fProject).getContents());
+			DocumentBuilder newDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			newDocumentBuilder.setErrorHandler(new PDEErrorHandler());
+			Document doc = newDocumentBuilder.parse(PDEProject.getPluginXml(fProject).getContents());
 			XPath xpath = XPathFactory.newInstance().newXPath();
 			// are we an application?
 			Node nodeProduct = (Node) xpath.evaluate("/plugin/extension[@point='org.eclipse.core.runtime.products']/product", doc, XPathConstants.NODE); //$NON-NLS-1$
