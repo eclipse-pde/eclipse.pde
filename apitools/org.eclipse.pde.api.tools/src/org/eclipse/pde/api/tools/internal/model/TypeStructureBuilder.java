@@ -64,7 +64,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 	 * @param component originating API component or <code>null</code> if unknown
 	 */
 	TypeStructureBuilder(boolean useExperimental, ClassVisitor cv, IApiComponent component, IApiTypeRoot file) {
-		super(Opcodes.ASM7_EXPERIMENTAL, cv);
+		super(Opcodes.ASM7, cv);
 		fComponent = component;
 		fFile = file;
 	}
