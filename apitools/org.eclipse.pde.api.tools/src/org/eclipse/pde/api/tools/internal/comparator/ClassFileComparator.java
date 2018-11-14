@@ -887,7 +887,9 @@ public class ClassFileComparator {
 				collectAllInterfaces(superclass, set);
 			}
 		} catch (CoreException e) {
-			ApiPlugin.log(e);
+			if (ApiPlugin.DEBUG_API_COMPARATOR) {
+				ApiPlugin.log(e);
+			}
 			reportStatus(e);
 		}
 	}
