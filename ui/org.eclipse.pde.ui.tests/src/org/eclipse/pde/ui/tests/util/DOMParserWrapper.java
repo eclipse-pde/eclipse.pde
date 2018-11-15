@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,26 +14,18 @@
 
 package org.eclipse.pde.ui.tests.util;
 
-import org.eclipse.pde.internal.core.util.PDEXMLHelper;
-
 import java.io.File;
 import java.io.IOException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-
+import javax.xml.parsers.*;
+import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-public class DOMParserWrapper {
+public class DOMParserWrapper implements AutoCloseable {
 
 	protected DocumentBuilder fParser;
 	protected boolean isdisposed;
 
-	/**
-	 *
-	 */
 	public DOMParserWrapper() throws ParserConfigurationException, FactoryConfigurationError {
 		fParser = PDEXMLHelper.Instance().getDefaultDOMParser();
 		isdisposed = false;
@@ -58,10 +50,8 @@ public class DOMParserWrapper {
 	// NOTE:  If other parser method calls are required, the corresponding
 	// wrapper method needs to be added here
 
-	// Explicit disposal
 	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
+	public void close() {
 		dispose();
 	}
 

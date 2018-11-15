@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -145,10 +145,8 @@ public class ParserWrapperTestCase extends TestCase {
 
 			for (int x = 0; x < FITERATIONS; x++) {
 
-				try {
-					DOMParserWrapper parser = new DOMParserWrapper();
+				try (DOMParserWrapper parser = new DOMParserWrapper()) {
 					parser.parse(fParserXMLFile);
-					parser.dispose();
 				} catch (ParserConfigurationException e) {
 					e.printStackTrace();
 					fError = true;
