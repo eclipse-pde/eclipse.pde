@@ -22,7 +22,7 @@
 
 	<properties>
 		<systemProperties>-Dignored.errors.regexp=${ignored.errors.regexp}</systemProperties>
-		<tycho.test.jvmArgs>-Xmx512m -XX:MaxPermSize=256m</tycho.test.jvmArgs>
+		<tycho.test.jvmArgs>-Xmx512m</tycho.test.jvmArgs>
 		<surefire.timeout>1200</surefire.timeout>
 		<platformSystemProperties></platformSystemProperties>
 	</properties>
