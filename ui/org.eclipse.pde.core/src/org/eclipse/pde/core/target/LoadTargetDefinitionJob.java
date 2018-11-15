@@ -95,12 +95,14 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			fTarget = service.newTarget();
 		}
 	}
-
+
+
 	@Override
 	public boolean belongsTo(Object family) {
 		return JOB_FAMILY_ID.equals(family);
 	}
-
+
+
 	@Override
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMon = SubMonitor.convert(monitor, Messages.LoadTargetOperation_mainTaskName, 40);
