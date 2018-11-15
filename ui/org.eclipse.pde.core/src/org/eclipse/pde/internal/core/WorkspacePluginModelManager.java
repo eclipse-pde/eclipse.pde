@@ -26,6 +26,7 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.builders.SchemaTransformer;
 import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.ibundle.*;
@@ -39,11 +40,29 @@ import org.osgi.framework.Constants;
 public class WorkspacePluginModelManager extends WorkspaceModelManager {
 
 	@SuppressWarnings("deprecation")
-	private static final Collection<String> RELEVANT_HEADERS = Collections.unmodifiableCollection(
-			new HashSet<>(Arrays.asList(Constants.BUNDLE_MANIFESTVERSION, Constants.BUNDLE_SYMBOLICNAME,
-					Constants.BUNDLE_VERSION, Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, Constants.FRAGMENT_HOST,
-					Constants.REQUIRE_BUNDLE, Constants.IMPORT_PACKAGE, Constants.EXPORT_PACKAGE,
-					Constants.BUNDLE_CLASSPATH, Constants.PROVIDE_CAPABILITY, Constants.REQUIRE_CAPABILITY)));
+	private static final Collection<String> RELEVANT_HEADERS = Collections
+			.unmodifiableCollection(new HashSet<>(Arrays.asList( //
+					Constants.BUNDLE_MANIFESTVERSION, //
+					Constants.BUNDLE_SYMBOLICNAME, //
+					ICoreConstants.AUTOMATIC_MODULE_NAME, //
+					Constants.BUNDLE_VERSION, //
+					Constants.FRAGMENT_HOST, //
+					IPDEBuildConstants.EXTENSIBLE_API, //
+					IPDEBuildConstants.PATCH_FRAGMENT, //
+					Constants.REQUIRE_BUNDLE, //
+					Constants.IMPORT_PACKAGE, //
+					Constants.EXPORT_PACKAGE, //
+					ICoreConstants.PROVIDE_PACKAGE, //
+					ICoreConstants.ECLIPSE_JREBUNDLE, //
+					Constants.BUNDLE_CLASSPATH, //
+					Constants.PROVIDE_CAPABILITY, //
+					Constants.REQUIRE_CAPABILITY, //
+					ICoreConstants.ECLIPSE_GENERIC_CAPABILITY, //
+					ICoreConstants.ECLIPSE_GENERIC_REQUIRED, //
+					Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, //
+					IPDEBuildConstants.ECLIPSE_PLATFORM_FILTER, //
+					ICoreConstants.ECLIPSE_SYSTEM_BUNDLE, //
+					ICoreConstants.ECLIPSE_SOURCE_BUNDLE)));
 
 	private ArrayList<IExtensionDeltaListener> fExtensionListeners = new ArrayList<>();
 	private ArrayList<ModelChange> fChangedExtensions = null;
