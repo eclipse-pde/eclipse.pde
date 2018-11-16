@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 540881
  *******************************************************************************/
 package org.eclipse.pde.core.target;
 
@@ -105,19 +106,15 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 
 	@Override
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-		SubMonitor subMon = SubMonitor.convert(monitor, Messages.LoadTargetOperation_mainTaskName, 40);
 		try {
-			if (subMon.isCanceled()) {
-				return Status.CANCEL_STATUS;
-			}
+			SubMonitor subMon = SubMonitor.convert(monitor, Messages.LoadTargetOperation_mainTaskName, 40)
+					.checkCanceled();
 
 			if (!fTarget.isResolved()) {
 				fTarget.resolve(subMon.split(20));
 			}
+			subMon.checkCanceled();
 			subMon.setWorkRemaining(20);
-			if (subMon.isCanceled()) {
-				return Status.CANCEL_STATUS;
-			}
 
 			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 
@@ -131,31 +128,16 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, ""); //$NON-NLS-1$
 			}
 			preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
-			if (subMon.isCanceled()) {
-				return Status.CANCEL_STATUS;
-			}
 
 			clearDeprecatedPreferences(preferences, subMon.split(3));
-			if (subMon.isCanceled()) {
-				return Status.CANCEL_STATUS;
-			}
 
 			loadJRE(subMon.split(3));
-			if (subMon.isCanceled()) {
-				return Status.CANCEL_STATUS;
-			}
 
 			PDECore.getDefault().getPreferencesManager().savePluginPreferences();
 			resetPlatform(subMon.split(14));
-			if (subMon.isCanceled()) {
-				return Status.CANCEL_STATUS;
-			}
 
-		} finally {
-			subMon.done();
-			if (monitor != null) {
-				monitor.done();
-			}
+		} catch (OperationCanceledException e) {
+			return Status.CANCEL_STATUS;
 		}
 		return Status.OK_STATUS;
 	}
