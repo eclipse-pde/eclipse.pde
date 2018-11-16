@@ -283,9 +283,7 @@ public class TargetPersistence34Helper {
 		}
 		// restrictions are global to all containers
 		if (!useAll && !included.isEmpty()) {
-			if (!included.isEmpty()) {
-				definition.setIncluded(included.toArray(new NameVersionDescriptor[included.size()]));
-			}
+			definition.setIncluded(included.toArray(new NameVersionDescriptor[included.size()]));
 		}
 		return containers;
 	}
