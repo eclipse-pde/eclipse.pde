@@ -28,7 +28,8 @@ import org.eclipse.pde.internal.ui.shared.target.IUContentProvider.IUWrapper;
 public class TargetLocationContentProvider implements ITreeContentProvider {
 
 	private boolean showContent = false;
-
+
+
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof ITargetDefinition) {
@@ -89,7 +90,8 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 		}
 		return new Object[0];
 	}
-
+
+
 	@Override
 	public Object getParent(Object element) {
 		if (element instanceof IUWrapper) {
@@ -97,13 +99,15 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 		}
 		return null;
 	}
-
+
+
 	@Override
 	public boolean hasChildren(Object element) {
 		// Since we are already resolved we can't be more efficient
 		return getChildren(element).length > 0;
 	}
-
+
+
 	@Override
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof ITargetDefinition) {
