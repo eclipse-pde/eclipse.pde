@@ -214,7 +214,7 @@ public class DSProvideSection extends TableSection implements
 
 	private void handleRemove() {
 		IStructuredSelection ssel = fProvidesTable.getStructuredSelection();
-		if (ssel.size() > 0) {
+		if (!ssel.isEmpty()) {
 			Iterator<?> iter = ssel.iterator();
 			IDSService service = getDSModel().getDSComponent().getService();
 			while (iter.hasNext()) {

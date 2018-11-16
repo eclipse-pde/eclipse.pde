@@ -374,7 +374,7 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		}
 
 		// cast the proposal elements to ICompletionProposal
-		if (proposals.size() > 0) {
+		if (!proposals.isEmpty()) {
 			ICompletionProposal proposalsArray[] = new ICompletionProposal[proposals
 					.size()];
 			for (int i = 0; i < proposals.size(); i++) {

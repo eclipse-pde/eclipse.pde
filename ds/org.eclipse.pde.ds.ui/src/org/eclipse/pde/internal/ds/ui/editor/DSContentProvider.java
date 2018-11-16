@@ -32,7 +32,7 @@ public class DSContentProvider implements IContentProvider,
 		} else if (parentElement instanceof IDSObject) {
 			List<?> list = ((IDSObject) parentElement).getChildNodesList();
 			// List is never null
-			if (list.size() > 0) {
+			if (!list.isEmpty()) {
 				return list.toArray();
 			}
 		}

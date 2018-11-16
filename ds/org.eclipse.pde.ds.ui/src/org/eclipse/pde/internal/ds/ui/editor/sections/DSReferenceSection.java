@@ -302,7 +302,7 @@ public class DSReferenceSection extends TableSection implements
 
 	private void handleRemove() {
 		IStructuredSelection ssel = fReferencesTable.getStructuredSelection();
-		if (ssel.size() > 0) {
+		if (!ssel.isEmpty()) {
 			Iterator<?> iter = ssel.iterator();
 			while (iter.hasNext()) {
 				Object object = iter.next();
