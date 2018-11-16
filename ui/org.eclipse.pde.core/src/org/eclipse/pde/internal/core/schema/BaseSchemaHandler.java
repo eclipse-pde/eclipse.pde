@@ -53,7 +53,7 @@ public class BaseSchemaHandler extends DefaultHandler {
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		// Track where we are in the XML document
-		if (fElementList.size() != 0) {
+		if (!fElementList.isEmpty()) {
 			fElementList.removeFirst();
 		} else {
 			// This should never happened and is ignored in any case

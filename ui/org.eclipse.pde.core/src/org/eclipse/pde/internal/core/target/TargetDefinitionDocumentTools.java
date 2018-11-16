@@ -120,7 +120,7 @@ public class TargetDefinitionDocumentTools {
 				removeChildAndWhitespace(element);
 			}
 		}
-		if (newElements.size() > 0) {
+		if (!newElements.isEmpty()) {
 			Node lastChild = parentElement.getLastChild();
 			if (isWhitespaceNode(lastChild)) {
 				parentElement.removeChild(lastChild);

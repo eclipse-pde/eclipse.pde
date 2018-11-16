@@ -37,7 +37,7 @@ public class DependencyLoopFinder {
 	}
 
 	private static void findLoops(Vector<DependencyLoop> loops, Vector<IPlugin> path, IPlugin subroot, IPlugin[] candidates, boolean onlyCandidates, Vector<String> exploredPlugins) {
-		if (path.size() > 0) {
+		if (!path.isEmpty()) {
 			// test the path so far
 			// is the subroot the same as root - if yes, that's it
 
@@ -62,7 +62,7 @@ public class DependencyLoopFinder {
 			}
 		}
 		@SuppressWarnings("unchecked")
-		Vector<IPlugin> newPath = path.size() > 0 ? ((Vector<IPlugin>) path.clone()) : path;
+		Vector<IPlugin> newPath = !path.isEmpty() ? ((Vector<IPlugin>) path.clone()) : path;
 		newPath.add(subroot);
 
 		if (!onlyCandidates) {

@@ -204,7 +204,7 @@ public class Product extends ProductObject implements IProduct {
 		}
 		writer.println(indent + "   </plugins>"); //$NON-NLS-1$
 
-		if (fFeatures.size() > 0) {
+		if (!fFeatures.isEmpty()) {
 			writer.println();
 			writer.println(indent + "   <features>"); //$NON-NLS-1$
 			Iterator<IProductFeature> fIter = fFeatures.iterator();
@@ -217,7 +217,7 @@ public class Product extends ProductObject implements IProduct {
 
 		writer.println();
 
-		if (fConfigurationProperties.size() > 0 || fPluginConfigurations.size() > 0) {
+		if (!fConfigurationProperties.isEmpty() || !fPluginConfigurations.isEmpty()) {
 			writer.println(indent + "   <configurations>"); //$NON-NLS-1$
 			iter = fPluginConfigurations.values().iterator();
 			while (iter.hasNext()) {
@@ -232,7 +232,7 @@ public class Product extends ProductObject implements IProduct {
 			writer.println(indent + "   </configurations>"); //$NON-NLS-1$
 		}
 
-		if (fRepositories.size() > 0) {
+		if (!fRepositories.isEmpty()) {
 			writer.println();
 			writer.println(indent + "   <repositories>"); //$NON-NLS-1$
 			Iterator<IProductObject> iterator = fRepositories.iterator();

@@ -321,7 +321,7 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 		}
 
-		if (map.size() > 0) {
+		if (!map.isEmpty()) {
 			// update class path for all affected workspace plug-ins in one operation
 			Iterator<Entry<IJavaProject, RequiredPluginsClasspathContainer>> iterator = map.entrySet().iterator();
 			IJavaProject[] projects = new IJavaProject[map.size()];

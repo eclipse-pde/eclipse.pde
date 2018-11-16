@@ -248,7 +248,7 @@ public class TargetPersistence34Helper {
 						}
 					}
 					// Primary container is only added by default if useAllPlugins='true'
-					if (included.size() > 0) {
+					if (!included.isEmpty()) {
 						containers.add(primaryContainer);
 					}
 				} else if (element.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.EXTRA_LOCATIONS)) {
@@ -282,8 +282,8 @@ public class TargetPersistence34Helper {
 			}
 		}
 		// restrictions are global to all containers
-		if (!useAll && included.size() > 0) {
-			if (included.size() > 0) {
+		if (!useAll && !included.isEmpty()) {
+			if (!included.isEmpty()) {
 				definition.setIncluded(included.toArray(new NameVersionDescriptor[included.size()]));
 			}
 		}

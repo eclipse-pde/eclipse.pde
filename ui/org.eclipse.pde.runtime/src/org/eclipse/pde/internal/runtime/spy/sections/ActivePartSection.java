@@ -87,7 +87,7 @@ public class ActivePartSection implements ISpySection {
 			Field field = clazz.getDeclaredField("menuExtenders"); //$NON-NLS-1$
 			field.setAccessible(true);
 			List list = (List) field.get(site);
-			if (list != null && list.size() > 0) {
+			if (list != null && !list.isEmpty()) {
 				Set<String> menuIds = new LinkedHashSet<>();
 				for (int i = 0; i < list.size(); i++) {
 					PopupMenuExtender extender = (PopupMenuExtender) list.get(i);

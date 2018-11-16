@@ -575,7 +575,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 					}
 				}
 			}
-			if (list.size() > 0) {
+			if (!list.isEmpty()) {
 				target.setIncluded(list.toArray(new NameVersionDescriptor[list.size()]));
 			}
 		}

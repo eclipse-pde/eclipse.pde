@@ -331,7 +331,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			}
 		}
 
-		if (userDefined.size() > 0) {
+		if (!userDefined.isEmpty()) {
 			programArgs.addAll(userDefined);
 		}
 

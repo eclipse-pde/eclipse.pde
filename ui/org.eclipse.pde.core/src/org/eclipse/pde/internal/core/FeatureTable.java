@@ -164,7 +164,7 @@ class FeatureTable {
 				break;
 			}
 		}
-		if (models.size() <= 0) {
+		if (models.isEmpty()) {
 			fIdver2models.remove(idver);
 
 			ArrayList<?> idvers = fId2idvers.get(idver.getId());
@@ -174,7 +174,7 @@ class FeatureTable {
 					break;
 				}
 			}
-			if (idvers.size() <= 0) {
+			if (idvers.isEmpty()) {
 				fId2idvers.remove(idver.getId());
 			}
 		}

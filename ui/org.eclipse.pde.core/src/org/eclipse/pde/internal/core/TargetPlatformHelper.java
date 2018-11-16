@@ -329,7 +329,7 @@ public class TargetPlatformHelper {
 				}
 			}
 		}
-		if (result.size() > 0)
+		if (!result.isEmpty())
 			return result.toArray(new Dictionary[result.size()]);
 		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment(state)};
 	}

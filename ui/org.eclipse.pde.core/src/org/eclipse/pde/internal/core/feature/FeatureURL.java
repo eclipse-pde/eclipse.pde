@@ -105,7 +105,7 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 
 	@Override
 	public void write(String indent, PrintWriter writer) {
-		if (fUpdate == null && fDiscoveries.size() <= 0) {
+		if (fUpdate == null && fDiscoveries.isEmpty()) {
 			return;
 		}
 		writer.println();

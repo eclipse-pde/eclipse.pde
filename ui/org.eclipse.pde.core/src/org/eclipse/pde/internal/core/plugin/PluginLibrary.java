@@ -121,11 +121,11 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 				}
 			}
 		}
-		if (exports.size() > 0) {
+		if (!exports.isEmpty()) {
 			fContentFilters = new String[exports.size()];
 			exports.copyInto(fContentFilters);
 		}
-		fExported = all || exports.size() > 0;
+		fExported = all || !exports.isEmpty();
 	}
 
 	@Override

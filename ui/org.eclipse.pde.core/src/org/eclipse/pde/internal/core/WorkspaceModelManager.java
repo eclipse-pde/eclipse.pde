@@ -223,11 +223,11 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 		}
 
 		int type = 0;
-		if (added.size() > 0)
+		if (!added.isEmpty())
 			type |= IModelProviderEvent.MODELS_ADDED;
-		if (removed.size() > 0)
+		if (!removed.isEmpty())
 			type |= IModelProviderEvent.MODELS_REMOVED;
-		if (changed.size() > 0)
+		if (!changed.isEmpty())
 			type |= IModelProviderEvent.MODELS_CHANGED;
 
 		if (type != 0) {

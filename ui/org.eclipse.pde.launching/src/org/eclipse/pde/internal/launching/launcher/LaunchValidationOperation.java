@@ -70,7 +70,7 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 				result.add(props);
 			}
 		}
-		if (result.size() > 0)
+		if (!result.isEmpty())
 			return result.toArray(new Dictionary[result.size()]);
 		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
 

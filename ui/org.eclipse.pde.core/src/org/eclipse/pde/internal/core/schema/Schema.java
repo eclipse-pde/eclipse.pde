@@ -966,7 +966,7 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 		addOmittedDocumentSections();
 		fLoaded = true;
-		if (fReferences.size() > 0)
+		if (!fReferences.isEmpty())
 			resolveReferences(fReferences);
 		fReferences = null;
 	}

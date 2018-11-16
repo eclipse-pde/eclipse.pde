@@ -326,11 +326,11 @@ public class Feature extends VersionableObject implements IFeature {
 		removedImports.removeAll(preservedImports);
 		// perform remove
 		fImports = preservedImports;
-		if (removedImports.size() > 0) {
+		if (!removedImports.isEmpty()) {
 			fireStructureChanged(removedImports.toArray(new IFeatureImport[removedImports.size()]), IModelChangedEvent.REMOVE);
 		}
 		// perform add
-		if (newImports.size() > 0) {
+		if (!newImports.isEmpty()) {
 			fImports.addAll(newImports);
 			fireStructureChanged(newImports.toArray(new IFeatureImport[newImports.size()]), IModelChangedEvent.INSERT);
 		}
@@ -794,7 +794,7 @@ public class Feature extends VersionableObject implements IFeature {
 			writer.println();
 			child.write(indent2, writer);
 		}
-		if (fImports.size() > 0) {
+		if (!fImports.isEmpty()) {
 			writer.println();
 			writer.println(indent2 + "<requires>"); //$NON-NLS-1$
 			for (int i = 0; i < fImports.size(); i++) {

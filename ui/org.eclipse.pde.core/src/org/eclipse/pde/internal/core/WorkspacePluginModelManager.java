@@ -423,7 +423,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	protected void removeListeners() {
 		PDECore.getWorkspace().removeResourceChangeListener(this);
 		JavaCore.removePreProcessingResourceChangedListener(this);
-		if (fExtensionListeners.size() > 0) {
+		if (!fExtensionListeners.isEmpty()) {
 			fExtensionListeners.clear();
 		}
 		super.removeListeners();

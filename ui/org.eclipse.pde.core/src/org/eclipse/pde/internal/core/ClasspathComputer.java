@@ -258,7 +258,7 @@ public class ClasspathComputer {
 			}
 		}
 		if (options == null) {
-			if (overrideExisting && projectMap.size() > 0) {
+			if (overrideExisting && !projectMap.isEmpty()) {
 				projectMap.remove(JavaCore.COMPILER_COMPLIANCE);
 				projectMap.remove(JavaCore.COMPILER_SOURCE);
 				projectMap.remove(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM);

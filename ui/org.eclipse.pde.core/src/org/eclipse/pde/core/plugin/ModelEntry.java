@@ -142,10 +142,10 @@ public class ModelEntry extends PlatformObject {
 	 * @return an array of the currently active plug-ins with the model entry ID
 	 */
 	public IPluginModelBase[] getActiveModels() {
-		if (fWorkspaceEntries.size() > 0)
+		if (!fWorkspaceEntries.isEmpty())
 			return getWorkspaceModels();
 
-		if (fExternalEntries.size() > 0) {
+		if (!fExternalEntries.isEmpty()) {
 			ArrayList<IPluginModelBase> list = new ArrayList<>(fExternalEntries.size());
 			for (int i = 0; i < fExternalEntries.size(); i++) {
 				IPluginModelBase model = fExternalEntries.get(i);

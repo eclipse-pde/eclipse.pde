@@ -174,7 +174,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		validateBuild(wbm.getBuild(true));
 
 		// if there are any errors report using the text model
-		if (fProblemList.size() > 0)
+		if (!fProblemList.isEmpty())
 			reportErrors(prepareTextBuildModel(monitor));
 	}
 
@@ -463,7 +463,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			}
 
 			// If a warnings entry is required, make sure there is one for each library with the correct content
-			if (complianceWarnSettings.size() > 0) {
+			if (!complianceWarnSettings.isEmpty()) {
 				for (String libName : libraryNames) {
 					IBuildEntry matchingEntry = null;
 					for (IBuildEntry candidate : javacWarningsEntries) {
@@ -495,7 +495,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			}
 
 			// If a warnings entry is required, make sure there is one for each library with the correct content
-			if (complianceErrorSettings.size() > 0) {
+			if (!complianceErrorSettings.isEmpty()) {
 				for (String libName : libraryNames) {
 					IBuildEntry matchingEntry = null;
 					for (IBuildEntry candidate : javacErrorsEntries) {

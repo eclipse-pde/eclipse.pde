@@ -179,7 +179,7 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 			writer.print(" arch=\"" + fArch + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fIsPatch)
 			writer.print(" patch=\"true\""); //$NON-NLS-1$
-		if (fCategories.size() > 0) {
+		if (!fCategories.isEmpty()) {
 			writer.println(">"); //$NON-NLS-1$
 			String indent2 = indent + "   "; //$NON-NLS-1$
 			for (int i = 0; i < fCategories.size(); i++) {

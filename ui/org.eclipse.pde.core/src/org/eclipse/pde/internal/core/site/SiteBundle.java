@@ -99,7 +99,7 @@ public class SiteBundle extends VersionableObject implements ISiteBundle {
 			writer.print(" version=\"" + getVersion() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (label != null)
 			writer.print(" label=\"" + getLabel() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (fCategories.size() > 0) {
+		if (!fCategories.isEmpty()) {
 			writer.println(">"); //$NON-NLS-1$
 			String indent2 = indent + "   "; //$NON-NLS-1$
 			for (int i = 0; i < fCategories.size(); i++) {

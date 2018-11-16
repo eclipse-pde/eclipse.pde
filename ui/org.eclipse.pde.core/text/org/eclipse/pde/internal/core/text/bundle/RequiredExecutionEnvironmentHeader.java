@@ -60,7 +60,7 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
 				list.add(env);
 		}
 
-		if (list.size() > 0)
+		if (!list.isEmpty())
 			addManifestElements(list.toArray(new ExecutionEnvironment[list.size()]));
 	}
 

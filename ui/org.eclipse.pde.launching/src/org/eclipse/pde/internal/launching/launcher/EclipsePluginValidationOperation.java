@@ -41,7 +41,7 @@ public class EclipsePluginValidationOperation extends LaunchValidationOperation 
 	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
 		super.run(monitor);
-		if (fExtensionErrors.size() > 0)
+		if (!fExtensionErrors.isEmpty())
 			fExtensionErrors.clear();
 		validateExtensions();
 	}
