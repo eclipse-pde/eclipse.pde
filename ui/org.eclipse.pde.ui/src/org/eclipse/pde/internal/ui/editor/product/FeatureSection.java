@@ -266,7 +266,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 
 	private void handleDelete() {
 		IStructuredSelection ssel = fFeatureTable.getStructuredSelection();
-		if (ssel.size() > 0) {
+		if (!ssel.isEmpty()) {
 			Object[] objects = ssel.toArray();
 			IProductFeature[] features = new IProductFeature[objects.length];
 			System.arraycopy(objects, 0, features, 0, objects.length);
@@ -297,7 +297,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 				handleDelete();
 			}
 		};
-		removeAction.setEnabled(isEditable() && ssel.size() > 0);
+		removeAction.setEnabled(isEditable() && !ssel.isEmpty());
 		manager.add(removeAction);
 
 		Action removeAll = new Action(PDEUIMessages.FeatureSection_removeAll) {

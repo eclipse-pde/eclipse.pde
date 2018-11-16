@@ -74,7 +74,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 
 	protected boolean doIsLeafMatch(IPluginElement pluginElement) {
 		List<String> syntheticAttributes = ExtensionsFilterUtil.handlePropertyTester(pluginElement);
-		if (fSearchPatterns != null && fSearchPatterns.size() > 0) {
+		if (fSearchPatterns != null && !fSearchPatterns.isEmpty()) {
 			int attributeNumber = 0;
 			for (String searchPattern : fSearchPatterns) {
 				if (attributeNumber < fSearchPatterns.size() && attributeNumber < ATTRIBUTE_LIMIT) {
@@ -222,7 +222,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 				doFilter(viewer, pluginPlugin, pluginPlugin.getExtensions(), false);
 			}
 		}
-		if (fFoundAnyElementsCache.size() > 0) {
+		if (!fFoundAnyElementsCache.isEmpty()) {
 			List<Object> found = new ArrayList<>();
 			for (Object element : elements) {
 				if (fFoundAnyElementsCache.contains(element)) {

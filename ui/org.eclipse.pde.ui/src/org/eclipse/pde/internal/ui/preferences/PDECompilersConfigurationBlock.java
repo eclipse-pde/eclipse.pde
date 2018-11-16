@@ -782,7 +782,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 			try {
 				ArrayList<Key> changes = new ArrayList<>();
 				collectChanges(fLookupOrder[0], changes);
-				if (changes.size() > 0) {
+				if (!changes.isEmpty()) {
 					if (fRebuildcount < 1) {
 						fRebuildcount++;
 						fManager.applyChanges();

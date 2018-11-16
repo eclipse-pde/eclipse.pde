@@ -86,7 +86,7 @@ public class OpenManifestHandler extends AbstractHandler {
 					projects.add(proj);
 			}
 		}
-		if (projects.size() > 0) {
+		if (!projects.isEmpty()) {
 			BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell().getDisplay(), () -> {
 				Iterator<IProject> it = projects.iterator();
 				while (it.hasNext()) {

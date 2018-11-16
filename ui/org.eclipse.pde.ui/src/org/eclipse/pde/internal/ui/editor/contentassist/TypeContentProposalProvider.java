@@ -120,7 +120,7 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 
 	private IContentProposal[] convertResultsToSortedProposals(ArrayList<Object> list) {
 		IContentProposal[] proposals = null;
-		if ((list != null) && (list.size() != 0)) {
+		if ((list != null) && (!list.isEmpty())) {
 			// Convert the results array list into an array of completion
 			// proposals
 			proposals = list.toArray(new IContentProposal[list.size()]);

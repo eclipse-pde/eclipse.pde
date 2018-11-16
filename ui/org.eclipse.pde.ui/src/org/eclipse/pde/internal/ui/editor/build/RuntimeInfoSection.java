@@ -550,7 +550,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 				}
 			}
 		}
-		if (outputFolders.size() != 0) {
+		if (!outputFolders.isEmpty()) {
 			String libName = buildEntry.getName().substring(7);
 			IBuildModel buildModel = getBuildModel();
 			IBuild build = buildModel.getBuild();

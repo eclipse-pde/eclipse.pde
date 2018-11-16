@@ -113,7 +113,7 @@ public class ProductConfigurationSection {
 			}
 		}
 
-		if (selection.size() > 0) {
+		if (!selection.isEmpty()) {
 			Object object = selection.getFirstElement();
 			if (object instanceof IFile) {
 				IFile file = (IFile) object;

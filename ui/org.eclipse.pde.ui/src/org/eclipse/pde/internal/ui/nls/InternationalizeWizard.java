@@ -161,7 +161,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 
 	@Override
 	public boolean canFinish() {
-		return getPluginModelsForInternationalization().size() > 0 && getLocalesForInternationalization().size() > 0;
+		return !getPluginModelsForInternationalization().isEmpty() && !getLocalesForInternationalization().isEmpty();
 	}
 
 	/**

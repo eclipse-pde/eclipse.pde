@@ -575,7 +575,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 * @return All history entries
 	 */
 	public String[] getHistoryEntries() {
-		if (fInputHistory.size() > 0) {
+		if (!fInputHistory.isEmpty()) {
 			updateHistoryEntries();
 		}
 		return fInputHistory.toArray(new String[fInputHistory.size()]);

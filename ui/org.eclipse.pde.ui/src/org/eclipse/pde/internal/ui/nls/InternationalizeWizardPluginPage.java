@@ -490,7 +490,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 
 	private void handleAdd() {
 		IStructuredSelection ssel = fAvailableViewer.getStructuredSelection();
-		if (ssel.size() > 0) {
+		if (!ssel.isEmpty()) {
 			Table table = fAvailableViewer.getTable();
 			int index = table.getSelectionIndices()[0];
 			Object[] selection = ssel.toArray();
@@ -513,7 +513,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		for (TableItem item : items) {
 			data.add(item.getData());
 		}
-		if (data.size() > 0) {
+		if (!data.isEmpty()) {
 			Object[] datas = data.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);
@@ -528,7 +528,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 
 	private void handleRemove() {
 		IStructuredSelection ssel = fSelectedViewer.getStructuredSelection();
-		if (ssel.size() > 0) {
+		if (!ssel.isEmpty()) {
 			Table table = fSelectedViewer.getTable();
 			int index = table.getSelectionIndices()[0];
 			Object[] selection = ssel.toArray();
@@ -571,7 +571,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		for (TableItem item : items) {
 			data.add(item.getData());
 		}
-		if (data.size() > 0) {
+		if (!data.isEmpty()) {
 			Object[] datas = data.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);

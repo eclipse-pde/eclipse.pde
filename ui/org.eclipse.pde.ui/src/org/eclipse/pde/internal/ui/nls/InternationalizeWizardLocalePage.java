@@ -362,7 +362,7 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 
 	private void handleAdd() {
 		IStructuredSelection ssel = fAvailableListViewer.getStructuredSelection();
-		if (ssel.size() > 0) {
+		if (!ssel.isEmpty()) {
 			Table table = fAvailableListViewer.getTable();
 			int index = table.getSelectionIndices()[0];
 			Object[] selection = ssel.toArray();
@@ -385,7 +385,7 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 		for (TableItem item : items) {
 			data.add(item.getData());
 		}
-		if (data.size() > 0) {
+		if (!data.isEmpty()) {
 			Object[] datas = data.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);
@@ -400,7 +400,7 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 
 	private void handleRemove() {
 		IStructuredSelection ssel = fSelectedListViewer.getStructuredSelection();
-		if (ssel.size() > 0) {
+		if (!ssel.isEmpty()) {
 			Table table = fSelectedListViewer.getTable();
 			int index = table.getSelectionIndices()[0];
 			Object[] selection = ssel.toArray();
@@ -443,7 +443,7 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 		for (TableItem item : items) {
 			data.add(item.getData());
 		}
-		if (data.size() > 0) {
+		if (!data.isEmpty()) {
 			Object[] datas = data.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);

@@ -180,7 +180,7 @@ public final class BuildJob extends Job {
 			}
 		}
 		IProject[] projects = null;
-		if (temp.size() != 0) {
+		if (!temp.isEmpty()) {
 			projects = new IProject[temp.size()];
 			temp.toArray(projects);
 		}

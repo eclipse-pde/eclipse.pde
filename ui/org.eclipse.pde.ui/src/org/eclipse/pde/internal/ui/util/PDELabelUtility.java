@@ -89,7 +89,7 @@ public class PDELabelUtility {
 	}
 
 	private static void addNumberToBase(StringBuilder base, boolean bracketed, HashSet<Integer> set) {
-		if (set.size() > 0) {
+		if (!set.isEmpty()) {
 			// Limit on the number of auto-generated item numbers to check for
 			int limit = 100;
 			// Check the set for the numbers encountered and generate the

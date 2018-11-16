@@ -144,7 +144,7 @@ public class ConvertPreferencesWizard extends Wizard {
 
 						// If there are preferences to save, look for a plugin_customization.ini file and either
 						// overwrite it or merge it.
-						if (properties.size() > 0) {
+						if (!properties.isEmpty()) {
 							// Ensure file exists in case it was deleted since we validated
 							IFile customizationFile = page.getPluginCustomizeFile();
 							errorFilePath = customizationFile.getFullPath().toString();

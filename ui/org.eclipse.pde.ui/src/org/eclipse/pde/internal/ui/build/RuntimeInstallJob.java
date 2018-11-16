@@ -147,7 +147,7 @@ public class RuntimeInstallJob extends Job {
 				subMonitor.split(2);
 			}
 
-			if (toInstall.size() > 0) {
+			if (!toInstall.isEmpty()) {
 				InstallOperation operation = ui.getInstallOperation(toInstall, new URI[] {destination});
 				operation.resolveModal(subMonitor.split(5));
 				IStatus status = operation.getResolutionResult();

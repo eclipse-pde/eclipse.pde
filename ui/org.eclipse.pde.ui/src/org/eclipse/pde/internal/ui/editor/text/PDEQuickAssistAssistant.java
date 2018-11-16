@@ -201,7 +201,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 					if (!(resolution instanceof AbstractPDEMarkerResolution) && !resolutions.contains(contributedResolutions[i]))
 						resolutions.add(contributedResolutions[i]);
 				}
-				if (resolutions.size() > 0) {
+				if (!resolutions.isEmpty()) {
 					fResMap.put(marker, resolutions.toArray(new IMarkerResolution[resolutions.size()]));
 				}
 			}

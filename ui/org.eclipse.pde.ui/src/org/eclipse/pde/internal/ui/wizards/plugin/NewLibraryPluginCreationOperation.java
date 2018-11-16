@@ -144,7 +144,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 				classpath.add(entry);
 			}
 		}
-		if (requiredProjects.size() <= 0)
+		if (requiredProjects.isEmpty())
 			return;
 		IFile file = PDEProject.getManifest(javaProject.getProject());
 		try {

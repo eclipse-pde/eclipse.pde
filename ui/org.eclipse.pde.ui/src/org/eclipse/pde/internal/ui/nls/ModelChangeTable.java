@@ -52,7 +52,7 @@ public class ModelChangeTable {
 	}
 
 	public boolean hasPreSelected() {
-		return fPreSelected.size() > 0;
+		return !fPreSelected.isEmpty();
 	}
 
 	public boolean isEmpty() {

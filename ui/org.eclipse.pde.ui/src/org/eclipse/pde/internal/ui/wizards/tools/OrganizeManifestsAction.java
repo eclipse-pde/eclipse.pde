@@ -71,7 +71,7 @@ public class OrganizeManifestsAction extends AbstractHandler {
 				if (proj != null && PDEProject.getManifest(proj).exists())
 					projects.add(proj);
 			}
-			if (projects.size() > 0) {
+			if (!projects.isEmpty()) {
 				OrganizeManifestsProcessor processor = new OrganizeManifestsProcessor(projects);
 				PDERefactor refactor = new PDERefactor(processor);
 				OrganizeManifestsWizard wizard = new OrganizeManifestsWizard(refactor);

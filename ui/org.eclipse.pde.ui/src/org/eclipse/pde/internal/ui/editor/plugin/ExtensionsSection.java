@@ -448,7 +448,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			manager.add(new Separator());
 			delAction.setEnabled(isEditable() && isRemoveEnabled(selection));
 		}
-		if (selection.size() > 0) {
+		if (!selection.isEmpty()) {
 			if (ExtensionsFilterUtil.isFilterRelatedEnabled(selection)) {
 				manager.add(fFilterRelatedAction);
 			}

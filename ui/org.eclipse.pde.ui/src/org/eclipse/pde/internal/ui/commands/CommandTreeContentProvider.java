@@ -104,7 +104,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 		if (element instanceof Category) {
 			ArrayList<?> list = fCatMap.get(element);
 			if (list != null)
-				return list.size() > 0;
+				return !list.isEmpty();
 		}
 		return false;
 	}

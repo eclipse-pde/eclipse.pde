@@ -190,7 +190,7 @@ public class TemplateSelectionPage extends WizardPage {
 				fVisiblePages.add(section.getPage(j));
 			}
 		}
-		if (fVisiblePages.size() > 0)
+		if (!fVisiblePages.isEmpty())
 			return fVisiblePages.get(0);
 
 		return null;

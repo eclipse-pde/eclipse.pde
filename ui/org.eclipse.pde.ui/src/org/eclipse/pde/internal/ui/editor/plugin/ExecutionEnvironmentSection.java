@@ -280,7 +280,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 
 	private void handleRemove() {
 		IStructuredSelection ssel = fEETable.getStructuredSelection();
-		if (ssel.size() > 0) {
+		if (!ssel.isEmpty()) {
 			Iterator<?> iter = ssel.iterator();
 			while (iter.hasNext()) {
 				Object object = iter.next();

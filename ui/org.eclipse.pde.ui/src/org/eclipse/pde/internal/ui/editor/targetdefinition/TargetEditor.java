@@ -281,7 +281,7 @@ public class TargetEditor extends FormEditor {
 				}
 				ImageHyperlink hyperlink = new ImageHyperlink(parent, SWT.NONE | SWT.NO_FOCUS);
 				hyperlink.setText(hyperLinkText);
-				if (arrayHyperLink.size() > 0) {
+				if (!arrayHyperLink.isEmpty()) {
 					// if hyperlink exist, update text from it.
 					hyperlink.setText(arrayHyperLink.get(0).getText());
 				}

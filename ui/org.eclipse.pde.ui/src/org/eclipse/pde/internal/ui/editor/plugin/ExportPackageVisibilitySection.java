@@ -323,7 +323,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 	@Override
 	public void selectionChanged(IFormPart source, ISelection selection) {
 		List<?> list = ((IStructuredSelection) selection).toList();
-		if (list.size() > 0) {
+		if (!list.isEmpty()) {
 			Object[] objects = list.toArray();
 			ExportPackageObject first = null;
 			for (int i = 0; i < objects.length; i++) {

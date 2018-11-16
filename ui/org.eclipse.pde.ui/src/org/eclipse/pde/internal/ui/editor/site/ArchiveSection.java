@@ -184,7 +184,7 @@ public class ArchiveSection extends PDESection {
 			return;
 		}
 		if (ssel != null) {
-			fRemoveButton.setEnabled(ssel.size() > 0);
+			fRemoveButton.setEnabled(!ssel.isEmpty());
 			fEditButton.setEnabled(ssel.size() == 1);
 		} else {
 			fRemoveButton.setEnabled(false);
@@ -205,7 +205,7 @@ public class ArchiveSection extends PDESection {
 	private void handleDelete() {
 		try {
 			IStructuredSelection ssel = fViewer.getStructuredSelection();
-			if (ssel.size() > 0) {
+			if (!ssel.isEmpty()) {
 				ISiteArchive[] array = (ISiteArchive[]) ssel.toList().toArray(new ISiteArchive[ssel.size()]);
 				ISite site = ((ISiteModel) getPage().getModel()).getSite();
 				site.removeArchives(array);

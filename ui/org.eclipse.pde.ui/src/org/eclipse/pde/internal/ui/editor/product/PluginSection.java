@@ -321,7 +321,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 				handleDelete();
 			}
 		};
-		removeAction.setEnabled(isEditable() && ssel.size() > 0);
+		removeAction.setEnabled(isEditable() && !ssel.isEmpty());
 		manager.add(removeAction);
 
 		Action removeAll = new Action(PDEUIMessages.PluginSection_removeAll) {
@@ -411,7 +411,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 
 	private void handleDelete() {
 		IStructuredSelection ssel = fPluginTable.getStructuredSelection();
-		if (ssel.size() > 0) {
+		if (!ssel.isEmpty()) {
 			Object[] objects = ssel.toArray();
 			IProductPlugin[] plugins = new IProductPlugin[objects.length];
 			System.arraycopy(objects, 0, plugins, 0, objects.length);

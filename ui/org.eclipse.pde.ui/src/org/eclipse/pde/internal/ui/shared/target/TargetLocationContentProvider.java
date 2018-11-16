@@ -62,7 +62,7 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 				HashMap<ITargetHandle, List<TargetDefinition>> targetFlagMap = TargetPlatformHelper
 						.getTargetDefinitionMap();
 				for (List<TargetDefinition> targetDefinitionValues : targetFlagMap.values()) {
-					if (targetDefinitionValues.size() > 0) {
+					if (!targetDefinitionValues.isEmpty()) {
 						ITargetLocation[] locs = targetDefinitionValues.get(0).getTargetLocations();
 						if (locs != null) {
 							for (ITargetLocation loc : locs) {

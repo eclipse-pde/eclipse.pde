@@ -208,7 +208,7 @@ public abstract class InputContext {
 	protected abstract void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event);
 
 	public void flushEditorInput() {
-		if (fEditOperations.size() > 0) {
+		if (!fEditOperations.isEmpty()) {
 			IDocument doc = fDocumentProvider.getDocument(fEditorInput);
 			fDocumentProvider.aboutToChange(fEditorInput);
 			flushModel(doc);
@@ -225,7 +225,7 @@ public abstract class InputContext {
 
 	protected void flushModel(IDocument doc) {
 		boolean flushed = true;
-		if (fEditOperations.size() > 0) {
+		if (!fEditOperations.isEmpty()) {
 			try {
 				MultiTextEdit edit = new MultiTextEdit();
 				if (isNewlineNeeded(doc))
@@ -312,7 +312,7 @@ public abstract class InputContext {
 				}
 			}
 		}
-		return fEditOperations.size() > 0 || fDocumentProvider.canSaveDocument(fEditorInput);
+		return !fEditOperations.isEmpty() || fDocumentProvider.canSaveDocument(fEditorInput);
 	}
 
 	public void dispose() {

@@ -283,7 +283,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 
 	@Override
 	public void setFocus() {
-		if (rows.size() > 0)
+		if (!rows.isEmpty())
 			rows.get(0).setFocus();
 	}
 

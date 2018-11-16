@@ -154,7 +154,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 					} else {
 						setErrorMessage(null);
 					}
-					if (result.size() > 0) {
+					if (!result.isEmpty()) {
 						fFeatureTable.setInput(result.toArray(new IFeatureModel[result.size()]));
 						fFeatureTable.getControl().setEnabled(true);
 						checkStateChanged();

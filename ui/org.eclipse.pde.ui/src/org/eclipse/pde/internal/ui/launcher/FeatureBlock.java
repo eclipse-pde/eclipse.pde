@@ -1198,7 +1198,7 @@ public class FeatureBlock {
 			}
 
 			List<Object> models = new ArrayList<>(fFeatureModels.values());
-			if (fAdditionalPlugins.size() > 0) {
+			if (!fAdditionalPlugins.isEmpty()) {
 				models.add(fAdditionalPluginsParentElement);
 			}
 			tree.setInput(models);

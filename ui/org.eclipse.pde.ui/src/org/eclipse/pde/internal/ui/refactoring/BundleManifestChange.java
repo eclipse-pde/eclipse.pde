@@ -84,7 +84,7 @@ public class BundleManifestChange {
 				edit.addChildren(operations);
 				change.setEdit(edit);
 				PDEModelUtility.setChangeTextType(change, file);
-				if (list.size() > 0)
+				if (!list.isEmpty())
 					change.setMovedElements(list.toArray(new PDEManifestElement[list.size()]));
 				return change;
 			}

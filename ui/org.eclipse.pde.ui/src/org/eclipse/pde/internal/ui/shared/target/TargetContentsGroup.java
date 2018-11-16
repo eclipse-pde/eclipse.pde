@@ -1023,7 +1023,7 @@ public class TargetContentsGroup {
 			result = container.getBundles();
 		} else if (fGrouping == GROUP_BY_FILE_LOC && parent instanceof IPath) {
 			List<TargetBundle> bundles = getFileBundleMapping().get(parent);
-			if (bundles != null && bundles.size() > 0) {
+			if (bundles != null && !bundles.isEmpty()) {
 				result = bundles.toArray();
 			}
 		}

@@ -156,7 +156,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 				}
 			}
 		}
-		if (items.size() > 0)
+		if (!items.isEmpty())
 			target.selectReveal(new StructuredSelection(items));
 	}
 

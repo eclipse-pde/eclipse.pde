@@ -305,7 +305,7 @@ public class RepositoryReferenceSection extends TableSection {
 
 	private void handleEdit(IStructuredSelection selection) {
 		clearEditors();
-		if (selection.size() > 0) {
+		if (!selection.isEmpty()) {
 			Object[] objects = selection.toArray();
 			RepositoryReferenceDialog dialog = new RepositoryReferenceDialog(PDEPlugin.getActiveWorkbenchShell(), (IRepositoryReference) objects[0]);
 			if (dialog.open() == Window.OK) {
@@ -322,7 +322,7 @@ public class RepositoryReferenceSection extends TableSection {
 	private void handleDelete() {
 		clearEditors();
 		IStructuredSelection ssel = fRepositoryTable.getStructuredSelection();
-		if (ssel.size() > 0) {
+		if (!ssel.isEmpty()) {
 			Object[] objects = ssel.toArray();
 			IRepositoryReference[] repos = new IRepositoryReference[objects.length];
 			System.arraycopy(objects, 0, repos, 0, objects.length);

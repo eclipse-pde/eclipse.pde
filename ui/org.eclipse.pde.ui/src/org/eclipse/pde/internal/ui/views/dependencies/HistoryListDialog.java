@@ -152,7 +152,7 @@ public class HistoryListDialog extends StatusDialog {
 		fHistoryViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 
 		ISelection sel;
-		if (fHistoryList.size() > 0) {
+		if (!fHistoryList.isEmpty()) {
 			sel = new StructuredSelection(fHistoryList.get(0));
 		} else {
 			sel = new StructuredSelection();
@@ -169,7 +169,7 @@ public class HistoryListDialog extends StatusDialog {
 			} else {
 				fResult = (String) selected.get(0);
 			}
-			fRemoveButton.setEnabled(fHistoryList.size() > selected.size() && selected.size() != 0);
+			fRemoveButton.setEnabled(fHistoryList.size() > selected.size() && !selected.isEmpty());
 			fHistoryStatus = status;
 			updateStatus(status);
 		});

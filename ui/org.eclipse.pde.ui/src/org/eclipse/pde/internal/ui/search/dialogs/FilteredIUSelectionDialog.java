@@ -179,7 +179,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 
 		public boolean isIUMatch(IInstallableUnit iu) {
-			if (iu.getFragments() != null && iu.getFragments().size() > 0)
+			if (iu.getFragments() != null && !iu.getFragments().isEmpty())
 				return false;
 
 			String id = iu.getId();

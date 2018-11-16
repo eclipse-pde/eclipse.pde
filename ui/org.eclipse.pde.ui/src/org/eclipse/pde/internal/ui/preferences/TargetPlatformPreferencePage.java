@@ -189,7 +189,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 						.getTargetDefinitionMap();
 				for (Entry<ITargetHandle, List<TargetDefinition>> entry : targetFlagMap.entrySet()) {
 					if (entry.getKey().equals(target.getHandle())) {
-						if (entry.getValue().size() > 0) {
+						if (!entry.getValue().isEmpty()) {
 							if (entry.getValue().get(0).isContentEquivalent(target)) {
 								isResolved = true;
 								break;
@@ -220,7 +220,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				for (Entry<ITargetHandle, List<TargetDefinition>> entry : targetFlagMap.entrySet()) {
 					if (entry.getKey().equals(target.getHandle())) {
 						List<TargetDefinition> targetList = entry.getValue();
-						if (targetList.size() > 0) {
+						if (!targetList.isEmpty()) {
 							if (targetList.get(0).isContentEquivalent(target)
 									&& targetList.get(0).getStatus() != null) {
 								int value = targetList.get(0).getStatus().getSeverity();

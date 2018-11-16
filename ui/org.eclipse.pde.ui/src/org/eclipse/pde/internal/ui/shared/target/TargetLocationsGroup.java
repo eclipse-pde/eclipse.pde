@@ -385,7 +385,7 @@ public class TargetLocationsGroup {
 					newContainers.addAll(Arrays.asList(fTarget.getTargetLocations()));
 				}
 				newContainers.removeAll(toRemove);
-				if (newContainers.size() > 0) {
+				if (!newContainers.isEmpty()) {
 					fTarget.setTargetLocations(newContainers.toArray(new ITargetLocation[newContainers.size()]));
 				} else {
 					fTarget.setTargetLocations(null);

@@ -93,7 +93,7 @@ public class InternationalizeModelTable {
 	 * @return whether or not the model table contains preselected models
 	 */
 	public boolean hasPreSelected() {
-		return fPreSelected.size() > 0;
+		return !fPreSelected.isEmpty();
 	}
 
 	/**

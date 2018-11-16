@@ -220,7 +220,7 @@ public class PluginImportOperation extends WorkspaceJob {
 					}
 				}
 			}
-			if (namesOfNotImportedProjects.size() > 0) {
+			if (!namesOfNotImportedProjects.isEmpty()) {
 				UIJob job = new UIJob(PDEUIMessages.PluginImportOperation_WarningDialogJob) {
 
 					@Override
@@ -313,7 +313,7 @@ public class PluginImportOperation extends WorkspaceJob {
 		monitor.worked(1);
 
 		final ArrayList<Object> overwriteProjectList = new ArrayList<>();
-		if (conflictingPlugins.size() > 0) {
+		if (!conflictingPlugins.isEmpty()) {
 
 			UIJob job = new UIJob(PDEUIMessages.PluginImportOperation_OverwritePluginProjects) {
 
@@ -1020,7 +1020,7 @@ public class PluginImportOperation extends WorkspaceJob {
 
 			ArrayList<Object> collected = new ArrayList<>();
 			PluginImportHelper.collectResourcesFromFolder(provider, root, defaultSourcePath, collected);
-			if (collected.size() > 0) {
+			if (!collected.isEmpty()) {
 				Set<IPath> packages = new HashSet<>();
 				PluginImportHelper.collectJavaPackages(provider, collected, prefixPath, packages);
 				addPackageEntries(packages, defaultSourcePath, packageLocations);

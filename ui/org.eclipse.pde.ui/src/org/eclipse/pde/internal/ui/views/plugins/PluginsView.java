@@ -443,7 +443,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 			if (addSeparator)
 				manager.add(new Separator());
 		}
-		if (selection.size() > 0) {
+		if (!selection.isEmpty()) {
 			if (isShowInApplicable()) {
 				String showInLabel = PDEUIMessages.PluginsView_showIn;
 				IBindingService bindingService = PlatformUI.getWorkbench().getAdapter(IBindingService.class);
@@ -474,7 +474,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		manager.add(fCopyAction);
 		IMenuManager selectionMenu = new MenuManager(PDEUIMessages.PluginsView_select);
 		manager.add(selectionMenu);
-		if (selection.size() > 0)
+		if (!selection.isEmpty())
 			selectionMenu.add(fSelectDependentAction);
 		selectionMenu.add(fSelectInJavaSearchAction);
 		selectionMenu.add(fSelectAllAction);

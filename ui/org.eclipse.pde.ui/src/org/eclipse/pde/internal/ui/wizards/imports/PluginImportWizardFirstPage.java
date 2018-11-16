@@ -301,7 +301,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 						}
 					}
 				}
-				if (index == -1 && targetDefinitions.size() > 0) {
+				if (index == -1 && !targetDefinitions.isEmpty()) {
 					index = 0;
 				}
 				if (index >= 0) {
@@ -764,7 +764,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 */
 	private ITargetDefinition getTargetDefinition() {
 		int index = targetDefinitionCombo.getSelectionIndex();
-		if (index >= 0 && targetDefinitions.size() > 0) {
+		if (index >= 0 && !targetDefinitions.isEmpty()) {
 			return targetDefinitions.get(targetDefinitionCombo.getSelectionIndex());
 		}
 		return null;

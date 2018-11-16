@@ -54,7 +54,7 @@ public abstract class AbstractFoldingStructureProvider implements IFoldingStruct
 			additionsMap.put(new ProjectionAnnotation(false), position);
 		}
 
-		if ((deletions.length != 0 || additionsMap.size() != 0)) {
+		if ((deletions.length != 0 || !additionsMap.isEmpty())) {
 			model.modifyAnnotations(deletions, additionsMap, new Annotation[] {});
 		}
 	}

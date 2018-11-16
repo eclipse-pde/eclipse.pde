@@ -245,7 +245,7 @@ public class BuildClasspathSection extends TableSection {
 	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
-		getTablePart().setButtonEnabled(1, selection != null && selection.size() > 0 && fEnabled);
+		getTablePart().setButtonEnabled(1, selection != null && !selection.isEmpty() && fEnabled);
 	}
 
 	private void handleDelete() {

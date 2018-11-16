@@ -301,7 +301,7 @@ public class PluginConfigurationSection extends TableSection {
 
 	private void handleRemove() {
 		IStructuredSelection ssel = fConfigurationsTable.getStructuredSelection();
-		if (ssel.size() > 0) {
+		if (!ssel.isEmpty()) {
 			Object[] objects = ssel.toArray();
 			IPluginConfiguration[] configurations = new IPluginConfiguration[objects.length];
 			System.arraycopy(objects, 0, configurations, 0, objects.length);
@@ -344,7 +344,7 @@ public class PluginConfigurationSection extends TableSection {
 				}
 			}
 		}
-		if (plugins.size() > 0) {
+		if (!plugins.isEmpty()) {
 			// Build a user-presentable description of the plugins and start levels.
 			StringBuilder bundlesList = new StringBuilder();
 			bundlesList.append('\n');

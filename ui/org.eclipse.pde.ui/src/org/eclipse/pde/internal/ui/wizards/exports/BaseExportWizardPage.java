@@ -239,7 +239,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		//preselect all models which were deduced and if possible
 		//scroll-down viewer to first one
 		fExportPart.setSelection(checked.toArray());
-		if (checked.size() > 0) {
+		if (!checked.isEmpty()) {
 			fExportPart.getTreeViewer().reveal(checked.get(0));
 		}
 	}
