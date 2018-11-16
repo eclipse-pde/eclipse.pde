@@ -14,6 +14,26 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/pde/core/IModelProvider.java" type="org.eclipse.pde.core.IModelProvider">
+        <filter comment="Bug 541068: Mark IModelProvider for deletion" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.core.IModelProvider"/>
+                <message_argument value="addModelProviderListener(IModelProviderListener)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 541068: Mark IModelProvider for deletion" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.core.IModelProvider"/>
+                <message_argument value="getModel(IFile)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 541068: Mark IModelProvider for deletion" id="406052990">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.core.IModelProvider"/>
+                <message_argument value="removeModelProviderListener(IModelProviderListener)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/pde/core/plugin/TargetPlatform.java" type="org.eclipse.pde.core.plugin.TargetPlatform">
         <filter comment="Old Update Manager is planned for removal and so it this API.  See bug 527378 for details" id="338944126">
             <message_arguments>

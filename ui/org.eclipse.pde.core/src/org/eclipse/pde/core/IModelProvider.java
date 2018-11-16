@@ -28,10 +28,15 @@ import org.eclipse.core.resources.IFile;
  * models whose underlying resources have been updated, and removing them from
  * the table when those resources have been deleted.
  *
+ * @deprecated This interface is not implemented within PDE and is scheduled for
+ *             deletion: https://bugs.eclipse.org/bugs/show_bug.cgi?id=541068
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
+ * @noreference This interface is scheduled for deletion.
  * @since 2.0
  */
+@Deprecated
 public interface IModelProvider {
 	/**
 	 * Registers a listener that will be notified about changes in the managed
