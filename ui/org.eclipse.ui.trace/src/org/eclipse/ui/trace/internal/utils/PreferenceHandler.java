@@ -22,7 +22,6 @@ import org.osgi.service.prefs.BackingStoreException;
 /**
  * Tracing preference handler.
  */
-@SuppressWarnings("deprecation")
 public class PreferenceHandler extends AbstractPreferenceInitializer {
 
 	@Override
@@ -37,7 +36,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 	 *         not exist.
 	 */
 	public static IEclipsePreferences getPreferences() {
-		return new InstanceScope().getNode(TracingConstants.BUNDLE_ID);
+		return InstanceScope.INSTANCE.getNode(TracingConstants.BUNDLE_ID);
 	}
 
 	/**
@@ -48,7 +47,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 	 *         preferences.
 	 */
 	public static Map<String, String> getPreferenceProperties() {
-		IEclipsePreferences tracingPrefs = new InstanceScope().getNode(TracingConstants.BUNDLE_ID);
+		IEclipsePreferences tracingPrefs = InstanceScope.INSTANCE.getNode(TracingConstants.BUNDLE_ID);
 		final String componentsAsString = tracingPrefs.get(TracingConstants.PREFERENCE_ENTRIES_IDENTIFIER, TracingConstants.EMPTY_STRING);
 		Map<String, String> options = null;
 		if (!componentsAsString.equals(TracingConstants.EMPTY_STRING)) {
@@ -106,7 +105,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 	 * @return <code>true</code> if tracing is enabled in the preferences; Otherwise, <code>false</code> is returned.
 	 */
 	public static boolean isTracingEnabled() {
-		final IScopeContext[] lookupOrder = new IScopeContext[] {new InstanceScope()};
+		final IScopeContext[] lookupOrder = new IScopeContext[] { InstanceScope.INSTANCE };
 		IPreferencesService prefService = Platform.getPreferencesService();
 		prefService.setDefaultLookupOrder(TracingConstants.BUNDLE_ID, null, new String[] {InstanceScope.SCOPE});
 		return prefService.getBoolean(TracingConstants.BUNDLE_ID, TracingConstants.PREFERENCE_ENABLEMENT_IDENTIFIER, false, lookupOrder);
@@ -118,7 +117,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 	 * @return The maximum file count in the preference store or the value 10 if it's not defined.
 	 */
 	public static int getMaxFileCount() {
-		final IScopeContext[] lookupOrder = new IScopeContext[] {new InstanceScope()};
+		final IScopeContext[] lookupOrder = new IScopeContext[] { InstanceScope.INSTANCE };
 		IPreferencesService prefService = Platform.getPreferencesService();
 		prefService.setDefaultLookupOrder(TracingConstants.BUNDLE_ID, null, new String[] {InstanceScope.SCOPE});
 		return prefService.getInt(TracingConstants.BUNDLE_ID, TracingConstants.PREFERENCE_MAX_FILE_COUNT_IDENTIFIER, 10, lookupOrder);
@@ -130,7 +129,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 	 * @return The maximum file size in the preference store or the value 1000 if it's not defined.
 	 */
 	public static int getMaxFileSize() {
-		final IScopeContext[] lookupOrder = new IScopeContext[] {new InstanceScope()};
+		final IScopeContext[] lookupOrder = new IScopeContext[] { InstanceScope.INSTANCE };
 		IPreferencesService prefService = Platform.getPreferencesService();
 		prefService.setDefaultLookupOrder(TracingConstants.BUNDLE_ID, null, new String[] {InstanceScope.SCOPE});
 		return prefService.getInt(TracingConstants.BUNDLE_ID, TracingConstants.PREFERENCE_MAX_FILE_SIZE_IDENTIFIER, 1000, lookupOrder);
@@ -142,7 +141,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 	 * @return The file path in the preference store or the default value if it's not defined.
 	 */
 	public static String getFilePath() {
-		final IScopeContext[] lookupOrder = new IScopeContext[] {new InstanceScope()};
+		final IScopeContext[] lookupOrder = new IScopeContext[] { InstanceScope.INSTANCE };
 		IPreferencesService prefService = Platform.getPreferencesService();
 		prefService.setDefaultLookupOrder(TracingConstants.BUNDLE_ID, null, new String[] {InstanceScope.SCOPE});
 		return prefService.getString(TracingConstants.BUNDLE_ID, TracingConstants.PREFERENCE_FILE_PATH, DebugOptionsHandler.getDebugOptions().getFile() == null ? null : DebugOptionsHandler.getDebugOptions().getFile().getAbsolutePath(), lookupOrder);
@@ -154,7 +153,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 	 * @return The output to standard output stream selection in the preference store or the default value if it's not defined.
 	 */
 	public static String getOutputToStandardStream() {
-		final IScopeContext[] lookupOrder = new IScopeContext[] {new InstanceScope()};
+		final IScopeContext[] lookupOrder = new IScopeContext[] { InstanceScope.INSTANCE };
 		IPreferencesService prefService = Platform.getPreferencesService();
 		prefService.setDefaultLookupOrder(TracingConstants.BUNDLE_ID, null, new String[] {InstanceScope.SCOPE});
 		return prefService.getString(TracingConstants.BUNDLE_ID, TracingConstants.PREFERENCE_OUTPUT_STANDARD_STREAM, "false", lookupOrder); //$NON-NLS-1$
