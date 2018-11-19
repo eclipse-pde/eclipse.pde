@@ -73,8 +73,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 				fJarPaths.add(newJarFile);
 				fTableViewer.add(newJarFile);
 			}
-			fRemove.setEnabled(!fJarPaths.isEmpty());
-			setPageComplete(!fJarPaths.isEmpty());
+			updatePageStatus();
 		}
 	}
 
@@ -97,8 +96,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 				fJarPaths.add(newJarFile);
 				fTableViewer.add(newJarFile);
 			}
-			fRemove.setEnabled(!fJarPaths.isEmpty());
-			setPageComplete(!fJarPaths.isEmpty());
+			updatePageStatus();
 		}
 	}
 
@@ -184,8 +182,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 		fRemove.setText(PDEUIMessages.LibraryPluginJarsPage_remove);
 		fRemove.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(fRemove);
-		fRemove.setEnabled(!fJarPaths.isEmpty());
-		setPageComplete(!fJarPaths.isEmpty());
+		updatePageStatus();
 		fRemove.addSelectionListener(widgetSelectedAdapter(e -> handleRemove()));
 
 		Dialog.applyDialogFont(control);
@@ -203,9 +200,13 @@ public class LibraryPluginJarsPage extends WizardPage {
 				fJarPaths.remove(file);
 				fTableViewer.remove(file);
 			}
-			fRemove.setEnabled(!fJarPaths.isEmpty());
-			setPageComplete(!fJarPaths.isEmpty());
+			updatePageStatus();
 		}
+	}
+
+	private void updatePageStatus() {
+		fRemove.setEnabled(!fJarPaths.isEmpty());
+		setPageComplete(!fJarPaths.isEmpty());
 	}
 
 	@Override
