@@ -43,9 +43,6 @@ public class ViewTemplate extends PDETemplateSection {
 		return "view"; //$NON-NLS-1$
 	}
 
-	/*
-	 * @see ITemplateSection#getNumberOfWorkUnits()
-	 */
 	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;

@@ -51,9 +51,6 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 		return dep;
 	}
 
-	/*
-	 * @see ITemplateSection#getNumberOfWorkUnits()
-	 */
 	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;

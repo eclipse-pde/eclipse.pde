@@ -43,9 +43,6 @@ public class E4HandlerTemplate extends PDETemplateSection {
 		return "E4Handler"; //$NON-NLS-1$
 	}
 
-	/*
-	 * @see ITemplateSection#getNumberOfWorkUnits()
-	 */
 	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;

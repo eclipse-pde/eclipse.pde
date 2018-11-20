@@ -36,9 +36,6 @@ public class NewWizardTemplate extends PDETemplateSection {
 		return "newWizard"; //$NON-NLS-1$
 	}
 
-	/*
-	 * @see ITemplateSection#getNumberOfWorkUnits()
-	 */
 	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;

@@ -43,9 +43,6 @@ public class HelloWorldCmdTemplate extends PDETemplateSection {
 		return "helloWorldCmd"; //$NON-NLS-1$
 	}
 
-	/*
-	 * @see ITemplateSection#getNumberOfWorkUnits()
-	 */
 	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;

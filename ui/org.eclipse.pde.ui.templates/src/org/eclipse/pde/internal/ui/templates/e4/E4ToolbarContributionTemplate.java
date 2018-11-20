@@ -43,9 +43,6 @@ public class E4ToolbarContributionTemplate extends PDETemplateSection {
 		return "E4ToolbarContribution"; //$NON-NLS-1$
 	}
 
-	/*
-	 * @see ITemplateSection#getNumberOfWorkUnits()
-	 */
 	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
