@@ -85,9 +85,6 @@ public class ConfigurationTab extends AbstractLauncherTab
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.LAUNCHER_CONFIGURATION);
 	}
 
-	/*
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		fConfigurationArea.setDefaults(configuration, fJUnitConfig);

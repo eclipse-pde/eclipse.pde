@@ -82,9 +82,6 @@ public class HistoryAction extends Action {
 		return desc;
 	}
 
-	/*
-	 * @see Action#run()
-	 */
 	@Override
 	public void run() {
 		fView.gotoHistoryEntry(fElement);

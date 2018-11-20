@@ -37,9 +37,6 @@ public class CategoryUndoManager extends ModelUndoManager {
 		return null;
 	}
 
-	/*
-	 * @see IModelUndoManager#execute(ModelUndoOperation)
-	 */
 	@Override
 	protected void execute(IModelChangedEvent event, boolean undo) {
 		IModelChangeProvider model = event.getChangeProvider();

@@ -101,9 +101,6 @@ public class PluginStatusDialog extends TrayDialog {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);

@@ -46,39 +46,24 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 		return fJarEntryFile.hashCode();
 	}
 
-	/*
-	 * @see IEditorInput#getPersistable()
-	 */
 	@Override
 	public IPersistableElement getPersistable() {
 		return null;
 	}
 
-	/*
-	 * @see IEditorInput#getName()
-	 */
 	@Override
 	public String getName() {
 		return fJarEntryFile.getName();
 	}
 
-	/*
-	 * @see IEditorInput#getFullPath()
-	 */
 	public String getFullPath() {
 		return fJarEntryFile.getFullPath().toString();
 	}
 
-	/*
-	 * @see IEditorInput#getContentType()
-	 */
 	public String getContentType() {
 		return fJarEntryFile.getFullPath().getFileExtension();
 	}
 
-	/*
-	 * @see IEditorInput#getToolTipText()
-	 */
 	@Override
 	public String getToolTipText() {
 		File file = fJarEntryFile.getAdapter(File.class);
@@ -87,27 +72,18 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 		return fJarEntryFile.getFullPath().toString();
 	}
 
-	/*
-	 * @see IEditorInput#getImageDescriptor()
-	 */
 	@Override
 	public ImageDescriptor getImageDescriptor() {
 		IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
 		return registry.getImageDescriptor(fJarEntryFile.getFullPath().getFileExtension());
 	}
 
-	/*
-	 * @see IEditorInput#exists()
-	 */
 	@Override
 	public boolean exists() {
 		// JAR entries can't be deleted
 		return true;
 	}
 
-	/*
-	 * @see IAdaptable#getAdapter(Class)
-	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {

@@ -74,9 +74,6 @@ public abstract class SharedPartWithButtons extends SharedPart {
 
 	protected abstract void buttonSelected(Button button, int index);
 
-	/*
-	 * @see SharedPart#createControl(Composite, FormWidgetFactory)
-	 */
 	@Override
 	public void createControl(Composite parent, int style, int span, FormToolkit toolkit) {
 		createMainLabel(parent, span, toolkit);

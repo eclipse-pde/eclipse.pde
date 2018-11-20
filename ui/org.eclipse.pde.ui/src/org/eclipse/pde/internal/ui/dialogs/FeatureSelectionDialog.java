@@ -149,9 +149,6 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 		setListLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 	}
 
-	/*
-	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
-	 */
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);

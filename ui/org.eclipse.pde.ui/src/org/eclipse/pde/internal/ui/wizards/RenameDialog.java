@@ -84,9 +84,6 @@ public class RenameDialog extends SelectionStatusDialog {
 		this.newName = oldName;
 	}
 
-	/*
-	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);

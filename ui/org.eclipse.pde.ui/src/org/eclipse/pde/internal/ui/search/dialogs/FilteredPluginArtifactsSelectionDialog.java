@@ -334,9 +334,6 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		setDetailsLabelProvider(detailsLabelProvider);
 	}
 
-	/*
-	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);

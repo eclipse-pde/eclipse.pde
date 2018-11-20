@@ -123,9 +123,6 @@ public class FeatureImportWizardPage extends WizardPage {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
-	/*
-	 * @see IDialogPage#createControl(Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);

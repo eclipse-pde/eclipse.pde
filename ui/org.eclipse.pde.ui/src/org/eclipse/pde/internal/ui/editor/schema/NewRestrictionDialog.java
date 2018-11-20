@@ -32,9 +32,6 @@ public class NewRestrictionDialog extends MessageDialog {
 		super(parent, PDEUIMessages.NewRestrictionDialog_title, null, PDEUIMessages.NewRestrictionDialog_message, QUESTION, new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
 	}
 
-	/*
-	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);

@@ -59,9 +59,6 @@ public class HistoryListDialog extends StatusDialog {
 		fHistoryList.addAll(Arrays.asList(elements));
 	}
 
-	/*
-	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
-	 */
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
@@ -74,9 +71,6 @@ public class HistoryListDialog extends StatusDialog {
 		super.create();
 	}
 
-	/*
-	 * @see Dialog#createDialogArea(Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		initializeDialogUnits(parent);

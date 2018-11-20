@@ -42,9 +42,6 @@ public class TypeCompletionProposal extends AbstractJavaCompletionProposal imple
 			fTypeName = typeName;
 		}
 
-		/*
-		 * @see org.eclipse.jdt.internal.ui.text.java.ProposalInfo#getJavaElement()
-		 */
 		@Override
 		public IJavaElement getJavaElement() throws JavaModelException {
 			return fJavaProject.findType(fTypeName);
@@ -92,9 +89,6 @@ public class TypeCompletionProposal extends AbstractJavaCompletionProposal imple
 		return new Point(getReplacementOffset() + getReplacementString().length(), 0);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension5#getAdditionalProposalInfo(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public Object getAdditionalProposalInfo(IProgressMonitor monitor) {
 		if (fAdditionalInfo != null)
@@ -127,9 +121,6 @@ public class TypeCompletionProposal extends AbstractJavaCompletionProposal imple
 		return super.getProposalInfo();
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.text.java.LazyJavaCompletionProposal#computeProposalInfo()
-	 */
 	protected ProposalInfo computeProposalInfo() {
 		if (fProject != null && fTypeName != null)
 			return new PDETypeProposalInfo(JavaCore.create(fProject), fTypeName);

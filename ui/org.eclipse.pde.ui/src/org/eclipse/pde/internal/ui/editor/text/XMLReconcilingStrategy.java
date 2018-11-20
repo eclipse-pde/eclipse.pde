@@ -56,25 +56,16 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 				fLockObject = fAnnotationModel;
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector#accept(org.eclipse.ui.texteditor.spelling.SpellingProblem)
-		 */
 		@Override
 		public void accept(SpellingProblem problem) {
 			fAddAnnotations.put(new SpellingAnnotation(problem), new Position(problem.getOffset(), problem.getLength()));
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector#beginCollecting()
-		 */
 		@Override
 		public void beginCollecting() {
 			fAddAnnotations = new HashMap<>();
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector#endCollecting()
-		 */
 		@Override
 		public void endCollecting() {
 			synchronized (fLockObject) {

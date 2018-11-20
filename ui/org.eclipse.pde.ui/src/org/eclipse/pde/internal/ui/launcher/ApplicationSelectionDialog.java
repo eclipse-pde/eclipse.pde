@@ -38,9 +38,6 @@ public class ApplicationSelectionDialog extends TrayDialog {
 		fApplicationNames = applicationNames;
 	}
 
-	/*
-	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);

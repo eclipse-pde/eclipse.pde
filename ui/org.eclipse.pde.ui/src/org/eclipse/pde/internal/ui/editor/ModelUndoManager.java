@@ -35,9 +35,6 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 		operations = new Vector<>();
 	}
 
-	/*
-	 * @see IModelUndoManager#connect(IModelChangeProvider)
-	 */
 	@Override
 	public void connect(IModelChangeProvider provider) {
 		provider.addModelChangedListener(this);
@@ -45,9 +42,6 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 			initialize();
 	}
 
-	/*
-	 * @see IModelUndoManager#disconnect(IModelChangeProvider)
-	 */
 	@Override
 	public void disconnect(IModelChangeProvider provider) {
 		provider.removeModelChangedListener(this);
@@ -59,17 +53,11 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 		updateActions();
 	}
 
-	/*
-	 * @see IModelUndoManager#isUndoable()
-	 */
 	@Override
 	public boolean isUndoable() {
 		return cursor >= 0;
 	}
 
-	/*
-	 * @see IModelUndoManager#isRedoable()
-	 */
 	@Override
 	public boolean isRedoable() {
 		if (operations == null)
@@ -77,9 +65,6 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 		return (cursor + 1) < operations.size();
 	}
 
-	/*
-	 * @see IModelUndoManager#undo()
-	 */
 	@Override
 	public void undo() {
 		IModelChangedEvent op = getCurrentOperation();
@@ -93,9 +78,6 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 		ignoreChanges = false;
 	}
 
-	/*
-	 * @see IModelUndoManager#redo()
-	 */
 	@Override
 	public void redo() {
 		cursor++;
@@ -124,9 +106,6 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 		}
 	}
 
-	/*
-	 * @see IModelChangedListener#modelChanged(IModelChangedEvent)
-	 */
 	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		if (ignoreChanges)

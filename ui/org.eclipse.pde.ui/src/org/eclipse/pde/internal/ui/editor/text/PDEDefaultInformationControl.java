@@ -24,9 +24,6 @@ public class PDEDefaultInformationControl extends DefaultInformationControl {
 		super(parent, tooltipAffordanceString);
 	}
 
-	/*
-	 * @see IInformationControl#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fDisposed = true;

@@ -59,9 +59,6 @@ public class PDEStorageDocumentProvider extends StorageDocumentProvider {
 		}
 	}
 
-	/*
-	 * @see AbstractDocumentProvider#createAnnotationModel(Object)
-	 */
 	@Override
 	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
 		if (element instanceof IAdaptable) {

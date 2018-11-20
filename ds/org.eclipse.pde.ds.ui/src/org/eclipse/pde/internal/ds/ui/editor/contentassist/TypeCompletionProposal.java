@@ -120,9 +120,6 @@ public class TypeCompletionProposal implements ICompletionProposal, ICompletionP
 		if (fCreator == null) {
 			fCreator = new AbstractReusableInformationControlCreator() {
 
-				/*
-				 * @see org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
-				 */
 				@Override
 				public IInformationControl doCreateInformationControl(Shell parent) {
 					return new BrowserInformationControl(parent,

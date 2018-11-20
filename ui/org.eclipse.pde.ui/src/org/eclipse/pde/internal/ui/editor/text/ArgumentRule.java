@@ -19,17 +19,11 @@ public class ArgumentRule extends WordPatternRule {
 
 	private static class ArgumentDetector implements IWordDetector {
 
-		/*
-		 * @see IWordDetector#isWordStart
-		 */
 		@Override
 		public boolean isWordStart(char c) {
 			return '{' == c;
 		}
 
-		/*
-		 * @see IWordDetector#isWordPart
-		 */
 		@Override
 		public boolean isWordPart(char c) {
 			return c == '}' || Character.isDigit(c);
@@ -47,9 +41,6 @@ public class ArgumentRule extends WordPatternRule {
 		super(new ArgumentDetector(), "{", "}", token); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.rules.WordPatternRule#endSequenceDetected(org.eclipse.jface.text.rules.ICharacterScanner)
-	 */
 	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		fCount++;
@@ -61,9 +52,6 @@ public class ArgumentRule extends WordPatternRule {
 		return super.endSequenceDetected(scanner);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.rules.PatternRule#sequenceDetected(org.eclipse.jface.text.rules.ICharacterScanner, char[], boolean)
-	 */
 	@Override
 	protected boolean sequenceDetected(ICharacterScanner scanner, char[] sequence, boolean eofAllowed) {
 		fCount = 0;

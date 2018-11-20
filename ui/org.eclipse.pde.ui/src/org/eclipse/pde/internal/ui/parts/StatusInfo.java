@@ -120,9 +120,6 @@ public class StatusInfo implements IStatus {
 		fSeverity = IStatus.OK;
 	}
 
-	/*
-	 * @see IStatus#matches(int)
-	 */
 	@Override
 	public boolean matches(int severityMask) {
 		return (fSeverity & severityMask) != 0;
@@ -137,17 +134,11 @@ public class StatusInfo implements IStatus {
 		return false;
 	}
 
-	/*
-	 * @see IStatus#getSeverity()
-	 */
 	@Override
 	public int getSeverity() {
 		return fSeverity;
 	}
 
-	/*
-	 * @see IStatus#getPlugin()
-	 */
 	@Override
 	public String getPlugin() {
 		return IPDEUIConstants.PLUGIN_ID;

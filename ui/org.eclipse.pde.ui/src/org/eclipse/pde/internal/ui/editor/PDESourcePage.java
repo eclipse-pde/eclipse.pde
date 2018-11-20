@@ -87,9 +87,6 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 			}
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-		 */
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			handleSelectionChangedSourcePage(event);

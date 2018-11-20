@@ -100,9 +100,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 			setEnabled(false);
 		}
 
-		/*
-		 * @see Action#actionPerformed
-		 */
 		@Override
 		public void run() {
 			LoopDialog dialog = new LoopDialog(PDEPlugin.getActiveWorkbenchShell(), fLoops);
@@ -121,9 +118,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 			setDisabledImageDescriptor(PDEPluginImages.DESC_CALLEES_DISABLED);
 		}
 
-		/*
-		 * @see Action#actionPerformed
-		 */
 		@Override
 		public void run() {
 			if (isChecked()) {
@@ -143,9 +137,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 			setDisabledImageDescriptor(PDEPluginImages.DESC_CALLERS_DISABLED);
 		}
 
-		/*
-		 * @see Action#actionPerformed
-		 */
 		@Override
 		public void run() {
 			if (isChecked()) {
@@ -165,9 +156,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 			setDisabledImageDescriptor(PDEPluginImages.DESC_FLAT_LAYOUT_DISABLED);
 		}
 
-		/*
-		 * @see Action#actionPerformed
-		 */
 		@Override
 		public void run() {
 			if (isChecked()) {
@@ -188,9 +176,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 			setDisabledImageDescriptor(PDEPluginImages.DESC_HIERARCHICAL_LAYOUT_DISABLED);
 		}
 
-		/*
-		 * @see Action#actionPerformed
-		 */
 		@Override
 		public void run() {
 			if (isChecked()) {

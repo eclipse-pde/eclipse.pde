@@ -69,9 +69,6 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		fReplaceQuery = replaceQuery;
 	}
 
-	/*
-	 * @see IWorkspaceRunnable#run(IProgressMonitor)
-	 */
 	@Override
 	public void run(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, PDEUIMessages.FeatureImportWizard_operation_creating,

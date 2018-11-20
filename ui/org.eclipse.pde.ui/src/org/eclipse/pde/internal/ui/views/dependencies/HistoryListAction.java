@@ -31,9 +31,6 @@ public class HistoryListAction extends Action {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IHelpContextIds.HISTORY_LIST_ACTION);
 	}
 
-	/*
-	 * @see IAction#run()
-	 */
 	@Override
 	public void run() {
 		String[] historyEntries = fView.getHistoryEntries();
