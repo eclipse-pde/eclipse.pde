@@ -40,25 +40,16 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 		return IFeature.INFO_TAGS[index];
 	}
 
-	/*
-	 * @see IFeatureInfo#getURL()
-	 */
 	@Override
 	public String getURL() {
 		return url;
 	}
 
-	/*
-	 * @see IFeatureInfo#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return description;
 	}
 
-	/*
-	 * @see IFeatureInfo#setURL(URL)
-	 */
 	@Override
 	public void setURL(String url) throws CoreException {
 		ensureModelEditable();
@@ -77,9 +68,6 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 			super.restoreProperty(name, oldValue, newValue);
 	}
 
-	/*
-	 * @see IFeatureInfo#setDescription(String)
-	 */
 	@Override
 	public void setDescription(String description) throws CoreException {
 		ensureModelEditable();

@@ -24,25 +24,16 @@ public class FeatureInstallHandler extends FeatureObject implements IFeatureInst
 	private String fLibrary;
 	private String fHandlerName;
 
-	/*
-	 * @see IFeatureInstallHandler#getLibrary()
-	 */
 	@Override
 	public String getLibrary() {
 		return fLibrary;
 	}
 
-	/*
-	 * @see IFeatureInstallHandler#getClassName()
-	 */
 	@Override
 	public String getHandlerName() {
 		return fHandlerName;
 	}
 
-	/*
-	 * @see IFeatureInstallHandler#setLibrary(String)
-	 */
 	@Override
 	public void setLibrary(String library) throws CoreException {
 		ensureModelEditable();
@@ -51,9 +42,6 @@ public class FeatureInstallHandler extends FeatureObject implements IFeatureInst
 		firePropertyChanged(P_LIBRARY, oldValue, library);
 	}
 
-	/*
-	 * @see IFeatureInstallHandler#setClassName(String)
-	 */
 	@Override
 	public void setHandlerName(String handlerName) throws CoreException {
 		ensureModelEditable();

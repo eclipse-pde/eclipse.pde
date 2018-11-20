@@ -94,9 +94,6 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		this.model = model;
 	}
 
-	/*
-	 * @see org.eclipse.pde.internal.core.ibundle.IBundlePluginBase#getExtensionsRoot()
-	 */
 	public IExtensions getExtensionsRoot() {
 		if (model != null) {
 			ISharedExtensionsModel emodel = model.getExtensionsModel();

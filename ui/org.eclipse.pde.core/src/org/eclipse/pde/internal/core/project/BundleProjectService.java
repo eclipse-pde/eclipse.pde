@@ -182,9 +182,6 @@ public final class BundleProjectService implements IBundleProjectService {
 		PDEProject.setBundleRoot(project, (bundleRoot == null) ? null : project.getFolder(bundleRoot));
 	}
 
-	/*
-	 * @see org.eclipse.pde.core.project.IBundleProjectService#getSourceReferenceHandler(java.lang.String)
-	 */
 	public IBundleImporter getSourceReferenceHandler(String id) {
 
 		return null;
