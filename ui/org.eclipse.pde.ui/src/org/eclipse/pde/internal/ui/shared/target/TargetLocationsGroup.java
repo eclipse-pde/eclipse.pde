@@ -19,6 +19,8 @@ import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -57,6 +59,7 @@ import org.eclipse.ui.progress.UIJob;
 public class TargetLocationsGroup {
 
 	private TreeViewer fTreeViewer;
+	private Action fCopySelectionAction;
 	private Button fAddButton;
 	private Button fEditButton;
 	private Button fRemoveButton;
@@ -135,15 +138,7 @@ public class TargetLocationsGroup {
 		atree.setLayout(new GridLayout());
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		atree.setLayoutData(gd);
-		atree.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.DEL && fRemoveButton.getEnabled()) {
-					handleRemove();
-				}
-
-			}
-		});
+		initializeTree(atree);
 
 		Composite buttonComp = toolkit.createComposite(comp);
 		GridLayout layout = new GridLayout();
@@ -180,14 +175,7 @@ public class TargetLocationsGroup {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 200;
 		atree.setLayoutData(gd);
-		atree.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.DEL && fRemoveButton.getEnabled()) {
-					handleRemove();
-				}
-			}
-		});
+		initializeTree(atree);
 
 		Composite buttonComp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_BOTH);
 		GridLayout layout = new GridLayout();
@@ -206,6 +194,19 @@ public class TargetLocationsGroup {
 
 		initializeTreeViewer(atree);
 		initializeButtons();
+	}
+
+	private void initializeTree(Tree tree) {
+		tree.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.DEL && fRemoveButton.getEnabled()) {
+					handleRemove();
+				} else if (e.keyCode == 'c' && (e.stateMask & SWT.CTRL) != 0) {
+					fCopySelectionAction.run();
+				}
+			}
+		});
 	}
 
 	/**
@@ -235,6 +236,18 @@ public class TargetLocationsGroup {
 			}
 		});
 		fTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+
+		createContextMenu(fTreeViewer.getTree());
+	}
+
+	private void createContextMenu(Tree tree) {
+		fCopySelectionAction = new CopyTreeSelectionAction(tree);
+
+		MenuManager menuManager = new MenuManager();
+		menuManager.add(fCopySelectionAction);
+
+		Menu menu = menuManager.createContextMenu(tree);
+		tree.setMenu(menu);
 	}
 
 	/**
