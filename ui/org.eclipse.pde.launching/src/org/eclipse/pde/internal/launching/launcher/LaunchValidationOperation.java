@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2015 IBM Corporation and others.
+ *  Copyright (c) 2007, 2018 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -14,13 +14,15 @@
 package org.eclipse.pde.internal.launching.launcher;
 
 import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.jdt.internal.launching.environments.EnvironmentsManager;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -30,6 +32,8 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.BundleValidationOperation;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
 public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
@@ -59,9 +63,21 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 		ArrayList<Dictionary<String, String>> result = new ArrayList<>(envs.length);
 		for (IExecutionEnvironment env : envs) {
 			Properties profileProps = getJavaProfileProperties(env.getId());
+			if (profileProps == null) {
+				// Java10 onwards, we take profile via this method
+				IExecutionEnvironment ev = EnvironmentsManager.getDefault().getEnvironment(env.getId());
+				profileProps = ev.getProfileProperties();
+			}
 			if (profileProps != null) {
 				Dictionary<String, String> props = TargetPlatformHelper.getTargetEnvironment();
 				String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
+				if (systemPackages == null) {
+					// java 10 and beyond
+					Properties javaProfilePropertiesForVMPackage = getJavaProfilePropertiesForVMPackage(env.getId());
+					if (javaProfilePropertiesForVMPackage != null) {
+						systemPackages = javaProfilePropertiesForVMPackage.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
+					}
+				}
 				if (systemPackages != null)
 					props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
 				String ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
@@ -74,6 +90,45 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 			return result.toArray(new Dictionary[result.size()]);
 		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
 
+	}
+
+	private static Properties getJavaProfilePropertiesForVMPackage(String ee) {
+		Bundle apitoolsBundle = Platform.getBundle("org.eclipse.pde.api.tools"); //$NON-NLS-1$
+		if (apitoolsBundle == null) {
+			return null;
+		}
+		URL systemPackageProfile = apitoolsBundle.getEntry("system_packages" + '/' + ee.replace('/', '_') + "-systempackages.profile"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (systemPackageProfile != null) {
+			return getPropertiesFromURL(systemPackageProfile);
+
+		}
+		return null;
+	}
+
+	private static Properties getPropertiesFromURL(URL profileURL) {
+		InputStream is = null;
+		try {
+			profileURL = FileLocator.resolve(profileURL);
+			URLConnection openConnection = profileURL.openConnection();
+			openConnection.setUseCaches(false);
+			is = openConnection.getInputStream();
+			if (is != null) {
+				Properties profile = new Properties();
+				profile.load(is);
+				return profile;
+			}
+		} catch (IOException e) {
+			PDELaunchingPlugin.log(e);
+		} finally {
+			try {
+				if (is != null) {
+					is.close();
+				}
+			} catch (IOException e) {
+				PDELaunchingPlugin.log(e);
+			}
+		}
+		return null;
 	}
 
 	protected IExecutionEnvironment[] getMatchingEnvironments() throws CoreException {
