@@ -196,8 +196,6 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fDisableAPIAnalysisBuilder = new Button(optionComp, SWT.CHECK);
 		fDisableAPIAnalysisBuilder.setText(PDEUIMessages.MainPreferencePage_DisableAPIAnalysisBuilder);
 		fDisableAPIAnalysisBuilder.setSelection(store.getBoolean(IPreferenceConstants.DISABLE_API_ANALYSIS_BUILDER));
-		fDisableAPIAnalysisBuilder.setToolTipText(PDEUIMessages.MainPreferencePage_WorkspacePluginsOverrideTargetTooltip);
-
 
 		Composite pathComposite = new Composite(optionComp, SWT.NONE);
 		pathComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
