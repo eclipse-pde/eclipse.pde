@@ -106,27 +106,17 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 	}
 
 	private static Properties getPropertiesFromURL(URL profileURL) {
-		InputStream is = null;
 		try {
 			profileURL = FileLocator.resolve(profileURL);
 			URLConnection openConnection = profileURL.openConnection();
 			openConnection.setUseCaches(false);
-			is = openConnection.getInputStream();
-			if (is != null) {
+			try (InputStream is = openConnection.getInputStream()) {
 				Properties profile = new Properties();
 				profile.load(is);
 				return profile;
 			}
 		} catch (IOException e) {
 			PDELaunchingPlugin.log(e);
-		} finally {
-			try {
-				if (is != null) {
-					is.close();
-				}
-			} catch (IOException e) {
-				PDELaunchingPlugin.log(e);
-			}
 		}
 		return null;
 	}
