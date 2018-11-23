@@ -1,4 +1,4 @@
-org.eclipse.pde.core/debug=true
+org.eclipse.pde.core/debug=false
 # trace for the classpath container and classpath computer
 org.eclipse.pde.core/classpath=false
 # prints the time taken to create the PDE plug-in models and OSGi state
