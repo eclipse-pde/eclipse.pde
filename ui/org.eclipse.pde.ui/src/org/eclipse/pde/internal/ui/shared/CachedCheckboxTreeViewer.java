@@ -14,7 +14,8 @@
 package org.eclipse.pde.internal.ui.shared;
 
 import java.util.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 
@@ -53,20 +54,10 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 				checkState = new HashSet<>();
 			}
 
-			ITreeContentProvider contentProvider = null;
-			if (getContentProvider() instanceof ITreeContentProvider) {
-				contentProvider = (ITreeContentProvider) getContentProvider();
-			}
-
-			if (contentProvider != null) {
-				Object[] children = contentProvider.getChildren(element);
-				if (children != null && children.length > 0) {
-					for (Object child : children) {
-						updateCheckState(child, state);
-					}
-				} else if (!checkState.contains(element)) {
-					// Check if already added to avoid concurrent modification exceptions
-					checkState.add(element);
+			Object[] children = getFilteredChildren(element);
+			if (children != null && children.length > 0) {
+				for (Object child : children) {
+					updateCheckState(child, state);
 				}
 			} else if (!checkState.contains(element)) {
 				// Check if already added to avoid concurrent modification exceptions
@@ -74,18 +65,11 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 			}
 		} else if (checkState != null) {
 			// Remove the item (or its children) from the cache
-			ITreeContentProvider contentProvider = null;
-			if (getContentProvider() instanceof ITreeContentProvider) {
-				contentProvider = (ITreeContentProvider) getContentProvider();
-			}
 
-			if (contentProvider != null) {
-				Object[] children = contentProvider.getChildren(element);
-				if (children.length > 0) {
-					for (Object child : children) {
-						updateCheckState(child, state);
-					}
-
+			Object[] children = getFilteredChildren(element);
+			if (children.length > 0) {
+				for (Object child : children) {
+					updateCheckState(child, state);
 				}
 			}
 			checkState.remove(element);
