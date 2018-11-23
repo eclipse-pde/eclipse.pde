@@ -133,6 +133,19 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 		return checkState.size();
 	}
 
+	/**
+	 * Returns whether {@code element} is a checked leaf node. This method uses
+	 * its internal check state cache to determine what has been checked, not
+	 * what is visible in the viewer.
+	 */
+	public boolean isCheckedLeafElement(Object element) {
+		if (checkState == null) {
+			return false;
+		}
+
+		return checkState.contains(element);
+	}
+
 	@Override
 	public boolean setChecked(Object element, boolean state) {
 		updateCheckState(element, state);

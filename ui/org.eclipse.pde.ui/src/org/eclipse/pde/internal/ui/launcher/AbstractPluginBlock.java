@@ -41,8 +41,8 @@ import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
-import org.eclipse.pde.internal.ui.launcher.FilteredCheckboxTree.FilterableCheckboxTreeViewer;
-import org.eclipse.pde.internal.ui.launcher.FilteredCheckboxTree.PreRefreshNotifier;
+import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
+import org.eclipse.pde.internal.ui.shared.FilteredCheckboxTree;
 import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.pde.launching.IPDELauncherConstants;
@@ -66,7 +66,7 @@ public abstract class AbstractPluginBlock {
 	protected AbstractLauncherTab fTab;
 
 	private FilteredCheckboxTree fPluginFilteredTree;
-	protected CheckboxTreeViewer fPluginTreeViewer;
+	protected CachedCheckboxTreeViewer fPluginTreeViewer;
 	protected NamedElement fWorkspacePlugins;
 	protected NamedElement fExternalPlugins;
 	private IPluginModelBase[] fExternalModels;
@@ -92,8 +92,6 @@ public abstract class AbstractPluginBlock {
 	private LaunchValidationOperation fOperation;
 
 	private Button fValidateButton;
-
-	private boolean viewerEnabled = true;
 
 	private HashMap<Object, String> levelColumnCache = new HashMap<>();
 	private HashMap<Object, String> autoColumnCache = new HashMap<>();
@@ -314,7 +312,7 @@ public abstract class AbstractPluginBlock {
 
 	public void createControl(Composite parent, int span, int indent) {
 		createPluginViewer(parent, span - 1, indent);
-		createButtonContainer(parent, fPluginFilteredTree.getTreeLocationOffset());
+		createButtonContainer(parent);
 		if (fTab instanceof PluginsTab) {
 			fIncludeOptionalButton = createButton(parent, span, indent,PDEUIMessages.AdvancedLauncherTab_includeOptional_plugins);
 		}else if (fTab instanceof BundlesTab) {
@@ -377,34 +375,10 @@ public abstract class AbstractPluginBlock {
 	}
 
 	protected void createPluginViewer(Composite composite, int span, int indent) {
-
 		PatternFilter patternFilter = new PatternFilter();
 		patternFilter.setIncludeLeadingWildcard(true);
-		fPluginFilteredTree = new FilteredCheckboxTree(composite, getTreeViewerStyle(), patternFilter);
-		fPluginTreeViewer = (CheckboxTreeViewer) fPluginFilteredTree.getViewer();
-		((FilterableCheckboxTreeViewer) fPluginTreeViewer).addPreRefreshNotifier(new PreRefreshNotifier() {
-
-			boolean previousFilter = false;
-
-			@Override
-			public void preRefresh(FilterableCheckboxTreeViewer viewer, boolean filtered) {
-				refreshTreeView(fPluginTreeViewer);
-				if (previousFilter != filtered) {
-					if (viewerEnabled) {
-						// Only update these buttons if the viewer is actually enabled
-						fWorkingSetButton.setEnabled(!filtered);
-						fAddRequiredButton.setEnabled(!filtered);
-						fDefaultsButton.setEnabled(!filtered);
-					}
-
-					fPluginTreeViewer.setChecked(fWorkspacePlugins, fNumWorkspaceChecked > 0);
-					fPluginTreeViewer.setGrayed(fWorkspacePlugins, fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < getWorkspaceModels().length);
-					fPluginTreeViewer.setChecked(fExternalPlugins, fNumExternalChecked > 0);
-					fPluginTreeViewer.setGrayed(fExternalPlugins, fNumExternalChecked > 0 && fNumExternalChecked < getExternalModels().length);
-				}
-				previousFilter = filtered;
-			}
-		});
+		fPluginFilteredTree = new FilteredCheckboxTree(composite, null, getTreeViewerStyle(), patternFilter);
+		fPluginTreeViewer = fPluginFilteredTree.getCheckboxTreeViewer();
 
 		fPluginTreeViewer.addCheckStateListener(event -> {
 			// Since a check on the root of a CheckBoxTreeViewer selects all its children
@@ -436,7 +410,7 @@ public abstract class AbstractPluginBlock {
 			if (element instanceof IPluginModelBase) {
 				handleCheckStateChanged(event);
 			} else {
-				handleGroupStateChanged(element, event.getChecked());
+				countSelectedModels();
 			}
 			fTab.updateLaunchConfigurationDialog();
 		});
@@ -587,11 +561,10 @@ public abstract class AbstractPluginBlock {
 		}
 	}
 
-	private void createButtonContainer(Composite parent, int vOffset) {
+	private void createButtonContainer(Composite parent) {
 		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_VERTICAL);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
-		layout.marginTop = vOffset;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
@@ -630,21 +603,7 @@ public abstract class AbstractPluginBlock {
 	}
 
 	protected void handleCheckStateChanged(CheckStateChangedEvent event) {
-		IPluginModelBase model = (IPluginModelBase) event.getElement();
-		if (model.getUnderlyingResource() == null) {
-			if (event.getChecked()) {
-				fNumExternalChecked += 1;
-			} else {
-				fNumExternalChecked -= 1;
-			}
-		} else {
-			if (event.getChecked()) {
-				fNumWorkspaceChecked += 1;
-			} else {
-				fNumWorkspaceChecked -= 1;
-			}
-		}
-		adjustGroupState();
+		countSelectedModels();
 		resetText((IPluginModelBase) event.getElement());
 	}
 
@@ -708,20 +667,11 @@ public abstract class AbstractPluginBlock {
 	}
 
 	protected void handleGroupStateChanged(Object group, boolean checked) {
-		fPluginTreeViewer.setSubtreeChecked(group, checked);
-		fPluginTreeViewer.setGrayed(group, false);
-
-		Object[] checkedChildren = ((FilteredCheckboxTree.FilterableCheckboxTreeViewer) fPluginTreeViewer).getCheckedChildren(group);
-		int numberOfChildren = 0;
-		if (checkedChildren != null) {
-			numberOfChildren = checkedChildren.length;
+		if (!fPluginFilteredTree.getPatternFilter().select(fPluginTreeViewer, null, group)) {
+			return;
 		}
 
-		if (group == fWorkspacePlugins) {
-			fNumWorkspaceChecked = numberOfChildren;
-		} else if (group == fExternalPlugins) {
-			fNumExternalChecked = numberOfChildren;
-		}
+		fPluginTreeViewer.setChecked(group, checked);
 
 		if (group instanceof NamedElement) {
 			NamedElement namedElement = (NamedElement) group;
@@ -744,6 +694,8 @@ public abstract class AbstractPluginBlock {
 	protected void toggleGroups(boolean select) {
 		handleGroupStateChanged(fWorkspacePlugins, select);
 		handleGroupStateChanged(fExternalPlugins, select);
+
+		countSelectedModels();
 	}
 
 	protected void handleFilterButton() {
@@ -761,15 +713,10 @@ public abstract class AbstractPluginBlock {
 				if (model != null) {
 					if (!fPluginTreeViewer.getChecked(model)) {
 						setChecked(model, true);
-						if (model.getUnderlyingResource() == null) {
-							fNumExternalChecked += 1;
-						} else {
-							fNumWorkspaceChecked += 1;
-						}
 					}
 				}
 			}
-			adjustGroupState();
+			countSelectedModels();
 		}
 	}
 
@@ -813,7 +760,7 @@ public abstract class AbstractPluginBlock {
 	public void initializeFrom(ILaunchConfiguration config, boolean enableTable) throws CoreException {
 		levelColumnCache = new HashMap<>();
 		autoColumnCache = new HashMap<>();
-		fPluginFilteredTree.resetFilter();
+		fPluginFilteredTree.getPatternFilter().setPattern(null);
 		fIncludeOptionalButton.setSelection(config.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true));
 		fAddWorkspaceButton.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true));
 		fAutoValidate.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, true));
@@ -832,7 +779,7 @@ public abstract class AbstractPluginBlock {
 	 * then also checked in the tree
 	 */
 	protected void addRequiredPlugins() {
-		Object[] checked = fPluginTreeViewer.getCheckedElements();
+		Object[] checked = fPluginTreeViewer.getCheckedLeafElements();
 		Set<IPluginModelBase> toCheck = Arrays.stream(checked).filter(IPluginModelBase.class::isInstance)
 				.map(IPluginModelBase.class::cast).collect(Collectors.toSet());
 
@@ -846,16 +793,7 @@ public abstract class AbstractPluginBlock {
 		checked = toCheck.toArray();
 		setCheckedElements(checked);
 
-		fNumExternalChecked = 0;
-		fNumWorkspaceChecked = 0;
-		for (Object checkedElement : checked) {
-			if (((IPluginModelBase) checkedElement).getUnderlyingResource() != null) {
-				fNumWorkspaceChecked += 1;
-			} else {
-				fNumExternalChecked += 1;
-			}
-		}
-		adjustGroupState();
+		countSelectedModels();
 	}
 
 	protected IPluginModelBase findPlugin(String id) {
@@ -905,11 +843,13 @@ public abstract class AbstractPluginBlock {
 		}
 	}
 
-	protected void adjustGroupState() {
-		fPluginTreeViewer.setChecked(fExternalPlugins, fNumExternalChecked > 0);
-		fPluginTreeViewer.setGrayed(fExternalPlugins, fNumExternalChecked > 0 && fNumExternalChecked < getExternalModels().length);
-		fPluginTreeViewer.setChecked(fWorkspacePlugins, fNumWorkspaceChecked > 0);
-		fPluginTreeViewer.setGrayed(fWorkspacePlugins, fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < getWorkspaceModels().length);
+	private void countSelectedModels() {
+		fNumWorkspaceChecked = countChecked(getWorkspaceModels());
+		fNumExternalChecked = countChecked(getExternalModels());
+	}
+
+	private int countChecked(Object[] elements) {
+		return (int) Arrays.stream(elements).filter(fPluginTreeViewer::isCheckedLeafElement).count();
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
@@ -931,7 +871,6 @@ public abstract class AbstractPluginBlock {
 	}
 
 	public void enableViewer(boolean enable) {
-		viewerEnabled = enable;
 		fPluginFilteredTree.setEnabled(enable);
 		fAddRequiredButton.setEnabled(enable);
 		fDefaultsButton.setEnabled(enable);
@@ -955,29 +894,24 @@ public abstract class AbstractPluginBlock {
 
 	protected void handleRestoreDefaults() {
 		TreeSet<String> wtable = new TreeSet<>();
-		fNumWorkspaceChecked = 0;
-		fNumExternalChecked = 0;
 
 		for (int i = 0; i < getWorkspaceModels().length; i++) {
 			IPluginModelBase model = getWorkspaceModels()[i];
-			fNumWorkspaceChecked += 1;
+			fPluginTreeViewer.setChecked(model, true);
 			String id = model.getPluginBase().getId();
 			if (id != null) {
 				wtable.add(model.getPluginBase().getId());
 			}
 		}
-		fPluginTreeViewer.setSubtreeChecked(fWorkspacePlugins, true);
 
-		fNumExternalChecked = 0;
 		IPluginModelBase[] externalModels = getExternalModels();
 		for (IPluginModelBase model : externalModels) {
 			boolean masked = wtable.contains(model.getPluginBase().getId());
 			if (!masked && model.isEnabled()) {
 				fPluginTreeViewer.setChecked(model, true);
-				fNumExternalChecked += 1;
 			}
 		}
-		adjustGroupState();
+		countSelectedModels();
 
 		Object[] selected = fPluginTreeViewer.getCheckedElements();
 		for (Object selectedElement : selected) {
