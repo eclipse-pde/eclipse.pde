@@ -44,8 +44,12 @@ public class SyntaxValidatorListener implements IDocumentListener {
 			return;
 		IAnnotationModel model = textFileBuffer
 				.getAnnotationModel();
-		// clear the annotations
-		model.getAnnotationIterator().forEachRemaining(model::removeAnnotation);
+		// clear the "org.eclipse.jdt.ui.error" annotations
+		model.getAnnotationIterator().forEachRemaining(annotation -> {
+			if (ERROR_MARKER.equals(annotation.getType())) {
+				model.removeAnnotation(annotation);
+			}
+		});
 		CompletableFuture.runAsync(() -> {
 			try {
 				Parser.getDefault().parse(fDocument);
