@@ -46,18 +46,20 @@ public class TargetDefinitionCodeMiningProvider extends AbstractCodeMiningProvid
 	}
 
 	void fillCodeMinings(IDocument document, List<ICodeMining> minings) throws BadLocationException {
+		int line = 0;
 		try {
 			Parser parser = Parser.getDefault();
 			parser.parse(document);
 			Node target = parser.getRootNode();
 			if (target != null) {
-				minings.add(new TargetDefinitionActivationCodeMining(2, document, this, null));
+				line = document.getLineOfOffset(target.getOffsetStart());
+				minings.add(new TargetDefinitionActivationCodeMining(line, document, this, null));
 			} else {
-				minings.add(new TargetDefinitionActivationCodeMining(2, document, this,
+				minings.add(new TargetDefinitionActivationCodeMining(line, document, this,
 						Messages.TargetDefinitionCodeMiningProvider_e_format_invalid));
 			}
 		} catch (XMLStreamException e) {
-			minings.add(new TargetDefinitionActivationCodeMining(2, document, this,
+			minings.add(new TargetDefinitionActivationCodeMining(line, document, this,
 					Messages.TargetDefinitionCodeMiningProvider_e_format_invalid));
 		}
 	}
