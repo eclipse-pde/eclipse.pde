@@ -32,9 +32,11 @@ import java.util.Set;
 import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -2370,6 +2372,16 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * project in the workspace
 	 */
 	public void checkBaselineMismatch(IApiBaseline baseline, IApiBaseline workspaceBaseline) {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		try {
+			IMarker[] findMarkers = root.findMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, false,
+					IResource.DEPTH_ZERO);
+			for (IMarker iMarker : findMarkers) {
+				iMarker.delete();
+			}
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
 		if (baseline == null || workspaceBaseline == null) {
 			return;
 		}
