@@ -256,23 +256,10 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 			ImportPackageSpecification[] importPkgs, Set<IPackageFragment> packagesToExport, IProgressMonitor monitor) {
 		SubMonitor subMonitor = SubMonitor.convert(monitor);
 
-		IPluginModelBase[] activeModels = PluginRegistry.getActiveModels();
-		Set<IJavaProject> javaProjects = new HashSet<>(activeModels.length * 2);
-
-		for (IPluginModelBase model : activeModels) {
-			IResource resource = model.getUnderlyingResource();
-			if (resource != null && resource.isAccessible()) {
-				IJavaProject javaProject = JavaCore.create(resource.getProject());
-				if (javaProject.exists()) {
-					javaProjects.add(javaProject);
-				}
-			}
-		}
 		final IJavaProject currentJavaProject = JavaCore.create(fProject);
-		javaProjects.remove(currentJavaProject); // no need to search in current project itself
 
 		try {
-			IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(javaProjects.toArray(new IJavaElement[javaProjects.size()]));
+			IJavaSearchScope searchScope = PDESearchScope.create();
 
 			final Map<String, IPackageFragment> packages = new HashMap<>();
 			final Map<String, String> qualifiedTypeNames = new HashMap<>();
