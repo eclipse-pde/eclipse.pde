@@ -37,7 +37,6 @@ public class NewProjectCreationFromTemplatePage extends NewProjectCreationPage {
 			boolean isOSGi = osgiFlag.booleanValue();
 			fEclipseButton.setSelection(!isOSGi);
 			fEclipseButton.setEnabled(!isOSGi);
-			fEclipseCombo.setEnabled(!isOSGi);
 			fOSGIButton.setSelection(isOSGi);
 			fOSGIButton.setEnabled(isOSGi);
 			fOSGiCombo.setEnabled(isOSGi);

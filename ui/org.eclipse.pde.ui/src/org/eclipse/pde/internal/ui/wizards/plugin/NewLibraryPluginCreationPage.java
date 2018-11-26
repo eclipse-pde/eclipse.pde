@@ -26,7 +26,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.util.*;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -81,7 +81,6 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	private Button fEclipseButton;
 	private Button fOSGIButton;
 	private Combo fOSGiCombo;
-	private Combo fTargetCombo;
 	protected Button fJarredCheck;
 	protected Button fFindDependencies;
 	private Button fUpdateRefsCheck;
@@ -130,20 +129,10 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 
-		fEclipseButton = createButton(group, SWT.RADIO, 1, 30);
+		fEclipseButton = createButton(group, SWT.RADIO, 2, 30);
 		fEclipseButton.setText(PDEUIMessages.NewProjectCreationPage_pDependsOnRuntime);
 		fEclipseButton.setSelection(fData.getOSGiFramework() == null);
 		fEclipseButton.addSelectionListener(widgetSelectedAdapter(e -> updateRuntimeDependency()));
-
-		fTargetCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
-		fTargetCombo.setItems(new String[] {PDEUIMessages.NewProjectCreationPage_target_version_range_3_5, ICoreConstants.TARGET34, ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31});
-		fTargetCombo.setText(PDEUIMessages.NewProjectCreationPage_target_version_range_3_5);
-		if (PDECore.getDefault().areModelsInitialized()) {
-			String text = TargetPlatformHelper.getTargetVersionString();
-			if (fTargetCombo.indexOf(text) >= 0) {
-				fTargetCombo.setText(text);
-			}
-		}
 
 		fOSGIButton = createButton(group, SWT.RADIO, 1, 30);
 		fOSGIButton.setText(PDEUIMessages.NewProjectCreationPage_pPureOSGi);
@@ -280,11 +269,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		fData.setLegacy(false);
 
 		// No project structure changes since 3.5, mark as latest version (though using any constant 3.5 or greater is equivalent)
-		if (fTargetCombo.getText().equals(PDEUIMessages.NewProjectCreationPage_target_version_range_3_5)) {
-			fData.setTargetVersion(ICoreConstants.TARGET_VERSION_LATEST);
-		} else {
-			fData.setTargetVersion(fTargetCombo.getText());
-		}
+		fData.setTargetVersion(ICoreConstants.TARGET_VERSION_LATEST);
 
 		// No longer support 3.0 non-osgi bundles in wizard
 		fData.setHasBundleStructure(true);
@@ -375,7 +360,6 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 
 	private void updateRuntimeDependency() {
 		boolean depends = fEclipseButton.getSelection();
-		fTargetCombo.setEnabled(depends);
 		fOSGiCombo.setEnabled(!depends);
 	}
 

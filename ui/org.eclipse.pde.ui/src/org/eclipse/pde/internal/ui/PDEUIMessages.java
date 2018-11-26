@@ -2482,8 +2482,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String NewProjectCreationPage_target;
 
-	public static String NewProjectCreationPage_target_version_range_3_5;
-
 	public static String NewProjectCreationPage_ftarget;
 
 	public static String NewProjectCreationPage_ptarget;

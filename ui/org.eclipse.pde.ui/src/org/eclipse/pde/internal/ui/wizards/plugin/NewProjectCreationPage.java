@@ -23,7 +23,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
@@ -42,13 +42,11 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	protected Text fOutputText;
 	private AbstractFieldData fData;
 	protected Button fEclipseButton;
-	protected Combo fEclipseCombo;
 	protected Combo fOSGiCombo;
 	protected Button fOSGIButton;
 	private IStructuredSelection fSelection;
 
 	private static final String S_OSGI_PROJECT = "osgiProject"; //$NON-NLS-1$
-	private static final String S_TARGET_NAME = "targetName"; //$NON-NLS-1$
 
 	public NewProjectCreationPage(String pageName, AbstractFieldData data, boolean fragment, IStructuredSelection selection) {
 		super(pageName);
@@ -124,26 +122,10 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		IDialogSettings settings = getDialogSettings();
 		boolean osgiProject = (settings == null) ? false : settings.getBoolean(S_OSGI_PROJECT);
 
-		fEclipseButton = createButton(group, SWT.RADIO, 1, 30);
+		fEclipseButton = createButton(group, SWT.RADIO, 2, 30);
 		fEclipseButton.setText(PDEUIMessages.NewProjectCreationPage_pDependsOnRuntime);
 		fEclipseButton.setSelection(!osgiProject);
 		fEclipseButton.addSelectionListener(widgetSelectedAdapter(e -> updateRuntimeDependency()));
-
-		fEclipseCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
-		fEclipseCombo.setItems(new String[] {PDEUIMessages.NewProjectCreationPage_target_version_range_3_5, ICoreConstants.TARGET34, ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31});
-
-		String text = null;
-		if (settings != null && !osgiProject) {
-			text = settings.get(S_TARGET_NAME);
-		}
-		// Avoid initializing the PDE models in the wizard
-		if (text == null && PDECore.getDefault().areModelsInitialized()) {
-			text = TargetPlatformHelper.getTargetVersionString();
-		}
-		if (text == null || fEclipseCombo.indexOf(text) < 0) {
-			text = PDEUIMessages.NewProjectCreationPage_target_version_range_3_5;
-		}
-		fEclipseCombo.setText(text);
 
 		fOSGIButton = createButton(group, SWT.RADIO, 1, 30);
 		fOSGIButton.setText(PDEUIMessages.NewProjectCreationPage_pPureOSGi);
@@ -152,19 +134,11 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fOSGiCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
 		fOSGiCombo.setItems(new String[] {ICoreConstants.EQUINOX, PDEUIMessages.NewProjectCreationPage_standard});
 
-		text = null;
-		if (settings != null && osgiProject) {
-			text = settings.get(S_TARGET_NAME);
-		}
-		if (text == null || fOSGiCombo.indexOf(text) < 0) {
-			text = ICoreConstants.EQUINOX;
-		}
-		fOSGiCombo.setText(text);
+		fOSGiCombo.setText(ICoreConstants.EQUINOX);
 	}
 
 	private void updateRuntimeDependency() {
 		boolean depends = fEclipseButton.getSelection();
-		fEclipseCombo.setEnabled(depends);
 		fOSGiCombo.setEnabled(!depends);
 	}
 
@@ -202,11 +176,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fData.setLegacy(false);
 
 		// No project structure changes since 3.5, mark as latest version (though using any constant 3.5 or greater is equivalent)
-		if (fEclipseCombo.getText().equals(PDEUIMessages.NewProjectCreationPage_target_version_range_3_5)) {
-			fData.setTargetVersion(ICoreConstants.TARGET_VERSION_LATEST);
-		} else {
-			fData.setTargetVersion(fEclipseCombo.getText());
-		}
+		fData.setTargetVersion(ICoreConstants.TARGET_VERSION_LATEST);
 
 		// No longer support 3.0 non-osgi bundles in wizard
 		fData.setHasBundleStructure(true);
@@ -258,23 +228,6 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	}
 
 	public void saveSettings(IDialogSettings settings) {
-		if (fEclipseButton.getSelection()) {
-			String targetName = fEclipseCombo.getText();
-			// Avoid initializing the PDE models in the wizard
-			if (PDECore.getDefault().areModelsInitialized()) {
-				if (TargetPlatformHelper.getTargetVersionString().equals(targetName)) {
-					targetName = null;
-				}
-			} else {
-				if (fEclipseCombo.getSelectionIndex() == 0) {
-					targetName = null;
-				}
-			}
-			settings.put(S_TARGET_NAME, targetName);
-			settings.put(S_OSGI_PROJECT, false);
-		} else {
-			settings.put(S_TARGET_NAME, (String) null);
-			settings.put(S_OSGI_PROJECT, true);
-		}
+		settings.put(S_OSGI_PROJECT, !fEclipseButton.getSelection());
 	}
 }
