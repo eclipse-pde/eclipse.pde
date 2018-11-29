@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.filesystem.URIUtil;
@@ -133,7 +134,10 @@ public class PDEState extends MinimalState {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, PDECoreMessages.PDEState_CreatingTargetModelState,
 				urls.length);
 		for (URL url : urls) {
-			File file = new File(url.getFile());
+			File file = toFile(url);
+			if (file == null) {
+				continue;
+			}
 			try {
 				subMonitor.subTask(file.getName());
 				addBundle(file, -1);
@@ -142,6 +146,24 @@ public class PDEState extends MinimalState {
 			}
 			subMonitor.split(1);
 		}
+	}
+
+	/**
+	 * @param url
+	 * @return File object or {@code null} if URL can't be converted to file. In
+	 *         the later case an error is logged.
+	 */
+	private static File toFile(URL url) {
+		try {
+			IPath path = URIUtil.toPath(url.toURI());
+			if (path != null) {
+				return path.toFile();
+			}
+			PDECore.log(new IllegalArgumentException("Failed to convert url to file: " + url)); //$NON-NLS-1$
+		} catch (URISyntaxException e) {
+			PDECore.log(e);
+		}
+		return null;
 	}
 
 	@Override
