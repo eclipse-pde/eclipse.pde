@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc. and others
+ * Copyright (c) 2017, 2018 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -52,6 +52,9 @@ public class SyntaxValidatorListener implements IDocumentListener {
 		});
 		CompletableFuture.runAsync(() -> {
 			try {
+				if (fDocument.get().isEmpty()) {
+					return;
+				}
 				Parser.getDefault().parse(fDocument);
 			} catch (XMLStreamException e) {
 				Annotation error = prepareAnnotation(e);
