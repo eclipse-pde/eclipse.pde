@@ -41,7 +41,7 @@ public class InformationSection extends SectionPart {
 	private FormPage fPage;
 
 	public InformationSection(FormPage page, Composite parent) {
-		super(parent, page.getManagedForm().getToolkit(), Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);
+		super(parent, page.getManagedForm().getToolkit(), ExpandableComposite.TITLE_BAR);
 		fPage = page;
 		fEditor = (TargetEditor) page.getEditor();
 		createClient(getSection(), page.getEditor().getToolkit());
@@ -68,7 +68,6 @@ public class InformationSection extends SectionPart {
 		section.setLayoutData(data);
 
 		section.setText(PDEUIMessages.InformationSection_0);
-		section.setDescription(PDEUIMessages.InformationSection_1);
 
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
@@ -100,7 +99,7 @@ public class InformationSection extends SectionPart {
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 	}
-
+
 	@Override
 	public void refresh() {
 		fNameText.setText(getTarget().getName() != null ? getTarget().getName() : ""); //$NON-NLS-1$
