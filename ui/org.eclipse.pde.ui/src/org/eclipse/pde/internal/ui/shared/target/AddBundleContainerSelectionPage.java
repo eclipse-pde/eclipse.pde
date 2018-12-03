@@ -14,8 +14,7 @@
 package org.eclipse.pde.internal.ui.shared.target;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
@@ -161,6 +160,9 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		choices.addAll(getStandardChoices());
 		choices.addAll(getTargetLocationProvisionerChoices()); // Extension point contributions
 		choices.addAll(getTargetProvisionerChoices()); // Deprecated extension point contributions
+
+		choices.sort(Comparator.comparing(element -> element.isPreferredOption() ? 0 : 1));
+
 		wizardSelectionViewer.setInput(choices.toArray(new IWizardNode[choices.size()]));
 	}
 
@@ -331,7 +333,9 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 						}
 					};
 					if (!WorkbenchActivityHelper.filterItem(pc)) {
-						list.add(createTargetLocationProvisionerNode(element));
+						AbstractBundleContainerNode wizardNode = createTargetLocationProvisionerNode(element);
+						wizardNode.setPreferredOption(InstallableUnitWizard.CONTRIBUTION_ID.equals(contributionId));
+						list.add(wizardNode);
 					}
 				}
 			}
@@ -533,6 +537,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		private String fTypeDescription;
 		private Image fTypeImage;
 		private IWizard fWizard;
+		private boolean fPreferredOption;
 
 		public AbstractBundleContainerNode(String name, String description, Image image) {
 			fTypeName = name;
@@ -541,6 +546,14 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		}
 
 		public abstract IWizard createWizard();
+
+		void setPreferredOption(boolean preferredOption) {
+			fPreferredOption = preferredOption;
+		}
+
+		boolean isPreferredOption() {
+			return fPreferredOption;
+		}
 
 		@Override
 		public void dispose() {

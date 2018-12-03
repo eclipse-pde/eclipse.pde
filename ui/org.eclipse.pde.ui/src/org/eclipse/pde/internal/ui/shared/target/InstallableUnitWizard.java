@@ -29,6 +29,8 @@ import org.eclipse.pde.ui.target.ITargetLocationWizard;
  */
 public class InstallableUnitWizard extends Wizard implements ITargetLocationWizard {
 
+	public static final String CONTRIBUTION_ID = "org.eclipse.pde.ui.InstallableUnitProvisioner"; //$NON-NLS-1$
+
 	private ITargetDefinition fTarget;
 
 	private ITargetLocation fLocation;
