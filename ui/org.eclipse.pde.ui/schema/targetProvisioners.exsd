@@ -9,7 +9,7 @@
          &lt;p&gt;
 This extension point is used to register new target plug-in provisioners. Each plug-in provisioner is listed when the user attempts to add plug-ins from the PDE Target Platform&apos;s Preference Page.  The selected provisioner is responsible for providing the target location which contain plug-ins the user wants to add to the Target Platform.
 &lt;/p&gt;&lt;p&gt;
-This extension point is deprecated.  Please use the &lt;code&gt;org.eclipse.pde.ui.targetLocationProvisioners&lt;/code&gt; extension point instead.
+This extension point is deprecated and scheduled for deletion. Please use the &lt;code&gt;org.eclipse.pde.ui.targetLocationProvisioners&lt;/code&gt; extension point instead.
 &lt;/p&gt;
       </documentation>
    </annotation>
