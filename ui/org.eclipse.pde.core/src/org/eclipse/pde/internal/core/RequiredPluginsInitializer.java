@@ -21,23 +21,19 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 
+	private static final Job initPDEJob = Job.create(PDECoreMessages.PluginModelManager_InitializingPluginModels,
+			monitor -> {
+				if (!PDECore.getDefault().getModelManager().isInitialized()) {
+					PDECore.getDefault().getModelManager().targetReloaded(monitor);
+				}
+			});
+
 	@Override
 	public void initialize(IPath containerPath, IJavaProject javaProject) throws CoreException {
 		IProject project = javaProject.getProject();
 		// The first project to be built may initialize the PDE models, potentially long running, so allow cancellation
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		if (!manager.isInitialized()) {
-			Job initPDEJob = new Job(PDECoreMessages.PluginModelManager_InitializingPluginModels) {
-				@Override
-				protected IStatus run(IProgressMonitor monitor) {
-					if (!PDECore.getDefault().getModelManager().isInitialized()) {
-						PDECore.getDefault().getModelManager().targetReloaded(monitor);
-					}
-					if (monitor.isCanceled())
-						return Status.CANCEL_STATUS;
-					return Status.OK_STATUS;
-				}
-			};
 			initPDEJob.schedule();
 			try {
 				initPDEJob.join();
