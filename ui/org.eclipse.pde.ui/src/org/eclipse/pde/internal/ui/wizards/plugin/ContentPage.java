@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,9 +10,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Kit Lo (IBM) - Bug 244461 - Duplicating colon in error message
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.wizards.plugin;
+
+import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -20,7 +23,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.util.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 import org.eclipse.pde.internal.ui.wizards.BundleProviderHistoryUtil;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.ui.IFieldData;
@@ -122,9 +124,9 @@ public abstract class ContentPage extends WizardPage {
 	 */
 	protected String validateVersion(Text text) {
 		if (text.getText().trim().length() == 0) {
-			return PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(text), PDEUIMessages.ControlValidationUtility_errorMsgValueMustBeSpecified);
+			return MessageFormat.format(PDEUIMessages.ContentPage_pversion_message, PDEUIMessages.ControlValidationUtility_errorMsgValueMustBeSpecified);
 		} else if (!isVersionValid(text.getText().trim())) {
-			return PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(text), UtilMessages.BundleErrorReporter_InvalidFormatInBundleVersion);
+			return MessageFormat.format(PDEUIMessages.ContentPage_pversion_message, UtilMessages.BundleErrorReporter_InvalidFormatInBundleVersion);
 		}
 		return null;
 	}

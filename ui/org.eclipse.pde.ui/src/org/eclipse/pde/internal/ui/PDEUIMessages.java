@@ -15,6 +15,7 @@
  *     Fabian Miehe - Bug 440420
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
+ *     Kit Lo (IBM) - Bug 244461 - Duplicating colon in error message
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -1200,6 +1201,7 @@ public class PDEUIMessages extends NLS {
 	public static String ContentPage_pClassGroup;
 	public static String ContentPage_pid;
 	public static String ContentPage_pversion;
+	public static String ContentPage_pversion_message;
 	public static String ContentPage_pname;
 	public static String ContentPage_pprovider;
 	public static String ContentPage_fid;
