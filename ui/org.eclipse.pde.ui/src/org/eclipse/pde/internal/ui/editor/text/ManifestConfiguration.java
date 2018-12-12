@@ -262,6 +262,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 				fContentAssistant.enableAutoInsert(true);
 				fContentAssistant.setInformationControlCreator(parent -> new DefaultInformationControl(parent, false));
 				fContentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
+				fContentAssistant.enableAutoActivation(true);
 			}
 			return fContentAssistant;
 		}

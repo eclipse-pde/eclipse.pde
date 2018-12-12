@@ -60,6 +60,8 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 
 	private static final String[] fNames = {BAUMAN, ANISZCZYK, LASOCKI_BICZYSKO, PAWLOWSKI, MELHEM, WINDATT};
 
+	private static final char[] fAutoActivationChars = { ':', ' ', ',', '.', ';', '=' };
+
 	protected static final short F_TYPE_HEADER = 0, // header proposal
 			F_TYPE_PKG = 1, // package proposal
 			F_TYPE_BUNDLE = 2, // bundle proposal
@@ -104,6 +106,11 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		} catch (BadLocationException e) {
 		}
 		return null;
+	}
+
+	@Override
+	public char[] getCompletionProposalAutoActivationCharacters() {
+		return fAutoActivationChars;
 	}
 
 	protected final void parseDocument(IDocument doc) {
