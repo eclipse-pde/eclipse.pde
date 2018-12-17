@@ -127,6 +127,8 @@ public class TargetPlatformRepository extends AbstractRepository {
 			if (service != null) {
 				ITargetDefinition definition = service.getWorkspaceTargetDefinition();
 				String name = definition.getName();
+				if (name == null)
+					return ""; //$NON-NLS-1$
 				if (name.length() > 30) {
 					name = name.substring(0, 30);
 				}
