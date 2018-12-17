@@ -596,7 +596,10 @@ public class TargetEditor extends FormEditor {
 				} catch (CoreException e) {
 					PDEPlugin.log(e);
 				}
-				Job resolveJob = new Job(NLS.bind(PDEUIMessages.TargetEditor_1, getTarget().getName())) {
+				String name = getTarget().getName();
+				if (name == null)
+					name = ""; //$NON-NLS-1$
+				Job resolveJob = new Job(NLS.bind(PDEUIMessages.TargetEditor_1, name)) {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						getTarget().resolve(monitor);

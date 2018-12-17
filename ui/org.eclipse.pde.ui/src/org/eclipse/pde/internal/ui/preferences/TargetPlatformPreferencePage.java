@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2018 EclipseSource Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -357,7 +357,10 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		if (target.isResolved())
 			return;
 
-		Job resolveJob = new Job(NLS.bind(PDEUIMessages.TargetEditor_1, target.getName())) {
+		String name = target.getName();
+		if (name == null)
+			name = ""; //$NON-NLS-1$
+		Job resolveJob = new Job(NLS.bind(PDEUIMessages.TargetEditor_1, name)) {
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				target.resolve(monitor);
