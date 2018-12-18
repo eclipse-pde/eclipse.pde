@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2017 IBM Corporation and others.
+ * Copyright (c) 2013, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,6 +20,7 @@ import org.eclipse.osgi.util.NLS;
 public class UtilMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.core.util.UtilMessages"; //$NON-NLS-1$
 	public static String ErrorReadingManifest;
+	public static String ErrorManifestFileAbsent;
 	public static String ErrorReadingOldStyleManifest;
 	public static String VMHelper_noJreForExecEnv;
 	public static String BundleErrorReporter_InvalidFormatInBundleVersion;
