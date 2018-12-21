@@ -154,6 +154,10 @@ public class TargetDefinitionPersistenceHelper {
 			}
 		} else {
 			stream = input.getFileStore().openInputStream(0, null);
+			if (stream.available() == 0) {
+				// do not process empty stream
+				return;
+			}
 		}
 		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		parser.setErrorHandler(new DefaultHandler());
