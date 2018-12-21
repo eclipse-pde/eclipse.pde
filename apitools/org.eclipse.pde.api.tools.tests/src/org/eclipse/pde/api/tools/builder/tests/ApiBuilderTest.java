@@ -35,10 +35,15 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.JavaCore;
@@ -60,6 +65,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.util.FileUtils;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
@@ -206,6 +212,13 @@ public abstract class ApiBuilderTest extends BuilderTests {
 					System.err.println("Unexpected JDT Marker in " + jdtMarkers[i].getResource().getFullPath()); //$NON-NLS-1$
 					System.err.println(cause);
 				}
+			}
+			if (condition) {
+				/*
+				 * We are about to fail, log some extra information for easier
+				 * debugging of the fail.
+				 */
+				logExtraInfos(resource, getName() + " is about to fail, logging extra infos"); //$NON-NLS-1$
 			}
 			assertFalse("Should not be a JDT error: " + cause, condition); //$NON-NLS-1$
 		}
@@ -1137,5 +1150,54 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		TestSuite suite = new TestSuite(ApiBuilderTest.class.getName());
 		collectTests(suite);
 		return suite;
+	}
+
+	private static void logExtraInfos(IPath resourcePath, String message) {
+		ILog log = PDECore.getDefault().getLog();
+		try {
+			IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+			IProject[] projects = workspaceRoot.getProjects();
+			IMarker[] markers = workspaceRoot.findMarkers(null, true, IResource.DEPTH_INFINITE);
+
+			String infosContent = String.join(System.lineSeparator(), message,
+					"resource path: " + resourcePath, //$NON-NLS-1$
+					toString(projects), toString(markers));
+
+			IStatus infos = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, infosContent);
+			log.log(infos);
+		} catch (Exception e) {
+			IStatus error = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "error occurred while logging extra info", e); //$NON-NLS-1$
+			log.log(error);
+		}
+	}
+
+	private static String toString(IProject[] projects) {
+		StringBuilder contents = new StringBuilder();
+		contents.append("Listing " + projects.length + " projects:"); //$NON-NLS-1$ //$NON-NLS-2$
+		for (IProject project : projects) {
+			contents.append(System.lineSeparator());
+			contents.append("    name: " + project.getName()); //$NON-NLS-1$
+			contents.append(System.lineSeparator());
+			contents.append("    location: " + project.getLocation()); //$NON-NLS-1$
+			contents.append(System.lineSeparator());
+			contents.append("    is accessible: " + project.isAccessible()); //$NON-NLS-1$
+		}
+		return contents.toString();
+	}
+
+	private static String toString(IMarker[] markers) throws CoreException {
+		StringBuilder contents = new StringBuilder();
+		contents.append("Listing " + markers.length + " markers:"); //$NON-NLS-1$ //$NON-NLS-2$
+		for (IMarker marker : markers) {
+			contents.append(System.lineSeparator());
+			contents.append("    message: " + marker.getAttribute(IMarker.MESSAGE)); //$NON-NLS-1$
+			contents.append(System.lineSeparator());
+			contents.append("    severity: " + marker.getAttribute(IMarker.SEVERITY)); //$NON-NLS-1$
+			contents.append(System.lineSeparator());
+			contents.append("    line number: " + marker.getAttribute(IMarker.LINE_NUMBER)); //$NON-NLS-1$
+			contents.append(System.lineSeparator());
+			contents.append("    resource: " + marker.getResource().getFullPath()); //$NON-NLS-1$
+		}
+		return contents.toString();
 	}
 }
