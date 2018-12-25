@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Sopot Cela (Red Hat Inc.)
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 541528
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.validator;
 
@@ -29,11 +30,11 @@ import org.eclipse.pde.internal.genericeditor.target.extension.model.xml.Parser;
 
 public class SyntaxValidatorListener implements IDocumentListener {
 
-	private static final String ERROR_MARKER = "org.eclipse.jdt.ui.error";
+	private static final String ERROR_MARKER = "org.eclipse.pde.genericeditor.error"; //$NON-NLS-1$
 
 	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
-
+		// do nothing for now
 	}
 
 	@Override
@@ -44,7 +45,7 @@ public class SyntaxValidatorListener implements IDocumentListener {
 			return;
 		IAnnotationModel model = textFileBuffer
 				.getAnnotationModel();
-		// clear the "org.eclipse.jdt.ui.error" annotations
+		// clear the "org.eclipse.pde.genericeditor.error" annotations
 		model.getAnnotationIterator().forEachRemaining(annotation -> {
 			if (ERROR_MARKER.equals(annotation.getType())) {
 				model.removeAnnotation(annotation);
@@ -66,13 +67,11 @@ public class SyntaxValidatorListener implements IDocumentListener {
 
 	private Position preparePosition(XMLStreamException e) {
 		int offset = e.getLocation().getCharacterOffset();
-		Position position = new Position(offset);
-		return position;
+		return new Position(offset);
 	}
 
 	private Annotation prepareAnnotation(XMLStreamException e) {
-		Annotation annotation = new Annotation(ERROR_MARKER, true, beautify(e.getLocalizedMessage()));
-		return annotation;
+		return new Annotation(ERROR_MARKER, true, beautify(e.getLocalizedMessage()));
 	}
 
 	private String beautify(String localizedMessage) {

@@ -172,4 +172,19 @@
             type="org.eclipse.ui.IEditorInput">
       </propertyTester>
    </extension>
+    <extension
+         point="org.eclipse.ui.editors.annotationTypes">
+      <type
+         name="org.eclipse.pde.genericeditor.error"
+         super="org.eclipse.ui.workbench.texteditor.error"
+         markerSeverity="2">
+      </type>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      <specification
+            annotationType="org.eclipse.pde.genericeditor.error">
+      </specification>
+
+	</extension>
 </plugin>
