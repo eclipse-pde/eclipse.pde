@@ -1541,12 +1541,9 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureImportWizard_errors_locationMissing;
 	public static String FeatureImportWizard_errors_buildFolderInvalid;
 	public static String FeatureImportWizard_errors_buildFolderMissing;
-
 	public static String FeatureImportWizard_messages_updating;
 	public static String FeatureImportWizard_title;
-	public static String FeatureSection_addRequired;
 
-	public static String FeatureSection_removeAll;
 	public static String FeatureImportWizard_noToAll;
 	public static String FeatureImportWizard_messages_noFeatures;
 	public static String FeatureImportWizard_messages_title;
@@ -2140,6 +2137,9 @@ public class PDEUIMessages extends NLS {
 	public static String Product_FeatureSection_up;
 	public static String Product_FeatureSection_down;
 	public static String Product_FeatureSection_sortAlpha;
+	public static String FeatureSection_addRequired;
+	public static String FeatureSection_toggleRoot;
+	public static String FeatureSection_removeAll;
 
 	public static String ImportPackageSection_desc;
 	public static String ImportPackageSection_descFragment;
@@ -3290,6 +3290,9 @@ public class PDEUIMessages extends NLS {
 
 	public static String VersionDialog_text;
 	public static String VersionDialog_title;
+
+	public static String FeatureProps_rootFeature;
+	public static String FeatureProps_title;
 
 	public static String SearchRepositoriesForIUProposal_message;
 	public static String SearchRepositoriesForIUProposal_description;

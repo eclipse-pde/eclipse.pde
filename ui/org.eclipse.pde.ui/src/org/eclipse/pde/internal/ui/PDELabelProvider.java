@@ -306,6 +306,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	public String getObjectText(IProductFeature obj) {
 		String name = preventNull(obj.getId());
+		if (obj.isRootInstallMode()) {
+			name += " (root)"; //$NON-NLS-1$
+		}
 		if (VersionUtil.isEmptyVersion(obj.getVersion()))
 			return name;
 		return name + ' ' + formatVersion(obj.getVersion());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2018 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -23,4 +23,15 @@ public interface IProductFeature extends IProductObject {
 
 	void setVersion(String version);
 
+	/**
+	 * @return true if the feature should be installed as a root feature.
+	 */
+	boolean isRootInstallMode();
+
+	/**
+	 * @param root
+	 *            true if the feature must be installed as a root feature
+	 * @return this
+	 */
+	IProductFeature setRootInstallMode(boolean root);
 }

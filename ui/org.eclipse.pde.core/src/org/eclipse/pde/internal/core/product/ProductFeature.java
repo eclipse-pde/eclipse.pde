@@ -23,16 +23,21 @@ import org.w3c.dom.Node;
 
 public class ProductFeature extends ProductObject implements IProductFeature {
 
+	/**
+	 * the models version property
+	 */
+	public static final String PROP_VERSION = "version"; //$NON-NLS-1$
+
+	/**
+	 * the models root install mode property
+	 */
+	public static final String PROP_INSTALL_MODE_ROOT = "installmoderoot"; //$NON-NLS-1$
+
 	private static final long serialVersionUID = 1L;
 	private String fId;
 	private String fVersion;
 
-	/*
-	 * Support for preserving tycho's installMode="root" feature
-	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=361722
-	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=429902
-	 */
-	private String fInstallMode;
+	private boolean fInstallModeRoot;
 
 	public ProductFeature(IProductModel model) {
 		super(model);
@@ -44,7 +49,7 @@ public class ProductFeature extends ProductObject implements IProductFeature {
 			Element element = (Element) node;
 			fId = element.getAttribute("id"); //$NON-NLS-1$
 			fVersion = element.getAttribute("version"); //$NON-NLS-1$
-			fInstallMode = element.getAttribute("installMode"); //$NON-NLS-1$
+			fInstallModeRoot = "root".equals(element.getAttribute("installMode")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -54,8 +59,8 @@ public class ProductFeature extends ProductObject implements IProductFeature {
 		if (fVersion != null && fVersion.length() > 0 && !fVersion.equals(ICoreConstants.DEFAULT_VERSION)) {
 			writer.print(" version=\"" + fVersion + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (fInstallMode != null && !fInstallMode.equals("")) { //$NON-NLS-1$
-			writer.print(" installMode=\"" + fInstallMode + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		if (fInstallModeRoot) {
+			writer.print(" installMode=\"root\""); //$NON-NLS-1$
 		}
 		writer.println("/>"); //$NON-NLS-1$
 	}
@@ -79,8 +84,23 @@ public class ProductFeature extends ProductObject implements IProductFeature {
 	public void setVersion(String version) {
 		String old = fVersion;
 		fVersion = version;
-		if (isEditable())
-			firePropertyChanged("version", old, fVersion); //$NON-NLS-1$
+		if (isEditable()) {
+			firePropertyChanged(PROP_VERSION, old, fVersion);
+		}
 	}
 
+	@Override
+	public IProductFeature setRootInstallMode(boolean root) {
+		boolean old = fInstallModeRoot;
+		fInstallModeRoot = root;
+		if (isEditable()) {
+			firePropertyChanged(PROP_INSTALL_MODE_ROOT, old, fInstallModeRoot);
+		}
+		return this;
+	}
+
+	@Override
+	public boolean isRootInstallMode() {
+		return fInstallModeRoot;
+	}
 }

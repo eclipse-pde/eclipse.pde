@@ -45,11 +45,19 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 /**
- * Section of the product editor on the depedencies page that lists all required features
- * of this feature-based product.
+ * Section of the product editor on the depedencies page that lists all required
+ * features of this feature-based product.
  */
 public class FeatureSection extends TableSection implements IPropertyChangeListener {
 
+	private static final int BTN_DWN = 7;
+	private static final int BTN_UP = 6;
+	private static final int BTN_ROOT = 5;
+	private static final int BTN_PROPS = 4;
+	private static final int BTN_REMOVE_ALL = 3;
+	private static final int BTN_REMOVE = 2;
+	private static final int BTN_ADD_REQ = 1;
+	private static final int BTN_ADD = 0;
 	private SortAction fSortAction;
 	private Action fNewFeatureAction;
 
@@ -80,14 +88,15 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	}
 
 	private static String[] getButtonLabels() {
-		String[] labels = new String[7];
-		labels[0] = PDEUIMessages.Product_FeatureSection_add;
-		labels[1] = PDEUIMessages.FeatureSection_addRequired;
-		labels[2] = PDEUIMessages.Product_FeatureSection_remove;
-		labels[3] = PDEUIMessages.Product_PluginSection_removeAll;
-		labels[4] = PDEUIMessages.Product_FeatureSection_properties;
-		labels[5] = PDEUIMessages.Product_FeatureSection_up;
-		labels[6] = PDEUIMessages.Product_FeatureSection_down;
+		String[] labels = new String[8];
+		labels[BTN_ADD] = PDEUIMessages.Product_FeatureSection_add;
+		labels[BTN_ADD_REQ] = PDEUIMessages.FeatureSection_addRequired;
+		labels[BTN_REMOVE] = PDEUIMessages.Product_FeatureSection_remove;
+		labels[BTN_REMOVE_ALL] = PDEUIMessages.Product_PluginSection_removeAll;
+		labels[BTN_ROOT] = PDEUIMessages.FeatureSection_toggleRoot;
+		labels[BTN_PROPS] = PDEUIMessages.Product_FeatureSection_properties;
+		labels[BTN_UP] = PDEUIMessages.Product_FeatureSection_up;
+		labels[BTN_DWN] = PDEUIMessages.Product_FeatureSection_down;
 		return labels;
 	}
 
@@ -149,40 +158,52 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 
 	@Override
 	protected void buttonSelected(int index) {
-		switch (index) {
-			case 0 :
+		switch (index)
+			{
+			case BTN_ADD:
 				handleAdd();
 				break;
-			case 1 :
+			case BTN_ADD_REQ:
 				handleAddRequired();
 				break;
-			case 2 :
+			case BTN_REMOVE:
 				handleDelete();
 				break;
-			case 3 :
+			case BTN_REMOVE_ALL:
 				handleRemoveAll();
 				break;
-			case 4 :
+			case BTN_PROPS:
 				handleProperties();
 				break;
-			case 5 :
+			case BTN_ROOT:
+				handleRootToggle();
+				break;
+			case BTN_UP:
 				handleUp();
 				break;
-			case 6 :
+			case BTN_DWN:
 				handleDown();
 				break;
-		}
+			}
+	}
+
+	private void handleRootToggle() {
+		boolean nonRootSelected = getViewerSelection().toList().stream()
+				.anyMatch(o -> !((IProductFeature) o).isRootInstallMode());
+		getViewerSelection().toList().forEach(o -> ((IProductFeature) o).setRootInstallMode(nonRootSelected));
 	}
 
 	private void handleProperties() {
 		IStructuredSelection ssel = fFeatureTable.getStructuredSelection();
 		if (ssel.size() == 1) {
 			IProductFeature feature = (IProductFeature) ssel.toArray()[0];
-			VersionDialog dialog = new VersionDialog(PDEPlugin.getActiveWorkbenchShell(), isEditable(), feature.getVersion());
+			FeatureProperties dialog = new FeatureProperties(PDEPlugin.getActiveWorkbenchShell(), isEditable(),
+					feature.getVersion(), feature.isRootInstallMode());
 			dialog.create();
 			SWTUtil.setDialogSize(dialog, 400, 200);
 			if (dialog.open() == Window.OK) {
 				feature.setVersion(dialog.getVersion());
+				feature.setRootInstallMode(dialog.getRootInstallMode());
 			}
 		}
 	}
@@ -203,7 +224,8 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		IProductFeature feature = factory.createFeature();
 		feature.setId(id);
 		feature.setVersion(version);
-		product.addFeatures(new IProductFeature[] {feature});
+		feature.setRootInstallMode(true);
+		product.addFeatures(new IProductFeature[] { feature });
 	}
 
 	private void handleRemoveAll() {
@@ -324,7 +346,8 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	}
 
 	private void handleAdd() {
-		FeatureSelectionDialog dialog = new FeatureSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), getAvailableChoices(), true);
+		FeatureSelectionDialog dialog = new FeatureSelectionDialog(PDEPlugin.getActiveWorkbenchShell(),
+				getAvailableChoices(), true);
 		if (dialog.open() == Window.OK) {
 			Object[] models = dialog.getResult();
 			for (Object model : models) {
@@ -448,8 +471,8 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		// This section can get disposed if the configuration is changed from
-		// plugins to features or vice versa.  Subsequently, the configuration
-		// page is removed and readded.  In this circumstance, abort the
+		// plugins to features or vice versa. Subsequently, the configuration
+		// page is removed and readded. In this circumstance, abort the
 		// refresh
 		if (fFeatureTable.getTable().isDisposed()) {
 			return;
@@ -489,17 +512,18 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		boolean hasSelection = tableSelection.length > 0;
 		if (updateRemove) {
 			ISelection selection = getViewerSelection();
-			tablePart.setButtonEnabled(2, isEditable() && !selection.isEmpty() && selection instanceof IStructuredSelection && ((IStructuredSelection) selection).getFirstElement() instanceof IProductFeature);
+			tablePart.setButtonEnabled(BTN_REMOVE_ALL, isEditable() && !selection.isEmpty() && selection instanceof IStructuredSelection && ((IStructuredSelection) selection).getFirstElement() instanceof IProductFeature);
 		}
 		if (updateRemoveAll)
-			tablePart.setButtonEnabled(3, isEditable() && fFeatureTable.getTable().getItemCount() > 0);
+			tablePart.setButtonEnabled(BTN_REMOVE_ALL, isEditable() && fFeatureTable.getTable().getItemCount() > 0);
 
-		tablePart.setButtonEnabled(4, isEditable() && hasSelection);
+		tablePart.setButtonEnabled(BTN_PROPS, isEditable() && tableSelection.length == 1);
 
-		// up/down buttons
+		tablePart.setButtonEnabled(BTN_ROOT, isEditable() && hasSelection);
+
 		boolean canMove = table.getItemCount() > 1 && tableSelection.length == 1 && !fSortAction.isChecked();
-		tablePart.setButtonEnabled(5, canMove && isEditable() && hasSelection && table.getSelectionIndex() > 0);
-		tablePart.setButtonEnabled(6, canMove && hasSelection && isEditable() && table.getSelectionIndex() < table.getItemCount() - 1);
+		tablePart.setButtonEnabled(BTN_UP, canMove && isEditable() && hasSelection && table.getSelectionIndex() > 0);
+		tablePart.setButtonEnabled(BTN_DWN, canMove && hasSelection && isEditable() && table.getSelectionIndex() < table.getItemCount() - 1);
 	}
 
 	@Override
