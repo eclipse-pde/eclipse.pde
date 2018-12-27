@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -46,6 +46,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.tests.builder.BuilderTests;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
@@ -1163,7 +1165,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 					"resource path: " + resourcePath, //$NON-NLS-1$
 					toString(projects), toString(markers));
 
-			IStatus infos = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, infosContent);
+			IStatus infos = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, infosContent, new Exception());
 			log.log(infos);
 		} catch (Exception e) {
 			IStatus error = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "error occurred while logging extra info", e); //$NON-NLS-1$
@@ -1171,7 +1173,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		}
 	}
 
-	private static String toString(IProject[] projects) {
+	private static String toString(IProject[] projects) throws Exception {
 		StringBuilder contents = new StringBuilder();
 		contents.append("Listing " + projects.length + " projects:"); //$NON-NLS-1$ //$NON-NLS-2$
 		for (IProject project : projects) {
@@ -1181,6 +1183,25 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			contents.append("    location: " + project.getLocation()); //$NON-NLS-1$
 			contents.append(System.lineSeparator());
 			contents.append("    is accessible: " + project.isAccessible()); //$NON-NLS-1$
+			contents.append(System.lineSeparator());
+			if (project.hasNature(JavaCore.NATURE_ID)) {
+				IJavaProject javaProject = JavaCore.create(project);
+				boolean ignoreUnresolvedEntry = true;
+				IClasspathEntry[] projectClassPath = javaProject.getResolvedClasspath(ignoreUnresolvedEntry);
+				contents.append(toString(projectClassPath));
+
+			}
+		}
+		return contents.toString();
+	}
+
+	private static String toString(IClasspathEntry[] classpathEntries) {
+		StringBuilder contents = new StringBuilder();
+		contents.append("Listing " + classpathEntries.length + " classpath entries:"); //$NON-NLS-1$ //$NON-NLS-2$
+		contents.append(System.lineSeparator());
+		for (IClasspathEntry classpathEntry : classpathEntries) {
+			contents.append(classpathEntry);
+			contents.append(System.lineSeparator());
 		}
 		return contents.toString();
 	}
