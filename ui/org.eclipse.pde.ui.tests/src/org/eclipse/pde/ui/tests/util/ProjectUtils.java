@@ -25,6 +25,7 @@ import org.eclipse.pde.internal.ui.wizards.plugin.PluginFieldData;
 import org.eclipse.pde.ui.IBundleContentWizard;
 import org.eclipse.pde.ui.templates.AbstractNewPluginTemplateWizard;
 import org.eclipse.pde.ui.templates.ITemplateSection;
+import org.eclipse.pde.ui.tests.runtime.TestUtils;
 
 /**
  * Utility class for project related operations
@@ -119,7 +120,9 @@ public class ProjectUtils {
 		NewProjectCreationOperation operation = new NewProjectCreationOperation(data, provider, wizard);
 		operation.run(new NullProgressMonitor());
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		return JavaCore.create(project);
+		IJavaProject javaProject = JavaCore.create(project);
+		TestUtils.waitForJobs("ProjectUtils.createPluginProject " + projectName, 100, 10000);
+		return javaProject;
 	}
 
 
