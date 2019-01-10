@@ -214,16 +214,16 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		dialog.create();
 		SWTUtil.setDialogSize(dialog, 400, 500);
 		if (dialog.open() == Window.OK) {
-			addFeature(wizard.getFeatureId(), wizard.getFeatureVersion());
+			addFeature(wizard.getFeatureId());
 		}
 	}
 
-	private void addFeature(String id, String version) {
+	private void addFeature(String id) {
 		IProduct product = getProduct();
 		IProductModelFactory factory = product.getModel().getFactory();
 		IProductFeature feature = factory.createFeature();
 		feature.setId(id);
-		feature.setVersion(version);
+		feature.setVersion(""); //$NON-NLS-1$
 		feature.setRootInstallMode(true);
 		product.addFeatures(new IProductFeature[] { feature });
 	}
@@ -352,7 +352,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 			Object[] models = dialog.getResult();
 			for (Object model : models) {
 				IFeature feature = ((IFeatureModel) model).getFeature();
-				addFeature(feature.getId(), feature.getVersion());
+				addFeature(feature.getId());
 			}
 		}
 	}
@@ -372,7 +372,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		for (String id : requiredFeatures) {
 			// Do not add features that already exist
 			if (!getProduct().containsFeature(id)) {
-				addFeature(id, ""); //$NON-NLS-1$
+				addFeature(id);
 			}
 		}
 	}
