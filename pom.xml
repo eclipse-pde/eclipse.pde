@@ -94,7 +94,6 @@
     <module>ui/org.eclipse.tools.layout.spy</module>
     <module>ui/org.eclipse.pde.ui.templates.tests</module>
     <module>ui/org.eclipse.ui.trace</module>
-    <module>ui/org.eclipse.ui.views.log</module>
     <module>ui/org.eclipse.pde.genericeditor.extension</module>
     <module>ui/org.eclipse.pde.genericeditor.extension.tests</module>
     <module>features/org.eclipse.pde-feature</module>

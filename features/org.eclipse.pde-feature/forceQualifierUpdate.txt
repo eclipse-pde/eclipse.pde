@@ -2,4 +2,4 @@
 [Bug 428468] [1.8][compiler] Finishing touches for Java 8 release - Touching bundle to pick up new ASM version
 [Bug 430892] PDE feature needs to be "touched" (for I-build)
 [Bug 399749] update to Orbit M7 S-build URL
-[Bug 486479 ] pde feature needs to be 'touched'
+[Bug 486479] pde feature needs to be 'touched'
