@@ -14,9 +14,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -68,45 +67,19 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 
 	public void initializeFrom(ILaunchConfiguration configuration) throws CoreException {
 		super.initializeFrom(configuration, true);
-		initWorkspacePluginsState(configuration);
-		initExternalPluginsState(configuration);
-		updateCounter();
+		initializePluginsState(configuration);
 		fLaunchConfiguration = configuration;
-		handleFilterButton(); // Once the page is initialized, apply any filtering.
 	}
 
 	// TODO deal with the discrepency between save/init states of the two blocks
 
-	private void initExternalPluginsState(ILaunchConfiguration configuration) throws CoreException {
-		Map<IPluginModelBase, String> map = BundleLauncherHelper.getTargetBundleMap(configuration,
-				Collections.EMPTY_SET, IPDELauncherConstants.TARGET_BUNDLES);
-		fPluginTreeViewer.setSubtreeChecked(fExternalPlugins, false);
-		for (Entry<IPluginModelBase, String> entry : map.entrySet()) {
-			IPluginModelBase model = entry.getKey();
-			if (fPluginTreeViewer.setChecked(model, true)) {
-				setText(model, entry.getValue().toString());
-			}
-		}
-		fNumExternalChecked = map.size();
-		resetGroup(fExternalPlugins);
-		fPluginTreeViewer.setChecked(fExternalPlugins, fNumExternalChecked > 0);
-		fPluginTreeViewer.setGrayed(fExternalPlugins, fNumExternalChecked > 0 && fNumExternalChecked < getExternalModels().length);
-	}
+	private void initializePluginsState(ILaunchConfiguration configuration) throws CoreException {
+		Map<IPluginModelBase, String> selected = new HashMap<>();
+		selected.putAll(BundleLauncherHelper.getWorkspaceBundleMap(configuration));
+		selected.putAll(
+				BundleLauncherHelper.getTargetBundleMap(configuration, null, IPDELauncherConstants.TARGET_BUNDLES));
 
-	private void initWorkspacePluginsState(ILaunchConfiguration configuration) throws CoreException {
-		Map<IPluginModelBase, String> map = BundleLauncherHelper.getWorkspaceBundleMap(configuration);
-		fPluginTreeViewer.setSubtreeChecked(fWorkspacePlugins, false);
-		for (Entry<IPluginModelBase, String> entry : map.entrySet()) {
-			IPluginModelBase model = entry.getKey();
-			if (fPluginTreeViewer.setChecked(model, true)) {
-				setText(model, entry.getValue().toString());
-			}
-		}
-		fNumWorkspaceChecked = map.size();
-		resetGroup(fWorkspacePlugins);
-
-		fPluginTreeViewer.setChecked(fWorkspacePlugins, fNumWorkspaceChecked > 0);
-		fPluginTreeViewer.setGrayed(fWorkspacePlugins, fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < getWorkspaceModels().length);
+		initializePluginsState(selected);
 	}
 
 	@Override

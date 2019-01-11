@@ -16,7 +16,6 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.*;
-import java.util.Map.Entry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -62,9 +61,7 @@ public class PluginBlock extends AbstractPluginBlock {
 		super.initializeFrom(config, enableTable);
 
 		if (enableTable) {
-			initWorkspacePluginsState(config);
-			initExternalPluginsState(config);
-			handleFilterButton(); // Once the page is initialized, apply any filtering
+			initializePluginsState(config);
 
 			// If the workspace plug-in state has changed (project closed, etc.) the launch config needs to be updated without making the tab dirty
 			if (fLaunchConfig.isWorkingCopy()) {
@@ -91,48 +88,14 @@ public class PluginBlock extends AbstractPluginBlock {
 		}
 	}
 
-	/*
-	 * if the "automatic add" option is selected, then we save the ids of plugins
-	 * that have been "deselected" by the user.
-	 * When we initialize the tree, we first set the workspace plugins subtree to 'checked',
-	 * then we check the plugins that had been deselected and saved in the config.
-	 *
-	 * If the "automatic add" option is not selected, then we save the ids of plugins
-	 * that were "selected" by the user.
-	 * When we initialize the tree, we first set the workspace plugins subtree to 'unchecked',
-	 * then we check the plugins that had been selected and saved in the config.
-	 */
-	protected void initWorkspacePluginsState(ILaunchConfiguration configuration) throws CoreException {
-		Map<IPluginModelBase, String> map = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null,
-				IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
-		fPluginTreeViewer.setSubtreeChecked(fWorkspacePlugins, false);
-		for (Entry<IPluginModelBase, String> entry : map.entrySet()) {
-			IPluginModelBase model = entry.getKey();
-			if (fPluginTreeViewer.setChecked(model, true)) {
-				setText(model, entry.getValue().toString());
-			}
-		}
-		fNumWorkspaceChecked = map.size();
-		resetGroup(fWorkspacePlugins);
+	private void initializePluginsState(ILaunchConfiguration config) throws CoreException {
+		Map<IPluginModelBase, String> selected = new HashMap<>();
+		selected.putAll(BundleLauncherHelper.getWorkspaceBundleMap(config, null,
+				IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS));
+		selected.putAll(
+				BundleLauncherHelper.getTargetBundleMap(config, null, IPDELauncherConstants.SELECTED_TARGET_PLUGINS));
 
-		fPluginTreeViewer.setChecked(fWorkspacePlugins, fNumWorkspaceChecked > 0);
-		fPluginTreeViewer.setGrayed(fWorkspacePlugins, fNumWorkspaceChecked > 0 && fNumWorkspaceChecked < getWorkspaceModels().length);
-	}
-
-	protected void initExternalPluginsState(ILaunchConfiguration configuration) throws CoreException {
-		Map<IPluginModelBase, String> map = BundleLauncherHelper.getTargetBundleMap(configuration,
-				Collections.EMPTY_SET, IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
-		fPluginTreeViewer.setSubtreeChecked(fExternalPlugins, false);
-		for (Entry<IPluginModelBase, String> entry : map.entrySet()) {
-			IPluginModelBase model = entry.getKey();
-			if (fPluginTreeViewer.setChecked(model, true)) {
-				setText(model, entry.getValue().toString());
-			}
-		}
-		fNumExternalChecked = map.size();
-		resetGroup(fExternalPlugins);
-		fPluginTreeViewer.setChecked(fExternalPlugins, fNumExternalChecked > 0);
-		fPluginTreeViewer.setGrayed(fExternalPlugins, fNumExternalChecked > 0 && fNumExternalChecked < getExternalModels().length);
+		initializePluginsState(selected);
 	}
 
 	@Override

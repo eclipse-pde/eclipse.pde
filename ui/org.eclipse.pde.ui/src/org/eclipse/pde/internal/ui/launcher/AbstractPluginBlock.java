@@ -21,6 +21,7 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.*;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -67,8 +68,8 @@ public abstract class AbstractPluginBlock {
 
 	private FilteredCheckboxTree fPluginFilteredTree;
 	protected CachedCheckboxTreeViewer fPluginTreeViewer;
-	protected NamedElement fWorkspacePlugins;
-	protected NamedElement fExternalPlugins;
+	private NamedElement fWorkspacePlugins;
+	private NamedElement fExternalPlugins;
 	private IPluginModelBase[] fExternalModels;
 	private IPluginModelBase[] fWorkspaceModels;
 	protected int fNumExternalChecked;
@@ -1022,6 +1023,21 @@ public abstract class AbstractPluginBlock {
 				}
 			}
 		}
+	}
+
+	protected final void initializePluginsState(Map<IPluginModelBase, String> selectedPlugins) {
+		for (Entry<IPluginModelBase, String> entry : selectedPlugins.entrySet()) {
+			IPluginModelBase model = entry.getKey();
+			setText(model, entry.getValue());
+		}
+
+		fPluginTreeViewer.setCheckedElements(selectedPlugins.keySet().toArray());
+		countSelectedModels();
+		resetGroup(fWorkspacePlugins);
+		resetGroup(fExternalPlugins);
+
+		handleFilterButton(); // Once the page is initialized, apply any filtering.
+		updateCounter();
 	}
 
 }
