@@ -95,14 +95,7 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 		}
 		// Now we are only going to set the check state of the leaf nodes
 		// and rely on our container checked code to update the parents properly.
-		Iterator<Object> iter = checkState.iterator();
-		Object element = null;
-
-		while (iter.hasNext()) {
-			element = iter.next();
-			// Call the super class as there is no need to update the check state
-			super.setChecked(element, true);
-		}
+		super.setCheckedElements(checkState.toArray());
 		getTree().setRedraw(true);
 	}
 
