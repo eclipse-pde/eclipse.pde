@@ -34,7 +34,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 
 	@Override
 	protected void savePluginState(ILaunchConfigurationWorkingCopy config) {
-		Object[] selected = fPluginTreeViewer.getCheckedElements();
+		Object[] selected = fPluginTreeViewer.getCheckedLeafElements();
 
 		PluginModelNameBuffer wBuffer = new PluginModelNameBuffer();
 		PluginModelNameBuffer tBuffer = new PluginModelNameBuffer();
@@ -57,7 +57,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 		if (fAddWorkspaceButton.getSelection()) {
 			IPluginModelBase[] workspaceModels = getWorkspaceModels();
 			for (int i = 0; i < workspaceModels.length; i++) {
-				if (!fPluginTreeViewer.getChecked(workspaceModels[i])) {
+				if (!fPluginTreeViewer.isCheckedLeafElement(workspaceModels[i])) {
 					buffer.add(workspaceModels[i]);
 				}
 			}

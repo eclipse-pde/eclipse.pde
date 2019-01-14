@@ -132,7 +132,7 @@ public class PluginBlock extends AbstractPluginBlock {
 				fInitDefaultCheckState = false;
 			} else {
 				// If we have checked elements, save them to the config
-				Object[] selected = fPluginTreeViewer.getCheckedElements();
+				Object[] selected = fPluginTreeViewer.getCheckedLeafElements();
 				for (Object selectedElement : selected) {
 					if (selectedElement instanceof IPluginModelBase) {
 						IPluginModelBase model = (IPluginModelBase) selectedElement;
@@ -152,7 +152,7 @@ public class PluginBlock extends AbstractPluginBlock {
 			if (fAddWorkspaceButton.getSelection()) {
 				IPluginModelBase[] workspaceModels = getWorkspaceModels();
 				for (int i = 0; i < workspaceModels.length; i++) {
-					if (!fPluginTreeViewer.getChecked(workspaceModels[i])) {
+					if (!fPluginTreeViewer.isCheckedLeafElement(workspaceModels[i])) {
 						buffer.add(workspaceModels[i]);
 					}
 				}
