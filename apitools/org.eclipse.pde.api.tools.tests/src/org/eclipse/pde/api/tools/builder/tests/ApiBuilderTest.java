@@ -220,7 +220,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 				 * We are about to fail, log some extra information for easier
 				 * debugging of the fail.
 				 */
-				logExtraInfos(resource, getName() + " is about to fail, logging extra infos"); //$NON-NLS-1$
+				logProjectInfos(getName() + " is about to fail, logging extra infos for resource " + resource); //$NON-NLS-1$
 			}
 			assertFalse("Should not be a JDT error: " + cause, condition); //$NON-NLS-1$
 		}
@@ -1154,18 +1154,52 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		return suite;
 	}
 
-	private static void logExtraInfos(IPath resourcePath, String message) {
+	private static void logProjectInfos(String message) {
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		logProjectInfos(message, IStatus.ERROR, Arrays.asList(projects));
+	}
+
+	/**
+	 * Logs the classpath of each accessible project of the specified projects,
+	 * as well as all markers in the workspace.
+	 *
+	 * @param message
+	 *            a prefix for the logged message
+	 * @param severity
+	 *            the severity of the logged entry
+	 * @param projectNames
+	 *            the names of the projects for which to log classpaths
+	 */
+	protected static void logProjectInfos(String message, String[] projectNames) {
+		List<IProject> projects = new ArrayList<>();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		for (String projectName : projectNames) {
+			IProject project = root.getProject(projectName);
+			projects.add(project);
+		}
+		logProjectInfos(message, IStatus.INFO, projects);
+	}
+
+	/**
+	 * Logs the classpath of each accessible project of the specified projects,
+	 * as well as all markers in the workspace.
+	 *
+	 * @param message
+	 *            a prefix for the logged message
+	 * @param severity
+	 *            the severity of the logged entry
+	 * @param projects
+	 *            the projects for which to log classpaths
+	 */
+	protected static void logProjectInfos(String message, int severity, List<IProject> projects) {
+		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		ILog log = PDECore.getDefault().getLog();
 		try {
-			IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-			IProject[] projects = workspaceRoot.getProjects();
 			IMarker[] markers = workspaceRoot.findMarkers(null, true, IResource.DEPTH_INFINITE);
 
-			String infosContent = String.join(System.lineSeparator(), message,
-					"resource path: " + resourcePath, //$NON-NLS-1$
-					toString(projects), toString(markers));
+			String infosContent = String.join(System.lineSeparator(), message, toString(projects), toString(markers));
 
-			IStatus infos = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, infosContent, new Exception());
+			IStatus infos = new Status(severity, PDECore.PLUGIN_ID, infosContent, new Exception());
 			log.log(infos);
 		} catch (Exception e) {
 			IStatus error = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "error occurred while logging extra info", e); //$NON-NLS-1$
@@ -1173,9 +1207,9 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		}
 	}
 
-	private static String toString(IProject[] projects) throws Exception {
+	private static String toString(List<IProject> projects) throws Exception {
 		StringBuilder contents = new StringBuilder();
-		contents.append("Listing " + projects.length + " projects:"); //$NON-NLS-1$ //$NON-NLS-2$
+		contents.append("Listing " + projects.size() + " projects:"); //$NON-NLS-1$ //$NON-NLS-2$
 		for (IProject project : projects) {
 			contents.append(System.lineSeparator());
 			contents.append("    name: " + project.getName()); //$NON-NLS-1$
@@ -1184,7 +1218,9 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			contents.append(System.lineSeparator());
 			contents.append("    is accessible: " + project.isAccessible()); //$NON-NLS-1$
 			contents.append(System.lineSeparator());
-			if (project.hasNature(JavaCore.NATURE_ID)) {
+			contents.append("    is open: " + project.isOpen()); //$NON-NLS-1$
+			contents.append(System.lineSeparator());
+			if (project.hasNature(JavaCore.NATURE_ID) && project.isAccessible()) {
 				IJavaProject javaProject = JavaCore.create(project);
 				boolean ignoreUnresolvedEntry = true;
 				IClasspathEntry[] projectClassPath = javaProject.getResolvedClasspath(ignoreUnresolvedEntry);

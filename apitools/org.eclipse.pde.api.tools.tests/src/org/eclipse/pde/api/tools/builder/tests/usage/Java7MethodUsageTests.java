@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -55,7 +60,21 @@ public class Java7MethodUsageTests extends Java7UsageTest {
 	 * Tests illegal use of methods inside a string switch block
 	 * (full)
 	 */
-	public void testStringSwitchF() {
+	public void testStringSwitchF() throws Exception {
+		IWorkspaceRoot root = getEnv().getWorkspace().getRoot();
+		assertEquals("unexpected test project name", "usageprojectjava7", getTestingProjectName()); //$NON-NLS-1$//$NON-NLS-2$
+		String[] projectNames = { "refprojectjava7", "usageprojectjava7" }; //$NON-NLS-1$ //$NON-NLS-2$
+		logProjectInfos(getClass() + "." + getName() + " logging extra infos before refresh", projectNames); //$NON-NLS-1$ //$NON-NLS-2$
+		for (String projectName : projectNames) {
+			IProject project = root.getProject(projectName);
+			assertTrue("project must exist but does not: " + projectName, project.exists()); //$NON-NLS-1$
+			project.open(null);
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		}
+		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
+		Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_REFRESH, null);
+
+		logProjectInfos(getClass() + "." + getName() + " logging extra infos before full build", projectNames); //$NON-NLS-1$ //$NON-NLS-2$
 		x1(false);
 	}
 
