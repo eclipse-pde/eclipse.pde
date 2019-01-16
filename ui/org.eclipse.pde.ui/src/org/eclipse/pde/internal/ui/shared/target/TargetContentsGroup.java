@@ -19,7 +19,7 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 import com.ibm.icu.text.MessageFormat;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.*;
+import java.net.URI;
 import java.util.*;
 import java.util.List;
 import java.util.jar.JarFile;
@@ -689,18 +689,13 @@ public class TargetContentsGroup {
 			SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.TargetContentsGroup_5, 150);
 
 			// Get all the bundle locations
-			List<URL> allLocations = new ArrayList<>(allBundles.size());
+			List<URI> allLocations = new ArrayList<>(allBundles.size());
 			for (TargetBundle bundle1 : allBundles) {
-				try {
-					// Some bundles, such as those with errors, may not have
-					// locations
-					URI location = bundle1.getBundleInfo().getLocation();
-					if (location != null) {
-						allLocations.add(new File(location).toURI().toURL());
-					}
-				} catch (MalformedURLException e) {
-					PDEPlugin.log(e);
-					return;
+				// Some bundles, such as those with errors, may not have
+				// locations
+				URI location = bundle1.getBundleInfo().getLocation();
+				if (location != null) {
+					allLocations.add(location);
 				}
 			}
 			if (subMonitor.isCanceled()) {
@@ -709,7 +704,7 @@ public class TargetContentsGroup {
 			subMonitor.worked(20);
 
 			// Create a PDE State containing all of the target bundles
-			PDEState state = new PDEState(allLocations.toArray(new URL[allLocations.size()]), true, false,
+			PDEState state = new PDEState(allLocations.toArray(new URI[allLocations.size()]), true, false,
 					subMonitor.split(50));
 			if (subMonitor.isCanceled()) {
 				return;

@@ -15,8 +15,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.*;
 import java.util.Map.Entry;
 import org.eclipse.core.resources.*;
@@ -530,7 +529,7 @@ public class PluginModelManager implements IModelProviderListener {
 		if (unresolvedRepoBasedtarget != null && !P2TargetUtils.isProfileValid(unresolvedRepoBasedtarget)) {
 			//Workspace target contains unresolved p2 repositories,
 			//set empty fState, fExternalManager, fEntries- scheduling target platform resolve
-			fState = new PDEState(new URL[0], true, true, subMon);
+			fState = new PDEState(new URI[0], true, true, subMon);
 			fExternalManager.setModels(new IPluginModelBase[0]);
 			fEntries = entries;
 			LoadTargetDefinitionJob.load(unresolvedRepoBasedtarget);
@@ -539,7 +538,7 @@ public class PluginModelManager implements IModelProviderListener {
 
 		long startTargetModels = System.currentTimeMillis();
 		// Target models
-		URL[] externalUrls = getExternalBundles(subMon.split(40));
+		URI[] externalUris = getExternalBundles(subMon.split(40));
 		if (subMon.isCanceled()) {
 			// If target resolution is cancelled, externalUrls will be empty. Log warning so user knows how to reload the target.
 			if (PDECore.DEBUG_MODEL) {
@@ -550,13 +549,13 @@ public class PluginModelManager implements IModelProviderListener {
 			fCancelled = true;
 		}
 
-		fState = new PDEState(externalUrls, true, true, subMon.split(15));
+		fState = new PDEState(externalUris, true, true, subMon.split(15));
 		fExternalManager.setModels(fState.getTargetModels());
 		addToTable(entries, fExternalManager.getAllModels());
 
 		// Check if the saved external bundle list has changed, if so target contents is different and projects should be rebuilt
-		boolean externalPluginsChanged = isSavedExternalPluginListDifferent(externalUrls);
-		saveExternalPluginList(externalUrls);
+		boolean externalPluginsChanged = isSavedExternalPluginListDifferent(externalUris);
+		saveExternalPluginList(externalUris);
 
 		if (PDECore.DEBUG_MODEL) {
 			System.out.println(fState.getTargetModels().length + " target models created in  " + (System.currentTimeMillis() - startTargetModels) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -606,24 +605,24 @@ public class PluginModelManager implements IModelProviderListener {
 	}
 
 	/**
-	 * Returns an array of URL plug-in locations for external bundles loaded from the
-	 * current target platform.  The URLs will not be encoded.
+	 * Returns an array of URI plug-in locations for external bundles loaded from the
+	 * current target platform.
 	 *
 	 * @param monitor progress monitor
 	 * @return array of URLs for external bundles
 	 */
-	private URL[] getExternalBundles(IProgressMonitor monitor) {
+	private URI[] getExternalBundles(IProgressMonitor monitor) {
 		ITargetDefinition target = null;
 		try {
 			target = TargetPlatformHelper.getWorkspaceTargetResolved(monitor);
 		} catch (CoreException e) {
 			PDECore.log(e);
-			return new URL[0];
+			return new URI[0];
 		}
 
 		// Resolution was cancelled
 		if (target == null) {
-			return new URL[0];
+			return new URI[0];
 		}
 
 		// Log any known issues with the target platform to warn user
@@ -639,24 +638,19 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 		}
 
-		URL[] externalURLs = new URL[0];
+		URI[] externalURIs = new URI[0];
 		TargetBundle[] bundles = target.getBundles();
 		if (bundles != null) {
-			List<URL> urls = new ArrayList<>(bundles.length);
+			List<URI> uris = new ArrayList<>(bundles.length);
 			for (TargetBundle bundle : bundles) {
 				if (bundle.getStatus().isOK()) {
-					try {
-						final File file = URIUtil.toFile(bundle.getBundleInfo().getLocation());
-						urls.add(file.toURL());
-					} catch (MalformedURLException e) {
-						// Ignore bad urls as they should be caught by the target resolution
-					}
+					uris.add(bundle.getBundleInfo().getLocation());
 				}
 			}
-			externalURLs = urls.toArray(new URL[urls.size()]);
+			externalURIs = uris.toArray(new URI[uris.size()]);
 		}
 
-		return externalURLs;
+		return externalURIs;
 
 	}
 
@@ -743,16 +737,16 @@ public class PluginModelManager implements IModelProviderListener {
 	}
 
 	/**
-	 * Saves the given list of external plugin urls to a file in the metadata folder
-	 * @param urls url list to save
+	 * Saves the given list of external plugin uris to a file in the metadata folder
+	 * @param uris url list to save
 	 */
-	private void saveExternalPluginList(URL[] urls) {
+	private void saveExternalPluginList(URI[] uris) {
 		File dir = new File(PDECore.getDefault().getStateLocation().toOSString());
 		File saveLocation = new File(dir, fExternalPluginListFile);
 		try (FileWriter fileWriter = new FileWriter(saveLocation, false)) {
 			fileWriter.write("# List of external plug-in models previously loaded. Timestamp: " + System.currentTimeMillis() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			for (URL url : urls) {
-				fileWriter.write(url.toString());
+			for (URI uri : uris) {
+				fileWriter.write(uri.toString());
 				fileWriter.write("\n"); //$NON-NLS-1$
 			}
 			fileWriter.flush();
@@ -764,13 +758,13 @@ public class PluginModelManager implements IModelProviderListener {
 	/**
 	 * Returns whether the saved list of external plugins is different from the given list of external plugins.
 	 *
-	 * @param newUrls the urls to compare against the saved list
+	 * @param newUris the uris to compare against the saved list
 	 * @return <code>true</code> if the two plug-in lists differ, <code>false</code> if they match
 	 */
-	private boolean isSavedExternalPluginListDifferent(URL[] newUrls) {
-		Set<String> newExternal = new HashSet<>();
-		for (URL newUrl : newUrls) {
-			newExternal.add(newUrl.toString());
+	private boolean isSavedExternalPluginListDifferent(URI[] newUris) {
+		Set<String> newExternal = new LinkedHashSet<>();
+		for (URI newUri : newUris) {
+			newExternal.add(newUri.toString());
 		}
 
 		File dir = new File(PDECore.getDefault().getStateLocation().toOSString());
@@ -781,7 +775,7 @@ public class PluginModelManager implements IModelProviderListener {
 			return !newExternal.isEmpty();
 		}
 
-		Set<String> previousExternal = new HashSet<>();
+		Set<String> previousExternal = new LinkedHashSet<>();
 		try (BufferedReader reader = new BufferedReader(new FileReader(saveLocation));) {
 			while (reader.ready()) {
 				String url = reader.readLine();

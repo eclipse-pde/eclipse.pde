@@ -15,8 +15,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
 import java.util.*;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -42,7 +41,7 @@ public class PDEState extends MinimalState {
 	 * @param removeDuplicates whether to remove duplicate conflicting bundles from the state
 	 * @param monitor progress monitor
 	 */
-	public PDEState(URL[] target, boolean addResolver, boolean removeDuplicates, IProgressMonitor monitor) {
+	public PDEState(URI[] target, boolean addResolver, boolean removeDuplicates, IProgressMonitor monitor) {
 		long start = System.currentTimeMillis();
 		fAuxiliaryState = new PDEAuxiliaryState();
 
@@ -61,7 +60,7 @@ public class PDEState extends MinimalState {
 			System.out.println("Time to create state: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	private void createNewTargetState(boolean resolve, URL[] urls, IProgressMonitor monitor) {
+	private void createNewTargetState(boolean resolve, URI[] uris, IProgressMonitor monitor) {
 		fState = stateObjectFactory.createState(resolve);
 		if (resolve) {
 			fState.getResolver().setSelectionPolicy(new Comparator<BaseDescription>() {
@@ -132,9 +131,9 @@ public class PDEState extends MinimalState {
 			});
 		}
 		SubMonitor subMonitor = SubMonitor.convert(monitor, PDECoreMessages.PDEState_CreatingTargetModelState,
-				urls.length);
-		for (URL url : urls) {
-			File file = toFile(url);
+				uris.length);
+		for (URI uri : uris) {
+			File file = toFile(uri);
 			if (file == null) {
 				continue;
 			}
@@ -149,20 +148,16 @@ public class PDEState extends MinimalState {
 	}
 
 	/**
-	 * @param url
-	 * @return File object or {@code null} if URL can't be converted to file. In
+	 * @param uri
+	 * @return File object or {@code null} if URI can't be converted to file. In
 	 *         the later case an error is logged.
 	 */
-	private static File toFile(URL url) {
-		try {
-			IPath path = URIUtil.toPath(url.toURI());
-			if (path != null) {
-				return path.toFile();
-			}
-			PDECore.log(new IllegalArgumentException("Failed to convert url to file: " + url)); //$NON-NLS-1$
-		} catch (URISyntaxException e) {
-			PDECore.log(e);
+	private static File toFile(URI uri) {
+		IPath path = URIUtil.toPath(uri);
+		if (path != null) {
+			return path.toFile();
 		}
+		PDECore.log(new IllegalArgumentException("Failed to convert URI to file: " + uri)); //$NON-NLS-1$
 		return null;
 	}
 

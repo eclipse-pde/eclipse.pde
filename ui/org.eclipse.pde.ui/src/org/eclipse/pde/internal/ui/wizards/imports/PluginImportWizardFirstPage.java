@@ -18,8 +18,7 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.*;
 import java.util.List;
 import java.util.Map.Entry;
@@ -525,22 +524,20 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			// We allow importing of bundles that are unchecked in the target definition
 			TargetBundle[] allBundles = target.getAllBundles();
 			Map<SourceLocationKey, TargetBundle> sourceMap = new HashMap<>();
-			List<URL> all = new ArrayList<>();
+			List<URI> all = new ArrayList<>();
 			for (TargetBundle bundle1 : allBundles) {
-				try {
-					if (bundle1.getStatus().isOK()) {
-						all.add(new File(bundle1.getBundleInfo().getLocation()).toURI().toURL());
-						if (bundle1.isSourceBundle()) {
-							sourceMap.put(new SourceLocationKey(bundle1.getBundleInfo().getSymbolicName(), new Version(bundle1.getBundleInfo().getVersion())), bundle1);
-						}
+				if (bundle1.getStatus().isOK()) {
+					URI location = bundle1.getBundleInfo().getLocation();
+					if(location != null){
+						all.add(location);
 					}
-				} catch (MalformedURLException e1) {
-					setErrorMessage(e1.getMessage());
-					subMon.setCanceled(true);
-					return;
+					if (bundle1.isSourceBundle()) {
+						sourceMap.put(new SourceLocationKey(bundle1.getBundleInfo().getSymbolicName(),
+								new Version(bundle1.getBundleInfo().getVersion())), bundle1);
+					}
 				}
 			}
-			state = new PDEState(all.toArray(new URL[0]), false, false, subMon.split(30));
+			state = new PDEState(all.toArray(new URI[0]), false, false, subMon.split(30));
 			models = state.getTargetModels();
 			List<IPluginModelBase> sourceModels = new ArrayList<>();
 			List<TargetBundle> sourceBundles = new ArrayList<>();

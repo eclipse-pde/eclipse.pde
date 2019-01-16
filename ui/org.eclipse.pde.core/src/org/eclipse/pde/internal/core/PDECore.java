@@ -14,8 +14,8 @@
 package org.eclipse.pde.internal.core;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.util.Hashtable;
+import java.net.*;
+import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -172,7 +172,8 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	public IPluginModelBase findPluginInHost(String id) {
 		if (registryPlugins == null) {
 			URL[] pluginPaths = ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
-			PDEState state = new PDEState(pluginPaths, false, false, new NullProgressMonitor());
+			URI[] paths = toUri(pluginPaths);
+			PDEState state = new PDEState(paths, false, false, new NullProgressMonitor());
 			registryPlugins = state.getTargetModels();
 		}
 
@@ -181,6 +182,18 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 				return plugin;
 		}
 		return null;
+	}
+
+	private URI[] toUri(URL[] pluginPaths) {
+		List<URI> uris = new ArrayList<>();
+		for (URL url : pluginPaths) {
+			try {
+				uris.add(URIUtil.toURI(url));
+			} catch (URISyntaxException e) {
+				// ignore
+			}
+		}
+		return uris.toArray(new URI[0]);
 	}
 
 	public PluginModelManager getModelManager() {
