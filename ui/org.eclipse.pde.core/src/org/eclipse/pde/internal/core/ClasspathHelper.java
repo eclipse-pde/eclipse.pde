@@ -13,19 +13,47 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 import java.util.Map.Entry;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.util.Properties;
+import java.util.StringTokenizer;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBundleClasspathResolver;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.project.PDEProject;
 
@@ -48,14 +76,16 @@ public class ClasspathHelper {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		for (IPluginModelBase model : models) {
 			String id = model.getPluginBase().getId();
-			if (id == null)
+			if (id == null) {
 				continue;
+			}
 			String entry = writeEntry(getDevPaths(model, checkExcluded, null));
 			if (entry.length() > 0) {
 				String currentValue = (String) properties.get(id);
 				if (!entry.equals(currentValue)) {
-					if (currentValue != null)
+					if (currentValue != null) {
 						entry = currentValue.concat(",").concat(entry); //$NON-NLS-1$
+					}
 					properties.put(id, entry);
 				}
 			}
@@ -92,8 +122,9 @@ public class ClasspathHelper {
 					String id = model.getPluginBase().getId();
 					String currentValue = (String) properties.get(id);
 					if (!entry.equals(currentValue)) {
-						if (currentValue != null)
+						if (currentValue != null) {
 							entry = currentValue.concat(",").concat(entry); //$NON-NLS-1$
+						}
 						properties.put(id, entry);
 					}
 				}
@@ -116,8 +147,9 @@ public class ClasspathHelper {
 		ArrayList<IPath> list = new ArrayList<>();
 		for (IPluginModelBase model : models) {
 			String id = model.getPluginBase().getId();
-			if (id == null || id.trim().length() == 0)
+			if (id == null || id.trim().length() == 0) {
 				continue;
+			}
 			IPath[] paths = getDevPaths(model, checkExcluded, null);
 			for (IPath path : paths) {
 				list.add(path);
@@ -131,20 +163,23 @@ public class ClasspathHelper {
 		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < paths.length; i++) {
 			buffer.append(paths[i].toString());
-			if (i < paths.length - 1)
+			if (i < paths.length - 1) {
 				buffer.append(","); //$NON-NLS-1$
+			}
 		}
 		return buffer.toString();
 	}
 
 	// TODO remove - no longer used after bug 217870
 	public static Dictionary<String, String> getDevDictionary(IPluginModelBase model) {
-		if (model.getUnderlyingResource() == null)
+		if (model.getUnderlyingResource() == null) {
 			return null;
+		}
 
 		String id = model.getPluginBase().getId();
-		if (id == null || id.trim().length() == 0)
+		if (id == null || id.trim().length() == 0) {
 			return null;
+		}
 		IPath[] paths = getDevPaths(model, false, null);
 		String entry = writeEntry(paths);
 		Hashtable<String, String> map = new Hashtable<>(2);
@@ -166,13 +201,15 @@ public class ClasspathHelper {
 			if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 				source = entry.getPath();
 				output = entry.getOutputLocation();
-				if (output == null)
+				if (output == null) {
 					output = jProject.getOutputLocation();
+				}
 			} else if (entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
 				source = entry.getPath();
 				output = entry.getPath();
-				if (source.segmentCount() == 1)
+				if (source.segmentCount() == 1) {
 					source = new Path(DOT);
+				}
 			}
 			if (output != null && !excluded.contains(output)) {
 				IResource file = project.findMember(output.removeFirstSegments(1));
@@ -190,11 +227,13 @@ public class ClasspathHelper {
 					} else {
 						output = output.makeRelative();
 					}
-				} else
+				} else {
 					continue;
+				}
 				ArrayList<IPath> list = map.get(source);
-				if (list == null)
+				if (list == null) {
 					list = new ArrayList<>();
+				}
 				list.add(output);
 				map.put(source, list);
 			}
@@ -232,8 +271,9 @@ public class ClasspathHelper {
 					ArrayList<IPath> list = classpathMap.get(res.getFullPath());
 					if (list != null) {
 						Iterator<IPath> li = list.iterator();
-						while (li.hasNext())
+						while (li.hasNext()) {
 							paths.add(li.next());
+						}
 					}
 				}
 			}
@@ -241,21 +281,23 @@ public class ClasspathHelper {
 
 		// search for a library that exists in jar form on the buildpath
 		IPath path = null;
-		if (libName.equals(DOT))
+		if (libName.equals(DOT)) {
 			path = new Path(DOT);
-		else {
+		} else {
 			IResource res = project.findMember(libName);
-			if (res != null)
+			if (res != null) {
 				path = res.getFullPath();
-			else
+			} else {
 				path = new Path(libName);
+			}
 		}
 
 		List<IPath> list = classpathMap.get(path);
 		if (list != null) {
 			Iterator<IPath> li = list.iterator();
-			while (li.hasNext())
+			while (li.hasNext()) {
 				paths.add(li.next());
+			}
 		}
 		return paths.toArray(new IPath[paths.size()]);
 	}
@@ -276,9 +318,9 @@ public class ClasspathHelper {
 					IBuild build = bModel.getBuild();
 					// if it is a custom build, act like there is no build.properties (add everything)
 					IBuildEntry entry = build.getEntry("custom"); //$NON-NLS-1$
-					if (entry != null)
+					if (entry != null) {
 						searchBuild = false;
-					else {
+					} else {
 						if (libraries.length == 0) {
 							IPath[] paths = findLibrary(DOT, project, classpathMap, build);
 							if (paths.length == 0) {
@@ -294,16 +336,18 @@ public class ClasspathHelper {
 									paths = collect.toArray(new IPath[collect.size()]);
 								}
 							}
-							for (IPath path : paths)
+							for (IPath path : paths) {
 								addPath(result, project, path);
+							}
 						} else {
 							for (int i = 0; i < libraries.length; i++) {
 								IPath[] paths = findLibrary(libraries[i].getName(), project, classpathMap, build);
 								if (paths.length == 0 && !libraries[i].getName().equals(DOT)) {
 									paths = findLibraryFromFragments(libraries[i].getName(), model, checkExcluded, pluginsMap);
 								}
-								for (IPath path : paths)
+								for (IPath path : paths) {
 									addPath(result, project, path);
+								}
 							}
 						}
 					}
@@ -315,8 +359,9 @@ public class ClasspathHelper {
 						Map.Entry<IPath, ArrayList<IPath>> entry = it.next();
 						ArrayList<IPath> list = entry.getValue();
 						ListIterator<IPath> li = list.listIterator();
-						while (li.hasNext())
+						while (li.hasNext()) {
 							addPath(result, project, li.next());
+						}
 					}
 				}
 			}
@@ -330,8 +375,9 @@ public class ClasspathHelper {
 	private static IPath[] findLibraryFromFragments(String libName, IPluginModelBase model, boolean checkExcluded, Map<?, ?> plugins) {
 		IFragmentModel[] frags = PDEManager.findFragmentsFor(model);
 		for (int i = 0; i < frags.length; i++) {
-			if (plugins != null && !plugins.containsKey(frags[i].getBundleDescription().getSymbolicName()))
+			if (plugins != null && !plugins.containsKey(frags[i].getBundleDescription().getSymbolicName())) {
 				continue;
+			}
 			// look in project first
 			if (frags[i].getUnderlyingResource() != null) {
 				try {
@@ -344,8 +390,9 @@ public class ClasspathHelper {
 						build = bModel.getBuild();
 					}
 					IPath[] paths = findLibrary(libName, project, classpathMap, build);
-					if (paths.length > 0)
+					if (paths.length > 0) {
 						return postfixFragmentAnnotation(paths);
+					}
 
 				} catch (JavaModelException e) {
 					continue;
@@ -355,9 +402,10 @@ public class ClasspathHelper {
 				File file = new File(frags[i].getInstallLocation());
 				if (file.isDirectory()) {
 					file = new File(file, libName);
-					if (file.exists())
+					if (file.exists()) {
 						// Postfix fragment annotation for fragment path (fix bug 294211)
 						return new IPath[] {new Path(file.getPath() + FRAGMENT_ANNOTATION)};
+					}
 				}
 			}
 		}
@@ -369,31 +417,34 @@ public class ClasspathHelper {
 	 * from fragments.  This is needed to fix bug 294211.
 	 */
 	private static IPath[] postfixFragmentAnnotation(IPath[] paths) {
-		for (int i = 0; i < paths.length; i++)
+		for (int i = 0; i < paths.length; i++) {
 			paths[i] = new Path(paths[i].toString() + FRAGMENT_ANNOTATION);
+		}
 		return paths;
 	}
 
 	private static void addPath(ArrayList<IPath> result, IProject project, IPath path) {
 		IPath resultPath = null;
-		if (path.isAbsolute())
+		if (path.isAbsolute()) {
 			resultPath = path;
-		else if (path.segmentCount() > 0 && path.segment(0).equals(project.getName())) {
+		} else if (path.segmentCount() > 0 && path.segment(0).equals(project.getName())) {
 			IContainer bundleRoot = PDEProject.getBundleRoot(project);
 			IPath rootPath = bundleRoot.getFullPath();
 			// make path relative to bundle root
 			path = path.makeRelativeTo(rootPath);
-			if (path.segmentCount() == 0)
+			if (path.segmentCount() == 0) {
 				resultPath = new Path(DOT);
-			else {
+			} else {
 				IResource resource = bundleRoot.findMember(path);
-				if (resource != null)
+				if (resource != null) {
 					resultPath = path;
+				}
 			}
 		}
 
-		if (resultPath != null && !result.contains(resultPath))
+		if (resultPath != null && !result.contains(resultPath)) {
 			result.add(resultPath);
+		}
 	}
 
 	private static List<Path> getFoldersToExclude(IProject project, boolean checkExcluded) {

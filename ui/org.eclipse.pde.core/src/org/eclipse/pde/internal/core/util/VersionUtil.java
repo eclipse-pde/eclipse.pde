@@ -24,8 +24,9 @@ public class VersionUtil {
 
 	public static IStatus validateVersion(String versionString) {
 		try {
-			if (versionString != null)
+			if (versionString != null) {
 				new Version(versionString.trim());
+			}
 		} catch (IllegalArgumentException e) {
 			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, UtilMessages.BundleErrorReporter_InvalidFormatInBundleVersion, e);
 		}
@@ -42,8 +43,9 @@ public class VersionUtil {
 	}
 
 	public static boolean compare(String id1, String version1, String id2, String version2, int match) {
-		if (!(id1.equals(id2)))
+		if (!(id1.equals(id2))) {
 			return false;
+		}
 		try {
 			Version v1 = Version.parseVersion(version1);
 			Version v2 = Version.parseVersion(version2);
@@ -73,47 +75,60 @@ public class VersionUtil {
 	 * @return true if empty version
 	 */
 	public static boolean isEmptyVersion(String version) {
-		if (version == null)
+		if (version == null) {
 			return true;
+		}
 		version = version.trim();
 		return version.length() == 0 || version.equals(Version.emptyVersion.toString());
 	}
 
 	public static boolean isCompatibleWith(Version v1, Version v2) {
-		if (v1.getMajor() != v2.getMajor())
+		if (v1.getMajor() != v2.getMajor()) {
 			return false;
-		if (v1.getMinor() > v2.getMinor())
+		}
+		if (v1.getMinor() > v2.getMinor()) {
 			return true;
-		if (v1.getMinor() < v2.getMinor())
+		}
+		if (v1.getMinor() < v2.getMinor()) {
 			return false;
-		if (v1.getMicro() > v2.getMicro())
+		}
+		if (v1.getMicro() > v2.getMicro()) {
 			return true;
-		if (v1.getMicro() < v2.getMicro())
+		}
+		if (v1.getMicro() < v2.getMicro()) {
 			return false;
+		}
 		return v1.getQualifier().compareTo(v2.getQualifier()) >= 0;
 	}
 
 	public static boolean isEquivalentTo(Version v1, Version v2) {
-		if (v1.getMajor() != v2.getMajor() || v1.getMinor() != v2.getMinor())
+		if (v1.getMajor() != v2.getMajor() || v1.getMinor() != v2.getMinor()) {
 			return false;
-		if (v1.getMicro() > v2.getMicro())
+		}
+		if (v1.getMicro() > v2.getMicro()) {
 			return true;
-		if (v1.getMicro() < v2.getMicro())
+		}
+		if (v1.getMicro() < v2.getMicro()) {
 			return false;
+		}
 		return v1.getQualifier().compareTo(v2.getQualifier()) >= 0;
 	}
 
 	public static boolean isGreaterOrEqualTo(Version v1, Version v2) {
-		if (v1.getMajor() > v2.getMajor())
+		if (v1.getMajor() > v2.getMajor()) {
 			return true;
+		}
 		if (v1.getMajor() == v2.getMajor()) {
-			if (v1.getMinor() > v2.getMinor())
+			if (v1.getMinor() > v2.getMinor()) {
 				return true;
+			}
 			if (v1.getMinor() == v2.getMinor()) {
-				if (v1.getMicro() > v2.getMicro())
+				if (v1.getMicro() > v2.getMicro()) {
 					return true;
-				if (v1.getMicro() == v2.getMicro())
+				}
+				if (v1.getMicro() == v2.getMicro()) {
 					return v1.getQualifier().compareTo(v2.getQualifier()) >= 0;
+				}
 			}
 		}
 		return false;
@@ -121,12 +136,14 @@ public class VersionUtil {
 
 	public static int compareMacroMinorMicro(Version v1, Version v2) {
 		int result = v1.getMajor() - v2.getMajor();
-		if (result != 0)
+		if (result != 0) {
 			return result;
+		}
 
 		result = v1.getMinor() - v2.getMinor();
-		if (result != 0)
+		if (result != 0) {
 			return result;
+		}
 
 		result = v1.getMicro() - v2.getMicro();
 		return result;

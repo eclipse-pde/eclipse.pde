@@ -30,8 +30,9 @@ public class PackageObject extends PDEManifestElement {
 	public PackageObject(ManifestHeader header, String name, String version, String versionAttribute) {
 		super(header, name.length() > 0 ? name : "."); //$NON-NLS-1$
 		fVersionAttribute = versionAttribute;
-		if (version != null)
+		if (version != null) {
 			addAttribute(fVersionAttribute, version);
+		}
 	}
 
 	@Override
@@ -41,21 +42,25 @@ public class PackageObject extends PDEManifestElement {
 		if (version != null && version.length() > 0) {
 			buffer.append(" "); //$NON-NLS-1$
 			boolean wrap = Character.isDigit(version.charAt(0));
-			if (wrap)
+			if (wrap) {
 				buffer.append("("); //$NON-NLS-1$
+			}
 			buffer.append(version);
-			if (wrap)
+			if (wrap) {
 				buffer.append(")"); //$NON-NLS-1$
+			}
 		}
 		return buffer.toString();
 	}
 
 	public String getVersion() {
 		String[] version = getAttributes(fVersionAttribute);
-		if (version == null || version.length == 0)
+		if (version == null || version.length == 0) {
 			return null;
-		if (version.length == 1)
+		}
+		if (version.length == 1) {
 			return version[0];
+		}
 		return version[0] + ',' + version[1];
 	}
 

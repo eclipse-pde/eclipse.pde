@@ -17,7 +17,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleFragment;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.core.text.bundle.FragmentHostHeader;
 import org.osgi.framework.BundleException;
@@ -87,8 +89,9 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 
 	private String writeFragmentHost(String id, String version) {
 		StringBuilder buffer = new StringBuilder();
-		if (id != null)
+		if (id != null) {
 			buffer.append(id);
+		}
 
 		if (version != null && version.trim().length() > 0) {
 			buffer.append(";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"" + version.trim() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -98,15 +101,18 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 
 	private String getAttribute(String key, String attribute) {
 		IBundle bundle = getBundle();
-		if (bundle == null)
+		if (bundle == null) {
 			return null;
+		}
 		String value = bundle.getHeader(key);
-		if (value == null)
+		if (value == null) {
 			return null;
+		}
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(key, value);
-			if (elements.length > 0)
+			if (elements.length > 0) {
 				return elements[0].getAttribute(attribute);
+			}
 		} catch (BundleException e) {
 		}
 		return null;

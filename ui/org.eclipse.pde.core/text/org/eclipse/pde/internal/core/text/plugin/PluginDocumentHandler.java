@@ -17,12 +17,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.text.*;
+import org.eclipse.pde.internal.core.text.DocumentHandler;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.xml.sax.SAXException;
 
 public class PluginDocumentHandler extends DocumentHandler {
 
-	private PluginModelBase fModel;
+	private final PluginModelBase fModel;
 	private String fSchemaVersion;
 	protected PluginDocumentNodeFactory fFactory;
 
@@ -44,8 +47,9 @@ public class PluginDocumentHandler extends DocumentHandler {
 	public void endDocument() throws SAXException {
 		IPluginBase pluginBase = fModel.getPluginBase(false);
 		try {
-			if (pluginBase != null)
+			if (pluginBase != null) {
 				pluginBase.setSchemaVersion(fSchemaVersion);
+			}
 		} catch (CoreException e) {
 		}
 	}
@@ -93,8 +97,9 @@ public class PluginDocumentHandler extends DocumentHandler {
 			}
 		}
 
-		if (node == null)
+		if (node == null) {
 			return fFactory.createDocumentNode(name, parent);
+		}
 
 		IDocumentAttributeNode[] attrs = node.getNodeAttributes();
 		for (IDocumentAttributeNode attrNode : attrs) {
@@ -127,10 +132,12 @@ public class PluginDocumentHandler extends DocumentHandler {
 			if (attr == null) {
 				attr = fFactory.createAttribute(name, value, parent);
 			} else {
-				if (!name.equals(attr.getAttributeName()))
+				if (!name.equals(attr.getAttributeName())) {
 					attr.setAttributeName(name);
-				if (!value.equals(attr.getAttributeValue()))
+				}
+				if (!value.equals(attr.getAttributeValue())) {
 					attr.setAttributeValue(value);
+				}
 			}
 		} catch (CoreException e) {
 		}

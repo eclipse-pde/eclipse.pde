@@ -22,9 +22,9 @@ import org.eclipse.pde.core.project.IBundleClasspathEntry;
  */
 public class BundleClasspathSpecification implements IBundleClasspathEntry {
 
-	private IPath fSource;
-	private IPath fBinary;
-	private IPath fEntry;
+	private final IPath fSource;
+	private final IPath fBinary;
+	private final IPath fEntry;
 
 	/**
 	 * Constructs a relationship. Must specify one of <code>sourceFolder</code> or

@@ -14,7 +14,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.content;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.ITextContentDescriber;
@@ -40,21 +44,25 @@ public class BundleManifestDescriber implements ITextContentDescriber {
 			// remember to skip it
 			contents.skip(bom.length);
 			// compute a corresponding charset
-			if (bom == IContentDescription.BOM_UTF_8)
+			if (bom == IContentDescription.BOM_UTF_8) {
 				charset = "UTF-8"; //$NON-NLS-1$
-			else if (bom == IContentDescription.BOM_UTF_16BE || bom == IContentDescription.BOM_UTF_16LE)
+			} else if (bom == IContentDescription.BOM_UTF_16BE || bom == IContentDescription.BOM_UTF_16LE) {
 				// UTF-16 will properly recognize the BOM
 				charset = "UTF-16"; //$NON-NLS-1$
+			}
 			// fill description if requested
-			if (description != null && description.isRequested(IContentDescription.BYTE_ORDER_MARK))
+			if (description != null && description.isRequested(IContentDescription.BYTE_ORDER_MARK)) {
 				description.setProperty(IContentDescription.BYTE_ORDER_MARK, bom);
+			}
 		}
 		BufferedReader reader = new BufferedReader(new InputStreamReader(contents, charset));
 		String line;
-		for (int i = 0; ((line = reader.readLine()) != null) && i < LINES; i++)
-			if (matches(line))
+		for (int i = 0; ((line = reader.readLine()) != null) && i < LINES; i++) {
+			if (matches(line)) {
 				// found signature
 				return VALID;
+			}
+		}
 		// could not find signature
 		return INDETERMINATE;
 	}
@@ -63,28 +71,35 @@ public class BundleManifestDescriber implements ITextContentDescriber {
 	public int describe(Reader contents, IContentDescription description) throws IOException {
 		BufferedReader reader = new BufferedReader(contents);
 		String line;
-		for (int i = 0; ((line = reader.readLine()) != null) && i < LINES; i++)
-			if (matches(line))
+		for (int i = 0; ((line = reader.readLine()) != null) && i < LINES; i++) {
+			if (matches(line)) {
 				return VALID;
+			}
+		}
 		return INDETERMINATE;
 	}
 
 	byte[] getByteOrderMark(InputStream input) throws IOException {
 		int first = (input.read() & 0xFF);//converts unsigned byte to int
 		int second = (input.read() & 0xFF);
-		if (first == -1 || second == -1)
+		if (first == -1 || second == -1) {
 			return null;
+		}
 		//look for the UTF-16 Byte Order Mark (BOM)
-		if (first == 0xFE && second == 0xFF)
+		if (first == 0xFE && second == 0xFF) {
 			return IContentDescription.BOM_UTF_16BE;
-		if (first == 0xFF && second == 0xFE)
+		}
+		if (first == 0xFF && second == 0xFE) {
 			return IContentDescription.BOM_UTF_16LE;
+		}
 		int third = (input.read() & 0xFF);
-		if (third == -1)
+		if (third == -1) {
 			return null;
+		}
 		//look for the UTF-8 BOM
-		if (first == 0xEF && second == 0xBB && third == 0xBF)
+		if (first == 0xEF && second == 0xBB && third == 0xBF) {
 			return IContentDescription.BOM_UTF_8;
+		}
 		return null;
 	}
 
@@ -96,9 +111,11 @@ public class BundleManifestDescriber implements ITextContentDescriber {
 	private boolean matches(String line) {
 		for (String header : HEADERS) {
 			int length = header.length();
-			if (line.length() >= length)
-				if (line.substring(0, length).equalsIgnoreCase(header))
+			if (line.length() >= length) {
+				if (line.substring(0, length).equalsIgnoreCase(header)) {
 					return true;
+				}
+			}
 		}
 		return false;
 	}

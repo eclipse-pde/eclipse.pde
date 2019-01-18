@@ -19,10 +19,10 @@ import org.w3c.dom.Element;
 
 public class ElementOccurrenceResult {
 
-	private Element fElement;
-	private ISchemaElement fSchemaElement;
-	private int fActualOccurrences;
-	private int fAllowedOccurrences;
+	private final Element fElement;
+	private final ISchemaElement fSchemaElement;
+	private final int fActualOccurrences;
+	private final int fAllowedOccurrences;
 
 	public ElementOccurrenceResult(Element element, ISchemaElement schemaElement, int actualOccurrences, int allowedOccurrences) {
 		fElement = element;

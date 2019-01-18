@@ -17,7 +17,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Vector;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -60,8 +59,9 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 				return list.toArray(new String[list.size()]);
 			}
 		}
-		if (!isExported())
+		if (!isExported()) {
 			return new String[0];
+		}
 		return isFullyExported() ? new String[] {"**"} : fContentFilters; //$NON-NLS-1$
 	}
 
@@ -160,10 +160,11 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_CONTENT_FILTERS)) {
 			ArrayList<?> list = (ArrayList<?>) newValue;
-			if (list != null)
+			if (list != null) {
 				setContentFilters(list.toArray(new String[list.size()]));
-			else
+			} else {
 				setContentFilters(null);
+			}
 			return;
 		}
 		if (name.equals(P_EXPORTED)) {
@@ -178,8 +179,9 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	}
 
 	private ArrayList<String> createArrayList(String[] array) {
-		if (array == null)
+		if (array == null) {
 			return null;
+		}
 		ArrayList<String> list = new ArrayList<>();
 		for (String element : array) {
 			list.add(element);
@@ -195,8 +197,9 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		if ((modelBase instanceof IBundlePluginModelBase) == false) {
 			writer.print(indent);
 			writer.print("<library name=\"" + PDEXMLHelper.getWritableString(getName()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-			if (fType != null)
+			if (fType != null) {
 				writer.print(" type=\"" + fType + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			if (!isExported()) {
 				writer.println("/>"); //$NON-NLS-1$
 			} else {
@@ -214,8 +217,9 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 				}
 				writer.println(indent + "</library>"); //$NON-NLS-1$
 			}
-		} else
+		} else {
 			writer.print(PDEXMLHelper.getWritableString(getName()));
+		}
 	}
 
 	@Override

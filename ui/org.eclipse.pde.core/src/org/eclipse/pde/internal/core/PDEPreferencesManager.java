@@ -13,8 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -25,8 +27,8 @@ public final class PDEPreferencesManager {
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-	private IEclipsePreferences fDefaultScopePrefs;
-	private IEclipsePreferences fInstanceScopePrefs;
+	private final IEclipsePreferences fDefaultScopePrefs;
+	private final IEclipsePreferences fInstanceScopePrefs;
 
 	/**
 	 * Creates the preferences manager for the scope defined by ID

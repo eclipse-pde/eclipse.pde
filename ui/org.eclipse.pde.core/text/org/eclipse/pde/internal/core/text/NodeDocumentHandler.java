@@ -21,7 +21,7 @@ import org.xml.sax.SAXException;
 
 public abstract class NodeDocumentHandler extends DocumentHandler {
 
-	private IDocumentNodeFactory fFactory;
+	private final IDocumentNodeFactory fFactory;
 	protected String fCollapsibleParentName;
 
 	// TODO: MP: TEO: LOW: Make PluginDocumentHandler extend this
@@ -48,10 +48,12 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 			if (attr == null) {
 				attr = fFactory.createAttribute(name, value, parent);
 			} else {
-				if (!name.equals(attr.getAttributeName()))
+				if (!name.equals(attr.getAttributeName())) {
 					attr.setAttributeName(name);
-				if (!value.equals(attr.getAttributeValue()))
+				}
+				if (!value.equals(attr.getAttributeValue())) {
 					attr.setAttributeValue(value);
+				}
 			}
 		} catch (CoreException e) {
 		}
@@ -81,8 +83,9 @@ public abstract class NodeDocumentHandler extends DocumentHandler {
 			}
 		}
 
-		if (node == null)
+		if (node == null) {
 			return fFactory.createDocumentNode(name, parent);
+		}
 
 		IDocumentAttributeNode[] attrs = node.getNodeAttributes();
 		for (IDocumentAttributeNode attrNode : attrs) {

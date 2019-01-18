@@ -13,12 +13,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.*;
-import org.eclipse.core.resources.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import org.eclipse.core.resources.IBuildConfiguration;
+import org.eclipse.core.resources.IDynamicReferenceProvider;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 /**
@@ -49,8 +56,9 @@ public class DynamicPluginProjectReferences implements IDynamicReferenceProvider
 					BundleDescription[] bundlePrereq = state.getStateHelper()
 							.getPrerequisites(new BundleDescription[] { currentBundle });
 					for (BundleDescription bundle : bundlePrereq) {
-						if (bundle.equals(currentBundle))
+						if (bundle.equals(currentBundle)) {
 							continue;
+						}
 						IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 						IProject project = root.getProject(bundle.getName());
 						if (project.exists() && !allProj.contains(project)) {

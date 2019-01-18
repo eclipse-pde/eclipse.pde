@@ -16,16 +16,48 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.net.*;
-import java.util.*;
-import javax.xml.parsers.*;
-import org.eclipse.ant.core.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.AntRunner;
+import org.eclipse.ant.core.IAntClasspathEntry;
+import org.eclipse.ant.core.Property;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -34,20 +66,40 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
+import org.eclipse.pde.internal.build.BuildScriptGenerator;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
+import org.eclipse.pde.internal.build.IXMLConstants;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ClasspathHelper;
+import org.eclipse.pde.internal.core.FeatureModelManager;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.P2Utils;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.target.TargetMetadataCollector;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.osgi.framework.InvalidSyntaxException;
-import org.w3c.dom.*;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class FeatureExportOperation extends Job {
 
@@ -71,8 +123,9 @@ public class FeatureExportOperation extends Job {
 		super(name);
 		fInfo = info;
 		String qualifier = info.qualifier;
-		if (qualifier == null)
+		if (qualifier == null) {
 			qualifier = QualifierReplacer.getDateQualifier();
+		}
 		QualifierReplacer.setGlobalQualifier(qualifier);
 		fBuildTempLocation = PDECore.getDefault().getStateLocation().append("temp").toString(); //$NON-NLS-1$
 		fBuildTempMetadataLocation = PDECore.getDefault().getStateLocation().append("tempp2metadata").toString(); //$NON-NLS-1$
@@ -83,8 +136,9 @@ public class FeatureExportOperation extends Job {
 		try {
 			createDestination();
 			String[][] configurations = fInfo.targets;
-			if (configurations == null)
+			if (configurations == null) {
 				configurations = new String[][] {null};
+			}
 			SubMonitor subMonitor = SubMonitor.convert(monitor, "Exporting...", (fInfo.items.length * 23) + 5 + 10); //$NON-NLS-1$
 
 			IStatus status = testBuildWorkspaceBeforeExport(subMonitor.split(10));
@@ -104,8 +158,9 @@ public class FeatureExportOperation extends Job {
 
 			} else {
 				for (Object item : fInfo.items) {
-					if (monitor.isCanceled())
+					if (monitor.isCanceled()) {
 						return Status.CANCEL_STATUS;
+					}
 					try {
 						doExport((IFeatureModel) item, configurations, subMonitor.split(20));
 					} catch (CoreException e) {
@@ -194,12 +249,14 @@ public class FeatureExportOperation extends Job {
 	}
 
 	private void createDestination(String os, String ws, String arch) throws InvocationTargetException {
-		if (!fInfo.toDirectory || groupedConfigurations())
+		if (!fInfo.toDirectory || groupedConfigurations()) {
 			return;
+		}
 		File file = new File(fInfo.destinationDirectory, os + '.' + ws + '.' + arch);
 		if (!file.exists() || !file.isDirectory()) {
-			if (!file.mkdirs())
+			if (!file.mkdirs()) {
 				throw new InvocationTargetException(new Exception(PDECoreMessages.ExportWizard_badDirectory));
+			}
 		}
 	}
 
@@ -249,8 +306,9 @@ public class FeatureExportOperation extends Job {
 		// compile the classes
 		runScript(featureLocation + IPath.SEPARATOR + "compile." + featureID + ".xml", new String[] {"main"}, properties, subMonitor.split(1)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		// grab the source if needed
-		if (fInfo.exportSource && !fInfo.exportSourceBundle)
+		if (fInfo.exportSource && !fInfo.exportSourceBundle) {
 			runScript(getBuildScriptName(featureLocation), new String[] {"build.sources"}, properties, subMonitor.split(1)); //$NON-NLS-1$
+		}
 
 		if (publishingP2Metadata()) {
 			subMonitor.setTaskName(PDECoreMessages.FeatureExportOperation_publishingMetadata);
@@ -294,8 +352,9 @@ public class FeatureExportOperation extends Job {
 			antProperties.put(IXMLConstants.PROPERTY_ARCHIVE_FULLPATH, fInfo.destinationDirectory + File.separator + filename);
 		} else {
 			String dir = fInfo.destinationDirectory;
-			if (fInfo.targets != null && !groupedConfigurations())
+			if (fInfo.targets != null && !groupedConfigurations()) {
 				dir += File.separatorChar + os + '.' + ws + '.' + arch;
+			}
 			antProperties.put(IXMLConstants.PROPERTY_ASSEMBLY_TMP, dir);
 		}
 	}
@@ -308,8 +367,9 @@ public class FeatureExportOperation extends Job {
 			model = (IModel) object;
 		}
 
-		if (model == null)
+		if (model == null) {
 			return;
+		}
 
 		if (model.getUnderlyingResource() != null && !isCustomBuild(model)) {
 			String directory = (model instanceof IFeatureModel) ? ((IFeatureModel) model).getInstallLocation() : ((IPluginModelBase) model).getInstallLocation();
@@ -453,8 +513,9 @@ public class FeatureExportOperation extends Job {
 			IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
 			for (IExecutionEnvironment env : envs) {
 				String id = env.getId();
-				if (id != null)
+				if (id != null) {
 					fAntBuildProperties.put(id, BuildUtilities.getBootClasspath(id));
+				}
 			}
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_FAIL_ON_ERROR, "false"); //$NON-NLS-1$
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$
@@ -540,8 +601,9 @@ public class FeatureExportOperation extends Job {
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_FINAL_MODE_OVERRIDE, IBuildPropertiesConstants.TRUE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_COMPRESS, IBuildPropertiesConstants.TRUE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_GATHERING, Boolean.toString(publishingP2Metadata()));
-			if (getCategoryDefinition() != null)
+			if (getCategoryDefinition() != null) {
 				map.put(IBuildPropertiesConstants.PROPERTY_P2_CATEGORY_DEFINITION, getCategoryDefinition());
+			}
 			try {
 				String destination = ""; //$NON-NLS-1$
 				if (publishingP2Metadata()) {
@@ -566,30 +628,34 @@ public class FeatureExportOperation extends Job {
 
 	private String getOS(IFeature feature) {
 		String os = feature.getOS();
-		if (os == null || os.trim().length() == 0 || os.indexOf(',') != -1 || os.equals("*")) //$NON-NLS-1$
+		if (os == null || os.trim().length() == 0 || os.indexOf(',') != -1 || os.equals("*")) { //$NON-NLS-1$
 			return TargetPlatform.getOS();
+		}
 		return os;
 	}
 
 	private String getWS(IFeature feature) {
 		String ws = feature.getWS();
-		if (ws == null || ws.trim().length() == 0 || ws.indexOf(',') != -1 || ws.equals("*")) //$NON-NLS-1$
+		if (ws == null || ws.trim().length() == 0 || ws.indexOf(',') != -1 || ws.equals("*")) { //$NON-NLS-1$
 			return TargetPlatform.getWS();
+		}
 		return ws;
 	}
 
 	private String getOSArch(IFeature feature) {
 		String arch = feature.getArch();
-		if (arch == null || arch.trim().length() == 0 || arch.indexOf(',') != -1 || arch.equals("*")) //$NON-NLS-1$
+		if (arch == null || arch.trim().length() == 0 || arch.indexOf(',') != -1 || arch.equals("*")) { //$NON-NLS-1$
 			return TargetPlatform.getOSArch();
+		}
 		return arch;
 	}
 
 	protected void createDestination() throws InvocationTargetException {
 		File file = new File(fInfo.destinationDirectory);
 		if (!file.exists() || !file.isDirectory()) {
-			if (!file.mkdirs())
+			if (!file.mkdirs()) {
 				throw new InvocationTargetException(new Exception(PDECoreMessages.ExportWizard_badDirectory));
+			}
 		}
 
 		File metadataTemp = new File(fBuildTempMetadataLocation);
@@ -616,8 +682,9 @@ public class FeatureExportOperation extends Job {
 	private String getConfigInfo(String[][] configs) {
 		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < configs.length; i++) {
-			if (i > 0)
+			if (i > 0) {
 				buffer.append('&');
+			}
 			buffer.append(configs[i][0]);
 			buffer.append(',');
 			buffer.append(configs[i][1]);
@@ -630,8 +697,9 @@ public class FeatureExportOperation extends Job {
 	private String getArchivesFormat(String[][] configs) {
 		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < configs.length; i++) {
-			if (i > 0)
+			if (i > 0) {
 				buffer.append('&');
+			}
 			buffer.append(configs[i][0]);
 			buffer.append(',');
 			buffer.append(configs[i][1]);
@@ -686,8 +754,9 @@ public class FeatureExportOperation extends Job {
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
 		for (IExecutionEnvironment env : envs) {
 			String id = env.getId();
-			if (id != null)
+			if (id != null) {
 				properties.put(id, BuildUtilities.getBootClasspath(id));
+			}
 		}
 		generator.setImmutableAntProperties(properties);
 
@@ -727,8 +796,9 @@ public class FeatureExportOperation extends Job {
 
 	protected State getBuildState() {
 		State main = TargetPlatformHelper.getState();
-		if (fStateCopy == null)
+		if (fStateCopy == null) {
 			copyState(main);
+		}
 		//this state is expected to get platform properties set by pde.build and re-resolved there.
 		//TODO should main.getPlatformProperties() be passed to pde/build?
 		return fStateCopy;
@@ -756,14 +826,16 @@ public class FeatureExportOperation extends Job {
 		}
 		if (buildModel != null) {
 			IBuild build = buildModel.getBuild();
-			if (build == null)
+			if (build == null) {
 				return false;
+			}
 			IBuildEntry entry = build.getEntry("custom"); //$NON-NLS-1$
 			if (entry != null) {
 				String[] tokens = entry.getTokens();
 				for (final String token : tokens) {
-					if (token.equals("true")) //$NON-NLS-1$
+					if (token.equals("true")) { //$NON-NLS-1$
 						return true;
+					}
 				}
 			}
 		}
@@ -855,8 +927,9 @@ public class FeatureExportOperation extends Job {
 	}
 
 	private String logName(String[] config) {
-		if (config == null)
+		if (config == null) {
 			return "/logs.zip"; //$NON-NLS-1$
+		}
 		return "/logs." + config[0] + '.' + config[1] + '.' + config[2] + ".zip"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
@@ -923,12 +996,14 @@ public class FeatureExportOperation extends Job {
 					}
 				}
 			}
-			if (returnAfterLoop)
+			if (returnAfterLoop) {
 				return;
+			}
 
 			File file = new File(featureLocation);
-			if (!file.exists() || !file.isDirectory())
+			if (!file.exists() || !file.isDirectory()) {
 				file.mkdirs();
+			}
 
 			save(new File(file, ICoreConstants.BUILD_FILENAME_DESCRIPTOR), prop, "Marker File"); //$NON-NLS-1$
 			XMLPrintHandler.writeFile(doc, new File(file, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR));
@@ -959,8 +1034,9 @@ public class FeatureExportOperation extends Job {
 		//return the launcher fragment that matches the given configuration
 		Dictionary<String, String> environment = getEnvironment(configuration);
 		for (int i = 0; i < fragments.length; i++) {
-			if (!isNLFragment(fragments[i]) && shouldAddPlugin(fragments[i], environment))
+			if (!isNLFragment(fragments[i]) && shouldAddPlugin(fragments[i], environment)) {
 				return fragments[i];
+			}
 		}
 		return null;
 	}
@@ -974,8 +1050,9 @@ public class FeatureExportOperation extends Job {
 
 	protected void createFeature(String featureID, String featureLocation, String[][] configurations, boolean includeLauncher) throws IOException {
 		File file = new File(featureLocation);
-		if (!file.exists() || !file.isDirectory())
+		if (!file.exists() || !file.isDirectory()) {
 			file.mkdirs();
+		}
 
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -1042,15 +1119,18 @@ public class FeatureExportOperation extends Job {
 						bundle = ((IPluginModelBase) item).getBundleDescription();
 					}
 					if (bundle == null) {
-						if (item instanceof BundleDescription)
+						if (item instanceof BundleDescription) {
 							bundle = (BundleDescription) item;
+						}
 					}
-					if (bundle == null)
+					if (bundle == null) {
 						continue;
+					}
 
 					List<String[]> configs = new ArrayList<>();
-					if (configurations.length > 1)
+					if (configurations.length > 1) {
 						configs.add(GENERIC_CONFIG);
+					}
 					configs.addAll(Arrays.asList(configurations));
 
 					//when doing multiplatform we need filters set on the plugin elements that need them

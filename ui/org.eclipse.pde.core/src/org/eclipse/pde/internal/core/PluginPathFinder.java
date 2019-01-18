@@ -14,11 +14,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Properties;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.osgi.service.datalocation.Location;
@@ -48,13 +55,15 @@ public class PluginPathFinder {
 			properties.load(fis);
 			String path = properties.getProperty("path"); //$NON-NLS-1$
 			if (path != null) {
-				if (!new Path(path).isAbsolute())
+				if (!new Path(path).isAbsolute()) {
 					path = prefix + IPath.SEPARATOR + path;
+				}
 				path += IPath.SEPARATOR + "eclipse" + IPath.SEPARATOR; //$NON-NLS-1$
-				if (features)
+				if (features) {
 					path += "features"; //$NON-NLS-1$
-				else
+				} else {
 					path += "plugins"; //$NON-NLS-1$
+				}
 				if (new File(path).exists()) {
 					return path;
 				}
@@ -73,10 +82,12 @@ public class PluginPathFinder {
 	private static File[] getSites(String platformHome, boolean features) {
 		HashSet<File> sites = new HashSet<>();
 		File file = new File(platformHome, features ? "features" : "plugins"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (!features && !file.exists())
+		if (!features && !file.exists()) {
 			file = new File(platformHome);
-		if (file.exists())
+		}
+		if (file.exists()) {
 			sites.add(file);
+		}
 
 		File[] linkFiles = new File(platformHome + IPath.SEPARATOR + "links").listFiles(); //$NON-NLS-1$
 		if (linkFiles != null) {
@@ -113,8 +124,9 @@ public class PluginPathFinder {
 	 */
 	public static URL[] getPluginPaths(String platformHome, boolean installedOnly) {
 		// If we don't care about installed bundles, simply scan the location
-		if (!installedOnly)
+		if (!installedOnly) {
 			return scanLocations(getSites(platformHome, false));
+		}
 
 		// See if we can find a bundles.info to get installed bundles from
 		URL[] urls = null;
@@ -146,8 +158,9 @@ public class PluginPathFinder {
 			return urls;
 		}
 
-		if (new Path(platformHome).equals(new Path(TargetPlatform.getDefaultLocation())) && !isDevLaunchMode())
+		if (new Path(platformHome).equals(new Path(TargetPlatform.getDefaultLocation())) && !isDevLaunchMode()) {
 			return ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
+		}
 
 		return getPlatformXMLPaths(platformHome, false);
 	}
@@ -195,12 +208,14 @@ public class PluginPathFinder {
 				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 				location = manager.performStringSubstitution(location);
 				Path path = new Path(location);
-				if (path.isAbsolute())
+				if (path.isAbsolute()) {
 					file = path.toFile();
-				else
+				} else {
 					file = new File(platformHome, location);
-				if (file.exists())
+				}
+				if (file.exists()) {
 					return file;
+				}
 			} catch (CoreException e) {
 				PDECore.log(e);
 			}
@@ -232,10 +247,11 @@ public class PluginPathFinder {
 			URL url = site.getURL();
 			if ("file".equalsIgnoreCase(url.getProtocol())) { //$NON-NLS-1$
 				String[] entries;
-				if (features)
+				if (features) {
 					entries = site.getFeatures();
-				else
+				} else {
 					entries = site.getPlugins();
+				}
 				for (String entry : entries) {
 					try {
 						extensionPlugins.add(new File(url.getFile(), entry).toURL());
@@ -255,8 +271,9 @@ public class PluginPathFinder {
 	public static URL[] scanLocations(File[] sites) {
 		HashSet<URL> result = new HashSet<>();
 		for (int i = 0; i < sites.length; i++) {
-			if (!sites[i].exists())
+			if (!sites[i].exists()) {
 				continue;
+			}
 			File[] children = sites[i].listFiles();
 			if (children != null) {
 				for (File element : children) {
@@ -271,12 +288,14 @@ public class PluginPathFinder {
 	}
 
 	public static boolean isDevLaunchMode() {
-		if (Boolean.getBoolean("eclipse.pde.launch")) //$NON-NLS-1$
+		if (Boolean.getBoolean("eclipse.pde.launch")) { //$NON-NLS-1$
 			return true;
+		}
 		String[] args = Platform.getApplicationArgs();
 		for (String arg : args) {
-			if (arg.equals("-pdelaunch")) //$NON-NLS-1$
+			if (arg.equals("-pdelaunch")) { //$NON-NLS-1$
 				return true;
+			}
 		}
 		return false;
 	}

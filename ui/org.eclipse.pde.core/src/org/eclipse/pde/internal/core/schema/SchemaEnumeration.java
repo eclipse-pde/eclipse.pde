@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
-
 import org.eclipse.pde.internal.core.ischema.ISchemaEnumeration;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 
@@ -30,8 +29,9 @@ public class SchemaEnumeration extends SchemaObject implements ISchemaEnumeratio
 	public void write(String indent, PrintWriter writer) {
 		writer.println(indent + "<enumeration value=\"" + getName() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 		String description = getDescription();
-		if (description != null)
+		if (description != null) {
 			description.trim();
+		}
 		if (description != null && description.length() > 0) {
 			String indent2 = indent + Schema.INDENT;
 			String indent3 = indent2 + Schema.INDENT;

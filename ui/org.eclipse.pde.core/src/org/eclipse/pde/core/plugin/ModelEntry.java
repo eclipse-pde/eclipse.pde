@@ -31,7 +31,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
  */
 public class ModelEntry extends PlatformObject {
 
-	private String fId;
+	private final String fId;
 
 	/**
 	 * The list of workspace models with the same entry ID
@@ -93,16 +93,18 @@ public class ModelEntry extends PlatformObject {
 	 */
 	public IPluginModelBase getModel() {
 		IPluginModelBase model = getBestCandidate(getWorkspaceModels());
-		if (model == null)
+		if (model == null) {
 			model = getBestCandidate(getExternalModels());
+		}
 		return model;
 	}
 
 	private IPluginModelBase getBestCandidate(IPluginModelBase[] models) {
 		IPluginModelBase result = null;
 		for (IPluginModelBase model : models) {
-			if (model.getBundleDescription() == null)
+			if (model.getBundleDescription() == null) {
 				continue;
+			}
 
 			if (result == null) {
 				result = model;
@@ -142,15 +144,17 @@ public class ModelEntry extends PlatformObject {
 	 * @return an array of the currently active plug-ins with the model entry ID
 	 */
 	public IPluginModelBase[] getActiveModels() {
-		if (!fWorkspaceEntries.isEmpty())
+		if (!fWorkspaceEntries.isEmpty()) {
 			return getWorkspaceModels();
+		}
 
 		if (!fExternalEntries.isEmpty()) {
 			ArrayList<IPluginModelBase> list = new ArrayList<>(fExternalEntries.size());
 			for (int i = 0; i < fExternalEntries.size(); i++) {
 				IPluginModelBase model = fExternalEntries.get(i);
-				if (model.isEnabled())
+				if (model.isEnabled()) {
 					list.add(model);
+				}
 			}
 			return list.toArray(new IPluginModelBase[list.size()]);
 		}
@@ -176,18 +180,21 @@ public class ModelEntry extends PlatformObject {
 	 * model exists.
 	 */
 	public IPluginModelBase getModel(BundleDescription desc) {
-		if (desc == null)
+		if (desc == null) {
 			return null;
+		}
 
 		for (int i = 0; i < fWorkspaceEntries.size(); i++) {
 			IPluginModelBase model = fWorkspaceEntries.get(i);
-			if (desc.equals(model.getBundleDescription()))
+			if (desc.equals(model.getBundleDescription())) {
 				return model;
+			}
 		}
 		for (int i = 0; i < fExternalEntries.size(); i++) {
 			IPluginModelBase model = fExternalEntries.get(i);
-			if (desc.equals(model.getBundleDescription()))
+			if (desc.equals(model.getBundleDescription())) {
 				return model;
+			}
 		}
 		return null;
 	}

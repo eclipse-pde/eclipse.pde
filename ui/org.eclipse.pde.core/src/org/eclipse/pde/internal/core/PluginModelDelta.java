@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core;
 
 import java.util.ArrayList;
-
 import org.eclipse.pde.core.plugin.ModelEntry;
 
 public class PluginModelDelta {
@@ -48,8 +47,9 @@ public class PluginModelDelta {
 	}
 
 	private ModelEntry[] getEntries(ArrayList<ModelEntry> list) {
-		if (list == null)
+		if (list == null) {
 			return new ModelEntry[0];
+		}
 		return list.toArray(new ModelEntry[list.size()]);
 	}
 
@@ -69,8 +69,9 @@ public class PluginModelDelta {
 	}
 
 	private ArrayList<ModelEntry> addEntry(ArrayList<ModelEntry> list, ModelEntry entry) {
-		if (list == null)
+		if (list == null) {
 			list = new ArrayList<>();
+		}
 		list.add(entry);
 		return list;
 	}

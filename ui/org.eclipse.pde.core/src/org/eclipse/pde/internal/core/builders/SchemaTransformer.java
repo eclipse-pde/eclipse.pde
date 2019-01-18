@@ -17,10 +17,21 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Locale;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.core.schema.*;
+import org.eclipse.pde.internal.core.ischema.IDocumentSection;
+import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
+import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
+import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
+import org.eclipse.pde.internal.core.schema.ChoiceRestriction;
+import org.eclipse.pde.internal.core.schema.DocumentSection;
+import org.eclipse.pde.internal.core.schema.SchemaRootElement;
 import org.osgi.framework.Bundle;
 
 public class SchemaTransformer {
@@ -52,14 +63,17 @@ public class SchemaTransformer {
 
 	private void setCssURL(URL cssURL) {
 		try {
-			if (cssURL != null)
+			if (cssURL != null) {
 				fCssURL = FileLocator.resolve(cssURL);
+			}
 		} catch (IOException e) {
 		}
-		if (fCssURL == null && fCssPurpose != BUILD)
+		if (fCssURL == null && fCssPurpose != BUILD) {
 			fCssURL = getResourceURL(getProductPlugin(), PLATFORM_CSS);
-		if (fCssURL == null && fCssPurpose != BUILD)
+		}
+		if (fCssURL == null && fCssPurpose != BUILD) {
 			fCssURL = getResourceURL(PDECore.PLUGIN_ID, PLATFORM_CSS);
+		}
 	}
 
 	private String getCssURL() {
@@ -67,8 +81,9 @@ public class SchemaTransformer {
 	}
 
 	private String getSchemaCssURL() {
-		if (fCssPurpose == BUILD)
+		if (fCssPurpose == BUILD) {
 			return "../../" + SCHEMA_CSS; //$NON-NLS-1$
+		}
 		URL url = getResourceURL(PLATFORM_PLUGIN_DOC, SCHEMA_CSS);
 		if (url == null) {
 			// this CSS file is last resort and is always there.
@@ -103,8 +118,9 @@ public class SchemaTransformer {
 			Bundle bundle = Platform.getBundle(bundleID);
 			if (bundle != null) {
 				URL entry = bundle.getEntry(resourcePath);
-				if (entry != null)
+				if (entry != null) {
 					return FileLocator.toFileURL(entry);
+				}
 			}
 		} catch (IOException e) {
 		}
@@ -118,8 +134,9 @@ public class SchemaTransformer {
 			fWriter.print("<div style=\"border: 1px solid #990000; padding: 5px; text-align: center; color: red;\">"); //$NON-NLS-1$
 			fWriter.print("This extension point is deprecated"); //$NON-NLS-1$
 			String suggestion = fSchema.getDeprecatedSuggestion();
-			if (suggestion != null)
+			if (suggestion != null) {
 				fWriter.print(", use <i>" + suggestion + "</i> as a replacement."); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			fWriter.println("</div>"); //$NON-NLS-1$
 		}
 		if (fSchema.isInternal()) {
@@ -147,17 +164,23 @@ public class SchemaTransformer {
 
 	private void transformSection(String title, String sectionId) {
 		IDocumentSection section = findSection(fSchema.getDocumentSections(), sectionId);
-		if (section == null)
+		if (section == null) {
 			return;
+		}
 		String description = section.getDescription();
-		if (description == null || description.trim().length() == 0)
+		if (description == null || description.trim().length() == 0) {
 			return;
+		}
 		if (title != null)
+		 {
 			fWriter.print("<h6 class=\"CaptionFigColumn SchemaHeader\">" + title + " </h6>"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		transformText(description);
 		fWriter.println();
 		if (!sectionId.equals(IDocumentSection.COPYRIGHT))
+		 {
 			fWriter.println("<p></p>"); //$NON-NLS-1$
+		}
 		fWriter.println();
 	}
 
@@ -171,8 +194,9 @@ public class SchemaTransformer {
 	}
 
 	private void transformText(String text) {
-		if (text == null)
+		if (text == null) {
 			return;
+		}
 		boolean preformatted = false;
 		boolean inTag = false;
 		boolean inCstring = false;
@@ -230,8 +254,9 @@ public class SchemaTransformer {
 					default :
 						fWriter.print(c);
 				}
-			} else
+			} else {
 				fWriter.print(c);
+			}
 		}
 	}
 
@@ -263,8 +288,9 @@ public class SchemaTransformer {
 		String dtd = element.getDTDRepresentation(true);
 		String nameLink = "<a name=\"e." + name + "\">" + name + "</a>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-		if (element.isDeprecated() && !(element instanceof SchemaRootElement))
+		if (element.isDeprecated() && !(element instanceof SchemaRootElement)) {
 			fWriter.print("<div style=\"color: red; font-style: italic;\">The <b>" + name + "</b> element is deprecated</div> "); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 
 		fWriter.print("<p class=\"code SchemaDtd\">&lt;!ELEMENT " //$NON-NLS-1$
 				+ nameLink + " " //$NON-NLS-1$
@@ -313,8 +339,9 @@ public class SchemaTransformer {
 				}
 			}
 			fWriter.print("<li>"); //$NON-NLS-1$
-			if (att.isDeprecated())
+			if (att.isDeprecated()) {
 				fWriter.print("<i style=\"color: red;\">Deprecated</i> "); //$NON-NLS-1$
+			}
 			fWriter.print("<b>" + att.getName() + "</b> - "); //$NON-NLS-1$ //$NON-NLS-2$
 			transformText(att.getDescription());
 			fWriter.println("</li>"); //$NON-NLS-1$
@@ -325,10 +352,12 @@ public class SchemaTransformer {
 	}
 
 	private boolean containsParagraph(String input) {
-		if (input.indexOf("<p>") != -1) //$NON-NLS-1$
+		if (input.indexOf("<p>") != -1) { //$NON-NLS-1$
 			return true;
-		if (input.indexOf("</p>") != -1) //$NON-NLS-1$
+		}
+		if (input.indexOf("</p>") != -1) { //$NON-NLS-1$
 			return true;
+		}
 		return false;
 	}
 
@@ -349,8 +378,9 @@ public class SchemaTransformer {
 		ISchemaSimpleType type = att.getType();
 		ISchemaRestriction restriction = null;
 		boolean choices = false;
-		if (type != null)
+		if (type != null) {
 			restriction = type.getRestriction();
+		}
 		String typeName = type != null ? type.getName().toLowerCase(Locale.ENGLISH) : "string"; //$NON-NLS-1$
 		if (typeName.equals("boolean")) { //$NON-NLS-1$
 			fWriter.print("(true | false) "); //$NON-NLS-1$
@@ -366,12 +396,14 @@ public class SchemaTransformer {
 
 		// add use
 		if (att.getUse() == ISchemaAttribute.REQUIRED) {
-			if (!choices)
+			if (!choices) {
 				fWriter.print("#REQUIRED"); //$NON-NLS-1$
+			}
 		} else if (att.getUse() == ISchemaAttribute.DEFAULT) {
 			fWriter.print("\"" + att.getValue() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		} else if (!choices)
+		} else if (!choices) {
 			fWriter.print("#IMPLIED"); //$NON-NLS-1$
+		}
 	}
 
 	private void appendRestriction(ISchemaRestriction restriction) {
@@ -379,8 +411,9 @@ public class SchemaTransformer {
 			String[] choices = ((ChoiceRestriction) restriction).getChoicesAsStrings();
 			fWriter.print("("); //$NON-NLS-1$
 			for (int i = 0; i < choices.length; i++) {
-				if (i > 0)
+				if (i > 0) {
 					fWriter.print("|"); //$NON-NLS-1$
+				}
 				fWriter.print(choices[i]);
 			}
 			fWriter.print(") "); //$NON-NLS-1$
@@ -388,14 +421,16 @@ public class SchemaTransformer {
 	}
 
 	private boolean isPreEnd(String text, int loc) {
-		if (loc + 5 >= text.length())
+		if (loc + 5 >= text.length()) {
 			return false;
+		}
 		return (text.substring(loc, loc + 6).toLowerCase(Locale.ENGLISH).equals("</pre>")); //$NON-NLS-1$
 	}
 
 	private boolean isPreStart(String text, int loc) {
-		if (loc + 4 >= text.length())
+		if (loc + 4 >= text.length()) {
 			return false;
+		}
 		return (text.substring(loc, loc + 5).toLowerCase(Locale.ENGLISH).equals("<pre>")); //$NON-NLS-1$
 	}
 

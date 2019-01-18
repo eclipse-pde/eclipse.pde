@@ -16,12 +16,28 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.ModelEntry;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.FeatureModelManager;
+import org.eclipse.pde.internal.core.IFeatureModelDelta;
+import org.eclipse.pde.internal.core.IFeatureModelListener;
+import org.eclipse.pde.internal.core.IPluginModelListener;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelDelta;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 /**
@@ -46,8 +62,9 @@ public class FeatureRebuilder implements IFeatureModelListener, IPluginModelList
 
 	@Override
 	public void modelsChanged(IFeatureModelDelta delta) {
-		if ((IFeatureModelDelta.ADDED & delta.getKind()) != 0 || (IFeatureModelDelta.REMOVED & delta.getKind()) != 0)
+		if ((IFeatureModelDelta.ADDED & delta.getKind()) != 0 || (IFeatureModelDelta.REMOVED & delta.getKind()) != 0) {
 			fTouchFeatures = true;
+		}
 	}
 
 	@Override
@@ -61,8 +78,9 @@ public class FeatureRebuilder implements IFeatureModelListener, IPluginModelList
 			// typically do not mix.
 			ModelEntry[] changed = delta.getChangedEntries();
 			if (changed.length > 0) {
-				if (!changed[0].hasWorkspaceModels())
+				if (!changed[0].hasWorkspaceModels()) {
 					touchFeatures();
+				}
 			}
 		}
 	}

@@ -25,8 +25,9 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 		super();
 		String name = "plugin"; //$NON-NLS-1$
 		try {
-			if (id == null)
+			if (id == null) {
 				id = ""; //$NON-NLS-1$
+			}
 			PluginAttribute attr = new PluginAttribute();
 			attr.setName(name);
 			attr.setEnclosingElement(this);
@@ -65,14 +66,18 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 	@Override
 	public int getMatch() {
 		String match = getXMLAttributeValue(P_MATCH);
-		if (match == null || match.trim().length() == 0)
+		if (match == null || match.trim().length() == 0) {
 			return IMatchRules.NONE;
-		if (match.equals("compatible")) //$NON-NLS-1$
+		}
+		if (match.equals("compatible")) { //$NON-NLS-1$
 			return IMatchRules.COMPATIBLE;
-		if (match.equals("perfect")) //$NON-NLS-1$
+		}
+		if (match.equals("perfect")) { //$NON-NLS-1$
 			return IMatchRules.PERFECT;
-		if (match.equals("equivalent")) //$NON-NLS-1$
+		}
+		if (match.equals("equivalent")) { //$NON-NLS-1$
 			return IMatchRules.EQUIVALENT;
+		}
 		return IMatchRules.GREATER_OR_EQUAL;
 	}
 
@@ -130,8 +135,9 @@ public class PluginImportNode extends PluginObjectNode implements IPluginImport 
 		appendAttribute(buffer, P_REEXPORTED, "false"); //$NON-NLS-1$
 		appendAttribute(buffer, P_OPTIONAL, "false"); //$NON-NLS-1$
 
-		if (terminate)
+		if (terminate) {
 			buffer.append("/"); //$NON-NLS-1$
+		}
 		buffer.append(">"); //$NON-NLS-1$
 		return buffer.toString();
 	}

@@ -16,7 +16,13 @@ package org.eclipse.pde.internal.core.text.plugin;
 import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 public abstract class PluginBaseNode extends PluginObjectNode implements IPluginBase {
@@ -85,8 +91,9 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		if (requiresNode != null) {
 			IDocumentElementNode[] children = requiresNode.getChildNodes();
 			for (IDocumentElementNode childNode : children) {
-				if (childNode instanceof IPluginLibrary)
+				if (childNode instanceof IPluginLibrary) {
 					result.add(childNode);
+				}
 			}
 		}
 
@@ -130,8 +137,9 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		if (requiresNode != null) {
 			IDocumentElementNode[] children = requiresNode.getChildNodes();
 			for (IDocumentElementNode childNode : children) {
-				if (childNode instanceof IPluginImport)
+				if (childNode instanceof IPluginImport) {
 					result.add(childNode);
+				}
 			}
 		}
 
@@ -223,18 +231,19 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 			extensionPoint.setInTheModel(true);
 			node.setParentNode(this);
 			IPluginExtensionPoint[] extPoints = getExtensionPoints();
-			if (extPoints.length > 0)
+			if (extPoints.length > 0) {
 				addChildNode(node, indexOf((IDocumentElementNode) extPoints[extPoints.length - 1]) + 1);
-			else {
+			} else {
 				IDocumentElementNode requires = getEnclosingElement("requires", false); //$NON-NLS-1$
 				if (requires != null) {
 					addChildNode(node, indexOf(requires) + 1);
 				} else {
 					IDocumentElementNode runtime = getEnclosingElement("runtime", false); //$NON-NLS-1$
-					if (runtime != null)
+					if (runtime != null) {
 						addChildNode(node, indexOf(runtime) + 1);
-					else
+					} else {
 						addChildNode(node, 0);
+					}
 				}
 			}
 			fireStructureChanged(extensionPoint, IModelChangedEvent.INSERT);
@@ -246,8 +255,9 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		ArrayList<IDocumentElementNode> result = new ArrayList<>();
 		IDocumentElementNode[] children = getChildNodes();
 		for (IDocumentElementNode childNode : children) {
-			if (childNode instanceof IPluginExtensionPoint)
+			if (childNode instanceof IPluginExtensionPoint) {
 				result.add(childNode);
+			}
 		}
 		return result.toArray(new IPluginExtensionPoint[result.size()]);
 	}
@@ -257,8 +267,9 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		ArrayList<IDocumentElementNode> result = new ArrayList<>();
 		IDocumentElementNode[] children = getChildNodes();
 		for (IDocumentElementNode childNode : children) {
-			if (childNode instanceof IPluginExtension)
+			if (childNode instanceof IPluginExtension) {
 				result.add(childNode);
+			}
 		}
 		return result.toArray(new IPluginExtension[result.size()]);
 	}
@@ -267,8 +278,9 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	public int getIndexOf(IPluginExtension e) {
 		IPluginExtension[] children = getExtensions();
 		for (int i = 0; i < children.length; i++) {
-			if (children[i].equals(e))
+			if (children[i].equals(e)) {
 				return i;
+			}
 		}
 		return -1;
 	}
@@ -382,16 +394,19 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		buffer.append(newLine);
 
 		String id = getId();
-		if (id != null && id.trim().length() > 0)
+		if (id != null && id.trim().length() > 0) {
 			buffer.append("   " + P_ID + "=\"" + getWritableString(id) + "\"" + newLine); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 
 		String name = getName();
-		if (name != null && name.trim().length() > 0)
+		if (name != null && name.trim().length() > 0) {
 			buffer.append("   " + P_NAME + "=\"" + getWritableString(name) + "\"" + newLine); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 
 		String version = getVersion();
-		if (version != null && version.trim().length() > 0)
+		if (version != null && version.trim().length() > 0) {
 			buffer.append("   " + P_VERSION + "=\"" + getWritableString(version) + "\"" + newLine); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 
 		String provider = getProviderName();
 		if (provider != null && provider.trim().length() > 0) {
@@ -399,10 +414,12 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 		}
 
 		String[] specific = getSpecificAttributes();
-		for (String element : specific)
+		for (String element : specific) {
 			buffer.append(newLine + element);
-		if (terminate)
+		}
+		if (terminate) {
 			buffer.append("/"); //$NON-NLS-1$
+		}
 		buffer.append(">"); //$NON-NLS-1$
 
 		return buffer.toString();

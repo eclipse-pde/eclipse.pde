@@ -13,10 +13,22 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.*;
+import java.util.Dictionary;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
@@ -24,8 +36,8 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 
 	private static StateObjectFactory FACTORY;
 
-	private IPluginModelBase[] fModels;
-	private Dictionary<?, ?>[] fProperties;
+	private final IPluginModelBase[] fModels;
+	private final Dictionary<?, ?>[] fProperties;
 	private State fState;
 
 	public BundleValidationOperation(IPluginModelBase[] models) {

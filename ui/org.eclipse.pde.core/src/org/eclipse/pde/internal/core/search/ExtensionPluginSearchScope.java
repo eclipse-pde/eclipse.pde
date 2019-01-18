@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.search;
 
 import java.util.HashSet;
-
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEExtensionRegistry;
@@ -35,8 +34,9 @@ public class ExtensionPluginSearchScope extends PluginSearchScope {
 
 	@Override
 	public IPluginModelBase[] getMatchingModels() {
-		if (fInput == null)
+		if (fInput == null) {
 			return new IPluginModelBase[0];
+		}
 		String pointId = fInput.getSearchString();
 		PDEExtensionRegistry registry = PDECore.getDefault().getExtensionsRegistry();
 		IPluginModelBase[] models = null;

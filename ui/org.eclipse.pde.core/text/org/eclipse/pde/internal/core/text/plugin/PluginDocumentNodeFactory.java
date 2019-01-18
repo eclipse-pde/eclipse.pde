@@ -24,13 +24,13 @@ import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.text.DocumentTextNode;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentNodeFactory;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
+import org.eclipse.pde.internal.core.text.IDocumentNodeFactory;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
 public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocumentNodeFactory {
 
-	private PluginModelBase fModel;
+	private final PluginModelBase fModel;
 
 	public PluginDocumentNodeFactory(PluginModelBase model) {
 		fModel = model;
@@ -38,14 +38,17 @@ public class PluginDocumentNodeFactory implements IPluginModelFactory, IDocument
 
 	@Override
 	public IDocumentElementNode createDocumentNode(String name, IDocumentElementNode parent) {
-		if (parent == null)
+		if (parent == null) {
 			return createPluginBase(name);
+		}
 
 		if (parent instanceof PluginBaseNode) {
-			if ("extension".equals(name)) //$NON-NLS-1$
+			if ("extension".equals(name)) { //$NON-NLS-1$
 				return (IDocumentElementNode) createExtension();
-			if ("extension-point".equals(name)) //$NON-NLS-1$
+			}
+			if ("extension-point".equals(name)) { //$NON-NLS-1$
 				return (IDocumentElementNode) createExtensionPoint();
+			}
 		} else {
 			if (name.equals("import") && parent instanceof PluginElementNode) { //$NON-NLS-1$
 				if (((PluginElementNode) parent).getName().equals("requires")) { //$NON-NLS-1$

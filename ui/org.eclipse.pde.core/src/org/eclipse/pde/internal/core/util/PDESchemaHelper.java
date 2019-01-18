@@ -14,11 +14,21 @@
 
 package org.eclipse.pde.internal.core.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaEnumeration;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
+import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
 
 public class PDESchemaHelper {
 
@@ -49,8 +59,9 @@ public class PDESchemaHelper {
 				if (child instanceof ISchemaEnumeration) {
 					ISchemaEnumeration enumeration = (ISchemaEnumeration) child;
 					String value = enumeration.getName();
-					if (value != null && value.length() > 0)
+					if (value != null && value.length() > 0) {
 						attributeMap.put(value, null);
+					}
 				}
 			}
 		}
@@ -74,8 +85,9 @@ public class PDESchemaHelper {
 
 	// TODO can we do this any faster?
 	private static void gatherAttributes(Map<String, IConfigurationElement> attributesInfo, String basedOn) {
-		if (basedOn == null) // check for null
+		if (basedOn == null) {
 			return;
+		}
 		String[] path = basedOn.split("/"); //$NON-NLS-1$
 		if (path.length < 2) {
 			return; // No plug-in identifier

@@ -15,8 +15,13 @@
 package org.eclipse.pde.internal.core.util;
 
 import java.util.ArrayList;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.launching.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstallType;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.util.NLS;
@@ -52,15 +57,17 @@ public class VMUtil {
 	 */
 	public static String getDefaultVMInstallName() {
 		IVMInstall install = JavaRuntime.getDefaultVMInstall();
-		if (install != null)
+		if (install != null) {
 			return install.getName();
+		}
 		return ""; //$NON-NLS-1$
 	}
 
 	public static String getDefaultVMInstallLocation() {
 		IVMInstall install = JavaRuntime.getDefaultVMInstall();
-		if (install != null)
+		if (install != null) {
 			return install.getInstallLocation().getAbsolutePath();
+		}
 		return null;
 	}
 
@@ -68,8 +75,9 @@ public class VMUtil {
 		if (name != null) {
 			IVMInstall[] installs = getAllVMInstances();
 			for (IVMInstall install : installs) {
-				if (install.getName().equals(name))
+				if (install.getName().equals(name)) {
 					return install;
+				}
 			}
 		}
 		return JavaRuntime.getDefaultVMInstall();
@@ -88,8 +96,9 @@ public class VMUtil {
 	public static String getVMInstallName(IExecutionEnvironment ee) throws CoreException {
 		IPath containerPath = JavaRuntime.newJREContainerPath(ee);
 		IVMInstall vmi = JavaRuntime.getVMInstall(containerPath);
-		if (vmi == null)
+		if (vmi == null) {
 			throw new CoreException(createErrorStatus(NLS.bind(UtilMessages.VMHelper_noJreForExecEnv, ee.getId())));
+		}
 		return vmi.getName();
 	}
 

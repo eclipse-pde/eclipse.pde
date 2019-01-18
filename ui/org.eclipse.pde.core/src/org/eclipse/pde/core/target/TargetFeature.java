@@ -16,10 +16,18 @@ package org.eclipse.pde.core.target;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
+import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.target.Messages;
 
 /**
@@ -49,8 +57,9 @@ public class TargetFeature {
 	 * @return id or <code>null</code>
 	 */
 	public String getId() {
-		if (featureModel == null)
+		if (featureModel == null) {
 			return null;
+		}
 		return featureModel.getFeature().getId();
 	}
 
@@ -60,8 +69,9 @@ public class TargetFeature {
 	 * @return version or <code>null</code>
 	 */
 	public String getVersion() {
-		if (featureModel == null)
+		if (featureModel == null) {
 			return null;
+		}
 		return featureModel.getFeature().getVersion();
 	}
 
@@ -72,8 +82,9 @@ public class TargetFeature {
 	 * @return install location path or <code>null</code>
 	 */
 	public String getLocation() {
-		if (featureModel == null)
+		if (featureModel == null) {
 			return null;
+		}
 		return featureModel.getInstallLocation();
 	}
 

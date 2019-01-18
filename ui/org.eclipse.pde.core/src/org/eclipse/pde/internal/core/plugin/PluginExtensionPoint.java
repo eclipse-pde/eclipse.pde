@@ -16,7 +16,10 @@ package org.eclipse.pde.internal.core.plugin;
 import java.io.PrintWriter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.w3c.dom.Node;
 
 public class PluginExtensionPoint extends IdentifiablePluginObject implements IPluginExtensionPoint {
@@ -41,26 +44,30 @@ public class PluginExtensionPoint extends IdentifiablePluginObject implements IP
 
 	@Override
 	public String getFullId() {
-		if (fPoint != null)
+		if (fPoint != null) {
 			return fPoint.getUniqueIdentifier();
+		}
 		String pointId = getId();
 		IPluginModelBase modelBase = getPluginModel();
 		IPluginBase pluginBase = modelBase.getPluginBase();
 		String schemaVersion = pluginBase.getSchemaVersion();
 		if (schemaVersion != null && Double.parseDouble(schemaVersion) >= 3.2) {
-			if (pointId.indexOf('.') > 0)
+			if (pointId.indexOf('.') > 0) {
 				return pointId;
+			}
 		}
 
-		if (pluginBase instanceof IFragment)
+		if (pluginBase instanceof IFragment) {
 			return ((IFragment) pluginBase).getPluginId() + '.' + pointId;
+		}
 		return pluginBase.getId() + '.' + pointId;
 	}
 
 	@Override
 	public String getSchema() {
-		if (fSchema == null && fPoint != null)
+		if (fSchema == null && fPoint != null) {
 			fSchema = fPoint.getSchemaReference();
+		}
 		return fSchema;
 	}
 
@@ -73,16 +80,19 @@ public class PluginExtensionPoint extends IdentifiablePluginObject implements IP
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
+		}
 		if (obj instanceof IPluginExtensionPoint) {
 			IPluginExtensionPoint target = (IPluginExtensionPoint) obj;
 			// Objects from the same model must be
 			// binary equal
-			if (target.getModel().equals(getModel()))
+			if (target.getModel().equals(getModel())) {
 				return false;
-			if (stringEqualWithNull(target.getFullId(), getId()) && stringEqualWithNull(target.getName(), getName()) && stringEqualWithNull(target.getSchema(), getSchema()))
+			}
+			if (stringEqualWithNull(target.getFullId(), getId()) && stringEqualWithNull(target.getName(), getName()) && stringEqualWithNull(target.getSchema(), getSchema())) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -108,19 +118,23 @@ public class PluginExtensionPoint extends IdentifiablePluginObject implements IP
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<extension-point"); //$NON-NLS-1$
-		if (getId() != null)
+		if (getId() != null) {
 			writer.print(" id=\"" + getWritableString(getId()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (getName() != null)
+		}
+		if (getName() != null) {
 			writer.print(" name=\"" + getWritableString(getName()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (getSchema() != null)
+		}
+		if (getSchema() != null) {
 			writer.print(" schema=\"" + getSchema() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		writer.println("/>"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getName() {
-		if (fName == null)
+		if (fName == null) {
 			fName = fPoint.getLabel();
+		}
 		return fName;
 	}
 
@@ -132,8 +146,9 @@ public class PluginExtensionPoint extends IdentifiablePluginObject implements IP
 				String pluginId = getPluginBase().getId();
 				if (fID.startsWith(pluginId)) {
 					String sub = fID.substring(pluginId.length());
-					if (sub.lastIndexOf('.') == 0)
+					if (sub.lastIndexOf('.') == 0) {
 						fID = sub.substring(1);
+					}
 				}
 			}
 		}

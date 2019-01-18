@@ -51,8 +51,9 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 	@Override
 	public String getTranslatedName() {
 		String name = getName();
-		if (name != null && name.trim().length() > 0)
+		if (name != null && name.trim().length() > 0) {
 			return getResourceString(name);
+		}
 		String point = getPoint();
 		ISchema schema = PDECore.getDefault().getSchemaRegistry().getSchema(point);
 		return schema == null ? "" : schema.getName(); //$NON-NLS-1$
@@ -72,8 +73,9 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 	public String write(boolean indent) {
 		String sep = getLineDelimiter();
 		StringBuilder buffer = new StringBuilder();
-		if (indent)
+		if (indent) {
 			buffer.append(getIndent());
+		}
 		buffer.append(writeShallow(false));
 		IDocumentElementNode[] children = getChildNodes();
 		for (IDocumentElementNode childNode : children) {
@@ -96,16 +98,20 @@ public class PluginExtensionNode extends PluginParentNode implements IPluginExte
 		String attrIndent = "      "; //$NON-NLS-1$
 		StringBuilder buffer = new StringBuilder("<extension"); //$NON-NLS-1$
 		IDocumentAttributeNode attr = getDocumentAttribute(P_ID);
-		if (attr != null && attr.getAttributeValue().trim().length() > 0)
+		if (attr != null && attr.getAttributeValue().trim().length() > 0) {
 			buffer.append(sep + getIndent() + attrIndent + attr.write());
+		}
 		attr = getDocumentAttribute(P_NAME);
-		if (attr != null && attr.getAttributeValue().trim().length() > 0)
+		if (attr != null && attr.getAttributeValue().trim().length() > 0) {
 			buffer.append(sep + getIndent() + attrIndent + attr.write());
+		}
 		attr = getDocumentAttribute(P_POINT);
-		if (attr != null && attr.getAttributeValue().trim().length() > 0)
+		if (attr != null && attr.getAttributeValue().trim().length() > 0) {
 			buffer.append(sep + getIndent() + attrIndent + attr.write());
-		if (terminate)
+		}
+		if (terminate) {
 			buffer.append("/"); //$NON-NLS-1$
+		}
 		buffer.append(">"); //$NON-NLS-1$
 		return buffer.toString();
 	}

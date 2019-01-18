@@ -15,9 +15,14 @@ package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.w3c.dom.Node;
 
@@ -54,8 +59,9 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 			IFeature feature = model.getFeature();
 			String pid = feature.getId();
 			String pversion = feature.getVersion();
-			if (VersionUtil.compare(pid, pversion, id, version, match))
+			if (VersionUtil.compare(pid, pversion, id, version, match)) {
 				return feature;
+			}
 		}
 		return null;
 	}
@@ -92,12 +98,13 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 	protected void parse(Node node) {
 		super.parse(node);
 		this.id = getNodeAttribute(node, "plugin"); //$NON-NLS-1$
-		if (id != null)
+		if (id != null) {
 			fType = PLUGIN;
-		else {
+		} else {
 			this.id = getNodeAttribute(node, "feature"); //$NON-NLS-1$
-			if (id != null)
+			if (id != null) {
 				fType = FEATURE;
+			}
 		}
 		String mvalue = getNodeAttribute(node, "match"); //$NON-NLS-1$
 		if (mvalue != null && mvalue.length() > 0) {
@@ -111,8 +118,9 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		}
 		mvalue = getNodeAttribute(node, "id-match"); //$NON-NLS-1$
 		if (mvalue != null && mvalue.length() > 0) {
-			if (mvalue.equalsIgnoreCase(RULE_PREFIX))
+			if (mvalue.equalsIgnoreCase(RULE_PREFIX)) {
 				fIdMatch = PREFIX;
+			}
 		}
 		fPatch = getBooleanAttribute(node, "patch"); //$NON-NLS-1$
 		fFilter = getNodeAttribute(node, "filter"); //$NON-NLS-1$
@@ -182,8 +190,9 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 			setType(newValue != null ? ((Integer) newValue).intValue() : PLUGIN);
 		} else if (name.equals(P_PATCH)) {
 			setPatch(newValue != null ? ((Boolean) newValue).booleanValue() : false);
-		} else
+		} else {
 			super.restoreProperty(name, oldValue, newValue);
+		}
 	}
 
 	@Override
@@ -212,11 +221,13 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 	@Override
 	public String toString() {
 		IPlugin plugin = getPlugin();
-		if (plugin != null)
+		if (plugin != null) {
 			return plugin.getTranslatedName();
+		}
 		IFeature feature = getFeature();
-		if (feature != null)
+		if (feature != null) {
 			return feature.getLabel();
+		}
 		return getId();
 	}
 

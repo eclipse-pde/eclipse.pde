@@ -16,8 +16,12 @@ package org.eclipse.pde.internal.core.plugin;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
@@ -40,8 +44,9 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 
 	@Override
 	public String getPoint() {
-		if (fPoint == null && fExtension != null)
+		if (fPoint == null && fExtension != null) {
 			fPoint = fExtension.getExtensionPointUniqueIdentifier();
+		}
 		return fPoint;
 	}
 
@@ -69,8 +74,9 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		fName = getNodeAttribute(node, "name"); //$NON-NLS-1$
 		fPoint = getNodeAttribute(node, "point"); //$NON-NLS-1$
 
-		if (fChildren == null)
+		if (fChildren == null) {
 			fChildren = new ArrayList<>();
+		}
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -88,34 +94,42 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
+		}
 		if (obj instanceof IPluginExtension) {
 			IPluginExtension target = (IPluginExtension) obj;
 
 			// comparing the model is a little complicated since we need to allow text and non-text models representing the same file
 			if (target.getModel().getClass() == getModel().getClass()) {
-				if (!target.getModel().equals(getModel()))
+				if (!target.getModel().equals(getModel())) {
 					return false;
+				}
 			} else {
 				// need to account for text model representing the same resource.
 				IResource res = getModel().getUnderlyingResource();
 				if (res == null) {
 					// model is external model
-					if (!(target.getModel().getInstallLocation().equals(getModel().getInstallLocation())))
+					if (!(target.getModel().getInstallLocation().equals(getModel().getInstallLocation()))) {
 						return false;
 					// model is a workspace model.  Need to compare underlyingResource because text and non-text model return differently formatted strings
-				} else if (!(res.equals(target.getModel().getUnderlyingResource())))
+					}
+				} else if (!(res.equals(target.getModel().getUnderlyingResource()))) {
 					return false;
+				}
 			}
-			if (!stringEqualWithNull(target.getId(), getId()))
+			if (!stringEqualWithNull(target.getId(), getId())) {
 				return false;
-			if (!stringEqualWithNull(target.getPoint(), getPoint()))
+			}
+			if (!stringEqualWithNull(target.getPoint(), getPoint())) {
 				return false;
-			if (!nameEqual(target.getName()))
+			}
+			if (!nameEqual(target.getName())) {
 				return false;
+			}
 			// Children
 			return super.equals(obj);
 		}
@@ -125,8 +139,9 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 	private boolean nameEqual(String targetName) {
 		// Since extension registry returns "" when an extension's name == null, we have to do the same when comparing the name of the target.
 		// Note, we only do this if the PluginExtension has an fExtension element which means it's name comes from the extension registry.
-		if (fExtension != null && targetName == null)
+		if (fExtension != null && targetName == null) {
 			targetName = ""; //$NON-NLS-1$
+		}
 		return stringEqualWithNull(targetName, getName());
 	}
 
@@ -149,8 +164,9 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 
 	@Override
 	public String toString() {
-		if (getName() != null)
+		if (getName() != null) {
 			return getName();
+		}
 		return getPoint();
 	}
 
@@ -196,8 +212,9 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 				String pluginId = getPluginBase().getId();
 				if (fID.startsWith(pluginId)) {
 					String sub = fID.substring(pluginId.length());
-					if (sub.lastIndexOf('.') == 0)
+					if (sub.lastIndexOf('.') == 0) {
 						fID = sub.substring(1);
+					}
 				}
 			}
 		}

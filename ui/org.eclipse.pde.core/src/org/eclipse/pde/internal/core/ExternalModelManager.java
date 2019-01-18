@@ -13,8 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import org.eclipse.core.runtime.IPath;
@@ -27,7 +32,7 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 public class ExternalModelManager extends AbstractModelManager {
 
 	private IPluginModelBase[] fModels = new IPluginModelBase[0];
-	private ExternalLibraryCache fLibCache = new ExternalLibraryCache();
+	private final ExternalLibraryCache fLibCache = new ExternalLibraryCache();
 
 	public IPluginModelBase[] getAllModels() {
 		return fModels;
@@ -110,8 +115,9 @@ class ExternalLibraryCache {
 	 */
 	public File[] getExtractedLibraries(IPluginModelBase model) {
 		File fJarFile = new File(model.getInstallLocation());
-		if (!fJarFile.isFile())
+		if (!fJarFile.isFile()) {
 			return new File[0];
+		}
 
 		BundleDescription desc = model.getBundleDescription();
 		IPluginLibrary[] libs = model.getPluginBase().getLibraries();
@@ -136,8 +142,9 @@ class ExternalLibraryCache {
 						// do not add file, but log error
 						PDECore.logException(ie, "Could not extract library from jarred bundle " + desc.getSymbolicName()); //$NON-NLS-1$
 					}
-				} else
+				} else {
 					files.add(fDestFile);
+				}
 			}
 		}
 
@@ -153,8 +160,9 @@ class ExternalLibraryCache {
 	 */
 	public void cleanExtractedLibraries(IPluginModelBase[] targetModels) {
 		File fCacheDir = getLibraryCacheDir();
-		if (!fCacheDir.isDirectory())
+		if (!fCacheDir.isDirectory()) {
 			return;
+		}
 
 		// build a list with all potential directory names for quick check
 		Set<String> bundleKeys = new HashSet<>();
@@ -168,8 +176,9 @@ class ExternalLibraryCache {
 
 		File[] fDirs = fCacheDir.listFiles();
 		for (int i = 0; i < fDirs.length; i++) {
-			if (fDirs[i].isDirectory() && !bundleKeys.contains(fDirs[i].getName()))
+			if (fDirs[i].isDirectory() && !bundleKeys.contains(fDirs[i].getName())) {
 				CoreUtility.deleteContent(fDirs[i]);
+			}
 		}
 
 		// Delete the cache folder if it is empty
@@ -271,8 +280,9 @@ class ExternalLibraryCache {
 			}
 			fTargetFile.getParentFile().mkdirs();
 			try (InputStream in = f.getInputStream(libEntry)) {
-			if (in == null)
+			if (in == null) {
 				throw new IOException();
+			}
 
 			CoreUtility.readFile(in, fTargetFile);
 			}

@@ -16,11 +16,17 @@ package org.eclipse.pde.internal.core.text.plugin;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IExtensions;
+import org.eclipse.pde.core.plugin.IExtensionsModelFactory;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginModelFactory;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDEManager;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
@@ -32,7 +38,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	private PluginBaseNode fPluginBase;
 	private boolean fIsEnabled;
 	private PluginDocumentHandler fHandler;
-	private IPluginModelFactory fFactory;
+	private final IPluginModelFactory fFactory;
 	private String fLocalization;
 	private boolean fHasTriedToCreateModel;
 
@@ -143,14 +149,16 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 
 	@Override
 	protected DefaultHandler createDocumentHandler(IModel model, boolean reconciling) {
-		if (fHandler == null)
+		if (fHandler == null) {
 			fHandler = new PluginDocumentHandler(this, reconciling);
+		}
 		return fHandler;
 	}
 
 	public IDocumentElementNode getLastErrorNode() {
-		if (fHandler != null)
+		if (fHandler != null) {
 			return fHandler.getLastErrorNode();
+		}
 		return null;
 	}
 

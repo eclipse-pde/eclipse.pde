@@ -21,7 +21,9 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDEManager;
-import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.WorkspaceExtensionsModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.osgi.framework.Constants;
@@ -31,7 +33,7 @@ public abstract class WorkspaceBundlePluginModelBase extends WorkspacePluginMode
 	private static final long serialVersionUID = 1L;
 	private ISharedExtensionsModel fExtensionsModel = null;
 	private IBundleModel fBundleModel = null;
-	private IFile fPluginFile;
+	private final IFile fPluginFile;
 
 	public WorkspaceBundlePluginModelBase(IFile manifestFile, IFile pluginFile) {
 		super(manifestFile, false);
@@ -43,8 +45,9 @@ public abstract class WorkspaceBundlePluginModelBase extends WorkspacePluginMode
 
 	@Override
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
-		if (fPluginBase == null)
+		if (fPluginBase == null) {
 			fPluginBase = createPluginBase();
+		}
 
 		if (fBundleModel == null) {
 			fBundleModel = new WorkspaceBundleModel((IFile) getUnderlyingResource());
@@ -56,18 +59,21 @@ public abstract class WorkspaceBundlePluginModelBase extends WorkspacePluginMode
 	public void save() {
 		if (fExtensionsModel != null && fExtensionsModel.getExtensions().getExtensions().length > 0) {
 			((BundlePluginBase) fPluginBase).updateSingleton(true);
-			if (((IEditableModel) fExtensionsModel).isDirty())
+			if (((IEditableModel) fExtensionsModel).isDirty()) {
 				((IEditableModel) fExtensionsModel).save();
+			}
 		}
 
-		if (fBundleModel != null && ((IEditableModel) fBundleModel).isDirty())
+		if (fBundleModel != null && ((IEditableModel) fBundleModel).isDirty()) {
 			((IEditableModel) fBundleModel).save();
+		}
 	}
 
 	@Override
 	public String getContents() {
-		if (fBundleModel != null && fBundleModel instanceof WorkspaceBundleModel)
+		if (fBundleModel != null && fBundleModel instanceof WorkspaceBundleModel) {
 			return ((WorkspaceBundleModel) fBundleModel).getContents();
+		}
 		return null;
 	}
 
@@ -104,25 +110,28 @@ public abstract class WorkspaceBundlePluginModelBase extends WorkspacePluginMode
 			fExtensionsModel = new WorkspaceExtensionsModel(fPluginFile);
 			((WorkspaceExtensionsModel) fExtensionsModel).setBundleModel(this);
 			((WorkspaceExtensionsModel) fExtensionsModel).setEditable(isEditable());
-			if (fPluginFile.exists())
+			if (fPluginFile.exists()) {
 				try {
 					fExtensionsModel.load();
 				} catch (CoreException e) {
 				}
+			}
 		}
 		return fExtensionsModel;
 	}
 
 	@Override
 	public void setBundleModel(IBundleModel bundleModel) {
-		if (bundleModel instanceof IEditableModel)
+		if (bundleModel instanceof IEditableModel) {
 			fBundleModel = bundleModel;
+		}
 	}
 
 	@Override
 	public void setExtensionsModel(ISharedExtensionsModel extensionsModel) {
-		if (extensionsModel instanceof IEditableModel)
+		if (extensionsModel instanceof IEditableModel) {
 			fExtensionsModel = extensionsModel;
+		}
 	}
 
 }

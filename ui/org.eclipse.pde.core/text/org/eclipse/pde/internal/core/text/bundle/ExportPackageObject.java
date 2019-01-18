@@ -17,7 +17,11 @@ package org.eclipse.pde.internal.core.text.bundle;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -32,7 +36,7 @@ public class ExportPackageObject extends PackageObject {
 
 	private static final long serialVersionUID = 1L;
 
-	private TreeMap<String, PackageFriend> fFriends = new TreeMap<>();
+	private final TreeMap<String, PackageFriend> fFriends = new TreeMap<>();
 
 	public ExportPackageObject(ManifestHeader header, ManifestElement element, String versionAttribute) {
 		super(header, element, versionAttribute);
@@ -71,12 +75,13 @@ public class ExportPackageObject extends PackageObject {
 			setDirective(ICoreConstants.INTERNAL_DIRECTIVE, null);
 			setDirective(ICoreConstants.FRIENDS_DIRECTIVE, null);
 		} else {
-			if (fFriends.isEmpty())
+			if (fFriends.isEmpty()) {
 				setDirective(ICoreConstants.INTERNAL_DIRECTIVE, "true"); //$NON-NLS-1$
-			else {
+			} else {
 				Iterator<String> iter = fFriends.keySet().iterator();
-				while (iter.hasNext())
+				while (iter.hasNext()) {
 					addDirective(ICoreConstants.FRIENDS_DIRECTIVE, iter.next().toString());
+				}
 			}
 		}
 		fHeader.update();
@@ -106,13 +111,15 @@ public class ExportPackageObject extends PackageObject {
 			hasInternalChanged = true;
 		} else {
 			Iterator<String> iter = fFriends.keySet().iterator();
-			while (iter.hasNext())
+			while (iter.hasNext()) {
 				addDirective(ICoreConstants.FRIENDS_DIRECTIVE, iter.next().toString());
+			}
 		}
 		fHeader.update();
 		fireStructureChanged(friend, IModelChangedEvent.REMOVE);
-		if (hasInternalChanged)
+		if (hasInternalChanged) {
 			firePropertyChanged(this, ICoreConstants.INTERNAL_DIRECTIVE, Boolean.FALSE.toString(), Boolean.TRUE.toString());
+		}
 
 	}
 
@@ -121,16 +128,19 @@ public class ExportPackageObject extends PackageObject {
 	}
 
 	public boolean hasSameVisibility(ExportPackageObject object) {
-		if (object.isInternal() != isInternal())
+		if (object.isInternal() != isInternal()) {
 			return false;
+		}
 
-		if (fFriends.size() != object.fFriends.size())
+		if (fFriends.size() != object.fFriends.size()) {
 			return false;
+		}
 
 		Iterator<String> iter = fFriends.keySet().iterator();
 		while (iter.hasNext()) {
-			if (!object.fFriends.containsKey(iter.next()))
+			if (!object.fFriends.containsKey(iter.next())) {
 				return false;
+			}
 		}
 		return true;
 	}

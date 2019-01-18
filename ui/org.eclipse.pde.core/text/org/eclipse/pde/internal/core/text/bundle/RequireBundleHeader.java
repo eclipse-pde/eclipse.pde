@@ -67,20 +67,25 @@ public class RequireBundleHeader extends CompositeManifestHeader {
 	 */
 	private void configureBundle(String version, boolean exported, boolean optional, RequireBundleObject element) {
 		int bundleManifestVersion = BundlePluginBase.getBundleManifestVersion(getBundle());
-		if (optional)
-			if (bundleManifestVersion > 1)
+		if (optional) {
+			if (bundleManifestVersion > 1) {
 				element.setDirective(Constants.RESOLUTION_DIRECTIVE, Constants.RESOLUTION_OPTIONAL);
-			else
+			} else {
 				element.setAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE, "true"); //$NON-NLS-1$
+			}
+		}
 
-		if (exported)
-			if (bundleManifestVersion > 1)
+		if (exported) {
+			if (bundleManifestVersion > 1) {
 				element.setDirective(Constants.VISIBILITY_DIRECTIVE, Constants.VISIBILITY_REEXPORT);
-			else
+			} else {
 				element.setAttribute(ICoreConstants.REPROVIDE_ATTRIBUTE, "true"); //$NON-NLS-1$
+			}
+		}
 
-		if (version != null && version.trim().length() > 0)
+		if (version != null && version.trim().length() > 0) {
 			element.setAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE, version.trim());
+		}
 	}
 
 	public void removeBundle(String id) {
@@ -97,8 +102,9 @@ public class RequireBundleHeader extends CompositeManifestHeader {
 	}
 
 	public void updateBundle(int index, IPluginImport iimport) {
-		if (index == -1)
+		if (index == -1) {
 			return;
+		}
 
 		PDEManifestElement element = getElementAt(index);
 		if (element != null) {
@@ -106,27 +112,31 @@ public class RequireBundleHeader extends CompositeManifestHeader {
 
 			int bundleManifestVersion = BundlePluginBase.getBundleManifestVersion(getBundle());
 			if (iimport.isOptional()) {
-				if (bundleManifestVersion > 1)
+				if (bundleManifestVersion > 1) {
 					element.setDirective(Constants.RESOLUTION_DIRECTIVE, Constants.RESOLUTION_OPTIONAL);
-				else
+				} else {
 					element.setAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE, "true"); //$NON-NLS-1$
+				}
 			} else {
-				if (bundleManifestVersion > 1)
+				if (bundleManifestVersion > 1) {
 					element.setDirective(Constants.RESOLUTION_DIRECTIVE, null);
-				else
+				} else {
 					element.setAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE, null);
+				}
 			}
 
 			if (iimport.isReexported()) {
-				if (bundleManifestVersion > 1)
+				if (bundleManifestVersion > 1) {
 					element.setDirective(Constants.VISIBILITY_DIRECTIVE, Constants.VISIBILITY_REEXPORT);
-				else
+				} else {
 					element.setAttribute(ICoreConstants.REPROVIDE_ATTRIBUTE, "true"); //$NON-NLS-1$
+				}
 			} else {
-				if (bundleManifestVersion > 1)
+				if (bundleManifestVersion > 1) {
 					element.setDirective(Constants.VISIBILITY_DIRECTIVE, null);
-				else
+				} else {
 					element.setAttribute(ICoreConstants.REPROVIDE_ATTRIBUTE, null);
+				}
 			}
 			element.setAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE, iimport.getVersion());
 		}

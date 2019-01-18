@@ -16,14 +16,13 @@ package org.eclipse.pde.internal.core.feature;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
 import org.w3c.dom.Node;
 
 public class FeatureURLElement extends FeatureObject implements IFeatureURLElement {
 	private static final long serialVersionUID = 1L;
-	private int fElementType;
+	private final int fElementType;
 	private int fSiteType = UPDATE_SITE;
 	private URL fUrl;
 
@@ -56,13 +55,15 @@ public class FeatureURLElement extends FeatureObject implements IFeatureURLEleme
 		super.parse(node);
 		String urlName = getNodeAttribute(node, "url"); //$NON-NLS-1$
 		try {
-			if (urlName != null)
+			if (urlName != null) {
 				fUrl = new URL(urlName);
+			}
 		} catch (MalformedURLException e) {
 		}
 		String typeName = getNodeAttribute(node, "type"); //$NON-NLS-1$
-		if (typeName != null && typeName.equals("web")) //$NON-NLS-1$
+		if (typeName != null && typeName.equals("web")) { //$NON-NLS-1$
 			fSiteType = WEB_SITE;
+		}
 	}
 
 	@Override
@@ -87,16 +88,19 @@ public class FeatureURLElement extends FeatureObject implements IFeatureURLEleme
 			setURL((URL) newValue);
 		} else if (name.equals(P_SITE_TYPE)) {
 			setSiteType(((Integer) newValue).intValue());
-		} else
+		} else {
 			super.restoreProperty(name, oldValue, newValue);
+		}
 	}
 
 	@Override
 	public String toString() {
-		if (label != null)
+		if (label != null) {
 			return label;
-		if (fUrl != null)
+		}
+		if (fUrl != null) {
 			return fUrl.toString();
+		}
 		return super.toString();
 	}
 
@@ -111,8 +115,9 @@ public class FeatureURLElement extends FeatureObject implements IFeatureURLEleme
 				tag = "discovery"; //$NON-NLS-1$
 				break;
 		}
-		if (tag == null)
+		if (tag == null) {
 			return;
+		}
 		writer.print(indent + "<" + tag); //$NON-NLS-1$
 		if (label != null && label.length() > 0) {
 			writer.print(" label=\"" + getWritableString(label) + "\""); //$NON-NLS-1$ //$NON-NLS-2$

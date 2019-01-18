@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.core.builders;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -36,7 +35,7 @@ import org.eclipse.pde.internal.core.WorkspaceModelManager;
 
 public class PluginRebuilder implements IStateDeltaListener, IResourceChangeListener {
 
-	private Set<String> fProjectNames = new HashSet<>();
+	private final Set<String> fProjectNames = new HashSet<>();
 
 	private boolean fTouchWorkspace = false;
 
@@ -103,13 +102,15 @@ public class PluginRebuilder implements IStateDeltaListener, IResourceChangeList
 				// only interested in workspace plug-ins that are affected by delta
 				// but not those who have caused it.
 				int type = bundleDelta.getType();
-				if ((type & BundleDelta.UPDATED) == BundleDelta.UPDATED || (type & BundleDelta.ADDED) == BundleDelta.ADDED || (type & BundleDelta.REMOVED) == BundleDelta.REMOVED)
+				if ((type & BundleDelta.UPDATED) == BundleDelta.UPDATED || (type & BundleDelta.ADDED) == BundleDelta.ADDED || (type & BundleDelta.REMOVED) == BundleDelta.REMOVED) {
 					continue;
+				}
 
 				IPluginModelBase model = PluginRegistry.findModel(bundleDelta.getBundle());
 				IResource resource = model == null ? null : model.getUnderlyingResource();
-				if (resource != null)
+				if (resource != null) {
 					fProjectNames.add(resource.getProject().getName());
+				}
 			}
 		}
 	}

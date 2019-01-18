@@ -18,7 +18,7 @@ import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.build.IBuildModelFactory;
 
 public class BuildModelFactory implements IBuildModelFactory {
-	private IBuildModel model;
+	private final IBuildModel model;
 
 	public BuildModelFactory(IBuildModel model) {
 		this.model = model;

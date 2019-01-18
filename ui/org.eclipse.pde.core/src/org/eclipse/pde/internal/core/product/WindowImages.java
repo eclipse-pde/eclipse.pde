@@ -60,38 +60,44 @@ public class WindowImages extends ProductObject implements IWindowImages {
 			case 0 :
 				old = f16ImagePath;
 				f16ImagePath = path;
-				if (isEditable())
+				if (isEditable()) {
 					firePropertyChanged(P_16, old, f16ImagePath);
+				}
 				break;
 			case 1 :
 				old = f32ImagePath;
 				f32ImagePath = path;
-				if (isEditable())
+				if (isEditable()) {
 					firePropertyChanged(P_32, old, f32ImagePath);
+				}
 				break;
 			case 2 :
 				old = f48ImagePath;
 				f48ImagePath = path;
-				if (isEditable())
+				if (isEditable()) {
 					firePropertyChanged(P_48, old, f48ImagePath);
+				}
 				break;
 			case 3 :
 				old = f64ImagePath;
 				f64ImagePath = path;
-				if (isEditable())
+				if (isEditable()) {
 					firePropertyChanged(P_64, old, f64ImagePath);
+				}
 				break;
 			case 4 :
 				old = f128ImagePath;
 				f128ImagePath = path;
-				if (isEditable())
+				if (isEditable()) {
 					firePropertyChanged(P_128, old, f128ImagePath);
+				}
 				break;
 			case 5 :
 				old = f256ImagePath;
 				f256ImagePath = path;
-				if (isEditable())
+				if (isEditable()) {
 					firePropertyChanged(P_256, old, f256ImagePath);
+				}
 				break;
 		}
 
@@ -103,13 +109,15 @@ public class WindowImages extends ProductObject implements IWindowImages {
 			Element element = (Element) node;
 			f16ImagePath = element.getAttribute(P_16);
 			// try the old 3.1 attribute name
-			if (f16ImagePath == null || f16ImagePath.length() == 0)
+			if (f16ImagePath == null || f16ImagePath.length() == 0) {
 				f16ImagePath = element.getAttribute("small"); //$NON-NLS-1$
+			}
 
 			f32ImagePath = element.getAttribute(P_32);
 			// try the old 3.1 attribute name
-			if (f32ImagePath == null || f32ImagePath.length() == 0)
+			if (f32ImagePath == null || f32ImagePath.length() == 0) {
 				f32ImagePath = element.getAttribute("large"); //$NON-NLS-1$
+			}
 
 			f48ImagePath = element.getAttribute(P_48);
 			f64ImagePath = element.getAttribute(P_64);

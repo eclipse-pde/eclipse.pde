@@ -16,7 +16,9 @@ package org.eclipse.pde.internal.core.product;
 import java.io.PrintWriter;
 import org.eclipse.pde.internal.core.iproduct.ILicenseInfo;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
-import org.w3c.dom.*;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 public class LicenseInfo extends ProductObject implements ILicenseInfo {
 
@@ -36,8 +38,9 @@ public class LicenseInfo extends ProductObject implements ILicenseInfo {
 	public void setURL(String url) {
 		String old = fURL;
 		fURL = url;
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged(P_URL, old, fURL);
+		}
 	}
 
 	@Override
@@ -54,8 +57,9 @@ public class LicenseInfo extends ProductObject implements ILicenseInfo {
 	public void setLicense(String text) {
 		String old = fLicense;
 		fLicense = text;
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged(P_LICENSE, old, fLicense);
+		}
 	}
 
 	@Override

@@ -15,14 +15,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.team.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.team.FileModificationValidationContext;
+import org.eclipse.core.resources.team.FileModificationValidator;
+import org.eclipse.core.resources.team.IMoveDeleteHook;
+import org.eclipse.core.resources.team.IResourceTree;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
 
 public class BinaryRepositoryProvider extends RepositoryProvider {
-	private IMoveDeleteHook moveDeleteHook;
-	private FileModificationValidator fileModificationValidator;
+	private final IMoveDeleteHook moveDeleteHook;
+	private final FileModificationValidator fileModificationValidator;
 
 	public static final String EXTERNAL_PROJECT_VALUE = "external"; //$NON-NLS-1$
 
@@ -32,10 +43,11 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		 */
 		@Override
 		public boolean deleteFile(IResourceTree tree, IFile file, int updateFlags, IProgressMonitor monitor) {
-			if (isBinaryResource(file, true))
+			if (isBinaryResource(file, true)) {
 				tree.failed(createProblemStatus());
-			else
+			} else {
 				tree.standardDeleteFile(file, updateFlags, monitor);
+			}
 			return true;
 		}
 
@@ -44,10 +56,11 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		 */
 		@Override
 		public boolean deleteFolder(IResourceTree tree, IFolder folder, int updateFlags, IProgressMonitor monitor) {
-			if (isBinaryResource(folder, true))
+			if (isBinaryResource(folder, true)) {
 				tree.failed(createProblemStatus());
-			else
+			} else {
 				tree.standardDeleteFolder(folder, updateFlags, monitor);
+			}
 			return true;
 		}
 
@@ -64,10 +77,11 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		 */
 		@Override
 		public boolean moveFile(IResourceTree tree, IFile source, IFile destination, int updateFlags, IProgressMonitor monitor) {
-			if (isBinaryResource(source, false))
+			if (isBinaryResource(source, false)) {
 				tree.failed(createProblemStatus());
-			else
+			} else {
 				tree.standardMoveFile(source, destination, updateFlags, monitor);
+			}
 			return true;
 		}
 
@@ -76,10 +90,11 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 		 */
 		@Override
 		public boolean moveFolder(IResourceTree tree, IFolder source, IFolder destination, int updateFlags, IProgressMonitor monitor) {
-			if (isBinaryResource(source, false))
+			if (isBinaryResource(source, false)) {
 				tree.failed(createProblemStatus());
-			else
+			} else {
 				tree.standardMoveFolder(source, destination, updateFlags, monitor);
+			}
 			return true;
 		}
 
@@ -164,16 +179,18 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 
 		// Test for resource links
 		if (!excludeProjectChildren || !(parent instanceof IProject)) {
-			if (resource.isLinked())
+			if (resource.isLinked()) {
 				return true;
+			}
 		}
 
 		// Test for resources that are in linked folders
 
 		while (parent instanceof IFolder) {
 			IFolder folder = (IFolder) parent;
-			if (folder.isLinked())
+			if (folder.isLinked()) {
 				return true;
+			}
 			parent = folder.getParent();
 		}
 		return false;

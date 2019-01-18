@@ -37,14 +37,18 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 	@Override
 	public int getRule() {
 		String match = getXMLAttributeValue("match"); //$NON-NLS-1$
-		if (match == null || match.trim().length() == 0)
+		if (match == null || match.trim().length() == 0) {
 			return IMatchRules.NONE;
-		if (match.equals("compatible")) //$NON-NLS-1$
+		}
+		if (match.equals("compatible")) { //$NON-NLS-1$
 			return IMatchRules.COMPATIBLE;
-		if (match.equals("perfect")) //$NON-NLS-1$
+		}
+		if (match.equals("perfect")) { //$NON-NLS-1$
 			return IMatchRules.PERFECT;
-		if (match.equals("equivalent")) //$NON-NLS-1$
+		}
+		if (match.equals("equivalent")) { //$NON-NLS-1$
 			return IMatchRules.EQUIVALENT;
+		}
 		return IMatchRules.GREATER_OR_EQUAL;
 	}
 
@@ -82,16 +86,19 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 		ArrayList<String> result = new ArrayList<>();
 
 		String pluginID = getPluginId();
-		if (pluginID != null && pluginID.trim().length() > 0)
+		if (pluginID != null && pluginID.trim().length() > 0) {
 			result.add("   " + P_PLUGIN_ID + "=\"" + pluginID + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 
 		String pluginVersion = getPluginVersion();
-		if (pluginVersion != null && pluginVersion.trim().length() > 0)
+		if (pluginVersion != null && pluginVersion.trim().length() > 0) {
 			result.add("   " + P_PLUGIN_VERSION + "=\"" + pluginVersion + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 
 		String match = getXMLAttributeValue(P_RULE);
-		if (match != null && match.trim().length() > 0)
+		if (match != null && match.trim().length() > 0) {
 			result.add("   " + P_RULE + "=\"" + match + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 
 		return result.toArray(new String[result.size()]);
 	}

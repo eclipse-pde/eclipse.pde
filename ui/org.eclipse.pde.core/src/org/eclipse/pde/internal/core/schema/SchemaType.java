@@ -14,13 +14,12 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.Serializable;
-
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaType;
 
 public abstract class SchemaType implements ISchemaType, Serializable {
 	private static final long serialVersionUID = 1L;
-	private String name;
+	private final String name;
 	transient private ISchema schema;
 
 	public SchemaType(ISchema schema, String typeName) {

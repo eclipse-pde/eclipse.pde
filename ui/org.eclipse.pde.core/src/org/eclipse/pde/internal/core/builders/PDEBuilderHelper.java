@@ -29,8 +29,9 @@ public class PDEBuilderHelper {
 		String[] unlisted = new String[cpes.length];
 		int index = 0;
 		for (IClasspathEntry entry : cpes) {
-			if (entry.getEntryKind() != IClasspathEntry.CPE_SOURCE || entry.isTest())
+			if (entry.getEntryKind() != IClasspathEntry.CPE_SOURCE || entry.isTest()) {
 				continue;
+			}
 			IPath path = entry.getPath();
 			boolean found = false;
 			for (int j = 0; j < sourceEntries.size(); j++) {
@@ -38,15 +39,18 @@ public class PDEBuilderHelper {
 				String[] tokens = be.getTokens();
 				for (String token : tokens) {
 					IResource res = project.findMember(token);
-					if (res == null)
+					if (res == null) {
 						continue;
+					}
 					IPath ipath = res.getFullPath();
-					if (ipath.equals(path))
+					if (ipath.equals(path)) {
 						found = true;
+					}
 				}
 			}
-			if (!found)
+			if (!found) {
 				unlisted[index++] = path.removeFirstSegments(1).addTrailingSeparator().toString();
+			}
 		}
 		return unlisted;
 	}

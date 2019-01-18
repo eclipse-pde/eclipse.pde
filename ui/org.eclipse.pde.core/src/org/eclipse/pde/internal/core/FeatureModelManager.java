@@ -13,11 +13,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelProviderEvent;
+import org.eclipse.pde.core.IModelProviderListener;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.internal.core.FeatureTable.Idver;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -49,14 +56,14 @@ public class FeatureModelManager {
 
 	private boolean fReloadExternalNeeded = false;
 
-	private WorkspaceFeatureModelManager fWorkspaceManager;
+	private final WorkspaceFeatureModelManager fWorkspaceManager;
 
 	private IModelProviderListener fProviderListener;
 
 	/**
 	 * List of IFeatureModelListener
 	 */
-	private ArrayList<IFeatureModelListener> fListeners;
+	private final ArrayList<IFeatureModelListener> fListeners;
 
 	public FeatureModelManager() {
 		fWorkspaceManager = new WorkspaceFeatureModelManager();
@@ -64,8 +71,9 @@ public class FeatureModelManager {
 	}
 
 	public synchronized void shutdown() {
-		if (fWorkspaceManager != null)
+		if (fWorkspaceManager != null) {
 			fWorkspaceManager.removeModelProviderListener(fProviderListener);
+		}
 		if (fExternalManager != null) {
 			fExternalManager.removeModelProviderListener(fProviderListener);
 		}
@@ -113,8 +121,9 @@ public class FeatureModelManager {
 				}
 			};
 			initializeExternalManager.schedule();
-		} else
+		} else {
 			fExternalManager.initialize();
+		}
 
 	}
 
@@ -261,14 +270,16 @@ public class FeatureModelManager {
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_REMOVED) != 0) {
 			IModel[] removed = e.getRemovedModels();
 			for (int i = 0; i < removed.length; i++) {
-				if (!(removed[i] instanceof IFeatureModel))
+				if (!(removed[i] instanceof IFeatureModel)) {
 					continue;
+				}
 				IFeatureModel model = (IFeatureModel) removed[i];
 				FeatureTable.Idver idver = fActiveModels.remove(model);
 				if (idver != null) {
 					// may need to activate another model
-					if (affectedIdVers == null)
+					if (affectedIdVers == null) {
 						affectedIdVers = new HashSet<>();
+					}
 					affectedIdVers.add(idver);
 					delta.add(model, IFeatureModelDelta.REMOVED);
 				} else {
@@ -279,15 +290,17 @@ public class FeatureModelManager {
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_ADDED) != 0) {
 			IModel[] added = e.getAddedModels();
 			for (int i = 0; i < added.length; i++) {
-				if (!(added[i] instanceof IFeatureModel))
+				if (!(added[i] instanceof IFeatureModel)) {
 					continue;
+				}
 				IFeatureModel model = (IFeatureModel) added[i];
 				if (model.getUnderlyingResource() != null) {
 					FeatureTable.Idver idver = fActiveModels.add(model);
 					delta.add(model, IFeatureModelDelta.ADDED);
 					// may need to deactivate another model
-					if (affectedIdVers == null)
+					if (affectedIdVers == null) {
 						affectedIdVers = new HashSet<>();
+					}
 					affectedIdVers.add(idver);
 				} else {
 					if (!model.isValid()) {
@@ -309,8 +322,9 @@ public class FeatureModelManager {
 					}
 					FeatureTable.Idver idver = fInactiveModels.add(model);
 					// may need to activate this model
-					if (affectedIdVers == null)
+					if (affectedIdVers == null) {
 						affectedIdVers = new HashSet<>();
+					}
 					affectedIdVers.add(idver);
 				}
 			}
@@ -320,8 +334,9 @@ public class FeatureModelManager {
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_CHANGED) != 0) {
 			IModel[] changed = e.getChangedModels();
 			for (int i = 0; i < changed.length; i++) {
-				if (!(changed[i] instanceof IFeatureModel))
+				if (!(changed[i] instanceof IFeatureModel)) {
 					continue;
+				}
 				IFeatureModel model = (IFeatureModel) changed[i];
 
 				String id = model.getFeature().getId();
@@ -331,8 +346,9 @@ public class FeatureModelManager {
 				if (oldIdver != null && !oldIdver.equals(id, version)) {
 					// version changed
 					FeatureTable.Idver idver = fActiveModels.add(model);
-					if (affectedIdVers == null)
+					if (affectedIdVers == null) {
 						affectedIdVers = new HashSet<>();
+					}
 					affectedIdVers.add(oldIdver);
 					affectedIdVers.add(idver);
 				}
@@ -352,8 +368,9 @@ public class FeatureModelManager {
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_CHANGED) != 0) {
 			IModel[] changed = e.getChangedModels();
 			for (int i = 0; i < changed.length; i++) {
-				if (!(changed[i] instanceof IFeatureModel))
+				if (!(changed[i] instanceof IFeatureModel)) {
 					continue;
+				}
 				IFeatureModel model = (IFeatureModel) changed[i];
 				if (!delta.contains(model, IFeatureModelDelta.ADDED | IFeatureModelDelta.REMOVED)) {
 					delta.add(model, IFeatureModelDelta.CHANGED);
@@ -402,13 +419,15 @@ public class FeatureModelManager {
 	}
 
 	public void addFeatureModelListener(IFeatureModelListener listener) {
-		if (!fListeners.contains(listener))
+		if (!fListeners.contains(listener)) {
 			fListeners.add(listener);
+		}
 	}
 
 	public void removeFeatureModelListener(IFeatureModelListener listener) {
-		if (fListeners.contains(listener))
+		if (fListeners.contains(listener)) {
 			fListeners.remove(listener);
+		}
 	}
 
 	public void targetReloaded() {
@@ -417,8 +436,9 @@ public class FeatureModelManager {
 
 	public IFeatureModel getDeltaPackFeature() {
 		IFeatureModel model = findFeatureModel("org.eclipse.equinox.executable"); //$NON-NLS-1$
-		if (model == null)
+		if (model == null) {
 			model = findFeatureModel("org.eclipse.platform.launchers"); //$NON-NLS-1$
+		}
 		return model;
 	}
 

@@ -21,7 +21,15 @@ import java.util.Vector;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.ischema.IMetaElement;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
+import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
+import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Node;
 
@@ -56,29 +64,33 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 
 	@Override
 	public ISchemaAttribute getAttribute(String name) {
-		if (element == null)
+		if (element == null) {
 			return null;
+		}
 		return element.getAttribute(name);
 	}
 
 	@Override
 	public int getAttributeCount() {
-		if (element == null)
+		if (element == null) {
 			return 0;
+		}
 		return element.getAttributeCount();
 	}
 
 	@Override
 	public ISchemaAttribute[] getAttributes() {
-		if (element == null)
+		if (element == null) {
 			return new ISchemaAttribute[0];
+		}
 		return element.getAttributes();
 	}
 
 	@Override
 	public String[] getAttributeNames() {
-		if (element == null)
+		if (element == null) {
 			return new String[0];
+		}
 		return element.getAttributeNames();
 	}
 
@@ -88,29 +100,33 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 
 	@Override
 	public String getDescription() {
-		if (element == null)
+		if (element == null) {
 			return ""; //$NON-NLS-1$
+		}
 		return element.getDescription();
 	}
 
 	@Override
 	public String getDTDRepresentation(boolean addLinks) {
-		if (element == null)
+		if (element == null) {
 			return PDECoreMessages.SchemaElementReference_refElementMissing;
+		}
 		return element.getDTDRepresentation(addLinks);
 	}
 
 	@Override
 	public String getIconProperty() {
-		if (element == null)
+		if (element == null) {
 			return ""; //$NON-NLS-1$
+		}
 		return element.getIconProperty();
 	}
 
 	@Override
 	public String getLabelProperty() {
-		if (element == null)
+		if (element == null) {
 			return ""; //$NON-NLS-1$
+		}
 		return element.getLabelProperty();
 	}
 
@@ -162,23 +178,26 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 			ISchema schema = element.getSchema();
 			if (schema != null) {
 				ISchemaDescriptor desc = schema.getSchemaDescriptor();
-				if (!(desc instanceof IncludedSchemaDescriptor))
+				if (!(desc instanceof IncludedSchemaDescriptor)) {
 					return schema;
+				}
 			}
 		}
 		return getCompositorsSchema();
 	}
 
 	public ISchema getCompositorsSchema() {
-		if (compositor != null)
+		if (compositor != null) {
 			return compositor.getSchema();
+		}
 		return null;
 	}
 
 	@Override
 	public ISchemaType getType() {
-		if (element == null)
+		if (element == null) {
 			return null;
+		}
 		return element.getType();
 	}
 
@@ -194,32 +213,36 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 		Integer oldValue = Integer.valueOf(maxOccurs);
 		maxOccurs = newMaxOccurs;
 		ISchema schema = getCompositorsSchema();
-		if (schema != null)
+		if (schema != null) {
 			schema.fireModelObjectChanged(this, P_MAX_OCCURS, oldValue, Integer.valueOf(maxOccurs));
+		}
 	}
 
 	public void setMinOccurs(int newMinOccurs) {
 		Integer oldValue = Integer.valueOf(minOccurs);
 		minOccurs = newMinOccurs;
 		ISchema schema = getCompositorsSchema();
-		if (schema != null)
+		if (schema != null) {
 			schema.fireModelObjectChanged(this, P_MIN_OCCURS, oldValue, Integer.valueOf(minOccurs));
+		}
 	}
 
 	@Override
 	public void setReferencedObject(ISchemaObject referencedObject) {
-		if (referencedObject instanceof ISchemaElement)
+		if (referencedObject instanceof ISchemaElement) {
 			element = (ISchemaElement) referencedObject;
-		else
+		} else {
 			element = null;
+		}
 	}
 
 	public void setReferenceName(String name) {
 		String oldValue = this.referenceName;
 		this.referenceName = name;
 		ISchema schema = getCompositorsSchema();
-		if (schema != null)
+		if (schema != null) {
 			schema.fireModelObjectChanged(this, P_REFERENCE_NAME, oldValue, name);
+		}
 	}
 
 	@Override
@@ -242,15 +265,18 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 
 	public Vector<String> addComments(Node node, Vector<String> result) {
 		for (Node prev = node.getPreviousSibling(); prev != null; prev = prev.getPreviousSibling()) {
-			if (prev.getNodeType() == Node.TEXT_NODE)
+			if (prev.getNodeType() == Node.TEXT_NODE) {
 				continue;
+			}
 			if (prev instanceof Comment) {
 				String comment = prev.getNodeValue();
-				if (result == null)
+				if (result == null) {
 					result = new Vector<>();
+				}
 				result.add(comment);
-			} else
+			} else {
 				break;
+			}
 		}
 		return result;
 	}
@@ -260,8 +286,9 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 	}
 
 	void writeComments(PrintWriter writer, Vector<String> source) {
-		if (source == null)
+		if (source == null) {
 			return;
+		}
 		for (int i = 0; i < source.size(); i++) {
 			String comment = source.elementAt(i);
 			writer.println("<!--" + comment + "-->"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -279,8 +306,9 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 	}
 
 	void bindSourceLocation(Node node, Hashtable<?, ?> lineTable) {
-		if (lineTable == null)
+		if (lineTable == null) {
 			return;
+		}
 		Integer[] data = (Integer[]) lineTable.get(node);
 		if (data != null) {
 			range = new int[] {data[0].intValue(), data[1].intValue()};
@@ -289,22 +317,25 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 
 	@Override
 	public boolean hasTranslatableContent() {
-		if (element == null)
+		if (element == null) {
 			return false;
+		}
 		return element.hasTranslatableContent();
 	}
 
 	@Override
 	public boolean isDeprecated() {
-		if (element == null)
+		if (element == null) {
 			return false;
+		}
 		return element.isDeprecated();
 	}
 
 	@Override
 	public boolean hasDeprecatedAttributes() {
-		if (element == null)
+		if (element == null) {
 			return false;
+		}
 		return element.hasDeprecatedAttributes();
 	}
 

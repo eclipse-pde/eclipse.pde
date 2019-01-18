@@ -29,8 +29,9 @@ public class PropertiesUtil {
 				char c = source.charAt(i);
 				if (c == ' ') {
 					writableName.append("\\ "); //$NON-NLS-1$
-				} else
+				} else {
 					writableName.append(c);
+				}
 			}
 			source = writableName.toString();
 		}
@@ -67,8 +68,9 @@ public class PropertiesUtil {
 	 * Copied from org.eclipse.jdt.internal.ui.refactoring.nls.ExternalizeWizardPage.windEscapeChars(String s)
 	 */
 	public static String windEscapeChars(String s) {
-		if (s == null)
+		if (s == null) {
 			return null;
+		}
 
 		char aChar;
 		int len = s.length();
@@ -77,15 +79,17 @@ public class PropertiesUtil {
 		for (int x = 0; x < len;) {
 			aChar = s.charAt(x++);
 			if (aChar == '\\') {
-				if (x >= len)
+				if (x >= len) {
 					break;
+				}
 				aChar = s.charAt(x++);
 				if (aChar == 'u') {
 					// Read the xxxx
 					int value = 0;
 					for (int i = 0; i < 4; i++) {
-						if (x >= len)
+						if (x >= len) {
 							break;
+						}
 						aChar = s.charAt(x++);
 						switch (aChar) {
 							case '0' :
@@ -140,8 +144,9 @@ public class PropertiesUtil {
 						}
 					}
 				}
-			} else
+			} else {
 				outBuffer.append(aChar);
+			}
 		}
 		return outBuffer.toString();
 	}
@@ -169,8 +174,9 @@ public class PropertiesUtil {
 				for (int j = 0; j < indentLength; j++) {
 					writer.print(" "); //$NON-NLS-1$
 				}
-			} else
+			} else {
 				writer.println(""); //$NON-NLS-1$
+			}
 		}
 	}
 

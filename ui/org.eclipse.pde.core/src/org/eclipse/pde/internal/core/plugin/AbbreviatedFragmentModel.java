@@ -25,7 +25,7 @@ public class AbbreviatedFragmentModel extends WorkspaceFragmentModel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private String[] fExtensionPointIDs;
+	private final String[] fExtensionPointIDs;
 
 	/**
 	 * @param file

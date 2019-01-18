@@ -20,7 +20,10 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
+import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 
 public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 
@@ -30,9 +33,9 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 
 	private ISchema fIncludedSchema;
 
-	private boolean fAbbreviated;
+	private final boolean fAbbreviated;
 
-	private List<IPath> fSearchPath;
+	private final List<IPath> fSearchPath;
 
 	public SchemaInclude(ISchemaObject parent, String location, boolean abbreviated) {
 		this(parent, location, abbreviated, null);
@@ -101,8 +104,9 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 	private ISchema createInternalSchema(ISchemaDescriptor desc, String location) {
 		try {
 			URL schemaURL = IncludedSchemaDescriptor.computeURL(desc, location, fSearchPath);
-			if (schemaURL == null)
+			if (schemaURL == null) {
 				return null;
+			}
 			Schema ischema = new Schema(null, schemaURL, fAbbreviated);
 			ischema.load();
 			return ischema;
@@ -123,8 +127,9 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 	public boolean equals(Object obj) {
 		if (obj instanceof ISchemaInclude) {
 			ISchemaInclude other = (ISchemaInclude) obj;
-			if (fLocation != null)
+			if (fLocation != null) {
 				return fLocation.equals(other.getLocation());
+			}
 			return other.getLocation() == null;
 		}
 		return false;

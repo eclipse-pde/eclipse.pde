@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.core.text.build;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.build.IBuild;
@@ -60,15 +59,17 @@ public class BuildModel extends AbstractEditingModel implements IBuildModel {
 
 	@Override
 	public IBuild getBuild() {
-		if (fBuild == null)
+		if (fBuild == null) {
 			fBuild = new Build(this);
+		}
 		return fBuild;
 	}
 
 	@Override
 	public IBuildModelFactory getFactory() {
-		if (fFactory == null)
+		if (fFactory == null) {
 			fFactory = new BuildModelFactory(this);
+		}
 		return fFactory;
 	}
 }

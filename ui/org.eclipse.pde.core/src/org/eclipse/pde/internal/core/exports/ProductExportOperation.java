@@ -15,18 +15,40 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.StringTokenizer;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.build.BuildScriptGenerator;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.build.IXMLConstants;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.P2Utils;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.iproduct.IJREInfo;
@@ -43,8 +65,8 @@ public class ProductExportOperation extends FeatureExportOperation {
 	private static final String ECLIPSE_APP_CONTENTS = "Eclipse.app/Contents"; //$NON-NLS-1$
 	private static final String MAC_JAVA_FRAMEWORK = "/System/Library/Frameworks/JavaVM.framework"; //$NON-NLS-1$
 	private String fFeatureLocation;
-	private String fRoot;
-	private IProduct fProduct;
+	private final String fRoot;
+	private final IProduct fProduct;
 
 	protected static String errorMessage;
 
@@ -57,8 +79,9 @@ public class ProductExportOperation extends FeatureExportOperation {
 	}
 
 	public static IStatus parseErrorMessage(CoreException e) {
-		if (errorMessage == null)
+		if (errorMessage == null) {
 			return null;
+		}
 
 		MultiStatus status = null;
 		StringTokenizer tokenizer = new StringTokenizer(errorMessage, "\n"); //$NON-NLS-1$
@@ -76,8 +99,9 @@ public class ProductExportOperation extends FeatureExportOperation {
 				}
 			}
 		}
-		if (status != null)
+		if (status != null) {
 			return status;
+		}
 
 		//parsing didn't work, just set the message
 		return new MultiStatus(PDECore.PLUGIN_ID, 0, new IStatus[] {e.getStatus()}, errorMessage, null);
@@ -92,8 +116,9 @@ public class ProductExportOperation extends FeatureExportOperation {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		String[][] configurations = fInfo.targets;
-		if (configurations == null)
+		if (configurations == null) {
 			configurations = new String[][] {{TargetPlatform.getOS(), TargetPlatform.getWS(), TargetPlatform.getOSArch(), TargetPlatform.getNL()}};
+		}
 
 		cleanupBuildRepo();
 		errorMessage = null;
@@ -112,8 +137,9 @@ public class ProductExportOperation extends FeatureExportOperation {
 		} catch (InvocationTargetException e) {
 			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
 		} catch (CoreException e) {
-			if (errorMessage != null)
+			if (errorMessage != null) {
 				return parseErrorMessage(e);
+			}
 			return e.getStatus();
 		} finally {
 			// Clean up generated files
@@ -160,8 +186,9 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 	private void createBuildPropertiesFile(String featureLocation, String[][] configurations) {
 		File file = new File(featureLocation);
-		if (!file.exists() || !file.isDirectory())
+		if (!file.exists() || !file.isDirectory()) {
 			file.mkdirs();
+		}
 
 		boolean hasLaunchers = PDECore.getDefault().getFeatureModelManager().getDeltaPackFeature() != null;
 		Properties properties = new Properties();
@@ -170,8 +197,9 @@ public class ProductExportOperation extends FeatureExportOperation {
 			properties.put(rootPrefix, getRootFileLocations(hasLaunchers));
 			if (TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$
 				String plist = createMacInfoPList();
-				if (plist != null)
+				if (plist != null) {
 					properties.put(rootPrefix + ".folder." + ECLIPSE_APP_CONTENTS, "absolute:file:" + plist); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 				properties.put(rootPrefix + ".folder." + ECLIPSE_APP_MACOS, getLauncherLocations(hasLaunchers)); //$NON-NLS-1$
 				properties.put(rootPrefix + ".permissions.755", "Contents/MacOS/" + getLauncherName()); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
@@ -227,11 +255,13 @@ public class ProductExportOperation extends FeatureExportOperation {
 						bundle = ((IPluginModelBase) item).getBundleDescription();
 					}
 					if (bundle == null) {
-						if (item instanceof BundleDescription)
+						if (item instanceof BundleDescription) {
 							bundle = (BundleDescription) item;
+						}
 					}
-					if (bundle == null)
+					if (bundle == null) {
 						continue;
+					}
 
 					//it doesn't matter if we generate extra properties for platforms we aren't exporting for
 					if (workspacePlugins.contains(PluginRegistry.findModel(bundle))) {
@@ -281,8 +311,9 @@ public class ProductExportOperation extends FeatureExportOperation {
 			File homeDir = new File(TargetPlatform.getLocation());
 			if (homeDir.exists() && homeDir.isDirectory()) {
 				File file = new File(homeDir, "startup.jar"); //$NON-NLS-1$
-				if (file.exists())
+				if (file.exists()) {
 					appendAbsolutePath(buffer, file);
+				}
 
 				file = new File(homeDir, "libXm.so.2"); //$NON-NLS-1$
 				if (file.exists()) {
@@ -307,8 +338,9 @@ public class ProductExportOperation extends FeatureExportOperation {
 	}
 
 	private void appendAbsolutePath(StringBuilder buffer, File file) {
-		if (buffer.length() > 0)
+		if (buffer.length() > 0) {
 			buffer.append(","); //$NON-NLS-1$
+		}
 
 		buffer.append("absolute:file:"); //$NON-NLS-1$
 		buffer.append(file.getAbsolutePath());
@@ -332,14 +364,16 @@ public class ProductExportOperation extends FeatureExportOperation {
 					images = getExpandedPath(info.getIconPath(ILauncherInfo.MACOSX_ICON));
 				}
 				if (images != null) {
-					if (icons.length() > 0)
+					if (icons.length() > 0) {
 						icons += ","; //$NON-NLS-1$
+					}
 					icons += images;
 				}
 
 			}
-			if (icons.length() > 0)
+			if (icons.length() > 0) {
 				properties.put(IXMLConstants.PROPERTY_LAUNCHER_ICONS, icons);
+			}
 		}
 
 		fAntBuildProperties.put(IXMLConstants.PROPERTY_COLLECTING_FOLDER, fRoot);
@@ -351,8 +385,9 @@ public class ProductExportOperation extends FeatureExportOperation {
 	@Override
 	protected void setP2MetaDataProperties(Map<String, String> map) {
 		if (fInfo.exportMetadata) {
-			if (PDECore.getDefault().getFeatureModelManager().getDeltaPackFeature() == null)
+			if (PDECore.getDefault().getFeatureModelManager().getDeltaPackFeature() == null) {
 				map.put(IXMLConstants.PROPERTY_LAUNCHER_PROVIDER, "org.eclipse.pde.container.feature"); //$NON-NLS-1$
+			}
 			map.put(IXMLConstants.TARGET_P2_METADATA, IBuildPropertiesConstants.TRUE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_FLAVOR, P2Utils.P2_FLAVOR_DEFAULT);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_PUBLISH_ARTIFACTS, IBuildPropertiesConstants.TRUE);
@@ -376,8 +411,9 @@ public class ProductExportOperation extends FeatureExportOperation {
 			String name = info.getLauncherName();
 			if (name != null && name.length() > 0) {
 				name = name.trim();
-				if (name.endsWith(".exe")) //$NON-NLS-1$
+				if (name.endsWith(".exe")) { //$NON-NLS-1$
 					name = name.substring(0, name.length() - 4);
+				}
 				return name;
 			}
 		}
@@ -403,15 +439,17 @@ public class ProductExportOperation extends FeatureExportOperation {
 	private void append(StringBuilder buffer, String path) {
 		path = getExpandedPath(path);
 		if (path != null) {
-			if (buffer.length() > 0)
+			if (buffer.length() > 0) {
 				buffer.append(","); //$NON-NLS-1$
+			}
 			buffer.append(path);
 		}
 	}
 
 	private String getExpandedPath(String path) {
-		if (path == null || path.length() == 0)
+		if (path == null || path.length() == 0) {
 			return null;
+		}
 		IResource resource = PDECore.getWorkspace().getRoot().findMember(new Path(path));
 		if (resource != null) {
 			IPath fullPath = resource.getLocation();
@@ -424,16 +462,18 @@ public class ProductExportOperation extends FeatureExportOperation {
 	protected void setupGenerator(BuildScriptGenerator generator, String featureID, String versionId, String[][] configs, String featureLocation) throws CoreException {
 		super.setupGenerator(generator, featureID, versionId, configs, featureLocation);
 		generator.setGenerateVersionsList(true);
-		if (fProduct != null)
+		if (fProduct != null) {
 			generator.setProduct(fProduct.getModel().getInstallLocation());
+		}
 	}
 
 	private String createMacInfoPList() {
 		String entryName = TargetPlatformHelper.getTargetVersion() >= 3.3 ? "macosx/Info.plist" //$NON-NLS-1$
 				: "macosx/Info.plist.32"; //$NON-NLS-1$
 		URL url = PDECore.getDefault().getBundle().getEntry(entryName);
-		if (url == null)
+		if (url == null) {
 			return null;
+		}
 
 		File plist = null;
 		String location = fFeatureLocation;

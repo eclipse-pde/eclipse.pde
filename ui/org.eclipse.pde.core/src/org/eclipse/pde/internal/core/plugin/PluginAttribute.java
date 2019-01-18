@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.PrintWriter;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;
@@ -47,16 +46,20 @@ public class PluginAttribute extends PluginObject implements IPluginAttribute {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
+		}
 		if (obj instanceof IPluginAttribute) {
 			IPluginAttribute target = (IPluginAttribute) obj;
-			if (target.getModel().equals(getModel()))
+			if (target.getModel().equals(getModel())) {
 				return false;
-			if (stringEqualWithNull(getName(), target.getName()) && stringEqualWithNull(getValue(), target.getValue()))
+			}
+			if (stringEqualWithNull(getName(), target.getName()) && stringEqualWithNull(getValue(), target.getValue())) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -108,8 +111,9 @@ public class PluginAttribute extends PluginObject implements IPluginAttribute {
 
 	@Override
 	public void write(String indent, PrintWriter writer) {
-		if (fValue == null)
+		if (fValue == null) {
 			return;
+		}
 		writer.print(indent);
 		writer.print(getName() + "=\"" + getWritableString(fValue) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}

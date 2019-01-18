@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
 import java.util.Vector;
-
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.core.ModelChangedEvent;
@@ -32,7 +31,7 @@ public class SchemaCompositor extends RepeatableSchemaObject implements ISchemaC
 	public static final String P_KIND = "p_kind"; //$NON-NLS-1$
 
 	private int kind;
-	private Vector<ISchemaObject> children = new Vector<>();
+	private final Vector<ISchemaObject> children = new Vector<>();
 
 	public SchemaCompositor(ISchemaObject parent, int kind) {
 		super(parent, ""); //$NON-NLS-1$
@@ -67,10 +66,11 @@ public class SchemaCompositor extends RepeatableSchemaObject implements ISchemaC
 	public void moveChildToSibling(ISchemaObject element, ISchemaObject sibling) {
 		int index = children.indexOf(element);
 		int newIndex;
-		if (sibling != null && children.contains(sibling))
+		if (sibling != null && children.contains(sibling)) {
 			newIndex = children.indexOf(sibling);
-		else
+		} else {
 			newIndex = children.size() - 1;
+		}
 
 		if (index > newIndex) {
 			for (int i = index; i > newIndex; i--) {
@@ -80,9 +80,10 @@ public class SchemaCompositor extends RepeatableSchemaObject implements ISchemaC
 			for (int i = index; i < newIndex; i++) {
 				children.set(i, children.elementAt(i + 1));
 			}
-		} else
+		} else {
 			// don't need to move
 			return;
+		}
 		children.set(newIndex, element);
 		getSchema().fireModelChanged(new ModelChangedEvent(getSchema(), IModelChangedEvent.CHANGE, new Object[] {this}, null));
 	}
@@ -92,10 +93,11 @@ public class SchemaCompositor extends RepeatableSchemaObject implements ISchemaC
 		if (afterSibling != null) {
 			index = children.indexOf(afterSibling);
 		}
-		if (index != -1)
+		if (index != -1) {
 			children.add(index + 1, newChild);
-		else
+		} else {
 			children.addElement(newChild);
+		}
 		getSchema().fireModelChanged(new ModelChangedEvent(getSchema(), IModelChangedEvent.INSERT, new Object[] {newChild}, null));
 	}
 
@@ -177,12 +179,9 @@ public class SchemaCompositor extends RepeatableSchemaObject implements ISchemaC
 						// a match. This is done to repair the
 						// reference when the referenced object's
 						// name changes.
-						if (ref.getReferencedElement() == element)
+						if (ref.getReferencedElement() == element) {
 							ref.setReferenceName(element.getName());
-						// Also handle the case where rename
-						// will satisfy a previously broken
-						// reference.
-						else if (element.getName().equals(refName)) {
+						} else if (element.getName().equals(refName)) {
 							ref.setReferencedObject(element);
 							getSchema().fireModelObjectChanged(ref, null, null, null);
 						}
@@ -209,8 +208,9 @@ public class SchemaCompositor extends RepeatableSchemaObject implements ISchemaC
 				tag = "sequence"; //$NON-NLS-1$
 				break;
 		}
-		if (tag == null)
+		if (tag == null) {
 			return;
+		}
 		writer.print(indent + "<" + tag); //$NON-NLS-1$
 		if (getMinOccurs() != 1 || getMaxOccurs() != 1) {
 			String min = "" + getMinOccurs(); //$NON-NLS-1$

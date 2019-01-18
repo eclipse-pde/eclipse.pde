@@ -27,8 +27,9 @@ public class PluginExtensionPointNode extends PluginObjectNode implements IPlugi
 	public String getFullId() {
 		String id = getId();
 		String version = getPluginBase().getSchemaVersion();
-		if (version != null && Double.parseDouble(version) >= 3.2 && id != null && id.indexOf('.') != -1)
+		if (version != null && Double.parseDouble(version) >= 3.2 && id != null && id.indexOf('.') != -1) {
 			return id;
+		}
 		String pluginID = getPluginBase().getId();
 		return (pluginID != null) ? pluginID + "." + id : id; //$NON-NLS-1$
 	}
@@ -75,8 +76,9 @@ public class PluginExtensionPointNode extends PluginObjectNode implements IPlugi
 		appendAttribute(buffer, P_NAME);
 		appendAttribute(buffer, P_SCHEMA);
 
-		if (terminate)
+		if (terminate) {
 			buffer.append("/"); //$NON-NLS-1$
+		}
 		buffer.append(">"); //$NON-NLS-1$
 		return buffer.toString();
 	}

@@ -16,11 +16,26 @@ package org.eclipse.pde.internal.core.target;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.target.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetLocation;
+import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.eclipse.pde.core.target.NameVersionDescriptor;
+import org.eclipse.pde.core.target.TargetBundle;
+import org.eclipse.pde.core.target.TargetFeature;
+import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 
 /**
  * A container of the bundles contained in a feature.
@@ -37,17 +52,17 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 	/**
 	 * Feature symbolic name
 	 */
-	private String fId;
+	private final String fId;
 
 	/**
 	 * Feature version or <code>null</code>
 	 */
-	private String fVersion;
+	private final String fVersion;
 
 	/**
 	 * Install location which may contain string substitution variables
 	 */
-	private String fHome;
+	private final String fHome;
 
 	/**
 	 * Constructs a new feature bundle container for the feature at the specified

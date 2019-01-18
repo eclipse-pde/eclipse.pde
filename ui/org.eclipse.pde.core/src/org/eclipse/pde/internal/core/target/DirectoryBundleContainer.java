@@ -15,10 +15,18 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.File;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.TargetBundle;
+import org.eclipse.pde.core.target.TargetFeature;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.PDECore;
 
@@ -38,7 +46,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	 * Path to this container's directory in the local file system.
 	 * The path may contain string substitution variables.
 	 */
-	private String fPath;
+	private final String fPath;
 
 	/**
 	 * Constructs a directory bundle container at the given location.

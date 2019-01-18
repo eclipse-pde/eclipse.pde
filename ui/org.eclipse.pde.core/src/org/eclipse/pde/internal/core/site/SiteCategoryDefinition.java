@@ -19,7 +19,9 @@ import java.io.PrintWriter;
 import java.util.Vector;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.isite.ISiteCategory;
+import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
+import org.eclipse.pde.internal.core.isite.ISiteDescription;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -28,7 +30,7 @@ public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryD
 	private static final long serialVersionUID = 1L;
 	private String name;
 	private ISiteDescription description;
-	private Vector<ISiteCategory> fCategories = new Vector<>();
+	private final Vector<ISiteCategory> fCategories = new Vector<>();
 
 	@Override
 	public String getName() {
@@ -95,18 +97,21 @@ public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryD
 			setName(newValue != null ? newValue.toString() : null);
 		} else if (name.equals(P_DESCRIPTION) && newValue instanceof ISiteDescription) {
 			setDescription((ISiteDescription) newValue);
-		} else
+		} else {
 			super.restoreProperty(name, oldValue, newValue);
+		}
 	}
 
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<category-def"); //$NON-NLS-1$
-		if (name != null)
+		if (name != null) {
 			writer.print(" name=\"" + SiteObject.getWritableString(name) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (label != null)
+		}
+		if (label != null) {
 			writer.print(" label=\"" + SiteObject.getWritableString(label) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		boolean hasChildrenElements = description != null || !this.fCategories.isEmpty();
 		if (hasChildrenElements) {
 			writer.println(">"); //$//$NON-NLS-1$

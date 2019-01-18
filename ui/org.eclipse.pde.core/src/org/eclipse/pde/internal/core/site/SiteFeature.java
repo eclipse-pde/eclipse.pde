@@ -15,7 +15,9 @@ package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
 import java.util.Vector;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -26,7 +28,7 @@ import org.w3c.dom.NodeList;
 
 public class SiteFeature extends VersionableObject implements ISiteFeature {
 	private static final long serialVersionUID = 1L;
-	private Vector<ISiteCategory> fCategories = new Vector<>();
+	private final Vector<ISiteCategory> fCategories = new Vector<>();
 	private String fType;
 	private String fUrl;
 	private String fOS;
@@ -37,12 +39,14 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 
 	@Override
 	public boolean isValid() {
-		if (fUrl == null)
+		if (fUrl == null) {
 			return false;
+		}
 		for (int i = 0; i < fCategories.size(); i++) {
 			ISiteCategory category = fCategories.get(i);
-			if (!category.isValid())
+			if (!category.isValid()) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -159,26 +163,36 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<feature"); //$NON-NLS-1$
-		if (fType != null)
+		if (fType != null) {
 			writer.print(" type=\"" + fType + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (fUrl != null)
+		}
+		if (fUrl != null) {
 			writer.print(" url=\"" + fUrl + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (id != null)
+		}
+		if (id != null) {
 			writer.print(" id=\"" + getId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (version != null)
+		}
+		if (version != null) {
 			writer.print(" version=\"" + getVersion() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (label != null)
+		}
+		if (label != null) {
 			writer.print(" label=\"" + getLabel() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (fOS != null)
+		}
+		if (fOS != null) {
 			writer.print(" os=\"" + fOS + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (fWS != null)
+		}
+		if (fWS != null) {
 			writer.print(" ws=\"" + fWS + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (fNL != null)
+		}
+		if (fNL != null) {
 			writer.print(" nl=\"" + fNL + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (fArch != null)
+		}
+		if (fArch != null) {
 			writer.print(" arch=\"" + fArch + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (fIsPatch)
+		}
+		if (fIsPatch) {
 			writer.print(" patch=\"true\""); //$NON-NLS-1$
+		}
 		if (!fCategories.isEmpty()) {
 			writer.println(">"); //$NON-NLS-1$
 			String indent2 = indent + "   "; //$NON-NLS-1$
@@ -187,21 +201,25 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 				category.write(indent2, writer);
 			}
 			writer.println(indent + "</feature>"); //$NON-NLS-1$
-		} else
+		} else {
 			writer.println("/>"); //$NON-NLS-1$
+		}
 	}
 
 	@Override
 	public IFile getArchiveFile() {
-		if (fUrl == null)
+		if (fUrl == null) {
 			return null;
+		}
 		IResource resource = getModel().getUnderlyingResource();
-		if (resource == null)
+		if (resource == null) {
 			return null;
+		}
 		IProject project = resource.getProject();
 		IFile file = project.getFile(new Path(fUrl));
-		if (file.exists())
+		if (file.exists()) {
 			return file;
+		}
 		return null;
 	}
 

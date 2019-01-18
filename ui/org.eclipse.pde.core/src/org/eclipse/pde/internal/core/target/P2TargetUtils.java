@@ -18,31 +18,86 @@ package org.eclipse.pde.internal.core.target;
 
 import java.io.File;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
-import org.eclipse.equinox.internal.p2.engine.*;
-import org.eclipse.equinox.internal.p2.engine.phases.*;
+import org.eclipse.equinox.internal.p2.engine.DownloadManager;
+import org.eclipse.equinox.internal.p2.engine.InstallableUnitOperand;
+import org.eclipse.equinox.internal.p2.engine.InstallableUnitPhase;
+import org.eclipse.equinox.internal.p2.engine.Phase;
+import org.eclipse.equinox.internal.p2.engine.PhaseSet;
+import org.eclipse.equinox.internal.p2.engine.Profile;
+import org.eclipse.equinox.internal.p2.engine.ProfileMetadataRepository;
+import org.eclipse.equinox.internal.p2.engine.phases.Collect;
+import org.eclipse.equinox.internal.p2.engine.phases.Configure;
+import org.eclipse.equinox.internal.p2.engine.phases.Install;
+import org.eclipse.equinox.internal.p2.engine.phases.Property;
+import org.eclipse.equinox.internal.p2.engine.phases.Uninstall;
 import org.eclipse.equinox.internal.p2.garbagecollector.GarbageCollector;
-import org.eclipse.equinox.p2.core.*;
-import org.eclipse.equinox.p2.engine.*;
+import org.eclipse.equinox.p2.core.IAgentLocation;
+import org.eclipse.equinox.p2.core.IProvisioningAgent;
+import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
+import org.eclipse.equinox.p2.core.ProvisionException;
+import org.eclipse.equinox.p2.engine.IEngine;
+import org.eclipse.equinox.p2.engine.IPhaseSet;
+import org.eclipse.equinox.p2.engine.IProfile;
+import org.eclipse.equinox.p2.engine.IProfileRegistry;
+import org.eclipse.equinox.p2.engine.IProvisioningPlan;
+import org.eclipse.equinox.p2.engine.PhaseSetFactory;
+import org.eclipse.equinox.p2.engine.ProvisioningContext;
 import org.eclipse.equinox.p2.engine.query.IUProfilePropertyQuery;
 import org.eclipse.equinox.p2.engine.spi.ProvisioningAction;
-import org.eclipse.equinox.p2.metadata.*;
+import org.eclipse.equinox.p2.metadata.IArtifactKey;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.IProvidedCapability;
+import org.eclipse.equinox.p2.metadata.IRequirement;
+import org.eclipse.equinox.p2.metadata.MetadataFactory;
 import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.planner.IPlanner;
 import org.eclipse.equinox.p2.planner.IProfileChangeRequest;
-import org.eclipse.equinox.p2.query.*;
-import org.eclipse.equinox.p2.repository.*;
-import org.eclipse.equinox.p2.repository.artifact.*;
+import org.eclipse.equinox.p2.query.IQuery;
+import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.query.IQueryable;
+import org.eclipse.equinox.p2.query.QueryUtil;
+import org.eclipse.equinox.p2.repository.IRepository;
+import org.eclipse.equinox.p2.repository.IRepositoryManager;
+import org.eclipse.equinox.p2.repository.IRepositoryReference;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRequest;
+import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
-import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetHandle;
+import org.eclipse.pde.core.target.ITargetLocation;
+import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.core.PDECore;
-import org.osgi.framework.*;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
 public class P2TargetUtils {
 
@@ -314,8 +369,9 @@ public class P2TargetUtils {
 		} catch (InvalidSyntaxException e) {
 			// ignore
 		} finally {
-			if (serviceReferences != null)
+			if (serviceReferences != null) {
 				context.ungetService(serviceReferences[0]);
+			}
 		}
 
 		IProvisioningAgentProvider provider = PDECore.getDefault().acquireService(IProvisioningAgentProvider.class);
@@ -347,8 +403,9 @@ public class P2TargetUtils {
 	 */
 	public static IProvisioningAgent getGlobalAgent() throws CoreException {
 		IProvisioningAgent agent = PDECore.getDefault().acquireService(IProvisioningAgent.class);
-		if (agent == null)
+		if (agent == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_11));
+		}
 		return agent;
 	}
 
@@ -360,8 +417,9 @@ public class P2TargetUtils {
 	 */
 	public static IAgentLocation getAgentLocation() throws CoreException {
 		IAgentLocation result = (IAgentLocation) getAgent().getService(IAgentLocation.SERVICE_NAME);
-		if (result == null)
+		if (result == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_10));
+		}
 		return result;
 	}
 
@@ -389,8 +447,9 @@ public class P2TargetUtils {
 		URI uri = BUNDLE_POOL.toFile().toURI();
 		IArtifactRepositoryManager manager = getArtifactRepositoryManager();
 		try {
-			if (manager.contains(uri))
+			if (manager.contains(uri)) {
 				return (IFileArtifactRepository) manager.loadRepository(uri, null);
+			}
 		} catch (CoreException e) {
 			// could not load or there wasn't one, fall through to create
 		}
@@ -645,8 +704,9 @@ public class P2TargetUtils {
 	 */
 	public static boolean isResolved(ITargetDefinition target) {
 		P2TargetUtils synchronizer = getSynchronizer(target);
-		if (synchronizer == null)
+		if (synchronizer == null) {
 			return false;
+		}
 		try {
 			return synchronizer.checkProfile(target);
 		} catch (CoreException e) {
@@ -661,8 +721,9 @@ public class P2TargetUtils {
 	 */
 	public static boolean isProfileValid(ITargetDefinition target) {
 		P2TargetUtils synchronizer = getSynchronizer(target);
-		if (synchronizer == null)
+		if (synchronizer == null) {
 			return false;
+		}
 		try {
 			synchronizer.updateProfileFromRegistry(target);
 			return synchronizer.checkProfile(target);
@@ -695,8 +756,9 @@ public class P2TargetUtils {
 	 */
 	static synchronized P2TargetUtils getSynchronizer(ITargetDefinition target) {
 		P2TargetUtils result = synchronizers.get(target);
-		if (result != null)
+		if (result != null) {
 			return result;
+		}
 
 		result = new P2TargetUtils();
 		synchronizers.put(target, result);
@@ -714,8 +776,9 @@ public class P2TargetUtils {
 	 */
 	public static IQueryResult<?> getIUs(ITargetDefinition target, IProgressMonitor monitor) throws CoreException {
 		P2TargetUtils synchronizer = getSynchronizer(target);
-		if (synchronizer == null)
+		if (synchronizer == null) {
 			return null;
+		}
 		synchronizer.synchronize(target, monitor);
 		return synchronizer.getProfile().query(QueryUtil.createIUAnyQuery(), null);
 	}
@@ -738,8 +801,9 @@ public class P2TargetUtils {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 
 		// Happiness if we have a profile and it checks out or if we can load one and it checks out.
-		if (fProfile == null)
+		if (fProfile == null) {
 			fProfile = getProfileRegistry().getProfile(getProfileId(target));
+		}
 		if (fProfile != null && checkProfile(target)) {
 			// always push the changes to the target because there can be many target objects
 			// for the same synchronizer (doh!)
@@ -752,16 +816,18 @@ public class P2TargetUtils {
 		deleteProfile(target.getHandle());
 		createProfile(target);
 
-		if (progress.isCanceled())
+		if (progress.isCanceled()) {
 			return;
+		}
 		progress.setWorkRemaining(75);
 
 		try {
 			// Now resolve the profile and refresh the relate IU containers
-			if (getIncludeAllRequired())
+			if (getIncludeAllRequired()) {
 				resolveWithPlanner(target, progress.split(60));
-			else
+			} else {
 				resolveWithSlicer(target, progress.split(60));
+			}
 
 			// If we are updating a profile then delete the old snapshot on success.
 			notify(target, progress.split(15));
@@ -1018,8 +1084,9 @@ public class P2TargetUtils {
 		// if include source is off then ensure that the source IU is removed.
 		if (!includeSource) {
 			IInstallableUnit sourceIU = getCurrentSourceIU(profile);
-			if (sourceIU != null)
+			if (sourceIU != null) {
 				request.remove(sourceIU);
+			}
 		}
 		// remove everything that is marked as roots.  The plan will have the new roots added in anyway.
 		IQuery<IInstallableUnit> query = new IUProfilePropertyQuery(PROP_INSTALLED_IU, Boolean.toString(true));
@@ -1047,8 +1114,9 @@ public class P2TargetUtils {
 		// call the planner again to add in the new source IU and all available source bundles
 		IPlanner planner = getPlanner();
 		IProfileChangeRequest request = planner.createChangeRequest(fProfile);
-		if (currentSourceIU != null)
+		if (currentSourceIU != null) {
 			request.remove(currentSourceIU);
+		}
 		request.add(sourceIU);
 		IProvisioningPlan plan = planner.getProvisioningPlan(request, context, subMonitor.split(25));
 		IStatus status = plan.getStatus();
@@ -1111,8 +1179,9 @@ public class P2TargetUtils {
 		IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(SOURCE_IU_ID);
 		IQueryResult<IInstallableUnit> list = queryable.query(query, null);
 		IInstallableUnit currentSourceIU = null;
-		if (!list.isEmpty())
+		if (!list.isEmpty()) {
 			currentSourceIU = list.iterator().next();
+		}
 		return currentSourceIU;
 	}
 
@@ -1226,8 +1295,9 @@ public class P2TargetUtils {
 
 		// Collect the IUs from the sliced
 		IQueryResult<IInstallableUnit> queryResult = null;
-		if (slice != null)
+		if (slice != null) {
 			queryResult = slice.query(QueryUtil.createIUAnyQuery(), subMonitor.split(50));
+		}
 
 		// If the slicer encounters a non-error status, only report it if the slice returned no IU results
 		// It would be better to inform the user, but we do not want to stop the location from resolving (bug 350772)
@@ -1291,11 +1361,13 @@ public class P2TargetUtils {
 	 */
 	private void findWorkspaceRepos(Set<URI> additionalRepos) {
 		IPreferencesService prefs = getPreferences();
-		if (prefs == null)
+		if (prefs == null) {
 			return;
+		}
 		String recent = prefs.getString("org.eclipse.ui.ide", "RECENT_WORKSPACES", null, null); //$NON-NLS-1$ //$NON-NLS-2$
-		if (recent == null)
+		if (recent == null) {
 			return;
+		}
 		String[] recents = recent.split("\n"); //$NON-NLS-1$
 		for (String recentWorkspace : recents) {
 			File bundlePool = new File(recentWorkspace + "/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool"); //$NON-NLS-1$
@@ -1316,11 +1388,13 @@ public class P2TargetUtils {
 		try {
 			// NOTE: be sure to use the global p2 agent here as we are looking for SELF.
 			IProfileRegistry profileRegistry = (IProfileRegistry) getGlobalAgent().getService(IProfileRegistry.SERVICE_NAME);
-			if (profileRegistry == null)
+			if (profileRegistry == null) {
 				return;
+			}
 			IProfile self = profileRegistry.getProfile(IProfileRegistry.SELF);
-			if (self == null)
+			if (self == null) {
 				return;
+			}
 
 			IAgentLocation location = (IAgentLocation) getGlobalAgent().getService(IAgentLocation.SERVICE_NAME);
 			URI dataArea = location.getDataArea("org.eclipse.equinox.p2.engine"); //$NON-NLS-1$
@@ -1330,8 +1404,9 @@ public class P2TargetUtils {
 			for (Object element : repos) {
 				if (element instanceof IRepositoryReference) {
 					IRepositoryReference reference = (IRepositoryReference) element;
-					if (reference.getType() == IRepository.TYPE_ARTIFACT && reference.getLocation() != null)
+					if (reference.getType() == IRepository.TYPE_ARTIFACT && reference.getLocation() != null) {
 						additionalRepos.add(reference.getLocation());
+					}
 				}
 			}
 		} catch (CoreException e) {
@@ -1408,14 +1483,16 @@ public class P2TargetUtils {
 		public IStatus execute(Map<String, Object> parameters) {
 			InstallableUnitOperand operand = (InstallableUnitOperand) parameters.get(PARM_OPERAND);
 			IInstallableUnit installableUnit = operand.second();
-			if (installableUnit == null)
+			if (installableUnit == null) {
 				return Status.OK_STATUS;
+			}
 
 			IArtifactRepositoryManager manager;
 			try {
 				Collection<?> toDownload = installableUnit.getArtifacts();
-				if (toDownload == null)
+				if (toDownload == null) {
 					return Status.OK_STATUS;
+				}
 
 				@SuppressWarnings("unchecked")
 				List<IArtifactRequest> artifactRequests = (List<IArtifactRequest>) parameters.get(NATIVE_ARTIFACTS);

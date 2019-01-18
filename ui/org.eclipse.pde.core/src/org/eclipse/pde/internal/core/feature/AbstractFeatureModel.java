@@ -14,9 +14,7 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.InputStream;
-
 import javax.xml.parsers.SAXParser;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
@@ -54,8 +52,9 @@ public abstract class AbstractFeatureModel extends AbstractNLModel implements IF
 
 	@Override
 	public IFeatureModelFactory getFactory() {
-		if (factory == null)
+		if (factory == null) {
 			factory = new FeatureFactory(this);
+		}
 		return factory;
 	}
 
@@ -85,11 +84,13 @@ public abstract class AbstractFeatureModel extends AbstractNLModel implements IF
 			if (handler.isPrepared()) {
 				processDocument(handler.getDocument());
 				String copyright = chandler.getCopyright();
-				if (copyright != null)
+				if (copyright != null) {
 					feature.setCopyright(copyright);
+				}
 				setLoaded(true);
-				if (!outOfSync)
+				if (!outOfSync) {
 					updateTimeStamp();
+				}
 			}
 		} catch (SAXException e) {
 		} catch (Exception e) {
@@ -99,8 +100,9 @@ public abstract class AbstractFeatureModel extends AbstractNLModel implements IF
 
 	@Override
 	public boolean isValid() {
-		if (!isLoaded())
+		if (!isLoaded()) {
 			return false;
+		}
 		IFeature feature = getFeature();
 		return feature != null && feature.isValid();
 	}
@@ -118,8 +120,9 @@ public abstract class AbstractFeatureModel extends AbstractNLModel implements IF
 
 	@Override
 	public void reload(InputStream stream, boolean outOfSync) throws CoreException {
-		if (feature != null)
+		if (feature != null) {
 			feature.reset();
+		}
 		load(stream, outOfSync);
 		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[] {feature}, null));
 	}

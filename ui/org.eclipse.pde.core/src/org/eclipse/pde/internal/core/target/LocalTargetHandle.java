@@ -13,11 +13,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import org.eclipse.core.filebuffers.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
@@ -34,7 +43,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	/**
 	 * Time stamp when target was created.
 	 */
-	private long fTimeStamp;
+	private final long fTimeStamp;
 
 	/**
 	 * The last time stamp handed out.

@@ -16,22 +16,34 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.osgi.service.resolver.BaseDescription;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
-import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.core.plugin.ExternalFragmentModel;
+import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
+import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.osgi.framework.Version;
 
 public class PDEState extends MinimalState {
 
-	private PDEAuxiliaryState fAuxiliaryState;
-	private ArrayList<IPluginModelBase> fTargetModels = new ArrayList<>();
+	private final PDEAuxiliaryState fAuxiliaryState;
+	private final ArrayList<IPluginModelBase> fTargetModels = new ArrayList<>();
 
 	/**
 	 * Creates a new PDE State containing bundles from the given URLs.
@@ -56,8 +68,9 @@ public class PDEState extends MinimalState {
 		createTargetModels(fState.getBundles());
 		clearOldCache();
 
-		if (PDECore.DEBUG_MODEL)
+		if (PDECore.DEBUG_MODEL) {
 			System.out.println("Time to create state: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 
 	private void createNewTargetState(boolean resolve, URI[] uris, IProgressMonitor monitor) {
@@ -69,8 +82,9 @@ public class PDEState extends MinimalState {
 					Version v1 = bd1.getVersion();
 					Version v2 = bd2.getVersion();
 					int versionCompare = versionCompare(v1, v2);
-					if (versionCompare != 0)
+					if (versionCompare != 0) {
 						return versionCompare;
+					}
 					BundleDescription s1 = bd1.getSupplier();
 					BundleDescription s2 = bd2.getSupplier();
 					String n1 = s1.getName();
@@ -86,11 +100,13 @@ public class PDEState extends MinimalState {
 									IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 									if (root != null) {
 										IPath p1 = new Path(loc1);
-										if (root.findContainersForLocationURI(URIUtil.toURI(p1)).length != 0)
+										if (root.findContainersForLocationURI(URIUtil.toURI(p1)).length != 0) {
 											return -1;
+										}
 										IPath p2 = new Path(loc2);
-										if (root.findContainersForLocationURI(URIUtil.toURI(p2)).length != 0)
+										if (root.findContainersForLocationURI(URIUtil.toURI(p2)).length != 0) {
 											return 1;
+										}
 									}
 								}
 							}
@@ -196,17 +212,19 @@ public class PDEState extends MinimalState {
 			fTargetModels.add(base);
 			models.put(desc.getSymbolicName(), base);
 		}
-		if (models.isEmpty())
+		if (models.isEmpty()) {
 			return new IPluginModelBase[0];
+		}
 		return models.values().toArray(new IPluginModelBase[models.size()]);
 	}
 
 	private IPluginModelBase createExternalModel(BundleDescription desc) {
 		ExternalPluginModelBase model = null;
-		if (desc.getHost() == null)
+		if (desc.getHost() == null) {
 			model = new ExternalPluginModel();
-		else
+		} else {
 			model = new ExternalFragmentModel();
+		}
 		model.load(desc, this);
 		model.setBundleDescription(desc);
 		model.setEnabled(true);

@@ -18,7 +18,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.MissingResourceException;
+import java.util.PropertyResourceBundle;
+import java.util.StringTokenizer;
 import org.eclipse.core.runtime.Platform;
 
 public class NLResourceHelper {
@@ -73,18 +75,21 @@ public class NLResourceHelper {
 	public String getResourceString(String value) {
 		String s = value.trim();
 
-		if (!s.startsWith(KEY_PREFIX))
+		if (!s.startsWith(KEY_PREFIX)) {
 			return s;
+		}
 
-		if (s.startsWith(KEY_DOUBLE_PREFIX))
+		if (s.startsWith(KEY_DOUBLE_PREFIX)) {
 			return s.substring(1);
+		}
 
 		int ix = s.indexOf(" "); //$NON-NLS-1$
 		String key = ix == -1 ? s : s.substring(0, ix);
 		String dflt = ix == -1 ? s : s.substring(ix + 1);
 
-		if (bundle == null)
+		if (bundle == null) {
 			return dflt;
+		}
 
 		try {
 			return bundle.getString(key.substring(1));
@@ -94,8 +99,9 @@ public class NLResourceHelper {
 	}
 
 	public boolean resourceExists(String value) {
-		if (bundle == null)
+		if (bundle == null) {
 			return false;
+		}
 		try {
 			bundle.getString(value.trim().substring(1));
 			return true;

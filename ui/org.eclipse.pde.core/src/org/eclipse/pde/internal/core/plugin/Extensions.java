@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.PrintWriter;
-
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 
@@ -54,23 +53,26 @@ public class Extensions extends AbstractExtensions {
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
-		if (fSchemaVersion != null)
+		if (fSchemaVersion != null) {
 			writer.println("<?eclipse version=\"" + fSchemaVersion + "\"?>"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		writer.println(fIsFragment ? "<fragment>" : "<plugin>"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		String firstIndent = "   "; //$NON-NLS-1$
 
 		Object[] children = getExtensionPoints();
-		if (children.length > 0)
+		if (children.length > 0) {
 			writer.println();
+		}
 		for (Object element : children) {
 			((IPluginExtensionPoint) element).write(firstIndent, writer);
 		}
 
 		// add extensions
 		children = getExtensions();
-		if (children.length > 0)
+		if (children.length > 0) {
 			writer.println();
+		}
 		for (Object element : children) {
 			((IPluginExtension) element).write(firstIndent, writer);
 		}

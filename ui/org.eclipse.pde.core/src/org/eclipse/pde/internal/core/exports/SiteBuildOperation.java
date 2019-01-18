@@ -17,15 +17,25 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.regex.Pattern;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.build.IXMLConstants;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.P2Utils;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.isite.ISiteDescription;
+import org.eclipse.pde.internal.core.isite.ISiteFeature;
+import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.osgi.framework.Version;
@@ -41,9 +51,9 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 
 	private long fBuildTime;
 
-	private IFeatureModel[] fFeatureModels;
-	private ISiteModel fSiteModel;
-	private IContainer fSiteContainer;
+	private final IFeatureModel[] fFeatureModels;
+	private final ISiteModel fSiteModel;
+	private final IContainer fSiteContainer;
 
 	public SiteBuildOperation(IFeatureModel[] features, ISiteModel site, String jobName) {
 		super(getInfo(features, site), jobName);

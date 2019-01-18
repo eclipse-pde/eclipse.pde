@@ -19,24 +19,51 @@ package org.eclipse.pde.internal.core.target;
 import java.io.File;
 import java.io.StringWriter;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
 import org.eclipse.equinox.p2.engine.IProfile;
-import org.eclipse.equinox.p2.metadata.*;
-import org.eclipse.equinox.p2.query.*;
+import org.eclipse.equinox.p2.metadata.IArtifactKey;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.Version;
+import org.eclipse.equinox.p2.query.IQuery;
+import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.query.IQueryable;
+import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
 import org.eclipse.equinox.p2.touchpoint.eclipse.query.OSGiBundleQuery;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.NameVersionDescriptor;
+import org.eclipse.pde.core.target.TargetBundle;
+import org.eclipse.pde.core.target.TargetFeature;
 import org.eclipse.pde.internal.core.PDECore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -108,7 +135,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * A set of bitmask flags that indicate how this container gets elements from its
 	 * associated p2 repository.
 	 */
-	private int fFlags;
+	private final int fFlags;
 
 	/**
 	 *  The p2 synchronizer to use in managing this container.
@@ -259,10 +286,11 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		for (int i = 0; i < fIds.length; i++) {
 			IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(fIds[i], fVersions[i]);
 			IQueryResult<IInstallableUnit> queryResult = profile.query(query, null);
-			if (queryResult.isEmpty())
+			if (queryResult.isEmpty()) {
 				status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, fIds[i] + " " + fVersions[i]))); //$NON-NLS-1$
-			else
+			} else {
 				result.add(queryResult.iterator().next());
+			}
 		}
 		if (!status.isOK()) {
 			fResolutionStatus = status;
@@ -357,14 +385,16 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		boolean updated = false;
 		SubMonitor loopProgress = progress.split(70).setWorkRemaining(fIds.length);
 		for (int i = 0; i < fIds.length; i++) {
-			if (!toUpdate.isEmpty() && !toUpdate.contains(fIds[i]))
+			if (!toUpdate.isEmpty() && !toUpdate.contains(fIds[i])) {
 				continue;
+			}
 			IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(fIds[i]));
 			IQueryResult<IInstallableUnit> queryResult = source.query(query, loopProgress.split(1));
 			Iterator<IInstallableUnit> it = queryResult.iterator();
 			// bail if the feature is no longer available.
-			if (!it.hasNext())
+			if (!it.hasNext()) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, fIds[i])));
+			}
 			IInstallableUnit iu = it.next();
 			// if the version is different from the spec (up or down), record the change.
 			if (!iu.getVersion().equals(fVersions[i])) {
@@ -539,8 +569,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	public boolean getIncludeAllRequired() {
 		// if this container has not been associated with a container, return its own value
-		if (fSynchronizer == null)
+		if (fSynchronizer == null) {
 			return (fFlags & INCLUDE_REQUIRED) == INCLUDE_REQUIRED;
+		}
 		return fSynchronizer.getIncludeAllRequired();
 	}
 
@@ -554,8 +585,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	public boolean getIncludeAllEnvironments() {
 		// if this container has not been associated with a container, return its own value
-		if (fSynchronizer == null)
+		if (fSynchronizer == null) {
 			return (fFlags & INCLUDE_ALL_ENVIRONMENTS) == INCLUDE_ALL_ENVIRONMENTS;
+		}
 		return fSynchronizer.getIncludeAllEnvironments();
 	}
 
@@ -567,8 +599,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	public boolean getIncludeSource() {
 		// if this container has not been associated with a container, return its own value
-		if (fSynchronizer == null)
+		if (fSynchronizer == null) {
 			return (fFlags & INCLUDE_SOURCE) == INCLUDE_SOURCE;
+		}
 		return fSynchronizer.getIncludeSource();
 	}
 
@@ -579,8 +612,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	public boolean getIncludeConfigurePhase() {
 		// if this container has not been associated with a container, return its own value
-		if (fSynchronizer == null)
+		if (fSynchronizer == null) {
 			return (fFlags & INCLUDE_CONFIGURE_PHASE) == INCLUDE_CONFIGURE_PHASE;
+		}
 		return fSynchronizer.getIncludeConfigurePhase();
 	}
 
@@ -591,8 +625,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @exception CoreException if unable to retrieve IU's
 	 */
 	public IInstallableUnit[] getInstallableUnits() throws CoreException {
-		if (fUnits == null)
+		if (fUnits == null) {
 			return new IInstallableUnit[0];
+		}
 		return fUnits;
 	}
 
@@ -622,8 +657,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		if (fSynchronizer != null) {
 			return fSynchronizer;
 		}
-		if (definition == null)
+		if (definition == null) {
 			return null;
+		}
 		return fSynchronizer = P2TargetUtils.getSynchronizer(definition);
 	}
 
@@ -728,10 +764,11 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			// For versions such as 0.0.0, the IU query may return multiple IUs, so we check which is the latest version
 			IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(fIds[j], fVersions[j]));
 			IQueryResult<IInstallableUnit> queryResult = repos.query(query, null);
-			if (queryResult.isEmpty())
+			if (queryResult.isEmpty()) {
 				status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, fIds[j] + " " + fVersions[j])));//$NON-NLS-1$
-			else
+			} else {
 				result.add(queryResult.iterator().next());
+			}
 		}
 		if (!status.isOK()) {
 			fResolutionStatus = status;

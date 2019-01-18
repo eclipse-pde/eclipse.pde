@@ -19,14 +19,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.NLResourceHelper;
-import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundleModelFactory;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
 public class BundleModel extends AbstractEditingModel implements IBundleModel {
 
-	private IBundle fBundle;
+	private final IBundle fBundle;
 	private IBundleModelFactory fFactory;
 
 	/**
@@ -73,8 +75,9 @@ public class BundleModel extends AbstractEditingModel implements IBundleModel {
 
 	@Override
 	public IBundleModelFactory getFactory() {
-		if (fFactory == null)
+		if (fFactory == null) {
 			fFactory = new BundleModelFactory(this);
+		}
 		return fFactory;
 	}
 

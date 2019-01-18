@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ant;
 
-import org.apache.tools.ant.*;
+import org.apache.tools.ant.BuildEvent;
+import org.apache.tools.ant.BuildListener;
+import org.apache.tools.ant.Project;
 import org.eclipse.pde.internal.core.exports.FeatureExportOperation;
 import org.eclipse.pde.internal.core.exports.ProductExportOperation;
 

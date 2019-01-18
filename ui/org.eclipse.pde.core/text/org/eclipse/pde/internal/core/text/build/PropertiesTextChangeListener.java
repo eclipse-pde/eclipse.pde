@@ -36,18 +36,21 @@ public class PropertiesTextChangeListener extends AbstractKeyValueTextChangeList
 		for (Object object : objects) {
 			IDocumentKey key = (IDocumentKey) object;
 			Object op = fOperationTable.remove(key);
-			if (fReadableNames != null)
+			if (fReadableNames != null) {
 				fReadableNames.remove(op);
+			}
 			String name = null;
 			switch (event.getChangeType()) {
 				case IModelChangedEvent.REMOVE :
-					if (fReadableNames != null)
+					if (fReadableNames != null) {
 						name = NLS.bind(PDECoreMessages.PropertiesTextChangeListener_editNames_remove, key.getName());
+					}
 					deleteKey(key, name);
 					break;
 				default :
-					if (fReadableNames != null)
+					if (fReadableNames != null) {
 						name = NLS.bind((key.getOffset() == -1 ? PDECoreMessages.PropertiesTextChangeListener_editNames_insert : PDECoreMessages.PropertiesTextChangeListener_editNames_delete), key.getName());
+					}
 					modifyKey(key, name);
 			}
 		}

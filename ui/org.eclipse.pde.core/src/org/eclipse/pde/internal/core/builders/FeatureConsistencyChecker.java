@@ -16,19 +16,28 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.util.Arrays;
 import java.util.Map;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.osgi.framework.Bundle;
 
 public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 	class DeltaVisitor implements IResourceDeltaVisitor {
-		private IProgressMonitor monitor;
+		private final IProgressMonitor monitor;
 
 		public DeltaVisitor(IProgressMonitor monitor) {
 			this.monitor = monitor;
@@ -65,16 +74,19 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
-		if (PDECore.getDefault().getBundle().getState() != Bundle.ACTIVE || monitor.isCanceled())
+		if (PDECore.getDefault().getBundle().getState() != Bundle.ACTIVE || monitor.isCanceled()) {
 			return new IProject[0];
+		}
 
-		if (WorkspaceModelManager.isBinaryProject(getProject()))
+		if (WorkspaceModelManager.isBinaryProject(getProject())) {
 			return new IProject[0];
+		}
 
 		IResourceDelta delta = null;
 
-		if (kind != FULL_BUILD)
+		if (kind != FULL_BUILD) {
 			delta = getDelta(getProject());
+		}
 
 		if (delta == null || kind == FULL_BUILD) {
 			// Full build

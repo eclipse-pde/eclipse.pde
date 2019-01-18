@@ -27,8 +27,9 @@ public class PluginErrorReporter extends PluginBaseErrorReporter {
 	protected void validateTopLevelAttributes(Element element) {
 		super.validateTopLevelAttributes(element);
 		Attr attr = element.getAttributeNode("class"); //$NON-NLS-1$
-		if (attr != null)
+		if (attr != null) {
 			validateJavaAttribute(element, attr);
+		}
 	}
 
 	@Override

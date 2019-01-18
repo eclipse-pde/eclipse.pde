@@ -49,8 +49,9 @@ public class PluginExportOperation extends FeatureBasedExportOperation {
 		boolean conflict = !super.shouldAddPlugin(bundle, environment);
 		if (conflict) {
 			// make a copy of the state if we haven't already
-			if (fStateCopy == null)
+			if (fStateCopy == null) {
 				copyState(TargetPlatformHelper.getState());
+			}
 			// replace the current BundleDescription with a copy who does not have the platform filter.  This will allow the plug-in to be resolved
 			BundleDescription desc = fStateCopy.removeBundle(bundle.getBundleId());
 			BundleDescription newDesc = fStateCopy.getFactory().createBundleDescription(desc.getBundleId(), desc.getSymbolicName(), desc.getVersion(), desc.getLocation(), desc.getRequiredBundles(), desc.getHost(), desc.getImportPackages(), desc.getExportPackages(), desc.isSingleton(), desc.attachFragments(), desc.dynamicFragments(), null, desc.getExecutionEnvironments(), desc.getGenericRequires(), desc.getGenericCapabilities());

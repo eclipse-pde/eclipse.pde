@@ -19,13 +19,15 @@ import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
-import org.w3c.dom.*;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class LauncherInfo extends ProductObject implements ILauncherInfo {
 
 	private static final long serialVersionUID = 1L;
 	private boolean fUseIcoFile;
-	private Map<String, String> fIcons = new HashMap<>();
+	private final Map<String, String> fIcons = new HashMap<>();
 	private String fLauncherName;
 
 	public LauncherInfo(IProductModel model) {
@@ -41,18 +43,21 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 	public void setLauncherName(String name) {
 		String old = fLauncherName;
 		fLauncherName = name;
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged(P_LAUNCHER, old, fLauncherName);
+		}
 	}
 
 	@Override
 	public void setIconPath(String iconId, String path) {
-		if (path == null)
+		if (path == null) {
 			path = ""; //$NON-NLS-1$
+		}
 		String old = fIcons.get(iconId);
 		fIcons.put(iconId, path);
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged(iconId, old, path);
+		}
 	}
 
 	@Override
@@ -69,8 +74,9 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 	public void setUseWinIcoFile(boolean use) {
 		boolean old = fUseIcoFile;
 		fUseIcoFile = use;
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged(P_USE_ICO, Boolean.toString(old), Boolean.toString(fUseIcoFile));
+		}
 	}
 
 	@Override
@@ -127,8 +133,9 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<launcher"); //$NON-NLS-1$
-		if (fLauncherName != null && fLauncherName.length() > 0)
+		if (fLauncherName != null && fLauncherName.length() > 0) {
 			writer.print(" name=\"" + fLauncherName + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		writer.println(">"); //$NON-NLS-1$
 
 		writeLinux(indent + "   ", writer); //$NON-NLS-1$
@@ -140,8 +147,9 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 	private void writerWin(String indent, PrintWriter writer) {
 		writer.println(indent + "<win " + P_USE_ICO + "=\"" + Boolean.toString(fUseIcoFile) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		String path = fIcons.get(P_ICO_PATH);
-		if (path != null && path.length() > 0)
+		if (path != null && path.length() > 0) {
 			writer.println(indent + "   <ico path=\"" + getWritableString(path) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		writer.print(indent + "   <bmp"); //$NON-NLS-1$
 		writeIcon(indent + "   ", WIN32_16_HIGH, writer); //$NON-NLS-1$
 		writeIcon(indent + "   ", WIN32_16_LOW, writer); //$NON-NLS-1$
@@ -165,14 +173,16 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 
 	private void writeMac(String indent, PrintWriter writer) {
 		String icon = fIcons.get(MACOSX_ICON);
-		if (icon != null && icon.length() > 0)
+		if (icon != null && icon.length() > 0) {
 			writer.println(indent + "<macosx icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 
 	private void writeLinux(String indent, PrintWriter writer) {
 		String icon = fIcons.get(LINUX_ICON);
-		if (icon != null && icon.length() > 0)
+		if (icon != null && icon.length() > 0) {
 			writer.println(indent + "<linux icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 
 }

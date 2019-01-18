@@ -21,8 +21,8 @@ import org.osgi.framework.Version;
  */
 public class PackageExportDescription implements IPackageExportDescription {
 
-	private String fName;
-	private Version fVersion;
+	private final String fName;
+	private final Version fVersion;
 	private String[] fFriends;
 	private boolean fApi;
 

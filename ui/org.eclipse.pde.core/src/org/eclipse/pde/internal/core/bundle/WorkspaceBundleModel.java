@@ -14,10 +14,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bundle;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.IEditableModel;
@@ -35,7 +42,7 @@ import org.eclipse.pde.internal.core.util.ManifestUtils;
 public class WorkspaceBundleModel extends BundleModel implements IEditableModel {
 	private static final long serialVersionUID = 1L;
 
-	private IFile fUnderlyingResource;
+	private final IFile fUnderlyingResource;
 
 	private boolean fDirty;
 
@@ -78,8 +85,9 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 			return null;
 		}
 		IPath path = fUnderlyingResource.getLocation();
-		if (path == null)
+		if (path == null) {
 			return null;
+		}
 		return path.removeLastSegments(2).addTrailingSeparator().toOSString();
 	}
 
@@ -95,8 +103,9 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 
 	@Override
 	public void load() {
-		if (fUnderlyingResource == null)
+		if (fUnderlyingResource == null) {
 			return;
+		}
 		if (fUnderlyingResource.exists()) {
 			InputStream stream = null;
 			try {
@@ -106,8 +115,9 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 				PDECore.logException(e);
 			} finally {
 				try {
-					if (stream != null)
+					if (stream != null) {
 						stream.close();
+					}
 				} catch (IOException e) {
 					PDECore.logException(e);
 				}
@@ -141,8 +151,9 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 
 	@Override
 	public void save() {
-		if (fUnderlyingResource == null)
+		if (fUnderlyingResource == null) {
 			return;
+		}
 		ByteArrayInputStream stream = null;
 		try {
 			String contents = fixLineDelimiter(getContents(), fUnderlyingResource);
@@ -152,8 +163,9 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 			} else {
 				// prevents Core Exception when META-INF folder does not exist
 				IContainer parent = fUnderlyingResource.getParent();
-				if (!parent.exists() && parent instanceof IFolder)
+				if (!parent.exists() && parent instanceof IFolder) {
 					CoreUtility.createFolder((IFolder) parent);
+				}
 				fUnderlyingResource.create(stream, false, null);
 			}
 			stream.close();
@@ -164,8 +176,9 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 			PDECore.logException(e);
 		} finally {
 			try {
-				if (stream != null)
+				if (stream != null) {
 					stream.close();
+				}
 			} catch (IOException e) {
 				PDECore.logException(e);
 			}
@@ -204,8 +217,9 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 
 	@Override
 	public IBundleModelFactory getFactory() {
-		if (fFactory == null)
+		if (fFactory == null) {
 			fFactory = new BundleModelFactory(this);
+		}
 		return fFactory;
 	}
 }

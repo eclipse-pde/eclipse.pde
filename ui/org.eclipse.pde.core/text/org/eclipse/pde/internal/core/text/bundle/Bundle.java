@@ -15,16 +15,20 @@ package org.eclipse.pde.internal.core.text.bundle;
 
 import java.util.Iterator;
 import java.util.Map;
-import org.eclipse.jface.text.*;
-import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
 import org.eclipse.pde.internal.core.util.HeaderMap;
 import org.osgi.framework.Constants;
 
 public class Bundle implements IBundle {
 
-	private BundleModel fModel;
-	private Map<String, IManifestHeader> fDocumentHeaders = new HeaderMap<>();
+	private final BundleModel fModel;
+	private final Map<String, IManifestHeader> fDocumentHeaders = new HeaderMap<>();
 
 	public Bundle(BundleModel model) {
 		fModel = model;
@@ -53,8 +57,9 @@ public class Bundle implements IBundle {
 		iter = headers.keySet().iterator();
 		while (iter.hasNext()) {
 			String key = iter.next().toString();
-			if (key.equals(Constants.BUNDLE_MANIFESTVERSION))
+			if (key.equals(Constants.BUNDLE_MANIFESTVERSION)) {
 				continue;
+			}
 			String value = headers.get(key).toString();
 			IManifestHeader header = fModel.getFactory().createHeader(key.toString(), value);
 			fDocumentHeaders.put(key.toString(), header);

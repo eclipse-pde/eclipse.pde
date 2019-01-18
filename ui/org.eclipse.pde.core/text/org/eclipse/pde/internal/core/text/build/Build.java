@@ -13,8 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.build;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Properties;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -27,8 +32,8 @@ import org.eclipse.pde.internal.core.util.PropertiesUtil;
 
 public class Build implements IBuild {
 
-	private BuildModel fModel;
-	private HashMap<String, IBuildEntry> fEntries = new LinkedHashMap<>();
+	private final BuildModel fModel;
+	private final HashMap<String, IBuildEntry> fEntries = new LinkedHashMap<>();
 
 	public Build(BuildModel model) {
 		fModel = model;
@@ -52,8 +57,9 @@ public class Build implements IBuild {
 
 	@Override
 	public void remove(IBuildEntry entry) throws CoreException {
-		if (fEntries.remove(entry.getName()) != null)
+		if (fEntries.remove(entry.getName()) != null) {
 			fModel.fireModelChanged(new ModelChangedEvent(fModel, IModelChangedEvent.REMOVE, new Object[] {entry}, null));
+		}
 	}
 
 	@Override
@@ -108,12 +114,15 @@ public class Build implements IBuild {
 					}
 				} else {
 					int index = line.indexOf('=');
-					if (index == -1)
+					if (index == -1) {
 						index = line.indexOf(':');
-					if (index == -1)
+					}
+					if (index == -1) {
 						index = line.indexOf(' ');
-					if (index == -1)
+					}
+					if (index == -1) {
 						index = line.indexOf('\t');
+					}
 					String name = (index != -1) ? line.substring(0, index).trim() : line;
 					String propertyKey;
 					try {

@@ -15,12 +15,15 @@ package org.eclipse.pde.internal.core.text.bundle;
 
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundleModelFactory;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.osgi.framework.Constants;
 
 public class BundleModelFactory implements IBundleModelFactory {
 
-	private IBundleModel fModel;
+	private final IBundleModel fModel;
 
 	public BundleModelFactory(IBundleModel model) {
 		fModel = model;
@@ -36,11 +39,12 @@ public class BundleModelFactory implements IBundleModelFactory {
 		ManifestHeader header = null;
 		IBundle bundle = fModel.getBundle();
 		String newLine;
-		if (fModel instanceof BundleModel)
+		if (fModel instanceof BundleModel) {
 			newLine = TextUtilities.getDefaultLineDelimiter(((BundleModel) fModel).getDocument());
-		else
+		} else {
 			// use consistent line endings, see bug 506157
 			newLine = "\n";
+		}
 
 		if (key.equalsIgnoreCase(Constants.BUNDLE_ACTIVATOR)) {
 			header = new BundleActivatorHeader(key, value, bundle, newLine);

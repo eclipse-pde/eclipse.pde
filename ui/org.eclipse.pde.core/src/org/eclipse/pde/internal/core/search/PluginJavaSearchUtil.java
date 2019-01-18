@@ -20,11 +20,21 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.osgi.service.resolver.VersionRange;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.PDEManager;
 
@@ -44,14 +54,16 @@ public class PluginJavaSearchUtil {
 	}
 
 	public static void collectAllPrerequisites(IPluginModelBase model, HashSet<IPluginModelBase> set) {
-		if (model == null || !set.add(model))
+		if (model == null || !set.add(model)) {
 			return;
+		}
 		IPluginImport[] imports = model.getPluginBase().getImports();
 		for (IPluginImport pluginImport : imports) {
 			if (pluginImport.isReexported()) {
 				IPluginModelBase child = PluginRegistry.findModel(pluginImport.getId());
-				if (child != null)
+				if (child != null) {
 					collectAllPrerequisites(child, set);
+				}
 			}
 		}
 	}
@@ -88,8 +100,9 @@ public class PluginJavaSearchUtil {
 			IJavaElement[] children = root.getChildren();
 			for (IJavaElement element : children) {
 				IPackageFragment fragment = (IPackageFragment) element;
-				if (!filterEmpty || fragment.hasChildren())
+				if (!filterEmpty || fragment.hasChildren()) {
 					result.add(fragment);
+				}
 			}
 		} catch (JavaModelException e) {
 		}
@@ -99,8 +112,9 @@ public class PluginJavaSearchUtil {
 		IPluginBase plugin = model.getPluginBase();
 
 		IFragmentModel[] fragments = new IFragmentModel[0];
-		if (plugin instanceof IPlugin)
+		if (plugin instanceof IPlugin) {
 			fragments = PDEManager.findFragmentsFor(model);
+		}
 
 		File file = new File(model.getInstallLocation());
 		if (file.isFile()) {

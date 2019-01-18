@@ -20,7 +20,9 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 
@@ -31,8 +33,9 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 	@Override
 	public void validate(IProgressMonitor monitor) {
 		Element element = getDocumentRoot();
-		if (element == null)
+		if (element == null) {
 			return;
+		}
 		String elementName = element.getNodeName();
 		if (!getRootElementName().equals(elementName)) {
 			reportIllegalElement(element, CompilerFlags.ERROR);
@@ -40,8 +43,9 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 			validateTopLevelAttributes(element);
 			NodeList children = element.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++) {
-				if (monitor.isCanceled())
+				if (monitor.isCanceled()) {
 					break;
+				}
 				Element child = (Element) children.item(i);
 				String name = child.getNodeName();
 				if (name.equals("extension")) { //$NON-NLS-1$
@@ -54,8 +58,9 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 					validateRequires(child);
 				} else {
 					int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ELEMENT);
-					if (severity != CompilerFlags.IGNORE)
+					if (severity != CompilerFlags.IGNORE) {
 						reportIllegalElement(element, severity);
+					}
 				}
 			}
 		}
@@ -72,8 +77,9 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 			validateTranslatableString(element, element.getAttributeNode("name"), true); //$NON-NLS-1$
 		}
 		Attr attr = element.getAttributeNode("provider-name"); //$NON-NLS-1$
-		if (attr != null)
+		if (attr != null) {
 			validateTranslatableString(element, attr, true);
+		}
 	}
 
 	protected abstract String getRootElementName();
@@ -96,20 +102,24 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 			validatePluginIDRef(element, element.getAttributeNode("plugin")); //$NON-NLS-1$
 		}
 		Attr attr = element.getAttributeNode("version"); //$NON-NLS-1$
-		if (attr != null)
+		if (attr != null) {
 			validateVersionAttribute(element, attr);
+		}
 
 		attr = element.getAttributeNode("match"); //$NON-NLS-1$
-		if (attr != null)
+		if (attr != null) {
 			validateMatch(element, attr);
+		}
 
 		attr = element.getAttributeNode("export"); //$NON-NLS-1$
-		if (attr != null)
+		if (attr != null) {
 			validateBoolean(element, attr);
+		}
 
 		attr = element.getAttributeNode("optional"); //$NON-NLS-1$
-		if (attr != null)
+		if (attr != null) {
 			validateBoolean(element, attr);
+		}
 	}
 
 	protected void validateRuntime(Element element) {
@@ -152,8 +162,9 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 			return;
 		}
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNRESOLVED_IMPORTS);
-		if ("true".equals(element.getAttribute("optional")) && severity == CompilerFlags.ERROR) //$NON-NLS-1$ //$NON-NLS-2$
+		if ("true".equals(element.getAttribute("optional")) && severity == CompilerFlags.ERROR) { //$NON-NLS-1$ //$NON-NLS-2$
 			severity = CompilerFlags.WARNING;
+		}
 		if (severity != CompilerFlags.IGNORE) {
 			IPluginModelBase model = PluginRegistry.findModel(attr.getValue());
 			if (model == null || !model.isEnabled()) {

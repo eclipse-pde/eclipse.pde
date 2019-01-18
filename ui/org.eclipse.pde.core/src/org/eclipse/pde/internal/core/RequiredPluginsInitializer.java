@@ -14,9 +14,15 @@
 package org.eclipse.pde.internal.core;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.ClasspathContainerInitializer;
+import org.eclipse.jdt.core.IClasspathContainer;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
@@ -48,8 +54,9 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 
 	@Override
 	public Object getComparisonID(IPath containerPath, IJavaProject project) {
-		if (containerPath == null || project == null)
+		if (containerPath == null || project == null) {
 			return null;
+		}
 
 		return containerPath.segment(0) + "/" + project.getPath().segment(0); //$NON-NLS-1$
 	}

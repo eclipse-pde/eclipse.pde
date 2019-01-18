@@ -15,20 +15,45 @@ package org.eclipse.pde.internal.core.project;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.project.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.project.IBundleClasspathEntry;
+import org.eclipse.pde.core.project.IBundleProjectDescription;
+import org.eclipse.pde.core.project.IBundleProjectService;
+import org.eclipse.pde.core.project.IHostDescription;
+import org.eclipse.pde.core.project.IPackageExportDescription;
+import org.eclipse.pde.core.project.IPackageImportDescription;
+import org.eclipse.pde.core.project.IRequiredBundleDescription;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.osgi.framework.*;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
 
 /**
  * A bundle project description contains the meta-data required to define
@@ -40,7 +65,7 @@ import org.osgi.framework.*;
  */
 public class BundleProjectDescription implements IBundleProjectDescription {
 
-	private IProject fProject;
+	private final IProject fProject;
 	private IPath fRoot;
 	private String fSymbolicName;
 	private String fBundleName;
@@ -66,7 +91,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	private IBundleProjectService fService;
 	private String[] fLaunchShortcuts;
 	private String fExportWizard;
-	private Map<String, String> fHeaders = new HashMap<>();
+	private final Map<String, String> fHeaders = new HashMap<>();
 	private Map<?, ?> fReadHeaders = null;
 
 	/**

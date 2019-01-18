@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

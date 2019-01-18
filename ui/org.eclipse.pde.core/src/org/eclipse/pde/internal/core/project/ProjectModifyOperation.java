@@ -13,23 +13,70 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.project;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.util.Set;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.resolver.VersionRange;
-import org.eclipse.pde.core.build.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.project.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModelFactory;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IMatchRules;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.project.IBundleClasspathEntry;
+import org.eclipse.pde.core.project.IBundleProjectDescription;
+import org.eclipse.pde.core.project.IBundleProjectService;
+import org.eclipse.pde.core.project.IHostDescription;
+import org.eclipse.pde.core.project.IPackageExportDescription;
+import org.eclipse.pde.core.project.IPackageImportDescription;
+import org.eclipse.pde.core.project.IRequiredBundleDescription;
+import org.eclipse.pde.internal.core.ClasspathComputer;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
-import org.eclipse.pde.internal.core.bundle.*;
-import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
+import org.eclipse.pde.internal.core.bundle.WorkspaceBundleFragmentModel;
+import org.eclipse.pde.internal.core.bundle.WorkspaceBundleModel;
+import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
-import org.eclipse.pde.internal.core.text.bundle.*;
+import org.eclipse.pde.internal.core.text.bundle.BundleModelFactory;
+import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
+import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
+import org.eclipse.pde.internal.core.text.bundle.PackageFriend;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
@@ -608,9 +655,9 @@ public class ProjectModifyOperation {
 			if (!isEqual(description.getActivationPolicy(), before.getActivationPolicy())) {
 				if (Constants.ACTIVATION_LAZY.equals(description.getActivationPolicy())) {
 					if (description.isEquinox()) {
-						if (targetVersion.equals(IBundleProjectDescription.VERSION_3_1))
+						if (targetVersion.equals(IBundleProjectDescription.VERSION_3_1)) {
 							bundle.setHeader(ICoreConstants.ECLIPSE_AUTOSTART, "true"); //$NON-NLS-1$
-						else {
+						} else {
 							double version = Double.parseDouble(targetVersion);
 							if (version >= 3.4) {
 								// use OSGi R4.1 header
@@ -870,10 +917,12 @@ public class ProjectModifyOperation {
 					IPath srcFolder = folder.getSourcePath();
 					if (srcFolder != null) {
 						IBuildEntry entry = getBuildEntry(build, factory, IBuildEntry.JAR_PREFIX + libraryName);
-						if (!srcFolder.isEmpty())
+						if (!srcFolder.isEmpty()) {
 							entry.addToken(srcFolder.addTrailingSeparator().toString());
-						else
+						}
+						else {
 							entry.addToken("."); //$NON-NLS-1$
+						}
 					}
 
 					// OUTPUT.<LIBRARY_NAME>
@@ -886,10 +935,11 @@ public class ProjectModifyOperation {
 					if (outFolder != null) {
 						IBuildEntry entry = getBuildEntry(build, factory, IBuildEntry.OUTPUT_PREFIX + libraryName);
 						String token = null;
-						if (!outFolder.isEmpty())
+						if (!outFolder.isEmpty()) {
 							token = outFolder.addTrailingSeparator().toString();
-						else
+						} else {
 							token = "."; //$NON-NLS-1$
+						}
 						if (!entry.contains(token)) {
 							entry.addToken(token);
 						}

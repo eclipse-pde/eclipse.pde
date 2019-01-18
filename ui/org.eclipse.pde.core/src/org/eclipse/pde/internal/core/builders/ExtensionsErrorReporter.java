@@ -15,22 +15,59 @@
 package org.eclipse.pde.internal.core.builders;
 
 import java.io.File;
-import java.util.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.plugin.IExtensions;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.core.AbstractNLModel;
+import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.NLResourceHelper;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.PDEManager;
 import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
+import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaEnumeration;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
+import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
+import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
+import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.eclipse.pde.internal.core.util.*;
-import org.w3c.dom.*;
+import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.IdUtil;
+import org.eclipse.pde.internal.core.util.PDEJavaHelper;
+import org.eclipse.pde.internal.core.util.PDESchemaHelper;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class ExtensionsErrorReporter extends ManifestErrorReporter {
@@ -38,15 +75,16 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	/**
 	 * PDE model object for the project. May be <code>null</code> if there is no backing model.
 	 */
-	private IPluginModelBase fModel;
+	private final IPluginModelBase fModel;
 	private IBuild fBuildModel;
 
 	public ExtensionsErrorReporter(IFile file) {
 		super(file);
 		fModel = PluginRegistry.findModel(file.getProject());
 		try {
-			if (fModel != null && fModel.getUnderlyingResource() != null)
+			if (fModel != null && fModel.getUnderlyingResource() != null) {
 				fBuildModel = ClasspathUtilCore.getBuild(fModel);
+			}
 		} catch (CoreException e) {
 		}
 	}
@@ -61,8 +99,9 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	@Override
 	public void validate(IProgressMonitor monitor) {
 		Element element = getDocumentRoot();
-		if (element == null)
+		if (element == null) {
 			return;
+		}
 		String elementName = element.getNodeName();
 		if (!"plugin".equals(elementName) && !"fragment".equals(elementName)) { //$NON-NLS-1$ //$NON-NLS-2$
 			reportIllegalElement(element, CompilerFlags.ERROR);
@@ -77,8 +116,9 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
 			NodeList children = element.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++) {
-				if (monitor.isCanceled())
+				if (monitor.isCanceled()) {
 					break;
+				}
 				Element child = (Element) children.item(i);
 				String name = child.getNodeName();
 				if (name.equals("extension")) { //$NON-NLS-1$
@@ -88,12 +128,14 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				} else {
 					if (!name.equals("runtime") && !name.equals("requires")) { //$NON-NLS-1$ //$NON-NLS-2$
 						severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ELEMENT);
-						if (severity != CompilerFlags.IGNORE)
+						if (severity != CompilerFlags.IGNORE) {
 							reportIllegalElement(child, severity);
+						}
 					} else {
 						severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
-						if (severity != CompilerFlags.IGNORE)
+						if (severity != CompilerFlags.IGNORE) {
 							reportUnusedElement(child, severity);
+						}
 					}
 				}
 			}
@@ -108,8 +150,9 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	}
 
 	protected void validateExtension(Element element) {
-		if (!assertAttributeDefined(element, "point", CompilerFlags.ERROR)) //$NON-NLS-1$
+		if (!assertAttributeDefined(element, "point", CompilerFlags.ERROR)) { //$NON-NLS-1$
 			return;
+		}
 		String pointID = element.getAttribute("point"); //$NON-NLS-1$
 		if (!PDECore.getDefault().getExtensionsRegistry().hasExtensionPoint(pointID)) {
 			int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNRESOLVED_EX_POINTS);
@@ -192,8 +235,9 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (schemaElement == null && parentSchema != null) {
 			ISchemaAttribute attr = parentSchema.getAttribute(elementName);
 			if (attr != null && attr.getKind() == IMetaAttribute.JAVA) {
-				if (attr.isDeprecated())
+				if (attr.isDeprecated()) {
 					reportDeprecatedAttribute(element, element.getAttributeNode("class")); //$NON-NLS-1$
+				}
 				validateJavaAttribute(element, element.getAttributeNode("class")); //$NON-NLS-1$
 			}
 		} else {
@@ -202,13 +246,15 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				validateExistingExtensionAttributes(element, element.getAttributes(), schemaElement);
 				validateInternalExtensionAttribute(element, schemaElement);
 				if (schemaElement.isDeprecated()) {
-					if (schemaElement instanceof ISchemaRootElement)
+					if (schemaElement instanceof ISchemaRootElement) {
 						reportDeprecatedRootElement(element, ((ISchemaRootElement) schemaElement).getDeprecatedSuggestion());
-					else
+					} else {
 						reportDeprecatedElement(element);
+					}
 				}
-				if (schemaElement.hasTranslatableContent())
+				if (schemaElement.hasTranslatableContent()) {
 					validateTranslatableElementContent(element);
+				}
 				// Bug 213457 - look up elements based on the schema in which the parent is found
 				schema = schemaElement.getSchema();
 			}
@@ -221,21 +267,25 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
 	private void validateInternalExtensionAttribute(Element element, ISchemaElement schemaElement) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_INTERNAL);
-		if (severity == CompilerFlags.IGNORE)
+		if (severity == CompilerFlags.IGNORE) {
 			return;
+		}
 
 		if (schemaElement instanceof ISchemaRootElement) {
 			ISchemaRootElement rootElement = (ISchemaRootElement) schemaElement;
 			String epid = schemaElement.getSchema().getPluginId();
-			if (fModel == null || fModel.getPluginBase() == null)
+			if (fModel == null || fModel.getPluginBase() == null) {
 				return;
+			}
 			String pid = fModel.getPluginBase().getId();
-			if (epid == null || pid == null)
+			if (epid == null || pid == null) {
 				return;
+			}
 			if (rootElement.isInternal() && !epid.equals(pid)) {
 				String point = element.getAttribute("point"); //$NON-NLS-1$
-				if (point == null)
+				if (point == null) {
 					return; // should never come to this...
+				}
 				VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_internal_rootElement, point), getLine(element, "point"), severity, PDEMarkerFactory.CAT_DEPRECATION); //$NON-NLS-1$
 				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_INTERNAL);
 			}
@@ -279,13 +329,15 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (type instanceof ISchemaComplexType) {
 			ISchemaComplexType complexType = (ISchemaComplexType) type;
 			ISchemaCompositor compositor = complexType.getCompositor();
-			if (compositor != null)
+			if (compositor != null) {
 				computeAllowedElements(compositor, elementSet);
+			}
 
 			ISchemaAttribute[] attrs = complexType.getAttributes();
 			for (ISchemaAttribute attr : attrs) {
-				if (attr.getKind() == IMetaAttribute.JAVA)
+				if (attr.getKind() == IMetaAttribute.JAVA) {
 					elementSet.add(attr.getName());
+				}
 			}
 		}
 	}
@@ -296,8 +348,9 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			if (child instanceof ISchemaObjectReference) {
 				ISchemaObjectReference ref = (ISchemaObjectReference) child;
 				ISchemaElement refElement = (ISchemaElement) ref.getReferencedObject();
-				if (refElement != null)
+				if (refElement != null) {
 					elementSet.add(refElement.getName());
+				}
 			} else if (child instanceof ISchemaCompositor) {
 				computeAllowedElements((ISchemaCompositor) child, elementSet);
 			}
@@ -306,8 +359,9 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
 	private void validateRequiredExtensionAttributes(Element element, ISchemaElement schemaElement) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_NO_REQUIRED_ATT);
-		if (severity == CompilerFlags.IGNORE)
+		if (severity == CompilerFlags.IGNORE) {
 			return;
+		}
 
 		ISchemaAttribute[] attInfos = schemaElement.getAttributes();
 		for (ISchemaAttribute attInfo : attInfos) {
@@ -340,8 +394,9 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 					validateJavaAttribute(element, attr);
 				} else {
 					int flag = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ATTRIBUTE);
-					if (flag != CompilerFlags.IGNORE)
+					if (flag != CompilerFlags.IGNORE) {
 						reportUnknownAttribute(element, attr.getName(), flag);
+					}
 				}
 			} else {
 				validateExtensionAttribute(element, attr, attInfo);
@@ -380,16 +435,17 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			Attr idAttr = element.getAttributeNode("id"); //$NON-NLS-1$
 			double schemaVersion = getSchemaVersion();
 			String message = null;
-			if (schemaVersion < 3.2 && !IdUtil.isValidSimpleID(idAttr.getValue()))
+			if (schemaVersion < 3.2 && !IdUtil.isValidSimpleID(idAttr.getValue())) {
 				message = NLS.bind(PDECoreMessages.Builders_Manifest_simpleID, idAttr.getValue());
-			else if (schemaVersion >= 3.2) {
+			} else if (schemaVersion >= 3.2) {
 				if (!IdUtil.isValidCompositeID(idAttr.getValue())) {
 					message = NLS.bind(PDECoreMessages.Builders_Manifest_compositeID, idAttr.getValue());
 				}
 			}
 
-			if (message != null)
+			if (message != null) {
 				report(message, getLine(element, idAttr.getName()), CompilerFlags.WARNING, PDEMarkerFactory.CAT_OTHER);
+			}
 		}
 
 		assertAttributeDefined(element, "name", CompilerFlags.ERROR); //$NON-NLS-1$
@@ -409,8 +465,9 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ELEMENT);
 		if (severity != CompilerFlags.IGNORE) {
 			NodeList children = element.getChildNodes();
-			for (int i = 0; i < children.getLength(); i++)
+			for (int i = 0; i < children.getLength(); i++) {
 				reportIllegalElement((Element) children.item(i), severity);
+			}
 		}
 
 		// Validate the "schema" attribute of the extension point
@@ -422,8 +479,9 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			String errorMessage = null;
 			// Check to see if the value specified is an extension point schema and it exists
 			if (!(res instanceof IFile && (res.getName().endsWith(".exsd") || //$NON-NLS-1$
-			res.getName().endsWith(".mxsd")))) //$NON-NLS-1$
+					res.getName().endsWith(".mxsd")))) { //$NON-NLS-1$
 				errorMessage = PDECoreMessages.ExtensionsErrorReporter_InvalidSchema;
+			}
 			// Report an error if one was found
 			if (errorMessage != null) {
 				severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_RESOURCE);
@@ -436,11 +494,13 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	}
 
 	protected void validateTranslatableString(Element element, Attr attr, boolean shouldTranslate) {
-		if (!shouldTranslate)
+		if (!shouldTranslate) {
 			return;
+		}
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_NOT_EXTERNALIZED);
-		if (severity == CompilerFlags.IGNORE)
+		if (severity == CompilerFlags.IGNORE) {
 			return;
+		}
 		String value = attr.getValue();
 		if (!value.startsWith("%")) { //$NON-NLS-1$
 			VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_non_ext_attribute, attr.getName()), getLine(element, attr.getName()), severity, PDEMarkerFactory.P_UNTRANSLATED_NODE, element, attr.getName(), PDEMarkerFactory.CAT_NLS);
@@ -456,11 +516,13 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
 	protected void validateTranslatableElementContent(Element element) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_NOT_EXTERNALIZED);
-		if (severity == CompilerFlags.IGNORE)
+		if (severity == CompilerFlags.IGNORE) {
 			return;
+		}
 		String value = getTextContent(element);
-		if (value == null)
+		if (value == null) {
 			return;
+		}
 		if (!value.startsWith("%")) { //$NON-NLS-1$
 			VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_non_ext_element, element.getNodeName()), getLine(element), severity, PDEMarkerFactory.P_UNTRANSLATED_NODE, element, null, PDEMarkerFactory.CAT_NLS);
 			addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_NOT_EXTERNALIZED);
@@ -521,10 +583,12 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			StringTokenizer tokenizer = new StringTokenizer(TargetPlatform.getNL(), "_"); //$NON-NLS-1$
 			String language = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : null;
 			String country = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : null;
-			if (language != null && country != null)
+			if (language != null && country != null) {
 				paths.add(location.replaceAll("\\$nl\\$", "nl" + IPath.SEPARATOR + language + IPath.SEPARATOR + country)); //$NON-NLS-1$ //$NON-NLS-2$
-			if (language != null)
+			}
+			if (language != null) {
 				paths.add(location.replaceAll("\\$nl\\$", "nl" + IPath.SEPARATOR + language)); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			paths.add(location.replaceAll("\\$nl\\$", "")); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			paths.add(location);
@@ -533,15 +597,19 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		for (int i = 0; i < paths.size(); i++) {
 			if (bundleJar == null) {
 				IPath currPath = new Path(paths.get(i).toString());
-				if (currPath.isAbsolute() && currPath.toFile().exists())
+				if (currPath.isAbsolute() && currPath.toFile().exists()) {
 					return true;
-				if (PDEProject.getBundleRoot(fFile.getProject()).findMember(currPath) != null)
+				}
+				if (PDEProject.getBundleRoot(fFile.getProject()).findMember(currPath) != null) {
 					return true;
-				if (fBuildModel != null && fBuildModel.getEntry("source." + paths.get(i)) != null) //$NON-NLS-1$
+				}
+				if (fBuildModel != null && fBuildModel.getEntry("source." + paths.get(i)) != null) { //$NON-NLS-1$
 					return true;
+				}
 			} else {
-				if (CoreUtility.jarContainsResource(new File(bundleJar), paths.get(i).toString(), false))
+				if (CoreUtility.jarContainsResource(new File(bundleJar), paths.get(i).toString(), false)) {
 					return true;
+				}
 			}
 		}
 
@@ -555,8 +623,9 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		// be careful: people have the option to use the format:
 		// fullqualifiedName:staticMethod
 		int index = value.indexOf(":"); //$NON-NLS-1$
-		if (index != -1)
+		if (index != -1) {
 			value = value.substring(0, index);
+		}
 
 		// assume we're on the classpath already
 		boolean onClasspath = true;
@@ -575,8 +644,9 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				return;
 			}
 			BundleDescription desc = fModel.getBundleDescription();
-			if (desc == null)
+			if (desc == null) {
 				return;
+			}
 			// only check if we're discouraged if there is something on the classpath
 			if (onClasspath && PDEJavaHelper.isDiscouraged(value, javaProject, desc)) {
 				VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Manifest_discouragedClass, (new String[] {value, attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.M_DISCOURAGED_CLASS, element, attr.getName() + F_ATT_VALUE_PREFIX + attr.getValue(), PDEMarkerFactory.CAT_OTHER);
@@ -639,13 +709,15 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
 		if (severity != CompilerFlags.IGNORE) {
 			String point = element.getAttribute("point"); //$NON-NLS-1$
-			if (point == null)
+			if (point == null) {
 				return; // should never come to this...
+			}
 			String message;
-			if (suggestion != null)
+			if (suggestion != null) {
 				message = NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_rootElementSuggestion, point, suggestion);
-			else
+			} else {
 				message = NLS.bind(PDECoreMessages.Builders_Manifest_deprecated_rootElement, point);
+			}
 			VirtualMarker marker = report(message, getLine(element, "point"), severity, PDEMarkerFactory.CAT_DEPRECATION); //$NON-NLS-1$
 			addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_DEPRECATED);
 		}

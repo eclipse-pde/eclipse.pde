@@ -16,11 +16,17 @@ package org.eclipse.pde.internal.core.text.build;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
@@ -31,9 +37,9 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 
 	private int fLength = -1;
 	private int fOffset = -1;
-	private IBuildModel fModel;
+	private final IBuildModel fModel;
 	private String fName;
-	private ArrayList<Object> fTokens = new ArrayList<>();
+	private final ArrayList<Object> fTokens = new ArrayList<>();
 	private String fLineDelimiter;
 
 	public BuildEntry(String name, IBuildModel model) {
@@ -53,10 +59,12 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 
 	@Override
 	public void addToken(String token) throws CoreException {
-		if (fTokens.contains(token))
+		if (fTokens.contains(token)) {
 			return;
-		if (fTokens.add(token))
+		}
+		if (fTokens.add(token)) {
 			getModel().fireModelObjectChanged(this, getName(), null, token);
+		}
 	}
 
 	@Override
@@ -76,8 +84,9 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 
 	@Override
 	public void removeToken(String token) throws CoreException {
-		if (fTokens.remove(token))
+		if (fTokens.remove(token)) {
 			getModel().fireModelObjectChanged(this, getName(), token, null);
+		}
 	}
 
 	@Override
@@ -102,8 +111,9 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 				PDECore.logException(e);
 			}
 			getModel().fireModelObjectChanged(this, getName(), oldName, name);
-		} else
+		} else {
 			fName = name;
+		}
 	}
 
 	@Override

@@ -14,12 +14,17 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeatureObject;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.w3c.dom.Node;
 
@@ -76,15 +81,17 @@ public abstract class FeatureObject extends PlatformObject implements IFeatureOb
 
 	@Override
 	public String getLabel() {
-		if (label == null)
+		if (label == null) {
 			return ""; //$NON-NLS-1$
+		}
 		return label;
 	}
 
 	@Override
 	public String getTranslatableLabel() {
-		if (label == null)
+		if (label == null) {
 			return ""; //$NON-NLS-1$
+		}
 		return model.getResourceString(label);
 	}
 
@@ -95,8 +102,9 @@ public abstract class FeatureObject extends PlatformObject implements IFeatureOb
 
 	String getNodeAttribute(Node node, String name) {
 		Node attribute = node.getAttributes().getNamedItem(name);
-		if (attribute != null)
+		if (attribute != null) {
 			return attribute.getNodeValue();
+		}
 		return null;
 	}
 

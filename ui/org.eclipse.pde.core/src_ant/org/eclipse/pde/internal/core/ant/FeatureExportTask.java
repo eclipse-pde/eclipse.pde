@@ -42,8 +42,9 @@ public class FeatureExportTask extends BaseExportTask {
 		if (!new File(fDestination).isAbsolute()) {
 			File home = new File(getLocation().getFileName()).getParentFile();
 			info.destinationDirectory = new File(home, fDestination).toString();
-		} else
+		} else {
 			info.destinationDirectory = fDestination;
+		}
 		return new FeatureExportOperation(info, jobName);
 	}
 
@@ -54,8 +55,9 @@ public class FeatureExportTask extends BaseExportTask {
 		while (tok.hasMoreTokens()) {
 			String id = tok.nextToken().trim();
 			IFeatureModel model = manager.findFeatureModel(id);
-			if (model != null)
+			if (model != null) {
 				list.add(model);
+			}
 		}
 
 		fFeatures = list.toArray(new IFeatureModel[list.size()]);

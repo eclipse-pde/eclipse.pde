@@ -16,7 +16,9 @@ package org.eclipse.pde.internal.core.product;
 import java.io.PrintWriter;
 import org.eclipse.pde.internal.core.iproduct.IPreferencesInfo;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
-import org.w3c.dom.*;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class PreferencesInfo extends ProductObject implements IPreferencesInfo {
 
@@ -35,10 +37,12 @@ public class PreferencesInfo extends ProductObject implements IPreferencesInfo {
 		fSourceFilePath = text;
 		if (isEditable()) {
 			if (old != null && text != null) {
-				if (!old.equals(text))
+				if (!old.equals(text)) {
 					firePropertyChanged(P_SOURCEFILEPATH, old, fSourceFilePath);
-			} else if (old != text)
+				}
+			} else if (old != text) {
 				firePropertyChanged(P_SOURCEFILEPATH, old, fSourceFilePath);
+			}
 		}
 	}
 
@@ -53,10 +57,12 @@ public class PreferencesInfo extends ProductObject implements IPreferencesInfo {
 		fOverwrite = text;
 		if (isEditable()) {
 			if (old != null && text != null) {
-				if (!old.equals(text))
+				if (!old.equals(text)) {
 					firePropertyChanged(P_OVERWRITE, old, fOverwrite);
-			} else if (old != text)
+				}
+			} else if (old != text) {
 				firePropertyChanged(P_OVERWRITE, old, fOverwrite);
+			}
 		}
 	}
 
@@ -71,10 +77,12 @@ public class PreferencesInfo extends ProductObject implements IPreferencesInfo {
 		fPreferenceCustomizationPath = text;
 		if (isEditable()) {
 			if (old != null && text != null) {
-				if (!old.equals(text))
+				if (!old.equals(text)) {
 					firePropertyChanged(P_TARGETFILEPATH, old, fPreferenceCustomizationPath);
-			} else if (old != text)
+				}
+			} else if (old != text) {
 				firePropertyChanged(P_TARGETFILEPATH, old, fPreferenceCustomizationPath);
+			}
 		}
 	}
 
@@ -108,13 +116,15 @@ public class PreferencesInfo extends ProductObject implements IPreferencesInfo {
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				if (child.getNodeName().equals("sourcefile")) { //$NON-NLS-1$
 					fSourceFilePath = ((Element) child).getAttribute("path"); //$NON-NLS-1$
-					if (fSourceFilePath.length() == 0)
+					if (fSourceFilePath.length() == 0) {
 						fSourceFilePath = null;
+					}
 				} else if (child.getNodeName().equals("targetfile")) { //$NON-NLS-1$
 					fOverwrite = ((Element) child).getAttribute("overwrite"); //$NON-NLS-1$
 					fPreferenceCustomizationPath = ((Element) child).getAttribute("path"); //$NON-NLS-1$
-					if (fPreferenceCustomizationPath.length() == 0)
+					if (fPreferenceCustomizationPath.length() == 0) {
 						fPreferenceCustomizationPath = null;
+					}
 				}
 			}
 		}

@@ -13,7 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.Vector;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.bundle.BundleObject;
@@ -26,7 +29,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 
 	private static final long serialVersionUID = 1L;
 
-	private boolean fSort;
+	private final boolean fSort;
 
 	protected ArrayList<Object> fManifestElements;
 
@@ -83,8 +86,9 @@ public class CompositeManifestHeader extends ManifestHeader {
 		}
 		String old = fValue;
 		fValue = sb.toString();
-		if (notify)
+		if (notify) {
 			firePropertyChanged(this, fName, old, fValue);
+		}
 	}
 
 	protected void addManifestElement(String value) {
@@ -105,8 +109,9 @@ public class CompositeManifestHeader extends ManifestHeader {
 	}
 
 	protected void addManifestElements(PDEManifestElement[] elements) {
-		for (PDEManifestElement element : elements)
+		for (PDEManifestElement element : elements) {
 			addManifestElement(element, false);
+		}
 		update(false);
 		fireStructureChanged(elements, IModelChangedEvent.INSERT);
 	}
@@ -115,12 +120,14 @@ public class CompositeManifestHeader extends ManifestHeader {
 		element.setModel(getModel());
 		element.setHeader(this);
 		if (fSort) {
-			if (fElementMap == null)
+			if (fElementMap == null) {
 				fElementMap = new TreeMap<>();
+			}
 			fElementMap.put(element.getValue(), element);
 		} else {
-			if (fManifestElements == null)
+			if (fManifestElements == null) {
 				fManifestElements = new ArrayList<>(1);
+			}
 			fManifestElements.add(element);
 		}
 		if (update) {
@@ -142,41 +149,48 @@ public class CompositeManifestHeader extends ManifestHeader {
 		} else if (fManifestElements != null) {
 			for (int i = 0; i < fManifestElements.size(); i++) {
 				PDEManifestElement element = (PDEManifestElement) fManifestElements.get(i);
-				if (name.equals(element.getValue()))
+				if (name.equals(element.getValue())) {
 					object = fManifestElements.remove(i);
+				}
 			}
 		}
 		update(false);
-		if (object instanceof BundleObject)
+		if (object instanceof BundleObject) {
 			fireStructureChanged((BundleObject) object, IModelChangedEvent.REMOVE);
+		}
 		return object;
 	}
 
 	public PDEManifestElement[] getElements() {
-		if (fSort && fElementMap != null)
+		if (fSort && fElementMap != null) {
 			return fElementMap.values().toArray(new PDEManifestElement[fElementMap.size()]);
+		}
 
-		if (fManifestElements != null)
+		if (fManifestElements != null) {
 			return fManifestElements.toArray(new PDEManifestElement[fManifestElements.size()]);
+		}
 
 		return NO_ELEMENTS;
 	}
 
 	public boolean isEmpty() {
-		if (fSort)
+		if (fSort) {
 			return fElementMap == null || fElementMap.isEmpty();
+		}
 		return fManifestElements == null || fManifestElements.isEmpty();
 	}
 
 	public boolean hasElement(String name) {
-		if (fSort && fElementMap != null)
+		if (fSort && fElementMap != null) {
 			return fElementMap.containsKey(name);
+		}
 
 		if (fManifestElements != null) {
 			for (int i = 0; i < fManifestElements.size(); i++) {
 				PDEManifestElement element = (PDEManifestElement) fManifestElements.get(i);
-				if (name.equals(element.getValue()))
+				if (name.equals(element.getValue())) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -192,8 +206,9 @@ public class CompositeManifestHeader extends ManifestHeader {
 	}
 
 	public void swap(int index1, int index2) {
-		if (fSort || fManifestElements == null)
+		if (fSort || fManifestElements == null) {
 			return;
+		}
 		int size = fManifestElements.size();
 		if (index1 >= 0 && index2 >= 0 && size > Math.max(index1, index2)) {
 			Object object1 = fManifestElements.get(index1);
@@ -205,8 +220,9 @@ public class CompositeManifestHeader extends ManifestHeader {
 	}
 
 	protected PDEManifestElement getElementAt(int index) {
-		if (fManifestElements != null && fManifestElements.size() > index)
+		if (fManifestElements != null && fManifestElements.size() > index) {
 			return (PDEManifestElement) fManifestElements.get(index);
+		}
 		return null;
 	}
 

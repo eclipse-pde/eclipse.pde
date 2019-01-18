@@ -16,16 +16,25 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+import java.util.StringTokenizer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
 import org.eclipse.pde.internal.core.schema.IncludedSchemaDescriptor;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 public class SchemaErrorReporter extends XMLErrorReporter {
 
@@ -69,7 +78,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 			"thead", //$NON-NLS-1$
 			"tr"}; //$NON-NLS-1$
 
-	private ISchema fSchema;
+	private final ISchema fSchema;
 	private static final String ELEMENT = "element"; //$NON-NLS-1$
 	private static final String DOCUMENTATION = "documentation"; //$NON-NLS-1$
 	private static final String ANNOTATION = "annotation"; //$NON-NLS-1$
@@ -118,8 +127,9 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 	}
 
 	private void validate(Element element) {
-		if (element.getNodeName().equals(ATTRIBUTE))
+		if (element.getNodeName().equals(ATTRIBUTE)) {
 			validateAttribute(element);
+		}
 
 		NodeList children = element.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -159,8 +169,9 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 				Stack<StackEntry> stack = new Stack<>();
 				boolean errorReported = false;
 				while (text.hasMoreTokens()) {
-					if (errorReported)
+					if (errorReported) {
 						break;
+					}
 
 					String next = text.nextToken();
 					if (next.equals("<")) { //$NON-NLS-1$
@@ -207,8 +218,9 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 									}
 								} else {
 									String shortTag = getTagName(tagName);
-									if (!forbiddenEndTag(shortTag))
+									if (!forbiddenEndTag(shortTag)) {
 										stack.push(new StackEntry(shortTag, lineNumber));
+									}
 									lineNumber += getLineBreakCount(tagName);
 								}
 							}
@@ -232,8 +244,9 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 	}
 
 	private void addMarkerAttribute(VirtualMarker marker, String attr, String value) {
-		if (marker != null)
+		if (marker != null) {
 			marker.setAttribute(attr, value);
+		}
 	}
 	private String getTagName(String text) {
 		StringTokenizer tokenizer = new StringTokenizer(text);
@@ -242,16 +255,18 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 
 	private boolean optionalEndTag(String tag) {
 		for (String optionalEndTagKey : optionalEndTagKeys) {
-			if (tag.equalsIgnoreCase(optionalEndTagKey))
+			if (tag.equalsIgnoreCase(optionalEndTagKey)) {
 				return true;
+			}
 		}
 		return false;
 	}
 
 	private boolean forbiddenEndTag(String tag) {
 		for (String forbiddenEndTagKey : forbiddenEndTagKeys) {
-			if (tag.equalsIgnoreCase(forbiddenEndTagKey))
+			if (tag.equalsIgnoreCase(forbiddenEndTagKey)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -260,8 +275,9 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 		StringTokenizer tokenizer = new StringTokenizer(tag, "\n", true); //$NON-NLS-1$
 		int token = 0;
 		while (tokenizer.hasMoreTokens()) {
-			if (tokenizer.nextToken().equals("\n")) //$NON-NLS-1$
+			if (tokenizer.nextToken().equals("\n")) { //$NON-NLS-1$
 				token++;
+			}
 		}
 		return token;
 	}
@@ -287,13 +303,15 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 			for (ISchemaInclude include : includes) {
 				ISchema includedSchema = include.getIncludedSchema();
 				try {
-					if (includedSchema == null)
+					if (includedSchema == null) {
 						continue;
+					}
 					URL includedSchemaUrl = includedSchema.getURL();
 					URL computedUrl = IncludedSchemaDescriptor.computeURL(fSchema.getSchemaDescriptor(), schemaLocation, null);
 					if (includedSchemaUrl != null && computedUrl != null && includedSchemaUrl.equals(computedUrl)) {
-						if (!includedSchema.isValid())
+						if (!includedSchema.isValid()) {
 							report(NLS.bind(PDECoreMessages.Builders_Schema_includeNotValid, schemaLocation), getLine(element), CompilerFlags.ERROR, PDEMarkerFactory.CAT_OTHER);
+						}
 					}
 				} catch (MalformedURLException e) {
 					// this should not happen since fSchema's URL is valid

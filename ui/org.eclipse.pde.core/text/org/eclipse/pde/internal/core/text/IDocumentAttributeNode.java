@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.text;
 
 import java.io.Serializable;
-
 import org.eclipse.core.runtime.CoreException;
 
 public interface IDocumentAttributeNode extends IDocumentRange, Serializable, IDocumentXMLNode {

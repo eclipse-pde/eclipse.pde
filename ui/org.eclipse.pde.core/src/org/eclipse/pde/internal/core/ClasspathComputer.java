@@ -13,18 +13,35 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.IAccessRule;
+import org.eclipse.jdt.core.IClasspathAttribute;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaModelStatus;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaConventions;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.build.*;
+import org.eclipse.pde.core.build.IBuild;
+import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
@@ -81,8 +98,9 @@ public class ClasspathComputer {
 			for (IClasspathEntry entry : entries) {
 				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE
 						|| entry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
-					if (paths.add(entry.getPath()))
+					if (paths.add(entry.getPath())) {
 						result.add(updateTestAttribute(isTestPlugin, entry));
+					}
 				}
 			}
 		}
@@ -95,10 +113,11 @@ public class ClasspathComputer {
 				addSourceFolder(buildEntry, project, paths, result, isTestPlugin);
 			} else {
 				IPath sourceAttachment = sourceLibraryMap != null ? (IPath) sourceLibraryMap.get(library.getName()) : null;
-				if (library.getName().equals(".")) //$NON-NLS-1$
+				if (library.getName().equals(".")) { //$NON-NLS-1$
 					addJARdPlugin(project, ClasspathUtilCore.getFilename(model), sourceAttachment, attrs, result);
-				else
+				} else {
 					addLibraryEntry(project, library, sourceAttachment, attrs, result);
+				}
 			}
 		}
 		if (libraries.length == 0) {
@@ -115,8 +134,9 @@ public class ClasspathComputer {
 	}
 
 	private static IClasspathEntry updateTestAttribute(boolean isTestPlugin, IClasspathEntry entry) {
-		if (isTestPlugin == entry.isTest() || entry.getEntryKind() != IClasspathEntry.CPE_SOURCE)
+		if (isTestPlugin == entry.isTest() || entry.getEntryKind() != IClasspathEntry.CPE_SOURCE) {
 			return entry;
+		}
 		IClasspathAttribute[] classpathAttributes = Arrays.stream(entry.getExtraAttributes())
 				.filter(e -> !e.getName().equals(IClasspathAttribute.TEST)).toArray(IClasspathAttribute[]::new);
 		if (isTestPlugin) {
@@ -180,8 +200,9 @@ public class ClasspathComputer {
 	private static void addLibraryEntry(IProject project, IPluginLibrary library, IPath sourceAttachment, IClasspathAttribute[] attrs, ArrayList<IClasspathEntry> result) throws JavaModelException {
 		String name = ClasspathUtilCore.expandLibraryName(library.getName());
 		IResource jarFile = project.findMember(name);
-		if (jarFile == null)
+		if (jarFile == null) {
 			return;
+		}
 
 		IPackageFragmentRoot root = JavaCore.create(project).getPackageFragmentRoot(jarFile);
 		if (root.exists() && root.getKind() == IPackageFragmentRoot.K_BINARY) {
@@ -196,8 +217,9 @@ public class ClasspathComputer {
 		}
 
 		IClasspathEntry entry = createClasspathEntry(project, jarFile, name, sourceAttachment, attrs, library.isExported());
-		if (!result.contains(entry))
+		if (!result.contains(entry)) {
 			result.add(entry);
+		}
 	}
 
 	private static void addJARdPlugin(IProject project, String filename, IPath sourceAttachment, IClasspathAttribute[] attrs, ArrayList<IClasspathEntry> result) {
@@ -205,8 +227,9 @@ public class ClasspathComputer {
 		IResource jarFile = project.findMember(name);
 		if (jarFile != null) {
 			IClasspathEntry entry = createClasspathEntry(project, jarFile, filename, sourceAttachment, attrs, true);
-			if (!result.contains(entry))
+			if (!result.contains(entry)) {
 				result.add(entry);
+			}
 		}
 	}
 
@@ -218,8 +241,9 @@ public class ClasspathComputer {
 	private static String getExecutionEnvironment(BundleDescription bundleDescription) {
 		if (bundleDescription != null) {
 			String[] envs = bundleDescription.getExecutionEnvironments();
-			if (envs.length > 0)
+			if (envs.length > 0) {
 				return envs[0];
+			}
 		}
 		return null;
 	}
@@ -357,8 +381,9 @@ public class ClasspathComputer {
 			}
 		}
 
-		if (path.equals(PDECore.JRE_CONTAINER_PATH))
+		if (path.equals(PDECore.JRE_CONTAINER_PATH)) {
 			return createJREEntry(ee);
+		}
 
 		return JavaCore.newContainerEntry(path);
 	}
@@ -382,8 +407,9 @@ public class ClasspathComputer {
 		if (ee != null) {
 			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 			IExecutionEnvironment env = manager.getEnvironment(ee);
-			if (env != null)
+			if (env != null) {
 				path = JavaRuntime.newJREContainerPath(env);
+			}
 		}
 		if (path == null) {
 			path = JavaRuntime.newDefaultJREContainerPath();

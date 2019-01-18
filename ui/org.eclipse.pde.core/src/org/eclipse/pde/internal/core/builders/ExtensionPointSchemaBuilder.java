@@ -14,25 +14,44 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 
 public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	class DeltaVisitor implements IResourceDeltaVisitor {
-		private IProgressMonitor monitor;
+		private final IProgressMonitor monitor;
 
 		public DeltaVisitor(IProgressMonitor monitor) {
 			this.monitor = monitor;
@@ -42,11 +61,13 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		public boolean visit(IResourceDelta delta) {
 			IResource resource = delta.getResource();
 
-			if (resource instanceof IProject)
+			if (resource instanceof IProject) {
 				return isInterestingProject((IProject) resource);
+			}
 
-			if (resource instanceof IFolder)
+			if (resource instanceof IFolder) {
 				return true;
+			}
 
 			if (resource instanceof IFile) {
 				// see if this is it
@@ -67,12 +88,14 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		IResourceDelta delta = null;
-		if (kind != FULL_BUILD)
+		if (kind != FULL_BUILD) {
 			delta = getDelta(getProject());
+		}
 
 		if (delta == null || kind == FULL_BUILD) {
-			if (isInterestingProject(getProject()))
+			if (isInterestingProject(getProject())) {
 				compileSchemasIn(getProject(), monitor);
+			}
 		} else {
 			delta.accept(new DeltaVisitor(monitor));
 		}
@@ -96,9 +119,9 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	private void cleanSchemasIn(IContainer container, IProgressMonitor monitor) throws CoreException {
 		IResource[] members = container.members();
 		for (IResource member : members) {
-			if (member instanceof IContainer)
+			if (member instanceof IContainer) {
 				cleanSchemasIn((IContainer) member, monitor);
-			else if (member instanceof IFile && isSchemaFile((IFile) member)) {
+			} else if (member instanceof IFile && isSchemaFile((IFile) member)) {
 				member.deleteMarkers(PDEMarkerFactory.MARKER_ID, true, IResource.DEPTH_ZERO);
 			}
 		}
@@ -165,9 +188,9 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		monitor.subTask(PDECoreMessages.Builders_Schema_compilingSchemas);
 		IResource[] members = container.members();
 		for (IResource member : members) {
-			if (member instanceof IContainer)
+			if (member instanceof IContainer) {
 				compileSchemasIn((IContainer) member, monitor);
-			else if (member instanceof IFile && isSchemaFile((IFile) member)) {
+			} else if (member instanceof IFile && isSchemaFile((IFile) member)) {
 				compileFile((IFile) member, monitor);
 			}
 		}
@@ -183,8 +206,9 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		int dot = fileName.lastIndexOf('.');
 		String pageName = fileName.substring(0, dot) + ".html"; //$NON-NLS-1$
 		String mangledPluginId = getMangledPluginId(file);
-		if (mangledPluginId != null)
+		if (mangledPluginId != null) {
 			pageName = mangledPluginId + "_" + pageName; //$NON-NLS-1$
+		}
 		IPath path = file.getProject().getFullPath().append(getDocLocation(file)).append(pageName);
 		return path.toString();
 	}

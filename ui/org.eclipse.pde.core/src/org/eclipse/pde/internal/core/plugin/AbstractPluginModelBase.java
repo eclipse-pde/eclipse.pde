@@ -19,8 +19,21 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.plugin.IExtensions;
+import org.eclipse.pde.core.plugin.IExtensionsModelFactory;
+import org.eclipse.pde.core.plugin.IPluginAttribute;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginModelFactory;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.internal.core.AbstractNLModel;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEState;
 
 public abstract class AbstractPluginModelBase extends AbstractNLModel implements IPluginModelBase, IPluginModelFactory {
 
@@ -74,8 +87,9 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 	}
 
 	public void load(InputStream stream, boolean outOfSync, PluginHandler handler) {
-		if (fPluginBase == null)
+		if (fPluginBase == null) {
 			fPluginBase = createPluginBase();
+		}
 
 		((PluginBase) fPluginBase).reset();
 		setLoaded(false);
@@ -84,8 +98,9 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 			parser.parse(stream, handler);
 			((PluginBase) fPluginBase).load(handler.getDocumentElement(), handler.getSchemaVersion());
 			setLoaded(true);
-			if (!outOfSync)
+			if (!outOfSync) {
 				updateTimeStamp();
+			}
 		} catch (Exception e) {
 			PDECore.log(e);
 		}
@@ -94,10 +109,11 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 	public void load(BundleDescription description, PDEState state) {
 		setBundleDescription(description);
 		IPluginBase base = getPluginBase();
-		if (base instanceof Plugin)
+		if (base instanceof Plugin) {
 			((Plugin) base).load(description, state);
-		else
+		} else {
 			((Fragment) base).load(description, state);
+		}
 		updateTimeStamp();
 		setLoaded(true);
 	}
@@ -136,8 +152,9 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 	@Override
 	public String toString() {
 		IPluginBase pluginBase = getPluginBase();
-		if (pluginBase != null)
+		if (pluginBase != null) {
 			return pluginBase.getId();
+		}
 		return super.toString();
 	}
 
@@ -200,10 +217,12 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 
 	@Override
 	public boolean isValid() {
-		if (!isLoaded())
+		if (!isLoaded()) {
 			return false;
-		if (fPluginBase == null)
+		}
+		if (fPluginBase == null) {
 			return false;
+		}
 		return fPluginBase.isValid();
 	}
 

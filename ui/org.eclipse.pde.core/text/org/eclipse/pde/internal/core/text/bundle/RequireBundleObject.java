@@ -78,15 +78,17 @@ public class RequireBundleObject extends PDEManifestElement {
 		boolean old = isOptional();
 		int bundleManifestVersion = BundlePluginBase.getBundleManifestVersion(fHeader.getBundle());
 		if (optional) {
-			if (bundleManifestVersion > 1)
+			if (bundleManifestVersion > 1) {
 				setDirective(Constants.RESOLUTION_DIRECTIVE, Constants.RESOLUTION_OPTIONAL);
-			else
+			} else {
 				setAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE, "true"); //$NON-NLS-1$
+			}
 		} else {
-			if (bundleManifestVersion > 1)
+			if (bundleManifestVersion > 1) {
 				setDirective(Constants.RESOLUTION_DIRECTIVE, null);
-			else
+			} else {
 				setAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE, null);
+			}
 		}
 		fHeader.update();
 		firePropertyChanged(this, Constants.RESOLUTION_DIRECTIVE, Boolean.toString(old), Boolean.toString(optional));
@@ -94,8 +96,9 @@ public class RequireBundleObject extends PDEManifestElement {
 
 	public boolean isOptional() {
 		int bundleManifestVersion = BundlePluginBase.getBundleManifestVersion(fHeader.getBundle());
-		if (bundleManifestVersion > 1)
+		if (bundleManifestVersion > 1) {
 			return Constants.RESOLUTION_OPTIONAL.equals(getDirective(Constants.RESOLUTION_DIRECTIVE));
+		}
 
 		return "true".equals(getAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE)); //$NON-NLS-1$
 	}
@@ -104,15 +107,17 @@ public class RequireBundleObject extends PDEManifestElement {
 		boolean old = isReexported();
 		int bundleManifestVersion = BundlePluginBase.getBundleManifestVersion(fHeader.getBundle());
 		if (export) {
-			if (bundleManifestVersion > 1)
+			if (bundleManifestVersion > 1) {
 				setDirective(Constants.VISIBILITY_DIRECTIVE, Constants.VISIBILITY_REEXPORT);
-			else
+			} else {
 				setAttribute(ICoreConstants.REPROVIDE_ATTRIBUTE, "true"); //$NON-NLS-1$
+			}
 		} else {
-			if (bundleManifestVersion > 1)
+			if (bundleManifestVersion > 1) {
 				setDirective(Constants.VISIBILITY_DIRECTIVE, null);
-			else
+			} else {
 				setAttribute(ICoreConstants.REPROVIDE_ATTRIBUTE, null);
+			}
 		}
 		fHeader.update();
 		firePropertyChanged(this, Constants.VISIBILITY_DIRECTIVE, Boolean.toString(old), Boolean.toString(export));
@@ -120,8 +125,9 @@ public class RequireBundleObject extends PDEManifestElement {
 
 	public boolean isReexported() {
 		int bundleManifestVersion = BundlePluginBase.getBundleManifestVersion(fHeader.getBundle());
-		if (bundleManifestVersion > 1)
+		if (bundleManifestVersion > 1) {
 			return Constants.VISIBILITY_REEXPORT.equals(getDirective(Constants.VISIBILITY_DIRECTIVE));
+		}
 
 		return "true".equals(getAttribute(ICoreConstants.REPROVIDE_ATTRIBUTE)); //$NON-NLS-1$
 	}

@@ -13,15 +13,36 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginAttribute;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.project.PDEProject;
@@ -63,8 +84,9 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		public void addLib(String libName) {
 			if (fLibs.contains(libName)) {
 				dupeLibName = libName;
-			} else
+			} else {
 				fLibs.add(libName);
+			}
 		}
 
 		public ArrayList<String> getLibs() {
@@ -99,7 +121,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 	class OutputFolder extends ProjectFolder {
 
-		private ArrayList<SourceFolder> fSourceFolders = new ArrayList<>();
+		private final ArrayList<SourceFolder> fSourceFolders = new ArrayList<>();
 		/**
 		 * True when there is no corresponding source - i.e. a class file folder or library
 		 */
@@ -127,8 +149,9 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		}
 
 		public void addSourceFolder(SourceFolder sourceFolder) {
-			if (!fSourceFolders.contains(sourceFolder))
+			if (!fSourceFolders.contains(sourceFolder)) {
 				fSourceFolders.add(sourceFolder);
+			}
 		}
 
 		public boolean isLibrary() {
@@ -147,8 +170,8 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 	 */
 	class EncodingEntry {
 
-		private String fEncoding;
-		private IResource fResource;
+		private final String fEncoding;
+		private final IResource fResource;
 
 		/**
 		 * Constructs an encoding entry for the given resource.
@@ -258,8 +281,8 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 	}
 
-	private HashMap<IPath, SourceFolder> fSourceFolderMap = new HashMap<>(4);
-	private HashMap<IPath, OutputFolder> fOutputFolderMap = new HashMap<>(4);
+	private final HashMap<IPath, SourceFolder> fSourceFolderMap = new HashMap<>(4);
+	private final HashMap<IPath, OutputFolder> fOutputFolderMap = new HashMap<>(4);
 	private IBuild fBuild = null;
 
 	/**
@@ -310,12 +333,14 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		for (IClasspathEntry entry : cpes) {
 			if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 				IPath sourcePath = getPath(entry);
-				if (sourcePath == null)
+				if (sourcePath == null) {
 					continue;
+				}
 
 				IPath outputLocation = entry.getOutputLocation();
-				if (outputLocation == null)
+				if (outputLocation == null) {
 					outputLocation = defaultOutputLocation;
+				}
 				IPath outputPath = getPath(outputLocation);
 
 				OutputFolder outputFolder = fOutputFolderMap.get(outputPath);
@@ -417,10 +442,11 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 					for (String libName : outputFolderLibs) {
 						IResource folderEntry = fProject.findMember(outputPath);
 						String message;
-						if (folderEntry == null || !folderEntry.exists() || !(folderEntry instanceof IContainer))
+						if (folderEntry == null || !folderEntry.exists() || !(folderEntry instanceof IContainer)) {
 							message = NLS.bind(PDECoreMessages.BuildErrorReporter_missingFolder, outputPath.toString());
-						else
+						} else {
 							message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_InvalidOutputFolder, outputPath.toString());
+						}
 						prepareError(PROPERTY_OUTPUT_PREFIX + libName, outputFolder.getToken(), message, PDEMarkerFactory.B_REMOVAL, fOututLibSeverity, CompilerFlags.P_BUILD_OUTPUT_LIBRARY,PDEMarkerFactory.CAT_OTHER);
 					}
 				} else {
@@ -484,8 +510,8 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		}
 
 		class MissingOutputEntry {
-			private List<String> fSrcFolders = new ArrayList<>(1);
-			private List<String> fOutputFolders = new ArrayList<>(1);
+			private final List<String> fSrcFolders = new ArrayList<>(1);
+			private final List<String> fOutputFolders = new ArrayList<>(1);
 
 			public String getOutputList() {
 				return generateList(fOutputFolders);
@@ -534,10 +560,11 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 				//error - not a src folder
 				IResource folderEntry = fProject.findMember(sourcePath);
 				String message;
-				if (folderEntry == null || !folderEntry.exists() || !(folderEntry instanceof IContainer))
+				if (folderEntry == null || !folderEntry.exists() || !(folderEntry instanceof IContainer)) {
 					message = NLS.bind(PDECoreMessages.BuildErrorReporter_missingFolder, sourcePath.toString());
-				else
+				} else {
 					message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_InvalidSourceFolder, sourcePath.toString());
+				}
 
 				ArrayList<String> srcLibs = sourceFolder.getLibs();
 				for (int i = 0; i < srcLibs.size(); i++) {
@@ -550,8 +577,9 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 					String libName = sourceFolder.getLibs().get(0);
 					MissingOutputEntry errorEntry = missingOutputEntryErrors.get(libName);
-					if (errorEntry == null)
+					if (errorEntry == null) {
 						errorEntry = new MissingOutputEntry();
+					}
 
 					errorEntry.addSrcFolder(sourcePath.toString());
 					errorEntry.addOutputFolder(outputFolder.getToken());

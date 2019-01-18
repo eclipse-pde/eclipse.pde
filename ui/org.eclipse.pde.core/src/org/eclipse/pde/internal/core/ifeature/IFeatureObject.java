@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.ifeature;
 
 import java.io.Serializable;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.pde.core.IWritable;

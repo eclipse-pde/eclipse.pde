@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.text.bundle;
 
 import java.io.PrintWriter;
-
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -29,8 +28,9 @@ public class ImportPackageObject extends PackageObject {
 
 	private static String getVersion(ExportPackageDescription desc) {
 		String version = desc.getVersion().toString();
-		if (!version.equals(Version.emptyVersion.toString()))
+		if (!version.equals(Version.emptyVersion.toString())) {
 			return desc.getVersion().toString();
+		}
 		return null;
 	}
 
@@ -48,8 +48,9 @@ public class ImportPackageObject extends PackageObject {
 
 	public boolean isOptional() {
 		int manifestVersion = BundlePluginBase.getBundleManifestVersion(getHeader().getBundle());
-		if (manifestVersion > 1)
+		if (manifestVersion > 1) {
 			return Constants.RESOLUTION_OPTIONAL.equals(getDirective(Constants.RESOLUTION_DIRECTIVE));
+		}
 		return "true".equals(getAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE)); //$NON-NLS-1$
 	}
 
@@ -57,10 +58,12 @@ public class ImportPackageObject extends PackageObject {
 		boolean old = isOptional();
 		int manifestVersion = BundlePluginBase.getBundleManifestVersion(getHeader().getBundle());
 		if (optional) {
-			if (manifestVersion > 1)
+			if (manifestVersion > 1) {
 				setDirective(Constants.RESOLUTION_DIRECTIVE, Constants.RESOLUTION_OPTIONAL);
-			else
+			}
+			else {
 				setAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE, "true"); //$NON-NLS-1$
+			}
 		} else {
 			setDirective(Constants.RESOLUTION_DIRECTIVE, null);
 			setAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE, null);

@@ -13,15 +13,33 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.p2.engine.EngineActivator;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.target.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.TargetBundle;
+import org.eclipse.pde.core.target.TargetFeature;
+import org.eclipse.pde.internal.core.P2Utils;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginPathFinder;
 
 /**
  * A bundle container representing an installed profile.
@@ -49,13 +67,13 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	/**
 	 * Path to home/root install location. May contain string variables.
 	 */
-	private String fHome;
+	private final String fHome;
 
 	/**
 	 * Alternate configuration location or <code>null</code> if default.
 	 * May contain string variables.
 	 */
-	private String fConfiguration;
+	private final String fConfiguration;
 
 	/**
 	 * Creates a new bundle container for the profile at the specified location.
@@ -346,8 +364,9 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	 */
 	private String substituteVar(Properties props, String source, String var, String prop, File defaultValue) {
 		String value = props.getProperty(prop);
-		if (value == null)
+		if (value == null) {
 			value = defaultValue.getAbsolutePath();
+		}
 		return value + source.substring(var.length());
 	}
 

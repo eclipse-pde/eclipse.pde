@@ -15,13 +15,30 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Vector;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.HostSpecification;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IMatchRules;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
+import org.eclipse.pde.internal.core.ifeature.IFeatureData;
+import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
+import org.eclipse.pde.internal.core.ifeature.IFeatureInfo;
+import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.w3c.dom.Node;
@@ -32,10 +49,10 @@ public class Feature extends VersionableObject implements IFeature {
 	final static String INDENT = "   "; //$NON-NLS-1$
 	private String fProviderName;
 	private IFeatureURL fUrl;
-	private IFeatureInfo[] fInfos = new IFeatureInfo[3];
-	private Vector<IFeatureData> fData = new Vector<>();
-	private Vector<IFeatureChild> fChildren = new Vector<>();
-	private Vector<IFeaturePlugin> fPlugins = new Vector<>();
+	private final IFeatureInfo[] fInfos = new IFeatureInfo[3];
+	private final Vector<IFeatureData> fData = new Vector<>();
+	private final Vector<IFeatureChild> fChildren = new Vector<>();
+	private final Vector<IFeaturePlugin> fPlugins = new Vector<>();
 	private Vector<IFeatureImport> fImports = new Vector<>();
 	private String fOs;
 	private String fWs;
@@ -288,19 +305,22 @@ public class Feature extends VersionableObject implements IFeature {
 		for (int i = 0; i < fPlugins.size(); i++) {
 			IFeaturePlugin fp = fPlugins.get(i);
 			ModelEntry entry = PluginRegistry.findEntry(fp.getId());
-			if (entry == null)
+			if (entry == null) {
 				continue;
+			}
 			IPluginModelBase[] models = entry.getActiveModels();
 			for (IPluginModelBase m : models) {
-				if (fp.getVersion().equals(m.getPluginBase().getVersion()) || fp.getVersion().equals(ICoreConstants.DEFAULT_VERSION))
+				if (fp.getVersion().equals(m.getPluginBase().getVersion()) || fp.getVersion().equals(ICoreConstants.DEFAULT_VERSION)) {
 					model = m;
+				}
 			}
 			if (model != null) {
 				addPluginImports(preservedImports, newImports, model.getPluginBase());
 				if (model.isFragmentModel()) {
 					BundleDescription desc = model.getBundleDescription();
-					if (desc == null)
+					if (desc == null) {
 						continue;
+					}
 					HostSpecification hostSpec = desc.getHost();
 					String id = hostSpec.getName();
 					String version = null;
@@ -317,8 +337,9 @@ public class Feature extends VersionableObject implements IFeature {
 		// preserve imports of features
 		for (int i = 0; i < fImports.size(); i++) {
 			IFeatureImport iimport = fImports.get(i);
-			if (iimport.getType() == IFeatureImport.FEATURE)
+			if (iimport.getType() == IFeatureImport.FEATURE) {
 				preservedImports.add(iimport);
+			}
 		}
 		// removed = old - preserved
 		@SuppressWarnings("unchecked")
@@ -400,10 +421,12 @@ public class Feature extends VersionableObject implements IFeature {
 		for (int i = 0; i < imports.size(); i++) {
 			IFeatureImport iimport = imports.get(i);
 			if (iimport.getId().equals(id)) {
-				if (version == null)
+				if (version == null) {
 					return iimport;
-				if (version.equals(iimport.getVersion()) && match == iimport.getMatch())
+				}
+				if (version.equals(iimport.getVersion()) && match == iimport.getMatch()) {
 					return iimport;
+				}
 			}
 		}
 		return null;
@@ -415,8 +438,9 @@ public class Feature extends VersionableObject implements IFeature {
 			IFeaturePlugin fp = fPlugins.get(i);
 			String pid = fp.getId();
 			String pversion = fp.getVersion();
-			if (VersionUtil.compare(pid, pversion, id, version, match))
+			if (VersionUtil.compare(pid, pversion, id, version, match)) {
 				return fp;
+			}
 		}
 		return null;
 	}
@@ -525,8 +549,9 @@ public class Feature extends VersionableObject implements IFeature {
 
 	@Override
 	public void setPrimary(boolean newValue) throws CoreException {
-		if (this.fPrimary == newValue)
+		if (this.fPrimary == newValue) {
 			return;
+		}
 		ensureModelEditable();
 		Boolean oldValue = this.fPrimary ? Boolean.TRUE : Boolean.FALSE;
 		this.fPrimary = newValue;
@@ -535,8 +560,9 @@ public class Feature extends VersionableObject implements IFeature {
 
 	@Override
 	public void setExclusive(boolean newValue) throws CoreException {
-		if (this.fExclusive == newValue)
+		if (this.fExclusive == newValue) {
 			return;
+		}
 		ensureModelEditable();
 		Boolean oldValue = this.fExclusive ? Boolean.TRUE : Boolean.FALSE;
 		this.fExclusive = newValue;
@@ -670,8 +696,9 @@ public class Feature extends VersionableObject implements IFeature {
 			setFeatureInfo((IFeatureInfo) newValue, INFO_COPYRIGHT);
 		} else if (name.equals(P_IMAGE)) {
 			setImageName((String) newValue);
-		} else
+		} else {
 			super.restoreProperty(name, oldValue, newValue);
+		}
 	}
 
 	@Override
@@ -706,31 +733,37 @@ public class Feature extends VersionableObject implements IFeature {
 	private boolean hasRequiredAttributes() {
 		// Verify that all the required attributes are
 		// defined.
-		if (id == null)
+		if (id == null) {
 			return false;
-		if (version == null)
+		}
+		if (version == null) {
 			return false;
+		}
 
 		for (int i = 0; i < fChildren.size(); i++) {
 			IFeatureChild child = fChildren.elementAt(i);
-			if (child.getId() == null || child.getVersion() == null)
+			if (child.getId() == null || child.getVersion() == null) {
 				return false;
+			}
 		}
 		for (int i = 0; i < fPlugins.size(); i++) {
 			IFeaturePlugin plugin = fPlugins.elementAt(i);
-			if (plugin.getId() == null || plugin.getVersion() == null)
+			if (plugin.getId() == null || plugin.getVersion() == null) {
 				return false;
+			}
 
 		}
 		for (int i = 0; i < fData.size(); i++) {
 			IFeatureData entry = fData.elementAt(i);
-			if (entry.getId() == null)
+			if (entry.getId() == null) {
 				return false;
+			}
 		}
 		for (int i = 0; i < fImports.size(); i++) {
 			IFeatureImport iimport = fImports.elementAt(i);
-			if (iimport.getId() == null)
+			if (iimport.getId() == null) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -754,8 +787,9 @@ public class Feature extends VersionableObject implements IFeature {
 		writeIfDefined(indenta, writer, "ws", fWs); //$NON-NLS-1$
 		writeIfDefined(indenta, writer, "nl", fNl); //$NON-NLS-1$
 		writeIfDefined(indenta, writer, "arch", fArch); //$NON-NLS-1$
-		if (fImageName != null)
+		if (fImageName != null) {
 			writeIfDefined(indenta, writer, "image", getWritableString(fImageName)); //$NON-NLS-1$
+		}
 		if (isPrimary()) {
 			writer.println();
 			writer.print(indenta + "primary=\"true\""); //$NON-NLS-1$
@@ -782,8 +816,9 @@ public class Feature extends VersionableObject implements IFeature {
 
 		for (int i = 0; i < 3; i++) {
 			IFeatureInfo info = fInfos[i];
-			if (info != null && !info.isEmpty())
+			if (info != null && !info.isEmpty()) {
 				info.write(indent2, writer);
+			}
 		}
 
 		if (fUrl != null) {
@@ -818,8 +853,9 @@ public class Feature extends VersionableObject implements IFeature {
 	}
 
 	private void writeIfDefined(String indent, PrintWriter writer, String attName, String attValue) {
-		if (attValue == null || attValue.trim().length() == 0)
+		if (attValue == null || attValue.trim().length() == 0) {
 			return;
+		}
 		writer.println();
 		writer.print(indent + attName + "=\"" + attValue + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -846,8 +882,9 @@ public class Feature extends VersionableObject implements IFeature {
 	public void swap(IFeatureChild feature1, IFeatureChild feature2) {
 		int index1 = fChildren.indexOf(feature1);
 		int index2 = fChildren.indexOf(feature2);
-		if (index1 == -1 || index2 == -1)
+		if (index1 == -1 || index2 == -1) {
 			return;
+		}
 
 		fChildren.set(index2, feature1);
 		fChildren.set(index1, feature2);

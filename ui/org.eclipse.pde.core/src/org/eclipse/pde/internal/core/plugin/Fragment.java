@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.PrintWriter;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
@@ -58,8 +57,9 @@ public class Fragment extends PluginBase implements IFragment {
 
 	@Override
 	protected boolean hasRequiredAttributes() {
-		if (fPluginId == null || fPluginVersion == null)
+		if (fPluginId == null || fPluginVersion == null) {
 			return false;
+		}
 		return super.hasRequiredAttributes();
 	}
 

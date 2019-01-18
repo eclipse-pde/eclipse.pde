@@ -14,8 +14,15 @@
 package org.eclipse.pde.internal.core.util;
 
 import java.lang.ref.SoftReference;
-import java.util.*;
-import javax.xml.parsers.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.SAXException;
 
 /**
@@ -96,8 +103,9 @@ public class PDEXMLHelper {
 	}
 
 	public static String getWritableString(String source) {
-		if (source == null)
+		if (source == null) {
 			return ""; //$NON-NLS-1$
+		}
 		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < source.length(); i++) {
 			char c = source.charAt(i);

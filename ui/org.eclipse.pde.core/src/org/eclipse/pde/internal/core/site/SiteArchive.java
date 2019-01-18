@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.isite.ISiteArchive;
 import org.w3c.dom.Node;
@@ -73,10 +72,12 @@ public class SiteArchive extends SiteObject implements ISiteArchive {
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<archive"); //$NON-NLS-1$
-		if (path != null)
+		if (path != null) {
 			writer.print(" path=\"" + SiteObject.getWritableString(path) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (url != null)
+		}
+		if (url != null) {
 			writer.print(" url=\"" + SiteObject.getWritableString(url) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		writer.println("/>"); //$NON-NLS-1$
 	}
 
@@ -86,8 +87,9 @@ public class SiteArchive extends SiteObject implements ISiteArchive {
 			setPath(newValue != null ? newValue.toString() : null);
 		} else if (name.equals(P_URL)) {
 			setURL(newValue != null ? newValue.toString() : null);
-		} else
+		} else {
 			super.restoreProperty(name, oldValue, newValue);
+		}
 	}
 
 }

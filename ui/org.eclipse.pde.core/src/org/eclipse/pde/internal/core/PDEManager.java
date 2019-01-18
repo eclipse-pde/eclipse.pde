@@ -13,13 +13,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 import org.osgi.framework.Constants;
@@ -47,8 +52,9 @@ public class PDEManager {
 			HostSpecification spec = desc.getHost();
 			if (spec != null) {
 				IPluginModelBase host = PluginRegistry.findModel(spec.getName());
-				if (host instanceof IPluginModel)
+				if (host instanceof IPluginModel) {
 					return (IPluginModel) host;
+				}
 			}
 		}
 		return null;
@@ -63,8 +69,9 @@ public class PDEManager {
 			// get the core model counterpart.
 			IProject project = model.getUnderlyingResource().getProject();
 			IPluginModelBase coreModel = PluginRegistry.findModel(project);
-			if (coreModel != null)
+			if (coreModel != null) {
 				desc = coreModel.getBundleDescription();
+			}
 		}
 		return desc;
 	}
@@ -79,8 +86,9 @@ public class PDEManager {
 			}
 		} else if (model instanceof IFragmentModel) {
 			IPluginModel host = findHostFor((IFragmentModel) model);
-			if (host != null)
+			if (host != null) {
 				addNLLocation(host, urls);
+			}
 		}
 		return urls.toArray(new URL[urls.size()]);
 	}
@@ -104,11 +112,13 @@ public class PDEManager {
 	 * @return the bundle localization file location or the default location
 	 */
 	public static String getBundleLocalization(IPluginModelBase model) {
-		if (model instanceof IBundlePluginModelBase && model.getUnderlyingResource() != null)
+		if (model instanceof IBundlePluginModelBase && model.getUnderlyingResource() != null) {
 			return ((IBundlePluginModelBase) model).getBundleLocalization();
+		}
 
-		if (model instanceof ExternalPluginModelBase)
+		if (model instanceof ExternalPluginModelBase) {
 			return ((ExternalPluginModelBase) model).getLocalization();
+		}
 
 		return Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
 	}

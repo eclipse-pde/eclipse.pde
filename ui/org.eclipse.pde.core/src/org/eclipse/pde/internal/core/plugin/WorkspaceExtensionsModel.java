@@ -15,17 +15,24 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.IEditableModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.NLResourceHelper;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelProvider;
@@ -34,7 +41,7 @@ import org.osgi.framework.Constants;
 
 public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements IEditableModel, IBundlePluginModelProvider {
 	private static final long serialVersionUID = 1L;
-	private IFile fUnderlyingResource;
+	private final IFile fUnderlyingResource;
 	private boolean fDirty;
 	private boolean fEditable = true;
 	private transient IBundlePluginModelBase fBundleModel;
@@ -86,11 +93,13 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 
 	@Override
 	public boolean isInSync() {
-		if (fUnderlyingResource == null)
+		if (fUnderlyingResource == null) {
 			return true;
+		}
 		IPath path = fUnderlyingResource.getLocation();
-		if (path == null)
+		if (path == null) {
 			return false;
+		}
 		return super.isInSync(path.toFile());
 	}
 
@@ -106,8 +115,9 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 
 	@Override
 	public void load() {
-		if (fUnderlyingResource == null)
+		if (fUnderlyingResource == null) {
 			return;
+		}
 		getExtensions(true);
 	}
 
@@ -118,8 +128,9 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 
 	@Override
 	public void save() {
-		if (fUnderlyingResource == null)
+		if (fUnderlyingResource == null) {
 			return;
+		}
 		String contents = fixLineDelimiter(getContents(), fUnderlyingResource);
 		try (ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8))) {
 

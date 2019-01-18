@@ -33,8 +33,9 @@ public class PluginNode extends PluginBaseNode implements IPlugin {
 	@Override
 	protected String[] getSpecificAttributes() {
 		String classname = getClassName();
-		if (classname != null && classname.trim().length() > 0)
+		if (classname != null && classname.trim().length() > 0) {
 			return new String[] {"   " + P_CLASS_NAME + "=\"" + classname + "\""}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 		return new String[0];
 	}
 

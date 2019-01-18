@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bundle;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
@@ -22,7 +24,7 @@ import org.osgi.framework.Constants;
 
 public class Bundle extends BundleObject implements IBundle {
 	private static final long serialVersionUID = 1L;
-	private Map<String, IManifestHeader> fDocumentHeaders = new HeaderMap<>();
+	private final Map<String, IManifestHeader> fDocumentHeaders = new HeaderMap<>();
 
 	@Override
 	public void setHeader(String key, String value) {

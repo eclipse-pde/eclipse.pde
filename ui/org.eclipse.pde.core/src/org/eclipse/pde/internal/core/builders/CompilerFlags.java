@@ -17,7 +17,9 @@ package org.eclipse.pde.internal.core.builders;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.osgi.service.prefs.BackingStoreException;
 

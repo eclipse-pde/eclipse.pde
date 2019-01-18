@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.PrintWriter;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPlugin;
@@ -128,16 +127,18 @@ public class Plugin extends PluginBase implements IPlugin {
 		for (Object element : children) {
 			((IPluginExtensionPoint) element).write(firstIndent, writer);
 		}
-		if (children.length > 0)
+		if (children.length > 0) {
 			writer.println();
+		}
 
 		// add extensions
 		children = getExtensions();
 		for (Object element : children) {
 			((IPluginExtension) element).write(firstIndent, writer);
 		}
-		if (children.length > 0)
+		if (children.length > 0) {
 			writer.println();
+		}
 
 		writer.println("</plugin>"); //$NON-NLS-1$
 	}

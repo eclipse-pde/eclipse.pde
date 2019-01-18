@@ -16,11 +16,20 @@ package org.eclipse.pde.internal.core.plugin;
 
 import java.util.ArrayList;
 import java.util.Locale;
-import javax.xml.parsers.*;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IMatchRules;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.PDEState;
@@ -140,8 +149,9 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	}
 
 	void load(Node node, String schemaVersion) {
-		if (node == null)
+		if (node == null) {
 			return;
+		}
 		fSchemaVersion = schemaVersion;
 		fId = getNodeAttribute(node, "id"); //$NON-NLS-1$
 		fName = getNodeAttribute(node, "name"); //$NON-NLS-1$
@@ -215,13 +225,16 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	 * @return an array of bundles that export packages being imported by the given bundle
 	 */
 	public static BundleDescription[] getImportedBundles(BundleDescription root) {
-		if (root == null)
+		if (root == null) {
 			return new BundleDescription[0];
+		}
 		ExportPackageDescription[] packages = root.getResolvedImports();
 		ArrayList<BundleDescription> resolvedImports = new ArrayList<>(packages.length);
-		for (int i = 0; i < packages.length; i++)
-			if (!root.getLocation().equals(packages[i].getExporter().getLocation()) && !resolvedImports.contains(packages[i].getExporter()))
+		for (int i = 0; i < packages.length; i++) {
+			if (!root.getLocation().equals(packages[i].getExporter().getLocation()) && !resolvedImports.contains(packages[i].getExporter())) {
 				resolvedImports.add(packages[i].getExporter());
+			}
+		}
 		return resolvedImports.toArray(new BundleDescription[resolvedImports.size()]);
 	}
 
@@ -331,8 +344,9 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		ensureModelEditable();
 		int index1 = fLibraries.indexOf(l1);
 		int index2 = fLibraries.indexOf(l2);
-		if (index1 == -1 || index2 == -1)
+		if (index1 == -1 || index2 == -1) {
 			throwCoreException(PDECoreMessages.PluginBase_librariesNotFoundException);
+		}
 		fLibraries.set(index2, l1);
 		fLibraries.set(index1, l2);
 		firePropertyChanged(this, P_LIBRARY_ORDER, l1, l2);
@@ -343,8 +357,9 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		ensureModelEditable();
 		int index1 = fImports.indexOf(import1);
 		int index2 = fImports.indexOf(import2);
-		if (index1 == -1 || index2 == -1)
+		if (index1 == -1 || index2 == -1) {
 			throwCoreException(PDECoreMessages.PluginBase_importsNotFoundException);
+		}
 		fImports.set(index2, import1);
 		fImports.set(index1, import2);
 		firePropertyChanged(this, P_IMPORT_ORDER, import1, import2);
@@ -357,24 +372,29 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 
 	@Override
 	protected boolean hasRequiredAttributes() {
-		if (fName == null)
+		if (fName == null) {
 			return false;
-		if (fId == null)
+		}
+		if (fId == null) {
 			return false;
-		if (fVersion == null)
+		}
+		if (fVersion == null) {
 			return false;
+		}
 
 		// validate libraries
 		for (int i = 0; i < fLibraries.size(); i++) {
 			IPluginLibrary library = fLibraries.get(i);
-			if (!library.isValid())
+			if (!library.isValid()) {
 				return false;
+			}
 		}
 		// validate imports
 		for (int i = 0; i < fImports.size(); i++) {
 			IPluginImport iimport = fImports.get(i);
-			if (!iimport.isValid())
+			if (!iimport.isValid()) {
 				return false;
+			}
 		}
 		return super.hasRequiredAttributes();
 	}
@@ -384,28 +404,30 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	}
 
 	public static int getMatchRule(VersionRange versionRange) {
-		if (versionRange == null || versionRange.getMinimum() == null)
+		if (versionRange == null || versionRange.getMinimum() == null) {
 			return IMatchRules.NONE;
+		}
 
 		Version minimum = versionRange.getLeft();
 		Version maximum = versionRange.getRight() == null ? maxVersion : versionRange.getRight();
 
-		if (maximum.compareTo(maxVersion) >= 0)
+		if (maximum.compareTo(maxVersion) >= 0) {
 			return IMatchRules.GREATER_OR_EQUAL;
-		else if (minimum.equals(maximum))
+		} else if (minimum.equals(maximum)) {
 			return IMatchRules.PERFECT;
-		else if (!versionRange.isIncluded(minimum) || versionRange.isIncluded(maximum))
+		} else if (!versionRange.isIncluded(minimum) || versionRange.isIncluded(maximum)) {
 			return IMatchRules.NONE; // no real match rule for this
-		else if (minimum.getMajor() == maximum.getMajor() - 1)
+		} else if (minimum.getMajor() == maximum.getMajor() - 1) {
 			return IMatchRules.COMPATIBLE;
-		else if (minimum.getMajor() != maximum.getMajor())
+		} else if (minimum.getMajor() != maximum.getMajor()) {
 			return IMatchRules.NONE; // no real match rule for this
-		else if (minimum.getMinor() == maximum.getMinor() - 1)
+		} else if (minimum.getMinor() == maximum.getMinor() - 1) {
 			return IMatchRules.EQUIVALENT;
-		else if (minimum.getMinor() != maximum.getMinor())
+		} else if (minimum.getMinor() != maximum.getMinor()) {
 			return IMatchRules.NONE; // no real match rule for this
-		else if (minimum.getMicro() == maximum.getMicro() - 1)
+		} else if (minimum.getMicro() == maximum.getMicro() - 1) {
 			return IMatchRules.PERFECT; // this is as close as we got
+		}
 
 		return IMatchRules.NONE; // no real match rule for this
 	}

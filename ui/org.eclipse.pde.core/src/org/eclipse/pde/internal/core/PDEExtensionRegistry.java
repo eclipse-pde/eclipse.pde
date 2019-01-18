@@ -14,11 +14,23 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.ListIterator;
+import org.eclipse.core.runtime.IContributor;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.spi.RegistryContributor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.plugin.PluginExtension;
 import org.eclipse.pde.internal.core.plugin.PluginExtensionPoint;
@@ -26,13 +38,13 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public class PDEExtensionRegistry {
 
-	private Object fMasterKey = new Object();
-	private Object fUserKey = new Object();
+	private final Object fMasterKey = new Object();
+	private final Object fUserKey = new Object();
 	private IExtensionRegistry fRegistry = null;
 	private PDERegistryStrategy fStrategy = null;
 
 	private IPluginModelBase[] fModels = null;
-	private ArrayList<IRegistryChangeListener> fListeners = new ArrayList<>();
+	private final ArrayList<IRegistryChangeListener> fListeners = new ArrayList<>();
 
 	private static final String EXTENSION_DIR = ".extensions"; //$NON-NLS-1$
 
@@ -70,16 +82,18 @@ public class PDEExtensionRegistry {
 	}
 
 	public void stop() {
-		if (fRegistry != null)
+		if (fRegistry != null) {
 			fRegistry.stop(fMasterKey);
+		}
 		dispose();
 	}
 
 	protected synchronized IExtensionRegistry getRegistry() {
 		if (fRegistry == null) {
 			fRegistry = createRegistry();
-			for (ListIterator<IRegistryChangeListener> li = fListeners.listIterator(); li.hasNext();)
+			for (ListIterator<IRegistryChangeListener> li = fListeners.listIterator(); li.hasNext();) {
 				fRegistry.addRegistryChangeListener(li.next());
+			}
 		}
 		return fRegistry;
 	}
@@ -91,8 +105,9 @@ public class PDEExtensionRegistry {
 	public void targetReloaded() {
 		// stop old registry (which will write contents to FS) and delete the cache it creates
 		// might see if we can dispose of a registry without writing to file system.  NOTE: Don't call stop() because we want to still reuse fStrategy
-		if (fRegistry != null)
+		if (fRegistry != null) {
 			fRegistry.stop(fMasterKey);
+		}
 		CoreUtility.deleteContent(new File(PDECore.getDefault().getStateLocation().toFile(), EXTENSION_DIR));
 		fRegistry = null;
 	}
@@ -115,8 +130,9 @@ public class PDEExtensionRegistry {
 		HashSet<IPluginModelBase> plugins = new HashSet<>();
 		for (IExtension ext : exts) {
 			IPluginModelBase base = getPlugin(ext.getContributor(), false);
-			if (base != null && !plugins.contains(base) && (!activeOnly || base.isEnabled()))
+			if (base != null && !plugins.contains(base) && (!activeOnly || base.isEnabled())) {
 				plugins.add(base);
+			}
 		}
 		return plugins.toArray(new IPluginModelBase[plugins.size()]);
 	}
@@ -168,8 +184,9 @@ public class PDEExtensionRegistry {
 
 	public IPluginExtension[] findExtensionsForPlugin(IPluginModelBase base) {
 		IContributor contributor = fStrategy.createContributor(base);
-		if (contributor == null)
+		if (contributor == null) {
 			return new IPluginExtension[0];
+		}
 		IExtension[] extensions = getRegistry().getExtensions(fStrategy.createContributor(base));
 		ArrayList<PluginExtension> list = new ArrayList<>();
 		for (IExtension ext : extensions) {
@@ -183,8 +200,9 @@ public class PDEExtensionRegistry {
 
 	public IPluginExtensionPoint[] findExtensionPointsForPlugin(IPluginModelBase base) {
 		IContributor contributor = fStrategy.createContributor(base);
-		if (contributor == null)
+		if (contributor == null) {
 			return new IPluginExtensionPoint[0];
+		}
 		IExtensionPoint[] extensions = getRegistry().getExtensionPoints(fStrategy.createContributor(base));
 		ArrayList<PluginExtensionPoint> list = new ArrayList<>();
 		for (IExtensionPoint extension : extensions) {
@@ -197,8 +215,9 @@ public class PDEExtensionRegistry {
 	}
 
 	private ISharedPluginModel getExtensionsModel(IPluginModelBase base) {
-		if (base instanceof IBundlePluginModelBase)
+		if (base instanceof IBundlePluginModelBase) {
 			return ((IBundlePluginModelBase) base).getExtensionsModel();
+		}
 		return base;
 	}
 
@@ -207,23 +226,27 @@ public class PDEExtensionRegistry {
 		IExtensionPoint point = getExtensionPoint(extensionPointId);
 		if (point != null) {
 			IExtension[] extensions = point.getExtensions();
-			if (!activeOnly)
+			if (!activeOnly) {
 				return extensions;
+			}
 			for (IExtension extension : extensions) {
 				IPluginModelBase base = getPlugin(extension.getContributor(), true);
-				if (base != null && base.isEnabled())
+				if (base != null && base.isEnabled()) {
 					list.add(extension);
+				}
 			}
 		} else {
 			IPluginModelBase[] bases = activeOnly ? PluginRegistry.getActiveModels() : PluginRegistry.getAllModels();
 			for (IPluginModelBase base : bases) {
 				IContributor contributor = fStrategy.createContributor(base);
-				if (contributor == null)
+				if (contributor == null) {
 					continue;
+				}
 				IExtension[] extensions = getRegistry().getExtensions(contributor);
 				for (IExtension extension : extensions) {
-					if (extension.getExtensionPointUniqueIdentifier().equals(extensionPointId))
+					if (extension.getExtensionPointUniqueIdentifier().equals(extensionPointId)) {
 						list.add(extension);
+					}
 				}
 			}
 		}
@@ -232,23 +255,27 @@ public class PDEExtensionRegistry {
 
 	// make sure we return the right IPluginModelBase when we have multiple versions of a plug-in Id
 	private IPluginModelBase getPlugin(IContributor icontributor, boolean searchAll) {
-		if (!(icontributor instanceof RegistryContributor))
+		if (!(icontributor instanceof RegistryContributor)) {
 			return null;
+		}
 		RegistryContributor contributor = (RegistryContributor) icontributor;
 		long bundleId = Long.parseLong(contributor.getActualId());
 		BundleDescription desc = PDECore.getDefault().getModelManager().getState().getState().getBundle(Long.parseLong(contributor.getActualId()));
-		if (desc != null)
+		if (desc != null) {
 			return PluginRegistry.findModel(desc);
+		}
 		// desc might be null if the workspace contains a plug-in with the same Bundle-SymbolicName
 		ModelEntry entry = PluginRegistry.findEntry(contributor.getActualName());
 		if (entry != null) {
-			if (!searchAll && entry.getWorkspaceModels().length > 0)
+			if (!searchAll && entry.getWorkspaceModels().length > 0) {
 				return null;
+			}
 			IPluginModelBase externalModels[] = entry.getExternalModels();
 			for (IPluginModelBase model : externalModels) {
 				BundleDescription extDesc = model.getBundleDescription();
-				if (extDesc != null && extDesc.getBundleId() == bundleId)
+				if (extDesc != null && extDesc.getBundleId() == bundleId) {
 					return model;
+				}
 			}
 		}
 		return null;
@@ -258,8 +285,9 @@ public class PDEExtensionRegistry {
 
 	public void addListener(IRegistryChangeListener listener) {
 		fRegistry.addRegistryChangeListener(listener);
-		if (!fListeners.contains(listener))
+		if (!fListeners.contains(listener)) {
 			fListeners.add(listener);
+		}
 	}
 
 	public void removeListener(IRegistryChangeListener listener) {

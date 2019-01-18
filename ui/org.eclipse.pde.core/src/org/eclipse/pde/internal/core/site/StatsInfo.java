@@ -19,8 +19,13 @@ import java.util.Vector;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IWritable;
-import org.eclipse.pde.internal.core.isite.*;
-import org.w3c.dom.*;
+import org.eclipse.pde.internal.core.isite.ISiteBundle;
+import org.eclipse.pde.internal.core.isite.ISiteFeature;
+import org.eclipse.pde.internal.core.isite.ISiteObject;
+import org.eclipse.pde.internal.core.isite.IStatsInfo;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class StatsInfo extends SiteObject implements IStatsInfo {
 
@@ -29,8 +34,8 @@ public class StatsInfo extends SiteObject implements IStatsInfo {
 
 	public static final String P_URL = "url"; //$NON-NLS-1$
 	private String fURL;
-	private Vector<ISiteObject> featureArtifacts = new Vector<>();
-	private Vector<ISiteObject> bundleArtifacts = new Vector<>();
+	private final Vector<ISiteObject> featureArtifacts = new Vector<>();
+	private final Vector<ISiteObject> bundleArtifacts = new Vector<>();
 
 	public StatsInfo() {
 		super();
@@ -157,13 +162,15 @@ public class StatsInfo extends SiteObject implements IStatsInfo {
 	public boolean isValid() {
 		for (int i = 0; i < featureArtifacts.size(); i++) {
 			ISiteFeature feature = (ISiteFeature) featureArtifacts.get(i);
-			if (!feature.isValid())
+			if (!feature.isValid()) {
 				return false;
+			}
 		}
 		for (int i = 0; i < bundleArtifacts.size(); i++) {
 			ISiteBundle bundle = (ISiteBundle) bundleArtifacts.get(i);
-			if (!bundle.isValid())
+			if (!bundle.isValid()) {
 				return false;
+			}
 		}
 		return isURLDefined();
 	}

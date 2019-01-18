@@ -18,8 +18,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.text.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
@@ -59,8 +62,9 @@ public class JarManifestErrorReporter extends ErrorReporter {
 
 	protected int getPackageLine(IHeader header, ManifestElement element) {
 		String packageName = element.getValue();
-		if (element.getDirectiveKeys() != null || element.getKeys() != null)
+		if (element.getDirectiveKeys() != null || element.getKeys() != null) {
 			return getLine(header, packageName + ";"); //$NON-NLS-1$
+		}
 
 		// check for this exact package on the last line
 		try {
@@ -115,8 +119,9 @@ public class JarManifestErrorReporter extends ErrorReporter {
 			JarManifestHeader header = null;
 			int l = 0;
 			for (; l < document.getNumberOfLines(); l++) {
-				if (l % 100 == 0)
+				if (l % 100 == 0) {
 					checkCanceled(monitor);
+				}
 				IRegion lineInfo = document.getLineInformation(l);
 				String line = document.get(lineInfo.getOffset(), lineInfo.getLength());
 				// test lines' length
@@ -260,8 +265,9 @@ public class JarManifestErrorReporter extends ErrorReporter {
 
 	@Override
 	protected void validate(IProgressMonitor monitor) {
-		if (fTextDocument != null)
+		if (fTextDocument != null) {
 			parseManifest(fTextDocument, monitor);
+		}
 	}
 
 	protected void validateDirectiveValue(IHeader header, ManifestElement element, String key, String[] allowedValues) {

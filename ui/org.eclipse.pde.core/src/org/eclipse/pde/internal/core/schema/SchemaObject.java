@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.Serializable;
-
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
@@ -87,8 +86,9 @@ public abstract class SchemaObject extends PlatformObject implements ISchemaObje
 
 	@Override
 	public String toString() {
-		if (fName != null)
+		if (fName != null) {
 			return fName;
+		}
 		return super.toString();
 	}
 

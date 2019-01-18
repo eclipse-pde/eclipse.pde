@@ -56,12 +56,14 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
 			} else if (envObject instanceof IExecutionEnvironment) {
 				env = new ExecutionEnvironment(this, ((IExecutionEnvironment) envObject).getId());
 			}
-			if (env != null && !hasElement(env.getName()))
+			if (env != null && !hasElement(env.getName())) {
 				list.add(env);
+			}
 		}
 
-		if (!list.isEmpty())
+		if (!list.isEmpty()) {
 			addManifestElements(list.toArray(new ExecutionEnvironment[list.size()]));
+		}
 	}
 
 	public void addExecutionEnvironments(ExecutionEnvironment[] envs) {

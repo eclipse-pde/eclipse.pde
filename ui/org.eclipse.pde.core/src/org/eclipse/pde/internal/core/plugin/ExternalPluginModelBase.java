@@ -20,7 +20,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.NLResourceHelper;
+import org.eclipse.pde.internal.core.PDEManager;
+import org.eclipse.pde.internal.core.PDEState;
 
 public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 
@@ -43,8 +46,9 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	@Deprecated
 	public URL getNLLookupLocation() {
 		try {
-			if (fInstallLocation != null && new File(fInstallLocation).isDirectory() && !fInstallLocation.endsWith("/")) //$NON-NLS-1$
+			if (fInstallLocation != null && new File(fInstallLocation).isDirectory() && !fInstallLocation.endsWith("/")) { //$NON-NLS-1$
 				return new URL("file:" + fInstallLocation + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			return new URL("file:" + fInstallLocation); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			return null;
@@ -75,8 +79,9 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	public void load(BundleDescription description, PDEState state) {
 		IPath path = new Path(description.getLocation());
 		String device = path.getDevice();
-		if (device != null)
+		if (device != null) {
 			path = path.setDevice(device.toUpperCase());
+		}
 		setInstallLocation(path.toOSString());
 		fLocalization = state.getBundleLocalization(description.getBundleId());
 		super.load(description, state);
@@ -89,8 +94,9 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 
 	private File getLocalFile() {
 		File file = new File(getInstallLocation());
-		if (file.isFile())
+		if (file.isFile()) {
 			return file;
+		}
 
 		file = new File(file, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 		if (!file.exists()) {

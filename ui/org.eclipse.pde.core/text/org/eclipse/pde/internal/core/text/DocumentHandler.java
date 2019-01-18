@@ -16,9 +16,18 @@ package org.eclipse.pde.internal.core.text;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Stack;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.FindReplaceDocumentAdapter;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
-import org.xml.sax.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public abstract class DocumentHandler extends DefaultHandler {
@@ -27,7 +36,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 	protected int fHighestOffset = 0;
 	private Locator fLocator;
 	private IDocumentElementNode fLastError;
-	private boolean fReconciling;
+	private final boolean fReconciling;
 
 	public DocumentHandler(boolean reconciling) {
 		fReconciling = reconciling;
@@ -89,8 +98,9 @@ public abstract class DocumentHandler extends DefaultHandler {
 				int position = 0;
 				IDocumentElementNode[] children = parent.getChildNodes();
 				for (; position < children.length; position++) {
-					if (children[position].getOffset() == -1)
+					if (children[position].getOffset() == -1) {
 						break;
+					}
 				}
 				parent.addChildNode(node, position);
 			} else {
@@ -110,8 +120,9 @@ public abstract class DocumentHandler extends DefaultHandler {
 		int line = fLocator.getLineNumber();
 		int col = fLocator.getColumnNumber();
 		IDocument doc = getDocument();
-		if (col < 0)
+		if (col < 0) {
 			col = doc.getLineLength(line);
+		}
 
 		int endOffset;
 		if (line < doc.getNumberOfLines()) {
@@ -126,11 +137,13 @@ public abstract class DocumentHandler extends DefaultHandler {
 		ArrayList<Position> commentPositions = new ArrayList<>();
 		for (int idx = 0; idx < text.length();) {
 			idx = text.indexOf("<!--", idx); //$NON-NLS-1$
-			if (idx == -1)
+			if (idx == -1) {
 				break;
+			}
 			int end = text.indexOf("-->", idx); //$NON-NLS-1$
-			if (end == -1)
+			if (end == -1) {
 				break;
+			}
 
 			commentPositions.add(new Position(idx, end - idx));
 			idx = end + 1;
@@ -139,8 +152,9 @@ public abstract class DocumentHandler extends DefaultHandler {
 		int idx = 0;
 		for (; idx < text.length(); idx += 1) {
 			idx = text.indexOf("<" + elementName, idx); //$NON-NLS-1$
-			if (idx == -1)
+			if (idx == -1) {
 				break;
+			}
 			boolean valid = true;
 			for (int i = 0; i < commentPositions.size(); i++) {
 				Position pos = commentPositions.get(i);
@@ -149,11 +163,13 @@ public abstract class DocumentHandler extends DefaultHandler {
 					break;
 				}
 			}
-			if (valid)
+			if (valid) {
 				break;
+			}
 		}
-		if (idx > -1)
+		if (idx > -1) {
 			fHighestOffset += idx + 1;
+		}
 		return fHighestOffset;
 	}
 
@@ -183,16 +199,18 @@ public abstract class DocumentHandler extends DefaultHandler {
 		IRegion nameRegion = fFindReplaceAdapter.find(offset, "\\s" + name + "\\s*=\\s*[\"\']", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 		if (nameRegion != null) {
 			nameRegion = new Region(nameRegion.getOffset() + 1, nameRegion.getLength() - 1);
-			if (getDocument().get(nameRegion.getOffset() + nameRegion.getLength(), value.length()).equals(value))
+			if (getDocument().get(nameRegion.getOffset() + nameRegion.getLength(), value.length()).equals(value)) {
 				return new Region(nameRegion.getOffset(), nameRegion.getLength() + value.length() + 1);
+			}
 		}
 		return null;
 	}
 
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
-		if (fDocumentNodeStack.isEmpty())
+		if (fDocumentNodeStack.isEmpty()) {
 			return;
+		}
 
 		IDocumentElementNode node = fDocumentNodeStack.pop();
 		try {
@@ -224,10 +242,12 @@ public abstract class DocumentHandler extends DefaultHandler {
 			}
 
 			// trim whitespace
-			while (Character.isWhitespace(text.charAt(relativeStartOffset)))
+			while (Character.isWhitespace(text.charAt(relativeStartOffset))) {
 				relativeStartOffset += 1;
-			while (Character.isWhitespace(text.charAt(relativeEndOffset)))
+			}
+			while (Character.isWhitespace(text.charAt(relativeEndOffset))) {
 				relativeEndOffset -= 1;
+			}
 
 			textNode.setOffset(node.getOffset() + relativeStartOffset);
 			textNode.setLength(relativeEndOffset - relativeStartOffset + 1);
@@ -249,8 +269,9 @@ public abstract class DocumentHandler extends DefaultHandler {
 			node.setIsErrorNode(true);
 			removeOrphanAttributes(node);
 			removeOrphanElements(node);
-			if (fLastError == null)
+			if (fLastError == null) {
 				fLastError = node;
+			}
 		}
 	}
 
@@ -280,8 +301,9 @@ public abstract class DocumentHandler extends DefaultHandler {
 
 	@Override
 	public void characters(char[] ch, int start, int length) throws SAXException {
-		if (!fReconciling || fDocumentNodeStack.isEmpty())
+		if (!fReconciling || fDocumentNodeStack.isEmpty()) {
 			return;
+		}
 
 		IDocumentElementNode parent = fDocumentNodeStack.peek();
 		StringBuilder buffer = new StringBuilder();
@@ -295,8 +317,9 @@ public abstract class DocumentHandler extends DefaultHandler {
 		if (fReconciling) {
 			IDocumentAttributeNode[] attrs = node.getNodeAttributes();
 			for (IDocumentAttributeNode attrNode : attrs) {
-				if (attrNode.getNameOffset() == -1)
+				if (attrNode.getNameOffset() == -1) {
 					node.removeDocumentAttribute(attrNode);
+				}
 			}
 		}
 	}

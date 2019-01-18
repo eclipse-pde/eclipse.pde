@@ -15,7 +15,11 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
 import org.eclipse.pde.internal.core.util.XMLComponentRegistry;
 
@@ -66,8 +70,9 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 
 	@Override
 	public String getBasedOn() {
-		if (getKind() == JAVA || getKind() == IDENTIFIER)
+		if (getKind() == JAVA || getKind() == IDENTIFIER) {
 			return basedOn;
+		}
 		return null;
 	}
 
@@ -128,8 +133,9 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 	@Override
 	public void setParent(ISchemaObject obj) {
 		super.setParent(obj);
-		if (type != null)
+		if (type != null) {
 			type.setSchema(getSchema());
+		}
 	}
 
 	public void setUse(int newUse) {
@@ -157,8 +163,9 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 		String typeName = type.getName();
 		writer.print(indent);
 		writer.print("<attribute name=\"" + getName() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (type.getRestriction() == null)
+		if (type.getRestriction() == null) {
 			writer.print(" type=\"" + typeName + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		String useString = null;
 		switch (getUse()) {
 			case OPTIONAL :
@@ -207,14 +214,18 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 					case IDENTIFIER :
 						kindValue = "identifier"; //$NON-NLS-1$
 				}
-				if (kindValue != null)
+				if (kindValue != null) {
 					writer.print(" kind=\"" + kindValue + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-				if (getBasedOn() != null)
+				}
+				if (getBasedOn() != null) {
 					writer.print(" basedOn=\"" + getBasedOn() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-				if (isTranslatable())
+				}
+				if (isTranslatable()) {
 					writer.print(" translatable=\"true\""); //$NON-NLS-1$
-				if (isDeprecated())
+				}
+				if (isDeprecated()) {
 					writer.print(" deprecated=\"true\""); //$NON-NLS-1$
+				}
 				writer.println("/>"); //$NON-NLS-1$
 				writer.println(indent2 + (getSchema().getSchemaVersion() >= 3.4 ? "</appinfo>" : "</appInfo>")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -232,8 +243,9 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 
 	@Override
 	public boolean isTranslatable() {
-		if (getKind() == STRING && fTranslatable)
+		if (getKind() == STRING && fTranslatable) {
 			return type == null || "string".equals(type.getName()); //$NON-NLS-1$
+		}
 		return false;
 	}
 

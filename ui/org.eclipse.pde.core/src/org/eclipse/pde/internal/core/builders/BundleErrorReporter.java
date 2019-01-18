@@ -18,24 +18,73 @@
 package org.eclipse.pde.internal.core.builders;
 
 import java.io.File;
-import java.util.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IModuleDescription;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.HostSpecification;
+import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
+import org.eclipse.osgi.service.resolver.ResolverError;
+import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.service.resolver.StateObjectFactory;
+import org.eclipse.osgi.service.resolver.VersionConstraint;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.AbstractNLModel;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.NLResourceHelper;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.PDEManager;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.TargetWeaver;
 import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
-import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
-import org.eclipse.pde.internal.core.util.*;
-import org.osgi.framework.*;
+import org.eclipse.pde.internal.core.util.IdUtil;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
+import org.eclipse.pde.internal.core.util.PDEJavaHelper;
+import org.eclipse.pde.internal.core.util.UtilMessages;
+import org.eclipse.pde.internal.core.util.VersionUtil;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
 
 public class BundleErrorReporter extends JarManifestErrorReporter {
@@ -51,23 +100,27 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	@Override
 	protected void validate(IProgressMonitor monitor) {
 		super.validate(monitor);
-		if (fHeaders == null || getErrorCount() > 0)
+		if (fHeaders == null || getErrorCount() > 0) {
 			return;
+		}
 
 		fModel = PluginRegistry.findModel(fProject);
 		// be paranoid.  something could have gone wrong reading the file etc.
-		if (fModel == null || !validateBundleSymbolicName())
+		if (fModel == null || !validateBundleSymbolicName()) {
 			return;
+		}
 		try {
 			if (fProject.hasNature(JavaCore.NATURE_ID)) {
 				validateAutomaticModuleName();
 			}
 		} catch (CoreException e1) {
 		}
-		if (!validateVersionOfRequireBundle())
+		if (!validateVersionOfRequireBundle()) {
 			return;
-		if (!validateVersionOfImportPackage())
+		}
+		if (!validateVersionOfImportPackage()) {
 			return;
+		}
 
 		BundleDescription desc = fModel.getBundleDescription();
 		if (desc == null && fModel.getInstallLocation() != null) {
@@ -116,8 +169,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private void validateAutomaticModuleName() {
 		int compilerFlag = CompilerFlags.getFlag(fProject, CompilerFlags.P_NO_AUTOMATIC_MODULE);
-		if( compilerFlag == CompilerFlags.IGNORE)
+		if( compilerFlag == CompilerFlags.IGNORE) {
 			return;
+		}
 
 		IJavaProject jp = JavaCore.create(fProject);
 		IModuleDescription moduleDescription = null;
@@ -174,21 +228,26 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				try {
 					if (ManifestUtils.isImmediateRoot(root)) {
 						IJavaElement[] javaElements = root.getChildren();
-						for (int j = 0; j < javaElements.length; j++)
+						for (int j = 0; j < javaElements.length; j++) {
 							if (javaElements[j] instanceof IPackageFragment) {
 								IPackageFragment fragment = (IPackageFragment) javaElements[j];
 								String name = fragment.getElementName();
 								if (name.length() == 0)
+								 {
 									name = "."; //$NON-NLS-1$
+								}
 								if (fragment.containsJavaResources() || fragment.getNonJavaResources().length > 0) {
 									if (!containsPackage(header, name)) {
 										packages.append(name);
 										if (j < javaElements.length - 1)
+										 {
 											packages.append(","); //$NON-NLS-1$
+										}
 
 									}
 								}
 							}
+						}
 					}
 				} catch (JavaModelException e) {
 				}
@@ -208,8 +267,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	 */
 	private boolean validateBundleSymbolicName() {
 		IHeader header = validateRequiredHeader(Constants.BUNDLE_SYMBOLICNAME);
-		if (header == null)
+		if (header == null) {
 			return false;
+		}
 
 		ManifestElement[] elements = header.getElements();
 		String id = elements.length > 0 ? elements[0].getValue() : null;
@@ -218,14 +278,16 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			return false;
 		}
 
-		if (!validateBundleManifestVersion())
+		if (!validateBundleManifestVersion()) {
 			return false;
+		}
 		validatePluginId(header, id);
 		validateSingleton(header, elements[0]);
 
 		// Header introduced in OSGi R4 - warn if R3 manifest
-		if (!fOsgiR4)
+		if (!fOsgiR4) {
 			report(NLS.bind(PDECoreMessages.BundleErrorReporter_R4SyntaxInR3Bundle, Constants.BUNDLE_SYMBOLICNAME), header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_R4_SYNTAX_IN_R3_BUNDLE, PDEMarkerFactory.CAT_OTHER);
+		}
 
 		return true;
 	}
@@ -236,8 +298,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	private boolean validateVersionOfRequireBundle() {
 		// check the version range of require bundle are ok
 		IHeader header = getHeader(Constants.REQUIRE_BUNDLE);
-		if (header == null)
+		if (header == null) {
 			return true;
+		}
 		ManifestElement[] required = header.getElements();
 		for (ManifestElement element : required) {
 			String versionRange = element.getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
@@ -260,8 +323,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	private boolean validateVersionOfImportPackage() {
 		// check the version range of import package are ok
 		IHeader header = getHeader(Constants.IMPORT_PACKAGE);
-		if (header == null)
+		if (header == null) {
 			return true;
+		}
 		ManifestElement[] importPackages = header.getElements();
 		for (ManifestElement element : importPackages) {
 			String versionRange = element.getAttribute(Constants.VERSION_ATTRIBUTE);
@@ -361,11 +425,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 
 		// Header introduced in OSGi R4 - warn if R3 manifest
-		if (!fOsgiR4)
+		if (!fOsgiR4) {
 			report(NLS.bind(PDECoreMessages.BundleErrorReporter_R4SyntaxInR3Bundle, Constants.FRAGMENT_HOST), header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_R4_SYNTAX_IN_R3_BUNDLE, PDEMarkerFactory.CAT_OTHER);
+		}
 
-		if (!isCheckUnresolvedImports())
+		if (!isCheckUnresolvedImports()) {
 			return;
+		}
 
 		BundleDescription desc = fModel.getBundleDescription();
 		if (desc == null) {
@@ -381,8 +447,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 
 		HostSpecification host = desc.getHost();
-		if (host == null)
+		if (host == null) {
 			return;
+		}
 
 		String name = host.getName();
 		if (host.getSupplier() == null) {
@@ -399,8 +466,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				BundleDescription[] suppliers = desc.getContainingState().getBundles(name);
 				boolean resolved = true;
 				for (BundleDescription supplier : suppliers) {
-					if (supplier.getHost() != null)
+					if (supplier.getHost() != null) {
 						continue;
+					}
 					if (supplier.isResolved()) {
 						Version version = supplier.getVersion();
 						// use fully qualified name to avoid conflict with other VersionRange class
@@ -432,8 +500,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private void validateBundleVersion() {
 		IHeader header = validateRequiredHeader(Constants.BUNDLE_VERSION);
-		if (header == null)
+		if (header == null) {
 			return;
+		}
 
 		IStatus status = VersionUtil.validateVersion(header.getValue());
 		if (!status.isOK()) {
@@ -444,16 +513,19 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private void validateRequiredExecutionEnvironment() {
 		int sev = CompilerFlags.getFlag(fProject, CompilerFlags.P_INCOMPATIBLE_ENV);
-		if (sev == CompilerFlags.IGNORE)
+		if (sev == CompilerFlags.IGNORE) {
 			return;
+		}
 		BundleDescription desc = fModel.getBundleDescription();
-		if (desc == null)
+		if (desc == null) {
 			return;
+		}
 
 		// if we aren't a java project, let's not check for a BREE
 		try {
-			if (!fProject.hasNature(JavaCore.NATURE_ID))
+			if (!fProject.hasNature(JavaCore.NATURE_ID)) {
 				return;
+			}
 		} catch (CoreException e) {
 			return;
 		}
@@ -514,8 +586,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 		@SuppressWarnings("deprecation")
 		IHeader header = getHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-		if (header == null)
+		if (header == null) {
 			return;
+		}
 
 		IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(bundleEnvs[0]);
 		if (env != null) {
@@ -524,11 +597,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			try {
 				entries = jproject.getRawClasspath();
 				for (IClasspathEntry entry : entries) {
-					if (entry.getEntryKind() != IClasspathEntry.CPE_CONTAINER)
+					if (entry.getEntryKind() != IClasspathEntry.CPE_CONTAINER) {
 						continue;
+					}
 					IPath currentPath = entry.getPath();
-					if (JavaRuntime.newDefaultJREContainerPath().matchingFirstSegments(currentPath) == 0)
+					if (JavaRuntime.newDefaultJREContainerPath().matchingFirstSegments(currentPath) == 0) {
 						continue;
+					}
 
 					IPath validPath = JavaRuntime.newJREContainerPath(env);
 					if (!validPath.equals(currentPath)) {
@@ -568,8 +643,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	 */
 	private void validateEclipseBundleShape() {
 		IHeader header = getHeader(ICoreConstants.ECLIPSE_BUNDLE_SHAPE);
-		if (header == null)
+		if (header == null) {
 			return;
+		}
 
 		String value = header.getValue();
 		if (value != null) {
@@ -580,14 +656,16 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private void validateEclipsePlatformFilter() {
 		IHeader header = getHeader(ICoreConstants.PLATFORM_FILTER);
-		if (header == null)
+		if (header == null) {
 			return;
+		}
 
 		try {
 			PDECore.getDefault().getBundleContext().createFilter(header.getValue());
 			int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_INCOMPATIBLE_ENV);
-			if (severity == CompilerFlags.IGNORE)
+			if (severity == CompilerFlags.IGNORE) {
 				return;
+			}
 			BundleDescription desc = fModel.getBundleDescription();
 			if (desc != null && !desc.isResolved()) {
 				ResolverError[] errors = desc.getContainingState().getResolverErrors(desc);
@@ -636,8 +714,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private void validateBundleActivator() {
 		IHeader header = getHeader(Constants.BUNDLE_ACTIVATOR);
-		if (header == null)
+		if (header == null) {
 			return;
+		}
 
 		String activator = header.getValue();
 		BundleDescription desc = fModel.getBundleDescription();
@@ -672,19 +751,22 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void validateRequireBundle(IProgressMonitor monitor) {
-		if (!isCheckUnresolvedImports())
+		if (!isCheckUnresolvedImports()) {
 			return;
+		}
 
 		IHeader header = getHeader(Constants.REQUIRE_BUNDLE);
-		if (header == null)
+		if (header == null) {
 			return;
+		}
 
 		ManifestElement[] required = header.getElements();
 
 		BundleDescription desc = fModel.getBundleDescription();
 		if (desc == null) {
-			for (ManifestElement element : required)
+			for (ManifestElement element : required) {
 				validateBundleVersionAttribute(header, element);
+			}
 			return;
 		}
 
@@ -716,8 +798,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,  CompilerFlags.P_UNRESOLVED_IMPORTS);
 					if (marker != null) {
 						marker.setAttribute("bundleId", required[i].getValue()); //$NON-NLS-1$
-						if (optional)
+						if (optional) {
 							marker.setAttribute("optional", true); //$NON-NLS-1$
+						}
 					}
 				} else {
 					report(NLS.bind(PDECoreMessages.BundleErrorReporter_BundleRangeInvalidInBundleVersion, bundleID + ": " + specs[i].getVersionRange()), //$NON-NLS-1$
@@ -727,8 +810,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 
 		// Header introduced in OSGi R4 - warn if R3 manifest
-		if (!fOsgiR4)
+		if (!fOsgiR4) {
 			report(NLS.bind(PDECoreMessages.BundleErrorReporter_R4SyntaxInR3Bundle, Constants.REQUIRE_BUNDLE), header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_R4_SYNTAX_IN_R3_BUNDLE, PDEMarkerFactory.CAT_OTHER);
+		}
 
 	}
 
@@ -776,8 +860,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private int getRequireBundleSeverity(ManifestElement requireBundleElement, boolean optional) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNRESOLVED_IMPORTS);
-		if (optional && severity != CompilerFlags.IGNORE)
+		if (optional && severity != CompilerFlags.IGNORE) {
 			severity += 1;
+		}
 		return severity;
 	}
 
@@ -802,8 +887,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private void validateImportPackage(IProgressMonitor monitor) {
 		IHeader header = getHeader(Constants.IMPORT_PACKAGE);
-		if (header == null)
+		if (header == null) {
 			return;
+		}
 
 		BundleDescription desc = fModel.getBundleDescription();
 		if (desc == null) {
@@ -830,8 +916,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (desc.hasDynamicImports()) {
 			List<ImportPackageSpecification> staticImportsList = new ArrayList<>();
 			for (int i = 0; i < imports.length; ++i) {
-				if (!imports[i].getDirective(Constants.RESOLUTION_DIRECTIVE).equals(ImportPackageSpecification.RESOLUTION_DYNAMIC))
+				if (!imports[i].getDirective(Constants.RESOLUTION_DIRECTIVE).equals(ImportPackageSpecification.RESOLUTION_DYNAMIC)) {
 					staticImportsList.add(imports[i]);
+				}
 			}
 			imports = staticImportsList.toArray(new ImportPackageSpecification[staticImportsList.size()]);
 		}
@@ -847,8 +934,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			// TODO we should only validate versions that we have a match
 			validateImportPackageVersion(header, element);
 
-			if (!hasUnresolved)
+			if (!hasUnresolved) {
 				continue;
+			}
 
 			int length = element.getValueComponents().length;
 			for (int j = 0; j < length; j++) {
@@ -862,8 +950,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					}
 				}
 
-				if (importSpec.isResolved() || !isCheckUnresolvedImports())
+				if (importSpec.isResolved() || !isCheckUnresolvedImports()) {
 					continue;
+				}
 
 				boolean optional = isOptional(element);
 				int severity = getRequireBundleSeverity(element, optional);
@@ -886,8 +975,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					addMarkerAttribute(marker,PDEMarkerFactory.compilerKey, CompilerFlags.P_UNRESOLVED_IMPORTS);
 					if (marker != null) {
 						marker.setAttribute("packageName", name); //$NON-NLS-1$
-						if (optional)
+						if (optional) {
 							marker.setAttribute("optional", true); //$NON-NLS-1$
+						}
 					}
 				}
 			}
@@ -916,8 +1006,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	protected void validateExportPackage(IProgressMonitor monitor) {
 		IHeader header = getHeader(Constants.EXPORT_PACKAGE);
-		if (header == null)
+		if (header == null) {
 			return;
+		}
 
 		String message = null;
 		ManifestElement[] elements = header.getElements();
@@ -965,8 +1056,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (header != null) {
 			ManifestElement[] elements = header.getElements();
 			for (ManifestElement element : elements) {
-				if (element.getValue().equals(name))
+				if (element.getValue().equals(name)) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -999,8 +1091,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				try {
 					if (fProject.hasNature(JavaCore.NATURE_ID)) {
 						IPackageFragment[] fragments = PluginJavaSearchUtil.collectPackageFragments(new IPluginModelBase[] {model}, JavaCore.create(fProject), false);
-						for (IPackageFragment fragment : fragments)
+						for (IPackageFragment fragment : fragments) {
 							fProjectPackages.add(fragment.getElementName());
+						}
 					}
 				} catch (CoreException ce) {
 				}
@@ -1030,10 +1123,12 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						for (IJavaElement element : children) {
 							IPackageFragment f = (IPackageFragment) element;
 							String name = f.getElementName();
-							if (name.equals("")) //$NON-NLS-1$
+							if (name.equals("")) { //$NON-NLS-1$
 								name = "."; //$NON-NLS-1$
-							if (f.hasChildren() || f.getNonJavaResources().length > 0)
+							}
+							if (f.hasChildren() || f.getNonJavaResources().length > 0) {
 								fProjectPackages.add(name);
+							}
 						}
 					}
 				}
@@ -1068,8 +1163,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private void validateTranslatableHeaders() {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_NOT_EXTERNALIZED);
-		if (severity == CompilerFlags.IGNORE)
+		if (severity == CompilerFlags.IGNORE) {
 			return;
+		}
 
 		for (String element : ICoreConstants.TRANSLATABLE_HEADERS) {
 			IHeader header = getHeader(element);
@@ -1135,12 +1231,14 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private void validateX_InternalDirective(IHeader header, ManifestElement element) {
 		String internal = element.getDirective(ICoreConstants.INTERNAL_DIRECTIVE);
-		if (internal == null)
+		if (internal == null) {
 			return;
+		}
 
 		for (String value : BOOLEAN_VALUES) {
-			if (value.equals(internal))
+			if (value.equals(internal)) {
 				return;
+			}
 		}
 		String message = NLS.bind(PDECoreMessages.BundleErrorReporter_dir_value, (new String[] {internal, ICoreConstants.INTERNAL_DIRECTIVE}));
 		report(message, getPackageLine(header, element), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
@@ -1159,8 +1257,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	private void validateBundleActivatorPolicy() {
 		IHeader header = getHeader(Constants.BUNDLE_ACTIVATIONPOLICY);
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
-		if (header == null)
+		if (header == null) {
 			return;
+		}
 
 		// Header introduced in OSGi R4 - warn if R3 manifest
 		if (!fOsgiR4) {
@@ -1176,8 +1275,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private void validateAutoStart() {
 		IHeader header = getHeader(ICoreConstants.ECLIPSE_AUTOSTART);
-		if (!validateStartHeader(header))
+		if (!validateStartHeader(header)) {
 			return; // valid start header problems already reported
+		}
 
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
 		if (severity != CompilerFlags.IGNORE && TargetPlatformHelper.getTargetVersion() >= 3.2 && !containsValidActivationHeader()) {
@@ -1199,8 +1299,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
 		validateStartHeader(header);
 		if (header != null) {
-			if (severity == CompilerFlags.IGNORE || containsValidActivationHeader())
+			if (severity == CompilerFlags.IGNORE || containsValidActivationHeader()) {
 				return;
+			}
 			double targetVersion = TargetPlatformHelper.getTargetVersion();
 			if (targetVersion < 3.2) {
 				VirtualMarker marker = report(PDECoreMessages.BundleErrorReporter_lazyStart_unsupported, header.getLineNumber() + 1, severity, PDEMarkerFactory.NO_RESOLUTION, PDEMarkerFactory.CAT_OTHER);
@@ -1224,38 +1325,43 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	private boolean containsValidActivationHeader() {
 		String header;
 		double targetVersion = TargetPlatformHelper.getTargetVersion();
-		if (targetVersion < 3.2)
+		if (targetVersion < 3.2) {
 			header = ICoreConstants.ECLIPSE_AUTOSTART;
-		else if (targetVersion < 3.4)
+		} else if (targetVersion < 3.4) {
 			header = ICoreConstants.ECLIPSE_LAZYSTART;
-		else
+		} else {
 			header = Constants.BUNDLE_ACTIVATIONPOLICY;
+		}
 
 		return getHeader(header) != null;
 	}
 
 	private String getCurrentActivationHeader() {
 		double targetVersion = TargetPlatformHelper.getTargetVersion();
-		if (targetVersion < 3.2)
+		if (targetVersion < 3.2) {
 			return ICoreConstants.ECLIPSE_AUTOSTART;
-		else if (targetVersion < 3.4)
+		} else if (targetVersion < 3.4) {
 			return ICoreConstants.ECLIPSE_LAZYSTART;
+		}
 		return Constants.BUNDLE_ACTIVATIONPOLICY;
 	}
 
 	private boolean validateStartHeader(IHeader header) {
-		if (header == null)
+		if (header == null) {
 			return false;
+		}
 		validateBooleanValue(header);
 		return exceptionsAttributesValid(header, header.getElements());
 	}
 
 	private boolean exceptionsAttributesValid(IHeader header, ManifestElement[] elements) {
-		if (elements == null || elements.length == 0)
+		if (elements == null || elements.length == 0) {
 			return true;
+		}
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ATTRIBUTE);
-		if (severity == CompilerFlags.IGNORE)
+		if (severity == CompilerFlags.IGNORE) {
 			return true;
+		}
 		Enumeration<?> keys = elements[0].getKeys();
 		if (keys != null && keys.hasMoreElements()) {
 			String key = (String) keys.nextElement();
@@ -1280,14 +1386,16 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private void validateExtensibleAPI() {
 		IHeader header = getHeader(ICoreConstants.EXTENSIBLE_API);
-		if (header != null)
+		if (header != null) {
 			validateBooleanValue(header);
+		}
 	}
 
 	public VirtualMarker report(String message, int line, int severity, int problemID, String headerName, String category) {
 		VirtualMarker marker = report(message, line, severity, problemID, category);
-		if (marker != null)
+		if (marker != null) {
 			marker.setAttribute(PDEMarkerFactory.MPK_LOCATION_PATH, headerName);
+		}
 		return marker;
 	}
 
@@ -1297,8 +1405,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			IHeader exportHeader = getHeader(ICoreConstants.EXPORT_SERVICE);
 			int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
 
-			if (severity == CompilerFlags.IGNORE)
+			if (severity == CompilerFlags.IGNORE) {
 				return;
+			}
 
 			if (importHeader != null) {
 				int line = importHeader.getLineNumber();
@@ -1316,8 +1425,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private void validateBundleLocalization() {
 		IHeader header = getHeader(Constants.BUNDLE_LOCALIZATION);
-		if (header == null)
+		if (header == null) {
 			return;
+		}
 		String location = header.getValue();
 		String fileName = null;
 		int index = location.lastIndexOf('/');
@@ -1330,8 +1440,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 
 		// Header introduced in OSGi R4 - warn if R3 manifest
-		if (!fOsgiR4)
+		if (!fOsgiR4) {
 			report(NLS.bind(PDECoreMessages.BundleErrorReporter_R4SyntaxInR3Bundle, Constants.BUNDLE_LOCALIZATION), header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_R4_SYNTAX_IN_R3_BUNDLE, PDEMarkerFactory.CAT_OTHER);
+		}
 
 		IResource res = PDEProject.getBundleRoot(fProject).findMember(location);
 		if (res == null || !(res instanceof IContainer)) {
@@ -1343,11 +1454,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		try {
 			IResource[] children = folder.members();
 			for (int i = 0; i < children.length; i++) {
-				if (!(children[i] instanceof IFile))
+				if (!(children[i] instanceof IFile)) {
 					continue;
+				}
 				String childName = children[i].getName();
-				if (childName.endsWith(".properties") && childName.startsWith(fileName)) //$NON-NLS-1$
+				if (childName.endsWith(".properties") && childName.startsWith(fileName)) { //$NON-NLS-1$
 					return;
+				}
 			}
 		} catch (CoreException e) {
 		}
@@ -1357,8 +1470,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private void validateFragmentHost(IHeader requireBundleHeader, ManifestElement element) {
 		IHeader header = getHeader(Constants.FRAGMENT_HOST);
-		if (header == null)
+		if (header == null) {
 			return;
+		}
 
 		ManifestElement[] elements = header.getElements();
 
@@ -1372,8 +1486,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private void validateProvidePackage() {
 		IHeader header = getHeader(ICoreConstants.PROVIDE_PACKAGE);
-		if (header == null)
+		if (header == null) {
 			return;
+		}
 
 		if (fOsgiR4 && isCheckDeprecated()) {
 			VirtualMarker marker = report(PDECoreMessages.BundleErrorReporter_providePackageHeaderDeprecated, header.getLineNumber() + 1, CompilerFlags.P_DEPRECATED, PDEMarkerFactory.M_DEPRECATED_PROVIDE_PACKAGE, PDEMarkerFactory.CAT_OTHER);
@@ -1382,8 +1497,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	}
 
 	private void addMarkerAttribute(VirtualMarker marker, String attr, String value) {
-		if (marker != null)
+		if (marker != null) {
 			marker.setAttribute(attr, value);
+		}
 	}
 
 	/**

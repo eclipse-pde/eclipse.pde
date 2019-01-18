@@ -16,7 +16,13 @@ package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.w3c.dom.Node;
@@ -48,9 +54,9 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		}
 		String version = getVersion();
 		IPluginModelBase model = null;
-		if (version == null || version.equals(ICoreConstants.DEFAULT_VERSION))
+		if (version == null || version.equals(ICoreConstants.DEFAULT_VERSION)) {
 			model = PluginRegistry.findModel(id);
-		else {
+		} else {
 			ModelEntry entry = PluginRegistry.findEntry(id);
 			// if no plug-ins match the id, entry == null
 			if (entry != null) {
@@ -63,10 +69,12 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 				}
 			}
 		}
-		if (fFragment && model instanceof IFragmentModel)
+		if (fFragment && model instanceof IFragmentModel) {
 			return model.getPluginBase();
-		if (!fFragment && model instanceof IPluginModel)
+		}
+		if (!fFragment && model instanceof IPluginModel) {
 			return model.getPluginBase();
+		}
 		return null;
 	}
 
@@ -100,8 +108,9 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_VERSION)) {
 			setVersion(newValue != null ? newValue.toString() : null);
-		} else
+		} else {
 			super.restoreProperty(name, oldValue, newValue);
+		}
 	}
 
 	public void setFragment(boolean fragment) throws CoreException {
@@ -114,11 +123,13 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		super.parse(node);
 		fVersion = getNodeAttribute(node, "version"); //$NON-NLS-1$
 		String f = getNodeAttribute(node, "fragment"); //$NON-NLS-1$
-		if (f != null && f.equalsIgnoreCase("true")) //$NON-NLS-1$
+		if (f != null && f.equalsIgnoreCase("true")) { //$NON-NLS-1$
 			fFragment = true;
+		}
 		String unpack = getNodeAttribute(node, "unpack"); //$NON-NLS-1$
-		if (unpack != null && unpack.equalsIgnoreCase("false")) //$NON-NLS-1$
+		if (unpack != null && unpack.equalsIgnoreCase("false")) { //$NON-NLS-1$
 			fUnpack = false;
+		}
 	}
 
 	public void loadFrom(IPluginBase plugin) {
@@ -156,8 +167,9 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 			return pluginBase.getTranslatedName();
 		}
 		String name = super.getLabel();
-		if (name == null)
+		if (name == null) {
 			name = getId();
+		}
 		return name;
 	}
 

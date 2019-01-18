@@ -14,7 +14,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -51,12 +56,14 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEdit
 	protected NLResourceHelper createNLResourceHelper() {
 		try {
 			// TODO revisit this method
-			if (file == null || file.getLocation() == null)
+			if (file == null || file.getLocation() == null) {
 				return null;
+			}
 			IPath path = file.getLocation().removeLastSegments(1);
 			String installLocation = path.toOSString();
-			if (installLocation.startsWith("file:") == false) //$NON-NLS-1$
+			if (installLocation.startsWith("file:") == false) { //$NON-NLS-1$
 				installLocation = "file:" + installLocation; //$NON-NLS-1$
+			}
 			URL url = new URL(installLocation + "/"); //$NON-NLS-1$
 			String name = "feature"; //$NON-NLS-1$
 			NLResourceHelper helper = new NLResourceHelper(name, new URL[] {url});
@@ -117,13 +124,14 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEdit
 
 	@Override
 	public void load() {
-		if (file == null)
+		if (file == null) {
 			return;
+		}
 		if (file.exists()) {
 			try (InputStream stream = new BufferedInputStream(file.getContents(true))) {
-				if (stream.available() > 0)
+				if (stream.available() > 0) {
 					load(stream, false);
-				else {
+				} else {
 					// if we have an empty file, then mark as loaded so users changes will be saved
 					setLoaded(true);
 				}
@@ -141,8 +149,9 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEdit
 
 	@Override
 	public void save() {
-		if (file == null)
+		if (file == null) {
 			return;
+		}
 		String contents = fixLineDelimiter(getContents(), file);
 		try (ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8));) {
 			if (file.exists()) {

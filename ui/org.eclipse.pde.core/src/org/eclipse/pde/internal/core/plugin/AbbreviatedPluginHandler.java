@@ -23,7 +23,7 @@ import org.xml.sax.SAXException;
  */
 public class AbbreviatedPluginHandler extends PluginHandler {
 
-	private String[] fExtensionPointIDs;
+	private final String[] fExtensionPointIDs;
 
 	/**
 	 * @param extensionPointIDs

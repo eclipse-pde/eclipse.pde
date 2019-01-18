@@ -13,15 +13,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.xml.parsers.SAXParserFactory;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.spi.*;
+import org.eclipse.core.runtime.IContributor;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.spi.IDynamicExtensionRegistry;
+import org.eclipse.core.runtime.spi.RegistryContributor;
+import org.eclipse.core.runtime.spi.RegistryStrategy;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class PDERegistryStrategy extends RegistryStrategy {
@@ -43,8 +53,9 @@ public class PDERegistryStrategy extends RegistryStrategy {
 		protected final void removeModels(IPluginModelBase[] bases, boolean onlyInactive) {
 			for (IPluginModelBase base : bases) {
 				//				resetModel(bases[i]);
-				if (onlyInactive && base.isEnabled())
+				if (onlyInactive && base.isEnabled()) {
 					continue;
+				}
 				removeBundle(fRegistry, base);
 			}
 		}
@@ -58,8 +69,9 @@ public class PDERegistryStrategy extends RegistryStrategy {
 
 		@Override
 		public void modelsChanged(PluginModelDelta delta) {
-			if (fRegistry == null)
+			if (fRegistry == null) {
 				createRegistry();
+			}
 			// can ignore removed models since the ModelEntries is empty
 			ModelEntry[] entries = delta.getChangedEntries();
 			for (int i = 0; i < entries.length; i++) {
@@ -90,8 +102,9 @@ public class PDERegistryStrategy extends RegistryStrategy {
 					}
 				}
 			}
-			for (ModelEntry entry : entries)
+			for (ModelEntry entry : entries) {
 				addBundles(fRegistry, entry.getActiveModels());
+			}
 		}
 
 	}
@@ -100,8 +113,9 @@ public class PDERegistryStrategy extends RegistryStrategy {
 
 		@Override
 		public void extensionsChanged(IExtensionDeltaEvent event) {
-			if (fRegistry == null)
+			if (fRegistry == null) {
 				createRegistry();
+			}
 			IPluginModelBase[] bases = event.getRemovedModels();
 			removeModels(bases, false);
 			removeModels(event.getChangedModels(), false);
@@ -144,18 +158,21 @@ public class PDERegistryStrategy extends RegistryStrategy {
 	}
 
 	protected void setListenerRegistry(IExtensionRegistry registry) {
-		if (fModelListener != null)
+		if (fModelListener != null) {
 			fModelListener.setRegistry(registry);
-		if (fExtensionListener != null)
+		}
+		if (fExtensionListener != null) {
 			fExtensionListener.setRegistry(registry);
+		}
 	}
 
 	@Override
 	public void onStart(IExtensionRegistry registry, boolean loadedFromCache) {
 		super.onStart(registry, loadedFromCache);
 		setListenerRegistry(registry);
-		if (!loadedFromCache)
+		if (!loadedFromCache) {
 			processBundles(registry);
+		}
 	}
 
 	@Override
@@ -178,20 +195,24 @@ public class PDERegistryStrategy extends RegistryStrategy {
 	}
 
 	private void addBundles(IExtensionRegistry registry, IPluginModelBase[] bases) {
-		for (IPluginModelBase base : bases)
+		for (IPluginModelBase base : bases) {
 			addBundle(registry, base);
+		}
 	}
 
 	private void addBundle(IExtensionRegistry registry, IPluginModelBase base) {
 		IContributor contributor = createContributor(base);
-		if (contributor == null)
+		if (contributor == null) {
 			return;
-		if (((IDynamicExtensionRegistry) registry).hasContributor(contributor))
+		}
+		if (((IDynamicExtensionRegistry) registry).hasContributor(contributor)) {
 			return;
+		}
 
 		File input = getFile(base);
-		if (input == null)
+		if (input == null) {
 			return;
+		}
 		InputStream is = null;
 		ZipFile jfile = null;
 
@@ -251,10 +272,12 @@ public class PDERegistryStrategy extends RegistryStrategy {
 			return null;
 		}
 		File file = new File(loc);
-		if (!file.exists())
+		if (!file.exists()) {
 			return null;
-		if (file.isFile())
+		}
+		if (file.isFile()) {
 			return file;
+		}
 		String fileName = (base.isFragmentModel()) ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
 		File inputFile = new File(file, fileName);
 		return (inputFile.exists()) ? inputFile : null;
@@ -263,8 +286,9 @@ public class PDERegistryStrategy extends RegistryStrategy {
 	public IContributor createContributor(IPluginModelBase base) {
 		BundleDescription desc = base == null ? null : base.getBundleDescription();
 		// return null if the IPluginModelBase does not have a BundleDescription (since then we won't have a valid 'id')
-		if (desc == null)
+		if (desc == null) {
 			return null;
+		}
 		String name = desc.getSymbolicName();
 		String id = Long.toString(desc.getBundleId());
 		String hostName = null;
@@ -272,8 +296,9 @@ public class PDERegistryStrategy extends RegistryStrategy {
 
 		HostSpecification host = desc.getHost();
 		// make sure model is a singleton.  If it is a fragment, make sure host is singleton
-		if (host != null && host.getBundle() != null && !host.getBundle().isSingleton() || host == null && !desc.isSingleton())
+		if (host != null && host.getBundle() != null && !host.getBundle().isSingleton() || host == null && !desc.isSingleton()) {
 			return null;
+		}
 		if (host != null) {
 			BundleDescription[] hosts = host.getHosts();
 			if (hosts.length != 1) {
@@ -307,8 +332,9 @@ public class PDERegistryStrategy extends RegistryStrategy {
 		long timeStamp = 0;
 		for (IPluginModelBase base : bases) {
 			String loc = base.getInstallLocation();
-			if (loc == null)
+			if (loc == null) {
 				continue;
+			}
 
 			File location = new File(loc);
 			if (location.exists()) {
@@ -316,14 +342,17 @@ public class PDERegistryStrategy extends RegistryStrategy {
 					timeStamp ^= location.lastModified();
 				} else {
 					File manifest = new File(location, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
-					if (manifest.exists())
+					if (manifest.exists()) {
 						timeStamp ^= manifest.lastModified();
+					}
 					manifest = new File(location, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
-					if (manifest.exists())
+					if (manifest.exists()) {
 						timeStamp ^= manifest.lastModified();
+					}
 					manifest = new File(location, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
-					if (manifest.exists())
+					if (manifest.exists()) {
 						timeStamp ^= manifest.lastModified();
+					}
 				}
 				timeStamp ^= location.getAbsolutePath().hashCode();
 			}

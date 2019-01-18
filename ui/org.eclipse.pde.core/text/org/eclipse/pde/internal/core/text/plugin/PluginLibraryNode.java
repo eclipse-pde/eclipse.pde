@@ -34,8 +34,9 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 				String name = childNode.getXMLAttributeValue(P_NAME);
 				if (name != null && !name.equals("*")) { //$NON-NLS-1$
 					int index = name.indexOf(".*"); //$NON-NLS-1$
-					if (index != -1)
+					if (index != -1) {
 						name = name.substring(0, index);
+					}
 					result.add(name);
 				}
 			}
@@ -53,8 +54,9 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		IDocumentElementNode[] children = getChildNodes();
 		for (final IDocumentElementNode childNode : children) {
 			final PluginObjectNode node = (PluginObjectNode) childNode;
-			if (node.getName().equals(P_EXPORTED))
+			if (node.getName().equals(P_EXPORTED)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -66,8 +68,9 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 			final PluginObjectNode node = (PluginObjectNode) childNode;
 			if (node.getName().equals(P_EXPORTED)) {
 				final String name = childNode.getXMLAttributeValue(P_NAME);
-				if (name != null && name.equals("*")) //$NON-NLS-1$
+				if (name != null && name.equals("*")) { //$NON-NLS-1$
 					return true;
+				}
 			}
 		}
 		return false;
@@ -103,8 +106,9 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 
 	@Override
 	public void removeContentFilter(String filter) throws CoreException {
-		if (!filter.endsWith(".*")) //$NON-NLS-1$
+		if (!filter.endsWith(".*")) { //$NON-NLS-1$
 			filter += ".*"; //$NON-NLS-1$
+		}
 		IDocumentElementNode[] children = getChildNodes();
 		for (final IDocumentElementNode childNode : children) {
 			if (childNode.getXMLTagName().equals(P_EXPORTED) && filter.equals(childNode.getXMLAttributeValue(P_NAME))) {
@@ -164,8 +168,9 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	public String write(boolean indent) {
 		String sep = getLineDelimiter();
 		StringBuilder buffer = new StringBuilder();
-		if (indent)
+		if (indent) {
 			buffer.append(getIndent());
+		}
 
 		IDocumentElementNode[] children = getChildNodes();
 		if (children.length > 0) {
@@ -189,8 +194,9 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 		for (final IDocumentAttributeNode attrNode : attrs) {
 			appendAttribute(buffer, attrNode.getAttributeName());
 		}
-		if (terminate)
+		if (terminate) {
 			buffer.append("/"); //$NON-NLS-1$
+		}
 		buffer.append(">"); //$NON-NLS-1$
 		return buffer.toString();
 	}

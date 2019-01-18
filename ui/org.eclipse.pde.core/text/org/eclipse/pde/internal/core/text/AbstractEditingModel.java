@@ -13,26 +13,35 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.internal.core.IModelChangeProviderExtension;
+import org.eclipse.pde.internal.core.IModelChangedListenerFilter;
+import org.eclipse.pde.internal.core.NLResourceHelper;
 
 public abstract class AbstractEditingModel extends PlatformObject implements IEditingModel, IModelChangeProviderExtension {
-	private ArrayList<IModelChangedListener> fListeners = new ArrayList<>();
+	private final ArrayList<IModelChangedListener> fListeners = new ArrayList<>();
 	protected boolean fReconciling;
 	protected boolean fInSync = true;
 	protected boolean fLoaded = false;
 	protected boolean fDisposed;
 	protected long fTimestamp;
 	private transient NLResourceHelper fNLResourceHelper;
-	private IDocument fDocument;
+	private final IDocument fDocument;
 	private boolean fDirty;
 	private Charset fCharset;
 	private IResource fUnderlyingResource;
@@ -56,8 +65,9 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 
 	@Override
 	public String getResourceString(String key) {
-		if (key == null || key.length() == 0)
+		if (key == null || key.length() == 0) {
 			return ""; //$NON-NLS-1$
+		}
 
 		return (getNLResourceHelper() == null) ? key : getNLResourceHelper().getResourceString(key);
 	}
@@ -65,8 +75,9 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	protected abstract NLResourceHelper createNLResourceHelper();
 
 	public NLResourceHelper getNLResourceHelper() {
-		if (fNLResourceHelper == null)
+		if (fNLResourceHelper == null) {
 			fNLResourceHelper = createNLResourceHelper();
+		}
 		return fNLResourceHelper;
 	}
 
@@ -142,8 +153,9 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 				}
 			} catch (CoreException e) {
 			}
-			if (isDirty())
+			if (isDirty()) {
 				setDirty(false);
+			}
 		}
 	}
 
@@ -165,8 +177,9 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 
 	@Override
 	public void addModelChangedListener(IModelChangedListener listener) {
-		if (!fListeners.contains(listener))
+		if (!fListeners.contains(listener)) {
 			fListeners.add(listener);
+		}
 	}
 
 	@Override
@@ -186,8 +199,9 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 
 	@Override
 	public void fireModelChanged(IModelChangedEvent event) {
-		if (event.getChangeType() == IModelChangedEvent.CHANGE && event.getOldValue() != null && event.getOldValue().equals(event.getNewValue()))
+		if (event.getChangeType() == IModelChangedEvent.CHANGE && event.getOldValue() != null && event.getOldValue().equals(event.getNewValue())) {
 			return;
+		}
 		setDirty(event.getChangeType() != IModelChangedEvent.WORLD_CHANGED);
 		for (int i = 0; i < fListeners.size(); i++) {
 			fListeners.get(i).modelChanged(event);
@@ -252,8 +266,9 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	public IModelTextChangeListener getLastTextChangeListener() {
 		for (int i = fListeners.size() - 1; i >= 0; i--) {
 			Object obj = fListeners.get(i);
-			if (obj instanceof IModelTextChangeListener)
+			if (obj instanceof IModelTextChangeListener) {
 				return (IModelTextChangeListener) obj;
+			}
 		}
 		return null;
 	}

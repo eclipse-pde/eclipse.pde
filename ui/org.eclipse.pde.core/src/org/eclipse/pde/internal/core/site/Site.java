@@ -20,18 +20,26 @@ import java.util.Vector;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IWritable;
-import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.isite.IRepositoryReference;
+import org.eclipse.pde.internal.core.isite.ISite;
+import org.eclipse.pde.internal.core.isite.ISiteArchive;
+import org.eclipse.pde.internal.core.isite.ISiteBundle;
+import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
+import org.eclipse.pde.internal.core.isite.ISiteDescription;
+import org.eclipse.pde.internal.core.isite.ISiteFeature;
+import org.eclipse.pde.internal.core.isite.ISiteObject;
+import org.eclipse.pde.internal.core.isite.IStatsInfo;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class Site extends SiteObject implements ISite {
 	private static final long serialVersionUID = 1L;
 	final static String INDENT = "   "; //$NON-NLS-1$
-	private Vector<ISiteObject> features = new Vector<>();
-	private Vector<ISiteObject> bundles = new Vector<>();
-	private Vector<ISiteObject> archives = new Vector<>();
-	private Vector<ISiteObject> categoryDefs = new Vector<>();
-	private Vector<ISiteObject> repositoryReferences = new Vector<>();
+	private final Vector<ISiteObject> features = new Vector<>();
+	private final Vector<ISiteObject> bundles = new Vector<>();
+	private final Vector<ISiteObject> archives = new Vector<>();
+	private final Vector<ISiteObject> categoryDefs = new Vector<>();
+	private final Vector<ISiteObject> repositoryReferences = new Vector<>();
 
 	private String type;
 	private String url;
@@ -324,8 +332,9 @@ public class Site extends SiteObject implements ISite {
 			((StatsInfo) info).setInTheModel(true);
 			statsInfo = info;
 		} else if (tag.equals(P_DESCRIPTION)) {
-			if (description != null)
+			if (description != null) {
 				return;
+			}
 			description = getModel().getFactory().createDescription(this);
 			((SiteDescription) description).parse(child);
 			((SiteDescription) description).setInTheModel(true);
@@ -346,8 +355,9 @@ public class Site extends SiteObject implements ISite {
 			setAssociateSitesURL(newValue != null ? newValue.toString() : null);
 		} else if (name.equals(P_DESCRIPTION) && newValue instanceof ISiteDescription) {
 			setDescription((ISiteDescription) newValue);
-		} else
+		} else {
 			super.restoreProperty(name, oldValue, newValue);
+		}
 	}
 
 	@Override
@@ -381,28 +391,33 @@ public class Site extends SiteObject implements ISite {
 	public boolean isValid() {
 		for (int i = 0; i < features.size(); i++) {
 			ISiteFeature feature = (ISiteFeature) features.get(i);
-			if (!feature.isValid())
+			if (!feature.isValid()) {
 				return false;
+			}
 		}
 		for (int i = 0; i < bundles.size(); i++) {
 			ISiteBundle bundle = (ISiteBundle) bundles.get(i);
-			if (!bundle.isValid())
+			if (!bundle.isValid()) {
 				return false;
+			}
 		}
 		for (int i = 0; i < archives.size(); i++) {
 			ISiteArchive archive = (ISiteArchive) archives.get(i);
-			if (!archive.isValid())
+			if (!archive.isValid()) {
 				return false;
+			}
 		}
 		for (int i = 0; i < categoryDefs.size(); i++) {
 			ISiteCategoryDefinition def = (ISiteCategoryDefinition) categoryDefs.get(i);
-			if (!def.isValid())
+			if (!def.isValid()) {
 				return false;
+			}
 		}
 		for (int i = 0; i < repositoryReferences.size(); i++) {
 			IRepositoryReference repo = (IRepositoryReference) repositoryReferences.get(i);
-			if (!repo.isValid())
+			if (!repo.isValid()) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -415,8 +430,9 @@ public class Site extends SiteObject implements ISite {
 	}
 
 	private void writeIfDefined(String indent, PrintWriter writer, String attName, String attValue) {
-		if (attValue == null || attValue.length() <= 0)
+		if (attValue == null || attValue.length() <= 0) {
 			return;
+		}
 		writer.println();
 		writer.print(indent + attName + "=\"" + SiteObject.getWritableString(attValue) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}

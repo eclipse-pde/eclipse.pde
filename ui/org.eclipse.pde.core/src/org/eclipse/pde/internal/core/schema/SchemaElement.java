@@ -16,7 +16,15 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
+import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaRepeatable;
+import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
 import org.eclipse.pde.internal.core.util.XMLComponentRegistry;
 
@@ -64,13 +72,16 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 			maxOccurs = ((ISchemaRepeatable) object).getMaxOccurs();
 		}
 		if (minOccurs == 0) {
-			if (maxOccurs == 1)
+			if (maxOccurs == 1) {
 				child += "?"; //$NON-NLS-1$
-			else
+			} else {
 				child += "*"; //$NON-NLS-1$
+			}
 		} else if (minOccurs == 1) {
 			if (maxOccurs > 1)
+			 {
 				child += "+"; //$NON-NLS-1$
+			}
 		}
 		return child;
 	}
@@ -78,8 +89,9 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 	private String calculateCompositorRepresentation(ISchemaCompositor compositor, boolean addLinks) {
 		int kind = compositor.getKind();
 		ISchemaObject[] children = compositor.getChildren();
-		if (children.length == 0)
+		if (children.length == 0) {
 			return "EMPTY"; //$NON-NLS-1$
+		}
 		String text = kind == ISchemaCompositor.GROUP ? "(" : ""; //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i = 0; i < children.length; i++) {
 			ISchemaObject object = children[i];
@@ -87,14 +99,16 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 
 			text += child;
 			if (i < children.length - 1) {
-				if (kind == ISchemaCompositor.SEQUENCE)
+				if (kind == ISchemaCompositor.SEQUENCE) {
 					text += " , "; //$NON-NLS-1$
-				else if (kind == ISchemaCompositor.CHOICE)
+				} else if (kind == ISchemaCompositor.CHOICE) {
 					text += " | "; //$NON-NLS-1$
+				}
 			}
 		}
-		if (kind == ISchemaCompositor.GROUP)
+		if (kind == ISchemaCompositor.GROUP) {
 			text += ")"; //$NON-NLS-1$
+		}
 		return text;
 	}
 
@@ -126,55 +140,63 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 	public String[] getAttributeNames() {
 		ISchemaAttribute[] attributes = getAttributes();
 		String[] names = new String[attributes.length];
-		for (int i = 0; i < attributes.length; i++)
+		for (int i = 0; i < attributes.length; i++) {
 			names[i] = attributes[i].getName();
+		}
 		return names;
 	}
 
 	@Override
 	public String getDTDRepresentation(boolean addLinks) {
 		String text = ""; //$NON-NLS-1$
-		if (type == null)
+		if (type == null) {
 			text += "EMPTY"; //$NON-NLS-1$
-		else {
+		} else {
 			if (type instanceof ISchemaComplexType) {
 				ISchemaComplexType complexType = (ISchemaComplexType) type;
 				ISchemaCompositor compositor = complexType.getCompositor();
-				if (compositor != null)
+				if (compositor != null) {
 					text += calculateChildRepresentation(compositor, addLinks);
-				else if (getAttributeCount() != 0)
+				} else if (getAttributeCount() != 0) {
 					text += "EMPTY"; //$NON-NLS-1$
+				}
 			}
-			if (text.length() == 0)
+			if (text.length() == 0) {
 				text += "(#PCDATA)"; //$NON-NLS-1$
+			}
 		}
 		if (text.length() > 0) {
-			if (!text.equals("EMPTY") && text.charAt(0) != '(') //$NON-NLS-1$
+			if (!text.equals("EMPTY") && text.charAt(0) != '(') { //$NON-NLS-1$
 				text = "(" + text + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 		return text;
 	}
 
 	@Override
 	public String getIconProperty() {
-		if (iconName != null)
+		if (iconName != null) {
 			return iconName;
+		}
 		ISchemaAttribute[] attributes = getAttributes();
 		for (ISchemaAttribute attribute : attributes) {
-			if (isValidIconProperty(attribute))
+			if (isValidIconProperty(attribute)) {
 				return attribute.getName();
+			}
 		}
 		return null;
 	}
 
 	@Override
 	public String getLabelProperty() {
-		if (labelProperty != null)
+		if (labelProperty != null) {
 			return labelProperty;
+		}
 		ISchemaAttribute[] attributes = getAttributes();
 		for (ISchemaAttribute attribute : attributes) {
-			if (isValidLabelProperty(attribute))
+			if (isValidLabelProperty(attribute)) {
 				return attribute.getName();
+			}
 		}
 		return null;
 	}
@@ -200,8 +222,9 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 			if (type instanceof ISchemaComplexType) {
 				ISchemaComplexType ctype = (ISchemaComplexType) type;
 				ISchemaCompositor comp = ctype.getCompositor();
-				if (comp != null)
+				if (comp != null) {
 					comp.setParent(this);
+				}
 			}
 		}
 		if (getAttributeCount() > 0) {
@@ -253,8 +276,9 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		writer.println(">"); //$NON-NLS-1$
 		String indent2 = indent + Schema.INDENT;
 		String realDescription = getWritableDescription();
-		if (realDescription.length() == 0)
+		if (realDescription.length() == 0) {
 			realDescription = null;
+		}
 
 		String extendedProperties = getExtendedAttributes();
 
@@ -265,23 +289,29 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 			if (iconName != null || labelProperty != null || extendedProperties != null || isDeprecated() || hasTranslatableContent()) {
 				writer.println(indent3 + (getSchema().getSchemaVersion() >= 3.4 ? "<appinfo>" : "<appInfo>")); //$NON-NLS-1$ //$NON-NLS-2$
 				writer.print(indent4 + "<meta.element"); //$NON-NLS-1$
-				if (labelProperty != null)
+				if (labelProperty != null) {
 					writer.print(" labelAttribute=\"" + labelProperty + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-				if (iconName != null)
+				}
+				if (iconName != null) {
 					writer.print(" icon=\"" + iconName + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-				if (hasTranslatableContent())
+				}
+				if (hasTranslatableContent()) {
 					writer.print(" translatable=\"true\""); //$NON-NLS-1$
-				if (isDeprecated())
+				}
+				if (isDeprecated()) {
 					writer.print(" deprecated=\"true\""); //$NON-NLS-1$
-				if (extendedProperties != null)
+				}
+				if (extendedProperties != null) {
 					writer.print(extendedProperties);
+				}
 				writer.println("/>"); //$NON-NLS-1$
 				writer.println(indent3 + (getSchema().getSchemaVersion() >= 3.4 ? "</appinfo>" : "</appInfo>")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if (realDescription != null) {
 				writer.println(indent3 + "<documentation>"); //$NON-NLS-1$
-				if (getDescription() != null)
+				if (getDescription() != null) {
 					writer.println(indent4 + realDescription);
+				}
 				writer.println(indent3 + "</documentation>"); //$NON-NLS-1$
 			}
 			writer.println(indent2 + "</annotation>"); //$NON-NLS-1$
@@ -342,8 +372,9 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 
 	@Override
 	public int compareTo(Object arg0) {
-		if (arg0 instanceof ISchemaElement)
+		if (arg0 instanceof ISchemaElement) {
 			return getName().compareToIgnoreCase(((ISchemaElement) arg0).getName());
+		}
 		return -1;
 	}
 }

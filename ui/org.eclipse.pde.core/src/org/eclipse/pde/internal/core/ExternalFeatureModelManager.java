@@ -13,10 +13,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
@@ -53,7 +66,7 @@ public class ExternalFeatureModelManager {
 		}
 	}
 
-	private ListenerList<IModelProviderListener> fListeners = new ListenerList<>();
+	private final ListenerList<IModelProviderListener> fListeners = new ListenerList<>();
 
 	private IFeatureModel[] fModels;
 
@@ -136,10 +149,12 @@ public class ExternalFeatureModelManager {
 	private void notifyListeners(IFeatureModel[] oldModels, IFeatureModel[] newFeatureModels) {
 		if (oldModels.length > 0 || newFeatureModels.length > 0) {
 			int type = 0;
-			if (oldModels.length > 0)
+			if (oldModels.length > 0) {
 				type |= IModelProviderEvent.MODELS_REMOVED;
-			if (newFeatureModels.length > 0)
+			}
+			if (newFeatureModels.length > 0) {
 				type |= IModelProviderEvent.MODELS_ADDED;
+			}
 			ModelProviderEvent replacedFeatures = new ModelProviderEvent(this, type, newFeatureModels, oldModels, null);
 			fireModelProviderEvent(replacedFeatures);
 		}
@@ -158,15 +173,17 @@ public class ExternalFeatureModelManager {
 		if (platformHome != null && platformHome.length() > 0) {
 			URL[] featureURLs = PluginPathFinder.getFeaturePaths(platformHome);
 
-			if (additionalLocations.isEmpty())
+			if (additionalLocations.isEmpty()) {
 				return createFeatures(featureURLs, monitor);
+			}
 
 			File[] dirs = new File[additionalLocations.size()];
 			for (int i = 0; i < dirs.length; i++) {
 				String directory = additionalLocations.get(i).toString();
 				File dir = new File(directory, "features"); //$NON-NLS-1$
-				if (!dir.exists())
+				if (!dir.exists()) {
 					dir = new File(directory);
+				}
 				dirs[i] = dir;
 			}
 

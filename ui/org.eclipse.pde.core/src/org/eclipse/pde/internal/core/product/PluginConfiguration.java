@@ -74,8 +74,9 @@ public class PluginConfiguration extends ProductObject implements IPluginConfigu
 	public void setAutoStart(boolean autostart) {
 		boolean oldValue = fAutoStart;
 		fAutoStart = autostart;
-		if (isEditable() && oldValue != fAutoStart)
+		if (isEditable() && oldValue != fAutoStart) {
 			firePropertyChanged(P_AUTO_START, Boolean.valueOf(oldValue), Boolean.valueOf(fAutoStart));
+		}
 
 	}
 
@@ -83,8 +84,9 @@ public class PluginConfiguration extends ProductObject implements IPluginConfigu
 	public void setStartLevel(int startLevel) {
 		int oldValue = fStartLevel;
 		fStartLevel = startLevel;
-		if (isEditable() && oldValue != fStartLevel)
+		if (isEditable() && oldValue != fStartLevel) {
 			firePropertyChanged(P_START_LEVEL, Integer.valueOf(oldValue), Integer.valueOf(fStartLevel));
+		}
 	}
 
 	@Override

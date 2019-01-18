@@ -14,7 +14,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.search;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
@@ -30,9 +32,9 @@ public class PluginSearchScope {
 	public static final int EXTERNAL_SCOPE_ENABLED = 1;
 	public static final int EXTERNAL_SCOPE_ALL = 2;
 
-	private int workspaceScope;
-	private int externalScope;
-	private HashSet<?> selectedResources;
+	private final int workspaceScope;
+	private final int externalScope;
+	private final HashSet<?> selectedResources;
 
 	/**
 	 * Create a scope object with the provided arguments.
@@ -58,17 +60,19 @@ public class PluginSearchScope {
 	}
 
 	protected final void addExternalModel(IPluginModelBase candidate, ArrayList<IPluginModelBase> result) {
-		if (externalScope == EXTERNAL_SCOPE_ALL)
+		if (externalScope == EXTERNAL_SCOPE_ALL) {
 			result.add(candidate);
-		else if (externalScope == EXTERNAL_SCOPE_ENABLED && candidate.isEnabled())
+		} else if (externalScope == EXTERNAL_SCOPE_ENABLED && candidate.isEnabled()) {
 			result.add(candidate);
+		}
 	}
 
 	protected final void addExternalModel(final IFeatureModel candidate, final List<IFeatureModel> result) {
-		if (externalScope == EXTERNAL_SCOPE_ALL)
+		if (externalScope == EXTERNAL_SCOPE_ALL) {
 			result.add(candidate);
-		else if (externalScope == EXTERNAL_SCOPE_ENABLED && candidate.isEnabled())
+		} else if (externalScope == EXTERNAL_SCOPE_ENABLED && candidate.isEnabled()) {
 			result.add(candidate);
+		}
 	}
 
 	protected final void addWorkspaceModel(IPluginModelBase candidate, ArrayList<IPluginModelBase> result) {

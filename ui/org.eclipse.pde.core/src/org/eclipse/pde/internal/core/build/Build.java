@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.core.build;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
@@ -42,8 +41,9 @@ public class Build extends BuildObject implements IBuild {
 	public IBuildEntry getEntry(String name) {
 		for (int i = 0; i < fEntries.size(); i++) {
 			IBuildEntry entry = fEntries.get(i);
-			if (entry.getName().equals(name))
+			if (entry.getName().equals(name)) {
 				return entry;
+			}
 		}
 		return null;
 	}

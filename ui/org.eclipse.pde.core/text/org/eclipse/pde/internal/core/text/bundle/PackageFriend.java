@@ -14,14 +14,13 @@
 package org.eclipse.pde.internal.core.text.bundle;
 
 import java.io.PrintWriter;
-
 import org.eclipse.pde.internal.core.bundle.BundleObject;
 
 public class PackageFriend extends BundleObject {
 
 	private static final long serialVersionUID = 1L;
 
-	private String fName;
+	private final String fName;
 
 	private transient PackageObject fPackageObject;
 

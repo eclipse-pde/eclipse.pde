@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
-
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
@@ -49,15 +48,17 @@ public class SchemaSimpleType extends SchemaType implements ISchemaSimpleType, I
 	@Override
 	public void setSchema(ISchema schema) {
 		super.setSchema(schema);
-		if (restriction != null)
+		if (restriction != null) {
 			restriction.setParent(schema);
+		}
 	}
 
 	public void setRestriction(ISchemaRestriction restriction) {
 		Object oldValue = this.restriction;
 		this.restriction = restriction;
-		if (restriction != null)
+		if (restriction != null) {
 			restriction.setBaseType(this);
+		}
 		getSchema().fireModelObjectChanged(this, P_RESTRICTION, oldValue, restriction);
 	}
 

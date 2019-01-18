@@ -25,7 +25,7 @@ import org.osgi.framework.Version;
  * <p>
  * An instance of this service can be obtained from a {@link BundleContext} as
  * follows
- * 
+ *
  * <pre>
  * BundleContext context = ...
  * ServiceReference<IBundleContextService> ref = context.getServiceReference(IBundleContextService.class);
@@ -34,7 +34,7 @@ import org.osgi.framework.Version;
  * context.ungetService(ref);
  * </pre>
  * </p>
- * 
+ *
  * @since 3.6
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.

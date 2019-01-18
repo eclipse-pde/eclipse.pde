@@ -15,9 +15,7 @@ package org.eclipse.pde.internal.core.product;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import javax.xml.parsers.SAXParser;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
@@ -43,15 +41,17 @@ public class ProductModel extends AbstractModel implements IProductModel {
 
 	@Override
 	public IProduct getProduct() {
-		if (fProduct == null)
+		if (fProduct == null) {
 			fProduct = getFactory().createProduct();
+		}
 		return fProduct;
 	}
 
 	@Override
 	public IProductModelFactory getFactory() {
-		if (fFactory == null)
+		if (fFactory == null) {
 			fFactory = new ProductModelFactory(this);
+		}
 		return fFactory;
 	}
 
@@ -83,8 +83,9 @@ public class ProductModel extends AbstractModel implements IProductModel {
 			PDECore.logException(e);
 		} finally {
 			try {
-				if (stream != null)
+				if (stream != null) {
 					stream.close();
+				}
 			} catch (IOException e) {
 			}
 		}

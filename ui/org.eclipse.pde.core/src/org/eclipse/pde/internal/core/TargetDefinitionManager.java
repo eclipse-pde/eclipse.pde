@@ -15,8 +15,18 @@ package org.eclipse.pde.internal.core;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionDelta;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
 public class TargetDefinitionManager implements IRegistryChangeListener {
@@ -35,23 +45,26 @@ public class TargetDefinitionManager implements IRegistryChangeListener {
 			String extensionId = extension.getExtensionPointUniqueIdentifier();
 			if (extensionId.equals("org.eclipse.pde.core.targets")) { //$NON-NLS-1$
 				IConfigurationElement[] elems = extension.getConfigurationElements();
-				if (delta.getKind() == IExtensionDelta.ADDED)
+				if (delta.getKind() == IExtensionDelta.ADDED) {
 					add(elems);
-				else
+				} else {
 					remove(elems);
+				}
 			}
 		}
 	}
 
 	public IConfigurationElement[] getTargets() {
-		if (fTargets == null)
+		if (fTargets == null) {
 			loadElements();
+		}
 		return fTargets.values().toArray(new IConfigurationElement[fTargets.size()]);
 	}
 
 	public IConfigurationElement[] getSortedTargets() {
-		if (fTargets == null)
+		if (fTargets == null) {
 			loadElements();
+		}
 		IConfigurationElement[] result = fTargets.values().toArray(new IConfigurationElement[fTargets.size()]);
 		Arrays.sort(result, new Comparator<Object>() {
 
@@ -74,8 +87,9 @@ public class TargetDefinitionManager implements IRegistryChangeListener {
 	}
 
 	public IConfigurationElement getTarget(String id) {
-		if (fTargets == null)
+		if (fTargets == null) {
 			loadElements();
+		}
 		return fTargets.get(id);
 	}
 
@@ -91,15 +105,17 @@ public class TargetDefinitionManager implements IRegistryChangeListener {
 		String value;
 		for (String attribute : attributes) {
 			value = elem.getAttribute(attribute);
-			if (value == null || value.equals("")) //$NON-NLS-1$
+			if (value == null || value.equals("")) { //$NON-NLS-1$
 				return false;
+			}
 		}
 		value = elem.getAttribute("definition"); //$NON-NLS-1$
 		String symbolicName = elem.getDeclaringExtension().getContributor().getName();
 		URL url = getResourceURL(symbolicName, value);
 		try {
-			if (url != null && url.openStream().available() > 0)
+			if (url != null && url.openStream().available() > 0) {
 				return true;
+			}
 		} catch (IOException e) {
 			// file does not exist
 		}
@@ -111,8 +127,9 @@ public class TargetDefinitionManager implements IRegistryChangeListener {
 			Bundle bundle = Platform.getBundle(bundleID);
 			if (bundle != null && resourcePath != null) {
 				URL entry = bundle.getEntry(resourcePath);
-				if (entry != null)
+				if (entry != null) {
 					return FileLocator.toFileURL(entry);
+				}
 			}
 		} catch (IOException e) {
 		}

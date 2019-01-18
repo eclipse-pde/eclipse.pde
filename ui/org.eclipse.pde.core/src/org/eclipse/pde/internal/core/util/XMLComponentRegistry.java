@@ -14,7 +14,10 @@
 
 package org.eclipse.pde.internal.core.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * SchemaDescriptionRegistry
@@ -51,11 +54,11 @@ public class XMLComponentRegistry {
 
 	private static ArrayList<Object> fConsumers = new ArrayList<>();
 
-	private Map<String, HashMap<String, String>> fSchemaComponentMap;
+	private final Map<String, HashMap<String, String>> fSchemaComponentMap;
 
-	private Map<String, HashMap<String, String>> fAttributeComponentMap;
+	private final Map<String, HashMap<String, String>> fAttributeComponentMap;
 
-	private Map<String, HashMap<String, String>> fElementComponentMap;
+	private final Map<String, HashMap<String, String>> fElementComponentMap;
 
 	private XMLComponentRegistry() {
 		fSchemaComponentMap = Collections.synchronizedMap(new HashMap<String, HashMap<String, String>>());

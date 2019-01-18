@@ -15,22 +15,56 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URI;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeSet;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetHandle;
+import org.eclipse.pde.core.target.ITargetLocation;
+import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.TargetDefinition;
-import org.eclipse.pde.internal.core.util.*;
-import org.osgi.framework.*;
+import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
+import org.eclipse.pde.internal.core.util.VersionUtil;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.Version;
 
 public class TargetPlatformHelper {
 
@@ -44,8 +78,9 @@ public class TargetPlatformHelper {
 
 	public static Properties getConfigIniProperties() {
 		File iniFile = new File(TargetPlatform.getLocation(), "configuration/config.ini"); //$NON-NLS-1$
-		if (!iniFile.exists())
+		if (!iniFile.exists()) {
 			return null;
+		}
 		Properties pini = new Properties();
 		try (FileInputStream fis = new FileInputStream(iniFile)) {
 			pini.load(fis);
@@ -117,12 +152,15 @@ public class TargetPlatformHelper {
 			bundle = bundle.trim();
 
 			// strip [reference:][platform:][file:] prefixes if any
-			if (bundle.startsWith(REFERENCE_PREFIX) && bundle.length() > REFERENCE_PREFIX.length())
+			if (bundle.startsWith(REFERENCE_PREFIX) && bundle.length() > REFERENCE_PREFIX.length()) {
 				bundle = bundle.substring(REFERENCE_PREFIX.length());
-			if (bundle.startsWith(PLATFORM_PREFIX) && bundle.length() > PLATFORM_PREFIX.length())
+			}
+			if (bundle.startsWith(PLATFORM_PREFIX) && bundle.length() > PLATFORM_PREFIX.length()) {
 				bundle = bundle.substring(PLATFORM_PREFIX.length());
-			if (bundle.startsWith(FILE_URL_PREFIX) && bundle.length() > FILE_URL_PREFIX.length())
+			}
+			if (bundle.startsWith(FILE_URL_PREFIX) && bundle.length() > FILE_URL_PREFIX.length()) {
 				bundle = bundle.substring(FILE_URL_PREFIX.length());
+			}
 
 			// if the path is relative, the last segment is the bundle symbolic name
 			// Otherwise, we need to retrieve the bundle symbolic name ourselves
@@ -144,18 +182,21 @@ public class TargetPlatformHelper {
 					id = id.substring(0, id.length() - 4);
 				}
 			}
-			if (result.length() > 0)
+			if (result.length() > 0) {
 				result.append(","); //$NON-NLS-1$
+			}
 			result.append(id != null ? id : bundle);
-			if (atIndex > -1)
+			if (atIndex > -1) {
 				result.append(token.substring(atIndex).trim());
+			}
 		}
 		return result.toString();
 	}
 
 	private static synchronized String getSymbolicName(String path) {
-		if (fgCachedLocations == null)
+		if (fgCachedLocations == null) {
 			fgCachedLocations = new HashMap<>();
+		}
 
 		if (fgCachedLocations.containsKey(path)) {
 			return fgCachedLocations.get(path);
@@ -197,8 +238,9 @@ public class TargetPlatformHelper {
 			File[] files = new File(model.getInstallLocation()).listFiles();
 			if (files != null) {
 				for (File file : files) {
-					if (file.isDirectory())
+					if (file.isDirectory()) {
 						continue;
+					}
 					String name = file.getName();
 					if (name.startsWith(Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME) && name.endsWith(".properties") //$NON-NLS-1$
 							&& file.lastModified() > timestamp) {
@@ -250,8 +292,9 @@ public class TargetPlatformHelper {
 		for (IExtension extension : extensions) {
 			String id = extension.getUniqueIdentifier();
 			IConfigurationElement[] elements = extension.getConfigurationElements();
-			if (elements.length != 1)
+			if (elements.length != 1) {
 				continue;
+			}
 			String visiblity = elements[0].getAttribute("visible"); //$NON-NLS-1$
 			boolean visible = visiblity == null ? true : Boolean.valueOf(visiblity).booleanValue();
 			if (id != null && visible) {
@@ -272,13 +315,16 @@ public class TargetPlatformHelper {
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] elements = extension.getConfigurationElements();
-			if (elements.length != 1)
+			if (elements.length != 1) {
 				continue;
-			if (!"product".equals(elements[0].getName())) //$NON-NLS-1$
+			}
+			if (!"product".equals(elements[0].getName())) { //$NON-NLS-1$
 				continue;
+			}
 			String id = extension.getUniqueIdentifier();
-			if (id != null && id.trim().length() > 0)
+			if (id != null && id.trim().length() > 0) {
 				result.add(id);
+			}
 		}
 		return result;
 	}
@@ -320,25 +366,29 @@ public class TargetPlatformHelper {
 				if (profileProps != null) {
 					Dictionary<String, String> props = TargetPlatformHelper.getTargetEnvironment(state);
 					String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
-					if (systemPackages != null)
+					if (systemPackages != null) {
 						props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
+					}
 					String ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
-					if (ee != null)
+					if (ee != null) {
 						props.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
+					}
 					result.add(props);
 				}
 			}
 		}
-		if (!result.isEmpty())
+		if (!result.isEmpty()) {
 			return result.toArray(new Dictionary[result.size()]);
+		}
 		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment(state)};
 	}
 
 	public static String[] getKnownExecutionEnvironments() {
 		String jreProfile = System.getProperty("pde.jreProfile"); //$NON-NLS-1$
 		if (jreProfile != null && jreProfile.length() > 0) {
-			if ("none".equals(jreProfile)) //$NON-NLS-1$
+			if ("none".equals(jreProfile)) { //$NON-NLS-1$
 				return new String[0];
+			}
 			return new String[] {jreProfile};
 		}
 		IExecutionEnvironment[] environments = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
@@ -357,32 +407,42 @@ public class TargetPlatformHelper {
 	 */
 	public static String getTargetVersionString() {
 		IPluginModelBase model = PluginRegistry.findModel(IPDEBuildConstants.BUNDLE_OSGI);
-		if (model == null)
+		if (model == null) {
 			return ICoreConstants.TARGET_VERSION_LATEST;
+		}
 
 		String version = model.getPluginBase().getVersion();
 		if (VersionUtil.validateVersion(version).getSeverity() == IStatus.OK) {
 			Version vid = new Version(version);
 			int major = vid.getMajor();
 			int minor = vid.getMinor();
-			if (major == 3 && minor == 0)
+			if (major == 3 && minor == 0) {
 				return ICoreConstants.TARGET30;
-			if (major == 3 && minor == 1)
+			}
+			if (major == 3 && minor == 1) {
 				return ICoreConstants.TARGET31;
-			if (major == 3 && minor == 2)
+			}
+			if (major == 3 && minor == 2) {
 				return ICoreConstants.TARGET32;
-			if (major == 3 && minor == 3)
+			}
+			if (major == 3 && minor == 3) {
 				return ICoreConstants.TARGET33;
-			if (major == 3 && minor == 4)
+			}
+			if (major == 3 && minor == 4) {
 				return ICoreConstants.TARGET34;
-			if (major == 3 && minor == 5)
+			}
+			if (major == 3 && minor == 5) {
 				return ICoreConstants.TARGET35;
-			if (major == 3 && minor == 6)
+			}
+			if (major == 3 && minor == 6) {
 				return ICoreConstants.TARGET36;
-			if (major == 3 && minor == 7)
+			}
+			if (major == 3 && minor == 7) {
 				return ICoreConstants.TARGET37;
-			if (major == 3 && minor == 8)
+			}
+			if (major == 3 && minor == 8) {
 				return ICoreConstants.TARGET38;
+			}
 		}
 		return ICoreConstants.TARGET_VERSION_LATEST;
 	}
@@ -504,8 +564,9 @@ public class TargetPlatformHelper {
 		IPluginModelBase[] models = PluginRegistry.getActiveModels();
 		for (IPluginModelBase model : models) {
 			BundleDescription desc = model.getBundleDescription();
-			if (desc == null)
+			if (desc == null) {
 				continue;
+			}
 			Long id = Long.valueOf(desc.getBundleId());
 			if (ClasspathUtilCore.hasExtensibleAPI(model)) {
 				properties.put(id, ICoreConstants.EXTENSIBLE_API + ": true"); //$NON-NLS-1$
@@ -541,8 +602,9 @@ public class TargetPlatformHelper {
 				result[i] = libs[i];
 			}
 		}
-		if (result.length == 0)
+		if (result.length == 0) {
 			return new String[] {"."}; //$NON-NLS-1$
+		}
 		return result;
 	}
 
@@ -551,8 +613,9 @@ public class TargetPlatformHelper {
 		ArrayList<String> list = new ArrayList<>();
 		for (IFeatureModel model : models) {
 			String location = model.getInstallLocation();
-			if (location != null)
+			if (location != null) {
 				list.add(location + IPath.SEPARATOR + ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
+			}
 		}
 		return list.toArray(new String[list.size()]);
 	}
@@ -592,13 +655,15 @@ public class TargetPlatformHelper {
 				boolean vmargs = false;
 				while ((str = in.readLine()) != null) {
 					if (vmargs) {
-						if (result.length() > 0)
+						if (result.length() > 0) {
 							result.append(" "); //$NON-NLS-1$
+						}
 						result.append(str);
 					}
 					// start concat'ng if we have vmargs
-					if (vmargs == false && str.equals("-vmargs")) //$NON-NLS-1$
+					if (vmargs == false && str.equals("-vmargs")) { //$NON-NLS-1$
 						vmargs = true;
+					}
 				}
 			} catch (IOException e) {
 				PDECore.log(e);
@@ -619,8 +684,9 @@ public class TargetPlatformHelper {
 	public static void addTargetDefinitionMap(TargetDefinition targetDefinition) {
 		if (fgCachedTargetDefinitionMap.containsKey(targetDefinition.getHandle())) {
 			List<TargetDefinition> targets = fgCachedTargetDefinitionMap.get(targetDefinition.getHandle());
-			if (!targets.contains(targetDefinition))
+			if (!targets.contains(targetDefinition)) {
 				targets.add(0, targetDefinition);
+			}
 
 		} else {
 			List<TargetDefinition> target = new ArrayList<>();

@@ -90,8 +90,9 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	public void setVersion(String version) {
 		String old = fVersion;
 		fVersion = version;
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged("version", old, fVersion); //$NON-NLS-1$
+		}
 	}
 
 	@Override

@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Properties;
-
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.core.build.IBuild;
@@ -36,8 +35,9 @@ public abstract class BuildModel extends AbstractModel implements IBuildModel {
 
 	@Override
 	public IBuild getBuild() {
-		if (isLoaded() == false)
+		if (isLoaded() == false) {
 			load();
+		}
 		return fBuild;
 	}
 
@@ -52,8 +52,9 @@ public abstract class BuildModel extends AbstractModel implements IBuildModel {
 
 	@Override
 	public IBuildModelFactory getFactory() {
-		if (fFactory == null)
+		if (fFactory == null) {
 			fFactory = new BuildModelFactory(this);
+		}
 		return fFactory;
 	}
 
@@ -65,8 +66,9 @@ public abstract class BuildModel extends AbstractModel implements IBuildModel {
 		Properties properties = new Properties();
 		try {
 			properties.load(source);
-			if (!outOfSync)
+			if (!outOfSync) {
 				updateTimeStamp();
+			}
 		} catch (IOException e) {
 			PDECore.logException(e);
 			return;
@@ -82,9 +84,9 @@ public abstract class BuildModel extends AbstractModel implements IBuildModel {
 
 	@Override
 	public void reload(InputStream source, boolean outOfSync) {
-		if (fBuild != null)
+		if (fBuild != null) {
 			fBuild.reset();
-		else {
+		} else {
 			fBuild = new Build();
 			fBuild.setModel(this);
 		}

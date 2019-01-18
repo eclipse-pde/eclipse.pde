@@ -13,20 +13,37 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetWeaver;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.project.PDEProject;
@@ -132,10 +149,11 @@ public class ManifestUtils {
 		IJavaProject javaProject = JavaCore.create(project);
 
 		String[] libs;
-		if (header == null || header.getValue() == null)
+		if (header == null || header.getValue() == null) {
 			libs = new String[] {"."}; //$NON-NLS-1$
-		else
+		} else {
 			libs = header.getValue().split(","); //$NON-NLS-1$
+		}
 
 		IBuild build = getBuild(project);
 		if (build == null) {
@@ -160,16 +178,19 @@ public class ManifestUtils {
 				pkgFragRoots.add(root);
 			} else {
 				IBuildEntry entry = build.getEntry("source." + lib); //$NON-NLS-1$
-				if (entry == null)
+				if (entry == null) {
 					continue;
+				}
 				String[] tokens = entry.getTokens();
 				for (String token : tokens) {
 					IResource resource = project.findMember(token);
-					if (resource == null)
+					if (resource == null) {
 						continue;
+					}
 					root = javaProject.getPackageFragmentRoot(resource);
-					if (root != null && root.exists())
+					if (root != null && root.exists()) {
 						pkgFragRoots.add(root);
+					}
 				}
 			}
 		}
@@ -253,14 +274,17 @@ public class ManifestUtils {
 	}
 
 	private static String splitOnComma(String value) {
-		if (value.length() < MANIFEST_MAXLINE || value.indexOf(MANIFEST_LINE_SEPARATOR) >= 0)
+		if (value.length() < MANIFEST_MAXLINE || value.indexOf(MANIFEST_LINE_SEPARATOR) >= 0) {
 			return value; // assume the line is already split
+		}
 		String[] values = ManifestElement.getArrayFromList(value);
-		if (values == null || values.length == 0)
+		if (values == null || values.length == 0) {
 			return value;
+		}
 		StringBuilder sb = new StringBuilder(value.length() + ((values.length - 1) * MANIFEST_LIST_SEPARATOR.length()));
-		for (int i = 0; i < values.length - 1; i++)
+		for (int i = 0; i < values.length - 1; i++) {
 			sb.append(values[i]).append(MANIFEST_LIST_SEPARATOR);
+		}
 		sb.append(values[values.length - 1]);
 		return sb.toString();
 	}

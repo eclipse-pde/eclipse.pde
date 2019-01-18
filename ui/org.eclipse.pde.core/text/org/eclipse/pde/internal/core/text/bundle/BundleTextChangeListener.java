@@ -38,15 +38,17 @@ public class BundleTextChangeListener extends AbstractKeyValueTextChangeListener
 	public TextEdit[] getTextOperations() {
 		TextEdit[] ops = super.getTextOperations();
 		try {
-			if (ops.length == 0 || !PropertiesUtil.isNewlineNeeded(fDocument))
+			if (ops.length == 0 || !PropertiesUtil.isNewlineNeeded(fDocument)) {
 				return ops;
+			}
 		} catch (BadLocationException e) {
 		}
 
 		TextEdit[] result = new TextEdit[ops.length + 1];
 		result[ops.length] = new InsertEdit(PropertiesUtil.getInsertOffset(fDocument), fSep);
-		if (fReadableNames != null)
+		if (fReadableNames != null) {
 			fReadableNames.put(result[ops.length], PDECoreMessages.BundleTextChangeListener_editNames_newLine);
+		}
 		System.arraycopy(ops, 0, result, 0, ops.length);
 		return result;
 	}
@@ -75,24 +77,27 @@ public class BundleTextChangeListener extends AbstractKeyValueTextChangeListener
 		}
 		InsertEdit edit = new InsertEdit(offset, buffer.toString());
 		fOperationTable.put(key, edit);
-		if (fReadableNames != null)
+		if (fReadableNames != null) {
 			fReadableNames.put(edit, name);
+		}
 	}
 
 	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		for (Object changedObject : event.getChangedObjects()) {
 			Object object = changedObject;
-			if (object instanceof PDEManifestElement)
+			if (object instanceof PDEManifestElement) {
 				object = ((PDEManifestElement) object).getHeader();
-			else if (object instanceof PackageFriend)
+			} else if (object instanceof PackageFriend) {
 				object = ((PackageFriend) object).getHeader();
+			}
 
 			if (object instanceof ManifestHeader) {
 				ManifestHeader header = (ManifestHeader) object;
 				Object op = fOperationTable.remove(header);
-				if (fReadableNames != null)
+				if (fReadableNames != null) {
 					fReadableNames.remove(op);
+				}
 
 				if (header.getValue() == null || header.getValue().trim().length() == 0) {
 					String name = fReadableNames == null ? null : NLS.bind(PDECoreMessages.BundleTextChangeListener_editNames_remove, header.fName);

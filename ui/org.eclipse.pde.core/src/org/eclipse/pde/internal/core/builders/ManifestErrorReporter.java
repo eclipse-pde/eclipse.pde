@@ -23,7 +23,11 @@ import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.core.util.VersionUtil;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 public abstract class ManifestErrorReporter extends XMLErrorReporter {
 
@@ -73,15 +77,17 @@ public abstract class ManifestErrorReporter extends XMLErrorReporter {
 
 	protected void validateVersionAttribute(Element element, Attr attr) {
 		IStatus status = VersionUtil.validateVersion(attr.getValue());
-		if (status.getSeverity() != IStatus.OK)
+		if (status.getSeverity() != IStatus.OK) {
 			report(status.getMessage(), getLine(element, attr.getName()), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+		}
 	}
 
 	protected void validateMatch(Element element, Attr attr) {
 		String value = attr.getValue();
 		if (!"perfect".equals(value) && !"equivalent".equals(value) //$NON-NLS-1$ //$NON-NLS-2$
-				&& !"greaterOrEqual".equals(value) && !"compatible".equals(value)) //$NON-NLS-1$ //$NON-NLS-2$
+				&& !"greaterOrEqual".equals(value) && !"compatible".equals(value)) { //$NON-NLS-1$ //$NON-NLS-2$
 			reportIllegalAttributeValue(element, attr);
+		}
 	}
 
 	protected void validateElementWithContent(Element element, boolean hasContent) {
@@ -95,8 +101,9 @@ public abstract class ManifestErrorReporter extends XMLErrorReporter {
 				reportIllegalElement((Element) child, CompilerFlags.ERROR);
 			}
 		}
-		if (!textFound)
+		if (!textFound) {
 			reportMissingElementContent(element);
+		}
 	}
 
 	private void reportMissingElementContent(Element element) {
@@ -115,8 +122,9 @@ public abstract class ManifestErrorReporter extends XMLErrorReporter {
 	protected void validateURL(Element element, String attName) {
 		String value = element.getAttribute(attName);
 		try {
-			if (!value.startsWith("http:") && !value.startsWith("file:")) //$NON-NLS-1$ //$NON-NLS-2$
+			if (!value.startsWith("http:") && !value.startsWith("file:")) { //$NON-NLS-1$ //$NON-NLS-2$
 				value = "file:" + value; //$NON-NLS-1$
+			}
 			new URL(value);
 		} catch (MalformedURLException e) {
 			report(NLS.bind(PDECoreMessages.Builders_Feature_badURL, attName), getLine(element, attName), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
@@ -143,8 +151,9 @@ public abstract class ManifestErrorReporter extends XMLErrorReporter {
 
 	protected void validateBoolean(Element element, Attr attr) {
 		String value = attr.getValue();
-		if (!value.equalsIgnoreCase("true") && !value.equalsIgnoreCase("false")) //$NON-NLS-1$ //$NON-NLS-2$
+		if (!value.equalsIgnoreCase("true") && !value.equalsIgnoreCase("false")) { //$NON-NLS-1$ //$NON-NLS-2$
 			reportIllegalAttributeValue(element, attr);
+		}
 	}
 
 	protected NodeList getChildrenByName(Element element, String name) {
@@ -184,8 +193,9 @@ public abstract class ManifestErrorReporter extends XMLErrorReporter {
 		}
 	}
 	protected void addMarkerAttribute(VirtualMarker marker, String attr, String value) {
-		if (marker != null)
+		if (marker != null) {
 			marker.setAttribute(attr, value);
+		}
 	}
 
 }

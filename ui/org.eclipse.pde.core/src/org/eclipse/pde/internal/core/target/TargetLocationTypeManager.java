@@ -15,7 +15,12 @@ package org.eclipse.pde.internal.core.target;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetLocationFactory;
 import org.eclipse.pde.internal.core.PDECore;
@@ -31,8 +36,8 @@ public class TargetLocationTypeManager {
 	private static final String ATTR_LOCFACTORY = "locationFactory"; //$NON-NLS-1$
 	private static final String TARGET_LOC_EXTPT = "targetLocations"; //$NON-NLS-1$
 
-	private Map<String, IConfigurationElement> fExtentionMap;
-	private Map<String, ITargetLocationFactory> fFactoryMap;
+	private final Map<String, IConfigurationElement> fExtentionMap;
+	private final Map<String, ITargetLocationFactory> fFactoryMap;
 
 	static TargetLocationTypeManager INSTANCE;
 
@@ -86,8 +91,9 @@ public class TargetLocationTypeManager {
 	private void readExtentions() {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint point = registry.getExtensionPoint(PDECore.PLUGIN_ID, TARGET_LOC_EXTPT);
-		if (point == null)
+		if (point == null) {
 			return;
+		}
 		IExtension[] extensions = point.getExtensions();
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] elements = extension.getConfigurationElements();

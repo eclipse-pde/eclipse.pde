@@ -19,15 +19,15 @@ import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.osgi.framework.BundleException;
 
 public class JarManifestHeader implements IHeader {
-	private JarManifestErrorReporter fErrorReporter;
+	private final JarManifestErrorReporter fErrorReporter;
 
-	private int fLineNumber;
+	private final int fLineNumber;
 
 	private int fLines;
 
 	private ManifestElement[] fManifestElements;
 
-	private String fName;
+	private final String fName;
 
 	private String fValue;
 

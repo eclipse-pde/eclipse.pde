@@ -28,9 +28,9 @@ public class NameVersionDescriptor {
 	public static final String TYPE_FEATURE = "feature"; //$NON-NLS-1$
 	public static final String TYPE_PACKAGE = "package"; //$NON-NLS-1$
 
-	private String fId;
-	private String fVersion;
-	private String fType;
+	private final String fId;
+	private final String fVersion;
+	private final String fType;
 
 	/**
 	 * Constructs a descriptor with a type of 'plugin'

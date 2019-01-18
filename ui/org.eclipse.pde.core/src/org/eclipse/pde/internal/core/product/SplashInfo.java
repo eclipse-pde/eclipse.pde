@@ -52,8 +52,9 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 	public void setLocation(String location, boolean blockNotification) {
 		String old = fLocation;
 		fLocation = location;
-		if (!blockNotification && isEditable())
+		if (!blockNotification && isEditable()) {
 			firePropertyChanged(P_LOCATION, old, fLocation);
+		}
 	}
 
 	@Override
@@ -76,24 +77,29 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 
 	@Override
 	public void write(String indent, PrintWriter writer) {
-		if (!hasData())
+		if (!hasData()) {
 			return;
+		}
 
 		writer.print(indent + "<splash"); //$NON-NLS-1$
 
-		if (fLocation != null && fLocation.length() > 0)
+		if (fLocation != null && fLocation.length() > 0) {
 			writeProperty(indent, writer, P_LOCATION, getWritableString(fLocation));
+		}
 
 		String progres = getGeometryString(fProgressGeometry);
-		if (fCustomizeProgressBar && progres != null)
+		if (fCustomizeProgressBar && progres != null) {
 			writeProperty(indent, writer, P_PROGRESS_GEOMETRY, getWritableString(progres));
+		}
 
 		String message = getGeometryString(fMessageGeometry);
-		if (fCustomizeProgressMessage && message != null)
+		if (fCustomizeProgressMessage && message != null) {
 			writeProperty(indent, writer, P_MESSAGE_GEOMETRY, getWritableString(message));
+		}
 
-		if (fCustomizeForegroundColor && isValidHexValue(fForegroundColor))
+		if (fCustomizeForegroundColor && isValidHexValue(fForegroundColor)) {
 			writeProperty(indent, writer, P_FOREGROUND_COLOR, getWritableString(fForegroundColor));
+		}
 
 		// Write the splash handler type if it is defined
 		if (isDefinedSplashHandlerType()) {
@@ -113,8 +119,9 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		fCustomizeProgressBar = geo != null;
 		int[] old = fProgressGeometry;
 		fProgressGeometry = geo;
-		if (!blockNotification && isEditable())
+		if (!blockNotification && isEditable()) {
 			firePropertyChanged(P_PROGRESS_GEOMETRY, old, fProgressGeometry);
+		}
 	}
 
 	@Override
@@ -127,8 +134,9 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		fCustomizeProgressMessage = geo != null;
 		int[] old = fMessageGeometry;
 		fMessageGeometry = geo;
-		if (!blockNotification && isEditable())
+		if (!blockNotification && isEditable()) {
 			firePropertyChanged(P_MESSAGE_GEOMETRY, old, fMessageGeometry);
+		}
 	}
 
 	@Override
@@ -138,15 +146,18 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 
 	@Override
 	public void setForegroundColor(String hexColor, boolean blockNotification) throws IllegalArgumentException {
-		if (hexColor != null && hexColor.length() == 0)
+		if (hexColor != null && hexColor.length() == 0) {
 			hexColor = null;
-		if (hexColor != null && !isValidHexValue(hexColor))
+		}
+		if (hexColor != null && !isValidHexValue(hexColor)) {
 			throw new IllegalArgumentException();
+		}
 		fCustomizeForegroundColor = hexColor != null;
 		String old = fForegroundColor;
 		fForegroundColor = hexColor;
-		if (!blockNotification && isEditable())
+		if (!blockNotification && isEditable()) {
 			firePropertyChanged(P_FOREGROUND_COLOR, old, fForegroundColor);
+		}
 	}
 
 	@Override
@@ -155,8 +166,9 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 	}
 
 	public static String getGeometryString(int[] geometry) {
-		if (geometry == null || geometry.length < 4)
+		if (geometry == null || geometry.length < 4) {
 			return null;
+		}
 		return Integer.toString(geometry[0]) + "," + //$NON-NLS-1$
 				Integer.toString(geometry[1]) + "," + //$NON-NLS-1$
 				Integer.toString(geometry[2]) + "," + //$NON-NLS-1$
@@ -164,20 +176,23 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 	}
 
 	public static int[] getGeometryArray(String tokenizedValue) {
-		if (tokenizedValue == null || tokenizedValue.length() == 0)
+		if (tokenizedValue == null || tokenizedValue.length() == 0) {
 			return null;
+		}
 
 		StringTokenizer tokenizer = new StringTokenizer(tokenizedValue, ","); //$NON-NLS-1$
 		int position = 0;
 		int[] geo = new int[4];
-		while (tokenizer.hasMoreTokens())
+		while (tokenizer.hasMoreTokens()) {
 			geo[position++] = Integer.parseInt(tokenizer.nextToken());
+		}
 		return geo;
 	}
 
 	private boolean isValidHexValue(String value) {
-		if (value == null || value.length() != 6)
+		if (value == null || value.length() != 6) {
 			return false;
+		}
 		for (int i = 0; i < value.length(); i++) {
 			boolean found = false;
 			for (char validChar : VALID_HEX_CHARS) {
@@ -186,8 +201,9 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 					break;
 				}
 			}
-			if (!found)
+			if (!found) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -209,10 +225,11 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		boolean old = fCustomizeProgressBar;
 		fCustomizeProgressBar = add;
 		int[] geo = getProgressGeometry();
-		if (add)
+		if (add) {
 			setProgressGeometry(geo != null ? geo : new int[] {F_DEFAULT_BAR_X_OFFSET, F_DEFAULT_BAR_Y_OFFSET, F_DEFAULT_BAR_WIDTH, F_DEFAULT_BAR_HEIGHT}, blockNotification);
-		else if (!blockNotification && isEditable())
+		} else if (!blockNotification && isEditable()) {
 			firePropertyChanged("", Boolean.toString(old), Boolean.toString(add)); //$NON-NLS-1$
+		}
 	}
 
 	@Override
@@ -226,8 +243,9 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		if (add) {
 			setMessageGeometry(geo != null ? geo : new int[] {F_DEFAULT_MESSAGE_X_OFFSET, F_DEFAULT_MESSAGE_Y_OFFSET, F_DEFAULT_MESSAGE_WIDTH, F_DEFAULT_MESSAGE_HEIGHT}, blockNotification);
 			setForegroundColor(foreground != null ? foreground : "000000", blockNotification); //$NON-NLS-1$
-		} else if (!blockNotification && isEditable())
+		} else if (!blockNotification && isEditable()) {
 			firePropertyChanged("", Boolean.toString(mold || cold), Boolean.toString(add)); //$NON-NLS-1$
+		}
 	}
 
 	@Override

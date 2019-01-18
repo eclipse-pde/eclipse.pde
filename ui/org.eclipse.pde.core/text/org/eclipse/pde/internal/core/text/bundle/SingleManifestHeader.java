@@ -31,12 +31,14 @@ public class SingleManifestHeader extends ManifestHeader {
 	protected void processValue(String value) {
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(getName(), value);
-			if (elements != null && elements.length > 0)
+			if (elements != null && elements.length > 0) {
 				fElement = new PDEManifestElement(this, elements[0]);
+			}
 		} catch (BundleException e) {
 		}
-		if (fElement == null)
+		if (fElement == null) {
 			fElement = new PDEManifestElement(this, ""); //$NON-NLS-1$
+		}
 		fValue = value;
 	}
 
@@ -51,10 +53,11 @@ public class SingleManifestHeader extends ManifestHeader {
 	}
 
 	public void setMainComponent(String value) {
-		if (value == null)
+		if (value == null) {
 			fElement.setValueComponents((String[]) null);
-		else
+		} else {
 			fElement.setValueComponents(new String[] {value});
+		}
 		update();
 	}
 
@@ -80,8 +83,9 @@ public class SingleManifestHeader extends ManifestHeader {
 	public void update(boolean notify) {
 		String old = fValue;
 		fValue = fElement.write();
-		if (notify)
+		if (notify) {
 			fBundle.getModel().fireModelObjectChanged(this, fName, old, fValue);
+		}
 	}
 
 }

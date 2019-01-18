@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginElement;
@@ -60,20 +59,24 @@ public abstract class PluginParent extends IdentifiablePluginObject implements I
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
+		}
 		if (obj instanceof IPluginParent) {
 			IPluginParent target = (IPluginParent) obj;
-			if (target.getChildCount() != getChildCount())
+			if (target.getChildCount() != getChildCount()) {
 				return false;
+			}
 			IPluginObject[] tchildren = target.getChildren();
 			for (int i = 0; i < tchildren.length; i++) {
 				IPluginObject tchild = tchildren[i];
 				IPluginObject child = getChildrenList().get(i);
-				if (child == null || child.equals(tchild) == false)
+				if (child == null || child.equals(tchild) == false) {
 					return false;
+				}
 			}
 			return true;
 		}
@@ -90,8 +93,9 @@ public abstract class PluginParent extends IdentifiablePluginObject implements I
 		ensureModelEditable();
 		int index1 = getChildrenList().indexOf(child1);
 		int index2 = getChildrenList().indexOf(child2);
-		if (index1 == -1 || index2 == -1)
+		if (index1 == -1 || index2 == -1) {
 			throwCoreException(PDECoreMessages.PluginParent_siblingsNotFoundException);
+		}
 		getChildrenList().set(index2, child1);
 		getChildrenList().set(index1, child2);
 		firePropertyChanged(this, P_SIBLING_ORDER, child1, child2);
@@ -111,8 +115,9 @@ public abstract class PluginParent extends IdentifiablePluginObject implements I
 	}
 
 	protected ArrayList<IPluginObject> getChildrenList() {
-		if (fChildren == null)
+		if (fChildren == null) {
 			fChildren = new ArrayList<>(1);
+		}
 		return fChildren;
 	}
 

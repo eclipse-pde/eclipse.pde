@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 
 public class StorageSchemaDescriptor implements ISchemaDescriptor {
-	private IStorage fStorage;
+	private final IStorage fStorage;
 	private Schema fSchema;
 
 	public StorageSchemaDescriptor(IStorage storage) {
@@ -61,8 +61,9 @@ public class StorageSchemaDescriptor implements ISchemaDescriptor {
 
 	@Override
 	public ISchema getSchema(boolean abbreviated) {
-		if (fSchema == null)
+		if (fSchema == null) {
 			loadSchema(abbreviated);
+		}
 		return fSchema;
 	}
 

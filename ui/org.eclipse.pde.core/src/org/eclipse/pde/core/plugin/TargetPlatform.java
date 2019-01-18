@@ -17,13 +17,18 @@ import java.io.File;
 import java.net.URL;
 import java.util.Properties;
 import java.util.Set;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.UpdateManagerHelper;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 
 /**
@@ -214,12 +219,14 @@ public class TargetPlatform {
 		Set<String> set = TargetPlatformHelper.getProductNameSet();
 		if (config != null) {
 			String product = (String) config.get(PRODUCT_PROPERTY);
-			if (product != null && set.contains(product))
+			if (product != null && set.contains(product)) {
 				return product;
+			}
 		}
 
-		if (set.contains(SDK_PRODUCT))
+		if (set.contains(SDK_PRODUCT)) {
 			return SDK_PRODUCT;
+		}
 
 		return set.contains(PLATFORM_PRODUCT) ? PLATFORM_PRODUCT : null;
 	}
@@ -239,8 +246,9 @@ public class TargetPlatform {
 		Set<String> set = TargetPlatformHelper.getApplicationNameSet();
 		if (config != null) {
 			String application = (String) config.get(APPLICATION_PROPERTY);
-			if (application != null && set.contains(application))
+			if (application != null && set.contains(application)) {
 				return application;
+			}
 		}
 		return IDE_APPLICATION;
 	}

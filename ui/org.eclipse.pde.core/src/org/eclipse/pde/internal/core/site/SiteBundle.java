@@ -25,14 +25,15 @@ import org.w3c.dom.NodeList;
 
 public class SiteBundle extends VersionableObject implements ISiteBundle {
 	private static final long serialVersionUID = 1L;
-	private Vector<ISiteCategory> fCategories = new Vector<>();
+	private final Vector<ISiteCategory> fCategories = new Vector<>();
 
 	@Override
 	public boolean isValid() {
 		for (int i = 0; i < fCategories.size(); i++) {
 			ISiteCategory category = fCategories.get(i);
-			if (!category.isValid())
+			if (!category.isValid()) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -93,12 +94,15 @@ public class SiteBundle extends VersionableObject implements ISiteBundle {
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<bundle"); //$NON-NLS-1$
-		if (id != null)
+		if (id != null) {
 			writer.print(" id=\"" + getId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (version != null)
+		}
+		if (version != null) {
 			writer.print(" version=\"" + getVersion() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (label != null)
+		}
+		if (label != null) {
 			writer.print(" label=\"" + getLabel() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		if (!fCategories.isEmpty()) {
 			writer.println(">"); //$NON-NLS-1$
 			String indent2 = indent + "   "; //$NON-NLS-1$
@@ -107,8 +111,9 @@ public class SiteBundle extends VersionableObject implements ISiteBundle {
 				category.write(indent2, writer);
 			}
 			writer.println(indent + "</bundle>"); //$NON-NLS-1$
-		} else
+		} else {
 			writer.println("/>"); //$NON-NLS-1$
+		}
 	}
 
 }

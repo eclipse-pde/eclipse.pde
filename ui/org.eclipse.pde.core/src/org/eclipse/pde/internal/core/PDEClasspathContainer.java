@@ -13,18 +13,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.IAccessRule;
-import org.eclipse.jdt.core.IClasspathEntry;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IAccessRule;
+import org.eclipse.jdt.core.IClasspathAttribute;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 
 public class PDEClasspathContainer {
 
@@ -34,8 +37,9 @@ public class PDEClasspathContainer {
 
 		@Override
 		public boolean equals(Object other) {
-			if (!(other instanceof Rule))
+			if (!(other instanceof Rule)) {
 				return false;
+			}
 			return discouraged == ((Rule) other).discouraged && path.equals(((Rule) other).path);
 		}
 
@@ -59,8 +63,9 @@ public class PDEClasspathContainer {
 			} else {
 				entry = JavaCore.newProjectEntry(project.getFullPath());
 			}
-			if (!entries.contains(entry))
+			if (!entries.contains(entry)) {
 				entries.add(entry);
+			}
 		}
 	}
 
@@ -73,8 +78,9 @@ public class PDEClasspathContainer {
 	protected static void addExternalPlugin(IPluginModelBase model, Rule[] rules, ArrayList<IClasspathEntry> entries) {
 		if (new File(model.getInstallLocation()).isFile()) {
 			IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, "."); //$NON-NLS-1$
-			if (srcPath == null)
+			if (srcPath == null) {
 				srcPath = new Path(model.getInstallLocation());
+			}
 			addLibraryEntry(new Path(model.getInstallLocation()), srcPath, rules, getClasspathAttributes(model), entries);
 
 			// If the jarred plugin contains any jarred libraries they must be extracted as the compiler can't handle nested jar files
@@ -88,24 +94,28 @@ public class PDEClasspathContainer {
 			if (libraries.length == 0) {
 				// If there are no libraries, assume the root of the plug-in is the library '.'
 				IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, "."); //$NON-NLS-1$
-				if (srcPath == null)
+				if (srcPath == null) {
 					srcPath = new Path(model.getInstallLocation());
+				}
 				addLibraryEntry(new Path(model.getInstallLocation()), srcPath, rules, getClasspathAttributes(model), entries);
 			} else {
 				for (IPluginLibrary library : libraries) {
-					if (IPluginLibrary.RESOURCE.equals(library.getType()))
+					if (IPluginLibrary.RESOURCE.equals(library.getType())) {
 						continue;
+					}
 					model = (IPluginModelBase) library.getModel();
 					String name = library.getName();
 					String expandedName = ClasspathUtilCore.expandLibraryName(name);
 					IPath path = ClasspathUtilCore.getPath(model, expandedName);
 					if (path == null && !model.isFragmentModel() && ClasspathUtilCore.containsVariables(name)) {
 						model = resolveLibraryInFragments(model, expandedName);
-						if (model != null && model.isEnabled())
+						if (model != null && model.isEnabled()) {
 							path = ClasspathUtilCore.getPath(model, expandedName);
+						}
 					}
-					if (path != null)
+					if (path != null) {
 						addLibraryEntry(path, ClasspathUtilCore.getSourceAnnotation(model, expandedName), rules, getClasspathAttributes(model), entries);
+					}
 				}
 			}
 		}
@@ -145,8 +155,9 @@ public class PDEClasspathContainer {
 	private static IClasspathAttribute[] getClasspathAttributes(IPluginModelBase model) {
 		JavadocLocationManager manager = PDECore.getDefault().getJavadocLocationManager();
 		String location = manager.getJavadocLocation(model);
-		if (location == null)
+		if (location == null) {
 			return new IClasspathAttribute[0];
+		}
 		return new IClasspathAttribute[] {JavaCore.newClasspathAttribute(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, location)};
 	}
 
@@ -164,8 +175,9 @@ public class PDEClasspathContainer {
 		if (desc != null) {
 			BundleDescription[] fragments = desc.getFragments();
 			for (BundleDescription fragment : fragments) {
-				if (new File(fragment.getLocation(), libraryName).exists())
+				if (new File(fragment.getLocation(), libraryName).exists()) {
 					return PluginRegistry.findModel(fragment);
+				}
 			}
 		}
 		return null;

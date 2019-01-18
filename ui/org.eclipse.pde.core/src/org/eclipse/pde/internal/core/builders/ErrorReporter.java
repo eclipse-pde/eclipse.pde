@@ -14,8 +14,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
-import org.eclipse.core.filebuffers.*;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
@@ -78,10 +83,11 @@ public abstract class ErrorReporter {
 	 * @return a new marker or <code>null</code>
 	 */
 	public VirtualMarker report(String message, int line, int severity, int problemID, String category) {
-		if (severity == CompilerFlags.ERROR)
+		if (severity == CompilerFlags.ERROR) {
 			return addMarker(message, line, IMarker.SEVERITY_ERROR, problemID, category);
-		else if (severity == CompilerFlags.WARNING)
+		} else if (severity == CompilerFlags.WARNING) {
 			return addMarker(message, line, IMarker.SEVERITY_WARNING, problemID, category);
+		}
 		return null;
 	}
 

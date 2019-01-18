@@ -14,11 +14,16 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.isite.ISite;
+import org.eclipse.pde.internal.core.isite.ISiteModel;
+import org.eclipse.pde.internal.core.isite.ISiteObject;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -76,8 +81,9 @@ public abstract class SiteObject extends PlatformObject implements ISiteObject {
 	}
 
 	public String getTranslatableLabel() {
-		if (label == null)
+		if (label == null) {
 			return ""; //$NON-NLS-1$
+		}
 		return model.getResourceString(label);
 	}
 
@@ -89,10 +95,12 @@ public abstract class SiteObject extends PlatformObject implements ISiteObject {
 	String getNodeAttribute(Node node, String name) {
 		NamedNodeMap atts = node.getAttributes();
 		Node attribute = null;
-		if (atts != null)
+		if (atts != null) {
 			attribute = atts.getNamedItem(name);
-		if (attribute != null)
+		}
+		if (attribute != null) {
 			return attribute.getNodeValue();
+		}
 		return null;
 	}
 
@@ -151,8 +159,9 @@ public abstract class SiteObject extends PlatformObject implements ISiteObject {
 	}
 
 	public static String getWritableString(String source) {
-		if (source == null)
+		if (source == null) {
 			return ""; //$NON-NLS-1$
+		}
 		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < source.length(); i++) {
 			char c = source.charAt(i);

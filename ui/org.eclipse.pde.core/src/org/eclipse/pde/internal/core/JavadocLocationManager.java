@@ -16,8 +16,14 @@ package org.eclipse.pde.internal.core;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -35,8 +41,9 @@ public class JavadocLocationManager {
 			File file = new File(model.getInstallLocation());
 			if (file.isDirectory()) {
 				File doc = new File(file, "doc"); //$NON-NLS-1$
-				if (new File(doc, "package-list").exists()) //$NON-NLS-1$
+				if (new File(doc, "package-list").exists()) { //$NON-NLS-1$
 					return doc.toURL().toString();
+				}
 			} else if (CoreUtility.jarContainsResource(file, "doc/package-list", false)) { //$NON-NLS-1$
 				return "jar:" + file.toURL().toString() + "!/doc"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -58,8 +65,9 @@ public class JavadocLocationManager {
 				while (iter.hasNext()) {
 					String location = iter.next().toString();
 					Set<String> set = fLocations.get(location);
-					if (set.contains(id))
+					if (set.contains(id)) {
 						return location;
+					}
 				}
 			}
 		}
@@ -67,16 +75,18 @@ public class JavadocLocationManager {
 	}
 
 	private synchronized void initialize() {
-		if (fLocations != null)
+		if (fLocations != null) {
 			return;
+		}
 		fLocations = new HashMap<>();
 
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(JAVADOC_ID, false);
 		for (IExtension extension : extensions) {
 			IPluginModelBase base = PluginRegistry.findModel(extension.getContributor().getName());
 			// only search external models
-			if (base == null || base.getUnderlyingResource() != null)
+			if (base == null || base.getUnderlyingResource() != null) {
 				continue;
+			}
 			processExtension(extension, base);
 		}
 	}
@@ -86,8 +96,9 @@ public class JavadocLocationManager {
 		for (IConfigurationElement element : children) {
 			if (element.getName().equals("javadoc")) { //$NON-NLS-1$
 				String path = element.getAttribute("path"); //$NON-NLS-1$
-				if (path == null)
+				if (path == null) {
 					continue;
+				}
 				try {
 					new URL(path);
 					processPlugins(path, element.getChildren());
@@ -127,8 +138,9 @@ public class JavadocLocationManager {
 		for (IConfigurationElement plugin : plugins) {
 			if (plugin.getName().equals("plugin")) { //$NON-NLS-1$
 				String id = plugin.getAttribute("id"); //$NON-NLS-1$
-				if (id == null)
+				if (id == null) {
 					continue;
+				}
 				Set<String> set = fLocations.get(path);
 				if (set == null) {
 					set = new HashSet<>();

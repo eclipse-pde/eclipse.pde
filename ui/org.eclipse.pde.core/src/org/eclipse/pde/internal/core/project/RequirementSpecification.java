@@ -21,10 +21,10 @@ import org.eclipse.osgi.service.resolver.VersionRange;
  */
 public abstract class RequirementSpecification {
 
-	private String fName;
-	private VersionRange fRange;
-	private boolean fExport;
-	private boolean fOptional;
+	private final String fName;
+	private final VersionRange fRange;
+	private final boolean fExport;
+	private final boolean fOptional;
 
 	/**
 	 * Constructs a new requirement specification.

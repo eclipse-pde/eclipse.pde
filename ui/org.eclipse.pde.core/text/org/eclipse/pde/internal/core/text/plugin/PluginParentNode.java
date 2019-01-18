@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.text.plugin;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginObject;
@@ -58,8 +57,9 @@ public class PluginParentNode extends PluginObjectNode implements IPluginParent 
 	public IPluginObject[] getChildren() {
 		ArrayList<IDocumentElementNode> result = new ArrayList<>();
 		IDocumentElementNode[] nodes = getChildNodes();
-		for (IDocumentElementNode childNode : nodes)
+		for (IDocumentElementNode childNode : nodes) {
 			result.add(childNode);
+		}
 
 		return result.toArray(new IPluginObject[result.size()]);
 	}

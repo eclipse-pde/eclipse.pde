@@ -13,14 +13,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IExtensions;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.w3c.dom.Node;
@@ -137,8 +148,9 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 		List<IPluginExtension> extensions = getExtensionsList();
 		int index1 = extensions.indexOf(e1);
 		int index2 = extensions.indexOf(e2);
-		if (index1 == -1 || index2 == -1)
+		if (index1 == -1 || index2 == -1) {
 			throwCoreException(PDECoreMessages.AbstractExtensions_extensionsNotFoundException);
+		}
 		extensions.set(index2, e1);
 		extensions.set(index1, e2);
 		firePropertyChanged(this, P_EXTENSION_ORDER, e1, e2);
@@ -159,16 +171,18 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 		int size = extensions.size();
 		for (int i = 0; i < size; i++) {
 			IPluginExtension extension = extensions.get(i);
-			if (!extension.isValid())
+			if (!extension.isValid()) {
 				return false;
+			}
 		}
 		// validate extension points
 		List<IPluginExtensionPoint> extPoints = getExtensionPointsList();
 		size = extPoints.size();
 		for (int i = 0; i < size; i++) {
 			IPluginExtensionPoint expoint = extPoints.get(i);
-			if (!expoint.isValid())
+			if (!expoint.isValid()) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -207,10 +221,11 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 		if (fExtensions == null) {
 			IPluginBase base = getPluginBase();
 			if (base != null) {
-				if (fCache)
+				if (fCache) {
 					fExtensions = new ArrayList<>(Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionsForPlugin(base.getPluginModel())));
-				else
+				} else {
 					return Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionsForPlugin(base.getPluginModel()));
+				}
 			} else {
 				return Collections.emptyList();
 			}
@@ -222,10 +237,11 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 		if (fExtensionPoints == null) {
 			IPluginBase base = getPluginBase();
 			if (base != null) {
-				if (fCache)
+				if (fCache) {
 					fExtensionPoints = new ArrayList<>(Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionPointsForPlugin(base.getPluginModel())));
-				else
+				} else {
 					return Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionPointsForPlugin(base.getPluginModel()));
+				}
 			} else {
 				return Collections.emptyList();
 			}
@@ -238,10 +254,12 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 	 */
 	protected void processChild(Node child) {
 		String name = child.getNodeName();
-		if (fExtensions == null)
+		if (fExtensions == null) {
 			fExtensions = new ArrayList<>();
-		if (fExtensionPoints == null)
+		}
+		if (fExtensionPoints == null) {
 			fExtensionPoints = new ArrayList<>();
+		}
 
 		if (name.equals("extension")) { //$NON-NLS-1$
 			PluginExtension extension = new PluginExtension();

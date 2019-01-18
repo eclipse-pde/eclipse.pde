@@ -13,7 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.core.target;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * Describes a location in a target that provides bundles and features. Abstracts

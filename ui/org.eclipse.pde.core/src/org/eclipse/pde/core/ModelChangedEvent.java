@@ -21,11 +21,11 @@ package org.eclipse.pde.core;
  * @since 2.0
  */
 public class ModelChangedEvent implements IModelChangedEvent {
-	private int type;
-	private IModelChangeProvider provider;
-	private Object[] changedObjects;
+	private final int type;
+	private final IModelChangeProvider provider;
+	private final Object[] changedObjects;
 	private Object oldValue, newValue;
-	private String changedProperty;
+	private final String changedProperty;
 
 	/**
 	 * The constructor of the event.

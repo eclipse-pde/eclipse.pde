@@ -21,17 +21,24 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.util.IdUtil;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class PluginHandler extends DefaultHandler {
 	private Document fDocument;
 	private Element fRootElement;
-	private Stack<Element> fOpenElements = new Stack<>();
+	private final Stack<Element> fOpenElements = new Stack<>();
 
 	private String fSchemaVersion;
-	private boolean fAbbreviated;
+	private final boolean fAbbreviated;
 	private Locator fLocator;
 	private boolean fPop;
 
@@ -62,10 +69,11 @@ public class PluginHandler extends DefaultHandler {
 			}
 		}
 
-		if (fRootElement == null)
+		if (fRootElement == null) {
 			fRootElement = element;
-		else
+		} else {
 			fOpenElements.peek().appendChild(element);
+		}
 
 		fOpenElements.push(element);
 	}
@@ -117,8 +125,9 @@ public class PluginHandler extends DefaultHandler {
 
 	@Override
 	public void characters(char[] characters, int start, int length) throws SAXException {
-		if (fAbbreviated)
+		if (fAbbreviated) {
 			return;
+		}
 
 		processCharacters(characters, start, length);
 	}
@@ -135,10 +144,11 @@ public class PluginHandler extends DefaultHandler {
 			buff.append(characters[start + i]);
 		}
 		Text text = fDocument.createTextNode(buff.toString());
-		if (fRootElement == null)
+		if (fRootElement == null) {
 			fDocument.appendChild(text);
-		else
+		} else {
 			fOpenElements.peek().appendChild(text);
+		}
 	}
 
 	public Node getDocumentElement() {

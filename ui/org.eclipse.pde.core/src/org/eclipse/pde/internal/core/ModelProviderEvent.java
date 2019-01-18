@@ -17,11 +17,11 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
 
 public class ModelProviderEvent implements IModelProviderEvent {
-	private int types;
-	private Object source;
-	private IModel[] added;
-	private IModel[] removed;
-	private IModel[] changed;
+	private final int types;
+	private final Object source;
+	private final IModel[] added;
+	private final IModel[] removed;
+	private final IModel[] changed;
 
 	public ModelProviderEvent(Object source, int types, IModel[] added, IModel[] removed, IModel[] changed) {
 		this.source = source;

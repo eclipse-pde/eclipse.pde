@@ -238,8 +238,9 @@ public class PluginRegistry {
 		if (base.getId() == null) {
 			return false; // guard against invalid plug-ins
 		}
-		if (version == null)
+		if (version == null) {
 			return base.getId().equals(id);
+		}
 		return VersionUtil.compare(base.getId(), base.getVersion(), id, version, match);
 	}
 
@@ -298,8 +299,9 @@ public class PluginRegistry {
 		IPluginModelBase[] models = PluginRegistry.getAllModels();
 		List<IPluginModelBase> results = new ArrayList<>();
 		for (IPluginModelBase model : models) {
-			if ((filter == null || filter.accept(model)) && isMatch(model.getPluginBase(), id, version, match))
+			if ((filter == null || filter.accept(model)) && isMatch(model.getPluginBase(), id, version, match)) {
 				results.add(model);
+			}
 		}
 		return results.toArray(new IPluginModelBase[results.size()]);
 	}

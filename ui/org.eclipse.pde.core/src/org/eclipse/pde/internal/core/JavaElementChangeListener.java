@@ -13,12 +13,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Properties;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.ElementChangedEvent;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IElementChangedListener;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaElementDelta;
+import org.eclipse.jdt.core.IJavaModel;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.project.PDEProject;
@@ -27,7 +40,7 @@ public class JavaElementChangeListener implements IElementChangedListener {
 
 	private static final String FILENAME = "clean-cache.properties"; //$NON-NLS-1$
 
-	private Properties fTable = new Properties();
+	private final Properties fTable = new Properties();
 
 	public void start() {
 		JavaCore.addElementChangedListener(this, ElementChangedEvent.POST_CHANGE);
@@ -65,8 +78,9 @@ public class JavaElementChangeListener implements IElementChangedListener {
 	private void handleChildDeltas(IJavaElementDelta delta) {
 		IJavaElementDelta[] deltas = delta.getAffectedChildren();
 		for (IJavaElementDelta childDelta : deltas) {
-			if (ignoreDelta(childDelta))
+			if (ignoreDelta(childDelta)) {
 				continue;
+			}
 			if (isInterestingDelta(childDelta)) {
 				updateTable(childDelta.getElement());
 				break;
@@ -82,8 +96,9 @@ public class JavaElementChangeListener implements IElementChangedListener {
 		IJavaElement element = delta.getElement();
 		boolean interestingElement = element instanceof IPackageFragment || element instanceof IPackageFragmentRoot;
 
-		if (interestingElement && interestingKind)
+		if (interestingElement && interestingKind) {
 			return true;
+		}
 
 		if (kind == IJavaElementDelta.CHANGED && element instanceof IPackageFragmentRoot) {
 			IPackageFragmentRoot root = (IPackageFragmentRoot) element;
@@ -98,8 +113,9 @@ public class JavaElementChangeListener implements IElementChangedListener {
 			if (element instanceof IPackageFragmentRoot) {
 				IPackageFragmentRoot root = (IPackageFragmentRoot) element;
 				IClasspathEntry entry = root.getRawClasspathEntry();
-				if (entry != null && entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER)
+				if (entry != null && entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
 					return true;
+				}
 			}
 		} catch (JavaModelException e) {
 		}
@@ -118,8 +134,9 @@ public class JavaElementChangeListener implements IElementChangedListener {
 			IPluginModelBase model = PluginRegistry.findModel(project);
 			if (model != null) {
 				String id = model.getPluginBase().getId();
-				if (id != null)
+				if (id != null) {
 					fTable.put(id, Long.toString(System.currentTimeMillis()));
+				}
 			}
 		}
 	}
@@ -130,8 +147,9 @@ public class JavaElementChangeListener implements IElementChangedListener {
 		while (keys.hasMoreElements()) {
 			String id = keys.nextElement().toString();
 			IPluginModelBase model = PluginRegistry.findModel(id);
-			if (model == null || model.getUnderlyingResource() == null)
+			if (model == null || model.getUnderlyingResource() == null) {
 				fTable.remove(id);
+			}
 		}
 
 		try (FileOutputStream stream = new FileOutputStream(new File(getDirectory(), FILENAME))) {
@@ -145,8 +163,9 @@ public class JavaElementChangeListener implements IElementChangedListener {
 	private File getDirectory() {
 		IPath path = PDECore.getDefault().getStateLocation().append(".cache"); //$NON-NLS-1$
 		File directory = new File(path.toOSString());
-		if (!directory.exists() || !directory.isDirectory())
+		if (!directory.exists() || !directory.isDirectory()) {
 			directory.mkdirs();
+		}
 		return directory;
 	}
 
@@ -167,8 +186,9 @@ public class JavaElementChangeListener implements IElementChangedListener {
 			IPluginModelBase model = PluginRegistry.findModel(id);
 			if (model != null) {
 				File file = new File(cacheDirectory, id + "_" + model.getPluginBase().getVersion() + ".MF"); //$NON-NLS-1$ //$NON-NLS-2$
-				if (file.exists() && file.isFile() && file.lastModified() < Long.parseLong(fTable.get(id).toString()))
+				if (file.exists() && file.isFile() && file.lastModified() < Long.parseLong(fTable.get(id).toString())) {
 					file.delete();
+				}
 			}
 		}
 	}

@@ -14,16 +14,20 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.File;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 
 public class IncludedSchemaDescriptor implements ISchemaDescriptor {
-	private URL fSchemaURL;
+	private final URL fSchemaURL;
 	private String fSchemaLocation;
 	private Schema fSchema;
 	private long fLastModified;
@@ -31,8 +35,9 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 	public IncludedSchemaDescriptor(URL schemaURL) {
 		fSchemaURL = schemaURL;
 		File file = new File(fSchemaURL.getFile());
-		if (file.exists())
+		if (file.exists()) {
 			fLastModified = file.lastModified();
+		}
 	}
 
 	public static URL computeURL(ISchemaDescriptor parentDesc, String schemaLocation, List<IPath> additionalSearchLocations) throws MalformedURLException {
@@ -43,8 +48,9 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 			return getPluginRelativePath(path.segment(0), path.removeFirstSegments(1), parentURL, additionalSearchLocations);
 		}
 
-		if (parentURL == null)
+		if (parentURL == null) {
 			return null;
+		}
 
 		// parent-relative location
 		IPath path = new Path(parentURL.getPath());
@@ -71,8 +77,9 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 		// Next search source locations
 		if (url == null) {
 			IPluginModelBase model = PluginRegistry.findModel(pluginID);
-			if (model != null)
+			if (model != null) {
 				url = SchemaRegistry.getSchemaFromSourceExtension(model.getPluginBase(), path);
+			}
 		}
 
 		File parentFile = null;

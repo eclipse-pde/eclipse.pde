@@ -23,7 +23,7 @@ import org.eclipse.pde.core.target.TargetBundle;
  */
 public class InvalidTargetBundle extends TargetBundle {
 
-	private IStatus fStatus;
+	private final IStatus fStatus;
 
 	/**
 	 * Creates a new target bundle with the given status and additional bundle information

@@ -19,27 +19,40 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.Map;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.osgi.framework.Bundle;
 
 public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
-	private int MANIFEST = 0x1;
-	private int EXTENSIONS = 0x2;
-	private int BUILD = 0x4;
-	private int STRUCTURE = 0x8;
+	private final int MANIFEST = 0x1;
+	private final int EXTENSIONS = 0x2;
+	private final int BUILD = 0x4;
+	private final int STRUCTURE = 0x8;
 
 	private static IProject[] EMPTY_LIST = new IProject[0];
 
-	private SelfVisitor fSelfVisitor = new SelfVisitor();
+	private final SelfVisitor fSelfVisitor = new SelfVisitor();
 
-	private ClassChangeVisitor fClassFileVisitor = new ClassChangeVisitor();
+	private final ClassChangeVisitor fClassFileVisitor = new ClassChangeVisitor();
 
 	class ClassChangeVisitor implements IResourceDeltaVisitor {
 		boolean hasChanged = false;
@@ -97,8 +110,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				}
 				IResource resource = delta.getResource();
 				// by ignoring derived resources we should scale a bit better.
-				if (resource.isDerived())
+				if (resource.isDerived()) {
 					return false;
+				}
 				if (resource.getType() == IResource.FILE) {
 					IFile file = (IFile) resource;
 					IProject project = file.getProject();
@@ -152,8 +166,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
-		if (PDECore.getDefault().getBundle().getState() != Bundle.ACTIVE || monitor.isCanceled())
+		if (PDECore.getDefault().getBundle().getState() != Bundle.ACTIVE || monitor.isCanceled()) {
 			return EMPTY_LIST;
+		}
 
 		IProject project = getProject();
 		if (!WorkspaceModelManager.isBinaryProject(project)) {
@@ -222,15 +237,17 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		if ((type & MANIFEST | EXTENSIONS) != 0) {
 			IProject project = getProject();
 			IFile file = PDEProject.getPluginXml(project);
-			if (!file.exists())
+			if (!file.exists()) {
 				file = PDEProject.getFragmentXml(project);
+			}
 
 			if (file.exists()) {
 				validateFiles(file, type, monitor);
 			} else if ((type & MANIFEST) != 0) {
 				IFile manifestFile = PDEProject.getManifest(project);
-				if (manifestFile.exists())
+				if (manifestFile.exists()) {
 					validateManifestFile(manifestFile, subMonitor.split(1));
+				}
 			}
 		}
 		if ((type & BUILD) != 0) {
@@ -240,16 +257,19 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 	private int getWorkAmount(int type) {
 		int work = 1;
-		if ((type & MANIFEST | EXTENSIONS) != 0)
+		if ((type & MANIFEST | EXTENSIONS) != 0) {
 			++work;
-		if ((type & BUILD) != 0)
+		}
+		if ((type & BUILD) != 0) {
 			++work;
+		}
 		return work;
 	}
 
 	private void validateProjectStructure(int type, IProgressMonitor monitor) {
-		if (monitor.isCanceled())
+		if (monitor.isCanceled()) {
 			return;
+		}
 		// clear markers from project
 		IProject project = getProject();
 		try {
@@ -265,8 +285,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	}
 
 	private void validateManifestFile(IFile file, IProgressMonitor monitor) {
-		if (monitor.isCanceled())
+		if (monitor.isCanceled()) {
 			return;
+		}
 		String message = NLS.bind(PDECoreMessages.Builders_verifying, file.getFullPath().toString());
 		monitor.subTask(message);
 
@@ -277,8 +298,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	}
 
 	private void validateFiles(IFile file, int type, IProgressMonitor monitor) {
-		if (monitor.isCanceled())
+		if (monitor.isCanceled()) {
 			return;
+		}
 		String message = NLS.bind(PDECoreMessages.Builders_verifying, file.getFullPath().toString());
 		monitor.subTask(message);
 
@@ -286,10 +308,12 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		XMLErrorReporter reporter = null;
 		BundleErrorReporter bundleReporter = null;
 		if (bundleManifest.exists()) {
-			if ((type & EXTENSIONS) != 0)
+			if ((type & EXTENSIONS) != 0) {
 				reporter = new ExtensionsErrorReporter(file);
-			if ((type & MANIFEST) != 0)
+			}
+			if ((type & MANIFEST) != 0) {
 				bundleReporter = new BundleErrorReporter(bundleManifest);
+			}
 		} else if ((type & MANIFEST) != 0 || (type & EXTENSIONS) != 0) {
 			if (file.equals(PDEProject.getPluginXml(getProject()))) {
 				reporter = new PluginErrorReporter(file);
@@ -310,8 +334,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	}
 
 	private void validateBuildProperties(IProgressMonitor monitor) {
-		if (monitor.isCanceled())
+		if (monitor.isCanceled()) {
 			return;
+		}
 		IProject project = getProject();
 		IFile file = PDEProject.getBuildProperties(project);
 		if (file.exists()) {
@@ -326,8 +351,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		IFile file = PDEProject.getBuildProperties(project);
 		if (!file.exists()) {
 			int severity = CompilerFlags.getFlag(project, CompilerFlags.P_BUILD);
-			if (severity == CompilerFlags.IGNORE)
+			if (severity == CompilerFlags.IGNORE) {
 				return;
+			}
 			// if build.properties doesn't exist and build problems != IGNORE, create a marker on the project bug 172451
 			try {
 				IMarker marker = project.createMarker(PDEMarkerFactory.MARKER_ID);
@@ -348,8 +374,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			} catch (CoreException e1) {
 			}
 			// exit if the proper casing exists (should be majority of the time)
-			if (PDEProject.getManifest(project).exists())
+			if (PDEProject.getManifest(project).exists()) {
 				return;
+			}
 
 			IPath location = manifestFolder.getLocation();
 			if (location != null) {

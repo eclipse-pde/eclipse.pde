@@ -17,8 +17,13 @@ import java.io.StringReader;
 import java.util.Stack;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class XMLDefaultHandler extends DefaultHandler {
@@ -38,24 +43,27 @@ public class XMLDefaultHandler extends DefaultHandler {
 
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-		if (!isPrepared())
+		if (!isPrepared()) {
 			return;
+		}
 		Element element = fDocument.createElement(qName);
 		for (int i = 0; i < attributes.getLength(); i++) {
 			element.setAttribute(attributes.getQName(i), attributes.getValue(i));
 		}
 
-		if (fRootElement == null)
+		if (fRootElement == null) {
 			fRootElement = element;
-		else
+		} else {
 			fElementStack.peek().appendChild(element);
+		}
 		fElementStack.push(element);
 	}
 
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
-		if (isPrepared() && !fElementStack.isEmpty())
+		if (isPrepared() && !fElementStack.isEmpty()) {
 			fElementStack.pop();
+		}
 	}
 
 	@Override
@@ -73,41 +81,47 @@ public class XMLDefaultHandler extends DefaultHandler {
 
 	@Override
 	public void endDocument() throws SAXException {
-		if (isPrepared())
+		if (isPrepared()) {
 			fDocument.appendChild(fRootElement);
+		}
 	}
 
 	@Override
 	public void processingInstruction(String target, String data) throws SAXException {
-		if (isPrepared())
+		if (isPrepared()) {
 			fDocument.appendChild(fDocument.createProcessingInstruction(target, data));
+		}
 	}
 
 	@Override
 	public void characters(char[] characters, int start, int length) throws SAXException {
-		if (fAbbreviated || !isPrepared())
+		if (fAbbreviated || !isPrepared()) {
 			return;
+		}
 		StringBuilder buff = new StringBuilder();
 		for (int i = 0; i < length; i++) {
 			buff.append(characters[start + i]);
 		}
 		Text text = fDocument.createTextNode(buff.toString());
-		if (fRootElement == null)
+		if (fRootElement == null) {
 			fDocument.appendChild(text);
-		else
+		} else {
 			fElementStack.peek().appendChild(text);
+		}
 	}
 
 	public Node getDocumentElement() {
-		if (!isPrepared())
+		if (!isPrepared()) {
 			return null;
+		}
 		normalizeDocumentElement();
 		return fDocument.getDocumentElement();
 	}
 
 	public org.w3c.dom.Document getDocument() {
-		if (!isPrepared())
+		if (!isPrepared()) {
 			return null;
+		}
 		normalizeDocumentElement();
 		return fDocument;
 	}
@@ -117,8 +131,9 @@ public class XMLDefaultHandler extends DefaultHandler {
 	}
 
 	private void normalizeDocumentElement() {
-		if (fDocument.getDocumentElement() != null)
+		if (fDocument.getDocumentElement() != null) {
 			fDocument.getDocumentElement().normalize();
+		}
 	}
 
 	@Override

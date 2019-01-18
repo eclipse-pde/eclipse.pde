@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
 import org.w3c.dom.Node;
@@ -56,8 +55,9 @@ public class FeatureInstallHandler extends FeatureObject implements IFeatureInst
 			setLibrary((String) newValue);
 		} else if (name.equals(P_HANDLER_NAME)) {
 			setHandlerName((String) newValue);
-		} else
+		} else {
 			super.restoreProperty(name, oldValue, newValue);
+		}
 	}
 
 	@Override

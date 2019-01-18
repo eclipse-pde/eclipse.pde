@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.text.bundle;
 
 import java.util.Vector;
-
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 

@@ -48,8 +48,9 @@ public class SchemaDescriptor implements ISchemaDescriptor {
 		fSchemaURL = schemaURL;
 		if (fSchemaURL != null) {
 			File file = new File(fSchemaURL.getFile());
-			if (file.exists())
+			if (file.exists()) {
 				fLastModified = file.lastModified();
+			}
 		}
 		fSearchPath = searchPath;
 	}
@@ -71,18 +72,20 @@ public class SchemaDescriptor implements ISchemaDescriptor {
 
 	@Override
 	public String getPointId() {
-		if (fPoint != null)
+		if (fPoint != null) {
 			return fPoint;
+		}
 		return (fSchema == null) ? null : fSchema.getQualifiedPointId();
 	}
 
 	@Override
 	public ISchema getSchema(boolean abbreviated) {
 		if (fSchema == null && fSchemaURL != null) {
-			if (fEditable)
+			if (fEditable) {
 				fSchema = new EditableSchema(this, fSchemaURL, abbreviated);
-			else
+			} else {
 				fSchema = new Schema(this, fSchemaURL, abbreviated);
+			}
 			fSchema.setSearchPath(fSearchPath);
 			fSchema.load();
 		}

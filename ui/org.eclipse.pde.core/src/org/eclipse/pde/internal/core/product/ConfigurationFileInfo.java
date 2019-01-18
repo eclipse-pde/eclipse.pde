@@ -19,7 +19,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
-import org.w3c.dom.*;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class ConfigurationFileInfo extends ProductObject implements IConfigurationFileInfo {
 
@@ -45,8 +47,9 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 	public void setPath(String path) {
 		String old = fPath;
 		fPath = path;
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged(P_PATH, old, fPath);
+		}
 	}
 
 	public String getPath() {
@@ -118,10 +121,12 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 
 		// the first entry here is for backwards compatibility
 		writer.print(indent + "<configIni"); //$NON-NLS-1$
-		if (fUse != null)
+		if (fUse != null) {
 			writer.print(" " + P_USE + "=\"" + fUse + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (fPath != null && fPath.trim().length() > 0)
+		}
+		if (fPath != null && fPath.trim().length() > 0) {
 			writer.print(" " + P_PATH + "=\"" + getWritableString(fPath.trim()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 
 		writer.println(">"); //$NON-NLS-1$
 
@@ -163,32 +168,37 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 		if (os == null) {
 			String old = fUse;
 			fUse = use;
-			if (isEditable())
+			if (isEditable()) {
 				firePropertyChanged(P_USE, old, fUse);
+			}
 		}
 
 		if (Platform.OS_WIN32.equals(os)) {
 			String old = fWinUse;
 			fWinUse = use;
-			if (isEditable())
+			if (isEditable()) {
 				firePropertyChanged(WIN, old, fWinUse);
+			}
 		} else if (Platform.OS_LINUX.equals(os)) {
 			String old = fLinUse;
 			fLinUse = use;
-			if (isEditable())
+			if (isEditable()) {
 				firePropertyChanged(LIN, old, fLinUse);
+			}
 		} else if (Platform.OS_MACOSX.equals(os)) {
 			String old = fMacUse;
 			fMacUse = use;
-			if (isEditable())
+			if (isEditable()) {
 				firePropertyChanged(MAC, old, fMacUse);
+			}
 		}
 	}
 
 	@Override
 	public String getUse(String os) {
-		if (os == null)
+		if (os == null) {
 			return fUse;
+		}
 
 		if (Platform.OS_WIN32.equals(os)) {
 			return fWinUse;
@@ -205,32 +215,37 @@ public class ConfigurationFileInfo extends ProductObject implements IConfigurati
 		if (os == null) {
 			String old = fPath;
 			fPath = path;
-			if (isEditable())
+			if (isEditable()) {
 				firePropertyChanged(P_PATH, old, fPath);
+			}
 		}
 
 		if (Platform.OS_WIN32.equals(os)) {
 			String old = fWinPath;
 			fWinPath = path;
-			if (isEditable())
+			if (isEditable()) {
 				firePropertyChanged(WIN, old, fWinPath);
+			}
 		} else if (Platform.OS_LINUX.equals(os)) {
 			String old = fLinPath;
 			fLinPath = path;
-			if (isEditable())
+			if (isEditable()) {
 				firePropertyChanged(LIN, old, fLinPath);
+			}
 		} else if (Platform.OS_MACOSX.equals(os)) {
 			String old = fMacPath;
 			fMacPath = path;
-			if (isEditable())
+			if (isEditable()) {
 				firePropertyChanged(MAC, old, fMacPath);
+			}
 		}
 	}
 
 	@Override
 	public String getPath(String os) {
-		if (os == null)
+		if (os == null) {
 			return fPath;
+		}
 
 		if (Platform.OS_WIN32.equals(os)) {
 			return fWinPath;

@@ -25,7 +25,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
 
 public class FeatureFactory implements IFeatureModelFactory {
-	private IFeatureModel model;
+	private final IFeatureModel model;
 
 	public FeatureFactory(IFeatureModel model) {
 		this.model = model;

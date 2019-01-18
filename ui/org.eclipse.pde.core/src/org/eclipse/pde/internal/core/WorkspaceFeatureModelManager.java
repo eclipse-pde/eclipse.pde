@@ -15,7 +15,10 @@ package org.eclipse.pde.internal.core;
 
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
@@ -35,11 +38,13 @@ public class WorkspaceFeatureModelManager extends WorkspaceModelManager {
 		if (featureXml.exists()) {
 			IModel model = new WorkspaceFeatureModel(featureXml);
 			loadModel(model, false);
-			if (fModels == null)
+			if (fModels == null) {
 				fModels = new LinkedHashMap<>();
+			}
 			fModels.put(project, model);
-			if (notify)
+			if (notify) {
 				addChange(model, IModelProviderEvent.MODELS_ADDED);
+			}
 		}
 	}
 

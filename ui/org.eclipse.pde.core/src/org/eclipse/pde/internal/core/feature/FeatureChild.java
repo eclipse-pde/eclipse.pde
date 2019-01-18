@@ -17,7 +17,9 @@ import java.io.PrintWriter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.w3c.dom.Node;
 
 public class FeatureChild extends IdentifiableObject implements IFeatureChild {
@@ -69,15 +71,17 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 			}
 		}
 		String searchLocationName = getNodeAttribute(node, "search_location"); //$NON-NLS-1$
-		if (searchLocationName == null)
+		if (searchLocationName == null) {
 			searchLocationName = getNodeAttribute(node, "search-location"); //$NON-NLS-1$
+		}
 		if (searchLocationName != null) {
-			if (searchLocationName.equals("root")) //$NON-NLS-1$
+			if (searchLocationName.equals("root")) { //$NON-NLS-1$
 				fSearchLocation = ROOT;
-			else if (searchLocationName.equals("self")) //$NON-NLS-1$
+			} else if (searchLocationName.equals("self")) { //$NON-NLS-1$
 				fSearchLocation = SELF;
-			else if (searchLocationName.equals("both")) //$NON-NLS-1$
+			} else if (searchLocationName.equals("both")) { //$NON-NLS-1$
 				fSearchLocation = BOTH;
+			}
 		}
 		//hookWithWorkspace();
 	}
@@ -253,8 +257,9 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 			setNL((String) newValue);
 		} else if (name.equals(P_SEARCH_LOCATION)) {
 			setSearchLocation(newValue != null ? ((Integer) newValue).intValue() : ROOT);
-		} else
+		} else {
 			super.restoreProperty(name, oldValue, newValue);
+		}
 	}
 
 	@Override

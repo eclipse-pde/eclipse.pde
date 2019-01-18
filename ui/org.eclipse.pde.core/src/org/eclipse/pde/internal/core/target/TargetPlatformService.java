@@ -13,12 +13,40 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import org.eclipse.core.filebuffers.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.resources.IResourceProxyVisitor;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
@@ -27,8 +55,17 @@ import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.target.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetHandle;
+import org.eclipse.pde.core.target.ITargetLocation;
+import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.eclipse.pde.core.target.NameVersionDescriptor;
+import org.eclipse.pde.core.target.TargetBundle;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.PDEPreferencesManager;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -63,7 +100,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 */
 	class ResourceProxyVisitor implements IResourceProxyVisitor {
 
-		private List<IResource> fList;
+		private final List<IResource> fList;
 
 		protected ResourceProxyVisitor(List<IResource> list) {
 			fList = list;
@@ -102,8 +139,9 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	@Override
 	public void deleteTarget(ITargetHandle handle) throws CoreException {
-		if (handle instanceof ExternalFileTargetHandle)
+		if (handle instanceof ExternalFileTargetHandle) {
 			fExtTargetHandles.remove(((ExternalFileTargetHandle) handle).getLocation());
+		}
 		((AbstractTargetHandle) handle).delete();
 	}
 
@@ -132,8 +170,9 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	@Override
 	public ITargetHandle getTarget(URI uri) {
-		if (fExtTargetHandles == null)
+		if (fExtTargetHandles == null) {
 			fExtTargetHandles = new LinkedHashMap<>(10);
+		}
 		if (fExtTargetHandles.containsKey(uri)) {
 			return fExtTargetHandles.get(uri);
 		}
@@ -151,8 +190,9 @@ public class TargetPlatformService implements ITargetPlatformService {
 			// If an external target is inaccessible then don't show it. But keep the reference in case it becomes accessible later
 			Collection<ExternalFileTargetHandle> externalTargets = fExtTargetHandles.values();
 			for (ExternalFileTargetHandle target : externalTargets) {
-				if (target.exists())
+				if (target.exists()) {
 					local.add(target);
+				}
 			}
 		} else {
 			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
@@ -630,8 +670,9 @@ public class TargetPlatformService implements ITargetPlatformService {
 		job.addJobChangeListener(new JobChangeAdapter() {
 			@Override
 			public void done(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
-				if (fVMArguments != null)
+				if (fVMArguments != null) {
 					target.setVMArguments(fVMArguments.toString().trim());
+				}
 
 			}
 		});
@@ -645,8 +686,9 @@ public class TargetPlatformService implements ITargetPlatformService {
 		if (containers != null) {
 			for (ITargetLocation container : containers) {
 				String[] vmargs = container.getVMArguments();
-				if (vmargs == null)
+				if (vmargs == null) {
 					continue;
+				}
 				for (String vmarg : vmargs) {
 					arguments.append(vmarg).append(' ');
 				}

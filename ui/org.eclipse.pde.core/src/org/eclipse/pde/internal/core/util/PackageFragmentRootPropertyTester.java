@@ -16,7 +16,9 @@ package org.eclipse.pde.internal.core.util;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.internal.core.PDECore;
 
 /**

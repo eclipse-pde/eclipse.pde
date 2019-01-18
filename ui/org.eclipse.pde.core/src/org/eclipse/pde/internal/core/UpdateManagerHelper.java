@@ -18,7 +18,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -30,14 +34,15 @@ import org.eclipse.update.configurator.IPlatformConfiguration;
 public class UpdateManagerHelper {
 
 	private static class LocalSite {
-		private ArrayList<IPluginModelBase> fPlugins;
+		private final ArrayList<IPluginModelBase> fPlugins;
 		private IPath fPath;
 
 		public LocalSite(IPath path) {
-			if (path.getDevice() != null)
+			if (path.getDevice() != null) {
 				fPath = path.setDevice(path.getDevice().toUpperCase(Locale.ENGLISH));
-			else
+			} else {
 				fPath = path;
+			}
 			fPlugins = new ArrayList<>();
 		}
 
@@ -59,8 +64,9 @@ public class UpdateManagerHelper {
 				IPluginModelBase model = fPlugins.get(i);
 				IPath location = new Path(model.getInstallLocation());
 				// defect 37319
-				if (location.segmentCount() > 2)
+				if (location.segmentCount() > 2) {
 					location = location.removeFirstSegments(location.segmentCount() - 2);
+				}
 				//31489 - entry must be relative
 				list[i] = location.setDevice(null).makeRelative().toString();
 			}
@@ -81,23 +87,26 @@ public class UpdateManagerHelper {
 
 			createConfigurationEntries(platformConfiguration, sites);
 
-			if (brandingPlugin != null)
+			if (brandingPlugin != null) {
 				createFeatureEntries(platformConfiguration, brandingPlugin);
+			}
 
 			platformConfiguration.refresh();
 			platformConfiguration.save(new URL("file:" + configLocation.getPath())); //$NON-NLS-1$
 		} catch (Exception e) {
 			// Wrap everything else in a core exception.
 			String message = e.getMessage();
-			if (message == null || message.length() == 0)
+			if (message == null || message.length() == 0) {
 				message = PDECoreMessages.TargetPlatform_exceptionThrown;
+			}
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, message, e));
 		}
 	}
 
 	private static void addToSite(IPath path, IPluginModelBase model, ArrayList<LocalSite> sites) {
-		if (path.getDevice() != null)
+		if (path.getDevice() != null) {
 			path = path.setDevice(path.getDevice().toUpperCase(Locale.ENGLISH));
+		}
 		for (int i = 0; i < sites.size(); i++) {
 			LocalSite localSite = sites.get(i);
 			if (localSite.getPath().equals(path)) {

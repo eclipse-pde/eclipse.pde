@@ -17,7 +17,10 @@ package org.eclipse.pde.internal.core;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.core.IBundleClasspathResolver;
 
 /**

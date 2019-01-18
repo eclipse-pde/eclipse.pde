@@ -21,7 +21,10 @@ import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.AbstractModel;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.osgi.framework.BundleException;
@@ -31,7 +34,7 @@ public abstract class BundleModel extends AbstractModel implements IBundleModel 
 
 	private static final long serialVersionUID = 1L;
 
-	private Bundle fBundle;
+	private final Bundle fBundle;
 
 	public BundleModel() {
 		fBundle = new Bundle();
@@ -40,8 +43,9 @@ public abstract class BundleModel extends AbstractModel implements IBundleModel 
 
 	@Override
 	public IBundle getBundle() {
-		if (!isLoaded())
+		if (!isLoaded()) {
 			load();
+		}
 		return fBundle;
 	}
 
@@ -63,8 +67,9 @@ public abstract class BundleModel extends AbstractModel implements IBundleModel 
 		try {
 			setLoaded(true); // Must be set before loading the manifest otherwise calls to getModel() cause a stack overflow
 			fBundle.load(ManifestElement.parseBundleManifest(source, null));
-			if (!outOfSync)
+			if (!outOfSync) {
 				updateTimeStamp();
+			}
 
 		} catch (BundleException e) {
 			PDECore.log(e);
@@ -78,21 +83,29 @@ public abstract class BundleModel extends AbstractModel implements IBundleModel 
 		Properties properties = new Properties();
 		properties.put(Constants.BUNDLE_SYMBOLICNAME, desc.getSymbolicName());
 		String value = state.getPluginName(id);
-		if (value != null)
+		if (value != null) {
 			properties.put(Constants.BUNDLE_NAME, value);
+		}
 		value = state.getProviderName(id);
-		if (value != null)
+		if (value != null) {
 			properties.put(Constants.BUNDLE_VENDOR, value);
+		}
 		value = state.getClassName(id);
-		if (value != null)
+		if (value != null) {
 			properties.put(Constants.BUNDLE_ACTIVATOR, value);
+		}
 		value = state.getBundleLocalization(id);
-		if (value != null)
+		if (value != null) {
 			properties.put(Constants.BUNDLE_LOCALIZATION, value);
+		}
 		if (state.hasExtensibleAPI(id))
+		 {
 			properties.put(ICoreConstants.EXTENSIBLE_API, "true"); //$NON-NLS-1$
+		}
 		if (state.isPatchFragment(id))
+		 {
 			properties.put(ICoreConstants.PATCH_FRAGMENT, "true"); //$NON-NLS-1$
+		}
 		String[] libraries = state.getLibraryNames(id);
 		if (libraries.length > 0) {
 			StringBuilder buffer = new StringBuilder();
@@ -118,8 +131,9 @@ public abstract class BundleModel extends AbstractModel implements IBundleModel 
 		String id = host.getName();
 		String version = host.getVersionRange().toString();
 		StringBuilder buffer = new StringBuilder();
-		if (id != null)
+		if (id != null) {
 			buffer.append(id);
+		}
 
 		if (version != null && version.trim().length() > 0) {
 			buffer.append(";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"" + version + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

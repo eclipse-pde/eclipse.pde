@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.content;
 
-import org.eclipse.core.filebuffers.*;
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.IDocumentFactory;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.jface.text.IDocument;
 
 public class DefaultDocumentFactory implements IDocumentFactory {

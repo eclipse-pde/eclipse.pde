@@ -80,8 +80,9 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.TEXT_NODE) {
 				Node firstChild = node.getFirstChild();
-				if (firstChild != null)
+				if (firstChild != null) {
 					text = getNormalizedText(firstChild.getNodeValue());
+				}
 				break;
 			}
 		}
@@ -95,21 +96,24 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 			setURL(newValue != null ? newValue.toString() : null);
 		} else if (name.equals(P_TEXT)) {
 			setText(newValue != null ? newValue.toString() : null);
-		} else
+		} else {
 			super.restoreProperty(name, oldValue, newValue);
+		}
 	}
 
 	@Override
 	public void write(String indent, PrintWriter writer) {
-		if ((name == null || name.length() <= 0) && (url == null || url.length() <= 0) && (text == null || text.trim().length() <= 0))
+		if ((name == null || name.length() <= 0) && (url == null || url.length() <= 0) && (text == null || text.trim().length() <= 0)) {
 			return;
+		}
 		writer.print(indent);
 		writer.print("<description"); //$NON-NLS-1$
 		if (name != null && name.length() > 0) {
 			writer.print(" name=\"" + SiteObject.getWritableString(name) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (url != null && url.length() > 0)
+		if (url != null && url.length() > 0) {
 			writer.print(" url=\"" + SiteObject.getWritableString(url) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		writer.println(">"); //$NON-NLS-1$
 		if (text != null) {
 			writer.println(indent + Site.INDENT + SiteObject.getWritableString(getNormalizedText(text)));

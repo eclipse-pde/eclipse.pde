@@ -37,8 +37,9 @@ public class BundleActivationPolicyHeader extends LazyStartHeader {
 	// Need to overwrite the write() method incase user has directives.  If we did not, we would continue to write directives even when we aren't lazy starting
 	@Override
 	public String write() {
-		if (isLazyStart())
+		if (isLazyStart()) {
 			return super.write();
+		}
 		return ""; //$NON-NLS-1$
 	}
 

@@ -15,8 +15,11 @@
 package org.eclipse.pde.internal.core.text.bundle;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.bundle.BundleObject;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
@@ -93,13 +96,16 @@ public class PDEManifestElement extends BundleObject {
 	}
 
 	private String getTableValue(TreeMap<String, Serializable> table, String key) {
-		if (table == null)
+		if (table == null) {
 			return null;
+		}
 		Object result = table.get(key);
-		if (result == null)
+		if (result == null) {
 			return null;
-		if (result instanceof String)
+		}
+		if (result instanceof String) {
 			return (String) result;
+		}
 
 		ArrayList<?> valueList = (ArrayList<?>) result;
 		//return the last value
@@ -107,20 +113,24 @@ public class PDEManifestElement extends BundleObject {
 	}
 
 	private String[] getTableValues(TreeMap<String, Serializable> table, String key) {
-		if (table == null)
+		if (table == null) {
 			return null;
+		}
 		Object result = table.get(key);
-		if (result == null)
+		if (result == null) {
 			return null;
-		if (result instanceof String)
+		}
+		if (result instanceof String) {
 			return new String[] {(String) result};
+		}
 		ArrayList<?> valueList = (ArrayList<?>) result;
 		return valueList.toArray(new String[valueList.size()]);
 	}
 
 	private Set<String> getTableKeys(TreeMap<String, Serializable> table) {
-		if (table == null)
+		if (table == null) {
 			return null;
+		}
 		return table.keySet();
 	}
 
@@ -151,9 +161,9 @@ public class PDEManifestElement extends BundleObject {
 		if (table == null) {
 			table = new TreeMap<>();
 		}
-		if (value == null || value.trim().length() == 0)
+		if (value == null || value.trim().length() == 0) {
 			table.remove(key);
-		else {
+		} else {
 			table.put(key, value);
 		}
 		return table;
@@ -166,8 +176,9 @@ public class PDEManifestElement extends BundleObject {
 		}
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(fHeader.fName, value);
-			if (elements != null && elements.length > 0)
+			if (elements != null && elements.length > 0) {
 				init(elements[0]);
+			}
 		} catch (BundleException e) {
 		}
 	}
@@ -180,10 +191,12 @@ public class PDEManifestElement extends BundleObject {
 				String attKey = (String) attKeys.nextElement();
 				String[] values = ManifestElement.getArrayFromList(manifestElement.getAttribute(attKey));
 				//empty string in attribute, go with default behavior of attribute
-				if (values == null)
+				if (values == null) {
 					continue;
-				for (String value : values)
+				}
+				for (String value : values) {
 					addAttribute(attKey, value);
+				}
 			}
 		}
 		Enumeration<?> dirKeys = manifestElement.getDirectiveKeys();
@@ -191,8 +204,9 @@ public class PDEManifestElement extends BundleObject {
 			while (dirKeys.hasMoreElements()) {
 				String dirKey = (String) dirKeys.nextElement();
 				String[] values = ManifestElement.getArrayFromList(manifestElement.getDirective(dirKey));
-				for (String value : values)
+				for (String value : values) {
 					addDirective(dirKey, value);
+				}
 			}
 		}
 	}
@@ -206,11 +220,13 @@ public class PDEManifestElement extends BundleObject {
 
 	public String getValue() {
 		StringBuilder sb = new StringBuilder();
-		if (fValueComponents == null)
+		if (fValueComponents == null) {
 			return ""; //$NON-NLS-1$
+		}
 		for (int i = 0; i < fValueComponents.length; i++) {
-			if (i != 0)
+			if (i != 0) {
 				sb.append("; "); //$NON-NLS-1$
+			}
 			sb.append(fValueComponents[i]);
 		}
 		return sb.toString();
@@ -223,31 +239,37 @@ public class PDEManifestElement extends BundleObject {
 		for (Entry<String, Serializable> entry : table.entrySet()) {
 			String dkey = entry.getKey();
 			Object value = entry.getValue();
-			if (value == null)
+			if (value == null) {
 				continue;
+			}
 			sb.append(";"); //$NON-NLS-1$
 			sb.append(dkey);
 			sb.append(table.equals(fDirectives) ? ":=" : "="); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (value instanceof String) {
 				boolean wrap = shouldWrap(value.toString());
-				if (wrap)
+				if (wrap) {
 					sb.append("\""); //$NON-NLS-1$
+				}
 				sb.append(value);
-				if (wrap)
+				if (wrap) {
 					sb.append("\""); //$NON-NLS-1$
+				}
 			} else if (value instanceof ArrayList) {
 				ArrayList<?> values = (ArrayList<?>) value;
 				boolean wrap = (values.size() > 1 || (values.size() == 1 && shouldWrap(values.get(0).toString())));
-				if (wrap)
+				if (wrap) {
 					sb.append("\""); //$NON-NLS-1$
+				}
 				for (int i = 0; i < values.size(); i++) {
-					if (i != 0)
+					if (i != 0) {
 						sb.append(","); //$NON-NLS-1$
+					}
 					sb.append(values.get(i));
 				}
-				if (wrap)
+				if (wrap) {
 					sb.append("\""); //$NON-NLS-1$
+				}
 			}
 		}
 	}

@@ -15,14 +15,29 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.*;
-import javax.xml.parsers.*;
-import org.eclipse.core.filebuffers.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.core.ModelChangedEvent;
 import org.xml.sax.SAXException;
 
 public abstract class AbstractModel extends PlatformObject implements IModel, IModelChangeProviderExtension, Serializable {
@@ -62,12 +77,14 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 	 */
 	public static String fixLineDelimiter(String string, IFile file) {
 		String lineDelimiter = getLineDelimiterPreference(file);
-		if (lineDelimiter == null)
+		if (lineDelimiter == null) {
 			return string;
+		}
 
 		String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
-		if (lineDelimiter.equals(lineSeparator))
+		if (lineDelimiter.equals(lineSeparator)) {
 			return string;
+		}
 
 		return string.replace(lineSeparator, lineDelimiter);
 	}
@@ -139,8 +156,9 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 	protected abstract void updateTimeStamp();
 
 	protected void updateTimeStamp(File localFile) {
-		if (localFile.exists())
+		if (localFile.exists()) {
 			fTimestamp = localFile.lastModified();
+		}
 	}
 
 	@Override

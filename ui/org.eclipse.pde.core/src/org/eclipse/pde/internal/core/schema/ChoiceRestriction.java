@@ -16,7 +16,11 @@ package org.eclipse.pde.internal.core.schema;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Vector;
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaEnumeration;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
+import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 
 public class ChoiceRestriction extends SchemaObject implements ISchemaRestriction {
 
@@ -50,8 +54,9 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 	}
 
 	public String[] getChoicesAsStrings() {
-		if (children == null)
+		if (children == null) {
 			return new String[0];
+		}
 		Vector<String> result = new Vector<>();
 		for (int i = 0; i < children.size(); i++) {
 			ISchemaEnumeration enumeration = children.get(i);
@@ -64,21 +69,24 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 
 	@Override
 	public ISchemaObject getParent() {
-		if (baseType != null)
+		if (baseType != null) {
 			return baseType.getSchema();
+		}
 		return super.getParent();
 	}
 
 	@Override
 	public boolean isValueValid(java.lang.Object value) {
-		if (children == null)
+		if (children == null) {
 			return false;
+		}
 		String svalue = value.toString();
 
 		for (int i = 0; i < children.size(); i++) {
 			ISchemaEnumeration enumeration = children.get(i);
-			if (enumeration.getName().equals(svalue))
+			if (enumeration.getName().equals(svalue)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -91,22 +99,25 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 	public void setChildren(List<ISchemaEnumeration> children) {
 		List<ISchemaEnumeration> oldValue = this.children;
 		this.children = children;
-		if (getParent() != null)
+		if (getParent() != null) {
 			getSchema().fireModelObjectChanged(this, P_CHOICES, oldValue, children);
+		}
 	}
 
 	@Override
 	public String toString() {
-		if (children == null)
+		if (children == null) {
 			return ""; //$NON-NLS-1$
+		}
 		StringBuilder buffer = new StringBuilder();
 
 		for (int i = 0; i < children.size(); i++) {
 			Object child = children.get(i);
 			if (child instanceof ISchemaEnumeration) {
 				ISchemaEnumeration enumeration = (ISchemaEnumeration) child;
-				if (i > 0)
+				if (i > 0) {
 					buffer.append(", "); //$NON-NLS-1$
+				}
 				buffer.append(enumeration.getName());
 			}
 		}

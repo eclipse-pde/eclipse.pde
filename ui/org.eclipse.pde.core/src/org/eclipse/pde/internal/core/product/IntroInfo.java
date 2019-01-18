@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
-
 import org.eclipse.pde.internal.core.iproduct.IIntroInfo;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.w3c.dom.Element;
@@ -34,8 +33,9 @@ public class IntroInfo extends ProductObject implements IIntroInfo {
 	public void setId(String id) {
 		String old = fIntroId;
 		fIntroId = id;
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged(P_INTRO_ID, old, fIntroId);
+		}
 	}
 
 	@Override
@@ -53,8 +53,9 @@ public class IntroInfo extends ProductObject implements IIntroInfo {
 
 	@Override
 	public void write(String indent, PrintWriter writer) {
-		if (fIntroId != null && fIntroId.length() > 0)
+		if (fIntroId != null && fIntroId.length() > 0) {
 			writer.println(indent + "<intro " + P_INTRO_ID + "=\"" + getWritableString(fIntroId) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 	}
 
 }

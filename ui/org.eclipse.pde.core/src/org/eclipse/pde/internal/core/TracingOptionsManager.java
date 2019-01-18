@@ -14,9 +14,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.IPath;
@@ -48,8 +59,9 @@ public class TracingOptionsManager {
 	}
 
 	public synchronized Hashtable<String, Object> getTemplateTable(String pluginId) {
-		if (template == null)
+		if (template == null) {
 			template = createTemplate();
+		}
 		Hashtable<String, Object> defaults = new Hashtable<>();
 		for (Enumeration<Object> keys = template.keys(); keys.hasMoreElements();) {
 			String key = keys.nextElement().toString();
@@ -83,19 +95,22 @@ public class TracingOptionsManager {
 	}
 
 	public synchronized Properties getTracingTemplateCopy() {
-		if (template == null)
+		if (template == null) {
 			template = createTemplate();
+		}
 		return (Properties) createTemplate().clone();
 	}
 
 	public static boolean isTraceable(IPluginModelBase model) {
 		String location = model.getInstallLocation();
-		if (location == null)
+		if (location == null) {
 			return false;
+		}
 
 		File pluginLocation = new File(location);
-		if (pluginLocation.isDirectory())
+		if (pluginLocation.isDirectory()) {
 			return new File(pluginLocation, ICoreConstants.OPTIONS_FILENAME).exists();
+		}
 		try (ZipFile jarFile = new ZipFile(pluginLocation, ZipFile.OPEN_READ)) {
 			ZipEntry manifestEntry = jarFile.getEntry(ICoreConstants.OPTIONS_FILENAME);
 			if (manifestEntry != null) {
@@ -139,8 +154,9 @@ public class TracingOptionsManager {
 
 	private Properties getOptions(IPluginModelBase model) {
 		String location = model.getInstallLocation();
-		if (location == null)
+		if (location == null) {
 			return null;
+		}
 		try {
 			File pluginLocation = new File(location);
 			Properties modelOptions = new Properties();
@@ -194,8 +210,9 @@ public class TracingOptionsManager {
 				if (line.startsWith("#") || line.trim().isEmpty()) { //$NON-NLS-1$
 					prevComment += "\n" + line.trim(); //$NON-NLS-1$
 				} else {
-					if (prevComment.trim().isEmpty())
+					if (prevComment.trim().isEmpty()) {
 						continue;
+					}
 
 					int eq = line.indexOf('=');
 					if (eq >= 0) {

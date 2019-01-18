@@ -16,7 +16,9 @@ package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.isite.ISite;
+import org.eclipse.pde.internal.core.isite.ISiteCategory;
+import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
 import org.w3c.dom.Node;
 
 public class SiteCategory extends SiteObject implements ISiteCategory {
@@ -61,8 +63,9 @@ public class SiteCategory extends SiteObject implements ISiteCategory {
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<category"); //$NON-NLS-1$
-		if (name != null)
+		if (name != null) {
 			writer.print(" name=\"" + SiteObject.getWritableString(name) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		writer.println("/>"); //$NON-NLS-1$
 	}
 
@@ -70,8 +73,9 @@ public class SiteCategory extends SiteObject implements ISiteCategory {
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_NAME)) {
 			setName(newValue != null ? newValue.toString() : null);
-		} else
+		} else {
 			super.restoreProperty(name, oldValue, newValue);
+		}
 	}
 
 	@Override
@@ -79,8 +83,9 @@ public class SiteCategory extends SiteObject implements ISiteCategory {
 		ISite site = getSite();
 		ISiteCategoryDefinition[] definitions = site.getCategoryDefinitions();
 		for (ISiteCategoryDefinition def : definitions) {
-			if (def.getName().equals(getName()))
+			if (def.getName().equals(getName())) {
 				return def;
+			}
 		}
 		return null;
 	}

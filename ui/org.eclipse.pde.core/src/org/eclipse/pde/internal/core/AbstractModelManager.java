@@ -19,7 +19,7 @@ import org.eclipse.pde.core.IModelProviderListener;
 
 public abstract class AbstractModelManager {
 
-	private ListenerList<IModelProviderListener> fListeners = new ListenerList<>();
+	private final ListenerList<IModelProviderListener> fListeners = new ListenerList<>();
 
 	public synchronized void removeModelProviderListener(IModelProviderListener listener) {
 		// TODO see bug 214613... investigate why FeatureModelManager is being bad

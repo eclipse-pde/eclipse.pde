@@ -17,7 +17,10 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.core.IWritable;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class ImportObject extends PluginReference implements IWritable, Serializable, IWritableDelimiter {
 
@@ -46,8 +49,9 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 	public boolean equals(Object object) {
 		if (object instanceof ImportObject) {
 			ImportObject io = (ImportObject) object;
-			if (iimport.equals(io.getImport()))
+			if (iimport.equals(io.getImport())) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -61,8 +65,9 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> key) {
 		if (key.equals(ISourceObject.class)) {
-			if (iimport instanceof ISourceObject)
+			if (iimport instanceof ISourceObject) {
 				return (T) iimport;
+			}
 		}
 		return super.getAdapter(key);
 	}

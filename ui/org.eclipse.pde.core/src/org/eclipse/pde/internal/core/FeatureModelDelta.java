@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core;
 
 import java.util.ArrayList;
-
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 public class FeatureModelDelta implements IFeatureModelDelta {
@@ -50,8 +49,9 @@ public class FeatureModelDelta implements IFeatureModelDelta {
 	}
 
 	private IFeatureModel[] get(ArrayList<IFeatureModel> list) {
-		if (list == null)
+		if (list == null) {
 			return new IFeatureModel[0];
+		}
 		return list.toArray(new IFeatureModel[list.size()]);
 	}
 
@@ -71,8 +71,9 @@ public class FeatureModelDelta implements IFeatureModelDelta {
 	}
 
 	private ArrayList<IFeatureModel> add(ArrayList<IFeatureModel> list, IFeatureModel model) {
-		if (list == null)
+		if (list == null) {
 			list = new ArrayList<>();
+		}
 		list.add(model);
 		return list;
 	}

@@ -15,19 +15,37 @@
 package org.eclipse.pde.internal.core.builders;
 
 import java.io.StringReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Stack;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.eclipse.core.filebuffers.*;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.text.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.FindReplaceDocumentAdapter;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
-import org.w3c.dom.*;
 import org.w3c.dom.Document;
-import org.xml.sax.*;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public abstract class XMLErrorReporter extends DefaultHandler {
@@ -118,19 +136,22 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 	public VirtualMarker report(String message, int line, int severity, int fixId, Element element, String attrName,
 			String category) {
 		VirtualMarker marker = report(message, line, severity, fixId, category);
-		if (marker == null)
+		if (marker == null) {
 			return null;
+		}
 		marker.setAttribute(PDEMarkerFactory.MPK_LOCATION_PATH, generateLocationPath(element, attrName));
 		return marker;
 	}
 
 	private String generateLocationPath(Node node, String attrName) {
-		if (node == null)
+		if (node == null) {
 			return ""; // //$NON-NLS-1$
+		}
 
 		int childIndex = 0;
-		for (Node previousSibling = node.getPreviousSibling(); previousSibling != null; previousSibling = previousSibling.getPreviousSibling())
+		for (Node previousSibling = node.getPreviousSibling(); previousSibling != null; previousSibling = previousSibling.getPreviousSibling()) {
 			childIndex += 1;
+		}
 
 		StringBuilder sb = new StringBuilder();
 		Node parent = node.getParentNode();
@@ -155,10 +176,12 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 	}
 
 	public VirtualMarker report(String message, int line, int severity, int fixId, String category) {
-		if (severity == CompilerFlags.ERROR)
+		if (severity == CompilerFlags.ERROR) {
 			return addMarker(message, line, IMarker.SEVERITY_ERROR, fixId, category);
-		if (severity == CompilerFlags.WARNING)
+		}
+		if (severity == CompilerFlags.WARNING) {
 			return addMarker(message, line, IMarker.SEVERITY_WARNING, fixId, category);
+		}
 		return null;
 	}
 
@@ -192,14 +215,16 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 			element.setAttribute(attributes.getQName(i), attributes.getValue(i));
 		}
 
-		if (fRootElement == null)
+		if (fRootElement == null) {
 			fRootElement = element;
-		else
+		} else {
 			fElementStack.peek().appendChild(element);
+		}
 		fElementStack.push(element);
 		try {
-			if (fTextDocument != null)
+			if (fTextDocument != null) {
 				fOffsetTable.put(element, new ElementData(getStartOffset(qName)));
+			}
 		} catch (BadLocationException e) {
 		}
 	}
@@ -212,8 +237,9 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 	private void generateErrorElementHierarchy() {
 		while (!fElementStack.isEmpty()) {
 			ElementData data = fOffsetTable.get(fElementStack.pop());
-			if (data != null)
+			if (data != null) {
 				data.fErrorNode = true;
+			}
 		}
 	}
 
@@ -224,10 +250,11 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 			buff.append(characters[start + i]);
 		}
 		Text text = fXMLDocument.createTextNode(buff.toString());
-		if (fRootElement == null)
+		if (fRootElement == null) {
 			fXMLDocument.appendChild(text);
-		else
+		} else {
 			fElementStack.peek().appendChild(text);
+		}
 	}
 
 	@Override
@@ -238,18 +265,21 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 	private int getStartOffset(String elementName) throws BadLocationException {
 		int line = fLocator.getLineNumber();
 		int col = fLocator.getColumnNumber();
-		if (col < 0)
+		if (col < 0) {
 			col = fTextDocument.getLineLength(line);
+		}
 		String text = fTextDocument.get(fHighestOffset + 1, fTextDocument.getLineOffset(line) - fHighestOffset - 1);
 
 		ArrayList<Position> commentPositions = new ArrayList<>();
 		for (int idx = 0; idx < text.length();) {
 			idx = text.indexOf("<!--", idx); //$NON-NLS-1$
-			if (idx == -1)
+			if (idx == -1) {
 				break;
+			}
 			int end = text.indexOf("-->", idx); //$NON-NLS-1$
-			if (end == -1)
+			if (end == -1) {
 				break;
+			}
 
 			commentPositions.add(new Position(idx, end - idx));
 			idx = end + 1;
@@ -258,8 +288,9 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 		int idx = 0;
 		for (; idx < text.length(); idx += 1) {
 			idx = text.indexOf("<" + elementName, idx); //$NON-NLS-1$
-			if (idx == -1)
+			if (idx == -1) {
 				break;
+			}
 			boolean valid = true;
 			for (int i = 0; i < commentPositions.size(); i++) {
 				Position pos = commentPositions.get(i);
@@ -268,11 +299,13 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 					break;
 				}
 			}
-			if (valid)
+			if (valid) {
 				break;
+			}
 		}
-		if (idx > -1)
+		if (idx > -1) {
 			fHighestOffset += idx + 1;
+		}
 		return fHighestOffset;
 	}
 
@@ -322,8 +355,9 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 	 */
 	protected String getTextContent(Element element) {
 		ElementData data = fOffsetTable.get(element);
-		if (data == null)
+		if (data == null) {
 			return null;
+		}
 		try {
 			if (element.hasChildNodes()) {
 				return null;
@@ -353,8 +387,9 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 		if (data != null) {
 			try {
 				int offset = getAttributeOffset(attName, element.getAttribute(attName), data.offset);
-				if (offset != -1)
+				if (offset != -1) {
 					return fTextDocument.getLineOfOffset(offset) + 1;
+				}
 			} catch (BadLocationException e) {
 			}
 		}
@@ -369,8 +404,9 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 	protected abstract void validate(IProgressMonitor monitor);
 
 	public Element getDocumentRoot() {
-		if (fRootElement != null)
+		if (fRootElement != null) {
 			fRootElement.normalize();
+		}
 		return fRootElement;
 	}
 

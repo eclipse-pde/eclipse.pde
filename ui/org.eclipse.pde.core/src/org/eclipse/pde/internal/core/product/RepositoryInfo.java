@@ -37,8 +37,9 @@ public class RepositoryInfo extends ProductObject implements IRepositoryInfo {
 	public void setURL(String url) {
 		String old = fURL;
 		fURL = url;
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged(P_LOCATION, old, fURL);
+		}
 	}
 
 	@Override
@@ -55,8 +56,9 @@ public class RepositoryInfo extends ProductObject implements IRepositoryInfo {
 	public void setEnabled(boolean enabled) {
 		boolean old = fEnabled;
 		fEnabled = enabled;
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged(P_ENABLED, old, fEnabled);
+		}
 	}
 
 	@Override

@@ -35,12 +35,14 @@ public class BundleSymbolicNameHeader extends SingleManifestHeader {
 	public void setSingleton(boolean singleton) {
 		if (getManifestVersion() > 1) {
 			setDirective(Constants.SINGLETON_DIRECTIVE, singleton ? Boolean.toString(true) : null);
-			if (getAttribute(Constants.SINGLETON_DIRECTIVE) != null)
+			if (getAttribute(Constants.SINGLETON_DIRECTIVE) != null) {
 				setAttribute(Constants.SINGLETON_DIRECTIVE, null);
+			}
 		} else {
 			setAttribute(Constants.SINGLETON_DIRECTIVE, singleton ? Boolean.toString(true) : null);
-			if (getDirective(Constants.SINGLETON_DIRECTIVE) != null)
+			if (getDirective(Constants.SINGLETON_DIRECTIVE) != null) {
 				setDirective(Constants.SINGLETON_DIRECTIVE, null);
+			}
 		}
 	}
 

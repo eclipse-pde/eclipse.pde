@@ -14,9 +14,15 @@
 package org.eclipse.pde.internal.core.build;
 
 import java.io.PrintWriter;
-import java.util.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.util.Enumeration;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -24,7 +30,7 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
 
 public class BuildEntry extends BuildObject implements IBuildEntry {
-	private Vector<String> tokens = new Vector<>();
+	private final Vector<String> tokens = new Vector<>();
 	private String name;
 
 	public BuildEntry(String name) {

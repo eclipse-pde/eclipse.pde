@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
@@ -45,20 +47,24 @@ class FeatureTable {
 		@Override
 		public int hashCode() {
 			int code = 0;
-			if (fId != null)
+			if (fId != null) {
 				code += fId.hashCode();
-			if (fVer != null)
+			}
+			if (fVer != null) {
 				code += fVer.hashCode();
+			}
 
 			return code;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (!(obj instanceof Idver))
+			}
+			if (!(obj instanceof Idver)) {
 				return false;
+			}
 			return equals(((Idver) obj).getId(), ((Idver) obj).getVer());
 		}
 
@@ -80,17 +86,17 @@ class FeatureTable {
 	/**
 	 * Map of IFeatureModel to Idver
 	 */
-	private Map<IFeatureModel, Idver> fModel2idver;
+	private final Map<IFeatureModel, Idver> fModel2idver;
 
 	/**
 	 * Map of Idver to ArrayList of IFeatureModel
 	 */
-	private Map<Idver, ArrayList<IFeatureModel>> fIdver2models;
+	private final Map<Idver, ArrayList<IFeatureModel>> fIdver2models;
 
 	/**
 	 * Map of Id to ArrayList of Idver
 	 */
-	private Map<String, ArrayList<Idver>> fId2idvers;
+	private final Map<String, ArrayList<Idver>> fId2idvers;
 
 	public FeatureTable() {
 
@@ -121,8 +127,9 @@ class FeatureTable {
 
 	public synchronized IFeatureModel[] get(String id) {
 		ArrayList<Idver> idvers = fId2idvers.get(id);
-		if (idvers == null)
+		if (idvers == null) {
 			return NO_MODELS;
+		}
 		ArrayList<IFeatureModel> allModels = new ArrayList<>();
 		for (int i = 0; i < idvers.size(); i++) {
 			Idver idver = idvers.get(i);

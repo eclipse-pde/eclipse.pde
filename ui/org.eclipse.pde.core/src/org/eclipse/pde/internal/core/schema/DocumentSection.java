@@ -24,7 +24,7 @@ public class DocumentSection extends SchemaObject implements IDocumentSection, C
 
 	public static final String[] DOC_SECTIONS = {IDocumentSection.SINCE, IDocumentSection.EXAMPLES, IDocumentSection.API_INFO, IDocumentSection.IMPLEMENTATION, IDocumentSection.COPYRIGHT};
 
-	private String sectionId;
+	private final String sectionId;
 
 	public DocumentSection(ISchemaObject parent, String sectionId, String name) {
 		super(parent, name);
@@ -39,8 +39,9 @@ public class DocumentSection extends SchemaObject implements IDocumentSection, C
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		String description = getWritableDescription();
-		if (description == null || description.equals("")) //$NON-NLS-1$
+		if (description == null || description.equals("")) { //$NON-NLS-1$
 			return;
+		}
 		String indent2 = indent + Schema.INDENT;
 		String indent3 = indent2 + Schema.INDENT;
 		writer.println(indent + "<annotation>"); //$NON-NLS-1$
@@ -55,8 +56,9 @@ public class DocumentSection extends SchemaObject implements IDocumentSection, C
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof DocumentSection && ((DocumentSection) obj).getSectionId().equalsIgnoreCase(sectionId))
+		if (obj instanceof DocumentSection && ((DocumentSection) obj).getSectionId().equalsIgnoreCase(sectionId)) {
 			return true;
+		}
 		return false;
 	}
 
@@ -65,24 +67,27 @@ public class DocumentSection extends SchemaObject implements IDocumentSection, C
 		if (arg0 instanceof DocumentSection) {
 			int otherIndex = getIndex(((DocumentSection) arg0).getSectionId());
 			int thisIndex = getIndex(sectionId);
-			if (otherIndex == thisIndex)
+			if (otherIndex == thisIndex) {
 				return 0;
-			else if (otherIndex == -1)
+			} else if (otherIndex == -1) {
 				return -1;
-			else if (thisIndex == -1)
+			} else if (thisIndex == -1) {
 				return 1;
-			else
+			} else {
 				return thisIndex - otherIndex;
+			}
 		}
 		return 0;
 	}
 
 	private int getIndex(String sectionId) {
-		if (sectionId == null)
+		if (sectionId == null) {
 			return -1;
+		}
 		for (int i = 0; i < DOC_SECTIONS.length; i++) {
-			if (DOC_SECTIONS[i].equalsIgnoreCase(sectionId))
+			if (DOC_SECTIONS[i].equalsIgnoreCase(sectionId)) {
 				return i;
+			}
 		}
 		return -1;
 	}

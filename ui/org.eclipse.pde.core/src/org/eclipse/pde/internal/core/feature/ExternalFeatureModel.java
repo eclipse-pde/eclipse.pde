@@ -61,8 +61,9 @@ public class ExternalFeatureModel extends AbstractFeatureModel {
 
 	public URL getNLLookupLocation() {
 		try {
-			if (location != null && new File(location).isDirectory() && !location.endsWith("/")) //$NON-NLS-1$
+			if (location != null && new File(location).isDirectory() && !location.endsWith("/")) { //$NON-NLS-1$
 				return new URL("file:" + location + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			return new URL("file:" + location); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			return null;

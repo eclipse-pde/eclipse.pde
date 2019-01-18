@@ -14,7 +14,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.build;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -25,7 +29,7 @@ import org.eclipse.pde.internal.core.PDECore;
 
 public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 	private static final long serialVersionUID = 1L;
-	private IFile fUnderlyingResource;
+	private final IFile fUnderlyingResource;
 	private boolean fDirty;
 	private boolean fEditable = true;
 
@@ -92,8 +96,9 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 
 	@Override
 	public void save() {
-		if (fUnderlyingResource == null)
+		if (fUnderlyingResource == null) {
 			return;
+		}
 		String contents = fixLineDelimiter(getContents(), fUnderlyingResource);
 		try (ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.ISO_8859_1))) {
 			if (fUnderlyingResource.exists()) {

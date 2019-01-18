@@ -18,11 +18,11 @@ import java.util.Locale;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class FileAdapter extends PlatformObject {
-	private File fFile;
+	private final File fFile;
 	private Object[] fChildren;
-	private FileAdapter fParent;
+	private final FileAdapter fParent;
 	private String fEditorId;
-	private IFileAdapterFactory fFactory;
+	private final IFileAdapterFactory fFactory;
 
 	/**
 	 * Constructor for FileAdapter.
@@ -64,16 +64,19 @@ public class FileAdapter extends PlatformObject {
 	}
 
 	public boolean hasChildren() {
-		if (fFile.isDirectory() == false)
+		if (fFile.isDirectory() == false) {
 			return false;
-		if (fChildren == null)
+		}
+		if (fChildren == null) {
 			createChildren();
+		}
 		return fChildren.length > 0;
 	}
 
 	public Object[] getChildren() {
-		if (fFile.isDirectory() && fChildren == null)
+		if (fFile.isDirectory() && fChildren == null) {
 			createChildren();
+		}
 		return fChildren != null ? fChildren : new Object[0];
 	}
 
@@ -81,10 +84,11 @@ public class FileAdapter extends PlatformObject {
 		File[] files = fFile.listFiles();
 		fChildren = new Object[files.length];
 		for (int i = 0; i < files.length; i++) {
-			if (fFactory == null)
+			if (fFactory == null) {
 				fChildren[i] = new FileAdapter(this, files[i], null);
-			else
+			} else {
 				fChildren[i] = fFactory.createAdapterChild(this, files[i]);
+			}
 		}
 	}
 }

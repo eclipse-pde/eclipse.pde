@@ -21,8 +21,9 @@ public abstract class AbstractNLModel extends AbstractModel {
 	protected transient NLResourceHelper fNLHelper;
 
 	public NLResourceHelper getNLResourceHelper() {
-		if (fNLHelper == null)
+		if (fNLHelper == null) {
 			fNLHelper = createNLResourceHelper();
+		}
 		return fNLHelper;
 	}
 
@@ -41,11 +42,13 @@ public abstract class AbstractNLModel extends AbstractModel {
 
 	@Override
 	public String getResourceString(String key) {
-		if (key == null)
+		if (key == null) {
 			return ""; //$NON-NLS-1$
+		}
 
-		if (fNLHelper == null)
+		if (fNLHelper == null) {
 			fNLHelper = createNLResourceHelper();
+		}
 
 		return fNLHelper != null ? fNLHelper.getResourceString(key) : key;
 	}

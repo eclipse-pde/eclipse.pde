@@ -17,10 +17,37 @@
 package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.iproduct.*;
-import org.w3c.dom.*;
+import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
+import org.eclipse.pde.internal.core.iproduct.IArgumentsInfo;
+import org.eclipse.pde.internal.core.iproduct.ICSSInfo;
+import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
+import org.eclipse.pde.internal.core.iproduct.IConfigurationProperty;
+import org.eclipse.pde.internal.core.iproduct.IIntroInfo;
+import org.eclipse.pde.internal.core.iproduct.IJREInfo;
+import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
+import org.eclipse.pde.internal.core.iproduct.ILicenseInfo;
+import org.eclipse.pde.internal.core.iproduct.IPluginConfiguration;
+import org.eclipse.pde.internal.core.iproduct.IPreferencesInfo;
+import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.iproduct.IProductFeature;
+import org.eclipse.pde.internal.core.iproduct.IProductModel;
+import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
+import org.eclipse.pde.internal.core.iproduct.IProductObject;
+import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
+import org.eclipse.pde.internal.core.iproduct.IRepositoryInfo;
+import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
+import org.eclipse.pde.internal.core.iproduct.IWindowImages;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class Product extends ProductObject implements IProduct {
 
@@ -32,10 +59,10 @@ public class Product extends ProductObject implements IProduct {
 	private String fVersion;
 	private IAboutInfo fAboutInfo;
 
-	private TreeMap<String, IProductObject> fPlugins = new TreeMap<>();
-	private TreeMap<String, IProductObject> fPluginConfigurations = new TreeMap<>();
-	private TreeMap<String, IProductObject> fConfigurationProperties = new TreeMap<>();
-	private List<IProductFeature> fFeatures = new ArrayList<>();
+	private final TreeMap<String, IProductObject> fPlugins = new TreeMap<>();
+	private final TreeMap<String, IProductObject> fPluginConfigurations = new TreeMap<>();
+	private final TreeMap<String, IProductObject> fConfigurationProperties = new TreeMap<>();
+	private final List<IProductFeature> fFeatures = new ArrayList<>();
 	private IConfigurationFileInfo fConfigIniInfo;
 	private IJREInfo fJVMInfo;
 	private boolean fUseFeatures;
@@ -46,7 +73,7 @@ public class Product extends ProductObject implements IProduct {
 	private IArgumentsInfo fLauncherArgs;
 	private IIntroInfo fIntroInfo;
 	private ILicenseInfo fLicenseInfo;
-	private List<IProductObject> fRepositories = new ArrayList<>();
+	private final List<IProductObject> fRepositories = new ArrayList<>();
 	private IPreferencesInfo fPreferencesInfo;
 	private ICSSInfo fCSSInfo;
 
@@ -82,8 +109,9 @@ public class Product extends ProductObject implements IProduct {
 
 	@Override
 	public String getDefiningPluginId() {
-		if (fProductId == null)
+		if (fProductId == null) {
 			return null;
+		}
 		int dot = fProductId.lastIndexOf('.');
 		return (dot != -1) ? fProductId.substring(0, dot) : null;
 	}
@@ -92,32 +120,36 @@ public class Product extends ProductObject implements IProduct {
 	public void setId(String id) {
 		String old = fId;
 		fId = id;
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged(P_UID, old, fId);
+		}
 	}
 
 	@Override
 	public void setProductId(String id) {
 		String old = fProductId;
 		fProductId = id;
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged(P_ID, old, fProductId);
+		}
 	}
 
 	@Override
 	public void setVersion(String version) {
 		String old = fVersion;
 		fVersion = version;
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged(P_VERSION, old, fVersion);
+		}
 	}
 
 	@Override
 	public void setName(String name) {
 		String old = fName;
 		fName = name;
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged(P_NAME, old, fName);
+		}
 	}
 
 	@Override
@@ -129,23 +161,29 @@ public class Product extends ProductObject implements IProduct {
 	public void setApplication(String application) {
 		String old = fApplication;
 		fApplication = application;
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged(P_APPLICATION, old, fApplication);
+		}
 	}
 
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<product"); //$NON-NLS-1$
-		if (fName != null && fName.length() > 0)
+		if (fName != null && fName.length() > 0) {
 			writer.print(" " + P_NAME + "=\"" + getWritableString(fName) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (fId != null && fId.length() > 0)
+		}
+		if (fId != null && fId.length() > 0) {
 			writer.print(" " + P_UID + "=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (fProductId != null && fProductId.length() > 0)
+		}
+		if (fProductId != null && fProductId.length() > 0) {
 			writer.print(" " + P_ID + "=\"" + fProductId + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (fApplication != null && fApplication.length() > 0)
+		}
+		if (fApplication != null && fApplication.length() > 0) {
 			writer.print(" " + P_APPLICATION + "=\"" + fApplication + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (fVersion != null && fVersion.length() > 0)
+		}
+		if (fVersion != null && fVersion.length() > 0) {
 			writer.print(" " + P_VERSION + "=\"" + fVersion + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 		writer.print(" " + P_USEFEATURES + "=\"" + Boolean.toString(fUseFeatures) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.print(" " + P_INCLUDE_LAUNCHERS + "=\"" + Boolean.toString(fIncludeLaunchers) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.println(">"); //$NON-NLS-1$
@@ -411,8 +449,9 @@ public class Product extends ProductObject implements IProduct {
 	public void addPlugins(IProductPlugin[] plugins) {
 		boolean modified = false;
 		for (int i = 0; i < plugins.length; i++) {
-			if (plugins[i] == null)
+			if (plugins[i] == null) {
 				continue;
+			}
 			String id = plugins[i].getId();
 			if (id == null || fPlugins.containsKey(id)) {
 				plugins[i] = null;
@@ -423,16 +462,18 @@ public class Product extends ProductObject implements IProduct {
 			fPlugins.put(id, plugins[i]);
 			modified = true;
 		}
-		if (modified && isEditable())
+		if (modified && isEditable()) {
 			fireStructureChanged(plugins, IModelChangedEvent.INSERT);
+		}
 	}
 
 	@Override
 	public void addPluginConfigurations(IPluginConfiguration[] configuration) {
 		boolean modified = false;
 		for (int i = 0; i < configuration.length; i++) {
-			if (configuration[i] == null)
+			if (configuration[i] == null) {
 				continue;
+			}
 			String id = configuration[i].getId();
 			if (id == null || fPluginConfigurations.containsKey(id)) {
 				configuration[i] = null;
@@ -443,16 +484,18 @@ public class Product extends ProductObject implements IProduct {
 			fPluginConfigurations.put(id, configuration[i]);
 			modified = true;
 		}
-		if (modified && isEditable())
+		if (modified && isEditable()) {
 			fireStructureChanged(configuration, IModelChangedEvent.INSERT);
+		}
 	}
 
 	@Override
 	public void addConfigurationProperties(IConfigurationProperty[] properties) {
 		boolean modified = false;
 		for (IConfigurationProperty property : properties) {
-			if (property == null)
+			if (property == null) {
 				continue;
+			}
 			String name = property.getName();
 			if (name == null || fConfigurationProperties.containsKey(name)) {
 				continue;
@@ -462,8 +505,9 @@ public class Product extends ProductObject implements IProduct {
 			fConfigurationProperties.put(name, property);
 			modified = true;
 		}
-		if (modified && isEditable())
+		if (modified && isEditable()) {
 			fireStructureChanged(properties, IModelChangedEvent.INSERT);
+		}
 	}
 
 	@Override
@@ -475,13 +519,15 @@ public class Product extends ProductObject implements IProduct {
 			if (fPlugins.remove(id) != null) {
 				modified = true;
 				Object configuration = fPluginConfigurations.remove(id);
-				if (configuration != null)
+				if (configuration != null) {
 					removedConfigurations.add(configuration);
+				}
 			}
 		}
 		if (isEditable()) {
-			if (modified)
+			if (modified) {
 				fireStructureChanged(plugins, IModelChangedEvent.REMOVE);
+			}
 			if (!removedConfigurations.isEmpty()) {
 				fireStructureChanged(removedConfigurations.toArray(new IProductObject[removedConfigurations.size()]), IModelChangedEvent.REMOVE);
 			}
@@ -496,8 +542,9 @@ public class Product extends ProductObject implements IProduct {
 				modified = true;
 			}
 		}
-		if (isEditable() && modified)
+		if (isEditable() && modified) {
 			fireStructureChanged(configurations, IModelChangedEvent.REMOVE);
+		}
 	}
 
 	@Override
@@ -508,8 +555,9 @@ public class Product extends ProductObject implements IProduct {
 				modified = true;
 			}
 		}
-		if (isEditable() && modified)
+		if (isEditable() && modified) {
 			fireStructureChanged(properties, IModelChangedEvent.REMOVE);
+		}
 	}
 
 	@Override
@@ -538,8 +586,9 @@ public class Product extends ProductObject implements IProduct {
 		for (IRepositoryInfo repo : repos) {
 			modified = modified || fRepositories.add(repo);
 		}
-		if (modified && isEditable())
+		if (modified && isEditable()) {
 			fireStructureChanged(repos, IModelChangedEvent.INSERT);
+		}
 	}
 
 	@Override
@@ -548,8 +597,9 @@ public class Product extends ProductObject implements IProduct {
 		for (IRepositoryInfo repo : repos) {
 			modified = fRepositories.remove(repo) || modified;
 		}
-		if (modified && isEditable())
+		if (modified && isEditable()) {
 			fireStructureChanged(repos, IModelChangedEvent.REMOVE);
+		}
 	}
 
 	@Override
@@ -591,8 +641,9 @@ public class Product extends ProductObject implements IProduct {
 	public void setUseFeatures(boolean use) {
 		boolean old = fUseFeatures;
 		fUseFeatures = use;
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged(P_USEFEATURES, Boolean.toString(old), Boolean.toString(fUseFeatures));
+		}
 	}
 
 	@Override
@@ -604,8 +655,9 @@ public class Product extends ProductObject implements IProduct {
 	public boolean containsFeature(String id) {
 		IProductFeature[] features = getFeatures();
 		for (IProductFeature feature : features) {
-			if (feature.getId().equals(id))
+			if (feature.getId().equals(id)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -647,8 +699,9 @@ public class Product extends ProductObject implements IProduct {
 		fFeatures.forEach(feat -> knownIds.add(feat.getId()));
 
 		for (int i = 0; i < features.length; i++) {
-			if (features[i] == null)
+			if (features[i] == null) {
 				continue;
+			}
 			String id = features[i].getId();
 			if (knownIds.contains(id)) {
 				features[i] = null;
@@ -661,8 +714,9 @@ public class Product extends ProductObject implements IProduct {
 			modified = true;
 		}
 
-		if (modified && isEditable())
+		if (modified && isEditable()) {
 			fireStructureChanged(features, IModelChangedEvent.INSERT);
+		}
 	}
 
 	@Override
@@ -674,8 +728,9 @@ public class Product extends ProductObject implements IProduct {
 				modified = true;
 			}
 		}
-		if (modified && isEditable())
+		if (modified && isEditable()) {
 			fireStructureChanged(features, IModelChangedEvent.REMOVE);
+		}
 	}
 
 	@Override
@@ -727,8 +782,9 @@ public class Product extends ProductObject implements IProduct {
 	public void swap(IProductFeature feature1, IProductFeature feature2) {
 		int index1 = fFeatures.indexOf(feature1);
 		int index2 = fFeatures.indexOf(feature2);
-		if (index1 == -1 || index2 == -1)
+		if (index1 == -1 || index2 == -1) {
 			return;
+		}
 
 		fFeatures.set(index2, feature1);
 		fFeatures.set(index1, feature2);
@@ -750,7 +806,8 @@ public class Product extends ProductObject implements IProduct {
 	public void setIncludeLaunchers(boolean include) {
 		boolean old = fIncludeLaunchers;
 		fIncludeLaunchers = include;
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged(P_INCLUDE_LAUNCHERS, Boolean.toString(old), Boolean.toString(fIncludeLaunchers));
+		}
 	}
 }

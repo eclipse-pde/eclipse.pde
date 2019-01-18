@@ -16,10 +16,15 @@ package org.eclipse.pde.internal.core.text.plugin;
 import java.io.PrintWriter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginAttribute;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.text.*;
+import org.eclipse.pde.internal.core.text.DocumentTextNode;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 
 public class PluginElementNode extends PluginParentNode implements IPluginElement {
 
@@ -75,14 +80,16 @@ public class PluginElementNode extends PluginParentNode implements IPluginElemen
 	public String write(boolean indent) {
 		String sep = getLineDelimiter();
 		StringBuilder buffer = new StringBuilder();
-		if (indent)
+		if (indent) {
 			buffer.append(getIndent());
+		}
 
 		IDocumentElementNode[] children = getChildNodes();
 		String text = getText();
 		buffer.append(writeShallow(false));
-		if (getAttributeCount() > 0 || children.length > 0 || text.length() > 0)
+		if (getAttributeCount() > 0 || children.length > 0 || text.length() > 0) {
 			buffer.append(sep);
+		}
 		if (children.length > 0 || text.length() > 0) {
 			if (text.length() > 0) {
 				buffer.append(getIndent());
@@ -96,8 +103,9 @@ public class PluginElementNode extends PluginParentNode implements IPluginElemen
 				buffer.append(sep);
 			}
 		}
-		if (getAttributeCount() > 0 || children.length > 0 || text.length() > 0)
+		if (getAttributeCount() > 0 || children.length > 0 || text.length() > 0) {
 			buffer.append(getIndent());
+		}
 
 		buffer.append("</" + getXMLTagName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		return buffer.toString();
@@ -110,11 +118,13 @@ public class PluginElementNode extends PluginParentNode implements IPluginElemen
 
 		IDocumentAttributeNode[] attrs = getNodeAttributes();
 		for (IDocumentAttributeNode attrNode : attrs) {
-			if (attrNode.getAttributeValue().length() > 0)
+			if (attrNode.getAttributeValue().length() > 0) {
 				buffer.append(sep + getIndent() + "      " + attrNode.write()); //$NON-NLS-1$
+			}
 		}
-		if (terminate)
+		if (terminate) {
 			buffer.append("/"); //$NON-NLS-1$
+		}
 		buffer.append(">"); //$NON-NLS-1$
 		return buffer.toString();
 	}
@@ -134,8 +144,9 @@ public class PluginElementNode extends PluginParentNode implements IPluginElemen
 		if (elementInfo == null) {
 			IDocumentElementNode node = getParentNode();
 			for (;;) {
-				if (node == null || node instanceof IPluginExtension)
+				if (node == null || node instanceof IPluginExtension) {
 					break;
+				}
 				node = node.getParentNode();
 			}
 			if (node != null) {

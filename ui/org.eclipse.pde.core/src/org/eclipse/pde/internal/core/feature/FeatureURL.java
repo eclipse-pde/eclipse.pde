@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.core.feature;
 import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.Vector;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
@@ -27,7 +26,7 @@ import org.w3c.dom.NodeList;
 public class FeatureURL extends FeatureObject implements IFeatureURL {
 	private static final long serialVersionUID = 1L;
 	private IFeatureURLElement fUpdate;
-	private Vector<IFeatureURLElement> fDiscoveries = new Vector<>();
+	private final Vector<IFeatureURLElement> fDiscoveries = new Vector<>();
 
 	@Override
 	public void addDiscovery(IFeatureURLElement discovery) throws CoreException {

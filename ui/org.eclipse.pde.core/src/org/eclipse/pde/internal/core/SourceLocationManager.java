@@ -14,12 +14,27 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
-import java.net.*;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.spi.RegistryContributor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.osgi.framework.Version;
 
 /**
@@ -241,8 +256,9 @@ public class SourceLocationManager implements ICoreConstants {
 	private IPath getRelativePath(IPluginBase pluginBase, IPath sourceFilePath) {
 		try {
 			String pluginDir = pluginBase.getId();
-			if (pluginDir == null)
+			if (pluginDir == null) {
 				return null;
+			}
 			String version = pluginBase.getVersion();
 			if (version != null) {
 				Version vid = new Version(version);
@@ -317,8 +333,9 @@ public class SourceLocationManager implements ICoreConstants {
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken();
 			SourceLocation location = parseSourceLocation(token);
-			if (location != null)
+			if (location != null) {
 				entries.add(location);
+			}
 		}
 	}
 
@@ -332,8 +349,9 @@ public class SourceLocationManager implements ICoreConstants {
 		try {
 			text = text.trim();
 			int commaIndex = text.lastIndexOf(',');
-			if (commaIndex == -1)
+			if (commaIndex == -1) {
 				return new SourceLocation(new Path(text));
+			}
 
 			int atLoc = text.indexOf('@');
 			path = (atLoc == -1) ? text.substring(0, commaIndex) : text.substring(atLoc + 1, commaIndex);
@@ -355,20 +373,22 @@ public class SourceLocationManager implements ICoreConstants {
 			long bundleId = Long.parseLong(contributor.getActualId());
 			BundleDescription desc = PDECore.getDefault().getModelManager().getState().getState().getBundle(Long.parseLong(contributor.getActualId()));
 			IPluginModelBase base = null;
-			if (desc != null)
+			if (desc != null) {
 				base = PluginRegistry.findModel(desc);
-			// desc might be null if the workspace contains a plug-in with the same Bundle-SymbolicName
-			else {
+			} else {
+				// desc might be null if the workspace contains a plug-in with the same Bundle-SymbolicName
 				ModelEntry entry = PluginRegistry.findEntry(contributor.getActualName());
 				IPluginModelBase externalModels[] = entry.getExternalModels();
 				for (IPluginModelBase externalModel : externalModels) {
 					BundleDescription extDesc = externalModel.getBundleDescription();
-					if (extDesc != null && extDesc.getBundleId() == bundleId)
+					if (extDesc != null && extDesc.getBundleId() == bundleId) {
 						base = externalModel;
+					}
 				}
 			}
-			if (base == null)
+			if (base == null) {
 				continue;
+			}
 			for (IConfigurationElement element : children) {
 				if (element.getName().equals("location")) { //$NON-NLS-1$
 					String pathValue = element.getAttribute("path"); //$NON-NLS-1$
@@ -376,8 +396,9 @@ public class SourceLocationManager implements ICoreConstants {
 					if (path.toFile().exists()) {
 						SourceLocation location = new SourceLocation(path);
 						location.setUserDefined(false);
-						if (!result.contains(location))
+						if (!result.contains(location)) {
 							result.add(location);
+						}
 					}
 				}
 			}

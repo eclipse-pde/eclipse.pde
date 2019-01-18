@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
 import java.util.Vector;
-
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.ischema.ISchema;
@@ -29,7 +28,7 @@ public class SchemaComplexType extends SchemaType implements ISchemaComplexType 
 	public static final String P_COMPOSITOR = "compositorProperty"; //$NON-NLS-1$
 	private boolean mixed;
 	private ISchemaCompositor compositor;
-	private Vector<ISchemaAttribute> attributes = new Vector<>();
+	private final Vector<ISchemaAttribute> attributes = new Vector<>();
 
 	public SchemaComplexType(ISchema schema) {
 		this(schema, null);
@@ -48,20 +47,22 @@ public class SchemaComplexType extends SchemaType implements ISchemaComplexType 
 		if (afterSibling != null) {
 			index = attributes.indexOf(afterSibling);
 		}
-		if (index != -1)
+		if (index != -1) {
 			attributes.add(index + 1, attribute);
-		else
+		} else {
 			attributes.addElement(attribute);
+		}
 		getSchema().fireModelChanged(new ModelChangedEvent(getSchema(), IModelChangedEvent.INSERT, new Object[] {attribute}, null));
 	}
 
 	public void moveAttributeTo(ISchemaAttribute attribute, ISchemaAttribute sibling) {
 		int index = attributes.indexOf(attribute);
 		int newIndex;
-		if (sibling != null && attributes.contains(sibling))
+		if (sibling != null && attributes.contains(sibling)) {
 			newIndex = attributes.indexOf(sibling);
-		else
+		} else {
 			newIndex = attributes.size() - 1;
+		}
 
 		if (index > newIndex) {
 			for (int i = index; i > newIndex; i--) {
@@ -71,9 +72,10 @@ public class SchemaComplexType extends SchemaType implements ISchemaComplexType 
 			for (int i = index; i < newIndex; i++) {
 				attributes.set(i, attributes.elementAt(i + 1));
 			}
-		} else
+		} else {
 			// don't need to move
 			return;
+		}
 		attributes.set(newIndex, attribute);
 		getSchema().fireModelChanged(new ModelChangedEvent(getSchema(), IModelChangedEvent.CHANGE, new Object[] {attribute.getParent()}, null));
 	}
@@ -82,8 +84,9 @@ public class SchemaComplexType extends SchemaType implements ISchemaComplexType 
 	public ISchemaAttribute getAttribute(String name) {
 		for (int i = 0; i < attributes.size(); i++) {
 			ISchemaAttribute attribute = attributes.elementAt(i);
-			if (attribute.getName().equals(name))
+			if (attribute.getName().equals(name)) {
 				return attribute;
+			}
 		}
 		return null;
 	}

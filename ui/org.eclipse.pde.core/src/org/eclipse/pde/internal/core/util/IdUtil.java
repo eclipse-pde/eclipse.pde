@@ -14,7 +14,12 @@
 package org.eclipse.pde.internal.core.util;
 
 import java.util.StringTokenizer;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
 
 public class IdUtil {
@@ -84,8 +89,9 @@ public class IdUtil {
 	public static String getValidProvider(String id) {
 		StringTokenizer tok = new StringTokenizer(id, "."); //$NON-NLS-1$
 		int count = tok.countTokens();
-		if (count > 2 && tok.nextToken().equals("com")) //$NON-NLS-1$
+		if (count > 2 && tok.nextToken().equals("com")) { //$NON-NLS-1$
 			return tok.nextToken().toUpperCase();
+		}
 		return ""; //$NON-NLS-1$
 	}
 
@@ -94,12 +100,14 @@ public class IdUtil {
 		IPluginBase plugin = extension.getPluginBase();
 		String schemaVersion = plugin.getSchemaVersion();
 		if (schemaVersion != null && Double.parseDouble(schemaVersion) >= 3.2) {
-			if (id.indexOf('.') > 0)
+			if (id.indexOf('.') > 0) {
 				return id;
+			}
 		}
 
-		if (plugin instanceof IFragment)
+		if (plugin instanceof IFragment) {
 			return ((IFragment) plugin).getPluginId() + '.' + id;
+		}
 		return plugin.getId() + '.' + id;
 	}
 
@@ -118,11 +126,13 @@ public class IdUtil {
 			String id = null;
 			if (model instanceof IFragmentModel) {
 				IFragment fragment = ((IFragmentModel) model).getFragment();
-				if (fragment != null)
+				if (fragment != null) {
 					id = fragment.getPluginId();
+				}
 			}
-			if (id == null)
+			if (id == null) {
 				id = model.getPluginBase().getId();
+			}
 			return id + '.' + pointId;
 		}
 		return point.getFullId();

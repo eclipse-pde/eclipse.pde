@@ -15,8 +15,14 @@ package org.eclipse.pde.internal.core.target;
 
 import java.io.File;
 import java.net.URI;
-import org.eclipse.core.filebuffers.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
 
@@ -42,7 +48,7 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 		return new ExternalFileTargetHandle(uri);
 	}
 
-	private URI fURI;
+	private final URI fURI;
 	private ITextFileBuffer fFileBuffer;
 
 	/**

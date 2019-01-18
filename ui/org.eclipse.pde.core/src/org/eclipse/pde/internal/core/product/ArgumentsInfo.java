@@ -23,17 +23,17 @@ import org.w3c.dom.NodeList;
 public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 
 	private static final long serialVersionUID = 1L;
-	private String[] fProgramArgs = new String[8];
-	private String[] fProgramArgsLin = new String[8];
-	private String[] fProgramArgsMac = new String[8];
-	private String[] fProgramArgsSol = new String[8];
-	private String[] fProgramArgsWin = new String[8];
+	private final String[] fProgramArgs = new String[8];
+	private final String[] fProgramArgsLin = new String[8];
+	private final String[] fProgramArgsMac = new String[8];
+	private final String[] fProgramArgsSol = new String[8];
+	private final String[] fProgramArgsWin = new String[8];
 
-	private String[] fVMArgs = new String[8];
-	private String[] fVMArgsLin = new String[8];
-	private String[] fVMArgsMac = new String[8];
-	private String[] fVMArgsSol = new String[8];
-	private String[] fVMArgsWin = new String[8];
+	private final String[] fVMArgs = new String[8];
+	private final String[] fVMArgsLin = new String[8];
+	private final String[] fVMArgsMac = new String[8];
+	private final String[] fVMArgsSol = new String[8];
+	private final String[] fVMArgsWin = new String[8];
 
 	public ArgumentsInfo(IProductModel model) {
 		super(model);
@@ -63,32 +63,37 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 	@Override
 	public void setProgramArguments(String args, int platform, int arch) {
 		String old;
-		if (args == null)
+		if (args == null) {
 			args = ""; //$NON-NLS-1$
+		}
 		switch (platform) {
 			case L_ARGS_ALL :
 				old = fProgramArgs[arch];
 				fProgramArgs[arch] = args;
-				if (isEditable())
+				if (isEditable()) {
 					firePropertyChanged(P_PROG_ARGS, old, fProgramArgs[arch]);
+				}
 				break;
 			case L_ARGS_LINUX :
 				old = fProgramArgsLin[arch];
 				fProgramArgsLin[arch] = args;
-				if (isEditable())
+				if (isEditable()) {
 					firePropertyChanged(P_PROG_ARGS_LIN, old, fProgramArgsLin[arch]);
+				}
 				break;
 			case L_ARGS_MACOS :
 				old = fProgramArgsMac[arch];
 				fProgramArgsMac[arch] = args;
-				if (isEditable())
+				if (isEditable()) {
 					firePropertyChanged(P_PROG_ARGS_MAC, old, fProgramArgsMac[arch]);
+				}
 				break;
 			case L_ARGS_WIN32 :
 				old = fProgramArgsWin[arch];
 				fProgramArgsWin[arch] = args;
-				if (isEditable())
+				if (isEditable()) {
 					firePropertyChanged(P_PROG_ARGS_WIN, old, fProgramArgsWin[arch]);
+				}
 				break;
 		}
 	}
@@ -152,32 +157,37 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 	@Override
 	public void setVMArguments(String args, int platform, int arch) {
 		String old;
-		if (args == null)
+		if (args == null) {
 			args = ""; //$NON-NLS-1$
+		}
 		switch (platform) {
 			case L_ARGS_ALL :
 				old = fVMArgs[arch];
 				fVMArgs[arch] = args;
-				if (isEditable())
+				if (isEditable()) {
 					firePropertyChanged(P_VM_ARGS, old, fVMArgs[arch]);
+				}
 				break;
 			case L_ARGS_LINUX :
 				old = fVMArgsLin[arch];
 				fVMArgsLin[arch] = args;
-				if (isEditable())
+				if (isEditable()) {
 					firePropertyChanged(P_VM_ARGS_LIN, old, fVMArgsLin[arch]);
+				}
 				break;
 			case L_ARGS_MACOS :
 				old = fVMArgsMac[arch];
 				fVMArgsMac[arch] = args;
-				if (isEditable())
+				if (isEditable()) {
 					firePropertyChanged(P_VM_ARGS_MAC, old, fVMArgsMac[arch]);
+				}
 				break;
 			case L_ARGS_WIN32 :
 				old = fVMArgsWin[arch];
 				fVMArgsWin[arch] = args;
-				if (isEditable())
+				if (isEditable()) {
 					firePropertyChanged(P_VM_ARGS_WIN, old, fVMArgsWin[arch]);
+				}
 				break;
 		}
 	}
@@ -236,10 +246,12 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 
 	private String getCompleteArgs(String archArgs, String platformArgs, String univArgs) {
 		String args = archArgs;
-		if (platformArgs.length() > 0)
+		if (platformArgs.length() > 0) {
 			args = platformArgs + " " + args; //$NON-NLS-1$
-		if (univArgs.length() > 0)
+		}
+		if (univArgs.length() > 0) {
 			args = univArgs + " " + args; //$NON-NLS-1$
+		}
 		return args.trim();
 	}
 

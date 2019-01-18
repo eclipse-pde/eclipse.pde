@@ -14,15 +14,45 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jdt.core.ElementChangedEvent;
+import org.eclipse.jdt.core.IClasspathContainer;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IElementChangedListener;
+import org.eclipse.jdt.core.IJavaElementDelta;
+import org.eclipse.jdt.core.IJavaModel;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 
 /**
@@ -38,7 +68,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	public static final String PROXY_PROJECT_NAME = "External Plug-in Libraries"; //$NON-NLS-1$
 	private static final String KEY = "searchablePlugins"; //$NON-NLS-1$
 
-	private Listener fElementListener;
+	private final Listener fElementListener;
 	private Set<String> fPluginIdSet;
 	private ArrayList<IPluginModelListener> fListeners;
 
@@ -55,8 +85,9 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 			if (element instanceof IJavaModel) {
 				IJavaElementDelta[] projectDeltas = delta.getAffectedChildren();
 				for (IJavaElementDelta projectDelta : projectDeltas) {
-					if (handleDelta(projectDelta))
+					if (handleDelta(projectDelta)) {
 						break;
+					}
 				}
 				return true;
 			}
@@ -110,8 +141,9 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 					String value = properties.getProperty(KEY);
 					if (value != null) {
 						StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
-						while (stok.hasMoreTokens())
+						while (stok.hasMoreTokens()) {
 							set.add(stok.nextToken());
+						}
 					}
 				}
 			}
@@ -138,8 +170,9 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		// remove listener
 		JavaCore.removeElementChangedListener(fElementListener);
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
-		if (fListeners != null)
+		if (fListeners != null) {
 			fListeners.clear();
+		}
 	}
 
 	public IClasspathEntry[] computeContainerClasspathEntries() throws CoreException {
@@ -163,15 +196,18 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 				wModels = entry.getWorkspaceModels();
 				for (IPluginModelBase model : wModels) {
 					IProject project = model.getUnderlyingResource().getProject();
-					if (project.hasNature(JavaCore.NATURE_ID))
+					if (project.hasNature(JavaCore.NATURE_ID)) {
 						addModel = false;
+					}
 				}
-				if (!addModel)
+				if (!addModel) {
 					continue;
+				}
 				IPluginModelBase[] models = entry.getExternalModels();
 				for (IPluginModelBase model : models) {
-					if (model.isEnabled())
+					if (model.isEnabled()) {
 						ClasspathUtilCore.addLibraries(model, result);
+					}
 				}
 			}
 		}
@@ -197,8 +233,9 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		if (!file.isDirectory()) {
 			if (file.isFile()) {
 				IPackageFragmentRoot root = findPackageFragmentRoot(new Path(file.getAbsolutePath()));
-				if (root != null)
+				if (root != null) {
 					return root;
+				}
 			}
 		}
 		return new FileAdapter(parent, file, this);
@@ -211,8 +248,9 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 				IPackageFragmentRoot[] roots = jProject.getAllPackageFragmentRoots();
 				for (IPackageFragmentRoot root : roots) {
 					IPath path = root.getPath();
-					if (path.equals(jarPath))
+					if (path.equals(jarPath)) {
 						return root;
+					}
 
 				}
 			} catch (JavaModelException e) {
@@ -228,8 +266,9 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 				IPackageFragmentRoot[] roots = javaProject.getAllPackageFragmentRoots();
 				for (IPackageFragmentRoot root : roots) {
 					IPath path = root.getPath();
-					if (path.equals(jarPath))
+					if (path.equals(jarPath)) {
 						return root;
+					}
 				}
 			} catch (JavaModelException e) {
 			}
@@ -242,8 +281,9 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 		try {
 			IProject project = root.getProject(SearchablePluginsManager.PROXY_PROJECT_NAME);
-			if (!project.exists())
+			if (!project.exists()) {
 				createProxyProject(new NullProgressMonitor());
+			}
 		} catch (CoreException e) {
 		}
 	}
@@ -351,15 +391,18 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	}
 
 	public void addPluginModelListener(IPluginModelListener listener) {
-		if (fListeners == null)
+		if (fListeners == null) {
 			fListeners = new ArrayList<>();
-		if (!fListeners.contains(listener))
+		}
+		if (!fListeners.contains(listener)) {
 			fListeners.add(listener);
+		}
 	}
 
 	public void removePluginModelListener(IPluginModelListener listener) {
-		if (fListeners != null)
+		if (fListeners != null) {
 			fListeners.remove(listener);
+		}
 	}
 
 	private void saveStates() {

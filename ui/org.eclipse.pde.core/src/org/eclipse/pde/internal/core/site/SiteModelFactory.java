@@ -15,10 +15,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
-import org.eclipse.pde.internal.core.isite.*;
+import org.eclipse.pde.internal.core.isite.IRepositoryReference;
+import org.eclipse.pde.internal.core.isite.ISite;
+import org.eclipse.pde.internal.core.isite.ISiteArchive;
+import org.eclipse.pde.internal.core.isite.ISiteBundle;
+import org.eclipse.pde.internal.core.isite.ISiteCategory;
+import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
+import org.eclipse.pde.internal.core.isite.ISiteDescription;
+import org.eclipse.pde.internal.core.isite.ISiteFeature;
+import org.eclipse.pde.internal.core.isite.ISiteModel;
+import org.eclipse.pde.internal.core.isite.ISiteModelFactory;
+import org.eclipse.pde.internal.core.isite.ISiteObject;
+import org.eclipse.pde.internal.core.isite.IStatsInfo;
 
 public class SiteModelFactory implements ISiteModelFactory {
-	private ISiteModel model;
+	private final ISiteModel model;
 
 	public SiteModelFactory(ISiteModel model) {
 		this.model = model;

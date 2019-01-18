@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
-import org.eclipse.jdt.launching.*;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 
@@ -44,8 +46,9 @@ public class BuildUtilities {
 				}
 			}
 		}
-		if (vm == null)
+		if (vm == null) {
 			vm = JavaRuntime.getDefaultVMInstall();
+		}
 		return getBootClasspath(vm);
 	}
 
@@ -54,8 +57,9 @@ public class BuildUtilities {
 		LibraryLocation[] locations = JavaRuntime.getLibraryLocations(install);
 		for (int i = 0; i < locations.length; i++) {
 			buffer.append(locations[i].getSystemLibraryPath().toOSString());
-			if (i < locations.length - 1)
+			if (i < locations.length - 1) {
 				buffer.append(";"); //$NON-NLS-1$
+			}
 		}
 		return buffer.toString();
 	}

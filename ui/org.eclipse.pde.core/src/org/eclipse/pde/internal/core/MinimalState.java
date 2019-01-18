@@ -15,9 +15,20 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
-import java.util.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.*;
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.service.resolver.StateDelta;
+import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
@@ -65,16 +76,18 @@ public class MinimalState {
 	}
 
 	public void addBundle(IPluginModelBase model, boolean update) {
-		if (model == null)
+		if (model == null) {
 			return;
+		}
 
 		BundleDescription desc = model.getBundleDescription();
 		long bundleId = desc == null || !update ? -1 : desc.getBundleId();
 		try {
 			BundleDescription newDesc = addBundle(new File(model.getInstallLocation()), bundleId);
 			model.setBundleDescription(newDesc);
-			if (newDesc == null && update)
+			if (newDesc == null && update) {
 				fState.removeBundle(desc);
+			}
 		} catch (CoreException e) {
 			PDECore.log(e);
 			model.setBundleDescription(null);
@@ -156,8 +169,9 @@ public class MinimalState {
 	}
 
 	protected boolean initializePlatformProperties() {
-		if (fExecutionEnvironments == null && !fNoProfile)
+		if (fExecutionEnvironments == null && !fNoProfile) {
 			setExecutionEnvironments();
+		}
 
 		if (fEEListChanged) {
 			fEEListChanged = false;
@@ -171,13 +185,15 @@ public class MinimalState {
 	}
 
 	public void removeBundleDescription(BundleDescription description) {
-		if (description != null)
+		if (description != null) {
 			fState.removeBundle(description);
+		}
 	}
 
 	public void updateBundleDescription(BundleDescription description) {
-		if (description != null)
+		if (description != null) {
 			fState.updateBundle(description);
+		}
 	}
 
 	public State getState() {
@@ -188,9 +204,11 @@ public class MinimalState {
 		String[] knownExecutionEnviroments = TargetPlatformHelper.getKnownExecutionEnvironments();
 		if (knownExecutionEnviroments.length == 0) {
 			String jreProfile = System.getProperty("pde.jreProfile"); //$NON-NLS-1$
-			if (jreProfile != null && jreProfile.length() > 0)
-				if ("none".equals(jreProfile)) //$NON-NLS-1$
+			if (jreProfile != null && jreProfile.length() > 0) {
+				if ("none".equals(jreProfile)) { //$NON-NLS-1$
 					fNoProfile = true;
+				}
+			}
 		}
 		if (!fNoProfile) {
 			fExecutionEnvironments = knownExecutionEnviroments;
@@ -199,8 +217,9 @@ public class MinimalState {
 	}
 
 	public void addBundleDescription(BundleDescription toAdd) {
-		if (toAdd != null)
+		if (toAdd != null) {
 			fState.addBundle(toAdd);
+		}
 	}
 
 	public long getNextId() {

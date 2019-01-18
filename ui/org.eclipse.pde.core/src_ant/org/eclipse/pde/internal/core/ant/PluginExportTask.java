@@ -41,8 +41,9 @@ public class PluginExportTask extends BaseExportTask {
 		if (!new File(fDestination).isAbsolute()) {
 			File home = new File(getLocation().getFileName()).getParentFile();
 			info.destinationDirectory = new File(home, fDestination).toString();
-		} else
+		} else {
 			info.destinationDirectory = fDestination;
+		}
 		return new PluginExportOperation(info, jobName);
 	}
 
@@ -52,8 +53,9 @@ public class PluginExportTask extends BaseExportTask {
 		while (tok.hasMoreTokens()) {
 			String id = tok.nextToken().trim();
 			IPluginModelBase model = PluginRegistry.findModel(id);
-			if (model != null)
+			if (model != null) {
 				models.add(model);
+			}
 		}
 		fPlugins = models.toArray(new IPluginModelBase[models.size()]);
 	}

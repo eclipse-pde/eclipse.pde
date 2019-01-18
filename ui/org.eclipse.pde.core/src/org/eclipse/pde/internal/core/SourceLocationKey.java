@@ -22,8 +22,8 @@ import org.osgi.framework.Version;
  * @since 3.4
  */
 public class SourceLocationKey {
-	private String fBundleName;
-	private Version fVersion;
+	private final String fBundleName;
+	private final Version fVersion;
 
 	public SourceLocationKey(String bundleName, Version version) {
 		fBundleName = bundleName;

@@ -43,11 +43,13 @@ public class SchemaRootElement extends SchemaElement implements ISchemaRootEleme
 	public String getExtendedAttributes() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append(" "); //$NON-NLS-1$
-		if (fDeperecatedReplacement != null)
+		if (fDeperecatedReplacement != null) {
 			buffer.append(P_DEP_REPLACEMENT + "=\"" + fDeperecatedReplacement + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 
-		if (fInternal == true)
+		if (fInternal == true) {
 			buffer.append(P_INTERNAL + "=\"" + "true" + "\" "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
 
 		return buffer.toString();
 	}

@@ -16,18 +16,28 @@ package org.eclipse.pde.internal.core;
 import java.io.File;
 import java.util.ArrayList;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.bundle.BundleFragment;
 import org.eclipse.pde.internal.core.bundle.BundlePlugin;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.core.plugin.Fragment;
 import org.eclipse.pde.internal.core.plugin.Plugin;
+import org.eclipse.pde.internal.core.plugin.PluginBase;
 
 public class ClasspathUtilCore {
 
@@ -37,8 +47,9 @@ public class ClasspathUtilCore {
 		} else {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 			for (IPluginLibrary library : libraries) {
-				if (IPluginLibrary.RESOURCE.equals(library.getType()))
+				if (IPluginLibrary.RESOURCE.equals(library.getType())) {
 					continue;
+				}
 				IClasspathEntry entry = createLibraryEntry(library);
 				if (entry != null && !result.contains(entry)) {
 					result.add(entry);
@@ -50,8 +61,9 @@ public class ClasspathUtilCore {
 	private static void addJARdPlugin(IPluginModelBase model, ArrayList<IClasspathEntry> result) {
 
 		IPath sourcePath = getSourceAnnotation(model, "."); //$NON-NLS-1$
-		if (sourcePath == null)
+		if (sourcePath == null) {
 			sourcePath = new Path(model.getInstallLocation());
+		}
 
 		IClasspathEntry entry = JavaCore.newLibraryEntry(new Path(model.getInstallLocation()), sourcePath, null, false);
 		if (entry != null && !result.contains(entry)) {
@@ -67,11 +79,13 @@ public class ClasspathUtilCore {
 		IPluginModelBase model = library.getPluginModel();
 		IPath path = getPath(model, expandedName);
 		if (path == null) {
-			if (model.isFragmentModel() || !containsVariables(name))
+			if (model.isFragmentModel() || !containsVariables(name)) {
 				return null;
+			}
 			model = resolveLibraryInFragments(library, expandedName);
-			if (model == null)
+			if (model == null) {
 				return null;
+			}
 			path = getPath(model, expandedName);
 		}
 
@@ -80,8 +94,9 @@ public class ClasspathUtilCore {
 
 	public static boolean hasExtensibleAPI(IPluginModelBase model) {
 		IPluginBase pluginBase = model.getPluginBase();
-		if (pluginBase instanceof IPlugin)
+		if (pluginBase instanceof IPlugin) {
 			return hasExtensibleAPI((IPlugin) pluginBase);
+		}
 		return false;
 	}
 
@@ -92,34 +107,41 @@ public class ClasspathUtilCore {
 
 	public static boolean isPatchFragment(IPluginModelBase model) {
 		IPluginBase pluginBase = model.getPluginBase();
-		if (pluginBase instanceof IFragment)
+		if (pluginBase instanceof IFragment) {
 			return isPatchFragment((IFragment) pluginBase);
+		}
 		return false;
 	}
 
 	private static boolean hasExtensibleAPI(IPlugin plugin) {
-		if (plugin instanceof Plugin)
+		if (plugin instanceof Plugin) {
 			return ((Plugin) plugin).hasExtensibleAPI();
-		if (plugin instanceof BundlePlugin)
+		}
+		if (plugin instanceof BundlePlugin) {
 			return ((BundlePlugin) plugin).hasExtensibleAPI();
+		}
 		return false;
 	}
 
 	private static boolean isPatchFragment(IFragment fragment) {
-		if (fragment instanceof Fragment)
+		if (fragment instanceof Fragment) {
 			return ((Fragment) fragment).isPatch();
-		if (fragment instanceof BundleFragment)
+		}
+		if (fragment instanceof BundleFragment) {
 			return ((BundleFragment) fragment).isPatch();
+		}
 		return false;
 	}
 
 	public static boolean hasBundleStructure(IPluginModelBase model) {
-		if (model.getUnderlyingResource() != null)
+		if (model.getUnderlyingResource() != null) {
 			return model instanceof IBundlePluginModelBase;
+		}
 
 		IPluginBase plugin = model.getPluginBase();
-		if (plugin instanceof PluginBase)
+		if (plugin instanceof PluginBase) {
 			return ((PluginBase) plugin).hasBundleStructure();
+		}
 		return false;
 	}
 
@@ -131,20 +153,25 @@ public class ClasspathUtilCore {
 	}
 
 	public static String expandLibraryName(String source) {
-		if (source == null || source.length() == 0)
+		if (source == null || source.length() == 0) {
 			return ""; //$NON-NLS-1$
-		if (source.indexOf("$ws$") != -1) //$NON-NLS-1$
+		}
+		if (source.indexOf("$ws$") != -1) { //$NON-NLS-1$
 			source = source.replaceAll("\\$ws\\$", //$NON-NLS-1$
 					"ws" + IPath.SEPARATOR + TargetPlatform.getWS()); //$NON-NLS-1$
-		if (source.indexOf("$os$") != -1) //$NON-NLS-1$
+		}
+		if (source.indexOf("$os$") != -1) { //$NON-NLS-1$
 			source = source.replaceAll("\\$os\\$", //$NON-NLS-1$
 					"os" + IPath.SEPARATOR + TargetPlatform.getOS()); //$NON-NLS-1$
-		if (source.indexOf("$nl$") != -1) //$NON-NLS-1$
+		}
+		if (source.indexOf("$nl$") != -1) { //$NON-NLS-1$
 			source = source.replaceAll("\\$nl\\$", //$NON-NLS-1$
 					"nl" + IPath.SEPARATOR + TargetPlatform.getNL()); //$NON-NLS-1$
-		if (source.indexOf("$arch$") != -1) //$NON-NLS-1$
+		}
+		if (source.indexOf("$arch$") != -1) { //$NON-NLS-1$
 			source = source.replaceAll("\\$arch\\$", //$NON-NLS-1$
 					"arch" + IPath.SEPARATOR + TargetPlatform.getOSArch()); //$NON-NLS-1$
+		}
 		return source;
 	}
 
@@ -169,8 +196,9 @@ public class ClasspathUtilCore {
 
 		for (IFragmentModel fragment : fragments) {
 			IPath path = getPath(fragment, libraryName);
-			if (path != null)
+			if (path != null) {
 				return fragment;
+			}
 		}
 		return null;
 	}
@@ -179,12 +207,14 @@ public class ClasspathUtilCore {
 		IResource resource = model.getUnderlyingResource();
 		if (resource != null) {
 			IResource jarFile = resource.getProject().findMember(libraryName);
-			if (jarFile != null)
+			if (jarFile != null) {
 				return jarFile.getFullPath();
+			}
 		} else {
 			File file = new File(model.getInstallLocation(), libraryName);
-			if (file.exists())
+			if (file.exists()) {
 				return new Path(file.getAbsolutePath());
+			}
 			file = new File(libraryName);
 			if (file.exists() && file.isAbsolute()) {
 				return new Path(libraryName);

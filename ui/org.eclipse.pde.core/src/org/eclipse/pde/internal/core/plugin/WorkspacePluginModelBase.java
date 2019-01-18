@@ -14,7 +14,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -25,7 +30,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.IEditableModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.NLResourceHelper;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEManager;
 
 /**
  * This class only represents 3.0 style plug-ins
@@ -34,7 +41,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 
 	private static final long serialVersionUID = 1L;
 
-	private IFile fUnderlyingResource;
+	private final IFile fUnderlyingResource;
 
 	private boolean fDirty;
 
@@ -101,11 +108,13 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 
 	@Override
 	public boolean isInSync() {
-		if (fUnderlyingResource == null)
+		if (fUnderlyingResource == null) {
 			return true;
+		}
 		IPath path = fUnderlyingResource.getLocation();
-		if (path == null)
+		if (path == null) {
 			return false;
+		}
 		return super.isInSync(path.toFile());
 	}
 
@@ -121,8 +130,9 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 
 	@Override
 	public void load() {
-		if (fUnderlyingResource == null)
+		if (fUnderlyingResource == null) {
 			return;
+		}
 		if (fUnderlyingResource.exists()) {
 			try (InputStream stream = new BufferedInputStream(fUnderlyingResource.getContents(true))) {
 				load(stream, false);
@@ -142,8 +152,9 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 
 	@Override
 	public void save() {
-		if (fUnderlyingResource == null)
+		if (fUnderlyingResource == null) {
 			return;
+		}
 		String contents = fixLineDelimiter(getContents(), fUnderlyingResource);
 		try (ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.UTF_8))) {
 			if (fUnderlyingResource.exists()) {

@@ -13,9 +13,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class XMLPrintHandler {
 	//	used to print XML file
@@ -43,8 +51,9 @@ public class XMLPrintHandler {
 		StringBuilder temp = new StringBuilder(indent);
 		temp.append(XML_BEGIN_TAG);
 		temp.append(elementString);
-		if (terminate)
+		if (terminate) {
 			temp.append(XML_SLASH);
+		}
 		temp.append(XML_END_TAG);
 		temp.append("\n"); //$NON-NLS-1$
 		xmlWriter.write(temp.toString());
@@ -123,11 +132,13 @@ public class XMLPrintHandler {
 				int length = childNodes.getLength();
 				printBeginElement(xmlWriter, tempElementString.toString(), indent, length == 0);
 
-				for (int i = 0; i < length; i++)
+				for (int i = 0; i < length; i++) {
 					printNode(xmlWriter, childNodes.item(i), encoding, indent + "\t"); //$NON-NLS-1$
+				}
 
-				if (length > 0)
+				if (length > 0) {
 					printEndElement(xmlWriter, node.getNodeName(), indent);
+				}
 				break;
 			}
 

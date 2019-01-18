@@ -20,15 +20,22 @@ import java.util.HashSet;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.IdUtil;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
 
 public class FeatureErrorReporter extends ManifestErrorReporter {
 
@@ -42,16 +49,18 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 
 	public FeatureErrorReporter(IFile file) {
 		super(file);
-		if (attrs.isEmpty())
+		if (attrs.isEmpty()) {
 			attrs.addAll(Arrays.asList(attrNames));
+		}
 	}
 
 	@Override
 	protected void validate(IProgressMonitor monitor) {
 		fMonitor = monitor;
 		Element element = getDocumentRoot();
-		if (element == null)
+		if (element == null) {
 			return;
+		}
 		String elementName = element.getNodeName();
 		if (!"feature".equals(elementName)) { //$NON-NLS-1$
 			reportIllegalElement(element, CompilerFlags.ERROR);
@@ -72,8 +81,9 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	private void validateData(Element parent) {
 		NodeList list = getChildrenByName(parent, "data"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
-			if (fMonitor.isCanceled())
+			if (fMonitor.isCanceled()) {
 				return;
+			}
 			Element data = (Element) list.item(i);
 			assertAttributeDefined(data, "id", CompilerFlags.ERROR); //$NON-NLS-1$
 			NamedNodeMap attributes = data.getAttributes();
@@ -92,8 +102,9 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	private void validatePlugins(Element parent) {
 		NodeList list = getChildrenByName(parent, "plugin"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
-			if (fMonitor.isCanceled())
+			if (fMonitor.isCanceled()) {
 				return;
+			}
 			Element plugin = (Element) list.item(i);
 			assertAttributeDefined(plugin, "id", CompilerFlags.ERROR); //$NON-NLS-1$
 			assertAttributeDefined(plugin, "version", CompilerFlags.ERROR); //$NON-NLS-1$
@@ -130,8 +141,9 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	private void validateImports(Element parent) {
 		NodeList list = getChildrenByName(parent, "import"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
-			if (fMonitor.isCanceled())
+			if (fMonitor.isCanceled()) {
 				return;
+			}
 			Element element = (Element) list.item(i);
 			Attr plugin = element.getAttributeNode("plugin"); //$NON-NLS-1$
 			Attr feature = element.getAttributeNode("feature"); //$NON-NLS-1$
@@ -176,8 +188,9 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	private void validateIncludes(Element parent) {
 		NodeList list = getChildrenByName(parent, "includes"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
-			if (fMonitor.isCanceled())
+			if (fMonitor.isCanceled()) {
 				return;
+			}
 			Element include = (Element) list.item(i);
 			if (assertAttributeDefined(include, "id", CompilerFlags.ERROR) //$NON-NLS-1$
 					&& assertAttributeDefined(include, "version", //$NON-NLS-1$
@@ -219,8 +232,9 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	private void validateUpdateURL(Element parent) {
 		NodeList list = getChildrenByName(parent, "update"); //$NON-NLS-1$
 		if (list.getLength() > 0) {
-			if (fMonitor.isCanceled())
+			if (fMonitor.isCanceled()) {
 				return;
+			}
 			Element update = (Element) list.item(0);
 			assertAttributeDefined(update, "url", CompilerFlags.ERROR); //$NON-NLS-1$
 			NamedNodeMap attributes = update.getAttributes();
@@ -239,8 +253,9 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	private void validateDiscoveryURL(Element parent) {
 		NodeList list = getChildrenByName(parent, "discovery"); //$NON-NLS-1$
 		if (list.getLength() > 0) {
-			if (fMonitor.isCanceled())
+			if (fMonitor.isCanceled()) {
 				return;
+			}
 			Element discovery = (Element) list.item(0);
 			assertAttributeDefined(discovery, "url", CompilerFlags.ERROR); //$NON-NLS-1$
 			NamedNodeMap attributes = discovery.getAttributes();
@@ -264,8 +279,9 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	private void validateCopyright(Element parent) {
 		NodeList list = getChildrenByName(parent, "copyright"); //$NON-NLS-1$
 		if (list.getLength() > 0) {
-			if (fMonitor.isCanceled())
+			if (fMonitor.isCanceled()) {
 				return;
+			}
 			Element element = (Element) list.item(0);
 			validateElementWithContent((Element) list.item(0), true);
 			NamedNodeMap attributes = element.getAttributes();
@@ -285,8 +301,9 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	private void validateLicense(Element parent) {
 		NodeList list = getChildrenByName(parent, "license"); //$NON-NLS-1$
 		if (list.getLength() > 0) {
-			if (fMonitor.isCanceled())
+			if (fMonitor.isCanceled()) {
 				return;
+			}
 			Element element = (Element) list.item(0);
 			validateElementWithContent((Element) list.item(0), true);
 			NamedNodeMap attributes = element.getAttributes();
@@ -306,8 +323,9 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	private void validateDescription(Element parent) {
 		NodeList list = getChildrenByName(parent, "description"); //$NON-NLS-1$
 		if (list.getLength() > 0) {
-			if (fMonitor.isCanceled())
+			if (fMonitor.isCanceled()) {
 				return;
+			}
 			Element element = (Element) list.item(0);
 			validateElementWithContent((Element) list.item(0), true);
 			NamedNodeMap attributes = element.getAttributes();
@@ -327,22 +345,25 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	private void validateInstallHandler(Element element) {
 		NodeList elements = getChildrenByName(element, "install-handler"); //$NON-NLS-1$
 		if (elements.getLength() > 0) {
-			if (fMonitor.isCanceled())
+			if (fMonitor.isCanceled()) {
 				return;
+			}
 			Element handler = (Element) elements.item(0);
 			NamedNodeMap attributes = handler.getAttributes();
 			for (int i = 0; i < attributes.getLength(); i++) {
 				String name = attributes.item(i).getNodeName();
-				if (!name.equals("library") && !name.equals("handler")) //$NON-NLS-1$ //$NON-NLS-2$
+				if (!name.equals("library") && !name.equals("handler")) { //$NON-NLS-1$ //$NON-NLS-2$
 					reportUnknownAttribute(handler, name, CompilerFlags.ERROR);
+				}
 			}
 			reportExtraneousElements(elements, 1);
 		}
 	}
 
 	private void validateFeatureAttributes(Element element) {
-		if (fMonitor.isCanceled())
+		if (fMonitor.isCanceled()) {
 			return;
+		}
 		assertAttributeDefined(element, "id", CompilerFlags.ERROR); //$NON-NLS-1$
 		assertAttributeDefined(element, "version", CompilerFlags.ERROR); //$NON-NLS-1$
 		NamedNodeMap attributes = element.getAttributes();
@@ -457,8 +478,9 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	private void validateVersion(Element plugin, Attr attr) {
 		String id = plugin.getAttribute("id"); //$NON-NLS-1$
 		String version = plugin.getAttribute("version"); //$NON-NLS-1$
-		if (id.trim().length() == 0 || version.trim().length() == 0 || version.equals(ICoreConstants.DEFAULT_VERSION))
+		if (id.trim().length() == 0 || version.trim().length() == 0 || version.equals(ICoreConstants.DEFAULT_VERSION)) {
 			return;
+		}
 		ModelEntry entry = PluginRegistry.findEntry(id);
 		if (entry != null) {
 			IPluginModelBase[] allModels = entry.getActiveModels();

@@ -41,11 +41,13 @@ public abstract class BaseExportTask extends Task {
 
 	@Override
 	public void execute() throws BuildException {
-		if (fDestination == null)
+		if (fDestination == null) {
 			throw new BuildException("No destination is specified"); //$NON-NLS-1$
+		}
 
-		if (!fToDirectory && fZipFilename == null)
+		if (!fToDirectory && fZipFilename == null) {
 			throw new BuildException("No zip file is specified"); //$NON-NLS-1$
+		}
 
 		Job job = getExportJob(PDECoreMessages.BaseExportTask_pdeExport);
 
@@ -57,8 +59,9 @@ public abstract class BaseExportTask extends Task {
 				job.join();
 			} catch (InterruptedException e) {
 			}
-		} else
+		} else {
 			job.schedule(2000);
+		}
 	}
 
 	public void setExportType(String type) {
@@ -116,8 +119,9 @@ public abstract class BaseExportTask extends Task {
 	public boolean isAntRunner() {
 		String args[] = Platform.getCommandLineArgs();
 		for (int i = 0; i < args.length; i++) {
-			if (args[i].equals("-application")) //$NON-NLS-1$
+			if (args[i].equals("-application")) { //$NON-NLS-1$
 				return args[i + 1].equals("org.eclipse.ant.core.antRunner"); //$NON-NLS-1$
+			}
 		}
 		return false;
 	}

@@ -14,11 +14,10 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
-
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class ModelFileAdapter extends FileAdapter {
-	private IPluginModelBase fModel;
+	private final IPluginModelBase fModel;
 
 	public ModelFileAdapter(IPluginModelBase model, File file, IFileAdapterFactory factory) {
 		super(null, file, factory);

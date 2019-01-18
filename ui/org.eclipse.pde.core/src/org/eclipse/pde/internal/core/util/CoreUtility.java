@@ -15,19 +15,39 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.xml.parsers.FactoryConfigurationError;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.FeatureModelManager;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 
@@ -83,13 +103,15 @@ public class CoreUtility {
 			IProjectDescription desc = project.getWorkspace().newProjectDescription(project.getName());
 			desc.setLocation(location);
 			project.create(desc, monitor);
-		} else
+		} else {
 			project.create(monitor);
+		}
 	}
 
 	public static String normalize(String text) {
-		if (text == null || text.trim().length() == 0)
+		if (text == null || text.trim().length() == 0) {
 			return ""; //$NON-NLS-1$
+		}
 
 		text = text.replaceAll("\\r|\\n|\\f|\\t", " "); //$NON-NLS-1$ //$NON-NLS-2$
 		return text;
@@ -138,11 +160,13 @@ public class CoreUtility {
 	}
 
 	public static boolean guessUnpack(BundleDescription bundle) {
-		if (bundle == null)
+		if (bundle == null) {
 			return true;
+		}
 
-		if (new File(bundle.getLocation()).isFile())
+		if (new File(bundle.getLocation()).isFile()) {
 			return false;
+		}
 
 		// at this point always make sure launcher fragments are flat; or else you will have launching problems
 		HostSpecification host = bundle.getHost();
@@ -152,21 +176,24 @@ public class CoreUtility {
 
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 		IContainer container = root.getContainerForLocation(new Path(bundle.getLocation()));
-		if (container == null)
+		if (container == null) {
 			return true;
+		}
 
 		if (container instanceof IProject) {
 			try {
-				if (!((IProject) container).hasNature(JavaCore.NATURE_ID))
+				if (!((IProject) container).hasNature(JavaCore.NATURE_ID)) {
 					return true;
+				}
 			} catch (CoreException e) {
 				PDECore.logException(e);
 			}
 		}
 
 		IPluginModelBase model = PluginRegistry.findModel(bundle);
-		if (model == null)
+		if (model == null) {
 			return true;
+		}
 
 		// check bundle header
 		if (model instanceof IBundlePluginModelBase) {
@@ -193,12 +220,14 @@ public class CoreUtility {
 		}
 
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-		if (libraries.length == 0)
+		if (libraries.length == 0) {
 			return false;
+		}
 
 		for (IPluginLibrary library : libraries) {
-			if (library.getName().equals(".")) //$NON-NLS-1$
+			if (library.getName().equals(".")) { //$NON-NLS-1$
 				return false;
+			}
 		}
 		return true;
 	}
@@ -206,8 +235,9 @@ public class CoreUtility {
 	public static boolean jarContainsResource(File file, String resource, boolean directory) {
 		try (ZipFile jarFile = new ZipFile(file, ZipFile.OPEN_READ);) {
 			ZipEntry resourceEntry = jarFile.getEntry(resource);
-			if (resourceEntry != null)
+			if (resourceEntry != null) {
 				return directory ? resourceEntry.isDirectory() : true;
+			}
 		} catch (IOException | FactoryConfigurationError e) {
 			PDECore.logException(e);
 		}
@@ -216,8 +246,9 @@ public class CoreUtility {
 
 	public static void copyFile(IPath originPath, String name, File target) {
 		File source = new File(originPath.toFile(), name);
-		if (source.exists() == false)
+		if (source.exists() == false) {
 			return;
+		}
 		try (FileInputStream is = new FileInputStream(source); FileOutputStream os = new FileOutputStream(target)) {
 			byte[] buf = new byte[1024];
 			int len = is.read(buf);
@@ -243,18 +274,21 @@ public class CoreUtility {
 				}
 			} else {
 				File file = new File(bundleLocation, path);
-				if (file.exists())
+				if (file.exists()) {
 					stream = new FileInputStream(file);
+				}
 			}
 			return getTextDocument(stream);
 		} catch (IOException e) {
 			PDECore.logException(e);
 		} finally {
 			try {
-				if (jarFile != null)
+				if (jarFile != null) {
 					jarFile.close();
-				if (stream != null)
+				}
+				if (stream != null) {
 					stream.close();
+				}
 			} catch (IOException e) {
 				PDECore.logException(e);
 			}

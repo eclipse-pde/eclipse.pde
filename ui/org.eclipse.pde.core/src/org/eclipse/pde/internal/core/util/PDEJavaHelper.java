@@ -13,17 +13,39 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.ListIterator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jdt.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.launching.JavaRuntime;
-import org.eclipse.osgi.service.resolver.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
+import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.service.resolver.StateHelper;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEPreferencesManager;
+import org.eclipse.pde.internal.core.SearchablePluginsManager;
 
 public class PDEJavaHelper {
 
@@ -55,21 +77,24 @@ public class PDEJavaHelper {
 
 		// just grab the package
 		int dot = fullyQualifiedName.lastIndexOf('.');
-		if (dot != -1) // check for the default package case
+		if (dot != -1) {
 			fullyQualifiedName = fullyQualifiedName.substring(0, dot);
-		else
+		} else {
 			fullyQualifiedName = "."; //$NON-NLS-1$
+		}
 
 		State state = desc.getContainingState();
 		StateHelper helper = state.getStateHelper();
 		ExportPackageDescription[] exports = helper.getVisiblePackages(desc);
 		for (ExportPackageDescription export : exports) {
 			BundleDescription exporter = export.getExporter();
-			if (exporter == null)
+			if (exporter == null) {
 				continue;
+			}
 
-			if (fullyQualifiedName.equals(export.getName()) && helper.getAccessCode(desc, export) == StateHelper.ACCESS_DISCOURAGED)
+			if (fullyQualifiedName.equals(export.getName()) && helper.getAccessCode(desc, export) == StateHelper.ACCESS_DISCOURAGED) {
 				return true;
+			}
 
 		}
 
@@ -77,8 +102,9 @@ public class PDEJavaHelper {
 	}
 
 	public static boolean isOnClasspath(String fullyQualifiedName, IJavaProject project) {
-		if (fullyQualifiedName.indexOf('$') != -1)
+		if (fullyQualifiedName.indexOf('$') != -1) {
 			fullyQualifiedName = fullyQualifiedName.replace('$', '.');
+		}
 		try {
 			IType type = project.findType(fullyQualifiedName);
 			return type != null && type.exists();
@@ -142,11 +168,12 @@ public class PDEJavaHelper {
 	 * @param project - if null will search for an external package fragment, otherwise will search in project
 	 */
 	public static IPackageFragment getPackageFragment(String packageName, String pluginID, IProject project) {
-		if (project == null)
+		if (project == null) {
 			return getExternalPackageFragment(packageName, pluginID);
+		}
 
 		IJavaProject jp = JavaCore.create(project);
-		if (jp != null)
+		if (jp != null) {
 			try {
 				IPackageFragmentRoot[] roots = jp.getAllPackageFragmentRoots();
 				for (IPackageFragmentRoot root : roots) {
@@ -157,44 +184,53 @@ public class PDEJavaHelper {
 				}
 			} catch (JavaModelException e) {
 			}
+		}
 		return null;
 	}
 
 	private static IPackageFragment getExternalPackageFragment(String packageName, String pluginID) {
-		if (pluginID == null)
+		if (pluginID == null) {
 			return null;
+		}
 		IPluginModelBase base = null;
 		try {
 			IPluginModelBase plugin = PluginRegistry.findModel(pluginID);
-			if (plugin == null)
+			if (plugin == null) {
 				return null;
+			}
 			ImportPackageSpecification[] packages = plugin.getBundleDescription().getImportPackages();
-			for (ImportPackageSpecification spec : packages)
+			for (ImportPackageSpecification spec : packages) {
 				if (spec.getName().equals(packageName)) {
 					ExportPackageDescription desc = (ExportPackageDescription) spec.getSupplier();
-					if (desc != null)
+					if (desc != null) {
 						base = PluginRegistry.findModel(desc.getExporter().getSymbolicName());
+					}
 					break;
 				}
-			if (base == null)
+			}
+			if (base == null) {
 				return null;
+			}
 			IResource res = base.getUnderlyingResource();
 			if (res != null) {
 				IJavaProject jp = JavaCore.create(res.getProject());
-				if (jp != null)
+				if (jp != null) {
 					try {
 						IPackageFragmentRoot[] roots = jp.getAllPackageFragmentRoots();
 						for (IPackageFragmentRoot root : roots) {
 							IPackageFragment frag = root.getPackageFragment(packageName);
-							if (frag.exists())
+							if (frag.exists()) {
 								return frag;
+							}
 						}
 					} catch (JavaModelException e) {
 					}
+				}
 			}
 			IProject proj = PDECore.getWorkspace().getRoot().getProject(SearchablePluginsManager.PROXY_PROJECT_NAME);
-			if (proj == null)
+			if (proj == null) {
 				return searchWorkspaceForPackage(packageName, base);
+			}
 			IJavaProject jp = JavaCore.create(proj);
 			IPath path = new Path(base.getInstallLocation());
 			// if model is in jar form
@@ -202,21 +238,24 @@ public class PDEJavaHelper {
 				IPackageFragmentRoot root = jp.findPackageFragmentRoot(path);
 				if (root != null) {
 					IPackageFragment frag = root.getPackageFragment(packageName);
-					if (frag.exists())
+					if (frag.exists()) {
 						return frag;
+					}
 				}
 				// else model is in folder form, try to find model's libraries on filesystem
 			} else {
 				IPluginLibrary[] libs = base.getPluginBase().getLibraries();
 				for (IPluginLibrary lib : libs) {
-					if (IPluginLibrary.RESOURCE.equals(lib.getType()))
+					if (IPluginLibrary.RESOURCE.equals(lib.getType())) {
 						continue;
+					}
 					String libName = ClasspathUtilCore.expandLibraryName(lib.getName());
 					IPackageFragmentRoot root = jp.findPackageFragmentRoot(path.append(libName));
 					if (root != null) {
 						IPackageFragment frag = root.getPackageFragment(packageName);
-						if (frag.exists())
+						if (frag.exists()) {
 							return frag;
+						}
 					}
 				}
 			}
@@ -233,24 +272,27 @@ public class PDEJavaHelper {
 			libPaths.add(path);
 		}
 		for (IPluginLibrary lib : libs) {
-			if (IPluginLibrary.RESOURCE.equals(lib.getType()))
+			if (IPluginLibrary.RESOURCE.equals(lib.getType())) {
 				continue;
+			}
 			String libName = ClasspathUtilCore.expandLibraryName(lib.getName());
 			libPaths.add(path.append(libName));
 		}
 		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			try {
-				if (!projects[i].hasNature(JavaCore.NATURE_ID) || !projects[i].isOpen())
+				if (!projects[i].hasNature(JavaCore.NATURE_ID) || !projects[i].isOpen()) {
 					continue;
+				}
 				IJavaProject jp = JavaCore.create(projects[i]);
 				ListIterator<IPath> li = libPaths.listIterator();
 				while (li.hasNext()) {
 					IPackageFragmentRoot root = jp.findPackageFragmentRoot(li.next());
 					if (root != null) {
 						IPackageFragment frag = root.getPackageFragment(packageName);
-						if (frag.exists())
+						if (frag.exists()) {
 							return frag;
+						}
 					}
 				}
 			} catch (CoreException e) {
@@ -273,11 +315,13 @@ public class PDEJavaHelper {
 				for (IJavaElement element : children) {
 					IPackageFragment fragment = (IPackageFragment) element;
 					String name = fragment.getElementName();
-					if (name.length() == 0)
+					if (name.length() == 0) {
 						name = "."; //$NON-NLS-1$
+					}
 					if ((fragment.hasChildren() || fragment.getNonJavaResources().length > 0) && !existingPackages.contains(name)) {
-						if (!name.equals("java") || !name.startsWith("java.") || allowJava) //$NON-NLS-1$ //$NON-NLS-2$
+						if (!name.equals("java") || !name.startsWith("java.") || allowJava) { //$NON-NLS-1$ //$NON-NLS-2$
 							map.put(fragment.getElementName(), fragment);
+						}
 					}
 				}
 			}

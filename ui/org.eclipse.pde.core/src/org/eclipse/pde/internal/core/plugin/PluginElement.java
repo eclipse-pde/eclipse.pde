@@ -14,13 +14,23 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginAttribute;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.w3c.dom.*;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class PluginElement extends PluginParent implements IPluginElement {
 	private static final long serialVersionUID = 1L;
@@ -60,22 +70,27 @@ public class PluginElement extends PluginParent implements IPluginElement {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
+		}
 		if (obj instanceof IPluginElement) {
 			IPluginElement target = (IPluginElement) obj;
 			// Equivalent models must return false to get proper source range selection, see bug 267954.
-			if (target.getModel().equals(getModel()))
+			if (target.getModel().equals(getModel())) {
 				return false;
-			if (target.getAttributeCount() != getAttributeCount())
+			}
+			if (target.getAttributeCount() != getAttributeCount()) {
 				return false;
+			}
 			IPluginAttribute tatts[] = target.getAttributes();
 			for (IPluginAttribute tatt : tatts) {
 				IPluginAttribute att = getAttributeMap().get(tatt.getName());
-				if (att == null || att.equals(tatt) == false)
+				if (att == null || att.equals(tatt) == false) {
 					return false;
+				}
 			}
 			return super.equals(obj);
 		}
@@ -102,8 +117,9 @@ public class PluginElement extends PluginParent implements IPluginElement {
 	@Override
 	public int getAttributeCount() {
 		// if attributes are initialized, don't load the entire map to find the # of elements
-		if (fAttributes == null && fElement != null)
+		if (fAttributes == null && fElement != null) {
 			return fElement.getAttributeNames().length;
+		}
 		return getAttributeMap().size();
 	}
 
@@ -133,15 +149,17 @@ public class PluginElement extends PluginParent implements IPluginElement {
 
 	@Override
 	public String getText() {
-		if (fText == null && fElement != null)
+		if (fText == null && fElement != null) {
 			fText = fElement.getValue();
+		}
 		return fText;
 	}
 
 	void load(Node node) {
 		fName = node.getNodeName();
-		if (fAttributes == null)
+		if (fAttributes == null) {
 			fAttributes = new Hashtable<>();
+		}
 		NamedNodeMap attributes = node.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node attribute = attributes.item(i);
@@ -151,8 +169,9 @@ public class PluginElement extends PluginParent implements IPluginElement {
 			this.fAttributes.put(attribute.getNodeName(), att);
 		}
 
-		if (fChildren == null)
+		if (fChildren == null) {
 			fChildren = new ArrayList<>();
+		}
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -166,8 +185,9 @@ public class PluginElement extends PluginParent implements IPluginElement {
 			} else if (child.getNodeType() == Node.TEXT_NODE && child.getNodeValue() != null) {
 				String text = child.getNodeValue();
 				text = text.trim();
-				if (isNotEmpty(text))
+				if (isNotEmpty(text)) {
 					this.fText = text;
+				}
 			}
 		}
 	}
@@ -226,8 +246,9 @@ public class PluginElement extends PluginParent implements IPluginElement {
 			for (Iterator<IPluginAttribute> iter = getAttributeMap().values().iterator(); iter.hasNext();) {
 				IPluginAttribute attribute = iter.next();
 				attribute.write(newIndent, writer);
-				if (iter.hasNext())
+				if (iter.hasNext()) {
 					writer.println();
+				}
 			}
 		}
 		writer.println(">"); //$NON-NLS-1$
@@ -250,8 +271,9 @@ public class PluginElement extends PluginParent implements IPluginElement {
 				String[] names = fElement.getAttributeNames();
 				for (String name : names) {
 					IPluginAttribute attr = createAttribute(name, fElement.getAttribute(name));
-					if (attr != null)
+					if (attr != null) {
 						fAttributes.put(name, attr);
+					}
 				}
 			}
 		}
@@ -259,13 +281,14 @@ public class PluginElement extends PluginParent implements IPluginElement {
 	}
 
 	private IPluginAttribute createAttribute(String name, String value) {
-		if (name == null || value == null)
+		if (name == null || value == null) {
 			return null;
+		}
 		try {
 			IPluginAttribute attr = getPluginModel().getFactory().createAttribute(this);
-			if (attr instanceof PluginAttribute)
+			if (attr instanceof PluginAttribute) {
 				((PluginAttribute) attr).load(name, value);
-			else {
+			} else {
 				attr.setName(name);
 				attr.setValue(value);
 			}

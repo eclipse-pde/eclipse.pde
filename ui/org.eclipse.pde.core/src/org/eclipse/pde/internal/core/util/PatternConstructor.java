@@ -54,14 +54,16 @@ public class PatternConstructor {
 	 * @return The created pattern
 	 */
 	public static Pattern createPattern(String pattern, boolean isCaseSensitive) {
-		if (isCaseSensitive)
+		if (isCaseSensitive) {
 			return Pattern.compile(asRegEx(pattern, false));
+		}
 		return Pattern.compile(asRegEx(pattern, false), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 	}
 
 	public static Pattern createGroupedPattern(String pattern, boolean isCaseSensitive) {
-		if (isCaseSensitive)
+		if (isCaseSensitive) {
 			return Pattern.compile(asRegEx(pattern, true));
+		}
 		return Pattern.compile(asRegEx(pattern, true), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 	}
 

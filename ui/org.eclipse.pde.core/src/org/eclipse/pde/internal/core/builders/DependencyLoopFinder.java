@@ -15,7 +15,11 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.util.Vector;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 
 public class DependencyLoopFinder {
@@ -70,8 +74,9 @@ public class DependencyLoopFinder {
 			for (IPluginImport iimport : iimports) {
 				String id = iimport.getId();
 				//Be paranoid
-				if (id == null)
+				if (id == null) {
 					continue;
+				}
 				if (!exploredPlugins.contains(id)) {
 					// is plugin in list of non loop yielding plugins
 					//Commenting linear lookup - was very slow
@@ -120,8 +125,9 @@ public class DependencyLoopFinder {
 
 	private static IPlugin findPlugin(String id) {
 		IPluginModelBase childModel = PluginRegistry.findModel(id);
-		if (childModel == null || !(childModel instanceof IPluginModel))
+		if (childModel == null || !(childModel instanceof IPluginModel)) {
 			return null;
+		}
 		return (IPlugin) childModel.getPluginBase();
 	}
 

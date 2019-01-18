@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
@@ -25,7 +24,7 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 	private static final long serialVersionUID = 1L;
 	private String url;
 	private String description;
-	private int index;
+	private final int index;
 
 	public FeatureInfo(int index) {
 		this.index = index;
@@ -64,8 +63,9 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 			setDescription(newValue != null ? newValue.toString() : null);
 		} else if (name.equals(P_URL)) {
 			setURL(newValue != null ? newValue.toString() : null);
-		} else
+		} else {
 			super.restoreProperty(name, oldValue, newValue);
+		}
 	}
 
 	@Override
@@ -80,8 +80,9 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 	protected void parse(Node node) {
 		url = getNodeAttribute(node, "url"); //$NON-NLS-1$
 		Node firstChild = node.getFirstChild();
-		if (firstChild != null)
+		if (firstChild != null) {
 			description = getNormalizedText(firstChild.getNodeValue());
+		}
 	}
 
 	@Override
@@ -94,18 +95,21 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 			writer.print(" url=\"" + getWritableString(url) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		writer.println(">"); //$NON-NLS-1$
-		if (desc != null)
+		if (desc != null) {
 			writer.println(indent2 + desc);
+		}
 		writer.println(indent + "</" + getTag() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
 	public boolean isEmpty() {
-		if (url != null)
+		if (url != null) {
 			return false;
+		}
 		String desc = description != null ? description.trim() : null;
-		if (desc != null && desc.length() > 0)
+		if (desc != null && desc.length() > 0) {
 			return false;
+		}
 		return true;
 	}
 

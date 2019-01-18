@@ -17,10 +17,10 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class ExtensionDeltaEvent implements IExtensionDeltaEvent {
 
-	private IPluginModelBase[] added;
-	private IPluginModelBase[] changed;
-	private IPluginModelBase[] removed;
-	private int types;
+	private final IPluginModelBase[] added;
+	private final IPluginModelBase[] changed;
+	private final IPluginModelBase[] removed;
+	private final int types;
 
 	public ExtensionDeltaEvent(int types, IPluginModelBase[] added, IPluginModelBase[] removed, IPluginModelBase[] changed) {
 		this.types = types;

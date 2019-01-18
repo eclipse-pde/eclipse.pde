@@ -15,16 +15,28 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-import javax.xml.parsers.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.ManifestElement;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -92,21 +104,27 @@ public class PDEAuxiliaryState {
 	 */
 	private void createPluginInfo(Element element) {
 		PluginInfo info = new PluginInfo();
-		if (element.hasAttribute(ATTR_NAME))
+		if (element.hasAttribute(ATTR_NAME)) {
 			info.name = element.getAttribute(ATTR_NAME);
-		if (element.hasAttribute(ATTR_PROVIDER))
+		}
+		if (element.hasAttribute(ATTR_PROVIDER)) {
 			info.providerName = element.getAttribute(ATTR_PROVIDER);
-		if (element.hasAttribute(ATTR_CLASS))
+		}
+		if (element.hasAttribute(ATTR_CLASS)) {
 			info.className = element.getAttribute(ATTR_CLASS);
+		}
 		info.hasExtensibleAPI = "true".equals(element.getAttribute(ATTR_EXTENSIBLE_API)); //$NON-NLS-1$
 		info.isPatchFragment = "true".equals(element.getAttribute(ATTR_PATCH)); //$NON-NLS-1$
 		info.hasBundleStructure = !"false".equals(element.getAttribute(ATTR_BUNDLE_STRUCTURE)); //$NON-NLS-1$
-		if (element.hasAttribute(ATTR_PROJECT))
+		if (element.hasAttribute(ATTR_PROJECT)) {
 			info.project = element.getAttribute(ATTR_PROJECT);
-		if (element.hasAttribute(ATTR_LOCALIZATION))
+		}
+		if (element.hasAttribute(ATTR_LOCALIZATION)) {
 			info.localization = element.getAttribute(ATTR_LOCALIZATION);
-		if (element.hasAttribute(ATTR_BUNDLE_SOURCE))
+		}
+		if (element.hasAttribute(ATTR_BUNDLE_SOURCE)) {
 			info.bundleSourceEntry = element.getAttribute(ATTR_BUNDLE_SOURCE);
+		}
 
 		NodeList libs = element.getChildNodes();
 		ArrayList<String> list = new ArrayList<>(libs.getLength());
@@ -186,22 +204,30 @@ public class PDEAuxiliaryState {
 				Element element = doc.createElement(ELEMENT_BUNDLE);
 				element.setAttribute(ATTR_BUNDLE_ID, key);
 				PluginInfo info = fPluginInfos.get(key);
-				if (info.className != null)
+				if (info.className != null) {
 					element.setAttribute(ATTR_CLASS, info.className);
-				if (info.providerName != null)
+				}
+				if (info.providerName != null) {
 					element.setAttribute(ATTR_PROVIDER, info.providerName);
-				if (info.name != null)
+				}
+				if (info.name != null) {
 					element.setAttribute(ATTR_NAME, info.name);
-				if (info.hasExtensibleAPI)
+				}
+				if (info.hasExtensibleAPI) {
 					element.setAttribute(ATTR_EXTENSIBLE_API, "true"); //$NON-NLS-1$
-				if (info.isPatchFragment)
+				}
+				if (info.isPatchFragment) {
 					element.setAttribute(ATTR_PATCH, "true"); //$NON-NLS-1$
-				if (!info.hasBundleStructure)
+				}
+				if (!info.hasBundleStructure) {
 					element.setAttribute(ATTR_BUNDLE_STRUCTURE, "false"); //$NON-NLS-1$
-				if (info.localization != null)
+				}
+				if (info.localization != null) {
 					element.setAttribute(ATTR_LOCALIZATION, info.localization);
-				if (info.bundleSourceEntry != null)
+				}
+				if (info.bundleSourceEntry != null) {
 					element.setAttribute(ATTR_BUNDLE_SOURCE, info.bundleSourceEntry);
+				}
 				if (info.libraries != null) {
 					for (String library : info.libraries) {
 						Element lib = doc.createElement(ELEMENT_LIB);
@@ -236,8 +262,9 @@ public class PDEAuxiliaryState {
 				if (root != null) {
 					NodeList list = root.getChildNodes();
 					for (int i = 0; i < list.getLength(); i++) {
-						if (list.item(i).getNodeType() == Node.ELEMENT_NODE)
+						if (list.item(i).getNodeType() == Node.ELEMENT_NODE) {
 							createPluginInfo((Element) list.item(i));
+						}
 					}
 				}
 				return true;
@@ -279,27 +306,34 @@ public class PDEAuxiliaryState {
 			for (int i = 0; i < models.length; i++) {
 				IPluginBase plugin = models[i].getPluginBase();
 				BundleDescription desc = models[i].getBundleDescription();
-				if (desc == null)
+				if (desc == null) {
 					continue;
+				}
 				Element element = doc.createElement(ELEMENT_BUNDLE);
 				element.setAttribute(ATTR_BUNDLE_ID, Long.toString(desc.getBundleId()));
 				element.setAttribute(ATTR_PROJECT, models[i].getUnderlyingResource().getProject().getName());
-				if (plugin instanceof IPlugin && ((IPlugin) plugin).getClassName() != null)
+				if (plugin instanceof IPlugin && ((IPlugin) plugin).getClassName() != null) {
 					element.setAttribute(ATTR_CLASS, ((IPlugin) plugin).getClassName());
-				if (plugin.getProviderName() != null)
+				}
+				if (plugin.getProviderName() != null) {
 					element.setAttribute(ATTR_PROVIDER, plugin.getProviderName());
-				if (plugin.getName() != null)
+				}
+				if (plugin.getName() != null) {
 					element.setAttribute(ATTR_NAME, plugin.getName());
-				if (ClasspathUtilCore.hasExtensibleAPI(models[i]))
+				}
+				if (ClasspathUtilCore.hasExtensibleAPI(models[i])) {
 					element.setAttribute(ATTR_EXTENSIBLE_API, "true"); //$NON-NLS-1$
-				else if (ClasspathUtilCore.isPatchFragment(models[i]))
+				} else if (ClasspathUtilCore.isPatchFragment(models[i])) {
 					element.setAttribute(ATTR_PATCH, "true"); //$NON-NLS-1$
-				if (!(models[i] instanceof IBundlePluginModelBase))
+				}
+				if (!(models[i] instanceof IBundlePluginModelBase)) {
 					element.setAttribute(ATTR_BUNDLE_STRUCTURE, "false"); //$NON-NLS-1$
+				}
 				if (models[i] instanceof IBundlePluginModelBase) {
 					String localization = ((IBundlePluginModelBase) models[i]).getBundleLocalization();
-					if (localization != null)
+					if (localization != null) {
 						element.setAttribute(ATTR_LOCALIZATION, localization);
+					}
 				}
 				if (models[i] instanceof IBundlePluginModelBase) {
 					IBundleModel bundleModel = ((IBundlePluginModelBase) models[i]).getBundleModel();
@@ -314,8 +348,9 @@ public class PDEAuxiliaryState {
 				for (int j = 0; j < libraries.length; j++) {
 					Element lib = doc.createElement(ELEMENT_LIB);
 					lib.setAttribute(ATTR_NAME, libraries[j].getName());
-					if (!libraries[j].isExported())
+					if (!libraries[j].isExported()) {
 						lib.setAttribute(ATTR_EXPORTED, "false"); //$NON-NLS-1$
+					}
 					element.appendChild(lib);
 				}
 				root.appendChild(element);

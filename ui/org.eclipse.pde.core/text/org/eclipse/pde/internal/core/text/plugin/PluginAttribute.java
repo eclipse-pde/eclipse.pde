@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.text.plugin;
 
 import java.io.PrintWriter;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.internal.core.text.DocumentAttributeNode;
@@ -30,7 +29,7 @@ public class PluginAttribute extends PluginObjectNode implements IPluginAttribut
 	// element node class - which is wrong when implementing
 	// the document attribute node interface
 	// To work around this issue, we use an adaptor.
-	private DocumentAttributeNode fAttribute;
+	private final DocumentAttributeNode fAttribute;
 
 	private String fValue;
 

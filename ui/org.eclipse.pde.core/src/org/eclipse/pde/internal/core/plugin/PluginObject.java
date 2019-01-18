@@ -16,9 +16,19 @@ package org.eclipse.pde.internal.core.plugin;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Vector;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangeProvider;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.ISourceObject;
+import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelProvider;
@@ -104,8 +114,9 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 
 	@Override
 	public IPluginModelBase getPluginModel() {
-		if (fModel instanceof IBundlePluginModelProvider)
+		if (fModel instanceof IBundlePluginModelProvider) {
 			return ((IBundlePluginModelProvider) fModel).getBundlePluginModel();
+		}
 
 		return fModel instanceof IPluginModelBase ? (IPluginModelBase) fModel : null;
 	}
@@ -117,8 +128,9 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 
 	@Override
 	public String getTranslatedName() {
-		if (fTranslatedName != null && !fModel.isEditable())
+		if (fTranslatedName != null && !fModel.isEditable()) {
 			return fTranslatedName;
+		}
 		if (fTranslatedName == null && fName != null && fModel != null) {
 			fTranslatedName = fModel.getResourceString(fName);
 		}
@@ -127,8 +139,9 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 
 	String getNodeAttribute(Node node, String name) {
 		Node attribute = node.getAttributes().getNamedItem(name);
-		if (attribute != null)
+		if (attribute != null) {
 			return attribute.getNodeValue();
+		}
 		return null;
 	}
 
@@ -150,8 +163,9 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 
 	static boolean isNotEmpty(String text) {
 		for (int i = 0; i < text.length(); i++) {
-			if (Character.isWhitespace(text.charAt(i)) == false)
+			if (Character.isWhitespace(text.charAt(i)) == false) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -203,22 +217,26 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 
 	public Vector<String> addComments(Node node, Vector<String> result) {
 		for (Node prev = node.getPreviousSibling(); prev != null; prev = prev.getPreviousSibling()) {
-			if (prev.getNodeType() == Node.TEXT_NODE)
+			if (prev.getNodeType() == Node.TEXT_NODE) {
 				continue;
+			}
 			if (prev instanceof Comment) {
 				String comment = prev.getNodeValue();
-				if (result == null)
+				if (result == null) {
 					result = new Vector<>();
+				}
 				result.add(0, comment);
-			} else
+			} else {
 				break;
+			}
 		}
 		return result;
 	}
 
 	void writeComments(PrintWriter writer, Vector<?> source) {
-		if (source == null)
+		if (source == null) {
 			return;
+		}
 		for (int i = 0; i < source.size(); i++) {
 			String comment = (String) source.elementAt(i);
 			writer.println("<!--" + comment + "-->"); //$NON-NLS-1$ //$NON-NLS-2$

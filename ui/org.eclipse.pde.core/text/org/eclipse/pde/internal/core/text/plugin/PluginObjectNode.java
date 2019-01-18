@@ -18,10 +18,20 @@ import java.nio.charset.Charset;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangeProvider;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.plugin.IWritableDelimiter;
-import org.eclipse.pde.internal.core.text.*;
+import org.eclipse.pde.internal.core.text.DocumentElementNode;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
+import org.eclipse.pde.internal.core.text.IDocumentRange;
+import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 
 public class PluginObjectNode extends DocumentElementNode implements IPluginObject, IWritableDelimiter {
@@ -111,12 +121,14 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 	public boolean setXMLAttribute(String name, String value) {
 		// Overrided by necessity - dealing with different objects
 		String oldValue = getXMLAttributeValue(name);
-		if (oldValue != null && oldValue.equals(value))
+		if (oldValue != null && oldValue.equals(value)) {
 			return false;
+		}
 		PluginAttribute attr = (PluginAttribute) getNodeAttributesMap().get(name);
 		try {
-			if (value == null)
+			if (value == null) {
 				value = ""; //$NON-NLS-1$
+			}
 			if (attr == null) {
 				attr = new PluginAttribute();
 				attr.setName(name);
@@ -127,8 +139,9 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 			attr.setValue(value);
 		} catch (CoreException e) {
 		}
-		if (fInTheModel)
+		if (fInTheModel) {
 			firePropertyChanged(attr.getEnclosingElement(), attr.getAttributeName(), oldValue, value);
+		}
 		return true;
 	}
 
@@ -174,8 +187,9 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 		IDocumentAttributeNode attr = getDocumentAttribute(attrName);
 		if (attr != null) {
 			String value = attr.getAttributeValue();
-			if (value != null && value.trim().length() > 0 && !value.equals(defaultValue))
+			if (value != null && value.trim().length() > 0 && !value.equals(defaultValue)) {
 				buffer.append(" " + attr.write()); //$NON-NLS-1$
+			}
 		}
 	}
 

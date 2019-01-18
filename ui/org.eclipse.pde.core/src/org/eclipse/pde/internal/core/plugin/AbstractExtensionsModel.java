@@ -16,11 +16,9 @@ package org.eclipse.pde.internal.core.plugin;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -92,8 +90,9 @@ public abstract class AbstractExtensionsModel extends AbstractNLModel implements
 			parser.parse(stream, handler);
 			fExtensions.load(handler.getSchemaVersion());
 			setLoaded(true);
-			if (!outOfSync)
+			if (!outOfSync) {
 				updateTimeStamp();
+			}
 		} catch (ParserConfigurationException e) {
 		} catch (SAXException e) {
 		} catch (FactoryConfigurationError e) {
@@ -152,10 +151,12 @@ public abstract class AbstractExtensionsModel extends AbstractNLModel implements
 
 	@Override
 	public boolean isValid() {
-		if (!isLoaded())
+		if (!isLoaded()) {
 			return false;
-		if (fExtensions == null)
+		}
+		if (fExtensions == null) {
 			return false;
+		}
 		return fExtensions.isValid();
 	}
 }

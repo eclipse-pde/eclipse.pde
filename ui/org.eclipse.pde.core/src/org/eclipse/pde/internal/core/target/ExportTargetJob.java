@@ -15,16 +15,30 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.net.URI;
-import java.util.*;
-import org.eclipse.core.filesystem.*;
-import org.eclipse.core.runtime.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileSystem;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.p2.internal.repository.tools.Repo2Runnable;
 import org.eclipse.equinox.p2.internal.repository.tools.RepositoryDescriptor;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.p2.query.IQueryResult;
-import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetLocation;
+import org.eclipse.pde.core.target.NameVersionDescriptor;
+import org.eclipse.pde.core.target.TargetBundle;
+import org.eclipse.pde.core.target.TargetFeature;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 
@@ -33,13 +47,13 @@ import org.eclipse.pde.internal.core.PDECoreMessages;
  */
 public class ExportTargetJob extends Job {
 
-	private URI fDestination;
+	private final URI fDestination;
 	private boolean fclearDestinationDirectory = true;
 	private IFileStore featureDir;
 	private IFileStore pluginDir;
 	private IFileSystem fileSystem;
 	private Map<String, NameVersionDescriptor[]> filter;
-	private ITargetDefinition fTarget;
+	private final ITargetDefinition fTarget;
 
 	public ExportTargetJob(ITargetDefinition target, URI destination, boolean clearDestinationDirectory) {
 		super("Export Current Target Definition"); //$NON-NLS-1$
@@ -66,8 +80,9 @@ public class ExportTargetJob extends Job {
 			for (ITargetLocation targetLocation : containers) {
 				ITargetLocation container = targetLocation;
 				container.resolve(fTarget, monitor);
-				if (!(container instanceof IUBundleContainer))
+				if (!(container instanceof IUBundleContainer)) {
 					exportContainer(container, fTarget, featureDir, pluginDir, fileSystem, monitor);
+				}
 			}
 			exportProfile(fTarget, fDestination, monitor);
 		} catch (CoreException e) {
@@ -80,14 +95,15 @@ public class ExportTargetJob extends Job {
 
 	private void constructFilter(ITargetDefinition target) {
 		NameVersionDescriptor[] included = target.getIncluded();
-		if (included == null)
+		if (included == null) {
 			return;
+		}
 		filter = new HashMap<>();
 		for (NameVersionDescriptor inclusion : included) {
 			NameVersionDescriptor[] versions = filter.get(inclusion.getId());
-			if (versions == null)
+			if (versions == null) {
 				filter.put(inclusion.getId(), new NameVersionDescriptor[] {inclusion});
-			else {
+			} else {
 				NameVersionDescriptor[] versions2 = new NameVersionDescriptor[versions.length + 1];
 				System.arraycopy(versions, 0, versions2, 0, versions.length);
 				versions2[versions.length] = inclusion;
@@ -115,36 +131,42 @@ public class ExportTargetJob extends Job {
 
 	private boolean shouldExport(NameVersionDescriptor descriptor) {
 		// currently PDE does not selectively include/exclude features
-		if (filter == null || descriptor.getType().equals(NameVersionDescriptor.TYPE_FEATURE))
+		if (filter == null || descriptor.getType().equals(NameVersionDescriptor.TYPE_FEATURE)) {
 			return true;
+		}
 		NameVersionDescriptor[] versions = filter.get(descriptor.getId());
-		if (versions == null)
+		if (versions == null) {
 			return false;
+		}
 		for (NameVersionDescriptor nameVersionDescriptor : versions) {
 			String version = nameVersionDescriptor.getVersion();
-			if ((version == null || version.equals(descriptor.getVersion())) && descriptor.getType().equals(nameVersionDescriptor.getType()))
+			if ((version == null || version.equals(descriptor.getVersion())) && descriptor.getType().equals(nameVersionDescriptor.getType())) {
 				return true;
+			}
 		}
 		return false;
 	}
 
 	private boolean shouldExport(TargetFeature feature) {
-		if (filter == null)
+		if (filter == null) {
 			return true;
+		}
 		NameVersionDescriptor descriptor = new NameVersionDescriptor(feature.getId(), feature.getVersion(), NameVersionDescriptor.TYPE_FEATURE);
 		return shouldExport(descriptor);
 	}
 
 	private boolean shouldExport(TargetBundle bundle) {
-		if (filter == null)
+		if (filter == null) {
 			return true;
+		}
 		NameVersionDescriptor descriptor = new NameVersionDescriptor(bundle.getBundleInfo().getSymbolicName(), bundle.getBundleInfo().getVersion(), NameVersionDescriptor.TYPE_PLUGIN);
 		return shouldExport(descriptor);
 	}
 
 	private boolean shouldExport(IInstallableUnit iu) {
-		if (filter == null)
+		if (filter == null) {
 			return true;
+		}
 		NameVersionDescriptor descriptor = null;
 		String feature = getCapability(iu, "org.eclipse.update.feature"); //$NON-NLS-1$
 		if (feature != null) {
@@ -164,8 +186,9 @@ public class ExportTargetJob extends Job {
 
 	private String getCapability(IInstallableUnit iu, String namespace) {
 		for (IProvidedCapability capability : iu.getProvidedCapabilities()) {
-			if (capability.getNamespace().equals(namespace))
+			if (capability.getNamespace().equals(namespace)) {
 				return capability.getName();
+			}
 		}
 		return null;
 	}
@@ -175,8 +198,9 @@ public class ExportTargetJob extends Job {
 		if (features != null) {
 			monitor.subTask(PDECoreMessages.ExportTargetExportFeatures);
 			for (TargetFeature feature : features) {
-				if (shouldExport(feature))
+				if (shouldExport(feature)) {
 					copy(feature.getLocation(), featureDir, fileSystem, monitor);
+				}
 			}
 		}
 
@@ -184,8 +208,9 @@ public class ExportTargetJob extends Job {
 		if (bundles != null) {
 			monitor.subTask(PDECoreMessages.ExportTargetExportPlugins);
 			for (TargetBundle bundle : bundles) {
-				if (shouldExport(bundle))
+				if (shouldExport(bundle)) {
 					copy(bundle.getBundleInfo().getLocation().getPath(), pluginDir, fileSystem, monitor);
+				}
 			}
 		}
 	}
@@ -214,8 +239,9 @@ public class ExportTargetJob extends Job {
 		result.setLocation(location);
 		result.setKind(kind);
 		result.setName(name);
-		if (fclearDestinationDirectory)
+		if (fclearDestinationDirectory) {
 			result.setAppend(false);
+		}
 		return result;
 	}
 
@@ -229,8 +255,9 @@ public class ExportTargetJob extends Job {
 		ArrayList<IInstallableUnit> toExport = new ArrayList<>();
 		for (Object installableUnit : ius) {
 			IInstallableUnit iu = (IInstallableUnit) installableUnit;
-			if (shouldExport(iu))
+			if (shouldExport(iu)) {
 				toExport.add(iu);
+			}
 		}
 		exporter.setSourceIUs(toExport);
 		exporter.run(monitor);

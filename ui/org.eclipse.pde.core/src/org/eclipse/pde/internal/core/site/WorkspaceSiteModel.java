@@ -13,7 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -29,7 +34,7 @@ import org.eclipse.pde.internal.core.PDECore;
 public class WorkspaceSiteModel extends AbstractSiteModel implements IEditableModel {
 	private static final long serialVersionUID = 1L;
 	private boolean fDirty;
-	private IFile fFile;
+	private final IFile fFile;
 	private boolean fEditable = true;
 
 	public WorkspaceSiteModel(IFile file) {
@@ -46,8 +51,9 @@ public class WorkspaceSiteModel extends AbstractSiteModel implements IEditableMo
 		try {
 			IPath path = fFile.getLocation().removeLastSegments(1);
 			String installLocation = path.toOSString();
-			if (installLocation.startsWith("file:") == false) //$NON-NLS-1$
+			if (installLocation.startsWith("file:") == false) { //$NON-NLS-1$
 				installLocation = "file:" + installLocation; //$NON-NLS-1$
+			}
 			URL url = new URL(installLocation + "/"); //$NON-NLS-1$
 			String name = "site"; //$NON-NLS-1$
 			NLResourceHelper helper = new NLResourceHelper(name, new URL[] {url});
@@ -106,9 +112,9 @@ public class WorkspaceSiteModel extends AbstractSiteModel implements IEditableMo
 	public void load() {
 		if (fFile.exists()) {
 			try (InputStream stream = new BufferedInputStream(fFile.getContents(true));) {
-					if (stream.available() > 0)
+					if (stream.available() > 0) {
 						load(stream, false);
-					else {
+					} else {
 						// if we have an empty file, then mark as loaded so users changes will be saved
 						setLoaded(true);
 					}

@@ -15,7 +15,9 @@ package org.eclipse.pde.internal.core.text;
 
 import java.nio.charset.Charset;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IEditable;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangeProvider;
 
 public interface IEditingModel extends IModel, IModelChangeProvider, IReconcilingParticipant, IEditable {
 

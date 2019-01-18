@@ -14,7 +14,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -28,11 +33,11 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 
 	private static final long serialVersionUID = 1L;
 
-	private IFile fFile;
+	private final IFile fFile;
 
 	private boolean fDirty;
 
-	private boolean fEditable;
+	private final boolean fEditable;
 
 	public WorkspaceProductModel(IFile file, boolean editable) {
 		fFile = file;
@@ -43,9 +48,9 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 	public void load() throws CoreException {
 		if (fFile.exists()) {
 			try (InputStream stream = new BufferedInputStream(fFile.getContents(true))) {
-					if (stream.available() > 0)
+					if (stream.available() > 0) {
 						load(stream, false);
-					else {
+					} else {
 						// if we have an empty file, then mark as loaded so users changes will be saved
 						setLoaded(true);
 					}

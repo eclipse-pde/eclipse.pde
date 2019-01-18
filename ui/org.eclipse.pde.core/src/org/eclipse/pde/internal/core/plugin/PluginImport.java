@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.core.plugin;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Locale;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
@@ -123,19 +122,23 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
+		}
 		if (obj instanceof IPluginImport) {
 			IPluginImport target = (IPluginImport) obj;
 			// Objects from the same model must be
 			// binary equal
-			if (target.getModel().equals(getModel()))
+			if (target.getModel().equals(getModel())) {
 				return false;
+			}
 
-			if (target.getId().equals(getId()) && target.isReexported() == isReexported() && stringEqualWithNull(target.getVersion(), getVersion()) && target.getMatch() == getMatch() && target.isOptional() == isOptional())
+			if (target.getId().equals(getId()) && target.isReexported() == isReexported() && stringEqualWithNull(target.getVersion(), getVersion()) && target.getMatch() == getMatch() && target.isOptional() == isOptional()) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -151,8 +154,9 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 		this.match = NONE;
 		if (match != null) {
 			String lmatch = match.toLowerCase(Locale.ENGLISH);
-			if (lmatch.equals("exact")) //$NON-NLS-1$
+			if (lmatch.equals("exact")) { //$NON-NLS-1$
 				lmatch = RULE_EQUIVALENT;
+			}
 			for (int i = 0; i < RULE_NAME_TABLE.length; i++) {
 				if (lmatch.equals(RULE_NAME_TABLE[i])) {
 					this.match = i;
@@ -234,12 +238,15 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 		if ((modelBase instanceof IBundlePluginModelBase) == false) {
 			writer.print(indent);
 			writer.print("<import plugin=\"" + getId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-			if (isReexported())
+			if (isReexported()) {
 				writer.print(" export=\"true\""); //$NON-NLS-1$
-			if (isOptional())
+			}
+			if (isOptional()) {
 				writer.print(" optional=\"true\""); //$NON-NLS-1$
-			if (version != null && version.length() > 0)
+			}
+			if (version != null && version.length() > 0) {
 				writer.print(" version=\"" + version + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			if (match != NONE && match != COMPATIBLE) {
 				String matchValue = RULE_NAME_TABLE[match];
 				writer.print(" match=\"" + matchValue + "\""); //$NON-NLS-1$ //$NON-NLS-2$

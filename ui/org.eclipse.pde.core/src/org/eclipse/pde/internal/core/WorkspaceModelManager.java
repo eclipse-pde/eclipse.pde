@@ -13,9 +13,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
-import java.util.*;
-import org.eclipse.core.resources.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.ListIterator;
+import java.util.Map;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
@@ -25,10 +39,12 @@ import org.eclipse.team.core.RepositoryProvider;
 public abstract class WorkspaceModelManager extends AbstractModelManager implements IResourceChangeListener, IResourceDeltaVisitor {
 
 	public static boolean isPluginProject(IProject project) {
-		if (project == null)
+		if (project == null) {
 			return false;
-		if (project.isOpen())
+		}
+		if (project.isOpen()) {
 			return PDEProject.getManifest(project).exists() || PDEProject.getPluginXml(project).exists() || PDEProject.getFragmentXml(project).exists();
+		}
 		return false;
 	}
 
@@ -80,14 +96,16 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 	private ArrayList<ModelChange> fChangedModels;
 
 	protected synchronized void initialize() {
-		if (fModels != null)
+		if (fModels != null) {
 			return;
+		}
 
 		fModels = Collections.synchronizedMap(new LinkedHashMap<IProject, IModel>());
 		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
 		for (IProject project : projects) {
-			if (isInterestingProject(project))
+			if (isInterestingProject(project)) {
 				createModel(project, false);
+			}
 		}
 		addListeners();
 	}
@@ -184,11 +202,13 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 
 	protected void addChange(Object model, int eventType) {
 		if (model instanceof IModel) {
-			if (fChangedModels == null)
+			if (fChangedModels == null) {
 				fChangedModels = new ArrayList<>();
+			}
 			ModelChange change = new ModelChange((IModel) model, eventType);
-			if (!fChangedModels.contains(change))
+			if (!fChangedModels.contains(change)) {
 				fChangedModels.add(change);
+			}
 		}
 	}
 
@@ -198,8 +218,9 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 	}
 
 	protected void processModelChanges(String changeId, ArrayList<ModelChange> changedModels) {
-		if (changedModels == null)
+		if (changedModels == null) {
 			return;
+		}
 
 		if (changedModels.isEmpty()) {
 			return;
@@ -223,12 +244,15 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 		}
 
 		int type = 0;
-		if (!added.isEmpty())
+		if (!added.isEmpty()) {
 			type |= IModelProviderEvent.MODELS_ADDED;
-		if (!removed.isEmpty())
+		}
+		if (!removed.isEmpty()) {
 			type |= IModelProviderEvent.MODELS_REMOVED;
-		if (!changed.isEmpty())
+		}
+		if (!changed.isEmpty()) {
 			type |= IModelProviderEvent.MODELS_CHANGED;
+		}
 
 		if (type != 0) {
 			createAndFireEvent(changeId, type, added, removed, changed);
@@ -239,10 +263,11 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 		IFile file = (IFile) model.getUnderlyingResource();
 		try (InputStream stream = new BufferedInputStream(file.getContents(true));) {
 
-			if (reload)
+			if (reload) {
 				model.reload(stream, false);
-			else
+			} else {
 				model.load(stream, false);
+			}
 		} catch (CoreException | IOException e) {
 			PDECore.logException(e);
 		}

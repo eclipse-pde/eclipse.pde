@@ -17,13 +17,21 @@ package org.eclipse.pde.internal.core.exports;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.Properties;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
@@ -64,12 +72,13 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
 		} finally {
 			for (Object item : fInfo.items) {
-				if (item instanceof IModel)
+				if (item instanceof IModel) {
 					try {
 						deleteBuildFiles(item);
 					} catch (CoreException e) {
 						PDECore.log(e);
 					}
+				}
 			}
 			cleanup(subMonitor.split(3));
 		}
@@ -88,8 +97,9 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 
 	private void createBuildPropertiesFile(String featureLocation) {
 		File file = new File(featureLocation);
-		if (!file.exists() || !file.isDirectory())
+		if (!file.exists() || !file.isDirectory()) {
 			file.mkdirs();
+		}
 		Properties prop = new Properties();
 		prop.put("pde", "marker"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -111,11 +121,13 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 						bundle = ((IPluginModelBase) item).getBundleDescription();
 					}
 					if (bundle == null) {
-						if (item instanceof BundleDescription)
+						if (item instanceof BundleDescription) {
 							bundle = (BundleDescription) item;
+						}
 					}
-					if (bundle == null)
+					if (bundle == null) {
 						continue;
+					}
 					if (shouldAddPlugin(bundle, environment)) {
 						prop.put("generate.plugin@" + bundle.getSymbolicName() + ".source", bundle.getSymbolicName()); //$NON-NLS-1$ //$NON-NLS-2$
 					}

@@ -48,8 +48,9 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	@Override
 	public boolean exists() {
 		String location = getModel().getInstallLocation();
-		if (location.startsWith("file:")) //$NON-NLS-1$
+		if (location.startsWith("file:")) { //$NON-NLS-1$
 			location = location.substring(5);
+		}
 		File file = new File(location + File.separator + getId());
 		return file.exists();
 	}
@@ -259,8 +260,9 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 			setDownloadSize(newValue != null ? ((Integer) newValue).intValue() : 0);
 		} else if (name.equals(P_INSTALL_SIZE)) {
 			setInstallSize(newValue != null ? ((Integer) newValue).intValue() : 0);
-		} else
+		} else {
 			super.restoreProperty(name, oldValue, newValue);
+		}
 	}
 
 	@Override

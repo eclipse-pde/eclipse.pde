@@ -14,9 +14,7 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.InputStream;
-
 import javax.xml.parsers.SAXParser;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
@@ -51,8 +49,9 @@ public abstract class AbstractSiteModel extends AbstractModel implements ISiteMo
 
 	@Override
 	public ISiteModelFactory getFactory() {
-		if (factory == null)
+		if (factory == null) {
 			factory = new SiteModelFactory(this);
+		}
 		return factory;
 	}
 
@@ -73,8 +72,9 @@ public abstract class AbstractSiteModel extends AbstractModel implements ISiteMo
 
 	@Override
 	public boolean isValid() {
-		if (!isLoaded() || site == null)
+		if (!isLoaded() || site == null) {
 			return false;
+		}
 		return site.isValid();
 	}
 
@@ -87,8 +87,9 @@ public abstract class AbstractSiteModel extends AbstractModel implements ISiteMo
 			if (handler.isPrepared()) {
 				processDocument(handler.getDocument());
 				setLoaded(true);
-				if (!outOfSync)
+				if (!outOfSync) {
 					updateTimeStamp();
+				}
 			}
 		} catch (Exception e) {
 			PDECore.logException(e);
@@ -108,8 +109,9 @@ public abstract class AbstractSiteModel extends AbstractModel implements ISiteMo
 
 	@Override
 	public void reload(InputStream stream, boolean outOfSync) throws CoreException {
-		if (site != null)
+		if (site != null) {
 			site.reset();
+		}
 		load(stream, outOfSync);
 		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[] {site}, null));
 	}

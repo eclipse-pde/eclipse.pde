@@ -16,7 +16,9 @@ package org.eclipse.pde.internal.core.text;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.TreeMap;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
@@ -41,8 +43,8 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	private transient IDocumentElementNode fPreviousSibling;
 	private transient int fIndent;
 
-	private ArrayList<IDocumentElementNode> fChildren;
-	private TreeMap<String, IDocumentAttributeNode> fAttributes;
+	private final ArrayList<IDocumentElementNode> fChildren;
+	private final TreeMap<String, IDocumentAttributeNode> fAttributes;
 	private String fTag;
 	private IDocumentTextNode fTextNode;
 
@@ -222,8 +224,9 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	@Override
 	public IDocumentElementNode getChildAt(int index) {
 		// Used by text edit operations
-		if (index < fChildren.size())
+		if (index < fChildren.size()) {
 			return fChildren.get(index);
+		}
 		return null;
 	}
 
@@ -378,8 +381,9 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		// Used by text edit operations
 		ArrayList<IDocumentAttributeNode> list = new ArrayList<>();
 		Iterator<IDocumentAttributeNode> iter = fAttributes.values().iterator();
-		while (iter.hasNext())
+		while (iter.hasNext()) {
 			list.add(iter.next());
+		}
 		return list.toArray(new IDocumentAttributeNode[list.size()]);
 	}
 
@@ -419,11 +423,13 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		child1.setPreviousSibling(index2 == 0 ? null : (IDocumentElementNode) fChildren.get(index2 - 1));
 		child2.setPreviousSibling(index1 == 0 ? null : (IDocumentElementNode) fChildren.get(index1 - 1));
 
-		if (index1 < fChildren.size() - 1)
+		if (index1 < fChildren.size() - 1) {
 			fChildren.get(index1 + 1).setPreviousSibling(child2);
+		}
 
-		if (index2 < fChildren.size() - 1)
+		if (index2 < fChildren.size() - 1) {
 			fChildren.get(index2 + 1).setPreviousSibling(child1);
+		}
 	}
 
 	@Override

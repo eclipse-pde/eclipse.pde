@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
-
 import org.eclipse.pde.internal.core.iproduct.IAboutInfo;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.w3c.dom.Element;
@@ -36,8 +35,9 @@ public class AboutInfo extends ProductObject implements IAboutInfo {
 	public void setText(String text) {
 		String old = fAboutText;
 		fAboutText = text;
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged(P_TEXT, old, fAboutText);
+		}
 	}
 
 	@Override
@@ -49,8 +49,9 @@ public class AboutInfo extends ProductObject implements IAboutInfo {
 	public void setImagePath(String path) {
 		String old = fImagePath;
 		fImagePath = path;
-		if (isEditable())
+		if (isEditable()) {
 			firePropertyChanged(P_IMAGE, old, fImagePath);
+		}
 	}
 
 	@Override
@@ -62,8 +63,9 @@ public class AboutInfo extends ProductObject implements IAboutInfo {
 	public void write(String indent, PrintWriter writer) {
 		if (isAboutImageDefined() || isAboutTextDefined()) {
 			writer.println(indent + "<aboutInfo>"); //$NON-NLS-1$
-			if (isAboutImageDefined())
+			if (isAboutImageDefined()) {
 				writer.println(indent + "   <image path=\"" + getWritableString(fImagePath.trim()) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			if (isAboutTextDefined()) {
 				writer.println(indent + "   <text>"); //$NON-NLS-1$
 				writer.println(indent + "      " + getWritableString(fAboutText.trim())); //$NON-NLS-1$
@@ -93,8 +95,9 @@ public class AboutInfo extends ProductObject implements IAboutInfo {
 					child.normalize();
 					if (child.getChildNodes().getLength() > 0) {
 						Node text = child.getFirstChild();
-						if (text.getNodeType() == Node.TEXT_NODE)
+						if (text.getNodeType() == Node.TEXT_NODE) {
 							fAboutText = ((Text) text).getData().trim();
+						}
 					}
 				}
 			}

@@ -15,7 +15,10 @@ package org.eclipse.pde.internal.core.builders;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
 
 public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 
@@ -29,8 +32,9 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 	public void validate(IProgressMonitor monitor) {
 		fMonitor = monitor;
 		Element root = getDocumentRoot();
-		if (root == null)
+		if (root == null) {
 			return;
+		}
 		String elementName = root.getNodeName();
 		if (!"site".equals(elementName)) { //$NON-NLS-1$
 			reportIllegalElement(root, CompilerFlags.ERROR);
@@ -62,8 +66,9 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 	private void validateArchives(Element root) {
 		NodeList list = getChildrenByName(root, "archive"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
-			if (fMonitor.isCanceled())
+			if (fMonitor.isCanceled()) {
 				return;
+			}
 			Element element = (Element) list.item(i);
 			assertAttributeDefined(element, "path", CompilerFlags.ERROR); //$NON-NLS-1$
 			assertAttributeDefined(element, "url", CompilerFlags.ERROR); //$NON-NLS-1$
@@ -86,8 +91,9 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 	private void validateCategoryDefinitions(Element root) {
 		NodeList list = getChildrenByName(root, "category-def"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
-			if (fMonitor.isCanceled())
+			if (fMonitor.isCanceled()) {
 				return;
+			}
 			Element element = (Element) list.item(i);
 			assertAttributeDefined(element, "name", CompilerFlags.ERROR); //$NON-NLS-1$
 			assertAttributeDefined(element, "label", CompilerFlags.ERROR); //$NON-NLS-1$
@@ -109,8 +115,9 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 	private void validateCategories(Element root) {
 		NodeList list = getChildrenByName(root, "category"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
-			if (fMonitor.isCanceled())
+			if (fMonitor.isCanceled()) {
 				return;
+			}
 			Element element = (Element) list.item(i);
 			assertAttributeDefined(element, "name", CompilerFlags.ERROR); //$NON-NLS-1$
 			NamedNodeMap attributes = element.getAttributes();
@@ -155,12 +162,14 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 	private void validateDescription(Element parent) {
 		NodeList list = getChildrenByName(parent, "description"); //$NON-NLS-1$
 		if (list.getLength() > 0) {
-			if (fMonitor.isCanceled())
+			if (fMonitor.isCanceled()) {
 				return;
+			}
 			Element element = (Element) list.item(0);
 			validateElementWithContent((Element) list.item(0), true);
-			if (element.getAttributeNode("url") != null) //$NON-NLS-1$
+			if (element.getAttributeNode("url") != null) { //$NON-NLS-1$
 				validateURL(element, "url"); //$NON-NLS-1$
+			}
 			reportExtraneousElements(list, 1);
 		}
 	}

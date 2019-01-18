@@ -16,8 +16,13 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import org.eclipse.pde.internal.core.ischema.*;
-import org.w3c.dom.*;
+import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
+import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * XMLElementProposalComputer

@@ -14,10 +14,25 @@
 package org.eclipse.pde.internal.core;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.*;
-import java.util.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
@@ -32,7 +47,9 @@ import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.update.configurator.ConfiguratorUtils;
-import org.osgi.framework.*;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
 
 public class PDECore extends Plugin implements DebugOptionsListener {
 	public static final String PLUGIN_ID = "org.eclipse.pde.core"; //$NON-NLS-1$
@@ -95,13 +112,15 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	}
 
 	public static void log(IStatus status) {
-		if (status != null)
+		if (status != null) {
 			ResourcesPlugin.getPlugin().getLog().log(status);
+		}
 	}
 
 	public static void log(Throwable e) {
-		if (e instanceof InvocationTargetException)
+		if (e instanceof InvocationTargetException) {
 			e = ((InvocationTargetException) e).getTargetException();
+		}
 		IStatus status = null;
 		if (e instanceof CoreException || e.getMessage() != null) {
 			status = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, e.getMessage(), e);
@@ -125,10 +144,12 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		if (e instanceof CoreException) {
 			status = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, e);
 		} else {
-			if (message == null)
+			if (message == null) {
 				message = e.getMessage();
-			if (message == null)
+			}
+			if (message == null) {
 				message = e.toString();
+			}
 			status = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, e);
 		}
 		log(status);
@@ -178,8 +199,9 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		}
 
 		for (IPluginModelBase plugin : registryPlugins) {
-			if (plugin.getPluginBase().getId().equals(id))
+			if (plugin.getPluginBase().getId().equals(id)) {
 				return plugin;
+			}
 		}
 		return null;
 	}
@@ -201,14 +223,16 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	}
 
 	public synchronized TargetDefinitionManager getTargetProfileManager() {
-		if (fTargetProfileManager == null)
+		if (fTargetProfileManager == null) {
 			fTargetProfileManager = new TargetDefinitionManager();
+		}
 		return fTargetProfileManager;
 	}
 
 	public synchronized FeatureModelManager getFeatureModelManager() {
-		if (fFeatureModelManager == null)
+		if (fFeatureModelManager == null) {
 			fFeatureModelManager = new FeatureModelManager();
+		}
 		return fFeatureModelManager;
 	}
 
@@ -217,8 +241,9 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	}
 
 	public synchronized SchemaRegistry getSchemaRegistry() {
-		if (fSchemaRegistry == null)
+		if (fSchemaRegistry == null) {
 			fSchemaRegistry = new SchemaRegistry();
+		}
 		return fSchemaRegistry;
 	}
 
@@ -230,8 +255,9 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	}
 
 	public synchronized SourceLocationManager getSourceLocationManager() {
-		if (fSourceLocationManager == null)
+		if (fSourceLocationManager == null) {
 			fSourceLocationManager = new SourceLocationManager();
+		}
 		return fSourceLocationManager;
 	}
 
@@ -250,14 +276,16 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	}
 
 	public synchronized JavadocLocationManager getJavadocLocationManager() {
-		if (fJavadocLocationManager == null)
+		if (fJavadocLocationManager == null) {
 			fJavadocLocationManager = new JavadocLocationManager();
+		}
 		return fJavadocLocationManager;
 	}
 
 	public synchronized TracingOptionsManager getTracingOptionsManager() {
-		if (fTracingOptionsManager == null)
+		if (fTracingOptionsManager == null) {
 			fTracingOptionsManager = new TracingOptionsManager();
+		}
 		return fTracingOptionsManager;
 	}
 
@@ -376,8 +404,9 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	 */
 	public <T> T acquireService(Class<T> serviceClass) {
 		ServiceReference<T> reference = fBundleContext.getServiceReference(serviceClass);
-		if (reference == null)
+		if (reference == null) {
 			return null;
+		}
 		T service = fBundleContext.getService(reference);
 		if (service != null) {
 			fBundleContext.ungetService(reference);

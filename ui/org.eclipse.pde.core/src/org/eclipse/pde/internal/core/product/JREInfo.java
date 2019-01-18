@@ -16,7 +16,9 @@ package org.eclipse.pde.internal.core.product;
 
 import java.io.File;
 import java.io.PrintWriter;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.internal.core.iproduct.IJREInfo;
@@ -63,26 +65,30 @@ public class JREInfo extends ProductObject implements IJREInfo {
 		if (Platform.OS_WIN32.equals(os)) {
 			IPath old = fJVMWin;
 			fJVMWin = jreContainerPath;
-			if (isEditable())
+			if (isEditable()) {
 				firePropertyChanged(JRE_WIN, old, fJVMWin);
+			}
 		} else if (Platform.OS_LINUX.equals(os)) {
 			IPath old = fJVMLin;
 			fJVMLin = jreContainerPath;
-			if (isEditable())
+			if (isEditable()) {
 				firePropertyChanged(JRE_LIN, old, fJVMLin);
+			}
 		} else if (Platform.OS_MACOSX.equals(os)) {
 			IPath old = fJVMMac;
 			fJVMMac = jreContainerPath;
-			if (isEditable())
+			if (isEditable()) {
 				firePropertyChanged(JRE_MAC, old, fJVMMac);
+			}
 		}
 	}
 
 	@Override
 	public File getJVMLocation(String os) {
 		IPath jreContainerPath = getJREContainerPath(os);
-		if (jreContainerPath == null) // no vm was specified
+		if (jreContainerPath == null) {
 			return null;
+		}
 		IVMInstall vm = JavaRuntime.getVMInstall(jreContainerPath);
 		if (vm != null) {
 			return vm.getInstallLocation();
@@ -179,18 +185,21 @@ public class JREInfo extends ProductObject implements IJREInfo {
 		if (Platform.OS_WIN32.equals(os)) {
 			Boolean old = Boolean.valueOf(bIncludeWin);
 			bIncludeWin = includeJRE;
-			if (isEditable())
+			if (isEditable()) {
 				firePropertyChanged(JRE_WIN, old, Boolean.valueOf(bIncludeWin));
+			}
 		} else if (Platform.OS_LINUX.equals(os)) {
 			Boolean old = Boolean.valueOf(bIncludeLin);
 			bIncludeLin = includeJRE;
-			if (isEditable())
+			if (isEditable()) {
 				firePropertyChanged(JRE_LIN, old, Boolean.valueOf(bIncludeLin));
+			}
 		} else if (Platform.OS_MACOSX.equals(os)) {
 			Boolean old = Boolean.valueOf(bIncludeMac);
 			bIncludeMac = includeJRE;
-			if (isEditable())
+			if (isEditable()) {
 				firePropertyChanged(JRE_MAC, old, Boolean.valueOf(bIncludeMac));
+			}
 		}
 	}
 

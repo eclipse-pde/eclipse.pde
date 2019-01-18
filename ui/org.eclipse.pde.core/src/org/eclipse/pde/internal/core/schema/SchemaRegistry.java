@@ -19,7 +19,13 @@ import java.net.URL;
 import java.util.HashMap;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SourceLocationManager;
 import org.eclipse.pde.internal.core.ischema.ISchema;
@@ -29,20 +35,22 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public class SchemaRegistry {
 
-	private HashMap<String, ISchemaDescriptor> fRegistry = new HashMap<>();
+	private final HashMap<String, ISchemaDescriptor> fRegistry = new HashMap<>();
 
 	public ISchema getSchema(String extPointID) {
 		IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(extPointID);
 		if (point == null) {
 			// if there is an old schema associated with this extension point, release it.
-			if (fRegistry.containsKey(extPointID))
+			if (fRegistry.containsKey(extPointID)) {
 				fRegistry.remove(extPointID);
+			}
 			return null;
 		}
 
 		URL url = getSchemaURL(point);
-		if (url == null)
+		if (url == null) {
 			return null;
+		}
 
 		ISchemaDescriptor desc = getExistingDescriptor(extPointID, url);
 		if (desc == null) {
@@ -56,8 +64,9 @@ public class SchemaRegistry {
 	public ISchema getIncludedSchema(ISchemaDescriptor parent, String schemaLocation) {
 		try {
 			URL url = IncludedSchemaDescriptor.computeURL(parent, schemaLocation, null);
-			if (url == null)
+			if (url == null) {
 				return null;
+			}
 
 			ISchemaDescriptor desc = getExistingDescriptor(url.toString(), url);
 			if (desc == null) {
@@ -74,8 +83,9 @@ public class SchemaRegistry {
 		ISchemaDescriptor desc = null;
 		if (fRegistry.containsKey(key)) {
 			desc = fRegistry.get(key);
-			if (hasSchemaChanged(desc, url))
+			if (hasSchemaChanged(desc, url)) {
 				desc = null;
+			}
 		}
 		return desc;
 	}
@@ -94,13 +104,15 @@ public class SchemaRegistry {
 
 	public static URL getSchemaURL(IPluginExtensionPoint point) {
 		String schema = point.getSchema();
-		if (schema == null || schema.trim().length() == 0)
+		if (schema == null || schema.trim().length() == 0) {
 			return null;
+		}
 
 		IPluginModelBase model = point.getPluginModel();
 		URL url = getSchemaURL(model.getPluginBase().getId(), schema);
-		if (url == null)
+		if (url == null) {
 			url = getSchemaFromSourceExtension(point.getPluginBase(), new Path(schema));
+		}
 		return url;
 	}
 
@@ -110,8 +122,9 @@ public class SchemaRegistry {
 	}
 
 	public static URL getSchemaURL(String pluginID, String schema) {
-		if (pluginID == null)
+		if (pluginID == null) {
 			return null;
+		}
 
 		URL url = null;
 		ModelEntry entry = PluginRegistry.findEntry(pluginID);
@@ -119,15 +132,17 @@ public class SchemaRegistry {
 			IPluginModelBase[] models = entry.getWorkspaceModels();
 			for (IPluginModelBase model : models) {
 				url = getSchemaURL(model, schema);
-				if (url != null)
+				if (url != null) {
 					break;
+				}
 			}
 			if (url == null) {
 				models = entry.getExternalModels();
 				for (IPluginModelBase model : models) {
 					url = getSchemaURL(model, schema);
-					if (url != null)
+					if (url != null) {
 						break;
+					}
 				}
 			}
 		}
@@ -136,18 +151,21 @@ public class SchemaRegistry {
 
 	private static URL getSchemaURL(IPluginModelBase model, String schema) {
 		try {
-			if (model == null)
+			if (model == null) {
 				return null;
+			}
 
 			String location = model.getInstallLocation();
-			if (location == null)
+			if (location == null) {
 				return null;
+			}
 
 			File file = new File(location);
 			if (file.isDirectory()) {
 				File schemaFile = new File(file, schema);
-				if (schemaFile.exists())
+				if (schemaFile.exists()) {
 					return schemaFile.toURL();
+				}
 			} else if (CoreUtility.jarContainsResource(file, schema, false)) {
 				return new URL("jar:file:" + file.getAbsolutePath() + "!/" + schema); //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -157,8 +175,9 @@ public class SchemaRegistry {
 	}
 
 	private boolean hasSchemaChanged(ISchemaDescriptor desc, URL url) {
-		if (!desc.getSchemaURL().equals(url))
+		if (!desc.getSchemaURL().equals(url)) {
 			return true;
+		}
 		File file = new File(url.getFile());
 		return (desc.getLastModified() != file.lastModified());
 	}
