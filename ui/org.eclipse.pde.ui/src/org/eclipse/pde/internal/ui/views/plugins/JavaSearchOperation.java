@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2015 IBM Corporation and others.
+ *  Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,8 @@
 package org.eclipse.pde.internal.ui.views.plugins;
 
 import java.lang.reflect.InvocationTargetException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
@@ -34,11 +35,20 @@ public class JavaSearchOperation implements IRunnableWithProgress {
 	@Override
 	public void run(IProgressMonitor monitor) throws InvocationTargetException {
 		try {
-			SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
-			if (fAdd)
-				manager.addToJavaSearch(fModels);
-			else
-				manager.removeFromJavaSearch(fModels);
+			Job job = new Job("Updating Java Workspace Scope") { //$NON-NLS-1$
+				@Override
+				public IStatus run(IProgressMonitor monitor) {
+					SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
+					if (fAdd)
+						manager.addToJavaSearch(fModels);
+					else
+						manager.removeFromJavaSearch(fModels);
+					return Status.OK_STATUS;
+				}
+			};
+			job.setSystem(false);
+			job.schedule();
+
 		} finally {
 			monitor.done();
 		}
