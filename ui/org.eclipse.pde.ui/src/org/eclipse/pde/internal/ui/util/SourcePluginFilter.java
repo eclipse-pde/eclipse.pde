@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
+import java.util.function.Predicate;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -23,7 +24,7 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
-public class SourcePluginFilter extends ViewerFilter {
+public class SourcePluginFilter extends ViewerFilter implements Predicate<IPluginModelBase> {
 
 	private PDEState fState;
 
@@ -42,15 +43,22 @@ public class SourcePluginFilter extends ViewerFilter {
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (element instanceof IPluginModelBase) {
-			IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
-			boolean showSourceBundles = store.getBoolean(IPreferenceConstants.PROP_SHOW_SOURCE_BUNDLES);
-			if (fState != null && !showSourceBundles) {
-				BundleDescription description = ((IPluginModelBase) element).getBundleDescription();
-				if (description != null) {
-					return fState.getBundleSourceEntry(description.getBundleId()) == null;
-				}
+			return test((IPluginModelBase) element);
+		}
+		return true;
+	}
+
+	@Override
+	public boolean test(IPluginModelBase element) {
+		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
+		boolean showSourceBundles = store.getBoolean(IPreferenceConstants.PROP_SHOW_SOURCE_BUNDLES);
+		if (fState != null && !showSourceBundles) {
+			BundleDescription description = element.getBundleDescription();
+			if (description != null) {
+				return fState.getBundleSourceEntry(description.getBundleId()) == null;
 			}
 		}
+
 		return true;
 	}
 

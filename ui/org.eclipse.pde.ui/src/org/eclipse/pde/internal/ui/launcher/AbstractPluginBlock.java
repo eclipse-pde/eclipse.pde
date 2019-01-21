@@ -279,7 +279,7 @@ public abstract class AbstractPluginBlock {
 	 */
 	protected IPluginModelBase[] getExternalModels() {
 		if (fExternalModels == null) {
-			fExternalModels = PluginRegistry.getExternalModels();
+			fExternalModels = collectModelsToDisplay(PluginRegistry.getExternalModels());
 		}
 		return fExternalModels;
 	}
@@ -291,16 +291,17 @@ public abstract class AbstractPluginBlock {
 	 */
 	protected IPluginModelBase[] getWorkspaceModels() {
 		if (fWorkspaceModels == null) {
-			IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-			ArrayList<IPluginModelBase> list = new ArrayList<>(models.length);
-			for (IPluginModelBase model : models) {
-				if (model.getBundleDescription() != null) {
-					list.add(model);
-				}
-			}
-			fWorkspaceModels = list.toArray(new IPluginModelBase[list.size()]);
+			fWorkspaceModels = collectModelsToDisplay(PluginRegistry.getWorkspaceModels());
 		}
 		return fWorkspaceModels;
+	}
+
+	private IPluginModelBase[] collectModelsToDisplay(IPluginModelBase[] models) {
+		SourcePluginFilter sourcePluginFilter = new SourcePluginFilter();
+		return Arrays.stream(models)
+				.filter(model -> model.getBundleDescription() != null)
+				.filter(sourcePluginFilter)
+				.toArray(IPluginModelBase[]::new);
 	}
 
 	protected void updateCounter() {
@@ -436,7 +437,6 @@ public abstract class AbstractPluginBlock {
 		fExternalPlugins = new NamedElement(PDEUIMessages.PluginsTab_target, siteImage);
 
 		fPluginTreeViewer.addFilter(new Filter());
-		fPluginTreeViewer.addFilter(new SourcePluginFilter());
 
 		Tree tree = fPluginTreeViewer.getTree();
 
