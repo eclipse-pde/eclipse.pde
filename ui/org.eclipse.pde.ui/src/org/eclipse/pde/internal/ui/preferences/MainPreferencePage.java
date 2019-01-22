@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -410,6 +410,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fAddToJavaSearch.setSelection(store.getDefaultBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH));
 		fShowTargetStatus.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TARGET_STATUS));
 		fAlwaysPreferWorkspace.setSelection(store.getDefaultBoolean(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET));
+		fDisableAPIAnalysisBuilder.setSelection(store.getDefaultBoolean(IPreferenceConstants.DISABLE_API_ANALYSIS_BUILDER));
 		fTestPluginPatternText.setText(store.getDefaultString(IPreferenceConstants.TEST_PLUGIN_PATTERN));
 		PDEPreferencesManager launchingStore = PDELaunchingPlugin.getDefault().getPreferenceManager();
 		boolean runtimeLocationIsContainer = launchingStore.getDefaultBoolean(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION_IS_CONTAINER);
