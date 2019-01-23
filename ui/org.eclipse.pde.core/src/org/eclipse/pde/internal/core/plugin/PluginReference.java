@@ -42,10 +42,14 @@ public class PluginReference extends PlatformObject {
 
 	public IPlugin getPlugin() {
 		if (fPlugin == null && fId != null) {
-			IPluginModelBase model = PluginRegistry.findModel(fId);
+			IPluginModelBase model = findModel();
 			fPlugin = model instanceof IPluginModel ? ((IPluginModel) model).getPlugin() : null;
 		}
 		return fPlugin;
+	}
+
+	protected IPluginModelBase findModel() {
+		return PluginRegistry.findModel(fId);
 	}
 
 	@Override

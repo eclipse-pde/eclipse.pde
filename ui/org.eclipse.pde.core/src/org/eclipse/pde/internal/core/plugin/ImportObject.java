@@ -17,27 +17,18 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.core.IWritable;
-import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 
 public class ImportObject extends PluginReference implements IWritable, Serializable, IWritableDelimiter {
 
 	private static final long serialVersionUID = 1L;
-	private IPluginImport iimport;
-
-	public ImportObject() {
-		super();
-	}
+	private final IPluginImport iimport;
 
 	public ImportObject(IPluginImport iimport) {
 		super(iimport.getId());
-		this.iimport = iimport;
-	}
-
-	public ImportObject(IPluginImport iimport, IPlugin plugin) {
-		super(plugin);
 		this.iimport = iimport;
 	}
 
@@ -91,6 +82,11 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 		if (iimport instanceof PluginImport) {
 			((PluginImport) iimport).writeDelimeter(writer);
 		}
+	}
+
+	@Override
+	protected IPluginModelBase findModel() {
+		return PluginRegistry.findModel(getId(), iimport.getVersion(), iimport.getMatch(), null);
 	}
 
 }
