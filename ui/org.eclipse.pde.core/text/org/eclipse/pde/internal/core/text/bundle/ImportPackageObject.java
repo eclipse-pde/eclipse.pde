@@ -14,9 +14,13 @@
 package org.eclipse.pde.internal.core.text.bundle;
 
 import java.io.PrintWriter;
+import java.util.Arrays;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.osgi.framework.Constants;
@@ -94,6 +98,16 @@ public class ImportPackageObject extends PackageObject {
 		} else if (fVersionAttribute != null && fVersionAttribute.equalsIgnoreCase(propertyName)) {
 			setVersion(newValue.toString());
 		}
+	}
+
+	public boolean isResolved() {
+		PDEState pdeState = PDECore.getDefault().getModelManager().getState();
+		ExportPackageDescription[] exportedPackages = pdeState.getState().getExportedPackages();
+
+		VersionRange versionRange = new VersionRange(getVersion());
+		return Arrays.stream(exportedPackages)
+				.filter(p -> p.getName().equals(getName()))
+				.anyMatch(p -> versionRange.isIncluded(p.getVersion()));
 	}
 
 }

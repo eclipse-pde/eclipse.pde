@@ -806,7 +806,18 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public Image getObjectImage(PackageObject obj) {
-		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
+		int flags = 0;
+		if (obj instanceof ImportPackageObject) {
+			ImportPackageObject importPackageObject = (ImportPackageObject) obj;
+			if (importPackageObject.isOptional()) {
+				flags |= F_OPTIONAL;
+			}
+			if (!importPackageObject.isResolved()) {
+				flags |= importPackageObject.isOptional() ? F_WARNING : F_ERROR;
+			}
+		}
+		ImageDescriptor desc = JavaUI.getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_PACKAGE);
+		return get(desc, flags);
 	}
 
 	private Image getObjectImage(IStatus status) {
