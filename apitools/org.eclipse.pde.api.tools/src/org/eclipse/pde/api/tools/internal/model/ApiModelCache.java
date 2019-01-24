@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -116,7 +116,7 @@ public final class ApiModelCache {
 		switch (element.getType()) {
 			case IApiElement.TYPE: {
 				if (fRootCache == null) {
-					fRootCache = new Cache<>(DEFAULT_CACHE_SIZE / 10, DEFAULT_OVERFLOW / 10);
+					fRootCache = new Cache<>(DEFAULT_CACHE_SIZE / 150, DEFAULT_OVERFLOW / 150);
 				}
 				IApiComponent comp = element.getApiComponent();
 				if (comp != null) {
