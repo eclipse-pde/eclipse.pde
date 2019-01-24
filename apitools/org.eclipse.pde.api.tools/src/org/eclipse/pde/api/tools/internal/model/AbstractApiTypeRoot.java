@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,6 +30,8 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
  */
 public abstract class AbstractApiTypeRoot extends ApiElement implements IApiTypeRoot {
 
+	private IApiType fType;
+
 	/**
 	 * Constructor
 	 *
@@ -44,6 +46,11 @@ public abstract class AbstractApiTypeRoot extends ApiElement implements IApiType
 
 	@Override
 	public IApiType getStructure() throws CoreException {
+		// if exists return
+		if (fType != null) {
+			return fType;
+		}
+
 		ApiModelCache cache = ApiModelCache.getCache();
 		IApiComponent comp = getApiComponent();
 		IApiType type = null;
@@ -67,7 +74,9 @@ public abstract class AbstractApiTypeRoot extends ApiElement implements IApiType
 				cache.cacheElementInfo(type);
 			}
 		}
-		return type;
+
+		fType = type;
+		return fType;
 	}
 
 	/**
