@@ -13,17 +13,15 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import java.io.File;
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.p2.metadata.InstallableUnit;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
@@ -43,15 +41,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * Tests for the IU bundle container
  */
 public class IUBundleContainerTests extends AbstractTargetTest {
-	protected File tempFile;
-
-	@Override
-	protected void tearDown() throws Exception {
-		if (tempFile != null) {
-			tempFile.delete();
-		}
-		super.tearDown();
-	}
 
 	/**
 	 * Returns the metadata repository at the specified location.
@@ -88,8 +77,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @return installable unit
 	 */
 	protected IInstallableUnit getUnit(String id, IMetadataRepository repository) {
-		IQueryResult<IInstallableUnit> result = repository.query(QueryUtil.createIUQuery(id), null);
-		IInstallableUnit[] units  = result.toArray(IInstallableUnit.class);
+		IQueryResult result = repository.query(QueryUtil.createIUQuery(id), null);
+		IInstallableUnit[] units = (IInstallableUnit[]) result.toArray(IInstallableUnit.class);
 		if (units.length == 1) {
 			return units[0];
 		}
@@ -108,8 +97,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 			IUBundleContainer container = createContainer(features1);
 			ITargetDefinition target = getTargetService().newTarget();
 			target.setTargetLocations(new ITargetLocation[]{container});
-			List<BundleInfo> infos = getAllBundleInfos(target);
-			Set<String> names = collectAllSymbolicNames(infos);
+			List infos = getAllBundleInfos(target);
+			Set names = collectAllSymbolicNames(infos);
 			assertEquals(expectedBundles.length, infos.size());
 			for (String expectedBundle : expectedBundles) {
 				assertTrue("Missing: " + expectedBundle, names.contains(expectedBundle));
@@ -125,9 +114,9 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 				assertTrue("Missing: " + element, names.contains(element));
 			}
 
-			List<String> profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
+			List profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 			assertEquals(1, profiles.size());
-			String id = profiles.get(0);
+			String id = (String) profiles.get(0);
 			assertTrue("Unexpected profile GC'd", id.endsWith(target.getHandle().getMemento()));
 
 		} finally {
@@ -144,38 +133,6 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	public void testResolveRequiredFeatures() throws Exception {
 		String[] bundles = new String[]{"bundle.a1", "bundle.a2", "bundle.a3", "bundle.b1", "bundle.b2", "bundle.b3"};
 		doResolutionTest(new String[]{"feature.b.feature.group"}, bundles);
-	}
-
-	/**
-	 * P2TargetUtils should not consume much memory if all target definitions
-	 * are deleted
-	 */
-	public void testSynchronizerLeak() throws Exception {
-		ITargetPlatformService service = getTargetService();
-		URI[] uris = new URI[] { getURI("/tests/sites/site.a.b") };
-
-		long bundleCount = 0;
-		long memoryLimit = usedMemory() + 200_000_000;
-		for (int i = 0; i < 1000; i++) {
-			ITargetDefinition target = service.newTarget();
-			try {
-				IInstallableUnit[] units = new IInstallableUnit[10000];
-				for (int m = 0; m < units.length; m++) {
-					InstallableUnit unit = new InstallableUnit();
-					unit.setId("bundle.a" + (bundleCount++));
-					units[m] = unit;
-				}
-				IUBundleContainer container = createContainer(units, uris, 0);
-				target.setTargetLocations(new ITargetLocation[] { container });
-			} finally {
-				// Free up memory and disk used by target
-				service.deleteTarget(target.getHandle());
-				P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
-			}
-			// If we omit this assertion, further tests won't be executed due
-			// to VM fatal error
-			assertTrue("Memory should not be consumed if all targets are deleted", usedMemory() < memoryLimit);
-		}
 	}
 
 	/**
@@ -267,16 +224,16 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 			IUBundleContainer container = createContainer(unitIds);
 			ITargetDefinition target = getTargetService().newTarget();
 			target.setTargetLocations(new ITargetLocation[]{container});
-			List<BundleInfo> infos = getAllBundleInfos(target);
-			Set<String> names = collectAllSymbolicNames(infos);
+			List infos = getAllBundleInfos(target);
+			Set names = collectAllSymbolicNames(infos);
 			assertEquals(bundleIds.length, infos.size());
 
 			for (String bundleId : bundleIds) {
 				assertTrue("Missing: " + bundleId, names.contains(bundleId));
 			}
-			List<String> profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
+			List profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 			assertEquals(1, profiles.size());
-			String id = profiles.get(0);
+			String id = (String) profiles.get(0);
 			assertTrue("Unexpected profile GC'd", id.endsWith(target.getHandle().getMemento()));
 		} finally {
 			// Always clean any profiles, even if the test failed to prevent cascading failures
@@ -296,24 +253,25 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		IUBundleContainer container = createContainer(unitIds);
 		ITargetDefinition target = getTargetService().newTarget();
 		target.setTargetLocations(new ITargetLocation[]{container});
-		tempFile = File.createTempFile("targetDefinition", null);
-		ITextFileBuffer fileBuffer = getTextFileBufferFromFile(tempFile);
-		TargetDefinitionPersistenceHelper.persistXML(target, fileBuffer);
+
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		TargetDefinitionPersistenceHelper.persistXML(target, outputStream);
 		ITargetDefinition definitionB = getTargetService().newTarget();
-		TargetDefinitionPersistenceHelper.initFromXML(definitionB, fileBuffer);
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+		TargetDefinitionPersistenceHelper.initFromXML(definitionB, inputStream);
 		assertTrue("Target content not equal",((TargetDefinition)target).isContentEqual(definitionB));
 
 		// resolve the restored target and ensure bundles are correct
-		List<BundleInfo> infos = getAllBundleInfos(definitionB);
-		Set<String> names = collectAllSymbolicNames(infos);
+		List infos = getAllBundleInfos(definitionB);
+		Set names = collectAllSymbolicNames(infos);
 		assertEquals(bundleIds.length, infos.size());
 
 		for (String bundleId : bundleIds) {
 			assertTrue("Missing: " + bundleId, names.contains(bundleId));
 		}
-		List<String> profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
+		List profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 		assertEquals(1, profiles.size());
-		String id = profiles.get(0);
+		String id = (String) profiles.get(0);
 		assertTrue("Unexpected profile GC'd", id.endsWith(definitionB.getHandle().getMemento()));
 	}
 
@@ -345,7 +303,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 			IPluginModelBase[] externalBundles = PDECore.getDefault().getModelManager().getExternalModelManager().getAllModels();
 			assertEquals("Wrong number of external bundles", 3, externalBundles.length);
 			// expected bundles
-			Set<String> expected = new HashSet<>();
+			Set expected = new HashSet();
 			expected.add("bundle.a1");
 			expected.add("bundle.a2");
 			expected.add("bundle.a3");
@@ -434,8 +392,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		IUBundleContainer c2 = createContainer(new String[]{"feature.b.feature.group"});
 		target.setTargetLocations(new IUBundleContainer[]{c2});
 
-		List<BundleInfo> infos = getAllBundleInfos(target);
-		Set<String> names = collectAllSymbolicNames(infos);
+		List infos = getAllBundleInfos(target);
+		Set names = collectAllSymbolicNames(infos);
 		String[] bundleIds = new String[]{"bundle.a1", "bundle.a2", "bundle.a3", "bundle.b1", "bundle.b2", "bundle.b3"};
 		assertEquals(bundleIds.length, infos.size());
 
@@ -445,7 +403,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 		getTargetService().deleteTarget(target.getHandle());
 
-		List<String> profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
+		List profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 		assertEquals(0, profiles.size());
 	}
 
@@ -468,8 +426,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		IUBundleContainer c2 = createContainer(new String[]{"feature.a.feature.group"});
 		target.setTargetLocations(new IUBundleContainer[]{c2});
 
-		List<BundleInfo> infos = getAllBundleInfos(target);
-		Set<String> names = collectAllSymbolicNames(infos);
+		List infos = getAllBundleInfos(target);
+		Set names = collectAllSymbolicNames(infos);
 		String[] bundleIds = new String[]{"bundle.a1", "bundle.a2", "bundle.a3"};
 		assertEquals(bundleIds.length, infos.size());
 
@@ -479,7 +437,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 
 		getTargetService().deleteTarget(target.getHandle());
 
-		List<String> profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
+		List profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 		assertEquals(0, profiles.size());
 	}
 
@@ -496,8 +454,8 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		IStatus resolve = target.resolve(null);
 		assertTrue(resolve.isOK());
 
-		List<BundleInfo> infos = getBundleInfos(c1);
-		Set<String> names = collectAllSymbolicNames(infos);
+		List infos = getBundleInfos(c1);
+		Set names = collectAllSymbolicNames(infos);
 		String[] bundleIds = new String[]{"bundle.a1", "bundle.a2", "bundle.a3"};
 		assertEquals(bundleIds.length, infos.size());
 
@@ -514,7 +472,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 			assertTrue("Missing: " + bundleId, names.contains(bundleId));
 		}
 
-		List<String> profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
+		List profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
 		assertEquals(1, profiles.size());
 	}
 
@@ -555,12 +513,12 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	public void deserializationTest(IUBundleContainer location) throws Exception {
 		ITargetDefinition td = getTargetService().newTarget();
 		td.setTargetLocations(new ITargetLocation[] {location});
-		tempFile = File.createTempFile("targetDefinition", null);
-		ITextFileBuffer fileBuffer = getTextFileBufferFromFile(tempFile);
-		TargetDefinitionPersistenceHelper.persistXML(td, fileBuffer);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		TargetDefinitionPersistenceHelper.persistXML(td, out);
+		String xml = new String(out.toByteArray());
 		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		parser.setErrorHandler(new DefaultHandler());
-		Document doc = parser.parse(new InputSource(fileBuffer.getFileStore().openInputStream(0, null)));
+		Document doc = parser.parse(new InputSource(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))));
 
 		ITargetDefinition definition = getTargetService().newTarget();
 		Element root = doc.getDocumentElement();
@@ -588,10 +546,4 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		String actualValue = xml.substring(start, start + String.valueOf(expectedValue).length()) ;
 		assertEquals(String.valueOf(expectedValue), actualValue);
 	}
-
-	private long usedMemory() {
-		System.gc();
-		return Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-	}
-
 }

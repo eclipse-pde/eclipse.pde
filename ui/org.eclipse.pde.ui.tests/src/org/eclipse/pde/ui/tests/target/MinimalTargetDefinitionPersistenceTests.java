@@ -13,12 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import java.io.File;
+import java.io.*;
 import java.net.*;
 import java.util.HashSet;
 import java.util.Set;
 import junit.framework.TestCase;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -38,15 +37,6 @@ import org.osgi.framework.ServiceReference;
  *
  */
 public class MinimalTargetDefinitionPersistenceTests extends TestCase {
-	protected File tempFile;
-
-	@Override
-	protected void tearDown() throws Exception {
-		if (tempFile != null) {
-			tempFile.delete();
-		}
-		super.tearDown();
-	}
 
 	protected void assertTargetDefinitionsEqual(ITargetDefinition targetA, ITargetDefinition targetB) {
 		assertTrue("Target content not equal", ((TargetDefinition) targetA).isContentEqual(targetB));
@@ -185,11 +175,11 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 */
 	public void testPersistEmptyDefinition() throws Exception {
 		ITargetDefinition definitionA = getTargetService().newTarget();
-		tempFile = File.createTempFile("targetDefinition", null);
-		ITextFileBuffer fileBuffer = AbstractTargetTest.getTextFileBufferFromFile(tempFile);
-		TargetDefinitionPersistenceHelper.persistXML(definitionA, fileBuffer);
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		TargetDefinitionPersistenceHelper.persistXML(definitionA, outputStream);
 		ITargetDefinition definitionB = getTargetService().newTarget();
-		TargetDefinitionPersistenceHelper.initFromXML(definitionB, fileBuffer);
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+		TargetDefinitionPersistenceHelper.initFromXML(definitionB, inputStream);
 		assertTargetDefinitionsEqual(definitionA, definitionB);
 	}
 
@@ -206,7 +196,9 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 				.getEntry("/tests/targets/target-files/" + name + ".trgt");
 		File file = new File(FileLocator.toFileURL(url).getFile());
 		ITargetDefinition target = getTargetService().newTarget();
-		TargetDefinitionPersistenceHelper.initFromXML(target, AbstractTargetTest.getTextFileBufferFromFile(file));
+		try (FileInputStream stream = new FileInputStream(file)) {
+			TargetDefinitionPersistenceHelper.initFromXML(target, stream);
+		}
 		return target;
 	}
 
@@ -285,7 +277,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 
 		NameVersionDescriptor[] infos = target.getImplicitDependencies();
 		assertEquals("Wrong number of implicit dependencies", 2, infos.length);
-		Set<String> set = new HashSet<>();
+		Set set = new HashSet();
 		for (NameVersionDescriptor info : infos) {
 			set.add(info.getId());
 		}
@@ -566,7 +558,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 * @throws CoreException
 	 *             if something goes wrong
 	 */
-	protected void validateTypeAndLocation(ITargetLocation container, Class<?> clazz, String rawLocation)
+	protected void validateTypeAndLocation(ITargetLocation container, Class clazz, String rawLocation)
 			throws CoreException {
 		assertTrue(clazz.isInstance(container));
 		assertEquals(rawLocation, container.getLocation(false));

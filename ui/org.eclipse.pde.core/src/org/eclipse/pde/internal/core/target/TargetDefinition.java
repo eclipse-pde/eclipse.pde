@@ -17,6 +17,8 @@ package org.eclipse.pde.internal.core.target;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +35,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -776,12 +777,12 @@ public class TargetDefinition implements ITargetDefinition {
 	/**
 	 * Build contents from the given stream.
 	 *
-	 * @param input
-	 *                  input file buffer
+	 * @param stream
+	 *            input stream
 	 * @throws CoreException
-	 *                           if an error occurs
+	 *             if an error occurs
 	 */
-	void setContents(ITextFileBuffer input) throws CoreException {
+	void setContents(InputStream stream) throws CoreException {
 		try {
 			fArch = null;
 			fContainers = null;
@@ -797,7 +798,7 @@ public class TargetDefinition implements ITargetDefinition {
 			fSequenceNumber = 0;
 			fDocument = null;
 			fRoot = null;
-			TargetDefinitionPersistenceHelper.initFromXML(this, input);
+			TargetDefinitionPersistenceHelper.initFromXML(this, stream);
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			setDocument(createNewDocument());
 			abort(Messages.TargetDefinition_0, e);
@@ -807,14 +808,19 @@ public class TargetDefinition implements ITargetDefinition {
 	/**
 	 * Persists contents to the given stream.
 	 *
-	 * @param output
-	 *                   output file buffer
+	 * @param stream
+	 *            output stream
 	 * @throws CoreException
-	 *                           if an error occurs
+	 *             if an error occurs
 	 */
-	void write(ITextFileBuffer output) throws CoreException {
+	void write(OutputStream stream) throws CoreException {
 		try {
-			TargetDefinitionPersistenceHelper.persistXML(this, output);
+			if (fContainers != null && fContainers.length != 0) {
+				Element containersElement = TargetDefinitionDocumentTools.getChildElement(fRoot,
+						TargetDefinitionPersistenceHelper.LOCATIONS);
+				serializeBundleContainers(fContainers, containersElement);
+			}
+			TargetDefinitionPersistenceHelper.persistXML(this, stream);
 		} catch (IOException | ParserConfigurationException | TransformerException | SAXException e) {
 			abort(Messages.TargetDefinition_3, e);
 		}
