@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.actions.OpenAction;
@@ -81,7 +82,6 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	private DisabledFilter fHideExtEnabledFilter = new DisabledFilter(true);
 	private DisabledFilter fHideExtDisabledFilter = new DisabledFilter(false);
 	private WorkspaceFilter fHideWorkspaceFilter = new WorkspaceFilter();
-	private SourcePluginFilter fSourcePluginFilter = new SourcePluginFilter();
 	private JavaFilter fJavaFilter = new JavaFilter();
 	private CopyToClipboardAction fCopyAction;
 	private Clipboard fClipboard;
@@ -558,7 +558,24 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		fHideWorkspaceFilterAction.setChecked(!hideWorkspace);
 		fHideExtEnabledFilterAction.setChecked(!hideEnabledExternal);
 		fHideExtDisabledFilterAction.setChecked(!hideDisabledExternal);
-		fTreeViewer.addFilter(fSourcePluginFilter);
+
+		if (PDECore.getDefault().getModelManager().isInitialized()) {
+			PDEState state = PDECore.getDefault().getModelManager().getState();
+			fTreeViewer.addFilter(new SourcePluginFilter(state));
+		} else {
+			// when TP state is not initialized yet defer computation to
+			// background
+			// job and apply the filter when it is available
+			Job.createSystem("", monitor -> { //$NON-NLS-1$
+				PDEState state = TargetPlatformHelper.getPDEState();
+				Tree tree = fTreeViewer.getTree();
+				if (!tree.isDisposed()) {
+					tree.getDisplay().asyncExec(() -> {
+						fTreeViewer.addFilter(new SourcePluginFilter(state));
+					});
+				}
+			}).schedule();
+		}
 	}
 
 	private void hookContextMenu() {
