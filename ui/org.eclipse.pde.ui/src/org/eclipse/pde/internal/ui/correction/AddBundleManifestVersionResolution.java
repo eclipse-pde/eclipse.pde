@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
@@ -23,8 +24,8 @@ import org.osgi.framework.Constants;
  */
 public class AddBundleManifestVersionResolution extends AbstractManifestMarkerResolution {
 
-	public AddBundleManifestVersionResolution() {
-		super(AbstractPDEMarkerResolution.CREATE_TYPE);
+	public AddBundleManifestVersionResolution(IMarker marker) {
+		super(AbstractPDEMarkerResolution.CREATE_TYPE, marker);
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2015 IBM Corporation and others.
+ *  Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -22,13 +23,14 @@ public class RemoveInternalDirectiveEntryResolution extends AbstractManifestMark
 
 	private String fPackageName;
 
-	public RemoveInternalDirectiveEntryResolution(int type, String packageName) {
-		super(type);
+	public RemoveInternalDirectiveEntryResolution(int type, String packageName, IMarker marker) {
+		super(type, marker);
 		fPackageName = packageName;
 	}
 
 	@Override
 	protected void createChange(BundleModel model) {
+		fPackageName= marker.getAttribute("packageName", (String) null); //$NON-NLS-1$
 		IManifestHeader header = model.getBundle().getManifestHeader(Constants.EXPORT_PACKAGE);
 		if (header instanceof ExportPackageHeader) {
 			ExportPackageObject exportedPackage = ((ExportPackageHeader) header).getPackage(fPackageName);

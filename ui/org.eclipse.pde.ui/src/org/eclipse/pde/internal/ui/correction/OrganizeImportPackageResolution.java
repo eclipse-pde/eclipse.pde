@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifest;
@@ -21,8 +22,8 @@ public class OrganizeImportPackageResolution extends AbstractManifestMarkerResol
 
 	private boolean fRemoveImports;
 
-	public OrganizeImportPackageResolution(int type, boolean removeImports) {
-		super(type);
+	public OrganizeImportPackageResolution(int type, boolean removeImports, IMarker marker) {
+		super(type, marker);
 		fRemoveImports = removeImports;
 	}
 

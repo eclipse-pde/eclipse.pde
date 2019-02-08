@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2015 IBM Corporation and others.
+ *  Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
@@ -23,8 +24,8 @@ public class RemoveImportExportServicesResolution extends AbstractManifestMarker
 
 	String fServiceHeader;
 
-	public RemoveImportExportServicesResolution(int type, String serviceHeader) {
-		super(type);
+	public RemoveImportExportServicesResolution(int type, String serviceHeader, IMarker marker) {
+		super(type, marker);
 		fServiceHeader = serviceHeader;
 	}
 

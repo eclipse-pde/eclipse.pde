@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -30,7 +30,7 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 	protected String fLocationPath;
 
 	public AbstractXMLMarkerResolution(int resolutionType, IMarker marker) {
-		super(resolutionType);
+		super(resolutionType, marker);
 		try {
 			fLocationPath = (String) marker.getAttribute(PDEMarkerFactory.MPK_LOCATION_PATH);
 		} catch (CoreException e) {
@@ -46,6 +46,10 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 	}
 
 	protected Object findNode(IPluginModelBase base) {
+		try {
+			fLocationPath = (String) marker.getAttribute(PDEMarkerFactory.MPK_LOCATION_PATH);
+		} catch (CoreException e) {
+		}
 		if (fLocationPath == null)
 			return null;
 

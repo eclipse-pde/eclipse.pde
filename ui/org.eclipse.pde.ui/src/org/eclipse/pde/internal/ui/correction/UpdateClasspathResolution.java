@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -24,8 +24,8 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class UpdateClasspathResolution extends AbstractPDEMarkerResolution {
 
-	public UpdateClasspathResolution(int type) {
-		super(type);
+	public UpdateClasspathResolution(int type, IMarker marker) {
+		super(type, marker);
 	}
 
 	@Override

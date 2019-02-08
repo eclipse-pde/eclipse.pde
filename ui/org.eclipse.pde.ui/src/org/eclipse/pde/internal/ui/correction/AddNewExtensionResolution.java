@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
@@ -25,8 +26,8 @@ import org.eclipse.ui.IEditorPart;
 
 public class AddNewExtensionResolution extends AbstractPDEMarkerResolution {
 
-	public AddNewExtensionResolution(int type) {
-		super(type);
+	public AddNewExtensionResolution(int type, IMarker marker) {
+		super(type, marker);
 	}
 
 	@Override

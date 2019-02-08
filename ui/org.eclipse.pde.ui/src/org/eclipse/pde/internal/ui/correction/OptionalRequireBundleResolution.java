@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -22,13 +23,14 @@ public class OptionalRequireBundleResolution extends AbstractManifestMarkerResol
 
 	private String fBundleId;
 
-	public OptionalRequireBundleResolution(int type, String bundleId) {
-		super(type);
+	public OptionalRequireBundleResolution(int type, String bundleId, IMarker marker) {
+		super(type, marker);
 		fBundleId = bundleId;
 	}
 
 	@Override
 	protected void createChange(BundleModel model) {
+		fBundleId= marker.getAttribute("bundleId", (String) null); //$NON-NLS-1$
 		Bundle bundle = (Bundle) model.getBundle();
 		RequireBundleHeader header = (RequireBundleHeader) bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
 		if (header != null) {

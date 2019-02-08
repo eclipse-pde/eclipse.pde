@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 IBM Corporation and others.
+ * Copyright (c) 2017, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -45,12 +45,10 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 public class ConfigureProblemSeverityForPDECompilerResolution extends AbstractManifestMarkerResolution
 		implements IJavaCompletionProposal, IMarkerResolutionRelevance {
 	private static final String CONFIGURE_PROBLEM_SEVERITY_DIALOG_ID = "configure_problem_severity_dialog_id_compiler"; //$NON-NLS-1$
-	IMarker marker = null;
 	String id = ""; //$NON-NLS-1$
 
 	public ConfigureProblemSeverityForPDECompilerResolution(IMarker mker, int type, String key) {
-		super(type);
-		marker = mker;
+		super(type, mker);
 		id = key;
 	}
 

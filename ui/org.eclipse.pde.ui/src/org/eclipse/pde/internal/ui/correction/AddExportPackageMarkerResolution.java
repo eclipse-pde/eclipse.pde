@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2018 IBM Corporation and others.
+ *  Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -13,10 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
-import java.util.HashSet;
 import java.util.regex.Pattern;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
@@ -28,10 +26,9 @@ import org.osgi.framework.Constants;
 public class AddExportPackageMarkerResolution extends AbstractManifestMarkerResolution {
 
 	private String fValues;
-	IMarker marker = null;
 
 	public AddExportPackageMarkerResolution(IMarker mark, int type, String values) {
-		super(type);
+		super(type, mark);
 		this.fValues = values;
 		this.marker = mark;
 	}
@@ -39,12 +36,6 @@ public class AddExportPackageMarkerResolution extends AbstractManifestMarkerReso
 	@Override
 	public String getLabel() {
 		return PDEUIMessages.AddExportPackageResolution_Label;
-	}
-
-	@Override
-	public void run(IMarker marker) {
-		this.marker = marker;
-		super.run(marker);
 	}
 
 	@Override
@@ -76,20 +67,6 @@ public class AddExportPackageMarkerResolution extends AbstractManifestMarkerReso
 			if (pat.matcher(packageId).matches())
 				obj.setInternal(true);
 		}
-	}
-
-	@Override
-	public IMarker[] findOtherMarkers(IMarker[] markers) {
-		HashSet<IMarker> mset = new HashSet<>(markers.length);
-		for (IMarker iMarker : markers) {
-			if (iMarker.equals(marker))
-				continue;
-			String str = iMarker.getAttribute(PDEMarkerFactory.compilerKey, ""); //$NON-NLS-1$
-			if (str.equals(marker.getAttribute(PDEMarkerFactory.compilerKey, ""))) //$NON-NLS-1$
-				mset.add(iMarker);
-		}
-		int size = mset.size();
-		return mset.toArray(new IMarker[size]);
 	}
 
 }

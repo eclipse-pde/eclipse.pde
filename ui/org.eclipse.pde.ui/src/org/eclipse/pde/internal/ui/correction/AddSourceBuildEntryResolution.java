@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -22,6 +22,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.builders.PDEBuilderHelper;
+import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.text.build.Build;
 import org.eclipse.pde.internal.core.text.build.BuildEntry;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -39,6 +40,11 @@ public class AddSourceBuildEntryResolution extends BuildEntryMarkerResolution {
 
 	@Override
 	protected void createChange(Build build) {
+		try {
+			fEntry = (String) marker.getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY);
+			fToken = (String) marker.getAttribute(PDEMarkerFactory.BK_BUILD_TOKEN);
+		} catch (CoreException e) {
+		}
 		try {
 			BuildEntry buildEntry = (BuildEntry) build.getEntry(fEntry);
 			boolean unlistedOnly = true;
