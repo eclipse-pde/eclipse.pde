@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc. and others
+ * Copyright (c) 2017, 2019 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,6 +24,8 @@ import org.eclipse.osgi.internal.framework.EquinoxBundle;
 import org.eclipse.osgi.storage.BundleInfo.Generation;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.builders.CompilerFlags;
+import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.internal.ui.wizards.WizardElement;
@@ -159,6 +161,12 @@ public class TestPDETemplates {
 		this.project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 
 		IMarker[] markers = this.project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+
+		// ignore missing package export marker
+		if (markers.length == 1 && CompilerFlags.P_MISSING_EXPORT_PKGS
+				.equals(markers[0].getAttribute(PDEMarkerFactory.compilerKey, ""))) {
+			markers = new IMarker[0];
+		}
 		if (markers.length > 0) {
 			System.out.println("Template '" + template.getLabel() + "' generates errors.");
 			for (IMarker marker : markers) {
