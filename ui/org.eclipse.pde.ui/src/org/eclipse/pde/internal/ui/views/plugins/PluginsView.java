@@ -566,7 +566,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 			// when TP state is not initialized yet defer computation to
 			// background
 			// job and apply the filter when it is available
-			Job.createSystem("", monitor -> { //$NON-NLS-1$
+			Job.createSystem("Initialize PDE State", monitor -> { //$NON-NLS-1$
 				PDEState state = TargetPlatformHelper.getPDEState();
 				Tree tree = fTreeViewer.getTree();
 				if (!tree.isDisposed()) {
