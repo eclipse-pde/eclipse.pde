@@ -112,8 +112,8 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 		IJavaElement element = javaProject.findElement(new Path(fileName));
 		if (element == null)
 			return null;
-		if (element instanceof IClassFile) {
-			type = ((IClassFile) element).getType();
+		if (element instanceof IOrdinaryClassFile) {
+			type = ((IOrdinaryClassFile) element).getType();
 		} else if (element instanceof ICompilationUnit) {
 			IType[] types = ((ICompilationUnit) element).getTypes();
 			type = types[0];

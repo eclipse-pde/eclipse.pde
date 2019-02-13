@@ -33,6 +33,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IOrdinaryClassFile;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
@@ -368,8 +369,8 @@ public class ProjectApiDescription extends ApiDescription {
 									String cuName = unit.getElementName();
 									String tName = cuName.substring(0, cuName.length() - ".java".length()); //$NON-NLS-1$
 									visit(visitor, unit.getType(tName));
-								} else if (child instanceof IClassFile) {
-									visit(visitor, ((IClassFile) child).getType());
+								} else if (child instanceof IOrdinaryClassFile) {
+									visit(visitor, ((IOrdinaryClassFile) child).getType());
 								}
 							}
 						} else {
@@ -489,8 +490,8 @@ public class ProjectApiDescription extends ApiDescription {
 								}
 							} else {
 								IClassFile file = fragment.getClassFile(name + ".class"); //$NON-NLS-1$
-								if (file.exists()) {
-									type = file.getType();
+								if (file.exists() && file instanceof IOrdinaryClassFile) {
+									type = ((IOrdinaryClassFile) file).getType();
 								}
 							}
 						}

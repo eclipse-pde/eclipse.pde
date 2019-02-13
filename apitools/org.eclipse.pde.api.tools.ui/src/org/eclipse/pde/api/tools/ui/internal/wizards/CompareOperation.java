@@ -22,10 +22,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IOrdinaryClassFile;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
@@ -206,8 +206,8 @@ public class CompareOperation extends Job {
 			return;
 		}
 		if (isArchive) {
-			IClassFile[] classFiles = packageFragment.getClassFiles();
-			for (IClassFile classFile : classFiles) {
+			IOrdinaryClassFile[] classFiles = packageFragment.getOrdinaryClassFiles();
+			for (IOrdinaryClassFile classFile : classFiles) {
 				addElementFor(classFile, apiComponent, scope);
 			}
 		} else {
@@ -218,7 +218,7 @@ public class CompareOperation extends Job {
 		}
 	}
 
-	private static void addElementFor(IClassFile classFile, IApiComponent apiComponent, ApiScope scope) {
+	private static void addElementFor(IOrdinaryClassFile classFile, IApiComponent apiComponent, ApiScope scope) {
 		try {
 			IApiTypeRoot typeRoot = apiComponent.findTypeRoot(classFile.getType().getFullyQualifiedName());
 			if (typeRoot != null) {
