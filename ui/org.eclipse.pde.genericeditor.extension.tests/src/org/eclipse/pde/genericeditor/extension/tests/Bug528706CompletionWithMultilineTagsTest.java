@@ -39,17 +39,17 @@ public class Bug528706CompletionWithMultilineTagsTest extends AbstractTargetEdit
 
 	@Test
 	public void testTagValueCompletionBeforeAMultiline() {
-		confirmCompletionAtOffset(151, "carbon");
+		confirmCompletionAtOffset(150, "cocoa");
 	}
 
 	@Test
 	public void testTagValueCompletionAsAMultiline() {
-		confirmCompletionAtOffset(167, "linux");
+		confirmCompletionAtOffset(166, "linux");
 	}
 
 	@Test
 	public void testTagValueCompletionAfterAMultiline() {
-		confirmCompletionAtOffset(187, "PA_RISC");
+		confirmCompletionAtOffset(181, "x86");
 	}
 
 	@Test

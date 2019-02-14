@@ -11,12 +11,12 @@
 <pro
 </locations>
 <environment>
-<ws>carb</ws>
+<ws>coc</ws>
 <os>
 
 linu
 
 </os>
-<arch>PA_RIS</arch>
+<arch>x</arch>
 </environment>
 </target>
