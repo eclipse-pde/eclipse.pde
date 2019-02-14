@@ -48,7 +48,7 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 			fId = element.getAttribute("id"); //$NON-NLS-1$
 			fVersion = element.getAttribute("version"); //$NON-NLS-1$
 			String fragment = element.getAttribute("fragment"); //$NON-NLS-1$
-			fFragment = Boolean.valueOf(fragment).booleanValue();
+			fFragment = Boolean.parseBoolean(fragment);
 		}
 	}
 

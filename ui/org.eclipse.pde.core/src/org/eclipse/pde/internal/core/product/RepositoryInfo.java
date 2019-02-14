@@ -66,7 +66,7 @@ public class RepositoryInfo extends ProductObject implements IRepositoryInfo {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
 			fURL = element.getAttribute("location"); //$NON-NLS-1$
-			fEnabled = Boolean.valueOf(element.getAttribute(P_ENABLED)).booleanValue();
+			fEnabled = Boolean.parseBoolean(element.getAttribute(P_ENABLED));
 		}
 	}
 

@@ -112,7 +112,7 @@ public class CompilerFlags {
 	 * @return the boolean value for the given preference id
 	 */
 	public static boolean getBoolean(IProject project, String flagId) {
-		return Boolean.valueOf(getString(project, flagId)).booleanValue();
+		return Boolean.parseBoolean(getString(project, flagId));
 	}
 
 	/**

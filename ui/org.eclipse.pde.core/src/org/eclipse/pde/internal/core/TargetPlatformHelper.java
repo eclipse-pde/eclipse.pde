@@ -296,7 +296,7 @@ public class TargetPlatformHelper {
 				continue;
 			}
 			String visiblity = elements[0].getAttribute("visible"); //$NON-NLS-1$
-			boolean visible = visiblity == null ? true : Boolean.valueOf(visiblity).booleanValue();
+			boolean visible = visiblity == null ? true : Boolean.parseBoolean(visiblity);
 			if (id != null && visible) {
 				result.add(id);
 			}
