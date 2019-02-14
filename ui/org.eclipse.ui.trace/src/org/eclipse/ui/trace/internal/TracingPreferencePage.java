@@ -572,8 +572,8 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 			if (debugOptionsValue != null) {
 				if (TracingUtils.isValueBoolean(debugOptionsValue) && TracingUtils.isValueBoolean(prefDebugOption.getValue())) {
 					// pick the one that is 'true'
-					boolean optionValue = Boolean.valueOf(debugOptionsValue).booleanValue();
-					boolean prefValue = Boolean.valueOf(prefDebugOption.getValue()).booleanValue();
+					boolean optionValue = Boolean.parseBoolean(debugOptionsValue);
+					boolean prefValue = Boolean.parseBoolean(prefDebugOption.getValue());
 					if (prefValue != optionValue) {
 						// if the preference value is 'true' then use it... otherwise do nothing since the value
 						// in the debug options will be used.

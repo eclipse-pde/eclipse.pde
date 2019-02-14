@@ -221,7 +221,7 @@ public class TracingComponent extends AbstractTracingNode {
 		for (IConfigurationElement child : componentChildren) {
 			if (child.getName().equals(TracingConstants.TRACING_EXTENSION_BUNDLE_ATTRIBUTE)) {
 				String name = child.getAttribute(TracingConstants.TRACING_EXTENSION_BUNDLE_NAME_ATTRIBUTE);
-				boolean consumed = Boolean.valueOf(child.getAttribute(TracingConstants.TRACING_EXTENSION_BUNDLE_CONSUMED_ATTRIBUTE)).booleanValue();
+				boolean consumed = Boolean.parseBoolean(child.getAttribute(TracingConstants.TRACING_EXTENSION_BUNDLE_CONSUMED_ATTRIBUTE));
 				this.addBundle(name, consumed, installedBundles);
 			}
 		}
