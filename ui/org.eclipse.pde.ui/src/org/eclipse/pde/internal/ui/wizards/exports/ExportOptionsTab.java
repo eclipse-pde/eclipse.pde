@@ -194,17 +194,17 @@ public class ExportOptionsTab extends AbstractExportTab {
 
 	protected boolean getInitialJarButtonSelection(IDialogSettings settings) {
 		String selected = settings.get(S_JAR_FORMAT);
-		return selected == null ? TargetPlatformHelper.getTargetVersion() >= 3.1 : Boolean.valueOf(selected).booleanValue();
+		return selected == null ? TargetPlatformHelper.getTargetVersion() >= 3.1 : Boolean.parseBoolean(selected);
 	}
 
 	protected boolean getInitialAllowBinaryCyclesSelection(IDialogSettings settings) {
 		String selected = settings.get(S_ALLOW_BINARY_CYCLES);
-		return selected == null ? true : Boolean.valueOf(selected).booleanValue();
+		return selected == null ? true : Boolean.parseBoolean(selected);
 	}
 
 	protected boolean getInitialUseWorkspaceCompiledClassesSelection(IDialogSettings settings) {
 		String selected = settings.get(S_USE_WORKSPACE_COMPILED_CLASSES);
-		return selected == null ? false : Boolean.valueOf(selected).booleanValue();
+		return selected == null ? false : Boolean.parseBoolean(selected);
 	}
 
 	protected void hookListeners() {
