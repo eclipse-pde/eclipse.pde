@@ -332,7 +332,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 			for (String locationString : locations) {
 				String values[] = locationString.split(UseScanManager.ESCAPE_REGEX + UseScanManager.STATE_DELIM);
 				fLocationList.add(values[0]);
-				if (Boolean.valueOf(values[1]).booleanValue()) {
+				if (Boolean.parseBoolean(values[1])) {
 					checkedLocations.add(values[0]);
 				}
 			}
@@ -396,7 +396,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 			String[] locations = oldLocations.split(UseScanManager.ESCAPE_REGEX + UseScanManager.LOCATION_DELIM);
 			for (String location : locations) {
 				String values[] = location.split(UseScanManager.ESCAPE_REGEX + UseScanManager.STATE_DELIM);
-				if (Boolean.valueOf(values[1]).booleanValue()) {
+				if (Boolean.parseBoolean(values[1])) {
 					oldCheckedElements.add(values[0]);
 				}
 			}
