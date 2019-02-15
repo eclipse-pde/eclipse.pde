@@ -60,12 +60,12 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 * @param target target definition
 	 * @return all bundle URLs
 	 */
-	protected Set getAllBundleURLs(ITargetDefinition target) throws Exception {
+	protected Set<URL> getAllBundleURLs(ITargetDefinition target) throws Exception {
 		if (!target.isResolved()) {
 			target.resolve(null);
 		}
 		TargetBundle[] bundles = target.getBundles();
-		Set urls = new HashSet(bundles.length);
+		Set<URL> urls = new HashSet<>(bundles.length);
 		for (TargetBundle bundle : bundles) {
 			urls.add(new File(bundle.getBundleInfo().getLocation()).toURL());
 		}
@@ -80,8 +80,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	public void testResetTargetPlatform() throws Exception {
 		ITargetDefinition definition = getDefaultTargetPlatorm();
-		Set urls = getAllBundleURLs(definition);
-		Set fragments = new HashSet();
+		Set<URL> urls = getAllBundleURLs(definition);
+		Set<URL> fragments = new HashSet<>();
 		TargetBundle[] bundles = definition.getBundles();
 		for (TargetBundle bundle : bundles) {
 			if (bundle.isFragment()) {
@@ -117,7 +117,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
 		definition.setTargetLocations(new ITargetLocation[]{container});
-		Set urls = getAllBundleURLs(definition);
+		Set<URL> urls = getAllBundleURLs(definition);
 
 		// the old way
 		IPath location = new Path(TargetPlatform.getDefaultLocation());
@@ -145,10 +145,10 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		};
 		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.setIncluded(restrictions);
-		List infos = getAllBundleInfos(definition);
+		List<BundleInfo> infos = getAllBundleInfos(definition);
 
 		assertEquals("Wrong number of bundles", 2, infos.size());
-		Set set = collectAllSymbolicNames(infos);
+		Set<String> set = collectAllSymbolicNames(infos);
 		for (NameVersionDescriptor info : restrictions) {
 			set.remove(info.getId());
 		}
@@ -166,13 +166,13 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
 		definition.setTargetLocations(new ITargetLocation[]{container});
-		List infos = getAllBundleInfos(definition);
+		List<BundleInfo> infos = getAllBundleInfos(definition);
 		// find right versions
 		String v1 = null;
 		String v2 = null;
-		Iterator iterator = infos.iterator();
+		Iterator<BundleInfo> iterator = infos.iterator();
 		while (iterator.hasNext() && (v2 == null || v1 == null)) {
-			BundleInfo info = (BundleInfo) iterator.next();
+			BundleInfo info = iterator.next();
 			if (info.getSymbolicName().equals("org.eclipse.jdt.launching")) {
 				v1 = info.getVersion();
 			} else if (info.getSymbolicName().equals("org.eclipse.jdt.debug")) {
@@ -194,7 +194,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		assertEquals("Wrong number of bundles", 2, infos.size());
 		iterator = infos.iterator();
 		while (iterator.hasNext()) {
-			BundleInfo info = (BundleInfo) iterator.next();
+			BundleInfo info = iterator.next();
 			if (info.getSymbolicName().equals("org.eclipse.jdt.launching")) {
 				assertEquals(v1, info.getVersion());
 			} else if (info.getSymbolicName().equals("org.eclipse.jdt.debug")) {
@@ -242,7 +242,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newProfileLocation("${eclipse_home}", null);
 		definition.setTargetLocations(new ITargetLocation[]{container});
-		Set urls = getAllBundleURLs(definition);
+		Set<URL> urls = getAllBundleURLs(definition);
 
 		// the old way
 		IPath location = new Path(TargetPlatform.getDefaultLocation());
@@ -268,7 +268,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newProfileLocation("${eclipse_home}", "${eclipse_home}/configuration");
 		definition.setTargetLocations(new ITargetLocation[]{container});
-		Set urls = getAllBundleURLs(definition);
+		Set<URL> urls = getAllBundleURLs(definition);
 
 		// the old way
 		IPath location = new Path(TargetPlatform.getDefaultLocation());
@@ -296,7 +296,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(),
 				new File(Platform.getConfigurationLocation().getURL().getFile()).getAbsolutePath());
 		definition.setTargetLocations(new ITargetLocation[]{container});
-		Set urls = getAllBundleURLs(definition);
+		Set<URL> urls = getAllBundleURLs(definition);
 
 		// the old way
 		URL[] pluginPaths = PluginPathFinder.getPluginPaths(TargetPlatform.getDefaultLocation(), true);
@@ -317,7 +317,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newDirectoryLocation(TargetPlatform.getDefaultLocation() + "/plugins");
 		definition.setTargetLocations(new ITargetLocation[]{container});
-		Set urls = getAllBundleURLs(definition);
+		Set<URL> urls = getAllBundleURLs(definition);
 
 		// the old way
 		URL[] pluginPaths = PluginPathFinder.getPluginPaths(TargetPlatform.getDefaultLocation(), false);
@@ -338,7 +338,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newDirectoryLocation("${eclipse_home}/plugins");
 		definition.setTargetLocations(new ITargetLocation[]{container});
-		Set urls = getAllBundleURLs(definition);
+		Set<URL> urls = getAllBundleURLs(definition);
 
 		// the old way
 		URL[] pluginPaths = PluginPathFinder.getPluginPaths(TargetPlatform.getDefaultLocation(), false);
@@ -435,7 +435,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		container.resolve(definition, null);
 		TargetBundle[] bundles = container.getBundles();
 
-		List expected = new ArrayList();
+		List<String> expected = new ArrayList<>();
 		expected.add("org.eclipse.jdt");
 		expected.add("org.eclipse.jdt.launching");
 		// 2 versions of JUnit
@@ -450,9 +450,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		for (TargetBundle bundle : bundles) {
 			expected.remove(bundle.getBundleInfo().getSymbolicName());
 		}
-		Iterator iterator = expected.iterator();
+		Iterator<String> iterator = expected.iterator();
 		while (iterator.hasNext()) {
-			String name = (String) iterator.next();
+			String name = iterator.next();
 			System.err.println("Missing: " + name);
 		}
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
@@ -478,7 +478,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		container.resolve(definition, null);
 		TargetBundle[] bundles = container.getBundles();
 
-		List expected = new ArrayList();
+		List<String> expected = new ArrayList<>();
 		expected.add("org.eclipse.jdt");
 		expected.add("org.eclipse.jdt.launching");
 		// 2 versions of JUnit
@@ -502,9 +502,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 				}
 			}
 		}
-		Iterator iterator = expected.iterator();
+		Iterator<String> iterator = expected.iterator();
 		while (iterator.hasNext()) {
-			String name = (String) iterator.next();
+			String name = iterator.next();
 			System.err.println("Missing: " + name);
 		}
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
@@ -533,10 +533,10 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		};
 		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.setIncluded(restrictions);
-		List infos = getAllBundleInfos(definition);
+		List<BundleInfo> infos = getAllBundleInfos(definition);
 
 		assertEquals("Wrong number of bundles", 2, infos.size());
-		Set set = collectAllSymbolicNames(infos);
+		Set<String> set = collectAllSymbolicNames(infos);
 		for (NameVersionDescriptor info : restrictions) {
 			set.remove(info.getId());
 		}
@@ -557,7 +557,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		container.resolve(definition, null);
 		TargetBundle[] bundles = container.getBundles();
 
-		List expected = new ArrayList();
+		List<String> expected = new ArrayList<>();
 		expected.add("org.eclipse.jdt.source");
 		expected.add("org.eclipse.jdt.launching.source");
 		// There are two versions of junit available, each with source
@@ -598,7 +598,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 			setTargetPlatform(target);
 
-			List expected = new ArrayList();
+			List<String> expected = new ArrayList<>();
 			expected.add("org.eclipse.jdt");
 			expected.add("org.eclipse.jdt.launching");
 			// 2 versions of JUnit
@@ -617,9 +617,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 				expected.remove(model.getPluginBase().getId());
 				assertTrue(model.isEnabled());
 			}
-			Iterator iterator = expected.iterator();
+			Iterator<String> iterator = expected.iterator();
 			while (iterator.hasNext()) {
-				String name = (String) iterator.next();
+				String name = iterator.next();
 				System.err.println("Missing: " + name);
 			}
 			assertTrue("Wrong bundles in target platform", expected.isEmpty());
@@ -804,7 +804,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			getTargetService().saveTargetDefinition(target);
 			setTargetPlatform(target);
 			IPluginModelBase[] models = PluginRegistry.getExternalModels();
-			Set enabled = new HashSet();
+			Set<NameVersionDescriptor> enabled = new HashSet<>();
 			for (IPluginModelBase pm : models) {
 				if (pm.getBundleDescription().getSymbolicName().equals(bsn)) {
 					NameVersionDescriptor desc = new NameVersionDescriptor(pm.getPluginBase().getId(), pm.getPluginBase().getVersion());

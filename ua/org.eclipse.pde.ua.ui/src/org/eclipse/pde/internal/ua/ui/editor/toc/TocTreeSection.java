@@ -1109,8 +1109,12 @@ public class TocTreeSection extends TreeSection {
 	 * Remove the selected objects from the TOC tree
 	 */
 	private void handleDeleteAction() {
-		ArrayList objects = new ArrayList<>(
-				fTocTree.getStructuredSelection().toList());
+		List<?> list = fTocTree.getStructuredSelection().toList();
+		ArrayList<TocObject> objects = new ArrayList<>(list.size());
+		for (Object o : list) {
+			if (o instanceof TocObject)
+				objects.add((TocObject) o);
+		}
 		boolean beep = false;
 
 		// Iterate through the list of selected objects, removing ones
