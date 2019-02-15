@@ -92,7 +92,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		testServiceReference = registration.getReference();
 
 		testExtPoint = Platform.getExtensionRegistry().getExtensionPoint(TEST_EXT_POINT);
-		testExtPointBundle = TestUtils.getBundle(TEST_EXT_POINT_BUNDLE);
+		testExtPointBundle = Platform.getBundle(TEST_EXT_POINT_BUNDLE);
 	}
 
 	@Override
