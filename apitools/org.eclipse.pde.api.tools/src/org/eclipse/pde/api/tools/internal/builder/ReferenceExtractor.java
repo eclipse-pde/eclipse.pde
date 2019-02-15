@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -415,7 +415,8 @@ public class ReferenceExtractor extends ClassVisitor {
 									}
 									if (root != null) {
 										IApiType type = root.getStructure();
-										if (type != null && getDefaultDefined(type, name, desc, false) != null) {
+										if (type != null && (!"<init>".equals(name)) //$NON-NLS-1$
+												&& getDefaultDefined(type, name, desc, false) != null) {
 											flags = IReference.F_DEFAULT_METHOD;
 										}
 									}
@@ -1397,7 +1398,9 @@ public class ReferenceExtractor extends ClassVisitor {
 					IApiType def = null;
 					if (fVersion >= Opcodes.V1_8) {
 						// See if we are overriding a default interface method
-						def = getDefaultDefined(owner, name, desc, true);
+						if (!"<init>".equals(name)) { //$NON-NLS-1$
+							def = getDefaultDefined(owner, name, desc, true);
+						}
 					}
 					if (def != null) {
 						addReference(Reference.methodReference(method, def.getName(), method.getName(), method.getSignature(), IReference.REF_OVERRIDE, IReference.F_DEFAULT_METHOD));
