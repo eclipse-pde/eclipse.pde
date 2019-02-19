@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2016 IBM Corporation and others.
+ *  Copyright (c) 2003, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -20,11 +20,14 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
@@ -202,6 +205,29 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 				}
 			}
 			addDependencies(model, selected, addFragments || containsVariable || hasextensibleAPI);
+		}
+	}
+
+	protected void addUnresolvedImportPackagesModels(IPluginModelBase model, ArrayList<IPluginModelBase> result, boolean addFragments) {
+		ISharedPluginModel sharedModel = model.getPluginBase().getModel();
+		if (sharedModel instanceof BundlePluginModel) {
+			BundlePluginModel bundleModel = (BundlePluginModel) sharedModel;
+			ImportPackageSpecification[] importPackages = bundleModel.getBundleDescription().getImportPackages();
+			for (ImportPackageSpecification importPackageSpecification : importPackages) {
+				IPluginModelBase found = findModel(importPackageSpecification.getName(), null);
+				for (IPluginModelBase mod : fModels) {
+					ExportPackageDescription[] exportPackages = mod.getBundleDescription().getExportPackages();
+					for (ExportPackageDescription exp : exportPackages) {
+						if (exp.getName().equals(importPackageSpecification.getName())) {
+							found = mod;
+							break;
+						}
+					}
+				}
+				 if (found != null) {
+					addPluginAndDependencies(found, result, addFragments);
+				 }
+			}
 		}
 	}
 

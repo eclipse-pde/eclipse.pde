@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2017 IBM Corporation and others.
+ *  Copyright (c) 2003, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -213,6 +213,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			IPluginModelBase model = (IPluginModelBase) wModel;
 			addDependencies(model, result, fAddFragmentsButton.getSelection());
 			addExtraPrerequisites(model, result);
+			addUnresolvedImportPackagesModels(model, result, fAddFragmentsButton.getSelection());
 		}
 
 		if (wModels.length > 0) {
