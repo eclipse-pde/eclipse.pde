@@ -491,4 +491,8 @@ public interface ICoreConstants {
 	 * treated as test code
 	 */
 	public static final String TEST_PLUGIN_PATTERN = "test_plugin_pattern"; //$NON-NLS-1$
+
+	// default value for
+	public static final String TEST_PLUGIN_PATTERN_DEFAULTVALUE = "[.]test[s]?$|[.]tests[.]"; //$NON-NLS-1$
+
 }

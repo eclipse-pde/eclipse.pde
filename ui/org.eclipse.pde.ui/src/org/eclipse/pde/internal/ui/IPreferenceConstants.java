@@ -66,7 +66,5 @@ public interface IPreferenceConstants extends ILaunchingPreferenceConstants {
 	 * treated as test code.
 	 */
 	public static final String TEST_PLUGIN_PATTERN = "Preferences.MainPage.testPluginPattern";//$NON-NLS-1$
-	// default value for
-	public static final String TEST_PLUGIN_PATTERN_DEFAULTVALUE = "[.]test[s]?$|[.]tests[.]"; //$NON-NLS-1$
 
 }

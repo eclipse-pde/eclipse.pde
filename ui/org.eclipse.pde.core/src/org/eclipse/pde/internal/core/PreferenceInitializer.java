@@ -69,5 +69,11 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		} catch (BackingStoreException e) {
 			PDECore.log(e);
 		}
+
+		// Now init pde.core preferences
+		PDEPreferencesManager corePrefs = PDECore.getDefault().getPreferencesManager();
+		corePrefs.setDefault(ICoreConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET, true);
+		corePrefs.setDefault(ICoreConstants.DISABLE_API_ANALYSIS_BUILDER, false);
+		corePrefs.setDefault(ICoreConstants.TEST_PLUGIN_PATTERN, ICoreConstants.TEST_PLUGIN_PATTERN_DEFAULTVALUE);
 	}
 }

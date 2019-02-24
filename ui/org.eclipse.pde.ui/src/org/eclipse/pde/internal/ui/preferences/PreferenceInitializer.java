@@ -15,7 +15,7 @@ package org.eclipse.pde.internal.ui.preferences;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.text.ColorManager;
@@ -31,11 +31,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		store.setDefault(IPreferenceConstants.SHOW_TARGET_STATUS, false);
 		store.setDefault(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET, true);
 		store.setDefault(IPreferenceConstants.DISABLE_API_ANALYSIS_BUILDER, false);
-		store.setDefault(IPreferenceConstants.TEST_PLUGIN_PATTERN, IPreferenceConstants.TEST_PLUGIN_PATTERN_DEFAULTVALUE);
-		PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
-		prefs.setDefault(ICoreConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET, true);
-		prefs.setDefault(ICoreConstants.DISABLE_API_ANALYSIS_BUILDER, false);
-		prefs.setDefault(ICoreConstants.TEST_PLUGIN_PATTERN, IPreferenceConstants.TEST_PLUGIN_PATTERN_DEFAULTVALUE);
+		store.setDefault(IPreferenceConstants.TEST_PLUGIN_PATTERN, ICoreConstants.TEST_PLUGIN_PATTERN_DEFAULTVALUE);
 	}
 
 }
