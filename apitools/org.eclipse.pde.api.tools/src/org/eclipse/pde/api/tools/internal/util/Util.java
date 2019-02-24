@@ -632,6 +632,8 @@ public final class Util {
 		if (components == null) {
 			return null;
 		}
+		CoreException ex = null;
+		IApiComponent component = null;
 		for (IApiComponent apiComponent : components) {
 			if (apiComponent != null) {
 				try {
@@ -640,9 +642,15 @@ public final class Util {
 						return classFile;
 					}
 				} catch (CoreException e) {
-					// ignore
+					if (ex == null) {
+						ex = e;
+						component = apiComponent;
+					}
 				}
 			}
+		}
+		if (ex != null) {
+			ApiPlugin.log("Error while resolving class file for: " + typeName + " via " + component.getName(), ex); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return null;
 	}

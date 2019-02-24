@@ -256,10 +256,7 @@ public class ApiType extends ApiMember implements IApiType {
 		if (fSuperInterfaces == null) {
 			IApiType[] interfaces = new IApiType[names.length];
 			for (int i = 0; i < interfaces.length; i++) {
-				interfaces[i] = resolveType(names[i]);
-				if (interfaces[i] == null) {
-					throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ApiPlugin.REPORT_RESOLUTION_ERRORS, MessageFormat.format(Messages.ApiType_0, names[i], getName()), null));
-				}
+				interfaces[i] = resolveSuperType(names[i]);
 			}
 			fSuperInterfaces = interfaces;
 		}
@@ -273,10 +270,7 @@ public class ApiType extends ApiMember implements IApiType {
 			return null;
 		}
 		if (fSuperclass == null) {
-			fSuperclass = resolveType(name);
-			if (fSuperclass == null) {
-				throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ApiPlugin.REPORT_RESOLUTION_ERRORS, MessageFormat.format(Messages.ApiType_1, name, getName()), null));
-			}
+			fSuperclass = resolveSuperType(name);
 		}
 		return fSuperclass;
 	}
@@ -289,22 +283,34 @@ public class ApiType extends ApiMember implements IApiType {
 	 * @return type or <code>null</code>
 	 * @throws CoreException if unable to resolve
 	 */
-	private IApiType resolveType(String qName) throws CoreException {
+	private IApiType resolveSuperType(String qName) throws CoreException {
 		if (getApiComponent() == null) {
 			requiresApiComponent();
 		}
 		String packageName = Signatures.getPackageName(qName);
 		IApiComponent[] components = getApiComponent().getBaseline().resolvePackage(getApiComponent(), packageName);
+		if (components == null || components.length == 0) {
+			throw new CoreException(createUnresolvedSuperClassStatus(qName));
+		}
 		// If system package, then reorganize library component to consider the
 		// java EE of the component as the preferred library
 		if (qName.startsWith("java.") && components.length > 1) { //$NON-NLS-1$
 			reOrganizeComponents(components);
 		}
 		IApiTypeRoot result = Util.getClassFile(components, qName);
-		if (result != null) {
-			return result.getStructure();
+		if (result == null) {
+			throw new CoreException(createUnresolvedSuperClassStatus(qName));
 		}
-		return null;
+		IApiType structure = result.getStructure();
+		if (structure == null) {
+			throw new CoreException(createUnresolvedSuperClassStatus(qName));
+		}
+		return structure;
+	}
+
+	private Status createUnresolvedSuperClassStatus(String qName) {
+		return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ApiPlugin.REPORT_RESOLUTION_ERRORS,
+				MessageFormat.format(Messages.ApiType_1, qName, getName()), null);
 	}
 
 	private void reOrganizeComponents(IApiComponent[] components) throws CoreException {
