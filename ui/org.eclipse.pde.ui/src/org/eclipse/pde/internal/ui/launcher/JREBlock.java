@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -200,8 +200,20 @@ public class JREBlock {
 		String vmInstallName = null;
 		String eeId = null;
 		if (jrePath == null) {
+			// Try to get a default EE based on default VM install first
+			IVMInstall install = JavaRuntime.getDefaultVMInstall();
+			IExecutionEnvironment[] systemEnvs = JavaRuntime.getExecutionEnvironmentsManager()
+					.getExecutionEnvironments();
+			for (IExecutionEnvironment iExecutionEnvironment : systemEnvs) {
+				if (iExecutionEnvironment.isStrictlyCompatible(install)) {
+					eeId = iExecutionEnvironment.getId();
+					break;
+				}
+			}
 			// Try to get a default EE based on the selected plug-ins in the config
-			eeId = VMHelper.getDefaultEEName(config);
+			if (eeId == null) {
+				eeId = VMHelper.getDefaultEEName(config);
+			}
 			if (eeId == null) {
 				vmInstallName = VMHelper.getDefaultVMInstallName(config);
 			}
