@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2017 IBM Corporation and others.
+ *  Copyright (c) 2017, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -28,7 +28,7 @@ public class AddAutomaticModuleResolution extends AbstractManifestMarkerResoluti
 	private IMarker mark;
 
 	public AddAutomaticModuleResolution(int type, IMarker marker) {
-		super(type);
+		super(type, marker);
 		mark = marker;
 	}
 

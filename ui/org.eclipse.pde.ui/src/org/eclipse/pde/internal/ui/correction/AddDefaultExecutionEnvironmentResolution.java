@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2015 IBM Corporation and others.
+ *  Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.util.NLS;
@@ -27,13 +28,14 @@ public class AddDefaultExecutionEnvironmentResolution extends AbstractManifestMa
 
 	private String id;
 
-	public AddDefaultExecutionEnvironmentResolution(int type, String id) {
-		super(type);
+	public AddDefaultExecutionEnvironmentResolution(int type, String id, IMarker marker) {
+		super(type, marker);
 		this.id = id;
 	}
 
 	@Override
 	protected void createChange(BundleModel model) {
+		id = this.marker.getAttribute("ee_id", null); //$NON-NLS-1$
 
 		IManifestHeader header = model.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 		if (header == null) {

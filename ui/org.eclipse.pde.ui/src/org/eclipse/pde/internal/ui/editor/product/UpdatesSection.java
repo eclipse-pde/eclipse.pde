@@ -433,7 +433,7 @@ public class UpdatesSection extends TableSection {
 			combo.pack();
 			combo.addSelectionListener(widgetSelectedAdapter(e -> {
 				item.setText(1, combo.getText());
-				repo.setEnabled(Boolean.valueOf(combo.getText()).booleanValue());
+				repo.setEnabled(Boolean.parseBoolean(combo.getText()));
 			}));
 			fEnabledColumnEditor.setEditor(combo, item, 1);
 		}

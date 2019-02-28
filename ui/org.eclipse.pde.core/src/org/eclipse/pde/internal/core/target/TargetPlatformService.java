@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -28,10 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
-import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
@@ -65,6 +64,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
+import org.eclipse.pde.internal.core.TargetDefinitionManager;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -100,7 +100,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 */
 	class ResourceProxyVisitor implements IResourceProxyVisitor {
 
-		private final List<IResource> fList;
+		private List<IResource> fList;
 
 		protected ResourceProxyVisitor(List<IResource> list) {
 			fList = list;
@@ -399,22 +399,10 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	@Override
 	public void copyTargetDefinition(ITargetDefinition from, ITargetDefinition to) throws CoreException {
-		File tempFile = null;
-		try {
-			tempFile = File.createTempFile("targetDefinition", null); //$NON-NLS-1$
-			IPath path = Path.fromOSString(tempFile.getAbsolutePath());
-			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-			manager.connect(path, LocationKind.LOCATION, null);
-			ITextFileBuffer holdFileBuffer = manager.getTextFileBuffer(path, LocationKind.LOCATION);
-			((TargetDefinition) from).write(holdFileBuffer);
-			((TargetDefinition) to).setContents(holdFileBuffer);
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getLocalizedMessage()));
-		} finally {
-			if (tempFile != null) {
-				tempFile.delete();
-			}
-		}
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		((TargetDefinition) from).write(outputStream);
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+		((TargetDefinition) to).setContents(inputStream);
 	}
 
 	@Override
@@ -424,10 +412,15 @@ public class TargetPlatformService implements ITargetPlatformService {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetPlatformService_2, targetExtensionId)));
 		}
 		String path = elem.getAttribute("definition"); //$NON-NLS-1$
-		if (path != null) {
-			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-			ITextFileBuffer fileBuffer = manager.getTextFileBuffer(Path.fromOSString(path), LocationKind.LOCATION);
-			((TargetDefinition) definition).setContents(fileBuffer);
+		String symbolicName = elem.getDeclaringExtension().getContributor().getName();
+		URL url = TargetDefinitionManager.getResourceURL(symbolicName, path);
+		if (url != null) {
+			try {
+				((TargetDefinition) definition).setContents(new BufferedInputStream(url.openStream()));
+			} catch (IOException e) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
+						NLS.bind(Messages.TargetPlatformService_3, path), e));
+			}
 		} else {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetPlatformService_4, path)));
 		}

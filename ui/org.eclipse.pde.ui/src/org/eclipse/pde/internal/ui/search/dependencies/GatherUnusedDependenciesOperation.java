@@ -173,8 +173,8 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			IType[] types = null;
 			if (child instanceof ICompilationUnit) {
 				types = ((ICompilationUnit) child).getAllTypes();
-			} else if (child instanceof IClassFile) {
-				types = new IType[] { ((IClassFile) child).getType() };
+			} else if (child instanceof IOrdinaryClassFile) {
+				types = new IType[] { ((IOrdinaryClassFile) child).getType() };
 			}
 			if (types != null) {
 				SubMonitor iterationMonitor = subMonitor.split(1).setWorkRemaining(types.length);

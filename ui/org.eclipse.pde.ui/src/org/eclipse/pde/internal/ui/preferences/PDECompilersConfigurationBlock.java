@@ -450,7 +450,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 				} else if (control instanceof Button) {
 					Button button = (Button) control;
 					ControlData data = (ControlData) button.getData();
-					button.setSelection(Boolean.valueOf(data.key.getStoredValue(fLookupOrder, false, fManager)).booleanValue());
+					button.setSelection(Boolean.parseBoolean(data.key.getStoredValue(fLookupOrder, false, fManager)));
 				} else if (control instanceof Text) {
 					Text text = (Text) control;
 					ControlData data = (ControlData) text.getData();
@@ -591,7 +591,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		Button button = SWTFactory.createCheckButton(parent, label, null, false, 2);
 		ControlData data = new ControlData(key, new String[] {Boolean.toString(false)});
 		button.setData(data);
-		button.setSelection(Boolean.valueOf(data.key.getStoredValue(fLookupOrder, false, fManager)).booleanValue());
+		button.setSelection(Boolean.parseBoolean(data.key.getStoredValue(fLookupOrder, false, fManager)));
 		button.addSelectionListener(selectionlistener);
 		Integer mapkey = Integer.valueOf(tabkind);
 		HashSet<Control> controls = fControlMap.get(mapkey);

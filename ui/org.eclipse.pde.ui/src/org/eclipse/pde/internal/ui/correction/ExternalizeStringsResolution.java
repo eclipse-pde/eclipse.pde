@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2018 IBM Corporation and others.
+ *  Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -24,16 +24,22 @@ import org.eclipse.swt.custom.BusyIndicator;
 
 public class ExternalizeStringsResolution extends AbstractPDEMarkerResolution {
 
-	public ExternalizeStringsResolution(int type) {
-		super(type);
+	private boolean hasRun = false;
+
+	public ExternalizeStringsResolution(int type, IMarker marker) {
+		super(type, marker);
 	}
 
 	@Override
 	public void run(final IMarker marker) {
+		// even for multiple error markers, this wizard must be run only once
+		if (hasRun)
+			return;
 		BusyIndicator.showWhile(SWTUtil.getStandardDisplay(), () -> {
 			GetNonExternalizedStringsAction fGetExternAction = new GetNonExternalizedStringsAction();
 			IStructuredSelection selection = new StructuredSelection(marker.getResource().getProject());
 			fGetExternAction.runGetNonExternalizedStringsAction(selection);
+			hasRun = true;
 		});
 	}
 

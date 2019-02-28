@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
@@ -21,6 +22,10 @@ public abstract class AbstractManifestMarkerResolution extends AbstractPDEMarker
 
 	public AbstractManifestMarkerResolution(int type) {
 		super(type);
+	}
+
+	public AbstractManifestMarkerResolution(int type, IMarker marker) {
+		super(type, marker);
 	}
 
 	protected abstract void createChange(BundleModel model);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -8,13 +8,12 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,11 +28,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -101,83 +98,48 @@ public class TargetDefinitionPersistenceHelper {
 	private static ITargetPlatformService fTargetService;
 
 	/**
-	 * Serializes a target definition to xml and writes the xml to the given stream
+	 * Serializes a target definition to xml and writes the xml to the given
+	 * stream
 	 *
 	 * @param definition
-	 *                       target definition to serialize
+	 *            target definition to serialize
 	 * @param output
-	 *                       output file buffer to write xml to
+	 *            output stream to write xml to
 	 * @throws CoreException
 	 * @throws ParserConfigurationException
 	 * @throws TransformerException
 	 * @throws IOException
 	 * @throws SAXException
 	 */
-	public static void persistXML(ITargetDefinition definition, ITextFileBuffer output)
+	public static void persistXML(ITargetDefinition definition, OutputStream output)
 			throws CoreException, ParserConfigurationException, TransformerException, IOException, SAXException {
-		if (output == null) {
-			return;
-		}
 		Document document = definition.getDocument();
 		DOMSource source = new DOMSource(document);
 
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		StreamResult outputTarget = new StreamResult(outputStream);
+		StreamResult outputTarget = new StreamResult(output);
 		TransformerFactory factory = TransformerFactory.newInstance();
 		Transformer transformer = factory.newTransformer();
 		transformer.transform(source, outputTarget);
-
-		// Convert the line separators
-		byte[] bytes = outputStream.toByteArray();
-		String encoding = output.getEncoding();
-		String strContent = outputStream.toString(encoding);
-		strContent = strContent.replace(System.getProperty("line.separator"), //$NON-NLS-1$
-				TextUtilities.getDefaultLineDelimiter(output.getDocument()));
-		bytes = strContent.getBytes(encoding);
-
-		try (OutputStream stream = output.getFileStore().openOutputStream(0, null)) {
-			stream.write(bytes);
-		}
 	}
 
 	/**
-	 * Parses an xml document from the text file buffer and deserializes it into a
+	 * Parses an xml document from the input stream and deserializes it into a
 	 * target definition.
 	 *
 	 * @param definition
-	 *                       definition to be filled with the result of
-	 *                       deserialization
+	 *            definition to be filled with the result of deserialization
 	 * @param input
-	 *                       text file buffer to get xml input from
+	 *            stream to get xml input from
 	 * @throws CoreException
 	 * @throws ParserConfigurationException
 	 * @throws IOException
 	 * @throws SAXException
 	 */
-	public static void initFromXML(ITargetDefinition definition, ITextFileBuffer input)
+	public static void initFromXML(ITargetDefinition definition, InputStream input)
 			throws CoreException, ParserConfigurationException, SAXException, IOException {
-		if (input == null) {
-			return;
-		}
-		InputStream stream = null;
-		if (input.isDirty()) {
-			String documentContent = input.getDocument().get();
-			if (!documentContent.isEmpty()) {
-				stream = new ByteArrayInputStream(documentContent.getBytes());
-			} else {
-				return;
-			}
-		} else {
-			stream = input.getFileStore().openInputStream(0, null);
-			if (stream.available() == 0) {
-				// do not process empty stream
-				return;
-			}
-		}
 		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		parser.setErrorHandler(new DefaultHandler());
-		Document doc = parser.parse(new InputSource(stream));
-		stream.close();
+		Document doc = parser.parse(new InputSource(input));
 
 		Element root = doc.getDocumentElement();
 		if (!root.getNodeName().equalsIgnoreCase(ROOT)) {

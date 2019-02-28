@@ -296,7 +296,7 @@ public class P2Utils {
 					if ("default".equals(auto)) {//$NON-NLS-1$
 						isAuto = defaultAutoStart;
 					} else {
-						isAuto = Boolean.valueOf(auto).booleanValue();
+						isAuto = Boolean.parseBoolean(auto);
 					}
 					if ("default".equals(levelString)) {//$NON-NLS-1$
 						level = defaultStartLevel;

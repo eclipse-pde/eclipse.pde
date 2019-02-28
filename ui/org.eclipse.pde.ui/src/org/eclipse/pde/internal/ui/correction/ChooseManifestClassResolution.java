@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.ui.IJavaElementSearchConstants;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
@@ -24,8 +25,8 @@ public class ChooseManifestClassResolution extends AbstractManifestMarkerResolut
 
 	private String fHeader;
 
-	public ChooseManifestClassResolution(int type, String headerName) {
-		super(type);
+	public ChooseManifestClassResolution(int type, String headerName, IMarker marker) {
+		super(type, marker);
 		fHeader = headerName;
 	}
 

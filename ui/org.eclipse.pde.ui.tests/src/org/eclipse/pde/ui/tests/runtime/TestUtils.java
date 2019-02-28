@@ -26,32 +26,11 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.junit.Assert;
-import org.osgi.framework.Bundle;
-import org.osgi.service.packageadmin.PackageAdmin;
 
 /**
  * Utility methods for JUnit tests.
  */
-@SuppressWarnings("deprecation")
-// We use package admin to access bundles during the tests
 public class TestUtils {
-
-	private static PackageAdmin packageAdmin;
-
-	public static Bundle getBundle(String symbolicName) {
-		if (packageAdmin == null) {
-			packageAdmin = PDETestsPlugin.getBundleContext()
-					.getService(PDETestsPlugin.getBundleContext().getServiceReference(PackageAdmin.class));
-		}
-		Bundle[] bundles = packageAdmin.getBundles(symbolicName, null);
-
-		if (bundles != null) {
-			return bundles[0];
-		}
-
-		return null;
-	}
-
 	public static IExtensionPoint getExtensionPoint(String extensionPointId) {
 		return Platform.getExtensionRegistry().getExtensionPoint(extensionPointId);
 	}

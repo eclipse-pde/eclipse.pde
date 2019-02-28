@@ -376,7 +376,7 @@ public class UseScanManager {
 		ArrayList<String> locationList = new ArrayList<>(locations.length);
 		for (String location : locations) {
 			String values[] = location.split(ESCAPE_REGEX + STATE_DELIM);
-			if (Boolean.valueOf(values[1]).booleanValue()) {
+			if (Boolean.parseBoolean(values[1])) {
 				locationList.add(values[0]);
 			}
 		}

@@ -441,7 +441,7 @@ public class RepositoryReferenceSection extends TableSection {
 			combo.addSelectionListener(widgetSelectedAdapter(e -> {
 				item.setText(1, combo.getText());
 				try {
-					repo.setEnabled(Boolean.valueOf(combo.getText()).booleanValue());
+					repo.setEnabled(Boolean.parseBoolean(combo.getText()));
 				} catch (CoreException ex) {
 					PDEPlugin.log(ex);
 				}

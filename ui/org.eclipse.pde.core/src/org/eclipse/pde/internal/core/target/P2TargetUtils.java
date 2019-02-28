@@ -532,7 +532,7 @@ public class P2TargetUtils {
 		boolean all = false;
 		String value = fProfile.getProperty(PROP_ALL_ENVIRONMENTS);
 		if (value != null) {
-			all = Boolean.valueOf(value).booleanValue();
+			all = Boolean.parseBoolean(value);
 			if (!Boolean.toString(getIncludeAllEnvironments()).equals(value)) {
 				return false;
 			}
@@ -559,11 +559,11 @@ public class P2TargetUtils {
 		}
 
 		// check that the include source flag matches what the profile represents
-		if (getIncludeSource() != Boolean.valueOf(fProfile.getProperty(PROP_AUTO_INCLUDE_SOURCE)).booleanValue()) {
+		if (getIncludeSource() != Boolean.parseBoolean(fProfile.getProperty(PROP_AUTO_INCLUDE_SOURCE))) {
 			return false;
 		}
 
-		if (getIncludeConfigurePhase() != Boolean.valueOf(fProfile.getProperty(PROP_INCLUDE_CONFIGURE_PHASE)).booleanValue()) {
+		if (getIncludeConfigurePhase() != Boolean.parseBoolean(fProfile.getProperty(PROP_INCLUDE_CONFIGURE_PHASE))) {
 			return false;
 		}
 

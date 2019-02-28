@@ -758,7 +758,7 @@ public class ApiDescriptionProcessor {
 		String value = element.getAttribute(name);
 		int lres = res;
 		if (value.length() > 0) {
-			if (!Boolean.valueOf(value).booleanValue()) {
+			if (!Boolean.parseBoolean(value)) {
 				lres = res | flag;
 			}
 		}

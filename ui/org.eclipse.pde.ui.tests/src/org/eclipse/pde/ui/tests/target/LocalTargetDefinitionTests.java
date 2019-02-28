@@ -450,7 +450,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		for (TargetBundle bundle : bundles) {
 			expected.remove(bundle.getBundleInfo().getSymbolicName());
 		}
-		for (String name : expected) {
+		Iterator<String> iterator = expected.iterator();
+		while (iterator.hasNext()) {
+			String name = iterator.next();
 			System.err.println("Missing: " + name);
 		}
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
@@ -500,7 +502,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 				}
 			}
 		}
-		for (String name : expected) {
+		Iterator<String> iterator = expected.iterator();
+		while (iterator.hasNext()) {
+			String name = iterator.next();
 			System.err.println("Missing: " + name);
 		}
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
@@ -613,7 +617,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 				expected.remove(model.getPluginBase().getId());
 				assertTrue(model.isEnabled());
 			}
-			for (String name : expected) {
+			Iterator<String> iterator = expected.iterator();
+			while (iterator.hasNext()) {
+				String name = iterator.next();
 				System.err.println("Missing: " + name);
 			}
 			assertTrue("Wrong bundles in target platform", expected.isEmpty());
@@ -657,7 +663,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		URL url = PDETestsPlugin.getBundleContext().getBundle().getEntry("/tests/targets/target-files/" + name + ".target");
 		File file = new File(FileLocator.toFileURL(url).getFile());
 		ITargetDefinition target = getNewTarget();
-		TargetDefinitionPersistenceHelper.initFromXML(target, getTextFileBufferFromFile(file));
+		try (FileInputStream stream = new FileInputStream(file)) {
+			TargetDefinitionPersistenceHelper.initFromXML(target, stream);
+		}
 		return target;
 	}
 

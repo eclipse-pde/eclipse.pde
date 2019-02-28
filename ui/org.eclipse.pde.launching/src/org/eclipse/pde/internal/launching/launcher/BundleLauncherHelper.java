@@ -607,7 +607,7 @@ public class BundleLauncherHelper {
 		if (userAddedPlugins != null) {
 			for (String addedPlugin : userAddedPlugins) {
 				String[] pluginData = addedPlugin.split(":"); //$NON-NLS-1$
-				boolean checked = Boolean.valueOf(pluginData[3]).booleanValue();
+				boolean checked = Boolean.parseBoolean(pluginData[3]);
 				if (!onlyEnabled || checked) {
 					String id = pluginData[0];
 					String version = pluginData[1];

@@ -41,7 +41,7 @@ public class PluginConfiguration extends ProductObject implements IPluginConfigu
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
 			fId = element.getAttribute("id"); //$NON-NLS-1$
-			fAutoStart = Boolean.valueOf(element.getAttribute(P_AUTO_START)).booleanValue();
+			fAutoStart = Boolean.parseBoolean(element.getAttribute(P_AUTO_START));
 			fStartLevel = Integer.parseInt(element.getAttribute(P_START_LEVEL));
 		}
 

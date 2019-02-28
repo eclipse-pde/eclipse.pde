@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc. and others
+ * Copyright (c) 2017, 2019 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -172,16 +172,18 @@ public class FoldingReconcilerStrategy implements IReconcilingStrategy, IReconci
 					}
 					break;
 				case END_OF_LINE:
-					if (currentChar == '\n' || characters == currentCharIndex + 1) {
-						List<Integer> listOfAnnotationIndexes = startOfAnnotation.get(word);
-						int start = listOfAnnotationIndexes.get(0);
-						if (document.getLineOfOffset(start) != document.getLineOfOffset(currentCharIndex)) {
-							positions.add(new Position(start, currentCharIndex + 1 - start));
-						}
-						if (listOfAnnotationIndexes.size() > 0) {
-							listOfAnnotationIndexes.remove(0);
-						}else {
-							startOfAnnotation.remove(word);
+					if (startOfAnnotation.containsKey(word)) {
+						if (currentChar == '\n' || characters == currentCharIndex + 1) {
+							List<Integer> listOfAnnotationIndexes = startOfAnnotation.get(word);
+							int start = listOfAnnotationIndexes.get(0);
+							if (document.getLineOfOffset(start) != document.getLineOfOffset(currentCharIndex)) {
+								positions.add(new Position(start, currentCharIndex + 1 - start));
+							}
+							if (listOfAnnotationIndexes.size() > 0) {
+								listOfAnnotationIndexes.remove(0);
+							} else {
+								startOfAnnotation.remove(word);
+							}
 						}
 						searchingFor = SearchingFor.START_OF_TAG;
 					}

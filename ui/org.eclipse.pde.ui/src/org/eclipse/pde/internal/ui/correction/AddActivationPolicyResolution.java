@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Alex Blewitt and others.
+ * Copyright (c) 2015, 2019 Alex Blewitt and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
@@ -22,8 +23,8 @@ import org.osgi.framework.Constants;
 
 public class AddActivationPolicyResolution extends AbstractManifestMarkerResolution {
 
-	public AddActivationPolicyResolution(int type) {
-		super(type);
+	public AddActivationPolicyResolution(int type, IMarker marker) {
+		super(type, marker);
 	}
 
 	@Override

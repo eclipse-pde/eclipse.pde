@@ -204,7 +204,7 @@ public class GeneralInfoSection extends PDESection {
 		} else if (prop.equals(IProduct.P_VERSION)) {
 			fVersionEntry.setValue(e.getNewValue().toString(), true);
 		} else if (prop.equals(IProduct.P_INCLUDE_LAUNCHERS)) {
-			fLaunchersButton.setSelection(Boolean.valueOf(e.getNewValue().toString()).booleanValue());
+			fLaunchersButton.setSelection(Boolean.parseBoolean(e.getNewValue().toString()));
 		}
 	}
 

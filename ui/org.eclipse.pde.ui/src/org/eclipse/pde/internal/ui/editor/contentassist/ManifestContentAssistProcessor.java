@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -51,14 +51,6 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	private static final String[] fHeader = {Constants.BUNDLE_ACTIVATIONPOLICY, Constants.BUNDLE_ACTIVATOR, Constants.BUNDLE_CATEGORY, Constants.BUNDLE_CLASSPATH, Constants.BUNDLE_CONTACTADDRESS, Constants.BUNDLE_COPYRIGHT, Constants.BUNDLE_DESCRIPTION, Constants.BUNDLE_DOCURL, Constants.BUNDLE_LOCALIZATION, Constants.BUNDLE_MANIFESTVERSION, Constants.BUNDLE_NAME, Constants.BUNDLE_NATIVECODE, Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, Constants.BUNDLE_SYMBOLICNAME, Constants.BUNDLE_UPDATELOCATION, Constants.BUNDLE_VENDOR, Constants.BUNDLE_VERSION, Constants.DYNAMICIMPORT_PACKAGE, ICoreConstants.ECLIPSE_BUDDY_POLICY, ICoreConstants.ECLIPSE_BUNDLE_SHAPE, ICoreConstants.ECLIPSE_GENERIC_CAPABILITY, ICoreConstants.ECLIPSE_GENERIC_REQUIRED, ICoreConstants.ECLIPSE_LAZYSTART,
 			ICoreConstants.PLATFORM_FILTER, ICoreConstants.ECLIPSE_REGISTER_BUDDY, ICoreConstants.ECLIPSE_SOURCE_REFERENCES, Constants.EXPORT_PACKAGE, ICoreConstants.EXPORT_SERVICE, Constants.FRAGMENT_HOST, Constants.IMPORT_PACKAGE, ICoreConstants.IMPORT_SERVICE, Constants.PROVIDE_CAPABILITY, Constants.REQUIRE_BUNDLE, Constants.REQUIRE_CAPABILITY};
 
-	private static final String BAUMAN = "Brian Bauman"; //$NON-NLS-1$
-	private static final String ANISZCZYK = "Chris Aniszczyk"; //$NON-NLS-1$
-	private static final String LASOCKI_BICZYSKO = "Janek Lasocki-Biczysko"; //$NON-NLS-1$
-	private static final String PAWLOWSKI = "Mike Pawlowski"; //$NON-NLS-1$
-	private static final String MELHEM = "Wassim Melhem"; //$NON-NLS-1$
-	private static final String WINDATT = "Curtis Windatt"; //$NON-NLS-1$
-
-	private static final String[] fNames = {BAUMAN, ANISZCZYK, LASOCKI_BICZYSKO, PAWLOWSKI, MELHEM, WINDATT};
 
 	private static final char[] fAutoActivationChars = { ':', ' ', ',', '.', ';', '=' };
 
@@ -245,23 +237,6 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	 */
 	protected ICompletionProposal[] handleBundleNameCompletion(String currentValue, int offset) {
 		currentValue = removeLeadingSpaces(currentValue);
-		int length = currentValue.length();
-
-		// only show when there is no bundle name
-		if (length == 0) {
-			return new ICompletionProposal[] {new TypeCompletionProposal(BAUMAN, null, BAUMAN, offset - length, length), new TypeCompletionProposal(ANISZCZYK, null, ANISZCZYK, offset - length, length), new TypeCompletionProposal(LASOCKI_BICZYSKO, null, LASOCKI_BICZYSKO, offset - length, length), new TypeCompletionProposal(PAWLOWSKI, null, PAWLOWSKI, offset - length, length), new TypeCompletionProposal(MELHEM, null, MELHEM, offset - length, length), new TypeCompletionProposal(WINDATT, null, WINDATT, offset - length, length)};
-		}
-
-		// only show when we are trying to complete a name
-		for (String fName : fNames) {
-			StringTokenizer tokenizer = new StringTokenizer(currentValue, " "); //$NON-NLS-1$
-			while (tokenizer.hasMoreTokens()) {
-				String token = tokenizer.nextToken();
-				if (fName.regionMatches(true, 0, token, 0, token.length())) {
-					return new ICompletionProposal[] {new TypeCompletionProposal(fName, null, fName, offset - token.length(), token.length())};
-				}
-			}
-		}
 		return new ICompletionProposal[0];
 	}
 

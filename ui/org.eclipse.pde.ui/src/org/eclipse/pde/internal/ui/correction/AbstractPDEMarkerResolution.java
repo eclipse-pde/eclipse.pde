@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2017 IBM Corporation and others.
+ *  Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -13,10 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import java.util.HashSet;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
@@ -37,15 +39,31 @@ public abstract class AbstractPDEMarkerResolution extends WorkbenchMarkerResolut
 	 * ie. its not the be used in getImage()/getType()/getDesciption()
 	 */
 	protected IResource fResource;
+	protected IMarker marker = null;
 
 	public AbstractPDEMarkerResolution(int type) {
 		fType = type;
 	}
 
+	public AbstractPDEMarkerResolution(int type, IMarker marker2) {
+		fType = type;
+		marker = marker2;
+	}
+
 	@Override
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
-		return new IMarker[0];
+		HashSet<IMarker> mset = new HashSet<>(markers.length);
+		for (IMarker iMarker : markers) {
+			if (iMarker.equals(marker))
+				continue;
+			String str = iMarker.getAttribute(PDEMarkerFactory.compilerKey, ""); //$NON-NLS-1$
+			if (str.equals(marker.getAttribute(PDEMarkerFactory.compilerKey, ""))) //$NON-NLS-1$
+				mset.add(iMarker);
+		}
+		int size = mset.size();
+		return mset.toArray(new IMarker[size]);
 	}
+
 	@Override
 	public Image getImage() {
 		if (image == null) {
@@ -78,6 +96,7 @@ public abstract class AbstractPDEMarkerResolution extends WorkbenchMarkerResolut
 
 	@Override
 	public void run(IMarker marker) {
+		this.marker = marker;
 		fResource = marker.getResource();
 		ModelModification modification = new ModelModification((IFile) marker.getResource()) {
 			@Override

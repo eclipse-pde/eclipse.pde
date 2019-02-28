@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.plugin;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
+import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.core.plugin.IPluginBase;
@@ -86,7 +87,9 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 
 	@Override
 	protected IPluginModelBase findModel() {
-		return PluginRegistry.findModel(getId(), iimport.getVersion(), iimport.getMatch(), null);
+		String version = iimport.getVersion();
+		VersionRange range = new VersionRange(version);
+		return PluginRegistry.findModel(getId(), range, null);
 	}
 
 }

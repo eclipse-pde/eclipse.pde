@@ -14,15 +14,12 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
-import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -84,9 +81,12 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	}
 
 	@Override
-	protected ITextFileBuffer getTextFileBuffer() throws CoreException {
+	public void save(ITargetDefinition definition) throws CoreException {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		((TargetDefinition) definition).write(outputStream);
+		ByteArrayInputStream stream = new ByteArrayInputStream(outputStream.toByteArray());
 		if (!fFile.exists()) {
-			fFile.create(new ByteArrayInputStream(new byte[0]), false, null);
+			fFile.create(stream, false, null);
 		} else {
 			// validate edit
 			if (fFile.isReadOnly()) {
@@ -95,10 +95,13 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 					throw new CoreException(status);
 				}
 			}
+			fFile.setContents(stream, true, false, null);
 		}
-		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-		manager.connect(fFile.getFullPath(), LocationKind.IFILE, null);
-		return manager.getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
+	}
+
+	@Override
+	protected InputStream getInputStream() throws CoreException {
+		return fFile.getContents();
 	}
 
 	@Override
@@ -128,13 +131,6 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 		P2TargetUtils.deleteProfile(this);
 	}
 
-	@Override
-	public void save(ITargetDefinition definition) throws CoreException {
-		((TargetDefinition) definition).write(getTextFileBuffer());
-		if (fFile.exists()) {
-			fFile.refreshLocal(IResource.DEPTH_ZERO, null);
-		}
-	}
 
 	@Override
 	public String toString() {

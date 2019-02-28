@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -8,13 +8,14 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Inc. - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import org.eclipse.core.filebuffers.ITextFileBuffer;
+import java.io.InputStream;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
@@ -30,7 +31,7 @@ public abstract class AbstractTargetHandle implements ITargetHandle {
 	public ITargetDefinition getTargetDefinition() throws CoreException {
 		TargetDefinition definition = new TargetDefinition(this);
 		if (exists()) {
-			definition.setContents(getTextFileBuffer());
+			definition.setContents(getInputStream());
 		}
 		return definition;
 	}
@@ -38,11 +39,11 @@ public abstract class AbstractTargetHandle implements ITargetHandle {
 	/**
 	 * Returns an input stream of the target definition's contents.
 	 *
-	 * @return file buffer of content
+	 * @return stream of content
 	 * @throws CoreException
-	 *                           if an error occurs
+	 *             if an error occurs
 	 */
-	protected abstract ITextFileBuffer getTextFileBuffer() throws CoreException;
+	protected abstract InputStream getInputStream() throws CoreException;
 
 	/**
 	 * Deletes the underlying target definition.

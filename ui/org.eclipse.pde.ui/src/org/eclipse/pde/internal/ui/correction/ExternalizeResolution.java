@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -126,6 +126,11 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 			};
 		}
 		PDEModelUtility.modifyModel(modification, null);
+	}
+
+	@Override
+	public IMarker[] findOtherMarkers(IMarker[] markers) {
+		return new IMarker[0];
 	}
 
 	private void checkPropertiesFile(IFile file) {

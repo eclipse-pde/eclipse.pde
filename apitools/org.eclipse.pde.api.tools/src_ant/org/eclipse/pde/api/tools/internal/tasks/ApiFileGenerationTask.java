@@ -200,7 +200,7 @@ public class ApiFileGenerationTask extends Task {
 	 * @param allow
 	 */
 	public void setAllowNonApiProject(String allow) {
-		this.allowNonApiProject = Boolean.valueOf(allow).booleanValue();
+		this.allowNonApiProject = Boolean.parseBoolean(allow);
 	}
 
 	/**
@@ -509,7 +509,7 @@ public class ApiFileGenerationTask extends Task {
 						Object directive = directiveKeys.nextElement();
 						if ("x-internal".equals(directive)) { //$NON-NLS-1$
 							String value = packageName.getDirective((String) directive);
-							if (Boolean.valueOf(value).booleanValue()) {
+							if (Boolean.parseBoolean(value)) {
 								include = false;
 								break loop;
 							}

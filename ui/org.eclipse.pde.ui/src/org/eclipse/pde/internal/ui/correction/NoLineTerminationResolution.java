@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2011, 2015 IBM Corporation and others.
+ *  Copyright (c) 2011, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -28,8 +29,8 @@ public class NoLineTerminationResolution extends AbstractManifestMarkerResolutio
 	 * @param type Either {@link AbstractPDEMarkerResolution#REMOVE_TYPE} to delete a whitespace only line
 	 * or {@link AbstractPDEMarkerResolution#CREATE_TYPE} to add a new line
 	 */
-	public NoLineTerminationResolution(int type) {
-		super(type);
+	public NoLineTerminationResolution(int type, IMarker marker) {
+		super(type, marker);
 	}
 
 	/**

@@ -102,9 +102,9 @@ public class IULocationFactory implements ITargetLocationFactory {
 					flags = 0;
 				}
 			}
-			flags |= Boolean.valueOf(includeAllPlatforms).booleanValue() ? IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS : 0;
-			flags |= Boolean.valueOf(includeSource).booleanValue() ? IUBundleContainer.INCLUDE_SOURCE : 0;
-			flags |= Boolean.valueOf(includeConfigurePhase).booleanValue() ? IUBundleContainer.INCLUDE_CONFIGURE_PHASE : 0;
+			flags |= Boolean.parseBoolean(includeAllPlatforms) ? IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS : 0;
+			flags |= Boolean.parseBoolean(includeSource) ? IUBundleContainer.INCLUDE_SOURCE : 0;
+			flags |= Boolean.parseBoolean(includeConfigurePhase) ? IUBundleContainer.INCLUDE_CONFIGURE_PHASE : 0;
 			IUBundleContainer targetLocation = new IUBundleContainer(iuIDs, iuVer, uris, flags);
 			return targetLocation;
 		}

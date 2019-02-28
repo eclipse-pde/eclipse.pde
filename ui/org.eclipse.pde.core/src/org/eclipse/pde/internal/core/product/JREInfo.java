@@ -103,7 +103,7 @@ public class JREInfo extends ProductObject implements IJREInfo {
 			Node child = list.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				Node includeNode = child.getAttributes().getNamedItem("include"); //$NON-NLS-1$
-				boolean include = includeNode != null ? Boolean.valueOf(includeNode.getNodeValue()).booleanValue() : true;
+				boolean include = includeNode != null ? Boolean.parseBoolean(includeNode.getNodeValue()) : true;
 				if (child.getNodeName().equals(JRE_LIN)) {
 					fJVMLin = getPath(child);
 					bIncludeLin = include;

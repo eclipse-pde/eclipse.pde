@@ -478,7 +478,7 @@ public class PluginConfigurationSection extends TableSection {
 			combo.pack();
 			combo.addSelectionListener(widgetSelectedAdapter(e -> {
 				item.setText(2, combo.getText());
-				ppc.setAutoStart(Boolean.valueOf(combo.getText()).booleanValue());
+				ppc.setAutoStart(Boolean.parseBoolean(combo.getText()));
 			}));
 			fAutoColumnEditor.setEditor(combo, item, 2);
 		}

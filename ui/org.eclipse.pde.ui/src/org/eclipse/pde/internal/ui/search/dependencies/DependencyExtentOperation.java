@@ -124,8 +124,8 @@ public class DependencyExtentOperation {
 						if (monitor.isCanceled())
 							break;
 						IType[] types = new IType[0];
-						if (child instanceof IClassFile) {
-							types = new IType[] {((IClassFile) child).getType()};
+						if (child instanceof IOrdinaryClassFile) {
+							types = new IType[] {((IOrdinaryClassFile) child).getType()};
 						} else if (child instanceof ICompilationUnit) {
 							types = ((ICompilationUnit) child).getTypes();
 						}

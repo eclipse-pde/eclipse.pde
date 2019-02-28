@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,9 +14,11 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import java.util.Map;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -26,13 +28,14 @@ public class UpdateActivationResolution extends AbstractManifestMarkerResolution
 
 	private String fHeader = null;
 
-	public UpdateActivationResolution(int type, String currentHeader) {
-		super(type);
+	public UpdateActivationResolution(int type, String currentHeader, IMarker marker) {
+		super(type, marker);
 		fHeader = currentHeader;
 	}
 
 	@Override
 	protected void createChange(BundleModel model) {
+		fHeader = marker.getAttribute(PDEMarkerFactory.ATTR_HEADER, ICoreConstants.ECLIPSE_AUTOSTART);
 		if (TargetPlatformHelper.getTargetVersion() >= 3.4) {
 			// get the header we wish to replace
 			LazyStartHeader header = (LazyStartHeader) model.getBundle().getManifestHeader(fHeader);

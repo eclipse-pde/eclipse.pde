@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2015 IBM Corporation and others.
+ *  Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.text.bundle.*;
@@ -23,8 +24,8 @@ public class AddBundleClassPathMarkerResolution extends AbstractManifestMarkerRe
 
 	private String fValue;
 
-	public AddBundleClassPathMarkerResolution(int type, String value) {
-		super(type);
+	public AddBundleClassPathMarkerResolution(int type, String value, IMarker marker) {
+		super(type, marker);
 		this.fValue = value;
 	}
 
@@ -35,6 +36,7 @@ public class AddBundleClassPathMarkerResolution extends AbstractManifestMarkerRe
 
 	@Override
 	protected void createChange(BundleModel model) {
+		this.fValue = marker.getAttribute("entry", null) ;//$NON-NLS-1$
 		IBundle bundle = model.getBundle();
 		if (bundle instanceof Bundle) {
 			BundleClasspathHeader header = (BundleClasspathHeader) bundle.getManifestHeader(Constants.BUNDLE_CLASSPATH);

@@ -15,19 +15,14 @@ package org.eclipse.pde.genericeditor.extension.tests;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
@@ -43,22 +38,20 @@ import org.junit.Test;
 import org.osgi.framework.FrameworkUtil;
 
 public class Bug531602FormattingTests extends AbstractTargetEditorTest {
-	private static final String TEST_FILE_LINE_SEPERATOR = "\n";
 
 	@Test
 	public void testSettingNullPersists() throws Exception {
 		ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		ITargetDefinition targetDefinition = service.newTarget();
 		targetDefinition.setName("test");
-		tempFile = File.createTempFile("targetDefinition", null);
-		ITextFileBuffer buffer = getTextFileBufferFromFile(tempFile);
-		TargetDefinitionPersistenceHelper.persistXML(targetDefinition, buffer);
-		String expectedOutput = readFile(tempFile.toPath(), StandardCharsets.UTF_8);
+		ByteArrayOutputStream expectedOutput = new ByteArrayOutputStream();
+		TargetDefinitionPersistenceHelper.persistXML(targetDefinition, expectedOutput);
 
+		ByteArrayOutputStream actualOutput = new ByteArrayOutputStream();
 		targetDefinition.setProgramArguments(null);
-		TargetDefinitionPersistenceHelper.persistXML(targetDefinition, buffer);
-		String actualOutput = readFile(tempFile.toPath(), StandardCharsets.UTF_8);
-		assertEquals(expectedOutput, actualOutput);
+		TargetDefinitionPersistenceHelper.persistXML(targetDefinition, actualOutput);
+		assertEquals(expectedOutput.toString(StandardCharsets.UTF_8.toString()),
+				actualOutput.toString(StandardCharsets.UTF_8.toString()));
 	}
 
 	@Test
@@ -66,18 +59,18 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 		ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		ITargetDefinition targetDefinition = service.newTarget();
 		targetDefinition.setOS("test_os");
+		ByteArrayOutputStream actualOutput = new ByteArrayOutputStream();
+		TargetDefinitionPersistenceHelper.persistXML(targetDefinition, actualOutput);
 		confirmMatch(targetDefinition, "IndentingTestCaseTarget.txt");
 	}
 
 	@Test
 	public void testCommentsAndWhitespacePersists() throws Exception {
-		URL url = FrameworkUtil.getBundle(this.getClass())
-				.getEntry("testing-files/target-files/PersistTestCaseTarget.txt");
-		File inputFile = new File(FileLocator.toFileURL(url).getFile());
+		InputStream inputStream = FrameworkUtil.getBundle(this.getClass())
+				.getEntry("testing-files/target-files/PersistTestCaseTarget.txt").openStream();
 		ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		ITargetDefinition targetDefinition = service.newTarget();
-		ITextFileBuffer buffer = getTextFileBufferFromFile(inputFile);
-		TargetDefinitionPersistenceHelper.initFromXML(targetDefinition, buffer);
+		TargetDefinitionPersistenceHelper.initFromXML(targetDefinition, inputStream);
 		confirmMatch(targetDefinition, "PersistTestCaseTarget.txt");
 	}
 
@@ -116,8 +109,6 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 		StringAsserts.assertEqualStringIgnoreDelim(actual, expected);
 	}
 	private void confirmMatch(ITargetDefinition targetDefinition, String expectedDefinitionPath) throws Exception {
-		String lineSeparator = System.getProperty("line.separator");
-		boolean requireReplaceLineSeparator = !lineSeparator.equals(TEST_FILE_LINE_SEPERATOR);
 		try (Scanner s = new Scanner(FrameworkUtil.getBundle(this.getClass())
 				.getEntry("testing-files/target-files/" + expectedDefinitionPath).openStream()).useDelimiter("\\A")) {
 			String result = s.hasNext() ? s.next() : "";
@@ -129,14 +120,10 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 				Arrays.fill(chars, ' ');
 				result.replace("\t", new String(chars));
 			}
-			tempFile = File.createTempFile("targetDefinition", null);
-			ITextFileBuffer buffer = getTextFileBufferFromFile(tempFile);
-			TargetDefinitionPersistenceHelper.persistXML(targetDefinition, buffer);
-			String fileContent = readFile(tempFile.toPath(), StandardCharsets.UTF_8);
-			if (requireReplaceLineSeparator) {
-				fileContent = fileContent.replace(lineSeparator, TEST_FILE_LINE_SEPERATOR);
-			}
-			assertEquals(result, fileContent);
+			ByteArrayOutputStream actualOutput = new ByteArrayOutputStream();
+			TargetDefinitionPersistenceHelper.persistXML(targetDefinition, actualOutput);
+
+			assertEqualStringIgnoreDelim(result, actualOutput.toString(StandardCharsets.UTF_8.toString()));
 		} catch (IOException e) {
 		}
 	}
@@ -163,10 +150,5 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 		targetDefinition.setIncluded(restrictions);
 		targetDefinition.setTargetLocations(new ITargetLocation[] { dirContainer, profileContainer, featureContainer,
 				restrictedProfileContainer, siteContainer });
-	}
-
-	static String readFile(Path path, Charset encoding) throws IOException {
-		byte[] encoded = Files.readAllBytes(path);
-		return new String(encoded, encoding);
 	}
 }

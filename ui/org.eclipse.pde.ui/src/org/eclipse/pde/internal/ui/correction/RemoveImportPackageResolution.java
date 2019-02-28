@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -22,13 +23,14 @@ public class RemoveImportPackageResolution extends AbstractManifestMarkerResolut
 
 	private String fPkgName;
 
-	public RemoveImportPackageResolution(int type, String packageName) {
-		super(type);
+	public RemoveImportPackageResolution(int type, String packageName, IMarker marker) {
+		super(type, marker);
 		fPkgName = packageName;
 	}
 
 	@Override
 	protected void createChange(BundleModel model) {
+		fPkgName = marker.getAttribute("packageName", (String) null); //$NON-NLS-1$
 		Bundle bundle = (Bundle) model.getBundle();
 		ImportPackageHeader header = (ImportPackageHeader) bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
 		if (header != null)

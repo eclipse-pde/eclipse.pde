@@ -197,7 +197,7 @@ public class TargetPersistence34Helper {
 		String def = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_USE_DEFAULT);
 		String path = null;
 		String type = null;
-		if (def.length() > 0 && Boolean.valueOf(def).booleanValue()) {
+		if (def.length() > 0 && Boolean.parseBoolean(def)) {
 			path = "${eclipse_home}"; //$NON-NLS-1$
 			type = ProfileBundleContainer.TYPE;
 		} else {

@@ -241,7 +241,7 @@ public class TargetPersistence35Helper {
 					flags = 0;
 				}
 			}
-			flags |= Boolean.valueOf(includeAllPlatforms).booleanValue() ? IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS : 0;
+			flags |= Boolean.parseBoolean(includeAllPlatforms) ? IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS : 0;
 			container = new IUBundleContainer(iuIDs, iuVer, uris, flags);
 		}
 
