@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2017 IBM Corporation and others.
+ *  Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,8 @@
 package org.eclipse.pde.internal.build.site;
 
 import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.*;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -407,6 +409,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 		Properties profileProps = null;
 		boolean added = false;
+		String eeJava9 = null;
 		//javaProfiles are sorted, go in reverse order, and if when we hit 0 we haven't added any yet, 
 		//then add that last profile so we have something.
 		for (int j = javaProfiles.length - 1; j >= 0; j--) {
@@ -420,11 +423,35 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 					prop = new Hashtable<>();
 					prop.put(ProfileManager.SYSTEM_PACKAGES, systemPackages);
+					if (profileName.equals("JavaSE-9")) { //$NON-NLS-1$
+						eeJava9 = ee;
+					}
 					prop.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
 					properties.add(prop);
 					added = true;
 				}
 			}
+		}
+		// from java 10 and beyond
+		String[] java10AndBeyond = {"JavaSE-10", "JavaSE-11"}; //$NON-NLS-1$//$NON-NLS-2$
+		prop = new Hashtable<>();
+		String previousEE = eeJava9;
+		for (int i = 0; i <= java10AndBeyond.length - 1; i++) {
+			String execEnvID = java10AndBeyond[i];
+			prop = new Hashtable<>();
+			Properties javaProfilePropertiesForVMPackage = getJavaProfilePropertiesForVMPackage(execEnvID);
+			if (javaProfilePropertiesForVMPackage != null) {
+				systemPackages = javaProfilePropertiesForVMPackage.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
+			}
+			String currentEE = previousEE + "," + execEnvID; //$NON-NLS-1$
+			if (systemPackages == null) {
+				previousEE = currentEE;
+				continue;
+			}
+			prop.put(ProfileManager.SYSTEM_PACKAGES, systemPackages);
+			prop.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, currentEE);
+			previousEE = currentEE;
+			properties.add(prop);
 		}
 
 		Dictionary<String, Object>[] stateProperties = properties.toArray(new Dictionary[properties.size()]);
@@ -716,5 +743,44 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			}
 		}
 		return profileManager;
+	}
+
+	private static Properties getJavaProfilePropertiesForVMPackage(String ee) {
+		Bundle apitoolsBundle = Platform.getBundle("org.eclipse.pde.api.tools"); //$NON-NLS-1$
+		if (apitoolsBundle == null) {
+			return null;
+		}
+		URL systemPackageProfile = apitoolsBundle.getEntry("system_packages" + '/' + ee.replace('/', '_') + "-systempackages.profile"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (systemPackageProfile != null) {
+			return getPropertiesFromURL(systemPackageProfile);
+
+		}
+		return null;
+	}
+
+	private static Properties getPropertiesFromURL(URL profileURL) {
+		InputStream is = null;
+		try {
+			profileURL = FileLocator.resolve(profileURL);
+			URLConnection openConnection = profileURL.openConnection();
+			openConnection.setUseCaches(false);
+			is = openConnection.getInputStream();
+			if (is != null) {
+				Properties profile = new Properties();
+				profile.load(is);
+				return profile;
+			}
+		} catch (IOException e) {
+			// nothing to do
+		} finally {
+			try {
+				if (is != null) {
+					is.close();
+				}
+			} catch (IOException e) {
+				// nothing to do
+			}
+		}
+		return null;
 	}
 }

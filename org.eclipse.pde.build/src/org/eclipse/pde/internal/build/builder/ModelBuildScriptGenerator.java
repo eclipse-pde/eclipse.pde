@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which accompanies this distribution,
@@ -1545,7 +1545,30 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printComment("compile the source code"); //$NON-NLS-1$
 			JavacTask javac = new JavacTask();
 			javac.setClasspathId(name + PROPERTY_CLASSPATH);
-			javac.setBootClasspath(Utils.getPropertyFormat(PROPERTY_BUNDLE_BOOTCLASSPATH));
+			String[] executionEnvironments = model.getExecutionEnvironments();
+			boolean isModular = false;
+			// 1 execution env associated with the model
+			if (executionEnvironments.length == 1) {
+				String ee = executionEnvironments[0];
+				ProfileManager profileManager = null;
+				try {
+					profileManager = getSite(false).getRegistry().getProfileManager();
+				} catch (CoreException e) {
+					//nothing to do, will assume non-modular
+				}
+				String source = null;
+				if (profileManager != null)
+					source = profileManager.getJavacSource(ee);
+				int parseInt = -1;
+				try {
+					parseInt = Integer.parseInt(source);
+				} catch (NumberFormatException ne) {
+					//by default non-modular for 1.8 etc and below
+				}
+				if (parseInt >= 9)
+					isModular = true;
+			}
+			javac.setBootClasspath(isModular == true ? null : Utils.getPropertyFormat(PROPERTY_BUNDLE_BOOTCLASSPATH));
 			javac.setDestdir(destdir);
 			javac.setFailOnError(Utils.getPropertyFormat(PROPERTY_JAVAC_FAIL_ON_ERROR));
 			javac.setDebug(Utils.getPropertyFormat(PROPERTY_JAVAC_DEBUG_INFO));

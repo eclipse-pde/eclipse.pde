@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which accompanies this distribution,
@@ -72,6 +72,9 @@ public class ProfileManager {
 		if (profileMap.containsKey(environment)) {
 			Properties properties = profileMap.get(environment);
 			return properties.getProperty(PROFILE_JAVAC_SOURCE);
+		}
+		if (environment.startsWith("JavaSE-")) { //$NON-NLS-1$
+			return environment.replace("JavaSE-", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return null;
 	}
