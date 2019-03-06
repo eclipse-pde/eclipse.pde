@@ -170,15 +170,8 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			for (IPackageFragment pkgFragment : packageFragments) {
 				SubMonitor iterationMonitor = subMonitor.split(2);
 				if (pkgFragment.hasChildren()) {
-					Requestor requestor = new Requestor();
-					engine.search(SearchPattern.createPattern(pkgFragment, IJavaSearchConstants.REFERENCES),
-							new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() }, searchScope,
-							requestor, iterationMonitor.split(1));
-					if (requestor.foundMatches()) {
-						if (provideJavaClasses(pkgFragment, engine, searchScope,
-								iterationMonitor.split(1))) {
-							return true;
-						}
+					if (provideJavaClasses(pkgFragment, engine, searchScope, iterationMonitor.split(1))) {
+						return true;
 					}
 				}
 			}
@@ -203,12 +196,15 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			if (types != null) {
 				SubMonitor iterationMonitor = subMonitor.split(1).setWorkRemaining(types.length);
 				for (IType type : types) {
-					requestor = new Requestor();
-					engine.search(SearchPattern.createPattern(type, IJavaSearchConstants.REFERENCES),
+					IType[] allTypes = type.newSupertypeHierarchy(iterationMonitor.split(1)).getAllTypes();
+					for (IType currType : allTypes) {
+						requestor = new Requestor();
+						engine.search(SearchPattern.createPattern(currType, IJavaSearchConstants.REFERENCES),
 							new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() }, searchScope,
 							requestor, iterationMonitor.split(1));
-					if (requestor.foundMatches()) {
-						return true;
+						if (requestor.foundMatches()) {
+							return true;
+						}
 					}
 				}
 			} else {
