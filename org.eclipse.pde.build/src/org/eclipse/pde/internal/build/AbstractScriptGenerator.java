@@ -127,9 +127,8 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	}
 
 	public static void setConfigInfo(String spec) throws CoreException {
-		configInfos.clear();
 		String[] configs = Utils.getArrayFromStringWithBlank(spec, "&"); //$NON-NLS-1$
-		configInfos = new ArrayList<>(configs.length);
+		List<Config> infos = new ArrayList<>(configs.length);
 		String[] os = new String[configs.length];
 		String[] ws = new String[configs.length];
 		String[] archs = new String[configs.length];
@@ -140,10 +139,11 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 				throw new CoreException(error);
 			}
 			Config aConfig = new Config(configs[i]);
-			if (aConfig.equals(Config.genericConfig()))
-				configInfos.add(Config.genericConfig());
-			else
-				configInfos.add(aConfig);
+			if (aConfig.equals(Config.genericConfig())) {
+				infos.add(Config.genericConfig());
+			} else {
+				infos.add(aConfig);
+			}
 
 			// create a list of all ws, os and arch to feed the SiteManager
 			os[i] = aConfig.getOs();
@@ -153,6 +153,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		SiteManager.setOS(Utils.getStringFromArray(os, ",")); //$NON-NLS-1$
 		SiteManager.setWS(Utils.getStringFromArray(ws, ",")); //$NON-NLS-1$
 		SiteManager.setArch(Utils.getStringFromArray(archs, ",")); //$NON-NLS-1$
+		configInfos = infos;
 	}
 
 	public void setWorkingDirectory(String location) {

@@ -374,7 +374,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			writer.startTag(FEATURE, parameters, true);
 
 			boolean fragment = false;
-			List<Config> configs = getConfigInfos();
+			List<Config> configs = new ArrayList<>(getConfigInfos());
 			//we do the generic config first as a special case
 			configs.remove(Config.genericConfig());
 			Iterator<Config> configIterator = configs.iterator();
