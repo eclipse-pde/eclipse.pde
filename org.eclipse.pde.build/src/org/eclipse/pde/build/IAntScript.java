@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -71,13 +71,13 @@ public interface IAntScript {
 	public void printAttribute(String name, String value, boolean mandatory);
 
 	/**
-	 * Print tagName as an xml begin tag (<code>&lt;tagName&gt;<code>).
+	 * Print tagName as an xml begin tag (<code>&lt;tagName&gt;</code>).
 	 * @param tagName the tag to print.
 	 */
 	public void printStartTag(String tagName);
 
 	/**
-	 * Print tagName as an xml begin tag with attributes (<code>&lt;tagName [attributes...] &gt;<code>).
+	 * Print tagName as an xml begin tag with attributes (<code>&lt;tagName [attributes...] &gt;</code>).
 	 * @param tag
 	 * @param attributes
 	 * @since 3.6
@@ -85,13 +85,13 @@ public interface IAntScript {
 	public void printStartTag(String tag, Map<String, String> attributes);
 
 	/**
-	 * Print tagName as an xml end tag (<code>&lt;/tagName&gt;<code>).
+	 * Print tagName as an xml end tag (<code>&lt;/tagName&gt;</code>).
 	 * @param endTag the tag to print.
 	 */
 	public void printEndTag(String endTag);
 
 	/**
-	 * Print an xml element with attributes (<code>&lt;tagName [attributes...] /&gt;<code>).
+	 * Print an xml element with attributes (<code>&lt;tagName [attributes...] /&gt;</code>).
 	 * @param tag
 	 * @param attributes
 	 * @since 3.6

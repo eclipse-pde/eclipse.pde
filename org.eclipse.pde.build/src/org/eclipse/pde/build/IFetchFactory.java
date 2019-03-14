@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2013 Eclipse Foundation and others.
+ * Copyright (c) 2004, 2019 Eclipse Foundation and others.
  *
  *   This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.IPath;
  * The format of <code>elementType</code> and <code>elementName</code> is fixed.
  * The factories specify the value of <code>repositoryTag</code> and the format of the <code>repositoryDetails</code>.
  * <code>repositoryTag</code> and <code>repositoryDetails</code> becomes defacto APIs. 
- * </br>
+ * <br>
  * <code>repositoryTag</code> should match the factory id used when declaring the factory extension. For example, for the CVS the value is "CVS". 
  * <code>repositoryDetails</code> should contains enough details to allow the factory to generate a fetch script retrieving the element.
   * </p>
