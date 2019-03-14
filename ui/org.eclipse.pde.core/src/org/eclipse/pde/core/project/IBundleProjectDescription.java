@@ -39,46 +39,46 @@ public interface IBundleProjectDescription {
 	/**
 	 * Identifies bundles developed for Eclipse 3.0, value is <code>"3.0"</code>.
 	 */
-	public static final String VERSION_3_0 = ICoreConstants.TARGET30;
+	String VERSION_3_0 = ICoreConstants.TARGET30;
 	/**
 	 * Identifies bundles developed for Eclipse 3.1, value is <code>"3.1"</code>.
 	 */
-	public static final String VERSION_3_1 = ICoreConstants.TARGET31;
+	String VERSION_3_1 = ICoreConstants.TARGET31;
 	/**
 	 * Identifies bundles developed for Eclipse 3.2, value is <code>"3.2"</code>.
 	 */
-	public static final String VERSION_3_2 = ICoreConstants.TARGET32;
+	String VERSION_3_2 = ICoreConstants.TARGET32;
 	/**
 	 * Identifies bundles developed for Eclipse 3.3, value is <code>"3.3"</code>.
 	 */
-	public static final String VERSION_3_3 = ICoreConstants.TARGET33;
+	String VERSION_3_3 = ICoreConstants.TARGET33;
 	/**
 	 * Identifies bundles developed for Eclipse 3.4, value is <code>"3.4"</code>.
 	 */
-	public static final String VERSION_3_4 = ICoreConstants.TARGET34;
+	String VERSION_3_4 = ICoreConstants.TARGET34;
 	/**
 	 * Identifies bundles developed for Eclipse 3.5, value is <code>"3.5"</code>.
 	 */
-	public static final String VERSION_3_5 = ICoreConstants.TARGET35;
+	String VERSION_3_5 = ICoreConstants.TARGET35;
 	/**
 	 * Identifies bundles developed for Eclipse 3.6, value is <code>"3.6"</code>.
 	 */
-	public static final String VERSION_3_6 = ICoreConstants.TARGET36;
+	String VERSION_3_6 = ICoreConstants.TARGET36;
 	/**
 	 * Identifies bundles developed for Eclipse 3.7, value is <code>"3.7"</code>.
 	 * @since 3.7
 	 */
-	public static final String VERSION_3_7 = ICoreConstants.TARGET37;
+	String VERSION_3_7 = ICoreConstants.TARGET37;
 	/**
 	 * Identifies bundles developed for Eclipse 3.8, value is <code>"3.8"</code>.
 	 * @since 3.8
 	 */
-	public static final String VERSION_3_8 = ICoreConstants.TARGET38;
+	String VERSION_3_8 = ICoreConstants.TARGET38;
 
 	/**
 	 * Constant for the PDE Plug-in project nature, value is <code>"org.eclipse.pde.PluginNature"</code>.
 	 */
-	public static final String PLUGIN_NATURE = PDE.PLUGIN_NATURE;
+	String PLUGIN_NATURE = PDE.PLUGIN_NATURE;
 
 	/**
 	 * Creates or modifies a bundle project and associated artifacts based current settings.
@@ -86,7 +86,7 @@ public interface IBundleProjectDescription {
 	 * @param monitor progress monitor or <code>null</code>
 	 * @throws CoreException if project creation or modification fails
 	 */
-	public void apply(IProgressMonitor monitor) throws CoreException;
+	void apply(IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Sets the symbolic name of the described bundle.
@@ -95,14 +95,14 @@ public interface IBundleProjectDescription {
 	 * </p>
 	 * @param name bundle symbolic name
 	 */
-	public void setSymbolicName(String name);
+	void setSymbolicName(String name);
 
 	/**
 	 * Returns the symbolic name of the described bundle or <code>null</code> if unspecified.
 	 *
 	 * @return bundle symbolic name or <code>null</code>
 	 */
-	public String getSymbolicName();
+	String getSymbolicName();
 
 	/**
 	 * Sets the location for the described project.
@@ -125,7 +125,7 @@ public interface IBundleProjectDescription {
 	 * @see #getLocationURI()
 	 * @see IProjectDescription#setLocationURI(URI)
 	 */
-	public void setLocationURI(URI location);
+	void setLocationURI(URI location);
 
 	/**
 	 * Returns the location URI for the described project.  <code>null</code> is
@@ -134,7 +134,7 @@ public interface IBundleProjectDescription {
 	 * @return the location for the described project or <code>null</code>
 	 * @see #setLocationURI(URI)
 	 */
-	public URI getLocationURI();
+	URI getLocationURI();
 
 	/**
 	 * Sets the value of the Bundle-Name header for the described bundle.
@@ -142,7 +142,7 @@ public interface IBundleProjectDescription {
 	 *
 	 * @param name bundle name
 	 */
-	public void setBundleName(String name);
+	void setBundleName(String name);
 
 	/**
 	 * Returns the value of the Bundle-Name header for the described bundle
@@ -152,14 +152,14 @@ public interface IBundleProjectDescription {
 	 * </p>
 	 * @return bundle name or <code>null</code>
 	 */
-	public String getBundleName();
+	String getBundleName();
 
 	/**
 	 * Sets the value of the Bundle-Vendor header for the described bundle.
 	 *
 	 * @param name bundle vendor name
 	 */
-	public void setBundleVendor(String name);
+	void setBundleVendor(String name);
 
 	/**
 	 * Returns the value of the Bundle-Vendor header for the described bundle
@@ -167,7 +167,7 @@ public interface IBundleProjectDescription {
 	 *
 	 * @return bundle vendor name or <code>null</code>
 	 */
-	public String getBundleVendor();
+	String getBundleVendor();
 
 	/**
 	 * Sets the value of the Bundle-Version header for the described bundle.
@@ -175,7 +175,7 @@ public interface IBundleProjectDescription {
 	 *
 	 * @param version bundle version
 	 */
-	public void setBundleVersion(Version version);
+	void setBundleVersion(Version version);
 
 	/**
 	 * Returns the value of the Bundle-Version header for the described bundle.
@@ -185,14 +185,14 @@ public interface IBundleProjectDescription {
 	 * </p>
 	 * @return bundle version or <code>null</code> if unspecified
 	 */
-	public Version getBundleVersion();
+	Version getBundleVersion();
 
 	/**
 	 * Sets whether the described bundle is a singleton.
 	 *
 	 * @param singleton whether the described bundle is a singleton
 	 */
-	public void setSingleton(boolean singleton);
+	void setSingleton(boolean singleton);
 
 	/**
 	 * Returns whether the described bundle is a singleton.
@@ -201,14 +201,14 @@ public interface IBundleProjectDescription {
 	 * </p>
 	 * @return whether the described bundle is a singleton
 	 */
-	public boolean isSingleton();
+	boolean isSingleton();
 
 	/**
 	 * Sets the value of the Bundle-Localization header for the described bundle.
 	 *
 	 * @param path bundle root relative path or <code>null</code>
 	 */
-	public void setLocalization(IPath path);
+	void setLocalization(IPath path);
 
 	/**
 	 * Returns the value of the Bundle-Localization header for the described bundle
@@ -216,7 +216,7 @@ public interface IBundleProjectDescription {
 	 *
 	 * @return bundle relative path or <code>null</code>
 	 */
-	public IPath getLocalization();
+	IPath getLocalization();
 
 	/**
 	 * Returns the list of natures associated with the described project.
@@ -226,7 +226,7 @@ public interface IBundleProjectDescription {
 	 * @see #setNatureIds(String[])
 	 * @see IProjectDescription#setNatureIds(String[])
 	 */
-	public String[] getNatureIds();
+	String[] getNatureIds();
 
 	/**
 	 * Sets the list of natures associated with the described project.
@@ -240,7 +240,7 @@ public interface IBundleProjectDescription {
 	 * @see #getNatureIds()
 	 * @see IProjectDescription#getNatureIds()
 	 */
-	public void setNatureIds(String[] natures);
+	void setNatureIds(String[] natures);
 
 	/**
 	 * Returns whether the project nature specified by the given
@@ -250,7 +250,7 @@ public interface IBundleProjectDescription {
 	 * @return <code>true</code> if the described project has the given nature
 	 * @see IProjectDescription#hasNature(String)
 	 */
-	public boolean hasNature(String natureId);
+	boolean hasNature(String natureId);
 
 	/**
 	 * Sets the the Fragment-Host header for the described fragment.
@@ -259,7 +259,7 @@ public interface IBundleProjectDescription {
 	 *
 	 * @param host host specification or <code>null</code>
 	 */
-	public void setHost(IHostDescription host);
+	void setHost(IHostDescription host);
 
 	/**
 	 * Returns the host bundle for the described fragment,
@@ -267,7 +267,7 @@ public interface IBundleProjectDescription {
 	 *
 	 * @return host specification or <code>null</code>
 	 */
-	public IHostDescription getHost();
+	IHostDescription getHost();
 
 	/**
 	 * Sets a project relative path for the default output folder used on the Java build path
@@ -276,7 +276,7 @@ public interface IBundleProjectDescription {
 	 *
 	 * @param output project relative path to default output location or <code>null</code>
 	 */
-	public void setDefaultOutputFolder(IPath output);
+	void setDefaultOutputFolder(IPath output);
 
 	/**
 	 * Returns a project relative path for the described bundle's default output folder used on the Java build path,
@@ -284,7 +284,7 @@ public interface IBundleProjectDescription {
 	 *
 	 * @return default project relative output folder path or <code>null</code>
 	 */
-	public IPath getDefaultOutputFolder();
+	IPath getDefaultOutputFolder();
 
 	/**
 	 * Sets the required execution environments for the described bundle, possible <code>null</code>.
@@ -293,7 +293,7 @@ public interface IBundleProjectDescription {
 	 *
 	 * @param environments execution environment identifiers or <code>null</code>
 	 */
-	public void setExecutionEnvironments(String[] environments);
+	void setExecutionEnvironments(String[] environments);
 
 	/**
 	 * Returns the required execution environments for the described bundle, or <code>null</code> if unspecified.
@@ -302,7 +302,7 @@ public interface IBundleProjectDescription {
 	 *
 	 * @return execution environment identifiers or <code>null</code>
 	 */
-	public String[] getExecutionEnvironments();
+	String[] getExecutionEnvironments();
 
 	/**
 	 * Sets the entries for the Bundle-Classpath header of the described bundle,
@@ -313,8 +313,7 @@ public interface IBundleProjectDescription {
 	 * @param entries Bundle-Classpath header entries or <code>null</code>
 	 * @deprecated use {@link #setBundleClasspath(IBundleClasspathEntry[])}
 	 */
-	@Deprecated
-	public void setBundleClassath(IBundleClasspathEntry[] entries);
+	@Deprecated void setBundleClassath(IBundleClasspathEntry[] entries);
 
 	/**
 	 * Sets the entries for the Bundle-Classpath header of the described bundle,
@@ -325,7 +324,7 @@ public interface IBundleProjectDescription {
 	 * @param entries Bundle-Classpath header entries or <code>null</code>
 	 * @since 3.7
 	 */
-	public void setBundleClasspath(IBundleClasspathEntry[] entries);
+	void setBundleClasspath(IBundleClasspathEntry[] entries);
 
 	/**
 	 * Returns the entries on the Bundle-Classpath header of the described bundle,
@@ -334,7 +333,7 @@ public interface IBundleProjectDescription {
 	 * @return bundle class path entries or <code>null</code> if unspecified
 	 * @see #setBundleClasspath(IBundleClasspathEntry[])
 	 */
-	public IBundleClasspathEntry[] getBundleClasspath();
+	IBundleClasspathEntry[] getBundleClasspath();
 
 	/**
 	 * Sets the value of the Bundle-Activator header for the described bundle,
@@ -342,7 +341,7 @@ public interface IBundleProjectDescription {
 	 *
 	 * @param className activator class name or <code>null</code>
 	 */
-	public void setActivator(String className);
+	void setActivator(String className);
 
 	/**
 	 * Returns the value of the Bundle-Activator header for the described bundle,
@@ -350,7 +349,7 @@ public interface IBundleProjectDescription {
 	 *
 	 * @return bundle activator class name or <code>null</code>
 	 */
-	public String getActivator();
+	String getActivator();
 
 	/**
 	 * Sets the version of Eclipse the described bundle is to targeted for.
@@ -363,7 +362,7 @@ public interface IBundleProjectDescription {
 	 * @param version one of the version constant values defined by this class or <code>null</code>
 	 * @see #setEquinox(boolean)
 	 */
-	public void setTargetVersion(String version);
+	void setTargetVersion(String version);
 
 	/**
 	 * Returns the version of Eclipse the described bundle is targeted for, or <code>null</code>
@@ -372,32 +371,40 @@ public interface IBundleProjectDescription {
 	 *
 	 * @return target version or <code>null</code>
 	 */
-	public String getTargetVersion();
+	String getTargetVersion();
 
 	/**
-	 * Sets whether the described bundle is targeted for the Equinox OSGi framework.
+	 * Sets whether the described bundle is targeted for the Equinox OSGi
+	 * framework.
 	 * <p>
-	 * An Equniox specific lazy-start header will be generated in the associated manifest
-	 * when <code>true</code> based on the target version and activation policy. For new projects
-	 * the value is <code>false</code>, by default.
+	 * An Equniox specific lazy-start header will be generated in the associated
+	 * manifest when <code>true</code> based on the target version and
+	 * activation policy. For new projects the value is <code>false</code>, by
+	 * default.
 	 * </p>
 	 * <p>
-	 * This following headers are affected when <code>true</code>, based on the {@link #getTargetVersion()}
-	 * and {@link #getActivationPolicy()}. The headers are removed when {@link #getActivationPolicy()} is
-	 * unspecified (<code>null</code>).
+	 * This following headers are affected when <code>true</code>, based on the
+	 * {@link #getTargetVersion()} and {@link #getActivationPolicy()}. The
+	 * headers are removed when {@link #getActivationPolicy()} is unspecified
+	 * (<code>null</code>).
+	 * </p>
 	 * <ul>
-	 * <li><code>Eclipse-AutoStart</code> is set to <code>true</code> when the target version is 3.1
-	 * 	and {@link #getActivationPolicy()} is {@link Constants#ACTIVATION_LAZY}</li>
-	 * <li><code>Eclipse-LazyStart</code> is set to <code>true</code> when the target version is 3.2 or 3.3
-	 *  and {@link #getActivationPolicy()} is {@link Constants#ACTIVATION_LAZY}</li>
-	 * <li><code>Bundle-ActivationPolicy</code> is set to <code>lazy</code> when the target version is 3.4 or
-	 *  greater and {@link #getActivationPolicy()} is {@link Constants#ACTIVATION_LAZY}</li>
+	 * <li><code>Eclipse-AutoStart</code> is set to <code>true</code> when the
+	 * target version is 3.1 and {@link #getActivationPolicy()} is
+	 * {@link Constants#ACTIVATION_LAZY}</li>
+	 * <li><code>Eclipse-LazyStart</code> is set to <code>true</code> when the
+	 * target version is 3.2 or 3.3 and {@link #getActivationPolicy()} is
+	 * {@link Constants#ACTIVATION_LAZY}</li>
+	 * <li><code>Bundle-ActivationPolicy</code> is set to <code>lazy</code> when
+	 * the target version is 3.4 or greater and {@link #getActivationPolicy()}
+	 * is {@link Constants#ACTIVATION_LAZY}</li>
 	 * </ul>
-	 * </p>
-	 * @param equinox whether targeted for the Equinox OSGi framework
+	 *
+	 * @param equinox
+	 *            whether targeted for the Equinox OSGi framework
 	 * @see #getTargetVersion()
 	 */
-	public void setEquinox(boolean equinox);
+	void setEquinox(boolean equinox);
 
 	/**
 	 * Returns whether the described bundle is targeted for the Equinox OSGi framework.
@@ -405,37 +412,44 @@ public interface IBundleProjectDescription {
 	 *
 	 * @return whether the described bundle is targeted for the Equinox OSGi framework
 	 */
-	public boolean isEquinox();
+	boolean isEquinox();
 
 	/**
-	 * Sets this bundle's activation policy. Legal values are {@link Constants#ACTIVATION_LAZY}
-	 * or <code>null</code> (unspecified). Any other values are ignored (equivalent to
-	 * <code>null</code>). When unspecified, a corresponding header is not generated. By default
-	 * the value is unspecified for newly created projects.
+	 * Sets this bundle's activation policy. Legal values are
+	 * {@link Constants#ACTIVATION_LAZY} or <code>null</code> (unspecified). Any
+	 * other values are ignored (equivalent to <code>null</code>). When
+	 * unspecified, a corresponding header is not generated. By default the
+	 * value is unspecified for newly created projects.
 	 * <p>
-	 * An Equniox specific lazy-start header will be generated in the associated manifest
-	 * based on the {@link #getTargetVersion()} and the specified policy. The headers are
-	 * removed when the policy is unspecified (<code>null</code>).
-	 * <ul>
-	 * <li><code>Eclipse-AutoStart</code> is set to <code>true</code> when the target version is 3.1
-	 * 	and policy is {@link Constants#ACTIVATION_LAZY}</li>
-	 * <li><code>Eclipse-LazyStart</code> is set to <code>true</code> when the target version is 3.2 or 3.3
-	 *  and policy is {@link Constants#ACTIVATION_LAZY}</li>
-	 * <li><code>Bundle-ActivationPolicy</code> is set to <code>lazy</code> when the target version is 3.4 or
-	 *  greater and policy is {@link Constants#ACTIVATION_LAZY}</li>
-	 * </ul>
+	 * An Equniox specific lazy-start header will be generated in the associated
+	 * manifest based on the {@link #getTargetVersion()} and the specified
+	 * policy. The headers are removed when the policy is unspecified
+	 * (<code>null</code>).
 	 * </p>
-	 * @param policy activation policy or <code>null</code>
+	 * <ul>
+	 * <li><code>Eclipse-AutoStart</code> is set to <code>true</code> when the
+	 * target version is 3.1 and policy is
+	 * {@link Constants#ACTIVATION_LAZY}</li>
+	 * <li><code>Eclipse-LazyStart</code> is set to <code>true</code> when the
+	 * target version is 3.2 or 3.3 and policy is
+	 * {@link Constants#ACTIVATION_LAZY}</li>
+	 * <li><code>Bundle-ActivationPolicy</code> is set to <code>lazy</code> when
+	 * the target version is 3.4 or greater and policy is
+	 * {@link Constants#ACTIVATION_LAZY}</li>
+	 * </ul>
+	 * 
+	 * @param policy
+	 *            activation policy or <code>null</code>
 	 * @see #getTargetVersion()
 	 */
-	public void setActivationPolicy(String policy);
+	void setActivationPolicy(String policy);
 
 	/**
 	 * Returns this bundle's activation policy or <code>null</code> if unspecified.
 	 *
 	 * @return activation policy or <code>null</code>
 	 */
-	public String getActivationPolicy();
+	String getActivationPolicy();
 
 	/**
 	 * Sets whether this bundle supports extension points and extensions via
@@ -444,7 +458,7 @@ public interface IBundleProjectDescription {
 	 *
 	 * @param supportExtensions whether extension points and extensions are supported
 	 */
-	public void setExtensionRegistry(boolean supportExtensions);
+	void setExtensionRegistry(boolean supportExtensions);
 
 	/**
 	 * Returns whether this bundle supports extension points and extensions via
@@ -453,56 +467,56 @@ public interface IBundleProjectDescription {
 	 *
 	 * @return whether extension points and extensions are supported
 	 */
-	public boolean isExtensionRegistry();
+	boolean isExtensionRegistry();
 
 	/**
 	 * Sets the value of the Require-Bundle header for the described bundle.
 	 *
 	 * @param bundles required bundle descriptions or <code>null</code> if none
 	 */
-	public void setRequiredBundles(IRequiredBundleDescription[] bundles);
+	void setRequiredBundles(IRequiredBundleDescription[] bundles);
 
 	/**
 	 * Returns the value of the Require-Bundle header or <code>null</code> if unspecified.
 	 *
 	 * @return required bundle descriptions or <code>null</code>
 	 */
-	public IRequiredBundleDescription[] getRequiredBundles();
+	IRequiredBundleDescription[] getRequiredBundles();
 
 	/**
 	 * Sets the value of the Import-Package header for the described bundle.
 	 *
 	 * @param imports package import descriptions or <code>null</code> if none
 	 */
-	public void setPackageImports(IPackageImportDescription[] imports);
+	void setPackageImports(IPackageImportDescription[] imports);
 
 	/**
 	 * Returns the value of the Import-Package header or <code>null</code> if unspecified.
 	 *
 	 * @return package import descriptions or <code>null</code>
 	 */
-	public IPackageImportDescription[] getPackageImports();
+	IPackageImportDescription[] getPackageImports();
 
 	/**
 	 * Sets the value of the Export-Package header for the described bundle.
 	 *
 	 * @param exports package export descriptions or <code>null</code> if none
 	 */
-	public void setPackageExports(IPackageExportDescription[] exports);
+	void setPackageExports(IPackageExportDescription[] exports);
 
 	/**
 	 * Returns the value of the Export-Package header or <code>null</code> if unspecified.
 	 *
 	 * @return package export descriptions or <code>null</code>
 	 */
-	public IPackageExportDescription[] getPackageExports();
+	IPackageExportDescription[] getPackageExports();
 
 	/**
 	 * Returns the project associated with the described bundle.
 	 *
 	 * @return associated project
 	 */
-	public IProject getProject();
+	IProject getProject();
 
 	/**
 	 * Sets file and folder entries on the <code>bin.includes</code> entry of
@@ -515,7 +529,7 @@ public interface IBundleProjectDescription {
 	 * @param paths bundle root relative paths of files and folders to include
 	 *  or <code>null</code> if none
 	 */
-	public void setBinIncludes(IPath[] paths);
+	void setBinIncludes(IPath[] paths);
 
 	/**
 	 * Returns the file and folder entries to be included on the <code>bin.includes</code> entry
@@ -528,7 +542,7 @@ public interface IBundleProjectDescription {
 	 * @return bundle root relative paths of files and folders on the <code>bin.includes</code>
 	 * 	entry or <code>null</code>
 	 */
-	public IPath[] getBinIncludes();
+	IPath[] getBinIncludes();
 
 	/**
 	 * Sets the location within the project where the root of the bundle and its associated
@@ -548,7 +562,7 @@ public interface IBundleProjectDescription {
 	 * </p>
 	 * @param path project relative path to bundle root artifacts in the project or <code>null</code>
 	 */
-	public void setBundleRoot(IPath path);
+	void setBundleRoot(IPath path);
 
 	/**
 	 * Returns the location within the project that is the root of the bundle related
@@ -556,7 +570,7 @@ public interface IBundleProjectDescription {
 	 *
 	 * @return project relative bundle root path or <code>null</code>
 	 */
-	public IPath getBundleRoot();
+	IPath getBundleRoot();
 
 	/**
 	 * Returns identifiers of <code>org.eclipse.debug.ui.launchShortcuts</code>
@@ -568,7 +582,7 @@ public interface IBundleProjectDescription {
 	 * @return identifiers of the <code>org.eclipse.debug.ui.launchShortcuts</code> extensions
 	 *  or <code>null</code>
 	 */
-	public String[] getLaunchShortcuts();
+	String[] getLaunchShortcuts();
 
 	/**
 	 * Sets the identifiers of <code>org.eclipse.debug.ui.launchShortcuts</code>
@@ -588,7 +602,7 @@ public interface IBundleProjectDescription {
 	 * @param ids identifiers of <code>org.eclipse.debug.ui.launchShortcuts</code> extensions
 	 *  or <code>null</code>
 	 */
-	public void setLaunchShortcuts(String[] ids);
+	void setLaunchShortcuts(String[] ids);
 
 	/**
 	 * Returns the identifier of the <code>org.eclipse.ui.exportWizards</code> extension
@@ -598,7 +612,7 @@ public interface IBundleProjectDescription {
 	 * @return identifier of an <code>org.eclipse.ui.exportWizards</code> extension
 	 *  or <code>null</code>
 	 */
-	public String getExportWizardId();
+	String getExportWizardId();
 
 	/**
 	 * Sets the identifier of the <code>org.eclipse.ui.exportWizards</code> extension
@@ -608,7 +622,7 @@ public interface IBundleProjectDescription {
 	 * @param id identifier of an <code>org.eclipse.ui.exportWizards</code> extension
 	 *  or <code>null</code>
 	 */
-	public void setExportWizardId(String id);
+	void setExportWizardId(String id);
 
 	/**
 	 * Sets the value of the specified header in the bundle manifest to the given value
@@ -627,7 +641,7 @@ public interface IBundleProjectDescription {
 	 * @param header header name
 	 * @param value header value or <code>null</code> to remove
 	 */
-	public void setHeader(String header, String value);
+	void setHeader(String header, String value);
 
 	/**
 	 * Returns the value of the specified header from the bundle manifest, or <code>null</code>
@@ -636,6 +650,6 @@ public interface IBundleProjectDescription {
 	 * @param header
 	 * @return header value or <code>null</code>
 	 */
-	public String getHeader(String header);
+	String getHeader(String header);
 
 }

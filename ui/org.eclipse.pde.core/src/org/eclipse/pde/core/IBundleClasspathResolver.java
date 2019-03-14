@@ -21,28 +21,32 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 
 /**
- * Resolves dynamically generated bundle classpath entries in the context of a java project.
+ * Resolves dynamically generated bundle classpath entries in the context of a
+ * java project.
  *
  * <p>
- * Generally, dynamically generated bundle classpath entries are not present under project
- * source tree but included in the bundle as part build process. During development time such bundle classpath entries
- * can be resolved to external jar files or workspace resources. Resolution of the
- * same entry may change over time, similarly to how Plug-in Dependencies classpath container can switch between
- * external bundles and workspace projects.
+ * Generally, dynamically generated bundle classpath entries are not present
+ * under project source tree but included in the bundle as part build process.
+ * During development time such bundle classpath entries can be resolved to
+ * external jar files or workspace resources. Resolution of the same entry may
+ * change over time, similarly to how Plug-in Dependencies classpath container
+ * can switch between external bundles and workspace projects.
  * </p>
  *
  * <p>
- * A resolver is declared as an extension (<code>org.eclipse.pde.core.bundleClasspathResolvers</code>). This
- * extension has the following attributes:
+ * A resolver is declared as an extension
+ * (<code>org.eclipse.pde.core.bundleClasspathResolvers</code>). This extension
+ * has the following attributes:
+ * </p>
  * <ul>
- * <li><code>nature</code> specified nature of the projects this resolver is registered for.</li>
- * <li><code>class</code> specifies the fully qualified name of the Java class that implements
- *     <code>IBundleClasspathResolver</code>.</li>
+ * <li><code>nature</code> specified nature of the projects this resolver is
+ * registered for.</li>
+ * <li><code>class</code> specifies the fully qualified name of the Java class
+ * that implements <code>IBundleClasspathResolver</code>.</li>
  * </ul>
- * </p>
  * <p>
- * The resolver is consulted when dynamically generated bundle is added to OSGi runtime launch and when looking up
- * sources from the bundle.
+ * The resolver is consulted when dynamically generated bundle is added to OSGi
+ * runtime launch and when looking up sources from the bundle.
  * </p>
  *
  * @since 3.8
@@ -59,7 +63,7 @@ public interface IBundleClasspathResolver {
 	 * @param javaProject the java project to collect classpath entries for
 	 * @return additional entries to add to the bundle classpath. Map of IPath to Collection, possibly empty
 	 */
-	public Map<IPath, Collection<IPath>> getAdditionalClasspathEntries(IJavaProject javaProject);
+	Map<IPath, Collection<IPath>> getAdditionalClasspathEntries(IJavaProject javaProject);
 
 	/**
 	 * Returns a possibly empty collection listing additional classpath entries for the source lookup path of a project in the workspace.
@@ -69,5 +73,5 @@ public interface IBundleClasspathResolver {
 	 * @param javaProject the java project to collect source entries for
 	 * @return additional entries for the source lookup path. Collection of IRuntimeClasspathEntry, possibly empty
 	 */
-	public Collection<IRuntimeClasspathEntry> getAdditionalSourceEntries(IJavaProject javaProject);
+	Collection<IRuntimeClasspathEntry> getAdditionalSourceEntries(IJavaProject javaProject);
 }

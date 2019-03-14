@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
-import org.eclipse.debug.core.ILaunchConfiguration;
-
 import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.*;
@@ -51,14 +49,12 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 	/**
 	 * This method first tries to locate existing launch configurations that are suitable
 	 * for the application or framework being launched.
-	 * <p>
 	 * <ul>
 	 * <li>If none are found, a new launch configuration is created and initialized</li>
 	 * <li>If one is found, it is launched automatically</li>
 	 * <li>If more than one is found, a selection dialog is presented to the user and the chosen
 	 * one will be launched</li>
 	 * </ul>
-	 * </p>
 	 * @param mode
 	 * 			mode of launch (run, debug or profile)
 	 *

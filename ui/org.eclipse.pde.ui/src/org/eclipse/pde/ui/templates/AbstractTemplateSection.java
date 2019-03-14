@@ -663,7 +663,8 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * one. It the plug-in doesn't have a manifest, this method does nothing.
 	 * It's expected that this method will only be called by sub-classes during
 	 * execution of the template (i.e. during the sub-class's
-	 * <samp>updateModel(...)</samp> method). <p/> For example:
+	 * <samp>updateModel(...)</samp> method). <br>
+	 * For example:
 	 * <dl>
 	 * <dd><samp>setManifestHeader(Constants.BUNDLE_LOCALIZATION,
 	 * &quot;plugin&quot;)</samp></dd>
@@ -720,8 +721,8 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * execution of the template (i.e. during the sub-class's
 	 * <samp>updateModel(...)</samp> method).
 	 *
-	 * @return <sampl>true</samp> if the plug-in has a manifest, <samp>false</samp>
-	 *         otherwise
+	 * @return <samp>true</samp> if the plug-in has a manifest,
+	 *         <samp>false</samp> otherwise
 	 * @since 3.4
 	 */
 	protected boolean hasBundleManifest() {

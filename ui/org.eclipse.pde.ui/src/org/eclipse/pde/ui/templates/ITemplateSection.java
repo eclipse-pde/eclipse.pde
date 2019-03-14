@@ -173,13 +173,10 @@ public interface ITemplateSection {
 	 * to the variable <code>bin.includes</code>. For this reason, wild cards
 	 * and other syntax rules applicable to this variable can be used in this
 	 * method. For example:
-	 * <p>
 	 *
 	 * <pre>
 	 * return new String[]{&quot;/icons/*.png&quot;};
 	 * </pre>
-	 *
-	 * </p>
 	 *
 	 * @return an array of strings that fully describe the files and folders
 	 *         created by this template section as required by <code>

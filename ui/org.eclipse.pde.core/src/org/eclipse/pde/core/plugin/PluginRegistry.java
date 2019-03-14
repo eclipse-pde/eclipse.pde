@@ -245,28 +245,36 @@ public class PluginRegistry {
 	}
 
 	/**
-	 * Returns a model matching the given id, version, match rule, and optional filter,
-	 * or <code>null</code> if none.
-	 * p>
+	 * Returns a model matching the given id, version, match rule, and optional
+	 * filter, or <code>null</code> if none.
+	 * <p>
 	 * A workspace plug-in is always preferably returned over a target plug-in.
-	 * A plug-in that is checked/enabled on the Target Platform preference page is always
-	 * preferably returned over a target plug-in that is unchecked/disabled.
+	 * A plug-in that is checked/enabled on the Target Platform preference page
+	 * is always preferably returned over a target plug-in that is
+	 * unchecked/disabled.
 	 * </p>
 	 * <p>
 	 * In the case of a tie among workspace plug-ins or among target plug-ins,
 	 * the plug-in with the highest version is returned.
 	 * </p>
 	 * <p>
-	 * In the case of a tie among more than one suitable plug-in that have the same version,
-	 * one of those plug-ins is randomly returned.
+	 * In the case of a tie among more than one suitable plug-in that have the
+	 * same version, one of those plug-ins is randomly returned.
 	 * </p>
 	 *
-	 * @param id symbolic name of a plug-in to find
-	 * @param version minimum version, or <code>null</code> to only match on symbolic name
-	 * @param match one of {@link IMatchRules#COMPATIBLE}, {@link IMatchRules#EQUIVALENT},
-	 *  {@link IMatchRules#GREATER_OR_EQUAL}, {@link IMatchRules#PERFECT}, or {@link IMatchRules#NONE}
-	 *  when a version is unspecified
-	 * @param filter a plug-in filter or <code>null</code>
+	 * @param id
+	 *            symbolic name of a plug-in to find
+	 * @param version
+	 *            minimum version, or <code>null</code> to only match on
+	 *            symbolic name
+	 * @param match
+	 *            one of {@link IMatchRules#COMPATIBLE},
+	 *            {@link IMatchRules#EQUIVALENT},
+	 *            {@link IMatchRules#GREATER_OR_EQUAL},
+	 *            {@link IMatchRules#PERFECT}, or {@link IMatchRules#NONE} when
+	 *            a version is unspecified
+	 * @param filter
+	 *            a plug-in filter or <code>null</code>
 	 *
 	 * @return a matching model or <code>null</code>
 	 * @since 3.6

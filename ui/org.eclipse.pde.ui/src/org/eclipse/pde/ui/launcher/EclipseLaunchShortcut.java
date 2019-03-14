@@ -175,14 +175,15 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	}
 
 	/**
-	 * Returns a boolean value indicating whether the launch configuration is a good match for
-	 * the application or product to launch.
+	 * Returns a boolean value indicating whether the launch configuration is a
+	 * good match for the application or product to launch.
 	 *
 	 * @param configuration
-	 * 			the launch configuration being evaluated
+	 *            the launch configuration being evaluated
 	 *
-	 * @return <code>true</coded> if the launch configuration is suitable for the application
-	 * or product to launch with, <code>false</code> otherwise.
+	 * @return <code>true</code> if the launch configuration is suitable for the
+	 *         application or product to launch with, <code>false</code>
+	 *         otherwise.
 	 */
 	@Override
 	protected boolean isGoodMatch(ILaunchConfiguration configuration) {

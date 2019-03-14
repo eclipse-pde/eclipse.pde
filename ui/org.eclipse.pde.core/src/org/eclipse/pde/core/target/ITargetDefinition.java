@@ -50,7 +50,7 @@ public interface ITargetDefinition {
 	 * @param monitor progress monitor or <code>null</code>
 	 * @return resolution multi-status
 	 */
-	public IStatus resolve(IProgressMonitor monitor);
+	IStatus resolve(IProgressMonitor monitor);
 
 	/**
 	 * Returns whether all {@link ITargetLocation}s in this target currently in
@@ -58,7 +58,7 @@ public interface ITargetDefinition {
 	 *
 	 * @return <code>true</code> if all locations are currently resolved
 	 */
-	public boolean isResolved();
+	boolean isResolved();
 
 	/**
 	 * Sets the XML document that stores the state of this target. The document is
@@ -68,7 +68,7 @@ public interface ITargetDefinition {
 	 *                     xml document or <code>null</code>
 	 * @since 3.12
 	 */
-	public void setDocument(Document document);
+	void setDocument(Document document);
 
 	/**
 	 * Returns the Document that represents this target, or <code>null</code> if
@@ -77,7 +77,7 @@ public interface ITargetDefinition {
 	 * @return document or <code>null</code>
 	 * @since 3.12
 	 */
-	public Document getDocument();
+	Document getDocument();
 
 	/**
 	 * Returns all bundles included in this target definition or <code>null</code>
@@ -93,7 +93,7 @@ public interface ITargetDefinition {
 	 * </p>
 	 * @return resolved bundles or <code>null</code>
 	 */
-	public TargetBundle[] getBundles();
+	TargetBundle[] getBundles();
 
 	/**
 	 * Returns a list of all resolved bundles in this target definition or <code>null</code>.
@@ -109,7 +109,7 @@ public interface ITargetDefinition {
 	 *
 	 * @return collection of resolved bundles or <code>null</code>
 	 */
-	public TargetBundle[] getAllBundles();
+	TargetBundle[] getAllBundles();
 
 	/**
 	 * Returns the list of feature models available in this target or <code>null</code> if
@@ -117,57 +117,59 @@ public interface ITargetDefinition {
 	 *
 	 * @return collection of feature models or <code>null</code>
 	 */
-	public TargetFeature[] getAllFeatures();
+	TargetFeature[] getAllFeatures();
 
 	/**
 	 * Returns a {@link MultiStatus} containing all problems with this target.
-	 * Returns an OK status if there are no problems.  Returns <code>null</code>
+	 * Returns an OK status if there are no problems. Returns <code>null</code>
 	 * if this target has not been resolved.
-	 * </p><p>
-	 * The returned status will include all non-OK statuses returned by {@link #resolve(IProgressMonitor)}
-	 * as well as any non-OK statuses found in {@link TargetBundle}s returned by {@link #getBundles()}.
-	 * For more information on the statuses that can be returned see {@link ITargetLocation#getStatus()}
-	 * and {@link TargetBundle#getStatus()}.
+	 * <p>
+	 * The returned status will include all non-OK statuses returned by
+	 * {@link #resolve(IProgressMonitor)} as well as any non-OK statuses found
+	 * in {@link TargetBundle}s returned by {@link #getBundles()}. For more
+	 * information on the statuses that can be returned see
+	 * {@link ITargetLocation#getStatus()} and {@link TargetBundle#getStatus()}.
 	 * </p>
 	 *
-	 * @return {@link MultiStatus} containing all problems with this target or <code>null</code>
+	 * @return {@link MultiStatus} containing all problems with this target or
+	 *         <code>null</code>
 	 */
-	public IStatus getStatus();
+	IStatus getStatus();
 
 	/**
 	 * Returns a handle to this target definition.
 	 *
 	 * @return target handle
 	 */
-	public ITargetHandle getHandle();
+	ITargetHandle getHandle();
 
 	/**
 	 * Returns the name of this target, or <code>null</code> if none
 	 *
 	 * @return name or <code>null</code>
 	 */
-	public String getName();
+	String getName();
 
 	/**
 	 * Sets the name of this target.
 	 *
 	 * @param name target name or <code>null</code>
 	 */
-	public void setName(String name);
+	void setName(String name);
 
 	/**
 	 * Returns the locations defined by this target, possible <code>null</code>.
 	 *
 	 * @return target locations or <code>null</code>
 	 */
-	public ITargetLocation[] getTargetLocations();
+	ITargetLocation[] getTargetLocations();
 
 	/**
 	 * Sets the locations in this target definition or <code>null</code> if none.
 	 *
 	 * @param containers target locations or <code>null</code>
 	 */
-	public void setTargetLocations(ITargetLocation[] containers);
+	void setTargetLocations(ITargetLocation[] containers);
 
 	/**
 	 * Returns a list of descriptors that filter the resolved plug-ins in this target.  The list may include
@@ -180,7 +182,7 @@ public interface ITargetDefinition {
 	 * @see #setIncluded(NameVersionDescriptor[])
 	 * @return list of name version descriptors or <code>null</code>
 	 */
-	public NameVersionDescriptor[] getIncluded();
+	NameVersionDescriptor[] getIncluded();
 
 	/**
 	 * Sets a list of descriptors to filter the resolved plug-ins in this target.  The list may include both
@@ -194,7 +196,7 @@ public interface ITargetDefinition {
 	 * @see #getIncluded()
 	 * @param included list of descriptors to include in the target or <code>null</code> to include all plug-ins
 	 */
-	public void setIncluded(NameVersionDescriptor[] included);
+	void setIncluded(NameVersionDescriptor[] included);
 
 	/**
 	 * Returns JRE container path that this target definition should be built against,
@@ -204,7 +206,7 @@ public interface ITargetDefinition {
 	 * @return JRE container path or <code>null</code>
 	 * @see JavaRuntime
 	 */
-	public IPath getJREContainer();
+	IPath getJREContainer();
 
 	/**
 	 * Sets the JRE that this target definition should be built against, or <code>null</code>
@@ -214,7 +216,7 @@ public interface ITargetDefinition {
 	 * @param containerPath JRE container path
 	 * @see JavaRuntime
 	 */
-	public void setJREContainer(IPath containerPath);
+	void setJREContainer(IPath containerPath);
 
 	/**
 	 * Returns the identifier of the operating system this target is configured for,
@@ -223,7 +225,7 @@ public interface ITargetDefinition {
 	 * @return operating system identifier or <code>null</code> to default to the
 	 * 	running operating system
 	 */
-	public String getOS();
+	String getOS();
 
 	/**
 	 * Sets the operating system this target is configured for or <code>null</code> to
@@ -233,7 +235,7 @@ public interface ITargetDefinition {
 	 * 	defined by {@link Constants} or <code>null</code> to default to the running
 	 * 	operating system
 	 */
-	public void setOS(String os);
+	void setOS(String os);
 
 	/**
 	 * Returns the identifier of the window system this target is configured for,
@@ -243,7 +245,7 @@ public interface ITargetDefinition {
 	 * 	defined by {@link Constants}, or <code>null</code> to default to the
 	 * 	running window system
 	 */
-	public String getWS();
+	String getWS();
 
 	/**
 	 * Sets the window system this target is configured for or <code>null</code> to
@@ -252,7 +254,7 @@ public interface ITargetDefinition {
 	 * @param ws window system identifier or <code>null</code> to default to the
 	 * 	running window system
 	 */
-	public void setWS(String ws);
+	void setWS(String ws);
 
 	/**
 	 * Returns the identifier of the architecture this target is configured for,
@@ -262,7 +264,7 @@ public interface ITargetDefinition {
 	 * 	defined by {@link Constants} or <code>null</code> to default to the running
 	 * 	architecture
 	 */
-	public String getArch();
+	String getArch();
 
 	/**
 	 * Sets the architecture this target is configured for, or <code>null</code> to default
@@ -271,7 +273,7 @@ public interface ITargetDefinition {
 	 * @param arch architecture identifier or <code>null</code> to default to the
 	 * 	running architecture.
 	 */
-	public void setArch(String arch);
+	void setArch(String arch);
 
 	/**
 	 * Returns the identifier of the locale this target is configured for, or <code>null</code>
@@ -279,14 +281,14 @@ public interface ITargetDefinition {
 	 *
 	 * @return locale identifier or <code>null</code> for default
 	 */
-	public String getNL();
+	String getNL();
 
 	/**
 	 * Sets the locale this target is configured for or <code>null</code> for default.
 	 *
 	 * @param nl locale identifier or <code>null</code> for default
 	 */
-	public void setNL(String nl);
+	void setNL(String nl);
 
 	/**
 	 * Returns any program arguments that should be used when launching this target
@@ -294,7 +296,7 @@ public interface ITargetDefinition {
 	 *
 	 * @return program arguments or <code>null</code> if none
 	 */
-	public String getProgramArguments();
+	String getProgramArguments();
 
 	/**
 	 * Sets any program arguments that should be used when launching this target
@@ -302,7 +304,7 @@ public interface ITargetDefinition {
 	 *
 	 * @param args program arguments or <code>null</code>
 	 */
-	public void setProgramArguments(String args);
+	void setProgramArguments(String args);
 
 	/**
 	 * Returns any VM arguments that should be used when launching this target
@@ -310,7 +312,7 @@ public interface ITargetDefinition {
 	 *
 	 * @return VM arguments or <code>null</code> if none
 	 */
-	public String getVMArguments();
+	String getVMArguments();
 
 	/**
 	 * Sets any VM arguments that should be used when launching this target
@@ -318,7 +320,7 @@ public interface ITargetDefinition {
 	 *
 	 * @param args VM arguments or <code>null</code>
 	 */
-	public void setVMArguments(String args);
+	void setVMArguments(String args);
 
 	/**
 	 * Sets implicit dependencies for this target. Bundles in this collection are always
@@ -327,12 +329,12 @@ public interface ITargetDefinition {
 	 *
 	 * @param bundles implicit dependencies or <code>null</code> if none
 	 */
-	public void setImplicitDependencies(NameVersionDescriptor[] bundles);
+	void setImplicitDependencies(NameVersionDescriptor[] bundles);
 
 	/**
 	 * Returns the implicit dependencies set on this target or <code>null</code> if none.
 	 *
 	 * @return implicit dependencies or <code>null</code>
 	 */
-	public NameVersionDescriptor[] getImplicitDependencies();
+	NameVersionDescriptor[] getImplicitDependencies();
 }

@@ -74,7 +74,8 @@ public abstract class TemplateOption extends TemplateField {
 	 * Returns whether this option is currently empty. The actual semantics of
 	 * the result depends on the implementing option.
 	 *
-	 * @return <samp>true </samp> if option is empty, </samp> false otherwise.
+	 * @return <samp>true</samp> if option is empty, <samp>false</samp>
+	 *         otherwise.
 	 */
 	public boolean isEmpty() {
 		return false;

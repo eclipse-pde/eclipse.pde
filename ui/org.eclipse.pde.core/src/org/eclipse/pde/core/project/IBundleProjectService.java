@@ -25,15 +25,15 @@ import org.osgi.framework.Version;
  * <p>
  * An instance of this service can be obtained from a {@link BundleContext} as
  * follows
+ * </p>
  *
  * <pre>
  * BundleContext context = ...
- * ServiceReference<IBundleContextService> ref = context.getServiceReference(IBundleContextService.class);
+ * ServiceReference&lt;IBundleContextService&gt; ref = context.getServiceReference(IBundleContextService.class);
  * IBundleContextService service = context.getService(ref);
  * ...
  * context.ungetService(ref);
  * </pre>
- * </p>
  *
  * @since 3.6
  * @noextend This interface is not intended to be extended by clients.
@@ -51,7 +51,7 @@ public interface IBundleProjectService {
 	 * @return bundle description for the associated project
 	 * @exception CoreException if unable to create a description on an existing project
 	 */
-	public IBundleProjectDescription getDescription(IProject project) throws CoreException;
+	IBundleProjectDescription getDescription(IProject project) throws CoreException;
 
 	/**
 	 * Creates and returns a new host description.
@@ -60,7 +60,7 @@ public interface IBundleProjectService {
 	 * @param range version constraint or <code>null</code>
 	 * @return host description
 	 */
-	public IHostDescription newHost(String name, VersionRange range);
+	IHostDescription newHost(String name, VersionRange range);
 
 	/**
 	 * Creates and returns a new package import description.
@@ -70,7 +70,7 @@ public interface IBundleProjectService {
 	 * @param optional whether the import is optional
 	 * @return package import description
 	 */
-	public IPackageImportDescription newPackageImport(String name, VersionRange range, boolean optional);
+	IPackageImportDescription newPackageImport(String name, VersionRange range, boolean optional);
 
 	/**
 	 * Constructs a new package export description.
@@ -82,7 +82,7 @@ public interface IBundleProjectService {
 	 *  friends are specified the package will not be API
 	 * @return package export description
 	 */
-	public IPackageExportDescription newPackageExport(String name, Version version, boolean api, String[] friends);
+	IPackageExportDescription newPackageExport(String name, Version version, boolean api, String[] friends);
 
 	/**
 	 * Creates and returns a new required bundle description.
@@ -93,7 +93,7 @@ public interface IBundleProjectService {
 	 * @param export whether the required bundle is re-exported
 	 * @return required bundle description
 	 */
-	public IRequiredBundleDescription newRequiredBundle(String name, VersionRange range, boolean optional, boolean export);
+	IRequiredBundleDescription newRequiredBundle(String name, VersionRange range, boolean optional, boolean export);
 
 	/**
 	 * Creates and returns a new bundle classpath entry defining the relationship
@@ -111,7 +111,7 @@ public interface IBundleProjectService {
 	 * 	to indicate default entry "."
 	 * @return a new bundle classpath entry
 	 */
-	public IBundleClasspathEntry newBundleClasspathEntry(IPath sourceFolder, IPath binaryFolder, IPath library);
+	IBundleClasspathEntry newBundleClasspathEntry(IPath sourceFolder, IPath binaryFolder, IPath library);
 
 	/**
 	 * Sets the location within the project where the root of the bundle and its associated
@@ -128,6 +128,6 @@ public interface IBundleProjectService {
 	 * @param bundleRoot project relative path to bundle root artifacts in the project or <code>null</code>
 	 * @throws CoreException if setting the root fails
 	 */
-	public void setBundleRoot(IProject project, IPath bundleRoot) throws CoreException;
+	void setBundleRoot(IProject project, IPath bundleRoot) throws CoreException;
 
 }

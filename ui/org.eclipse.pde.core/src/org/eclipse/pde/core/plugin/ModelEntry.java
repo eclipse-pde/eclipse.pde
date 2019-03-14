@@ -131,15 +131,16 @@ public class ModelEntry extends PlatformObject {
 	}
 
 	/**
-	 * Returns all the plug-ins, with the model entry ID, that are currently active.
+	 * Returns all the plug-ins, with the model entry ID, that are currently
+	 * active.
 	 * <p>
-	 * Workspace plug-ins are always active.
-	 * Target plug-ins are only active if:
+	 * Workspace plug-ins are always active. Target plug-ins are only active if:
+	 * </p>
 	 * <ul>
-	 * <li>they are checked on the <b>Plug-in Development > Target Platform</b> preference page</li>
+	 * <li>they are checked on the <b>Plug-in Development > Target Platform</b>
+	 * preference page</li>
 	 * <li>there does not exist a workspace plug-in that has the same ID</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @return an array of the currently active plug-ins with the model entry ID
 	 */

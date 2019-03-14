@@ -35,7 +35,7 @@ public interface ITargetPlatformService {
 	 * added to the file system that the target platform does not know
 	 * about).
 	 */
-	public static final int STATUS_MISSING_FROM_TARGET_PLATFORM = 1;
+	int STATUS_MISSING_FROM_TARGET_PLATFORM = 1;
 
 	/**
 	 * Status code indicating that a bundle in the current target platform
@@ -43,14 +43,14 @@ public interface ITargetPlatformService {
 	 * deleted from the file system that the target platform does not
 	 * know about).
 	 */
-	public static final int STATUS_MISSING_FROM_TARGET_DEFINITION = 2;
+	int STATUS_MISSING_FROM_TARGET_DEFINITION = 2;
 
 	/**
 	 * Returns handles to all target definitions known in the workspace.
 	 *
 	 * @return handles to all target definitions known in the workspace
 	 */
-	public ITargetHandle[] getTargets(IProgressMonitor monitor);
+	ITargetHandle[] getTargets(IProgressMonitor monitor);
 
 	/**
 	 * Returns a handle to a target definition backed by the underlying file.
@@ -61,7 +61,7 @@ public interface ITargetPlatformService {
 	 * @param file target definition file that may or may not exist
 	 * @return target handle
 	 */
-	public ITargetHandle getTarget(IFile file);
+	ITargetHandle getTarget(IFile file);
 
 	/**
 	 * Returns a handle to a target definition backed by the underlying {@link URI}.
@@ -72,7 +72,7 @@ public interface ITargetPlatformService {
 	 * @param uri target definition {@link URI} that may or may not exist
 	 * @return target handle
 	 */
-	public ITargetHandle getTarget(URI uri);
+	ITargetHandle getTarget(URI uri);
 
 	/**
 	 * Returns a new target definition to be stored with local metadata. The target
@@ -80,7 +80,7 @@ public interface ITargetPlatformService {
 	 *
 	 * @return new empty target definition
 	 */
-	public ITargetDefinition newTarget();
+	ITargetDefinition newTarget();
 
 	/**
 	 * Persists the given target definition. The target becomes one of known
@@ -93,7 +93,7 @@ public interface ITargetPlatformService {
 	 * @param definition definition to persist
 	 * @throws CoreException if unable to persist the definition
 	 */
-	public void saveTargetDefinition(ITargetDefinition definition) throws CoreException;
+	void saveTargetDefinition(ITargetDefinition definition) throws CoreException;
 
 	/**
 	 * Deletes the target definition associated with the given handle.
@@ -101,7 +101,7 @@ public interface ITargetPlatformService {
 	 * @param handle target handle
 	 * @throws CoreException if the associated target does not exist or deletion fails
 	 */
-	public void deleteTarget(ITargetHandle handle) throws CoreException;
+	void deleteTarget(ITargetHandle handle) throws CoreException;
 
 	/**
 	 * Creates and returns a target handle from the given memento. The memento must
@@ -111,7 +111,7 @@ public interface ITargetPlatformService {
 	 * @return target handle
 	 * @throws CoreException if the target handle format is invalid
 	 */
-	public ITargetHandle getTarget(String memento) throws CoreException;
+	ITargetHandle getTarget(String memento) throws CoreException;
 
 	/**
 	 * Creates and returns a target location that contains all bundles in the
@@ -120,7 +120,7 @@ public interface ITargetPlatformService {
 	 * @param path absolute path in the local file system, may contain string variables
 	 * @return target location
 	 */
-	public ITargetLocation newDirectoryLocation(String path);
+	ITargetLocation newDirectoryLocation(String path);
 
 	/**
 	 * Creates and returns a target location that contains all bundles installed in
@@ -135,7 +135,7 @@ public interface ITargetPlatformService {
 	 *  variables or <code>null</code> to use the default location
 	 * @return target location
 	 */
-	public ITargetLocation newProfileLocation(String home, String configurationLocation);
+	ITargetLocation newProfileLocation(String home, String configurationLocation);
 
 	/**
 	 * Creates and returns a target location that contains all bundles contained in
@@ -148,7 +148,7 @@ public interface ITargetPlatformService {
 	 * @param resolutionFlags bitmask of flags to control IU resolution, possible flags are {@link IUBundleContainer#INCLUDE_ALL_ENVIRONMENTS}, {@link IUBundleContainer#INCLUDE_REQUIRED}, {@link IUBundleContainer#INCLUDE_SOURCE}, {@link IUBundleContainer#INCLUDE_CONFIGURE_PHASE}
 	 * @return target location
 	 */
-	public ITargetLocation newIULocation(IInstallableUnit[] units, URI[] repositories, int resolutionFlags);
+	ITargetLocation newIULocation(IInstallableUnit[] units, URI[] repositories, int resolutionFlags);
 
 	/**
 	 * Creates and returns a target location that contains all bundles contained in
@@ -162,7 +162,7 @@ public interface ITargetPlatformService {
 	 * @param resolutionFlags bitmask of flags to control IU resolution, possible flags are {@link IUBundleContainer#INCLUDE_ALL_ENVIRONMENTS}, {@link IUBundleContainer#INCLUDE_REQUIRED}, {@link IUBundleContainer#INCLUDE_SOURCE}, {@link IUBundleContainer#INCLUDE_CONFIGURE_PHASE}
 	 * @return target location
 	 */
-	public ITargetLocation newIULocation(String[] unitIds, String[] versions, URI[] repositories, int resolutionFlags);
+	ITargetLocation newIULocation(String[] unitIds, String[] versions, URI[] repositories, int resolutionFlags);
 
 	/**
 	 * Creates and returns a target location that contains all bundles referenced by
@@ -175,7 +175,7 @@ public interface ITargetPlatformService {
 	 * @param version feature version identifier or <code>null</code> to use most recent available
 	 * @return target location
 	 */
-	public ITargetLocation newFeatureLocation(String home, String featureId, String version);
+	ITargetLocation newFeatureLocation(String home, String featureId, String version);
 
 	/**
 	 * Returns a handle to the target definition that corresponds to the active target platform
@@ -184,7 +184,7 @@ public interface ITargetPlatformService {
 	 * @return handle to workspace target platform or <code>null</code> if none
 	 * @exception CoreException if an error occurs generating the handle
 	 */
-	public ITargetHandle getWorkspaceTargetHandle() throws CoreException;
+	ITargetHandle getWorkspaceTargetHandle() throws CoreException;
 
 	/**
 	 * Returns a {@link ITargetDefinition} that corresponds to the active target platform. Will
@@ -202,29 +202,35 @@ public interface ITargetPlatformService {
 	 *
 	 * @since 3.10 Added in the Luna 4.4 release
 	 */
-	public ITargetDefinition getWorkspaceTargetDefinition() throws CoreException;
+	ITargetDefinition getWorkspaceTargetDefinition() throws CoreException;
 
 	/**
-	 * Returns a status describing whether the given target definition is synchronized with
-	 * workspace's target platform state. It is possible that bundles could have been added/removed
-	 * from the underlying target location storage making the current target platform state out of
-	 * synch with the contents of the a definition. The given target definition must already be
+	 * Returns a status describing whether the given target definition is
+	 * synchronized with workspace's target platform state. It is possible that
+	 * bundles could have been added/removed from the underlying target location
+	 * storage making the current target platform state out of synch with the
+	 * contents of the a definition. The given target definition must already be
 	 * resolved or this method will return <code>null</code>.
 	 * <p>
-	 * An <code>OK</code> status is returned when in synch. A multi-status is returned
-	 * when there are synchronization issues. <code>Null</code> is returned if the target
-	 * has not been resolved. Each status contains one of the following codes
-	 * and the name of the associated bundle as a message:
+	 * An <code>OK</code> status is returned when in synch. A multi-status is
+	 * returned when there are synchronization issues. <code>Null</code> is
+	 * returned if the target has not been resolved. Each status contains one of
+	 * the following codes and the name of the associated bundle as a message:
+	 * </p>
 	 * <ul>
 	 * <li>STATUS_MISSING_FROM_STATE</li>
 	 * <li>STATUS_MISSING_FROM_TARGET_DEFINITION</li>
 	 * </ul>
-	 * </p>
-	 * @param target resolved target definition to compare with target platform state
-	 * @return status describing whether the target is in synch with target platform state
-	 * @throws CoreException if comparison fails
+	 * 
+	 * @param target
+	 *            resolved target definition to compare with target platform
+	 *            state
+	 * @return status describing whether the target is in synch with target
+	 *         platform state
+	 * @throws CoreException
+	 *             if comparison fails
 	 */
-	public IStatus compareWithTargetPlatform(ITargetDefinition target) throws CoreException;
+	IStatus compareWithTargetPlatform(ITargetDefinition target) throws CoreException;
 
 	/**
 	 * Copies all attributes from one target definition to another.
@@ -233,7 +239,7 @@ public interface ITargetPlatformService {
 	 * @param to attributes are copied to this definition
 	 * @throws CoreException in copy fails
 	 */
-	public void copyTargetDefinition(ITargetDefinition from, ITargetDefinition to) throws CoreException;
+	void copyTargetDefinition(ITargetDefinition from, ITargetDefinition to) throws CoreException;
 
 	/**
 	 * Sets the content of the given target definition based on the target file supplied
@@ -244,7 +250,7 @@ public interface ITargetPlatformService {
 	 * @throws CoreException if the extension is not found or an error occurs reading the target
 	 * 	file or loading the target definition
 	 */
-	public void loadTargetDefinition(ITargetDefinition definition, String targetExtensionId) throws CoreException;
+	void loadTargetDefinition(ITargetDefinition definition, String targetExtensionId) throws CoreException;
 
 	/**
 	 * Returns a new target definition with default settings. The default target contains all plug-ins
@@ -253,6 +259,6 @@ public interface ITargetPlatformService {
 	 *
 	 * @return a new target definition with default settings
 	 */
-	public ITargetDefinition newDefaultTarget();
+	ITargetDefinition newDefaultTarget();
 
 }

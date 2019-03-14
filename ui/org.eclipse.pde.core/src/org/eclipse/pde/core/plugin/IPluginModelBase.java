@@ -84,9 +84,9 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	IPluginBase getPluginBase(boolean createIfMissing);
 
 	/**
-	 * Returns </samp>true</samp> if this model is currently enabled.
+	 * Returns <samp>true</samp> if this model is currently enabled.
 	 *
-	 *@return true if the model is enabled
+	 * @return true if the model is enabled
 	 */
 	boolean isEnabled();
 
