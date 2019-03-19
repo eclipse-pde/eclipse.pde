@@ -110,13 +110,22 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	}
 
 	/**
-	 * Force a combo choice representation.
-	 * Radio buttons look bad - even if only two options specified.
+	 * Force a combo choice representation. Radio buttons look bad - even if
+	 * only two options specified.
+	 *
 	 * @param name
+	 *            the unique name
 	 * @param label
+	 *            the presentable label
 	 * @param choices
+	 *            the list of choices from which the value can be chosen. Each
+	 *            array entry should be an array of size 2, where position 0
+	 *            will be interpeted as the choice unique name, and position 1
+	 *            as the choice presentable label.
 	 * @param value
+	 *            registerOption
 	 * @param pageIndex
+	 *            the page index to which this option belongs
 	 * @return the newly created option
 	 */
 	protected ComboChoiceOption addComboChoiceOption(String name, String label, String[][] choices, String value, int pageIndex) {

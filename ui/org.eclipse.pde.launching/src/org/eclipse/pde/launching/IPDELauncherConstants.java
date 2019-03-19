@@ -295,7 +295,7 @@ public interface IPDELauncherConstants {
 	 * of workspace bundles to launch with the OSGi framework.
 	 *
 	 * Each token in the list is of the format:
-	 * <plugin-id>@<start-level>:<auto-start>
+	 * &lt;plugin-id&gt;@&lt;start-level&gt;:&lt;auto-start&gt;
 	 *
 	 * @see IPDELauncherConstants#DEFAULT_AUTO_START
 	 * @see IPDELauncherConstants#DEFAULT_START_LEVEL
@@ -307,7 +307,7 @@ public interface IPDELauncherConstants {
 	 * of non-workspace bundles to launch with the OSGi framework.
 	 *
 	 * Each token in the list is of the format:
-	 * <plugin-id>@<start-level>:<auto-start>
+	 * &lt;plugin-id&gt;@&lt;start-level&gt;:&lt;auto-start&gt;
 	 *
 	 * @see IPDELauncherConstants#DEFAULT_AUTO_START
 	 * @see IPDELauncherConstants#DEFAULT_START_LEVEL

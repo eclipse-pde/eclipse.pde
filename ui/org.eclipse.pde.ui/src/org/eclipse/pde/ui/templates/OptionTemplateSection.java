@@ -214,7 +214,8 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 *
 	 * @param pageIndex
 	 *            0-based index of the template page
-	 * @return @see #setPageCount(int)
+	 * @return Options for the page with given index.
+	 * @see #setPageCount(int)
 	 */
 
 	public TemplateOption[] getOptions(int pageIndex) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 IBM Corporation and others.
+ * Copyright (c) 2011, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -71,7 +71,7 @@ public interface ITargetLocation extends IAdaptable {
 	 * @param monitor progress monitor or <code>null</code>
 	 * @return resolution status
 	 */
-	public IStatus resolve(ITargetDefinition definition, IProgressMonitor monitor);
+	IStatus resolve(ITargetDefinition definition, IProgressMonitor monitor);
 
 	/**
 	 * Returns whether this location has resolved all of its contents. If there
@@ -81,7 +81,7 @@ public interface ITargetLocation extends IAdaptable {
 	 * @see #resolve(ITargetDefinition, IProgressMonitor)
 	 * @return whether this location has resolved all of its contents
 	 */
-	public boolean isResolved();
+	boolean isResolved();
 
 	/**
 	 * Returns the status of the last bundle resolution or <code>null</code> if
@@ -91,7 +91,7 @@ public interface ITargetLocation extends IAdaptable {
 	 *
 	 * @return resolution status or <code>null</code>
 	 */
-	public IStatus getStatus();
+	IStatus getStatus();
 
 	/**
 	 * Returns a string that identifies the implementation of this target location.
@@ -100,7 +100,7 @@ public interface ITargetLocation extends IAdaptable {
 	 *
 	 * @return string identifier for the type of target location.
 	 */
-	public String getType();
+	String getType();
 
 	/**
 	 * Returns a path in the local file system to the root of the target location.
@@ -114,7 +114,7 @@ public interface ITargetLocation extends IAdaptable {
 	 * @exception CoreException if unable to resolve the location
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	public String getLocation(boolean resolve) throws CoreException;
+	String getLocation(boolean resolve) throws CoreException;
 
 	/**
 	 * Returns the bundles in this location or <code>null</code> if this location is not resolved
@@ -126,7 +126,7 @@ public interface ITargetLocation extends IAdaptable {
 	 * </p>
 	 * @return resolved bundles or <code>null</code>
 	 */
-	public TargetBundle[] getBundles();
+	TargetBundle[] getBundles();
 
 	/**
 	 * Returns all features available in this location or <code>null</code> if this location is
@@ -138,25 +138,29 @@ public interface ITargetLocation extends IAdaptable {
 	 * </p>
 	 * @return features or <code>null</code>
 	 */
-	public TargetFeature[] getFeatures();
+	TargetFeature[] getFeatures();
 
 	/**
 	 * Returns VM Arguments that are specified in the bundle location or <code>null</code> if none.
 	 *
 	 * @return list of VM Arguments or <code>null</code> if none available
 	 */
-	public String[] getVMArguments();
+	String[] getVMArguments();
 
 	/**
-	 * Returns a serialized XML string that stores information about this location so it can
-	 * be restored later using a {@link ITargetLocationFactory}.  May return <code>null</code>
-	 * to have this location ignored when saving a target definition.
+	 * Returns a serialized XML string that stores information about this
+	 * location so it can be restored later using a
+	 * {@link ITargetLocationFactory}. May return <code>null</code> to have this
+	 * location ignored when saving a target definition.
 	 * <p>
-	 * The returned xml must contain a single root element named <code>location</code>. The root
-	 * element may have attributes set and children.  The xml should not be prefixed by a XML
-	 * declaration such as <code>&lt?xml version="1.0" encoding="UTF-8"?&gt</code>.
+	 * The returned xml must contain a single root element named
+	 * <code>location</code>. The root element may have attributes set and
+	 * children. The xml should not be prefixed by a XML declaration such as
+	 * <code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</code>.
 	 * </p>
-	 * @return an XML string storing all location information or <code>null</code>
+	 *
+	 * @return an XML string storing all location information or
+	 *         <code>null</code>
 	 */
-	public String serialize();
+	String serialize();
 }

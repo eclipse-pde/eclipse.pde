@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -437,7 +437,7 @@ public interface IBundleProjectDescription {
 	 * the target version is 3.4 or greater and policy is
 	 * {@link Constants#ACTIVATION_LAZY}</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param policy
 	 *            activation policy or <code>null</code>
 	 * @see #getTargetVersion()
@@ -644,10 +644,12 @@ public interface IBundleProjectDescription {
 	void setHeader(String header, String value);
 
 	/**
-	 * Returns the value of the specified header from the bundle manifest, or <code>null</code>
-	 * if unspecified. Note that an empty string is returned for a header that has an empty value.
+	 * Returns the value of the specified header from the bundle manifest, or
+	 * <code>null</code> if unspecified. Note that an empty string is returned
+	 * for a header that has an empty value.
 	 *
 	 * @param header
+	 *            header name
 	 * @return header value or <code>null</code>
 	 */
 	String getHeader(String header);

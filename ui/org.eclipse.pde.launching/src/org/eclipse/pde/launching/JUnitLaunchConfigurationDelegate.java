@@ -204,12 +204,13 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		launch.setAttribute(PDE_JUNIT_SHOW_COMMAND, "true"); //$NON-NLS-1$
 		return super.showCommandLine(configuration, mode, launch, monitor);
 	}
+	
 	/**
 	 * Returns the application to launch plug-in tests with
 	 *
 	 * @since 3.5
 	 *
-	 * @param configuration
+	 * @param configuration The launch configuration in which the application is specified.
 	 * @return the application
 	 */
 	protected String getApplication(ILaunchConfiguration configuration) {

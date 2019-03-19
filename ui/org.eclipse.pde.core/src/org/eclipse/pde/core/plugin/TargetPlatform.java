@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2018 IBM Corporation and others.
+ *  Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -100,8 +100,9 @@ public class TargetPlatform {
 	}
 
 	/**
-	 * Returns the target operating system as specified on the <b>Environment</b>
-	 * tab of the <b>Plug-in Development > Target Platform</b> preference page.
+	 * Returns the target operating system as specified on the
+	 * <b>Environment</b> tab of the <b>Plug-in Development &gt; Target
+	 * Platform</b> preference page.
 	 *
 	 * @return the target operating system
 	 */
@@ -119,8 +120,9 @@ public class TargetPlatform {
 	}
 
 	/**
-	 * Returns the target windowing system as specified on the <b>Environment</b>
-	 * tab of the <b>Plug-in Development > Target Platform</b> preference page.
+	 * Returns the target windowing system as specified on the
+	 * <b>Environment</b> tab of the <b>Plug-in Development &gt; Target
+	 * Platform</b> preference page.
 	 *
 	 * @return the target windowing system
 	 */
@@ -138,8 +140,8 @@ public class TargetPlatform {
 	}
 
 	/**
-	 * Returns the target locale as specified on the <b>Environment</b>
-	 * tab of the <b>Plug-in Development > Target Platform</b> preference page.
+	 * Returns the target locale as specified on the <b>Environment</b> tab of
+	 * the <b>Plug-in Development &gt; Target Platform</b> preference page.
 	 *
 	 * @return the target locale
 	 */
@@ -157,8 +159,9 @@ public class TargetPlatform {
 	}
 
 	/**
-	 * Returns the target system architecture as specified on the <b>Environment</b>
-	 * tab of the <b>Plug-in Development > Target Platform</b> preference page.
+	 * Returns the target system architecture as specified on the
+	 * <b>Environment</b> tab of the <b>Plug-in Development &gt; Target
+	 * Platform</b> preference page.
 	 *
 	 * @return the target system architecture
 	 */

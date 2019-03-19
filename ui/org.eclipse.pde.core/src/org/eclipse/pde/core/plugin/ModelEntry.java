@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2012 IBM Corporation and others.
+ *  Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -63,10 +63,12 @@ public class ModelEntry extends PlatformObject {
 
 	/**
 	 * Returns all plug-ins in the target platform that have the model entry ID.
-	 * The returned result contains both plug-ins that are enabled (ie. checked on the
-	 * <b>Plug-in Development > Target Platform</b> preference page) and disabled.
+	 * The returned result contains both plug-ins that are enabled (ie. checked
+	 * on the <b>Plug-in Development &gt; Target Platform</b> preference page)
+	 * and disabled.
 	 *
-	 * @return an array of plug-ins in the target platform that have the model entry ID
+	 * @return an array of plug-ins in the target platform that have the model
+	 *         entry ID
 	 */
 	public IPluginModelBase[] getExternalModels() {
 		return fExternalEntries.toArray(new IPluginModelBase[fExternalEntries.size()]);
@@ -137,8 +139,8 @@ public class ModelEntry extends PlatformObject {
 	 * Workspace plug-ins are always active. Target plug-ins are only active if:
 	 * </p>
 	 * <ul>
-	 * <li>they are checked on the <b>Plug-in Development > Target Platform</b>
-	 * preference page</li>
+	 * <li>they are checked on the <b>Plug-in Development &gt; Target
+	 * Platform</b> preference page</li>
 	 * <li>there does not exist a workspace plug-in that has the same ID</li>
 	 * </ul>
 	 *

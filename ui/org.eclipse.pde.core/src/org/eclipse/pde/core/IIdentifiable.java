@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,21 +29,21 @@ public interface IIdentifiable {
 	 * A property that will be carried by the change event
 	 * if 'id' field of this object is changed.
 	 */
-	public static final String P_ID = "id"; //$NON-NLS-1$
+	String P_ID = "id"; //$NON-NLS-1$
 
 	/**
 	 * Returns a unique id of this object.
 	 * @return the id of this object
 	 */
-	public String getId();
+	String getId();
 
 	/**
 	 * Sets the id of this IIdentifiable to the provided value.
-	 * This method will throw CoreException if
-	 * object is not editable.
 	 *
-	 * @param id a new id of this object
+	 * @param id
+	 *            a new id of this object
 	 * @throws CoreException
+	 *             If object is not editable.
 	 */
 	void setId(String id) throws CoreException;
 }

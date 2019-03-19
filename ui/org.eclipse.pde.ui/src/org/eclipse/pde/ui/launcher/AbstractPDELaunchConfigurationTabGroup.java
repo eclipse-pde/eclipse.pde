@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,9 +14,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-import org.eclipse.pde.launching.PDESourcePathProvider;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -27,6 +24,8 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
+import org.eclipse.pde.launching.IPDELauncherConstants;
+import org.eclipse.pde.launching.PDESourcePathProvider;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 
@@ -106,9 +105,9 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends AbstractLau
 	}
 
 	/**
-	 * Delegates to all tabs to set defaults.
-	 * It then sets program and VM arguments based on values on the
-	 * <b>Plug-in Development > Target Platform > Launching Arguments</b> preference page.
+	 * Delegates to all tabs to set defaults. It then sets program and VM
+	 * arguments based on values on the <b>Plug-in Development &gt; Target
+	 * Platform &gt; Launching Arguments</b> preference page.
 	 *
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */

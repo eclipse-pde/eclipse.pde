@@ -58,6 +58,7 @@ public class OptionTemplateWizardPage extends WizardPage {
 	 * subject to their position in the list.'
 	 *
 	 * @param composite
+	 *            Parent widget.
 	 */
 	@Override
 	public void createControl(Composite composite) {
@@ -83,6 +84,8 @@ public class OptionTemplateWizardPage extends WizardPage {
 	 * made visible.
 	 *
 	 * @param visible
+	 *            <code>true</code> to make this page visible, and
+	 *            <code>false</code> to hide it
 	 */
 	@Override
 	public void setVisible(boolean visible) {
