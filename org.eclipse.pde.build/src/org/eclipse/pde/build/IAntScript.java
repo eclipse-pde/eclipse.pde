@@ -78,8 +78,8 @@ public interface IAntScript {
 
 	/**
 	 * Print tagName as an xml begin tag with attributes (<code>&lt;tagName [attributes...] &gt;</code>).
-	 * @param tag
-	 * @param attributes
+	 * @param tag the tag to print.
+	 * @param attributes attributes for the tag.
 	 * @since 3.6
 	 */
 	public void printStartTag(String tag, Map<String, String> attributes);
@@ -92,8 +92,8 @@ public interface IAntScript {
 
 	/**
 	 * Print an xml element with attributes (<code>&lt;tagName [attributes...] /&gt;</code>).
-	 * @param tag
-	 * @param attributes
+	 * @param tag the tag to print
+	 * @param attributes the attributes for the tag
 	 * @since 3.6
 	 */
 	public void printElement(String tag, Map<String, String> attributes);
@@ -140,9 +140,9 @@ public interface IAntScript {
 	public void printEchoTask(String file, String message, String level);
 
 	/**
-	 * Print the beginning of a <a href="http://ant.apache.org/manual/Tasks/macrodef.html">macro definition</a>
-	 * @param macroName
-	 * @param attributes
+	 * Print the beginning of a <a href="http://ant.apache.org/manual/Tasks/macrodef.html">macro definition</a>.
+	 * @param macroName the name of the macro
+	 * @param attributes the attributes of the macro
 	 * @since 3.6
 	 */
 	public void printMacroDef(String macroName, List<String> attributes);
