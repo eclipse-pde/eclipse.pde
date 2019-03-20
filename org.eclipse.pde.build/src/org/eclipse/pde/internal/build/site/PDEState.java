@@ -433,7 +433,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			}
 		}
 		// from java 10 and beyond
-		String[] java10AndBeyond = {"JavaSE-10", "JavaSE-11"}; //$NON-NLS-1$//$NON-NLS-2$
+		String[] java10AndBeyond = {"JavaSE-10", "JavaSE-11", "JavaSE-12"}; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		prop = new Hashtable<>();
 		String previousEE = eeJava9;
 		for (int i = 0; i <= java10AndBeyond.length - 1; i++) {
