@@ -13,19 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ds.internal.annotations;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -39,8 +34,6 @@ import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 @SuppressWarnings("restriction")
 public class DSAnnotationClasspathContributor implements IClasspathContributor {
@@ -52,47 +45,42 @@ public class DSAnnotationClasspathContributor implements IClasspathContributor {
 
 	@Override
 	public List<IClasspathEntry> getInitialEntries(BundleDescription project) {
-		Bundle bundle = FrameworkUtil.getBundle(Activator.class);
-		if (bundle != null) {
-			IPluginModelBase model = PluginRegistry.findModel(project);
-			if (model != null) {
-				IResource resource = model.getUnderlyingResource();
-				if (resource != null && !WorkspaceModelManager.isBinaryProject(resource.getProject())) {
-					IPreferencesService prefs = Platform.getPreferencesService();
-					IScopeContext[] scope = new IScopeContext[] { new ProjectScope(resource.getProject()), InstanceScope.INSTANCE, DefaultScope.INSTANCE };
-					boolean enabled = prefs.getBoolean(Activator.PLUGIN_ID, Activator.PREF_ENABLED, false, scope);
-					if (enabled) {
-						boolean autoClasspath = prefs.getBoolean(Activator.PLUGIN_ID, Activator.PREF_CLASSPATH, true, scope);
-						if (autoClasspath) {
-							DSAnnotationVersion specVersion;
-							try {
-								specVersion = DSAnnotationVersion.valueOf(prefs.getString(Activator.PLUGIN_ID, Activator.PREF_SPEC_VERSION, DSAnnotationVersion.V1_3.name(), scope));
-							} catch (IllegalArgumentException e) {
-								specVersion = DSAnnotationVersion.V1_3;
-							}
+		IPluginModelBase model = PluginRegistry.findModel(project);
+		if (model != null) {
+			IResource resource = model.getUnderlyingResource();
+			if (resource != null && !WorkspaceModelManager.isBinaryProject(resource.getProject())) {
+				IPreferencesService prefs = Platform.getPreferencesService();
+				IScopeContext[] scope = new IScopeContext[] { new ProjectScope(resource.getProject()),
+						InstanceScope.INSTANCE, DefaultScope.INSTANCE };
+				boolean enabled = prefs.getBoolean(Activator.PLUGIN_ID, Activator.PREF_ENABLED, false, scope);
+				if (enabled) {
+					boolean autoClasspath = prefs.getBoolean(Activator.PLUGIN_ID, Activator.PREF_CLASSPATH, true,
+							scope);
+					if (autoClasspath) {
+						DSAnnotationVersion specVersion;
+						try {
+							specVersion = DSAnnotationVersion.valueOf(prefs.getString(Activator.PLUGIN_ID,
+									Activator.PREF_SPEC_VERSION, DSAnnotationVersion.V1_3.name(), scope));
+						} catch (IllegalArgumentException e) {
+							specVersion = DSAnnotationVersion.V1_3;
+						}
 
-							String jarDir;
-							if (specVersion == DSAnnotationVersion.V1_3) {
-								jarDir = "lib"; //$NON-NLS-1$
-							} else {
-								jarDir = "lib1_2"; //$NON-NLS-1$
-							}
+						String libBundleName;
+						if (specVersion == DSAnnotationVersion.V1_3) {
+							libBundleName = "org.eclipse.pde.ds.lib"; //$NON-NLS-1$
+						} else {
+							libBundleName = "org.eclipse.pde.ds1_2.lib"; //$NON-NLS-1$
+						}
 
-							try {
-								URL entryUrl = bundle.getEntry(jarDir + "/annotations.jar");
-								if (entryUrl == null) {
-									Activator.log(new IllegalStateException(
-											"Missing " + bundle.getSymbolicName() + "/" + jarDir + "/annotations.jar")); //$NON-NLS-1$
-									return Collections.emptyList();
-								}
-								URL fileURL = FileLocator.toFileURL(entryUrl); // $NON-NLS-1$
-								if ("file".equals(fileURL.getProtocol())) { //$NON-NLS-1$
-									IPath srcPath = getSrcPath(bundle, jarDir);
-									IClasspathEntry entry = JavaCore.newLibraryEntry(new Path(fileURL.getPath()), srcPath, Path.ROOT, ANNOTATION_ACCESS_RULES, DS_ATTRS, false);
-									return Collections.singletonList(entry);
-								}
-							} catch (IOException e) {
-								Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error creating classpath entry.", e)); //$NON-NLS-1$
+						IPluginModelBase bundle = PluginRegistry.findModel(libBundleName);
+						if (bundle != null && bundle.isEnabled()) {
+							String location = bundle.getInstallLocation();
+							if (location != null) {
+								IPath srcPath = getSrcPath(libBundleName);
+								IClasspathEntry entry = JavaCore.newLibraryEntry(
+										new Path(location + "/annotations.jar"), srcPath, Path.ROOT, //$NON-NLS-1$
+										ANNOTATION_ACCESS_RULES, DS_ATTRS, false);
+								return Collections.singletonList(entry);
 							}
 						}
 					}
@@ -103,16 +91,16 @@ public class DSAnnotationClasspathContributor implements IClasspathContributor {
 		return Collections.emptyList();
 	}
 
-	private IPath getSrcPath(Bundle bundle, String jarDir) throws IOException {
-		URL srcEntry = bundle.getEntry(jarDir + "/annotationssrc.zip");
-		if (srcEntry == null) {
-			Activator.log(new IllegalStateException(
-					"Missing " + bundle.getSymbolicName() + "/" + jarDir + "/annotationssrc.zip")); //$NON-NLS-1$
-			return null;
+	private IPath getSrcPath(String libBundleName) {
+		IPluginModelBase bundle = PluginRegistry.findModel(libBundleName + ".source"); //$NON-NLS-1$
+		if (bundle != null && bundle.isEnabled()) {
+			String location = bundle.getInstallLocation();
+			if (location != null) {
+				return new Path(location);
+			}
 		}
-		URL srcFileURL = FileLocator.toFileURL(srcEntry); // $NON-NLS-1$
-		IPath srcPath = "file".equals(srcFileURL.getProtocol()) ? new Path(srcFileURL.getPath()) : null; //$NON-NLS-1$
-		return srcPath;
+
+		return null;
 	}
 
 	@Override

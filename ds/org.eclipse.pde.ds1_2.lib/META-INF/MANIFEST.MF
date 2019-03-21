@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.pde.ds1_2.lib
-Bundle-Version: 1.0.200.qualifier
+Bundle-Version: 1.0.300.qualifier
 Bundle-ClassPath: annotations.jar
 Bundle-Vendor: %Bundle-Vendor
 Export-Package: org.osgi.service.component.annotations;version="1.2.0"

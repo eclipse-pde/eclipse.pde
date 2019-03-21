@@ -21,6 +21,46 @@
   </parent>
   <groupId>org.eclipse.pde</groupId>
   <artifactId>org.eclipse.pde.ds.lib</artifactId>
-  <version>1.1.200-SNAPSHOT</version>
+  <version>1.1.300-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>annotationssrc-zip</id>
+            <phase>generate-sources</phase>
+            <configuration>
+              <target>
+                <unzip dest="${project.build.directory}/annotationssrc" overwrite="false">
+                  <fileset dir="${basedir}">
+                    <include name="annotationssrc.zip" />
+                  </fileset>
+                </unzip>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-source-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <configuration>
+          <additionalFileSets>
+            <fileSet>
+              <directory>${project.build.directory}/annotationssrc/</directory>
+              <includes>
+                <include>**/*</include>
+              </includes>
+            </fileSet>
+          </additionalFileSets>
+        </configuration>
+      </plugin>      
+    </plugins>
+  </build>
 </project>
