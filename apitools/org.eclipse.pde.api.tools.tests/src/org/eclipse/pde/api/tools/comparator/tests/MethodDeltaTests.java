@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -2654,7 +2654,7 @@ public class MethodDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		assertFalse("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,8 +13,9 @@
  *******************************************************************************/
 package p;
 
-public class X {
+public class X_test110 {
 
-	protected void m1() {
+	protected String m1() {
+		return null;
 	}
 }

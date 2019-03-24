@@ -260,6 +260,8 @@ public class Messages extends NLS {
 									return 31;
 								}
 								return 32;
+							case IDelta.RESTRICTIONS:
+								return 112;
 							case IDelta.TYPE_MEMBER:
 								if (Flags.isProtected(delta.getOldModifiers())) {
 									return 33;
@@ -432,6 +434,8 @@ public class Messages extends NLS {
 								return 61;
 							case IDelta.DEPRECATION:
 								return 111;
+							case IDelta.RESTRICTIONS:
+								return 112;
 							default:
 								break;
 						}

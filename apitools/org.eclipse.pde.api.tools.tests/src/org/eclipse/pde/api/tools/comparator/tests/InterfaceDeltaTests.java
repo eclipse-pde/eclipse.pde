@@ -1104,8 +1104,10 @@ public class InterfaceDeltaTests extends DeltaTestSetup {
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.API, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals("Wrong size", 2, allLeavesDeltas.length); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
+		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+		child = allLeavesDeltas[1];
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -52,18 +52,14 @@ public class RestrictionsDeltaTests extends DeltaTestSetup {
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 2, allLeavesDeltas.length); //$NON-NLS-1$
+		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
 		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
 		assertFalse("Extend restrictions", RestrictionModifiers.isExtendRestriction(child.getCurrentRestrictions())); //$NON-NLS-1$
 		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
-		child = allLeavesDeltas[1];
-		assertEquals("Wrong kind", IDelta.ADDED, child.getKind()); //$NON-NLS-1$
-		assertEquals("Wrong flag", IDelta.RESTRICTIONS, child.getFlags()); //$NON-NLS-1$
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
+
 	}
 
 	/**
@@ -266,7 +262,13 @@ public class RestrictionsDeltaTests extends DeltaTestSetup {
 		assertTrue("Has no description", afterApiComponent.hasApiDescription()); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
+		assertEquals("Wrong flag", IDelta.RESTRICTIONS, child.getFlags()); //$NON-NLS-1$
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
+		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
 
 	/**
@@ -285,9 +287,15 @@ public class RestrictionsDeltaTests extends DeltaTestSetup {
 		assertTrue("Has no description", afterApiComponent.hasApiDescription()); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(beforeApiComponent, afterApiComponent, before, after, VisibilityModifiers.ALL_VISIBILITIES, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
-		assertTrue("Should be NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
+		IDelta[] allLeavesDeltas = collectLeaves(delta);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
+		IDelta child = allLeavesDeltas[0];
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
+		assertEquals("Wrong flag", IDelta.RESTRICTIONS, child.getFlags()); //$NON-NLS-1$
+		assertEquals("Wrong element type", IDelta.INTERFACE_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
+		assertTrue("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Add @noextend on a final class and remove final on the new version of the
 	 * class 247654
@@ -313,7 +321,7 @@ public class RestrictionsDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Add @noinstantiate on an abstract class and remove abstract on the new
 	 * version of the class 247654
@@ -339,7 +347,7 @@ public class RestrictionsDeltaTests extends DeltaTestSetup {
 		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
 		assertTrue("Not compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Add extend restrictions
 	 */

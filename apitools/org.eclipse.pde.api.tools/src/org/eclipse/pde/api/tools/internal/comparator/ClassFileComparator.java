@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -975,6 +975,9 @@ public class ClassFileComparator {
 							if ((RestrictionModifiers.isImplementRestriction(restrictions2) && !RestrictionModifiers.isImplementRestriction(restrictions)) || (RestrictionModifiers.isExtendRestriction(restrictions2) && !RestrictionModifiers.isExtendRestriction(restrictions))) {
 								this.addDelta(getElementType(this.type1), IDelta.ADDED, IDelta.RESTRICTIONS, restrictions2, typeAccess, typeAccess2, this.type2, this.type2.getName(), Util.getDescriptorName(type1));
 							}
+							if ((!RestrictionModifiers.isImplementRestriction(restrictions2) && RestrictionModifiers.isImplementRestriction(restrictions)) || (!RestrictionModifiers.isExtendRestriction(restrictions2) && RestrictionModifiers.isExtendRestriction(restrictions))) {
+								this.addDelta(getElementType(this.type1), IDelta.REMOVED, IDelta.RESTRICTIONS, restrictions2, typeAccess, typeAccess2, this.type2, this.type2.getName(), Util.getDescriptorName(type1));
+							}
 						} else {
 							boolean reportChangedRestrictions = false;
 							if (!Flags.isFinal(typeAccess2) && !Flags.isFinal(typeAccess)) {
@@ -982,10 +985,20 @@ public class ClassFileComparator {
 									reportChangedRestrictions = true;
 									this.addDelta(getElementType(this.type1), IDelta.ADDED, IDelta.RESTRICTIONS, restrictions2, typeAccess, typeAccess2, this.type2, this.type2.getName(), Util.getDescriptorName(type1));
 								}
+								if (!RestrictionModifiers.isExtendRestriction(restrictions2) && RestrictionModifiers.isExtendRestriction(restrictions)) {
+									reportChangedRestrictions = true;
+									this.addDelta(getElementType(this.type1), IDelta.REMOVED, IDelta.RESTRICTIONS,restrictions2, typeAccess, typeAccess2, this.type2, this.type2.getName(),Util.getDescriptorName(type1));
+								}
 							}
 							if (!reportChangedRestrictions && !Flags.isAbstract(typeAccess2) && !Flags.isAbstract(typeAccess)) {
 								if (RestrictionModifiers.isInstantiateRestriction(restrictions2) && !RestrictionModifiers.isInstantiateRestriction(restrictions)) {
 									this.addDelta(getElementType(this.type1), IDelta.ADDED, IDelta.RESTRICTIONS, restrictions2, typeAccess, typeAccess2, this.type2, this.type2.getName(), Util.getDescriptorName(type1));
+								}
+							}
+							if (!reportChangedRestrictions && !Flags.isAbstract(typeAccess2)
+									&& !Flags.isAbstract(typeAccess)) {
+								if (!RestrictionModifiers.isInstantiateRestriction(restrictions2) && RestrictionModifiers.isInstantiateRestriction(restrictions)) {
+									this.addDelta(getElementType(this.type1), IDelta.REMOVED, IDelta.RESTRICTIONS,restrictions2, typeAccess, typeAccess2, this.type2, this.type2.getName(),Util.getDescriptorName(type1));
 								}
 							}
 						}
