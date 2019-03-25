@@ -117,7 +117,7 @@ public abstract class AbstractPluginBlock {
 		private String getPluginName(IPluginModelBase model) {
 			String startLevel = null;
 			String autoStart = null;
-			if (fPluginTreeViewer.getChecked(model)) {
+			if (fPluginTreeViewer.isCheckedLeafElement(model)) {
 				startLevel = levelColumnCache.get(model) != null ? levelColumnCache.get(model).toString() : null;
 				autoStart = autoColumnCache.get(model) != null ? autoColumnCache.get(model).toString() : null;
 			}
