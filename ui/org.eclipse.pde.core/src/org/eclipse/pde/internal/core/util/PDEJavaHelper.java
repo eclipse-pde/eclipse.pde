@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -302,7 +302,8 @@ public class PDEJavaHelper {
 	}
 
 	public static IPackageFragment[] getPackageFragments(IJavaProject jProject, Collection<?> existingPackages, boolean allowJava) {
-		HashMap<String, IPackageFragment> map = getPackageFragmentsHash(jProject, existingPackages, allowJava);
+		// for unique package fragments, use getPackageFragmentsHash2
+		HashMap<String, IPackageFragment> map = getPackageFragmentsHash2(jProject, existingPackages, allowJava);
 		return map.values().toArray(new IPackageFragment[map.size()]);
 	}
 
@@ -321,6 +322,29 @@ public class PDEJavaHelper {
 					if ((fragment.hasChildren() || fragment.getNonJavaResources().length > 0) && !existingPackages.contains(name)) {
 						if (!name.equals("java") || !name.startsWith("java.") || allowJava) { //$NON-NLS-1$ //$NON-NLS-2$
 							map.put(fragment.getElementName(), fragment);
+						}
+					}
+				}
+			}
+		} catch (JavaModelException e) {
+		}
+		return map;
+	}
+	public static HashMap<String, IPackageFragment> getPackageFragmentsHash2(IJavaProject jProject, Collection<?> existingPackages, boolean allowJava) {
+		HashMap<String, IPackageFragment> map = new LinkedHashMap<>();
+		try {
+			IPackageFragmentRoot[] roots = getRoots(jProject);
+			for (IPackageFragmentRoot root : roots) {
+				IJavaElement[] children = root.getChildren();
+				for (IJavaElement element : children) {
+					IPackageFragment fragment = (IPackageFragment) element;
+					String name = fragment.getElementName();
+					if (name.length() == 0) {
+						name = "."; //$NON-NLS-1$
+					}
+					if ((fragment.hasChildren() || fragment.getNonJavaResources().length > 0) && !existingPackages.contains(name)) {
+						if (!name.equals("java") || !name.startsWith("java.") || allowJava) { //$NON-NLS-1$ //$NON-NLS-2$
+							map.put(fragment.getPath().makeRelative() + "_" + fragment.getElementName(), fragment); //$NON-NLS-1$
 						}
 					}
 				}
