@@ -16,13 +16,13 @@ package org.eclipse.pde.internal.ui.correction.java;
 import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
+import org.eclipse.pde.internal.core.ClasspathUtilCore.ClasspathLibrary;
 
 class PDESearchScope implements IJavaSearchScope {
 
@@ -37,9 +37,8 @@ class PDESearchScope implements IJavaSearchScope {
 
 		LinkedHashSet<IPath> allPaths = new LinkedHashSet<>(Arrays.asList(workspacePaths));
 
-		IPluginModelBase[] activeModels = PluginRegistry.getActiveModels();
-		for (int i = 0; i < activeModels.length; i++) {
-			addPaths(allPaths, activeModels[i]);
+		for (IPluginModelBase model : PluginRegistry.getActiveModels()) {
+			addPaths(allPaths, model);
 		}
 
 		return new PDESearchScope(allPaths.toArray(new IPath[0]));
@@ -51,11 +50,8 @@ class PDESearchScope implements IJavaSearchScope {
 			return; // already added by workspace scope
 		}
 
-		ArrayList<IClasspathEntry> pluginClasspathEntries = new ArrayList<>();
-		ClasspathUtilCore.addLibraries(model, pluginClasspathEntries);
-
-		for (IClasspathEntry classpathEntry : pluginClasspathEntries) {
-			allPaths.add(classpathEntry.getPath());
+		for (ClasspathLibrary library : ClasspathUtilCore.collectLibraries(model)) {
+			allPaths.add(library.getPath());
 		}
 	}
 

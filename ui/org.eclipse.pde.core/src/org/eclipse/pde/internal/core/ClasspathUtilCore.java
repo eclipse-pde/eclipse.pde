@@ -13,8 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import static java.util.Collections.singleton;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -42,36 +45,38 @@ import org.eclipse.pde.internal.core.plugin.PluginBase;
 public class ClasspathUtilCore {
 
 	public static void addLibraries(IPluginModelBase model, ArrayList<IClasspathEntry> result) {
-		if (new File(model.getInstallLocation()).isFile()) {
-			addJARdPlugin(model, result);
-		} else {
-			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-			for (IPluginLibrary library : libraries) {
-				if (IPluginLibrary.RESOURCE.equals(library.getType())) {
-					continue;
-				}
-				IClasspathEntry entry = createLibraryEntry(library);
-				if (entry != null && !result.contains(entry)) {
-					result.add(entry);
-				}
+
+		for (ClasspathLibrary library : collectLibraries(model)) {
+			IClasspathEntry entry = library.createClasspathEntry();
+			if (!result.contains(entry)) {
+				result.add(entry);
 			}
 		}
 	}
 
-	private static void addJARdPlugin(IPluginModelBase model, ArrayList<IClasspathEntry> result) {
-
-		IPath sourcePath = getSourceAnnotation(model, "."); //$NON-NLS-1$
-		if (sourcePath == null) {
-			sourcePath = new Path(model.getInstallLocation());
+	public static Collection<ClasspathLibrary> collectLibraries(IPluginModelBase model) {
+		if (new File(model.getInstallLocation()).isFile()) {
+			return singleton(new ClasspathLibrary(new Path(model.getInstallLocation()), model, null));
 		}
 
-		IClasspathEntry entry = JavaCore.newLibraryEntry(new Path(model.getInstallLocation()), sourcePath, null, false);
-		if (entry != null && !result.contains(entry)) {
-			result.add(entry);
-		}
+		return collectLibraryEntries(model);
 	}
 
-	protected static IClasspathEntry createLibraryEntry(IPluginLibrary library) {
+	private static Collection<ClasspathLibrary> collectLibraryEntries(IPluginModelBase model) {
+		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+		ArrayList<ClasspathLibrary> entries = new ArrayList<>();
+		for (IPluginLibrary library : libraries) {
+			if (IPluginLibrary.RESOURCE.equals(library.getType())) {
+				continue;
+			}
+
+			addLibraryEntry(library, entries);
+		}
+
+		return entries;
+	}
+
+	private static void addLibraryEntry(IPluginLibrary library, Collection<ClasspathLibrary> entries) {
 
 		String name = library.getName();
 		String expandedName = expandLibraryName(name);
@@ -80,16 +85,16 @@ public class ClasspathUtilCore {
 		IPath path = getPath(model, expandedName);
 		if (path == null) {
 			if (model.isFragmentModel() || !containsVariables(name)) {
-				return null;
+				return;
 			}
 			model = resolveLibraryInFragments(library, expandedName);
 			if (model == null) {
-				return null;
+				return;
 			}
 			path = getPath(model, expandedName);
 		}
 
-		return JavaCore.newLibraryEntry(path, getSourceAnnotation(model, expandedName), null, false);
+		entries.add(new ClasspathLibrary(path, model, expandedName));
 	}
 
 	public static boolean hasExtensibleAPI(IPluginModelBase model) {
@@ -230,6 +235,40 @@ public class ClasspathUtilCore {
 
 	public static String getFilename(IPluginModelBase model) {
 		return new Path(model.getInstallLocation()).lastSegment();
+	}
+
+	public static class ClasspathLibrary {
+
+		private final IPath fPath;
+		private final IPluginModelBase fModel;
+		private final String fLibraryName;
+
+		public ClasspathLibrary(IPath path, IPluginModelBase model, String libraryName) {
+			fPath = path;
+			fModel = model;
+			fLibraryName = libraryName;
+		}
+
+		public IPath getPath() {
+			return fPath;
+		}
+
+		public IClasspathEntry createClasspathEntry() {
+			IPath sourcePath = findSourcePath();
+			return JavaCore.newLibraryEntry(fPath, sourcePath, null, false);
+		}
+
+		private IPath findSourcePath() {
+			if (fLibraryName == null) {
+				IPath sourcePath = getSourceAnnotation(fModel, "."); //$NON-NLS-1$
+				if (sourcePath == null) {
+					sourcePath = fPath;
+				}
+				return sourcePath;
+			}
+
+			return getSourceAnnotation(fModel, fLibraryName);
+		}
 	}
 
 }
