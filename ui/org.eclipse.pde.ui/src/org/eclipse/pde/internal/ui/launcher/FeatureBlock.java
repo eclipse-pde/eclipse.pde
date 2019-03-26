@@ -1084,7 +1084,7 @@ public class FeatureBlock {
 		Set<String> pluginsEntry = new HashSet<>();
 		ArrayList<PluginLaunchModel> checkPluginLaunchModels = new ArrayList<>();
 
-		Object[] models = fTree.getCheckedElements();
+		Object[] models = fTree.getCheckedLeafElements();
 
 		for (Object model : models) {
 			if (model instanceof FeatureLaunchModel) {
