@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -239,17 +239,18 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 								if (fragment.containsJavaResources() || fragment.getNonJavaResources().length > 0) {
 									if (!containsPackage(header, name)) {
 										packages.append(name);
-										if (j < javaElements.length - 1)
-										 {
-											packages.append(","); //$NON-NLS-1$
-										}
-
+										packages.append(","); //$NON-NLS-1$
 									}
 								}
 							}
 						}
 					}
 				} catch (JavaModelException e) {
+				}
+			}
+			if (packages.toString().length() > 0) {
+				if (packages.substring(packages.length() - 1).equals(",")) { //$NON-NLS-1$
+					packages.setLength(packages.length() - 1);
 				}
 			}
 
