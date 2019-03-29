@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 Red Hat Inc. and others
+ * Copyright (c) 2017, 2019 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -49,7 +49,8 @@ public class Bug528706CompletionWithMultilineTagsTest extends AbstractTargetEdit
 
 	@Test
 	public void testTagValueCompletionAfterAMultiline() {
-		confirmCompletionAtOffset(181, "x86");
+		checkProposals(new String[] { "x86", "x86_64" },
+				contentAssist.computeCompletionProposals(textViewer, 181 + 1), 181);
 	}
 
 	@Test
