@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2019 EclipseSource Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     EclipseSource Corporation - initial API and implementation
  *     IBM Corporation - ongoing enhancements
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 541067
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
@@ -39,7 +40,6 @@ import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor;
 import org.eclipse.pde.internal.ui.shared.target.*;
 import org.eclipse.pde.internal.ui.shared.target.Messages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -956,24 +956,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				}
 			};
 
-			if (fPrevious.getHandle() instanceof WorkspaceFileTargetHandle) {
-				WorkspaceFileTargetHandle wrkHandle = (WorkspaceFileTargetHandle) fPrevious.getHandle();
-				Object object = wrkHandle.getWorkspaceEditor();
-				if (object instanceof TargetEditor) {
-					TargetEditor targetEditor = (TargetEditor) object;
-					targetEditor.updateHyperlinkText(PDEUIMessages.AbstractTargetPage_setTarget);
-				}
-			}
 			LoadTargetDefinitionJob.load(toLoad, listener);
 
-			if ((toLoad != null) && (toLoad.getHandle() instanceof WorkspaceFileTargetHandle)) {
-				WorkspaceFileTargetHandle wrkHandle = (WorkspaceFileTargetHandle) toLoad.getHandle();
-				Object object = wrkHandle.getWorkspaceEditor();
-				if (object instanceof TargetEditor) {
-					TargetEditor targetEditor = (TargetEditor) object;
-					targetEditor.updateHyperlinkText(PDEUIMessages.AbstractTargetPage_reloadTarget);
-				}
-			}
 			fPrevious = toLoad == null ? null : toLoad;
 
 			// Start a separate job to clean p2 bundle pool

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2018 vogella GmbH and others
+ * Copyright (c) 2018, 2019 vogella GmbH and others
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -9,7 +9,7 @@
  *
  * Contributors:
  *     Lars Vogel (vogella GmbH) - initial API and implementation
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 534758
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 534758, Bug 541067
  ********************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.codemining;
 
@@ -38,7 +38,6 @@ import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor;
 import org.eclipse.swt.events.MouseEvent;
 
 @SuppressWarnings("restriction")
@@ -94,7 +93,6 @@ public class TargetDefinitionActivationCodeMining extends LineHeaderCodeMining {
 			ITargetHandle targetHandle = getTargetHandle();
 			ITargetDefinition toLoad = targetHandle.getTargetDefinition();
 			LoadTargetDefinitionJob.load(toLoad);
-			TargetEditor.updateTargetEditors(targetHandle);
 		} catch (CoreException e) {
 			PDEPlugin.log(e.getStatus());
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 541067
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
@@ -18,7 +19,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -42,11 +42,6 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	 * Scheme for resource target handle
 	 */
 	static final String SCHEME = "resource"; //$NON-NLS-1$
-
-	/**
-	 * Map of all target editor file and the workspace editor
-	 */
-	public static HashMap<IFile, Object> mapFileTarget = new HashMap<>();
 
 	/**
 	 * Returns a handle for the given URI.
@@ -146,19 +141,4 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 		return fFile;
 	}
 
-	/**
-	 * Returns the workspace editor from target file.
-	 *
-	 * @return target
-	 */
-	public Object getWorkspaceEditor() {
-		return mapFileTarget.get(fFile);
-	}
-
-	/**
-	 * Updates the map with the file and workspace target
-	 */
-	public void setWorkspaceEditor(Object target) {
-		mapFileTarget.put(fFile, target);
-	}
 }

@@ -21,11 +21,17 @@ import java.util.zip.ZipFile;
 import junit.framework.TestCase;
 import org.eclipse.core.filebuffers.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.event.EventHandler;
 
 /**
  * Common utility methods for target definition tests
@@ -219,6 +225,13 @@ public abstract class AbstractTargetTest extends TestCase {
 	 * @throws CoreException
 	 */
 	protected void setTargetPlatform(ITargetDefinition target) throws CoreException {
+		final Object[] payload = new Object[1];
+		BundleContext bundleContext = PDECore.getDefault().getBundleContext();
+		IEclipseContext context = EclipseContextFactory.getServiceContext(bundleContext);
+		IEventBroker eventBroker = context.get(IEventBroker.class);
+		EventHandler handler = e -> payload[0] = e.getProperty(IEventBroker.DATA);
+		eventBroker.subscribe(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, handler);
+
 		// Create the job to load the target, but then join with the job's thread
 		LoadTargetDefinitionJob job = new LoadTargetDefinitionJob(target);
 		job.schedule();
@@ -227,11 +240,13 @@ public abstract class AbstractTargetTest extends TestCase {
 		} catch (InterruptedException e) {
 			assertFalse("Target platform reset interrupted", true);
 		}
+		eventBroker.unsubscribe(handler);
 		ITargetHandle handle = null;
 		if (target != null) {
 			handle = target.getHandle();
 		}
 		assertEquals("Wrong target platform handle preference setting", handle, getTargetService().getWorkspaceTargetHandle());
+		assertEquals("Wrong workspaceTargetChanged event payload", target, payload[0]);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Lucas Bullen (Red Hat Inc.) - Bug 520216 - Add generic editor as a tab
  *                                 - Bug 531226 - Update to reflect addition of source tab
  *                                 - Bug 531602 - formatting munged by editor
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 541067
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
@@ -27,11 +28,15 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.source.ISourceViewerExtension5;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.*;
@@ -53,6 +58,9 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 import org.xml.sax.SAXException;
 
 /**
@@ -74,7 +82,11 @@ public class TargetEditor extends FormEditor {
 	private InputHandler fInputHandler = new InputHandler();
 	private TargetChangedListener fTargetChangedListener;
 	private boolean fDirty;
-	private ArrayList<ImageHyperlink> arrayHyperLink = new ArrayList<>();
+
+	private ImageHyperlink fLoadHyperlink;
+
+	private EventHandler fEventHandler = e -> handleBrokerEvent(e);
+
 	@Override
 	protected FormToolkit createToolkit(Display display) {
 		return new FormToolkit(PDEPlugin.getDefault().getFormColors(display));
@@ -91,6 +103,10 @@ public class TargetEditor extends FormEditor {
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		}
+		BundleContext bundleContext = PDECore.getDefault().getBundleContext();
+		IEclipseContext context = EclipseContextFactory.getServiceContext(bundleContext);
+		IEventBroker eventBroker = context.get(IEventBroker.class);
+		eventBroker.subscribe(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, fEventHandler);
 	}
 
 	@Override
@@ -215,6 +231,11 @@ public class TargetEditor extends FormEditor {
 
 	@Override
 	public void dispose() {
+		BundleContext bundleContext = PDECore.getDefault().getBundleContext();
+		IEclipseContext context = EclipseContextFactory.getServiceContext(bundleContext);
+		IEventBroker eventBroker = context.get(IEventBroker.class);
+		eventBroker.unsubscribe(fEventHandler);
+
 		// Cancel any resolution jobs that are runnning
 		Job.getJobManager().cancel(getTargetChangedListener().getJobFamily());
 		getTargetChangedListener().setContentTree(null);
@@ -261,6 +282,7 @@ public class TargetEditor extends FormEditor {
 
 	public void contributeToToolbar(final ScrolledForm form, String contextID) {
 		ControlContribution setAsTarget = new ControlContribution("Set") { //$NON-NLS-1$
+
 			@Override
 			protected Control createControl(Composite parent) {
 				PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
@@ -277,16 +299,11 @@ public class TargetEditor extends FormEditor {
 						hyperLinkText = PDEUIMessages.AbstractTargetPage_reloadTarget;
 					}
 				}
-				ImageHyperlink hyperlink = new ImageHyperlink(parent, SWT.NONE | SWT.NO_FOCUS);
-				hyperlink.setText(hyperLinkText);
-				if (!arrayHyperLink.isEmpty()) {
-					// if hyperlink exist, update text from it.
-					hyperlink.setText(arrayHyperLink.get(0).getText());
-				}
-				arrayHyperLink.add(hyperlink);
-				hyperlink.setUnderlined(true);
-				hyperlink.setForeground(getToolkit().getHyperlinkGroup().getForeground());
-				hyperlink.addHyperlinkListener(new IHyperlinkListener() {
+				fLoadHyperlink = new ImageHyperlink(parent, SWT.NONE | SWT.NO_FOCUS);
+				fLoadHyperlink.setText(hyperLinkText);
+				fLoadHyperlink.setUnderlined(true);
+				fLoadHyperlink.setForeground(getToolkit().getHyperlinkGroup().getForeground());
+				fLoadHyperlink.addHyperlinkListener(new IHyperlinkListener() {
 					@Override
 					public void linkActivated(HyperlinkEvent e) {
 						IEditorPart editorPart = TargetEditor.this;
@@ -296,12 +313,6 @@ public class TargetEditor extends FormEditor {
 						}
 						ITargetDefinition target = getTarget();
 						LoadTargetDefinitionJob.load(target);
-						try {
-							updateTargetEditors(target.getHandle());
-						} catch (CoreException ce) {
-							PDEPlugin.log(ce);
-							hyperlink.setText(PDEUIMessages.AbstractTargetPage_reloadTarget);
-						}
 					}
 
 					@Override
@@ -309,7 +320,7 @@ public class TargetEditor extends FormEditor {
 						HyperlinkGroup hyperlinkGroup = getHyperlinkGroup();
 
 						if (hyperlinkGroup != null) {
-							hyperlink.setForeground(hyperlinkGroup.getActiveForeground());
+							fLoadHyperlink.setForeground(hyperlinkGroup.getActiveForeground());
 						}
 					}
 
@@ -318,7 +329,7 @@ public class TargetEditor extends FormEditor {
 						HyperlinkGroup hyperlinkGroup = getHyperlinkGroup();
 
 						if (hyperlinkGroup != null) {
-							hyperlink.setForeground(hyperlinkGroup.getForeground());
+							fLoadHyperlink.setForeground(hyperlinkGroup.getForeground());
 						}
 					}
 
@@ -331,7 +342,7 @@ public class TargetEditor extends FormEditor {
 						return hyperlinkGroup;
 					}
 				});
-				return hyperlink;
+				return fLoadHyperlink;
 			}
 		};
 
@@ -449,9 +460,6 @@ public class TargetEditor extends FormEditor {
 				if (fInput instanceof IFileEditorInput) {
 					ITargetHandle fileHandle = service.getTarget(((IFileEditorInput) fInput).getFile());
 					fTarget = fileHandle.getTargetDefinition();
-					if (fileHandle instanceof WorkspaceFileTargetHandle) {
-						((WorkspaceFileTargetHandle) fileHandle).setWorkspaceEditor(TargetEditor.this);
-					}
 				} else if (fInput instanceof IURIEditorInput) {
 					ITargetHandle externalTarget = service.getTarget(((IURIEditorInput) fInput).getURI());
 					fTarget = externalTarget.getTargetDefinition();
@@ -642,41 +650,48 @@ public class TargetEditor extends FormEditor {
 		}
 	}
 
-	public void updateHyperlinkText(String s) {
-		for (Hyperlink hyperlink : arrayHyperLink) {
-			if (hyperlink == null || hyperlink.isDisposed()) {
-				continue;
-			}
-			hyperlink.setText(s);
+	private void updateHyperlinkText(String s) {
+		if (fLoadHyperlink != null && !fLoadHyperlink.isDisposed()) {
+			fLoadHyperlink.setText(s);
 		}
-		updateTextualEditor();
+		ITextViewer viewer = fTextualEditor.getAdapter(ITextViewer.class);
+		if (viewer instanceof ISourceViewerExtension5) {
+			ISourceViewerExtension5 extension5 = (ISourceViewerExtension5) viewer;
+			extension5.updateCodeMinings();
+		}
 	}
 
-	public static void updateTargetEditors(ITargetHandle targetHandle) throws CoreException {
-		String targetMemento = targetHandle.getMemento();
-		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-		for (IWorkbenchWindow window : windows) {
-			IWorkbenchPage[] pages = window.getPages();
-			for (IWorkbenchPage page : pages) {
-				IEditorReference[] references = page.getEditorReferences();
-				for (IEditorReference reference : references) {
-					IEditorPart editor = reference.getEditor(false);
-					if (editor instanceof TargetEditor) {
-						TargetEditor targetEditor = (TargetEditor) editor;
-						ITargetDefinition target = targetEditor.getTarget();
-						if (target == null) {
-							continue;
-						}
-						ITargetHandle handle = target.getHandle();
-						String memento = handle.getMemento();
-						boolean isCurrent = Objects.equals(memento, targetMemento);
-						String label = isCurrent ? PDEUIMessages.AbstractTargetPage_reloadTarget
-								: PDEUIMessages.AbstractTargetPage_setTarget;
-						targetEditor.updateHyperlinkText(label);
-					}
-				}
-			}
+	private void handleBrokerEvent(Event event) {
+		String topic = event.getTopic();
+		if (TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED.equals(topic)) {
+			ITargetDefinition workspaceTarget = extractTargetDefinition(event);
+			handleWorkspaceTargetChanged(workspaceTarget);
 		}
+	}
+
+	private void handleWorkspaceTargetChanged(ITargetDefinition workspaceTarget) {
+		ITargetDefinition editorTarget = getTarget();
+		if (editorTarget == null) {
+			return;
+		}
+		ITargetHandle editorHandle = editorTarget.getHandle();
+		ITargetHandle changedHandle = workspaceTarget.getHandle();
+		try {
+			final boolean isCurrent = Objects.equals(editorHandle.getMemento(), changedHandle.getMemento());
+			final String label = isCurrent ? PDEUIMessages.AbstractTargetPage_reloadTarget
+					: PDEUIMessages.AbstractTargetPage_setTarget;
+			Display.getDefault().asyncExec(() -> updateHyperlinkText(label));
+		} catch (CoreException e) {
+			PDECore.log(e.getStatus());
+		}
+	}
+
+	private ITargetDefinition extractTargetDefinition(Event event) {
+		Object data = event.getProperty(IEventBroker.DATA);
+		if (data instanceof ITargetDefinition) {
+			return (ITargetDefinition) data;
+		}
+		return null;
 	}
 
 }
