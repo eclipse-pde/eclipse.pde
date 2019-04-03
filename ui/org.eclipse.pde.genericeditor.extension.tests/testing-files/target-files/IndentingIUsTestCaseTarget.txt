@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?>
+<target>
 	<locations>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
 			<unit id="org.eclipse.fake.1" version="0.0.0"/>

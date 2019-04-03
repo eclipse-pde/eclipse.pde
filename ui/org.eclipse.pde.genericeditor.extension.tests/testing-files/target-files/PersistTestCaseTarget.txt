@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target sequenceNumber="0">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?>
+<target sequenceNumber="0">
 
 	<!--The white space above and this comment should stay-->
 	<environment>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 541188
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -114,12 +116,24 @@ public class TargetDefinitionPersistenceHelper {
 	public static void persistXML(ITargetDefinition definition, OutputStream output)
 			throws CoreException, ParserConfigurationException, TransformerException, IOException, SAXException {
 		Document document = definition.getDocument();
-		DOMSource source = new DOMSource(document);
-
+		NodeList childNodes = document.getChildNodes();
+		int length = childNodes.getLength();
+		if (length == 0) {
+			return;
+		}
 		StreamResult outputTarget = new StreamResult(output);
 		TransformerFactory factory = TransformerFactory.newInstance();
 		Transformer transformer = factory.newTransformer();
-		transformer.transform(source, outputTarget);
+		transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+		transformer.setOutputProperty(OutputKeys.STANDALONE, "no"); //$NON-NLS-1$
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no"); //$NON-NLS-1$
+		transformer.transform(new DOMSource(childNodes.item(0)), outputTarget);
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes"); //$NON-NLS-1$
+		transformer.setOutputProperty(OutputKeys.INDENT, "no"); //$NON-NLS-1$
+		for (int i = 1; i < length; i++) {
+			transformer.transform(new DOMSource(childNodes.item(i)), outputTarget);
+		}
 	}
 
 	/**

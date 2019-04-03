@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?>
+<target>
 	<locations>
 		<location locationTestAttribute="test1" type="TestTargetLocation">
 			<message messageTestAttribute="test2">This is a custom target location</message>
