@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 541067
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
@@ -240,13 +241,13 @@ public abstract class AbstractTargetTest extends TestCase {
 		} catch (InterruptedException e) {
 			assertFalse("Target platform reset interrupted", true);
 		}
+		ITargetPlatformService service = getTargetService();
+		ITargetDefinition definition = (target != null) ? target : service.getWorkspaceTargetDefinition();
 		eventBroker.unsubscribe(handler);
-		ITargetHandle handle = null;
-		if (target != null) {
-			handle = target.getHandle();
-		}
-		assertEquals("Wrong target platform handle preference setting", handle, getTargetService().getWorkspaceTargetHandle());
-		assertEquals("Wrong workspaceTargetChanged event payload", target, payload[0]);
+		ITargetHandle handle = (target != null) ? target.getHandle() : null;
+		assertEquals("Wrong target platform handle preference setting", handle, service.getWorkspaceTargetHandle());
+		assertEquals("Wrong workspaceTargetChanged event payload", definition, payload[0]);
+
 	}
 
 	/**

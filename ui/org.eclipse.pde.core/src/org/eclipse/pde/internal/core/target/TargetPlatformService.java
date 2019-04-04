@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 import org.eclipse.core.resources.IFile;
@@ -332,11 +333,13 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * @param target the new workspace target definition
 	 */
 	public void setWorkspaceTargetDefinition(ITargetDefinition target) {
+		boolean changed = !Objects.equals(fWorkspaceTarget, target);
 		fWorkspaceTarget = target;
-
-		IEclipseContext context = EclipseContextFactory.getServiceContext(PDECore.getDefault().getBundleContext());
-		IEventBroker broker = context.get(IEventBroker.class);
-		broker.send(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, target);
+		if (changed) {
+			IEclipseContext context = EclipseContextFactory.getServiceContext(PDECore.getDefault().getBundleContext());
+			IEventBroker broker = context.get(IEventBroker.class);
+			broker.send(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, target);
+		}
 	}
 
 	/**
