@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
@@ -38,8 +39,8 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.UIJob;
 
 /**
  * Operation for creating a new API problem filter
@@ -50,10 +51,12 @@ import org.eclipse.ui.progress.UIJob;
  *
  * @since 1.0.0
  */
-public class CreateApiFilterOperation extends UIJob {
+public class CreateApiFilterOperation extends Job {
 
 	private IMarker[] fMarkers = null;
 	private boolean fAddingComment = false;
+	String comment = null;
+	boolean cancel = false;
 
 	/**
 	 * Constructor
@@ -70,27 +73,49 @@ public class CreateApiFilterOperation extends UIJob {
 		this.fAddingComment = addingcomments;
 	}
 
+	public static Display getDisplay() {
+		Display display = Display.getCurrent();
+		if (display == null) {
+			display = Display.getDefault();
+		}
+		return display;
+	}
 	@Override
-	public IStatus runInUIThread(IProgressMonitor monitor) {
+	public IStatus run(IProgressMonitor monitor) {
 		try {
 			HashMap<IApiComponent, HashSet<IApiProblemFilter>> map = new HashMap<>(fMarkers.length);
 			IResource resource = null;
 			IProject project = null;
-			String comment = null;
+
 			HashSet<IProject> projects = new HashSet<>();
+
 			if (fAddingComment) {
-				InputDialog dialog = new InputDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), MarkerMessages.CreateApiFilterOperation_add_filter_comment, MarkerMessages.CreateApiFilterOperation_filter_comment, null, null);
-				int okCancel = dialog.open();
-				if (okCancel == IDialogConstants.OK_ID) {
-					comment = dialog.getValue();
-					if (comment != null && comment.length() < 1) {
-						comment = null;
+				getDisplay().syncExec(new Runnable() {
+					@Override
+					public void run() {
+						InputDialog dialog = new InputDialog(
+								PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+								MarkerMessages.CreateApiFilterOperation_add_filter_comment,
+								MarkerMessages.CreateApiFilterOperation_filter_comment, null, null);
+						int okCancel = dialog.open();
+						if (okCancel == IDialogConstants.OK_ID) {
+							comment = dialog.getValue();
+							if (comment != null && comment.length() < 1) {
+								comment = null;
+							}
+						}
+						if (okCancel == IDialogConstants.CANCEL_ID) {
+							cancel = true;
+						}
 					}
-				}
-				if (okCancel == IDialogConstants.CANCEL_ID) {
-					return Status.CANCEL_STATUS;
-				}
+				});
+
 			}
+
+			if (cancel) {
+				return Status.CANCEL_STATUS;
+			}
+
 			IMarker marker = null;
 			IApiProblem problem = null;
 			HashSet<IApiProblemFilter> filters = null;
