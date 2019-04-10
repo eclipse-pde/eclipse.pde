@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@ package org.eclipse.pde.api.tools.ui.internal.markers;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
@@ -24,7 +25,6 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMarkerResolution2;
-import org.eclipse.ui.progress.UIJob;
 
 /**
  * This resolution helps users to pick a default API profile when the tooling
@@ -112,9 +112,9 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 				// IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE
 				title = NLS.bind(MarkerMessages.VersionNumberingResolution_reexportedMinor2, this.newVersionValue);
 		}
-		UIJob job = new UIJob(title) {
+		Job job = new Job(title) {
 			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
+			public IStatus run(IProgressMonitor monitor) {
 				UpdateBundleVersionOperation updateBundleVersionOperation = new UpdateBundleVersionOperation(marker, VersionNumberingResolution.this.newVersionValue);
 				return updateBundleVersionOperation.run(monitor);
 			}
