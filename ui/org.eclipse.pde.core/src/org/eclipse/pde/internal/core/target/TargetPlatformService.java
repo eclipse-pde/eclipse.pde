@@ -338,7 +338,9 @@ public class TargetPlatformService implements ITargetPlatformService {
 		if (changed) {
 			IEclipseContext context = EclipseContextFactory.getServiceContext(PDECore.getDefault().getBundleContext());
 			IEventBroker broker = context.get(IEventBroker.class);
-			broker.send(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, target);
+			if (broker != null) {
+				broker.send(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, target);
+			}
 		}
 	}
 
