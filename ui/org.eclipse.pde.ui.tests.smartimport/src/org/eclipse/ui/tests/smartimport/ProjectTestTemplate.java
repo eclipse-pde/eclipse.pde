@@ -13,6 +13,7 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.smartimport;
 
+import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -26,6 +27,7 @@ import org.eclipse.reddeer.common.matcher.RegexMatcher;
 import org.eclipse.reddeer.common.wait.AbstractWait;
 import org.eclipse.reddeer.common.wait.TimePeriod;
 import org.eclipse.reddeer.common.wait.WaitUntil;
+import org.eclipse.reddeer.eclipse.core.resources.DefaultProject;
 import org.eclipse.reddeer.eclipse.core.resources.Project;
 import org.eclipse.reddeer.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.reddeer.eclipse.ui.problems.Problem;
@@ -62,7 +64,7 @@ public abstract class ProjectTestTemplate {
 	@After
 	public void cleanup() {
 		WorkbenchShellHandler.getInstance().closeAllNonWorbenchShells();
-		for (Project p : new ProjectExplorer().getProjects()) {
+		for (Project p : getProjects()) {
 			p.delete(false);
 		}
 		// empty error log
@@ -70,6 +72,17 @@ public abstract class ProjectTestTemplate {
 		LogView logView = new LogView();
 		logView.open();
 		logView.deleteLog();
+	}
+
+	private List<DefaultProject> getProjects() {
+		try {
+			return new ProjectExplorer().getProjects();
+		} catch (NullPointerException e) {
+			// TODO: remove workaround when
+			// https://github.com/eclipse/reddeer/issues/2005 is fixed
+			LOG.error("https://github.com/eclipse/reddeer/issues/2005", e);
+			return emptyList();
+		}
 	}
 
 	@BeforeClass
@@ -126,7 +139,8 @@ public abstract class ProjectTestTemplate {
 			if (matcher.matches(logMessage.getMessage())) {
 				LOG.info("Ignoring error message: " + logMessage.getMessage());
 				iterator.remove();
-				// Increase exceptedErrors if log contains error which can be ignored.
+				// Increase exceptedErrors if log contains error which can be
+				// ignored.
 				ignoredErrors++;
 			}
 		}
