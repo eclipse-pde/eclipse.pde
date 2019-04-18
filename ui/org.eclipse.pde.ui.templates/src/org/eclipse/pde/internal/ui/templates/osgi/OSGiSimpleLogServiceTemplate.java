@@ -50,6 +50,7 @@ public class OSGiSimpleLogServiceTemplate extends PDETemplateSection {
 
 	@Override
 	protected void updateModel(IProgressMonitor monitor) {
+		setManifestHeader("Export-Package", getStringOption(KEY_PACKAGE_NAME)); //$NON-NLS-1$
 		setManifestHeader("Service-Component", "OSGI-INF/*.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 		setManifestHeader("Bundle-ActivationPolicy", "lazy"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
