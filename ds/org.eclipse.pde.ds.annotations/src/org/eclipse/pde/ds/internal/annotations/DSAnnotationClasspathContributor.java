@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2017 Ecliptical Software Inc. and others.
+ * Copyright (c) 2015, 2019 Ecliptical Software Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -48,44 +48,47 @@ public class DSAnnotationClasspathContributor implements IClasspathContributor {
 		IPluginModelBase model = PluginRegistry.findModel(project);
 		if (model != null) {
 			IResource resource = model.getUnderlyingResource();
-			if (resource != null && !WorkspaceModelManager.isBinaryProject(resource.getProject())) {
-				IPreferencesService prefs = Platform.getPreferencesService();
-				IScopeContext[] scope = new IScopeContext[] { new ProjectScope(resource.getProject()),
-						InstanceScope.INSTANCE, DefaultScope.INSTANCE };
-				boolean enabled = prefs.getBoolean(Activator.PLUGIN_ID, Activator.PREF_ENABLED, false, scope);
-				if (enabled) {
-					boolean autoClasspath = prefs.getBoolean(Activator.PLUGIN_ID, Activator.PREF_CLASSPATH, true,
-							scope);
-					if (autoClasspath) {
-						DSAnnotationVersion specVersion;
-						try {
-							specVersion = DSAnnotationVersion.valueOf(prefs.getString(Activator.PLUGIN_ID,
-									Activator.PREF_SPEC_VERSION, DSAnnotationVersion.V1_3.name(), scope));
-						} catch (IllegalArgumentException e) {
-							specVersion = DSAnnotationVersion.V1_3;
-						}
+			if (resource == null || WorkspaceModelManager.isBinaryProject(resource.getProject())) {
+				return Collections.emptyList();
+			}
 
-						String libBundleName;
-						if (specVersion == DSAnnotationVersion.V1_3) {
-							libBundleName = "org.eclipse.pde.ds.lib"; //$NON-NLS-1$
-						} else {
-							libBundleName = "org.eclipse.pde.ds1_2.lib"; //$NON-NLS-1$
-						}
+			IPreferencesService prefs = Platform.getPreferencesService();
+			IScopeContext[] scope = new IScopeContext[] { new ProjectScope(resource.getProject()),
+					InstanceScope.INSTANCE, DefaultScope.INSTANCE };
+			boolean enabled = prefs.getBoolean(Activator.PLUGIN_ID, Activator.PREF_ENABLED, false, scope);
+			if (enabled) {
+				boolean autoClasspath = prefs.getBoolean(Activator.PLUGIN_ID, Activator.PREF_CLASSPATH, true, scope);
+				if (autoClasspath) {
+					DSAnnotationVersion specVersion;
+					try {
+						specVersion = DSAnnotationVersion.valueOf(prefs.getString(Activator.PLUGIN_ID,
+								Activator.PREF_SPEC_VERSION, DSAnnotationVersion.V1_3.name(), scope));
+					} catch (IllegalArgumentException e) {
+						specVersion = DSAnnotationVersion.V1_3;
+					}
 
-						IPluginModelBase bundle = PluginRegistry.findModel(libBundleName);
-						if (bundle != null && bundle.isEnabled()) {
-							String location = bundle.getInstallLocation();
-							if (location != null) {
-								IPath srcPath = getSrcPath(libBundleName);
-								IClasspathEntry entry = JavaCore.newLibraryEntry(
-										new Path(location + "/annotations.jar"), srcPath, Path.ROOT, //$NON-NLS-1$
-										ANNOTATION_ACCESS_RULES, DS_ATTRS, false);
-								return Collections.singletonList(entry);
-							}
+					String libBundleName;
+					if (specVersion == DSAnnotationVersion.V1_3) {
+						libBundleName = "org.eclipse.pde.ds.lib"; //$NON-NLS-1$
+					} else {
+						libBundleName = "org.eclipse.pde.ds1_2.lib"; //$NON-NLS-1$
+					}
+
+					IPluginModelBase bundle = PluginRegistry.findModel(libBundleName);
+					if (bundle != null && bundle.isEnabled()) {
+						String location = bundle.getInstallLocation();
+						if (location != null) {
+							IPath srcPath = getSrcPath(libBundleName);
+							IClasspathEntry entry = JavaCore.newLibraryEntry(new Path(location + "/annotations.jar"), //$NON-NLS-1$
+									srcPath, Path.ROOT, ANNOTATION_ACCESS_RULES, DS_ATTRS, false);
+							DSLibPluginModelListener.addProject(JavaCore.create(resource.getProject()), libBundleName);
+							return Collections.singletonList(entry);
 						}
 					}
 				}
 			}
+
+			DSLibPluginModelListener.removeProject(JavaCore.create(resource.getProject()));
 		}
 
 		return Collections.emptyList();

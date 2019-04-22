@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2017 Ecliptical Software Inc. and others.
+ * Copyright (c) 2012, 2019 Ecliptical Software Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -428,12 +428,13 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 	public boolean performOk() {
 		IEclipsePreferences prefs;
 		if (isProjectPreferencePage()) {
-			prefs = wcManager.getWorkingCopy(new ProjectScope(getProject()).getNode(Activator.PLUGIN_ID));
-			if (!useProjectSettings()) {
+			IProject project = getProject();
+			prefs = wcManager.getWorkingCopy(new ProjectScope(project).getNode(Activator.PLUGIN_ID));
+			if (useProjectSettings()) {
+				Activator.getDefault().listenForClasspathPreferenceChanges(JavaCore.create(project));
+			} else {
 				try {
-					for (String key : prefs.keys()) {
-						prefs.remove(key);
-					}
+					prefs.clear();
 				} catch (BackingStoreException e) {
 					Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Unable to reset project preferences.", e)); //$NON-NLS-1$
 				}
@@ -474,11 +475,6 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		} catch (BackingStoreException e) {
 			Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Unable to save preferences.", e)); //$NON-NLS-1$
 			return false;
-		}
-
-		IProject project = getProject();
-		if (project != null) {
-			Activator.getDefault().listenForClasspathPreferenceChanges(JavaCore.create(project));
 		}
 
 		return true;

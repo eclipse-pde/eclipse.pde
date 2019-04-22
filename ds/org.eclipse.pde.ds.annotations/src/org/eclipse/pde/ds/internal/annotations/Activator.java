@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2017 Ecliptical Software Inc. and others.
+ * Copyright (c) 2012, 2019 Ecliptical Software Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -61,6 +61,7 @@ public class Activator extends AbstractUIPlugin {
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
+		DSLibPluginModelListener.dispose();
 		dsPrefListener.dispose();
 
 		synchronized (projectPrefListeners) {
