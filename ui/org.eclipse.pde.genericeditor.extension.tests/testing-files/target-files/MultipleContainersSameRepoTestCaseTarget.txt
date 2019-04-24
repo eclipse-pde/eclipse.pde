@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target>
 	<locations>
 		<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
+			<repository location="TESTURI"/>
 			<unit id="unit1" version="1.0.0"/>
 			<unit id="unit2" version="2.0.0"/>
-			<repository location="TESTURI"/>
 		</location>
 		<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
 			<repository location="TESTURI"/>

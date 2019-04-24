@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Sonatype, Inc. - ongoing development
  *     EclipseSource, Inc. - ongoing development
  *     Manumitting Technologies Inc - bug 437726: wrong error messages opening target definition
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 542425
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
@@ -703,14 +704,6 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_ALL_PLATFORMS, Boolean.toString(getIncludeAllEnvironments()));
 		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_SOURCE, Boolean.toString(getIncludeSource()));
 		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_CONFIGURE_PHASE, Boolean.toString(getIncludeConfigurePhase()));
-		String[] ids = getIds();
-		Version[] versions = getVersions();
-		for (int i : getPredictableOrder(ids, versions)) {
-			Element unit = document.createElement(TargetDefinitionPersistenceHelper.INSTALLABLE_UNIT);
-			unit.setAttribute(TargetDefinitionPersistenceHelper.ATTR_ID, ids[i]);
-			unit.setAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION, versions[i].toString());
-			containerElement.appendChild(unit);
-		}
 		URI[] repositories = getRepositories();
 		if (repositories != null) {
 			Arrays.sort(repositories);
@@ -720,7 +713,14 @@ public class IUBundleContainer extends AbstractBundleContainer {
 				containerElement.appendChild(repo);
 			}
 		}
-
+		String[] ids = getIds();
+		Version[] versions = getVersions();
+		for (int i : getPredictableOrder(ids, versions)) {
+			Element unit = document.createElement(TargetDefinitionPersistenceHelper.INSTALLABLE_UNIT);
+			unit.setAttribute(TargetDefinitionPersistenceHelper.ATTR_ID, ids[i]);
+			unit.setAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION, versions[i].toString());
+			containerElement.appendChild(unit);
+		}
 		try {
 			document.appendChild(containerElement);
 			StreamResult result = new StreamResult(new StringWriter());
