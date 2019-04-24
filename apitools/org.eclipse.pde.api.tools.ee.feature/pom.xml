@@ -19,6 +19,6 @@
   </parent>
   <groupId>org.eclipse.pde.feature</groupId>
   <artifactId>org.eclipse.pde.api.tools.ee.feature</artifactId>
-  <version>1.0.400-SNAPSHOT</version>
+  <version>1.0.500-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
 </project>
