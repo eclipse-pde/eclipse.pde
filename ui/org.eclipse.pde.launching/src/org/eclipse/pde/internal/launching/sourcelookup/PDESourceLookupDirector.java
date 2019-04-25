@@ -30,6 +30,7 @@ import org.eclipse.pde.core.IBundleClasspathResolver;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
+import org.eclipse.pde.internal.launching.launcher.VMHelper;
 
 public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 
@@ -37,6 +38,8 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	 * Cache of source containers by location and id (String & String)
 	 */
 	private Map<String, ISourceContainer[]> fSourceContainerMap = new LinkedHashMap<>();
+
+	private ISourceContainer[] fJreSourceContainers;
 
 	private static Set<String> fFilteredTypes;
 
@@ -141,6 +144,16 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 		containers = JavaRuntime.getSourceContainers(entries);
 		fSourceContainerMap.put(location, containers);
 		return containers;
+	}
+
+	ISourceContainer[] getJreSourceContainers() throws CoreException {
+		if (fJreSourceContainers != null)
+			return fJreSourceContainers;
+
+		IRuntimeClasspathEntry unresolvedJreEntry = VMHelper.getJREEntry(getLaunchConfiguration());
+		IRuntimeClasspathEntry[] resolvedJreEntries = JavaRuntime.resolveRuntimeClasspathEntry(unresolvedJreEntry, getLaunchConfiguration());
+		fJreSourceContainers = JavaRuntime.getSourceContainers(resolvedJreEntries);
+		return fJreSourceContainers;
 	}
 
 	private boolean isPerfectMatch(IPluginModelBase model, IPath path) {

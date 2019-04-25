@@ -214,4 +214,22 @@ public class VMHelper {
 		return launcher;
 	}
 
+	/**
+	 * Returns a JRE runtime classpath entry
+	 *
+	 * @param configuration
+	 * 			the launch configuration
+	 * @return a JRE runtime classpath entry
+	 * @throws CoreException
+	 * 			if the JRE associated with the launch configuration cannot be found
+	 * 			or if unable to retrieve the launch configuration attributes
+	 */
+	public static IRuntimeClasspathEntry getJREEntry(ILaunchConfiguration configuration) throws CoreException {
+		IVMInstall jre = createLauncher(configuration);
+		IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
+		containerPath = containerPath.append(jre.getVMInstallType().getId());
+		containerPath = containerPath.append(jre.getName());
+		return JavaRuntime.newRuntimeContainerClasspathEntry(containerPath, IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);
+	}
+
 }

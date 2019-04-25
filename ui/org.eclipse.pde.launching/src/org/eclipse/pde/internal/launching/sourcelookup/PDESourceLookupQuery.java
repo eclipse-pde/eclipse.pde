@@ -110,6 +110,9 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 					if (model != null)
 						fResult = getSourceElement(model.getInstallLocation(), MAIN_PLUGIN, sourcePath, true);
 				}
+			} else {
+				// declaringType was loaded by bootstrap classloader --> part of JRE
+				fResult = findJreSourceElement(sourcePath);
 			}
 		}
 	}
@@ -271,6 +274,11 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 			}
 		}
 		return null;
+	}
+
+	private Object findJreSourceElement(String sourcePath) throws CoreException {
+		ISourceContainer[] jreSourceContainers = fDirector.getJreSourceContainers();
+		return findSourceElement(jreSourceContainers, sourcePath);
 	}
 
 	private Object findSourceElement(ISourceContainer[] containers, String typeName) throws CoreException {
