@@ -50,6 +50,8 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	private static final String LEGACY_MAIN_PLUGIN = "org.eclipse.platform"; //$NON-NLS-1$
 	private static final String MAIN_CLASS = "org.eclipse.equinox.launcher.Main"; //$NON-NLS-1$
 	private static final String LAUNCHER_PLUGIN = "org.eclipse.equinox.launcher"; //$NON-NLS-1$
+	private static final String STARTUP_CLASSLOADER = "org.eclipse.equinox.launcher.Main$StartupClassLoader"; //$NON-NLS-1$
+	private static final String OSGI_FRAMEWORK_PLUGIN = "org.eclipse.osgi"; //$NON-NLS-1$
 
 	private Object fElement;
 	private Object fResult;
@@ -107,6 +109,8 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 					fResult = findSourceElement(classLoaderObject, sourcePath);
 				} else if (LEGACY_ECLIPSE_CLASSLOADER.equals(classLoaderName)) {
 					fResult = findSourceElement_legacy(classLoaderObject, sourcePath);
+				} else if (STARTUP_CLASSLOADER.equals(classLoaderName)) {
+					fResult = findSourceElementInModel(OSGI_FRAMEWORK_PLUGIN, sourcePath);
 				} else if (MAIN_CLASS.equals(declaringTypeName)) {
 					fResult = findSourceElementInModel(LAUNCHER_PLUGIN, sourcePath);
 				} else if (LEGACY_MAIN_CLASS.equals(declaringTypeName)) {
