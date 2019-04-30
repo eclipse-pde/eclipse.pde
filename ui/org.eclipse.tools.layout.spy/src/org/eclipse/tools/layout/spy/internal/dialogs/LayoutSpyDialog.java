@@ -29,11 +29,11 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.swt.WidgetSideEffects;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.IViewerObservableValue;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
@@ -96,12 +96,12 @@ public class LayoutSpyDialog {
 	private WritableValue<@Nullable Composite> parentControl = new WritableValue<>(null, null);
 	private WritableValue<Boolean> controlSelectorOpen = new WritableValue<>(Boolean.FALSE, null);
 	private ComputedList<Control> listContents;
-	private IViewerObservableValue selectedChild;
+	private IViewerObservableValue<@Nullable Control> selectedChild;
 	private Color parentRectangleColor;
 	private Color childRectangleColor;
 	private ResourceManager resources;
 	private Region region;
-	private ISWTObservableValue overlayEnabled;
+	private ISWTObservableValue<Boolean> overlayEnabled;
 	private Image upImage;
 	private Text diagnostics;
 
@@ -197,9 +197,9 @@ public class LayoutSpyDialog {
 		});
 
 		// Set up the model
-		selectedChild = ViewerProperties.singleSelection().observe(childList);
-		overlayEnabled = WidgetProperties.selection().observe(showOverlayButton);
-		childList.setContentProvider(new ObservableListContentProvider());
+		selectedChild = ViewerProperties.singleSelection(Control.class).observe(childList);
+		overlayEnabled = WidgetProperties.buttonSelection().observe(showOverlayButton);
+		childList.setContentProvider(new ObservableListContentProvider<>());
 		listContents = new ComputedList<Control>() {
 			@Override
 			protected List<Control> calculate() {
@@ -269,13 +269,12 @@ public class LayoutSpyDialog {
 	 * Returns the currently-selected child control or null if none.
 	 */
 	private @Nullable Control getSelectedChild() {
-		return (@Nullable Control) selectedChild.getValue();
+		return selectedChild.getValue();
 	}
 
 	/**
 	 * Opens the given control in the layout spy.
 	 */
-	@SuppressWarnings("unchecked")
 	private void openControl(Control control) {
 		Composite parent = control.getParent();
 
@@ -321,7 +320,7 @@ public class LayoutSpyDialog {
 		region.dispose();
 		region = new Region();
 		@Nullable
-		Control child = (@Nullable Control) selectedChild.getValue();
+		Control child = selectedChild.getValue();
 		if (child != null) {
 			Rectangle childBoundsWrtOverlay = Geometry.toControl(overlay, GeometryUtil.getDisplayBounds(child));
 			Rectangle childInnerBoundsWrtOverlay = Geometry.copy(childBoundsWrtOverlay);
@@ -362,7 +361,7 @@ public class LayoutSpyDialog {
 		Geometry.expand(parentBoundsWrtOverlay, -halfSize, -halfSize, -halfSize, -halfSize);
 
 		@Nullable
-		Control child = (@Nullable Control) selectedChild.getValue();
+		Control child = selectedChild.getValue();
 		e.gc.setLineWidth(EDGE_SIZE);
 		e.gc.setForeground(parentRectangleColor);
 		e.gc.drawRectangle(parentBoundsWrtOverlay.x, parentBoundsWrtOverlay.y, parentBoundsWrtOverlay.width,
@@ -399,7 +398,6 @@ public class LayoutSpyDialog {
 	/**
 	 * Invoked when the user clicks the "go up" button, which opens the parent.
 	 */
-	@SuppressWarnings("unchecked")
 	private void goUp() {
 		@Nullable
 		Composite parent = parentControl.getValue();
