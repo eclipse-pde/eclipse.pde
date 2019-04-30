@@ -13,8 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import static java.util.Collections.singletonMap;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -51,6 +55,11 @@ import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 
 public class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
+
+	@SuppressWarnings("nls")
+	private static final Collection<String> JUNIT5_RUNTIME_PLUGINS = new HashSet<>(
+			Arrays.asList("org.junit", "org.junit.jupiter.api", "org.junit.jupiter.engine",
+					"org.junit.platform.commons", "org.junit.platform.engine", "org.hamcrest.core", "org.opentest4j"));
 
 	private final IPluginModelBase fModel;
 	private IBuild fBuild;
@@ -181,6 +190,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			if (fBuild != null) {
 				addExtraClasspathEntries(added, entries);
 			}
+
+			addJunit5RuntimeDependencies(added, entries);
 
 		} catch (CoreException e) {
 		}
@@ -454,6 +465,42 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				}
 			}
 		}
+	}
+
+	/**
+	 * Adds JUnit5 dependencies that are required at runtime in eclipse, but not
+	 * at compile-time or in tycho.
+	 */
+	private void addJunit5RuntimeDependencies(HashSet<BundleDescription> added, ArrayList<IClasspathEntry> entries)
+			throws CoreException {
+		if (!containsJunit5Dependency(added)) {
+			return;
+		}
+
+		if (JUNIT5_RUNTIME_PLUGINS.contains(fModel.getPluginBase().getId())) {
+			return; // never extend the classpath of a junit bundle
+		}
+
+		for (String pluginId : JUNIT5_RUNTIME_PLUGINS) {
+			IPluginModelBase model = PluginRegistry.findModel(pluginId);
+			if (model == null || !model.isEnabled()) {
+				continue;
+			}
+
+			BundleDescription desc = model.getBundleDescription();
+			if (added.contains(desc)) {
+				continue; // bundle has explicit dependency
+			}
+
+			// add dependency with exclude all rule
+			Map<BundleDescription, ArrayList<Rule>> rules = singletonMap(desc, new ArrayList<>());
+			addPlugin(desc, true, rules, entries);
+		}
+
+	}
+
+	private static boolean containsJunit5Dependency(Collection<BundleDescription> dependencies) {
+		return dependencies.stream().anyMatch(desc -> "org.junit.jupiter.api".equals(desc.getName())); //$NON-NLS-1$
 	}
 
 	private void addSecondaryDependencies(BundleDescription desc, HashSet<BundleDescription> added, ArrayList<IClasspathEntry> entries) {
