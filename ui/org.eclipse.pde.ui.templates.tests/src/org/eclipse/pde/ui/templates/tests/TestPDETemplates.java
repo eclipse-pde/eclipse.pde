@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.templates.tests;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -34,7 +37,6 @@ import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.IPluginContentWizard;
 import org.eclipse.ui.PlatformUI;
 import org.junit.*;
-import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -93,7 +95,7 @@ public class TestPDETemplates {
 	@Parameter
 	public static WizardElement template;
 
-	@Parameters
+	@Parameters(name = "{index}: {0}")
 	public static Collection<WizardElement> allTemplateWizards() {
 		return Arrays.asList(new NewPluginProjectWizard().getAvailableCodegenWizards().getChildren()).stream()
 				.filter(o -> (o instanceof WizardElement))
@@ -171,14 +173,7 @@ public class TestPDETemplates {
 			markers = new IMarker[0];
 		}
 
-		if (markers.length > 0) {
-			System.out.println("Template '" + template.getLabel() + "' generates errors.");
-			for (IMarker marker : markers) {
-				System.out.println(marker);
-			}
-			System.out.println("--------------------------------------------------------");
-		}
-		Assert.assertArrayEquals("Template '" + template.getLabel() + "' generates errors.", new IMarker[0], markers);
+		assertThat("Template '" + template.getLabel() + "' generates errors.", markers, equalTo(new IMarker[0]));
 	}
 
 	@After
