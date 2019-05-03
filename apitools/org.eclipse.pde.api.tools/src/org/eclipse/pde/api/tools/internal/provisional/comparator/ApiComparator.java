@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -735,7 +735,9 @@ public class ApiComparator {
 									}
 									globalDelta.add(new Delta(deltaComponentID, IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE, RestrictionModifiers.NO_RESTRICTIONS, RestrictionModifiers.NO_RESTRICTIONS, typeDescriptor.getModifiers(), 0, typeName, typeName, new String[] {
 											typeName,
-											Util.getComponentVersionsId(component2) }));
+													component2.isFragment()
+															? Util.getComponentVersionsId(component2.getHost())
+															: Util.getComponentVersionsId(component2) }));
 								} else {
 									if ((visibility & visibilityModifiers) == 0) {
 										// we skip the class file according to
