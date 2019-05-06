@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 IBM Corporation and others.
+ * Copyright (c) 2012, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,8 +23,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 
@@ -68,11 +71,20 @@ public class AntFilterStore extends FilterStore {
 		File filterFileParent = new File(fFiltersRoot, fComponentId);
 		try {
 			if (!filterFileParent.exists()) {
-				return;
+				IApiBaseline base = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
+				if (base != null) {
+					IApiComponent apiComponent = base.getApiComponent(fComponentId);
+					if (apiComponent != null && apiComponent.isFragment()) {
+						filterFileParent = new File(fFiltersRoot, apiComponent.getHost().getSymbolicName());
+					}
+				}
+				if (!filterFileParent.exists()) {
+					return;
+				}
 			}
 			contents = new BufferedInputStream(new FileInputStream(new File(filterFileParent, IApiCoreConstants.API_FILTERS_XML_NAME)));
 			readFilterFile(contents);
-		} catch (IOException ioe) {
+		} catch (IOException | CoreException ioe) {
 			ApiPlugin.log("Failed to read filter file " + filterFileParent, ioe); //$NON-NLS-1$
 		} finally {
 			if (contents != null) {
