@@ -1,15 +1,17 @@
 /*******************************************************************************
-.
-. This
- * program and the accompanying materials are made available under the terms of
- * the Eclipse Public License 2.0 which accompanies this distribution, and is
-t https://www.eclipse.org/legal/epl-2.0/
-t
-t SPDX-License-Identifier: EPL-2.0
+ * Copyright (c) 2009, 2019 EclipseSource and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *   EclipseSource - initial API and implementation
- *   IBM Corporation - ongoing enhancements
+ *     EclipseSource - initial API and implementation
+ *     IBM Corporation - ongoing enhancements
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 546803
  ******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.category;
@@ -22,14 +24,13 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.pde.internal.core.isite.ISiteObject;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
-import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 
-public class CategoryEditor extends PDEFormEditor {
+public class CategoryEditor extends MultiSourceEditor {
 
 	@Override
 	protected String getEditorID() {
@@ -61,6 +62,7 @@ public class CategoryEditor extends PDEFormEditor {
 
 	@Override
 	public void editorContextAdded(InputContext context) {
+		addSourcePage(context.getId());
 	}
 
 	@Override
@@ -97,6 +99,7 @@ public class CategoryEditor extends PDEFormEditor {
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
+		addSourcePage(CategoryInputContext.CONTEXT_ID);
 	}
 
 	@Override
@@ -107,6 +110,11 @@ public class CategoryEditor extends PDEFormEditor {
 	@Override
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new CategoryOutlinePage(this);
+	}
+
+	@Override
+	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
+		return new CategorySourcePage(editor, title, name);
 	}
 
 	@Override

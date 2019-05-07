@@ -1,19 +1,21 @@
 /*******************************************************************************
-.
-. This
-* program and the accompanying materials are made available under the terms of
-* the Eclipse Public License 2.0 which accompanies this distribution, and is
-t https://www.eclipse.org/legal/epl-2.0/
-t
-t SPDX-License-Identifier: EPL-2.0
-*
-* Contributors:
-*   EclipseSource - initial API and implementation
-*   IBM Corporation - ongoing enhancements
-*   Red Hat Inc - Support for bundles and nested categories
-*   Martin Karpisek <martin.karpisek@gmail.com> - Bug 296392, 351356
-*   Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
-******************************************************************************/
+ * Copyright (c) 2009, 2019 EclipseSource and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     EclipseSource - initial API and implementation
+ *     IBM Corporation - ongoing enhancements
+ *     Red Hat Inc - Support for bundles and nested categories
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 296392, 351356
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 546803
+ ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
 
 import java.util.*;
@@ -759,6 +761,9 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 
 	@Override
 	public void modelChanged(IModelChangedEvent e) {
+		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
+			fCategoryViewer.setSelection(StructuredSelection.EMPTY);
+		}
 		markStale();
 	}
 
