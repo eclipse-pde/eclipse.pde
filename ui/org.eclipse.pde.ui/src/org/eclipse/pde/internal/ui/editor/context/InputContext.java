@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2017 IBM Corporation and others.
+ *  Copyright (c) 2003, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -353,6 +353,12 @@ public abstract class InputContext {
 			// are caused by reconciliation and should not be
 			// fired to the world.
 			flushModel(fDocumentProvider.getDocument(fEditorInput));
+			if (fModel instanceof IEditable) {
+				if (!((IEditable) fModel).isDirty()) {
+					fMustSynchronize = false;
+					return true;
+				}
+			}
 			fMustSynchronize = true;
 			return true;
 		}
