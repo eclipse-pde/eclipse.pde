@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 Rapicorp Corporation and others.
+ * Copyright (c) 2014, 2019 Rapicorp Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     Rapicorp Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487988
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 351356
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 547155
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
 
@@ -109,14 +110,15 @@ public class DownloadStatsSection extends TableSection {
 			@Override
 			public void textValueChanged(FormEntry entry) {
 				try {
-					getStatsInfo().setURL(entry.getValue());
+					ensureStatsInfo().setURL(entry.getValue());
 				} catch (CoreException e) {
 					PDEPlugin.log(e);
 				}
 			}
 
 		});
-		fURLEntry.setEditable(isEditable());
+		boolean editable = isEditable();
+		fURLEntry.setEditable(editable);
 
 		Composite container = createClientContainer(client, 2, toolkit);
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
@@ -136,11 +138,11 @@ public class DownloadStatsSection extends TableSection {
 		});
 		data = (GridData) tablePart.getControl().getLayoutData();
 		data.minimumWidth = 200;
-		fArtifactTable.setInput(getStatsInfo());
-		tablePart.setButtonEnabled(0, isEditable());
-		tablePart.setButtonEnabled(1, isEditable());
-		tablePart.setButtonEnabled(2, isEditable());
-		tablePart.setButtonEnabled(3, isEditable());
+		resetArtifactTable();
+		tablePart.setButtonEnabled(0, editable);
+		tablePart.setButtonEnabled(1, editable);
+		tablePart.setButtonEnabled(2, editable);
+		tablePart.setButtonEnabled(3, editable);
 
 		toolkit.paintBordersFor(container);
 
@@ -186,7 +188,7 @@ public class DownloadStatsSection extends TableSection {
 	private boolean handleRemoveSiteFeatureAdapter(SiteFeatureAdapter adapter) {
 		try {
 			ISiteFeature feature = adapter.feature;
-			getStatsInfo().removeFeatureArtifacts(new ISiteFeature[] {feature});
+			ensureStatsInfo().removeFeatureArtifacts(new ISiteFeature[] { feature });
 			return true;
 		} catch (CoreException e) {
 		}
@@ -196,7 +198,7 @@ public class DownloadStatsSection extends TableSection {
 	private boolean handleRemoveSiteBundleAdapter(SiteBundleAdapter adapter) {
 		try {
 			ISiteBundle bundle = adapter.bundle;
-			getStatsInfo().removeBundleArtifacts(new ISiteBundle[] {bundle});
+			ensureStatsInfo().removeBundleArtifacts(new ISiteBundle[] { bundle });
 			return true;
 		} catch (CoreException e) {
 		}
@@ -205,8 +207,9 @@ public class DownloadStatsSection extends TableSection {
 
 	private void handleRemoveAll() {
 		try {
-			getStatsInfo().removeBundleArtifacts(getStatsInfo().getBundleArtifacts());
-			getStatsInfo().removeFeatureArtifacts(getStatsInfo().getFeatureArtifacts());
+			IStatsInfo statsInfo = ensureStatsInfo();
+			statsInfo.removeBundleArtifacts(statsInfo.getBundleArtifacts());
+			statsInfo.removeFeatureArtifacts(statsInfo.getFeatureArtifacts());
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		}
@@ -375,7 +378,7 @@ public class DownloadStatsSection extends TableSection {
 		}
 
 		// Update model
-		getStatsInfo().addFeatureArtifacts(added);
+		ensureStatsInfo().addFeatureArtifacts(added);
 		// Select last added feature
 		if (added.length > 0) {
 			fArtifactTable.setSelection(new StructuredSelection(new SiteFeatureAdapter(null, added[added.length - 1])), true);
@@ -394,7 +397,7 @@ public class DownloadStatsSection extends TableSection {
 		}
 
 		// Update model
-		getStatsInfo().addBundleArtifacts(added);
+		ensureStatsInfo().addBundleArtifacts(added);
 		// Select last added bundle
 		if (added.length > 0) {
 			fArtifactTable.setSelection(new StructuredSelection(new SiteBundleAdapter(null, added[added.length - 1])), true);
@@ -410,8 +413,12 @@ public class DownloadStatsSection extends TableSection {
 
 	@Override
 	public void refresh() {
-		IStatsInfo info = getStatsInfo();
-		fURLEntry.setValue(info.getURL(), true);
+		IStatsInfo info = getSite().getStatsInfo();
+		if (info != null) {
+			fURLEntry.setValue(info.getURL(), true);
+		} else {
+			fURLEntry.setValue(null, true);
+		}
 		fArtifactTable.refresh();
 		super.refresh();
 	}
@@ -428,7 +435,7 @@ public class DownloadStatsSection extends TableSection {
 		super.cancelEdit();
 	}
 
-	private IStatsInfo getStatsInfo() {
+	private IStatsInfo ensureStatsInfo() {
 		IStatsInfo info = getSite().getStatsInfo();
 		if (info == null) {
 			info = getModel().getFactory().createStatsInfo();
@@ -461,9 +468,16 @@ public class DownloadStatsSection extends TableSection {
 	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
-		fArtifactTable.setInput(getStatsInfo());
+		resetArtifactTable();
 		refresh();
 		updateButtons();
+	}
+
+	private void resetArtifactTable() {
+		IStatsInfo statsInfo = getSite().getStatsInfo();
+		if (statsInfo != null) {
+			fArtifactTable.setInput(statsInfo);
+		}
 	}
 
 	@Override
@@ -477,9 +491,11 @@ public class DownloadStatsSection extends TableSection {
 	private void updateButtons() {
 		TablePart tablePart = getTablePart();
 		ISelection selection = getViewerSelection();
-		boolean enabled = isEditable() && !selection.isEmpty() && selection instanceof IStructuredSelection;
-		tablePart.setButtonEnabled(2, enabled);
-		tablePart.setButtonEnabled(3, isEditable() && (getStatsInfo().getFeatureArtifacts().length > 0 || getStatsInfo().getBundleArtifacts().length > 0));
+		boolean editable = isEditable();
+		tablePart.setButtonEnabled(2, editable && !selection.isEmpty() && selection instanceof IStructuredSelection);
+		boolean hasInfo = getSite().getStatsInfo() != null;
+		tablePart.setButtonEnabled(3, editable && hasInfo && (ensureStatsInfo().getFeatureArtifacts().length > 0
+				|| ensureStatsInfo().getBundleArtifacts().length > 0));
 	}
 
 }
