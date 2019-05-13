@@ -14,7 +14,7 @@
  *     Red Hat Inc - Support for bundles and nested categories
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 296392, 351356
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487943
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 546803
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - ongoing enhancements
  ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
 
@@ -48,7 +48,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
-import org.osgi.framework.Version;
 
 public class CategorySection extends TreeSection implements IFeatureModelListener {
 
@@ -874,11 +873,14 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	private boolean canAdd(IFeatureModel candidate) {
 		ISiteFeature[] features = fModel.getSite().getFeatures();
 		IFeature cfeature = candidate.getFeature();
+		String id = cfeature.getId();
+		String version = cfeature.getVersion();
 
 		for (ISiteFeature bfeature : features) {
-			if (bfeature.getId() != null && bfeature.getId().equals(cfeature.getId()) && bfeature.getVersion() != null
-					&& bfeature.getVersion().equals(cfeature.getVersion()))
+			boolean idEquals = Objects.equals(bfeature.getId(), id);
+			if (idEquals && (bfeature.getVersion() == null || Objects.equals(bfeature.getVersion(), version))) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -899,11 +901,6 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		IFeature feature = featureModel.getFeature();
 		ISiteFeature sfeature = model.getFactory().createFeature();
 		sfeature.setId(feature.getId());
-		sfeature.setVersion(feature.getVersion());
-		// sfeature.setURL(model.getBuildModel().getSiteBuild().getFeatureLocation()
-		// + "/" + feature.getId() + "_" + feature.getVersion() + ".jar");
-		// //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		sfeature.setURL("features/" + feature.getId() + "_" + formatVersion(feature.getVersion()) + ".jar"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		sfeature.setOS(feature.getOS());
 		sfeature.setWS(feature.getWS());
 		sfeature.setArch(feature.getArch());
@@ -917,15 +914,6 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		newBundle.setId(candidate.getPluginBase().getId());
 		newBundle.setVersion(candidate.getPluginBase().getVersion());
 		return newBundle;
-	}
-
-	private static String formatVersion(String version) {
-		try {
-			Version v = new Version(version);
-			return v.toString();
-		} catch (IllegalArgumentException e) {
-		}
-		return version;
 	}
 
 	private static boolean isFeaturePatch(IFeature feature) {
