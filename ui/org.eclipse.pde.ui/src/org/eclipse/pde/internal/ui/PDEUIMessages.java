@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2018 IBM Corporation and others.
+ * Copyright (c) 2014, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
  *     Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
  *     Kit Lo (IBM) - Bug 244461 - Duplicating colon in error message
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 547222
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -1923,6 +1924,13 @@ public class PDEUIMessages extends NLS {
 	public static String CategoryDetails_desc;
 	public static String CategoryDetails_alreadyExists;
 	public static String CategoryDetails_alreadyExists_title;
+
+	public static String FeatureDetails_title;
+	public static String FeatureDetails_sectionDescription;
+	public static String FeatureDetails_id;
+	public static String FeatureDetails_version;
+	public static String FeatureDetails_url;
+	public static String FeatureDetails_include_url;
 
 	public static String FeaturesPage_title;
 	public static String FeaturesPage_header;

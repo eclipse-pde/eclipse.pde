@@ -685,7 +685,8 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		ISiteFeature featureCopy = adapter.feature;
 		ISiteFeature[] features = fModel.getSite().getFeatures();
 		for (ISiteFeature feature : features) {
-			if (feature.getId().equals(featureCopy.getId()) && feature.getVersion().equals(featureCopy.getVersion())) {
+			if (Objects.equals(feature.getId(), featureCopy.getId())
+					&& Objects.equals(feature.getVersion(), featureCopy.getVersion())) {
 				return feature;
 			}
 		}

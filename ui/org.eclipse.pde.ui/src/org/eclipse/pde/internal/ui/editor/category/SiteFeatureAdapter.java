@@ -1,19 +1,22 @@
 /*******************************************************************************
-.
-. This
-* program and the accompanying materials are made available under the terms of
-* the Eclipse Public License 2.0 which accompanies this distribution, and is
-t https://www.eclipse.org/legal/epl-2.0/
-t
-t SPDX-License-Identifier: EPL-2.0
-*
-* Contributors:
-*   EclipseSource - initial API and implementation
-******************************************************************************/
+ * Copyright (c) 2009, 2019 EclipseSource and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     EclipseSource - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 547222
+ ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.Objects;
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
 
@@ -35,8 +38,8 @@ public class SiteFeatureAdapter implements Serializable, IWritable {
 	}
 
 	/*
-	 * For retaining selectiong in the tree, when modyfing or moving features,
-	 * SiteFeatureAdapter are equal if features are equal (same ID and version)
+	 * For retaining selection in the tree, when modyfing or moving features,
+	 * SiteFeatureAdapter are equal if features are equal
 	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -44,32 +47,13 @@ public class SiteFeatureAdapter implements Serializable, IWritable {
 	public boolean equals(Object obj) {
 		if (obj instanceof SiteFeatureAdapter) {
 			SiteFeatureAdapter adapter = (SiteFeatureAdapter) obj;
-			String id = feature.getId();
-			String id2 = adapter.feature.getId();
-			boolean sameFeature = id != null && id2 != null && id.equals(id2);
-			if (sameFeature) {
-				String version = feature.getVersion();
-				String version2 = adapter.feature.getVersion();
-				sameFeature = version != null && version2 != null && version.equals(version2);
-			}
-			boolean sameCategory = adapter.category != null && category != null ? adapter.category.equals(category) : true;
-			return sameFeature && sameCategory;
+			return Objects.equals(feature, adapter.feature);
 		}
 		return super.equals(obj);
 	}
 
 	@Override
 	public int hashCode() {
-		if (feature.getId() == null) {
-			return super.hashCode();
-		}
-		int code = feature.getId().hashCode();
-		if (feature.getVersion() != null) {
-			code += feature.getVersion().hashCode();
-		}
-		if (category != null) {
-			code += category.hashCode();
-		}
-		return code;
+		return feature.hashCode();
 	}
 }

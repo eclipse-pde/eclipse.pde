@@ -1,21 +1,24 @@
 /*******************************************************************************
-.
-. This
-* program and the accompanying materials are made available under the terms of
-* the Eclipse Public License 2.0 which accompanies this distribution, and is
-t https://www.eclipse.org/legal/epl-2.0/
-t
-t SPDX-License-Identifier: EPL-2.0
-*
-* Contributors:
-*   EclipseSource - initial API and implementation
-*   IBM Corporation - Renamed from FeaturesPage
-*   Red Hat Inc. - Support for nested categories
-*   Martin Karpisek <martin.karpisek@gmail.com> - Bug 296392
-******************************************************************************/
+ * Copyright (c) 2009, 2019 EclipseSource and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     EclipseSource - initial API and implementation
+ *     IBM Corporation - Renamed from FeaturesPage
+ *     Red Hat Inc. - Support for nested categories
+ *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 296392
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 547222
+ ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
 
 import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
+import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.widgets.Composite;
@@ -60,8 +63,11 @@ public class IUsPage extends PDEFormPage {
 
 				@Override
 				public IDetailsPage getPage(Object key) {
-					if (key.equals(ISiteCategoryDefinition.class) || key.equals(SiteCategoryDefinitionAdapter.class))
+					if (key.equals(ISiteCategoryDefinition.class) || key.equals(SiteCategoryDefinitionAdapter.class)) {
 						return createCategoryDetails();
+					} else if (key.equals(ISiteFeature.class) || key.equals(SiteFeatureAdapter.class)) {
+						return createFeatureDetails();
+					}
 					return null;
 				}
 			});
@@ -89,6 +95,20 @@ public class IUsPage extends PDEFormPage {
 			@Override
 			protected PDESection[] createSections(PDEFormPage page, Composite parent) {
 				return new PDESection[] {new CategoryDetailsSection(getPage(), parent)};
+			}
+
+			@Override
+			public String getContextId() {
+				return CategoryInputContext.CONTEXT_ID;
+			}
+		};
+	}
+
+	private IDetailsPage createFeatureDetails() {
+		return new PDEDetailsSections() {
+			@Override
+			protected PDESection[] createSections(PDEFormPage page, Composite parent) {
+				return new PDESection[] { new FeatureDetailsSection(getPage(), parent) };
 			}
 
 			@Override
