@@ -14,9 +14,10 @@
 package org.eclipse.pde.ds.internal.annotations;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -38,7 +39,9 @@ public class DSLibPluginModelListener implements IPluginModelListener {
 
 	private static DSLibPluginModelListener INSTANCE;
 
-	private final HashSet<IJavaProject> projects = new HashSet<>();
+	private final HashMap<IJavaProject, String> projects = new HashMap<>();
+
+	private final HashMap<String, Integer> counts = new HashMap<>();
 
 	private DSLibPluginModelListener() {
 		PluginModelManager.getInstance().addPluginModelListener(this);
@@ -52,10 +55,26 @@ public class DSLibPluginModelListener implements IPluginModelListener {
 		return INSTANCE;
 	}
 
-	public static void addProject(IJavaProject project) {
+	private void decrementCount(String modelId) {
+		Integer oldCount = counts.get(modelId);
+		if (oldCount != null) {
+			if (oldCount.intValue() <= 1) {
+				counts.remove(modelId);
+			} else {
+				counts.put(modelId, oldCount.intValue() - 1);
+			}
+		}
+	}
+
+	public static void addProject(IJavaProject project, String modelId) {
 		DSLibPluginModelListener instance = getInstance(true);
 		synchronized (instance.projects) {
-			instance.projects.add(project);
+			String oldModelId = instance.projects.put(project, modelId);
+			Integer count = instance.counts.getOrDefault(modelId, Integer.valueOf(0));
+			instance.counts.put(modelId, count.intValue() + 1);
+			if (oldModelId != null) {
+				instance.decrementCount(oldModelId);
+			}
 		}
 	}
 
@@ -63,23 +82,47 @@ public class DSLibPluginModelListener implements IPluginModelListener {
 		DSLibPluginModelListener instance = getInstance(false);
 		if (instance != null) {
 			synchronized (instance.projects) {
-				instance.projects.remove(project);
+				String oldModelId = instance.projects.remove(project);
+				if (oldModelId != null) {
+					instance.decrementCount(oldModelId);
+				}
 			}
 		}
 	}
 
-	private boolean containsModel(ModelEntry[] entries) {
-		return Arrays.stream(entries).anyMatch(entry -> Activator.PLUGIN_ID.equals(entry.getId()));
+	private boolean containsModel(ModelEntry[] entries, String id) {
+		for (ModelEntry entry : entries) {
+			if ("org.eclipse.pde.ds.lib".equals(entry.getId())) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	@Override
 	public void modelsChanged(PluginModelDelta delta) {
-		if (((delta.getKind() & PluginModelDelta.ADDED) != 0 && containsModel(delta.getAddedEntries()))
-				|| ((delta.getKind() & PluginModelDelta.CHANGED) != 0 && containsModel(delta.getChangedEntries()))
-				|| ((delta.getKind() & PluginModelDelta.REMOVED) != 0 && containsModel(delta.getRemovedEntries()))) {
-			ArrayList<IJavaProject> toUpdate;
-			synchronized (projects) {
-				toUpdate = new ArrayList<>(projects);
+		synchronized (projects) {
+			HashSet<String> modelIds = new HashSet<>(2);
+		for (String modelId : counts.keySet()) {
+			if (((delta.getKind() & PluginModelDelta.ADDED) != 0 && containsModel(delta.getAddedEntries(), modelId))
+					|| ((delta.getKind() & PluginModelDelta.CHANGED) != 0
+							&& containsModel(delta.getChangedEntries(), modelId))
+					|| ((delta.getKind() & PluginModelDelta.REMOVED) != 0
+							&& containsModel(delta.getRemovedEntries(), modelId))) {
+				modelIds.add(modelId);
+			}
+		}
+
+			ArrayList<IJavaProject> toUpdate = new ArrayList<>(projects.size());
+			if (!modelIds.isEmpty()) {
+				for (Map.Entry<IJavaProject, String> entry : projects.entrySet()) {
+					IJavaProject project = entry.getKey();
+					String modelId = entry.getValue();
+					if (modelIds.contains(modelId)) {
+						toUpdate.add(project);
+					}
+				}
 			}
 
 			if (!toUpdate.isEmpty()) {

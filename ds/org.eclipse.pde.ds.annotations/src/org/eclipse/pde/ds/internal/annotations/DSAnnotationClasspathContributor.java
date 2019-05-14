@@ -13,29 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ds.internal.annotations;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -57,10 +42,6 @@ public class DSAnnotationClasspathContributor implements IClasspathContributor {
 	private static final IAccessRule[] ANNOTATION_ACCESS_RULES = { };
 
 	private static final IClasspathAttribute[] DS_ATTRS = { JavaCore.newClasspathAttribute(Activator.CP_ATTRIBUTE, Boolean.toString(true)) };
-
-	private static final String ANNOTATIONS_JAR = "annotations.jar"; //$NON-NLS-1$
-
-	private static final String ANNOTATIONS_SRC_ZIP = "annotationssrc.zip"; //$NON-NLS-1$
 
 	@Override
 	public List<IClasspathEntry> getInitialEntries(BundleDescription project) {
@@ -86,50 +67,21 @@ public class DSAnnotationClasspathContributor implements IClasspathContributor {
 						specVersion = DSAnnotationVersion.V1_3;
 					}
 
-					String jarDir;
+					String libBundleName;
 					if (specVersion == DSAnnotationVersion.V1_3) {
-						jarDir = "lib/"; //$NON-NLS-1$
+						libBundleName = "org.eclipse.pde.ds.lib"; //$NON-NLS-1$
 					} else {
-						jarDir = "lib1_2/"; //$NON-NLS-1$
+						libBundleName = "org.eclipse.pde.ds1_2.lib"; //$NON-NLS-1$
 					}
 
-					IPluginModelBase bundle = PluginRegistry.findModel(Activator.PLUGIN_ID);
+					IPluginModelBase bundle = PluginRegistry.findModel(libBundleName);
 					if (bundle != null && bundle.isEnabled()) {
 						String location = bundle.getInstallLocation();
 						if (location != null) {
-							File locationFile = new File(location);
-							IPath dirPath;
-							if (locationFile.isFile()) {
-								String cacheDir = computeBinDirname(location, bundle.getTimeStamp());
-								IPath cacheDirPath = Activator.getDefault().getStateLocation().addTrailingSeparator()
-										.append("jars/").append(cacheDir); //$NON-NLS-1$
-								dirPath = cacheDirPath.addTrailingSeparator().append(jarDir);
-								File cacheDirFile = cacheDirPath.toFile();
-								if (!cacheDirFile.exists()) {
-									deleteCache(cacheDirFile.getParentFile());
-									File jarDirFile = new File(cacheDirFile, jarDir);
-									try {
-										Files.createDirectories(jarDirFile.toPath());
-										try (JarFile jarFile = new JarFile(locationFile)) {
-											extractJarEntry(jarFile, jarDir + ANNOTATIONS_JAR,
-													new File(jarDirFile, ANNOTATIONS_JAR));
-											extractJarEntry(jarFile, jarDir + ANNOTATIONS_SRC_ZIP,
-													new File(jarDirFile, ANNOTATIONS_SRC_ZIP));
-										}
-									} catch (IOException e) {
-										Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-												"Error creating classpath entry.", e)); //$NON-NLS-1$
-									}
-								}
-							} else {
-								dirPath = new Path(location).addTrailingSeparator().append(jarDir);
-							}
-							
-							IPath jarPath = dirPath.append(ANNOTATIONS_JAR);
-							IPath srcPath = dirPath.append(ANNOTATIONS_SRC_ZIP);
-							IClasspathEntry entry = JavaCore.newLibraryEntry(jarPath, srcPath, Path.ROOT,
-									ANNOTATION_ACCESS_RULES, DS_ATTRS, false);
-							DSLibPluginModelListener.addProject(JavaCore.create(resource.getProject()));
+							IPath srcPath = getSrcPath(libBundleName);
+							IClasspathEntry entry = JavaCore.newLibraryEntry(new Path(location + "/annotations.jar"), //$NON-NLS-1$
+									srcPath, Path.ROOT, ANNOTATION_ACCESS_RULES, DS_ATTRS, false);
+							DSLibPluginModelListener.addProject(JavaCore.create(resource.getProject()), libBundleName);
 							return Collections.singletonList(entry);
 						}
 					}
@@ -142,49 +94,16 @@ public class DSAnnotationClasspathContributor implements IClasspathContributor {
 		return Collections.emptyList();
 	}
 
-	private void deleteCache(File dir) {
-		if (dir.isDirectory()) {
-			try (DirectoryStream<java.nio.file.Path> dirs = Files.newDirectoryStream(dir.toPath(),
-					path -> path.toFile().isDirectory())) {
-				dirs.forEach(path -> {
-					try {
-						Files.walk(path).sorted(Comparator.reverseOrder()).map(java.nio.file.Path::toFile)
-								.forEach(File::delete);
-					} catch (IOException e) {
-						Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-								"Error deleting stale cache entries.", e)); //$NON-NLS-1$
-					}
-				});
-			} catch (IOException e2) {
-				Activator.log(
-						new Status(IStatus.WARNING, Activator.PLUGIN_ID, "Error enumerating stale cache entries.", e2)); //$NON-NLS-1$
+	private IPath getSrcPath(String libBundleName) {
+		IPluginModelBase bundle = PluginRegistry.findModel(libBundleName + ".source"); //$NON-NLS-1$
+		if (bundle != null && bundle.isEnabled()) {
+			String location = bundle.getInstallLocation();
+			if (location != null) {
+				return new Path(location);
 			}
 		}
-	}
 
-	private void extractJarEntry(JarFile jar, String entryName, File out) throws IOException {
-		JarEntry entry = jar.getJarEntry(entryName);
-		if (entry != null) {
-			try (InputStream in = jar.getInputStream(entry)) {
-				Files.copy(in, out.toPath());
-			}
-		}
-	}
-
-	private String computeBinDirname(String location, long timestamp) {
-		MessageDigest md;
-		try {
-			md = MessageDigest.getInstance("SHA-1"); //$NON-NLS-1$
-		} catch (NoSuchAlgorithmException e) {
-			Activator.log(new Status(IStatus.WARNING, Activator.PLUGIN_ID,
-					"Error computing cache directory name.", e)); //$NON-NLS-1$
-			return String.format("%d-%d", location.hashCode(), timestamp); //$NON-NLS-1$
-		}
-
-		md.update(location.getBytes(StandardCharsets.UTF_8));
-		md.update(ByteBuffer.allocate(Long.BYTES).putLong(timestamp).array());
-		BigInteger num = new BigInteger(1, md.digest());
-		return num.toString(16);
+		return null;
 	}
 
 	@Override

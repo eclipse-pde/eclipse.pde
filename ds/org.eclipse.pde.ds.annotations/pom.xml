@@ -23,25 +23,4 @@
   <artifactId>org.eclipse.pde.ds.annotations</artifactId>
   <version>1.1.400-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>annotations-jar</id>
-            <phase>process-resources</phase>
-            <configuration>
-              <target>
-                <ant antfile="buildfiles/annotations.xml" />
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 </project>
