@@ -19,8 +19,6 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.taskdefs.Ant;
@@ -34,26 +32,28 @@ import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.pde.internal.build.site.BuildTimeFeatureFactory;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
 import org.osgi.framework.FrameworkUtil;
 
+@RunWith(BlockJUnit4ClassRunner.class)
 public class SourceTests extends PDETestCase {
-
-	public static Test suite() {
-		return new TestSuite(SourceTests.class);
-	}
-
+	@Test
 	public void testBug206679_247198() throws Exception {
 		IFolder buildFolder = newTest("206679");
 		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
 
-		//generate an SDK feature
-		Utils.generateFeature(buildFolder, "sdk", new String[] {"org.eclipse.jdt", "jdt.source", "org.eclipse.platform"}, null);
+		// generate an SDK feature
+		Utils.generateFeature(buildFolder, "sdk",
+				new String[] { "org.eclipse.jdt", "jdt.source", "org.eclipse.platform" }, null);
 		Properties properties = new Properties();
 		properties.put("generate.feature@jdt.source", "org.eclipse.jdt");
 		Utils.storeBuildProperties(sdk, properties);
 
 		Properties props = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "sdk");
-		//tests bug 247198
+		// tests bug 247198
 		props.put("filteredDependencyCheck", "true");
 		generateScripts(buildFolder, props);
 
@@ -64,6 +64,7 @@ public class SourceTests extends PDETestCase {
 		assertTrue(feature.getDescription() != null);
 	}
 
+	@Test
 	public void testBug114150() throws Exception {
 		IFolder buildFolder = newTest("114150");
 
@@ -76,7 +77,7 @@ public class SourceTests extends PDETestCase {
 		entries.add("eclipse/features/a.feature.sdk_1.0.0/feature.xml");
 		entries.add("eclipse/features/a.feature.source_1.0.0/feature.xml");
 		entries.add("eclipse/plugins/a.feature.source_1.0.0/src/a.plugin_1.0.0/src.zip");
-		entries.add("eclipse/plugins/a.feature.source_1.0.0/src/a.plugin_1.0.0/about.html"); //tests bug 209092
+		entries.add("eclipse/plugins/a.feature.source_1.0.0/src/a.plugin_1.0.0/about.html"); // tests bug 209092
 		assertZipContents(buildFolder, "I.TestBuild/a.feature.sdk.zip", entries);
 
 		entries.add("eclipse/features/a.feature_1.0.0/feature.xml");
@@ -86,12 +87,13 @@ public class SourceTests extends PDETestCase {
 
 	// test that generated source fragments have a proper platform filter
 	@SuppressWarnings("unchecked")
+	@Test
 	public void testBug184517() throws Exception {
 		IFolder buildFolder = newTest("184517");
 		IFolder features = Utils.createFolder(buildFolder, "features");
 
-		//generate an SDK feature
-		Utils.generateFeature(buildFolder, "sdk", new String[] {"rcp", "rcp.source"}, null);
+		// generate an SDK feature
+		Utils.generateFeature(buildFolder, "sdk", new String[] { "rcp", "rcp.source" }, null);
 		Properties properties = new Properties();
 		properties.put("generate.feature@rcp.source", "rcp");
 		IFolder sdk = features.getFolder("sdk");
@@ -101,17 +103,19 @@ public class SourceTests extends PDETestCase {
 		String ws = Platform.getWS();
 		String arch = Platform.getOSArch();
 
-		//Create the rcp feature
-		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"fragment;os=\"" + os + "\";ws=\"" + ws + "\";arch=\"" + arch + "\""});
+		// Create the rcp feature
+		Utils.generateFeature(buildFolder, "rcp", null,
+				new String[] { "fragment;os=\"" + os + "\";ws=\"" + ws + "\";arch=\"" + arch + "\"" });
 
-		//Create a fragment with a platform filter
+		// Create a fragment with a platform filter
 		IFolder fragment = Utils.createFolder(buildFolder, "plugins/fragment");
 		Utils.generatePluginBuildProperties(fragment, null);
 		Attributes manifestAdditions = new Attributes();
-		manifestAdditions.put(new Attributes.Name("Eclipse-PlatformFilter"), "(& (osgi.ws=" + ws + ") (osgi.os=" + os + ") (osgi.arch=" + arch + "))");
+		manifestAdditions.put(new Attributes.Name("Eclipse-PlatformFilter"),
+				"(& (osgi.ws=" + ws + ") (osgi.os=" + os + ") (osgi.arch=" + arch + "))");
 		Utils.generateBundleManifest(fragment, "fragment", "1.0.0", manifestAdditions);
 
-		//getScriptGenerationProperties sets buildDirectory to buildFolder by default
+		// getScriptGenerationProperties sets buildDirectory to buildFolder by default
 		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "sdk");
 		properties.put("configs", os + "," + ws + "," + arch);
 		generateScripts(buildFolder, properties);
@@ -121,7 +125,8 @@ public class SourceTests extends PDETestCase {
 
 		// check the manifest for a correct platform filter
 		assertResourceFile(sourceFragment, "META-INF/MANIFEST.MF");
-		try (InputStream stream = new BufferedInputStream(sourceFragment.getFile("META-INF/MANIFEST.MF").getLocationURI().toURL().openStream())) {
+		try (InputStream stream = new BufferedInputStream(
+				sourceFragment.getFile("META-INF/MANIFEST.MF").getLocationURI().toURL().openStream())) {
 			Manifest manifest = new Manifest(stream);
 			String filter = manifest.getMainAttributes().getValue("Eclipse-PlatformFilter");
 			assertTrue(filter.length() > 0);
@@ -129,7 +134,8 @@ public class SourceTests extends PDETestCase {
 			properties.put("osgi.os", os);
 			properties.put("osgi.ws", ws);
 			properties.put("osgi.arch", arch);
-			// In 1.6 VMs properties is not casted correctly to dictionary causing a compilation error (Bug 390267)
+			// In 1.6 VMs properties is not casted correctly to dictionary causing a
+			// compilation error (Bug 390267)
 			@SuppressWarnings("rawtypes")
 			Dictionary dictionary = properties;
 			assertTrue(FrameworkUtil.createFilter(filter).match(dictionary));
@@ -139,13 +145,15 @@ public class SourceTests extends PDETestCase {
 
 	// test that '<' and '>' are properly escaped in generated source feature
 	// Also tests bug 191756: features with empty <license> entries
+	@Test
 	public void testbug184920() throws Exception {
-		//the provided resource features/a.feature/feature.xml contains &lt;foo!&gt; 
-		//which must be handled properly
+		// the provided resource features/a.feature/feature.xml contains &lt;foo!&gt;
+		// which must be handled properly
 		IFolder buildFolder = newTest("184920");
 
-		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "a.feature.sdk");
-		//191756: This will NPE if empty license entry is a problem 
+		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature",
+				"a.feature.sdk");
+		// 191756: This will NPE if empty license entry is a problem
 		generateScripts(buildFolder, properties);
 
 		assertResourceFile(buildFolder, "features/a.feature.source/feature.xml");
@@ -156,22 +164,23 @@ public class SourceTests extends PDETestCase {
 	}
 
 	// test that source can come before the feature it is based on
+	@Test
 	public void testBug179616A() throws Exception {
 		IFolder buildFolder = newTest("179616A");
 		IFolder bundleFolder = Utils.createFolder(buildFolder, "plugins/a.bundle");
 		IFolder sdkFolder = Utils.createFolder(buildFolder, "features/sdk");
 
 		Utils.generateBundle(bundleFolder, "a.bundle");
-		//add some source to a.bundle
+		// add some source to a.bundle
 		File src = new File(bundleFolder.getLocation().toFile(), "src/a.java");
 		src.getParentFile().mkdir();
 		try (FileOutputStream stream = new FileOutputStream(src)) {
 			stream.write("//L33T CODEZ\n".getBytes());
 		}
 
-		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"a.bundle"});
+		Utils.generateFeature(buildFolder, "rcp", null, new String[] { "a.bundle" });
 
-		Utils.generateFeature(buildFolder, "sdk", new String[] {"rcp.source", "rcp"}, null);
+		Utils.generateFeature(buildFolder, "sdk", new String[] { "rcp.source", "rcp" }, null);
 		Properties properties = new Properties();
 		properties.put("generate.feature@rcp.source", "rcp");
 		Utils.storeBuildProperties(sdkFolder, properties);
@@ -185,6 +194,7 @@ public class SourceTests extends PDETestCase {
 		assertZipContents(buildFolder, "I.TestBuild/eclipse.zip", entries);
 	}
 
+	@Test
 	public void testBug179616B() throws Exception {
 		IFolder buildFolder = newTest("179616B");
 		IFolder bundleFolder = Utils.createFolder(buildFolder, "plugins/a.bundle");
@@ -197,7 +207,7 @@ public class SourceTests extends PDETestCase {
 			stream.write("//L33T CODEZ\n".getBytes());
 		}
 
-		Utils.generateFeature(buildFolder, "single", null, new String[] {"single.source", "a.bundle"});
+		Utils.generateFeature(buildFolder, "single", null, new String[] { "single.source", "a.bundle" });
 		Properties properties = new Properties();
 		properties.put("generate.plugin@single.source", "single");
 		Utils.storeBuildProperties(singleFolder, properties);
@@ -211,8 +221,10 @@ public class SourceTests extends PDETestCase {
 		assertZipContents(buildFolder, "I.TestBuild/eclipse.zip", entries);
 	}
 
-	// Test the use of plugin@foo;unpack="false" in the generate.feature property 
-	// Test Source generation when source feature is name different from originating feature
+	// Test the use of plugin@foo;unpack="false" in the generate.feature property
+	// Test Source generation when source feature is name different from originating
+	// feature
+	@Test
 	public void testBug107372_208617() throws Exception {
 		IFolder buildFolder = newTest("107372");
 		IFolder bundleA = Utils.createFolder(buildFolder, "plugins/bundleA");
@@ -233,22 +245,24 @@ public class SourceTests extends PDETestCase {
 			outputStream.write("//L33T CODEZ\n".getBytes());
 		}
 
-		//generate an SDK feature
-		//test bug 208617 by naming the source feature something other than just originating feature + .source
-		Utils.generateFeature(buildFolder, "sdk", new String[] {"rcp", "source"}, null);
+		// generate an SDK feature
+		// test bug 208617 by naming the source feature something other than just
+		// originating feature + .source
+		Utils.generateFeature(buildFolder, "sdk", new String[] { "rcp", "source" }, null);
 		Properties properties = new Properties();
 		properties.put("generate.feature@source", "rcp,plugin@bundleDoc;unpack=\"false\"");
 		Utils.storeBuildProperties(sdk, properties);
 
-		//RCP Feature
-		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"bundleA"});
+		// RCP Feature
+		Utils.generateFeature(buildFolder, "rcp", null, new String[] { "bundleA" });
 
 		Utils.generateAllElements(buildFolder, "sdk");
 		Utils.storeBuildProperties(buildFolder, BuildConfiguration.getBuilderProperties(buildFolder));
 		runBuild(buildFolder);
 
-		//bundleDoc only gets in the build by being added to the generated source feature,
-		//check that it is there in the result and is in jar form.
+		// bundleDoc only gets in the build by being added to the generated source
+		// feature,
+		// check that it is there in the result and is in jar form.
 		Set<String> entries = new HashSet<>();
 		entries.add("eclipse/plugins/bundleDoc_1.0.0.jar");
 		entries.add("eclipse/plugins/source_1.0.0/src/bundleA_1.0.0/src.zip");
@@ -256,11 +270,12 @@ public class SourceTests extends PDETestCase {
 	}
 
 	// test use of feature@foo;optional="true"
+	@Test
 	public void testBug228537() throws Exception {
 		IFolder buildFolder = newTest("228537");
 		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
 
-		Utils.generateFeature(buildFolder, "sdk", new String[] {"source"}, null);
+		Utils.generateFeature(buildFolder, "sdk", new String[] { "source" }, null);
 		Properties properties = new Properties();
 		properties.put("generate.feature@source", "sdk,feature@org.eclipse.rcp;optional=\"true\";os=\"win32\"");
 		Utils.storeBuildProperties(sdk, properties);
@@ -280,6 +295,7 @@ public class SourceTests extends PDETestCase {
 		assertEquals(entries[0].getOS(), "win32");
 	}
 
+	@Test
 	public void testIndividualSourceBundles() throws Exception {
 		IFolder buildFolder = newTest("individualSourceBundles");
 
@@ -308,14 +324,14 @@ public class SourceTests extends PDETestCase {
 			outputStream.write("//L33T CODEZ\n".getBytes());
 		}
 
-		//generate an SDK feature
-		Utils.generateFeature(buildFolder, "sdk", new String[] {"rcp", "rcp.source"}, null);
+		// generate an SDK feature
+		Utils.generateFeature(buildFolder, "sdk", new String[] { "rcp", "rcp.source" }, null);
 		Properties properties = new Properties();
 		properties.put("generate.feature@rcp.source", "rcp");
 		Utils.storeBuildProperties(sdk, properties);
 
-		//RCP Feature
-		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"bundleA", "bundleB"});
+		// RCP Feature
+		Utils.generateFeature(buildFolder, "rcp", null, new String[] { "bundleA", "bundleB" });
 
 		Utils.generateAllElements(buildFolder, "sdk");
 		buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
@@ -353,6 +369,7 @@ public class SourceTests extends PDETestCase {
 		assertFalse(included[1].isUnpack());
 	}
 
+	@Test
 	public void testBug230870() throws Exception {
 		IFolder buildFolder = newTest("230870");
 
@@ -360,14 +377,15 @@ public class SourceTests extends PDETestCase {
 		IFolder bundleB = Utils.createFolder(buildFolder, "plugins/bundleB");
 		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
 
-		Utils.generateFeature(buildFolder, "sdk", new String[] {"rcp", "rcp.source"}, new String[] {"bundleB", "bundleB.source;unpack=false"});
+		Utils.generateFeature(buildFolder, "sdk", new String[] { "rcp", "rcp.source" },
+				new String[] { "bundleB", "bundleB.source;unpack=false" });
 		Properties properties = new Properties();
 		properties.put("generate.feature@rcp.source", "rcp");
 		properties.put("generate.plugin@bundleB.source", "bundleB");
 		properties.put("individualSourceBundles", "true");
 		Utils.storeBuildProperties(sdk, properties);
 
-		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"bundleA"});
+		Utils.generateFeature(buildFolder, "rcp", null, new String[] { "bundleA" });
 
 		Utils.generateBundleManifest(bundleA, "bundleA", "1.0.0", null);
 		Properties buildProperties = new Properties();
@@ -402,6 +420,7 @@ public class SourceTests extends PDETestCase {
 		assertZipContents(buildFolder, "tmp/eclipse/plugins/bundleB.source_1.0.0.jar", entries);
 	}
 
+	@Test
 	public void testIndividualSourceBundles_2() throws Exception {
 		IFolder buildFolder = newTest("individualSourceBundles2");
 
@@ -415,8 +434,8 @@ public class SourceTests extends PDETestCase {
 			outputStream.write("class A {\n}\n".getBytes());
 		}
 
-		//generate an SDK feature
-		Utils.generateFeature(buildFolder, "sdk", null, new String[] {"bundleA", "bundleA.source"});
+		// generate an SDK feature
+		Utils.generateFeature(buildFolder, "sdk", null, new String[] { "bundleA", "bundleA.source" });
 		Properties properties = new Properties();
 		properties.put("generate.plugin@bundleA.source", "bundleA");
 		Utils.storeBuildProperties(sdk, properties);
@@ -444,6 +463,7 @@ public class SourceTests extends PDETestCase {
 		}
 	}
 
+	@Test
 	public void test243475_243227() throws Exception {
 		IFolder buildFolder = newTest("243475");
 		IFolder bundleFolder = Utils.createFolder(buildFolder, "plugins/a.bundle");
@@ -453,21 +473,21 @@ public class SourceTests extends PDETestCase {
 		Properties props = new Properties();
 		props.put("src.includes", "about.html");
 		Utils.generatePluginBuildProperties(bundleFolder, props);
-		//add some source to a.bundle
+		// add some source to a.bundle
 		File src = new File(bundleFolder.getLocation().toFile(), "src/a.java");
 		src.getParentFile().mkdir();
 		try (FileOutputStream stream = new FileOutputStream(src)) {
 			stream.write("//L33T CODEZ\n".getBytes());
 		}
-		//add the about.html
+		// add the about.html
 		File about = new File(bundleFolder.getLocation().toFile(), "about.html");
 		try (FileOutputStream stream = new FileOutputStream(about)) {
 			stream.write("about\n".getBytes());
 		}
 
-		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"a.bundle"}, "1.0.0.qualifier");
+		Utils.generateFeature(buildFolder, "rcp", null, new String[] { "a.bundle" }, "1.0.0.qualifier");
 
-		Utils.generateFeature(buildFolder, "sdk", new String[] {"rcp", "rcp.source"}, null);
+		Utils.generateFeature(buildFolder, "sdk", new String[] { "rcp", "rcp.source" }, null);
 		Properties properties = new Properties();
 		properties.put("generate.feature@rcp.source", "rcp");
 		Utils.storeBuildProperties(sdkFolder, properties);
@@ -482,10 +502,10 @@ public class SourceTests extends PDETestCase {
 		assertResourceFile(buildFolder, "tmp/eclipse/plugins/rcp.source_1.0.0.123/src/a.bundle_1.0.0/about.html");
 		assertResourceFile(buildFolder, "tmp/eclipse/plugins/rcp.source_1.0.0.123/src/a.bundle_1.0.0/src.zip");
 
-		//build again using the binaries output from the first build
+		// build again using the binaries output from the first build
 		IFolder build2 = Utils.createFolder(buildFolder, "2");
 
-		//top level feature must be in buildDirectory
+		// top level feature must be in buildDirectory
 		Utils.createFolder(build2, "features");
 		sdkFolder.move(new Path("../2/features/sdk"), true, null);
 
@@ -502,11 +522,13 @@ public class SourceTests extends PDETestCase {
 		assertResourceFile(build2, "tmp/eclipse/plugins/rcp.source_1.0.0.124/src/a.bundle_1.0.0/src.zip");
 	}
 
+	@Ignore
+	@Test
 	public void testBug247007_247027() throws Exception {
 		IFolder buildFolder = newTest("247007");
 		IFolder sdkFolder = Utils.createFolder(buildFolder, "features/sdk");
 
-		Utils.generateFeature(buildFolder, "sdk", new String[] {"sdk.source"}, new String[] {"org.apache.ant"});
+		Utils.generateFeature(buildFolder, "sdk", new String[] { "sdk.source" }, new String[] { "org.apache.ant" });
 		Properties properties = new Properties();
 		properties.put("generate.feature@sdk.source", "sdk,feature@org.eclipse.rcp");
 		Utils.storeBuildProperties(sdkFolder, properties);
@@ -515,17 +537,21 @@ public class SourceTests extends PDETestCase {
 		properties.put("filteredDependencyCheck", "true");
 		generateScripts(buildFolder, properties);
 
-		//if we failed to account for the source features, then osgi would not have been in the state and 
-		//org.apache.ant would have failed to resolve and generateScripts would have thrown an exception
+		// if we failed to account for the source features, then osgi would not have
+		// been in the state and
+		// org.apache.ant would have failed to resolve and generateScripts would have
+		// thrown an exception
 	}
 
+	@Test
 	public void testBug257761() throws Exception {
 		IFolder buildFolder = newTest("257761");
 		IFolder a1 = Utils.createFolder(buildFolder, "plugins/a1");
 		IFolder a2 = Utils.createFolder(buildFolder, "plugins/a2");
 		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
 
-		Utils.generateFeature(buildFolder, "sdk", new String[] {"sdk.source"}, new String[] {"a;version=1.0.0", "a;version=2.0.0"});
+		Utils.generateFeature(buildFolder, "sdk", new String[] { "sdk.source" },
+				new String[] { "a;version=1.0.0", "a;version=2.0.0" });
 		Properties properties = new Properties();
 		properties.put("generate.feature@sdk.source", "sdk");
 		properties.put("individualSourceBundles", "true");
@@ -550,13 +576,14 @@ public class SourceTests extends PDETestCase {
 		assertResourceFile(buildFolder, "tmp/eclipse/plugins/a.source_2.0.0.jar");
 	}
 
+	@Test
 	public void testBug272543() throws Exception {
 		IFolder root = newTest("272543");
 		IFolder buildFolder = Utils.createFolder(root, "build1");
 		IFolder bundleA = Utils.createFolder(buildFolder, "plugins/bundleA");
 		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
 
-		Utils.generateFeature(buildFolder, "sdk", null, new String[] {"bundleA", "bundleA.source;unpack=false"});
+		Utils.generateFeature(buildFolder, "sdk", null, new String[] { "bundleA", "bundleA.source;unpack=false" });
 		Properties properties = new Properties();
 		properties.put("generate.plugin@bundleA.source", "bundleA");
 		properties.put("individualSourceBundles", "true");
@@ -578,7 +605,7 @@ public class SourceTests extends PDETestCase {
 
 		IFolder build2 = Utils.createFolder(root, "build2");
 		IFolder sdk2 = Utils.createFolder(build2, "features/sdk2");
-		Utils.generateFeature(build2, "sdk2", null, new String[] {"bundleA", "bundleA.source;unpack=false"});
+		Utils.generateFeature(build2, "sdk2", null, new String[] { "bundleA", "bundleA.source;unpack=false" });
 		properties = new Properties();
 		properties.put("generate.plugin@bundleA.source", "bundleA");
 		properties.put("individualSourceBundles", "true");
@@ -592,12 +619,13 @@ public class SourceTests extends PDETestCase {
 		runBuild(build2);
 	}
 
+	@Test
 	public void testBug290828() throws Exception {
 		IFolder buildFolder = newTest("290828");
 		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
 
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"org.eclipse.team.core"});
-		Utils.generateFeature(buildFolder, "sdk", new String[] {"f", "f.source"}, null);
+		Utils.generateFeature(buildFolder, "f", null, new String[] { "org.eclipse.team.core" });
+		Utils.generateFeature(buildFolder, "sdk", new String[] { "f", "f.source" }, null);
 
 		Properties properties = new Properties();
 		properties.put("generate.feature@f.source", "f");
@@ -617,17 +645,19 @@ public class SourceTests extends PDETestCase {
 		FeatureEntry[] included = model.getPluginEntries();
 		assertEquals(1, included.length);
 		for (int i = 0; i < included.length; i++) {
-			assertResourceFile(buildFolder, "tmp/eclipse/plugins/" + included[i].getId() + "_" + included[i].getVersion() + ".jar");
+			assertResourceFile(buildFolder,
+					"tmp/eclipse/plugins/" + included[i].getId() + "_" + included[i].getVersion() + ".jar");
 		}
 	}
 
+	@Test
 	public void testbug302941() throws Exception {
 		IFolder buildFolder = newTest("302941");
 
 		IFolder bundleA = Utils.createFolder(buildFolder, "plugins/bundleA");
 		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
 
-		Utils.generateFeature(buildFolder, "sdk", null, new String[] {"bundleA", "bundleA.source;unpack=false"});
+		Utils.generateFeature(buildFolder, "sdk", null, new String[] { "bundleA", "bundleA.source;unpack=false" });
 		Properties properties = new Properties();
 		properties.put("generate.plugin@bundleA.source", "bundleA");
 		properties.put("individualSourceBundles", "true");
@@ -647,18 +677,26 @@ public class SourceTests extends PDETestCase {
 		Utils.storeBuildProperties(buildFolder, properties);
 
 		StringBuffer buildAll = new StringBuffer();
-		buildAll.append("<project default=\"main\">                                                                  \n");
-		buildAll.append("   <target name=\"main\" >                                                                  \n");
-		buildAll.append("      <property name=\"builder\" value=\"${basedir}\" />                                    \n");
-		buildAll.append("      <ant antfile=\"build.xml\" dir=\"${eclipse.pdebuild.scripts}\" target=\"generate\" /> \n");
-		buildAll.append("      <ant antfile=\"build.xml\" dir=\"${eclipse.pdebuild.scripts}\" target=\"generate\" /> \n");
-		buildAll.append("   </target>                                                                                \n");
-		buildAll.append("</project>                                                                                  \n");
+		buildAll.append(
+				"<project default=\"main\">                                                                  \n");
+		buildAll.append(
+				"   <target name=\"main\" >                                                                  \n");
+		buildAll.append(
+				"      <property name=\"builder\" value=\"${basedir}\" />                                    \n");
+		buildAll.append(
+				"      <ant antfile=\"build.xml\" dir=\"${eclipse.pdebuild.scripts}\" target=\"generate\" /> \n");
+		buildAll.append(
+				"      <ant antfile=\"build.xml\" dir=\"${eclipse.pdebuild.scripts}\" target=\"generate\" /> \n");
+		buildAll.append(
+				"   </target>                                                                                \n");
+		buildAll.append(
+				"</project>                                                                                  \n");
 
 		IFile buildXml = buildFolder.getFile("buildAll.xml");
 		Utils.writeBuffer(buildXml, buildAll);
 
-		runAntScript(buildXml.getLocation().toOSString(), new String[] {"main"}, buildFolder.getLocation().toOSString(), null);
+		runAntScript(buildXml.getLocation().toOSString(), new String[] { "main" },
+				buildFolder.getLocation().toOSString(), null);
 
 		IFile buildScript = buildFolder.getFile("plugins/bundleA.source_1.0.0/build.xml");
 		Project antProject = assertValidAntScript(buildScript);

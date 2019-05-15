@@ -37,12 +37,18 @@ import org.eclipse.pde.build.tests.Activator;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.internal.build.P2InfUtils;
 import org.eclipse.pde.internal.build.site.*;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.BlockJUnit4ClassRunner;
 import org.osgi.framework.Constants;
 
+@RunWith(BlockJUnit4ClassRunner.class)
 public class PublishingTests extends P2TestCase {
 
 	private static final boolean BUG_429228 = true;
 
+	@Test
 	public void testPublishBundle_simple() throws Exception {
 		IFolder buildFolder = newTest("PublishBundle_simple");
 
@@ -103,6 +109,7 @@ public class PublishingTests extends P2TestCase {
 		assertTouchpoint(iu, "install", "myRandomAction");
 	}
 
+	@Test
 	public void testBug277824() throws Exception {
 		IFolder buildFolder = newTest("277824 space");
 
@@ -142,6 +149,7 @@ public class PublishingTests extends P2TestCase {
 		assertEquals(iu.getProperty("org.eclipse.equinox.p2.name"), "foo Root Files");
 	}
 
+	@Test
 	public void testBug277824_2() throws Exception {
 		IFolder buildFolder = newTest("277824_2");
 		IFolder f = Utils.createFolder(buildFolder, "features/f");
@@ -173,6 +181,7 @@ public class PublishingTests extends P2TestCase {
 		getIU(meta, "f.feature.group");
 	}
 
+	@Test
 	public void testPublishFeature_rootFiles() throws Exception {
 		IFolder buildFolder = newTest("PublishFeature_rootFiles");
 		IFolder f = Utils.createFolder(buildFolder, "features/f");
@@ -218,6 +227,7 @@ public class PublishingTests extends P2TestCase {
 		assertZipContents(buildFolder, "buildRepo/binary/f_root_1.0.0", entries);
 	}
 
+	@Test
 	public void testPublishFeature_versionReplacement() throws Exception {
 		IFolder buildFolder = newTest("PublishFeature_versions");
 		IFolder f = Utils.createFolder(buildFolder, "features/F");
@@ -279,6 +289,7 @@ public class PublishingTests extends P2TestCase {
 		assertEquals(model.getPluginEntries()[0].getVersion(), "1.0.0.12345");
 	}
 
+	@Test
 	public void testPublishBundle_customCallbacks() throws Exception {
 		IFolder buildFolder = newTest("PublishBundle_callbacks");
 
@@ -325,6 +336,7 @@ public class PublishingTests extends P2TestCase {
 		assertZipContents(buildFolder, "buildRepo/plugins/bundle_1.0.0.v1234.jar", contents);
 	}
 
+	@Test
 	public void testPublishBundle_p2infCUs() throws Exception {
 		IFolder buildFolder = newTest("PublishBundle_p2infCUs");
 
@@ -437,6 +449,7 @@ public class PublishingTests extends P2TestCase {
 		assertProvides(iu, "test", "my.provides");
 	}
 
+	@Test
 	public void testPublishFeature_ExecutableFeature() throws Exception {
 		if (BUG_429228)
 			return;
@@ -492,6 +505,7 @@ public class PublishingTests extends P2TestCase {
 		// targetFile:libcairo-swt.so, permissions:755);");
 	}
 
+	@Test
 	public void testPublishBundle_APITooling() throws Exception {
 		IFolder buildFolder = newTest("PublishBundle_APITooling");
 
@@ -539,6 +553,7 @@ public class PublishingTests extends P2TestCase {
 		assertZipContents(buildFolder, "buildRepo/plugins/bundle_1.0.0.v1234.jar", contents);
 	}
 
+	@Test
 	public void testPublish_Packaging_1() throws Exception {
 		IFolder buildFolder = newTest("packaging_1");
 		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
@@ -597,6 +612,7 @@ public class PublishingTests extends P2TestCase {
 		assertZipContents(buildFolder, "I.TestBuild/F-TestBuild-group.group.group.zip", entries);
 	}
 
+	@Test
 	public void testPublish_Source_1() throws Exception {
 		IFolder buildFolder = newTest("source_1");
 
@@ -626,6 +642,7 @@ public class PublishingTests extends P2TestCase {
 		assertZipContents(buildFolder, "buildRepo/plugins/bundle.source_1.0.0.jar", entries);
 	}
 
+	@Test
 	public void testPublish_Brand_1() throws Exception {
 		if (BUG_429228)
 			return;
@@ -717,6 +734,7 @@ public class PublishingTests extends P2TestCase {
 		assertFalse(wrongFile.exists());
 	}
 
+	@Test
 	public void testAssemblePackage() throws Exception {
 		IFolder buildFolder = newTest("publishAssemblePackage");
 
@@ -803,6 +821,7 @@ public class PublishingTests extends P2TestCase {
 		getIU(repo, "new_category_1");
 	}
 
+	@Test
 	public void testPublishAndRunSimpleProduct() throws Exception {
 		IFolder buildFolder = newTest("PublishAndRunSimpleProduct");
 
@@ -914,6 +933,8 @@ public class PublishingTests extends P2TestCase {
 
 	}
 
+	@Ignore
+	@Test
 	public void testBug265726() throws Exception {
 		IFolder buildFolder = newTest("265726");
 		if (Platform.getOS().equals("win32") && buildFolder.getLocation().toOSString().length() > 70) {
@@ -1004,6 +1025,7 @@ public class PublishingTests extends P2TestCase {
 		assertZipContents(buildFolder, "tmp/eclipse/plugins/org.eclipse.ui_" + iu.getVersion() + ".jar", entries);
 	}
 
+	@Test
 	public void testMultiConfig() throws Exception {
 		IFolder buildFolder = newTest("multiConfig");
 
@@ -1033,6 +1055,7 @@ public class PublishingTests extends P2TestCase {
 		assertResourceFile(buildFolder, "unzipped/content.xml");
 	}
 
+	@Test
 	public void testShape_267506() throws Exception {
 		IFolder buildFolder = newTest("publishShape");
 		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
@@ -1143,6 +1166,7 @@ public class PublishingTests extends P2TestCase {
 		removeMetadataRepository(uri);
 	}
 
+	@Test
 	public void testBug267461_2() throws Exception {
 		IFolder buildFolder = newTest("267461_2");
 		File executable = Utils.findExecutable();
@@ -1188,6 +1212,7 @@ public class PublishingTests extends P2TestCase {
 		assertFalse(buildFolder.getFile("tmp/eclipse/eclipse.exe").exists());
 	}
 
+	@Test
 	public void testBug267972() throws Exception {
 		IFolder buildFolder = newTest("267972");
 		File executable = Utils.findExecutable();
@@ -1231,6 +1256,7 @@ public class PublishingTests extends P2TestCase {
 		assertFalse(buildFolder.getFolder("finalRepo").exists());
 	}
 
+	@Test
 	public void testBug266488() throws Exception {
 		IFolder buildFolder = newTest("266488");
 		IFolder bundle = Utils.createFolder(buildFolder, "plugins/e");
@@ -1274,6 +1300,7 @@ public class PublishingTests extends P2TestCase {
 		assertZipContents(buildFolder, "tmp/eclipse/plugins/e.source_1.0.0.jar", entries);
 	}
 
+	@Test
 	public void testPublishFeature_Bug270882() throws Exception {
 		IFolder buildFolder = newTest("PublishFeature_Bug270882");
 
@@ -1341,6 +1368,7 @@ public class PublishingTests extends P2TestCase {
 		assertNull(getIU(metadata, "f.feature.jar", false));
 	}
 
+	@Test
 	public void testBug264743_PublishExecutable() throws Exception {
 		IFolder buildFolder = newTest("264743").getFolder("build1");
 
@@ -1405,6 +1433,7 @@ public class PublishingTests extends P2TestCase {
 		assertResourceFile(repo, "binary/rcp.product_root.win32.win32.x86_1.0.0");
 	}
 
+	@Test
 	public void testBug269972() throws Exception {
 		IFolder buildFolder = newTest("269972");
 		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
@@ -1436,6 +1465,7 @@ public class PublishingTests extends P2TestCase {
 		getIU(metadata, "b");
 	}
 
+	@Test
 	public void testBug259792_ReuseIUs() throws Exception {
 		IFolder root = newTest("259792");
 		IFolder build1 = Utils.createFolder(root, "build1");
@@ -1499,6 +1529,7 @@ public class PublishingTests extends P2TestCase {
 		removeMetadataRepository(repoURI);
 	}
 
+	@Test
 	public void testPublish_FeatureBasedProduct() throws Exception {
 		IFolder buildFolder = newTest("featureBasedProduct");
 		IFolder finalRepo = Utils.createFolder(buildFolder, "final");
@@ -1566,6 +1597,7 @@ public class PublishingTests extends P2TestCase {
 		assertZipContents(buildFolder, "I.TestBuild/eclipse-win32.win32.x86_64.zip", entries);
 	}
 
+	@Test
 	public void testDirectorLogging() throws Exception {
 		IFolder buildFolder = newTest("directorLogging");
 		File executable = Utils.findExecutable();
@@ -1604,6 +1636,7 @@ public class PublishingTests extends P2TestCase {
 				"Missing requirement: rcp.product 1.0.0.I10232 (uid.product 1.0.0.I10232) requires 'foo; bar [1.0.0,1.0.0]' but it could not be found" });
 	}
 
+	@Test
 	public void testBug272907() throws Exception {
 		IFolder buildFolder = newTest("272907");
 		IFolder foo = Utils.createFolder(buildFolder, "plugins/foo");
@@ -1659,6 +1692,7 @@ public class PublishingTests extends P2TestCase {
 		assertProvides(iu, P2InfUtils.NAMESPACE_IU, "testid0");
 	}
 
+	@Test
 	public void testBug268498() throws Exception {
 		IFolder buildFolder = newTest("268498");
 		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
@@ -1743,6 +1777,7 @@ public class PublishingTests extends P2TestCase {
 			assertEquals(req1.getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
 	}
 
+	@Test
 	public void testPublish_P2InfConfigProperty() throws Exception {
 		IFolder buildFolder = newTest("infConfig");
 		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
@@ -1813,6 +1848,7 @@ public class PublishingTests extends P2TestCase {
 		assertLogContainsLine(ini, "osgi.instance.area.default=@user.home/workspace");
 	}
 
+	@Test
 	public void testBug262464_customConfig() throws Exception {
 		IFolder buildFolder = newTest("262464");
 		IFolder bundle = Utils.createFolder(buildFolder, "plugins/bundle");
@@ -1866,6 +1902,7 @@ public class PublishingTests extends P2TestCase {
 		assertLogContainsLine(config, line);
 	}
 
+	@Test
 	public void testBug283060() throws Exception {
 		IFolder buildFolder = newTest("283060");
 		IFolder F = Utils.createFolder(buildFolder, "features/F");
@@ -1922,6 +1959,7 @@ public class PublishingTests extends P2TestCase {
 		assertNull(getIU(meta, EQUINOX_APP, false));
 	}
 
+	@Test
 	public void testBug284499() throws Exception {
 		IFolder buildFolder = newTest("284499");
 
@@ -1947,6 +1985,7 @@ public class PublishingTests extends P2TestCase {
 		getIU(meta, "f.feature.group");
 	}
 
+	@Test
 	public void testBug293048() throws Exception {
 		IFolder buildFolder = newTest("293048");
 		IFolder A1 = Utils.createFolder(buildFolder, "plugins/A_1.0.0");
@@ -1982,6 +2021,7 @@ public class PublishingTests extends P2TestCase {
 		}
 	}
 
+	@Test
 	public void testBug307157() throws Exception {
 		IFolder buildFolder = newTest("307157");
 
@@ -2018,6 +2058,7 @@ public class PublishingTests extends P2TestCase {
 		assertTrue(entries.contains("file1.txt"));
 	}
 
+	@Test
 	public void testBug271373() throws Exception {
 		IFolder buildFolder = newTest("271373_publisher");
 
@@ -2046,6 +2087,7 @@ public class PublishingTests extends P2TestCase {
 		assertResourceFile(buildFolder, "tmp/eclipse/plugins/A_1.0.0.jar");
 	}
 
+	@Test
 	public void testBug323286() throws Exception {
 		IFolder buildFolder = newTest("323286");
 		IFolder A_1 = Utils.createFolder(buildFolder, "plugins/A_1");
@@ -2068,6 +2110,7 @@ public class PublishingTests extends P2TestCase {
 		runBuild(buildFolder);
 	}
 
+	@Test
 	public void testBug322340() throws Exception {
 		IFolder buildFolder = newTest("322340");
 		IFolder F = Utils.createFolder(buildFolder, "features/F");
@@ -2101,6 +2144,7 @@ public class PublishingTests extends P2TestCase {
 		assertZipPermissions(zip, "eclipse/file.txt", "-rwxr-xr-x");
 	}
 
+	@Test
 	public void testBug329162() throws Exception {
 		IFolder buildFolder = newTest("329162");
 
