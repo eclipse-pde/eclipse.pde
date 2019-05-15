@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     EclipseSource Corporation - ongoing enhancements
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 268363
  *     Rapicorp Corporation - ongoing enhancements
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 547322
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -96,6 +97,11 @@ public class ProductEditor extends PDELauncherFormEditor {
 	}
 
 	@Override
+	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
+		return new ProductSourcePage(editor, title, name);
+	}
+
+	@Override
 	protected InputContext getInputContext(Object object) {
 		return fInputContextManager.findContext(ProductInputContext.CONTEXT_ID);
 	}
@@ -115,6 +121,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
+		addSourcePage(ProductInputContext.CONTEXT_ID);
 	}
 
 	public void updateConfigurationPage() {
@@ -132,6 +139,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 
 	@Override
 	public void editorContextAdded(InputContext context) {
+		addSourcePage(context.getId());
 	}
 
 	@Override

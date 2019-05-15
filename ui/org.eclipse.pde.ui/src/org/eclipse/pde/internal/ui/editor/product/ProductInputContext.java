@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,10 +11,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 97149, bug 268363
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 547322
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -29,11 +31,11 @@ import org.eclipse.pde.internal.core.product.ProductModel;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.pde.internal.ui.editor.context.UTF8InputContext;
+import org.eclipse.pde.internal.ui.editor.context.XMLInputContext;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.*;
 
-public class ProductInputContext extends UTF8InputContext {
+public class ProductInputContext extends XMLInputContext {
 
 	public static final String CONTEXT_ID = "product-context"; //$NON-NLS-1$
 
@@ -97,15 +99,21 @@ public class ProductInputContext extends UTF8InputContext {
 	}
 
 	@Override
-	public void doRevert() {
-		fEditOperations.clear();
+	protected boolean synchronizeModel(IDocument doc) {
 		IProductModel model = (IProductModel) getModel();
-		try {
-			InputStream is = ((IFile) model.getUnderlyingResource()).getContents();
-			model.reload(is, true);
-			getEditor().doRevert();
+		boolean cleanModel = true;
+		String text = doc.get();
+		try (InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8))) {
+			model.reload(stream, false);
 		} catch (CoreException e) {
+			cleanModel = false;
+		} catch (IOException e) {
 		}
+		return cleanModel;
+	}
+
+	@Override
+	protected void reorderInsertEdits(ArrayList<TextEdit> ops) {
 	}
 
 	@Override
