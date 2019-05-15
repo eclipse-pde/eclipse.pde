@@ -889,9 +889,12 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		ISiteBundle[] currentBundles = fModel.getSite().getBundles();
 		IPluginBase candidateBundle = candidate.getPluginBase();
 
+		String candidateId = candidateBundle.getId();
+		String candidateVersion = candidateBundle.getVersion();
+
 		for (ISiteBundle currentBundle : currentBundles) {
-			if (currentBundle.getId().equals(candidateBundle.getId()) && currentBundle.getVersion() != null
-					&& currentBundle.getVersion().equals(candidateBundle.getVersion()))
+			if (currentBundle.getId().equals(candidateId)
+					&& (currentBundle.getVersion() == null || currentBundle.getVersion().equals(candidateVersion)))
 				return false;
 		}
 		return true;
@@ -912,7 +915,6 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	private ISiteBundle createSiteBundle(ISiteModel model, IPluginModelBase candidate) throws CoreException {
 		ISiteBundle newBundle = model.getFactory().createBundle();
 		newBundle.setId(candidate.getPluginBase().getId());
-		newBundle.setVersion(candidate.getPluginBase().getVersion());
 		return newBundle;
 	}
 
