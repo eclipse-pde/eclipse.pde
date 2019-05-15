@@ -15,26 +15,12 @@ package org.eclipse.pde.build.internal.tests;
 
 import java.io.File;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
 
 public class AssembleTests extends PDETestCase {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AssembleTests.class.getName());
-
-		// add all the normal tests
-		suite.addTestSuite(AssembleTests.class);
-
-		// If running the intermittent tests:
-		// if (System.getProperties().get("pde.build.intermittent") != null) {
-		// }
-		return suite;
-	}
 
 	public void testCustomAssembly() throws Exception {
 		IFolder buildFolder = newTest("customAssembly");

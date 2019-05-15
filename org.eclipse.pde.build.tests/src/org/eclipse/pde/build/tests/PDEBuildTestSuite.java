@@ -26,7 +26,7 @@ public class PDEBuildTestSuite {
 		suite.addTestSuite(ScriptGenerationTests.class);
 		suite.addTestSuite(ProductTests.class);
 		suite.addTestSuite(LicenseTests.class);
-		suite.addTest(AssembleTests.suite());
+		suite.addTestSuite(AssembleTests.class);
 		if (Boolean.valueOf(System.getProperty("pde.build.includeP2", "true")).booleanValue())
 			suite.addTest(P2TestSuite.suite());
 		if (System.getProperty("pde.build.includeFetch") != null)
