@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Red Hat Inc. - Support for <bundle...> tag
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 546804
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
@@ -41,6 +42,7 @@ public class Site extends SiteObject implements ISite {
 	private final Vector<ISiteObject> categoryDefs = new Vector<>();
 	private final Vector<ISiteObject> repositoryReferences = new Vector<>();
 
+	private String copyright;
 	private String type;
 	private String url;
 	private String mirrorsUrl;
@@ -48,6 +50,14 @@ public class Site extends SiteObject implements ISite {
 	private String associateSitesUrl;
 	private ISiteDescription description;
 	private IStatsInfo statsInfo;
+
+	public String getCopyright() {
+		return copyright;
+	}
+
+	public void setCopyright(String copyright) {
+		this.copyright = copyright;
+	}
 
 	@Override
 	public void setType(String type) throws CoreException {
@@ -362,6 +372,9 @@ public class Site extends SiteObject implements ISite {
 
 	@Override
 	public void write(String indent, PrintWriter writer) {
+		if (copyright != null) {
+			writer.println("<!--" + copyright + "-->"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		writer.print(indent + "<site"); //$NON-NLS-1$
 		String indent2 = indent + INDENT;
 		String indenta = indent + INDENT + INDENT;

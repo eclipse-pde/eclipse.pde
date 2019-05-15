@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 546804
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
@@ -20,6 +21,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.XMLCopyrightHandler;
 import org.eclipse.pde.internal.core.XMLDefaultHandler;
 import org.eclipse.pde.internal.core.isite.ISite;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
@@ -83,9 +85,15 @@ public abstract class AbstractSiteModel extends AbstractModel implements ISiteMo
 		try {
 			SAXParser parser = getSaxParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
+			XMLCopyrightHandler chandler = new XMLCopyrightHandler(handler);
+			parser.setProperty("http://xml.org/sax/properties/lexical-handler", chandler); //$NON-NLS-1$
 			parser.parse(stream, handler);
 			if (handler.isPrepared()) {
 				processDocument(handler.getDocument());
+				String copyright = chandler.getCopyright();
+				if (copyright != null) {
+					site.setCopyright(copyright);
+				}
 				setLoaded(true);
 				if (!outOfSync) {
 					updateTimeStamp();
