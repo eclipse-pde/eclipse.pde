@@ -1927,10 +1927,13 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureDetails_title;
 	public static String FeatureDetails_sectionDescription;
-	public static String FeatureDetails_id;
-	public static String FeatureDetails_version;
+	public static String SiteContentDetails_id;
+	public static String SiteContentDetails_version;
 	public static String FeatureDetails_url;
 	public static String FeatureDetails_include_url;
+
+	public static String BundleDetails_title;
+	public static String BundleDetails_sectionDescription;
 
 	public static String FeaturesPage_title;
 	public static String FeaturesPage_header;

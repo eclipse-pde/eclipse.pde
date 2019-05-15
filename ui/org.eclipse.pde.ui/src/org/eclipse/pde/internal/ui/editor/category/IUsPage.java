@@ -17,8 +17,7 @@
  ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
 
-import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
-import org.eclipse.pde.internal.core.isite.ISiteFeature;
+import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.widgets.Composite;
@@ -67,6 +66,8 @@ public class IUsPage extends PDEFormPage {
 						return createCategoryDetails();
 					} else if (key.equals(ISiteFeature.class) || key.equals(SiteFeatureAdapter.class)) {
 						return createFeatureDetails();
+					} else if (key.equals(ISiteBundle.class) || key.equals(SiteBundleAdapter.class)) {
+						return createBundleDetails();
 					}
 					return null;
 				}
@@ -94,7 +95,7 @@ public class IUsPage extends PDEFormPage {
 		return new PDEDetailsSections() {
 			@Override
 			protected PDESection[] createSections(PDEFormPage page, Composite parent) {
-				return new PDESection[] {new CategoryDetailsSection(getPage(), parent)};
+				return new PDESection[] { new CategoryDetailsSection(getPage(), parent) };
 			}
 
 			@Override
@@ -109,6 +110,20 @@ public class IUsPage extends PDEFormPage {
 			@Override
 			protected PDESection[] createSections(PDEFormPage page, Composite parent) {
 				return new PDESection[] { new FeatureDetailsSection(getPage(), parent) };
+			}
+
+			@Override
+			public String getContextId() {
+				return CategoryInputContext.CONTEXT_ID;
+			}
+		};
+	}
+
+	private IDetailsPage createBundleDetails() {
+		return new PDEDetailsSections() {
+			@Override
+			protected PDESection[] createSections(PDEFormPage page, Composite parent) {
+				return new PDESection[] { new BundleDetailsSection(getPage(), parent) };
 			}
 
 			@Override
