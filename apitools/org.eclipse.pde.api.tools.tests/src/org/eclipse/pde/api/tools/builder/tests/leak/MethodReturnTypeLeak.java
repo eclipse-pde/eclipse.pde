@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -504,14 +504,53 @@ public class MethodReturnTypeLeak extends LeakTest {
 	}
 
 	/**
-	 * Tests that a protected method(s) in a final class does not report any return type leaks
-	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=257113
+	 * Tests that a protected method(s) in a final class does not report any
+	 * return type leaks https://bugs.eclipse.org/bugs/show_bug.cgi?id=257113
+	 * 
 	 * @param inc
 	 */
 	private void x19(boolean inc) {
 		expectingNoProblems();
 		String typename = "testMRL19"; //$NON-NLS-1$
 		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
+	}
+
+	public void testMethodReturnType21F() {
+		x21(false);
+	}
+
+	public void testMethodReturnType21I() {
+		x21(true);
+	}
+
+	/**
+	 * Tests that a protected method(s) in a final class does not report any
+	 * return type leaks https://bugs.eclipse.org/bugs/show_bug.cgi?id=257113
+	 *
+	 * @param inc
+	 */
+	private void x21(boolean inc) {
+		expectingNoProblems();
+		String typename = "testMRL21"; //$NON-NLS-1$
+		deployLeakTest(typename + ".java", inc); //$NON-NLS-1$
+	}
+
+	public void testMethodReturnType22F() {
+		x22(false);
+	}
+
+	public void testMethodReturnType22I() {
+		x22(true);
+	}
+
+
+	private void x22(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemIdSet(1));
+
+		expectingNoProblems();
+		String typename = "testMRL22"; //$NON-NLS-1$
+		setExpectedMessageArgs(new String[][] { { "classDefault", typename, "m1()" } }); //$NON-NLS-1$ //$NON-NLS-2$
+		deployLeakTest(typename + ".java", inc); //$NON-NLS-1$
 	}
 
  }
