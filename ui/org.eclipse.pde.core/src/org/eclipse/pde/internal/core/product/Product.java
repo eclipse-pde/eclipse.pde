@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     EclipseSource Corporation - ongoing enhancements
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 265931
  *     Rapicorp Corporation - ongoing enhancements
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 547323
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -52,6 +53,8 @@ import org.w3c.dom.NodeList;
 public class Product extends ProductObject implements IProduct {
 
 	private static final long serialVersionUID = 1L;
+
+	private String fCopyright;
 	private String fId;
 	private String fProductId;
 	private String fName;
@@ -80,6 +83,10 @@ public class Product extends ProductObject implements IProduct {
 	public Product(IProductModel model) {
 		super(model);
 		fIncludeLaunchers = true;
+	}
+
+	public String getCopyright() {
+		return fCopyright;
 	}
 
 	@Override
@@ -114,6 +121,10 @@ public class Product extends ProductObject implements IProduct {
 		}
 		int dot = fProductId.lastIndexOf('.');
 		return (dot != -1) ? fProductId.substring(0, dot) : null;
+	}
+
+	public void setCopyright(String copyright) {
+		this.fCopyright = copyright;
 	}
 
 	@Override
@@ -168,6 +179,9 @@ public class Product extends ProductObject implements IProduct {
 
 	@Override
 	public void write(String indent, PrintWriter writer) {
+		if (fCopyright != null) {
+			writer.println("<!--" + fCopyright + "-->"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		writer.print(indent + "<product"); //$NON-NLS-1$
 		if (fName != null && fName.length() > 0) {
 			writer.print(" " + P_NAME + "=\"" + getWritableString(fName) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

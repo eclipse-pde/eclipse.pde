@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 547323
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -21,6 +22,7 @@ import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.XMLCopyrightHandler;
 import org.eclipse.pde.internal.core.XMLDefaultHandler;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
@@ -74,9 +76,18 @@ public class ProductModel extends AbstractModel implements IProductModel {
 		try {
 			SAXParser parser = getSaxParser();
 			XMLDefaultHandler handler = new XMLDefaultHandler();
+			XMLCopyrightHandler chandler = new XMLCopyrightHandler(handler);
+			parser.setProperty("http://xml.org/sax/properties/lexical-handler", chandler); //$NON-NLS-1$
 			parser.parse(stream, handler);
 			if (handler.isPrepared()) {
 				processDocument(handler.getDocument());
+				String copyright = chandler.getCopyright();
+				if (copyright != null) {
+					if (fProduct instanceof Product) {
+						Product product = (Product) fProduct;
+						product.setCopyright(copyright);
+					}
+				}
 				setLoaded(true);
 			}
 		} catch (Exception e) {
