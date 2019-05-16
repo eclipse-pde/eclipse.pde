@@ -13,25 +13,13 @@
 
 package org.eclipse.pde.build.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.pde.build.internal.tests.*;
 import org.eclipse.pde.build.internal.tests.p2.LicenseTests;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ SourceTests.class, ScriptGenerationTests.class, ProductTests.class, LicenseTests.class,
+		AssembleTests.class, P2TestSuite.class, FetchTests.class })
 public class PDEBuildTestSuite {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for org.eclipse.pde.build"); //$NON-NLS-1$
-		suite.addTestSuite(SourceTests.class);
-		suite.addTestSuite(ScriptGenerationTests.class);
-		suite.addTestSuite(ProductTests.class);
-		suite.addTestSuite(LicenseTests.class);
-		suite.addTestSuite(AssembleTests.class);
-		if (Boolean.valueOf(System.getProperty("pde.build.includeP2", "true")).booleanValue())
-			suite.addTest(P2TestSuite.suite());
-		if (System.getProperty("pde.build.includeFetch") != null)
-			suite.addTestSuite(FetchTests.class);
-		return suite;
-	}
-
 }
