@@ -59,6 +59,9 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		PreferenceConverter.setDefault(store, P_HEADER_ATTRIBUTES, HEADER_ATTRIBUTES);
 		store.setDefault(P_HEADER_ATTRIBUTES + IPDEColorConstants.P_ITALIC_SUFFIX, true);
 		PreferenceConverter.setDefault(store, P_HEADER_ASSIGNMENT, HEADER_ASSIGNMENT);
+		if (!PlatformUI.isWorkbenchRunning()) {
+			return;
+		}
 		try {
 			Display display = PlatformUI.getWorkbench().getDisplay();
 			Runnable runnable = () -> {
@@ -73,7 +76,8 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 			} else {
 				display.asyncExec(runnable);
 			}
-		} catch (SWTException e) { // keep non-high-contrast-mode defaults
+		} catch (SWTException | IllegalStateException e) {
+			// keep non-high-contrast-mode defaults
 		}
 	}
 
