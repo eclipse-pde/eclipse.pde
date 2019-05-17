@@ -43,6 +43,11 @@ public class CoreMessages extends NLS {
 	public static String JavadocTagManager_method_no_overried;
 	public static String JavadocTagManager_method_no_reference;
 	public static String ProjectComponent_could_not_locate_model;
+	public static String api_generation_printArguments;
+	public static String api_generation_projectLocationNotADirectory;
+	public static String api_generation_targetFolderNotADirectory;
+	public static String api_generation_invalidBinaryLocation;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, CoreMessages.class);

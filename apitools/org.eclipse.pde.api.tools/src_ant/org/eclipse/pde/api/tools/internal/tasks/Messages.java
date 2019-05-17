@@ -86,11 +86,6 @@ public class Messages extends NLS {
 	public static String couldNotUntar;
 	public static String reportLocationHasToBeAFile;
 
-	public static String api_generation_printArguments;
-	public static String api_generation_projectLocationNotADirectory;
-	public static String api_generation_targetFolderNotADirectory;
-	public static String api_generation_invalidBinaryLocation;
-
 	public static String ApiMigrationTask_missing_scan_location;
 	public static String ApiMigrationTask_scan_location_not_dir;
 	public static String ApiMigrationTask_scan_location_not_exist;
