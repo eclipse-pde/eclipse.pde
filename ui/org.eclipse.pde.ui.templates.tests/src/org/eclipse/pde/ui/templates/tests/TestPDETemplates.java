@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.internal.framework.EquinoxBundle;
 import org.eclipse.osgi.storage.BundleInfo.Generation;
 import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.ds.internal.annotations.Messages;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
@@ -167,6 +168,14 @@ public class TestPDETemplates {
 		// ignore missing package export marker
 		if (markers.length == 1 && CompilerFlags.P_MISSING_EXPORT_PKGS
 				.equals(markers[0].getAttribute(PDEMarkerFactory.compilerKey, ""))) {
+			System.out.println("Template '" + template.getLabel() + "' ignored errors.");
+			System.out.println(markers[0]);
+			System.out.println("--------------------------------------------------------");
+			markers = new IMarker[0];
+		}
+		// ignore "DS Annotations missing from permanent build path"
+		if (markers.length == 1 && Messages.DSAnnotationCompilationParticipant_buildpathProblemMarker_message
+				.equals(markers[0].getAttribute(IMarker.MESSAGE, ""))) {
 			System.out.println("Template '" + template.getLabel() + "' ignored errors.");
 			System.out.println(markers[0]);
 			System.out.println("--------------------------------------------------------");
