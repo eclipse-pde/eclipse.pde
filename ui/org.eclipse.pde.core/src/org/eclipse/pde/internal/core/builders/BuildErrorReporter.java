@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -983,7 +983,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			if (sourceFolderList.contains(res.getFullPath())) {
 				errorMessage = PDECoreMessages.BuildErrorReporter_srcIncludesSourceFolder;
 			} else if (token.startsWith(".") || reservedTokens.contains(res.getName().toString().toLowerCase())) { //$NON-NLS-1$
-				errorMessage = NLS.bind(PDECoreMessages.BuildErrorReporter_srcIncludesSourceFolder1, res.getName());
+				if (!res.getName().toString().toLowerCase().equals(".settings")) {//$NON-NLS-1$
+					errorMessage = NLS.bind(PDECoreMessages.BuildErrorReporter_srcIncludesSourceFolder1, res.getName());
+				}
 			}
 
 			if (errorMessage != null) {
