@@ -38,7 +38,8 @@ public class EnvironmentAnalyzerDelegate implements IExecutionEnvironmentAnalyze
 		String javaVersion = vm2.getJavaVersion();
 		if (javaVersion != null) {
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(EE_NO_SOUND);
-			String[] compatible = new String[] { "11", "10", "9", "1.8", "1.7", "1.6", "1.5", "1.4" };
+			// TODO: use common place for Java versions in PDE, see bug 545051
+			String[] compatible = new String[] { "12", "11", "10", "9", "1.8", "1.7", "1.6", "1.5", "1.4" };
 			for (String element : compatible) {
 				if (javaVersion.startsWith(element)) {
 					result.add(new CompatibleEnvironment(env, false));
