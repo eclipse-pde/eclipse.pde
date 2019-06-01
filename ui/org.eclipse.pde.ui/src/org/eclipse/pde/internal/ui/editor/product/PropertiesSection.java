@@ -23,6 +23,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.util.PDESchemaHelper;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
@@ -92,22 +93,24 @@ public class PropertiesSection extends TableSection {
 	}
 
 	private class PropertyDialog extends StatusDialog {
+
 		private Text fName;
 		private Text fValue;
 		private Combo fOS;
 		private Combo fArch;
 		private IConfigurationProperty fEdit;
-		private Set<String> fExistingNames;
+		private Set<IConfigurationProperty> fExistingProperties;
 
 		private String[] COMBO_OSLABELS = new String[] { PDEUIMessages.PropertiesSection_All, Platform.OS_LINUX,
 				Platform.OS_MACOSX, Platform.OS_WIN32 };
 		private String[] COMBO_ARCHLABELS = new String[] { PDEUIMessages.PropertiesSection_All, Platform.ARCH_X86,
 				Platform.ARCH_X86_64 };
 
-		public PropertyDialog(Shell shell, IConfigurationProperty property, Set<String> existingNames) {
+		public PropertyDialog(Shell shell, IConfigurationProperty property,
+				Set<IConfigurationProperty> existingProperties) {
 			super(shell);
 			fEdit = property;
-			fExistingNames = existingNames;
+			fExistingProperties = existingProperties;
 			setTitle(PDEUIMessages.PropertiesSection_PropertyDialogTitle);
 		}
 
@@ -126,12 +129,12 @@ public class PropertiesSection extends TableSection {
 			fOS.addSelectionListener(new SelectionListener() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					updateStatus(Status.OK_STATUS);
+					validate();
 				}
 
 				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
-					updateStatus(Status.OK_STATUS);
+					validate();
 				}
 
 			});
@@ -141,12 +144,12 @@ public class PropertiesSection extends TableSection {
 			fArch.addSelectionListener(new SelectionListener() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					updateStatus(Status.OK_STATUS);
+					validate();
 				}
 
 				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
-					updateStatus(Status.OK_STATUS);
+					validate();
 				}
 
 			});
@@ -182,7 +185,10 @@ public class PropertiesSection extends TableSection {
 			String name = fName.getText().trim();
 			if (name.length() == 0) {
 				updateStatus(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, PDEUIMessages.PropertiesSection_ErrorPropertyNoName));
-			} else if (fExistingNames.contains(name)) {
+			} else if (PDESchemaHelper.containsMatchingProperty(fExistingProperties, name,
+					fOS.getSelectionIndex() == 0 ? PDESchemaHelper.ALL_OS : COMBO_OSLABELS[fOS.getSelectionIndex()],
+					fArch.getSelectionIndex() == 0 ? PDESchemaHelper.ALL_ARCH
+							: COMBO_ARCHLABELS[fArch.getSelectionIndex()])) {
 				updateStatus(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, NLS.bind(PDEUIMessages.PropertiesSection_ErrorPropertyExists, name)));
 			} else {
 				updateStatus(Status.OK_STATUS);
@@ -201,9 +207,9 @@ public class PropertiesSection extends TableSection {
 			fEdit.setName(fName.getText().trim());
 			fEdit.setValue(fValue.getText().trim());
 			int index = fOS.getSelectionIndex();
-			fEdit.setOs(index == 0 ? "" : COMBO_OSLABELS[index]); //$NON-NLS-1$
+			fEdit.setOs(index == 0 ? PDESchemaHelper.ALL_OS : COMBO_OSLABELS[index]);
 			index = fArch.getSelectionIndex();
-			fEdit.setArch(index == 0 ? "" : COMBO_ARCHLABELS[index]); //$NON-NLS-1$
+			fEdit.setArch(index == 0 ? PDESchemaHelper.ALL_ARCH : COMBO_ARCHLABELS[index]);
 			getProduct().addConfigurationProperties(new IConfigurationProperty[] {fEdit});
 			super.okPressed();
 		}
@@ -348,7 +354,7 @@ public class PropertiesSection extends TableSection {
 	}
 
 	private void handleAdd() {
-		PropertyDialog dialog = new PropertyDialog(PDEPlugin.getActiveWorkbenchShell(), null, getExistingNames());
+		PropertyDialog dialog = new PropertyDialog(PDEPlugin.getActiveWorkbenchShell(), null, getExistingProperties());
 		if (dialog.open() == Window.OK) {
 			IConfigurationProperty result = dialog.getResult();
 			if (result != null) {
@@ -363,8 +369,8 @@ public class PropertiesSection extends TableSection {
 		IStructuredSelection ssel = fPropertiesTable.getStructuredSelection();
 		if (!ssel.isEmpty() && ssel.getFirstElement() instanceof IConfigurationProperty) {
 			IConfigurationProperty propertyToEdit = (IConfigurationProperty) ssel.getFirstElement();
-			Set<String> existing = getExistingNames();
-			existing.remove(propertyToEdit.getName());
+			Set<IConfigurationProperty> existing = getExistingProperties();
+			existing.remove(propertyToEdit);
 			PropertyDialog dialog = new PropertyDialog(PDEPlugin.getActiveWorkbenchShell(), propertyToEdit, existing);
 			if (dialog.open() == Window.OK) {
 				IConfigurationProperty result = dialog.getResult();
@@ -380,11 +386,11 @@ public class PropertiesSection extends TableSection {
 	/**
 	 * @return A list of property names currently in use by the product, possibly empty
 	 */
-	private Set<String> getExistingNames() {
-		Set<String> result = new HashSet<>();
+	private Set<IConfigurationProperty> getExistingProperties() {
+		Set<IConfigurationProperty> result = new HashSet<>();
 		IConfigurationProperty[] properties = getProduct().getConfigurationProperties();
 		for (IConfigurationProperty property : properties) {
-			result.add(property.getName());
+			result.add(property);
 		}
 		return result;
 	}

@@ -19,9 +19,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.iproduct.IConfigurationProperty;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
@@ -31,6 +33,10 @@ import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
 import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
 
 public class PDESchemaHelper {
+
+	public static final String ALL_OS = ""; //$NON-NLS-1$
+
+	public static final String ALL_ARCH = ""; //$NON-NLS-1$
 
 	/**
 	 * Returns valid attributes given a schema attribute
@@ -155,4 +161,20 @@ public class PDESchemaHelper {
 		return ""; //$NON-NLS-1$
 	}
 
+	public static boolean containsMatchingProperty(Set<IConfigurationProperty> existingProperties, String name,
+			String os, String arch) {
+		for (IConfigurationProperty property : existingProperties) {
+			if (name.equals(property.getName().trim())) {
+				// check if os/arch is different
+				String propOs = property.getOs() != null ? property.getOs().trim() : ALL_OS;
+				if (ALL_OS.equals(propOs) || ALL_OS.equals(os) || propOs.equals(os)) {
+					String propArch = property.getArch() != null ? property.getArch().trim() : ALL_ARCH;
+					if (propArch.equals(arch) || ALL_ARCH.equals(arch) || ALL_ARCH.equals(propArch)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 }

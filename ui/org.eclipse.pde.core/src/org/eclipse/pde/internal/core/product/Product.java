@@ -46,6 +46,7 @@ import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.eclipse.pde.internal.core.iproduct.IRepositoryInfo;
 import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
 import org.eclipse.pde.internal.core.iproduct.IWindowImages;
+import org.eclipse.pde.internal.core.util.PDESchemaHelper;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -62,10 +63,10 @@ public class Product extends ProductObject implements IProduct {
 	private String fVersion;
 	private IAboutInfo fAboutInfo;
 
-	private final TreeMap<String, IProductObject> fPlugins = new TreeMap<>();
-	private final TreeMap<String, IProductObject> fPluginConfigurations = new TreeMap<>();
-	private final TreeMap<String, IProductObject> fConfigurationProperties = new TreeMap<>();
-	private final List<IProductFeature> fFeatures = new ArrayList<>();
+	private TreeMap<String, IProductObject> fPlugins = new TreeMap<>();
+	private TreeMap<String, IProductObject> fPluginConfigurations = new TreeMap<>();
+	private Set<IConfigurationProperty> fConfigurationProperties = new HashSet<>();
+	private List<IProductFeature> fFeatures = new ArrayList<>();
 	private IConfigurationFileInfo fConfigIniInfo;
 	private IJREInfo fJVMInfo;
 	private boolean fUseFeatures;
@@ -76,7 +77,7 @@ public class Product extends ProductObject implements IProduct {
 	private IArgumentsInfo fLauncherArgs;
 	private IIntroInfo fIntroInfo;
 	private ILicenseInfo fLicenseInfo;
-	private final List<IProductObject> fRepositories = new ArrayList<>();
+	private List<IProductObject> fRepositories = new ArrayList<>();
 	private IPreferencesInfo fPreferencesInfo;
 	private ICSSInfo fCSSInfo;
 
@@ -276,9 +277,9 @@ public class Product extends ProductObject implements IProduct {
 				IPluginConfiguration configuration = (IPluginConfiguration) iter.next();
 				configuration.write(indent + "      ", writer); //$NON-NLS-1$
 			}
-			iter = fConfigurationProperties.values().iterator();
-			while (iter.hasNext()) {
-				IConfigurationProperty property = (IConfigurationProperty) iter.next();
+			Iterator<IConfigurationProperty> propIter = fConfigurationProperties.iterator();
+			while (propIter.hasNext()) {
+				IConfigurationProperty property = propIter.next();
 				property.write(indent + "      ", writer); //$NON-NLS-1$
 			}
 			writer.println(indent + "   </configurations>"); //$NON-NLS-1$
@@ -427,7 +428,7 @@ public class Product extends ProductObject implements IProduct {
 				if (child.getNodeName().equals("property")) { //$NON-NLS-1$
 					IConfigurationProperty property = getModel().getFactory().createConfigurationProperty();
 					property.parse(child);
-					fConfigurationProperties.put(property.getName(), property);
+					fConfigurationProperties.add(property);
 				}
 			}
 		}
@@ -511,18 +512,20 @@ public class Product extends ProductObject implements IProduct {
 				continue;
 			}
 			String name = property.getName();
-			if (name == null || fConfigurationProperties.containsKey(name)) {
+			if (name == null || PDESchemaHelper.containsMatchingProperty(fConfigurationProperties, name,
+					property.getOs(), property.getArch())) {
 				continue;
 			}
 
 			property.setModel(getModel());
-			fConfigurationProperties.put(name, property);
+			fConfigurationProperties.add(property);
 			modified = true;
 		}
 		if (modified && isEditable()) {
 			fireStructureChanged(properties, IModelChangedEvent.INSERT);
 		}
 	}
+
 
 	@Override
 	public void removePlugins(IProductPlugin[] plugins) {
@@ -565,7 +568,7 @@ public class Product extends ProductObject implements IProduct {
 	public void removeConfigurationProperties(IConfigurationProperty[] properties) {
 		boolean modified = false;
 		for (IConfigurationProperty property : properties) {
-			if (fConfigurationProperties.remove(property.getName()) != null) {
+			if (fConfigurationProperties.remove(property)) {
 				modified = true;
 			}
 		}
@@ -586,7 +589,7 @@ public class Product extends ProductObject implements IProduct {
 
 	@Override
 	public IConfigurationProperty[] getConfigurationProperties() {
-		return fConfigurationProperties.values().toArray(new IConfigurationProperty[fConfigurationProperties.size()]);
+		return fConfigurationProperties.toArray(new IConfigurationProperty[fConfigurationProperties.size()]);
 	}
 
 	@Override
