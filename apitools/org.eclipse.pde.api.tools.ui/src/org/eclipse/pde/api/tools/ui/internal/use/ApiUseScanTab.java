@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -110,6 +110,9 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			}
 			SWTFactory.showPreferencePage(getTabShell(), "org.eclipse.pde.api.tools.ui.apiprofiles.prefpage", null); //$NON-NLS-1$
 			updateAvailableBaselines();
+			if (ApiUseScanTab.this.baseline.getItemCount() == 1) {
+				name = ApiUseScanTab.this.baseline.getItem(0);
+			}
 			if (name != null) {
 				String[] items = ApiUseScanTab.this.baseline.getItems();
 				for (int i = 0; i < items.length; i++) {
