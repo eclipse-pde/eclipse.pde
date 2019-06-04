@@ -262,7 +262,7 @@
       <view
             category="org.eclipse.pde.api.tools.ui.views.apitooling.view.category"
             class="org.eclipse.pde.api.tools.ui.internal.views.APIToolingView"
-            icon="icons/full/obj16/api_tools.gif"
+            icon="icons/full/obj16/api_tools.png"
             id="org.eclipse.pde.api.tools.ui.views.apitooling.views.apitoolingview"
             name="%Apitoolingview.name">
       </view>

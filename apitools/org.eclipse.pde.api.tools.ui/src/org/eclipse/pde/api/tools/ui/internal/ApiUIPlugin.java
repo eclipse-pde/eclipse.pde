@@ -278,13 +278,13 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	@Override
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		// model objects
-		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_API_COMPONENT, OBJECT + "api_tools.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_API_COMPONENT, OBJECT + "api_tools.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY, OBJECT + "library_obj.png"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_API_SEARCH, OBJECT + "extract_references.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_API_SEARCH, OBJECT + "extract_references.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_BUNDLE, OBJECT + "plugin_obj.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_FRAGMENT, OBJECT + "frgmt_obj.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_ECLIPSE_PROFILE, OBJECT + "eclipse16.png"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_BUNDLE_VERSION, OBJECT + "bundleversion.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_BUNDLE_VERSION, OBJECT + "bundleversion.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_CHANGE_CORRECTION, OBJECT + "correction_change.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_SETUP_APITOOLS, OBJECT + "category_menu.png"); //$NON-NLS-1$
 
@@ -298,11 +298,11 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		// enabled images
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_FILTER, ELCL + "filter_ps.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_REMOVE, ELCL + "remove_exc.png"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_OPEN_PAGE, ELCL + "open_page.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_OPEN_PAGE, ELCL + "open_page.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_HELP_PAGE, ELCL + "help.png"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_COMPARE_APIS, ELCL + "compare_apis.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_COMPARE_APIS, ELCL + "compare_apis.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_CONFIG_SEV, ELCL + "configure_problem_severity.png"); //$NON-NLS-1$
-		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_COMPARE_APIS_DISABLED, DLCL + "compare_apis.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_COMPARE_APIS_DISABLED, DLCL + "compare_apis.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_EXPORT, ELCL + "export.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_NEXT_NAV, ELCL + "next_nav.png"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_PREV_NAV, ELCL + "prev_nav.png"); //$NON-NLS-1$
