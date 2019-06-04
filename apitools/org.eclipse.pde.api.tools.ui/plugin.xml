@@ -33,7 +33,7 @@
          name="%ApiToolsProposalCategory.name"
          point="org.eclipse.jdt.ui.javaCompletionProposalComputer">
       <proposalCategory
-            icon="icons/full/obj16/category_menu.gif">
+            icon="icons/full/obj16/category_menu.png">
       </proposalCategory>
    </extension>
    <extension
@@ -434,7 +434,7 @@
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
             configTypeID="org.eclipse.pde.api.tools.usescan"
-            icon="$nl$/icons/full/obj16/category_menu.gif"
+            icon="$nl$/icons/full/obj16/category_menu.png"
             id="org.eclipse.pde.api.tools.usescan.image">
       </launchConfigurationTypeImage>
    </extension>
@@ -584,15 +584,15 @@
          point="org.eclipse.ui.commandImages">
       <image
             commandId="org.eclipse.pde.api.tools.ui.convert.javadocs"
-            icon="$nl$/icons/full/obj16/annotation_obj.gif">
+            icon="$nl$/icons/full/obj16/annotation_obj.png">
       </image>
       <image
             commandId="org.eclipse.pde.api.tools.ui.remove.filters"
-            icon="$nl$/icons/full/elcl16/filter_ps.gif">
+            icon="$nl$/icons/full/elcl16/filter_ps.png">
       </image>
       <image
             commandId="org.eclipse.pde.api.tools.ui.setup.projects"
-            icon="$nl$/icons/full/obj16/category_menu.gif">
+            icon="$nl$/icons/full/obj16/category_menu.png">
       </image>
       <image
             commandId="org.eclipse.pde.api.tools.ui.compare.to.baseline"
