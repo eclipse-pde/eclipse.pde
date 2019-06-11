@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2019 Julian Honnen.
+  All rights reserved. This program and the accompanying materials
+  are made available under the terms of the Eclipse Distribution License v1.0
+  which accompanies this distribution, and is available at
+  http://www.eclipse.org/org/documents/edl-v10.php
+
+  Contributors:
+     Julian Honnen <julian.honnen@vector.com>  - initial implementation
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>eclipse.pde.ui</artifactId>
+    <groupId>eclipse.pde.ui</groupId>
+    <version>4.13.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>eclipse.pde.ui.apitools</artifactId>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>org.eclipse.pde.api.tools</module>
+    <module>org.eclipse.pde.api.tools.annotations</module>
+    <module>org.eclipse.pde.api.tools.ee.cdcfoundation10</module>
+    <module>org.eclipse.pde.api.tools.ee.cdcfoundation11</module>
+    <module>org.eclipse.pde.api.tools.ee.feature</module>
+    <module>org.eclipse.pde.api.tools.ee.j2se12</module>
+    <module>org.eclipse.pde.api.tools.ee.j2se13</module>
+    <module>org.eclipse.pde.api.tools.ee.j2se14</module>
+    <module>org.eclipse.pde.api.tools.ee.j2se15</module>
+    <module>org.eclipse.pde.api.tools.ee.javase16</module>
+    <module>org.eclipse.pde.api.tools.ee.javase17</module>
+    <module>org.eclipse.pde.api.tools.ee.javase18</module>
+    <module>org.eclipse.pde.api.tools.ee.javase9</module>
+    <module>org.eclipse.pde.api.tools.ee.jre11</module>
+    <module>org.eclipse.pde.api.tools.ee.osgiminimum10</module>
+    <module>org.eclipse.pde.api.tools.ee.osgiminimum11</module>
+    <module>org.eclipse.pde.api.tools.ee.osgiminimum12</module>
+    <module>org.eclipse.pde.api.tools.tests</module>
+    <module>org.eclipse.pde.api.tools.ui</module>
+  </modules>
+</project>

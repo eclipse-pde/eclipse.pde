@@ -54,25 +54,7 @@
   </profiles>
 
   <modules>
-    <module>apitools/org.eclipse.pde.api.tools</module>
-    <module>apitools/org.eclipse.pde.api.tools.annotations</module>
-    <module>apitools/org.eclipse.pde.api.tools.ee.cdcfoundation10</module>
-    <module>apitools/org.eclipse.pde.api.tools.ee.cdcfoundation11</module>
-    <module>apitools/org.eclipse.pde.api.tools.ee.feature</module>
-    <module>apitools/org.eclipse.pde.api.tools.ee.j2se12</module>
-    <module>apitools/org.eclipse.pde.api.tools.ee.j2se13</module>
-    <module>apitools/org.eclipse.pde.api.tools.ee.j2se14</module>
-    <module>apitools/org.eclipse.pde.api.tools.ee.j2se15</module>
-    <module>apitools/org.eclipse.pde.api.tools.ee.javase16</module>
-    <module>apitools/org.eclipse.pde.api.tools.ee.javase17</module>
-    <module>apitools/org.eclipse.pde.api.tools.ee.javase18</module>
-    <module>apitools/org.eclipse.pde.api.tools.ee.javase9</module>
-    <module>apitools/org.eclipse.pde.api.tools.ee.jre11</module>
-    <module>apitools/org.eclipse.pde.api.tools.ee.osgiminimum10</module>
-    <module>apitools/org.eclipse.pde.api.tools.ee.osgiminimum11</module>
-    <module>apitools/org.eclipse.pde.api.tools.ee.osgiminimum12</module>
-    <module>apitools/org.eclipse.pde.api.tools.tests</module>
-    <module>apitools/org.eclipse.pde.api.tools.ui</module>
+    <module>apitools</module>
     <module>ds/org.eclipse.pde.ds.core</module>
     <module>ds/org.eclipse.pde.ds.tests</module>
     <module>ds/org.eclipse.pde.ds.ui</module>
