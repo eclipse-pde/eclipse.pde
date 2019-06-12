@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.launching.environments.EnvironmentsManager;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
@@ -478,9 +479,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 						// if
 						// we fail to find a compatible EE, fall back to highest
 						// known.
-						// TODO this should be updated for each new EE that gets
-						// added
-						systemEE = "JavaSE-1.7"; //$NON-NLS-1$
+						systemEE = "JavaSE-" + JavaCore.latestSupportedJavaVersion(); //$NON-NLS-1$
 					}
 					// only update if different from current or missing VM
 					// binding
