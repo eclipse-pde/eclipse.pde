@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548238
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
@@ -39,6 +40,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
@@ -96,7 +98,15 @@ public class CreateApiFilterOperation extends Job {
 						InputDialog dialog = new InputDialog(
 								PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
 								MarkerMessages.CreateApiFilterOperation_add_filter_comment,
-								MarkerMessages.CreateApiFilterOperation_filter_comment, null, null);
+								MarkerMessages.CreateApiFilterOperation_filter_comment, null, null) {
+
+							@Override
+							protected void createButtonsForButtonBar(Composite parent) {
+								super.createButtonsForButtonBar(parent);
+								getButton(IDialogConstants.OK_ID).setText(IDialogConstants.PROCEED_LABEL);
+							}
+
+						};
 						int okCancel = dialog.open();
 						if (okCancel == IDialogConstants.OK_ID) {
 							comment = dialog.getValue();
