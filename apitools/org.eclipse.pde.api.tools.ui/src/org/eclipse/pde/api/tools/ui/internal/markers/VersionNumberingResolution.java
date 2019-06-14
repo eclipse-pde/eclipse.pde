@@ -46,6 +46,7 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 
 	@Override
 	public String getDescription() {
+		description = description.replace(System.getProperty("line.separator"), "<br>");//$NON-NLS-1$ //$NON-NLS-2$
 		switch (this.kind) {
 			case IApiProblem.MAJOR_VERSION_CHANGE:
 				return NLS.bind(MarkerMessages.VersionNumberingResolution_major0, new String[] { this.description });
