@@ -146,7 +146,7 @@ public class BundleLauncherHelper {
 				}
 			}
 
-			HashMap<IPluginModelBase, String> additionalPlugins = getAdditionalPlugins(configuration, true);
+			Map<IPluginModelBase, AdditionalPluginData> additionalPlugins = getAdditionalPlugins(configuration, true);
 			launchPlugins.addAll(additionalPlugins.keySet());
 
 			// Get any plug-ins required by the application/product set on the config
@@ -600,8 +600,8 @@ public class BundleLauncherHelper {
 	 * @return map of IPluginModelBase to String resolution setting
 	 * @throws CoreException if there is a problem reading the launch config
 	 */
-	public static HashMap<IPluginModelBase, String> getAdditionalPlugins(ILaunchConfiguration config, boolean onlyEnabled) throws CoreException {
-		HashMap<IPluginModelBase, String> resolvedAdditionalPlugins = new HashMap<>();
+	public static Map<IPluginModelBase, AdditionalPluginData> getAdditionalPlugins(ILaunchConfiguration config, boolean onlyEnabled) throws CoreException {
+		HashMap<IPluginModelBase, AdditionalPluginData> resolvedAdditionalPlugins = new HashMap<>();
 		Set<String> userAddedPlugins = config.getAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS, (Set<String>) null);
 		String defaultPluginResolution = config.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
 		if (userAddedPlugins != null) {
@@ -613,18 +613,30 @@ public class BundleLauncherHelper {
 					String version = pluginData[1];
 					String pluginResolution = pluginData[2];
 					ModelEntry pluginModelEntry = PluginRegistry.findEntry(id);
+					
 					if (pluginModelEntry != null) {
 						if (IPDELauncherConstants.LOCATION_DEFAULT.equalsIgnoreCase(pluginResolution)) {
 							pluginResolution = defaultPluginResolution;
 						}
 						IPluginModelBase model = findModel(pluginModelEntry, version, pluginResolution);
 						if (model != null) {
-							resolvedAdditionalPlugins.put(model, pluginData[2]);
+							AdditionalPluginData additionalPluginData = new AdditionalPluginData(pluginData[2], checked);
+							resolvedAdditionalPlugins.put(model, additionalPluginData);
 						}
 					}
 				}
 			}
 		}
 		return resolvedAdditionalPlugins;
+	}
+
+	public static class AdditionalPluginData {
+		public final String fResolution;
+		public final boolean fEnabled;
+
+		public AdditionalPluginData(String resolution, boolean enabled) {
+			fResolution = resolution;
+			fEnabled = enabled;
+		}
 	}
 }

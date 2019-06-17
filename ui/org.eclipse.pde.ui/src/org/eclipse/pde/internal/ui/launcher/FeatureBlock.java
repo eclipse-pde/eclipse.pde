@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.*;
 import java.util.List;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
@@ -29,6 +30,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper.AdditionalPluginData;
 import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
@@ -1186,13 +1188,14 @@ public class FeatureBlock {
 		try {
 			fAdditionalPlugins = new ArrayList<>();
 			List<PluginLaunchModel> checkedAdditionalPlugins = new ArrayList<>();
-			HashMap<?, ?> allAdditionalMap = BundleLauncherHelper.getAdditionalPlugins(config, false);
-			HashMap<?, ?> checkedAdditionalMap = BundleLauncherHelper.getAdditionalPlugins(config, true);
-			for (Object name : allAdditionalMap.keySet()) {
-				IPluginModelBase model = (IPluginModelBase) name;
-				PluginLaunchModel launchModel = new PluginLaunchModel(model, (String) allAdditionalMap.get(model));
+			Map<IPluginModelBase, AdditionalPluginData> additionalMap = BundleLauncherHelper
+					.getAdditionalPlugins(config, false);
+			for (Entry<IPluginModelBase, AdditionalPluginData> additionalEntry : additionalMap.entrySet()) {
+				AdditionalPluginData data = additionalEntry.getValue();
+				PluginLaunchModel launchModel = new PluginLaunchModel(additionalEntry.getKey(), data.fResolution);
 				fAdditionalPlugins.add(launchModel);
-				if (checkedAdditionalMap.containsKey(model)) {
+
+				if (data.fEnabled) {
 					checkedAdditionalPlugins.add(launchModel);
 				}
 			}
