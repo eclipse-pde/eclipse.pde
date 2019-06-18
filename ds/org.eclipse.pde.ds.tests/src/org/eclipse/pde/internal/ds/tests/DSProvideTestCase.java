@@ -47,7 +47,7 @@ public class DSProvideTestCase extends AbstractDSModelTestCase {
 		provide.setInterface(interfaceName);
 
 		String content = fModel.getDSComponent().toString();
-		assertTrue(content.indexOf(interfaceName) != -1);
+		assertTrue(content.contains(interfaceName));
 
 		assertEquals(provide.getName(), interfaceName);
 
@@ -74,7 +74,7 @@ public class DSProvideTestCase extends AbstractDSModelTestCase {
 
 			String content = component.toString();
 
-			assertTrue(content.indexOf("interface=\"java.lang.Runnable\"") != -1);
+			assertTrue(content.contains("interface=\"java.lang.Runnable\""));
 
 			IDSService service0 = component.getService();
 			assertNotNull(service0);

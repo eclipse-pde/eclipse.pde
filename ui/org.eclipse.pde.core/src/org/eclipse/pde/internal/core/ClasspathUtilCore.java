@@ -151,29 +151,29 @@ public class ClasspathUtilCore {
 	}
 
 	public static boolean containsVariables(String name) {
-		return name.indexOf("$os$") != -1 //$NON-NLS-1$
-				|| name.indexOf("$ws$") != -1 //$NON-NLS-1$
-				|| name.indexOf("$nl$") != -1 //$NON-NLS-1$
-				|| name.indexOf("$arch$") != -1; //$NON-NLS-1$
+		return name.contains("$os$") //$NON-NLS-1$
+				|| name.contains("$ws$") //$NON-NLS-1$
+				|| name.contains("$nl$") //$NON-NLS-1$
+				|| name.contains("$arch$"); //$NON-NLS-1$
 	}
 
 	public static String expandLibraryName(String source) {
 		if (source == null || source.length() == 0) {
 			return ""; //$NON-NLS-1$
 		}
-		if (source.indexOf("$ws$") != -1) { //$NON-NLS-1$
+		if (source.contains("$ws$")) { //$NON-NLS-1$
 			source = source.replaceAll("\\$ws\\$", //$NON-NLS-1$
 					"ws" + IPath.SEPARATOR + TargetPlatform.getWS()); //$NON-NLS-1$
 		}
-		if (source.indexOf("$os$") != -1) { //$NON-NLS-1$
+		if (source.contains("$os$")) { //$NON-NLS-1$
 			source = source.replaceAll("\\$os\\$", //$NON-NLS-1$
 					"os" + IPath.SEPARATOR + TargetPlatform.getOS()); //$NON-NLS-1$
 		}
-		if (source.indexOf("$nl$") != -1) { //$NON-NLS-1$
+		if (source.contains("$nl$")) { //$NON-NLS-1$
 			source = source.replaceAll("\\$nl\\$", //$NON-NLS-1$
 					"nl" + IPath.SEPARATOR + TargetPlatform.getNL()); //$NON-NLS-1$
 		}
-		if (source.indexOf("$arch$") != -1) { //$NON-NLS-1$
+		if (source.contains("$arch$")) { //$NON-NLS-1$
 			source = source.replaceAll("\\$arch\\$", //$NON-NLS-1$
 					"arch" + IPath.SEPARATOR + TargetPlatform.getOSArch()); //$NON-NLS-1$
 		}

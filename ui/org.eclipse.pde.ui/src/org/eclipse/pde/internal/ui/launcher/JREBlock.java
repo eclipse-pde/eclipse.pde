@@ -365,7 +365,7 @@ public class JREBlock {
 	}
 
 	public String validate() {
-		if (fEeButton.getSelection() && fEeCombo.getText().indexOf(PDEUIMessages.BasicLauncherTab_unbound) != -1)
+		if (fEeButton.getSelection() && fEeCombo.getText().contains(PDEUIMessages.BasicLauncherTab_unbound))
 			return NLS.bind(PDEUIMessages.BasicLauncherTab_noJreForEeMessage, parseEESelection(fEeCombo.getText()));
 		return null;
 	}

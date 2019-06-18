@@ -271,7 +271,7 @@ public class LaunchArgumentsHelper {
 				File[] files = bundleFile.listFiles(new FilenameFilter() {
 					@Override
 					public boolean accept(File dir, String name) {
-						return name.indexOf(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER) >= 0;
+						return name.contains(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER);
 					}
 				});
 				for (File file : files) {

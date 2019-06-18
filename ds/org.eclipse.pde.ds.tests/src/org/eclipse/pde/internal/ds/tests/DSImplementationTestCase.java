@@ -78,7 +78,7 @@ public class DSImplementationTestCase extends AbstractDSModelTestCase {
 		component.setImplementation(Implementation);
 
 		String content = component.toString();
-		assertTrue(content.indexOf("class=\"" + className + "\"") != -1);
+		assertTrue(content.contains("class=\"" + className + "\""));
 
 		IDSImplementation Implementation0 = component.getImplementation();
 		assertNotNull(Implementation0);

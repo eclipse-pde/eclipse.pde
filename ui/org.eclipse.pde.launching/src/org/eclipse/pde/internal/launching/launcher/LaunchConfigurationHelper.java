@@ -53,7 +53,7 @@ public class LaunchConfigurationHelper {
 	public static void synchronizeManifests(ILaunchConfiguration config, File configDir) {
 		try {
 			String programArgs = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
-			if (programArgs.indexOf("-clean") != -1) //$NON-NLS-1$
+			if (programArgs.contains("-clean")) //$NON-NLS-1$
 				return;
 		} catch (CoreException e) {
 		}
@@ -150,7 +150,7 @@ public class LaunchConfigurationHelper {
 		boolean autostart = configuration.getAttribute(IPDELauncherConstants.DEFAULT_AUTO_START, false);
 
 		// Special processing for launching with p2 (simple configurator)
-		if (osgiBundles != null && osgiBundles.indexOf(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR) != -1 && bundles.containsKey(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR)) {
+		if (osgiBundles != null && osgiBundles.contains(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR) && bundles.containsKey(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR)) {
 
 			// Write out P2 files (bundles.txt)
 			URL bundlesTxt = null;

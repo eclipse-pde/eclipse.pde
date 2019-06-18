@@ -280,7 +280,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		}
 		// For p2 target, add "-Declipse.p2.data.area=@config.dir/p2" unless already specified by user
 		if (fAllBundles.containsKey("org.eclipse.equinox.p2.core")) { //$NON-NLS-1$
-			if (vmArgs.indexOf("-Declipse.p2.data.area=") < 0) { //$NON-NLS-1$
+			if (!vmArgs.contains("-Declipse.p2.data.area=")) { //$NON-NLS-1$
 				vmArgs = concatArg(vmArgs, "-Declipse.p2.data.area=@config.dir" + File.separator + "p2"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}

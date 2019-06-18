@@ -575,7 +575,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 				else {
 					singletonValue = Constants.SINGLETON_DIRECTIVE + "=true"; //$NON-NLS-1$
 				}
-				if (value.indexOf(singletonValue) != -1) {
+				if (value.contains(singletonValue)) {
 					return;
 				}
 				getBundle().setHeader(Constants.BUNDLE_SYMBOLICNAME, value + "; " + singletonValue); //$NON-NLS-1$

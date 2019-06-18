@@ -579,7 +579,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		}
 
 		ArrayList<String> paths = new ArrayList<>();
-		if (location.indexOf("$nl$") != -1) { //$NON-NLS-1$
+		if (location.contains("$nl$")) { //$NON-NLS-1$
 			StringTokenizer tokenizer = new StringTokenizer(TargetPlatform.getNL(), "_"); //$NON-NLS-1$
 			String language = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : null;
 			String country = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : null;

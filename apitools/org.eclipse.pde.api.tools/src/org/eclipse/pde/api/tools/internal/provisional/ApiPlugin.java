@@ -649,7 +649,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 		boolean mustRebuild = false;
 		for (Bundle allFragment : allFragments) {
 			// We only care about
-			if (allFragment.getSymbolicName().indexOf(EE_DESCRIPTION_PREFIX) >= 0) {
+			if (allFragment.getSymbolicName().contains(EE_DESCRIPTION_PREFIX)) {
 				NameVersionDescriptor current = new NameVersionDescriptor(allFragment.getSymbolicName(), allFragment.getVersion().toString());
 				if (knownFragments.contains(current)) {
 					knownFragments.remove(current);
@@ -697,7 +697,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	private String getListOfEEFragments(Bundle[] allFragments) {
 		StringBuilder result = new StringBuilder();
 		for (Bundle allFragment : allFragments) {
-			if (allFragment.getSymbolicName().indexOf(EE_DESCRIPTION_PREFIX) >= 0) {
+			if (allFragment.getSymbolicName().contains(EE_DESCRIPTION_PREFIX)) {
 				result.append(allFragment.getSymbolicName());
 				result.append(';');
 				result.append(allFragment.getVersion().toString());

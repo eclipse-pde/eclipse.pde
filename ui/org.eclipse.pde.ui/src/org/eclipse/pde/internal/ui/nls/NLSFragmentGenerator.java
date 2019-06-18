@@ -94,7 +94,7 @@ public class NLSFragmentGenerator {
 				@Override
 				public boolean matches(Object object) {
 					String path = object.toString();
-					return path.indexOf(BIN) != -1 || path.endsWith(SLASH) || path.endsWith(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
+					return path.contains(BIN) || path.endsWith(SLASH) || path.endsWith(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 				}
 			});
 
@@ -114,7 +114,7 @@ public class NLSFragmentGenerator {
 				@Override
 				public boolean matches(Object object) {
 					String path = object.toString();
-					return path.indexOf(BIN) != -1 || path.endsWith(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
+					return path.contains(BIN) || path.endsWith(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
 				}
 			});
 

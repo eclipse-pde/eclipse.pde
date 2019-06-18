@@ -1002,7 +1002,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		String[] tokens = includes.getTokens();
 		for (String tokenBasic : tokens) {
 			String token = tokenBasic.trim();
-			if (token.indexOf("*") != -1) { //$NON-NLS-1$
+			if (token.contains("*")) { //$NON-NLS-1$
 				// skip entries with wildcards
 				continue;
 			}

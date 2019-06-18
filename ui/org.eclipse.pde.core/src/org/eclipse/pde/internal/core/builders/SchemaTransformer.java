@@ -352,10 +352,10 @@ public class SchemaTransformer {
 	}
 
 	private boolean containsParagraph(String input) {
-		if (input.indexOf("<p>") != -1) { //$NON-NLS-1$
+		if (input.contains("<p>")) { //$NON-NLS-1$
 			return true;
 		}
-		if (input.indexOf("</p>") != -1) { //$NON-NLS-1$
+		if (input.contains("</p>")) { //$NON-NLS-1$
 			return true;
 		}
 		return false;

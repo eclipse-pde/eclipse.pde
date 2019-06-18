@@ -523,7 +523,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			String value = iter.next().toString();
 			buffer.append(value);
 
-			if (value.indexOf(";version=") == -1 && (version != null) && (values.size() == 1)) { //$NON-NLS-1$
+			if (!value.contains(";version=") && (version != null) && (values.size() == 1)) { //$NON-NLS-1$
 				buffer.append(";version=\"").append(version).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}

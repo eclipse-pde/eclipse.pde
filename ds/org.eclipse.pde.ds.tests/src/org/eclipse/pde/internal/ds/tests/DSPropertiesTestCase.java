@@ -124,7 +124,7 @@ public class DSPropertiesTestCase extends AbstractDSModelTestCase {
 
 		String content = component.toString();
 
-		assertTrue(content.indexOf("entry=\""+entry+"\"") != -1);
+		assertTrue(content.contains("entry=\""+entry+"\""));
 
 		IDSProperties[] PropertiesElements = component.getPropertiesElements();
 		IDSProperties Properties0 = PropertiesElements[0];

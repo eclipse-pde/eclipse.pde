@@ -240,7 +240,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 					// allKeys must NOT have any duplicates
 					for (int j = 0; j < allKeys.size(); j++) {
 						String akey = '%' + allKeys.get(j) + '%';
-						if (entry.indexOf(akey) != -1)
+						if (entry.contains(akey))
 							allKeys.remove(allKeys.get(j--));
 						if (allKeys.isEmpty())
 							return;

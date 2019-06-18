@@ -274,7 +274,7 @@ public class ManifestUtils {
 	}
 
 	private static String splitOnComma(String value) {
-		if (value.length() < MANIFEST_MAXLINE || value.indexOf(MANIFEST_LINE_SEPARATOR) >= 0) {
+		if (value.length() < MANIFEST_MAXLINE || value.contains(MANIFEST_LINE_SEPARATOR)) {
 			return value; // assume the line is already split
 		}
 		String[] values = ManifestElement.getArrayFromList(value);

@@ -86,7 +86,7 @@ public class JarManifestErrorReporter extends ErrorReporter {
 			try {
 				IRegion lineRegion = fTextDocument.getLineInformation(l);
 				String lineStr = fTextDocument.get(lineRegion.getOffset(), lineRegion.getLength());
-				if (lineStr.indexOf(valueSubstring) >= 0) {
+				if (lineStr.contains(valueSubstring)) {
 					return l + 1;
 				}
 			} catch (BadLocationException ble) {
@@ -100,7 +100,7 @@ public class JarManifestErrorReporter extends ErrorReporter {
 			for (int l = header.getLineNumber() + 1; l < header.getLineNumber() + header.getLinesSpan(); l++) {
 				lineRegion = fTextDocument.getLineInformation(l);
 				lineStr += fTextDocument.get(lineRegion.getOffset() + 1/* the space */, lineRegion.getLength());
-				if (lineStr.indexOf(valueSubstring) >= 0) {
+				if (lineStr.contains(valueSubstring)) {
 					return l;
 				}
 			}
