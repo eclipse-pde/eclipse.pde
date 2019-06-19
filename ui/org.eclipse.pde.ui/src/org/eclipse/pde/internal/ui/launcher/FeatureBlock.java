@@ -649,6 +649,11 @@ public class FeatureBlock {
 			return fPluginModelBase.getPluginBase().getVersion();
 		}
 
+		public String buildEntry(boolean isChecked) {
+			IPluginBase base = fPluginModelBase.getPluginBase();
+			return String.join(":", base.getId(), base.getVersion(), fPluginResolution, String.valueOf(isChecked)); //$NON-NLS-1$
+		}
+
 	}
 
 	class FeatureLaunchModel {
@@ -1098,8 +1103,7 @@ public class FeatureBlock {
 				featuresEntry.add(buffer.toString());
 			} else if (model instanceof PluginLaunchModel) {
 				PluginLaunchModel pluginLaunchModel = (PluginLaunchModel) model;
-				String entry = BundleLauncherHelper.writeAdditionalPluginsEntry(pluginLaunchModel.getPluginModelBase(), pluginLaunchModel.getPluginResolution(), true);
-				pluginsEntry.add(entry);
+				pluginsEntry.add(pluginLaunchModel.buildEntry(true));
 				checkPluginLaunchModels.add(pluginLaunchModel);
 			}
 		}
@@ -1107,8 +1111,7 @@ public class FeatureBlock {
 		for (PluginLaunchModel uncheckedPluginLaunchModel : fAdditionalPlugins) {
 			if (checkPluginLaunchModels.contains(uncheckedPluginLaunchModel))
 				continue;
-			String entry = BundleLauncherHelper.writeAdditionalPluginsEntry(uncheckedPluginLaunchModel.getPluginModelBase(), uncheckedPluginLaunchModel.getPluginResolution(), false);
-			pluginsEntry.add(entry);
+			pluginsEntry.add(uncheckedPluginLaunchModel.buildEntry(false));
 		}
 		config.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, featuresEntry);
 		config.setAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS, pluginsEntry);
