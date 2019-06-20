@@ -14,7 +14,7 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import org.eclipse.pde.launching.IPDELauncherConstants;
-
+import java.util.Collections;
 import java.util.TreeSet;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -48,9 +48,7 @@ public class JUnitProgramBlock extends ProgramBlock {
 		TreeSet<String> result = new TreeSet<>();
 		result.add(PDEUIMessages.JUnitProgramBlock_headless);
 		String[] appNames = super.getApplicationNames();
-		for (String appName : appNames) {
-			result.add(appName);
-		}
+		Collections.addAll(result, appNames);
 		return result.toArray(new String[result.size()]);
 	}
 

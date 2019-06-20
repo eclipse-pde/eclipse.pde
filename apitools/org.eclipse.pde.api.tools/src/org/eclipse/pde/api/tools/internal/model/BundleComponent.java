@@ -25,6 +25,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -428,9 +429,7 @@ public class BundleComponent extends Component {
 			comp = (IApiComponent) container.getAncestor(IApiElement.COMPONENT);
 			if (comp != null && comp.getSymbolicName().equals(getSymbolicName())) {
 				String[] packageNames = container.getPackageNames();
-				for (String packageName : packageNames) {
-					names.add(packageName);
-				}
+				Collections.addAll(names, packageNames);
 			}
 		}
 		return names;

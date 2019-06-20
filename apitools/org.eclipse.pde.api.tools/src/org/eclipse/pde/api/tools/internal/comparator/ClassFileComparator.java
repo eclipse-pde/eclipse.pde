@@ -14,6 +14,7 @@
 package org.eclipse.pde.api.tools.internal.comparator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -1768,17 +1769,13 @@ public class ClassFileComparator {
 		List<String> list1 = null;
 		if (names1 != null) {
 			list1 = new ArrayList<>(names1.length);
-			for (int i = 0; i < names1.length; i++) {
-				list1.add(names1[i]);
-			}
+			Collections.addAll(list1, names1);
 		}
 		String[] names2 = method2.getExceptionNames();
 		List<String> list2 = null;
 		if (names2 != null) {
 			list2 = new ArrayList<>(names2.length);
-			for (int i = 0; i < names2.length; i++) {
-				list2.add(names2[i]);
-			}
+			Collections.addAll(list2, names2);
 		}
 		if (names1 != null) {
 			if (names2 == null) {

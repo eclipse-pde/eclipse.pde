@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.ui.editor.targetdefinition;
 import org.eclipse.pde.core.target.ITargetDefinition;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import java.util.TreeSet;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -204,8 +205,7 @@ public class EnvironmentSection extends SectionPart {
 		ITargetDefinition target = getTarget();
 		fOSChoices = new TreeSet<>();
 		String[] os = Platform.knownOSValues();
-		for (String osValue : os)
-			fOSChoices.add(osValue);
+		Collections.addAll(fOSChoices, os);
 		fOSChoices.add(""); //$NON-NLS-1$
 		String fileValue = target.getOS();
 		if (fileValue != null)
@@ -213,8 +213,7 @@ public class EnvironmentSection extends SectionPart {
 
 		fWSChoices = new TreeSet<>();
 		String[] ws = Platform.knownWSValues();
-		for (String wsValue : ws)
-			fWSChoices.add(wsValue);
+		Collections.addAll(fWSChoices, ws);
 		fWSChoices.add(""); //$NON-NLS-1$
 		fileValue = target.getWS();
 		if (fileValue != null)
@@ -222,8 +221,7 @@ public class EnvironmentSection extends SectionPart {
 
 		fArchChoices = new TreeSet<>();
 		String[] arch = Platform.knownOSArchValues();
-		for (String archValue : arch)
-			fArchChoices.add(archValue);
+		Collections.addAll(fArchChoices, arch);
 		fArchChoices.add(""); //$NON-NLS-1$
 		fileValue = target.getArch();
 		if (fileValue != null)
@@ -235,8 +233,7 @@ public class EnvironmentSection extends SectionPart {
 
 	private void initializeAllLocales() {
 		String[] nl = LocaleUtil.getLocales();
-		for (String localeValue : nl)
-			fNLChoices.add(localeValue);
+		Collections.addAll(fNLChoices, nl);
 		String fileValue = getTarget().getNL();
 		if (fileValue != null)
 			fNLChoices.add(LocaleUtil.expandLocaleName(fileValue));

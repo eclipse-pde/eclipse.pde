@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.refactoring;
 
+import java.util.Collections;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IProject;
@@ -114,9 +115,7 @@ public class RefactoringUtils {
 					continue;
 				}
 				fs = store.getFilters(resource);
-				for (IApiProblemFilter element : fs) {
-					filters.add(element);
-				}
+				Collections.addAll(filters, fs);
 			} catch (JavaModelException jme) {
 				// do nothing
 			}

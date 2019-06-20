@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import java.util.Collections;
 import java.util.Vector;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -219,9 +220,7 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 				names = fCurrentLibrary.getContentFilters();
 				Vector<String> existing = new Vector<>();
 				if (names != null) {
-					for (String name : names) {
-						existing.add(name);
-					}
+					Collections.addAll(existing, names);
 				}
 				ILabelProvider labelProvider = new JavaElementLabelProvider();
 				PackageSelectionDialog dialog = new PackageSelectionDialog(fPackageExportViewer.getTable().getShell(), labelProvider, JavaCore.create(project), existing, true);

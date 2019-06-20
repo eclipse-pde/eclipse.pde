@@ -231,9 +231,7 @@ public class APIDeprecationReportConversionTask extends Task {
 	private void dumpEntries(Map<String, List<Entry>> entries, StringBuilder buffer) {
 		dumpHeader(buffer);
 		List<Map.Entry<String, List<Entry>>> allEntries = new ArrayList<>();
-		for (Map.Entry<String, List<Entry>> entry : entries.entrySet()) {
-			allEntries.add(entry);
-		}
+		allEntries.addAll(entries.entrySet());
 		Collections.sort(allEntries, (o1, o2) -> {
 			return o1.getKey().compareTo(o2.getKey());
 		});

@@ -377,9 +377,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 			ExportPackageDescription[] visiblePkgs = helper.getVisiblePackages(desc);
 
 			HashSet<ExportPackageDescription> set = new HashSet<>();
-			for (ExportPackageDescription visiblePackage : visiblePkgs) {
-				set.add(visiblePackage);
-			}
+			Collections.addAll(set, visiblePkgs);
 			return set;
 		}
 		return Collections.emptySet();

@@ -62,9 +62,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
 
 		String[] args = super.getProgramArguments(configuration);
-		for (String arg : args) {
-			programArgs.add(arg);
-		}
+		Collections.addAll(programArgs, args);
 		return programArgs.toArray(new String[programArgs.size()]);
 	}
 

@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.project;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -247,9 +248,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 					String libName = element.getValue();
 					IBundleClasspathEntry[] entries = getClasspathEntries(project, build, libName);
 					if (entries != null) {
-						for (IBundleClasspathEntry entry : entries) {
-							collect.add(entry);
-						}
+						Collections.addAll(collect, entries);
 					}
 				}
 				classpath = collect.toArray(new IBundleClasspathEntry[collect.size()]);
@@ -340,9 +339,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 					String[] tokens = entry.getTokens();
 					if (tokens != null && tokens.length > 0) {
 						List<String> strings = new ArrayList<>();
-						for (String token : tokens) {
-							strings.add(token);
-						}
+						Collections.addAll(strings, tokens);
 						// remove the default entries
 						strings.remove("META-INF/"); //$NON-NLS-1$
 						String[] names = ProjectModifyOperation.getLibraryNames(this);

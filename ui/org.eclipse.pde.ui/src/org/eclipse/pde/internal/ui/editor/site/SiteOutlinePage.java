@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.editor.site;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -41,9 +42,7 @@ public class SiteOutlinePage extends FormOutlinePage {
 				if (page.getId().equals(FeaturesPage.PAGE_ID)) {
 					ArrayList<IWritable> result = new ArrayList<>();
 					ISiteCategoryDefinition[] catDefs = site.getCategoryDefinitions();
-					for (ISiteCategoryDefinition catDef : catDefs) {
-						result.add(catDef);
-					}
+					Collections.addAll(result, catDefs);
 					ISiteFeature[] features = site.getFeatures();
 					for (ISiteFeature feature : features) {
 						if (feature.getCategories().length == 0)

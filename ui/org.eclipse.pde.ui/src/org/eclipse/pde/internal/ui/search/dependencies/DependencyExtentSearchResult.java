@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dependencies;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.jdt.core.*;
@@ -66,9 +67,7 @@ public class DependencyExtentSearchResult extends SearchResult {
 	private void collectMatches(Set<Match> matches, IJavaElement element) {
 		Match[] m = getMatches(element);
 		if (m.length != 0) {
-			for (Match elementMatch : m) {
-				matches.add(elementMatch);
-			}
+			Collections.addAll(matches, m);
 		}
 		if (element instanceof IParent) {
 			IParent parent = (IParent) element;

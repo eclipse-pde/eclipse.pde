@@ -349,15 +349,11 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		TreeSet<String> set = new TreeSet<>();
 		if (fGenerator != null) {
 			String[] packages = fGenerator.getImportPackages();
-			for (String pkg : packages) {
-				set.add(pkg);
-			}
+			Collections.addAll(set, packages);
 		}
 		if (fContentWizard instanceof IBundleContentWizard) {
 			String[] packages = ((IBundleContentWizard) fContentWizard).getImportPackages();
-			for (String pkg : packages) {
-				set.add(pkg);
-			}
+			Collections.addAll(set, packages);
 		}
 		return set;
 	}
@@ -407,9 +403,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		ArrayList<IPluginReference> result = new ArrayList<>();
 		if (fGenerator != null) {
 			IPluginReference[] refs = fGenerator.getDependencies();
-			for (IPluginReference ref : refs) {
-				result.add(ref);
-			}
+			Collections.addAll(result, refs);
 		}
 
 		if (fContentWizard != null) {

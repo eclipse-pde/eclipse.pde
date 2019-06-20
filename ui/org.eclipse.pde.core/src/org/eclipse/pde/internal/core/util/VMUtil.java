@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.core.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -34,9 +35,7 @@ public class VMUtil {
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
 		for (IVMInstallType type : types) {
 			IVMInstall[] installs = type.getVMInstalls();
-			for (IVMInstall install : installs) {
-				res.add(install);
-			}
+			Collections.addAll(res, installs);
 		}
 		return res.toArray(new IVMInstall[res.size()]);
 	}

@@ -220,8 +220,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 				ArrayList<String> usedkeys = new ArrayList<>();
 				findTranslatedStrings(project, modelBase, bundle, usedkeys);
 
-				for (int i = 0; i < usedkeys.size(); i++)
-					allKeys.remove(usedkeys.get(i));
+				allKeys.removeAll(usedkeys);
 
 				if (allKeys.isEmpty())
 					return;

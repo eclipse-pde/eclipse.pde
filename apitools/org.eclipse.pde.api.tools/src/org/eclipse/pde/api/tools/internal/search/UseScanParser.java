@@ -483,9 +483,7 @@ public class UseScanParser {
 	 */
 	File[] sort(File[] files) {
 		List<File> sorted = new ArrayList<>(files.length + 2);
-		for (File file : files) {
-			sorted.add(file);
-		}
+		Collections.addAll(sorted, files);
 
 		Collections.sort(sorted, Util.filesorter);
 		return sorted.toArray(new File[sorted.size()]);

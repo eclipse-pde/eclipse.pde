@@ -14,6 +14,7 @@
 package org.eclipse.pde.api.tools.internal.provisional;
 
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import org.eclipse.core.runtime.CoreException;
@@ -161,9 +162,7 @@ public class Factory {
 	 */
 	public static IApiTypeContainer newScope(IApiComponent[] components) throws CoreException {
 		LinkedList<IApiTypeContainer> compList = new LinkedList<>();
-		for (IApiComponent component : components) {
-			compList.add(component);
-		}
+		Collections.addAll(compList, components);
 		CompositeApiTypeContainer scope = new CompositeApiTypeContainer(components[0].getBaseline(), compList);
 		return scope;
 	}

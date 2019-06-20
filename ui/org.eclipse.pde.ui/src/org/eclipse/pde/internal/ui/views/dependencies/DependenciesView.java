@@ -572,9 +572,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 */
 	public void setHistoryEntries(String[] elems) {
 		fInputHistory.clear();
-		for (String elem : elems) {
-			fInputHistory.add(elem);
-		}
+		Collections.addAll(fInputHistory, elems);
 		updateHistoryEntries();
 	}
 

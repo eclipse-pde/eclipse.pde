@@ -42,6 +42,7 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -2395,9 +2396,7 @@ public final class Util {
 	public static Set<String> convertAsSet(String[] values) {
 		Set<String> set = new HashSet<>();
 		if (values != null && values.length != 0) {
-			for (String value : values) {
-				set.add(value);
-			}
+			Collections.addAll(set, values);
 		}
 		return set;
 	}

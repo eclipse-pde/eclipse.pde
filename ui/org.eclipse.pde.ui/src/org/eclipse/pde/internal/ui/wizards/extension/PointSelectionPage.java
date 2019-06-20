@@ -158,13 +158,11 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 				String id = plugin.getPluginBase().getId();
 				if (id.equals(fModel.getPluginBase().getId()))
 					continue;
-				for (IPluginExtensionPoint point : points)
-					extPoints.add(point);
+				Collections.addAll(extPoints, points);
 			}
 
 			IPluginExtensionPoint[] points = fModel.getPluginBase().getExtensionPoints();
-			for (IPluginExtensionPoint point : points)
-				extPoints.add(point);
+			Collections.addAll(extPoints, points);
 
 			return extPoints.toArray();
 		}

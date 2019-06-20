@@ -26,9 +26,7 @@ public class ActionMenu extends Action implements IMenuCreator {
 
 	public ActionMenu(LauncherAction[] actions) {
 		fActions = new LinkedList<>();
-		for (LauncherAction action : actions) {
-			fActions.add(action);
-		}
+		Collections.addAll(fActions, actions);
 		if (!fActions.isEmpty()) {
 			setToolTipText(fActions.get(0).getToolTipText());
 			setImageDescriptor(fActions.get(0).getImageDescriptor());

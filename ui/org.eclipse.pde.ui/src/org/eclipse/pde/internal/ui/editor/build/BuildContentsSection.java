@@ -246,10 +246,8 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 			if (excludes != null)
 				exclTokens = excludes.getTokens();
 			Set<String> temp = new TreeSet<>();
-			for (String inclToken : inclTokens)
-				temp.add(inclToken);
-			for (String exclToken : exclTokens)
-				temp.add(exclToken);
+			Collections.addAll(temp, inclTokens);
+			Collections.addAll(temp, exclTokens);
 			Iterator<String> iter = temp.iterator();
 			while (iter.hasNext()) {
 				String resource = iter.next().toString();

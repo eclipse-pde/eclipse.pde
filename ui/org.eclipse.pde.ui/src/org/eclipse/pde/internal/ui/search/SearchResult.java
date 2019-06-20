@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.ui.search;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -96,9 +97,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 			if (o instanceof IFeaturePlugin) {
 				IFeaturePlugin object = (IFeaturePlugin) o;
 				if (isMatchContained(editor, object)) {
-					for (Match match : getMatches(object)) {
-						list.add(match);
-					}
+					Collections.addAll(list, getMatches(object));
 				}
 			}
 		}

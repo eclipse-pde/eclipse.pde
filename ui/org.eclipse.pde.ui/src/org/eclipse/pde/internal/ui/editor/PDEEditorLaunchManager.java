@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -90,9 +91,7 @@ public class PDEEditorLaunchManager {
 		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettingsSection(SETTINGS_SECTION);
 		String[] result = settings.getArray(SETTINGS_RECENT_LAUNCHES);
 		if (result != null) {
-			for (String resultString : result) {
-				recentLaunches.add(resultString);
-			}
+			Collections.addAll(recentLaunches, result);
 		}
 	}
 

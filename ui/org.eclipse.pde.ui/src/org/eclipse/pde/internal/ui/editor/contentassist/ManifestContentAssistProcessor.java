@@ -742,8 +742,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	// if you use java.util.Arrays.asList(), we get an UnsupportedOperation later in the code
 	protected final ArrayList<Object> initializeNewList(Object[] values) {
 		ArrayList<Object> list = new ArrayList<>(values.length);
-		for (Object value : values)
-			list.add(value);
+		Collections.addAll(list, values);
 		return list;
 	}
 

@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.plugin;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Vector;
 import org.eclipse.core.runtime.CoreException;
@@ -183,9 +184,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 			return null;
 		}
 		ArrayList<String> list = new ArrayList<>();
-		for (String element : array) {
-			list.add(element);
-		}
+		Collections.addAll(list, array);
 		return list;
 	}
 

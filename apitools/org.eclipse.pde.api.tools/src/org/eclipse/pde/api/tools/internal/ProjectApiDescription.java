@@ -14,6 +14,7 @@
 package org.eclipse.pde.api.tools.internal;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -649,9 +650,7 @@ public class ProjectApiDescription extends ApiDescription {
 				IResource resource = root.getCorrespondingResource();
 				if (resource != null && resource.getProject().equals(getJavaProject().getProject())) {
 					IJavaElement[] children = root.getChildren();
-					for (IJavaElement element : children) {
-						local.add(element);
-					}
+					Collections.addAll(local, children);
 				}
 			}
 		} catch (JavaModelException e) {

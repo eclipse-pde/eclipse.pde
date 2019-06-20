@@ -102,9 +102,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 			programArgs.add("-pdelaunch"); //$NON-NLS-1$
 
 		String[] args = super.getProgramArguments(configuration);
-		for (String arg : args) {
-			programArgs.add(arg);
-		}
+		Collections.addAll(programArgs, args);
 
 		if (!programArgs.contains("-nosplash") && showSplash) { //$NON-NLS-1$
 			if (TargetPlatformHelper.getTargetVersion() >= 3.1) {

@@ -328,9 +328,7 @@ public class Schema extends PlatformObject implements ISchema {
 				continue;
 			}
 			ISchemaElement[] ielements = schema.getElements();
-			for (ISchemaElement element : ielements) {
-				result.add(element);
-			}
+			Collections.addAll(result, ielements);
 		}
 		return (ISchemaElement[]) result.toArray(new ISchemaElement[result.size()]);
 	}

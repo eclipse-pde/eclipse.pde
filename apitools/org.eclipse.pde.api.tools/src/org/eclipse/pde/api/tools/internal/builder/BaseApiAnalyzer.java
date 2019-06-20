@@ -23,6 +23,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -648,9 +649,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					if (resource != null) {
 						filters = store.getUnusedFilters(resource, type, null);
 						if (autoremove) {
-							for (IApiProblemFilter filter : filters) {
-								toremove.add(filter);
-							}
+							Collections.addAll(toremove, filters);
 							continue;
 						}
 						createUnusedApiFilterProblems(filters);
@@ -662,9 +661,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			} else {
 				filters = store.getUnusedFilters(null, null, null);
 				if (autoremove) {
-					for (IApiProblemFilter filter : filters) {
-						toremove.add(filter);
-					}
+					Collections.addAll(toremove, filters);
 					removeUnusedProblemFilters(store, toremove, monitor);
 				} else {
 					// full build, clean up all old markers

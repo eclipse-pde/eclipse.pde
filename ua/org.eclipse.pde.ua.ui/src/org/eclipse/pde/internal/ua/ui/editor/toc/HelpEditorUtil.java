@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 
@@ -42,9 +43,7 @@ public class HelpEditorUtil {
 	private static HashSet<String> pageExtensionSet = new HashSet<>(pageExtensions.length);
 
 	private static void populateHashSet() {
-		for (String pageExtension : pageExtensions) {
-			pageExtensionSet.add(pageExtension);
-		}
+		Collections.addAll(pageExtensionSet, pageExtensions);
 	}
 
 	public static boolean hasValidPageExtension(IPath path) {

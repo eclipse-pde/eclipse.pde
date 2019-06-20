@@ -389,9 +389,7 @@ public class PropertiesSection extends TableSection {
 	private Set<IConfigurationProperty> getExistingProperties() {
 		Set<IConfigurationProperty> result = new HashSet<>();
 		IConfigurationProperty[] properties = getProduct().getConfigurationProperties();
-		for (IConfigurationProperty property : properties) {
-			result.add(property);
-		}
+		Collections.addAll(result, properties);
 		return result;
 	}
 

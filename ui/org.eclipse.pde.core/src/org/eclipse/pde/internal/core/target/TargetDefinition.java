@@ -545,9 +545,7 @@ public class TargetDefinition implements ITargetDefinition {
 				for (ITargetLocation container : containers) {
 					TargetBundle[] bundles = container.getBundles();
 					if (bundles != null) {
-						for (TargetBundle rb : bundles) {
-							all.add(rb);
-						}
+						Collections.addAll(all, bundles);
 					}
 				}
 
@@ -614,9 +612,7 @@ public class TargetDefinition implements ITargetDefinition {
 				// Add the required plugins from the feature to the list of includes
 				if (bestMatch != null) {
 					NameVersionDescriptor[] plugins = bestMatch.getPlugins();
-					for (NameVersionDescriptor plugin : plugins) {
-						included.add(plugin);
-					}
+					Collections.addAll(included, plugins);
 				} else {
 					missingFeatures.add(element);
 				}

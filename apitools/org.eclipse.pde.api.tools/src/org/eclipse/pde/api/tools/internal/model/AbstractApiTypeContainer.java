@@ -15,6 +15,7 @@ package org.eclipse.pde.api.tools.internal.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -156,9 +157,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 		IApiTypeContainer[] containers = getApiTypeContainers();
 		for (IApiTypeContainer container : containers) {
 			String[] packageNames = container.getPackageNames();
-			for (String packageName : packageNames) {
-				names.add(packageName);
-			}
+			Collections.addAll(names, packageNames);
 		}
 		String[] result = new String[names.size()];
 		names.toArray(result);
@@ -227,9 +226,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 		} else {
 			fApiTypeContainers = new ArrayList<>(containers.length);
 		}
-		for (IApiTypeContainer container : containers) {
-			fApiTypeContainers.add(container);
-		}
+		Collections.addAll(fApiTypeContainers, containers);
 	}
 
 	@Override

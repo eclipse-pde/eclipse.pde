@@ -75,9 +75,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			// model = (ISite) inputElement;
 			ArrayList<IWritable> result = new ArrayList<>();
 			ISiteCategoryDefinition[] catDefs = fModel.getSite().getCategoryDefinitions();
-			for (ISiteCategoryDefinition catDef : catDefs) {
-				result.add(catDef);
-			}
+			Collections.addAll(result, catDefs);
 			ISiteFeature[] features = fModel.getSite().getFeatures();
 			for (ISiteFeature feature : features) {
 				if (feature.getCategories().length == 0)

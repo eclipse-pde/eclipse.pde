@@ -264,9 +264,7 @@ public class ExtensionsFilterUtil {
 		List<String> propertyTestAttributes = new ArrayList<>();
 		if (isElementNameMatch(pluginElement, ELEMENT_PROPERTYTESTER)) {
 			Set<String> attributes = handlePropertyTester(new HashSet<String>(), pluginElement);
-			for (String attribute : attributes) {
-				propertyTestAttributes.add(attribute);
-			}
+			propertyTestAttributes.addAll(attributes);
 		}
 		return propertyTestAttributes;
 	}

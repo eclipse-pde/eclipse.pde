@@ -232,9 +232,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 						SpellingAnnotation annotation = (SpellingAnnotation) key;
 						if (amodel.getPosition(annotation).overlapsWith(offset, 1)) {
 							ICompletionProposal[] proposals = annotation.getSpellingProblem().getProposals();
-							for (ICompletionProposal proposal : proposals) {
-								proposalSet.add(proposal);
-							}
+							Collections.addAll(proposalSet, proposals);
 						}
 					}
 					continue;

@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import java.util.Collections;
 import java.util.Vector;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -143,9 +144,7 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 				java.util.List<ISchemaEnumeration> vres = new Vector<>();
 				if (res != null) {
 					ISchemaEnumeration[] currRes = res.getChildren();
-					for (ISchemaEnumeration currRe : currRes) {
-						vres.add(currRe);
-					}
+					Collections.addAll(vres, currRes);
 				}
 				vres.add(new SchemaEnumeration(getAttribute().getSchema(), text));
 				if (res == null)

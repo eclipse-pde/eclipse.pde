@@ -557,9 +557,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 			return secondaryDepSet;
 		}
 		// Add all token values to the dependencies set
-		for (String token : tokens) {
-			secondaryDepSet.add(token);
-		}
+		Collections.addAll(secondaryDepSet, tokens);
 		return secondaryDepSet;
 	}
 

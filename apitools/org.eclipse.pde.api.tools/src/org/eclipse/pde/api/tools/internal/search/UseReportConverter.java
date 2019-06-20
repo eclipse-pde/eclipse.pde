@@ -1033,9 +1033,7 @@ public class UseReportConverter extends HTMLConvertor {
 			if (file.exists()) {
 				String[] missingBundles = getMissingBundles(file);
 				hasMissing = missingBundles.length > 0;
-				for (String missingBundle : missingBundles) {
-					sorted.add(missingBundle);
-				}
+				Collections.addAll(sorted, missingBundles);
 			}
 			StringBuilder buffer = new StringBuilder();
 			buffer.append(HTML_HEADER);

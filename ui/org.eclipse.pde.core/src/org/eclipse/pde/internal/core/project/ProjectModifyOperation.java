@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.project;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -301,9 +302,7 @@ public class ProjectModifyOperation {
 				}
 				if (!add.isEmpty()) {
 					List<IClasspathEntry> all = new ArrayList<>();
-					for (IClasspathEntry cpe : rawClasspath) {
-						all.add(cpe);
-					}
+					Collections.addAll(all, rawClasspath);
 					all.addAll(add);
 					javaProject.setRawClasspath(all.toArray(new IClasspathEntry[all.size()]), null);
 				}
@@ -448,14 +447,10 @@ public class ProjectModifyOperation {
 		IProjectDescription projectDescription = project.getDescription();
 		String[] curr = projectDescription.getNatureIds();
 		Set<String> before = new HashSet<>();
-		for (String element : curr) {
-			before.add(element);
-		}
+		Collections.addAll(before, curr);
 		String[] natureIds = description.getNatureIds();
 		Set<String> after = new HashSet<>();
-		for (String natureId : natureIds) {
-			after.add(natureId);
-		}
+		Collections.addAll(after, natureIds);
 		if (!before.equals(after)) {
 			projectDescription.setNatureIds(natureIds);
 			project.setDescription(projectDescription, null);

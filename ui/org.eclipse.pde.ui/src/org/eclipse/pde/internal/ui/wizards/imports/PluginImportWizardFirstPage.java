@@ -807,9 +807,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	public void configureBundleImportPages(IPluginModelBase[] models) {
 		// make a set of the models to import for quick lookup
 		Set<IPluginModelBase> modelsSet = new HashSet<>();
-		for (IPluginModelBase model : models) {
-			modelsSet.add(model);
-		}
+		Collections.addAll(modelsSet, models);
 		Map<IBundleImporter, List<ScmUrlImportDescription>> importerToImportees = new HashMap<>();
 		Iterator<Entry<IBundleImporter, ScmUrlImportDescription[]>> iterator = importerToInstructions.entrySet().iterator();
 		while (iterator.hasNext()) {

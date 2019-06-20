@@ -236,8 +236,7 @@ public class PackageFinder {
 						if (child instanceof IPackageFragment) {
 							IPackageFragment frag = (IPackageFragment) child;
 							IClassFile[] files = frag.getClassFiles();
-							for (IClassFile file : files)
-								classFiles.add(file);
+							Collections.addAll(classFiles, files);
 						}
 					}
 				} catch (JavaModelException e) {

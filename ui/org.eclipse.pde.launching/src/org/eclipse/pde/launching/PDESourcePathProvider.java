@@ -14,6 +14,7 @@
 package org.eclipse.pde.launching;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -88,9 +89,7 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 				}
 			} else {
 				IRuntimeClasspathEntry[] resolved = JavaRuntime.resolveRuntimeClasspathEntry(entrie, configuration);
-				for (IRuntimeClasspathEntry element : resolved) {
-					all.add(element);
-				}
+				Collections.addAll(all, resolved);
 			}
 		}
 		return all.toArray(new IRuntimeClasspathEntry[all.size()]);

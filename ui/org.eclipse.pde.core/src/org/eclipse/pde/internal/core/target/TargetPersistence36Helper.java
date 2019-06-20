@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.target;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -105,9 +106,7 @@ public class TargetPersistence36Helper {
 						definition.setIncluded(included.toArray(new NameVersionDescriptor[included.size()]));
 					} else {
 						List<NameVersionDescriptor> allIncluded = new ArrayList<>();
-						for (NameVersionDescriptor nameVersionDescriptor : previousIncluded) {
-							allIncluded.add(nameVersionDescriptor);
-						}
+						Collections.addAll(allIncluded, previousIncluded);
 						allIncluded.addAll(included);
 						definition.setIncluded(allIncluded.toArray(new NameVersionDescriptor[included.size()]));
 					}

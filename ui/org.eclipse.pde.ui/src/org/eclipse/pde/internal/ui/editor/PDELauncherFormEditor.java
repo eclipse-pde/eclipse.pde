@@ -145,9 +145,7 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 				String[] values = PDEProject.getLaunchShortcuts(project);
 				if (values != null) {
 					specificIds = new HashSet<>();
-					for (String value : values) {
-						specificIds.add(value);
-					}
+					Collections.addAll(specificIds, values);
 				}
 			}
 		}

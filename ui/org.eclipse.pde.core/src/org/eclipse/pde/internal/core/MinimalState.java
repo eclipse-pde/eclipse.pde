@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
@@ -156,9 +157,7 @@ public class MinimalState {
 		List<BundleDescription> bundles = new ArrayList<>();
 		for (String symbolicName : symbolicNames) {
 			BundleDescription[] descriptions = fState.getBundles(symbolicName);
-			for (BundleDescription description : descriptions) {
-				bundles.add(description);
-			}
+			Collections.addAll(bundles, descriptions);
 		}
 		return fState.resolve(bundles.toArray(new BundleDescription[bundles.size()]));
 	}
