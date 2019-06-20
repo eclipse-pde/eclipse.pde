@@ -169,10 +169,10 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		if (geometry == null || geometry.length < 4) {
 			return null;
 		}
-		return Integer.toString(geometry[0]) + "," + //$NON-NLS-1$
-				Integer.toString(geometry[1]) + "," + //$NON-NLS-1$
-				Integer.toString(geometry[2]) + "," + //$NON-NLS-1$
-				Integer.toString(geometry[3]);
+		return geometry[0] + "," + //$NON-NLS-1$
+				geometry[1] + "," + //$NON-NLS-1$
+				geometry[2] + "," + //$NON-NLS-1$
+				geometry[3];
 	}
 
 	public static int[] getGeometryArray(String tokenizedValue) {

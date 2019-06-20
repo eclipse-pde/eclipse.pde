@@ -758,7 +758,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 						path = path.substring(sep + 1);
 						if (resource == null) {
 							IPath result = PDECore.getDefault().getModelManager().getExternalModelManager()
-									.getNestedLibrary(model, path.toString());
+									.getNestedLibrary(model, path);
 							if (result == null) {
 								exists = false;
 							}
@@ -982,8 +982,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			String errorMessage = null;
 			if (sourceFolderList.contains(res.getFullPath())) {
 				errorMessage = PDECoreMessages.BuildErrorReporter_srcIncludesSourceFolder;
-			} else if (token.startsWith(".") || reservedTokens.contains(res.getName().toString().toLowerCase())) { //$NON-NLS-1$
-				if (!res.getName().toString().toLowerCase().equals(".settings")) {//$NON-NLS-1$
+			} else if (token.startsWith(".") || reservedTokens.contains(res.getName().toLowerCase())) { //$NON-NLS-1$
+				if (!res.getName().toLowerCase().equals(".settings")) {//$NON-NLS-1$
 					errorMessage = NLS.bind(PDECoreMessages.BuildErrorReporter_srcIncludesSourceFolder1, res.getName());
 				}
 			}
@@ -1043,7 +1043,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 	private boolean startsWithAntVariable(String token) {
 		int varStart = token.indexOf("${"); //$NON-NLS-1$
-		return varStart != -1 && varStart < token.indexOf("}"); //$NON-NLS-1$
+		return varStart != -1 && varStart < token.indexOf('}'); //$NON-NLS-1$
 	}
 
 	private void validateDependencyManagement(IBuildEntry bundleList) {

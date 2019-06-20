@@ -200,7 +200,7 @@ public class PDEAuxiliaryState {
 
 			Iterator<String> iter = fPluginInfos.keySet().iterator();
 			while (iter.hasNext()) {
-				String key = iter.next().toString();
+				String key = iter.next();
 				Element element = doc.createElement(ELEMENT_BUNDLE);
 				element.setAttribute(ATTR_BUNDLE_ID, key);
 				PluginInfo info = fPluginInfos.get(key);

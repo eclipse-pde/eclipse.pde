@@ -596,7 +596,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
 		for (int i = 0; i < paths.size(); i++) {
 			if (bundleJar == null) {
-				IPath currPath = new Path(paths.get(i).toString());
+				IPath currPath = new Path(paths.get(i));
 				if (currPath.isAbsolute() && currPath.toFile().exists()) {
 					return true;
 				}
@@ -607,7 +607,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 					return true;
 				}
 			} else {
-				if (CoreUtility.jarContainsResource(new File(bundleJar), paths.get(i).toString(), false)) {
+				if (CoreUtility.jarContainsResource(new File(bundleJar), paths.get(i), false)) {
 					return true;
 				}
 			}
@@ -622,7 +622,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
 		// be careful: people have the option to use the format:
 		// fullqualifiedName:staticMethod
-		int index = value.indexOf(":"); //$NON-NLS-1$
+		int index = value.indexOf(':'); //$NON-NLS-1$
 		if (index != -1) {
 			value = value.substring(0, index);
 		}

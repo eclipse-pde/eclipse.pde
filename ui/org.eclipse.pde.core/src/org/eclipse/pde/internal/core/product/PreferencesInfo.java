@@ -99,7 +99,7 @@ public class PreferencesInfo extends ProductObject implements IPreferencesInfo {
 			writer.println(indent + "   <sourcefile path=\"" + getWritableString(fSourceFilePath.trim()) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		boolean overwrite = fOverwrite != null && "true".equals(fOverwrite); //$NON-NLS-1$
-		String targetFile = indent + "   <targetfile overwrite=\"" + Boolean.toString(overwrite) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+		String targetFile = indent + "   <targetfile overwrite=\"" + overwrite + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 		if (fPreferenceCustomizationPath != null && fPreferenceCustomizationPath.length() > 0) {
 			targetFile += " path=\"" + getWritableString(fPreferenceCustomizationPath.trim()) + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 		}

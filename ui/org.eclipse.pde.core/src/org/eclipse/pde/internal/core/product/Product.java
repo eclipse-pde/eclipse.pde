@@ -199,8 +199,8 @@ public class Product extends ProductObject implements IProduct {
 		if (fVersion != null && fVersion.length() > 0) {
 			writer.print(" " + P_VERSION + "=\"" + fVersion + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
-		writer.print(" " + P_USEFEATURES + "=\"" + Boolean.toString(fUseFeatures) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		writer.print(" " + P_INCLUDE_LAUNCHERS + "=\"" + Boolean.toString(fIncludeLaunchers) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		writer.print(" " + P_USEFEATURES + "=\"" + fUseFeatures + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		writer.print(" " + P_INCLUDE_LAUNCHERS + "=\"" + fIncludeLaunchers + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.println(">"); //$NON-NLS-1$
 
 		if (fAboutInfo != null) {

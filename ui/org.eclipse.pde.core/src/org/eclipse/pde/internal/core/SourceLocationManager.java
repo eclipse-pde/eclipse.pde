@@ -262,7 +262,7 @@ public class SourceLocationManager implements ICoreConstants {
 			String version = pluginBase.getVersion();
 			if (version != null) {
 				Version vid = new Version(version);
-				pluginDir += "_" + vid.toString(); //$NON-NLS-1$
+				pluginDir += "_" + vid; //$NON-NLS-1$
 			}
 			IPath path = new Path(pluginDir);
 			return sourceFilePath == null ? path : path.append(sourceFilePath);

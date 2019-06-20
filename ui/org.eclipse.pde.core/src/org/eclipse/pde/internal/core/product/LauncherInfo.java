@@ -145,7 +145,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 	}
 
 	private void writerWin(String indent, PrintWriter writer) {
-		writer.println(indent + "<win " + P_USE_ICO + "=\"" + Boolean.toString(fUseIcoFile) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		writer.println(indent + "<win " + P_USE_ICO + "=\"" + fUseIcoFile + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		String path = fIcons.get(P_ICO_PATH);
 		if (path != null && path.length() > 0) {
 			writer.println(indent + "   <ico path=\"" + getWritableString(path) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$

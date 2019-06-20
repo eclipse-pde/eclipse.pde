@@ -143,25 +143,25 @@ public class JREInfo extends ProductObject implements IJREInfo {
 		writer.println(indent + "<vm>"); //$NON-NLS-1$
 		if (fJVMLin != null) {
 			writer.print(indent);
-			writer.print("   <" + JRE_LIN + " include=\"" + String.valueOf(bIncludeLin) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.print("   <" + JRE_LIN + " include=\"" + bIncludeLin + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			writer.print(fJVMLin.toPortableString());
 			writer.println("</" + JRE_LIN + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (fJVMMac != null) {
 			writer.print(indent);
-			writer.print("   <" + JRE_MAC + " include=\"" + String.valueOf(bIncludeMac) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.print("   <" + JRE_MAC + " include=\"" + bIncludeMac + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			writer.print(fJVMMac.toPortableString());
 			writer.println("</" + JRE_MAC + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (fJVMSol != null) {
 			writer.print(indent);
-			writer.print("   <" + JRE_SOL + " include=\"" + String.valueOf(bIncludeSol) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.print("   <" + JRE_SOL + " include=\"" + bIncludeSol + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			writer.print(fJVMSol.toPortableString());
 			writer.println("</" + JRE_SOL + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (fJVMWin != null) {
 			writer.print(indent);
-			writer.print("   <" + JRE_WIN + " include=\"" + String.valueOf(bIncludeWin) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			writer.print("   <" + JRE_WIN + " include=\"" + bIncludeWin + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			writer.print(fJVMWin.toPortableString());
 			writer.println("</" + JRE_WIN + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		}

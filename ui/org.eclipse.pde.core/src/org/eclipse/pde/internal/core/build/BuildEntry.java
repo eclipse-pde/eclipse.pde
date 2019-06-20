@@ -83,7 +83,7 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 	public void renameToken(String oldName, String newName) throws CoreException {
 		ensureModelEditable();
 		for (int i = 0; i < tokens.size(); i++) {
-			if (tokens.elementAt(i).toString().equals(oldName)) {
+			if (tokens.elementAt(i).equals(oldName)) {
 				tokens.setElementAt(newName, i);
 				break;
 			}

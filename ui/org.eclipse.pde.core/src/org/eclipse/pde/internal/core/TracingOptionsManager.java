@@ -141,7 +141,7 @@ public class TracingOptionsManager {
 		for (Enumeration<?> keys = properties.keys(); keys.hasMoreElements();) {
 			String key = keys.nextElement().toString();
 			Path path = new Path(key);
-			if (path.segmentCount() < 1 || !selected.contains(path.segment(0).toString())) {
+			if (path.segmentCount() < 1 || !selected.contains(path.segment(0))) {
 				properties.remove(key);
 			}
 		}

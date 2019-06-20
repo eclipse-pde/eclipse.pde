@@ -69,9 +69,9 @@ public class Bundle extends BundleObject implements IBundle {
 			String key = iter.next().toString();
 			if (headers.get(key) != null) {
 				String value = headers.get(key).toString();
-				IManifestHeader header = getModel().getFactory().createHeader(key.toString(), value);
+				IManifestHeader header = getModel().getFactory().createHeader(key, value);
 				header.update(); // Format the headers, unknown if this step is necessary for new header objects
-				fDocumentHeaders.put(key.toString(), header);
+				fDocumentHeaders.put(key, header);
 			}
 		}
 	}

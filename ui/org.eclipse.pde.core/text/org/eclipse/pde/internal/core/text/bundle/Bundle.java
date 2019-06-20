@@ -48,8 +48,8 @@ public class Bundle implements IBundle {
 			String key = iter.next().toString();
 			if (key.equals(Constants.BUNDLE_MANIFESTVERSION)) {
 				String value = headers.get(key).toString();
-				IManifestHeader header = fModel.getFactory().createHeader(key.toString(), value);
-				fDocumentHeaders.put(key.toString(), header);
+				IManifestHeader header = fModel.getFactory().createHeader(key, value);
+				fDocumentHeaders.put(key, header);
 				break;
 			}
 		}
@@ -61,8 +61,8 @@ public class Bundle implements IBundle {
 				continue;
 			}
 			String value = headers.get(key).toString();
-			IManifestHeader header = fModel.getFactory().createHeader(key.toString(), value);
-			fDocumentHeaders.put(key.toString(), header);
+			IManifestHeader header = fModel.getFactory().createHeader(key, value);
+			fDocumentHeaders.put(key, header);
 		}
 		adjustOffsets(fModel.getDocument());
 	}

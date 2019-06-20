@@ -45,7 +45,7 @@ public class JavadocLocationManager {
 					return doc.toURL().toString();
 				}
 			} else if (CoreUtility.jarContainsResource(file, "doc/package-list", false)) { //$NON-NLS-1$
-				return "jar:" + file.toURL().toString() + "!/doc"; //$NON-NLS-1$ //$NON-NLS-2$
+				return "jar:" + file.toURL() + "!/doc"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return getEntry(model);
 		} catch (MalformedURLException e) {
@@ -63,7 +63,7 @@ public class JavadocLocationManager {
 			if (id != null) {
 				Iterator<String> iter = fLocations.keySet().iterator();
 				while (iter.hasNext()) {
-					String location = iter.next().toString();
+					String location = iter.next();
 					Set<String> set = fLocations.get(location);
 					if (set.contains(id)) {
 						return location;

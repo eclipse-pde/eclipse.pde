@@ -80,7 +80,7 @@ public class ExportPackageObject extends PackageObject {
 			} else {
 				Iterator<String> iter = fFriends.keySet().iterator();
 				while (iter.hasNext()) {
-					addDirective(ICoreConstants.FRIENDS_DIRECTIVE, iter.next().toString());
+					addDirective(ICoreConstants.FRIENDS_DIRECTIVE, iter.next());
 				}
 			}
 		}
@@ -112,7 +112,7 @@ public class ExportPackageObject extends PackageObject {
 		} else {
 			Iterator<String> iter = fFriends.keySet().iterator();
 			while (iter.hasNext()) {
-				addDirective(ICoreConstants.FRIENDS_DIRECTIVE, iter.next().toString());
+				addDirective(ICoreConstants.FRIENDS_DIRECTIVE, iter.next());
 			}
 		}
 		fHeader.update();

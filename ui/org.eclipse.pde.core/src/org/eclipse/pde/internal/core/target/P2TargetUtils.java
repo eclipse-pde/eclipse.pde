@@ -358,7 +358,7 @@ public class P2TargetUtils {
 
 	public static IProvisioningAgent getAgent() throws CoreException {
 		//Is there already an agent for this location?
-		String filter = "(locationURI=" + String.valueOf(AGENT_LOCATION) + ")"; //$NON-NLS-1$//$NON-NLS-2$
+		String filter = "(locationURI=" + AGENT_LOCATION + ")"; //$NON-NLS-1$//$NON-NLS-2$
 		ServiceReference<?>[] serviceReferences = null;
 		BundleContext context = PDECore.getDefault().getBundleContext();
 		try {

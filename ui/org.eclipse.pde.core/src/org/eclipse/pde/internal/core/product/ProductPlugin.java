@@ -62,10 +62,10 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 		// If the plugin is a known fragment or has a cached fragment setting, mark it as a fragment
 		if (PluginRegistry.findModel(fId) != null) {
 			if (PluginRegistry.findModel(fId) instanceof IFragmentModel) {
-				writer.print(" fragment=\"" + Boolean.TRUE.toString() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+				writer.print(" fragment=\"" + Boolean.TRUE + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else if (fFragment) {
-			writer.print(" fragment=\"" + Boolean.TRUE.toString() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.print(" fragment=\"" + Boolean.TRUE + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		writer.println("/>"); //$NON-NLS-1$
