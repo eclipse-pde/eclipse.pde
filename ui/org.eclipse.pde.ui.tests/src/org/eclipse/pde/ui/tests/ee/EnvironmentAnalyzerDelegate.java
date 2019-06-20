@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,9 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.ee;
 
-import java.util.ArrayList;
+import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.jdt.launching.environments.*;
 
@@ -38,15 +39,13 @@ public class EnvironmentAnalyzerDelegate implements IExecutionEnvironmentAnalyze
 		String javaVersion = vm2.getJavaVersion();
 		if (javaVersion != null) {
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(EE_NO_SOUND);
-			// TODO: use common place for Java versions in PDE, see bug 545051
-			String[] compatible = new String[] { "12", "11", "10", "9", "1.8", "1.7", "1.6", "1.5", "1.4" };
-			for (String element : compatible) {
+			List<String> allVersions = JavaCore.getAllVersions();
+			List<String> compatibleList = allVersions.subList(3, allVersions.size());
+			Collections.reverse(compatibleList);
+			for (String element : compatibleList) {
 				if (javaVersion.startsWith(element)) {
 					result.add(new CompatibleEnvironment(env, false));
 				}
-			}
-			if (javaVersion.startsWith("1.3")) {
-				result.add(new CompatibleEnvironment(env, true));
 			}
 		}
 		return result.toArray(new CompatibleEnvironment[result.size()]);
