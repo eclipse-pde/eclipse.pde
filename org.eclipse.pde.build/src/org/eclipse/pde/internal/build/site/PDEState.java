@@ -31,7 +31,7 @@ import org.osgi.framework.*;
 // This class provides a higher level API on the state
 public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private static final String[] MANIFEST_ENTRIES = {Constants.BUNDLE_LOCALIZATION, Constants.BUNDLE_NAME, Constants.BUNDLE_VENDOR, ECLIPSE_BUNDLE_SHAPE, ECLIPSE_SOURCE_BUNDLE, ECLIPSE_SOURCE_REF};
-
+	private static int LAST_SUPPORTED_JDK = 12;
 	private StateObjectFactory factory;
 	protected State state;
 	private long id;
@@ -432,12 +432,14 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				}
 			}
 		}
-		// from java 10 and beyond
-		String[] java10AndBeyond = {"JavaSE-10", "JavaSE-11", "JavaSE-12"}; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		// from java 10 and beyond 
+		ArrayList<String> eeJava10AndBeyond = new ArrayList<>();
+		for (int i = 10; i <= LAST_SUPPORTED_JDK; i++) {
+			eeJava10AndBeyond.add("JavaSE-" + i);//$NON-NLS-1$		
+		}
 		prop = new Hashtable<>();
 		String previousEE = eeJava9;
-		for (int i = 0; i <= java10AndBeyond.length - 1; i++) {
-			String execEnvID = java10AndBeyond[i];
+		for (String execEnvID : eeJava10AndBeyond) {
 			prop = new Hashtable<>();
 			Properties javaProfilePropertiesForVMPackage = getJavaProfilePropertiesForVMPackage(execEnvID);
 			if (javaProfilePropertiesForVMPackage != null) {
