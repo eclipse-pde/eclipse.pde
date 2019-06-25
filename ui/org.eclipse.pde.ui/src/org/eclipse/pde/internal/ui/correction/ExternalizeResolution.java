@@ -65,11 +65,7 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 				IDocument document = buffer.getDocument();
 				ExternalizeStringsOperation.getPropertiesInsertEdit(document, element).apply(document);
 				buffer.commit(null, true);
-			} catch (CoreException e) {
-				PDEPlugin.log(e);
-			} catch (MalformedTreeException e) {
-				PDEPlugin.log(e);
-			} catch (BadLocationException e) {
+			} catch (CoreException | MalformedTreeException | BadLocationException e) {
 				PDEPlugin.log(e);
 			} finally {
 				try {

@@ -66,20 +66,12 @@ public class SchemaUtil {
 				SAXParserWrapper parser = new SAXParserWrapper();
 				parser.parse(input, handler);
 			}
-		} catch (MalformedURLException e) {
+		} catch (MalformedURLException | SAXException e) {
 			// Ignore
 			// Caused when URL is null
 			// This occurs when the extension point schema is first
 			// created.
-		} catch (IOException e) {
-			PDECore.logException(e);
-		} catch (SAXException e) {
-			// Ignore parse errors
-			// Handler may send a SAX Exception to prematurely abort parsing
-			// in order to save execution time.  This is not an error
-		} catch (ParserConfigurationException e) {
-			PDECore.logException(e);
-		} catch (FactoryConfigurationError e) {
+		} catch (IOException | ParserConfigurationException | FactoryConfigurationError e) {
 			PDECore.logException(e);
 		} finally {
 			try {

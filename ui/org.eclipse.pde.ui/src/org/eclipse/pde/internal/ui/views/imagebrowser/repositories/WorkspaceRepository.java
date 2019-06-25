@@ -76,9 +76,7 @@ public class WorkspaceRepository extends AbstractRepository {
 
 						return false;
 					}, IResource.DEPTH_INFINITE, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
-				} catch (CoreException e) {
-					PDEPlugin.log(e);
-				} catch (IOException e) {
+				} catch (CoreException | IOException e) {
 					PDEPlugin.log(e);
 				}
 			}

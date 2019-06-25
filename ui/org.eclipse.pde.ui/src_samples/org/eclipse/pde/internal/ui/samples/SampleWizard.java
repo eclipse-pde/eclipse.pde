@@ -120,16 +120,10 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 				enableActivities();
 			if (sampleEditorNeeded && sampleManifest != null)
 				IDE.openEditor(page, sampleManifest, true);
-		} catch (InvocationTargetException e) {
+		} catch (InvocationTargetException | CoreException e) {
 			PDEPlugin.logException(e);
 			return false;
-		} catch (InterruptedException e) {
-			//PDEPlugin.logException(e);
-			return false;
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-			return false;
-		} catch (OperationCanceledException e) {
+		} catch (InterruptedException | OperationCanceledException e) {
 			return false;
 		}
 		return true;

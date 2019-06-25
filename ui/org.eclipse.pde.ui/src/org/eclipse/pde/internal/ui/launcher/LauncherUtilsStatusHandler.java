@@ -123,8 +123,7 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 				Iterator<?> it = projects.iterator();
 				while (it.hasNext())
 					table.put(((IProject) it.next()).getName(), ts);
-			} catch (OperationCanceledException e1) {
-			} catch (CoreException e2) {
+			} catch (OperationCanceledException | CoreException e2) {
 			}
 		});
 	}

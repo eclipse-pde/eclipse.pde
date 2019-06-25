@@ -253,11 +253,7 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 					manipulator.load();
 					fVMArgs = manipulator.getLauncherData().getJvmArgs();
 				}
-			} catch (BundleException e) {
-				PDECore.log(e);
-			} catch (CoreException e) {
-				PDECore.log(e);
-			} catch (IOException e) {
+			} catch (BundleException | CoreException | IOException e) {
 				PDECore.log(e);
 			}
 

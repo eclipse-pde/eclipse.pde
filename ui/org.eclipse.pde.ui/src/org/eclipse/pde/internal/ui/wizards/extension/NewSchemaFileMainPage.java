@@ -52,9 +52,7 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
 			return false;
-		} catch (InterruptedException e) {
-			return false;
-		} catch (CoreException e) {
+		} catch (InterruptedException | CoreException e) {
 			return false;
 		}
 		return true;

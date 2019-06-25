@@ -207,9 +207,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 			try {
 				headers = ManifestElement.parseBundleManifest(manifest.getContents(), null);
 				fReadHeaders = headers;
-			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage(), e));
-			} catch (BundleException e) {
+			} catch (IOException | BundleException e) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage(), e));
 			}
 			setActivator(getHeaderValue(headers, Constants.BUNDLE_ACTIVATOR));

@@ -233,7 +233,6 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 				ImageDescriptor desc = ImageDescriptor.createFromImageData(new ImageData(stream));
 				return get(desc);
 			}
-		} catch (FileNotFoundException e) {
 		} catch (IOException e) {
 		} finally {
 			try {

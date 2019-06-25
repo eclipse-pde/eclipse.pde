@@ -241,8 +241,7 @@ public class FragmentContentPage extends ContentPage {
 							throw new InterruptedException();
 						}
 					});
-				} catch (InvocationTargetException ex) {
-				} catch (InterruptedException ex) {
+				} catch (InvocationTargetException | InterruptedException ex) {
 					// Model initialization cancelled, target platform will be empty
 				}
 			}
@@ -322,8 +321,7 @@ public class FragmentContentPage extends ContentPage {
 								throw new InterruptedException();
 							}
 						});
-					} catch (InvocationTargetException e) {
-					} catch (InterruptedException e) {
+					} catch (InvocationTargetException | InterruptedException e) {
 						// Model initialization cancelled, target platform will be empty
 					}
 				}

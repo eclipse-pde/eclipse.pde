@@ -172,8 +172,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			javaProject.setRawClasspath(classpath.toArray(new IClasspathEntry[classpath.size()]),
 					subMonitor.split(1));
 //			ClasspathComputer.setClasspath(javaProject.getProject(), model);
-		} catch (IOException e) {
-		} catch (CoreException e) {
+		} catch (IOException | CoreException e) {
 		}
 	}
 
@@ -547,8 +546,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 
 				}
 			}.run(monitor);
-		} catch (InvocationTargetException e) {
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 		}
 	}
 

@@ -285,9 +285,7 @@ public final class BundleProjectService implements IBundleProjectService {
 				return null;
 			}
 			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable<String, String>(10));
-		} catch (BundleException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, TargetBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.TargetBundle_ErrorReadingManifest, bundleLocation.getAbsolutePath()), e));
-		} catch (IOException e) {
+		} catch (BundleException | IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, TargetBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.TargetBundle_ErrorReadingManifest, bundleLocation.getAbsolutePath()), e));
 		} finally {
 			closeZipFileAndStream(manifestStream, jarFile);

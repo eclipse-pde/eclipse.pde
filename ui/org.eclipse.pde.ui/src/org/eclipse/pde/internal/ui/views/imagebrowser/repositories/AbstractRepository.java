@@ -113,8 +113,6 @@ public abstract class AbstractRepository extends Job {
 					}
 				}
 			}
-		} catch (ZipException e) {
-			PDEPlugin.log(e);
 		} catch (IOException e) {
 			PDEPlugin.log(e);
 		}

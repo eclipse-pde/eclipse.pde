@@ -29,9 +29,7 @@ public class AddAllPluginsToJavaSearchHandler extends AbstractHandler {
 		IRunnableWithProgress op = new JavaSearchOperation(models, true);
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(op);
-		} catch (InterruptedException e) {
-			PDEPlugin.logException(e);
-		} catch (InvocationTargetException e) {
+		} catch (InterruptedException | InvocationTargetException e) {
 			PDEPlugin.logException(e);
 		}
 		return null;

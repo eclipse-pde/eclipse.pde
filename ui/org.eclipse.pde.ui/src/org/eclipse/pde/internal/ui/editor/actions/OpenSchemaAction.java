@@ -227,10 +227,7 @@ public class OpenSchemaAction extends Action {
 			if (!SchemaEditor.openSchema(jarFile, schemaEntryName)) {
 				displayErrorDialog();
 			}
-		} catch (URISyntaxException e) {
-			PDEPlugin.log(e);
-			displayErrorDialog();
-		} catch (MalformedURLException e) {
+		} catch (URISyntaxException | MalformedURLException e) {
 			PDEPlugin.log(e);
 			displayErrorDialog();
 		}

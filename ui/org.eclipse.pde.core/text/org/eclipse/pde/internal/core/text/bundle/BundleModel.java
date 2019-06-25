@@ -55,9 +55,7 @@ public class BundleModel extends AbstractEditingModel implements IBundleModel {
 		try {
 			fLoaded = true;
 			((Bundle) getBundle()).load(ManifestElement.parseBundleManifest(source, null));
-		} catch (BundleException e) {
-			fLoaded = false;
-		} catch (IOException e) {
+		} catch (BundleException | IOException e) {
 			fLoaded = false;
 		}
 	}

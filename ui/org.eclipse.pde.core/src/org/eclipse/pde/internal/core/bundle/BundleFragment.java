@@ -40,7 +40,6 @@ public class BundleFragment extends BundlePluginBase implements IBundleFragment 
 		try {
 			VersionRange versionRange = new VersionRange(version);
 			return versionRange.getMinimum() != null ? versionRange.getMinimum().toString() : version;
-		} catch (NumberFormatException e) {
 		} catch (IllegalArgumentException e) {
 		}
 		return version;

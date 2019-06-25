@@ -61,8 +61,7 @@ public class GetNonExternalizedStringsAction extends AbstractHandler {
 		GetNonExternalizedStringsOperation runnable = new GetNonExternalizedStringsOperation(selection, fExternalizeSelectedPluginsOnly);
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(runnable);
-		} catch (InvocationTargetException e) {
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 		} finally {
 			if (runnable.wasCanceled())
 				return;

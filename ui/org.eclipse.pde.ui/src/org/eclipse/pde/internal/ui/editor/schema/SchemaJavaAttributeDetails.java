@@ -161,7 +161,6 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 					}
 				}
 			}
-		} catch (PartInitException e1) {
 		} catch (CoreException e1) {
 		}
 		return null;

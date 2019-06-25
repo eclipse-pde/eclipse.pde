@@ -146,8 +146,6 @@ public class PDEJavaHelperUI {
 					}
 				}
 			}
-		} catch (PartInitException e) {
-			PDEPlugin.logException(e);
 		} catch (JavaModelException e) {
 			// nothing
 			Display.getCurrent().beep();

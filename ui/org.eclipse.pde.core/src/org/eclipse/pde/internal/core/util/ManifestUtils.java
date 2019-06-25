@@ -138,9 +138,7 @@ public class ManifestUtils {
 			// The necessary bundle information has not been found in manifest.mf or plugin.xml
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, STATUS_CODE_NOT_A_BUNDLE_MANIFEST, NLS.bind(UtilMessages.ErrorReadingManifest, bundleLocation.getAbsolutePath()), null));
 
-		} catch (BundleException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(UtilMessages.ErrorReadingManifest, bundleLocation.getAbsolutePath()), e));
-		} catch (IOException e) {
+		} catch (BundleException | IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(UtilMessages.ErrorReadingManifest, bundleLocation.getAbsolutePath()), e));
 		}
 	}

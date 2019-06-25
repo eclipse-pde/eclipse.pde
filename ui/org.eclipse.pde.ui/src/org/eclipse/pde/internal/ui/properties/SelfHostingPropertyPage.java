@@ -72,7 +72,6 @@ public class SelfHostingPropertyPage extends PropertyPage {
 					}
 				}
 			}
-		} catch (JavaModelException e) {
 		} catch (CoreException e) {
 		}
 		return list.toArray(new String[list.size()]);

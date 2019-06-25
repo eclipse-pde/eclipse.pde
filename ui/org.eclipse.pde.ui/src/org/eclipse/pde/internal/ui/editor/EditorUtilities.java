@@ -72,8 +72,6 @@ public class EditorUtilities {
 			message = PDEUIMessages.EditorUtilities_noImageData;
 		} catch (SWTException e) {
 			message = PDEUIMessages.EditorUtilities_pathNotValidImage;
-		} catch (MalformedURLException e) {
-			message = PDEUIMessages.EditorUtilities_invalidFilePath;
 		} catch (IOException e) {
 			message = PDEUIMessages.EditorUtilities_invalidFilePath;
 		}

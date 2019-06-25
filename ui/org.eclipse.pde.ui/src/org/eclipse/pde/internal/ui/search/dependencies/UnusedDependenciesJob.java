@@ -40,8 +40,7 @@ public class UnusedDependenciesJob extends Job {
 			udo.run(monitor);
 			// List can contain IPluginImports or ImportPackageObjects
 			showResults(udo.getList().toArray());
-		} catch (InvocationTargetException e) {
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 		} finally {
 			monitor.done();
 		}

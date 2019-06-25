@@ -92,10 +92,7 @@ public class NewExtensionTemplateWizard extends Wizard implements IExtensionWiza
 		};
 		try {
 			getContainer().run(false, true, operation);
-		} catch (InvocationTargetException e) {
-			PDEPlugin.logException(e);
-			return false;
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 			PDEPlugin.logException(e);
 			return false;
 		}

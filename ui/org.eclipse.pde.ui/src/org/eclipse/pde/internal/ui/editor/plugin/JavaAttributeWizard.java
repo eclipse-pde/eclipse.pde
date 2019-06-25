@@ -95,11 +95,7 @@ public class JavaAttributeWizard extends Wizard {
 					IDE.openEditor(page, (IFile) resource, true);
 				}
 			}
-		} catch (InvocationTargetException e) {
-			PDEPlugin.logException(e);
-		} catch (InterruptedException e) {
-			PDEPlugin.logException(e);
-		} catch (CoreException e) {
+		} catch (InvocationTargetException | InterruptedException | CoreException e) {
 			PDEPlugin.logException(e);
 		}
 		return true;

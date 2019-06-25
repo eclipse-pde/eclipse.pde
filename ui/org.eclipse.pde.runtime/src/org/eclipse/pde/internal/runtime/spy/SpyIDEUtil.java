@@ -66,9 +66,7 @@ public class SpyIDEUtil {
 		try {
 			IType type = project.findType(clazz);
 			JavaUI.openInEditor(type, false, true);
-		} catch (JavaModelException e) {
-			PDERuntimePlugin.log(e);
-		} catch (PartInitException e) {
+		} catch (JavaModelException | PartInitException e) {
 			PDERuntimePlugin.log(e);
 		}
 	}

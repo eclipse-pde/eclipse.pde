@@ -364,7 +364,6 @@ public class ClasspathHelper {
 					}
 				}
 			}
-		} catch (JavaModelException e) {
 		} catch (CoreException e) {
 		}
 		return result.toArray(new IPath[result.size()]);

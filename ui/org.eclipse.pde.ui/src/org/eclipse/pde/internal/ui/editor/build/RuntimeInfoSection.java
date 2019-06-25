@@ -287,8 +287,6 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 					if (fragmentRoot.getKind() == IPackageFragmentRoot.K_SOURCE)
 						folders.add(fragmentRoot);
 			}
-		} catch (JavaModelException e) {
-			PDEPlugin.logException(e);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}

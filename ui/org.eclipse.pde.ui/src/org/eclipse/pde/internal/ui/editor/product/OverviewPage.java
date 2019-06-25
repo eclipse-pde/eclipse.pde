@@ -113,9 +113,7 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 
 		try {
 			browser.openURL(new URL(url));
-		} catch (PartInitException e) {
-			PDEPlugin.log(e);
-		} catch (MalformedURLException e) {
+		} catch (PartInitException | MalformedURLException e) {
 			PDEPlugin.log(e);
 		}
 	}

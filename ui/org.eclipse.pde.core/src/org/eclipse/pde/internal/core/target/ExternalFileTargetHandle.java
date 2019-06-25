@@ -19,7 +19,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -76,7 +75,6 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 	protected InputStream getInputStream() throws CoreException {
 		try {
 			return fURI.toURL().openStream();
-		} catch (MalformedURLException e) {
 		} catch (IOException e) {
 		}
 		return null;

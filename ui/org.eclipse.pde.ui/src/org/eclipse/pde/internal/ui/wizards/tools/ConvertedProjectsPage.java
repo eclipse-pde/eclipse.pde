@@ -148,10 +148,7 @@ public class ConvertedProjectsPage extends WizardPage {
 			IRunnableWithProgress convertOperation;
 			convertOperation = new ConvertProjectToPluginOperation(projects, fApiAnalysisButton.getSelection());
 			getContainer().run(false, true, convertOperation);
-		} catch (InvocationTargetException e) {
-			PDEPlugin.logException(e);
-			return false;
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 			PDEPlugin.logException(e);
 			return false;
 		}

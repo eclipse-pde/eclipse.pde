@@ -112,7 +112,6 @@ public class MinimalState {
 			MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, NLS.bind(UtilMessages.ErrorReadingManifest, bundleLocation.toString()), null);
 			status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage()));
 			throw new CoreException(status);
-		} catch (NumberFormatException e) {
 		} catch (IllegalArgumentException e) {
 		}
 		return null;

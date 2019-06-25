@@ -171,9 +171,7 @@ public class FeatureExportOperation extends Job {
 				}
 			}
 			return status;
-		} catch (InvocationTargetException e) {
-			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getCause() != null ? e.getCause() : e);
-		} catch (CoreException e) {
+		} catch (InvocationTargetException | CoreException e) {
 			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getCause() != null ? e.getCause() : e);
 		} catch (IOException e) {
 			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e);
@@ -905,10 +903,7 @@ public class FeatureExportOperation extends Job {
 			runner.setBuildFileLocation(scriptFile.getAbsolutePath());
 			runner.setExecutionTargets(targets);
 			runner.run(subMonitor.split(1));
-		} catch (FactoryConfigurationError e) {
-		} catch (ParserConfigurationException e) {
-		} catch (CoreException e) {
-		} catch (IOException e) {
+		} catch (FactoryConfigurationError | ParserConfigurationException | CoreException | IOException e) {
 		} finally {
 			if (scriptFile != null && scriptFile.exists()) {
 				scriptFile.delete();
@@ -1007,9 +1002,7 @@ public class FeatureExportOperation extends Job {
 
 			save(new File(file, ICoreConstants.BUILD_FILENAME_DESCRIPTOR), prop, "Marker File"); //$NON-NLS-1$
 			XMLPrintHandler.writeFile(doc, new File(file, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR));
-		} catch (DOMException e1) {
-		} catch (FactoryConfigurationError e1) {
-		} catch (ParserConfigurationException e1) {
+		} catch (DOMException | FactoryConfigurationError | ParserConfigurationException e1) {
 		}
 	}
 
@@ -1177,9 +1170,7 @@ public class FeatureExportOperation extends Job {
 				}
 			}
 			XMLPrintHandler.writeFile(doc, new File(file, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR));
-		} catch (DOMException e1) {
-		} catch (FactoryConfigurationError e1) {
-		} catch (ParserConfigurationException e1) {
+		} catch (DOMException | FactoryConfigurationError | ParserConfigurationException e1) {
 		}
 	}
 

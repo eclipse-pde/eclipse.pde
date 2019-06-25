@@ -544,8 +544,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 			}
 			// Reconnect
 			clone.reconnect(this, fModel);
-		} catch (IOException e) {
-		} catch (ClassNotFoundException e) {
+		} catch (IOException | ClassNotFoundException e) {
 		}
 
 		return clone;

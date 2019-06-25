@@ -130,8 +130,7 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 		} else {
 			try {
 				JavaEditorOpener.open(match, currentOffset, currentLength, activate);
-			} catch (PartInitException e) {
-			} catch (JavaModelException e) {
+			} catch (PartInitException | JavaModelException e) {
 			}
 		}
 	}

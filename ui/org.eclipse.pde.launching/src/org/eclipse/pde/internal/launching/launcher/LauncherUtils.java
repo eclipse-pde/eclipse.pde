@@ -15,7 +15,6 @@
 package org.eclipse.pde.internal.launching.launcher;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.resources.*;
@@ -93,13 +92,7 @@ public class LauncherUtils {
 					isLocked = targetLocation.isLocked();
 				}
 			}
-		} catch (InvalidSyntaxException e) {
-			PDECore.log(e);
-			isLocked = false;
-		} catch (MalformedURLException e) {
-			PDECore.log(e);
-			isLocked = false;
-		} catch (IOException e) {
+		} catch (InvalidSyntaxException | IOException e) {
 			PDECore.log(e);
 			isLocked = false;
 		}

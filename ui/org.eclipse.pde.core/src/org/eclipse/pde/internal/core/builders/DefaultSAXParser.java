@@ -31,10 +31,7 @@ public class DefaultSAXParser {
 			try (InputStream stream = new BufferedInputStream(file.getContents())) {
 			parser.parse(stream, reporter);
 			}
-		} catch (CoreException e) {
-		} catch (SAXException e) {
-		} catch (IOException e) {
-		} catch (ParserConfigurationException e) {
+		} catch (CoreException | SAXException | IOException | ParserConfigurationException e) {
 		}
 	}
 

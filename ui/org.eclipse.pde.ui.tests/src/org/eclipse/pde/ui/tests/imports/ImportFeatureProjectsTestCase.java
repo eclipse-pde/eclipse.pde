@@ -58,9 +58,7 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 			PDEPlugin.getWorkspace().run(op, new NullProgressMonitor());
 			if (models.length > 0)
 				lookingAtProject(models[0]);
-		} catch (OperationCanceledException e) {
-			fail("Feature import failed...");
-		} catch (CoreException e) {
+		} catch (OperationCanceledException | CoreException e) {
 			fail("Feature import failed...");
 		}
 	}

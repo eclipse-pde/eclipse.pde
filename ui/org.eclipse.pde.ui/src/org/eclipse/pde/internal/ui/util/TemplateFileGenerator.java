@@ -189,7 +189,6 @@ public class TemplateFileGenerator implements IVariableProvider {
 			IPath path = new Path(templateDirectory);
 			try (ZipFile zipFile = new ZipFile(pluginJar)) {
 				generateFiles(zipFile, path, fProject, true, false, monitor);
-			} catch (ZipException ze) {
 			} catch (IOException ioe) {
 			}
 

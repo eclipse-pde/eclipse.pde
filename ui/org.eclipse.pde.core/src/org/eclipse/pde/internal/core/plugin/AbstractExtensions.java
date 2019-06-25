@@ -199,10 +199,7 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 						PluginHandler handler = new PluginHandler(true);
 						SAXParserFactory.newInstance().newSAXParser().parse(stream, handler);
 						return handler.getSchemaVersion();
-					} catch (CoreException e) {
-					} catch (SAXException e) {
-					} catch (IOException e) {
-					} catch (ParserConfigurationException e) {
+					} catch (CoreException | SAXException | IOException | ParserConfigurationException e) {
 					}
 				}
 			}

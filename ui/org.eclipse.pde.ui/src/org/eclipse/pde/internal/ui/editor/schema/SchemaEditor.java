@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -228,8 +227,6 @@ public class SchemaEditor extends MultiSourceEditor {
 			IStorage storage = new JarEntryFile(zipFile, schemaJarFileEntry);
 			IEditorInput input = new JarEntryEditorInput(storage);
 			return openEditor(input);
-		} catch (ZipException e) {
-			PDEPlugin.log(e);
 		} catch (IOException e) {
 			PDEPlugin.log(e);
 		}

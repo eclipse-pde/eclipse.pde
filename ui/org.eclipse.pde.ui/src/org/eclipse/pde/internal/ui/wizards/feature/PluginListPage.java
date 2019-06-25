@@ -57,8 +57,7 @@ public class PluginListPage extends BasePluginListPage {
 							throw new InterruptedException();
 						}
 					});
-				} catch (InvocationTargetException e) {
-				} catch (InterruptedException e) {
+				} catch (InvocationTargetException | InterruptedException e) {
 				}
 			}
 		}

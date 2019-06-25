@@ -119,16 +119,7 @@ public class ParserWrapperTestCase extends TestCase {
 					SAXParserWrapper parser = new SAXParserWrapper();
 					parser.parse(fParserXMLFile, handler);
 					parser.dispose();
-				} catch (ParserConfigurationException e) {
-					e.printStackTrace();
-					fError = true;
-				} catch (SAXException e) {
-					e.printStackTrace();
-					fError = true;
-				} catch (FactoryConfigurationError e) {
-					e.printStackTrace();
-					fError = true;
-				} catch (IOException e) {
+				} catch (ParserConfigurationException | SAXException | FactoryConfigurationError | IOException e) {
 					e.printStackTrace();
 					fError = true;
 				}
@@ -147,16 +138,7 @@ public class ParserWrapperTestCase extends TestCase {
 
 				try (DOMParserWrapper parser = new DOMParserWrapper()) {
 					parser.parse(fParserXMLFile);
-				} catch (ParserConfigurationException e) {
-					e.printStackTrace();
-					fError = true;
-				} catch (SAXException e) {
-					e.printStackTrace();
-					fError = true;
-				} catch (FactoryConfigurationError e) {
-					e.printStackTrace();
-					fError = true;
-				} catch (IOException e) {
+				} catch (ParserConfigurationException | SAXException | FactoryConfigurationError | IOException e) {
 					e.printStackTrace();
 					fError = true;
 				}
