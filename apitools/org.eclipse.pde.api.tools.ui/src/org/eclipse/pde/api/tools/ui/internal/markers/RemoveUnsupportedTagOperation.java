@@ -42,7 +42,6 @@ import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.text.edits.TextEdit;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -135,8 +134,6 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 						localMonitor.split(1);
 					}
 				}
-			} catch (JavaModelException jme) {
-			} catch (PartInitException e) {
 			} catch (CoreException e) {
 			}
 		}

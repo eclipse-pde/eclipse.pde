@@ -1221,13 +1221,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 					IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 					try {
 						handlerService.executeCommand(P2_INSTALL_COMMAND_HANDLER, null);
-					} catch (ExecutionException ex) {
-						handleCommandException();
-					} catch (NotDefinedException ex) {
-						handleCommandException();
-					} catch (NotEnabledException ex) {
-						handleCommandException();
-					} catch (NotHandledException ex) {
+					} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException ex) {
 						handleCommandException();
 					}
 				}));

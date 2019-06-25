@@ -744,8 +744,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							// ignore
 						}
 					}
-				} catch (JavaModelException e) {
-					ApiPlugin.log(e);
 				} catch (CoreException e) {
 					ApiPlugin.log(e);
 				}
@@ -2299,9 +2297,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						break loop;
 					}
 				}
-			} catch (CoreException e) {
-				// ignore
-			} catch (IOException e) {
+			} catch (CoreException | IOException e) {
 				// ignore
 			} finally {
 				try {

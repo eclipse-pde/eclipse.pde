@@ -196,9 +196,7 @@ public abstract class ApiBaselineWizardPage extends WizardPage {
 		WorkingCopyOperation op = new WorkingCopyOperation(fProfile);
 		try {
 			getContainer().run(true, false, op);
-		} catch (InvocationTargetException e) {
-			ApiUIPlugin.log(e);
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 			ApiUIPlugin.log(e);
 		}
 		fProfile = op.getWorkingCopy();

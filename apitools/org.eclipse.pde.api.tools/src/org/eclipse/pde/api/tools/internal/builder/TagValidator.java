@@ -754,9 +754,7 @@ public class TagValidator extends Validator {
 			// unit cannot be null
 			IDocument document = Util.getDocument(fCompilationUnit);
 			linenumber = document.getLineOfOffset(charstart);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		} catch (CoreException e) {
+		} catch (BadLocationException | CoreException e) {
 			e.printStackTrace();
 		}
 		try {

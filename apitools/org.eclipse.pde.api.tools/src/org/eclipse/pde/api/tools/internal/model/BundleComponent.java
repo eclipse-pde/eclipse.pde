@@ -1066,9 +1066,7 @@ public class BundleComponent extends Component {
 		SAXParser saxParser = null;
 		try {
 			saxParser = factory.newSAXParser();
-		} catch (ParserConfigurationException e) {
-			// ignore
-		} catch (SAXException e) {
+		} catch (ParserConfigurationException | SAXException e) {
 			// ignore
 		}
 
@@ -1082,9 +1080,7 @@ public class BundleComponent extends Component {
 			SourceDefaultHandler defaultHandler = new SourceDefaultHandler();
 			saxParser.parse(inputSource, defaultHandler);
 			return defaultHandler.isSource();
-		} catch (SAXException e) {
-			// ignore
-		} catch (IOException e) {
+		} catch (SAXException | IOException e) {
 			// ignore
 		}
 		return false;

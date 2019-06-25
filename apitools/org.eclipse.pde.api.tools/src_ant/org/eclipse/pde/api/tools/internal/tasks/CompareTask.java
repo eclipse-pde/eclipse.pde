@@ -189,9 +189,7 @@ public class CompareTask extends CommonUtilsTask {
 					System.out.println(potentialExcludeList);
 				}
 			}
-		} catch (IOException e) {
-			ApiPlugin.log(e);
-		} catch (CoreException e) {
+		} catch (IOException | CoreException e) {
 			ApiPlugin.log(e);
 		} finally {
 			try {

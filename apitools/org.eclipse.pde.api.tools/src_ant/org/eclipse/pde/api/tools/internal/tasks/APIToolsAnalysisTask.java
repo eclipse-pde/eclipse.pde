@@ -247,9 +247,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				}
 
 				contents = Util.serializeDocument(document);
-			} catch (DOMException e) {
-				throw new BuildException(e);
-			} catch (CoreException e) {
+			} catch (DOMException | CoreException e) {
 				throw new BuildException(e);
 			}
 			if (contents != null) {
@@ -274,9 +272,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 					}
 				}
 				contents = Util.serializeDocument(document);
-			} catch (DOMException e) {
-				throw new BuildException(e);
-			} catch (CoreException e) {
+			} catch (DOMException | CoreException e) {
 				throw new BuildException(e);
 			}
 			if (contents != null) {
@@ -294,9 +290,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			root.setAttribute(IApiXmlConstants.ATTR_COUNT_WARNINGS, Integer.toString(counter.warnings));
 			root.setAttribute(IApiXmlConstants.ATTR_COUNT_ERRORS, Integer.toString(counter.errors));
 			contents = Util.serializeDocument(document);
-		} catch (DOMException e) {
-			throw new BuildException(e);
-		} catch (CoreException e) {
+		} catch (DOMException | CoreException e) {
 			throw new BuildException(e);
 		}
 		if (contents != null) {

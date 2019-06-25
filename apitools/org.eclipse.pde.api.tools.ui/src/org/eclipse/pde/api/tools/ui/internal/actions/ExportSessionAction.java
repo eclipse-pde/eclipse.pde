@@ -22,7 +22,6 @@ import java.io.InputStream;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
@@ -126,9 +125,7 @@ public class ExportSessionAction extends Action {
 							writer.flush();
 							progress.worked(25);
 						}
-					} catch (IOException e) {
-						ApiPlugin.log(e);
-					} catch (CoreException e) {
+					} catch (IOException | CoreException e) {
 						ApiPlugin.log(e);
 					} finally {
 						if (writer != null) {
@@ -161,11 +158,7 @@ public class ExportSessionAction extends Action {
 							TransformerFactory transFact = TransformerFactory.newInstance();
 							Transformer trans = transFact.newTransformer(xsltSource);
 							trans.transform(xmlSource, result);
-						} catch (TransformerConfigurationException e) {
-							ApiUIPlugin.log(e);
-						} catch (TransformerException e) {
-							ApiUIPlugin.log(e);
-						} catch (IOException e) {
+						} catch (TransformerException | IOException e) {
 							ApiUIPlugin.log(e);
 						} finally {
 							if (writer != null) {

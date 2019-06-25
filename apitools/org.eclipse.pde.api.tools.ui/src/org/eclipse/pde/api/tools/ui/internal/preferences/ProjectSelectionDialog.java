@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaElementComparator;
 import org.eclipse.jdt.ui.JavaElementLabelProvider;
 import org.eclipse.jdt.ui.StandardJavaElementContentProvider;
@@ -68,8 +67,6 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 							set.add(project);
 						}
 					}
-				} catch (JavaModelException jme) {
-					// ignore
 				} catch (CoreException ce) {
 					// ignore
 				}

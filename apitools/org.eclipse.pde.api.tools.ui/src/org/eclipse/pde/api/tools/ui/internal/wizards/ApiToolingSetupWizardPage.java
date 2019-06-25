@@ -372,9 +372,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 				}
 				projectchange.add(change);
 			}
-		} catch (CoreException e) {
-			ApiUIPlugin.log(e);
-		} catch (IOException e) {
+		} catch (CoreException | IOException e) {
 			ApiUIPlugin.log(e);
 		}
 	}
@@ -413,9 +411,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		};
 		try {
 			getContainer().run(false, false, op);
-		} catch (InvocationTargetException e) {
-			ApiUIPlugin.log(e);
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 			ApiUIPlugin.log(e);
 		}
 	}

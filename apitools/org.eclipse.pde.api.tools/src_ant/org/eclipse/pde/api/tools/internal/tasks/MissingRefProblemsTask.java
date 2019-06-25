@@ -17,7 +17,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -270,11 +269,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 
 			MissingRefMetadata metadata = new MissingRefMetadata(super.currentBaselineLocation, super.reportLocation, this.apiUseScans);
 			metadata.serializeToFile(file);
-		} catch (FileNotFoundException e) {
-			ApiPlugin.log(e);
-		} catch (IOException e) {
-			ApiPlugin.log(e);
-		} catch (CoreException e) {
+		} catch (IOException | CoreException e) {
 			ApiPlugin.log(e);
 		}
 	}
@@ -317,9 +312,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 				report.appendChild(category);
 
 				contents = Util.serializeDocument(document);
-			} catch (DOMException e) {
-				throw new BuildException(e);
-			} catch (CoreException e) {
+			} catch (DOMException | CoreException e) {
 				throw new BuildException(e);
 			}
 			if (contents != null) {

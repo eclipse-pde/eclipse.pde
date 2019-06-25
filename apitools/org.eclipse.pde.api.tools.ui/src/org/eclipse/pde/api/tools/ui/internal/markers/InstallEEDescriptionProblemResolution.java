@@ -60,13 +60,7 @@ public class InstallEEDescriptionProblemResolution implements IMarkerResolution2
 					IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 					try {
 						handlerService.executeCommand(ApiErrorsWarningsConfigurationBlock.P2_INSTALL_COMMAND_HANDLER, null);
-					} catch (ExecutionException ex) {
-						ApiErrorsWarningsConfigurationBlock.handleCommandException();
-					} catch (NotDefinedException ex) {
-						ApiErrorsWarningsConfigurationBlock.handleCommandException();
-					} catch (NotEnabledException ex) {
-						ApiErrorsWarningsConfigurationBlock.handleCommandException();
-					} catch (NotHandledException ex) {
+					} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException ex) {
 						ApiErrorsWarningsConfigurationBlock.handleCommandException();
 					}
 				}

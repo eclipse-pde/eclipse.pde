@@ -307,9 +307,7 @@ public class APIDeprecationReportConversionTask extends Task {
 		SAXParser parser = null;
 		try {
 			parser = factory.newSAXParser();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
+		} catch (ParserConfigurationException | SAXException e) {
 			e.printStackTrace();
 		}
 		if (parser == null) {
@@ -329,9 +327,7 @@ public class APIDeprecationReportConversionTask extends Task {
 			StringBuilder buffer = new StringBuilder();
 			dumpEntries(defaultHandler.getEntries(), buffer);
 			writeOutput(buffer);
-		} catch (SAXException e) {
-			// ignore
-		} catch (IOException e) {
+		} catch (SAXException | IOException e) {
 			// ignore
 		}
 	}

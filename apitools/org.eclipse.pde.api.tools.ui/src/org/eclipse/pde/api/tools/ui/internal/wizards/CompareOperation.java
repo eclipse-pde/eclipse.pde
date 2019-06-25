@@ -178,8 +178,6 @@ public class CompareOperation extends Job {
 						default:
 							break;
 					}
-				} catch (JavaModelException e) {
-					ApiPlugin.log(e);
 				} catch (CoreException e) {
 					ApiPlugin.log(e);
 				}

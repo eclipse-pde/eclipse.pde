@@ -303,8 +303,7 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 			setPageComplete(pageValid());
 			nametext.setFocus();
 			nametext.selectAll();
-		} catch (InvocationTargetException ite) {
-		} catch (InterruptedException ie) {
+		} catch (InvocationTargetException | InterruptedException ie) {
 		}
 	}
 

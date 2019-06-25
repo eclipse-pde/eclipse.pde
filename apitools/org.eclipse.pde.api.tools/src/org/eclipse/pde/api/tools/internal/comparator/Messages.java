@@ -68,9 +68,7 @@ public class Messages extends NLS {
 			try {
 				int messageID = Integer.parseInt(key);
 				templates.put(Integer.valueOf(messageID), bundle.getString(key));
-			} catch (NumberFormatException e) {
-				// key ill-formed
-			} catch (MissingResourceException e) {
+			} catch (NumberFormatException | MissingResourceException e) {
 				// available ID
 			}
 		}

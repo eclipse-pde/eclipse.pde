@@ -15,7 +15,6 @@ package org.eclipse.pde.api.tools.internal.search;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -72,9 +71,7 @@ public class XmlSearchReporter implements IApiSearchReporter {
 		try {
 			parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
-		} catch (FactoryConfigurationError fce) {
-			ApiPlugin.log(fce);
-		} catch (ParserConfigurationException pce) {
+		} catch (FactoryConfigurationError | ParserConfigurationException pce) {
 			ApiPlugin.log(pce);
 		}
 	}
@@ -194,11 +191,7 @@ public class XmlSearchReporter implements IApiSearchReporter {
 				file.createNewFile();
 			}
 			data.serializeToFile(file);
-		} catch (FileNotFoundException fnfe) {
-			ApiPlugin.log(fnfe);
-		} catch (IOException ioe) {
-			ApiPlugin.log(ioe);
-		} catch (CoreException ce) {
+		} catch (IOException | CoreException ce) {
 			ApiPlugin.log(ce);
 		}
 	}

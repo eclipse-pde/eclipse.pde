@@ -250,10 +250,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 								lineNumber = document.getLineOfOffset(charStart);
 							}
 						}
-					} catch (CoreException e) {
-						ApiPlugin.log(e);
-						return null;
-					} catch (BadLocationException e) {
+					} catch (CoreException | BadLocationException e) {
 						ApiPlugin.log(e);
 						return null;
 					}

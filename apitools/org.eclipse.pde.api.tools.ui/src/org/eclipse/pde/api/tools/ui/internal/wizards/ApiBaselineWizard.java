@@ -104,9 +104,7 @@ public class ApiBaselineWizard extends Wizard {
 				return profile != null;
 			}
 			return true;
-		} catch (IOException e) {
-			ApiUIPlugin.log(e);
-		} catch (CoreException e) {
+		} catch (IOException | CoreException e) {
 			ApiUIPlugin.log(e);
 		}
 		return false;

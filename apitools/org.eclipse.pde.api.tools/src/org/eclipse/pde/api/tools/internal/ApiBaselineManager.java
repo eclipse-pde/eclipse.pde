@@ -428,9 +428,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		try {
 			parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
-		} catch (ParserConfigurationException e) {
-			abort("Error restoring API baseline", e); //$NON-NLS-1$
-		} catch (FactoryConfigurationError e) {
+		} catch (ParserConfigurationException | FactoryConfigurationError e) {
 			abort("Error restoring API baseline", e); //$NON-NLS-1$
 		}
 		try {
@@ -485,9 +483,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 				}
 				baseline.addApiComponents(components.toArray(new IApiComponent[components.size()]));
 			}
-		} catch (IOException e) {
-			abort("Error restoring API baseline", e); //$NON-NLS-1$
-		} catch (SAXException e) {
+		} catch (IOException | SAXException e) {
 			abort("Error restoring API baseline", e); //$NON-NLS-1$
 		} finally {
 			try {
