@@ -24,13 +24,12 @@ import java.nio.file.Paths;
 import java.util.*;
 import junit.framework.AssertionFailedError;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.debug.core.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.target.*;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.junit.*;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
@@ -39,29 +38,9 @@ public class FeatureBasedLaunchTest {
 
 	private ILaunchConfiguration fFeatureBasedWithStartLevels;
 
-	@Before
-	public void setupTargetPlatform() throws Exception {
-		ITargetPlatformService tps = PDECore.getDefault().acquireService(ITargetPlatformService.class);
-		ITargetDefinition defaultTarget = tps.newDefaultTarget();
-		LoadTargetDefinitionJob job = new LoadTargetDefinitionJob(defaultTarget);
-		job.schedule();
-		job.join();
-
-		IStatus result = job.getResult();
-		if (!result.isOK()) {
-			throw new AssertionError(result.getMessage(), result.getException());
-		}
-
-		// FIXME: When run in tycho, the ${eclipse_home} installation doesn't
-		// use simpleconfigurator. PDE only picks up the
-		// simpleconfigurator/bundles.info from the configuration area when
-		// using the installation as target, not the osgi.bundles from
-		// config.ini
-		// --> target is missing almost all bundles and this test won't work
-
-		boolean functionalTargetPlatform = Arrays.stream(PluginRegistry.getActiveModels(false))
-				.anyMatch(p -> Platform.PI_RUNTIME.equals(p.getPluginBase().getId()));
-		Assume.assumeTrue("core platform bundles are missing in ${eclipse_home} target", functionalTargetPlatform);
+	@BeforeClass
+	public static void setupTargetPlatform() throws Exception {
+		TargetPlatformUtil.setRunningPlatformAsTarget();
 	}
 
 	@Before
