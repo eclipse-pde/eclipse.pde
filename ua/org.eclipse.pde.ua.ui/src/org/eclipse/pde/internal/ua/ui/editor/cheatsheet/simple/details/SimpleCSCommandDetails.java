@@ -403,9 +403,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 			if (service != null) {
 				try {
 					return service.deserialize(serialization);
-				} catch (NotDefinedException e) {
-					PDEUserAssistanceUIPlugin.logException(e, SimpleDetailsMessages.SimpleCSCommandDetails_errTitle, SimpleDetailsMessages.SimpleCSCommandDetails_errMsg + serialization);
-				} catch (SerializationException e) {
+				} catch (NotDefinedException | SerializationException e) {
 					PDEUserAssistanceUIPlugin.logException(e, SimpleDetailsMessages.SimpleCSCommandDetails_errTitle, SimpleDetailsMessages.SimpleCSCommandDetails_errMsg + serialization);
 				}
 			}

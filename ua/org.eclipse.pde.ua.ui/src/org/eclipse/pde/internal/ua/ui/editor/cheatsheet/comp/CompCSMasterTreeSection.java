@@ -375,9 +375,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 						swriter.toString(), url);
 				openAction.run();
 			}
-		} catch (IOException e) {
-			PDEUserAssistanceUIPlugin.logException(e);
-		} catch (CoreException e) {
+		} catch (IOException | CoreException e) {
 			PDEUserAssistanceUIPlugin.logException(e);
 		}
 	}
