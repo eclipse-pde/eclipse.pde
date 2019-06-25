@@ -86,9 +86,7 @@ public abstract class AbstractDSModelTestCase extends TestCase {
 		multi.addChildren(ops);
 		try {
 			multi.apply(fDocument);
-		} catch (MalformedTreeException e) {
-			fail(e.getMessage());
-		} catch (BadLocationException e) {
+		} catch (MalformedTreeException | BadLocationException e) {
 			fail(e.getMessage());
 		}
 		load();

@@ -56,7 +56,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
@@ -219,7 +218,6 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 								}
 							}
 						}
-							} catch (PartInitException e1) {
 							} catch (CoreException e1) {
 					}
 						}
