@@ -23,10 +23,8 @@ public class View extends ViewPart {
 	private TableViewer viewer;
 	
 	private class StringLabelProvider extends ColumnLabelProvider {
-		@Override
-		public String getText(Object element) {
-			return super.getText(element);
-		}
+		
+		// getText method is used from super class ColumnLabelProvider
 
 		@Override
 		public Image getImage(Object obj) {
