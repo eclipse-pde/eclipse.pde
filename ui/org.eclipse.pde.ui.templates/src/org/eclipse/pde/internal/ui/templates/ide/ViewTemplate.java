@@ -22,9 +22,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.templates.*;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.*;
+import org.osgi.framework.Constants;
 
 public class ViewTemplate extends PDETemplateSection {
 	private BooleanOption addToPerspective;
@@ -119,6 +122,10 @@ public class ViewTemplate extends PDETemplateSection {
 
 	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
+
+		IBundle bundle = ((IBundlePluginModelBase) model).getBundleModel().getBundle();
+		bundle.setHeader(Constants.IMPORT_PACKAGE, "javax.inject"); //$NON-NLS-1$
+
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension("org.eclipse.ui.views", true); //$NON-NLS-1$
 		IPluginModelFactory factory = model.getPluginFactory();

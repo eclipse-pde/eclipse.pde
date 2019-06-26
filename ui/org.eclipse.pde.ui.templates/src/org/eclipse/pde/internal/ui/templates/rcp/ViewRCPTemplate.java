@@ -19,8 +19,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.templates.*;
 import org.eclipse.pde.ui.IFieldData;
+import org.osgi.framework.Constants;
 
 public class ViewRCPTemplate extends PDETemplateSection {
 
@@ -82,6 +85,9 @@ public class ViewRCPTemplate extends PDETemplateSection {
 
 		if (getBooleanOption(KEY_PRODUCT_BRANDING))
 			createProductExtension();
+
+		IBundle bundle = ((IBundlePluginModelBase) model).getBundleModel().getBundle();
+		bundle.setHeader(Constants.IMPORT_PACKAGE, "javax.inject"); //$NON-NLS-1$
 	}
 
 	private void createApplicationExtension() throws CoreException {
