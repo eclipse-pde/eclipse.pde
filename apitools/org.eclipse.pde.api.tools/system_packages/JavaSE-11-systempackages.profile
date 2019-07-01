@@ -9,7 +9,7 @@
 #     IBM Corporation - initial API and implementation
 ###############################################################################
 # NOTE: This profile only has JavaSE-11's VM packages
- org.osgi.framework.system.packages = \
+org.osgi.framework.system.packages = \
  com.sun.jarsigner,\
  com.sun.java.accessibility.util,\
  com.sun.javadoc,\

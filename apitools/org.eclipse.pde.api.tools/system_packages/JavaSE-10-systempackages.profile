@@ -12,7 +12,7 @@
 #     IBM Corporation - initial API and implementation
 ###############################################################################
 # NOTE: This profile only has JavaSE-10's VM packages
- org.osgi.framework.system.packages = \
+org.osgi.framework.system.packages = \
  com.oracle.awt,\
  com.oracle.net,\
  com.oracle.nio,\
