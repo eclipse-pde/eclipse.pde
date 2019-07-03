@@ -83,10 +83,11 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 					new ConfigureProblemSeverityForAPIToolsResolution(marker) };
 			}
 			case IApiMarkerConstants.SINCE_TAG_MARKER_ID: {
-				IMarkerResolution[] res = hasVersionProblems() ? 
+				IMarker markerVersion = getVersionProblems(marker);
+				IMarkerResolution[] res = (markerVersion != null) ?
 				new IMarkerResolution[] {
 					new ConfigureProblemSeverityForAPIToolsResolution(marker),
-					new SinceTagAfterVersionUpdateResolution(marker),
+					new SinceTagAfterVersionUpdateResolution(markerVersion, marker),
 					new SinceTagResolution(marker),
 					new FilterProblemResolution(marker),
 					new FilterProblemWithCommentResolution(marker) }:
@@ -189,17 +190,32 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 
 	}
 
-	private boolean hasVersionProblems() {
+	private IMarker getVersionProblems(IMarker marker) {
+		IProject project = null;
+		IProject project2 = null;
+		IResource resource = marker.getResource();
+		if (resource != null) {
+			project = resource.getProject();
+		}
 		IMarker markerVersion = null;
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		try {
 			IMarker[] findMarkers = root.findMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false,
 					IResource.DEPTH_INFINITE);
-			if (findMarkers.length == 1) {
-				markerVersion = findMarkers[0];
+			for (IMarker iMarker : findMarkers) {
+				IResource resource2 = iMarker.getResource();
+				if (resource2 != null) {
+					project2 = resource2.getProject();
+					if(project !=null && project2 !=null) {
+						if(project.equals(project2)) {
+							markerVersion = iMarker;
+							break;
+						}
+					}
+				}
 			}
 		} catch (CoreException e) {
 		}
-		return markerVersion != null;
+		return markerVersion;
 	}
 }
