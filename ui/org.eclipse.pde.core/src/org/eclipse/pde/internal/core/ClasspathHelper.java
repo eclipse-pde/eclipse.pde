@@ -188,8 +188,7 @@ public class ClasspathHelper {
 	}
 
 	// creates a map whose key is a Path to the source directory/jar and the value is a Path output directory or jar.
-	private static Map<IPath, ArrayList<IPath>> getClasspathMap(IProject project, boolean checkExcluded,
-			boolean onlyJarsIfLinked, boolean absolutePaths) throws JavaModelException {
+	private static Map<IPath, ArrayList<IPath>> getClasspathMap(IProject project, boolean checkExcluded, boolean absolutePaths) throws JavaModelException {
 		List<Path> excluded = getFoldersToExclude(project, checkExcluded);
 		IJavaProject jProject = JavaCore.create(project);
 		HashMap<IPath, ArrayList<IPath>> map = new LinkedHashMap<>();
@@ -216,9 +215,6 @@ public class ClasspathHelper {
 				// make the path either relative or absolute
 				if (file != null) {
 					boolean isLinked = file.isLinked(IResource.CHECK_ANCESTORS);
-					if (entry.getEntryKind() != IClasspathEntry.CPE_SOURCE && !isLinked && onlyJarsIfLinked) {
-						continue;
-					}
 					if (isLinked || absolutePaths) {
 						IPath location = file.getLocation();
 						if (location != null) {
@@ -312,10 +308,7 @@ public class ClasspathHelper {
 		IPluginLibrary[] libraries = base.getLibraries();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
-				boolean isSystemBundle = base.getId()
-						.equals(PDECore.getDefault().getModelManager().getSystemBundleId());
-				Map<IPath, ArrayList<IPath>> classpathMap = getClasspathMap(project, checkExcluded, !isSystemBundle,
-						false);
+				Map<IPath, ArrayList<IPath>> classpathMap = getClasspathMap(project, checkExcluded, false);
 				IFile file = PDEProject.getBuildProperties(project);
 				IPath filePath = file.getLocation();
 				boolean searchBuild = filePath != null && filePath.toFile().exists();
@@ -387,7 +380,7 @@ public class ClasspathHelper {
 			if (frags[i].getUnderlyingResource() != null) {
 				try {
 					IProject project = frags[i].getUnderlyingResource().getProject();
-					Map<IPath, ArrayList<IPath>> classpathMap = getClasspathMap(project, checkExcluded, false, true);
+					Map<IPath, ArrayList<IPath>> classpathMap = getClasspathMap(project, checkExcluded, true);
 					IFile file = PDEProject.getBuildProperties(project);
 					IBuild build = null;
 					if (file.exists()) {
