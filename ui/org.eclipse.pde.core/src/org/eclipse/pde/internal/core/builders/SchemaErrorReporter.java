@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2017 IBM Corporation and others.
+ *  Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -217,7 +217,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 										errorReported = true;
 									}
 								} else {
-									String shortTag = getTagName(tagName);
+									String shortTag = tagName.trim().isEmpty() ? tagName : getTagName(tagName);
 									if (!forbiddenEndTag(shortTag)) {
 										stack.push(new StackEntry(shortTag, lineNumber));
 									}
