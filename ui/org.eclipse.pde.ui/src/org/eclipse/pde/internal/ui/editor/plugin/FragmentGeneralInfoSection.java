@@ -371,7 +371,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 			return;
 		}
 		version = version.trim();
-		int comInd = version.indexOf(","); //$NON-NLS-1$
+		int comInd = version.indexOf(','); //$NON-NLS-1$
 		int lastPos = version.length() - 1;
 		char first = version.charAt(0);
 		char last = version.charAt(lastPos);

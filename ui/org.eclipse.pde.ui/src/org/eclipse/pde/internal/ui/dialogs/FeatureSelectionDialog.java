@@ -58,7 +58,7 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 		public FeatureSearchItemsFilter() {
 			super();
 			String pattern = patternMatcher.getPattern();
-			if (pattern.indexOf("*") != 0 && pattern.indexOf("?") != 0 && pattern.indexOf(".") != 0) {//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (pattern.indexOf('*') != 0 && pattern.indexOf('?') != 0 && pattern.indexOf('.') != 0) {//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				pattern = "*" + pattern; //$NON-NLS-1$
 				patternMatcher.setPattern(pattern);
 			}
