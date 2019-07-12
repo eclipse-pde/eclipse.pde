@@ -40,4 +40,10 @@ public class SinceTagAfterVersionUpdateResolution extends SinceTagResolution {
 		super.run(marker);
 	}
 
+	@Override
+	public String getDescription() {
+		return NLS.bind(MarkerMessages.SinceTagResolution_add_since_tag_after_version_update,
+				markerVersion.getAttribute(IApiMarkerConstants.MARKER_ATTR_VERSION, null));
+	}
+
 }
