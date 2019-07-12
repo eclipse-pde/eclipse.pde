@@ -24,7 +24,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.text.contentassist.BoldStylerProvider;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.core.plugin.*;
@@ -36,6 +38,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
+import org.eclipse.ui.dialogs.StyledStringHighlighter;
 
 public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelectionDialog {
 
@@ -63,7 +66,11 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	private SearchLabelProvider searchLabelProvider = new SearchLabelProvider();
 	private ILabelProvider detailsLabelProvider = new DetailedLabelProvider();
 
-	private class SearchLabelProvider extends LabelProvider implements ILabelDecorator {
+	private class SearchLabelProvider extends LabelProvider implements ILabelDecorator, IStyledLabelProvider {
+
+		private BoldStylerProvider boldStylerProvider;
+		private StyledStringHighlighter styledStringHighlighter = new StyledStringHighlighter();
+
 		@Override
 		public Image getImage(Object element) {
 			if (element instanceof ExportPackageDescription) {
@@ -118,6 +125,37 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			}
 			return text;
 		}
+
+		@Override
+		public StyledString getStyledText(Object element) {
+			String text = getText(element);
+			Text patternControl = (Text) FilteredPluginArtifactsSelectionDialog.this.getPatternControl();
+
+			if (patternControl == null) {
+				return new StyledString(text);
+			}
+
+			String pattern = patternControl.getText();
+			return styledStringHighlighter.highlight(text, pattern, getBoldStylerProvider().getBoldStyler());
+		}
+
+		private BoldStylerProvider getBoldStylerProvider() {
+			if (boldStylerProvider != null) {
+				return boldStylerProvider;
+			}
+
+			return boldStylerProvider = new BoldStylerProvider(getDialogArea().getFont());
+		}
+
+		@Override
+		public void dispose() {
+			if (boldStylerProvider != null) {
+				boldStylerProvider.dispose();
+			}
+
+			super.dispose();
+		}
+
 	}
 
 	private class DetailedLabelProvider extends LabelProvider {
@@ -622,7 +660,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		public PluginSearchItemsFilter() {
 			super();
 			String pattern = patternMatcher.getPattern();
-			if (pattern.indexOf('*') != 0 && pattern.indexOf('?') != 0 && pattern.indexOf('.') != 0) {//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (pattern.indexOf('*') != 0 && pattern.indexOf('?') != 0 && pattern.indexOf('.') != 0) {
 				pattern = "*" + pattern; //$NON-NLS-1$
 				patternMatcher.setPattern(pattern);
 			}
