@@ -608,7 +608,7 @@ public class P2Tests extends P2TestCase {
 			return;
 
 		IFile artifact = repository.getFile(getArtifactLocation(descriptor));
-		String actualMD5 = ChecksumProducer.produce(artifact.getLocation().toFile(), "MD5");
+		String actualMD5 = ChecksumProducer.computeMD5(artifact.getLocation().toFile());
 		assertEquals(md5, actualMD5);
 	}
 
