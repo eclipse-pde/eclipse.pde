@@ -68,6 +68,7 @@ import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.PDEManager;
+import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.TargetWeaver;
 import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
@@ -795,6 +796,17 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			// It is possible for the bundle description to not match the headers
 			if (specs != null && specs[i].getSupplier() == null) {
 				if (desc.getContainingState().getBundle(specs[i].getName(), null) == null) {
+					PDEState pdeState = TargetPlatformHelper.getPDEState();
+					if (pdeState != null) {
+						IPluginModelBase[] targetModels = pdeState.getTargetModels();
+						if (targetModels != null && targetModels.length == 0) {
+							VirtualMarker marker = report(PDECoreMessages.BundleErrorReporter_EmptyTargetPlatform, 1,
+									severity, PDEMarkerFactory.M_REQ_BUNDLE_NOT_AVAILABLE, PDEMarkerFactory.CAT_FATAL);
+							addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,
+									CompilerFlags.P_UNRESOLVED_IMPORTS);
+							return;
+						}
+					}
 					VirtualMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_NotExistPDE, bundleID), getPackageLine(header, required[i]), severity, PDEMarkerFactory.M_REQ_BUNDLE_NOT_AVAILABLE, PDEMarkerFactory.CAT_FATAL);
 					addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,  CompilerFlags.P_UNRESOLVED_IMPORTS);
 					if (marker != null) {

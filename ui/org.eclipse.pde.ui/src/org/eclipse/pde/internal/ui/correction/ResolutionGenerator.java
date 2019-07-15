@@ -21,8 +21,8 @@ import java.util.Arrays;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.*;
@@ -216,8 +216,16 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 
 	private IMarkerResolution[] getUnresolvedBundle(IMarker marker) {
 		String bundleId = marker.getAttribute("bundleId", (String) null); //$NON-NLS-1$
-		if (bundleId == null)
+		if (bundleId == null){
+			PDEState pdeState = TargetPlatformHelper.getPDEState();
+			if (pdeState != null) {
+				IPluginModelBase[] targetModels = pdeState.getTargetModels();
+				if (targetModels != null && targetModels.length == 0) {
+					return new IMarkerResolution[] { new ConfigureTargetPlatformResolution()};
+				}
+			}
 			return NO_RESOLUTIONS;
+		}
 
 		boolean optionalBundle = marker.getAttribute("optional", false); //$NON-NLS-1$
 		if (optionalBundle) {
