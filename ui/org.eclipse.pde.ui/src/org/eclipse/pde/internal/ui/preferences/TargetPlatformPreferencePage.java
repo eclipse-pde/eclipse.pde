@@ -631,6 +631,11 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			}
 			fTableViewer.refresh(true);
 			fTableViewer.setSelection(new StructuredSelection(def));
+			if (fTargets.size() == 1) {
+				fTableViewer.setCheckedElements(new Object[] { fActiveTarget });
+				handleActivate();
+			}
+
 		}
 	}
 
