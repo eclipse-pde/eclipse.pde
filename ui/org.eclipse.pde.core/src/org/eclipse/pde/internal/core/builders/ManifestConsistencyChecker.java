@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Code 9 Corporation - ongoing enhancements
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 477527
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 500495
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
@@ -132,9 +133,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 							System.out.println(" - changed"); //$NON-NLS-1$
 						}
 					} else if (name.endsWith(".exsd") || file.equals(PDEProject.getPluginXml(project)) || file.equals(PDEProject.getFragmentXml(project))) { //$NON-NLS-1$
-						type |= EXTENSIONS;
+						type |= EXTENSIONS | BUILD;
 						if (PDECore.DEBUG_VALIDATION) {
-							System.out.print("Needs to rebuild extensions in project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
+							System.out.print("Needs to rebuild project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
 							System.out.print(delta.getResource().getProjectRelativePath().toString());
 							System.out.println(" - changed"); //$NON-NLS-1$
 						}
