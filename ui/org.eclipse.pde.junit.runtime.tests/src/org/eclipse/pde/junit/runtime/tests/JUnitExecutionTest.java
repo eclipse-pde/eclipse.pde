@@ -37,6 +37,9 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.junit.model.ITestElement;
+import org.eclipse.jdt.junit.model.ITestElement.FailureTrace;
+import org.eclipse.jdt.junit.model.ITestElement.Result;
+import org.eclipse.jdt.junit.model.ITestElementContainer;
 import org.eclipse.jdt.junit.model.ITestRunSession;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -46,6 +49,8 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
+
+import junit.framework.AssertionFailedError;
 
 @RunWith(Parameterized.class)
 public class JUnitExecutionTest {
@@ -81,7 +86,9 @@ public class JUnitExecutionTest {
 		return Arrays.asList(new TestInput("JUnit5", "verification.tests.junit5"),
 				new TestInput("JUnit5 Fragment", "verification.tests.junit5.fragment"),
 				new TestInput("JUnit4", "verification.tests.junit4"),
-				new TestInput("JUnit4 Fragment", "verification.tests.junit4.fragment"));
+				new TestInput("JUnit4 Fragment", "verification.tests.junit4.fragment"),
+				new TestInput("JUnit4 (JUnitPlatform)", "verification.tests.junit4.platform"),
+				new TestInput("JUnit4 (JUnitPlatform) Fragment", "verification.tests.junit4.platform.fragment"));
 	}
 
 	@Test
@@ -90,7 +97,7 @@ public class JUnitExecutionTest {
 		ITestRunSession session = TestExecutionUtil.runTest(testClass);
 
 		assertThat(session.getChildren(), is(arrayWithSize(1)));
-		assertThat(session.getTestResult(true), is(ITestElement.Result.OK));
+		assertSuccessful(session);
 	}
 
 	@Test
@@ -99,7 +106,7 @@ public class JUnitExecutionTest {
 		ITestRunSession session = TestExecutionUtil.runTest(testPackage);
 
 		assertThat(session.getChildren(), is(arrayWithSize(2)));
-		assertThat(session.getTestResult(true), is(ITestElement.Result.OK));
+		assertSuccessful(session);
 	}
 
 	@Test
@@ -107,7 +114,7 @@ public class JUnitExecutionTest {
 		ITestRunSession session = TestExecutionUtil.runTest(input.project);
 
 		assertThat(session.getChildren(), is(arrayWithSize(2)));
-		assertThat(session.getTestResult(true), is(ITestElement.Result.OK));
+		assertSuccessful(session);
 	}
 
 	@Test
@@ -116,7 +123,31 @@ public class JUnitExecutionTest {
 		ITestRunSession session = TestExecutionUtil.runTest(testMethod);
 
 		assertThat(session.getChildren(), is(arrayWithSize(1)));
-		assertThat(session.getTestResult(true), is(ITestElement.Result.OK));
+		assertSuccessful(session);
+	}
+
+	private void assertSuccessful(ITestRunSession session) {
+		Result testResult = session.getTestResult(true);
+		if (ITestElement.Result.OK.equals(testResult))
+			return;
+		
+		AssertionFailedError assertionFailedError = new AssertionFailedError("test completed with " + testResult);
+		addFailureTraces(session, assertionFailedError);
+		
+		throw assertionFailedError;
+	}
+
+	private void addFailureTraces(ITestElement element, AssertionFailedError assertionFailedError) {
+		FailureTrace trace = element.getFailureTrace();
+		if (trace != null) {
+			assertionFailedError.addSuppressed(new AssertionFailedError("FailureTrace of " + element + ":\n\n" + trace.getTrace()));
+		}
+		
+		if (element instanceof ITestElementContainer) {
+			for (ITestElement child : ((ITestElementContainer) element).getChildren()) {
+				addFailureTraces(child, assertionFailedError);
+			}
+		}
 	}
 
 	static class TestInput {

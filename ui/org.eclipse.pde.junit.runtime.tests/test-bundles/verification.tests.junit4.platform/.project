@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.eclipse.pde.junit.runtime.tests</name>
+	<name>verification.tests.junit4.platform</name>
 	<comment></comment>
 	<projects>
 	</projects>
