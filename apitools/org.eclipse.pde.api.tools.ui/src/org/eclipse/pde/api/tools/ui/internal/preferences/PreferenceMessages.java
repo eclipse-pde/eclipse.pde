@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class PreferenceMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.ui.internal.preferences.preferencemessages"; //$NON-NLS-1$
+	public static String ApiBaselinesConfigurationBlock_0;
 	public static String ApiErrorsWarningsConfigurationBlock_0;
 	public static String ApiErrorsWarningsConfigurationBlock_1;
 	public static String ApiErrorsWarningsConfigurationBlock_2;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,12 @@ package org.eclipse.pde.api.tools.ui.internal.preferences;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -25,6 +30,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
@@ -275,6 +281,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	 */
 	private Composite fParent = null;
 
+	private boolean hasBaseline = true;
 	/**
 	 * Constructor
 	 *
@@ -327,6 +334,48 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 			try {
 				ArrayList<Key> changes = new ArrayList<>();
 				collectChanges(fLookupOrder[0], changes);
+				if (changes.size() == 1) {
+					// Note that there is only 1 key in ApiBaselineConfigBlock
+					Key k = changes.get(0);
+
+					String original = k.getStoredValue(fLookupOrder[0], null);
+					if (original == null) {
+						// this means default value - always error
+						original = ApiPlugin.VALUE_ERROR;
+					}
+					String newval = k.getStoredValue(fLookupOrder[0], fManager);
+					if (newval.equals(ApiPlugin.VALUE_IGNORE)) {
+						// just check for any missing baseline and delete it
+						deleteMissingBaselineMarker();
+
+					} else if (newval.equals(ApiPlugin.VALUE_WARNING)) {
+						// if error to warning - change attribute
+						if (original.equals(ApiPlugin.VALUE_ERROR)) {
+							updateMissingBaselineMarkerSeverity(IMarker.SEVERITY_WARNING);
+						}
+						// if ignore to warning - calculate
+						if (original.equals(ApiPlugin.VALUE_IGNORE)) {
+							if (hasBaseline == false) {
+								createMissingBaselineMarker(IMarker.SEVERITY_WARNING);
+							}
+						}
+
+					} else if (newval.equals(ApiPlugin.VALUE_ERROR)) {
+						// if warning to error - change attribute
+						if (original.equals(ApiPlugin.VALUE_WARNING)) {
+							updateMissingBaselineMarkerSeverity(IMarker.SEVERITY_ERROR);
+						}
+						// if ignore to warning - calculate
+						if (original.equals(ApiPlugin.VALUE_IGNORE)) {
+							if (hasBaseline == false) {
+								createMissingBaselineMarker(IMarker.SEVERITY_ERROR);
+							}
+						}
+					}
+					fDirty = false;
+					return;
+				}
+				// code below probably redundant now
 				if (changes.size() > 0) {
 					if (ApiBaselinePreferencePage.rebuildcount < 1) {
 						ApiBaselinePreferencePage.rebuildcount++;
@@ -350,6 +399,74 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 				ApiPlugin.log(bse);
 			}
 		}
+	}
+
+	private void updateMissingBaselineMarkerSeverity(int severity) {
+		ArrayList<IMarker> marker = findMissingBaselineMarker();
+
+		for (IMarker iMarker : marker) {
+			try {
+				iMarker.setAttribute(IMarker.SEVERITY, severity);
+			} catch (CoreException e) {
+				ApiPlugin.log(e);
+			}
+		}
+	}
+
+	private void deleteMissingBaselineMarker() {
+		ArrayList<IMarker> marker = findMissingBaselineMarker();
+		for (IMarker iMarker : marker) {
+			try {
+				iMarker.delete();
+			} catch (CoreException e) {
+				ApiPlugin.log(e);
+			}
+		}
+	}
+
+	private void createMissingBaselineMarker(int valueWarning) {
+		IProject[] apiProjects = Util.getApiProjects();
+		for (IProject iProject : apiProjects) {
+			createMissingBaselineMarkerOnProject(iProject, valueWarning);
+		}
+	}
+
+	private void createMissingBaselineMarkerOnProject(IResource res, int valueWarning) {
+		try {
+			IMarker createMarker = res.createMarker(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER);
+			createMarker.setAttribute(IMarker.MESSAGE, PreferenceMessages.ApiBaselinesConfigurationBlock_0);
+			createMarker.setAttribute(IMarker.SEVERITY, valueWarning);
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
+	}
+
+	private ArrayList<IMarker> findMissingBaselineMarker() {
+		ArrayList<IMarker> markList = new ArrayList<>();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		try {
+			IMarker[] findMarkers = root.findMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, false,
+					IResource.DEPTH_ZERO);
+			for (IMarker iMarker : findMarkers) {
+				markList.add(iMarker);
+			}
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
+		IProject[] apiProjects = Util.getApiProjects();
+		for (IProject iProject : apiProjects) {
+			IMarker[] findMarkers;
+			try {
+				findMarkers = iProject.findMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, false,
+						IResource.DEPTH_ZERO);
+				for (IMarker iMarker : findMarkers) {
+					markList.add(iMarker);
+				}
+			} catch (CoreException e) {
+				ApiPlugin.log(e);
+			}
+		}
+		return markList;
 	}
 
 	/**
@@ -457,5 +574,10 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 				}
 			}
 		}
+	}
+
+	public void hasSelectedBaseline(boolean b) {
+		hasBaseline = b;
+
 	}
 }
