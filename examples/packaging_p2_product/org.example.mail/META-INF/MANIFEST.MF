@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Mail Plug-in
 Bundle-SymbolicName: org.example.mail; singleton:=true
-Bundle-Version: 1.0.100.qualifier
-Bundle-Activator: org.example.mail.Activator
+Bundle-Version: 1.1.0.qualifier
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: org.example.mail
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.example.mail
