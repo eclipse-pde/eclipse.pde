@@ -424,8 +424,37 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 		}
 	}
 
+	public void createMissingBaselineMarker() {
+		if (hasBaseline) {
+			return;
+		}
+		String newval = fgAllKeys[0].getStoredValue(fLookupOrder[0], fManager);
+		if (newval == null) {
+			newval = ApiPlugin.VALUE_ERROR;
+		}
+		int valueWarning = -1;
+		if (newval.equals(ApiPlugin.VALUE_WARNING)) {
+			valueWarning = IMarker.SEVERITY_WARNING;
+		}
+		if (newval.equals(ApiPlugin.VALUE_ERROR)) {
+			valueWarning = IMarker.SEVERITY_ERROR;
+		}
+		if(valueWarning < 0) {
+			return;
+		}
+		IProject[] apiProjects = Util.getApiProjects();
+		if (apiProjects == null) {
+			return;
+		}
+		for (IProject iProject : apiProjects) {
+			createMissingBaselineMarkerOnProject(iProject, valueWarning);
+		}
+	}
 	private void createMissingBaselineMarker(int valueWarning) {
 		IProject[] apiProjects = Util.getApiProjects();
+		if (apiProjects == null) {
+			return;
+		}
 		for (IProject iProject : apiProjects) {
 			createMissingBaselineMarkerOnProject(iProject, valueWarning);
 		}
@@ -454,6 +483,9 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 			ApiPlugin.log(e);
 		}
 		IProject[] apiProjects = Util.getApiProjects();
+		if (apiProjects == null) {
+			return markList;
+		}
 		for (IProject iProject : apiProjects) {
 			IMarker[] findMarkers;
 			try {
@@ -576,7 +608,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 		}
 	}
 
-	public void hasSelectedBaseline(boolean b) {
+	public void setHasBaseline(boolean b) {
 		hasBaseline = b;
 
 	}

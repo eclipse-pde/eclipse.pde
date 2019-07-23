@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -34,6 +36,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
+import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiToolsLabelProvider;
@@ -326,6 +329,18 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 			manager.addApiBaseline(iApiBaseline);
 		}
 		manager.setDefaultApiBaseline(newdefault);
+		if (defaultchanged && newdefault == null && origdefault != null) {
+			findAndDeleteCompatibilityMarkers();
+			Object[] checkedElements = tableviewer.getCheckedElements();
+			this.block.setHasBaseline(checkedElements.length != 0);
+			this.block.createMissingBaselineMarker();
+			origdefault = newdefault;
+			dirty = false;
+			defaultcontentchanged = false;
+			defaultchanged = false;
+			removed.clear();
+			return;
+		}
 		if (defaultchanged || defaultcontentchanged) {
 			if (rebuildcount < 1) {
 				rebuildcount++;
@@ -350,10 +365,53 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 		removed.clear();
 	}
 
+	private void findAndDeleteCompatibilityMarkers() {
+		IProject[] apiProjects = Util.getApiProjects();
+		if (apiProjects == null) {
+			return;
+		}
+		for (IProject iProject : apiProjects) {
+			cleanupCompatibilityMarkers(iProject);
+			try {
+				iProject.deleteMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false,
+						IResource.DEPTH_INFINITE);
+			} catch (CoreException e) {
+			}
+
+		}
+		return;
+	}
+
+	/**
+	 * Cleans up only API compatibility markers on the given {@link IResource}
+	 *
+	 * @param resource
+	 *            the given resource
+	 */
+	void cleanupCompatibilityMarkers(IResource resource) {
+		try {
+			if (resource != null && resource.isAccessible()) {
+				resource.deleteMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, false,
+						IResource.DEPTH_INFINITE);
+				resource.deleteMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+				if (resource.getType() == IResource.PROJECT) {
+					// on full builds
+					resource.deleteMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false,
+							IResource.DEPTH_INFINITE);
+					resource.deleteMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, true,
+							IResource.DEPTH_ZERO);
+					resource.deleteMarkers(IApiMarkerConstants.API_COMPONENT_RESOLUTION_PROBLEM_MARKER, true,
+							IResource.DEPTH_ZERO);
+				}
+			}
+		} catch (CoreException e) {
+			ApiPlugin.log(e.getStatus());
+		}
+	}
 	@Override
 	public boolean performOk() {
 		Object[] checkedElements = tableviewer.getCheckedElements();
-		this.block.hasSelectedBaseline(checkedElements.length != 0);
+		this.block.setHasBaseline(checkedElements.length != 0);
 		this.block.performOK();
 		applyChanges();
 		return true;
