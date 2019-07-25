@@ -45,7 +45,11 @@ public class WorkspaceRepository extends AbstractRepository {
 			if (manifest.exists()) {
 				try {
 					// extract plugin name
-					final String pluginName = getPluginName(manifest.getContents());
+					Optional<String> name = getPluginName(manifest.getContents());
+					if (!name.isPresent()) {
+						return !fProjects.isEmpty();
+					}
+					final String pluginName = name.get();
 
 					// parse all folders
 					project.accept((IResourceProxyVisitor) proxy -> {
