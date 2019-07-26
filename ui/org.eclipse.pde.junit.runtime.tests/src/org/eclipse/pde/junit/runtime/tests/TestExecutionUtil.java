@@ -19,6 +19,10 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -31,6 +35,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -43,6 +48,7 @@ import org.eclipse.jdt.junit.JUnitCore;
 import org.eclipse.jdt.junit.TestRunListener;
 import org.eclipse.jdt.junit.model.ITestRunSession;
 import org.eclipse.pde.internal.launching.IPDEConstants;
+import org.eclipse.pde.internal.launching.launcher.LaunchListener;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.JUnitWorkbenchLaunchShortcut;
 
@@ -116,6 +122,7 @@ class TestExecutionUtil {
 				}
 
 				if (launch.equals(terminatedLaunch)) {
+					checkExitValueAndDumpLog(launch);
 					break;
 				}
 			}
@@ -127,6 +134,26 @@ class TestExecutionUtil {
 			if (!launch.isTerminated()) {
 				launch.terminate();
 			}
+		}
+	}
+
+	private static void checkExitValueAndDumpLog(ILaunch launch) throws DebugException, CoreException {
+		int exitValue = launch.getProcesses()[0].getExitValue();
+		String logFile = readLogFile(launch.getLaunchConfiguration());
+		if (exitValue == 13) {
+			fail("test application could not start:\n\n" + logFile);
+		} else {
+			System.out.println(MessageFormat.format("test process terminated with exit value {0}; log file: \n\n{1}",
+					exitValue, logFile));
+		}
+	}
+
+	private static String readLogFile(ILaunchConfiguration launchConfiguration) throws CoreException {
+		File logFile = LaunchListener.getMostRecentLogFile(launchConfiguration);
+		try {
+			return String.join("\n", Files.readAllLines(logFile.toPath()));
+		} catch (IOException e) {
+			return "could not read log: " + e.toString();
 		}
 	}
 
