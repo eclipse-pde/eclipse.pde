@@ -150,6 +150,9 @@ class TestExecutionUtil {
 
 	private static String readLogFile(ILaunchConfiguration launchConfiguration) throws CoreException {
 		File logFile = LaunchListener.getMostRecentLogFile(launchConfiguration);
+		if(logFile == null) {
+			return "could not read log for: " + launchConfiguration;
+		}
 		try {
 			return String.join("\n", Files.readAllLines(logFile.toPath()));
 		} catch (IOException e) {
