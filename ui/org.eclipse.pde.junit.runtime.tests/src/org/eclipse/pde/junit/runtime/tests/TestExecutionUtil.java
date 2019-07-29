@@ -34,7 +34,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -65,6 +67,7 @@ class TestExecutionUtil {
 		TestLaunchShortcut launchShortcut = new TestLaunchShortcut();
 		ILaunchConfigurationWorkingCopy launchConfiguration = launchShortcut.createLaunchConfiguration(element);
 		launchConfiguration.setAttribute(IPDELauncherConstants.APPLICATION, IPDEConstants.CORE_TEST_APPLICATION);
+		setupDirectories(launchConfiguration, element);
 
 		BlockingQueue<ITestRunSession> testResult = new LinkedBlockingDeque<>();
 		TestRunListener testRunListener = new TestRunListener() {
@@ -85,6 +88,16 @@ class TestExecutionUtil {
 		} finally {
 			JUnitCore.removeTestRunListener(testRunListener);
 		}
+	}
+
+	private static void setupDirectories(ILaunchConfigurationWorkingCopy launchConfiguration, IJavaElement element) {
+		String dir = element.getJavaProject().getElementName() + "_" + launchConfiguration.getName();
+		IPath testLocation = Platform.getLocation().append(dir);
+
+		launchConfiguration.setAttribute(IPDELauncherConstants.LOCATION, testLocation.append("workspace").toOSString());
+		launchConfiguration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION,
+				testLocation.append("configuration").toOSString());
+		launchConfiguration.setAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, false);
 	}
 
 	private static void launchAndWaitForTermination(ILaunchConfiguration launchConfiguration) throws CoreException {

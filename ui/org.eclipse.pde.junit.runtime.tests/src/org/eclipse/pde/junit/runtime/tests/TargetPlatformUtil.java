@@ -56,6 +56,11 @@ public class TargetPlatformUtil {
 		}).map(f -> f.getBaseFile().getParentFile()).distinct()
 				.map(dir -> tps.newDirectoryLocation(dir.getAbsolutePath())).toArray(ITargetLocation[]::new);
 
+		NameVersionDescriptor[] included = Arrays.stream(installedBundles)
+				.map(b -> new NameVersionDescriptor(b.getSymbolicName(), b.getVersion().toString()))
+				.toArray(NameVersionDescriptor[]::new);
+		targetDefinition.setIncluded(included);
+
 		targetDefinition.setTargetLocations(bundleContainers);
 		targetDefinition.setArch(Platform.getOSArch());
 		targetDefinition.setOS(Platform.getOS());
