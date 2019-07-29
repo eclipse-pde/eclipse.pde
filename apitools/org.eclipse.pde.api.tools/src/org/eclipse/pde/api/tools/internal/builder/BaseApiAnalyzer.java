@@ -73,6 +73,7 @@ import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.ApiFilterStore;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
 import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
@@ -407,6 +408,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				System.out.println("Checking use scan dependencies for: " + Arrays.asList(apiUseTypes)); //$NON-NLS-1$
 			}
 		}
+		boolean checkState = hasCheckedAPIScanLocation();
+		if (checkState == false) {
+			return;
+		}
 		SubMonitor localmonitor = SubMonitor.convert(monitor, BuilderMessages.checking_external_dependencies, 10);
 		IReferenceDescriptor[] externalDependencies = UseScanManager.getInstance().getExternalDependenciesFor(apiComponent, apiUseTypes, localmonitor.split(10));
 		try {
@@ -462,6 +467,25 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		} finally {
 			localmonitor.done();
 		}
+	}
+
+	private boolean hasCheckedAPIScanLocation() {
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
+		String location = node.get(IApiCoreConstants.API_USE_SCAN_LOCATION, null);
+		if (location == null || location.length() == 0) {
+			return false;
+		}
+		ArrayList<String> checkedLocations = new ArrayList<>();
+		if (location != null && location.length() > 0) {
+			String[] locations = location.split(UseScanManager.ESCAPE_REGEX + UseScanManager.LOCATION_DELIM);
+			for (String locationString : locations) {
+				String values[] = locationString.split(UseScanManager.ESCAPE_REGEX + UseScanManager.STATE_DELIM);
+				if (Boolean.parseBoolean(values[1])) {
+					checkedLocations.add(values[0]);
+				}
+			}
+		}
+		return checkedLocations.size() > 0;
 	}
 
 	public boolean isSeverityEnabled(Properties properties) {
