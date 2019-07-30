@@ -127,6 +127,13 @@ class TestExecutionUtil {
 		ILaunch launch = DebugUITools.buildAndLaunch(launchConfiguration, ILaunchManager.RUN_MODE,
 				new NullProgressMonitor());
 
+		launch.getProcesses()[0].getStreamsProxy().getOutputStreamMonitor().addListener((text, m) -> {
+			System.out.println("[test] " + text);
+		});
+		launch.getProcesses()[0].getStreamsProxy().getErrorStreamMonitor().addListener((text, m) -> {
+			System.err.println("[test] " + text);
+		});
+
 		try {
 			while (true) {
 				ILaunch terminatedLaunch = terminatedLaunches.poll(5, TimeUnit.MINUTES);
@@ -163,8 +170,8 @@ class TestExecutionUtil {
 
 	private static String readLogFile(ILaunchConfiguration launchConfiguration) throws CoreException {
 		File logFile = LaunchListener.getMostRecentLogFile(launchConfiguration);
-		if(logFile == null) {
-			return "could not read log for: " + launchConfiguration;
+		if (logFile == null) {
+			return "no log file for: " + launchConfiguration;
 		}
 		try {
 			return String.join("\n", Files.readAllLines(logFile.toPath()));
