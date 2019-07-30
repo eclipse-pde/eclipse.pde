@@ -81,7 +81,6 @@ public class AddSourceBuildEntryResolution extends BuildEntryMarkerResolution {
 				IClasspathEntry[] cpes = jp.getRawClasspath();
 				return PDEBuilderHelper.getUnlistedClasspaths(sourceEntries, project, cpes);
 			}
-		} catch (JavaModelException e) {
 		} catch (CoreException e) {
 		}
 		return null;

@@ -14,13 +14,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.junit.runtime;
 
-import java.io.*;
-import java.net.URI;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.internal.junit.runner.RemoteTestRunner;
-import org.eclipse.osgi.internal.framework.EquinoxBundle;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.wiring.BundleWiring;
@@ -80,77 +79,17 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 
 		@Override
 		public Enumeration<URL> getResources(String res) throws IOException {
-			List<URL> resources = new ArrayList<>(6);
-			String location = null;
-			URL url = null;
-			if (bundle instanceof EquinoxBundle) {
-				location = ((EquinoxBundle) bundle).getLocation();
-			}
-			if (location != null && location.startsWith("reference:")) { //$NON-NLS-1$
-				location = location.substring(10, location.length());
-				URI uri = URI.create(location);
-				String newPath = uri.getPath() + "bin" + '/' + res; //$NON-NLS-1$
-				URI newUri = uri.resolve(newPath);
-				url = newUri.normalize().toURL();
-			}
-			if (url != null) {
-				File f = new File(url.getFile());
-				if (f.exists()){
-					resources.add(url);
-				} else {
-					Set<String> outputPaths = getOutputPaths();
-					for (String string : outputPaths) {
-						URI uri = URI.create(location);
-						String newPath = uri.getPath() + string + '/' + res;
-						URI newUri = uri.resolve(newPath);
-						url = newUri.normalize().toURL();
-						if (url != null) {
-							File f2 = new File(url.getFile());
-							if (f2.exists()) {
-								resources.add(url);
-							}
-						}
-					}
-				}
-			}
-			else
+			Enumeration<URL> bundleResources = bundle.getResources(res);
+			if (bundleResources == null)
 				return Collections.emptyEnumeration();
 
-			return Collections.enumeration(resources);
-		}
-
-		private Set<String> getOutputPaths() {
-			String location = bundle.getLocation();
-			location = location.substring(16);
-			File cpFile = new File(location + ".classpath"); //$NON-NLS-1$
-			Set<String> paths = new HashSet<String>();
-			try (BufferedReader br = new BufferedReader(new FileReader(cpFile.getAbsoluteFile()))) {
-				String line;
-				while ((line = br.readLine()) != null) {
-					if (line.contains("kind=\"output\"")) { //$NON-NLS-1$
-						int index = line.indexOf(" path=\""); //$NON-NLS-1$
-						if (index >= 0) {
-							line = line.substring(index);
-							line = line.substring(line.indexOf("\"") + 1); //$NON-NLS-1$
-							line = line.substring(0, line.indexOf("\"")); //$NON-NLS-1$
-							paths.add(line);
-						}
-					}
-					if (line.contains("kind=\"src\"") && line.contains("path=\"")) { //$NON-NLS-1$ //$NON-NLS-2$
-						int index = line.indexOf(" output=\""); //$NON-NLS-1$
-						if (index >= 0) {
-							line = line.substring(index);
-							line = line.substring(line.indexOf("\"") + 1); //$NON-NLS-1$
-							line = line.substring(0, line.indexOf("\"")); //$NON-NLS-1$-2$
-							paths.add(line);
-						}
-					}
-				}
-			} catch (IOException e) {
-				// return set collected so far
+			List<URL> compatibleResources = new ArrayList<>();
+			while (bundleResources.hasMoreElements()) {
+				URL nativeUrl = FileLocator.resolve(bundleResources.nextElement());
+				compatibleResources.add(nativeUrl);
 			}
-			return paths;
 
+			return Collections.enumeration(compatibleResources);
 		}
 	}
 

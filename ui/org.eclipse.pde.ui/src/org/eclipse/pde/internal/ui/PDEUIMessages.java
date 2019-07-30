@@ -3242,6 +3242,7 @@ public class PDEUIMessages extends NLS {
 	public static String PDEJavaHelper_msgContentAssistAvailableWithKeyBinding;
 
 	public static String AddExportPackageResolution_Label;
+	public static String AddExportPackageInternalDirectiveResolution_Label;
 	public static String AddBundleClassPathResolution_add;
 
 	public static String AddBundleManifestVersionResolution_description;

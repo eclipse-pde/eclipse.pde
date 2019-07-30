@@ -50,13 +50,7 @@ public class SearchRepositoriesForIUProposal implements IJavaCompletionProposal 
 			Parameterization parameterization = new Parameterization(parameter, fPackageName);
 			ParameterizedCommand pc = new ParameterizedCommand(command, new Parameterization[] {parameterization});
 			handlerService.executeCommand(pc, null);
-		} catch (ExecutionException e) {
-			PDEPlugin.log(e);
-		} catch (NotDefinedException e) {
-			PDEPlugin.log(e);
-		} catch (NotEnabledException e) {
-			PDEPlugin.log(e);
-		} catch (NotHandledException e) {
+		} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
 			PDEPlugin.log(e);
 		}
 	}

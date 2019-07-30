@@ -48,9 +48,7 @@ public class BundleManifestChange {
 			bundle.getModel().addModelChangedListener(listener);
 			addPackage(bundle, change);
 			return createChange(listener, file);
-		} catch (CoreException e) {
-		} catch (MalformedTreeException e) {
-		} catch (BadLocationException e) {
+		} catch (CoreException | MalformedTreeException | BadLocationException e) {
 		} finally {
 			FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
 		}
@@ -88,9 +86,7 @@ public class BundleManifestChange {
 					change.setMovedElements(list.toArray(new PDEManifestElement[list.size()]));
 				return change;
 			}
-		} catch (CoreException e) {
-		} catch (MalformedTreeException e) {
-		} catch (BadLocationException e) {
+		} catch (CoreException | MalformedTreeException | BadLocationException e) {
 		} finally {
 			FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
 		}
@@ -134,9 +130,7 @@ public class BundleManifestChange {
 				}
 			}
 			return createChange(listener, file);
-		} catch (CoreException e) {
-		} catch (MalformedTreeException e) {
-		} catch (BadLocationException e) {
+		} catch (CoreException | MalformedTreeException | BadLocationException e) {
 		} finally {
 			FileBuffers.getTextFileBufferManager().disconnect(file.getFullPath(), LocationKind.NORMALIZE, monitor);
 		}

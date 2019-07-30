@@ -286,9 +286,7 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 			}
 			// Save plugin customization file changes
 			savePluginCustomFileChanges(pluginCustomModel, subMonitor.split(1));
-		} catch (MalformedTreeException e) {
-			throw createCoreException(PDEUIMessages.UpdateSplashProgressAction_msgErrorCustomFileSaveFailed, e);
-		} catch (BadLocationException e) {
+		} catch (MalformedTreeException | BadLocationException e) {
 			throw createCoreException(PDEUIMessages.UpdateSplashProgressAction_msgErrorCustomFileSaveFailed, e);
 		} finally {
 			// Disconnect from the text file buffer manager

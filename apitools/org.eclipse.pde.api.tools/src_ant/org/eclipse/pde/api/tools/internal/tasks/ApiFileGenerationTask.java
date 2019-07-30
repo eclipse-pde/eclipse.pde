@@ -18,7 +18,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -381,11 +380,7 @@ public class ApiFileGenerationTask extends Task {
 								manifestMap = ManifestElement.parseBundleManifest(inputStream, null);
 								currentApiPackages = collectApiPackageNames(manifestMap);
 							}
-						} catch (FileNotFoundException e) {
-							ApiPlugin.log(e);
-						} catch (IOException e) {
-							ApiPlugin.log(e);
-						} catch (BundleException e) {
+						} catch (IOException | BundleException e) {
 							ApiPlugin.log(e);
 						} finally {
 							if (inputStream != null) {
@@ -590,8 +585,6 @@ public class ApiFileGenerationTask extends Task {
 			stream = new BufferedInputStream(new FileInputStream(dotProjectFile));
 			String contents = new String(Util.getInputStreamAsCharArray(stream, -1, StandardCharsets.UTF_8));
 			return containsAPIToolsNature(contents);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -628,9 +621,7 @@ public class ApiFileGenerationTask extends Task {
 		SAXParser saxParser = null;
 		try {
 			saxParser = factory.newSAXParser();
-		} catch (ParserConfigurationException e) {
-			// ignore
-		} catch (SAXException e) {
+		} catch (ParserConfigurationException | SAXException e) {
 			// ignore
 		}
 
@@ -644,9 +635,7 @@ public class ApiFileGenerationTask extends Task {
 			APIToolsNatureDefaultHandler defaultHandler = new APIToolsNatureDefaultHandler();
 			saxParser.parse(inputSource, defaultHandler);
 			return defaultHandler.isAPIToolsNature();
-		} catch (SAXException e) {
-			// ignore
-		} catch (IOException e) {
+		} catch (SAXException | IOException e) {
 			// ignore
 		}
 		return false;

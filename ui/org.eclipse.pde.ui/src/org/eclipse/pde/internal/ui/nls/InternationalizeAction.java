@@ -41,8 +41,7 @@ public class InternationalizeAction extends AbstractHandler {
 		InternationalizeOperation runnable = new InternationalizeOperation(selection);
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(runnable);
-		} catch (InvocationTargetException e) {
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 		} finally {
 			if (runnable.wasCanceled()) {
 				return null;

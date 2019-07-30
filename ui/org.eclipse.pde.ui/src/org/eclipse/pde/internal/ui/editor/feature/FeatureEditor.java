@@ -96,8 +96,6 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 					input = new FileStoreEditorInput(store);
 				}
 				return IDE.openEditor(PDEPlugin.getActivePage(), input, IPDEUIConstants.FEATURE_EDITOR_ID, true);
-			} catch (PartInitException e) {
-				PDEPlugin.logException(e);
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}

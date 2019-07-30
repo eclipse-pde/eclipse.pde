@@ -363,8 +363,7 @@ public class TargetBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 			treeviewer.setInput(getCurrentComponents());
 			treeviewer.refresh();
 			setPageComplete(pageValid());
-		} catch (InvocationTargetException ite) {
-		} catch (InterruptedException ie) {
+		} catch (InvocationTargetException | InterruptedException ie) {
 		}
 	}
 

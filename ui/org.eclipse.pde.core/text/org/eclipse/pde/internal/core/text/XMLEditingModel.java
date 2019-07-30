@@ -53,11 +53,7 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 		} catch (SAXException e) {
 			fLoaded = false;
 			status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage(), e);
-		} catch (IOException e) {
-			fLoaded = false;
-		} catch (ParserConfigurationException e) {
-			fLoaded = false;
-		} catch (FactoryConfigurationError e) {
+		} catch (IOException | ParserConfigurationException | FactoryConfigurationError e) {
 			fLoaded = false;
 		}
 	}
@@ -74,10 +70,7 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 		try {
 			SAXParserWrapper parser = new SAXParserWrapper();
 			parser.parse(getInputStream(document), createDocumentHandler(this, false));
-		} catch (SAXException e) {
-		} catch (IOException e) {
-		} catch (ParserConfigurationException e) {
-		} catch (FactoryConfigurationError e) {
+		} catch (SAXException | IOException | ParserConfigurationException | FactoryConfigurationError e) {
 		}
 	}
 

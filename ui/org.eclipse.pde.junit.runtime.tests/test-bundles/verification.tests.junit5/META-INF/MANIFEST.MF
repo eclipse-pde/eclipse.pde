@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tests
+Bundle-SymbolicName: verification.tests.junit5
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: verification.tests
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.junit;bundle-version="4.12.0",
+ org.junit.jupiter.api;bundle-version="5.4.0"
+Export-Package: verification.tests.junit5

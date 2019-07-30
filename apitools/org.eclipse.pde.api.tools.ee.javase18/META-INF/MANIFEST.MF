@@ -8,5 +8,4 @@ Fragment-Host: org.eclipse.pde.api.tools;bundle-version="1.0.501"
 Bundle-Localization: fragmentjavase18
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.pde.api.tools.ee.javase18
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 

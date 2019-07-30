@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,8 @@ package org.eclipse.pde.api.tools.ui.internal.markers;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -81,11 +83,21 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 					new ConfigureProblemSeverityForAPIToolsResolution(marker) };
 			}
 			case IApiMarkerConstants.SINCE_TAG_MARKER_ID: {
-				return new IMarkerResolution[] {
+				IMarker markerVersion = getVersionProblems(marker);
+				IMarkerResolution[] res = (markerVersion != null) ?
+				new IMarkerResolution[] {
 					new ConfigureProblemSeverityForAPIToolsResolution(marker),
-						new SinceTagResolution(marker),
-						new FilterProblemResolution(marker),
-						new FilterProblemWithCommentResolution(marker) };
+					new SinceTagAfterVersionUpdateResolution(markerVersion, marker),
+					new SinceTagResolution(marker),
+					new FilterProblemResolution(marker),
+					new FilterProblemWithCommentResolution(marker) }:
+				new IMarkerResolution[] {
+					new ConfigureProblemSeverityForAPIToolsResolution(marker),
+					new SinceTagResolution(marker),
+					new FilterProblemResolution(marker),
+					new FilterProblemWithCommentResolution(marker)
+				};
+				return res;
 			}
 			case IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID: {
 			return new IMarkerResolution[] {
@@ -176,5 +188,34 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 		}
 		return false;
 
+	}
+
+	private IMarker getVersionProblems(IMarker marker) {
+		IProject project = null;
+		IProject project2 = null;
+		IResource resource = marker.getResource();
+		if (resource != null) {
+			project = resource.getProject();
+		}
+		IMarker markerVersion = null;
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		try {
+			IMarker[] findMarkers = root.findMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, false,
+					IResource.DEPTH_INFINITE);
+			for (IMarker iMarker : findMarkers) {
+				IResource resource2 = iMarker.getResource();
+				if (resource2 != null) {
+					project2 = resource2.getProject();
+					if(project !=null && project2 !=null) {
+						if(project.equals(project2)) {
+							markerVersion = iMarker;
+							break;
+						}
+					}
+				}
+			}
+		} catch (CoreException e) {
+		}
+		return markerVersion;
 	}
 }

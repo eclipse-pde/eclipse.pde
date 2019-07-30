@@ -239,9 +239,7 @@ public class ShowDescriptionAction extends Action {
 				IWebBrowser browser = support.createBrowser(IWorkbenchBrowserSupport.AS_EDITOR | IWorkbenchBrowserSupport.STATUS, file.getName(), fPointID, fPointID);
 				browser.openURL(url);
 			}
-		} catch (MalformedURLException e) {
-			PDEPlugin.logException(e);
-		} catch (PartInitException e) {
+		} catch (MalformedURLException | PartInitException e) {
 			PDEPlugin.logException(e);
 		}
 	}

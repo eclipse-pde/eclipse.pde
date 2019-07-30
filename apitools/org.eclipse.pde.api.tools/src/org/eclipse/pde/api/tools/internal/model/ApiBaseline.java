@@ -490,9 +490,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 							fVMBinding = iVMInstall;
 							ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
 							initialize(ee);
-						} catch (CoreException e) {
-							error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_2, e);
-						} catch (IOException e) {
+						} catch (CoreException | IOException e) {
 							error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_2, e);
 						}
 					}

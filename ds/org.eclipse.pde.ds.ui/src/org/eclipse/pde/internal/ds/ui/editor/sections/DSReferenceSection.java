@@ -59,7 +59,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.SelectionDialog;
@@ -441,8 +440,6 @@ public class DSReferenceSection extends TableSection implements
 				if (element != null)
 					JavaUI.openInEditor(element);
 			}
-		} catch (PartInitException e) {
-			Activator.logException(e);
 		} catch (CoreException e) {
 			Activator.logException(e);
 		}

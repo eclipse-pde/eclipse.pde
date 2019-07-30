@@ -37,9 +37,7 @@ public class CreateManifestOperation implements IRunnableWithProgress {
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
 			trimOldManifest();
-		} catch (BadLocationException e) {
-			throw new InvocationTargetException(e);
-		} catch (CoreException e) {
+		} catch (BadLocationException | CoreException e) {
 			throw new InvocationTargetException(e);
 		}
 	}

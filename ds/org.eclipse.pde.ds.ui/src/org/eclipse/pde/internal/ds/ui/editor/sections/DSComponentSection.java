@@ -46,7 +46,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
@@ -321,7 +320,6 @@ public class DSComponentSection extends PDESection {
 					}
 				}
 			}
-		} catch (PartInitException e1) {
 		} catch (CoreException e1) {
 		}
 		return null;

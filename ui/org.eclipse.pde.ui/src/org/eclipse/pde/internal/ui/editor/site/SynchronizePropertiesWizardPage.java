@@ -102,9 +102,7 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 			public void execute(IProgressMonitor monitor) {
 				try {
 					runOperation(mode, monitor);
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-				} catch (InvocationTargetException e) {
+				} catch (CoreException | InvocationTargetException e) {
 					PDEPlugin.logException(e);
 				} finally {
 					monitor.done();

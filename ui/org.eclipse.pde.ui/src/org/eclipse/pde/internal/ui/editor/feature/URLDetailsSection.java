@@ -64,9 +64,7 @@ public class URLDetailsSection extends PDESection implements IPartSelectionListe
 			} else {
 				fInput.setURL(null);
 			}
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		} catch (MalformedURLException e) {
+		} catch (CoreException | MalformedURLException e) {
 			PDEPlugin.logException(e);
 		}
 	}

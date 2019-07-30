@@ -97,9 +97,7 @@ public class CreateHeaderChangeOperation implements IWorkspaceRunnable {
 					return getTextChange(listener, manifest);
 				}
 			}
-		} catch (MalformedTreeException e) {
-		} catch (CoreException e) {
-		} catch (BadLocationException e) {
+		} catch (MalformedTreeException | CoreException | BadLocationException e) {
 		} finally {
 			FileBuffers.getTextFileBufferManager().disconnect(manifest.getFullPath(), LocationKind.NORMALIZE,
 					subMonitor.split(1));

@@ -289,9 +289,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 			try {
 				ClassReader classReader = new ClassReader(abstractApiTypeRoot.getContents());
 				classReader.accept(visitor, ClassReader.SKIP_FRAMES);
-			} catch (ArrayIndexOutOfBoundsException e) {
-				ApiPlugin.log(e);
-			} catch (CoreException e) {
+			} catch (ArrayIndexOutOfBoundsException | CoreException e) {
 				// bytes could not be retrieved for abstractApiTypeRoot
 				ApiPlugin.log(e);
 			}

@@ -93,10 +93,7 @@ public abstract class AbstractExtensionsModel extends AbstractNLModel implements
 			if (!outOfSync) {
 				updateTimeStamp();
 			}
-		} catch (ParserConfigurationException e) {
-		} catch (SAXException e) {
-		} catch (FactoryConfigurationError e) {
-		} catch (IOException e) {
+		} catch (ParserConfigurationException | SAXException | FactoryConfigurationError | IOException e) {
 		}
 	}
 

@@ -401,9 +401,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 					preferenceManager.flush();
 					return true;
 				}
-			} catch (CoreException e) {
-				PDECore.log(e);
-			} catch (BackingStoreException e) {
+			} catch (CoreException | BackingStoreException e) {
 				PDECore.log(e);
 			}
 

@@ -646,14 +646,7 @@ public class BuildState {
 			} finally {
 				out.close();
 			}
-		} catch (RuntimeException e) {
-			try {
-				file.delete();
-			} catch (SecurityException se) {
-				// could not delete file: cannot do much more
-			}
-			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, Platform.PLUGIN_ERROR, NLS.bind(BuilderMessages.build_cannotSaveState, project.getName()), e));
-		} catch (IOException e) {
+		} catch (RuntimeException | IOException e) {
 			try {
 				file.delete();
 			} catch (SecurityException se) {

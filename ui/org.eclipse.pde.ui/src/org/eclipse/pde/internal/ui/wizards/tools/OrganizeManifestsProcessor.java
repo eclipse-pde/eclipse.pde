@@ -116,9 +116,7 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 					try {
 						SubMonitor subMonitor = SubMonitor.convert(monitor);
 						runCleanup(subMonitor, (IBundlePluginModelBase) model, result);
-					} catch (InvocationTargetException e) {
-						ee[0] = e;
-					} catch (InterruptedException e) {
+					} catch (InvocationTargetException | InterruptedException e) {
 						ee[0] = e;
 					}
 			}

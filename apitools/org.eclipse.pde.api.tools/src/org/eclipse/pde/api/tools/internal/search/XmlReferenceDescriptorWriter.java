@@ -88,9 +88,7 @@ public class XmlReferenceDescriptorWriter {
 		try {
 			parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
-		} catch (FactoryConfigurationError fce) {
-			ApiPlugin.log(fce);
-		} catch (ParserConfigurationException pce) {
+		} catch (FactoryConfigurationError | ParserConfigurationException pce) {
 			ApiPlugin.log(pce);
 		}
 	}

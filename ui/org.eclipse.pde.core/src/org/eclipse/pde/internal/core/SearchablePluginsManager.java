@@ -147,8 +147,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 					}
 				}
 			}
-		} catch (IOException e) {
-		} catch (CoreException e) {
+		} catch (IOException | CoreException e) {
 		}
 		return set;
 	}
@@ -433,9 +432,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 						file.create(inStream, true, new NullProgressMonitor());
 					}
 				}
-			} catch (IOException e) {
-				PDECore.log(e);
-			} catch (CoreException e) {
+			} catch (IOException | CoreException e) {
 				PDECore.log(e);
 			}
 		}

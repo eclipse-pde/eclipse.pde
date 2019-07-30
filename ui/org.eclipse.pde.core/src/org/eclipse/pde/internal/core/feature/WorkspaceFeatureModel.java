@@ -135,9 +135,7 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEdit
 					// if we have an empty file, then mark as loaded so users changes will be saved
 					setLoaded(true);
 				}
-			} catch (CoreException e) {
-				PDECore.logException(e);
-			} catch (IOException e) {
+			} catch (CoreException | IOException e) {
 				PDECore.logException(e);
 			}
 		} else {

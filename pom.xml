@@ -67,6 +67,7 @@
     <module>ui/org.eclipse.pde</module>
     <module>ui/org.eclipse.pde.core</module>
     <module>ui/org.eclipse.pde.junit.runtime</module>
+    <module>ui/org.eclipse.pde.junit.runtime.tests</module>
     <module>ui/org.eclipse.pde.launching</module>
     <module>ui/org.eclipse.pde.runtime</module>
     <module>ui/org.eclipse.pde.ui</module>

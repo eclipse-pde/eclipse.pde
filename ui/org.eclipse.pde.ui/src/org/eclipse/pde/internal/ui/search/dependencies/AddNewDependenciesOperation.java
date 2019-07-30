@@ -447,8 +447,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 					added.add(pluginId);
 					if (entry != null && entry.contains(pluginId))
 						entry.removeToken(pluginId);
-				} catch (BundleException e) {
-				} catch (CoreException e) {
+				} catch (BundleException | CoreException e) {
 				}
 		}
 	}

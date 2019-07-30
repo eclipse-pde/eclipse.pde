@@ -485,9 +485,7 @@ public class APIFreezeReportConversionTask extends Task {
 		SAXParser parser = null;
 		try {
 			parser = factory.newSAXParser();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
+		} catch (ParserConfigurationException | SAXException e) {
 			e.printStackTrace();
 		}
 		if (parser == null) {

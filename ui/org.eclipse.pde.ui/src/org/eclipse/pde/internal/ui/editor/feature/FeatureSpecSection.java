@@ -119,9 +119,7 @@ public class FeatureSpecSection extends PDESection {
 					}
 				}
 			}
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		} catch (MalformedURLException e) {
+		} catch (CoreException | MalformedURLException e) {
 			PDEPlugin.logException(e);
 		}
 	}

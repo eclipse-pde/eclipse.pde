@@ -125,9 +125,7 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 				export.setAttribute("qualifier", qualifier); //$NON-NLS-1$
 			target.appendChild(export);
 			return doc;
-		} catch (DOMException e) {
-		} catch (FactoryConfigurationError e) {
-		} catch (ParserConfigurationException e) {
+		} catch (DOMException | FactoryConfigurationError | ParserConfigurationException e) {
 		}
 		return null;
 	}

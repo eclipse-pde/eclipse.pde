@@ -163,9 +163,7 @@ public class EnvironmentSection extends SectionPart {
 							initializeAllLocales();
 							LOCALES_INITIALIZED = true;
 						});
-					} catch (InvocationTargetException e) {
-						PDEPlugin.log(e);
-					} catch (InterruptedException e) {
+					} catch (InvocationTargetException | InterruptedException e) {
 						PDEPlugin.log(e);
 					}
 				}
@@ -185,7 +183,7 @@ public class EnvironmentSection extends SectionPart {
 						if (value == null) {
 							getTarget().setNL(null);
 						} else {
-							int index = value.indexOf("-"); //$NON-NLS-1$
+							int index = value.indexOf('-'); //$NON-NLS-1$
 							if (index > 0)
 								value = value.substring(0, index);
 							getTarget().setNL(value.trim());

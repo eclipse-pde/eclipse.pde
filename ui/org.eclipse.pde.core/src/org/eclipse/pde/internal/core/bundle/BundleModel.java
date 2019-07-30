@@ -71,9 +71,7 @@ public abstract class BundleModel extends AbstractModel implements IBundleModel 
 				updateTimeStamp();
 			}
 
-		} catch (BundleException e) {
-			PDECore.log(e);
-		} catch (IOException e) {
+		} catch (BundleException | IOException e) {
 			PDECore.log(e);
 		}
 	}

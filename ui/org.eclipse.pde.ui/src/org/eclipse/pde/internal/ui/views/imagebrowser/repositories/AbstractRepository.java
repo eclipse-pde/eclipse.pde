@@ -16,7 +16,8 @@ package org.eclipse.pde.internal.ui.views.imagebrowser.repositories;
 
 import java.io.*;
 import java.util.*;
-import java.util.zip.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -113,8 +114,6 @@ public abstract class AbstractRepository extends Job {
 					}
 				}
 			}
-		} catch (ZipException e) {
-			PDEPlugin.log(e);
 		} catch (IOException e) {
 			PDEPlugin.log(e);
 		}
@@ -124,7 +123,11 @@ public abstract class AbstractRepository extends Job {
 		File manifest = new File(directory, "META-INF/MANIFEST.MF"); //$NON-NLS-1$
 		if (manifest.exists()) {
 			try {
-				String pluginName = getPluginName(new FileInputStream(manifest));
+				Optional<String> name = getPluginName(new FileInputStream(manifest));
+				if (!name.isPresent()) {
+					return;
+				}
+				String pluginName = name.get();
 				int directoryPathLength = directory.getAbsolutePath().length();
 
 				Collection<File> locations = new HashSet<>();
@@ -160,16 +163,24 @@ public abstract class AbstractRepository extends Job {
 		}
 	}
 
-	protected String getPluginName(final InputStream manifest) throws IOException {
+	/**
+	 * @return can return {@link Optional#empty()} if given manifest is not
+	 *         valid bundle manifest
+	 */
+	protected Optional<String> getPluginName(final InputStream manifest) throws IOException {
 		Properties properties = new Properties();
 		try (BufferedInputStream stream = new BufferedInputStream(manifest)) {
 			properties.load(stream);
 		}
 		String property = properties.getProperty("Bundle-SymbolicName"); //$NON-NLS-1$
-		if (property.contains(";")) //$NON-NLS-1$
-			return property.substring(0, property.indexOf(';')).trim();
+		if (property == null) {
+			return Optional.empty();
+		}
+		if (property.contains(";")) { //$NON-NLS-1$
+			return Optional.of(property.substring(0, property.indexOf(';')).trim());
+		}
 
-		return property.trim();
+		return Optional.of(property.trim());
 	}
 
 	protected void addImageElement(ImageElement element) {

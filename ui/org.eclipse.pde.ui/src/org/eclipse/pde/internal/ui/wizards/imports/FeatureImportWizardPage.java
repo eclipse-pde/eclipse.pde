@@ -455,8 +455,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		IProgressService pservice = PlatformUI.getWorkbench().getProgressService();
 		try {
 			pservice.busyCursorWhile(runnable);
-		} catch (InvocationTargetException e) {
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 		}
 		return fModels;
 	}

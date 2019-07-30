@@ -43,8 +43,7 @@ public class ExternalizeStringsProcessor extends RefactoringProcessor {
 		ExternalizeStringsOperation op = new ExternalizeStringsOperation(fChangeFiles, change);
 		try {
 			op.run(pm);
-		} catch (InvocationTargetException e) {
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 		}
 		return change;
 	}

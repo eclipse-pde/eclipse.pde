@@ -42,9 +42,7 @@ public class FormatAction extends Action {
 
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new FormatOperation(new Object[] {fTextEditor.getEditorInput()}));
-		} catch (InvocationTargetException e) {
-			PDEPlugin.log(e);
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 			PDEPlugin.log(e);
 		}
 	}

@@ -189,7 +189,6 @@ public class PluginPathFinder {
 				} finally {
 					System.setProperty(URL_PROPERTY, EMPTY_STRING);
 				}
-			} catch (MalformedURLException e) {
 			} catch (IOException e) {
 			}
 		}

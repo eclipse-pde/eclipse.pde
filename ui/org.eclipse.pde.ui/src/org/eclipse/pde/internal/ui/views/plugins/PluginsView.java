@@ -683,8 +683,6 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 			IEditorInput in = new FileStoreEditorInput(store);
 			page.openEditor(in, editorId);
 			adapter.setEditorId(editorId);
-		} catch (PartInitException e) {
-			PDEPlugin.logException(e);
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}

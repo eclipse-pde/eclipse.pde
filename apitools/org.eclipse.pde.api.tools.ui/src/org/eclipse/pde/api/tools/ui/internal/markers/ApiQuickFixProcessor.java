@@ -251,9 +251,7 @@ public class ApiQuickFixProcessor implements IQuickFixProcessor {
 						return false;
 					}
 				}
-			} catch (CoreException ce) {
-				ApiUIPlugin.log(ce);
-			} catch (IOException e) {
+			} catch (CoreException | IOException e) {
 				ApiUIPlugin.log(e);
 			} finally {
 				if (stream != null) {

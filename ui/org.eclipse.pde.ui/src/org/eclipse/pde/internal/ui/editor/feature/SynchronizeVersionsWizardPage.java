@@ -117,9 +117,7 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 			public void execute(IProgressMonitor monitor) {
 				try {
 					runOperation(mode, monitor);
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-				} catch (BadLocationException e) {
+				} catch (CoreException | BadLocationException e) {
 					PDEPlugin.logException(e);
 				} finally {
 					monitor.done();

@@ -226,15 +226,7 @@ public class ConvertPreferencesWizard extends Wizard {
 						} else {
 							page.setMessage(PDEUIMessages.ConvertPreferencesWizard_errorNoPrefs, IMessageProvider.WARNING);
 						}
-					} catch (FileNotFoundException e1) {
-						page.setErrorMessage(NLS.bind(PDEUIMessages.ConvertPreferencesWizard_errorFile, errorFilePath));
-						PDEPlugin.logException(e1);
-						return;
-					} catch (CoreException e2) {
-						page.setErrorMessage(NLS.bind(PDEUIMessages.ConvertPreferencesWizard_errorFile, errorFilePath));
-						PDEPlugin.logException(e2);
-						return;
-					} catch (IOException e3) {
+					} catch (CoreException | IOException e3) {
 						page.setErrorMessage(NLS.bind(PDEUIMessages.ConvertPreferencesWizard_errorFile, errorFilePath));
 						PDEPlugin.logException(e3);
 						return;

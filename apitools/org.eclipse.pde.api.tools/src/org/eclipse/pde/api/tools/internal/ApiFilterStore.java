@@ -177,9 +177,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 					}
 					fTriggeredChange = true;
 					fNeedsSaving = false;
-				} catch (CoreException ce) {
-					ApiPlugin.log(ce);
-				} catch (IOException ioe) {
+				} catch (CoreException | IOException ioe) {
 					ApiPlugin.log(ioe);
 				}
 				return Status.OK_STATUS;
@@ -523,9 +521,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 				contents = filterFile.getContents();
 				readFilterFile(contents);
 			}
-		} catch (CoreException e) {
-			ApiPlugin.log(e);
-		} catch (IOException e) {
+		} catch (CoreException | IOException e) {
 			ApiPlugin.log(e);
 		} finally {
 			if (contents != null) {

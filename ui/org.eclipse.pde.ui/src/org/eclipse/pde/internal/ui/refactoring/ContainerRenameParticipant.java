@@ -114,9 +114,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 						return result;
 					}
 				}
-			} catch (CoreException e) {
-			} catch (MalformedTreeException e) {
-			} catch (BadLocationException e) {
+			} catch (CoreException | MalformedTreeException | BadLocationException e) {
 			} finally {
 				FileBuffers.getTextFileBufferManager().disconnect(manifest.getFullPath(), LocationKind.NORMALIZE,
 						subMonitor.split(1));

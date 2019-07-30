@@ -85,9 +85,7 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 			} else {
 				fFile.create(stream, false, null);
 			}
-		} catch (CoreException e) {
-			PDECore.logException(e);
-		} catch (IOException e) {
+		} catch (CoreException | IOException e) {
 			PDECore.logException(e);
 		}
 	}

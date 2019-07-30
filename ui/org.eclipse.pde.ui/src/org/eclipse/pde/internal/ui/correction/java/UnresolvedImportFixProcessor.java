@@ -91,8 +91,7 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 		IRunnableWithProgress findOperation = new FindClassResolutionsOperation(project.getProject(), name, collector);
 		try {
 			findOperation.run(new NullProgressMonitor());
-		} catch (InvocationTargetException e) {
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 		}
 		return collector.getProposals();
 	}

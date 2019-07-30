@@ -53,8 +53,6 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 							set.add(project);
 						}
 					}
-				} catch (JavaModelException jme) {
-					//ignore
 				} catch (CoreException ce) {
 					//ignore
 				}

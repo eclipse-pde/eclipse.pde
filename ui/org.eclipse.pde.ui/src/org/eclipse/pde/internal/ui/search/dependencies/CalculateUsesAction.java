@@ -52,8 +52,7 @@ public class CalculateUsesAction extends Action {
 				CalculateUsesOperation op = getOperation();
 				try {
 					op.run(monitor);
-				} catch (InvocationTargetException e) {
-				} catch (InterruptedException e) {
+				} catch (InvocationTargetException | InterruptedException e) {
 				} finally {
 					monitor.done();
 				}

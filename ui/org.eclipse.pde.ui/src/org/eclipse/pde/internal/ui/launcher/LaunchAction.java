@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import static java.util.stream.Collectors.toSet;
+
 import java.io.File;
 import java.util.*;
 import org.eclipse.core.resources.IResource;
@@ -32,6 +34,7 @@ import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper.AdditionalPluginData;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -114,22 +117,47 @@ public class LaunchAction extends Action {
 		wc.setAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, configIni == null);
 		if (configIni != null)
 			wc.setAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, configIni);
+
+		if (fProduct.useFeatures()) {
+			refreshFeatureLaunchAttributes(wc, models);
+		}
+
 		return wc.doSave();
 	}
 
+	private void refreshFeatureLaunchAttributes(ILaunchConfigurationWorkingCopy wc, IPluginModelBase[] models) {
+		Set<String> selectedFeatures = Arrays.stream(getUniqueFeatures())
+				.map(f -> f.getFeature().getId() + ":" + IPDELauncherConstants.LOCATION_DEFAULT).collect(toSet()); //$NON-NLS-1$
+
+		Set<String> additionalPlugins = Arrays.stream(models)
+				.map(model -> getPluginConfiguration(model)
+						.map(c -> new FeatureBlock.PluginLaunchModel(model, c, null).buildEntry(true)).orElse(null))
+				.filter(Objects::nonNull).collect(toSet());
+
+		wc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, selectedFeatures);
+		wc.setAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS, additionalPlugins);
+	}
+
 	private void appendBundle(StringBuilder buffer, IPluginModelBase model) {
-		IPluginConfiguration configuration = fPluginConfigurations.get(model.getPluginBase().getId());
-		String sl = "default"; //$NON-NLS-1$
-		String autostart = "default"; //$NON-NLS-1$
-		if (configuration != null) {
-			sl = Integer.toString(configuration.getStartLevel());
-			// ensure we don't have a 0 start level
-			sl = sl.equals("0") ? "default" : sl; //$NON-NLS-1$ //$NON-NLS-2$
-			autostart = Boolean.toString(configuration.isAutoStart());
-		}
-		String entry = BundleLauncherHelper.writeBundleEntry(model, sl, autostart);
+		AdditionalPluginData configuration = getPluginConfiguration(model).orElse(FeatureBlock.DEFAULT_PLUGIN_DATA);
+		String entry = BundleLauncherHelper.writeBundleEntry(model, configuration.fStartLevel,
+				configuration.fAutoStart);
 		buffer.append(entry);
 		buffer.append(',');
+	}
+
+	private Optional<AdditionalPluginData> getPluginConfiguration(IPluginModelBase model) {
+		IPluginConfiguration configuration = fPluginConfigurations.get(model.getPluginBase().getId());
+		if (configuration == null) {
+			return Optional.empty();
+		}
+
+		String startLevel = (configuration.getStartLevel() > 0) ? String.valueOf(configuration.getStartLevel())
+				: "default"; //$NON-NLS-1$
+		String autoStart = String.valueOf(configuration.isAutoStart());
+		AdditionalPluginData data = new AdditionalPluginData(IPDELauncherConstants.LOCATION_DEFAULT, true, startLevel,
+				autoStart);
+		return Optional.of(data);
 	}
 
 	private String getProgramArguments(String os, String arch) {

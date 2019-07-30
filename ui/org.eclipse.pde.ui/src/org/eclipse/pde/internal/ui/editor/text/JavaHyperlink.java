@@ -20,7 +20,6 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PartInitException;
 
 public class JavaHyperlink extends AbstractHyperlink {
 
@@ -42,8 +41,6 @@ public class JavaHyperlink extends AbstractHyperlink {
 				if (result != null)
 					JavaUI.openInEditor(result);
 			}
-		} catch (PartInitException e) {
-			PDEPlugin.logException(e);
 		} catch (JavaModelException e) {
 			Display.getCurrent().beep(); // just for Dejan
 		} catch (CoreException e) {

@@ -448,9 +448,7 @@ public class AnalysisReportConversionTask extends Task {
 		SAXParser parser = null;
 		try {
 			parser = factory.newSAXParser();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
+		} catch (ParserConfigurationException | SAXException e) {
 			e.printStackTrace();
 		}
 		if (parser == null) {
@@ -503,9 +501,7 @@ public class AnalysisReportConversionTask extends Task {
 					dumpIndexFile(reportsRoot, summaries, nonApiBundleSummary);
 				}
 			}
-		} catch (SAXException e) {
-			// ignore
-		} catch (IOException e) {
+		} catch (SAXException | IOException e) {
 			// ignore
 		}
 	}

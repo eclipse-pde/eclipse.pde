@@ -48,11 +48,11 @@ public class AddExportPackageMarkerResolution extends AbstractManifestMarkerReso
 				bundle.setHeader(Constants.EXPORT_PACKAGE, ""); //$NON-NLS-1$
 				header = (ExportPackageHeader) bun.getManifestHeader(Constants.EXPORT_PACKAGE);
 			}
-			processPackages(header);
+			processPackages(header, false);
 		}
 	}
 
-	private void processPackages(ExportPackageHeader header) {
+	protected void processPackages(ExportPackageHeader header, boolean setInternal) {
 		fValues = marker.getAttribute("packages", null); //$NON-NLS-1$
 		if (fValues == null) {
 			return;
@@ -64,6 +64,10 @@ public class AddExportPackageMarkerResolution extends AbstractManifestMarkerReso
 		Pattern pat = PatternConstructor.createPattern(filter, false);
 		for (String packageId : packages) {
 			ExportPackageObject obj = header.addPackage(packageId);
+			if (setInternal){
+				obj.setInternal(setInternal);
+				continue;
+			}
 			if (pat.matcher(packageId).matches())
 				obj.setInternal(true);
 		}

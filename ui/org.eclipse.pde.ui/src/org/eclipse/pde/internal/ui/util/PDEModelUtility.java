@@ -359,11 +359,7 @@ public class PDEModelUtility {
 					edits.add(change);
 				}
 			}
-		} catch (CoreException e) {
-			PDEPlugin.log(e);
-		} catch (MalformedTreeException e) {
-			PDEPlugin.log(e);
-		} catch (BadLocationException e) {
+		} catch (CoreException | MalformedTreeException | BadLocationException e) {
 			PDEPlugin.log(e);
 		} finally {
 			// don't want to over-disconnect in case we ran into an exception during connections

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -83,7 +83,7 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddNoExtend"}; //$NON-NLS-1$
+		args[0] = new String[] { "@noextend", PACKAGE_PREFIX + "AddNoExtend" }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -106,7 +106,7 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddNoInstantiate"}; //$NON-NLS-1$
+		args[0] = new String[] { "@noinstantiate", PACKAGE_PREFIX + "AddNoInstantiate" }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}

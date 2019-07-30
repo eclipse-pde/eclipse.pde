@@ -635,9 +635,6 @@ public class PluginImportOperation extends WorkspaceJob {
 			}
 			subMonitor.worked(1);
 
-		} catch (ZipException e) {
-			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
-			throw new CoreException(status);
 		} catch (IOException e) {
 			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
 			throw new CoreException(status);

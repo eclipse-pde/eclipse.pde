@@ -144,9 +144,6 @@ public class P2Utils {
 				return null;
 			}
 			return bundles;
-		} catch (MalformedURLException e) {
-			PDECore.log(e);
-			return null;
 		} catch (IOException e) {
 			PDECore.log(e);
 			return null;
@@ -176,9 +173,6 @@ public class P2Utils {
 				return null;
 			}
 			return srcBundles;
-		} catch (MalformedURLException e) {
-			PDECore.log(e);
-			return null;
 		} catch (IOException e) {
 			PDECore.log(e);
 			return null;

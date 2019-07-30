@@ -170,9 +170,7 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 			}
 			stream.close();
 			setLoaded(true);
-		} catch (CoreException e) {
-			PDECore.logException(e);
-		} catch (IOException e) {
+		} catch (CoreException | IOException e) {
 			PDECore.logException(e);
 		} finally {
 			try {

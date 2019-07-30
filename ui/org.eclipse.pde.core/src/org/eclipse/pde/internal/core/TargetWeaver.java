@@ -17,7 +17,6 @@ package org.eclipse.pde.internal.core;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -81,8 +80,6 @@ public class TargetWeaver {
 							if (file.exists()) {
 								try (BufferedInputStream stream = new BufferedInputStream(new FileInputStream(file));) {
 									fgDevProperties.load(stream);
-								} catch (FileNotFoundException e) {
-									PDECore.log(e);
 								} catch (IOException e) {
 									PDECore.log(e);
 								}

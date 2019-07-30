@@ -221,8 +221,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 						collector);
 				try {
 					findOperation.run(new NullProgressMonitor());
-				} catch (InvocationTargetException e) {
-				} catch (InterruptedException e) {
+				} catch (InvocationTargetException | InterruptedException e) {
 				}
 			}
 		}

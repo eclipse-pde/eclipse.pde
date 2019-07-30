@@ -237,10 +237,7 @@ public abstract class InputContext {
 					((IEditingModel) fModel).setStale(true);
 				edit.apply(doc);
 				fEditOperations.clear();
-			} catch (MalformedTreeException e) {
-				PDEPlugin.logException(e);
-				flushed = false;
-			} catch (BadLocationException e) {
+			} catch (MalformedTreeException | BadLocationException e) {
 				PDEPlugin.logException(e);
 				flushed = false;
 			}
@@ -507,10 +504,7 @@ public abstract class InputContext {
 			monitor.setCanceled(false);
 			// Store the new editor input in this context
 			updateInput(newInput);
-		} catch (InterruptedException e) {
-			monitor.setCanceled(true);
-			throw e;
-		} catch (InvocationTargetException e) {
+		} catch (InterruptedException | InvocationTargetException e) {
 			monitor.setCanceled(true);
 			throw e;
 		} finally {

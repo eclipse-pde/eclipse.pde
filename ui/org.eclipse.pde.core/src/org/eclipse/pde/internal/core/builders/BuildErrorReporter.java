@@ -14,6 +14,7 @@
  *     Brock Janiczak <brockj@tpg.com.au> - bug 191545
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 221998
  *     Steven Spungin <steven@spungin.tv> - Bug 408727
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 500495
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
@@ -692,10 +693,22 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			if (nodeProduct != null) {
 				Node attValue = (Node) xpath.evaluate("property[@name='applicationXMI']/@value", nodeProduct, XPathConstants.NODE); //$NON-NLS-1$
 				if (attValue != null) {
-					if (attValue.getNodeValue().isEmpty()) {
-						//Error: no URL defined but should already be reported.
+					String nodeValue = attValue.getNodeValue();
+					if (nodeValue.isEmpty()) {
+						// Error: no URL defined but should already be reported.
 					} else {
-						validateBinIncludes(binIncludes, attValue.getNodeValue());
+						String platform = "platform:/plugin/"; //$NON-NLS-1$
+						if (nodeValue.startsWith(platform)) {
+							IPluginModelBase model = PluginRegistry.findModel(fProject);
+							if (model != null) {
+								String prefix = platform + model.getPluginBase().getId() + '/';
+								if (nodeValue.startsWith(prefix)) {
+									validateBinIncludes(binIncludes, nodeValue.substring(prefix.length()));
+								}
+							}
+						} else {
+							validateBinIncludes(binIncludes, nodeValue);
+						}
 					}
 				} else {
 					if (fProject.exists(new Path("Application.e4xmi"))) { //$NON-NLS-1$
@@ -1043,7 +1056,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 	private boolean startsWithAntVariable(String token) {
 		int varStart = token.indexOf("${"); //$NON-NLS-1$
-		return varStart != -1 && varStart < token.indexOf('}'); //$NON-NLS-1$
+		return varStart != -1 && varStart < token.indexOf('}');
 	}
 
 	private void validateDependencyManagement(IBuildEntry bundleList) {

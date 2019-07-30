@@ -44,7 +44,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.forms.FormDialog;
 import org.eclipse.ui.forms.IManagedForm;
@@ -192,7 +191,6 @@ public class DSEditPropertiesDialog extends FormDialog {
 					}
 				}
 			}
-		} catch (PartInitException e1) {
 		} catch (CoreException e1) {
 		}
 		return null;

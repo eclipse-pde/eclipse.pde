@@ -154,9 +154,7 @@ public class URLSection extends TableSection {
 			url.addDiscovery(element);
 			fUrlViewer.setSelection(new StructuredSelection(element));
 
-		} catch (CoreException e) {
-			PDEPlugin.logException(e);
-		} catch (MalformedURLException e) {
+		} catch (CoreException | MalformedURLException e) {
 			PDEPlugin.logException(e);
 		}
 	}

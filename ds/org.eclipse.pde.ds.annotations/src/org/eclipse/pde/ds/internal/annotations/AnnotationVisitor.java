@@ -477,9 +477,7 @@ public class AnnotationVisitor extends ASTVisitor {
 
 			LinkedModeModel.closeAllModels(document);
 			edit.apply(document);
-		} catch (MalformedTreeException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error applying changes to component model.", e)); //$NON-NLS-1$
-		} catch (BadLocationException e) {
+		} catch (MalformedTreeException | BadLocationException e) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error applying changes to component model.", e)); //$NON-NLS-1$
 		} finally {
 			if (session != null) {
@@ -1396,11 +1394,7 @@ public class AnnotationVisitor extends ASTVisitor {
 			}
 			// Reconnect
 			clone.reconnect(obj, obj.getSharedModel());
-		} catch (IOException e) {
-			if (debug.isDebugging()) {
-				debug.trace("Error cloning element.", e); //$NON-NLS-1$
-			}
-		} catch (ClassNotFoundException e) {
+		} catch (IOException | ClassNotFoundException e) {
 			if (debug.isDebugging()) {
 				debug.trace("Error cloning element.", e); //$NON-NLS-1$
 			}

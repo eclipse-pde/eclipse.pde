@@ -61,8 +61,7 @@ public class AddNewDependenciesAction extends Action {
 					op.run(monitor);
 					if (!op.foundNewDependencies())
 						Display.getDefault().asyncExec(() -> MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.AddNewDependenciesAction_title, PDEUIMessages.AddNewDependenciesAction_notFound));
-				} catch (InvocationTargetException e) {
-				} catch (InterruptedException e) {
+				} catch (InvocationTargetException | InterruptedException e) {
 				} finally {
 					monitor.done();
 				}

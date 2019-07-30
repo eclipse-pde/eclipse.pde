@@ -133,9 +133,7 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		try {
 			progressService.runInUI(progressService, convertOperation, null);
-		} catch (InvocationTargetException e) {
-			fail("Plug-in project conversion failed...");
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 			fail("Plug-in project conversion failed...");
 		}
 	}

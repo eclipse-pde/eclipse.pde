@@ -280,7 +280,8 @@ public class FeatureBlock {
 				Object[] models = dialog.getResult();
 				ArrayList<PluginLaunchModel> modelList = new ArrayList<>(models.length);
 				for (Object model : models) {
-					PluginLaunchModel pluginLaunchModel = new PluginLaunchModel((IPluginModelBase) model);
+					PluginLaunchModel pluginLaunchModel = new PluginLaunchModel((IPluginModelBase) model,
+							DEFAULT_PLUGIN_DATA, fTab::updateLaunchConfigurationDialog);
 					modelList.add(pluginLaunchModel);
 				}
 
@@ -623,21 +624,18 @@ public class FeatureBlock {
 		}
 	}
 
-	class PluginLaunchModel implements StartLevelEditingSupport.IHasStartLevel, AutoStartEditingSupport.IHasAutoStart {
-		private IPluginModelBase fPluginModelBase;
+	static class PluginLaunchModel
+			implements StartLevelEditingSupport.IHasStartLevel, AutoStartEditingSupport.IHasAutoStart {
+		private final Runnable fPropertyChangedListener;
+		private final IPluginModelBase fPluginModelBase;
 		private String fPluginResolution;
 		private String fStartLevel;
 		private String fAutoStart;
 
-		public PluginLaunchModel(IPluginModelBase pluginModelBase) {
+		public PluginLaunchModel(IPluginModelBase pluginModelBase, AdditionalPluginData data,
+				Runnable propertyChangedListener) {
 			fPluginModelBase = pluginModelBase;
-			fPluginResolution = IPDELauncherConstants.LOCATION_DEFAULT;
-			fStartLevel = "default"; //$NON-NLS-1$
-			fAutoStart = "default"; //$NON-NLS-1$
-		}
-
-		public PluginLaunchModel(IPluginModelBase pluginModelBase, AdditionalPluginData data) {
-			fPluginModelBase = pluginModelBase;
+			fPropertyChangedListener = propertyChangedListener;
 			fPluginResolution = data.fResolution;
 			fStartLevel = data.fStartLevel;
 			fAutoStart = data.fAutoStart;
@@ -665,7 +663,9 @@ public class FeatureBlock {
 			requireNonNull(startLevel, "startLevel"); //$NON-NLS-1$
 			if (!Objects.equals(fStartLevel, startLevel)) {
 				fStartLevel = startLevel;
-				fTab.updateLaunchConfigurationDialog();
+				if (fPropertyChangedListener != null) {
+					fPropertyChangedListener.run();
+				}
 			}
 		}
 
@@ -679,7 +679,9 @@ public class FeatureBlock {
 			requireNonNull(autoStart, "autoStart"); //$NON-NLS-1$
 			if (!Objects.equals(fAutoStart, autoStart)) {
 				fAutoStart = autoStart;
-				fTab.updateLaunchConfigurationDialog();
+				if (fPropertyChangedListener != null) {
+					fPropertyChangedListener.run();
+				}
 			}
 		}
 
@@ -793,6 +795,9 @@ public class FeatureBlock {
 
 	private static final String COLUMN_ID = "columnID"; //$NON-NLS-1$
 	private static final String PROPERTY_RESOLUTION = "resolution"; //$NON-NLS-1$
+
+	static final AdditionalPluginData DEFAULT_PLUGIN_DATA = new AdditionalPluginData(
+			IPDELauncherConstants.LOCATION_DEFAULT, true, null, null);
 
 	private Button fAddRequiredFeaturesButton;
 	private Button fDefaultsButton;
@@ -1260,7 +1265,8 @@ public class FeatureBlock {
 					.getAdditionalPlugins(config, false);
 			for (Entry<IPluginModelBase, AdditionalPluginData> additionalEntry : additionalMap.entrySet()) {
 				AdditionalPluginData data = additionalEntry.getValue();
-				PluginLaunchModel launchModel = new PluginLaunchModel(additionalEntry.getKey(), data);
+				PluginLaunchModel launchModel = new PluginLaunchModel(additionalEntry.getKey(), data,
+						fTab::updateLaunchConfigurationDialog);
 				fAdditionalPlugins.add(launchModel);
 
 				if (data.fEnabled) {
