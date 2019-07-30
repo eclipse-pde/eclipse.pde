@@ -49,6 +49,6 @@ public class Activator extends AbstractUIPlugin {
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
-		return ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, path).orElse(null);
+		return (ImageDescriptor) ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, path).orElse(null);
 	}
 }
