@@ -44,6 +44,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.junit.JUnitCore;
@@ -158,13 +159,15 @@ class TestExecutionUtil {
 	}
 
 	private static void checkExitValueAndDumpLog(ILaunch launch) throws DebugException, CoreException {
-		int exitValue = launch.getProcesses()[0].getExitValue();
+		IProcess process = launch.getProcesses()[0];
+		int exitValue = process.getExitValue();
 		String logFile = readLogFile(launch.getLaunchConfiguration());
 		if (exitValue == 13) {
 			fail("test application could not start:\n\n" + logFile);
 		} else {
-			System.out.println(MessageFormat.format("test process terminated with exit value {0}; log file: \n\n{1}",
-					exitValue, logFile));
+			System.out.println(MessageFormat.format(
+					"test process terminated with exit value {0}\ncommand line: {1}\nlog file: \n\n{2}", exitValue,
+					process.getAttribute(IProcess.ATTR_CMDLINE), logFile));
 		}
 	}
 
