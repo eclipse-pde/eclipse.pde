@@ -45,7 +45,7 @@ public class TargetPlatformUtil {
 	}
 
 	private static ITargetDefinition createTarget(ITargetPlatformService tps) throws CoreException {
-		ITargetDefinition targetDefinition = tps.newDefaultTarget();
+		ITargetDefinition targetDefinition = tps.newTarget();
 		targetDefinition.setName(TARGET_NAME);
 
 		Bundle[] installedBundles = FrameworkUtil.getBundle(TargetPlatformUtil.class).getBundleContext().getBundles();
