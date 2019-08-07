@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017  IBM Corporation and others.
+ * Copyright (c) 2008, 2019  IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Chris Aniszczyk <zx@code9.com> - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 489181
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.ui;
 
@@ -24,6 +25,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -76,7 +78,7 @@ public class PDEUserAssistanceUIPlugin extends AbstractUIPlugin {
 	}
 
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
-		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
 
 	public static void logException(Throwable e, final String title,

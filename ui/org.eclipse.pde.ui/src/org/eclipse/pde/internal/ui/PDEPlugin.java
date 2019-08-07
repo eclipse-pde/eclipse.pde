@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 489181
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -28,8 +29,7 @@ import org.eclipse.pde.internal.ui.shared.target.TargetStatus;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.internal.views.log.ILogFileProvider;
@@ -99,7 +99,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	 *         no active workbench window or if called from a non-UI thread
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
-		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
 
 	public static PDEPlugin getDefault() {
@@ -124,7 +124,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	 * @return The active workbench page or <code>null</code> if the workbench is shutting down
 	 */
 	private IWorkbenchPage internalGetActivePage() {
-		IWorkbenchWindow workbenchWin = getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow workbenchWin = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		return workbenchWin != null ? workbenchWin.getActivePage() : null;
 	}
 

@@ -11,7 +11,7 @@
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 549441
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 549441, Bug 489181
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui;
 
@@ -27,6 +27,7 @@ import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -102,7 +103,7 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
-		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
 
 	public static void logException(Throwable e, final String title,
