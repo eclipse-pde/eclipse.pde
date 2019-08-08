@@ -107,9 +107,9 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		try {
 			fConfigDir = null;
-			SubMonitor subMonitor = SubMonitor.convert(monitor, 4);
+			SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
 			try {
-				preLaunchCheck(configuration, launch, subMonitor.split(2));
+				preLaunchCheck(configuration, launch, subMonitor.split(50));
 			} catch (CoreException e) {
 				if (e.getStatus().getSeverity() == IStatus.CANCEL) {
 					subMonitor.setCanceled(true);
@@ -127,13 +127,13 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			runnerConfig.setEnvironment(getEnvironment(configuration));
 			runnerConfig.setVMSpecificAttributesMap(getVMSpecificAttributesMap(configuration));
 
-			subMonitor.worked(1);
+			subMonitor.worked(25);
 
 			setDefaultSourceLocator(configuration);
 			manageLaunch(launch);
 			IVMRunner runner = getVMRunner(configuration, mode);
 			if (runner != null)
-				runner.run(runnerConfig, launch, subMonitor.split(1));
+				runner.run(runnerConfig, launch, subMonitor.split(25));
 			else
 				subMonitor.setCanceled(true);
 
@@ -357,18 +357,18 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			isShowCommand = attribute.equals("true"); //$NON-NLS-1$
 		}
 		boolean autoValidate = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
-		SubMonitor subMonitor = SubMonitor.convert(monitor, autoValidate ? 3 : 4);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, autoValidate ? 30 : 40);
 		if (isShowCommand == false) {
 			if (autoValidate) {
-				validatePluginDependencies(configuration, subMonitor.split(1));
+				validatePluginDependencies(configuration, subMonitor.split(10));
 			}
-			validateProjectDependencies(configuration, subMonitor.split(1));
+			validateProjectDependencies(configuration, subMonitor.split(10));
 			LauncherUtils.setLastLaunchMode(launch.getLaunchMode());
-			clear(configuration, subMonitor.split(1));
+			clear(configuration, subMonitor.split(10));
 		}
 		launch.setAttribute(PDE_LAUNCH_SHOW_COMMAND, "false"); //$NON-NLS-1$
 		launch.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getConfigDir(configuration).toString());
-		synchronizeManifests(configuration, subMonitor.split(1));
+		synchronizeManifests(configuration, subMonitor.split(10));
 	}
 
 	/**
@@ -440,7 +440,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 
 	/**
 	 * Checks if the Automated Management of Dependencies option is turned on.
-	 * If so, it makes aure all manifests are updated with the correct dependencies.
+	 * If so, it makes sure all manifests are updated with the correct dependencies.
 	 *
 	 * @param configuration
 	 * 			the launch configuration

@@ -138,24 +138,19 @@ public class CoreUtility {
 	public static void deleteContent(File fileToDelete, IProgressMonitor monitor) {
 		if (fileToDelete.exists()) {
 			SubMonitor subMon = SubMonitor.convert(monitor, 100);
+
 			if (fileToDelete.isDirectory()) {
 				File[] children = fileToDelete.listFiles();
-				if (children != null) {
-					subMon.setWorkRemaining(children.length * 10);
+				if (children != null && children.length > 0) {
+					SubMonitor childMon = SubMonitor.convert(subMon.split(90), children.length);
 					for (File element : children) {
-						if (subMon.isCanceled()) {
-							return;
-						}
-						deleteContent(element, subMon.split(10));
+						deleteContent(element, childMon.split(1));
 					}
 				}
 			}
 			fileToDelete.delete();
 
 			subMon.done();
-		}
-		if (monitor != null) {
-			monitor.done();
 		}
 	}
 

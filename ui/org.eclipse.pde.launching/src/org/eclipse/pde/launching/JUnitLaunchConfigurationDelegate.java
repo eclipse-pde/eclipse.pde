@@ -472,18 +472,14 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		SubMonitor subMon = SubMonitor.convert(monitor, 50);
 
 		// Clear workspace and prompt, if necessary
-		if (!LauncherUtils.clearWorkspace(configuration, fWorkspaceLocation, subMon.split(25))) {
-			throw new CoreException(Status.CANCEL_STATUS);
-		}
+		LauncherUtils.clearWorkspace(configuration, fWorkspaceLocation, subMon.split(25));
 
 		subMon.setWorkRemaining(25);
-		if (subMon.isCanceled()) {
-			throw new CoreException(Status.CANCEL_STATUS);
-		}
 
 		// clear config area, if necessary
-		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
+		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false)) {
 			CoreUtility.deleteContent(getConfigurationDirectory(configuration), subMon.split(25));
+		}
 
 		subMon.done();
 	}
