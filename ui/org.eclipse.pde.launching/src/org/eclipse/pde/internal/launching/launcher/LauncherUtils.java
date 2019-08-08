@@ -341,7 +341,7 @@ public class LauncherUtils {
 		try {
 			String projectID = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
 			if (projectID.length() > 0) {
-				IResource project = PDELaunchingPlugin.getWorkspace().getRoot().findMember(projectID);
+				IResource project = ResourcesPlugin.getWorkspace().getRoot().findMember(projectID);
 				if (project instanceof IProject) {
 					IPluginModelBase model = PluginRegistry.findModel((IProject) project);
 					if (model != null) {
