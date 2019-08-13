@@ -44,7 +44,7 @@ public class TracingComponentTreeViewer extends FilteredTree {
 	}
 
 	@Override
-	public void setEnabled(final boolean enabled) {
+	public void setEnabled(boolean enabled) {
 
 		filterComposite.setEnabled(enabled);
 		getViewer().getTree().setEnabled(enabled);
