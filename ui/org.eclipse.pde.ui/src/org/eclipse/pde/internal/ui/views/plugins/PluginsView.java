@@ -171,7 +171,8 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		fTreeViewer = new TreeViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL);
+		fTreeViewer = new TreeViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+		fTreeViewer.setUseHashlookup(true);
 		fDrillDownAdapter = new DrillDownAdapter(fTreeViewer);
 		fTreeViewer.setContentProvider(new PluginsContentProvider(this));
 		fTreeViewer.setLabelProvider(new PluginsLabelProvider());
