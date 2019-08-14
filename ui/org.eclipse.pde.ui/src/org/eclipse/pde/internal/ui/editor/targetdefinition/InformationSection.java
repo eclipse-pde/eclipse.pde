@@ -77,8 +77,12 @@ public class InformationSection extends SectionPart {
 		fNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fNameText.addModifyListener(e -> {
 			String value = fNameText.getText().trim();
-			getTarget().setName(value.length() > 0 ? value : null);
-			markDirty();
+			String name = getTarget().getName();
+			if (!value.equals(name)) {
+				getTarget().setName(value.length() > 0 ? value : null);
+				markDirty();
+			}
+
 		});
 
 		fNameTextValidator = new TextValidator(fPage.getManagedForm(), fNameText, null, true) {
