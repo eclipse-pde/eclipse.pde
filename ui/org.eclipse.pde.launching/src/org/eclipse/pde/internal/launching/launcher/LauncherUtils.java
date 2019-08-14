@@ -224,7 +224,7 @@ public class LauncherUtils {
 					if (path == null)
 						continue;
 					file = path.toFile();
-					Stack<File> files = new Stack<>();
+					ArrayDeque<File> files = new ArrayDeque<>();
 					files.push(file);
 					while (!files.isEmpty()) {
 						file = files.pop();
