@@ -15,8 +15,7 @@ package org.eclipse.pde.internal.ui.views.dependencies;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
-import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 
@@ -25,6 +24,9 @@ public class OpenPluginDependenciesAction extends Action {
 	private IPluginModelBase fModel = null;
 
 	public OpenPluginDependenciesAction(IPluginModelBase base) {
+		setText(PDEUIMessages.PluginsView_openDependencies);
+		setImageDescriptor(PDEPluginImages.DESC_CALLEES);
+
 		fModel = base;
 	}
 

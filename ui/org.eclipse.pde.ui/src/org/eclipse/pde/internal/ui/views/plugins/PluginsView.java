@@ -430,8 +430,6 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 			IPluginModelBase entry = getEnclosingModel();
 			if (entry != null) {
 				Action action = new OpenPluginDependenciesAction(entry);
-				action.setText(PDEUIMessages.PluginsView_openDependencies);
-				action.setImageDescriptor(PDEPluginImages.DESC_CALLEES);
 				manager.add(action);
 				manager.add(new Separator());
 
