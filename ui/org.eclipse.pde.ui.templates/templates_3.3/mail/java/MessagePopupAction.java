@@ -1,8 +1,13 @@
 package $packageName$;
 
+import java.net.URL;
+
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.osgi.framework.Bundle;
 
 
 public class MessagePopupAction extends Action {
@@ -16,7 +21,9 @@ public class MessagePopupAction extends Action {
         setId(ICommandIds.CMD_OPEN_MESSAGE);
         // Associate the action with a pre-defined command, to allow key bindings.
         setActionDefinitionId(ICommandIds.CMD_OPEN_MESSAGE);
-        setImageDescriptor($pluginClass$.getImageDescriptor("/icons/sample3.gif"));
+        Bundle bundle = Platform.getBundle(Activator.PLUGIN_ID);
+        URL fileURL = bundle.getEntry("/icons/sample3.gif");
+        setImageDescriptor(ImageDescriptor.createFromURL(fileURL));
     }
 
     @Override

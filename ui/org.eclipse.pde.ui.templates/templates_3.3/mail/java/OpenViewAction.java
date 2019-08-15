@@ -1,10 +1,12 @@
 package $packageName$;
 
+import java.net.URL;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.*;
+import org.osgi.framework.Bundle;
 
 
 public class OpenViewAction extends Action {
@@ -21,7 +23,9 @@ public class OpenViewAction extends Action {
 		setId(ICommandIds.CMD_OPEN);
         // Associate the action with a pre-defined command, to allow key bindings.
 		setActionDefinitionId(ICommandIds.CMD_OPEN);
-		setImageDescriptor($pluginClass$.getImageDescriptor("/icons/sample2.gif"));
+        Bundle bundle = Platform.getBundle(Activator.PLUGIN_ID);
+        URL fileURL = bundle.getEntry("/icons/sample2.gif");
+        setImageDescriptor(ImageDescriptor.createFromURL(fileURL));
 	}
 	
 	@Override
