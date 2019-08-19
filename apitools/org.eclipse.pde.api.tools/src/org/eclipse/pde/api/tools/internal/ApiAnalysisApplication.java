@@ -18,9 +18,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IMarker;
@@ -308,7 +310,21 @@ public class ApiAnalysisApplication implements IApplication {
 			projectDescription.setBuildSpec(builders);
 			res.setDescription(projectDescription, 0, new NullProgressMonitor());
 		}
+		ICommand[] buildSpec = projectDescription.getBuildSpec();
+		List<ICommand> newBuilders = removeManifestAndSchemaBuilders(buildSpec);
+		projectDescription.setBuildSpec(
+				newBuilders.toArray(new ICommand[newBuilders.size()]));
+		res.setDescription(projectDescription, new NullProgressMonitor());
 		return res;
+	}
+
+	private static List<ICommand> removeManifestAndSchemaBuilders(ICommand[] buildSpec) {
+		// remove manifest and schema builders
+		return Arrays.stream(buildSpec)
+				.filter(x -> !("org.eclipse.pde.ManifestBuilder".equals(x.getBuilderName()) //$NON-NLS-1$
+				|| "org.eclipse.pde.SchemaBuilder".equals(x.getBuilderName())) //$NON-NLS-1$
+
+				).collect(Collectors.toList());
 	}
 
 	@Override
