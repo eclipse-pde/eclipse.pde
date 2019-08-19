@@ -102,79 +102,90 @@ public class ApiAnalysisApplication implements IApplication {
 
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
-		IWorkspaceDescription desc = ResourcesPlugin.getWorkspace().getDescription();
-		desc.setAutoBuilding(false);
-		ResourcesPlugin.getWorkspace().setDescription(desc);
-		PDECore.getDefault().getPreferencesManager().setValue(ICoreConstants.DISABLE_API_ANALYSIS_BUILDER, false);
+		try {
+			IWorkspaceDescription desc = ResourcesPlugin.getWorkspace().getDescription();
+			desc.setAutoBuilding(false);
+			ResourcesPlugin.getWorkspace().setDescription(desc);
+			PDECore.getDefault().getPreferencesManager().setValue(ICoreConstants.DISABLE_API_ANALYSIS_BUILDER, false);
 
-		Request args = Request
-				.readFromArgs((String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS));
-		IProject project = importProject(args.project);
-		if (project == null) {
-			System.err.println("Project not loaded."); //$NON-NLS-1$
-			return IStatus.ERROR;
-		}
-		IApiBaseline baseline = setBaseline(args.baselinePath);
-		if (baseline == null) {
-			System.err.println("Baseline shouldn't be null."); //$NON-NLS-1$
-			return IStatus.ERROR;
-		}
-		setTargetPlatform(args.tpFile);
-		configureSeverity(project);
-
-		project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
-		IMarker[] allProblemMarkers = project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
-		Predicate<IMarker> isAPIMarker = marker -> {
-			try {
-				return marker.getType().startsWith(ApiPlugin.PLUGIN_ID);
-			} catch (CoreException e) {
-				ApiPlugin.log(e);
-				return false;
+			Request args = Request
+					.readFromArgs((String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS));
+			IProject project = importProject(args.project);
+			if (project == null) {
+				System.err.println("Project not loaded."); //$NON-NLS-1$
+				return IStatus.ERROR;
 			}
-		};
-		IMarker[] allAPIProbleMarkers = Arrays.stream(allProblemMarkers).filter(isAPIMarker).toArray(IMarker[]::new);
-		IMarker[] allNonAPIErrors = Arrays.stream(allProblemMarkers).filter(isAPIMarker.negate())
-				.filter(marker -> marker.getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR)
-				.toArray(IMarker[]::new);
-		if (allNonAPIErrors.length > 0) {
-			System.err.println("Some blocking (most likely link/compilation) errors are present:"); //$NON-NLS-1$
-			for (IMarker marker : allNonAPIErrors) {
+			IApiBaseline baseline = setBaseline(args.baselinePath);
+			if (baseline == null) {
+				System.err.println("Baseline shouldn't be null."); //$NON-NLS-1$
+				return IStatus.ERROR;
+			}
+			setTargetPlatform(args.tpFile);
+			configureSeverity(project);
+
+			project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
+			IMarker[] allProblemMarkers = project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+			Predicate<IMarker> isAPIMarker = marker -> {
+				try {
+					return marker.getType().startsWith(ApiPlugin.PLUGIN_ID);
+				} catch (CoreException e) {
+					ApiPlugin.log(e);
+					return false;
+				}
+			};
+			IMarker[] allAPIProbleMarkers = Arrays.stream(allProblemMarkers) //
+					.filter(isAPIMarker) //
+					.toArray(IMarker[]::new);
+			IMarker[] allNonAPIErrors = Arrays.stream(allProblemMarkers) //
+					.filter(isAPIMarker.negate()) //
+					.filter(marker -> marker.getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR) //
+					.toArray(IMarker[]::new);
+			if (allNonAPIErrors.length > 0) {
+				System.err.println("Some blocking (most likely link/compilation) errors are present:"); //$NON-NLS-1$
+				for (IMarker marker : allNonAPIErrors) {
+					System.err.println("* " + marker); //$NON-NLS-1$
+				}
+				System.err.println("Some blocking (most likely link/compilation) errors are present ^^^"); //$NON-NLS-1$
+				return 10;
+			}
+			// errors
+			IMarker[] errorMarkers = Arrays.stream(allAPIProbleMarkers)
+					.filter(marker -> marker.getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR)
+					.toArray(IMarker[]::new);
+			System.err.println(errorMarkers.length + " API ERRORS"); //$NON-NLS-1$
+			for (IMarker marker : errorMarkers) {
 				System.err.println("* " + marker); //$NON-NLS-1$
 			}
-			System.err.println("Some blocking (most likely link/compilation) errors are present ^^^"); //$NON-NLS-1$
-			return 10;
-		}
-		// errors
-		IMarker[] errorMarkers = Arrays.stream(allAPIProbleMarkers)
-				.filter(marker -> marker.getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR)
-				.toArray(IMarker[]::new);
-		System.err.println(errorMarkers.length + " API ERRORS"); //$NON-NLS-1$
-		for (IMarker marker : errorMarkers) {
-			System.err.println("* " + marker); //$NON-NLS-1$
-		}
-		// warnings
-		IMarker[] warningMarkers = Arrays.stream(allAPIProbleMarkers)
-				.filter(marker -> marker.getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_WARNING)
-				.toArray(IMarker[]::new);
-		System.out.println(warningMarkers.length + " API warnings"); //$NON-NLS-1$
-		for (IMarker marker : warningMarkers) {
-			System.out.println("* " + marker); //$NON-NLS-1$
-		}
-		// fail
-		if (args.failOnError && errorMarkers.length > 0) {
+			// warnings
+			IMarker[] warningMarkers = Arrays.stream(allAPIProbleMarkers)
+					.filter(marker -> marker.getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_WARNING)
+					.toArray(IMarker[]::new);
+			System.out.println(warningMarkers.length + " API warnings"); //$NON-NLS-1$
+			for (IMarker marker : warningMarkers) {
+				System.out.println("* " + marker); //$NON-NLS-1$
+			}
+			// fail
+			if (args.failOnError && errorMarkers.length > 0) {
+				return IStatus.ERROR;
+			}
+			return IStatus.OK;
+		} catch (Exception e) {
+			e.printStackTrace();
 			return IStatus.ERROR;
 		}
-		return IStatus.OK;
 	}
 
 	private void setTargetPlatform(File dependencyList) throws IOException, CoreException, InterruptedException {
 		if (dependencyList != null) {
+			if (!(dependencyList.isFile() && dependencyList.canRead())) {
+				throw new IllegalArgumentException("dependencyList argument points to non radable file: " + dependencyList.getAbsolutePath());//$NON-NLS-1$
+			}
 			// File is typically the output of `mvn dependnecy:list
 			// -DoutputAbsoluteArtifactFilename=true -DoutputScope=false -DoutputFile=...`
 			// like
 			// ```
 			// The following files have been resolved:
-			// p2.eclipse-plugin:org.eclipse.equinox.event:jar:1.5.0.v20181008-1938:/home/mistria/.m2/repository/p2/osgi/bundle/org.eclipse.equinox.event/1.5.0.v20181008-1938/org.eclipse.equinox.event-1.5.0.v20181008-1938.jar
+			// p2.eclipse-plugin:org.eclipse.equinoxz.event:jar:1.5.0.v20181008-1938:/home/mistria/.m2/repository/p2/osgi/bundle/org.eclipse.equinox.event/1.5.0.v20181008-1938/org.eclipse.equinox.event-1.5.0.v20181008-1938.jar
 			// p2.eclipse-plugin:org.eclipse.equinox.p2.core:jar:2.6.0.v20190215-2242:/home/mistria/.m2/repository/p2/osgi/bundle/org.eclipse.equinox.p2.core/2.6.0.v20190215-2242/org.eclipse.equinox.p2.core-2.6.0.v20190215-2242.jar
 			// p2.eclipse-plugin:org.eclipse.osgi.compatibility.state:jar:1.1.400.v20190208-1533:/home/mistria/.m2/repository/p2/osgi/bundle/org.eclipse.osgi.compatibility.state/1.1.400.v20190208-1533/org.eclipse.osgi.compatibility.state-1.1.400.v20190208-1533.jar
 			// ```
@@ -234,7 +245,16 @@ public class ApiAnalysisApplication implements IApplication {
 		} else if (baselinePath.isFile() && baselinePath.getName().endsWith(".target")) { //$NON-NLS-1$
 			ITargetPlatformService service = TargetPlatformService.getDefault();
 			ITargetDefinition definition = service.getTarget(baselinePath.toURI()).getTargetDefinition();
-			definition.resolve(new NullProgressMonitor());
+			IStatus resolutionStatus = definition.resolve(new NullProgressMonitor());
+			switch (resolutionStatus.getSeverity())
+				{
+				case IStatus.WARNING:
+					System.out.println("WARNING resolving target platform: " + resolutionStatus.getMessage()); //$NON-NLS-1$
+					break;
+				case IStatus.ERROR:
+					throw new CoreException(resolutionStatus);
+				default: // Nothing
+				}
 			ApiBaseline baseline = new ApiBaseline(baselinePath.getAbsolutePath());
 			for (TargetBundle bundle : definition.getAllBundles()) {
 				BundleInfo bundleInfo = bundle.getBundleInfo();
