@@ -119,6 +119,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 			}
 		}));
 		tableviewer = new CheckboxTableViewer(table);
+		tableviewer.setUseHashlookup(true);
 		tableviewer.setLabelProvider(new BaselineLabelProvider());
 		tableviewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableviewer.addDoubleClickListener(event -> {
