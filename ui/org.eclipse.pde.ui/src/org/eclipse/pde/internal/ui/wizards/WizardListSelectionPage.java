@@ -83,6 +83,7 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage im
 		sashForm.setLayoutData(gd);
 
 		wizardSelectionViewer = new TableViewer(sashForm, SWT.BORDER);
+		wizardSelectionViewer.setUseHashlookup(true);
 		wizardSelectionViewer.setContentProvider(new ListContentProvider());
 		wizardSelectionViewer.setLabelProvider(ListUtil.TABLE_LABEL_PROVIDER);
 		wizardSelectionViewer.setComparator(ListUtil.NAME_COMPARATOR);
