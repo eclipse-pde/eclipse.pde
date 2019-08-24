@@ -24,29 +24,18 @@ public class FeatureViewerComparator extends ViewerComparator {
 		if (element instanceof IFeatureChild) {
 			element = FeatureSupport.toFeatureModel(element);
 			if (element == null) {
-				return 4;
+				return 2;
 			}
 		}
 
 		if (element instanceof IFeatureModel) {
 			IFeatureModel featureModel = (IFeatureModel) element;
-			boolean editable = featureModel.isEditable();
-			boolean hasChildren = featureModel.getFeature().getIncludedFeatures().length > 0;
-
-			if (hasChildren && editable) {
-				return 0;
-			} else if (hasChildren) {
-				return 1;
-			} else if (editable) {
-				return 2;
-			} else {
-				return 3;
-			}
+			return (featureModel.isEditable() ? 0 : 1);
 		} else if (element instanceof IFeaturePlugin) {
-			return 5;
+			return 3;
 		}
 
-		return 6;
+		return 4;
 	}
 
 }

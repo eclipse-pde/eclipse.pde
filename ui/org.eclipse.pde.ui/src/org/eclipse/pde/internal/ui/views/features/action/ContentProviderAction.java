@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.ui.views.features.action;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.ui.views.features.FeaturesView;
 
@@ -30,8 +29,6 @@ public abstract class ContentProviderAction extends Action {
 		fFeaturesView = featuresView;
 		fFeatureModelManager = featureModelManager;
 	}
-
-	public abstract ViewerComparator createViewerComparator();
 
 	public abstract IContentProvider createContentProvider();
 

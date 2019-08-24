@@ -40,7 +40,7 @@ public class FeatureIndex implements IFeatureModelListener {
 
 	private void reIndex() {
 		fIncludingFeatures.clear();
-		for (IFeatureModel parentModel : fFeatureModelManager.getWorkspaceModels()) {
+		for (IFeatureModel parentModel : fFeatureModelManager.getModels()) {
 			for (IFeatureChild child : parentModel.getFeature().getIncludedFeatures()) {
 				IFeatureModel childModel = fFeatureModelManager.findFeatureModel(child.getId());
 				if (childModel != null) {

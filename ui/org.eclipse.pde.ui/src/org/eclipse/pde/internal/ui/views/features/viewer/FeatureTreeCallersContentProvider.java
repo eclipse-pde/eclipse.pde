@@ -44,7 +44,7 @@ public class FeatureTreeCallersContentProvider extends AbstractFeatureTreeConten
 		if (inputElement instanceof FeatureInput) {
 			FeatureInput input = (FeatureInput) inputElement;
 			FeatureModelManager featureModelManager = input.getFeatureModelManager();
-			return featureModelManager.getWorkspaceModels();
+			return featureModelManager.getModels();
 		}
 
 		return new Object[0];

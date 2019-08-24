@@ -28,8 +28,7 @@ import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.views.dependencies.OpenPluginDependenciesAction;
 import org.eclipse.pde.internal.ui.views.features.action.*;
 import org.eclipse.pde.internal.ui.views.features.support.*;
-import org.eclipse.pde.internal.ui.views.features.viewer.FeatureElementComparer;
-import org.eclipse.pde.internal.ui.views.features.viewer.RootElementsFilteredTree;
+import org.eclipse.pde.internal.ui.views.features.viewer.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.widgets.Composite;
@@ -121,6 +120,7 @@ public class FeaturesView extends ViewPart {
 
 	private void initialiseViewer(FeatureInput input) {
 		resetViewerFilters();
+		fViewer.setComparator(new FeatureViewerComparator());
 		fViewer.setInput(input);
 	}
 
@@ -141,9 +141,8 @@ public class FeaturesView extends ViewPart {
 		return fViewerFilters.contains(filter);
 	}
 
-	private void setContentProvider(ViewerComparator viewerComparator, IContentProvider contentProvider,
-			boolean supportsFilters, boolean supportsPlugins) {
-		fViewer.setComparator(viewerComparator);
+	private void setContentProvider(IContentProvider contentProvider, boolean supportsFilters,
+			boolean supportsPlugins) {
 		fViewer.setContentProvider(contentProvider);
 
 		setViewerFilterActionsEnabled(supportsFilters);
@@ -189,6 +188,7 @@ public class FeaturesView extends ViewPart {
 		toolBarManager.add(new Separator());
 
 		ViewerFilterAction filterFeatureChildAction = new FilterFeatureChildAction(this, fFeatureIndex);
+		filterFeatureChildAction.setChecked(true);
 		toolBarManager.add(filterFeatureChildAction);
 
 		fShowPluginsAction = new ShowPluginsAction(this);
@@ -231,8 +231,7 @@ public class FeaturesView extends ViewPart {
 
 	public void setContentProvider(ContentProviderAction contentProviderAction) {
 		if (contentProviderAction.isChecked()) {
-			setContentProvider(contentProviderAction.createViewerComparator(),
-					contentProviderAction.createContentProvider(), contentProviderAction.isSupportsFilters(),
+			setContentProvider(contentProviderAction.createContentProvider(), contentProviderAction.isSupportsFilters(),
 					contentProviderAction.isSupportsPlugins());
 		}
 	}

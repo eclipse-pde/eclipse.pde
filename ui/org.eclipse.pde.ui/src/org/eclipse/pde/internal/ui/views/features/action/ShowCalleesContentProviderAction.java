@@ -14,13 +14,11 @@
 package org.eclipse.pde.internal.ui.views.features.action;
 
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.views.features.FeaturesView;
 import org.eclipse.pde.internal.ui.views.features.viewer.FeatureTreeCalleesContentProvider;
-import org.eclipse.pde.internal.ui.views.features.viewer.FeatureViewerComparator;
 
 public class ShowCalleesContentProviderAction extends ContentProviderAction {
 
@@ -31,11 +29,6 @@ public class ShowCalleesContentProviderAction extends ContentProviderAction {
 		setDescription(PDEUIMessages.FeaturesView_ShowCalleesContentProviderAction_description);
 		setToolTipText(PDEUIMessages.FeaturesView_ShowCalleesContentProviderAction_tooltip);
 		setImageDescriptor(PDEPluginImages.DESC_CALLEES);
-	}
-
-	@Override
-	public ViewerComparator createViewerComparator() {
-		return new FeatureViewerComparator();
 	}
 
 	@Override

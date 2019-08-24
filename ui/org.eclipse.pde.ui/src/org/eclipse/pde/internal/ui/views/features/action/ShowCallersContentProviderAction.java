@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.ui.views.features.action;
 
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -34,11 +33,6 @@ public class ShowCallersContentProviderAction extends ContentProviderAction {
 		setDescription(PDEUIMessages.FeaturesView_ShowCallersContentProviderAction_description);
 		setToolTipText(PDEUIMessages.FeaturesView_ShowCallersContentProviderAction_tooltip);
 		setImageDescriptor(PDEPluginImages.DESC_CALLERS);
-	}
-
-	@Override
-	public ViewerComparator createViewerComparator() {
-		return new ViewerComparator();
 	}
 
 	@Override
