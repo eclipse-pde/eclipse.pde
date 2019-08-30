@@ -41,12 +41,14 @@ public class NewTargetDefinitionWizard2 extends Wizard {
 		addPage(fPage);
 		addPage(new TargetDefinitionContentPage(null));
 	}
-
+
+
 	@Override
 	public boolean canFinish() {
 		return false;
 	}
-
+
+
 	@Override
 	public boolean performFinish() {
 		return true;

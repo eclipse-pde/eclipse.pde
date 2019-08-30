@@ -39,7 +39,8 @@ public class TargetPlatformProvisionTask extends Task {
 	private File targetFile;
 	private File destinationDirectory;
 	private boolean clearDestination;
-
+
+
 	@Override
 	public void execute() throws BuildException {
 
