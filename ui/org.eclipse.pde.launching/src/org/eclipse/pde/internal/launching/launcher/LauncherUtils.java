@@ -65,7 +65,7 @@ public class LauncherUtils {
 	public static boolean clearWorkspace(ILaunchConfiguration configuration, String workspace, IProgressMonitor monitor) throws CoreException {
 
 		// If the workspace is not defined, there is no workspace to clear
-		// Unless the user has added the -data program arugment themselves,
+		// Unless the user has added the -data program argument themselves,
 		// the workspace chooser dialog will be brought up.
 		if (workspace == null || workspace.length() == 0) {
 			if (monitor != null) {
@@ -224,7 +224,7 @@ public class LauncherUtils {
 					if (path == null)
 						continue;
 					file = path.toFile();
-					Stack<File> files = new Stack<>();
+					ArrayDeque<File> files = new ArrayDeque<>();
 					files.push(file);
 					while (!files.isEmpty()) {
 						file = files.pop();
@@ -341,7 +341,7 @@ public class LauncherUtils {
 		try {
 			String projectID = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
 			if (projectID.length() > 0) {
-				IResource project = PDELaunchingPlugin.getWorkspace().getRoot().findMember(projectID);
+				IResource project = ResourcesPlugin.getWorkspace().getRoot().findMember(projectID);
 				if (project instanceof IProject) {
 					IPluginModelBase model = PluginRegistry.findModel((IProject) project);
 					if (model != null) {

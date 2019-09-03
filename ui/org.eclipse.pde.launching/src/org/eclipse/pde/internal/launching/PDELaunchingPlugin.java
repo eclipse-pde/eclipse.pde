@@ -15,8 +15,6 @@
 package org.eclipse.pde.internal.launching;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.DebugPlugin;
@@ -61,9 +59,6 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 		return fPreferenceManager;
 	}
 
-	public URL getInstallURL() {
-		return getDefault().getBundle().getEntry("/"); //$NON-NLS-1$
-	}
 
 	public static PDELaunchingPlugin getDefault() {
 		return fInstance;
@@ -71,10 +66,6 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 
 	public static String getPluginId() {
 		return getDefault().getBundle().getSymbolicName();
-	}
-
-	public static IWorkspace getWorkspace() {
-		return ResourcesPlugin.getWorkspace();
 	}
 
 	public static void log(IStatus status) {
@@ -131,10 +122,6 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 				}
 			});
 		}
-	}
-
-	public BundleContext getBundleContext() {
-		return fBundleContext;
 	}
 
 	@Override

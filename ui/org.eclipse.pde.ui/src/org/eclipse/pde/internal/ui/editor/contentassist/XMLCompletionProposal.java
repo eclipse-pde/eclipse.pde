@@ -15,8 +15,8 @@
 
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
+import java.util.ArrayDeque;
 import java.util.HashSet;
-import java.util.Stack;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.internal.text.html.BrowserInformationControl;
@@ -281,7 +281,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 						break;
 				}
 			} else if (fRange instanceof IDocumentElementNode && base instanceof IDocumentElementNode) {
-				Stack<IDocumentElementNode> s = new Stack<>();
+				ArrayDeque<IDocumentElementNode> s = new ArrayDeque<>();
 				IDocumentElementNode node = (IDocumentElementNode) fRange;
 				IDocumentElementNode newSearch = (IDocumentElementNode) base;
 				// traverse up old model, pushing all nodes onto the stack along the way

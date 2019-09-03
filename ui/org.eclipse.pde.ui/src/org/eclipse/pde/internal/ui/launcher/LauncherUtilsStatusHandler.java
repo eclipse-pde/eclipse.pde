@@ -13,6 +13,7 @@
  *     Achim Demelt, eXXcellent solutions gmbh - initial API and implementation
  *     EclipseSource - initial API and implementation, ongoing enhancements
  *     IBM Corporation - ongoing enhancements
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 489181
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -31,14 +32,13 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.launching.PDEMessages;
 import org.eclipse.pde.internal.launching.launcher.LauncherUtils;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsProcessor;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.MainTab;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.*;
 
 public class LauncherUtilsStatusHandler implements IStatusHandler {
 
@@ -137,13 +137,16 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 	}
 
 	public final static Shell getActiveShell() {
-		IWorkbenchWindow window = PDEPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
 		if (window == null) {
-			IWorkbenchWindow[] windows = PDEPlugin.getDefault().getWorkbench().getWorkbenchWindows();
-			if (windows.length > 0)
+			IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
+			if (windows.length > 0) {
 				return windows[0].getShell();
-		} else
+			}
+		} else {
 			return window.getShell();
+		}
 		return getDisplay().getActiveShell();
 	}
 

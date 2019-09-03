@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2019 Code 9 Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 549441, Bug 489181
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui;
 
@@ -21,11 +22,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -70,42 +72,26 @@ public class Activator extends AbstractUIPlugin {
 
 	@Override
 	protected void initializeImageRegistry(ImageRegistry registry) {
-		registry.put(SharedImages.DESC_IMPLEMENTATION,
-				createImageDescriptor(SharedImages.DESC_IMPLEMENTATION));
-		registry.put(SharedImages.DESC_PROPERTIES,
-				createImageDescriptor(SharedImages.DESC_PROPERTIES));
-		registry.put(SharedImages.DESC_PROPERTY,
-				createImageDescriptor(SharedImages.DESC_PROPERTY));
-		registry.put(SharedImages.DESC_PROVIDE,
-				createImageDescriptor(SharedImages.DESC_PROVIDE));
-		registry.put(SharedImages.DESC_REFERENCE,
-				createImageDescriptor(SharedImages.DESC_REFERENCE));
-		registry.put(SharedImages.DESC_REFERENCE_ZERO_N,
-				createImageDescriptor(SharedImages.DESC_REFERENCE_ZERO_N));
-		registry.put(SharedImages.DESC_REFERENCE_ZERO_ONE,
-				createImageDescriptor(SharedImages.DESC_REFERENCE_ZERO_ONE));
-		registry.put(SharedImages.DESC_REFERENCE_ONE_N,
-				createImageDescriptor(SharedImages.DESC_REFERENCE_ONE_N));
-		registry.put(SharedImages.DESC_ROOT,
-				createImageDescriptor(SharedImages.DESC_ROOT));
-		registry.put(SharedImages.DESC_SERVICE,
-				createImageDescriptor(SharedImages.DESC_SERVICE));
-		registry.put(SharedImages.DESC_SERVICES,
-				createImageDescriptor(SharedImages.DESC_SERVICES));
-		registry.put(SharedImages.DESC_DS,
-				createImageDescriptor(SharedImages.DESC_DS));
-		registry.put(SharedImages.DESC_ATTR,
-				createImageDescriptor(SharedImages.DESC_ATTR));
-		registry.put(SharedImages.OVR_DYNAMIC,
-				createImageDescriptor(SharedImages.OVR_DYNAMIC));
-		registry.put(SharedImages.DESC_DETAILS,
-				createImageDescriptor(SharedImages.DESC_DETAILS));
-		registry.put(SharedImages.DESC_DS_WIZ,
-				createImageDescriptor(SharedImages.DESC_DS_WIZ));
+		registerImageDescriptor(registry, SharedImages.DESC_IMPLEMENTATION);
+		registerImageDescriptor(registry, SharedImages.DESC_PROPERTIES);
+		registerImageDescriptor(registry, SharedImages.DESC_PROPERTY);
+		registerImageDescriptor(registry, SharedImages.DESC_PROVIDE);
+		registerImageDescriptor(registry, SharedImages.DESC_REFERENCE);
+		registerImageDescriptor(registry, SharedImages.DESC_REFERENCE_ZERO_N);
+		registerImageDescriptor(registry, SharedImages.DESC_REFERENCE_ZERO_ONE);
+		registerImageDescriptor(registry, SharedImages.DESC_REFERENCE_ONE_N);
+		registerImageDescriptor(registry, SharedImages.DESC_ROOT);
+		registerImageDescriptor(registry, SharedImages.DESC_SERVICE);
+		registerImageDescriptor(registry, SharedImages.DESC_SERVICES);
+		registerImageDescriptor(registry, SharedImages.DESC_DS);
+		registerImageDescriptor(registry, SharedImages.DESC_ATTR);
+		registerImageDescriptor(registry, SharedImages.OVR_DYNAMIC);
+		registerImageDescriptor(registry, SharedImages.DESC_DETAILS);
+		registerImageDescriptor(registry, SharedImages.DESC_DS_WIZ);
 	}
 
-	private ImageDescriptor createImageDescriptor(String id) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, id);
+	private void registerImageDescriptor(ImageRegistry registry, String id) {
+		ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, id).ifPresent(d -> registry.put(id, d));
 	}
 
 	public static Shell getActiveWorkbenchShell() {
@@ -117,7 +103,7 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
-		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
 
 	public static void logException(Throwable e, final String title,

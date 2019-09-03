@@ -444,6 +444,13 @@
             id="org.eclipse.pde.ui.PluginsView">
       </view>
       <view
+            name="%views.features.name"
+            icon="$nl$/icons/obj16/feature_obj.png"
+            category="org.eclipse.pde.ui"
+            class="org.eclipse.pde.internal.ui.views.features.FeaturesView"
+            id="org.eclipse.pde.ui.FeaturesView">
+      </view>
+      <view
             name="%views.dependencies.name"
             icon="$nl$/icons/obj16/req_plugins_obj.png"
             category="org.eclipse.pde.ui"

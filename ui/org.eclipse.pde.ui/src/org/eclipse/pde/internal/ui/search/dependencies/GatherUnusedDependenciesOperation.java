@@ -252,7 +252,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		}
 
 		Iterator<String> it = usedPlugins.keySet().iterator();
-		Stack<String> plugins = new Stack<>();
+		ArrayDeque<String> plugins = new ArrayDeque<>();
 		while (it.hasNext())
 			plugins.push(it.next().toString());
 		SubMonitor subMonitor = SubMonitor.convert(monitor);

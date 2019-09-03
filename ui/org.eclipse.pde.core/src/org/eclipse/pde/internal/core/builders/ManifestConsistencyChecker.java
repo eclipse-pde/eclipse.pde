@@ -31,6 +31,7 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
@@ -48,10 +49,18 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private final int EXTENSIONS = 0x2;
 	private final int BUILD = 0x4;
 	private final int STRUCTURE = 0x8;
+	static final IPath SETTINGS_PATH = new Path(".settings"); //$NON-NLS-1$
 
 	private static IProject[] EMPTY_LIST = new IProject[0];
 
 	private final SelfVisitor fSelfVisitor = new SelfVisitor();
+
+	/*
+	 * Bug 549839:In case auto-building on PDE compiler setting change is not
+	 * desired, specify VM property: {@code
+	 * -Dorg.eclipse.disableAutoBuildOnSettingsChange=true}
+	 */
+	private static final boolean DISABLE_AUTO_BUILDING_ON_SETTINGS_CHANGE = Boolean.getBoolean("org.eclipse.disableAutoBuildOnSettingsChange"); //$NON-NLS-1$
 
 	private final ClassChangeVisitor fClassFileVisitor = new ClassChangeVisitor();
 
@@ -97,6 +106,11 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
+			if (delta != null && delta.findMember(SETTINGS_PATH) != null) {
+				if (!DISABLE_AUTO_BUILDING_ON_SETTINGS_CHANGE) {
+					type |= MANIFEST | EXTENSIONS | BUILD | STRUCTURE;
+				}
+			}
 			if (delta != null && type != (MANIFEST | EXTENSIONS | BUILD | STRUCTURE)) {
 				int kind = delta.getKind();
 				if (kind == IResourceDelta.ADDED || kind == IResourceDelta.REMOVED) {

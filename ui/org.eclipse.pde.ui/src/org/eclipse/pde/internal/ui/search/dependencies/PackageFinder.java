@@ -211,7 +211,7 @@ public class PackageFinder {
 	private static void addClassFilesFromResource(IResource res, List<IClassFile> classFiles) {
 		if (res == null)
 			return;
-		Stack<IResource> stack = new Stack<>();
+		ArrayDeque<IResource> stack = new ArrayDeque<>();
 		if (res instanceof IContainer) {
 			stack.push(res);
 			while (!stack.isEmpty()) {

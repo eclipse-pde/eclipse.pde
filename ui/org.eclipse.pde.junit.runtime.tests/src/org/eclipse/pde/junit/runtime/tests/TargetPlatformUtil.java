@@ -45,7 +45,7 @@ public class TargetPlatformUtil {
 	}
 
 	private static ITargetDefinition createTarget(ITargetPlatformService tps) throws CoreException {
-		ITargetDefinition targetDefinition = tps.newDefaultTarget();
+		ITargetDefinition targetDefinition = tps.newTarget();
 		targetDefinition.setName(TARGET_NAME);
 
 		Bundle[] installedBundles = FrameworkUtil.getBundle(TargetPlatformUtil.class).getBundleContext().getBundles();
@@ -55,6 +55,11 @@ public class TargetPlatformUtil {
 			return generation.getBundleFile();
 		}).map(f -> f.getBaseFile().getParentFile()).distinct()
 				.map(dir -> tps.newDirectoryLocation(dir.getAbsolutePath())).toArray(ITargetLocation[]::new);
+
+		NameVersionDescriptor[] included = Arrays.stream(installedBundles)
+				.map(b -> new NameVersionDescriptor(b.getSymbolicName(), b.getVersion().toString()))
+				.toArray(NameVersionDescriptor[]::new);
+		targetDefinition.setIncluded(included);
 
 		targetDefinition.setTargetLocations(bundleContainers);
 		targetDefinition.setArch(Platform.getOSArch());

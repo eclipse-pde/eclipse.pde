@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2018 IBM Corporation and others.
+ *  Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 549441
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
@@ -18,6 +19,7 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -25,7 +27,6 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class SharedLabelProvider extends LabelProvider implements ITableLabelProvider {
 	public static final int F_ERROR = 1;
@@ -183,8 +184,7 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 	}
 
 	public Image getImageFromPlugin(String bundleID, String path) {
-		ImageDescriptor desc = AbstractUIPlugin.imageDescriptorFromPlugin(bundleID, path);
-		return (desc != null) ? get(desc) : getBlankImage();
+		return ResourceLocator.imageDescriptorFromBundle(bundleID, path).map(d-> get(d)).orElse(getBlankImage());
 	}
 
 	public Image getImageFromPlugin(IPluginModelBase model, String relativePath) {

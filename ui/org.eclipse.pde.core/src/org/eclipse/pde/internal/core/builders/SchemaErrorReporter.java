@@ -16,9 +16,9 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 import java.util.StringTokenizer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -166,7 +166,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 				StringTokenizer text = new StringTokenizer(textNode.getData(), "<>", true); //$NON-NLS-1$
 
 				int lineNumber = getLine(element);
-				Stack<StackEntry> stack = new Stack<>();
+				ArrayDeque<StackEntry> stack = new ArrayDeque<>();
 				boolean errorReported = false;
 				while (text.hasMoreTokens()) {
 					if (errorReported) {

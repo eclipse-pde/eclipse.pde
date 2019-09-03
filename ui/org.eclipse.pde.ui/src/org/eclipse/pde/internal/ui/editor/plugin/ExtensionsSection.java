@@ -174,7 +174,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			String tagName = (parent == extension ? "extension" : parent.getName()); //$NON-NLS-1$
 			elementInfo = schema.findElement(tagName);
 		} else {
-			Stack<String> stack = new Stack<>();
+			ArrayDeque<String> stack = new ArrayDeque<>();
 			IPluginParent parentParent = parent;
 			while (parentParent != extension && parentParent != null) {
 				stack.push(parentParent.getName());

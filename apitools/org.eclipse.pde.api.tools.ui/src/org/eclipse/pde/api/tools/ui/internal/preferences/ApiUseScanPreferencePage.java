@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 IBM Corporation and others.
+ * Copyright (c) 2010, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.Dialog;
@@ -34,6 +36,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.search.UseScanManager;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
@@ -358,7 +361,9 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 			locations.append(UseScanManager.LOCATION_DELIM);
 		}
 
-		if (hasLocationsChanges(locations.toString())) {
+		Object[] newCheckedLocations = fTableViewer.getCheckedElements();
+		boolean hasLocationChanges = hasLocationsChanges(locations.toString());
+		if (hasLocationChanges && newCheckedLocations.length != 0) {
 			IProject[] projects = Util.getApiProjects();
 			// If there are API projects in the workspace, ask the user if they
 			// should be cleaned and built to run the new tooling
@@ -368,6 +373,9 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 				}
 			}
 		}
+		if (hasLocationChanges && newCheckedLocations.length == 0) {
+			findAndDeleteAPIUseScanMarkers();
+		}
 
 		setStoredValue(IApiCoreConstants.API_USE_SCAN_LOCATION, locations.toString());
 
@@ -376,6 +384,22 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		} catch (BackingStoreException e) {
 			ApiUIPlugin.log(e);
 		}
+	}
+
+	private void findAndDeleteAPIUseScanMarkers() {
+		IProject[] apiProjects = Util.getApiProjects();
+		if (apiProjects == null) {
+			return;
+		}
+		for (IProject iProject : apiProjects) {
+			try {
+				iProject.deleteMarkers(IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER, false,
+						IResource.DEPTH_INFINITE);
+			} catch (CoreException e) {
+			}
+
+		}
+		return;
 	}
 
 	/**

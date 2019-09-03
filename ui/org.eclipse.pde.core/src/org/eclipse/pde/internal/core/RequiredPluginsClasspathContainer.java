@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core;
 import static java.util.Collections.singletonMap;
 
 import java.io.File;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,7 +25,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 import java.util.TreeMap;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -529,7 +529,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 	protected final void findExportedPackages(BundleDescription desc, BundleDescription projectDesc, Map<BundleDescription, ArrayList<Rule>> map) {
 		if (desc != null) {
-			Stack<BaseDescription> stack = new Stack<>();
+			ArrayDeque<BaseDescription> stack = new ArrayDeque<>();
 			stack.add(desc);
 			while (!stack.isEmpty()) {
 				BundleDescription bdesc = (BundleDescription) stack.pop();

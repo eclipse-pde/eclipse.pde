@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *     Gary Duprex <Gary.Duprex@aspectstools.com> - bug 179213
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 247553
  *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 489181
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
@@ -41,6 +42,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.ui.*;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
@@ -460,11 +462,12 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	 * @param file file to open the editor on
 	 */
 	private void openFile(final IFile file) {
-		PDEPlugin.getDefault().getWorkbench().getDisplay().asyncExec(() -> {
+		Display.getDefault().asyncExec(() -> {
 			final IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
 			final IWorkbenchPage page = ww.getActivePage();
-			if (page == null)
+			if (page == null) {
 				return;
+			}
 			IWorkbenchPart focusPart = page.getActivePart();
 			if (focusPart instanceof ISetSelectionTarget) {
 				ISelection selection = new StructuredSelection(file);

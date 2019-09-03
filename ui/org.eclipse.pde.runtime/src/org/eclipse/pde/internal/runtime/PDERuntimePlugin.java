@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 489181
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime;
 
@@ -18,8 +19,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -60,15 +60,23 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 	}
 
 	public static IWorkbenchPage getActivePage() {
-		return getDefault().internalGetActivePage();
+		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (activeWindow != null) {
+			return activeWindow.getActivePage();
+		}
+		return null;
 	}
 
 	public static Shell getActiveWorkbenchShell() {
-		return getActiveWorkbenchWindow().getShell();
+		IWorkbenchWindow activeWindow = getActiveWorkbenchWindow();
+		if (activeWindow != null) {
+			return activeWindow.getShell();
+		}
+		return null;
 	}
 
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
-		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
 
 	public PackageAdmin getPackageAdmin() {
@@ -91,10 +99,6 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 
 	public static String getPluginId() {
 		return getDefault().getBundle().getSymbolicName();
-	}
-
-	private IWorkbenchPage internalGetActivePage() {
-		return getWorkbench().getActiveWorkbenchWindow().getActivePage();
 	}
 
 	@Override

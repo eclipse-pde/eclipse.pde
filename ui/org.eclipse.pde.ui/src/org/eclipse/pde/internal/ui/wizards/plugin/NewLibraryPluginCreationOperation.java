@@ -526,7 +526,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 				protected void addProjectPackages(IBundle bundle, Set<String> ignorePkgs) {
 					if (!unzip)
 						super.addProjectPackages(bundle, ignorePkgs);
-					Stack<IResource> stack = new Stack<>();
+					ArrayDeque<IResource> stack = new ArrayDeque<>();
 					stack.push(fProject);
 					try {
 						while (!stack.isEmpty()) {

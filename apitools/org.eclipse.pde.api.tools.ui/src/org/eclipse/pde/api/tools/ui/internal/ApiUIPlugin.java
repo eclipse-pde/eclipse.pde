@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 489181
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal;
 
@@ -31,6 +32,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ISession;
 import org.eclipse.pde.api.tools.internal.provisional.ISessionListener;
 import org.eclipse.pde.api.tools.ui.internal.views.APIToolingView;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -240,7 +242,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	private ISessionListener sessionListener = new ISessionListener() {
 		@Override
 		public void sessionAdded(ISession addedSession) {
-			getWorkbench().getDisplay().asyncExec(() -> showAPIToolingView());
+			Display.getDefault().asyncExec(() -> showAPIToolingView());
 		}
 
 		@Override
@@ -324,7 +326,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	}
 
 	private void showView(String id) {
-		IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window == null) {
 			return;
 		}

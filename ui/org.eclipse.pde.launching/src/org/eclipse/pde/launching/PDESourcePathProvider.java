@@ -13,18 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.launching;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import java.util.*;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
-import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.launching.launcher.LaunchPluginValidator;
 import org.eclipse.pde.internal.launching.launcher.VMHelper;
 
@@ -71,7 +67,7 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 	 */
 	private IProject[] getJavaProjects(ILaunchConfiguration configuration) throws CoreException {
 		IProject[] projects = LaunchPluginValidator.getAffectedProjects(configuration, false);
-		return PDELaunchingPlugin.getWorkspace().computeProjectOrder(projects).projects;
+		return ResourcesPlugin.getWorkspace().computeProjectOrder(projects).projects;
 	}
 
 	@Override
