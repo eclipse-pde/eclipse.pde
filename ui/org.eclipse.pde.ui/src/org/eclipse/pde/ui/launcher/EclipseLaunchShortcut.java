@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -240,7 +240,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 				wc.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
 				wc.setAttribute(IPDELauncherConstants.PRODUCT, product);
 			}
-			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, false);
+			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 		} else {
 			String defaultProduct = TargetPlatform.getDefaultProduct();
 			if (defaultProduct != null) {
