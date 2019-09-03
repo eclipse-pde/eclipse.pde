@@ -1274,6 +1274,11 @@ public class PluginImportOperation extends WorkspaceJob {
 		if (!desc.hasNature(JavaCore.NATURE_ID) && needsJavaNature(project, model)) {
 			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, null);
 		}
+		// if the project has .api_description, then API nature must be added
+		if (project.findMember(".api_description") != null) { //$NON-NLS-1$
+			CoreUtility.addNatureToProject(project, "org.eclipse.pde.api.tools.apiAnalysisNature", null); //$NON-NLS-1$
+		}
+
 	}
 
 	/**
