@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.runtime.registry.model.*;
+import org.eclipse.ui.progress.UIJob;
 
 public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 
@@ -25,7 +27,13 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 
 	@Override
 	public void modelChanged(final ModelChangeDelta[] delta) {
-		fRegistryBrowser.getSite().getWorkbenchWindow().getWorkbench().getDisplay().asyncExec(() -> update(delta));
+		new UIJob("Updating Registry") { //$NON-NLS-1$
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				update(delta);
+				return Status.OK_STATUS;
+			}
+		}.schedule();
 	}
 
 	private boolean topLevelElement(Object object) {

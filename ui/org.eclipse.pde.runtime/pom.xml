@@ -20,7 +20,7 @@
   </parent>
   <groupId>org.eclipse.pde</groupId>
   <artifactId>org.eclipse.pde.runtime</artifactId>
-  <version>3.6.600-SNAPSHOT</version>
+  <version>3.6.700-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
   <properties>
