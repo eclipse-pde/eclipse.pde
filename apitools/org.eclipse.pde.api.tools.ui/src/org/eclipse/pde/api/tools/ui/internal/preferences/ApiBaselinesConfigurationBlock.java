@@ -446,10 +446,26 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 		if (apiProjects == null) {
 			return;
 		}
+		removeBaselineMismatchMarker();
 		for (IProject iProject : apiProjects) {
 			createMissingBaselineMarkerOnProject(iProject, valueWarning);
 		}
 	}
+
+	private void removeBaselineMismatchMarker() {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		try {
+			IMarker[] findMarkers = root.findMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, false,
+					IResource.DEPTH_ZERO);
+			for (IMarker iMarker : findMarkers) {
+				iMarker.delete();
+			}
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
+
+	}
+
 	private void createMissingBaselineMarker(int valueWarning) {
 		IProject[] apiProjects = Util.getApiProjects();
 		if (apiProjects == null) {
