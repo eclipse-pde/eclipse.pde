@@ -180,7 +180,8 @@ public class ApiAnalysisApplication implements IApplication {
 	private void setTargetPlatform(File dependencyList) throws IOException, CoreException, InterruptedException {
 		if (dependencyList != null) {
 			if (!(dependencyList.isFile() && dependencyList.canRead())) {
-				throw new IllegalArgumentException("dependencyList argument points to non radable file: " + dependencyList.getAbsolutePath());//$NON-NLS-1$
+				throw new IllegalArgumentException(
+						"dependencyList argument points to non readable file: " + dependencyList.getAbsolutePath());//$NON-NLS-1$
 			}
 			// File is typically the output of `mvn dependnecy:list
 			// -DoutputAbsoluteArtifactFilename=true -DoutputScope=false -DoutputFile=...`
