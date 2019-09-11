@@ -1386,7 +1386,6 @@ public class PDEUIMessages extends NLS {
 	public static String BaseFeatureSpecPage_patchGroup_title;
 	public static String BaseFeatureSpecPage_featurePropertiesGroup_title;
 	public static String BaseFeatureSpecPage_browse;
-	public static String BaseExtensionPoint_sections_copyright;
 	public static String BaseExportWizard_confirmReplace_title;
 	public static String BaseExtensionPoint_generating;
 	public static String GeneralInfoSection_IdWarning;

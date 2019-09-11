@@ -206,7 +206,6 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		section.setDescription(PDEUIMessages.BaseExtensionPoint_sections_supplied);
 		schema.addDocumentSection(section);
 		section = new DocumentSection(schema, IDocumentSection.COPYRIGHT, "Copyright"); //$NON-NLS-1$
-		section.setDescription(PDEUIMessages.BaseExtensionPoint_sections_copyright);
 		schema.addDocumentSection(section);
 		StringWriter swriter = new StringWriter();
 		try (PrintWriter writer = new PrintWriter(swriter, true)) {
