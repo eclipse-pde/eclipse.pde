@@ -269,6 +269,10 @@ public class TypeStructureBuilder extends ClassVisitor {
 			// thrown from ASM 5.0 for bad bytecodes
 			return logAndReturn(file, iae);
 		}
+		catch (UnsupportedOperationException e) {
+			ApiPlugin.log(e);
+			return null;
+		}
 		return visitor.fType;
 	}
 
@@ -291,6 +295,9 @@ public class TypeStructureBuilder extends ClassVisitor {
 				classReader.accept(visitor, ClassReader.SKIP_FRAMES);
 			} catch (ArrayIndexOutOfBoundsException | CoreException e) {
 				// bytes could not be retrieved for abstractApiTypeRoot
+				ApiPlugin.log(e);
+			}
+			catch (UnsupportedOperationException e) {
 				ApiPlugin.log(e);
 			}
 			if (visitor.found) {
