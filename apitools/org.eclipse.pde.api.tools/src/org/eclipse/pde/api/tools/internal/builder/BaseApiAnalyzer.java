@@ -1053,7 +1053,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, fJavaProject.getProject().getProject()) == ApiPlugin.SEVERITY_IGNORE;
 	}
 
-	private boolean reportMinorVersionCheckWithoutApiChange() {
+	private boolean reportUnnecessaryMinorMicroVersionCheck() {
 		if (fJavaProject == null) {
 			// we ignore it for non-OSGi case
 			return true;
@@ -2093,6 +2093,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			System.out.println("component version of " + component.getSymbolicName() + " : " + compversion); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		IDelta[] breakingChanges = fBuildState.getBreakingChanges();
+		IDelta[] compatibleChanges = fBuildState.getCompatibleChanges();
 		if (breakingChanges.length != 0) {
 			// make sure that the major version has been incremented
 			if (compversion.getMajor() <= refversion.getMajor()) {
@@ -2101,7 +2102,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						compversionval, refversionval }, String.valueOf(newversion), collectDetails(breakingChanges));
 			}
 		} else {
-			IDelta[] compatibleChanges = fBuildState.getCompatibleChanges();
 			if (compatibleChanges.length != 0) {
 				// only new API have been added
 				if (compversion.getMajor() != refversion.getMajor()) {
@@ -2126,7 +2126,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				}
 			} else if (compversion.getMinor() != refversion.getMinor()) {
 				// the minor version should not be incremented
-				if (reportMinorVersionCheckWithoutApiChange() && !hasExecutionEnvironmentChanged(reference, component)) {
+				if (reportUnnecessaryMinorMicroVersionCheck() && !hasExecutionEnvironmentChanged(reference, component)) {
 					newversion = new Version(refversion.getMajor(), refversion.getMinor(), refversion.getMicro(), refversion.getQualifier() != null ? QUALIFIER : null);
 					problem = createVersionProblem(IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API, new String[] {
 							compversionval, refversionval }, String.valueOf(newversion), Util.EMPTY_STRING);
@@ -2254,6 +2254,73 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (problem != null) {
 			addProblem(problem);
 		}
+		if (problem == null) {
+			if (breakingChanges.length > 0 || compatibleChanges.length > 0) {
+				// check if major or minor version is increased
+				if (reportUnnecessaryMinorMicroVersionCheck()
+						&& checkIfMajorOrMinorVersionIncreased(compversion, refversion)) {
+					if (hasMicroVersionIncreased(compversion)) {
+						newversion = new Version(compversion.getMajor(), compversion.getMinor(), 0,
+								compversion.getQualifier() != null ? QUALIFIER : null);
+						problem = createVersionProblem(IApiProblem.MICRO_VERSION_CHANGE_UNNECESSARILY,
+								new String[] { compversionval, refversionval }, String.valueOf(newversion),
+								Util.EMPTY_STRING);
+						if (problem != null) {
+							addProblem(problem);
+						}
+					}
+				}
+			}
+			if (breakingChanges.length > 0) {
+				// check if major version is increased
+				if (reportUnnecessaryMinorMicroVersionCheck()
+						&& checkIfMajorVersionIncreased(compversion, refversion)) {
+					if (hasMinorVersionIncreased(compversion)) {
+						newversion = new Version(compversion.getMajor(), 0, 0,
+								compversion.getQualifier() != null ? QUALIFIER : null);
+						problem = createVersionProblem(IApiProblem.MINOR_VERSION_CHANGE_UNNECESSARILY,
+								new String[] { compversionval, refversionval }, String.valueOf(newversion),
+								Util.EMPTY_STRING);
+						if (problem != null) {
+							addProblem(problem);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private boolean hasMinorVersionIncreased(Version compversion) {
+		if (compversion.getMinor() > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean checkIfMajorVersionIncreased(Version compversion, Version refversion) {
+		if (compversion.getMajor() > refversion.getMajor()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean hasMicroVersionIncreased(Version compversion) {
+		if (compversion.getMicro() > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean checkIfMajorOrMinorVersionIncreased(Version compversion, Version refversion) {
+		if (compversion.getMajor() > refversion.getMajor()) {
+			return true;
+		}
+		if (compversion.getMinor() > refversion.getMinor()) {
+			return true;
+		}
+		return false;
+
 	}
 
 	/**

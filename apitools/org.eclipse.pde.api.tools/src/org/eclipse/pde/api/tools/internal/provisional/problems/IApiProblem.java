@@ -204,6 +204,25 @@ public interface IApiProblem {
 	public static final int MINOR_VERSION_CHANGE_EXECUTION_ENV_CHANGED = 7;
 
 	/**
+	 * Constant representing the value of the micro version change (inspite of
+	 * major/minor change) {@link IApiProblem} kind. <br>
+	 * Value is: <code>8</code>
+	 *
+	 * @see #getKind()
+	 * @see #CATEGORY_VERSION
+	 */
+	public static final int MICRO_VERSION_CHANGE_UNNECESSARILY = 8;
+	/**
+	 * Constant representing the value of the minor version change (inspite of major
+	 * change) {@link IApiProblem} kind. <br>
+	 * Value is: <code>8</code>
+	 *
+	 * @see #getKind()
+	 * @see #CATEGORY_VERSION
+	 */
+	public static final int MINOR_VERSION_CHANGE_UNNECESSARILY = 9;
+
+	/**
 	 * Constant representing the value of an illegal extend {@link IApiProblem}
 	 * kind. <br>
 	 * Value is: <code>1</code>

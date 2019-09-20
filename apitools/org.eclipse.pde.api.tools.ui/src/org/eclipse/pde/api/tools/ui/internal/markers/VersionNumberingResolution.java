@@ -60,6 +60,10 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 				return MarkerMessages.VersionNumberingResolution_reexportedMajor0;
 			case IApiProblem.MINOR_VERSION_CHANGE_EXECUTION_ENV_CHANGED:
 				return MarkerMessages.VersionNumberingResolution_breeMinor;
+			case IApiProblem.MICRO_VERSION_CHANGE_UNNECESSARILY:
+				return MarkerMessages.VersionNumberingResolution_unnecessaryMicroIncrease;
+			case IApiProblem.MINOR_VERSION_CHANGE_UNNECESSARILY:
+				return MarkerMessages.VersionNumberingResolution_unnecessaryMinorIncrease;
 			default:
 				// reexported minor
 				return MarkerMessages.VersionNumberingResolution_reexportedMinor0;
@@ -84,6 +88,11 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 				return NLS.bind(MarkerMessages.VersionNumberingResolution_minorNoNewAPI1, this.newVersionValue);
 			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE:
 				return NLS.bind(MarkerMessages.VersionNumberingResolution_reexportedMajor1, this.newVersionValue);
+			case IApiProblem.MICRO_VERSION_CHANGE_UNNECESSARILY:
+				return MarkerMessages.VersionNumberingResolution_unnecessaryMicroIncrease;
+			case IApiProblem.MINOR_VERSION_CHANGE_UNNECESSARILY:
+				return MarkerMessages.VersionNumberingResolution_unnecessaryMinorIncrease;
+
 			default:
 				// IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE
 				return NLS.bind(MarkerMessages.VersionNumberingResolution_reexportedMinor1, this.newVersionValue);
@@ -108,6 +117,12 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 				break;
 			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE:
 				title = NLS.bind(MarkerMessages.VersionNumberingResolution_reexportedMajor2, this.newVersionValue);
+				break;
+			case IApiProblem.MICRO_VERSION_CHANGE_UNNECESSARILY:
+				title = MarkerMessages.VersionNumberingResolution_unnecessaryMicroIncrease;
+				break;
+			case IApiProblem.MINOR_VERSION_CHANGE_UNNECESSARILY:
+				title = MarkerMessages.VersionNumberingResolution_unnecessaryMinorIncrease;
 				break;
 			default:
 				// IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE
