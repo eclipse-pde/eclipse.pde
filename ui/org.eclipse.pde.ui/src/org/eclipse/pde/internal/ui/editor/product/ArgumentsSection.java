@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2018 IBM Corporation and others.
+ *  Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,8 @@ package org.eclipse.pde.internal.ui.editor.product;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import java.util.Arrays;
+import java.util.Objects;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.iproduct.*;
@@ -104,7 +106,7 @@ public class ArgumentsSection extends PDESection {
 		fArchCombo = new ComboViewerPart();
 		fArchCombo.createControl(archParent, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		fArchCombo.getControl().setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
-		fArchCombo.setItems(TAB_ARCHLABELS);
+		fArchCombo.setItems(Arrays.stream(TAB_ARCHLABELS).filter(Objects::nonNull).toArray(String[]::new));
 		Control archComboControl = fArchCombo.getControl();
 		if (archComboControl instanceof Combo)
 			((Combo) archComboControl).select(fLastArch[fLastTab]);
