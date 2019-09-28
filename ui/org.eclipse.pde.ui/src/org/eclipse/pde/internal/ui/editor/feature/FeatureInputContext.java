@@ -135,21 +135,17 @@ public class FeatureInputContext extends XMLInputContext {
 
 	@Override
 	protected boolean synchronizeModel(IDocument doc) {
+		if (doc == null) {
+			return false;
+		}
 		IFeatureModel model = (IFeatureModel) getModel();
-
-		boolean cleanModel = true;
 		String text = doc.get();
-		InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
-		try {
+		try (InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8))) {
 			model.reload(stream, false);
-		} catch (CoreException e) {
-			cleanModel = false;
+		} catch (CoreException | IOException e) {
+			return false;
 		}
-		try {
-			stream.close();
-		} catch (IOException e) {
-		}
-		return cleanModel;
+		return true;
 	}
 
 	@Override
