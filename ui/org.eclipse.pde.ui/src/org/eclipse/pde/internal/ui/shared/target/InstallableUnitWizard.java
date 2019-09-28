@@ -44,12 +44,12 @@ public class InstallableUnitWizard extends Wizard implements ITargetLocationWiza
 	public InstallableUnitWizard() {
 		setWindowTitle(Messages.AddBundleContainerSelectionPage_1);
 	}
-
+
 	@Override
 	public void setTarget(ITargetDefinition target) {
 		fTarget = target;
 	}
-
+
 	@Override
 	public void addPages() {
 		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(SETTINGS_SECTION);
@@ -59,13 +59,13 @@ public class InstallableUnitWizard extends Wizard implements ITargetLocationWiza
 		setDialogSettings(settings);
 		addPage(new EditIUContainerPage(fTarget));
 	}
-
+
 	@Override
 	public boolean performFinish() {
 		fLocation = ((EditIUContainerPage) getPages()[0]).getBundleContainer();
 		return true;
 	}
-
+
 	@Override
 	public ITargetLocation[] getLocations() {
 		return new ITargetLocation[] {fLocation};

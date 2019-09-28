@@ -145,7 +145,7 @@ public class TargetFeature {
 		}
 		featureModel = ExternalFeatureModelManager.createModel(featureXML);
 	}
-
+
 	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();

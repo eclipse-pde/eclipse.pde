@@ -28,14 +28,14 @@ public class TargetLocationLabelProvider extends StyledBundleLabelProvider {
 	public TargetLocationLabelProvider(boolean showVersion, boolean appendResolvedVariables) {
 		super(showVersion, appendResolvedVariables);
 	}
-
+
 	@Override
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
 		cell.setText(getText(element));
 		cell.setImage(getImage(element));
 	}
-
+
 	@Override
 	public Image getImage(Object element) {
 		ILabelProvider provider = Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);
@@ -47,7 +47,7 @@ public class TargetLocationLabelProvider extends StyledBundleLabelProvider {
 
 		return super.getImage(element);
 	}
-
+
 	@Override
 	public String getText(Object element) {
 		ILabelProvider provider = Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);

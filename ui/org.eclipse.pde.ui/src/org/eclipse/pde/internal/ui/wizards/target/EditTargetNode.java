@@ -27,7 +27,7 @@ public class EditTargetNode implements IWizardNode {
 
 	private EditTargetDefinitionWizard fWizard;
 	private ITargetDefinition fDefinition;
-
+
 	@Override
 	public void dispose() {
 		if (fWizard != null) {
@@ -36,12 +36,12 @@ public class EditTargetNode implements IWizardNode {
 			fDefinition = null;
 		}
 	}
-
+
 	@Override
 	public Point getExtent() {
 		return new Point(-1, -1);
 	}
-
+
 	@Override
 	public IWizard getWizard() {
 		if (fWizard == null) {
@@ -50,7 +50,7 @@ public class EditTargetNode implements IWizardNode {
 		}
 		return fWizard;
 	}
-
+
 	@Override
 	public boolean isContentCreated() {
 		return fWizard != null;

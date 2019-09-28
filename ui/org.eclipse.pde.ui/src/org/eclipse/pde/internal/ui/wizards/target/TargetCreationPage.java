@@ -63,7 +63,7 @@ public class TargetCreationPage extends WizardSelectionPage {
 	protected ITargetPlatformService getTargetService() {
 		return PDECore.getDefault().acquireService(ITargetPlatformService.class);
 	}
-
+
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
@@ -204,7 +204,7 @@ public class TargetCreationPage extends WizardSelectionPage {
 			service.loadTargetDefinition(definition, id);
 		}
 	}
-
+
 	@Override
 	public IWizardPage getNextPage() {
 		ITargetDefinition target = null;

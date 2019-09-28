@@ -260,7 +260,7 @@ public abstract class PDEFormPage extends FormPage {
 				((IContextPart) part).cancelEdit();
 		}
 	}
-
+
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);

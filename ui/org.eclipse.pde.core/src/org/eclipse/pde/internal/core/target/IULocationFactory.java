@@ -39,7 +39,7 @@ import org.w3c.dom.NodeList;
  *
  */
 public class IULocationFactory implements ITargetLocationFactory {
-
+
 	@Override
 	public ITargetLocation getTargetLocation(String type, String serializedXML) throws CoreException {
 

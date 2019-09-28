@@ -44,7 +44,7 @@ public class EditTargetDefinitionWizard extends Wizard {
 		setTargetDefinition(definition, createWorkingCopy);
 		setNeedsProgressMonitor(true);
 	}
-
+
 	@Override
 	public boolean performFinish() {
 		// update the cache to remove all other targets with same handle except
@@ -82,7 +82,7 @@ public class EditTargetDefinitionWizard extends Wizard {
 		}
 		return true;
 	}
-
+
 	@Override
 	public void addPages() {
 		addPage(new TargetDefinitionContentPage(fDefinition));

@@ -179,21 +179,21 @@ public class ArgumentsSection extends SectionPart {
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 	}
-
+
 	@Override
 	public void refresh() {
 		fProgramArguments.setValue(getTarget().getProgramArguments(), true);
 		fVMArguments.setValue(getTarget().getVMArguments(), true);
 		super.refresh();
 	}
-
+
 	@Override
 	public void commit(boolean onSave) {
 		fProgramArguments.commit();
 		fVMArguments.commit();
 		super.commit(onSave);
 	}
-
+
 	@Override
 	public void dispose() {
 		if (fImage != null)

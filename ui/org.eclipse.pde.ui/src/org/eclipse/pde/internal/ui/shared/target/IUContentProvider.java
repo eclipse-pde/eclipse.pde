@@ -28,12 +28,12 @@ import org.eclipse.pde.internal.core.target.P2TargetUtils;
  *
  */
 public class IUContentProvider implements ITreeContentProvider {
-
+
 	@Override
 	public Object[] getElements(Object inputElement) {
 		return null;
 	}
-
+
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		IUBundleContainer location = (IUBundleContainer) parentElement;
@@ -58,7 +58,7 @@ public class IUContentProvider implements ITreeContentProvider {
 		}
 		return new Object[0];
 	}
-
+
 	@Override
 	public Object getParent(Object element) {
 		if (element instanceof IUWrapper) {
@@ -66,7 +66,7 @@ public class IUContentProvider implements ITreeContentProvider {
 		}
 		return null;
 	}
-
+
 	@Override
 	public boolean hasChildren(Object element) {
 		return false;

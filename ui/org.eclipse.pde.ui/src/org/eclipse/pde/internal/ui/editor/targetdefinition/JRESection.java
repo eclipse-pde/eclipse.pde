@@ -172,7 +172,7 @@ public class JRESection extends SectionPart {
 		fNamedJREsCombo.setEnabled(fNamedJREButton.getSelection());
 		fExecEnvsCombo.setEnabled(fExecEnvButton.getSelection());
 	}
-
+
 	@Override
 	public void refresh() {
 		fBlockChanges = true;
