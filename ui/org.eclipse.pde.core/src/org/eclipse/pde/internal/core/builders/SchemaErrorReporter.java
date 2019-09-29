@@ -308,7 +308,8 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 					}
 					URL includedSchemaUrl = includedSchema.getURL();
 					URL computedUrl = IncludedSchemaDescriptor.computeURL(fSchema.getSchemaDescriptor(), schemaLocation, null);
-					if (includedSchemaUrl != null && computedUrl != null && includedSchemaUrl.equals(computedUrl)) {
+					if (includedSchemaUrl != null && computedUrl != null
+							&& includedSchemaUrl.toExternalForm().equals(computedUrl.toExternalForm())) {
 						if (!includedSchema.isValid()) {
 							report(NLS.bind(PDECoreMessages.Builders_Schema_includeNotValid, schemaLocation), getLine(element), CompilerFlags.ERROR, PDEMarkerFactory.CAT_OTHER);
 						}

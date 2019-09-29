@@ -164,7 +164,7 @@ public class SchemaRegistry {
 			if (file.isDirectory()) {
 				File schemaFile = new File(file, schema);
 				if (schemaFile.exists()) {
-					return schemaFile.toURL();
+					return schemaFile.toURI().toURL();
 				}
 			} else if (CoreUtility.jarContainsResource(file, schema, false)) {
 				return new URL("jar:file:" + file.getAbsolutePath() + "!/" + schema); //$NON-NLS-1$ //$NON-NLS-2$
@@ -175,7 +175,7 @@ public class SchemaRegistry {
 	}
 
 	private boolean hasSchemaChanged(ISchemaDescriptor desc, URL url) {
-		if (!desc.getSchemaURL().equals(url)) {
+		if (!desc.getSchemaURL().toExternalForm().equals(url.toExternalForm())) {
 			return true;
 		}
 		File file = new File(url.getFile());

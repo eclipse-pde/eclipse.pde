@@ -358,7 +358,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 			// This can happen when creating a new extension point schema
 			return null;
 		}
-		String hashkey = schema.getURL().hashCode() + "_" + getName(); //$NON-NLS-1$
+		String hashkey = schema.getURL().toExternalForm().hashCode() + "_" + getName(); //$NON-NLS-1$
 		String description = XMLComponentRegistry.Instance().getDescription(hashkey, XMLComponentRegistry.F_ELEMENT_COMPONENT);
 		if (description == null) {
 			SchemaElementHandler handler = new SchemaElementHandler(getName());

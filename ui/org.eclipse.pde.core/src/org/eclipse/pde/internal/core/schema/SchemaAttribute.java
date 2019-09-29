@@ -270,7 +270,7 @@ public class SchemaAttribute extends SchemaObject implements ISchemaAttribute {
 				return null;
 			}
 		}
-		String hashkey = schema.getURL().hashCode() + "_" + elementName + "_" + getName(); //$NON-NLS-1$ //$NON-NLS-2$
+		String hashkey = schema.getURL().toExternalForm().hashCode() + "_" + elementName + "_" + getName(); //$NON-NLS-1$ //$NON-NLS-2$
 		String description = XMLComponentRegistry.Instance().getDescription(hashkey, XMLComponentRegistry.F_ATTRIBUTE_COMPONENT);
 		if (description == null) {
 			SchemaAttributeHandler handler = new SchemaAttributeHandler(elementName, getName());
