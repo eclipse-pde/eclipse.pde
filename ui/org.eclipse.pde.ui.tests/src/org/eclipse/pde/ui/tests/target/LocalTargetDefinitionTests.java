@@ -14,7 +14,7 @@
 package org.eclipse.pde.ui.tests.target;
 
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
@@ -55,19 +55,19 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 	/**
 	 * Retrieves all bundles (source and code) in the given target definition
-	 * returning them as a set of URLs.
+	 * returning them as a set of URIs.
 	 *
 	 * @param target target definition
-	 * @return all bundle URLs
+	 * @return all bundle URIs
 	 */
-	protected Set<URL> getAllBundleURLs(ITargetDefinition target) throws Exception {
+	protected Set<URI> getAllBundleURIs(ITargetDefinition target) throws Exception {
 		if (!target.isResolved()) {
 			target.resolve(null);
 		}
 		TargetBundle[] bundles = target.getBundles();
-		Set<URL> urls = new HashSet<>(bundles.length);
+		Set<URI> urls = new HashSet<>(bundles.length);
 		for (TargetBundle bundle : bundles) {
-			urls.add(new File(bundle.getBundleInfo().getLocation()).toURL());
+			urls.add(bundle.getBundleInfo().getLocation());
 		}
 		return urls;
 	}
@@ -80,12 +80,12 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	public void testResetTargetPlatform() throws Exception {
 		ITargetDefinition definition = getDefaultTargetPlatorm();
-		Set<URL> urls = getAllBundleURLs(definition);
-		Set<URL> fragments = new HashSet<>();
+		Set<URI> uris = getAllBundleURIs(definition);
+		Set<URI> fragments = new HashSet<>();
 		TargetBundle[] bundles = definition.getBundles();
 		for (TargetBundle bundle : bundles) {
 			if (bundle.isFragment()) {
-				fragments.add(new File(bundle.getBundleInfo().getLocation()).toURL());
+				fragments.add(bundle.getBundleInfo().getLocation());
 			}
 		}
 
@@ -93,13 +93,13 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
 
 		// should be equivalent
-		assertEquals("Should have same number of bundles", urls.size(), models.length);
+		assertEquals("Should have same number of bundles", uris.size(), models.length);
 		for (IPluginModelBase model : models) {
 			String location = model.getInstallLocation();
-			URL url = new File(location).toURL();
-			assertTrue("Missing plug-in " + location, urls.contains(url));
+			URI uri = new File(location).toURI();
+			assertTrue("Missing plug-in " + location, uris.contains(uri));
 			if (model.isFragmentModel()) {
-				assertTrue("Missing fragmnet", fragments.remove(url));
+				assertTrue("Missing fragment", fragments.remove(uri));
 			}
 		}
 		assertTrue("Different number of fragments", fragments.isEmpty());
@@ -117,17 +117,14 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
 		definition.setTargetLocations(new ITargetLocation[]{container});
-		Set<URL> urls = getAllBundleURLs(definition);
+		Set<URI> uris = getAllBundleURIs(definition);
 
 		// the old way
 		IPath location = new Path(TargetPlatform.getDefaultLocation());
-		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile().toURL());
+		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(),
+				location.append("configuration").toFile().toURI().toURL());
 		// pluginPaths will be null (and NPE) when self-hosting and the target platform is not a real installation
-		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
-		for (URL url : pluginPaths) {
-			assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
-		}
-
+		assertBundlePathsEqual(pluginPaths, uris);
 	}
 
 	/**
@@ -242,17 +239,14 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newProfileLocation("${eclipse_home}", null);
 		definition.setTargetLocations(new ITargetLocation[]{container});
-		Set<URL> urls = getAllBundleURLs(definition);
+		Set<URI> uris = getAllBundleURIs(definition);
 
 		// the old way
 		IPath location = new Path(TargetPlatform.getDefaultLocation());
-		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile().toURL());
+		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(),
+				location.append("configuration").toFile().toURI().toURL());
 		// pluginPaths will be null (and NPE) when self-hosting and the target platform is not a real installation
-		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
-		for (URL url : pluginPaths) {
-			assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
-		}
-
+		assertBundlePathsEqual(pluginPaths, uris);
 	}
 
 	/**
@@ -268,17 +262,14 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newProfileLocation("${eclipse_home}", "${eclipse_home}/configuration");
 		definition.setTargetLocations(new ITargetLocation[]{container});
-		Set<URL> urls = getAllBundleURLs(definition);
+		Set<URI> uris = getAllBundleURIs(definition);
 
 		// the old way
 		IPath location = new Path(TargetPlatform.getDefaultLocation());
-		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile().toURL());
+		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(),
+				location.append("configuration").toFile().toURI().toURL());
 		// pluginPaths will be null (and NPE) when self-hosting and the target platform is not a real installation
-		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
-		for (URL url : pluginPaths) {
-			assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
-		}
-
+		assertBundlePathsEqual(pluginPaths, uris);
 	}
 
 	/**
@@ -296,15 +287,11 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(),
 				new File(Platform.getConfigurationLocation().getURL().getFile()).getAbsolutePath());
 		definition.setTargetLocations(new ITargetLocation[]{container});
-		Set<URL> urls = getAllBundleURLs(definition);
+		Set<URI> uris = getAllBundleURIs(definition);
 
 		// the old way
 		URL[] pluginPaths = PluginPathFinder.getPluginPaths(TargetPlatform.getDefaultLocation(), true);
-		for (URL url : pluginPaths) {
-			assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
-		}
-		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
-
+		assertBundlePathsEqual(pluginPaths, uris);
 	}
 
 	/**
@@ -317,14 +304,11 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newDirectoryLocation(TargetPlatform.getDefaultLocation() + "/plugins");
 		definition.setTargetLocations(new ITargetLocation[]{container});
-		Set<URL> urls = getAllBundleURLs(definition);
+		Set<URI> uris = getAllBundleURIs(definition);
 
 		// the old way
 		URL[] pluginPaths = PluginPathFinder.getPluginPaths(TargetPlatform.getDefaultLocation(), false);
-		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
-		for (URL url : pluginPaths) {
-			assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
-		}
+		assertBundlePathsEqual(pluginPaths, uris);
 	}
 
 	/**
@@ -338,14 +322,11 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newDirectoryLocation("${eclipse_home}/plugins");
 		definition.setTargetLocations(new ITargetLocation[]{container});
-		Set<URL> urls = getAllBundleURLs(definition);
+		Set<URI> uris = getAllBundleURIs(definition);
 
 		// the old way
 		URL[] pluginPaths = PluginPathFinder.getPluginPaths(TargetPlatform.getDefaultLocation(), false);
-		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
-		for (URL url : pluginPaths) {
-			assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
-		}
+		assertBundlePathsEqual(pluginPaths, uris);
 	}
 
 	/**
@@ -650,6 +631,12 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		assertTrue("Target content not equal",((TargetDefinition)targetA).isContentEqual(targetB));
 	}
 
+	protected void assertBundlePathsEqual(URL[] legacyPluginPaths, Set<URI> bundleUris) throws URISyntaxException {
+		for (URL legacyPluginPath : legacyPluginPaths) {
+			assertTrue("Missing plug-in " + legacyPluginPath, bundleUris.contains(legacyPluginPath.toURI()));
+		}
+		assertEquals("Should have same number of bundles", legacyPluginPaths.length, bundleUris.size());
+	}
 
 	/**
 	 * Reads a target definition file from the tests/targets/target-files location

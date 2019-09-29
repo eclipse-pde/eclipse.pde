@@ -18,9 +18,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Properties;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -268,7 +271,7 @@ public class PluginPathFinder {
 	 * @return URLs to plugins/features
 	 */
 	public static URL[] scanLocations(File[] sites) {
-		HashSet<URL> result = new HashSet<>();
+		Map<URI, URL> result = new HashMap<>();
 		for (int i = 0; i < sites.length; i++) {
 			if (!sites[i].exists()) {
 				continue;
@@ -277,13 +280,14 @@ public class PluginPathFinder {
 			if (children != null) {
 				for (File element : children) {
 					try {
-						result.add(element.toURL());
+						URI elementUri = element.toURI();
+						result.put(elementUri, elementUri.toURL());
 					} catch (MalformedURLException e) {
 					}
 				}
 			}
 		}
-		return result.toArray(new URL[result.size()]);
+		return result.values().toArray(new URL[result.size()]);
 	}
 
 	public static boolean isDevLaunchMode() {
