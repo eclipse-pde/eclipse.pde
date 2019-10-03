@@ -5,10 +5,12 @@ import org.eclipse.osgi.framework.console.CommandProvider;
 
 import org.osgi.service.component.annotations.*;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 @Component
 public class ServiceComponent implements CommandProvider {
 	
-	private DictionaryService dictionary;
+	final AtomicReference<DictionaryService> dictionaryRef = new AtomicReference<>();
 	
 	public void _$command$(CommandInterpreter ci) {
 		String arg = ci.nextArgument();
@@ -17,14 +19,14 @@ public class ServiceComponent implements CommandProvider {
 			return;
 		}
 		if (arg.equalsIgnoreCase("check")) {
-			if(word != null && dictionary.check(word)) {
+			if(word != null && dictionaryRef.get().check(word)) {
 				ci.println(word + ": exists in the dictionary");
 			} else {
 				ci.println(word + ": doesn't exist in the dictionary");
 			}
 		}
 		if (arg.equalsIgnoreCase("languages")) {
-			String[] langs = dictionary.getLanguages();
+			String[] langs = dictionaryRef.get().getLanguages();
 			for(int i = 0; i < langs.length; i++) {
 				ci.println("Languages available:");
 				ci.println("\t " + langs[i]);
@@ -43,11 +45,11 @@ public class ServiceComponent implements CommandProvider {
 	
 	@Reference
 	public void setDictionary(DictionaryService d) {
-		dictionary = d;
+		dictionaryRef.set(d);
 	}
 	
 	public void unsetDictionary(DictionaryService d) {
-		dictionary = null;
+		dictionaryRef.compareAndSet(d, null);
 	}
 	
 }
