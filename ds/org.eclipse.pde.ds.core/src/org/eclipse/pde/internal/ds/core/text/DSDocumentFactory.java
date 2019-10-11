@@ -49,7 +49,7 @@ public class DSDocumentFactory extends DocumentNodeFactory implements
 
 		// TODO this logic needs to be pushed up somehow... we shouldn't care
 		// about the namespace prefix
-		int index = name.indexOf(':'); //$NON-NLS-1$
+		int index = name.indexOf(':'); 
 		if (index != -1) {
 			name = name.substring(index + 1);
 		}

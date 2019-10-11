@@ -622,7 +622,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
 		// be careful: people have the option to use the format:
 		// fullqualifiedName:staticMethod
-		int index = value.indexOf(':'); //$NON-NLS-1$
+		int index = value.indexOf(':'); 
 		if (index != -1) {
 			value = value.substring(0, index);
 		}

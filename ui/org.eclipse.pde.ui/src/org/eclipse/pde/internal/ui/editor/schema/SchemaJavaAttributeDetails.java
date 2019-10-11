@@ -63,7 +63,7 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 
 		String basedOn = getAttribute().getBasedOn();
 		if ((basedOn != null) && (basedOn.length() > 0)) {
-			int index = basedOn.indexOf(':'); //$NON-NLS-1$
+			int index = basedOn.indexOf(':'); 
 			if (index == -1) {
 				String className = basedOn.substring(basedOn.lastIndexOf(".") + 1); //$NON-NLS-1$
 				if ((className.length() > 1) && (className.charAt(0) == 'I')) {

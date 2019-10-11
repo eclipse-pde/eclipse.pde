@@ -124,7 +124,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 	private void initializeExpectedValues() {
 
 		//			source folder name, package name, class name
-		int loc = className.indexOf(':'); //$NON-NLS-1$
+		int loc = className.indexOf(':'); 
 		if (loc != -1) {
 			if (loc < className.length()) {
 				initialValues.classArgs = className.substring(loc + 1, className.length());

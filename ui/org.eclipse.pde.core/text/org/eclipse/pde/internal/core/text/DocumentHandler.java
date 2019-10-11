@@ -182,7 +182,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 
 		int index = lineText.indexOf("</" + node.getXMLTagName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (index == -1) {
-			index = lineText.indexOf('>'); //$NON-NLS-1$
+			index = lineText.indexOf('>'); 
 			if (index == -1) {
 				endIndex = column;
 			} else {

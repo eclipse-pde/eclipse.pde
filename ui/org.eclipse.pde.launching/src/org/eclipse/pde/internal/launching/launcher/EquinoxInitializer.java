@@ -75,7 +75,7 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 	protected String getAutoStart(String bundleID) {
 		if (fStartLevels.containsKey(bundleID)) {
 			String value = fStartLevels.get(bundleID).toString();
-			return value.substring(value.indexOf(':') + 1); //$NON-NLS-1$
+			return value.substring(value.indexOf(':') + 1); 
 		}
 		return super.getAutoStart(bundleID);
 	}
@@ -84,7 +84,7 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 	protected String getStartLevel(String bundleID) {
 		if (fStartLevels.containsKey(bundleID)) {
 			String value = fStartLevels.get(bundleID).toString();
-			return value.substring(0, value.indexOf(':')); //$NON-NLS-1$
+			return value.substring(0, value.indexOf(':')); 
 		}
 		return super.getStartLevel(bundleID);
 	}
@@ -99,7 +99,7 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 				StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
 				while (tokenizer.hasMoreTokens()) {
 					String tokenValue = tokenizer.nextToken();
-					int index = tokenValue.indexOf('@'); //$NON-NLS-1$
+					int index = tokenValue.indexOf('@'); 
 					if (index > 0) {
 						String bundle = tokenValue.substring(0, index).trim();
 						fStartLevels.put(bundle, getStartValue(tokenValue.substring(index)));
