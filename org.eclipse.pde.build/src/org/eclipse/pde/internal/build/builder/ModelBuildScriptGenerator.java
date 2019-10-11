@@ -1319,7 +1319,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				String[] ids = Utils.getArrayFromString(required, ":"); //$NON-NLS-1$
 				for (int i = 0; i < ids.length; i++) {
 					try {
-						BundleDescription bundle = state.getBundle(new Long(ids[i]).longValue());
+						BundleDescription bundle = state.getBundle(Long.valueOf(ids[i]).longValue());
 						if (bundle != null && !Utils.isBinary(bundle)) {
 							Path bundleLocation = new Path(bundle.getLocation());
 							results.add(bundleLocation.append("compilation.problem")); //$NON-NLS-1$
@@ -1820,7 +1820,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	}
 
 	protected String[] getClasspathEntries(BundleDescription lookedUpModel) throws CoreException {
-		return getSite(false).getRegistry().getExtraData().get(new Long(lookedUpModel.getBundleId()));
+		return getSite(false).getRegistry().getExtraData().get(Long.valueOf(lookedUpModel.getBundleId()));
 	}
 
 	@Override

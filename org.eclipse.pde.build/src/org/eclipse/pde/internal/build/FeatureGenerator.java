@@ -401,7 +401,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 							Filter filter = helper.getFilter(bundle);
 							if (filter == null || filter.match(environment)) {
 								writeBundle = true;
-								guessedUnpack = Utils.guessUnpack(bundle, state.getExtraData().get(new Long(bundle.getBundleId())));
+								guessedUnpack = Utils.guessUnpack(bundle, state.getExtraData().get(Long.valueOf(bundle.getBundleId())));
 								if (currentConfig.equals(Config.genericConfig())) {
 									listIter.remove();
 								}

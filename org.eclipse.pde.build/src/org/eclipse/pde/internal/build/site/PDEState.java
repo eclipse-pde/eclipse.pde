@@ -90,10 +90,10 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		try {
 			BundleDescription descriptor;
 			descriptor = factory.createBundleDescription(state, enhancedManifest, bundleLocation.getAbsolutePath(), getNextId());
-			bundleClasspaths.put(new Long(descriptor.getBundleId()), BundleHelper.getClasspath(enhancedManifest));
+			bundleClasspaths.put(Long.valueOf(descriptor.getBundleId()), BundleHelper.getClasspath(enhancedManifest));
 			String patchValue = fillPatchData(enhancedManifest);
 			if (patchValue != null)
-				patchBundles.put(new Long(descriptor.getBundleId()), patchValue);
+				patchBundles.put(Long.valueOf(descriptor.getBundleId()), patchValue);
 			rememberQualifierTagPresence(descriptor);
 			rememberManifestConversion(descriptor, enhancedManifest);
 			rememberManifestEntries(descriptor, enhancedManifest, MANIFEST_ENTRIES);

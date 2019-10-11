@@ -108,7 +108,7 @@ public class CompilationScriptGenerator extends AbstractScriptGenerator {
 					script.printParallel(threadCount, threadsPerProcessor);
 					bucket.clear();
 				}
-				bucket.add(new Long(bundle.getBundleId()));
+				bucket.add(Long.valueOf(bundle.getBundleId()));
 			}
 
 			IPath location = Utils.makeRelative(new Path(getLocation(bundle)), basePath);
@@ -127,7 +127,7 @@ public class CompilationScriptGenerator extends AbstractScriptGenerator {
 				String[] ids = Utils.getArrayFromString(required, ":"); //$NON-NLS-1$
 				for (int i = 0; i < ids.length; i++) {
 					try {
-						if (bucket.contains(new Long(ids[i]))) {
+						if (bucket.contains(Long.valueOf(ids[i]))) {
 							return true;
 						}
 					} catch (NumberFormatException e) {

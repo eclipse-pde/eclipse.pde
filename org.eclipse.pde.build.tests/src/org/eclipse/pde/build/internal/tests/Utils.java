@@ -235,7 +235,7 @@ public class Utils {
 			buffer.append("\"");
 		}
 		buffer.append(" useFeatures=\"");
-		buffer.append(new Boolean(features).toString());
+		buffer.append(Boolean.valueOf(features).toString());
 		buffer.append("\">\n");
 		buffer.append("  <configIni use=\"default\"/>\n");
 		buffer.append("  <launcher name=\"" + (launcher != null ? launcher : "eclipse") + "\"/>\n");

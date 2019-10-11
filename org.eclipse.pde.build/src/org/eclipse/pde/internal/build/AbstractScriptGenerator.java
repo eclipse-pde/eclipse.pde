@@ -688,7 +688,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			return null;
 
 		Map<String, Object> results = new HashMap<>();
-		results.put(PROFILE_TIMESTAMP, new Long(-1));
+		results.put(PROFILE_TIMESTAMP, Long.valueOf(-1));
 
 		String profileId = null;
 		if (target.isFile()) {
@@ -701,7 +701,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			if (idx > 0) {
 				timestamp = timestamp.substring(0, idx);
 				try {
-					results.put(PROFILE_TIMESTAMP, new Long(timestamp));
+					results.put(PROFILE_TIMESTAMP, Long.valueOf(timestamp));
 				} catch (NumberFormatException e) {
 					//not a timestamp?
 				}

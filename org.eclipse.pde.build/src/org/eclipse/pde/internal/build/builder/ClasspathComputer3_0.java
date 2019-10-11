@@ -227,13 +227,13 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 */
 	private void addPlugin(BundleDescription plugin, List<Object> classpath, String location) throws CoreException {
 		boolean allFragments = true;
-		String patchInfo = generator.getSite(false).getRegistry().getPatchData().get(new Long(plugin.getBundleId()));
+		String patchInfo = generator.getSite(false).getRegistry().getPatchData().get(Long.valueOf(plugin.getBundleId()));
 		if (patchInfo != null && plugin != generator.getModel()) {
 			addFragmentsLibraries(plugin, classpath, location, false, false);
 			allFragments = false;
 		}
 
-		requiredIds.add(new Long(plugin.getBundleId()));
+		requiredIds.add(Long.valueOf(plugin.getBundleId()));
 
 		addRuntimeLibraries(plugin, classpath, location);
 		addFragmentsLibraries(plugin, classpath, location, true, allFragments);
@@ -278,7 +278,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			if (matchFilter(fragments[i]) == false)
 				continue;
 
-			requiredIds.add(new Long(fragments[i].getBundleId()));
+			requiredIds.add(Long.valueOf(fragments[i].getBundleId()));
 
 			if (!afterPlugin && isPatchFragment(fragments[i])) {
 				addPluginLibrariesToFragmentLocations(plugin, fragments[i], classpath, baseLocation);
@@ -294,7 +294,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	}
 
 	private boolean isPatchFragment(BundleDescription fragment) throws CoreException {
-		return generator.getSite(false).getRegistry().getPatchData().get(new Long(fragment.getBundleId())) != null;
+		return generator.getSite(false).getRegistry().getPatchData().get(Long.valueOf(fragment.getBundleId())) != null;
 	}
 
 	/**
