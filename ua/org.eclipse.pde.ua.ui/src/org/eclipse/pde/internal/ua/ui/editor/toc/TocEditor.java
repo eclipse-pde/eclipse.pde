@@ -175,7 +175,7 @@ public class TocEditor extends MultiSourceEditor {
 	 * @return the <code>IShowInTargetList</code>
 	 */
 	private IShowInTargetList getShowInTargetList() {
-		return () -> new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV };
+		return () -> new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_PROJECT_EXPLORER };
 	}
 
 	@Override
