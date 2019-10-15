@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -116,7 +116,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		fFeatureTable = tablePart.getTableViewer();
 		fFeatureTable.setContentProvider(new ContentProvider());
 		fFeatureTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		fFeatureTable.setSorter(null);
+		fFeatureTable.setComparator(null);
 		GridData data = (GridData) tablePart.getControl().getLayoutData();
 		data.minimumWidth = 200;
 		fFeatureTable.setInput(PDECore.getDefault().getFeatureModelManager());
