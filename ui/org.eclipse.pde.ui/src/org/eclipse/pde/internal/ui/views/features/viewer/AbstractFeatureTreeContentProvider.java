@@ -13,12 +13,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.features.viewer;
 
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.progress.DeferredTreeContentManager;
 
-public abstract class AbstractFeatureTreeContentProvider
-		implements ITreeContentProvider, IFeatureModelListener {
+public abstract class AbstractFeatureTreeContentProvider implements ITreeContentProvider, IFeatureModelListener {
 
 	protected final FeatureModelManager fFeatureModelManager;
 
@@ -26,7 +29,7 @@ public abstract class AbstractFeatureTreeContentProvider
 
 	protected DeferredTreeContentManager fDeferredTreeContentManager;
 
-	private Viewer fViewer;
+	private TreeViewer fViewer;
 
 	public AbstractFeatureTreeContentProvider(FeatureModelManager featureModelManager) {
 		fFeatureModelManager = featureModelManager;
@@ -35,8 +38,14 @@ public abstract class AbstractFeatureTreeContentProvider
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		fViewer = viewer;
-		fDeferredTreeContentManager = new DeferredTreeContentManager((AbstractTreeViewer) viewer);
+		fViewer = (TreeViewer) viewer;
+		fDeferredTreeContentManager = new DeferredTreeContentManager(fViewer);
+		fDeferredTreeContentManager.addUpdateCompleteListener(new JobChangeAdapter() {
+			@Override
+			public void done(IJobChangeEvent event) {
+				resetViewerScrollPosition();
+			}
+		});
 
 		if (newInput instanceof DeferredFeatureInput) {
 			fInput = (DeferredFeatureInput) newInput;
@@ -75,13 +84,27 @@ public abstract class AbstractFeatureTreeContentProvider
 	}
 
 	private void refreshViewer() {
-		if (fViewer.getControl().isDisposed()) {
+		runViewerTask(fViewer::refresh);
+	}
+
+	private void resetViewerScrollPosition() {
+		runViewerTask(() -> {
+			Tree tree = fViewer.getTree();
+			if (tree.getItemCount() > 0) {
+				TreeItem firstItem = tree.getItem(0);
+				tree.setTopItem(firstItem);
+			}
+		});
+	}
+
+	private void runViewerTask(Runnable viewerTask) {
+		if (fViewer.getTree().isDisposed()) {
 			return;
 		}
 
-		fViewer.getControl().getDisplay().asyncExec(() -> {
-			if (!fViewer.getControl().isDisposed()) {
-				fViewer.refresh();
+		fViewer.getTree().getDisplay().asyncExec(() -> {
+			if (!fViewer.getTree().isDisposed()) {
+				viewerTask.run();
 			}
 		});
 	}
