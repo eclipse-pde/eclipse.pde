@@ -17,7 +17,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.views.features.support.FeatureIndex;
-import org.eclipse.pde.internal.ui.views.features.support.FeatureInput;
 
 public class FeatureChildViewerFilter extends ViewerFilter {
 
@@ -29,7 +28,7 @@ public class FeatureChildViewerFilter extends ViewerFilter {
 
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		if (parentElement instanceof FeatureInput && element instanceof IFeatureModel) {
+		if (parentElement instanceof DeferredFeatureInput && element instanceof IFeatureModel) {
 			IFeatureModel featureModel = (IFeatureModel) element;
 			String featureId = featureModel.getFeature().getId();
 			boolean includedInFeature = !fFeatureIndex.getIncludingFeatures(featureId).isEmpty();

@@ -79,6 +79,10 @@ public class FeatureModelManager {
 		}
 	}
 
+	public boolean isInitialized() {
+		return (fActiveModels != null && !fReloadExternalNeeded);
+	}
+
 	private synchronized void init() {
 		if (fActiveModels != null) {
 			if (fReloadExternalNeeded) {

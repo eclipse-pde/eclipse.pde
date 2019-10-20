@@ -13,17 +13,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.features.viewer;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.ui.views.features.support.FeatureInput;
+import org.eclipse.ui.progress.DeferredTreeContentManager;
 
 public abstract class AbstractFeatureTreeContentProvider
 		implements ITreeContentProvider, IFeatureModelListener {
 
 	protected final FeatureModelManager fFeatureModelManager;
 
-	protected FeatureInput fInput;
+	protected DeferredFeatureInput fInput;
+
+	protected DeferredTreeContentManager fDeferredTreeContentManager;
 
 	private Viewer fViewer;
 
@@ -35,9 +36,10 @@ public abstract class AbstractFeatureTreeContentProvider
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		fViewer = viewer;
+		fDeferredTreeContentManager = new DeferredTreeContentManager((AbstractTreeViewer) viewer);
 
-		if (newInput instanceof FeatureInput) {
-			fInput = (FeatureInput) newInput;
+		if (newInput instanceof DeferredFeatureInput) {
+			fInput = (DeferredFeatureInput) newInput;
 		}
 	}
 
@@ -49,6 +51,17 @@ public abstract class AbstractFeatureTreeContentProvider
 	@Override
 	public boolean hasChildren(Object element) {
 		return getChildren(element).length > 0;
+	}
+
+	@Override
+	public Object[] getElements(Object inputElement) {
+		if (inputElement instanceof DeferredFeatureInput) {
+			DeferredFeatureInput deferredFeatureInput = (DeferredFeatureInput) inputElement;
+			return deferredFeatureInput.isInitialized() ? deferredFeatureInput.getChildren(inputElement)
+					: fDeferredTreeContentManager.getChildren(inputElement);
+		}
+
+		return new Object[0];
 	}
 
 	@Override

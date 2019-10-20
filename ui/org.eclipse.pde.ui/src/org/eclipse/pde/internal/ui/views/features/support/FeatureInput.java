@@ -25,6 +25,10 @@ public class FeatureInput {
 		fFeatureModelManager = featureModelManager;
 	}
 
+	public boolean isInitialized() {
+		return fFeatureModelManager.isInitialized();
+	}
+
 	public FeatureModelManager getFeatureModelManager() {
 		return fFeatureModelManager;
 	}

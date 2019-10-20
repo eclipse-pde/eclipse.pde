@@ -82,7 +82,7 @@ public class FeaturesView extends ViewPart {
 		contributeToActionBar(featureModelManager);
 		hookContextMenu();
 
-		initialiseViewer(input);
+		initializeViewer(input);
 	}
 
 	@Override
@@ -118,10 +118,10 @@ public class FeaturesView extends ViewPart {
 		return filteredTree;
 	}
 
-	private void initialiseViewer(FeatureInput input) {
+	private void initializeViewer(FeatureInput input) {
 		resetViewerFilters();
 		fViewer.setComparator(new FeatureViewerComparator());
-		fViewer.setInput(input);
+		fViewer.setInput(new DeferredFeatureInput(input));
 	}
 
 	private void resetViewerFilters() {
@@ -162,7 +162,8 @@ public class FeaturesView extends ViewPart {
 	}
 
 	public void configureContent(Consumer<FeatureInput> configurator) {
-		configurator.accept((FeatureInput) fViewer.getInput());
+		DeferredFeatureInput deferredFeatureInput = (DeferredFeatureInput) fViewer.getInput();
+		configurator.accept(deferredFeatureInput.getFeatureInput());
 		fViewer.refresh();
 	}
 

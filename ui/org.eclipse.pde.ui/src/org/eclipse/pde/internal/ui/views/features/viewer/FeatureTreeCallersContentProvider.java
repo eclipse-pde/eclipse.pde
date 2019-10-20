@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.ui.views.features.viewer;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.views.features.support.FeatureIndex;
-import org.eclipse.pde.internal.ui.views.features.support.FeatureInput;
 
 public class FeatureTreeCallersContentProvider extends AbstractFeatureTreeContentProvider {
 
@@ -34,17 +33,6 @@ public class FeatureTreeCallersContentProvider extends AbstractFeatureTreeConten
 			IFeatureModel featureModel = (IFeatureModel) parentElement;
 			String featureId = featureModel.getFeature().getId();
 			return fFeatureIndex.getIncludingFeatures(featureId).toArray();
-		}
-
-		return new Object[0];
-	}
-
-	@Override
-	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof FeatureInput) {
-			FeatureInput input = (FeatureInput) inputElement;
-			FeatureModelManager featureModelManager = input.getFeatureModelManager();
-			return featureModelManager.getModels();
 		}
 
 		return new Object[0];
