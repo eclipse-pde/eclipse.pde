@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.ListIterator;
 import java.util.Map;
 import org.eclipse.core.resources.IContainer;
@@ -151,10 +150,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		}
 
 		if (model != null) {
-			if (fModels == null) {
-				fModels = new LinkedHashMap<>();
-			}
-			fModels.put(project, model);
+			getModelsMap().put(project, model);
 			if (notify) {
 				addChange(model, IModelProviderEvent.MODELS_ADDED);
 			}
@@ -442,7 +438,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 */
 	protected IPluginModelBase[] getPluginModels() {
 		initialize();
-		return fModels.values().toArray(new IPluginModelBase[fModels.size()]);
+		return getModelsMap().values().toArray(new IPluginModelBase[getModelsMap().size()]);
 	}
 
 	/**
@@ -495,29 +491,6 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * This method is called when workspace models are read and initialized
-	 * from the cache.  No need to read the workspace plug-ins from scratch.
-	 *
-	 * @param models  the workspace plug-in models
-	 */
-	protected void setModels(IPluginModelBase[] models) {
-		fModels = Collections.synchronizedMap(new LinkedHashMap<IProject, IModel>());
-		for (IPluginModelBase model : models) {
-			IProject project = model.getUnderlyingResource().getProject();
-			fModels.put(project, model);
-		}
-		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			// if any projects contained Manifest files and were not included in the PDEState,
-			// we should create models for them now
-			if (!fModels.containsKey(projects[i]) && isInterestingProject(projects[i])) {
-				createModel(projects[i], false);
-			}
-		}
-		addListeners();
 	}
 
 	/**

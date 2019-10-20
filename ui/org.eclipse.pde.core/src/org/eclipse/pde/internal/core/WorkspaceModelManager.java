@@ -92,15 +92,27 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 		}
 	}
 
-	protected Map<IProject, IModel> fModels = null;
+	private Map<IProject, Object> fModels = null;
 	private ArrayList<ModelChange> fChangedModels;
+
+	protected Map<IProject, Object> getModelsMap() {
+		ensureModelsMapCreated();
+		return fModels;
+	}
+
+	private void ensureModelsMapCreated() {
+		if (fModels == null) {
+			fModels = Collections.synchronizedMap(new LinkedHashMap<IProject, Object>());
+		}
+	}
 
 	protected synchronized void initialize() {
 		if (fModels != null) {
 			return;
 		}
 
-		fModels = Collections.synchronizedMap(new LinkedHashMap<IProject, IModel>());
+		ensureModelsMapCreated();
+
 		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
 		for (IProject project : projects) {
 			if (isInterestingProject(project)) {

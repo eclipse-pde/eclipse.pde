@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -38,10 +37,7 @@ public class WorkspaceFeatureModelManager extends WorkspaceModelManager {
 		if (featureXml.exists()) {
 			IModel model = new WorkspaceFeatureModel(featureXml);
 			loadModel(model, false);
-			if (fModels == null) {
-				fModels = new LinkedHashMap<>();
-			}
-			fModels.put(project, model);
+			getModelsMap().put(project, model);
 			if (notify) {
 				addChange(model, IModelProviderEvent.MODELS_ADDED);
 			}
@@ -81,7 +77,7 @@ public class WorkspaceFeatureModelManager extends WorkspaceModelManager {
 
 	protected IFeatureModel[] getFeatureModels() {
 		initialize();
-		return fModels.values().toArray(new IFeatureModel[fModels.size()]);
+		return getModelsMap().values().toArray(new IFeatureModel[getModelsMap().size()]);
 	}
 
 	protected IFeatureModel getFeatureModel(IProject project) {
@@ -89,7 +85,7 @@ public class WorkspaceFeatureModelManager extends WorkspaceModelManager {
 	}
 
 	public void removeModel(IFeatureModel iFeatureModel) {
-		for (Entry<IProject, IModel> entry : fModels.entrySet()) {
+		for (Entry<IProject, Object> entry : getModelsMap().entrySet()) {
 			if (entry.getValue() == iFeatureModel) {
 				this.removeModel(entry.getKey());
 				break;
