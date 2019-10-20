@@ -13,18 +13,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.features.action;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.views.features.FeaturesView;
+import org.eclipse.pde.internal.ui.views.features.support.FeaturesViewInput;
+import org.eclipse.pde.internal.ui.views.features.viewer.PluginViewerFilter;
 
-public class ShowPluginsAction extends Action {
+public class ShowPluginsAction extends ViewerFilterAction {
 
-	private final FeaturesView fFeaturesView;
+	private final FeaturesViewInput fFeaturesViewInput;
 
-	public ShowPluginsAction(FeaturesView featuresView) {
-		super(null, AS_CHECK_BOX);
-		fFeaturesView = featuresView;
+	public ShowPluginsAction(FeaturesView featuresView, FeaturesViewInput featuresViewInput) {
+		super(featuresView, new PluginViewerFilter());
+		fFeaturesViewInput = featuresViewInput;
 
 		setDescription(PDEUIMessages.FeaturesView_ShowPluginsAction_description);
 		setToolTipText(PDEUIMessages.FeaturesView_ShowPluginsAction_tooltip);
@@ -33,7 +34,8 @@ public class ShowPluginsAction extends Action {
 
 	@Override
 	public void run() {
-		fFeaturesView.configureContent(featuresViewInput -> featuresViewInput.setIncludePlugins(isChecked()));
+		fFeaturesViewInput.setIncludePlugins(isChecked());
+		super.run();
 	}
 
 }

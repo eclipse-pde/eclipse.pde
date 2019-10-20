@@ -30,12 +30,8 @@ public class FeatureTreeCalleesContentProvider extends AbstractFeatureTreeConten
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IProductModel) {
 			IProductModel productModel = (IProductModel) parentElement;
+
 			Object[] features = productModel.getProduct().getFeatures();
-
-			if (!fInput.getFeaturesViewInput().isIncludePlugins()) {
-				return features;
-			}
-
 			Object[] plugins = productModel.getProduct().getPlugins();
 
 			List<Object> all = new ArrayList<>(features.length + plugins.length);
@@ -45,12 +41,8 @@ public class FeatureTreeCalleesContentProvider extends AbstractFeatureTreeConten
 			return all.toArray();
 		} else if (parentElement instanceof IFeatureModel) {
 			IFeatureModel featureModel = (IFeatureModel) parentElement;
+
 			Object[] features = featureModel.getFeature().getIncludedFeatures();
-
-			if (!fInput.getFeaturesViewInput().isIncludePlugins()) {
-				return features;
-			}
-
 			Object[] plugins = featureModel.getFeature().getPlugins();
 
 			List<Object> all = new ArrayList<>(features.length + plugins.length);

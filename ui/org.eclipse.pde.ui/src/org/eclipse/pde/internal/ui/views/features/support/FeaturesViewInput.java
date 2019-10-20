@@ -40,10 +40,6 @@ public class FeaturesViewInput {
 	}
 
 	public IModel[] getModels() {
-		if (!isIncludeProducts()) {
-			return getFeatures();
-		}
-
 		IFeatureModel[] featureModels = getFeatures();
 		IProductModel[] productModels = getProducts();
 

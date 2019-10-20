@@ -29,12 +29,8 @@ public class FeatureTreeCallersContentProvider extends AbstractFeatureTreeConten
 		if (parentElement instanceof IFeatureModel) {
 			IFeatureModel featureModel = (IFeatureModel) parentElement;
 			String featureId = featureModel.getFeature().getId();
+
 			Collection<IFeatureModel> features = fInput.getFeaturesViewInput().getIncludingFeatures(featureId);
-
-			if (!fInput.getFeaturesViewInput().isIncludeProducts()) {
-				return features.toArray();
-			}
-
 			Collection<IProductModel> products = fInput.getFeaturesViewInput().getIncludingProducts(featureId);
 
 			List<Object> all = new ArrayList<>(features.size() + products.size());

@@ -37,8 +37,10 @@ public abstract class ContentProviderAction extends Action {
 		fFeaturesView.setContentProvider(this);
 	}
 
-	public abstract boolean isSupportsFilters();
+	public abstract boolean isSupportsFeatureChildFilter();
 
 	public abstract boolean isSupportsPlugins();
+
+	public abstract boolean isSupportsProducts();
 
 }

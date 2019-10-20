@@ -36,13 +36,18 @@ public class ShowCallersContentProviderAction extends ContentProviderAction {
 	}
 
 	@Override
-	public boolean isSupportsFilters() {
+	public boolean isSupportsFeatureChildFilter() {
 		return false;
 	}
 
 	@Override
 	public boolean isSupportsPlugins() {
 		return false;
+	}
+
+	@Override
+	public boolean isSupportsProducts() {
+		return true;
 	}
 
 }

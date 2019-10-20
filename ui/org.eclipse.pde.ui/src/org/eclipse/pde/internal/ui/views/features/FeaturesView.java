@@ -48,13 +48,15 @@ public class FeaturesView extends ViewPart {
 		}
 	};
 
-	private final Collection<ViewerFilterAction> fViewerFilterActions = new ArrayList<>();
-
 	private final Collection<ViewerFilter> fViewerFilters = new ArrayList<>();
 
 	private PatternFilter fPatternFilter;
 
-	private Action fShowPluginsAction;
+	private ViewerFilterAction fFilterFeatureChildAction;
+
+	private ViewerFilterAction fShowPluginsAction;
+
+	private ViewerFilterAction fShowProductsAction;
 
 	private TreeViewer fViewer;
 
@@ -71,7 +73,6 @@ public class FeaturesView extends ViewPart {
 		FilteredTree filteredTree = createFilteredTree(parent);
 		fViewer = filteredTree.getViewer();
 		fPatternFilter = filteredTree.getPatternFilter();
-		fViewerFilters.add(fPatternFilter);
 
 		fClipboard = new Clipboard(parent.getDisplay());
 		fCopyAction = new FeatureAndPluginCopyAction(fViewer, fClipboard, fInput);
@@ -103,6 +104,7 @@ public class FeaturesView extends ViewPart {
 		patternFilter.setIncludeLeadingWildcard(true);
 
 		TreeViewer viewer = filteredTree.getViewer();
+		viewer.setExpandPreCheckFilters(true);
 		viewer.setComparer(new FeatureElementComparer());
 		viewer.setLabelProvider(new PDELabelProvider());
 
@@ -123,7 +125,20 @@ public class FeaturesView extends ViewPart {
 	}
 
 	private void resetViewerFilters() {
+		fViewerFilters.clear();
+
+		fViewerFilters.add(fPatternFilter);
+		addViewerFilter(fViewerFilters, fFilterFeatureChildAction);
+		addViewerFilter(fViewerFilters, fShowPluginsAction);
+		addViewerFilter(fViewerFilters, fShowProductsAction);
+
 		fViewer.setFilters(fViewerFilters.toArray(new ViewerFilter[fViewerFilters.size()]));
+	}
+
+	private void addViewerFilter(Collection<ViewerFilter> viewerFilters, ViewerFilterAction viewerFilterAction) {
+		if (viewerFilterAction.isEnabled() && !viewerFilterAction.isChecked()) {
+			viewerFilters.add(viewerFilterAction.getViewerFilter());
+		}
 	}
 
 	public void toggle(ViewerFilter filter) {
@@ -139,24 +154,15 @@ public class FeaturesView extends ViewPart {
 		return fViewerFilters.contains(filter);
 	}
 
-	private void setContentProvider(IContentProvider contentProvider, boolean supportsFilters,
-			boolean supportsPlugins) {
+	private void setContentProvider(IContentProvider contentProvider, boolean supportsFeatureChildFilter,
+			boolean supportsPlugins, boolean supportsProducts) {
 		fViewer.setContentProvider(contentProvider);
 
-		setViewerFilterActionsEnabled(supportsFilters);
+		fFilterFeatureChildAction.setEnabled(supportsFeatureChildFilter);
 		fShowPluginsAction.setEnabled(supportsPlugins);
+		fShowProductsAction.setEnabled(supportsProducts);
 
-		if (supportsFilters) {
-			resetViewerFilters();
-		} else {
-			fViewer.setFilters(new ViewerFilter[] { fPatternFilter });
-		}
-	}
-
-	private void setViewerFilterActionsEnabled(boolean supportsFilters) {
-		for (ViewerFilterAction viewerFilterAction : fViewerFilterActions) {
-			viewerFilterAction.setEnabled(supportsFilters);
-		}
+		resetViewerFilters();
 	}
 
 	public void configureContent(Consumer<FeaturesViewInput> configurator) {
@@ -185,18 +191,17 @@ public class FeaturesView extends ViewPart {
 		toolBarManager.add(callersAction);
 		toolBarManager.add(new Separator());
 
-		ViewerFilterAction filterFeatureChildAction = new FilterFeatureChildAction(this);
-		filterFeatureChildAction.setChecked(true);
-		toolBarManager.add(filterFeatureChildAction);
+		fFilterFeatureChildAction = new FilterFeatureChildAction(this);
+		fFilterFeatureChildAction.setChecked(true);
+		toolBarManager.add(fFilterFeatureChildAction);
 
-		fShowPluginsAction = new ShowPluginsAction(this);
+		fShowPluginsAction = new ShowPluginsAction(this, fInput);
 		toolBarManager.add(fShowPluginsAction);
-		Action showProductsAction = new ShowProductsAction(this);
-		toolBarManager.add(showProductsAction);
+		fShowProductsAction = new ShowProductsAction(this, fInput);
+		toolBarManager.add(fShowProductsAction);
 
 		setContentProvider(calleesAction);
 		setContentProvider(callersAction);
-		registerFilterAction(filterFeatureChildAction);
 
 		actionBars.updateActionBars();
 	}
@@ -222,17 +227,10 @@ public class FeaturesView extends ViewPart {
 		manager.add(fCopyAction);
 	}
 
-	private void registerFilterAction(ViewerFilterAction filterAction) {
-		fViewerFilterActions.add(filterAction);
-		if (!filterAction.isChecked()) {
-			fViewerFilters.add(filterAction.getViewerFilter());
-		}
-	}
-
 	public void setContentProvider(ContentProviderAction contentProviderAction) {
 		if (contentProviderAction.isChecked()) {
-			setContentProvider(contentProviderAction.createContentProvider(), contentProviderAction.isSupportsFilters(),
-					contentProviderAction.isSupportsPlugins());
+			setContentProvider(contentProviderAction.createContentProvider(), contentProviderAction.isSupportsFeatureChildFilter(),
+					contentProviderAction.isSupportsPlugins(), contentProviderAction.isSupportsProducts());
 		}
 	}
 
