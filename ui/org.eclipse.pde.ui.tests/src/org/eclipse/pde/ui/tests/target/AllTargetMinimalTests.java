@@ -24,11 +24,15 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-	TargetEnvironmentTestCase.class, TargetPlatformHelperTests.class,
+	TargetEnvironmentTestCase.class, //
+	TargetPlatformHelperTests.class, //
 	// LocalTargetDefinitionTests.class,
 	// WorkspaceTargetDefinitionTests.class
-	MinimalTargetDefinitionPersistenceTests.class, MinimalTargetDefinitionResolutionTests.class,
-	MinimalTargetDefinitionFeatureResolutionTests.class, IUBundleContainerTests.class
+	MinimalTargetDefinitionPersistenceTests.class, //
+	MinimalTargetDefinitionResolutionTests.class, //
+	MinimalTargetDefinitionFeatureResolutionTests.class, //
+	IUBundleContainerTests.class, //
+	ProfileContainerTests.class
 })
 public class AllTargetMinimalTests {
 }

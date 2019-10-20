@@ -18,10 +18,15 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ TargetEnvironmentTestCase.class, TargetPlatformHelperTests.class, LocalTargetDefinitionTests.class,
-	WorkspaceTargetDefinitionTests.class, TargetDefinitionPersistenceTests.class,
-	TargetDefinitionResolutionTests.class, TargetDefinitionFeatureResolutionTests.class,
-	IUBundleContainerTests.class })
+@SuiteClasses({ TargetEnvironmentTestCase.class, //
+		TargetPlatformHelperTests.class, //
+		LocalTargetDefinitionTests.class, //
+		WorkspaceTargetDefinitionTests.class, //
+		TargetDefinitionPersistenceTests.class, //
+		TargetDefinitionResolutionTests.class, //
+		TargetDefinitionFeatureResolutionTests.class, //
+		IUBundleContainerTests.class, //
+		ProfileContainerTests.class })
 public class AllTargetTests {
 
 }
