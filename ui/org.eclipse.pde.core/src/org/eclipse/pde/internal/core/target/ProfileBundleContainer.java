@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import static java.util.Arrays.stream;
+import static java.util.stream.Stream.concat;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,6 +24,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -140,35 +144,21 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		if (source == null) {
 			source = new BundleInfo[0];
 		}
-		List<TargetBundle> all = new ArrayList<>();
 		SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, infos.length + source.length);
-		// Add executable bundles
-		for (BundleInfo info : infos) {
-			if (monitor.isCanceled()) {
-				return new TargetBundle[0];
-			}
+
+		return concat(stream(infos), stream(source)).parallel().map(info -> {
 			URI location = info.getLocation();
 			try {
-				all.add(new TargetBundle(URIUtil.toFile(location)));
+				if (monitor.isCanceled()) {
+					return null;
+				}
+				return new TargetBundle(URIUtil.toFile(location));
 			} catch (CoreException e) {
-				all.add(new InvalidTargetBundle(new BundleInfo(location), e.getStatus()));
+				return new InvalidTargetBundle(new BundleInfo(location), e.getStatus());
+			} finally {
+				localMonitor.split(1);
 			}
-			localMonitor.split(1);
-		}
-		// Add source bundles
-		for (BundleInfo element : source) {
-			if (monitor.isCanceled()) {
-				return new TargetBundle[0];
-			}
-			URI location = element.getLocation();
-			try {
-				all.add(new TargetBundle(URIUtil.toFile(location)));
-			} catch (CoreException e) {
-				all.add(new InvalidTargetBundle(new BundleInfo(location), e.getStatus()));
-			}
-			localMonitor.split(1);
-		}
-		return all.toArray(new TargetBundle[all.size()]);
+		}).filter(Objects::nonNull).toArray(TargetBundle[]::new);
 	}
 
 	@Override
