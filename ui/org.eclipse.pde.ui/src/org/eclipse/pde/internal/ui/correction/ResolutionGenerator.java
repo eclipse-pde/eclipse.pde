@@ -80,7 +80,11 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 			case PDEMarkerFactory.M_MISMATCHED_EXEC_ENV :
 				return new IMarkerResolution[] {new UpdateClasspathResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
 			case PDEMarkerFactory.M_UNKNOW_EXEC_ENV :
-				return new IMarkerResolution[] {new RemoveUnknownExecEnvironments(AbstractPDEMarkerResolution.REMOVE_TYPE,marker)};
+				return new IMarkerResolution[] {
+						new RemoveUnknownExecEnvironments(AbstractPDEMarkerResolution.REMOVE_TYPE, marker) };
+			case PDEMarkerFactory.M_EXEC_ENV_TOO_LOW:
+				return new IMarkerResolution[] {
+						new ReplaceExecEnvironment(AbstractPDEMarkerResolution.RENAME_TYPE, marker) };
 			case PDEMarkerFactory.M_DEPRECATED_IMPORT_SERVICE :
 				return new IMarkerResolution[] {new RemoveImportExportServicesResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, ICoreConstants.IMPORT_SERVICE, marker)};
 			case PDEMarkerFactory.M_DEPRECATED_EXPORT_SERVICE :

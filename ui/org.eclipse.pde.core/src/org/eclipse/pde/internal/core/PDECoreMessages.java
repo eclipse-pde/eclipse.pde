@@ -213,6 +213,7 @@ public class PDECoreMessages extends NLS {
 	public static String BundleErrorReporter_R4SyntaxInR3Bundle;
 	public static String BundleErrorReporter_NotExistPDE;
 	public static String BundleErrorReporter_EmptyTargetPlatform;
+	public static String BundleErrorReporter_ExecEnv_tooLow;
 	public static String BundleErrorReporter_HostNotExistPDE;
 	public static String BundleErrorReporter_HostNeeded;
 	public static String BundleErrorReporter_PackageNotExported;

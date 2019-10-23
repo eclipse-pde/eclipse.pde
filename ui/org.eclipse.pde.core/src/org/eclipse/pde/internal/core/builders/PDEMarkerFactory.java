@@ -77,6 +77,7 @@ public class PDEMarkerFactory {
 	public static final int M_SERVICECOMPONENT_MISSING_LAZY = 0x1026; // other problem
 	public static final int M_ONLY_CONFIG_SEV = 0x1027; // other problem
 	public static final int M_NO_AUTOMATIC_MODULE = 0x1028; // other problem
+	public static final int M_EXEC_ENV_TOO_LOW = 0x1029; // other problem
 
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;
@@ -99,6 +100,7 @@ public class PDEMarkerFactory {
 	public static final String MPK_LOCATION_PATH = "xmlTree.locationPath"; //$NON-NLS-1$
 	public static final String ATTR_CAN_ADD = "deprecatedAutostart.canAdd"; //$NON-NLS-1$
 	public static final String ATTR_HEADER = "deprecatedAutostart.header"; //$NON-NLS-1$
+	public static final String REQUIRED_EXEC_ENV = "executionEnvironment.key"; //$NON-NLS-1$
 	/**
 	 * Boolean attribute for marker added when no newline is found at the end of a manifest. Value is
 	 * <code>true</code> if there is character content on the last line that should be

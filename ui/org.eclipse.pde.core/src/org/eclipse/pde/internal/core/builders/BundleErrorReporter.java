@@ -18,7 +18,10 @@
 package org.eclipse.pde.internal.core.builders;
 
 import java.io.File;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Deque;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -636,6 +641,128 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				break;
 			}
 		}
+
+		// Check for highest BREE of bundle dependencies
+		String highestDependencyEE = checkBREE(desc);
+		String highestBundleEE = getHighestBREE(bundleEnvs);
+		try {
+			if (highestBundleEE != getHighestEE(highestDependencyEE, highestBundleEE)) {
+				VirtualMarker marker = report(
+						NLS.bind(PDECoreMessages.BundleErrorReporter_ExecEnv_tooLow,
+								highestDependencyEE, highestDependencyEE),
+						getLine(header, highestBundleEE), sev, PDEMarkerFactory.M_EXEC_ENV_TOO_LOW,
+						PDEMarkerFactory.CAT_EE);
+				addMarkerAttribute(marker, PDEMarkerFactory.REQUIRED_EXEC_ENV, highestDependencyEE);
+			}
+		} catch (Exception e) {
+			PDECore.log(e);
+		}
+	}
+
+	static final List<String> EXECUTION_ENVIRONMENT_NAMES = Arrays.asList("OSGi/Minimum", //$NON-NLS-1$
+			"CDC-1.0/Foundation", //$NON-NLS-1$
+			"CDC-1.1/Foundation", "JRE", "J2SE", "JavaSE"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+
+	private static String getHighestEE(String execEnv1, String execEnv2) throws IllegalArgumentException {
+		if (execEnv1 == null) {
+			return execEnv2;
+		} else if (execEnv2 == null) {
+			return execEnv1;
+		}
+
+		Pattern p = Pattern.compile("(.*)-(\\d+)\\.?(\\d+)?(.*)?"); //$NON-NLS-1$
+		Matcher eeMatcher1 = p.matcher(execEnv1);
+		Matcher eeMatcher2 = p.matcher(execEnv2);
+
+		if (!eeMatcher1.matches()) {
+			throw new IllegalArgumentException(String.format("%s is not a valid Execution Environment", execEnv1)); //$NON-NLS-1$
+		}
+		if (!eeMatcher2.matches()) {
+			throw new IllegalArgumentException(String.format("%s is not a valid Execution Environment", execEnv2)); //$NON-NLS-1$
+		}
+
+		String eeName1 = eeMatcher1.group(1);
+		String eeName2 = eeMatcher2.group(1);
+		int eeNameIndex1 = EXECUTION_ENVIRONMENT_NAMES.indexOf(eeName1);
+		int eeNameIndex2 = EXECUTION_ENVIRONMENT_NAMES.indexOf(eeName2);
+		int eeMajorVersion1 = Integer.parseInt(eeMatcher1.group(2));
+		int eeMajorVersion2 = Integer.parseInt(eeMatcher2.group(2));
+		Integer eeMinorVersion1 = null;
+		Integer eeMinorVersion2 = null;
+
+		if (eeMatcher1.groupCount() > 2) {
+			eeMinorVersion1 = Integer.valueOf(eeMatcher1.group(3));
+		}
+		if (eeMatcher2.groupCount() > 2) {
+			eeMinorVersion2 = Integer.valueOf(eeMatcher2.group(3));
+		}
+
+		if (eeNameIndex1 > eeNameIndex2) {
+			return execEnv1;
+		} else if (eeNameIndex1 < eeNameIndex2) {
+			return execEnv2;
+		}
+
+		// EE1 and EE2 have the same EE name
+		if (eeMajorVersion1 > eeMajorVersion2) {
+			return execEnv1;
+		} else if (eeMajorVersion1 < eeMajorVersion2) {
+			return execEnv2;
+		}
+
+		// EE1 and EE2 have the same major version
+		if (eeMinorVersion1 != null && eeMinorVersion2 != null) {
+			if (eeMinorVersion1 > eeMinorVersion2) {
+				return execEnv1;
+			} else if (eeMinorVersion1 < eeMinorVersion2) {
+				return execEnv2;
+			}
+		}
+
+		// EE1 == EE2
+		return execEnv1;
+	}
+
+	private String getHighestBREE(String[] executionEnvironments) {
+		if (executionEnvironments.length == 0) {
+			return null;
+		}
+		String highestExecEnv = executionEnvironments[0];
+		if (executionEnvironments.length > 1) {
+			for (String execEnv : executionEnvironments) {
+				try {
+				highestExecEnv = getHighestEE(highestExecEnv, execEnv);
+				} catch (Exception e) {
+					PDECore.log(e);
+					return null;
+				}
+
+			}
+		}
+
+		return highestExecEnv;
+	}
+
+	private String checkBREE(BundleDescription desc) {
+		String highestBREE = getHighestBREE(desc.getExecutionEnvironments());
+		HashSet<BundleDescription> visitedBundles = new HashSet<>();
+		Deque<BundleDescription> bundleDescriptions = new ArrayDeque<>();
+		bundleDescriptions.push(desc);
+		while (!bundleDescriptions.isEmpty()) {
+			BundleDescription dependencyDesc = bundleDescriptions.pop();
+			visitedBundles.add(dependencyDesc);
+			for (BundleDescription transitiveDependencyDesc : dependencyDesc.getResolvedRequires()) {
+				if (!visitedBundles.contains(transitiveDependencyDesc)) {
+				bundleDescriptions.push(transitiveDependencyDesc);
+				}
+			}
+			try {
+				highestBREE = getHighestEE(highestBREE, getHighestBREE(dependencyDesc.getExecutionEnvironments()));
+			} catch (Exception e) {
+				PDECore.log(e);
+			}
+		}
+		return highestBREE;
 	}
 
 	/**
