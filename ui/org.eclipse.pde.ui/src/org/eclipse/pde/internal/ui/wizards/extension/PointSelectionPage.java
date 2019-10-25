@@ -263,7 +263,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		fFilterText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fFilterText.addModifyListener(e -> {
 			fWildCardFilter.setMatchText(fFilterText.getText());
-			fPointListViewer.refresh();
+			refreshPointListViewer();
 		});
 		fFilterText.addKeyListener(new KeyListener() {
 			@Override
@@ -282,7 +282,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fFilterCheck.setLayoutData(gd);
 		fFilterCheck.setSelection(true);
-		fFilterCheck.addSelectionListener(widgetSelectedAdapter(e -> fPointListViewer.refresh()));
+		fFilterCheck.addSelectionListener(widgetSelectedAdapter(e -> refreshPointListViewer()));
 
 		fPointListViewer = new TableViewer(pointContainer, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
 		fPointListViewer.setContentProvider(new PointContentProvider());
@@ -384,6 +384,16 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		setControl(tabFolder);
 		Dialog.applyDialogFont(outerContainer);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(outerContainer.getParent(), IHelpContextIds.ADD_EXTENSIONS_SCHEMA_BASED);
+	}
+
+	private void refreshPointListViewer() {
+		Control control = fPointListViewer.getControl();
+		try {
+			control.setRedraw(false);
+			fPointListViewer.refresh();
+		} finally {
+			control.setRedraw(true);
+		}
 	}
 
 	private Control createWizardsPage(Composite parent) {
