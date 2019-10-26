@@ -16,20 +16,20 @@ package org.eclipse.pde.internal.ui.views.features.viewer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.views.features.support.FeatureInput;
+import org.eclipse.pde.internal.ui.views.features.support.FeaturesViewInput;
 import org.eclipse.ui.model.WorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
 
-public class DeferredFeatureInput extends WorkbenchAdapter implements IDeferredWorkbenchAdapter {
+public class DeferredFeaturesViewInput extends WorkbenchAdapter implements IDeferredWorkbenchAdapter {
 
-	private final FeatureInput fInput;
+	private final FeaturesViewInput fInput;
 
-	public DeferredFeatureInput(FeatureInput input) {
+	public DeferredFeaturesViewInput(FeaturesViewInput input) {
 		fInput = input;
 	}
 
-	public FeatureInput getFeatureInput() {
+	public FeaturesViewInput getFeaturesViewInput() {
 		return fInput;
 	}
 
@@ -45,7 +45,7 @@ public class DeferredFeatureInput extends WorkbenchAdapter implements IDeferredW
 
 	@Override
 	public Object[] getChildren(Object object) {
-		return fInput.getFeatures();
+		return fInput.getModels();
 	}
 
 	private void updateTree(IElementCollector collector, IProgressMonitor monitor, Object[] children) {

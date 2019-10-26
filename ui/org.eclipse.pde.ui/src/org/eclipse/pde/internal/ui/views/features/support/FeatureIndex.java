@@ -17,20 +17,30 @@ import java.util.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.iproduct.IProductFeature;
+import org.eclipse.pde.internal.core.iproduct.IProductModel;
+import org.eclipse.pde.internal.ui.views.features.model.IProductModelListener;
+import org.eclipse.pde.internal.ui.views.features.model.ProductModelManager;
 
-public class FeatureIndex implements IFeatureModelListener {
+public class FeatureIndex implements IFeatureModelListener, IProductModelListener {
 
 	private final FeatureModelManager fFeatureModelManager;
 
+	private final ProductModelManager fProductModelManager;
+
 	private volatile Map<String, Collection<IFeatureModel>> fIncludingFeatures;
 
-	public FeatureIndex(FeatureModelManager featureModelManager) {
+	private volatile Map<String, Collection<IProductModel>> fIncludingProducts;
+
+	public FeatureIndex(FeatureModelManager featureModelManager, ProductModelManager productModelManager) {
 		fFeatureModelManager = featureModelManager;
 		fFeatureModelManager.addFeatureModelListener(this);
+		fProductModelManager = productModelManager;
+		fProductModelManager.addProductModelListener(this);
 	}
 
 	public boolean isInitialized() {
-		return (fIncludingFeatures != null);
+		return (fIncludingFeatures != null && fIncludingProducts != null);
 	}
 
 	public void ensureInitialized() {
@@ -44,12 +54,19 @@ public class FeatureIndex implements IFeatureModelListener {
 		return fIncludingFeatures.getOrDefault(childId, Collections.emptySet());
 	}
 
+	public Collection<IProductModel> getIncludingProducts(String featureId) {
+		ensureInitialized();
+		return fIncludingProducts.getOrDefault(featureId, Collections.emptySet());
+	}
+
 	public void dispose() {
 		fFeatureModelManager.removeFeatureModelListener(this);
+		fProductModelManager.removeProductModelListener(this);
 	}
 
 	private void reIndex() {
 		Map<String, Collection<IFeatureModel>> includingFeatures = new HashMap<>();
+		Map<String, Collection<IProductModel>> includingProducts = new HashMap<>();
 
 		for (IFeatureModel parentModel : fFeatureModelManager.getModels()) {
 			for (IFeatureChild child : parentModel.getFeature().getIncludedFeatures()) {
@@ -60,7 +77,17 @@ public class FeatureIndex implements IFeatureModelListener {
 			}
 		}
 
+		for (IProductModel productModel : fProductModelManager.getModels()) {
+			for (IProductFeature productFeature : productModel.getProduct().getFeatures()) {
+				IFeatureModel featureModel = fFeatureModelManager.findFeatureModel(productFeature.getId());
+				if (featureModel != null) {
+					index(includingProducts, featureModel, productModel);
+				}
+			}
+		}
+
 		fIncludingFeatures = includingFeatures;
+		fIncludingProducts = includingProducts;
 	}
 
 	private void index(Map<String, Collection<IFeatureModel>> includingFeatures, IFeatureModel childModel,
@@ -71,8 +98,21 @@ public class FeatureIndex implements IFeatureModelListener {
 		parents.add(parentModel);
 	}
 
+	private void index(Map<String, Collection<IProductModel>> includingProducts, IFeatureModel childModel,
+			IProductModel productModel) {
+		String featureId = childModel.getFeature().getId();
+
+		Collection<IProductModel> products = includingProducts.computeIfAbsent(featureId, key -> new HashSet<>());
+		products.add(productModel);
+	}
+
 	@Override
 	public void modelsChanged(IFeatureModelDelta delta) {
+		reIndex();
+	}
+
+	@Override
+	public void modelsChanged() {
 		reIndex();
 	}
 

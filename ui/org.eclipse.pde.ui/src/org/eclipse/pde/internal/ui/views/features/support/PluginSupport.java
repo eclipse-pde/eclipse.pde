@@ -20,13 +20,11 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 
 public class PluginSupport {
 
-	private PluginSupport() {
-	}
-
-	public static IPluginModelBase toSinglePluginModel(IStructuredSelection selection) {
+	public IPluginModelBase toSinglePluginModel(IStructuredSelection selection) {
 		if (selection.size() != 1) {
 			return null;
 		}
@@ -35,12 +33,15 @@ public class PluginSupport {
 		return toPluginModel(firstElement);
 	}
 
-	public static IPluginModelBase toPluginModel(Object obj) {
+	public IPluginModelBase toPluginModel(Object obj) {
 		if (obj instanceof IPluginModelBase) {
 			return (IPluginModelBase) obj;
 		} else if (obj instanceof IFeaturePlugin) {
 			IFeaturePlugin featurePlugin = (IFeaturePlugin) obj;
 			return getManager().findModel(featurePlugin.getId());
+		} else if (obj instanceof IProductPlugin) {
+			IProductPlugin productPlugin = (IProductPlugin) obj;
+			return getManager().findModel(productPlugin.getId());
 		} else if (obj instanceof IProject) {
 			return getManager().findModel((IProject) obj);
 		} else if (obj instanceof IJavaProject) {
@@ -50,7 +51,7 @@ public class PluginSupport {
 		}
 	}
 
-	public static PluginModelManager getManager() {
+	public PluginModelManager getManager() {
 		return PDECore.getDefault().getModelManager();
 	}
 

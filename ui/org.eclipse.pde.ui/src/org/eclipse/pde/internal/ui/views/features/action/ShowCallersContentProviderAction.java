@@ -14,16 +14,16 @@
 package org.eclipse.pde.internal.ui.views.features.action;
 
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.views.features.FeaturesView;
+import org.eclipse.pde.internal.ui.views.features.support.FeaturesViewInput;
 import org.eclipse.pde.internal.ui.views.features.viewer.FeatureTreeCallersContentProvider;
 
 public class ShowCallersContentProviderAction extends ContentProviderAction {
 
-	public ShowCallersContentProviderAction(FeaturesView featuresView, FeatureModelManager featureModelManager) {
-		super(featuresView, featureModelManager);
+	public ShowCallersContentProviderAction(FeaturesView featuresView, FeaturesViewInput fFeaturesViewInput) {
+		super(featuresView, fFeaturesViewInput);
 
 		setDescription(PDEUIMessages.FeaturesView_ShowCallersContentProviderAction_description);
 		setToolTipText(PDEUIMessages.FeaturesView_ShowCallersContentProviderAction_tooltip);
@@ -32,7 +32,7 @@ public class ShowCallersContentProviderAction extends ContentProviderAction {
 
 	@Override
 	public IContentProvider createContentProvider() {
-		return new FeatureTreeCallersContentProvider(fFeatureModelManager);
+		return new FeatureTreeCallersContentProvider(fFeaturesViewInput);
 	}
 
 	@Override

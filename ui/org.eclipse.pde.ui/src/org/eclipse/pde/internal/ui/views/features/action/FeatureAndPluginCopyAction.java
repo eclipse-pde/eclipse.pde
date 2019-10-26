@@ -22,9 +22,9 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.views.features.support.FeatureSupport;
-import org.eclipse.pde.internal.ui.views.features.support.PluginSupport;
+import org.eclipse.pde.internal.ui.views.features.support.FeaturesViewInput;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.ISharedImages;
@@ -38,11 +38,15 @@ public class FeatureAndPluginCopyAction extends Action {
 
 	private final Clipboard fClipboard;
 
-	public FeatureAndPluginCopyAction(StructuredViewer structuredViewer, Clipboard clipboard) {
+	private final FeaturesViewInput fFeaturesViewInput;
+
+	public FeatureAndPluginCopyAction(StructuredViewer structuredViewer, Clipboard clipboard,
+			FeaturesViewInput featuresViewInput) {
 		super(PDEUIMessages.FeaturesView_FeatureAndPluginCopyAction_label,
 				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		fStructuredViewer = structuredViewer;
 		fClipboard = clipboard;
+		fFeaturesViewInput = featuresViewInput;
 
 		setActionDefinitionId(ActionFactory.COPY.getCommandId());
 	}
@@ -71,9 +75,12 @@ public class FeatureAndPluginCopyAction extends Action {
 	}
 
 	private IModel toModel(Object element) {
-		IModel model = FeatureSupport.toFeatureModel(element);
+		IModel model = fFeaturesViewInput.getFeatureSupport().toFeatureModel(element);
 		if (model == null) {
-			model = PluginSupport.toPluginModel(element);
+			model = fFeaturesViewInput.getPluginSupport().toPluginModel(element);
+		}
+		if (model == null) {
+			model = fFeaturesViewInput.getProductSupport().toProductModel(element);
 		}
 
 		return model;
@@ -90,6 +97,8 @@ public class FeatureAndPluginCopyAction extends Action {
 			return ((IFeatureModel) model).getFeature().getId();
 		} else if (model instanceof IPluginModelBase) {
 			return ((IPluginModelBase) model).getPluginBase().getId();
+		} else if (model instanceof IProductModel) {
+			return ((IProductModel) model).getProduct().getId();
 		}
 
 		return null;

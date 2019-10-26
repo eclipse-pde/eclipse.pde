@@ -33,8 +33,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.feature.*;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.iproduct.IProductFeature;
-import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
+import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
@@ -103,6 +102,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof IProductFeature) {
 			return getObjectText((IProductFeature) obj);
+		}
+		if (obj instanceof IProductModel) {
+			return getObjectText((IProductModel) obj);
 		}
 		if (obj instanceof ISiteFeature) {
 			return getObjectText((ISiteFeature) obj);
@@ -314,6 +316,18 @@ public class PDELabelProvider extends SharedLabelProvider {
 		return name + ' ' + formatVersion(obj.getVersion());
 	}
 
+	private String getObjectText(IProductModel obj) {
+		IProduct product = obj.getProduct();
+		String name = preventNull(product.getId());
+		if (name.isEmpty()) {
+			name = preventNull(product.getName());
+		}
+		if (VersionUtil.isEmptyVersion(product.getVersion())) {
+			return name;
+		}
+		return name + ' ' + formatVersion(product.getVersion());
+	}
+
 	public String getObjectText(ISiteFeature obj) {
 		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(obj.getId(), obj.getVersion() != null ? obj.getVersion() : ICoreConstants.DEFAULT_VERSION);
 		if (model != null)
@@ -444,6 +458,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		if (obj instanceof IFeatureInfo) {
 			return getObjectImage((IFeatureInfo) obj);
+		}
+		if (obj instanceof IProductModel) {
+			return getObjectImage((IProductModel) obj);
 		}
 		if (obj instanceof IBuildEntry) {
 			return get(PDEPluginImages.DESC_BUILD_VAR_OBJ);
@@ -770,6 +787,10 @@ public class PDELabelProvider extends SharedLabelProvider {
 			flags = F_EDIT;
 		}
 		return get(PDEPluginImages.DESC_DOC_SECTION_OBJ, flags);
+	}
+
+	private Image getObjectImage(IProductModel productModel) {
+		return get(PDEPluginImages.DESC_PRODUCT_DEFINITION);
 	}
 
 	public Image getObjectImage(ISiteFeature obj) {

@@ -33,7 +33,7 @@ public class ShowPluginsAction extends Action {
 
 	@Override
 	public void run() {
-		fFeaturesView.configureContent(featureInput -> featureInput.setIncludePlugins(isChecked()));
+		fFeaturesView.configureContent(featuresViewInput -> featuresViewInput.setIncludePlugins(isChecked()));
 	}
 
 }

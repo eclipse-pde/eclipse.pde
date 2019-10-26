@@ -19,15 +19,15 @@ import java.util.function.Consumer;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.feature.FeatureEditor;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.views.dependencies.OpenPluginDependenciesAction;
 import org.eclipse.pde.internal.ui.views.features.action.*;
-import org.eclipse.pde.internal.ui.views.features.support.*;
+import org.eclipse.pde.internal.ui.views.features.support.FeaturesViewInput;
 import org.eclipse.pde.internal.ui.views.features.viewer.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -62,12 +62,11 @@ public class FeaturesView extends ViewPart {
 
 	private Action fCopyAction;
 
-	private FeatureInput fInput;
+	private FeaturesViewInput fInput;
 
 	@Override
 	public void createPartControl(Composite parent) {
-		FeatureModelManager featureModelManager = FeatureSupport.getManager();
-		fInput = new FeatureInput(featureModelManager);
+		fInput = new FeaturesViewInput();
 
 		FilteredTree filteredTree = createFilteredTree(parent);
 		fViewer = filteredTree.getViewer();
@@ -75,10 +74,10 @@ public class FeaturesView extends ViewPart {
 		fViewerFilters.add(fPatternFilter);
 
 		fClipboard = new Clipboard(parent.getDisplay());
-		fCopyAction = new FeatureAndPluginCopyAction(fViewer, fClipboard);
+		fCopyAction = new FeatureAndPluginCopyAction(fViewer, fClipboard, fInput);
 
 		registerGlobalActions();
-		contributeToActionBar(featureModelManager);
+		contributeToActionBar();
 		hookContextMenu();
 
 		initializeViewer();
@@ -119,8 +118,8 @@ public class FeaturesView extends ViewPart {
 
 	private void initializeViewer() {
 		resetViewerFilters();
-		fViewer.setComparator(new FeatureViewerComparator());
-		fViewer.setInput(new DeferredFeatureInput(fInput));
+		fViewer.setComparator(new FeatureViewerComparator(fInput));
+		fViewer.setInput(new DeferredFeaturesViewInput(fInput));
 	}
 
 	private void resetViewerFilters() {
@@ -160,9 +159,9 @@ public class FeaturesView extends ViewPart {
 		}
 	}
 
-	public void configureContent(Consumer<FeatureInput> configurator) {
-		DeferredFeatureInput deferredFeatureInput = (DeferredFeatureInput) fViewer.getInput();
-		configurator.accept(deferredFeatureInput.getFeatureInput());
+	public void configureContent(Consumer<FeaturesViewInput> configurator) {
+		DeferredFeaturesViewInput deferredInput = (DeferredFeaturesViewInput) fViewer.getInput();
+		configurator.accept(deferredInput.getFeaturesViewInput());
 		fViewer.refresh();
 	}
 
@@ -171,18 +170,18 @@ public class FeaturesView extends ViewPart {
 		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), fCopyAction);
 	}
 
-	private void contributeToActionBar(FeatureModelManager featureModelManager) {
+	private void contributeToActionBar() {
 		IActionBars actionBars = getViewSite().getActionBars();
 		IToolBarManager toolBarManager = actionBars.getToolBarManager();
 
 		toolBarManager.add(new CollapseAllAction(fViewer));
 		toolBarManager.add(new Separator());
 
-		ContentProviderAction calleesAction = new ShowCalleesContentProviderAction(this, featureModelManager);
+		ContentProviderAction calleesAction = new ShowCalleesContentProviderAction(this, fInput);
 		calleesAction.setChecked(true);
 		toolBarManager.add(calleesAction);
 
-		ContentProviderAction callersAction = new ShowCallersContentProviderAction(this, featureModelManager);
+		ContentProviderAction callersAction = new ShowCallersContentProviderAction(this, fInput);
 		toolBarManager.add(callersAction);
 		toolBarManager.add(new Separator());
 
@@ -192,6 +191,8 @@ public class FeaturesView extends ViewPart {
 
 		fShowPluginsAction = new ShowPluginsAction(this);
 		toolBarManager.add(fShowPluginsAction);
+		Action showProductsAction = new ShowProductsAction(this);
+		toolBarManager.add(showProductsAction);
 
 		setContentProvider(calleesAction);
 		setContentProvider(callersAction);
@@ -237,16 +238,21 @@ public class FeaturesView extends ViewPart {
 
 	private void handleOpen() {
 		for (Object selection : getViewerSelection()) {
-			IFeatureModel featureModel = FeatureSupport.toFeatureModel(selection);
+			IFeatureModel featureModel = fInput.getFeatureSupport().toFeatureModel(selection);
 			if (featureModel != null) {
 				FeatureEditor.openFeatureEditor(featureModel);
 				continue;
 			}
 
-			IPluginModelBase pluginModel = PluginSupport.toPluginModel(selection);
+			IPluginModelBase pluginModel = fInput.getPluginSupport().toPluginModel(selection);
 			if (pluginModel != null) {
 				ManifestEditor.openPluginEditor(pluginModel);
 				continue;
+			}
+
+			IProductModel productModel = fInput.getProductSupport().toProductModel(selection);
+			if (productModel != null) {
+				fInput.getProductSupport().openProductEditor(productModel);
 			}
 		}
 	}
@@ -256,7 +262,7 @@ public class FeaturesView extends ViewPart {
 	}
 
 	private IPluginModelBase getSelectedPluginModel() {
-		return PluginSupport.toSinglePluginModel(fViewer.getStructuredSelection());
+		return fInput.getPluginSupport().toSinglePluginModel(fViewer.getStructuredSelection());
 	}
 
 }

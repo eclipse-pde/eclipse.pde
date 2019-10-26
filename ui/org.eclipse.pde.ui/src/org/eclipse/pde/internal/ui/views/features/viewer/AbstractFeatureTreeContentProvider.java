@@ -17,23 +17,31 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.ui.views.features.model.IProductModelListener;
+import org.eclipse.pde.internal.ui.views.features.model.ProductModelManager;
+import org.eclipse.pde.internal.ui.views.features.support.FeaturesViewInput;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.progress.DeferredTreeContentManager;
 
-public abstract class AbstractFeatureTreeContentProvider implements ITreeContentProvider, IFeatureModelListener {
+public abstract class AbstractFeatureTreeContentProvider
+		implements ITreeContentProvider, IFeatureModelListener, IProductModelListener {
 
 	protected final FeatureModelManager fFeatureModelManager;
 
-	protected DeferredFeatureInput fInput;
+	protected final ProductModelManager fProductModelManager;
+
+	protected DeferredFeaturesViewInput fInput;
 
 	protected DeferredTreeContentManager fDeferredTreeContentManager;
 
 	private TreeViewer fViewer;
 
-	public AbstractFeatureTreeContentProvider(FeatureModelManager featureModelManager) {
-		fFeatureModelManager = featureModelManager;
+	public AbstractFeatureTreeContentProvider(FeaturesViewInput featuresViewInput) {
+		fFeatureModelManager = featuresViewInput.getFeatureSupport().getManager();
 		fFeatureModelManager.addFeatureModelListener(this);
+		fProductModelManager = featuresViewInput.getProductSupport().getManager();
+		fProductModelManager.addProductModelListener(this);
 	}
 
 	@Override
@@ -47,8 +55,8 @@ public abstract class AbstractFeatureTreeContentProvider implements ITreeContent
 			}
 		});
 
-		if (newInput instanceof DeferredFeatureInput) {
-			fInput = (DeferredFeatureInput) newInput;
+		if (newInput instanceof DeferredFeaturesViewInput) {
+			fInput = (DeferredFeaturesViewInput) newInput;
 		}
 	}
 
@@ -64,9 +72,9 @@ public abstract class AbstractFeatureTreeContentProvider implements ITreeContent
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof DeferredFeatureInput) {
-			DeferredFeatureInput deferredFeatureInput = (DeferredFeatureInput) inputElement;
-			return deferredFeatureInput.isInitialized() ? deferredFeatureInput.getChildren(inputElement)
+		if (inputElement instanceof DeferredFeaturesViewInput) {
+			DeferredFeaturesViewInput deferredFeaturesViewInput = (DeferredFeaturesViewInput) inputElement;
+			return deferredFeaturesViewInput.isInitialized() ? deferredFeaturesViewInput.getChildren(inputElement)
 					: fDeferredTreeContentManager.getChildren(inputElement);
 		}
 
@@ -76,10 +84,16 @@ public abstract class AbstractFeatureTreeContentProvider implements ITreeContent
 	@Override
 	public void dispose() {
 		fFeatureModelManager.removeFeatureModelListener(this);
+		fProductModelManager.removeProductModelListener(this);
 	}
 
 	@Override
 	public void modelsChanged(IFeatureModelDelta delta) {
+		refreshViewer();
+	}
+
+	@Override
+	public void modelsChanged() {
 		refreshViewer();
 	}
 

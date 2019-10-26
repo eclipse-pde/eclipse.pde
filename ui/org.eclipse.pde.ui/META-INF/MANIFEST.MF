@@ -51,6 +51,7 @@ Export-Package:
  org.eclipse.pde.internal.ui.views.imagebrowser.repositories;x-internal:=true,
  org.eclipse.pde.internal.ui.views.features;x-internal:=true,
  org.eclipse.pde.internal.ui.views.features.action;x-internal:=true,
+ org.eclipse.pde.internal.ui.views.features.model;x-internal:=true,
  org.eclipse.pde.internal.ui.views.features.support;x-internal:=true,
  org.eclipse.pde.internal.ui.views.features.viewer;x-internal:=true,
  org.eclipse.pde.internal.ui.views.plugins;x-internal:=true,

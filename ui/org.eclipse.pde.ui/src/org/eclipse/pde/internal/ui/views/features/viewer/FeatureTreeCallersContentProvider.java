@@ -13,13 +13,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.features.viewer;
 
-import org.eclipse.pde.internal.core.FeatureModelManager;
+import java.util.*;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.iproduct.IProductModel;
+import org.eclipse.pde.internal.ui.views.features.support.FeaturesViewInput;
 
 public class FeatureTreeCallersContentProvider extends AbstractFeatureTreeContentProvider {
 
-	public FeatureTreeCallersContentProvider(FeatureModelManager featureModelManager) {
-		super(featureModelManager);
+	public FeatureTreeCallersContentProvider(FeaturesViewInput featuresViewInput) {
+		super(featuresViewInput);
 	}
 
 	@Override
@@ -27,7 +29,19 @@ public class FeatureTreeCallersContentProvider extends AbstractFeatureTreeConten
 		if (parentElement instanceof IFeatureModel) {
 			IFeatureModel featureModel = (IFeatureModel) parentElement;
 			String featureId = featureModel.getFeature().getId();
-			return fInput.getFeatureInput().getIncludingFeatures(featureId).toArray();
+			Collection<IFeatureModel> features = fInput.getFeaturesViewInput().getIncludingFeatures(featureId);
+
+			if (!fInput.getFeaturesViewInput().isIncludeProducts()) {
+				return features.toArray();
+			}
+
+			Collection<IProductModel> products = fInput.getFeaturesViewInput().getIncludingProducts(featureId);
+
+			List<Object> all = new ArrayList<>(features.size() + products.size());
+			all.addAll(features);
+			all.addAll(products);
+
+			return all.toArray();
 		}
 
 		return new Object[0];

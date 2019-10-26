@@ -18,13 +18,11 @@ import org.eclipse.pde.core.IIdentifiable;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.iproduct.IProductFeature;
 
 public class FeatureSupport {
 
-	private FeatureSupport() {
-	}
-
-	public static IFeatureModel toFeatureModel(Object obj) {
+	public IFeatureModel toFeatureModel(Object obj) {
 		if (obj instanceof IFeatureModel) {
 			return (IFeatureModel) obj;
 		} else if (obj instanceof IIdentifiable) {
@@ -32,12 +30,15 @@ public class FeatureSupport {
 			return getManager().findFeatureModel(featureOrChild.getId());
 		} else if (obj instanceof IProject) {
 			return getManager().getFeatureModel((IProject) obj);
+		} else if (obj instanceof IProductFeature) {
+			IProductFeature productFeature = (IProductFeature) obj;
+			return getManager().findFeatureModel(productFeature.getId());
 		} else {
 			return null;
 		}
 	}
 
-	public static FeatureModelManager getManager() {
+	public FeatureModelManager getManager() {
 		return PDECore.getDefault().getFeatureModelManager();
 	}
 

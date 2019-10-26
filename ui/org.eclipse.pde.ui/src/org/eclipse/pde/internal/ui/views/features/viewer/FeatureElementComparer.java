@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.views.features.viewer;
 
 import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.iproduct.*;
 
 public class FeatureElementComparer implements IElementComparer {
 
@@ -24,6 +25,20 @@ public class FeatureElementComparer implements IElementComparer {
 			IFeature a = ((IFeatureModel) aObj).getFeature();
 			IFeature b = ((IFeatureModel) bObj).getFeature();
 			return a.getId().equals(b.getId()) && a.getVersion().equals(b.getVersion());
+		} else if (areInstances(aObj, bObj, IProductModel.class)) {
+			IProduct a = ((IProductModel) aObj).getProduct();
+			IProduct b = ((IProductModel) bObj).getProduct();
+			return a.getId().equals(b.getId()) && a.getVersion().equals(b.getVersion());
+		} else if (areInstances(aObj, bObj, IProductFeature.class)) {
+			IProductFeature a = (IProductFeature) aObj;
+			IProductFeature b = (IProductFeature) bObj;
+			return a.getId().equals(b.getId()) && a.getVersion().equals(b.getVersion())
+					&& equals(a.getModel(), b.getModel());
+		} else if (areInstances(aObj, bObj, IProductPlugin.class)) {
+			IProductPlugin a = (IProductPlugin) aObj;
+			IProductPlugin b = (IProductPlugin) bObj;
+			return a.getId().equals(b.getId()) && a.getVersion().equals(b.getVersion())
+					&& equals(a.getModel(), b.getModel());
 		} else if (areInstances(aObj, bObj, IFeatureChild.class)) {
 			IFeatureChild a = (IFeatureChild) aObj;
 			IFeatureChild b = (IFeatureChild) bObj;
@@ -43,6 +58,12 @@ public class FeatureElementComparer implements IElementComparer {
 	public int hashCode(Object element) {
 		if (element instanceof IFeatureModel) {
 			return ((IFeatureModel) element).getFeature().getId().hashCode();
+		} else if (element instanceof IProductModel) {
+			return ((IProductModel) element).getProduct().getId().hashCode();
+		} else if (element instanceof IProductFeature) {
+			return ((IProductFeature) element).getId().hashCode();
+		} else if (element instanceof IProductPlugin) {
+			return ((IProductPlugin) element).getId().hashCode();
 		} else if (element instanceof IFeatureChild) {
 			return ((IFeatureChild) element).getId().hashCode();
 		} else if (element instanceof IFeaturePlugin) {

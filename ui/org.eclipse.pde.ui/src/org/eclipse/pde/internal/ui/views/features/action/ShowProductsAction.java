@@ -14,31 +14,26 @@
 package org.eclipse.pde.internal.ui.views.features.action;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.views.features.FeaturesView;
-import org.eclipse.pde.internal.ui.views.features.support.FeaturesViewInput;
 
-public abstract class ContentProviderAction extends Action {
+public class ShowProductsAction extends Action {
 
 	private final FeaturesView fFeaturesView;
 
-	protected final FeaturesViewInput fFeaturesViewInput;
-
-	public ContentProviderAction(FeaturesView featuresView, FeaturesViewInput featuresViewInput) {
-		super(null, AS_RADIO_BUTTON);
+	public ShowProductsAction(FeaturesView featuresView) {
+		super(null, AS_CHECK_BOX);
 		fFeaturesView = featuresView;
-		fFeaturesViewInput = featuresViewInput;
-	}
 
-	public abstract IContentProvider createContentProvider();
+		setDescription(PDEUIMessages.FeaturesView_ShowProductsAction_description);
+		setToolTipText(PDEUIMessages.FeaturesView_ShowProductsAction_tooltip);
+		setImageDescriptor(PDEPluginImages.DESC_PRODUCT_DEFINITION);
+	}
 
 	@Override
 	public void run() {
-		fFeaturesView.setContentProvider(this);
+		fFeaturesView.configureContent(featuresViewInput -> featuresViewInput.setIncludeProducts(isChecked()));
 	}
-
-	public abstract boolean isSupportsFilters();
-
-	public abstract boolean isSupportsPlugins();
 
 }
