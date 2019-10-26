@@ -16,13 +16,12 @@ package org.eclipse.pde.internal.ui.views.features.action;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.views.features.FeaturesView;
-import org.eclipse.pde.internal.ui.views.features.support.FeatureIndex;
 import org.eclipse.pde.internal.ui.views.features.viewer.FeatureChildViewerFilter;
 
 public class FilterFeatureChildAction extends ViewerFilterAction {
 
-	public FilterFeatureChildAction(FeaturesView featuresView, FeatureIndex featureIndex) {
-		super(featuresView, new FeatureChildViewerFilter(featureIndex));
+	public FilterFeatureChildAction(FeaturesView featuresView) {
+		super(featuresView, new FeatureChildViewerFilter());
 
 		setDescription(PDEUIMessages.FeaturesView_FilterFeatureChildAction_description);
 		setToolTipText(PDEUIMessages.FeaturesView_FilterFeatureChildAction_tooltip);

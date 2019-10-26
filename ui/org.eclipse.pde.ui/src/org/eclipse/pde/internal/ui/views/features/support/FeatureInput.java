@@ -13,24 +13,39 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.features.support;
 
+import java.util.Collection;
 import org.eclipse.pde.internal.core.FeatureModelManager;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 public class FeatureInput {
 
 	private final FeatureModelManager fFeatureModelManager;
 
+	private final FeatureIndex fIndex;
+
 	private boolean fIncludePlugins;
 
 	public FeatureInput(FeatureModelManager featureModelManager) {
 		fFeatureModelManager = featureModelManager;
+		fIndex = new FeatureIndex(featureModelManager);
 	}
 
 	public boolean isInitialized() {
-		return fFeatureModelManager.isInitialized();
+		return fFeatureModelManager.isInitialized() && fIndex.isInitialized();
 	}
 
-	public FeatureModelManager getFeatureModelManager() {
-		return fFeatureModelManager;
+	public IFeatureModel[] getFeatures() {
+		ensureInitialized();
+		return fFeatureModelManager.getModels();
+	}
+
+	public Collection<IFeatureModel> getIncludingFeatures(String childId) {
+		ensureInitialized();
+		return fIndex.getIncludingFeatures(childId);
+	}
+
+	private void ensureInitialized() {
+		fIndex.ensureInitialized();
 	}
 
 	public boolean isIncludePlugins() {
@@ -39,6 +54,10 @@ public class FeatureInput {
 
 	public void setIncludePlugins(boolean includePlugins) {
 		fIncludePlugins = includePlugins;
+	}
+
+	public void dispose() {
+		fIndex.dispose();
 	}
 
 }

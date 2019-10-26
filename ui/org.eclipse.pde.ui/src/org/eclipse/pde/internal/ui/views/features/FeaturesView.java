@@ -62,13 +62,12 @@ public class FeaturesView extends ViewPart {
 
 	private Action fCopyAction;
 
-	private FeatureIndex fFeatureIndex;
+	private FeatureInput fInput;
 
 	@Override
 	public void createPartControl(Composite parent) {
 		FeatureModelManager featureModelManager = FeatureSupport.getManager();
-		FeatureInput input = new FeatureInput(featureModelManager);
-		fFeatureIndex = new FeatureIndex(featureModelManager);
+		fInput = new FeatureInput(featureModelManager);
 
 		FilteredTree filteredTree = createFilteredTree(parent);
 		fViewer = filteredTree.getViewer();
@@ -82,7 +81,7 @@ public class FeaturesView extends ViewPart {
 		contributeToActionBar(featureModelManager);
 		hookContextMenu();
 
-		initializeViewer(input);
+		initializeViewer();
 	}
 
 	@Override
@@ -93,7 +92,7 @@ public class FeaturesView extends ViewPart {
 	@Override
 	public void dispose() {
 		super.dispose();
-		fFeatureIndex.dispose();
+		fInput.dispose();
 		fClipboard.dispose();
 	}
 
@@ -118,10 +117,10 @@ public class FeaturesView extends ViewPart {
 		return filteredTree;
 	}
 
-	private void initializeViewer(FeatureInput input) {
+	private void initializeViewer() {
 		resetViewerFilters();
 		fViewer.setComparator(new FeatureViewerComparator());
-		fViewer.setInput(new DeferredFeatureInput(input));
+		fViewer.setInput(new DeferredFeatureInput(fInput));
 	}
 
 	private void resetViewerFilters() {
@@ -183,12 +182,11 @@ public class FeaturesView extends ViewPart {
 		calleesAction.setChecked(true);
 		toolBarManager.add(calleesAction);
 
-		ContentProviderAction callersAction = new ShowCallersContentProviderAction(this, featureModelManager,
-				fFeatureIndex);
+		ContentProviderAction callersAction = new ShowCallersContentProviderAction(this, featureModelManager);
 		toolBarManager.add(callersAction);
 		toolBarManager.add(new Separator());
 
-		ViewerFilterAction filterFeatureChildAction = new FilterFeatureChildAction(this, fFeatureIndex);
+		ViewerFilterAction filterFeatureChildAction = new FilterFeatureChildAction(this);
 		filterFeatureChildAction.setChecked(true);
 		toolBarManager.add(filterFeatureChildAction);
 

@@ -16,22 +16,17 @@ package org.eclipse.pde.internal.ui.views.features.viewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.ui.views.features.support.FeatureIndex;
 
 public class FeatureChildViewerFilter extends ViewerFilter {
-
-	private final FeatureIndex fFeatureIndex;
-
-	public FeatureChildViewerFilter(FeatureIndex featureIndex) {
-		fFeatureIndex = featureIndex;
-	}
 
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (parentElement instanceof DeferredFeatureInput && element instanceof IFeatureModel) {
+			DeferredFeatureInput input = (DeferredFeatureInput) parentElement;
 			IFeatureModel featureModel = (IFeatureModel) element;
+
 			String featureId = featureModel.getFeature().getId();
-			boolean includedInFeature = !fFeatureIndex.getIncludingFeatures(featureId).isEmpty();
+			boolean includedInFeature = !input.getFeatureInput().getIncludingFeatures(featureId).isEmpty();
 
 			return !includedInFeature;
 		}

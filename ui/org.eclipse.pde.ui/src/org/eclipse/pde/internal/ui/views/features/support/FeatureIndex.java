@@ -20,17 +20,27 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 public class FeatureIndex implements IFeatureModelListener {
 
-	private final Map<String, Collection<IFeatureModel>> fIncludingFeatures = new HashMap<>();
-
 	private final FeatureModelManager fFeatureModelManager;
+
+	private volatile Map<String, Collection<IFeatureModel>> fIncludingFeatures;
 
 	public FeatureIndex(FeatureModelManager featureModelManager) {
 		fFeatureModelManager = featureModelManager;
 		fFeatureModelManager.addFeatureModelListener(this);
-		reIndex();
+	}
+
+	public boolean isInitialized() {
+		return (fIncludingFeatures != null);
+	}
+
+	public void ensureInitialized() {
+		if (!isInitialized()) {
+			reIndex();
+		}
 	}
 
 	public Collection<IFeatureModel> getIncludingFeatures(String childId) {
+		ensureInitialized();
 		return fIncludingFeatures.getOrDefault(childId, Collections.emptySet());
 	}
 
@@ -39,21 +49,25 @@ public class FeatureIndex implements IFeatureModelListener {
 	}
 
 	private void reIndex() {
-		fIncludingFeatures.clear();
+		Map<String, Collection<IFeatureModel>> includingFeatures = new HashMap<>();
+
 		for (IFeatureModel parentModel : fFeatureModelManager.getModels()) {
 			for (IFeatureChild child : parentModel.getFeature().getIncludedFeatures()) {
 				IFeatureModel childModel = fFeatureModelManager.findFeatureModel(child.getId());
 				if (childModel != null) {
-					index(childModel, parentModel);
+					index(includingFeatures, childModel, parentModel);
 				}
 			}
 		}
+
+		fIncludingFeatures = includingFeatures;
 	}
 
-	private void index(IFeatureModel childModel, IFeatureModel parentModel) {
+	private void index(Map<String, Collection<IFeatureModel>> includingFeatures, IFeatureModel childModel,
+			IFeatureModel parentModel) {
 		String childId = childModel.getFeature().getId();
 
-		Collection<IFeatureModel> parents = fIncludingFeatures.computeIfAbsent(childId, key -> new HashSet<>());
+		Collection<IFeatureModel> parents = includingFeatures.computeIfAbsent(childId, key -> new HashSet<>());
 		parents.add(parentModel);
 	}
 

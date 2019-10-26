@@ -45,7 +45,7 @@ public class DeferredFeatureInput extends WorkbenchAdapter implements IDeferredW
 
 	@Override
 	public Object[] getChildren(Object object) {
-		return fInput.getFeatureModelManager().getModels();
+		return fInput.getFeatures();
 	}
 
 	private void updateTree(IElementCollector collector, IProgressMonitor monitor, Object[] children) {
