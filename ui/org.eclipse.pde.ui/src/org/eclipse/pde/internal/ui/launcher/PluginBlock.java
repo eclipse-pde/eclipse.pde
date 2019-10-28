@@ -82,7 +82,9 @@ public class PluginBlock extends AbstractPluginBlock {
 	public void initialize(boolean enable) throws CoreException {
 		// To support lazy loading of the table we need to set some launch configuration attributes when the combo changes
 		if (fLaunchConfig != null) {
-			fInitDefaultCheckState = enable && !fLaunchConfig.hasAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS) && !fLaunchConfig.hasAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
+			fInitDefaultCheckState = enable
+					&& !fLaunchConfig.hasAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES)
+					&& !fLaunchConfig.hasAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES);
 			fTab.updateLaunchConfigurationDialog();
 			initializeFrom(fLaunchConfig, enable);
 		}
@@ -91,9 +93,9 @@ public class PluginBlock extends AbstractPluginBlock {
 	private void initializePluginsState(ILaunchConfiguration config) throws CoreException {
 		Map<IPluginModelBase, String> selected = new HashMap<>();
 		selected.putAll(BundleLauncherHelper.getWorkspaceBundleMap(config, null,
-				IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS));
-		selected.putAll(
-				BundleLauncherHelper.getTargetBundleMap(config, null, IPDELauncherConstants.SELECTED_TARGET_PLUGINS));
+				IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES));
+		selected.putAll(BundleLauncherHelper.getTargetBundleMap(config, null,
+				IPDELauncherConstants.SELECTED_TARGET_BUNDLES));
 
 		initializePluginsState(selected);
 	}
@@ -145,8 +147,8 @@ public class PluginBlock extends AbstractPluginBlock {
 				}
 
 			}
-			config.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, wBuffer.toString());
-			config.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, tBuffer.toString());
+			config.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, wBuffer.getNameSet());
+			config.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, tBuffer.getNameSet());
 
 			PluginModelNameBuffer buffer = new PluginModelNameBuffer();
 			if (fAddWorkspaceButton.getSelection()) {
@@ -157,7 +159,7 @@ public class PluginBlock extends AbstractPluginBlock {
 					}
 				}
 			}
-			config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, buffer.toString());
+			config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES, buffer.getNameSet());
 		}
 	}
 

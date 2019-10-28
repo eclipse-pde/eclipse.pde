@@ -55,7 +55,7 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends AbstractLau
 		BusyIndicator.showWhile(Display.getCurrent(), () -> {
 			try {
 				if (config instanceof ILaunchConfigurationWorkingCopy) {
-					checkBackwardCompatibility((ILaunchConfigurationWorkingCopy) config);
+					migrateLaunchConfiguration((ILaunchConfigurationWorkingCopy) config);
 				}
 			} catch (CoreException e) {
 			}
@@ -74,7 +74,7 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends AbstractLau
 	 * 			a CoreException is thrown if there was an error retrieving launch
 	 * 			configuration attributes
 	 */
-	private void checkBackwardCompatibility(ILaunchConfigurationWorkingCopy wc) throws CoreException {
+	private void migrateLaunchConfiguration(ILaunchConfigurationWorkingCopy wc) throws CoreException {
 		String id = wc.getAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, (String) null);
 		if (id == null) {
 			wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, PDESourcePathProvider.ID);
@@ -98,10 +98,7 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends AbstractLau
 			wc.setAttribute(IPDELauncherConstants.LOCATION, value);
 		}
 
-		BundleLauncherHelper.checkBackwardCompatibility(wc, false);
-		if (wc.isDirty()) {
-			wc.doSave();
-		}
+		BundleLauncherHelper.migrateLaunchConfiguration(wc);
 	}
 
 	/**

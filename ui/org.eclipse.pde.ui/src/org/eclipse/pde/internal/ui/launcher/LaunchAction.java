@@ -101,8 +101,8 @@ public class LaunchAction extends Action {
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, getVMArguments(os, arch));
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, getProgramArguments(os, arch));
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, getJREContainer(os));
-		StringBuilder wsplugins = new StringBuilder();
-		StringBuilder explugins = new StringBuilder();
+		Set<String> wsplugins = new HashSet<>();
+		Set<String> explugins = new HashSet<>();
 		IPluginModelBase[] models = getModels();
 		for (IPluginModelBase model : models) {
 			if (model.getUnderlyingResource() == null) {
@@ -111,8 +111,8 @@ public class LaunchAction extends Action {
 				appendBundle(wsplugins, model);
 			}
 		}
-		wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, wsplugins.toString());
-		wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, explugins.toString());
+		wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, wsplugins);
+		wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, explugins);
 		String configIni = getTemplateConfigIni(os);
 		wc.setAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, configIni == null);
 		if (configIni != null)
@@ -138,12 +138,11 @@ public class LaunchAction extends Action {
 		wc.setAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS, additionalPlugins);
 	}
 
-	private void appendBundle(StringBuilder buffer, IPluginModelBase model) {
+	private void appendBundle(Set<String> plugins, IPluginModelBase model) {
 		AdditionalPluginData configuration = getPluginConfiguration(model).orElse(FeatureBlock.DEFAULT_PLUGIN_DATA);
 		String entry = BundleLauncherHelper.writeBundleEntry(model, configuration.fStartLevel,
 				configuration.fAutoStart);
-		buffer.append(entry);
-		buffer.append(',');
+		plugins.add(entry);
 	}
 
 	private Optional<AdditionalPluginData> getPluginConfiguration(IPluginModelBase model) {

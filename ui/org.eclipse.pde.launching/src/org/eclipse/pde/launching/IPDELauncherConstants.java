@@ -123,9 +123,26 @@ public interface IPDELauncherConstants {
 	 * a comma-separated list of IDs of workspace plug-ins to launch with.
 	 * This value is only used when the Automatic Add option is off.
 	 *
-	 * @see IPDELauncherConstants#AUTOMATIC_ADD
+	 * @deprecated Use {@link IPDELauncherConstants#SELECTED_WORKSPACE_BUNDLES}
 	 */
+	@Deprecated
 	String SELECTED_WORKSPACE_PLUGINS = "selected_workspace_plugins"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is a set specifying
+	 * IDs of workspace bundles to launch with.
+	 * This value is only used when the Automatic Add option is off.
+	 * 
+	 * Each item in the set is of the format:
+	 * &lt;plugin-id&gt;@&lt;start-level&gt;:&lt;auto-start&gt;
+	 * 
+	 * @see IPDELauncherConstants#AUTOMATIC_ADD
+	 * @see IPDELauncherConstants#DEFAULT_AUTO_START
+	 * @see IPDELauncherConstants#DEFAULT_START_LEVEL
+	 * 
+	 * @since 3.8
+	 */
+	String SELECTED_WORKSPACE_BUNDLES = "selected_workspace_bundles"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is a string specifying
@@ -133,20 +150,31 @@ public interface IPDELauncherConstants {
 	 * the launch.
 	 * This value is only used when the Automatic Add option is on.
 	 *
-	 * @see IPDELauncherConstants#AUTOMATIC_ADD
+	 * @deprecated Use {@link IPDELauncherConstants#DESELECTED_WORKSPACE_BUNDLES}
 	 */
+	@Deprecated
 	String DESELECTED_WORKSPACE_PLUGINS = "deselected_workspace_plugins"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is a set specifying
+	 * IDs of workspace bundles that are to be excluded from the launch.
+	 * This value is only used when the Automatic Add option is on.
+	 * 
+	 * @see IPDELauncherConstants#AUTOMATIC_ADD
+	 * @since 3.8
+	 */
+	String DESELECTED_WORKSPACE_BUNDLES = "deselected_workspace_bundles"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is a boolean specifying
 	 * whether workspace plug-in created after the creation of a launch configuration
 	 * should be added to the list of plug-ins to launch with.
 	 *
-	 * If the value is <code>true</code>, then DESELECTED_WORKSPACE_PLUGINS should be used.
-	 * Otherwise, SELECTED_WORKSPACE_PLUGINS should be used.
+	 * If the value is <code>true</code>, then DESELECTED_WORKSPACE_BUNDLES should be used.
+	 * Otherwise, SELECTED_WORKSPACE_BUNDLES should be used.
 	 *
-	 * @see IPDELauncherConstants#DESELECTED_WORKSPACE_PLUGINS
-	 * @see IPDELauncherConstants#SELECTED_WORKSPACE_PLUGINS
+	 * @see IPDELauncherConstants#DESELECTED_WORKSPACE_BUNDLES
+	 * @see IPDELauncherConstants#SELECTED_WORKSPACE_BUNDLES
 	 */
 	String AUTOMATIC_ADD = "automaticAdd"; //$NON-NLS-1$
 
@@ -163,8 +191,25 @@ public interface IPDELauncherConstants {
 	 * Launch configuration attribute key. The value is a string specifying
 	 * a comma-separated list of IDs of target platform plug-ins to launch with.
 	 * This value is only used when the Automatic Add option is off.
+	 * 
+	 * @deprecated Use {@link IPDELauncherConstants.SELECTED_TARGET_BUNDLES}
 	 */
+	@Deprecated
 	String SELECTED_TARGET_PLUGINS = "selected_target_plugins"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is a set specifying
+	 * the IDs of non-workspace bundles to launch with.
+	 * This value is only used when the Automatic Add option is off.
+	 * 
+	 * Each item in the set is of the format:
+	 * &lt;plugin-id&gt;@&lt;start-level&gt;:&lt;auto-start&gt;
+	 * 
+	 * @see IPDELauncherConstants#DEFAULT_AUTO_START
+	 * @see IPDELauncherConstants#DEFAULT_START_LEVEL
+	 * @since 3.8
+	 */
+	String SELECTED_TARGET_BUNDLES = "selected_target_bundles"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is a boolean indicating
@@ -297,9 +342,9 @@ public interface IPDELauncherConstants {
 	 * Each token in the list is of the format:
 	 * &lt;plugin-id&gt;@&lt;start-level&gt;:&lt;auto-start&gt;
 	 *
-	 * @see IPDELauncherConstants#DEFAULT_AUTO_START
-	 * @see IPDELauncherConstants#DEFAULT_START_LEVEL
+	 * @deprecated Use {@link IPDELauncherConstants#SELECTED_WORKSPACE_BUNDLES}
 	 */
+	@Deprecated
 	String WORKSPACE_BUNDLES = "workspace_bundles"; //$NON-NLS-1$
 
 	/**
@@ -309,9 +354,9 @@ public interface IPDELauncherConstants {
 	 * Each token in the list is of the format:
 	 * &lt;plugin-id&gt;@&lt;start-level&gt;:&lt;auto-start&gt;
 	 *
-	 * @see IPDELauncherConstants#DEFAULT_AUTO_START
-	 * @see IPDELauncherConstants#DEFAULT_START_LEVEL
+	 * @deprecated Use {@link IPDELauncherConstants#SELECTED_TARGET_BUNDLES}
 	 */
+	@Deprecated
 	String TARGET_BUNDLES = "target_bundles"; //$NON-NLS-1$
 
 	/**

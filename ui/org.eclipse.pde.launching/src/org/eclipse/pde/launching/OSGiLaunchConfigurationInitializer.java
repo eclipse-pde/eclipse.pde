@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.launching;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -75,24 +77,22 @@ public class OSGiLaunchConfigurationInitializer {
 	 * 			the launch configuration
 	 */
 	protected void initializeBundleState(ILaunchConfigurationWorkingCopy configuration) {
-		StringBuilder explugins = new StringBuilder();
-		StringBuilder wsplugins = new StringBuilder();
+		Set<String> targetBundles = new HashSet<>();
+		Set<String> workspaceBundles = new HashSet<>();
 		IPluginModelBase[] models = PluginRegistry.getActiveModels();
 		for (IPluginModelBase model : models) {
 			boolean inWorkspace = model.getUnderlyingResource() != null;
-			appendBundle(inWorkspace ? wsplugins : explugins, model);
+			appendBundle(inWorkspace ? workspaceBundles : targetBundles, model);
 		}
-		configuration.setAttribute(IPDELauncherConstants.WORKSPACE_BUNDLES, wsplugins.toString());
-		configuration.setAttribute(IPDELauncherConstants.TARGET_BUNDLES, explugins.toString());
+		configuration.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, workspaceBundles);
+		configuration.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, targetBundles);
 		configuration.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 	}
 
-	private void appendBundle(StringBuilder buffer, IPluginModelBase model) {
-		if (buffer.length() > 0)
-			buffer.append(","); //$NON-NLS-1$
+	private void appendBundle(Set<String> bundleSet, IPluginModelBase model) {
 		String id = model.getPluginBase().getId();
 		String value = BundleLauncherHelper.writeBundleEntry(model, getStartLevel(id), getAutoStart(id));
-		buffer.append(value);
+		bundleSet.add(value);
 	}
 
 	/**

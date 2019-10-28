@@ -13,11 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.*;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.launching.launcher.OSGiFrameworkManager;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Creates and initializes the tabs on the OSGi Framework launch configuration.
@@ -30,6 +35,26 @@ import org.eclipse.pde.internal.launching.launcher.OSGiFrameworkManager;
  * @since 3.3
  */
 public class OSGiLauncherTabGroup extends AbstractLaunchConfigurationTabGroup {
+
+	/**
+	 * The tab group delegates to all tabs in the group. Prior to the
+	 * delegation, it migrates all launch configurations.
+	 *
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	@Override
+	public void initializeFrom(ILaunchConfiguration configuration) {
+		final ILaunchConfiguration config = configuration;
+		BusyIndicator.showWhile(Display.getCurrent(), () -> {
+			try {
+				if (config instanceof ILaunchConfigurationWorkingCopy) {
+					BundleLauncherHelper.migrateOsgiLaunchConfiguration(config);
+				}
+			} catch (CoreException e) {
+			}
+			super.initializeFrom(configuration);
+		});
+	}
 
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {

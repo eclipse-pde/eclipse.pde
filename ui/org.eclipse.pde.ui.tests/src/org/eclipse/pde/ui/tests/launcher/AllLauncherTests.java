@@ -21,7 +21,8 @@ import org.junit.runners.Suite.SuiteClasses;
  * @since 3.5
  */
 @RunWith(Suite.class)
-@SuiteClasses({ FeatureBasedLaunchTest.class, LaunchConfigurationHelperTestCase.class })
+@SuiteClasses({ FeatureBasedLaunchTest.class, LaunchConfigurationHelperTestCase.class,
+		LaunchConfigurationMigrationTest.class })
 public class AllLauncherTests {
 
 }

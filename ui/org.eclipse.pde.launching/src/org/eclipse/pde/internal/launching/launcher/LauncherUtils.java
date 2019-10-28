@@ -265,7 +265,7 @@ public class LauncherUtils {
 	}
 
 	private static void handleSelectedPlugins(ILaunchConfiguration config, String timeStamp, ArrayList<IProject> projects) throws CoreException {
-		Map<IPluginModelBase, String> selectedPlugins = BundleLauncherHelper.getWorkspaceBundleMap(config, null, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
+		Map<IPluginModelBase, String> selectedPlugins = BundleLauncherHelper.getWorkspaceBundleMap(config, null, IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES);
 		Iterator<IPluginModelBase> it = selectedPlugins.keySet().iterator();
 		while (it.hasNext()) {
 			IPluginModelBase model = it.next();
@@ -280,7 +280,7 @@ public class LauncherUtils {
 	}
 
 	private static void handleDeselectedPlugins(ILaunchConfiguration config, String launcherTimeStamp, ArrayList<IProject> projects) throws CoreException {
-		Map<IPluginModelBase, String> deSelectedPlugins = BundleLauncherHelper.getWorkspaceBundleMap(config, null, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS);
+		Map<IPluginModelBase, String> deSelectedPlugins = BundleLauncherHelper.getWorkspaceBundleMap(config, null, IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES);
 		IProject[] projs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projs.length; i++) {
 			if (!WorkspaceModelManager.isPluginProject(projs[i]))

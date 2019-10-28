@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *     Julian Honnen <julian.honnen@vector.com> - initial API and implementation
+ *     Andras Peteri <apeteri@b2international.com> - extracted common superclass
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.launcher;
 
@@ -17,55 +18,22 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.Map;
 import junit.framework.AssertionFailedError;
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
-import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
-import org.junit.*;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import org.junit.Before;
+import org.junit.Test;
 
-public class FeatureBasedLaunchTest {
+public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 
 	private ILaunchConfiguration fFeatureBasedWithStartLevels;
 
-	@BeforeClass
-	public static void setupTargetPlatform() throws Exception {
-		TargetPlatformUtil.setRunningPlatformAsTarget();
-	}
-
 	@Before
 	public void setupLaunchConfig() throws Exception {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IProject project = workspace.getRoot().getProject(getClass().getSimpleName());
-		if (project.exists()) {
-			project.delete(true, null);
-		}
-
-		project.create(null);
-		project.open(null);
-		Bundle bundle = FrameworkUtil.getBundle(getClass());
-		ArrayList<URL> resources = Collections.list(bundle.findEntries("tests/launch", "*", false));
-		for (URL url : resources) {
-			Path path = Paths.get(FileLocator.toFileURL(url).toURI());
-			IFile file = project.getFile(path.getFileName().toString());
-			try (InputStream in = url.openStream()) {
-				file.create(in, true, null);
-			}
-		}
-
-		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-		fFeatureBasedWithStartLevels = launchManager
-				.getLaunchConfiguration(project.getFile("feature-based-with-startlevels.launch"));
+		fFeatureBasedWithStartLevels = getLaunchConfiguration("feature-based-with-startlevels.launch");
 	}
 
 	@Test
