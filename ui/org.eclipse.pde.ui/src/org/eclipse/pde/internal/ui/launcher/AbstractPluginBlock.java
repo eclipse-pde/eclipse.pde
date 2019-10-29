@@ -55,6 +55,7 @@ import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -507,6 +508,14 @@ public abstract class AbstractPluginBlock {
 						fTab.updateLaunchConfigurationDialog();
 					}
 				});
+				// Resize column with on GTK to ensure the Spinner widget will
+				// fit. See bug 552519.
+				if (Util.isGtk()) {
+					Point spinnerSize = spinner.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					levelColumnEditor.minimumWidth = spinnerSize.x;
+					TreeColumn levelColumn = tree.getColumn(1);
+					levelColumn.setWidth(spinnerSize.x);
+				}
 				levelColumnEditor.setEditor(spinner, item, 1);
 
 				final CCombo combo = new CCombo(tree, SWT.BORDER | SWT.READ_ONLY);
