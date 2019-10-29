@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Testframework
+Bundle-SymbolicName: fragment.required.testframework
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: testframework
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: fragment.required.bundle;bundle-version="1.0.0"

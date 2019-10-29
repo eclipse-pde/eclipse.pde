@@ -311,25 +311,6 @@ public class ApiBaselineTests {
 	}
 
 	/**
-	 * Tests component dependents.
-	 *
-	 * @throws CoreException
-	 */
-	@Test
-	public void testDependents() throws CoreException {
-		IApiComponent component = fBaseline.getApiComponent(COMPONENT_A);
-		IApiComponent[] dependents = fBaseline.getDependentComponents(new IApiComponent[] { component });
-		assertEquals("Wrong number of dependents", 2, dependents.length); //$NON-NLS-1$
-		for (IApiComponent apiComponent : dependents) {
-			if (apiComponent.getSymbolicName().equals(COMPONENT_B)) {
-				// done
-				return;
-			}
-		}
-		assertEquals("Missing dependent component.b", false); //$NON-NLS-1$
-	}
-
-	/**
 	 * Tests getting the location from an 'old' baseline
 	 */
 	@Test

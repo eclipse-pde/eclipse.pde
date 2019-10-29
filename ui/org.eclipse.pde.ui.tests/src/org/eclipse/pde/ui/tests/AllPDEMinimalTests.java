@@ -43,7 +43,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	AllPDERuntimeTests.class,
 	// ExportBundleTests.class,
 	AllLauncherTests.class, AllLogViewTests.class, ProjectCreationTests.class, BundleRootTests.class,
-		PluginRegistryTestsMinimal.class, ClasspathResolverTest.class, PDESchemaHelperTest.class
+	PluginRegistryTestsMinimal.class, ClasspathResolverTest.class, PDESchemaHelperTest.class,
+	DynamicPluginProjectReferencesTest.class
 	// ClasspathContributorTest.class
 })
 public class AllPDEMinimalTests {

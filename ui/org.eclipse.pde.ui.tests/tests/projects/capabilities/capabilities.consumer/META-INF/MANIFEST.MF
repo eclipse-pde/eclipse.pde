@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Consumer
+Bundle-SymbolicName: capabilities.consumer
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: capabilities.consumer
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Capability: some.test.capability
