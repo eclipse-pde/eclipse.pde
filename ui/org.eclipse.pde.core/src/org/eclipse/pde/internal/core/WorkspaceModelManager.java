@@ -36,7 +36,8 @@ import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.team.core.RepositoryProvider;
 
-public abstract class WorkspaceModelManager extends AbstractModelManager implements IResourceChangeListener, IResourceDeltaVisitor {
+public abstract class WorkspaceModelManager<T> extends AbstractModelManager
+		implements IResourceChangeListener, IResourceDeltaVisitor {
 
 	public static boolean isPluginProject(IProject project) {
 		if (project == null) {
@@ -71,7 +72,7 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 		return RepositoryProvider.getProvider(project) == null || isBinaryProject(project);
 	}
 
-	class ModelChange {
+	static class ModelChange {
 		IModel model;
 		int type;
 
@@ -92,17 +93,17 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 		}
 	}
 
-	private Map<IProject, Object> fModels = null;
+	private Map<IProject, T> fModels = null;
 	private ArrayList<ModelChange> fChangedModels;
 
-	protected Map<IProject, Object> getModelsMap() {
+	protected Map<IProject, T> getModelsMap() {
 		ensureModelsMapCreated();
 		return fModels;
 	}
 
 	private void ensureModelsMapCreated() {
 		if (fModels == null) {
-			fModels = Collections.synchronizedMap(new LinkedHashMap<IProject, Object>());
+			fModels = Collections.synchronizedMap(new LinkedHashMap<IProject, T>());
 		}
 	}
 
@@ -126,16 +127,13 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 
 	protected abstract void createModel(IProject project, boolean notify);
 
+	protected abstract T removeModel(IProject project);
+
 	protected abstract void addListeners();
 
-	protected Object getModel(IProject project) {
+	protected T getModel(IProject project) {
 		initialize();
 		return fModels.get(project);
-	}
-
-	protected Object[] getModels() {
-		initialize();
-		return fModels.values().toArray();
 	}
 
 	@Override
@@ -206,18 +204,12 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 
 	protected abstract void handleFileDelta(IResourceDelta delta);
 
-	protected Object removeModel(IProject project) {
-		Object model = fModels != null ? fModels.remove(project) : null;
-		addChange(model, IModelProviderEvent.MODELS_REMOVED);
-		return model;
-	}
-
-	protected void addChange(Object model, int eventType) {
-		if (model instanceof IModel) {
+	protected void addChange(IModel model, int eventType) {
+		if (model != null) {
 			if (fChangedModels == null) {
 				fChangedModels = new ArrayList<>();
 			}
-			ModelChange change = new ModelChange((IModel) model, eventType);
+			ModelChange change = new ModelChange(model, eventType);
 			if (!fChangedModels.contains(change)) {
 				fChangedModels.add(change);
 			}

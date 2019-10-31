@@ -623,7 +623,8 @@ public class PluginModelManager implements IModelProviderListener {
 		subMon.split(15);
 
 		if (PDECore.DEBUG_MODEL) {
-			System.out.println(fWorkspaceManager.getModels().length + " workspace models created in  " + (System.currentTimeMillis() - startWorkspaceAdditions) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println(fWorkspaceManager.getModelsMap().size() + " workspace models created in  " //$NON-NLS-1$
+					+ (System.currentTimeMillis() - startWorkspaceAdditions) + " ms"); //$NON-NLS-1$
 		}
 
 		// Resolve the state for all external and workspace models
@@ -1050,7 +1051,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	public IPluginModelBase findModel(IProject project) {
 		initializeTable(null);
-		return fWorkspaceManager.getPluginModel(project);
+		return fWorkspaceManager.getModel(project);
 	}
 
 	/**
@@ -1249,7 +1250,7 @@ public class PluginModelManager implements IModelProviderListener {
 		fWorkspaceManager.removeModel(project);
 		if (fWorkspaceManager.isInterestingProject(project)) {
 			fWorkspaceManager.createModel(project, false);
-			Object model = fWorkspaceManager.getModel(project);
+			IPluginModelBase model = fWorkspaceManager.getModel(project);
 			fWorkspaceManager.addChange(model, IModelProviderEvent.MODELS_CHANGED);
 		}
 		fWorkspaceManager.processModelChanges();

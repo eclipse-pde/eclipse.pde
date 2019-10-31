@@ -164,7 +164,7 @@ public class FeatureModelManager {
 
 	public IFeatureModel getFeatureModel(IProject project) {
 		init();
-		return fWorkspaceManager.getFeatureModel(project);
+		return fWorkspaceManager.getModel(project);
 	}
 
 	/**
