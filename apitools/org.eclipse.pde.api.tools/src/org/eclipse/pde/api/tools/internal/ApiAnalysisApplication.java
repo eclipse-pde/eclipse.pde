@@ -312,19 +312,19 @@ public class ApiAnalysisApplication implements IApplication {
 			res.setDescription(projectDescription, 0, new NullProgressMonitor());
 		}
 		ICommand[] buildSpec = projectDescription.getBuildSpec();
-		List<ICommand> newBuilders = removeManifestAndSchemaBuilders(buildSpec);
+		List<ICommand> newBuilders = removeManifestSchemaAndJavaBuilders(buildSpec);
 		projectDescription.setBuildSpec(
 				newBuilders.toArray(new ICommand[newBuilders.size()]));
 		res.setDescription(projectDescription, new NullProgressMonitor());
 		return res;
 	}
 
-	private static List<ICommand> removeManifestAndSchemaBuilders(ICommand[] buildSpec) {
-		// remove manifest and schema builders
+	private static List<ICommand> removeManifestSchemaAndJavaBuilders(ICommand[] buildSpec) {
+		// remove manifest, schema and java builders
 		return Arrays.stream(buildSpec)
 				.filter(x -> !("org.eclipse.pde.ManifestBuilder".equals(x.getBuilderName()) //$NON-NLS-1$
-				|| "org.eclipse.pde.SchemaBuilder".equals(x.getBuilderName())) //$NON-NLS-1$
-
+						|| "org.eclipse.pde.SchemaBuilder".equals(x.getBuilderName()) //$NON-NLS-1$
+				|| "org.eclipse.jdt.core.javabuilder".equals(x.getBuilderName())) //$NON-NLS-1$
 				).collect(Collectors.toList());
 	}
 
