@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -197,7 +197,7 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ReduceInterfaceFromABtoA"}; //$NON-NLS-1$
+		args[0] = new String[] { PACKAGE_PREFIX + "ReduceInterfaceFromABtoA", "a.classes.hierarchy.InterfaceB" }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -220,7 +220,8 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ReduceInterfaceFromABtoEmpty"}; //$NON-NLS-1$
+		args[0] = new String[] { PACKAGE_PREFIX + "ReduceInterfaceFromABtoEmpty", //$NON-NLS-1$
+				"a.classes.hierarchy.InterfaceB,a.classes.hierarchy.InterfaceA" }; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -243,7 +244,7 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ChangeInterfaceFromAtoB"}; //$NON-NLS-1$
+		args[0] = new String[] { PACKAGE_PREFIX + "ChangeInterfaceFromAtoB", "a.classes.hierarchy.InterfaceA" }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}

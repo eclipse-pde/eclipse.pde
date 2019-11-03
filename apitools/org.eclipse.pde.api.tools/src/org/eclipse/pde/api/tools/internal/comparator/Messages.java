@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -85,6 +85,12 @@ public class Messages extends NLS {
 			return MessageFormat.format(Messages.problem_message_not_found, String.valueOf(key));
 		}
 		String[] arguments = delta.getArguments();
+		if (arguments != null) {
+			// for expanded and contracted superset
+			if (arguments.length == 2) {
+				return MessageFormat.format(message, (Object[]) arguments);
+			}
+		}
 		if (arguments.length != 0) {
 			return MessageFormat.format(message, (Object[]) arguments);
 		}

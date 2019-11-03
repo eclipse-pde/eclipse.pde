@@ -349,7 +349,10 @@ public class ClassFileComparator {
 					}
 				}
 
-				this.addDelta(getElementType(this.type1), IDelta.CHANGED, IDelta.EXPANDED_SUPERINTERFACES_SET, this.currentDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, this.type1.getName(), Util.getDescriptorName(type1));
+				this.addDelta(getElementType(this.type1), IDelta.CHANGED, IDelta.EXPANDED_SUPERINTERFACES_SET,
+						this.currentDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(),
+						this.type1, this.type1.getName(), new String[] { Util.getDescriptorName(type1),
+								computeDiff(superinterfacesSet1, superinterfacesSet2, true) });
 				if (this.type1.isInterface()) {
 					for (Iterator<IApiType> iterator = superinterfacesSet2.iterator(); iterator.hasNext();) {
 						IApiType type = iterator.next();
@@ -392,7 +395,10 @@ public class ClassFileComparator {
 				}
 			}
 		} else if (superinterfacesSet2 == null) {
-			this.addDelta(getElementType(this.type1), IDelta.CHANGED, IDelta.CONTRACTED_SUPERINTERFACES_SET, this.currentDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, this.type1.getName(), Util.getDescriptorName(type1));
+			this.addDelta(getElementType(this.type1), IDelta.CHANGED, IDelta.CONTRACTED_SUPERINTERFACES_SET,
+					this.currentDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(),
+					this.type1, this.type1.getName(), new String[] { Util.getDescriptorName(type1),
+							computeDiff(superinterfacesSet1, superinterfacesSet2, false) });
 		} else {
 			Set<String> names2 = new HashSet<>();
 			for (Iterator<IApiType> iterator = superinterfacesSet2.iterator(); iterator.hasNext();) {
@@ -409,7 +415,10 @@ public class ClassFileComparator {
 				}
 			}
 			if (contracted) {
-				this.addDelta(getElementType(this.type1), IDelta.CHANGED, IDelta.CONTRACTED_SUPERINTERFACES_SET, this.currentDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, this.type1.getName(), Util.getDescriptorName(type1));
+				this.addDelta(getElementType(this.type1), IDelta.CHANGED, IDelta.CONTRACTED_SUPERINTERFACES_SET,
+						this.currentDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(),
+						this.type1, this.type1.getName(), new String[] { Util.getDescriptorName(type1),
+								computeDiff(superinterfacesSet1, superinterfacesSet2, false) });
 				return;
 			}
 			if (names2.size() > 0) {
@@ -456,7 +465,10 @@ public class ClassFileComparator {
 					}
 				}
 
-				this.addDelta(getElementType(this.type1), IDelta.CHANGED, IDelta.EXPANDED_SUPERINTERFACES_SET, this.currentDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, this.type1.getName(), Util.getDescriptorName(type1));
+				this.addDelta(getElementType(this.type1), IDelta.CHANGED, IDelta.EXPANDED_SUPERINTERFACES_SET,
+						this.currentDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(),
+						this.type1, this.type1.getName(), new String[] { Util.getDescriptorName(type1),
+								computeDiff(superinterfacesSet1, superinterfacesSet2, true) });
 				if (this.type1.isInterface()) {
 					for (Iterator<String> iterator = names2.iterator(); iterator.hasNext();) {
 						String interfaceName = iterator.next();
@@ -512,6 +524,49 @@ public class ClassFileComparator {
 				}
 			}
 		}
+	}
+
+	private String computeDiff(Set<IApiType> superinterfacesSet1, Set<IApiType> superinterfacesSet2, boolean expand) {
+		Set<String> namesToReturn = new HashSet<>();
+		if (superinterfacesSet1 == null) {
+			for (Iterator<IApiType> iterator = superinterfacesSet2.iterator(); iterator.hasNext();) {
+				namesToReturn.add(iterator.next().getName());
+			}
+			return processNames(namesToReturn);
+
+		}
+		if (superinterfacesSet2 == null) {
+			for (Iterator<IApiType> iterator = superinterfacesSet1.iterator(); iterator.hasNext();) {
+				namesToReturn.add(iterator.next().getName());
+			}
+			return processNames(namesToReturn);
+
+		}
+		for (Iterator<IApiType> iterator = expand ? superinterfacesSet2.iterator()
+				: superinterfacesSet1.iterator(); iterator.hasNext();) {
+			namesToReturn.add(iterator.next().getName());
+		}
+		Set<String> names1 = new HashSet<>();
+		for (Iterator<IApiType> iterator = expand ? superinterfacesSet1.iterator()
+				: superinterfacesSet2.iterator(); iterator.hasNext();) {
+			names1.add(iterator.next().getName());
+		}
+
+		for (String name : names1) {
+			namesToReturn.remove(name);
+
+		}
+		return processNames(namesToReturn);
+
+	}
+
+	private String processNames(Set<String> namesToReturn) {
+		StringBuilder str = new StringBuilder();
+		for (String string : namesToReturn) {
+			str.append(string);
+			str.append(',');
+		}
+		return str.substring(0, str.length() - 1);
 	}
 
 	private void checkTypeMembers() throws CoreException {
