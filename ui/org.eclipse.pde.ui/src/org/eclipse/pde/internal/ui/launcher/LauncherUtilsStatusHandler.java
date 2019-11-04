@@ -38,7 +38,7 @@ import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.MainTab;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
+import org.eclipse.ui.PlatformUI;
 
 public class LauncherUtilsStatusHandler implements IStatusHandler {
 
@@ -137,17 +137,7 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 	}
 
 	public final static Shell getActiveShell() {
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-		if (window == null) {
-			IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-			if (windows.length > 0) {
-				return windows[0].getShell();
-			}
-		} else {
-			return window.getShell();
-		}
-		return getDisplay().getActiveShell();
+		return PlatformUI.getWorkbench().getModalDialogShellProvider().getShell();
 	}
 
 	private static void initializeProcessor(OrganizeManifestsProcessor processor) {

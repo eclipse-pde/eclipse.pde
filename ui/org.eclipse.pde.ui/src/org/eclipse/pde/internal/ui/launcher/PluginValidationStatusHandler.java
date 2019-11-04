@@ -18,6 +18,7 @@ package org.eclipse.pde.internal.ui.launcher;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.launching.PDEMessages;
 import org.eclipse.pde.internal.launching.launcher.*;
@@ -25,6 +26,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 
 public class PluginValidationStatusHandler implements IStatusHandler {
 	@Override
@@ -47,7 +49,8 @@ public class PluginValidationStatusHandler implements IStatusHandler {
 		final int[] result = new int[1];
 		final Display display = LauncherUtilsStatusHandler.getDisplay();
 		display.syncExec(() -> {
-			PluginStatusDialog dialog = new PluginStatusDialog(display.getActiveShell());
+			IShellProvider shellProvider = PlatformUI.getWorkbench().getModalDialogShellProvider();
+			PluginStatusDialog dialog = new PluginStatusDialog(shellProvider.getShell());
 			dialog.showCancelButton(true);
 			dialog.setInput(op.getInput());
 			result[0] = dialog.open();

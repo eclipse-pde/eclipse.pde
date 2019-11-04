@@ -94,6 +94,20 @@ public class PluginStatusDialog extends TrayDialog {
 	}
 
 	@Override
+	protected IDialogSettings getDialogBoundsSettings() {
+		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = settings.getSection(getDialogSectionName());
+		if (section == null)
+			section = settings.addNewSection(getDialogSectionName());
+		return section;
+	}
+
+	@Override
+	protected int getDialogBoundsStrategy() {
+		return DIALOG_PERSISTSIZE;
+	}
+
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, PDEUIMessages.PluginStatusDialog_continueButtonLabel, true);
 		if (fShowCancelButton) {
@@ -136,22 +150,11 @@ public class PluginStatusDialog extends TrayDialog {
 		return super.close();
 	}
 
-	private IDialogSettings getDialogSettings() {
-		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = settings.getSection(getDialogSectionName());
-		if (section == null)
-			section = settings.addNewSection(getDialogSectionName());
-		return section;
-	}
 
 	protected String getDialogSectionName() {
 		return PDEPlugin.getPluginId() + ".PLUGIN_STATUS_DIALOG"; //$NON-NLS-1$
 	}
 
-	@Override
-	protected IDialogSettings getDialogBoundsSettings() {
-		return getDialogSettings();
-	}
 
 	public void refresh(Map<?, ?> input) {
 		fInput = input;
