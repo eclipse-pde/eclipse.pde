@@ -690,10 +690,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		Integer eeMinorVersion1 = null;
 		Integer eeMinorVersion2 = null;
 
-		if (eeMatcher1.groupCount() > 2) {
+		if (eeMatcher1.groupCount() > 2 && eeMatcher1.group(3) != null) {
 			eeMinorVersion1 = Integer.valueOf(eeMatcher1.group(3));
 		}
-		if (eeMatcher2.groupCount() > 2) {
+		if (eeMatcher2.groupCount() > 2 && eeMatcher2.group(3) != null) {
 			eeMinorVersion2 = Integer.valueOf(eeMatcher2.group(3));
 		}
 
