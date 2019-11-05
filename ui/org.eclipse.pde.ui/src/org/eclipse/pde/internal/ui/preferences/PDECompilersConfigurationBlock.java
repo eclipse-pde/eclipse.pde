@@ -239,6 +239,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	private static final Key KEY_P_VERSION_EXP_PKG = getPDEPrefKey(CompilerFlags.P_MISSING_VERSION_EXP_PKG);
 	private static final Key KEY_P_VERSION_IMP_PKG = getPDEPrefKey(CompilerFlags.P_MISSING_VERSION_IMP_PKG);
 	private static final Key KEY_P_VERSION_REQ_BUNDLE = getPDEPrefKey(CompilerFlags.P_MISSING_VERSION_REQ_BUNDLE);
+	private static final Key KEY_P_VERSION_EXEC_ENV_TOO_LOW = getPDEPrefKey(CompilerFlags.P_EXEC_ENV_TOO_LOW);
 
 	private static final Key KEY_S_CREATE_DOCS = getPDEPrefKey(CompilerFlags.S_CREATE_DOCS);
 	private static final Key KEY_S_DOC_FOLDER = getPDEPrefKey(CompilerFlags.S_DOC_FOLDER);
@@ -246,7 +247,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 	private static String[] SEVERITIES = {PDEUIMessages.PDECompilersConfigurationBlock_error, PDEUIMessages.PDECompilersConfigurationBlock_warning, PDEUIMessages.PDECompilersConfigurationBlock_ignore};
 
-	private static Key[] fgAllKeys = {KEY_F_UNRESOLVED_FEATURES, KEY_F_UNRESOLVED_PLUGINS, KEY_P_BUILD, KEY_P_BUILD_MISSING_OUTPUT, KEY_P_BUILD_SOURCE_LIBRARY, KEY_P_BUILD_OUTPUT_LIBRARY, KEY_P_BUILD_SRC_INCLUDES, KEY_P_BUILD_BIN_INCLUDES, KEY_P_BUILD_JAVA_COMPLIANCE, KEY_P_BUILD_JAVA_COMPILER, KEY_P_BUILD_ENCODINGS, KEY_P_INTERNAL, KEY_P_SERVICE_COMP_WITHOUT_LAZY, KEY_P_NO_AUTOMATIC_MODULE_NAME, KEY_P_DEPRECATED, KEY_P_DISCOURAGED_CLASS, KEY_P_INCOMPATIBLE_ENV, KEY_P_MISSING_EXPORT_PKGS, KEY_P_NO_REQUIRED_ATT, KEY_P_NOT_EXTERNALIZED, KEY_P_UNKNOWN_ATTRIBUTE, KEY_P_UNKNOWN_CLASS, KEY_P_UNKNOWN_ELEMENT, KEY_P_UNKNOWN_IDENTIFIER, KEY_P_UNKNOWN_RESOURCE, KEY_P_UNRESOLVED_EX_POINTS, KEY_P_UNRESOLVED_IMPORTS, KEY_P_VERSION_EXP_PKG, KEY_P_VERSION_IMP_PKG, KEY_P_VERSION_REQ_BUNDLE, KEY_S_CREATE_DOCS, KEY_S_DOC_FOLDER, KEY_S_OPEN_TAGS };
+	private static Key[] fgAllKeys = {KEY_F_UNRESOLVED_FEATURES, KEY_F_UNRESOLVED_PLUGINS, KEY_P_BUILD, KEY_P_BUILD_MISSING_OUTPUT, KEY_P_BUILD_SOURCE_LIBRARY, KEY_P_BUILD_OUTPUT_LIBRARY, KEY_P_BUILD_SRC_INCLUDES, KEY_P_BUILD_BIN_INCLUDES, KEY_P_BUILD_JAVA_COMPLIANCE, KEY_P_BUILD_JAVA_COMPILER, KEY_P_BUILD_ENCODINGS, KEY_P_INTERNAL, KEY_P_SERVICE_COMP_WITHOUT_LAZY, KEY_P_NO_AUTOMATIC_MODULE_NAME, KEY_P_DEPRECATED, KEY_P_DISCOURAGED_CLASS, KEY_P_INCOMPATIBLE_ENV, KEY_P_MISSING_EXPORT_PKGS, KEY_P_NO_REQUIRED_ATT, KEY_P_NOT_EXTERNALIZED, KEY_P_UNKNOWN_ATTRIBUTE, KEY_P_UNKNOWN_CLASS, KEY_P_UNKNOWN_ELEMENT, KEY_P_UNKNOWN_IDENTIFIER, KEY_P_UNKNOWN_RESOURCE, KEY_P_UNRESOLVED_EX_POINTS, KEY_P_UNRESOLVED_IMPORTS, KEY_P_VERSION_EXP_PKG, KEY_P_VERSION_IMP_PKG, KEY_P_VERSION_REQ_BUNDLE, KEY_P_VERSION_EXEC_ENV_TOO_LOW, KEY_S_CREATE_DOCS, KEY_S_DOC_FOLDER, KEY_S_OPEN_TAGS };
 
 	/**
 	 * Constant representing the {@link IDialogSettings} section for this block
@@ -541,7 +542,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 				initializeComboControls(client, new String[] {PDEUIMessages.PDECompilersConfigurationBlock_1, PDEUIMessages.PDECompilersConfigurationBlock_2, PDEUIMessages.PDECompilersConfigurationBlock_0, PDEUIMessages.PDECompilersConfigurationBlock_3, PDEUIMessages.PDECompilersConfigurationBlock_4, PDEUIMessages.PDECompilersConfigurationBlock_5, PDEUIMessages.PDECompilersConfigurationBlock_6, PDEUIMessages.PDECompilersConfigurationBlock_7, PDEUIMessages.CompilersConfigurationTab_buildPropertiesErrors}, new Key[] {KEY_P_BUILD_SOURCE_LIBRARY, KEY_P_BUILD_OUTPUT_LIBRARY, KEY_P_BUILD_MISSING_OUTPUT, KEY_P_BUILD_BIN_INCLUDES, KEY_P_BUILD_SRC_INCLUDES, KEY_P_BUILD_JAVA_COMPLIANCE, KEY_P_BUILD_JAVA_COMPILER, KEY_P_BUILD_ENCODINGS, KEY_P_BUILD}, CompilerFlags.PLUGIN_FLAGS);
 				// Versioning
 				client = createExpansibleComposite(sbody, PDEUIMessages.PDECompilersConfigurationBlock_versioning);
-				initializeComboControls(client, new String[] {PDEUIMessages.compilers_p_missing_require_bundle, PDEUIMessages.compilers_p_missing_exp_pkg, PDEUIMessages.compilers_p_missing_imp_pkg}, new Key[] {KEY_P_VERSION_REQ_BUNDLE, KEY_P_VERSION_EXP_PKG, KEY_P_VERSION_IMP_PKG}, CompilerFlags.PLUGIN_FLAGS);
+				initializeComboControls(client, new String[] {PDEUIMessages.compilers_p_missing_require_bundle, PDEUIMessages.compilers_p_missing_exp_pkg, PDEUIMessages.compilers_p_missing_imp_pkg, PDEUIMessages.compilers_p_exec_env_too_low}, new Key[] {KEY_P_VERSION_REQ_BUNDLE, KEY_P_VERSION_EXP_PKG, KEY_P_VERSION_IMP_PKG, KEY_P_VERSION_EXEC_ENV_TOO_LOW}, CompilerFlags.PLUGIN_FLAGS);
 				// Usage
 				client = createExpansibleComposite(sbody, PDEUIMessages.PDECompilersConfigurationBlock_usage);
 				initializeComboControls(client, new String[] { PDEUIMessages.compilers_p_unresolved_import, PDEUIMessages.compilers_p_unresolved_ex_points, PDEUIMessages.compilers_p_internal, PDEUIMessages.compilers_p_deprecated, PDEUIMessages.compilers_p_not_externalized_att, PDEUIMessages.compilers_p_service_component_without_lazy_act }, new Key[] { KEY_P_UNRESOLVED_IMPORTS, KEY_P_UNRESOLVED_EX_POINTS, KEY_P_INTERNAL, KEY_P_DEPRECATED, KEY_P_NOT_EXTERNALIZED, KEY_P_SERVICE_COMP_WITHOUT_LAZY }, CompilerFlags.PLUGIN_FLAGS);
