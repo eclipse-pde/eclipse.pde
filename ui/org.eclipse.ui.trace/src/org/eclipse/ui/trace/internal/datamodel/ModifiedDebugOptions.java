@@ -25,8 +25,8 @@ public class ModifiedDebugOptions {
 	 * Construct a new ModifiedDebugOptions object
 	 */
 	public ModifiedDebugOptions() {
-		debugOptionsToAdd = new ArrayList<TracingComponentDebugOption>();
-		debugOptionsToRemove = new ArrayList<TracingComponentDebugOption>();
+		debugOptionsToAdd = new ArrayList<>();
+		debugOptionsToRemove = new ArrayList<>();
 	}
 
 	/**

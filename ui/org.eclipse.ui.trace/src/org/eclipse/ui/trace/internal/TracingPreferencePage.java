@@ -535,7 +535,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		if (displayableTracingComponents != null) {
 			purgeModel();
 		}
-		displayableTracingComponents = new HashMap<String, TracingComponent>();
+		displayableTracingComponents = new HashMap<>();
 		// look for extension points
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] cf = registry.getConfigurationElementsFor(TracingConstants.BUNDLE_ID, TracingConstants.TRACING_EXTENSION_POINT_NAME);
@@ -633,7 +633,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		DebugOptionsHandler.setDebugEnabled(enableTracing);
 		DebugOptionsHandler.getDebugOptions().setFile(standardOutputStreamButton.getSelection() ? null : new File(tracingFileText.getText()));
 		if (enableTracing) {
-			Map<String, String> newOptions = new HashMap<String, String>();
+			Map<String, String> newOptions = new HashMap<>();
 			// get the set of options available
 			Map<String, String> currentOptions = DebugOptionsHandler.getDebugOptions().getOptions();
 			newOptions.putAll(currentOptions);
@@ -674,7 +674,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 	 * Save the property page preferences.
 	 */
 	protected void savePreferences(boolean tracingEnabled) {
-		Map<String, String> prefValues = new HashMap<String, String>(5);
+		Map<String, String> prefValues = new HashMap<>(5);
 		prefValues.put(TracingConstants.PREFERENCE_ENABLEMENT_IDENTIFIER, Boolean.toString(tracingEnabled));
 		prefValues.put(TracingConstants.PREFERENCE_MAX_FILE_COUNT_IDENTIFIER, Integer.toString(maximumFileCountSpinner.getSelection()));
 		prefValues.put(TracingConstants.PREFERENCE_MAX_FILE_SIZE_IDENTIFIER, Integer.toString(maximumFileSizeSpinner.getSelection()));

@@ -29,11 +29,11 @@ public class TracingCollections {
 	 */
 	protected TracingCollections() {
 
-		this.fComponentCollection = new HashMap<String, TracingComponent>();
-		this.fDebugOptionCollection = new HashMap<String, List<TracingComponentDebugOption>>();
-		this.fBundleOptionsCollection = new HashMap<Bundle, Properties>();
-		this.fBundleConsumedCollection = new HashMap<Bundle, Boolean>();
-		this.fBundleComponentCollection = new HashMap<Bundle, List<TracingComponent>>();
+		this.fComponentCollection = new HashMap<>();
+		this.fDebugOptionCollection = new HashMap<>();
+		this.fBundleOptionsCollection = new HashMap<>();
+		this.fBundleConsumedCollection = new HashMap<>();
+		this.fBundleComponentCollection = new HashMap<>();
 		this.fModifiedDebugOptions = new ModifiedDebugOptions();
 	}
 
@@ -70,7 +70,7 @@ public class TracingCollections {
 			List<TracingComponentDebugOption> debugOptions = this.fDebugOptionCollection.get(newDebugOption.getOptionPath());
 			if (debugOptions == null) {
 				// create the list of {@link TracingComponentDebugOption} elements
-				debugOptions = new ArrayList<TracingComponentDebugOption>();
+				debugOptions = new ArrayList<>();
 				fDebugOptionCollection.put(newDebugOption.getOptionPath(), debugOptions);
 			}
 			// add the newly created {@link TracingComponentDebugOption}
@@ -202,7 +202,7 @@ public class TracingCollections {
 		if ((bundle != null) && (component != null)) {
 			List<TracingComponent> components = fBundleComponentCollection.get(bundle);
 			if (components == null) {
-				components = new ArrayList<TracingComponent>();
+				components = new ArrayList<>();
 				fBundleComponentCollection.put(bundle, components);
 			}
 			components.add(component);

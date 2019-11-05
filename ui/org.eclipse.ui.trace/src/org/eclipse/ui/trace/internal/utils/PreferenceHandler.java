@@ -62,7 +62,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 	 * Set the default preferences
 	 */
 	public static void setDefaultPreferences() {
-		final Map<String, String> prefValues = new HashMap<String, String>(5);
+		final Map<String, String> prefValues = new HashMap<>(5);
 		// tracing is off by default
 		prefValues.put(TracingConstants.PREFERENCE_ENABLEMENT_IDENTIFIER, Boolean.toString(false));
 		// see org.eclipse.osgi.framework.debug.EclipseDebugTrace#DEFAULT_TRACE_FILES

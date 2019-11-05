@@ -40,7 +40,7 @@ public class TracingComponent extends AbstractTracingNode {
 		// set the label
 		setLabel(element.getAttribute(TracingConstants.TRACING_EXTENSION_LABEL_ATTRIBUTE));
 		// set the bundles
-		bundles = new ArrayList<Bundle>();
+		bundles = new ArrayList<>();
 		addBundles(element);
 	}
 

@@ -25,7 +25,7 @@ public abstract class AbstractTracingNode implements TracingNode {
 	 * Constructor to create the empty list of children
 	 */
 	public AbstractTracingNode() {
-		children = new ArrayList<TracingNode>();
+		children = new ArrayList<>();
 	}
 
 	protected abstract void populateChildren();

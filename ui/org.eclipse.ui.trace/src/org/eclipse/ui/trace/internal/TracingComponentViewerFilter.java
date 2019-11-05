@@ -31,8 +31,8 @@ public class TracingComponentViewerFilter extends PatternFilter {
 	 */
 	public TracingComponentViewerFilter() {
 
-		visibleTracingComponentsCache = new HashMap<TracingComponent, Boolean>();
-		visibleTracingDebugOptions = new HashMap<TracingComponentDebugOption, Boolean>();
+		visibleTracingComponentsCache = new HashMap<>();
+		visibleTracingDebugOptions = new HashMap<>();
 	}
 
 	@Override

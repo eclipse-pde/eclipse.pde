@@ -65,7 +65,7 @@ public class TracingUIActivator extends Plugin {
 			if (instanceLocation == null || !instanceLocation.isSet()) {
 				// register a startup monitor to notify us when the application is running
 				final TracingStartupMonitor startupMonitor = new TracingStartupMonitor();
-				final Dictionary<String, ?> properties = new Hashtable<String, Object>(1);
+				final Dictionary<String, ?> properties = new Hashtable<>(1);
 				ServiceRegistration<StartupMonitor> registration = context.registerService(StartupMonitor.class, startupMonitor, properties);
 				startupMonitor.setRegistration(registration);
 			} else {

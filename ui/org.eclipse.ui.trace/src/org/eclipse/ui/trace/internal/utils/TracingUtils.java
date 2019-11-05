@@ -86,7 +86,7 @@ public class TracingUtils {
 	 * @return A {@link Map} object containing the key=value pairs in the encoded debug options {@link String}
 	 */
 	public static Map<String, String> convertToMap(final String debugOptions) {
-		final Map<String, String> result = new HashMap<String, String>();
+		final Map<String, String> result = new HashMap<>();
 		if (debugOptions != null) {
 			StringTokenizer optionTokens = new StringTokenizer(debugOptions, TracingConstants.DEBUG_OPTION_PREFERENCE_SEPARATOR);
 			while (optionTokens.hasMoreTokens()) {
