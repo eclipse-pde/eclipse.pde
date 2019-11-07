@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,7 +17,7 @@ package org.eclipse.pde.internal.runtime.registry.model;
 import java.util.Arrays;
 import org.osgi.framework.ServiceReference;
 
-public class ServiceName extends ModelObject implements Comparable {
+public class ServiceName extends ModelObject implements Comparable<ServiceName> {
 
 	private String[] classes;
 	private ServiceReference<?> reference;
@@ -70,16 +70,12 @@ public class ServiceName extends ModelObject implements Comparable {
 	}
 
 	@Override
-	public int compareTo(Object obj) {
-		if (obj instanceof ServiceName) {
-			// compare first class
-			ServiceName other = (ServiceName) obj;
-			String myClass = classes[0];
-			String otherClass = other.getClasses()[0];
+	public int compareTo(ServiceName other) {
+		// compare first class
+		String myClass = classes[0];
+		String otherClass = other.getClasses()[0];
 
-			return myClass.compareTo(otherClass);
-		}
-		return 0;
+		return myClass.compareTo(otherClass);
 
 	}
 }

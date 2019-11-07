@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2008, 2017 IBM Corporation and others.
+ *  Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -17,7 +17,7 @@ package org.eclipse.pde.internal.runtime.registry.model;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ServiceRegistration extends ModelObject implements Comparable {
+public class ServiceRegistration extends ModelObject implements Comparable<ServiceRegistration> {
 
 	private long id;
 	private String bundle;
@@ -143,11 +143,7 @@ public class ServiceRegistration extends ModelObject implements Comparable {
 	}
 
 	@Override
-	public int compareTo(Object obj) {
-		if (obj instanceof ServiceRegistration) {
-			ServiceRegistration other = (ServiceRegistration) obj;
-			return name.compareTo(other.getName());
-		}
-		return 0;
+	public int compareTo(ServiceRegistration other) {
+		return name.compareTo(other.getName());
 	}
 }

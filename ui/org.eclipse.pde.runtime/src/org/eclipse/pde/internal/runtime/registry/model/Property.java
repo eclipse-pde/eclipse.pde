@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,7 @@ package org.eclipse.pde.internal.runtime.registry.model;
 
 import org.osgi.framework.Constants;
 
-public class Property extends ModelObject implements Comparable {
+public class Property extends ModelObject implements Comparable<Property> {
 	public static final String PREFIX_SERVICE = "service."; //$NON-NLS-1$
 	public static final String PREFIX_COMPONENT = "component."; //$NON-NLS-1$
 
@@ -50,15 +50,16 @@ public class Property extends ModelObject implements Comparable {
 	}
 
 	/**
-	 * Compare properties for order. Returns a negative integer, zero, or a positive
-	 * integer as the first argument is less than, equal to, or greater than the second.
+	 * Compare properties for order. Returns a negative integer, zero, or a
+	 * positive integer as the first argument is less than, equal to, or greater
+	 * than the second.
 	 *
 	 * <p>
 	 * The {@link Property}s are compared according to the following rules:
 	 * <ul>
 	 * <li>objectClass is always less than everything else</li>
 	 * <li>properties with names starting with "service." are considered "less"
-	 * 		than other properties.</li>
+	 * than other properties.</li>
 	 * <li>regular properties are considered "more" than other properties</li>
 	 * </ul>
 	 * </p>
@@ -79,19 +80,14 @@ public class Property extends ModelObject implements Comparable {
 	 * </ul>
 	 * </p>
 	 *
-	 * @param obj other property to be compared against
+	 * @param other
+	 *            other property to be compared against
 	 *
 	 * @return a negative integer, zero, or a positive integer as the first
-	 * 			argument is less than, equal to, or greater than the second.
+	 *         argument is less than, equal to, or greater than the second.
 	 */
 	@Override
-	public int compareTo(Object obj) {
-		if (!(obj instanceof Property)) {
-			return 0;
-		}
-
-		Property other = (Property) obj;
-
+	public int compareTo(Property other) {
 		String name0 = getName();
 		String name1 = other.getName();
 
