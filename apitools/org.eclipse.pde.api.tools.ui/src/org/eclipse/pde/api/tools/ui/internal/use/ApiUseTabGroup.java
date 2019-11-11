@@ -16,7 +16,6 @@ package org.eclipse.pde.api.tools.ui.internal.use;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
 
 /**
  * The tab group for API use scanning
@@ -27,8 +26,7 @@ public class ApiUseTabGroup extends AbstractLaunchConfigurationTabGroup {
 
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		setTabs(new ILaunchConfigurationTab[] {
-				new ApiUseScanTab(), new ApiUsePatternTab(), new CommonTab() });
+		setTabs(new ApiUseScanTab(), new ApiUsePatternTab(), new CommonTab());
 	}
 
 }
