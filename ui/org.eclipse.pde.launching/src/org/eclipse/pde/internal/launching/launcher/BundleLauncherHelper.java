@@ -43,11 +43,11 @@ public class BundleLauncherHelper {
 	public static final char VERSION_SEPARATOR = '*';
 
 	public static Map<IPluginModelBase, String> getWorkspaceBundleMap(ILaunchConfiguration configuration) throws CoreException {
-		return getWorkspaceBundleMap(configuration, null, IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES);
+		return getWorkspaceBundleMap(configuration, null);
 	}
 
 	public static Map<IPluginModelBase, String> getTargetBundleMap(ILaunchConfiguration configuration) throws CoreException {
-		return getTargetBundleMap(configuration, null, IPDELauncherConstants.SELECTED_TARGET_BUNDLES);
+		return getTargetBundleMap(configuration, null);
 	}
 
 	public static Map<IPluginModelBase, String> getMergedBundleMap(ILaunchConfiguration configuration, boolean osgi) throws CoreException {
@@ -208,8 +208,8 @@ public class BundleLauncherHelper {
 		}
 
 		Set<String> set = new HashSet<>();
-		map = getWorkspaceBundleMap(configuration, set, IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES);
-		map.putAll(getTargetBundleMap(configuration, set, IPDELauncherConstants.SELECTED_TARGET_BUNDLES));
+		map = getWorkspaceBundleMap(configuration, set);
+		map.putAll(getTargetBundleMap(configuration, set));
 		return map;
 	}
 
@@ -300,8 +300,8 @@ public class BundleLauncherHelper {
 		return map.keySet().toArray(new IPluginModelBase[map.size()]);
 	}
 
-	public static Map<IPluginModelBase, String> getWorkspaceBundleMap(ILaunchConfiguration configuration, Set<String> set, String attribute) throws CoreException {
-		Set<String> selected = configuration.getAttribute(attribute, Collections.emptySet());
+	public static Map<IPluginModelBase, String> getWorkspaceBundleMap(ILaunchConfiguration configuration, Set<String> set) throws CoreException {
+		Set<String> selected = configuration.getAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Collections.emptySet());
 		Map<IPluginModelBase, String> map = new LinkedHashMap<>();
 		for (String token : selected) {
 			int index = token.indexOf('@');
@@ -425,8 +425,8 @@ public class BundleLauncherHelper {
 
 	}
 
-	public static Map<IPluginModelBase, String> getTargetBundleMap(ILaunchConfiguration configuration, Set<String> set, String attribute) throws CoreException {
-		Set<String> selected = configuration.getAttribute(attribute, Collections.emptySet());
+	public static Map<IPluginModelBase, String> getTargetBundleMap(ILaunchConfiguration configuration, Set<String> set) throws CoreException {
+		Set<String> selected = configuration.getAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Collections.emptySet());
 		Map<IPluginModelBase, String> map = new LinkedHashMap<>();
 		for (String token : selected) {
 			int index = token.indexOf('@');

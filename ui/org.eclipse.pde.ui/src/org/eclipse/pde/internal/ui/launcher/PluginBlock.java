@@ -92,10 +92,8 @@ public class PluginBlock extends AbstractPluginBlock {
 
 	private void initializePluginsState(ILaunchConfiguration config) throws CoreException {
 		Map<IPluginModelBase, String> selected = new HashMap<>();
-		selected.putAll(BundleLauncherHelper.getWorkspaceBundleMap(config, null,
-				IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES));
-		selected.putAll(BundleLauncherHelper.getTargetBundleMap(config, null,
-				IPDELauncherConstants.SELECTED_TARGET_BUNDLES));
+		selected.putAll(BundleLauncherHelper.getWorkspaceBundleMap(config, null));
+		selected.putAll(BundleLauncherHelper.getTargetBundleMap(config, null));
 
 		initializePluginsState(selected);
 	}

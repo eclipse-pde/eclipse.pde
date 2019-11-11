@@ -75,10 +75,8 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 
 			// fetch the plug-ins models
 			Set<String> set = new HashSet<>();
-			Map<IPluginModelBase, String> map = BundleLauncherHelper.getWorkspaceBundleMap(fLaunchConfiguration, set,
-					IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES);
-			map.putAll(BundleLauncherHelper.getTargetBundleMap(fLaunchConfiguration, set,
-					IPDELauncherConstants.SELECTED_TARGET_BUNDLES));
+			Map<IPluginModelBase, String> map = BundleLauncherHelper.getWorkspaceBundleMap(fLaunchConfiguration, set);
+			map.putAll(BundleLauncherHelper.getTargetBundleMap(fLaunchConfiguration, set));
 
 			addPlugins(factory, product, map);
 

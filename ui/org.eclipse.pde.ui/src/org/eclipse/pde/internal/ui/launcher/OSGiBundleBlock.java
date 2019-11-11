@@ -76,8 +76,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	private void initializePluginsState(ILaunchConfiguration configuration) throws CoreException {
 		Map<IPluginModelBase, String> selected = new HashMap<>();
 		selected.putAll(BundleLauncherHelper.getWorkspaceBundleMap(configuration));
-		selected.putAll(BundleLauncherHelper.getTargetBundleMap(configuration, null,
-				IPDELauncherConstants.SELECTED_TARGET_BUNDLES));
+		selected.putAll(BundleLauncherHelper.getTargetBundleMap(configuration, null));
 
 		initializePluginsState(selected);
 	}
