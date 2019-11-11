@@ -18,6 +18,7 @@
 package org.eclipse.pde.internal.core.builders;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -246,6 +247,12 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 									if (!containsPackage(header, name)) {
 										packages.append(name);
 										packages.append(","); //$NON-NLS-1$
+										byte[] bytes = packages.toString().getBytes(StandardCharsets.UTF_8);
+										// See MarkerInfo::checkValidAttribute
+										if (bytes.length > 65535) {
+											packages.delete(packages.lastIndexOf(name), packages.length());
+											break;
+										}
 									}
 								}
 							}
