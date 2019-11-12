@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -192,7 +192,7 @@ public interface IPDELauncherConstants {
 	 * a comma-separated list of IDs of target platform plug-ins to launch with.
 	 * This value is only used when the Automatic Add option is off.
 	 * 
-	 * @deprecated Use {@link IPDELauncherConstants.SELECTED_TARGET_BUNDLES}
+	 * @deprecated Use {@link IPDELauncherConstants#SELECTED_TARGET_BUNDLES}
 	 */
 	@Deprecated
 	String SELECTED_TARGET_PLUGINS = "selected_target_plugins"; //$NON-NLS-1$
