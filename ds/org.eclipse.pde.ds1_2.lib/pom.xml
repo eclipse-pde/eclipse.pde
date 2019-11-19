@@ -22,7 +22,7 @@
   </parent>
   <groupId>org.eclipse.pde</groupId>
   <artifactId>org.eclipse.pde.ds1_2.lib</artifactId>
-  <version>1.0.300-SNAPSHOT</version>
+  <version>1.0.400-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
   <build>
     <plugins>
