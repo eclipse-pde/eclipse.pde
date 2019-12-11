@@ -213,11 +213,11 @@ public class TargetDefinitionContentAssist implements IContentAssistProcessor {
 	/**
 	 * Uses a search term to determine if a string is a match. If it is a match,
 	 * then a StyledString is generated showing how it is matched.
-	 * 
+	 *
 	 * Matches if searchTerm is empty, string contains searchTerm, or if searchTerm
 	 * matches string using the camelCase technique where digits and symbols are
 	 * considered as upper case letters
-	 * 
+	 *
 	 * @param string
 	 *            The string in question
 	 * @param searchTerm

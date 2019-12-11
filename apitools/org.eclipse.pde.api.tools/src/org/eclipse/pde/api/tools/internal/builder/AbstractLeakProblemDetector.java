@@ -52,7 +52,7 @@ public abstract class AbstractLeakProblemDetector extends AbstractProblemDetecto
 		}
 		// could be a reference to a package visible type
 		IApiMember member = reference.getMember();
-		
+
 		// if reference has noimplement restriction, it could leak non-API types
 		if (RestrictionModifiers.isImplementRestriction(member.getModifiers())) {
 			return true;

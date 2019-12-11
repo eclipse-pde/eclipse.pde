@@ -225,7 +225,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 			}
 		}
 
-		//collected models from selection actually doesn't have to be valid for 
+		//collected models from selection actually doesn't have to be valid for
 		//this export page (or subclass) - select those which fits
 		//because otherwise we could try to select for export something which is not
 		//in the viewer visible for user

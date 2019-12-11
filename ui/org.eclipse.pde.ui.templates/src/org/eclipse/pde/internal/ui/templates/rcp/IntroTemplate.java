@@ -250,7 +250,7 @@ public class IntroTemplate extends PDETemplateSection {
 		for (IPluginReference iPluginReference : getRCP3xDependencies()) {
 			result.add((PluginReference) iPluginReference);
 		}
-		
+
 		if (getValue(KEY_GENERATE_DYNAMIC_CONTENT).toString().equals(DYNAMIC_SELECTED)) {
 			result.add(new PluginReference("org.eclipse.ui.forms")); //$NON-NLS-1$
 			result.add(new PluginReference("org.eclipse.swt")); //$NON-NLS-1$

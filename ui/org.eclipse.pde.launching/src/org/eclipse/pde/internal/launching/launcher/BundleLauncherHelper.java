@@ -629,7 +629,7 @@ public class BundleLauncherHelper {
 					String version = pluginData[1];
 					String pluginResolution = pluginData[2];
 					ModelEntry pluginModelEntry = PluginRegistry.findEntry(id);
-					
+
 					if (pluginModelEntry != null) {
 						if (IPDELauncherConstants.LOCATION_DEFAULT.equalsIgnoreCase(pluginResolution)) {
 							pluginResolution = defaultPluginResolution;

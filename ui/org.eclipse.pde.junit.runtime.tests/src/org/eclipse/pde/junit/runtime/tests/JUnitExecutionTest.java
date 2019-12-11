@@ -130,10 +130,10 @@ public class JUnitExecutionTest {
 		Result testResult = session.getTestResult(true);
 		if (ITestElement.Result.OK.equals(testResult))
 			return;
-		
+
 		AssertionFailedError assertionFailedError = new AssertionFailedError("test completed with " + testResult);
 		addFailureTraces(session, assertionFailedError);
-		
+
 		throw assertionFailedError;
 	}
 
@@ -142,7 +142,7 @@ public class JUnitExecutionTest {
 		if (trace != null) {
 			assertionFailedError.addSuppressed(new AssertionFailedError("FailureTrace of " + element + ":\n\n" + trace.getTrace()));
 		}
-		
+
 		if (element instanceof ITestElementContainer) {
 			for (ITestElement child : ((ITestElementContainer) element).getChildren()) {
 				addFailureTraces(child, assertionFailedError);

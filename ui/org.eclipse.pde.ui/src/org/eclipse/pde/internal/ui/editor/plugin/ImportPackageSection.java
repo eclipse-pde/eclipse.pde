@@ -195,9 +195,9 @@ public class ImportPackageSection extends TableSection {
 				String s1 = e1.toString();
 				String s2 = e2.toString();
 				if (s1.contains(" ")) //$NON-NLS-1$
-					s1 = s1.substring(0, s1.indexOf(' ')); 
+					s1 = s1.substring(0, s1.indexOf(' '));
 				if (s2.contains(" ")) //$NON-NLS-1$
-					s2 = s2.substring(0, s2.indexOf(' ')); 
+					s2 = s2.substring(0, s2.indexOf(' '));
 				return super.compare(viewer, s1, s2);
 			}
 		});

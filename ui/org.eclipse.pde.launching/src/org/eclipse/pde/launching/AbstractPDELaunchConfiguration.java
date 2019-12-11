@@ -484,7 +484,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 
 	/**
 	 * Updates the field shouldVMAddModuleSystem.
-	 * 
+	 *
 	 * @since 3.8
 	 * @deprecated This method was wrongly added and is no longer used. It is a no-op now.
 	 * @noreference This method is not intended to be referenced by clients.

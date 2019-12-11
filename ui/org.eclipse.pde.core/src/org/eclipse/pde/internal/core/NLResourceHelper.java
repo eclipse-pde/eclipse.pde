@@ -83,7 +83,7 @@ public class NLResourceHelper {
 			return s.substring(1);
 		}
 
-		int ix = s.indexOf(' '); 
+		int ix = s.indexOf(' ');
 		String key = ix == -1 ? s : s.substring(0, ix);
 		String dflt = ix == -1 ? s : s.substring(ix + 1);
 

@@ -282,11 +282,11 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		}
 		return false;
 	}
-	
+
 	private static boolean isJUnit5(String[] args) {
 		if (runAsJUnit5(args) == true)
 			return true;
-		
+
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("org.eclipse.jdt.internal.junit5.runner.JUnit5TestLoader")) //$NON-NLS-1$
 				return true;

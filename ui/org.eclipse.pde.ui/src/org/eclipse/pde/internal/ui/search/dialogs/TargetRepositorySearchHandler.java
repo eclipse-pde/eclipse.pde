@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2010, 2017 EclipseSource and others. 
+* Copyright (c) 2010, 2017 EclipseSource and others.
 *
 * This
 * program and the accompanying materials are made available under the terms of

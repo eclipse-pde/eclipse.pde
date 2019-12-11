@@ -33,7 +33,7 @@ public class TracingPropertySource {
 	private static final String[] fBooleanChoices = {"false", "true"}; //$NON-NLS-1$ //$NON-NLS-2$
 	private Properties fMasterOptions;
 	private boolean fModified;
-	
+
 	// the flag fChanged is used to determine whether the model's content page
 	// should be recreated
 	private boolean fChanged;
