@@ -106,6 +106,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		setDescription(Messages.preferencePageDescription);
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 
 		// empty implementation

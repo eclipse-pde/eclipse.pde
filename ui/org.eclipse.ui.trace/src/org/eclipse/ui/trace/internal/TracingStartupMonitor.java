@@ -26,6 +26,7 @@ public class TracingStartupMonitor implements StartupMonitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.osgi.service.runnable.StartupMonitor#update()
 	 */
+	@Override
 	public void update() {
 
 		// empty implementation
@@ -34,6 +35,7 @@ public class TracingStartupMonitor implements StartupMonitor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.osgi.service.runnable.StartupMonitor#applicationRunning()
 	 */
+	@Override
 	public void applicationRunning() {
 
 		// bug 395632: The application is running now so it's safe to initialize the preferences

@@ -93,6 +93,7 @@ public class TracingComponent extends AbstractTracingNode {
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.trace.internal.datamodel.AbstractTracingNode#isEnabled()
 	 */
+	@Override
 	public boolean isEnabled() {
 
 		// a tracing component is enabled if all of its children are enabled

@@ -124,6 +124,7 @@ public class TracingComponentDebugOption extends AbstractTracingNode {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.trace.internal.datamodel.TracingNode#isEnabled()
 	 */
+	@Override
 	public boolean isEnabled() {
 		boolean isEnabled = false;
 		if (TracingUtils.isValueBoolean(fOptionPathValue)) {
