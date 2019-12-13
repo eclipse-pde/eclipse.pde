@@ -644,9 +644,9 @@ public class SourceTests extends PDETestCase {
 		BuildTimeFeature model = factory.parseBuildFeature(feature.getLocationURI().toURL());
 		FeatureEntry[] included = model.getPluginEntries();
 		assertEquals(1, included.length);
-		for (int i = 0; i < included.length; i++) {
+		for (FeatureEntry element : included) {
 			assertResourceFile(buildFolder,
-					"tmp/eclipse/plugins/" + included[i].getId() + "_" + included[i].getVersion() + ".jar");
+					"tmp/eclipse/plugins/" + element.getId() + "_" + element.getVersion() + ".jar");
 		}
 	}
 

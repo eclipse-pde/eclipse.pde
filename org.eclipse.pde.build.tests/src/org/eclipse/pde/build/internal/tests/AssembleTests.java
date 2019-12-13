@@ -131,8 +131,8 @@ public class AssembleTests extends PDETestCase {
 
 		buildFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
 		File[] plugins = buildFolder.getFolder("tmp/eclipse/plugins").getLocation().toFile().listFiles();
-		for (int i = 0; i < plugins.length; i++) {
-			assertJarVerifies(plugins[i]);
+		for (File plugin : plugins) {
+			assertJarVerifies(plugin);
 		}
 	}
 

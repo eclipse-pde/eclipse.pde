@@ -195,8 +195,8 @@ public abstract class PDETestCase extends TestCase {
 			}
 		}
 
-		for (int i = 0; i < targets.length; i++) {
-			args[idx++] = targets[i];
+		for (String target : targets) {
+			args[idx++] = target;
 		}
 		return args;
 	}
@@ -356,8 +356,8 @@ public abstract class PDETestCase extends TestCase {
 			SignedContent content = certFactory.getSignedContent(jarFile);
 			if (content.isSigned()) {
 				SignedContentEntry[] entries = content.getSignedEntries();
-				for (int i = 0; i < entries.length; i++) {
-					entries[i].verify();
+				for (SignedContentEntry entrie : entries) {
+					entrie.verify();
 				}
 			} else if (throwIfNotSigned)
 				throw new AssertionFailedException(jarFile.toString() + " is not signed.");

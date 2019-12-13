@@ -578,8 +578,7 @@ public class P2Tests extends P2TestCase {
 		Map<String, String> repoProps = repository.getProperties();
 		assertEquals(repoProps.get("publishPackFilesAsSiblings"), "true");
 		IQueryResult<IArtifactKey> keys = repository.query(ArtifactKeyQuery.ALL_KEYS, null);
-		for (Iterator<IArtifactKey> iterator = keys.iterator(); iterator.hasNext();) {
-			IArtifactKey key = iterator.next();
+		for (IArtifactKey key : keys) {
 			IArtifactDescriptor[] descriptors = repository.getArtifactDescriptors(key);
 
 			if (key.getClassifier().equals("osgi.bundle") && key.getId().equals("org.eclipse.cvs")) {

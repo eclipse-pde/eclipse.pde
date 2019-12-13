@@ -149,12 +149,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		// Figure out the version of the org.eclipse.rcp feature
 		String baseLocation = Platform.getInstallLocation().getURL().getPath();
 		File features = new File(baseLocation, "features");
-		FileFilter filter = new FileFilter() {
-			@Override
-			public boolean accept(File pathname) {
-				return pathname.getName().startsWith("org.eclipse.rcp_");
-			}
-		};
+		FileFilter filter = pathname -> pathname.getName().startsWith("org.eclipse.rcp_");
 		File rcp[] = features.listFiles(filter);
 		assertTrue(rcp.length > 0);
 		String name = rcp[0].getName();
