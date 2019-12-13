@@ -37,3 +37,4 @@ Import-Package: org.eclipse.equinox.frameworkadmin;version="2.0.0",
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.pde.build.tests
+Bundle-Vendor: Eclipse.org
