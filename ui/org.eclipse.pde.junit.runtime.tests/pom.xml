@@ -25,7 +25,7 @@
 	</parent>
 	<groupId>org.eclipse.pde</groupId>
 	<artifactId>org.eclipse.pde.junit.runtime.tests</artifactId>
-	<version>3.5.500-SNAPSHOT</version>
+	<version>3.5.600-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
 	
 	<properties>
