@@ -418,7 +418,7 @@ public class ApiModelFactory {
 		}
 		int seqEnd = -1;
 		if (location.charAt(TARGET_PREFIX.length()) != IPath.SEPARATOR) {
-			location = location.replace(System.getProperty("file.separator"), "/"); //$NON-NLS-1$ //$NON-NLS-2$
+			location = location.replace(File.separatorChar, '/');
 			if (location.charAt(TARGET_PREFIX.length()) != IPath.SEPARATOR) {
 				return false;
 			}

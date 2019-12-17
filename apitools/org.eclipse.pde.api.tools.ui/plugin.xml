@@ -22,7 +22,8 @@
       <javaCompletionProposalComputer
             activate="true"
             categoryId="org.eclipse.pde.api.tools.ui.apitools_proposal_category"
-            class="org.eclipse.pde.api.tools.ui.internal.completion.APIToolsJavadocCompletionProposalComputer">
+            class="org.eclipse.pde.api.tools.ui.internal.completion.APIToolsJavadocCompletionProposalComputer"
+            requiresUIThread="false">
          <partition
                type="__java_javadoc">
          </partition>

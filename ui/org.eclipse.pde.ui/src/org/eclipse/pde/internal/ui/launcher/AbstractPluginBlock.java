@@ -20,7 +20,6 @@ package org.eclipse.pde.internal.ui.launcher;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.*;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import org.eclipse.core.resources.IProject;
@@ -104,15 +103,15 @@ public abstract class AbstractPluginBlock {
 	private PluginStatusDialog fDialog;
 
 	class PluginModelNameBuffer {
-		private List<String> nameList;
+		private Set<String> nameSet;
 
 		PluginModelNameBuffer() {
 			super();
-			nameList = new ArrayList<>();
+			nameSet = new HashSet<>();
 		}
 
 		void add(IPluginModelBase model) {
-			nameList.add(getPluginName(model));
+			nameSet.add(getPluginName(model));
 		}
 
 		private String getPluginName(IPluginModelBase model) {
@@ -125,22 +124,13 @@ public abstract class AbstractPluginBlock {
 			return BundleLauncherHelper.writeBundleEntry(model, startLevel, autoStart);
 		}
 
+		public Set<String> getNameSet() {
+			return nameSet;
+		}
+
 		@Override
 		public String toString() {
-			Collections.sort(nameList);
-			StringBuilder result = new StringBuilder();
-			for (String name : nameList) {
-				if (result.length() > 0) {
-					result.append(',');
-				}
-				result.append(name);
-			}
-
-			if (result.length() == 0) {
-				return null;
-			}
-
-			return result.toString();
+			return String.join(",", nameSet); //$NON-NLS-1$
 		}
 	}
 

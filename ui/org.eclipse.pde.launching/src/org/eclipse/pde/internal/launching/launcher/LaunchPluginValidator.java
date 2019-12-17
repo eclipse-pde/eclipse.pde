@@ -38,7 +38,7 @@ public class LaunchPluginValidator {
 			return models;
 
 		Collection<IPluginModelBase> result = null;
-		Map<IPluginModelBase, String> bundles = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
+		Map<IPluginModelBase, String> bundles = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null);
 		result = bundles.keySet();
 		return result.toArray(new IPluginModelBase[result.size()]);
 	}
@@ -52,43 +52,42 @@ public class LaunchPluginValidator {
 	 */
 	public static Set<IPluginModelBase> parsePlugins(ILaunchConfiguration configuration, String attribute) throws CoreException {
 		HashSet<IPluginModelBase> set = new HashSet<>();
-		String ids = configuration.getAttribute(attribute, (String) null);
-		if (ids != null) {
-			String[] entries = ids.split(","); //$NON-NLS-1$
-			Map<String, IPluginModelBase> unmatchedEntries = new HashMap<>();
-			for (int i = 0; i < entries.length; i++) {
-				int index = entries[i].indexOf('@');
-				if (index < 0) { // if no start levels, assume default
-					entries[i] = entries[i].concat("@default:default"); //$NON-NLS-1$
-					index = entries[i].indexOf('@');
-				}
-				String idVersion = entries[i].substring(0, index);
-				int versionIndex = entries[i].indexOf(BundleLauncherHelper.VERSION_SEPARATOR);
-				String id = (versionIndex > 0) ? idVersion.substring(0, versionIndex) : idVersion;
-				String version = (versionIndex > 0) ? idVersion.substring(versionIndex + 1) : null;
-				ModelEntry entry = PluginRegistry.findEntry(id);
-				if (entry != null) {
-					IPluginModelBase matchingModels[] = attribute.equals(IPDELauncherConstants.SELECTED_TARGET_PLUGINS) ? entry.getExternalModels() : entry.getWorkspaceModels();
-					for (IPluginModelBase matchingModel : matchingModels) {
-						if (matchingModel.isEnabled()) {
-							// TODO Very similar logic to BundleLauncherHelper
-							// the logic here is this (see bug 225644)
-							// a) if we come across a bundle that has the right version, immediately add it
-							// b) if there's no version, add it
-							// c) if there's only one instance of that bundle in the list of ids... add it
-							if (version == null || matchingModel.getPluginBase().getVersion().equals(version)) {
-								set.add(matchingModel);
-							} else if (matchingModels.length == 1) {
-								if (unmatchedEntries.remove(id) == null) {
-									unmatchedEntries.put(id, matchingModel);
-								}
+		Map<String, IPluginModelBase> unmatchedEntries = new HashMap<>();
+		Set<String> entries = configuration.getAttribute(attribute, Collections.emptySet());
+
+		for (String token : entries) {
+			int index = token.indexOf('@');
+			if (index < 0) { // if no start levels, assume default
+				token = token.concat("@default:default"); //$NON-NLS-1$
+				index = token.indexOf('@');
+			}
+			String idVersion = token.substring(0, index);
+			int versionIndex = token.indexOf(BundleLauncherHelper.VERSION_SEPARATOR);
+			String id = (versionIndex > 0) ? idVersion.substring(0, versionIndex) : idVersion;
+			String version = (versionIndex > 0) ? idVersion.substring(versionIndex + 1) : null;
+			ModelEntry entry = PluginRegistry.findEntry(id);
+			if (entry != null) {
+				IPluginModelBase matchingModels[] = attribute.equals(IPDELauncherConstants.SELECTED_TARGET_BUNDLES) ? entry.getExternalModels() : entry.getWorkspaceModels();
+				for (IPluginModelBase matchingModel : matchingModels) {
+					if (matchingModel.isEnabled()) {
+						// TODO Very similar logic to BundleLauncherHelper
+						// the logic here is this (see bug 225644)
+						// a) if we come across a bundle that has the right version, immediately add it
+						// b) if there's no version, add it
+						// c) if there's only one instance of that bundle in the list of ids... add it
+						if (version == null || matchingModel.getPluginBase().getVersion().equals(version)) {
+							set.add(matchingModel);
+						} else if (matchingModels.length == 1) {
+							if (unmatchedEntries.remove(id) == null) {
+								unmatchedEntries.put(id, matchingModel);
 							}
 						}
 					}
 				}
 			}
-			set.addAll(unmatchedEntries.values());
 		}
+
+		set.addAll(unmatchedEntries.values());
 		return set;
 	}
 

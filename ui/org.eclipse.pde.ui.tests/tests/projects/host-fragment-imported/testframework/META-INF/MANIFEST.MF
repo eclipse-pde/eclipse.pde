@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Testframework
+Bundle-SymbolicName: fragment.imported.testframework
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: testframework_import
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: fragment.imported.testframework
+Import-Package: fragment.imported.bundle

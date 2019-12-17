@@ -87,7 +87,7 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 			case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API:
 				return NLS.bind(MarkerMessages.VersionNumberingResolution_minorNoNewAPI1, this.newVersionValue);
 			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE:
-				return NLS.bind(MarkerMessages.VersionNumberingResolution_reexportedMajor1, this.newVersionValue);
+				return NLS.bind(MarkerMessages.VersionNumberingResolution_major1, this.newVersionValue);
 			case IApiProblem.MICRO_VERSION_CHANGE_UNNECESSARILY:
 				return MarkerMessages.VersionNumberingResolution_unnecessaryMicroIncrease;
 			case IApiProblem.MINOR_VERSION_CHANGE_UNNECESSARILY:
@@ -95,7 +95,7 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 
 			default:
 				// IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE
-				return NLS.bind(MarkerMessages.VersionNumberingResolution_reexportedMinor1, this.newVersionValue);
+				return NLS.bind(MarkerMessages.VersionNumberingResolution_minor1, this.newVersionValue);
 		}
 	}
 
@@ -104,19 +104,19 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 		String title = null;
 		switch (this.kind) {
 			case IApiProblem.MAJOR_VERSION_CHANGE:
-				title = NLS.bind(MarkerMessages.VersionNumberingResolution_major2, this.newVersionValue);
+				title = NLS.bind(MarkerMessages.VersionNumberingResolution_major1, this.newVersionValue);
 				break;
 			case IApiProblem.MINOR_VERSION_CHANGE:
-				title = NLS.bind(MarkerMessages.VersionNumberingResolution_minor2, this.newVersionValue);
+				title = NLS.bind(MarkerMessages.VersionNumberingResolution_minor1, this.newVersionValue);
 				break;
 			case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE:
-				title = NLS.bind(MarkerMessages.VersionNumberingResolution_major2, this.newVersionValue);
+				title = NLS.bind(MarkerMessages.VersionNumberingResolution_major1, this.newVersionValue);
 				break;
 			case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API:
 				title = NLS.bind(MarkerMessages.VersionNumberingResolution_minorNoNewAPI2, this.newVersionValue);
 				break;
 			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE:
-				title = NLS.bind(MarkerMessages.VersionNumberingResolution_reexportedMajor2, this.newVersionValue);
+				title = NLS.bind(MarkerMessages.VersionNumberingResolution_major1, this.newVersionValue);
 				break;
 			case IApiProblem.MICRO_VERSION_CHANGE_UNNECESSARILY:
 				title = MarkerMessages.VersionNumberingResolution_unnecessaryMicroIncrease;
@@ -126,7 +126,7 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 				break;
 			default:
 				// IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE
-				title = NLS.bind(MarkerMessages.VersionNumberingResolution_reexportedMinor2, this.newVersionValue);
+				title = NLS.bind(MarkerMessages.VersionNumberingResolution_minor1, this.newVersionValue);
 		}
 		Job job = new Job(title) {
 			@Override

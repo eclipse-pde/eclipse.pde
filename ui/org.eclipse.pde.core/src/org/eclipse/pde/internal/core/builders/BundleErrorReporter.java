@@ -18,6 +18,7 @@
 package org.eclipse.pde.internal.core.builders;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -246,6 +247,12 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 									if (!containsPackage(header, name)) {
 										packages.append(name);
 										packages.append(","); //$NON-NLS-1$
+										byte[] bytes = packages.toString().getBytes(StandardCharsets.UTF_8);
+										// See MarkerInfo::checkValidAttribute
+										if (bytes.length > 65535) {
+											packages.delete(packages.lastIndexOf(name), packages.length());
+											break;
+										}
 									}
 								}
 							}
@@ -643,19 +650,24 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 
 		// Check for highest BREE of bundle dependencies
+		int compilerFlag = CompilerFlags.getFlag(fProject, CompilerFlags.P_EXEC_ENV_TOO_LOW);
+		if (compilerFlag != CompilerFlags.IGNORE) {
 		String highestDependencyEE = checkBREE(desc);
 		String highestBundleEE = getHighestBREE(bundleEnvs);
 		try {
 			if (highestBundleEE != getHighestEE(highestDependencyEE, highestBundleEE)) {
-				VirtualMarker marker = report(
-						NLS.bind(PDECoreMessages.BundleErrorReporter_ExecEnv_tooLow,
-								highestDependencyEE, highestDependencyEE),
-						getLine(header, highestBundleEE), sev, PDEMarkerFactory.M_EXEC_ENV_TOO_LOW,
-						PDEMarkerFactory.CAT_EE);
-				addMarkerAttribute(marker, PDEMarkerFactory.REQUIRED_EXEC_ENV, highestDependencyEE);
+
+					VirtualMarker marker = report(
+							NLS.bind(PDECoreMessages.BundleErrorReporter_ExecEnv_tooLow, highestDependencyEE,
+									highestDependencyEE),
+							getLine(header, highestBundleEE), compilerFlag, PDEMarkerFactory.M_EXEC_ENV_TOO_LOW,
+							PDEMarkerFactory.CAT_EE);
+					addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_EXEC_ENV_TOO_LOW);
+					addMarkerAttribute(marker, PDEMarkerFactory.REQUIRED_EXEC_ENV, highestDependencyEE);
 			}
 		} catch (Exception e) {
 			PDECore.log(e);
+		}
 		}
 	}
 
@@ -663,6 +675,32 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			"CDC-1.0/Foundation", //$NON-NLS-1$
 			"CDC-1.1/Foundation", "JRE", "J2SE", "JavaSE"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
+	/**
+	 * <p>
+	 * Returns the highest Execution Environment between two given Execution
+	 * Environments. An Execution Environment is <b>higher</b> than another
+	 * Execution Environment if it's name occurs at a later index in
+	 * {@link #EXECUTION_ENVIRONMENT_NAMES}, or if the names are equal and it's
+	 * major version is greater, or if the names and major version are equal and
+	 * it's minor version is greater.
+	 * </p>
+	 * <p>
+	 * For example, the name component of JavaSE-1.8 is 'JavaSE', it's major
+	 * version is 1 and it's minor version is 8. Thus JavaSE-1.8 is a higher
+	 * Execution Environment than JRE-1.1 since it's name occurs at later index
+	 * than 'JRE' in {@link #EXECUTION_ENVIRONMENT_NAMES}.
+	 * </p>
+	 *
+	 * @param execEnv1
+	 *            String representation of the first Execution Environment to
+	 *            compare
+	 * @param execEnv2
+	 *            String representation of the second Execution Environment to
+	 *            compare
+	 * @return The string representation of the highest Execution Environment
+	 *         between the two Execution Environments
+	 * @throws IllegalArgumentException
+	 */
 	private static String getHighestEE(String execEnv1, String execEnv2) throws IllegalArgumentException {
 		if (execEnv1 == null) {
 			return execEnv2;
@@ -723,6 +761,16 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		return execEnv1;
 	}
 
+	/**
+	 * Compares all the Execution Environments in an array of Execution
+	 * Environments strings and returns the highest one.
+	 *
+	 * @param executionEnvironments
+	 *            Array of Execution Environment strings to compare
+	 * @return The highest Execution Environment in the array of Execution
+	 *         Environments, null if an error occurred or if an empty array is
+	 *         given
+	 */
 	private String getHighestBREE(String[] executionEnvironments) {
 		if (executionEnvironments.length == 0) {
 			return null;
@@ -743,6 +791,16 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		return highestExecEnv;
 	}
 
+	/**
+	 * Gets the highest Execution Environment required by a bundle or any of
+	 * it's transitive dependencies.
+	 *
+	 * @param desc
+	 *            The bundle description of the bundle which we wish to check
+	 *            for it's highest required Execution Environment
+	 * @return The highest Execution Environment required by the bundle or any
+	 *         of it's dependencies
+	 */
 	private String checkBREE(BundleDescription desc) {
 		String highestBREE = getHighestBREE(desc.getExecutionEnvironments());
 		HashSet<BundleDescription> visitedBundles = new HashSet<>();

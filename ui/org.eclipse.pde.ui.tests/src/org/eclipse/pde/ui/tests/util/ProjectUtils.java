@@ -13,8 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.util;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
+import java.io.IOException;
+import java.net.URL;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -26,6 +27,7 @@ import org.eclipse.pde.ui.IBundleContentWizard;
 import org.eclipse.pde.ui.templates.AbstractNewPluginTemplateWizard;
 import org.eclipse.pde.ui.templates.ITemplateSection;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Utility class for project related operations
@@ -41,6 +43,7 @@ public class ProjectUtils {
 		TestProjectProvider(String projectName) {
 			fProjectName = projectName;
 		}
+
 		@Override
 		public IPath getLocationPath() {
 			return ResourcesPlugin.getWorkspace().getRoot().getLocation();
@@ -90,7 +93,9 @@ public class ProjectUtils {
 	 * Create a plugin project with the given name and execution environment.
 	 *
 	 * @param projectName
-	 * @param env environment for build path or <code>null</code> if default system JRE
+	 * @param env
+	 *            environment for build path or <code>null</code> if default
+	 *            system JRE
 	 * @return a new plugin project
 	 * @throws CoreException
 	 */
@@ -125,5 +130,21 @@ public class ProjectUtils {
 		return javaProject;
 	}
 
+	public static IProject importTestProject(String path) throws IOException, CoreException {
+		URL entry = FileLocator.toFileURL(FrameworkUtil.getBundle(ProjectUtils.class).getEntry(path));
+		if (entry == null) {
+			throw new IllegalArgumentException(path + " does not exist");
+		}
+		Path src = new Path(entry.getPath());
+
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProjectDescription projectDescription = ResourcesPlugin.getWorkspace()
+				.loadProjectDescription(src.append(IProjectDescription.DESCRIPTION_FILE_NAME));
+		IProject project = root.getProject(projectDescription.getName());
+		project.create(projectDescription, null);
+		project.open(null);
+
+		return project;
+	}
 
 }

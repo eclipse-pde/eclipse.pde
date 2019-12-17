@@ -67,6 +67,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.internal.core.BuildDependencyCollector;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
@@ -666,7 +667,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 				}
 			}
 		}
-		return getApiComponents(visible.toArray(new BundleDescription[visible.size()]));
+		return getApiComponents(visible);
 	}
 
 	/**
@@ -864,13 +865,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		ApiModelCache.getCache().removeElementInfo(this);
 	}
 
-	@Override
-	public IApiComponent[] getDependentComponents(IApiComponent[] components) throws CoreException {
-		ArrayList<BundleDescription> bundles = getBundleDescriptions(components);
-		BundleDescription[] bundleDescriptions = getState().getStateHelper().getDependentBundles(bundles.toArray(new BundleDescription[bundles.size()]));
-		return getApiComponents(bundleDescriptions);
-	}
-
 	/**
 	 * Returns an array of API components corresponding to the given bundle
 	 * descriptions.
@@ -878,8 +872,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * @param bundles bundle descriptions
 	 * @return corresponding API components
 	 */
-	private IApiComponent[] getApiComponents(BundleDescription[] bundles) {
-		ArrayList<IApiComponent> dependents = new ArrayList<>(bundles.length);
+	private IApiComponent[] getApiComponents(Collection<BundleDescription> bundles) {
+		ArrayList<IApiComponent> dependents = new ArrayList<>(bundles.size());
 		for (BundleDescription bundle : bundles) {
 			IApiComponent component = getApiComponent(bundle.getSymbolicName());
 			if (component != null) {
@@ -909,8 +903,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	@Override
 	public IApiComponent[] getPrerequisiteComponents(IApiComponent[] components) throws CoreException {
 		ArrayList<BundleDescription> bundles = getBundleDescriptions(components);
-		BundleDescription[] bundlesDescriptions = getState().getStateHelper().getPrerequisites(bundles.toArray(new BundleDescription[bundles.size()]));
-		return getApiComponents(bundlesDescriptions);
+		return getApiComponents(BuildDependencyCollector.collectBuildRelevantDependencies(bundles));
 	}
 
 	/**

@@ -139,18 +139,6 @@ public interface IApiBaseline extends IApiElement {
 	public void close() throws CoreException;
 
 	/**
-	 * Returns all components in this baseline depending on the given
-	 * components. The returned collection includes the given components and all
-	 * dependents.
-	 *
-	 * @param components the initial set of components
-	 * @return an array of components for the given roots and all components in
-	 *         the state that depend on them
-	 * @throws CoreException if the baseline is disposed
-	 */
-	public IApiComponent[] getDependentComponents(IApiComponent[] components) throws CoreException;
-
-	/**
 	 * Returns all the prerequisite components in this baseline for the given
 	 * components. The returned collection includes the given components and all
 	 * prerequisites.

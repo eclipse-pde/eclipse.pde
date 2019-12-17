@@ -43,20 +43,19 @@ public class BundleLauncherHelper {
 	public static final char VERSION_SEPARATOR = '*';
 
 	public static Map<IPluginModelBase, String> getWorkspaceBundleMap(ILaunchConfiguration configuration) throws CoreException {
-		return getWorkspaceBundleMap(configuration, null, IPDELauncherConstants.WORKSPACE_BUNDLES);
+		return getWorkspaceBundleMap(configuration, null);
 	}
 
 	public static Map<IPluginModelBase, String> getTargetBundleMap(ILaunchConfiguration configuration) throws CoreException {
-		return getTargetBundleMap(configuration, null, IPDELauncherConstants.TARGET_BUNDLES);
+		return getTargetBundleMap(configuration, null);
 	}
 
 	public static Map<IPluginModelBase, String> getMergedBundleMap(ILaunchConfiguration configuration, boolean osgi) throws CoreException {
 		Map<IPluginModelBase, String> map = new LinkedHashMap<>();
 
-		// if we are using the eclipse-based launcher, we need special checks
 		if (!osgi) {
 
-			checkBackwardCompatibility(configuration, true);
+			migrateLaunchConfiguration(configuration);
 
 			if (configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
 				IPluginModelBase[] models = PluginRegistry.getActiveModels();
@@ -65,6 +64,9 @@ public class BundleLauncherHelper {
 				}
 				return map;
 			}
+
+		} else {
+			migrateOsgiLaunchConfiguration(configuration);
 		}
 
 		if (configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false)) {
@@ -205,11 +207,9 @@ public class BundleLauncherHelper {
 			return map;
 		}
 
-		String workspace = osgi == false ? IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS : IPDELauncherConstants.WORKSPACE_BUNDLES;
-		String target = osgi == false ? IPDELauncherConstants.SELECTED_TARGET_PLUGINS : IPDELauncherConstants.TARGET_BUNDLES;
 		Set<String> set = new HashSet<>();
-		map = getWorkspaceBundleMap(configuration, set, workspace);
-		map.putAll(getTargetBundleMap(configuration, set, target));
+		map = getWorkspaceBundleMap(configuration, set);
+		map.putAll(getTargetBundleMap(configuration, set));
 		return map;
 	}
 
@@ -300,12 +300,10 @@ public class BundleLauncherHelper {
 		return map.keySet().toArray(new IPluginModelBase[map.size()]);
 	}
 
-	public static Map<IPluginModelBase, String> getWorkspaceBundleMap(ILaunchConfiguration configuration, Set<String> set, String attribute) throws CoreException {
-		String selected = configuration.getAttribute(attribute, ""); //$NON-NLS-1$
+	public static Map<IPluginModelBase, String> getWorkspaceBundleMap(ILaunchConfiguration configuration, Set<String> set) throws CoreException {
+		Set<String> selected = configuration.getAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Collections.emptySet());
 		Map<IPluginModelBase, String> map = new LinkedHashMap<>();
-		StringTokenizer tok = new StringTokenizer(selected, ","); //$NON-NLS-1$
-		while (tok.hasMoreTokens()) {
-			String token = tok.nextToken();
+		for (String token : selected) {
 			int index = token.indexOf('@');
 			if (index < 0) { // if no start levels, assume default
 				token = token.concat("@default:default"); //$NON-NLS-1$
@@ -338,7 +336,7 @@ public class BundleLauncherHelper {
 		}
 
 		if (configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true)) {
-			Set<IPluginModelBase> deselectedPlugins = LaunchPluginValidator.parsePlugins(configuration, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS);
+			Set<IPluginModelBase> deselectedPlugins = LaunchPluginValidator.parsePlugins(configuration, IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES);
 			IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 			for (int i = 0; i < models.length; i++) {
 				String id = models[i].getPluginBase().getId();
@@ -427,12 +425,10 @@ public class BundleLauncherHelper {
 
 	}
 
-	public static Map<IPluginModelBase, String> getTargetBundleMap(ILaunchConfiguration configuration, Set<String> set, String attribute) throws CoreException {
-		String selected = configuration.getAttribute(attribute, ""); //$NON-NLS-1$
+	public static Map<IPluginModelBase, String> getTargetBundleMap(ILaunchConfiguration configuration, Set<String> set) throws CoreException {
+		Set<String> selected = configuration.getAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Collections.emptySet());
 		Map<IPluginModelBase, String> map = new LinkedHashMap<>();
-		StringTokenizer tok = new StringTokenizer(selected, ","); //$NON-NLS-1$
-		while (tok.hasMoreTokens()) {
-			String token = tok.nextToken();
+		for (String token : selected) {
 			int index = token.indexOf('@');
 			if (index < 0) { // if no start levels, assume default
 				token = token.concat("@default:default"); //$NON-NLS-1$
@@ -488,13 +484,9 @@ public class BundleLauncherHelper {
 		return buffer.toString();
 	}
 
-	public static void checkBackwardCompatibility(ILaunchConfiguration configuration, boolean save) throws CoreException {
-		ILaunchConfigurationWorkingCopy wc = null;
-		if (configuration.isWorkingCopy()) {
-			wc = (ILaunchConfigurationWorkingCopy) configuration;
-		} else {
-			wc = configuration.getWorkingCopy();
-		}
+	@SuppressWarnings("deprecation")
+	public static void migrateLaunchConfiguration(ILaunchConfiguration configuration) throws CoreException {
+		ILaunchConfigurationWorkingCopy wc = getWorkingCopy(configuration);
 
 		String value = configuration.getAttribute("wsproject", (String) null); //$NON-NLS-1$
 		if (value != null) {
@@ -571,8 +563,43 @@ public class BundleLauncherHelper {
 			}
 		}
 
-		if (save && (value != null || value2 != null || upgrade))
+		convertToSet(wc, IPDELauncherConstants.SELECTED_TARGET_PLUGINS, IPDELauncherConstants.SELECTED_TARGET_BUNDLES);
+		convertToSet(wc, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES);
+		convertToSet(wc, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES);
+
+		if (wc.isDirty()) {
 			wc.doSave();
+		}
+	}
+
+	private static ILaunchConfigurationWorkingCopy getWorkingCopy(ILaunchConfiguration configuration) throws CoreException {
+		if (configuration.isWorkingCopy()) {
+			return (ILaunchConfigurationWorkingCopy) configuration;
+		}
+		return configuration.getWorkingCopy();
+	}
+
+	@SuppressWarnings("deprecation")
+	public static void migrateOsgiLaunchConfiguration(ILaunchConfiguration configuration) throws CoreException {
+		ILaunchConfigurationWorkingCopy wc = getWorkingCopy(configuration);
+
+		convertToSet(wc, IPDELauncherConstants.WORKSPACE_BUNDLES, IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES);
+		convertToSet(wc, IPDELauncherConstants.TARGET_BUNDLES, IPDELauncherConstants.SELECTED_TARGET_BUNDLES);
+		convertToSet(wc, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES);
+
+		if (wc.isDirty()) {
+			wc.doSave();
+		}
+	}
+
+	private static void convertToSet(ILaunchConfigurationWorkingCopy wc, String stringAttribute, String listAttribute) throws CoreException {
+		String value = wc.getAttribute(stringAttribute, (String) null);
+		if (value != null) {
+			wc.setAttribute(stringAttribute, (String) null);
+			String[] itemArray = value.split(","); //$NON-NLS-1$
+			Set<String> itemSet = new HashSet<>(Arrays.asList(itemArray));
+			wc.setAttribute(listAttribute, itemSet);
+		}
 	}
 
 	/**

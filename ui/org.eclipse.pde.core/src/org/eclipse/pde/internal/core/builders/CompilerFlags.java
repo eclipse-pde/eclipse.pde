@@ -73,6 +73,7 @@ public class CompilerFlags {
 	public static final String P_INTERNAL = "compilers.p.internal"; //$NON-NLS-1$
 	public static final String P_SERVICE_COMP_WITHOUT_LAZY_ACT = "compilers.p.service.component.without.lazyactivation"; //$NON-NLS-1$
 	public static final String P_NO_AUTOMATIC_MODULE = "compilers.p.no.automatic.module"; //$NON-NLS-1$
+	public static final String P_EXEC_ENV_TOO_LOW = "compilers.p.exec-env-too-low"; //$NON-NLS-1$
 
 	public static final String P_MISSING_VERSION_EXP_PKG = "compilers.p.missing-version-export-package"; //$NON-NLS-1$
 	public static final String P_MISSING_VERSION_IMP_PKG = "compilers.p.missing-version-import-package"; //$NON-NLS-1$

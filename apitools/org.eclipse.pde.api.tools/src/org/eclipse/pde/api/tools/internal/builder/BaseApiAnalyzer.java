@@ -1825,6 +1825,17 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				}
 				IProject project = fJavaProject.getProject();
 				resource = Util.getResource(project, type);
+				IProject project2 = resource.getProject();
+				if (!project2.equals(project)) {
+					// marker should be on the same project as fJavaProject
+					int flag = delta.getFlags();
+					if (flag == IDelta.REEXPORTED_API_TYPE) {
+						resource = project.findMember(new Path(JarFile.MANIFEST_NAME));
+						charStart = 0;
+						charEnd = 0;
+						lineNumber = 1;
+					}
+				}
 				if (resource == null) {
 					return null;
 				}

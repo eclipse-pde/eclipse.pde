@@ -50,8 +50,8 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 			}
 		}
 
-		config.setAttribute(IPDELauncherConstants.WORKSPACE_BUNDLES, wBuffer.toString());
-		config.setAttribute(IPDELauncherConstants.TARGET_BUNDLES, tBuffer.toString());
+		config.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, wBuffer.getNameSet());
+		config.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, tBuffer.getNameSet());
 
 		PluginModelNameBuffer buffer = new PluginModelNameBuffer();
 		if (fAddWorkspaceButton.getSelection()) {
@@ -62,7 +62,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 				}
 			}
 		}
-		config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, buffer.toString());
+		config.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES, buffer.getNameSet());
 	}
 
 	public void initializeFrom(ILaunchConfiguration configuration) throws CoreException {
@@ -76,8 +76,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	private void initializePluginsState(ILaunchConfiguration configuration) throws CoreException {
 		Map<IPluginModelBase, String> selected = new HashMap<>();
 		selected.putAll(BundleLauncherHelper.getWorkspaceBundleMap(configuration));
-		selected.putAll(
-				BundleLauncherHelper.getTargetBundleMap(configuration, null, IPDELauncherConstants.TARGET_BUNDLES));
+		selected.putAll(BundleLauncherHelper.getTargetBundleMap(configuration, null));
 
 		initializePluginsState(selected);
 	}

@@ -74,15 +74,9 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 			}
 
 			// fetch the plug-ins models
-			String workspaceId = IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS;
-			String targetId = IPDELauncherConstants.SELECTED_TARGET_PLUGINS;
-			if (fLaunchConfiguration.getType().getIdentifier().equals(IPDELauncherConstants.OSGI_CONFIGURATION_TYPE)) {
-				workspaceId = IPDELauncherConstants.WORKSPACE_BUNDLES;
-				targetId = IPDELauncherConstants.TARGET_BUNDLES;
-			}
 			Set<String> set = new HashSet<>();
-			Map<IPluginModelBase, String> map = BundleLauncherHelper.getWorkspaceBundleMap(fLaunchConfiguration, set, workspaceId);
-			map.putAll(BundleLauncherHelper.getTargetBundleMap(fLaunchConfiguration, set, targetId));
+			Map<IPluginModelBase, String> map = BundleLauncherHelper.getWorkspaceBundleMap(fLaunchConfiguration, set);
+			map.putAll(BundleLauncherHelper.getTargetBundleMap(fLaunchConfiguration, set));
 
 			addPlugins(factory, product, map);
 

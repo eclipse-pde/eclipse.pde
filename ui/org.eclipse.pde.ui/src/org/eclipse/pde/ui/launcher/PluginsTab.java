@@ -240,11 +240,12 @@ public class PluginsTab extends AbstractLauncherTab {
 		getAttributesLabelsForPrototype().put(IPDELauncherConstants.USE_CUSTOM_FEATURES, PDEUIMessages.PluginsTab_AttributeLabel_UseCustomFeatures);
 		getAttributesLabelsForPrototype().put(IPDELauncherConstants.DEFAULT_AUTO_START, PDEUIMessages.PluginsTab_AttributeLabel_DefaultAutoStart);
 		getAttributesLabelsForPrototype().put(IPDELauncherConstants.DEFAULT_START_LEVEL, PDEUIMessages.PluginsTab_AttributeLabel_DefaultStartLevel);
-		getAttributesLabelsForPrototype().put(IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, PDEUIMessages.PluginsTab_AttributeLabel_DeselectedWorkspacePlugins);
-		getAttributesLabelsForPrototype().put(IPDELauncherConstants.WORKSPACE_BUNDLES, PDEUIMessages.PluginsTab_AttributeLabel_WorkspaceBundles);
-		getAttributesLabelsForPrototype().put(IPDELauncherConstants.TARGET_BUNDLES, PDEUIMessages.PluginsTab_AttributeLabel_TargetBundles);
-		getAttributesLabelsForPrototype().put(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, PDEUIMessages.PluginsTab_AttributeLabel_SelectedWorkspacePlugins);
-		getAttributesLabelsForPrototype().put(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, PDEUIMessages.PluginsTab_AttributeLabel_SelectedTargetPlugins);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES,
+				PDEUIMessages.PluginsTab_AttributeLabel_DeselectedWorkspacePlugins);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES,
+				PDEUIMessages.PluginsTab_AttributeLabel_SelectedWorkspacePlugins);
+		getAttributesLabelsForPrototype().put(IPDELauncherConstants.SELECTED_TARGET_BUNDLES,
+				PDEUIMessages.PluginsTab_AttributeLabel_SelectedTargetPlugins);
 		getAttributesLabelsForPrototype().put(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, PDEUIMessages.PluginsTab_AttributeLabel_FeaturePluginResolution);
 		getAttributesLabelsForPrototype().put(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, PDEUIMessages.PluginsTab_AttributeLabel_FeatureDefaultLocation);
 		getAttributesLabelsForPrototype().put(IPDELauncherConstants.AUTOMATIC_VALIDATE, PDEUIMessages.PluginsTab_AttributeLabel_AutomaticValidate);

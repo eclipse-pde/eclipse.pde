@@ -50,7 +50,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	BundleRootTests.class,
 	PluginRegistryTests.class,
 	ClasspathResolverTest.class,
-	ClasspathContributorTest.class
+	ClasspathContributorTest.class,
+	DynamicPluginProjectReferencesTest.class
 })
 public class AllPDETests {
 

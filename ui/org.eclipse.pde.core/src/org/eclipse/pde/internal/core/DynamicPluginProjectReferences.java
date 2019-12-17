@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.ArrayList;
+import static java.util.Collections.singleton;
+import static java.util.stream.Collectors.toList;
+
 import java.util.Collections;
 import java.util.List;
 import org.eclipse.core.resources.IBuildConfiguration;
@@ -24,8 +26,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.State;
-import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 /**
@@ -33,8 +33,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
  * indirect plug-in dependencies
  */
 public class DynamicPluginProjectReferences implements IDynamicReferenceProvider {
-
-	public static State state;
 
 	public DynamicPluginProjectReferences() {
 		super();
@@ -47,26 +45,14 @@ public class DynamicPluginProjectReferences implements IDynamicReferenceProvider
 		if (javaProject != null) {
 			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(javaProject.getProject());
 			if (model != null) {
-				List<IProject> allProj = new ArrayList<>();
 				BundleDescription currentBundle = model.getBundleDescription();
-				if (state == null) {
-					state = StateObjectFactory.defaultFactory.createState(true);
+				if (currentBundle != null) {
+					IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
+					return BuildDependencyCollector.collectBuildRelevantDependencies(singleton(currentBundle)).stream()
+							.filter(dependency -> dependency != currentBundle)
+							.map(dependency -> root.getProject(dependency.getName())).filter(IProject::exists)
+							.distinct().collect(toList());
 				}
-				if (state != null && currentBundle != null) {
-					BundleDescription[] bundlePrereq = state.getStateHelper()
-							.getPrerequisites(new BundleDescription[] { currentBundle });
-					for (BundleDescription bundle : bundlePrereq) {
-						if (bundle.equals(currentBundle)) {
-							continue;
-						}
-						IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
-						IProject project = root.getProject(bundle.getName());
-						if (project.exists() && !allProj.contains(project)) {
-							allProj.add(project);
-						}
-					}
-				}
-				return allProj;
 			}
 		}
 		return Collections.emptyList();
