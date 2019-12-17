@@ -39,23 +39,25 @@ import org.osgi.framework.Version;
 
 public class ScriptGenerationTests extends PDETestCase {
 
-	// Test that script generation works when buildDirectory does not contain a plugins subdirectory
+	// Test that script generation works when buildDirectory does not contain a
+	// plugins subdirectory
 	public void testBug147292() throws Exception {
 		IFolder buildFolder = newTest("147292");
 
 		String bundleId = "org.eclipse.pde.build.test.147292";
 		Utils.generateBundle(buildFolder, bundleId);
 
-		//getScriptGenerationProperties sets buildDirectory to buildFolder by default
+		// getScriptGenerationProperties sets buildDirectory to buildFolder by default
 		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", bundleId);
 		properties.put("baseLocation", buildFolder.getLocation().toOSString());
 		generateScripts(buildFolder, properties);
 
-		// test passes if generateScripts did not throw an exception 
+		// test passes if generateScripts did not throw an exception
 		assertResourceFile(buildFolder, "build.xml");
 	}
 
-	// Test that the order in which archivesFormat and configInfo are set does not matter
+	// Test that the order in which archivesFormat and configInfo are set does not
+	// matter
 	public void testBug148288() throws Exception {
 		IProject buildProject = newTest();
 
@@ -64,7 +66,8 @@ public class ScriptGenerationTests extends PDETestCase {
 			public HashMap<Config, String> getArchivesFormat() {
 				return super.getArchivesFormat();
 			}
-		};
+		}
+		;
 
 		String location = buildProject.getLocation().toOSString();
 		MyBuildScriptGenerator generator = new MyBuildScriptGenerator();
@@ -111,7 +114,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		properties.put("baseLocation", buildFolder.getLocation().toOSString());
 		generateScripts(buildFolder, properties);
 
-		// test passes if generateScripts did not throw an exception 
+		// test passes if generateScripts did not throw an exception
 		assertResourceFile(buildFolder, "build.xml");
 	}
 
@@ -127,30 +130,26 @@ public class ScriptGenerationTests extends PDETestCase {
 		runBuild(buildFolder);
 
 		assertResourceFile(buildFolder, "log.log");
-		String[] lines = new String[] {"[echo] Hello Plugin!", "[echo] Hello Feature!"};
+		String[] lines = new String[] { "[echo] Hello Plugin!", "[echo] Hello Feature!" };
 		assertLogContainsLines(buildFolder.getFile("log.log"), lines);
 	}
 
 	/**
-	 *  test platform.xml
-	 *  TODO This test is commented out because it requires a completely self-contained feature
-	 *  for the purpose of the test. In Eclipse 3.x it used the org.eclipse.rcp feature, but in Eclipse 4.x
-	 *  that feature now has included and required features. Perhaps the test can be updated to
-	 *  use multiple features instead of just one. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=379182.
+	 * test platform.xml TODO This test is commented out because it requires a
+	 * completely self-contained feature for the purpose of the test. In Eclipse 3.x
+	 * it used the org.eclipse.rcp feature, but in Eclipse 4.x that feature now has
+	 * included and required features. Perhaps the test can be updated to use
+	 * multiple features instead of just one. See
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=379182.
 	 */
 	public void _testBug183924() throws Exception {
 		IFolder buildFolder = newTest("183924");
 		IFolder configFolder = Utils.createFolder(buildFolder, "configuration/org.eclipse.update");
 
-		//Figure out the version of the org.eclipse.rcp feature
+		// Figure out the version of the org.eclipse.rcp feature
 		String baseLocation = Platform.getInstallLocation().getURL().getPath();
 		File features = new File(baseLocation, "features");
-		FileFilter filter = new FileFilter() {
-			@Override
-			public boolean accept(File pathname) {
-				return pathname.getName().startsWith("org.eclipse.rcp_");
-			}
-		};
+		FileFilter filter = pathname -> pathname.getName().startsWith("org.eclipse.rcp_");
 		File rcp[] = features.listFiles(filter);
 		assertTrue(rcp.length > 0);
 		String name = rcp[0].getName();
@@ -161,18 +160,22 @@ public class ScriptGenerationTests extends PDETestCase {
 		Map<String, String> replacements = new HashMap<>();
 		replacements.put("BASE_LOCATION", baseLocation);
 		replacements.put("RCP_VERSION", version);
-		Utils.transferAndReplace(sourceXML.getLocationURI().toURL(), configFolder.getFile("platform.xml"), replacements);
+		Utils.transferAndReplace(sourceXML.getLocationURI().toURL(), configFolder.getFile("platform.xml"),
+				replacements);
 
-		//Generate Scripts for org.eclipse.rcp, expect to find it through platform.xml
-		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "org.eclipse.rcp");
+		// Generate Scripts for org.eclipse.rcp, expect to find it through platform.xml
+		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature",
+				"org.eclipse.rcp");
 		properties.put("baseLocation", buildFolder.getLocation().toOSString());
 		generateScripts(buildFolder, properties);
 
-		//platform.xml has MANAGED-ONLY policy, expect to not find org.eclipse.core.resources
-		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "org.eclipse.core.resources");
+		// platform.xml has MANAGED-ONLY policy, expect to not find
+		// org.eclipse.core.resources
+		properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin",
+				"org.eclipse.core.resources");
 		properties.put("baseLocation", buildFolder.getLocation().toOSString());
 		try {
-			//this is expected to fail
+			// this is expected to fail
 			generateScripts(buildFolder, properties);
 			assertTrue(false);
 		} catch (Exception e) {
@@ -206,7 +209,8 @@ public class ScriptGenerationTests extends PDETestCase {
 			buildProperties.delete(true, null);
 			manifest.delete(true, null);
 
-			Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "org.eclipse.pde.build.test.221855");
+			Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin",
+					"org.eclipse.pde.build.test.221855");
 			properties.put("filterP2Base", "true");
 			try {
 				generateScripts(buildFolder, properties);
@@ -232,7 +236,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	public void testBug187809() throws Exception {
 		IFolder buildFolder = newTest("187809");
 
-		Utils.generateFeature(buildFolder, "sdk", new String[] {"foo", "bar", "disco"}, null);
+		Utils.generateFeature(buildFolder, "sdk", new String[] { "foo", "bar", "disco" }, null);
 
 		assertResourceFile(buildFolder, "features/sdk/feature.xml");
 		IFile feature = buildFolder.getFile("features/sdk/feature.xml");
@@ -247,7 +251,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	}
 
 	public void testBug203270() throws Exception {
-		//test the highest version of a bundle is selected when both are resolved
+		// test the highest version of a bundle is selected when both are resolved
 		IFolder buildFolder = newTest("203270");
 
 		IFolder A1 = Utils.createFolder(buildFolder, "plugins/a_1");
@@ -258,7 +262,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.generateBundle(A2, "a", "1.0.0.3");
 		Utils.generateBundle(A3, "a", "1.0.0.2");
 
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"a;version=1.0.0.qualifier"});
+		Utils.generateFeature(buildFolder, "f", null, new String[] { "a;version=1.0.0.qualifier" });
 
 		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f");
 		properties.put("baseLocation", " ");
@@ -272,12 +276,12 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder buildFolder = newTest("125577");
 		Utils.createFolder(buildFolder, "plugins");
 
-		//Create Bundle A
+		// Create Bundle A
 		IFolder bundleA = buildFolder.getFolder("plugins/A & A");
 		bundleA.create(true, true, null);
 		Utils.generateBundle(bundleA, "A");
 
-		//Create Bundle B
+		// Create Bundle B
 		IFolder bundleB = buildFolder.getFolder("plugins/B");
 		bundleB.create(true, true, null);
 		Utils.generatePluginBuildProperties(bundleB, null);
@@ -290,7 +294,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "B"));
 
 		assertResourceFile(bundleB, "build.xml");
-		//if the & was not escaped, it won't be a valid ant script
+		// if the & was not escaped, it won't be a valid ant script
 		assertValidAntScript(bundleB.getFile("build.xml"));
 	}
 
@@ -313,8 +317,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertTrue(child instanceof Path);
 		String path = child.toString();
 
-		//Assert classpath has correct contents
-		int idx[] = {0, path.indexOf(EQUINOX_PREFERENCES), path.indexOf(OSGI), path.indexOf(EQUINOX_COMMON), path.indexOf(EQUINOX_REGISTRY), path.indexOf(CORE_JOBS)};
+		// Assert classpath has correct contents
+		int idx[] = { 0, path.indexOf(EQUINOX_PREFERENCES), path.indexOf(OSGI), path.indexOf(EQUINOX_COMMON),
+				path.indexOf(EQUINOX_REGISTRY), path.indexOf(CORE_JOBS) };
 		for (int i = 0; i < idx.length - 1; i++) {
 			assertTrue(idx[i] < idx[i + 1]);
 		}
@@ -339,7 +344,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertTrue(child instanceof Path);
 		String path = child.toString();
 
-		//Assert classpath has the swt fragment
+		// Assert classpath has the swt fragment
 		String swtFragment = "org.eclipse.swt." + Platform.getWS() + '.' + Platform.getOS();
 		if (!Platform.getWS().equals("carbon") && !Platform.getWS().equals("cocoa"))
 			swtFragment += '.' + Platform.getOSArch();
@@ -353,7 +358,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		Utils.generateBundle(bundleA, "bundleA");
 		Utils.generateBundle(bundleB, "bundleB");
-		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"bundleA", "bundleB"});
+		Utils.generateFeature(buildFolder, "rcp", null, new String[] { "bundleA", "bundleB" });
 
 		Properties props = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "rcp");
 		props.put("pluginPath", bundleB.getLocation().toOSString());
@@ -371,15 +376,17 @@ public class ScriptGenerationTests extends PDETestCase {
 		manifestAdditions.put(new Attributes.Name("Require-Bundle"), EQUINOX_REGISTRY);
 		Utils.generateBundleManifest(bundleFolder, "bundle", "1.0.0", manifestAdditions);
 
-		Utils.generateFeature(buildFolder, "rcp", null, new String[] {"bundle", OSGI, EQUINOX_COMMON, EQUINOX_REGISTRY, CORE_JOBS});
+		Utils.generateFeature(buildFolder, "rcp", null,
+				new String[] { "bundle", OSGI, EQUINOX_COMMON, EQUINOX_REGISTRY, CORE_JOBS });
 
 		Properties props = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "rcp");
 		props.put("filteredDependencyCheck", "true");
 
 		generateScripts(buildFolder, props);
 
-		// org.eclipse.core.runtime.compatibility.registry is an optional bundle, which should have been excluded 
-		//from the state by the filtering, check that is isn't in the classpath 
+		// org.eclipse.core.runtime.compatibility.registry is an optional bundle, which
+		// should have been excluded
+		// from the state by the filtering, check that is isn't in the classpath
 		IFile buildScript = bundleFolder.getFile("build.xml");
 		Project antProject = assertValidAntScript(buildScript);
 		Target dot = antProject.getTargets().get("@dot");
@@ -418,7 +425,8 @@ public class ScriptGenerationTests extends PDETestCase {
 		final IFile buildXML = buildFolder.getFile("build.xml");
 		Utils.writeBuffer(buildXML, buffer);
 
-		runAntScript(buildXML.getLocation().toOSString(), new String[] {"default"}, buildFolder.getLocation().toOSString(), null);
+		runAntScript(buildXML.getLocation().toOSString(), new String[] { "default" },
+				buildFolder.getLocation().toOSString(), null);
 
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
 		BuildTimeFeature feature = factory.parseBuildFeature(featureXML.getLocationURI().toURL());
@@ -439,7 +447,8 @@ public class ScriptGenerationTests extends PDETestCase {
 		manifestAdditions.put(new Attributes.Name("Require-Bundle"), "org.eclipse.swt");
 		Utils.generateBundleManifest(buildFolder, "bundle", "1.0.0", manifestAdditions);
 
-		// give a non-existant directory for the buildDirectory, we are only building a plugin and
+		// give a non-existant directory for the buildDirectory, we are only building a
+		// plugin and
 		// no features so we shouldn't need it to exist.
 		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "bundle");
 		properties.put("buildDirectory", buildFolder.getLocation().toOSString() + "/nothing");
@@ -451,7 +460,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder buildFolder = newTest("206679");
 
 		// test that our feature parser throws an exception on an empty requires
-		// which would imply that other source generation tests would catch the 
+		// which would imply that other source generation tests would catch the
 		// bad features
 
 		StringBuffer buffer = new StringBuffer();
@@ -478,7 +487,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder bundleA = Utils.createFolder(buildFolder, "bundleA");
 
 		Utils.generateBundle(bundleA, "bundleA");
-		Utils.generateFeature(buildFolder, "featureA", null, new String[] {"bundleA"});
+		Utils.generateFeature(buildFolder, "featureA", null, new String[] { "bundleA" });
 
 		// move generated feature out into root and get rid of features directory
 		File featureA = buildFolder.getFolder("features/featureA").getLocation().toFile();
@@ -499,32 +508,39 @@ public class ScriptGenerationTests extends PDETestCase {
 	}
 
 	/*
-	 * Test disabled and resources removed 23 July 2013 as Equinox framework no longer supports pre-osgi plug-ins (Bug 411907)
+	 * Test disabled and resources removed 23 July 2013 as Equinox framework no
+	 * longer supports pre-osgi plug-ins (Bug 411907)
 	 * 
-	 * Tests that 196754 works without a manifest (pre-osgi plug-in)
-	 * Bug 196754: Unpacked fragments have their manifest entries reordered during feature export
+	 * Tests that 196754 works without a manifest (pre-osgi plug-in) Bug 196754:
+	 * Unpacked fragments have their manifest entries reordered during feature
+	 * export
+	 * 
 	 * @throws Exception
 	 */
-	//	public void testBug196159_196754() throws Exception {
-	//		IFolder buildFolder = newTest("196159");
+	// public void testBug196159_196754() throws Exception {
+	// IFolder buildFolder = newTest("196159");
 	//
-	//		Utils.generateFeature(buildFolder, "featureA", null, new String[] {"Plugin21;unpack=\"false\""});
+	// Utils.generateFeature(buildFolder, "featureA", null, new String[]
+	// {"Plugin21;unpack=\"false\""});
 	//
-	//		Utils.storeBuildProperties(buildFolder, BuildConfiguration.getBuilderProperties(buildFolder));
-	//		Utils.generateAllElements(buildFolder, "featureA");
+	// Utils.storeBuildProperties(buildFolder,
+	// BuildConfiguration.getBuilderProperties(buildFolder));
+	// Utils.generateAllElements(buildFolder, "featureA");
 	//
-	//		runBuild(buildFolder);
+	// runBuild(buildFolder);
 	//
-	//		IFile javaCompilerArgs = buildFolder.getFile("plugins/Plugin21/javaCompiler.Plugin21.jar.args");
-	//		assertFalse(javaCompilerArgs.exists());
-	//	}
+	// IFile javaCompilerArgs =
+	// buildFolder.getFile("plugins/Plugin21/javaCompiler.Plugin21.jar.args");
+	// assertFalse(javaCompilerArgs.exists());
+	// }
 
 	public void testBug210464() throws Exception {
 		IFolder buildFolder = newTest("210464 space");
 
-		Utils.generateFeature(buildFolder, "featureA", null, new String[] {OSGI});
+		Utils.generateFeature(buildFolder, "featureA", null, new String[] { OSGI });
 
-		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "featureA"));
+		generateScripts(buildFolder,
+				BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "featureA"));
 
 		assertResourceFile(buildFolder, "features/featureA/build.xml");
 	}
@@ -546,7 +562,8 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.generateFeature(buildFolder, "F", null, null);
 
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("<product name=\"Test\" id=\"Test.product\" application=\"org.eclipse.ant.core.antRunner\" useFeatures=\"false\">");
+		buffer.append(
+				"<product name=\"Test\" id=\"Test.product\" application=\"org.eclipse.ant.core.antRunner\" useFeatures=\"false\">");
 		buffer.append("  <configIni use=\"default\"/>");
 		buffer.append("  <launcherArgs>");
 		buffer.append("   <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>");
@@ -567,7 +584,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		properties.put("allowBinaryCycles", "true");
 		properties.put("topLevelElementId", "featureA");
 		Utils.storeBuildProperties(buildFolder, properties);
-		Utils.generateFeature(buildFolder, "featureA", null, new String[] {"B"});
+		Utils.generateFeature(buildFolder, "featureA", null, new String[] { "B" });
 
 		runBuild(buildFolder);
 	}
@@ -579,13 +596,14 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		Utils.generateBundle(fooFolder, "foo");
 		Utils.createFolder(fooFolder, "src");
-		Utils.generateFeature(buildFolder, "F", null, new String[] {"foo"});
+		Utils.generateFeature(buildFolder, "F", null, new String[] { "foo" });
 
 		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "F"));
 
 		assertResourceFile(featureFolder, "build.xml");
 		IFile script = featureFolder.getFile("build.xml");
-		runAntScript(script.getLocation().toOSString(), new String[] {}, featureFolder.getLocation().toOSString(), null);
+		runAntScript(script.getLocation().toOSString(), new String[] {}, featureFolder.getLocation().toOSString(),
+				null);
 
 		assertResourceFile(featureFolder, "F_1.0.0.jar");
 		assertResourceFile(fooFolder, "foo_1.0.0.jar");
@@ -594,14 +612,15 @@ public class ScriptGenerationTests extends PDETestCase {
 	public void testBug237475() throws Exception {
 		IFolder buildFolder = newTest("237475");
 
-		Utils.generateFeature(buildFolder, "f", new String[] {"opt;optional=true"}, new String[] {OSGI});
+		Utils.generateFeature(buildFolder, "f", new String[] { "opt;optional=true" }, new String[] { OSGI });
 		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f"));
 	}
 
 	public void testBug247091() throws Exception {
 		IFolder buildFolder = newTest("247091");
-		//also tests bug 250942
-		Utils.generateFeature(buildFolder, "sdk", new String[] {"f;version=0.0.0", "f;version=1.0.0.qualifier", "f;version=1.0.0.v_qualifier"}, null);
+		// also tests bug 250942
+		Utils.generateFeature(buildFolder, "sdk",
+				new String[] { "f;version=0.0.0", "f;version=1.0.0.qualifier", "f;version=1.0.0.v_qualifier" }, null);
 		Utils.generateFeature(buildFolder, "f", null, null, "2.0.0");
 		IFolder f = buildFolder.getFolder("features/f");
 		f.refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -615,7 +634,8 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "sdk"));
 
-		assertLogContainsLines(buildFolder.getFile("features/sdk/build.xml"), new String[] {"../F1", "../F2", "../F3"});
+		assertLogContainsLines(buildFolder.getFile("features/sdk/build.xml"),
+				new String[] { "../F1", "../F2", "../F3" });
 	}
 
 	public void testBug247091_2() throws Exception {
@@ -623,43 +643,43 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertTrue(range.getIncludeMinimum());
 		assertTrue(range.getIncludeMaximum());
 		assertEquals(range.getMinimum(), new Version("1.0.0"));
-		assertEquals(range.getMaximum(), new Version("1.0.0"));
+		assertEquals(range.getRight(), new Version("1.0.0"));
 
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.qualifier");
 		assertTrue(range.getIncludeMinimum());
 		assertFalse(range.getIncludeMaximum());
 		assertEquals(range.getMinimum(), new Version("1.0.0"));
-		assertEquals(range.getMaximum(), new Version("1.0.1"));
+		assertEquals(range.getRight(), new Version("1.0.1"));
 
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.zqualifier");
 		assertTrue(range.getIncludeMinimum());
 		assertFalse(range.getIncludeMaximum());
 		assertEquals(range.getMinimum(), new Version("1.0.0.z"));
-		assertEquals(range.getMaximum(), new Version("1.0.1"));
+		assertEquals(range.getRight(), new Version("1.0.1"));
 
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abcqualifier");
 		assertTrue(range.getIncludeMinimum());
 		assertFalse(range.getIncludeMaximum());
 		assertEquals(range.getMinimum(), new Version("1.0.0.abc"));
-		assertEquals(range.getMaximum(), new Version("1.0.0.abd"));
+		assertEquals(range.getRight(), new Version("1.0.0.abd"));
 
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abzqualifier");
 		assertTrue(range.getIncludeMinimum());
 		assertFalse(range.getIncludeMaximum());
 		assertEquals(range.getMinimum(), new Version("1.0.0.abz"));
-		assertEquals(range.getMaximum(), new Version("1.0.0.ac"));
+		assertEquals(range.getRight(), new Version("1.0.0.ac"));
 
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abzzqualifier");
 		assertTrue(range.getIncludeMinimum());
 		assertFalse(range.getIncludeMaximum());
 		assertEquals(range.getMinimum(), new Version("1.0.0.abzz"));
-		assertEquals(range.getMaximum(), new Version("1.0.0.ac"));
+		assertEquals(range.getRight(), new Version("1.0.0.ac"));
 
 		range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0.abzz_qualifier");
 		assertTrue(range.getIncludeMinimum());
 		assertFalse(range.getIncludeMaximum());
 		assertEquals(range.getMinimum(), new Version("1.0.0.abzz_"));
-		assertEquals(range.getMaximum(), new Version("1.0.0.abzza"));
+		assertEquals(range.getRight(), new Version("1.0.0.abzza"));
 
 	}
 
@@ -679,13 +699,13 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.generateBundle(D, "D");
 		Utils.generateBundle(E, "E");
 
-		Utils.generateFeature(buildFolder, "sdk", null, new String[] {"A", "B", "C", "D", "E"});
+		Utils.generateFeature(buildFolder, "sdk", null, new String[] { "A", "B", "C", "D", "E" });
 
 		Properties props = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "sdk");
 		props.put("baseLocation", base.getLocation().toOSString());
 		generateScripts(buildFolder, props);
 
-		//success if we found all the bundles and hence did not throw an exception
+		// success if we found all the bundles and hence did not throw an exception
 	}
 
 	public void testBug247232() throws Exception {
@@ -696,11 +716,13 @@ public class ScriptGenerationTests extends PDETestCase {
 		buildFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
 
 		try {
-			generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "org.foo"));
+			generateScripts(buildFolder,
+					BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "org.foo"));
 		} catch (Exception e) {
-			//ok
+			// ok
 		}
-		assertLogContainsLines(buildFolder.getFile("log.log"), new String[] {"Problem occurred while considering plugin: Test Bundle org.foo.", "invalid qualifier"});
+		assertLogContainsLines(buildFolder.getFile("log.log"), new String[] {
+				"Problem occurred while considering plugin: Test Bundle org.foo.", "invalid qualifier" });
 	}
 
 	public void testBug248767_212467() throws Exception {
@@ -709,9 +731,10 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder build2 = rootFolder.getFolder("build2");
 
 		// Build 1 compiles B against source A
-		// A must compile first, testing flatten dependencies (non-flattened order is depth first putting B before A).
-		Utils.generateFeature(build1, "F1", new String[] {"F2"}, new String[] {"A;unpack=true", OSGI});
-		Utils.generateFeature(build1, "F2", null, new String[] {"B"});
+		// A must compile first, testing flatten dependencies (non-flattened order is
+		// depth first putting B before A).
+		Utils.generateFeature(build1, "F1", new String[] { "F2" }, new String[] { "A;unpack=true", OSGI });
+		Utils.generateFeature(build1, "F2", null, new String[] { "B" });
 
 		Properties properties = BuildConfiguration.getBuilderProperties(build1);
 		properties.put("topLevelElementId", "F1");
@@ -724,12 +747,12 @@ public class ScriptGenerationTests extends PDETestCase {
 		build1.refreshLocal(IResource.DEPTH_INFINITE, null);
 
 		assertResourceFile(build1, "compile.F1.xml");
-		assertLogContainsLines(build1.getFile("compile.F1.xml"), new String[] {"plugins/A", "plugins/B"});
+		assertLogContainsLines(build1.getFile("compile.F1.xml"), new String[] { "plugins/A", "plugins/B" });
 
 		build1.getFolder("tmp/eclipse/plugins/B_1.0.0").delete(true, null);
 
-		//Build 2 compiles B against binary A
-		Utils.generateFeature(build2, "F2", null, new String[] {"A", "B"});
+		// Build 2 compiles B against binary A
+		Utils.generateFeature(build2, "F2", null, new String[] { "A", "B" });
 		properties = BuildConfiguration.getBuilderProperties(build2);
 		properties.put("topLevelElementId", "F2");
 		properties.put("baseLocation", build1.getFolder("tmp/eclipse").getLocation().toOSString());
@@ -746,7 +769,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder e = Utils.createFolder(buildFolder, "plugins/E");
 		IFolder f = Utils.createFolder(buildFolder, "plugins/F");
 
-		Utils.generateFeature(buildFolder, "feature", null, new String[] {"A", "B", "C", "D", "E", "F"});
+		Utils.generateFeature(buildFolder, "feature", null, new String[] { "A", "B", "C", "D", "E", "F" });
 
 		Utils.generateBundleManifest(a, "A", "1.0.0", null);
 		Utils.generateBundle(a, "A");
@@ -910,8 +933,8 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder p1 = Utils.createFolder(buildFolder, "plugins/p1");
 		IFolder p2 = Utils.createFolder(buildFolder, "plugins/p2");
 		IFolder f1 = Utils.createFolder(buildFolder, "features/F1");
-		Utils.generateFeature(buildFolder, "F1", new String[] {"F2"}, new String[] {"P1"});
-		Utils.generateFeature(buildFolder, "F2", null, new String[] {"P2"});
+		Utils.generateFeature(buildFolder, "F1", new String[] { "F2" }, new String[] { "P1" });
+		Utils.generateFeature(buildFolder, "F2", null, new String[] { "P2" });
 
 		Utils.generateBundle(p1, "P1");
 		Utils.writeBuffer(p1.getFile("src/a.java"), new StringBuffer("class A implements foo {}"));
@@ -931,7 +954,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		entries.add("plugins/P2_1.0.0/@dot.log");
 		assertZipContents(f1, "F1_1.0.0.log.zip", entries);
 
-		//bug 279609
+		// bug 279609
 		properties.put("logExtension", ".xml");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
@@ -950,13 +973,15 @@ public class ScriptGenerationTests extends PDETestCase {
 		additionalAttributes.put(new Attributes.Name("Import-Package"), "org.xml.sax");
 		Utils.generateBundleManifest(a, "a", "1.0.0", additionalAttributes);
 
-		//1: without any particular profiles defined in build.properties, default to largest (1.6?) which does contain org.xml.sax
+		// 1: without any particular profiles defined in build.properties, default to
+		// largest (1.6?) which does contain org.xml.sax
 		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "a");
 		buildProperties.put("baseLocation", " ");
 		buildProperties.put("pluginPath", FileLocator.getBundleFile(Platform.getBundle(OSGI)).getAbsolutePath());
 		generateScripts(buildFolder, buildProperties);
 
-		//2: define CDC-1.1/Foundation-1.1, expect failure since that profile doesn't have org.xml.sax
+		// 2: define CDC-1.1/Foundation-1.1, expect failure since that profile doesn't
+		// have org.xml.sax
 		buildProperties.put("CDC-1.1/Foundation-1.1", "somejar.jar");
 		try {
 			generateScripts(buildFolder, buildProperties);
@@ -965,18 +990,19 @@ public class ScriptGenerationTests extends PDETestCase {
 			assertTrue(e.getMessage().indexOf("Unable to find element: a") > -1);
 		}
 
-		//3: add a bundle exporting xml.sax, expect success
+		// 3: add a bundle exporting xml.sax, expect success
 		IFolder xml = Utils.createFolder(buildFolder, "plugins/xml");
 		additionalAttributes.put(new Attributes.Name("Export-Package"), "org.xml.sax");
 		Utils.generateBundleManifest(xml, "org.xml", "1.0.0", additionalAttributes);
 		generateScripts(buildFolder, buildProperties);
 	}
 
-	// NOTE: If this test fails, then the supported BREE probably increased and need to be adjusted below
+	// NOTE: If this test fails, then the supported BREE probably increased and need
+	// to be adjusted below
 	public void testBug239843_2() throws Exception {
 		IFolder buildFolder = newTest("239843_2");
 
-		//custom profile contributed, without profile.list, in a folder
+		// custom profile contributed, without profile.list, in a folder
 		IFolder custom = Utils.createFolder(buildFolder, "plugins/custom");
 		Utils.generateBundle(custom, "custom");
 
@@ -984,8 +1010,10 @@ public class ScriptGenerationTests extends PDETestCase {
 		buffer.append("org.osgi.framework.system.packages=org.my.package\n");
 		buffer.append("org.osgi.framework.bootdelegation = org.my.package\n");
 		// A minimum EE of 1.5 is needed for the OSGi state to resolve (bug 392789)
-		buffer.append("org.osgi.framework.executionenvironment=MyCustomProfile,OSGi/Minimum-1.0,OSGi/Minimum-1.1,OSGi/Minimum-1.2,JRE-1.1,J2SE-1.2,J2SE-1.3,J2SE-1.4,J2SE-1.5,JavaSE-1.6,JavaSE-1.7\n");
-		buffer.append("org.osgi.framework.system.capabilities=osgi.ee; osgi.ee=\"OSGi/Minimum\"; version:List<Version>=\"1.0, 1.1, 1.2\", osgi.ee; osgi.ee=\"JRE\"; version:List<Version>=\"1.0, 1.1\", osgi.ee; osgi.ee=\"JavaSE\"; version:List<Version>=\"1.0, 1.1, 1.2, 1.3, 1.4, 1.5\"\n");
+		buffer.append(
+				"org.osgi.framework.executionenvironment=MyCustomProfile,OSGi/Minimum-1.0,OSGi/Minimum-1.1,OSGi/Minimum-1.2,JRE-1.1,J2SE-1.2,J2SE-1.3,J2SE-1.4,J2SE-1.5,JavaSE-1.6,JavaSE-1.7\n");
+		buffer.append(
+				"org.osgi.framework.system.capabilities=osgi.ee; osgi.ee=\"OSGi/Minimum\"; version:List<Version>=\"1.0, 1.1, 1.2\", osgi.ee; osgi.ee=\"JRE\"; version:List<Version>=\"1.0, 1.1\", osgi.ee; osgi.ee=\"JavaSE\"; version:List<Version>=\"1.0, 1.1, 1.2, 1.3, 1.4, 1.5\"\n");
 		Utils.writeBuffer(custom.getFile("my.profile"), buffer);
 
 		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
@@ -1001,11 +1029,12 @@ public class ScriptGenerationTests extends PDETestCase {
 		generateScripts(buildFolder, buildProperties);
 	}
 
-	// NOTE: If this test fails, it might be because the supported BREE probably increased and need to be adjusted below
+	// NOTE: If this test fails, it might be because the supported BREE probably
+	// increased and need to be adjusted below
 	public void testBug239843_3() throws Exception {
 		IFolder buildFolder = newTest("239843_3");
 
-		//custom profile contributed, with profile.list, in a jar
+		// custom profile contributed, with profile.list, in a jar
 		IFolder custom = Utils.createFolder(buildFolder, "plugins/custom");
 		Utils.generateBundle(custom, "custom");
 
@@ -1013,14 +1042,17 @@ public class ScriptGenerationTests extends PDETestCase {
 		buffer.append("org.osgi.framework.system.packages=org.my.package\n");
 		buffer.append("org.osgi.framework.bootdelegation = org.my.package\n");
 		// A minimum EE of 1.5 is needed for the OSGi state to resolve (bug 392789)
-		buffer.append("org.osgi.framework.executionenvironment=MyCustomProfile,OSGi/Minimum-1.0,OSGi/Minimum-1.1,OSGi/Minimum-1.2,JRE-1.1,J2SE-1.2,J2SE-1.3,J2SE-1.4, J2SE-1.5, JavaSE-1.6, JavaSE-1.7\n");
-		buffer.append("org.osgi.framework.system.capabilities=osgi.ee; osgi.ee=\"OSGi/Minimum\"; version:List<Version>=\"1.0, 1.1, 1.2\", osgi.ee; osgi.ee=\"JRE\"; version:List<Version>=\"1.0, 1.1\", osgi.ee; osgi.ee=\"JavaSE\"; version:List<Version>=\"1.0, 1.1, 1.2, 1.3, 1.4, 1.5,1.6\"\n");
+		buffer.append(
+				"org.osgi.framework.executionenvironment=MyCustomProfile,OSGi/Minimum-1.0,OSGi/Minimum-1.1,OSGi/Minimum-1.2,JRE-1.1,J2SE-1.2,J2SE-1.3,J2SE-1.4, J2SE-1.5, JavaSE-1.6, JavaSE-1.7\n");
+		buffer.append(
+				"org.osgi.framework.system.capabilities=osgi.ee; osgi.ee=\"OSGi/Minimum\"; version:List<Version>=\"1.0, 1.1, 1.2\", osgi.ee; osgi.ee=\"JRE\"; version:List<Version>=\"1.0, 1.1\", osgi.ee; osgi.ee=\"JavaSE\"; version:List<Version>=\"1.0, 1.1, 1.2, 1.3, 1.4, 1.5,1.6\"\n");
 		Utils.writeBuffer(custom.getFile("my.profile"), buffer);
 
 		Utils.writeBuffer(custom.getFile("profiles/my.profile"), buffer);
 		Utils.writeBuffer(custom.getFile("profile.list"), new StringBuffer("java.profiles=profiles/my.profile\n"));
 
-		try (ZipOutputStream jar = new ZipOutputStream(new FileOutputStream(new File(custom.getLocation().toOSString() + ".jar")))) {
+		try (ZipOutputStream jar = new ZipOutputStream(
+				new FileOutputStream(new File(custom.getLocation().toOSString() + ".jar")))) {
 			jar.putNextEntry(new ZipEntry(JarFile.MANIFEST_NAME));
 			Utils.transferStreams(custom.getFile(JarFile.MANIFEST_NAME).getContents(), true, jar, false);
 			jar.putNextEntry(new ZipEntry("profile.list"));
@@ -1053,7 +1085,8 @@ public class ScriptGenerationTests extends PDETestCase {
 		additionalAttributes.put(new Attributes.Name("Bundle-RequiredExecutionEnvironment"), "CDC-1.1/Foundation-1.1");
 		Utils.generateBundleManifest(cdc, "cdc", "1.0.0", additionalAttributes);
 
-		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new org.eclipse.core.runtime.Path("/scripts/productBuild/productBuild.xml"), null);
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
+				new org.eclipse.core.runtime.Path("/scripts/productBuild/productBuild.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 
 		Properties generateProperties = new Properties();
@@ -1064,7 +1097,8 @@ public class ScriptGenerationTests extends PDETestCase {
 		generateProperties.put("configs", "*,*,*");
 		generateProperties.put("CDC-1.1/Foundation-1.1", "here");
 		generateProperties.put("pluginList", "cdc");
-		runAntScript(buildXMLPath, new String[] {"generateFeature"}, buildFolder.getLocation().toOSString(), generateProperties);
+		runAntScript(buildXMLPath, new String[] { "generateFeature" }, buildFolder.getLocation().toOSString(),
+				generateProperties);
 	}
 
 	public void testRootFiles_1() throws Exception {
@@ -1122,8 +1156,10 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFile xml = buildFolder.getFile("build.xml");
 		Utils.writeBuffer(xml, buffer);
 
-		runAntScript(xml.getLocation().toOSString(), new String[] {"main"}, buildFolder.getLocation().toOSString(), null);
-		assertLogContainsLine(buildFolder.getFile("META-INF/MANIFEST.MF"), "Bundle-RequiredExecutionEnvironment: J2SE-1.4");
+		runAntScript(xml.getLocation().toOSString(), new String[] { "main" }, buildFolder.getLocation().toOSString(),
+				null);
+		assertLogContainsLine(buildFolder.getFile("META-INF/MANIFEST.MF"),
+				"Bundle-RequiredExecutionEnvironment: J2SE-1.4");
 	}
 
 	public void testBug260634() throws Exception {
@@ -1137,7 +1173,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "bundle"));
 		String buildXMLPath = bundle.getFile("build.xml").getLocation().toOSString();
-		runAntScript(buildXMLPath, new String[] {"build.update.jar"}, buildFolder.getLocation().toOSString(), null);
+		runAntScript(buildXMLPath, new String[] { "build.update.jar" }, buildFolder.getLocation().toOSString(), null);
 
 		assertResourceFile(bundle, "bundle_1.0.0.jar");
 		try (JarFile jar = new JarFile(bundle.getFile("bundle_1.0.0.jar").getLocation().toFile());) {
@@ -1181,12 +1217,13 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		IFolder p1 = Utils.createFolder(buildFolder, "plugins/p1");
 
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"p1;unpack=false"});
+		Utils.generateFeature(buildFolder, "f", null, new String[] { "p1;unpack=false" });
 
 		Utils.generateBundle(p1, "p1");
 		Utils.writeBuffer(p1.getFile("src/a.java"), new StringBuffer("class A {}"));
 
-		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"), new org.eclipse.core.runtime.Path("/resources/keystore/keystore"), null);
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"),
+				new org.eclipse.core.runtime.Path("/resources/keystore/keystore"), null);
 		assertNotNull(resource);
 		String keystorePath = FileLocator.toFileURL(resource).getPath();
 
@@ -1214,7 +1251,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder p1 = Utils.createFolder(buildFolder, "plugins/p1");
 		IFolder p2 = Utils.createFolder(buildFolder, "plugins/p2");
 
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"p1;unpack=false", "p2;unpack=false"});
+		Utils.generateFeature(buildFolder, "f", null, new String[] { "p1;unpack=false", "p2;unpack=false" });
 
 		Utils.generateBundle(p1, "p1");
 		Utils.writeBuffer(p1.getFile("src/a.java"), new StringBuffer("class A {}"));
@@ -1233,7 +1270,8 @@ public class ScriptGenerationTests extends PDETestCase {
 		zipEntries.add("plugins/p2_1.0.0.jar");
 		assertZipContents(buildFolder, "I.TestBuild/f-TestBuild.zip", zipEntries);
 
-		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"), new org.eclipse.core.runtime.Path("/resources/keystore/keystore"), null);
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"),
+				new org.eclipse.core.runtime.Path("/resources/keystore/keystore"), null);
 		assertNotNull(resource);
 		String keystorePath = FileLocator.toFileURL(resource).getPath();
 
@@ -1256,7 +1294,8 @@ public class ScriptGenerationTests extends PDETestCase {
 		final IFile buildXML = buildFolder.getFile("build.xml");
 		Utils.writeBuffer(buildXML, buffer);
 
-		runAntScript(buildXML.getLocation().toOSString(), new String[] {"default"}, buildFolder.getLocation().toOSString(), null);
+		runAntScript(buildXML.getLocation().toOSString(), new String[] { "default" },
+				buildFolder.getLocation().toOSString(), null);
 
 		zipEntries.add("plugins/p1_1.0.0.jar.pack.gz");
 		zipEntries.add("plugins/p2_1.0.0.jar.pack.gz");
@@ -1286,7 +1325,8 @@ public class ScriptGenerationTests extends PDETestCase {
 			generateScripts(buildFolder, properties);
 			fail("We expected an exception");
 		} catch (Exception e) {
-			assertEquals(e.getMessage(), "Malformed URL exception: org.eclipse.pde.build.test.279583/build.properties: platform:/plugins/foo/k.jar.");
+			assertEquals(e.getMessage(),
+					"Malformed URL exception: org.eclipse.pde.build.test.279583/build.properties: platform:/plugins/foo/k.jar.");
 		}
 	}
 
@@ -1331,21 +1371,23 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.generatePluginBuildProperties(X2, null);
 		additionalAttributes.put(new Attributes.Name("Export-Package"), "x;version=\"2.0.1\"");
 		Utils.generateBundleManifest(X2, "X", "2.0.0", additionalAttributes);
-		Utils.writeBuffer(X2.getFile("src/x/X.java"), new StringBuffer("package x;\n public class X { public static void f(){} }"));
+		Utils.writeBuffer(X2.getFile("src/x/X.java"),
+				new StringBuffer("package x;\n public class X { public static void f(){} }"));
 
 		IFolder X3 = Utils.createFolder(buildFolder, "plugins/X_3");
 		additionalAttributes = new Attributes();
 		Utils.generatePluginBuildProperties(X3, null);
 		additionalAttributes.put(new Attributes.Name("Export-Package"), "x;version=\"3.0.2\"");
 		Utils.generateBundleManifest(X3, "X", "3.0.0", additionalAttributes);
-		Utils.writeBuffer(X3.getFile("src/x/X.java"), new StringBuffer("package x;\n public class X { public static void g(){} }"));
+		Utils.writeBuffer(X3.getFile("src/x/X.java"),
+				new StringBuffer("package x;\n public class X { public static void g(){} }"));
 
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"B", "D", "X;version=2.0.0", "X;version=3.0.0"});
+		Utils.generateFeature(buildFolder, "f", null, new String[] { "B", "D", "X;version=2.0.0", "X;version=3.0.0" });
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
 		properties.put("logExtension", ".xml");
 		properties.put("baseLocation", "");
-		properties.put("pluginPath", "${buildDirectory}"); //178449
+		properties.put("pluginPath", "${buildDirectory}"); // 178449
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 	}
@@ -1391,9 +1433,10 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.generatePluginBuildProperties(X2, null);
 		additionalAttributes.put(new Attributes.Name("Export-Package"), "x;version=\"2.0.1\", x;version=\"3.0.2\"");
 		Utils.generateBundleManifest(X2, "X", "2.0.0", additionalAttributes);
-		Utils.writeBuffer(X2.getFile("src/x/X.java"), new StringBuffer("package x;\n public class X { public static void f(){} public static void g(){} }"));
+		Utils.writeBuffer(X2.getFile("src/x/X.java"),
+				new StringBuffer("package x;\n public class X { public static void f(){} public static void g(){} }"));
 
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"B", "D", "X"});
+		Utils.generateFeature(buildFolder, "f", null, new String[] { "B", "D", "X" });
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
 		properties.put("logExtension", ".xml");
@@ -1443,7 +1486,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		code.append("}                           \n");
 		Utils.writeBuffer(fB.getFile("src/api/A.java"), code);
 
-		//bug 105631
+		// bug 105631
 		code = new StringBuffer();
 		code.append("package c;                  \n");
 		code.append("public class CError{        \n");
@@ -1486,13 +1529,14 @@ public class ScriptGenerationTests extends PDETestCase {
 		code.append("}                           \n");
 		Utils.writeBuffer(D.getFile("src/d/D.java"), code);
 
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"host", "fA;ws=win32", "fB;ws=cocoa", "C;ws=win32", "D;ws=cocoa"});
+		Utils.generateFeature(buildFolder, "f", null,
+				new String[] { "host", "fA;ws=win32", "fB;ws=cocoa", "C;ws=win32", "D;ws=cocoa" });
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
 		properties.put("configs", "win32,win32,x86 & macosx,cocoa,x86");
 		properties.put("logExtension", ".xml");
 		properties.put("baseLocation", "");
-		properties.put("pluginPath", "${buildDirectory}"); //178449
+		properties.put("pluginPath", "${buildDirectory}"); // 178449
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 	}
@@ -1509,7 +1553,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder aSource = Utils.createFolder(buildFolder, "plugins/a");
 		Utils.generateBundle(aSource, "a; singleton:=true", "3.4.2.Branch_qualifier");
 
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"a;version=\"3.4.2.Branch_qualifier\""});
+		Utils.generateFeature(buildFolder, "f", null, new String[] { "a;version=\"3.4.2.Branch_qualifier\"" });
 
 		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f");
 		buildProperties.put("baseLocation", buildFolder.getFolder("base").getLocation().toOSString());
@@ -1520,7 +1564,8 @@ public class ScriptGenerationTests extends PDETestCase {
 		} catch (Throwable e) {
 			failedMessage = e.getMessage();
 		}
-		assertTrue(failedMessage != null && failedMessage.indexOf("Another singleton version selected: a_3.4.2.v_833") > -1);
+		assertTrue(failedMessage != null
+				&& failedMessage.indexOf("Another singleton version selected: a_3.4.2.v_833") > -1);
 	}
 
 	public void testCatchAllValue() throws Exception {
@@ -1540,7 +1585,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		code.append("}                           \n");
 		Utils.writeBuffer(A.getFile("src/api/A.java"), code);
 
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"A"});
+		Utils.generateFeature(buildFolder, "f", null, new String[] { "A" });
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
 		Utils.storeBuildProperties(buildFolder, properties);
@@ -1598,17 +1643,19 @@ public class ScriptGenerationTests extends PDETestCase {
 		code.append("}                           \n");
 		Utils.writeBuffer(C.getFile("src/c/C.java"), code);
 
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"A", "B", "C"});
+		Utils.generateFeature(buildFolder, "f", null, new String[] { "A", "B", "C" });
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
 		properties.put("baseLocation", "");
-		properties.put("pluginPath", "${buildDirectory}"); //178449
+		properties.put("pluginPath", "${buildDirectory}"); // 178449
 		properties.put("javacFailOnError", "false");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);
 
-		assertLogContainsLines(buildFolder.getFile("I.TestBuild/compilelogs/plugins/B_1.0.0/@dot.log"), new String[] {"The value of the local variable b is not used", "1 problem (1 error)"});
-		assertLogContainsLines(buildFolder.getFile("I.TestBuild/compilelogs/plugins/C_1.0.0/@dot.log"), new String[] {"Discouraged access: The type 'A'", "3 problems (3 errors)"});
+		assertLogContainsLines(buildFolder.getFile("I.TestBuild/compilelogs/plugins/B_1.0.0/@dot.log"),
+				new String[] { "The value of the local variable b is not used", "1 problem (1 error)" });
+		assertLogContainsLines(buildFolder.getFile("I.TestBuild/compilelogs/plugins/C_1.0.0/@dot.log"),
+				new String[] { "Discouraged access: The type 'A'", "3 problems (3 errors)" });
 	}
 
 	public void testBug243582() throws Exception {
@@ -1620,7 +1667,8 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.generateBundle(A, "A");
 
 		Attributes attributes = new Attributes();
-		attributes.put(new Attributes.Name(IPDEBuildConstants.ECLIPSE_SOURCE_REF), "${PDE_SOURCE_REF},foo.bar;type:=mine");
+		attributes.put(new Attributes.Name(IPDEBuildConstants.ECLIPSE_SOURCE_REF),
+				"${PDE_SOURCE_REF},foo.bar;type:=mine");
 		Utils.writeBuffer(B.getFile("src/foo.java"), new StringBuffer("public class foo { int i; }"));
 		Utils.generateBundleManifest(B, "B", "1.0.0", attributes);
 		Utils.generatePluginBuildProperties(B, null);
@@ -1631,14 +1679,15 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.generateBundleManifest(C, "C", "1.0.0", attributes);
 		Utils.generatePluginBuildProperties(C, null);
 
-		Utils.generateFeature(buildFolder, "F", null, new String[] {"A", "B", "C"});
+		Utils.generateFeature(buildFolder, "F", null, new String[] { "A", "B", "C" });
 
 		Properties sourceRefs = new Properties();
 		final String a_source = "\"1.0,:pserver:dev.eclipse.org:/cvsroot/rt,org.eclipse.equinox/p2/bundles/org.eclipse.equinox.p2.publisher,org.eclipse.equinox.p2.publisher\";type:=psf;provider:=\"org.eclipse.team.cvs.core.cvsnature\"";
 		sourceRefs.put("A,0.0.0", a_source);
 		sourceRefs.put("B,0.0.0", "B's source");
 		sourceRefs.put("C,0.0.0", "C's source");
-		Utils.storeProperties(buildFolder.getFile(IPDEBuildConstants.DEFAULT_SOURCE_REFERENCES_FILENAME_DESCRIPTOR), sourceRefs);
+		Utils.storeProperties(buildFolder.getFile(IPDEBuildConstants.DEFAULT_SOURCE_REFERENCES_FILENAME_DESCRIPTOR),
+				sourceRefs);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "F");
@@ -1651,7 +1700,8 @@ public class ScriptGenerationTests extends PDETestCase {
 		Manifest m = Utils.loadManifest(buildFolder.getFile("tmp/eclipse/plugins/A_1.0.0/META-INF/MANIFEST.MF"));
 		assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF), a_source);
 		m = Utils.loadManifest(buildFolder.getFile("tmp/eclipse/plugins/B_1.0.0/META-INF/MANIFEST.MF"));
-		assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF), "B's source,foo.bar;type:=\"mine\"");
+		assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF),
+				"B's source,foo.bar;type:=\"mine\"");
 		m = Utils.loadManifest(buildFolder.getFile("tmp/eclipse/plugins/C_1.0.0/META-INF/MANIFEST.MF"));
 		assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF), "foo.bar;type:=mine");
 	}
@@ -1668,7 +1718,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		properties.put("bin.includes", "lib.so, META-INF/, .");
 		Utils.generatePluginBuildProperties(A, properties);
 
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"foo"});
+		Utils.generateFeature(buildFolder, "f", null, new String[] { "foo" });
 		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f");
 		buildProperties.put("baseLocation", " ");
 		buildProperties.put("configs", "win32,win32,x86");
@@ -1679,7 +1729,8 @@ public class ScriptGenerationTests extends PDETestCase {
 		} catch (Throwable e) {
 			failedMessage = e.getMessage();
 		}
-		assertTrue(failedMessage != null && failedMessage.indexOf("Unsatisfied native code filter: lib.so; selection-filter=\"(osgi.os=foobar)\"") > -1);
+		assertTrue(failedMessage != null && failedMessage
+				.indexOf("Unsatisfied native code filter: lib.so; selection-filter=\"(osgi.os=foobar)\"") > -1);
 
 		properties = new Properties();
 		properties.put("buildDirectory", buildFolder.getLocation().toOSString());
@@ -1687,9 +1738,11 @@ public class ScriptGenerationTests extends PDETestCase {
 		properties.put("pluginList", "foo");
 		properties.put("configs", "win32,win32,x86");
 		properties.put("verify", "true");
-		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new org.eclipse.core.runtime.Path("/scripts/productBuild/productBuild.xml"), null);
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
+				new org.eclipse.core.runtime.Path("/scripts/productBuild/productBuild.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
-		runAntScript(buildXMLPath, new String[] {"generateFeature"}, buildFolder.getLocation().toOSString(), properties);
+		runAntScript(buildXMLPath, new String[] { "generateFeature" }, buildFolder.getLocation().toOSString(),
+				properties);
 	}
 
 	public void testBug301311() throws Exception {
@@ -1710,9 +1763,12 @@ public class ScriptGenerationTests extends PDETestCase {
 			newVersions.put("foo,1.0.0", "one");
 			newVersions.put("foo,2.0.0.R1_", "r1");
 
-			assertEquals("1.0.0.one", QualifierReplacer.replaceQualifierInVersion("1.0.0.qualifier", "foo", null, newVersions));
-			assertEquals("2.0.0.wildcard", QualifierReplacer.replaceQualifierInVersion("2.0.0.qualifier", "foo", null, newVersions));
-			assertEquals("2.0.0.R1_r1", QualifierReplacer.replaceQualifierInVersion("2.0.0.R1_qualifier", "foo", null, newVersions));
+			assertEquals("1.0.0.one",
+					QualifierReplacer.replaceQualifierInVersion("1.0.0.qualifier", "foo", null, newVersions));
+			assertEquals("2.0.0.wildcard",
+					QualifierReplacer.replaceQualifierInVersion("2.0.0.qualifier", "foo", null, newVersions));
+			assertEquals("2.0.0.R1_r1",
+					QualifierReplacer.replaceQualifierInVersion("2.0.0.R1_qualifier", "foo", null, newVersions));
 		} finally {
 			generator.setImmutableAntProperties(null);
 		}
@@ -1723,7 +1779,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder buildFolder = newTest("303960_sourceFileExtensions1");
 		Utils.createFolder(buildFolder, "plugins");
 
-		//Create Plugin
+		// Create Plugin
 		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
 		plugin.create(true, true, null);
 		Utils.generateBundle(plugin, "Plugin");
@@ -1743,7 +1799,8 @@ public class ScriptGenerationTests extends PDETestCase {
 		// check the excludes directive for copying files over
 		Target dot = antProject.getTargets().get("@dot");
 		Copy copyChild = (Copy) AntUtils.getFirstChildByName(dot, "copy");
-		Enumeration<RuntimeConfigurable> rc = copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement().getChildren();
+		Enumeration<RuntimeConfigurable> rc = copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()
+				.getChildren();
 		RuntimeConfigurable configurable = rc.nextElement();
 		assertEquals(configurable.getElementTag(), "exclude");
 		assertEquals(configurable.getAttributeMap().get("name"), "**/*.java");
@@ -1780,7 +1837,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder buildFolder = newTest("303960_sourceFileExtensions2");
 		Utils.createFolder(buildFolder, "plugins");
 
-		//Create Plugin
+		// Create Plugin
 		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
 		plugin.create(true, true, null);
 		Utils.generateBundle(plugin, "Plugin");
@@ -1799,7 +1856,8 @@ public class ScriptGenerationTests extends PDETestCase {
 		// check the excludes directive for copying files over
 		Target dot = antProject.getTargets().get("@dot");
 		Copy copyChild = (Copy) AntUtils.getFirstChildByName(dot, "copy");
-		Enumeration<RuntimeConfigurable> rc = copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement().getChildren();
+		Enumeration<RuntimeConfigurable> rc = copyChild.getRuntimeConfigurableWrapper().getChildren().nextElement()
+				.getChildren();
 		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/*.java");
 		assertEquals(rc.nextElement().getAttributeMap().get("name"), "**/package.htm*");
 		assertFalse("Should have only found 2 filter elements", rc.hasMoreElements());
@@ -1824,7 +1882,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder buildFolder = newTest("303960_compilerAdapter");
 		Utils.createFolder(buildFolder, "plugins");
 
-		//Create Plugin
+		// Create Plugin
 		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
 		plugin.create(true, true, null);
 		Utils.generateBundle(plugin, "Plugin");
@@ -1849,7 +1907,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder buildFolder = newTest("303960_compilerAdapterUseLog1");
 		Utils.createFolder(buildFolder, "plugins");
 
-		//Create Plugin
+		// Create Plugin
 		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
 		plugin.create(true, true, null);
 		Utils.generateBundle(plugin, "Plugin");
@@ -1871,7 +1929,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		while (en.hasMoreElements()) {
 			RuntimeConfigurable rc = en.nextElement();
 			if ("compilerarg".equals(rc.getElementTag())) {
-				if (rc.getAttributeMap().containsKey("line") && "-log '${build.result.folder}/@dot${logExtension}'".equals(rc.getAttributeMap().get("line")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
+				if (rc.getAttributeMap().containsKey("line")
+						&& "-log '${build.result.folder}/@dot${logExtension}'".equals(rc.getAttributeMap().get("line"))
+						&& "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
 					return;
 				}
 			}
@@ -1884,7 +1944,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder buildFolder = newTest("303960_compilerAdapterUseLog2");
 		Utils.createFolder(buildFolder, "plugins");
 
-		//Create Plugin
+		// Create Plugin
 		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
 		plugin.create(true, true, null);
 		Utils.generateBundle(plugin, "Plugin");
@@ -1907,7 +1967,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		while (en.hasMoreElements()) {
 			RuntimeConfigurable rc = en.nextElement();
 			if ("compilerarg".equals(rc.getElementTag())) {
-				if (rc.getAttributeMap().containsKey("line") && "-log '${build.result.folder}/@dot${logExtension}'".equals(rc.getAttributeMap().get("line")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
+				if (rc.getAttributeMap().containsKey("line")
+						&& "-log '${build.result.folder}/@dot${logExtension}'".equals(rc.getAttributeMap().get("line"))
+						&& "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
 					return;
 				}
 			}
@@ -1920,7 +1982,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder buildFolder = newTest("303960_compilerAdapterUseLog3");
 		Utils.createFolder(buildFolder, "plugins");
 
-		//Create Plugin
+		// Create Plugin
 		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
 		plugin.create(true, true, null);
 		Utils.generateBundle(plugin, "Plugin");
@@ -1943,7 +2005,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		while (en.hasMoreElements()) {
 			RuntimeConfigurable rc = en.nextElement();
 			if ("compilerarg".equals(rc.getElementTag())) {
-				if (rc.getAttributeMap().containsKey("line") && "-log '${build.result.folder}/@dot${logExtension}'".equals(rc.getAttributeMap().get("line")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
+				if (rc.getAttributeMap().containsKey("line")
+						&& "-log '${build.result.folder}/@dot${logExtension}'".equals(rc.getAttributeMap().get("line"))
+						&& "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
 					fail("Should not have found compiler log entry:\n-log '${build.result.folder}/@dot${logExtension}'");
 				}
 			}
@@ -1955,7 +2019,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder buildFolder = newTest("303960_compilerAdapterUseArgFile1");
 		Utils.createFolder(buildFolder, "plugins");
 
-		//Create Plugin
+		// Create Plugin
 		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
 		plugin.create(true, true, null);
 		Utils.generateBundle(plugin, "Plugin");
@@ -1978,7 +2042,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		while (en.hasMoreElements()) {
 			RuntimeConfigurable rc = en.nextElement();
 			if ("compilerarg".equals(rc.getElementTag())) {
-				if (rc.getAttributeMap().containsKey("value") && "@${basedir}/javaCompiler...args".equals(rc.getAttributeMap().get("value")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
+				if (rc.getAttributeMap().containsKey("value")
+						&& "@${basedir}/javaCompiler...args".equals(rc.getAttributeMap().get("value"))
+						&& "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
 					return;
 				}
 			}
@@ -1991,7 +2057,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder buildFolder = newTest("303960_compilerAdapterUseArgFile2");
 		Utils.createFolder(buildFolder, "plugins");
 
-		//Create Plugin
+		// Create Plugin
 		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
 		plugin.create(true, true, null);
 		Utils.generateBundle(plugin, "Plugin");
@@ -2015,7 +2081,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		while (en.hasMoreElements()) {
 			RuntimeConfigurable rc = en.nextElement();
 			if ("compilerarg".equals(rc.getElementTag())) {
-				if (rc.getAttributeMap().containsKey("value") && "@${basedir}/javaCompiler...args".equals(rc.getAttributeMap().get("value")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
+				if (rc.getAttributeMap().containsKey("value")
+						&& "@${basedir}/javaCompiler...args".equals(rc.getAttributeMap().get("value"))
+						&& "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
 					return;
 				}
 			}
@@ -2028,7 +2096,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder buildFolder = newTest("303960_compilerAdapterUseArgFile3");
 		Utils.createFolder(buildFolder, "plugins");
 
-		//Create Plugin
+		// Create Plugin
 		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
 		plugin.create(true, true, null);
 		Utils.generateBundle(plugin, "Plugin");
@@ -2052,7 +2120,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		while (en.hasMoreElements()) {
 			RuntimeConfigurable rc = en.nextElement();
 			if ("compilerarg".equals(rc.getElementTag())) {
-				if (rc.getAttributeMap().containsKey("value") && "@${basedir}/javaCompiler...args".equals(rc.getAttributeMap().get("value")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
+				if (rc.getAttributeMap().containsKey("value")
+						&& "@${basedir}/javaCompiler...args".equals(rc.getAttributeMap().get("value"))
+						&& "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
 					fail("Should not have found compiler log entry:\n@${basedir}/javaCompiler...args");
 				}
 			}
@@ -2064,7 +2134,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder buildFolder = newTest("303960_compilerArgs1");
 		Utils.createFolder(buildFolder, "plugins");
 
-		//Create Plugin
+		// Create Plugin
 		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
 		plugin.create(true, true, null);
 		Utils.generateBundle(plugin, "Plugin");
@@ -2085,7 +2155,8 @@ public class ScriptGenerationTests extends PDETestCase {
 		while (en.hasMoreElements()) {
 			RuntimeConfigurable rc = en.nextElement();
 			if ("compilerarg".equals(rc.getElementTag())) {
-				if (rc.getAttributeMap().containsKey("line") && "-foo -bar baz".equals(rc.getAttributeMap().get("line"))) {
+				if (rc.getAttributeMap().containsKey("line")
+						&& "-foo -bar baz".equals(rc.getAttributeMap().get("line"))) {
 					return;
 				}
 			}
@@ -2098,7 +2169,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		IFolder buildFolder = newTest("303960_compilerArgs2");
 		Utils.createFolder(buildFolder, "plugins");
 
-		//Create Plugin
+		// Create Plugin
 		IFolder plugin = buildFolder.getFolder("plugins/Plugin");
 		plugin.create(true, true, null);
 		Utils.generateBundle(plugin, "Plugin");
@@ -2120,7 +2191,8 @@ public class ScriptGenerationTests extends PDETestCase {
 		while (en.hasMoreElements()) {
 			RuntimeConfigurable rc = en.nextElement();
 			if ("compilerarg".equals(rc.getElementTag())) {
-				if (rc.getAttributeMap().containsKey("line") && "-foo -bar baz".equals(rc.getAttributeMap().get("line")) && "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
+				if (rc.getAttributeMap().containsKey("line") && "-foo -bar baz".equals(rc.getAttributeMap().get("line"))
+						&& "org.foo.someCompilerAdapter".equals(rc.getAttributeMap().get("compiler"))) {
 					return;
 				}
 			}
@@ -2145,7 +2217,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.generateBundleManifest(A, "A", "1.0.0", attributes);
 		Utils.generatePluginBuildProperties(A, null);
 
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"A", "test.pluginmodelinstalllocation"});
+		Utils.generateFeature(buildFolder, "f", null, new String[] { "A", "test.pluginmodelinstalllocation" });
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
 		Utils.storeBuildProperties(buildFolder, properties);
@@ -2163,8 +2235,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		manifest.append("Bundle-SymbolicName: A\n");
 		Utils.writeBuffer(A.getFile("META-INF/MANIFEST.MF"), manifest);
 
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"A"});
-		Utils.writeBuffer(buildFolder.getFile("features/f/build.properties"), new StringBuffer("bin.includes=feature.xml\n"));
+		Utils.generateFeature(buildFolder, "f", null, new String[] { "A" });
+		Utils.writeBuffer(buildFolder.getFile("features/f/build.properties"),
+				new StringBuffer("bin.includes=feature.xml\n"));
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "f");
 		Utils.storeBuildProperties(buildFolder, properties);
@@ -2213,7 +2286,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		buffer.append("public class C { } 	\n");
 		Utils.writeBuffer(fragment.getFile("src_c/c/C.java"), buffer);
 
-		Utils.generateFeature(buildFolder, "F", null, new String[] {"Host", "fragment"});
+		Utils.generateFeature(buildFolder, "F", null, new String[] { "Host", "fragment" });
 
 		properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "F");
@@ -2225,9 +2298,10 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		IFolder second = Utils.createFolder(root, "second");
 		IFolder plugins = Utils.createFolder(second, "target/plugins");
-		buildFolder.getFile("buildRepo/plugins/fragment_1.0.0.jar").getLocation().toFile().renameTo(plugins.getFile("Host_1.0.0.jar").getLocation().toFile());
+		buildFolder.getFile("buildRepo/plugins/fragment_1.0.0.jar").getLocation().toFile()
+				.renameTo(plugins.getFile("Host_1.0.0.jar").getLocation().toFile());
 
-		Utils.generateFeature(second, "F", null, new String[] {"D"});
+		Utils.generateFeature(second, "F", null, new String[] { "D" });
 
 		IFolder d = Utils.createFolder(second, "plugins/d");
 		additional = new Attributes();

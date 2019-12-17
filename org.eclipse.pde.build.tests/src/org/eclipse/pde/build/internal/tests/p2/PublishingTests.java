@@ -2010,8 +2010,8 @@ public class PublishingTests extends P2TestCase {
 		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
 		IInstallableUnit iu = getIU(repo, "foo");
 		Collection<IRequirement> required = iu.getRequirements();
-		for (Iterator<IRequirement> iterator = required.iterator(); iterator.hasNext();) {
-			IRequiredCapability reqCap = (IRequiredCapability) iterator.next();
+		for (IRequirement iRequirement : required) {
+			IRequiredCapability reqCap = (IRequiredCapability) iRequirement;
 			if (reqCap.getName().equals("a")) {
 				VersionRange range = reqCap.getRange();
 				assertTrue(PublisherHelper.toOSGiVersion(range.getMinimum()).getQualifier().startsWith("20"));

@@ -49,9 +49,11 @@ public abstract class P2TestCase extends PDETestCase {
 		if (context == null)
 			throw new IllegalStateException();
 
-		ServiceReference<IMetadataRepositoryManager> reference = context.getServiceReference(IMetadataRepositoryManager.class);
+		ServiceReference<IMetadataRepositoryManager> reference = context
+				.getServiceReference(IMetadataRepositoryManager.class);
 		if (reference == null) {
-			IProvisioningAgent agent = (IProvisioningAgent) ServiceHelper.getService(context, IProvisioningAgent.SERVICE_NAME);
+			IProvisioningAgent agent = (IProvisioningAgent) ServiceHelper.getService(context,
+					IProvisioningAgent.SERVICE_NAME);
 			if (agent == null)
 				throw new IllegalStateException();
 
@@ -64,7 +66,8 @@ public abstract class P2TestCase extends PDETestCase {
 		context.ungetService(reference);
 		metadataManager = (IMetadataRepositoryManager) result;
 
-		ServiceReference<IArtifactRepositoryManager> reference2 = context.getServiceReference(IArtifactRepositoryManager.class);
+		ServiceReference<IArtifactRepositoryManager> reference2 = context
+				.getServiceReference(IArtifactRepositoryManager.class);
 		if (reference2 == null)
 			throw new IllegalStateException();
 
@@ -127,10 +130,12 @@ public abstract class P2TestCase extends PDETestCase {
 		Arrays.sort(profiles);
 		File profile = profiles[profiles.length - 1];
 
-		CompositeMetadataRepository repo = (CompositeMetadataRepository) metadataManager.createRepository(baseURI, "base composite", IMetadataRepositoryManager.TYPE_COMPOSITE_REPOSITORY, null);
+		CompositeMetadataRepository repo = (CompositeMetadataRepository) metadataManager.createRepository(baseURI,
+				"base composite", IMetadataRepositoryManager.TYPE_COMPOSITE_REPOSITORY, null);
 		repo.addChild(profile.toURI());
 
-		CompositeArtifactRepository artifact = (CompositeArtifactRepository) artifactManager.createRepository(baseURI, "base composite", IArtifactRepositoryManager.TYPE_COMPOSITE_REPOSITORY, null);
+		CompositeArtifactRepository artifact = (CompositeArtifactRepository) artifactManager.createRepository(baseURI,
+				"base composite", IArtifactRepositoryManager.TYPE_COMPOSITE_REPOSITORY, null);
 		artifact.addChild(URIUtil.toURI(Platform.getInstallLocation().getURL()));
 
 		return baseURI;
@@ -177,8 +182,8 @@ public abstract class P2TestCase extends PDETestCase {
 
 	public void assertTouchpoint(IInstallableUnit iu, String phase, String action) {
 		Collection<ITouchpointData> data = iu.getTouchpointData();
-		for (Iterator<ITouchpointData> iter = data.iterator(); iter.hasNext();) {
-			ITouchpointInstruction instruction = iter.next().getInstruction(phase);
+		for (ITouchpointData iTouchpointData : data) {
+			ITouchpointInstruction instruction = iTouchpointData.getInstruction(phase);
 			if (instruction != null && instruction.getBody().indexOf(action) > -1)
 				return;
 		}
@@ -187,8 +192,7 @@ public abstract class P2TestCase extends PDETestCase {
 
 	public void assertProvides(IInstallableUnit iu, String namespace, String name) {
 		Collection<IProvidedCapability> caps = iu.getProvidedCapabilities();
-		for (Iterator<IProvidedCapability> iterator = caps.iterator(); iterator.hasNext();) {
-			IProvidedCapability cap = iterator.next();
+		for (IProvidedCapability cap : caps) {
 			if (cap.getNamespace().equals(namespace) && cap.getName().equals(name))
 				return;
 
@@ -198,8 +202,8 @@ public abstract class P2TestCase extends PDETestCase {
 
 	public void assertRequires(IInstallableUnit iu, String namespace, String name) {
 		Collection<IRequirement> reqs = iu.getRequirements();
-		for (Iterator<IRequirement> iterator = reqs.iterator(); iterator.hasNext();) {
-			IRequiredCapability reqCap = (IRequiredCapability) iterator.next();
+		for (IRequirement iRequirement : reqs) {
+			IRequiredCapability reqCap = (IRequiredCapability) iRequirement;
 			if (reqCap.getNamespace().equals(namespace) && reqCap.getName().equals(name))
 				return;
 
@@ -207,14 +211,16 @@ public abstract class P2TestCase extends PDETestCase {
 		assertTrue(false);
 	}
 
-	public ArrayList<IInstallableUnit> assertRequires(IInstallableUnit iu, ArrayList<IInstallableUnit> requiredIUs, boolean requireAll) {
+	public ArrayList<IInstallableUnit> assertRequires(IInstallableUnit iu, ArrayList<IInstallableUnit> requiredIUs,
+			boolean requireAll) {
 		outer: for (Iterator<IInstallableUnit> iterator = requiredIUs.iterator(); iterator.hasNext();) {
 			IInstallableUnit reqIU = iterator.next();
 
 			Collection<IRequirement> reqs = iu.getRequirements();
-			for (Iterator<IRequirement> iterator2 = reqs.iterator(); iterator2.hasNext();) {
-				IRequiredCapability reqCap = (IRequiredCapability) iterator2.next();
-				if (reqCap.getNamespace().equals(IU_NAMESPACE) && reqCap.getName().equals(reqIU.getId()) && reqCap.getRange().isIncluded(reqIU.getVersion())) {
+			for (IRequirement iRequirement : reqs) {
+				IRequiredCapability reqCap = (IRequiredCapability) iRequirement;
+				if (reqCap.getNamespace().equals(IU_NAMESPACE) && reqCap.getName().equals(reqIU.getId())
+						&& reqCap.getRange().isIncluded(reqIU.getVersion())) {
 					iterator.remove();
 					continue outer;
 				}

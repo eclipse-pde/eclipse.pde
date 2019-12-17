@@ -34,14 +34,14 @@ public class AntUtils {
 	 */
 	static public Object getFirstChildByName(Target target, String name) {
 		Task[] tasks = target.getTasks();
-		for (int i = 0; i < tasks.length; i++) {
-			if (tasks[i].getTaskName().equals(name)) {
-				if (tasks[i] instanceof UnknownElement) {
-					UnknownElement task = (UnknownElement) tasks[i];
+		for (Task task2 : tasks) {
+			if (task2.getTaskName().equals(name)) {
+				if (task2 instanceof UnknownElement) {
+					UnknownElement task = (UnknownElement) task2;
 					task.maybeConfigure();
 					return task.getRealThing();
 				}
-				return tasks[i];
+				return task2;
 			}
 		}
 		return null;
@@ -52,14 +52,14 @@ public class AntUtils {
 		@SuppressWarnings("rawtypes")
 		List list = new ArrayList();
 		Task[] tasks = target.getTasks();
-		for (int i = 0; i < tasks.length; i++) {
-			if (tasks[i].getTaskName().equals(name)) {
-				if (tasks[i] instanceof UnknownElement) {
-					UnknownElement task = (UnknownElement) tasks[i];
+		for (Task task2 : tasks) {
+			if (task2.getTaskName().equals(name)) {
+				if (task2 instanceof UnknownElement) {
+					UnknownElement task = (UnknownElement) task2;
 					task.maybeConfigure();
 					list.add(task.getRealThing());
 				} else {
-					list.add(tasks[i]);
+					list.add(task2);
 				}
 			}
 		}
@@ -79,9 +79,7 @@ public class AntUtils {
 		setupClasspath();
 
 		List<org.eclipse.ant.core.Task> tasks = AntCorePlugin.getPlugin().getPreferences().getTasks();
-		for (Iterator<org.eclipse.ant.core.Task> iterator = tasks.iterator(); iterator.hasNext();) {
-			org.eclipse.ant.core.Task coreTask = iterator.next();
-
+		for (org.eclipse.ant.core.Task coreTask : tasks) {
 			AntTypeDefinition def = new AntTypeDefinition();
 			String name = ProjectHelper.genComponentName(coreTask.getURI(), coreTask.getTaskName());
 			def.setName(name);
@@ -96,8 +94,7 @@ public class AntUtils {
 		}
 
 		List<Type> types = AntCorePlugin.getPlugin().getPreferences().getTypes();
-		for (Iterator<Type> iterator = types.iterator(); iterator.hasNext();) {
-			Type type = iterator.next();
+		for (Type type : types) {
 			AntTypeDefinition def = new AntTypeDefinition();
 			String name = ProjectHelper.genComponentName(type.getURI(), type.getTypeName());
 			def.setName(name);
@@ -111,9 +108,9 @@ public class AntUtils {
 		URL[] antClasspath = AntCorePlugin.getPlugin().getPreferences().getURLs();
 		StringBuffer buff = new StringBuffer();
 		File file = null;
-		for (int i = 0; i < antClasspath.length; i++) {
+		for (URL element : antClasspath) {
 			try {
-				file = new File(FileLocator.toFileURL(antClasspath[i]).getPath());
+				file = new File(FileLocator.toFileURL(element).getPath());
 			} catch (IOException e) {
 				continue;
 			}

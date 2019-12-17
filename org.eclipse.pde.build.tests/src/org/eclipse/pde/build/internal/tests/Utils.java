@@ -53,8 +53,7 @@ public class Utils {
 		Reader reader = new InputStreamReader(new BufferedInputStream(resource.openStream()));
 		final ReplaceTokens replaces = new ReplaceTokens(reader);
 
-		for (Iterator<String> iterator = replacements.keySet().iterator(); iterator.hasNext();) {
-			String replaceTag = iterator.next();
+		for (String replaceTag : replacements.keySet()) {
 			String replaceString = replacements.get(replaceTag);
 			ReplaceTokens.Token token = new ReplaceTokens.Token();
 			token.setKey(replaceTag);
@@ -241,8 +240,8 @@ public class Utils {
 		buffer.append("  <launcher name=\"" + (launcher != null ? launcher : "eclipse") + "\"/>\n");
 		if (features) {
 			buffer.append("  <features>\n");
-			for (int i = 0; i < entryList.length; i++) {
-				Map<String, Object> items = org.eclipse.pde.internal.build.Utils.parseExtraBundlesString(entryList[i],
+			for (String element : entryList) {
+				Map<String, Object> items = org.eclipse.pde.internal.build.Utils.parseExtraBundlesString(element,
 						false);
 				buffer.append("    <feature id=\"");
 				buffer.append(items.get(ID));
@@ -257,8 +256,8 @@ public class Utils {
 			buffer.append("  </features>\n");
 		} else {
 			buffer.append("  <plugins>\n");
-			for (int i = 0; i < entryList.length; i++) {
-				Map<String, Object> items = org.eclipse.pde.internal.build.Utils.parseExtraBundlesString(entryList[i],
+			for (String element : entryList) {
+				Map<String, Object> items = org.eclipse.pde.internal.build.Utils.parseExtraBundlesString(element,
 						false);
 				buffer.append("    <plugin id=\"");
 				buffer.append(items.get(ID));
@@ -336,9 +335,9 @@ public class Utils {
 					.loadConfiguration(BundleHelper.getDefault().getBundle().getBundleContext(), null);
 			// find a fragment for a platform we aren't
 			String id = "org.eclipse.equinox.launcher.win32.win32.x86_64";
-			for (int i = 0; i < bundles.length; i++) {
-				if (bundles[i].getSymbolicName().equals(id)) {
-					URI location = bundles[i].getLocation();
+			for (BundleInfo bundle : bundles) {
+				if (bundle.getSymbolicName().equals(id)) {
+					URI location = bundle.getLocation();
 					executableLocation = findExecutable(URIUtil.toFile(URIUtil.append(location, "../..")));
 					if (executableLocation != null)
 						return executableLocation;
@@ -444,8 +443,8 @@ public class Utils {
 			if (!target.exists())
 				target.mkdirs();
 			File[] children = source.listFiles();
-			for (int i = 0; i < children.length; i++)
-				copy(children[i], new File(target, children[i].getName()));
+			for (File element : children)
+				copy(element, new File(target, element.getName()));
 			return;
 		}
 		try (InputStream input = new BufferedInputStream(new FileInputStream(source));
