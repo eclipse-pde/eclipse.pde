@@ -207,7 +207,10 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	@Override
 	protected TargetFeature[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		fTarget = definition;
-		fSynchronizer.synchronize(definition, monitor);
+
+		if (!isResolved()) {
+			fSynchronizer.synchronize(definition, monitor);
+		}
 		return fFeatures;
 	}
 
@@ -271,7 +274,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	@Override
 	protected TargetBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		fTarget = definition;
-		fSynchronizer.synchronize(definition, monitor);
+		if (!isResolved()) {
+			fSynchronizer.synchronize(definition, monitor);
+		}
 		return fBundles;
 	}
 
