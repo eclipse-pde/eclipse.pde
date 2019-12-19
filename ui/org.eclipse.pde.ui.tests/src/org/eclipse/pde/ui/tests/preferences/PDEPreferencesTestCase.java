@@ -16,7 +16,6 @@ package org.eclipse.pde.ui.tests.preferences;
 import junit.framework.TestCase;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
@@ -69,13 +68,9 @@ public class PDEPreferencesTestCase extends TestCase {
 		final String key = "stringKey";
 		String originalValue = preferences.get(key, key);
 
-		IPreferenceChangeListener listener = new IPreferenceChangeListener(){
-
-			@Override
-			public void preferenceChange(PreferenceChangeEvent event) {
-				assertEquals(event.getKey(), key);
-				assertEquals(event.getNewValue(), "stringValue");
-			}
+		IPreferenceChangeListener listener = event -> {
+			assertEquals(event.getKey(), key);
+			assertEquals(event.getNewValue(), "stringValue");
 		};
 		preferences.addPreferenceChangeListener(listener);
 		preferences.put(key, "stringValue");
@@ -93,14 +88,10 @@ public class PDEPreferencesTestCase extends TestCase {
 
 		preferences.put(key, "oldStringValue");
 
-		IPreferenceChangeListener listener = new IPreferenceChangeListener(){
-
-			@Override
-			public void preferenceChange(PreferenceChangeEvent event) {
-				assertEquals(event.getKey(), key);
-				assertEquals(event.getOldValue(), "oldStringValue");
-				assertEquals(event.getNewValue(), "newStringValue");
-			}
+		IPreferenceChangeListener listener = event -> {
+			assertEquals(event.getKey(), key);
+			assertEquals(event.getOldValue(), "oldStringValue");
+			assertEquals(event.getNewValue(), "newStringValue");
 		};
 		preferences.put(key, "newStringValue");
 		preferences.removePreferenceChangeListener(listener);

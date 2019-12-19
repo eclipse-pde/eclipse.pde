@@ -66,31 +66,28 @@ public class SampleOperation implements IRunnableWithProgress {
 	@Override
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
-			ICoreRunnable op = new ICoreRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					IConfigurationElement[] projects = sample.getChildren("project"); //$NON-NLS-1$
-					SubMonitor subMonitor = SubMonitor.convert(monitor, PDEUIMessages.SampleOperation_creating,
-							projects.length);
-					createdProjects = new IProject[projects.length];
-					try {
-						for (int i = 0; i < projects.length; i++) {
-							IFile file = importProject(projectNames[i], projects[i],
-									subMonitor.split(1));
-							if (file != null && sampleManifest == null)
-								sampleManifest = file;
-							if (file != null) {
-								createdProjects[i] = file.getProject();
-							}
-							if (cancel)
-								// if user has cancelled operation, exit.
-								break;
+			ICoreRunnable op = monitor1 -> {
+				IConfigurationElement[] projects = sample.getChildren("project"); //$NON-NLS-1$
+				SubMonitor subMonitor = SubMonitor.convert(monitor1, PDEUIMessages.SampleOperation_creating,
+						projects.length);
+				createdProjects = new IProject[projects.length];
+				try {
+					for (int i = 0; i < projects.length; i++) {
+						IFile file = importProject(projectNames[i], projects[i],
+								subMonitor.split(1));
+						if (file != null && sampleManifest == null)
+							sampleManifest = file;
+						if (file != null) {
+							createdProjects[i] = file.getProject();
 						}
-					} catch (InterruptedException e) {
-						throw new OperationCanceledException();
-					} catch (InvocationTargetException e) {
-						throwCoreException(e);
+						if (cancel)
+							// if user has cancelled operation, exit.
+							break;
 					}
+				} catch (InterruptedException e1) {
+					throw new OperationCanceledException();
+				} catch (InvocationTargetException e2) {
+					throwCoreException(e2);
 				}
 			};
 			PDEPlugin.getWorkspace().run(op, monitor);
