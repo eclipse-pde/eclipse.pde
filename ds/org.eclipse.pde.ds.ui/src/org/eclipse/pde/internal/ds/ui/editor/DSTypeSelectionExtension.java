@@ -29,7 +29,7 @@ public class DSTypeSelectionExtension extends TypeSelectionExtension {
 
 	class TypeInfoFilterExtension implements ITypeInfoFilterExtension {
 
-		List<String> fProvides = new ArrayList<String>(3);
+		List<String> fProvides = new ArrayList<>(3);
 
 		public TypeInfoFilterExtension(IDSProvide[] provides) {
 			for (IDSProvide provide : provides) {

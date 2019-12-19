@@ -341,7 +341,7 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 			IDocumentElementNode node, int offset, IDocument doc,
 			String filter, String tag) {
 
-		ArrayList<DSAttrCompletionProposal> proposals = new ArrayList<DSAttrCompletionProposal>();
+		ArrayList<DSAttrCompletionProposal> proposals = new ArrayList<>();
 
 		if (!(node instanceof IDSObject)) {
 			return null;
@@ -403,7 +403,7 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 
 	private ICompletionProposal[] computeRootNodeProposals(
 			IDocumentElementNode node, int offset, String filter) {
-		ArrayList<DSCompletionProposal> proposals = new ArrayList<DSCompletionProposal>();
+		ArrayList<DSCompletionProposal> proposals = new ArrayList<>();
 		IDSModel model = (DSModel) fSourcePage.getInputContext().getModel();
 
 		IDSComponent component = model.getDSComponent();
