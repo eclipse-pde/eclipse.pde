@@ -76,7 +76,7 @@ public class DSAnnotationPreferenceListener implements IPreferenceChangeListener
 				}
 
 				return Status.OK_STATUS;
-			};
+			}
 
 			@Override
 			public boolean belongsTo(Object family) {
