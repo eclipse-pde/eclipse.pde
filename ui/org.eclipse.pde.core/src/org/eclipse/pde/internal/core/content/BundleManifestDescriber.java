@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,9 +31,6 @@ public class BundleManifestDescriber implements ITextContentDescriber {
 
 	private final static QualifiedName[] SUPPORTED_OPTIONS = {IContentDescription.BYTE_ORDER_MARK};
 
-	/* (Intentionally not included in javadoc)
-	 * @see IContentDescriber#describe(InputStream, IContentDescription)
-	 */
 	@Override
 	public int describe(InputStream contents, IContentDescription description) throws IOException {
 		byte[] bom = getByteOrderMark(contents);
@@ -55,12 +52,13 @@ public class BundleManifestDescriber implements ITextContentDescriber {
 				description.setProperty(IContentDescription.BYTE_ORDER_MARK, bom);
 			}
 		}
-		BufferedReader reader = new BufferedReader(new InputStreamReader(contents, charset));
-		String line;
-		for (int i = 0; ((line = reader.readLine()) != null) && i < LINES; i++) {
-			if (matches(line)) {
-				// found signature
-				return VALID;
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(contents, charset))) {
+			String line;
+			for (int i = 0; ((line = reader.readLine()) != null) && i < LINES; i++) {
+				if (matches(line)) {
+					// found signature
+					return VALID;
+				}
 			}
 		}
 		// could not find signature
@@ -69,11 +67,12 @@ public class BundleManifestDescriber implements ITextContentDescriber {
 
 	@Override
 	public int describe(Reader contents, IContentDescription description) throws IOException {
-		BufferedReader reader = new BufferedReader(contents);
-		String line;
-		for (int i = 0; ((line = reader.readLine()) != null) && i < LINES; i++) {
-			if (matches(line)) {
-				return VALID;
+		try (BufferedReader reader = new BufferedReader(contents)) {
+			String line;
+			for (int i = 0; ((line = reader.readLine()) != null) && i < LINES; i++) {
+				if (matches(line)) {
+					return VALID;
+				}
 			}
 		}
 		return INDETERMINATE;
