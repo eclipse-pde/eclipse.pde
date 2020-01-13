@@ -56,7 +56,7 @@ public final class Painter extends Object {
 		Painter.getSystemColor(SWT.COLOR_DARK_MAGENTA)
 	};
 
-	private static final String LINE_SEPARATOR = System.getProperty("line.separator");  //$NON-NLS-1$
+	private static final String LINE_SEPARATOR = System.lineSeparator();
 
 	//
 	// Static Methods

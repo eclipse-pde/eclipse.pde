@@ -53,7 +53,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 			IDocument document = ((IEditingModel) fModel).getDocument();
 			fLineDelimiter = TextUtilities.getDefaultLineDelimiter(document);
 		} else {
-			fLineDelimiter = System.getProperty("line.separator"); //$NON-NLS-1$
+			fLineDelimiter = System.lineSeparator(); //$NON-NLS-1$
 		}
 	}
 

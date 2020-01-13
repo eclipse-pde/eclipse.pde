@@ -1227,7 +1227,7 @@ public class PluginImportOperation extends WorkspaceJob {
 					for (ManifestElement element : elements) {
 						if (buffer.length() > 0) {
 							buffer.append(","); //$NON-NLS-1$
-							buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
+							buffer.append(System.lineSeparator());
 							buffer.append(" "); //$NON-NLS-1$
 						}
 						if (element.getValue().equals(".")) //$NON-NLS-1$

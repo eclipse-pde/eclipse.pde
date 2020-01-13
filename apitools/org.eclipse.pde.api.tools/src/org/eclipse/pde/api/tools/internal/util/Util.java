@@ -285,7 +285,7 @@ public final class Util {
 
 	private static final String JAVA_LANG_OBJECT = "java.lang.Object"; //$NON-NLS-1$
 	private static final String JAVA_LANG_RUNTIMEEXCEPTION = "java.lang.RuntimeException"; //$NON-NLS-1$
-	public static final String LINE_DELIMITER = System.getProperty("line.separator"); //$NON-NLS-1$
+	public static final String LINE_DELIMITER = System.lineSeparator();
 
 	public static final String UNKNOWN_ELEMENT_KIND = "UNKNOWN_ELEMENT_KIND"; //$NON-NLS-1$
 

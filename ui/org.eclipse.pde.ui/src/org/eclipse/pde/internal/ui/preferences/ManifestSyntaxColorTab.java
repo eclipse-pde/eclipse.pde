@@ -30,7 +30,7 @@ public class ManifestSyntaxColorTab extends SyntaxColorTab {
 	@Override
 	protected IDocument getDocument() {
 		StringBuilder buffer = new StringBuilder();
-		String delimiter = System.getProperty("line.separator"); //$NON-NLS-1$
+		String delimiter = System.lineSeparator();
 		buffer.append("Manifest-Version: 1.0"); //$NON-NLS-1$
 		buffer.append(delimiter);
 		buffer.append("Bundle-Name: %name"); //$NON-NLS-1$
