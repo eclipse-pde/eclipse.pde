@@ -59,7 +59,7 @@ public class TocLink extends TocObject {
 																			// same
 																			// project,
 			// remove the project name segment
-			setFieldTocPath(path.removeFirstSegments(1).toString()); //$NON-NLS-1$
+			setFieldTocPath(path.removeFirstSegments(1).toString());
 		} else { // If the file is from another project, add ".."
 			// to traverse outside this model's project
 			setFieldTocPath(".." + path.toString()); //$NON-NLS-1$
