@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,10 +30,11 @@ public class NLResourceHelper {
 	private String fNLFileBasePath;
 
 	public NLResourceHelper(String name, URL[] locations) {
-		try (InputStream stream = getResourceStream(name, locations);) {
-			if (stream != null) {
-				bundle = new PropertyResourceBundle(stream);
-				stream.close();
+		try (URLClassLoader resourceLoader = new URLClassLoader(locations, null)) {
+			try (InputStream stream = getResourceStream(resourceLoader, name);) {
+				if (stream != null) {
+					bundle = new PropertyResourceBundle(stream);
+				}
 			}
 		} catch (IOException e) {
 			PDECore.logException(e);
@@ -44,10 +45,7 @@ public class NLResourceHelper {
 		bundle = null;
 	}
 
-	private InputStream getResourceStream(String name, URL[] locations) {
-		@SuppressWarnings("resource") // will be closed by caller
-		URLClassLoader resourceLoader = new URLClassLoader(locations, null);
-
+	private InputStream getResourceStream(URLClassLoader resourceLoader, String name) {
 		StringTokenizer tokenizer = new StringTokenizer(Platform.getNL(), "_"); //$NON-NLS-1$
 		String language = tokenizer.nextToken();
 		String country = (tokenizer.hasMoreTokens() ? tokenizer.nextToken() : ""); //$NON-NLS-1$
