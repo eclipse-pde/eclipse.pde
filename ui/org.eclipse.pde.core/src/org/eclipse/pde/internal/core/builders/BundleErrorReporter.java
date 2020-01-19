@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -809,9 +809,14 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		while (!bundleDescriptions.isEmpty()) {
 			BundleDescription dependencyDesc = bundleDescriptions.pop();
 			visitedBundles.add(dependencyDesc);
-			for (BundleDescription transitiveDependencyDesc : dependencyDesc.getResolvedRequires()) {
-				if (!visitedBundles.contains(transitiveDependencyDesc)) {
-				bundleDescriptions.push(transitiveDependencyDesc);
+			for (BundleSpecification transitiveDependencyDesc : dependencyDesc.getRequiredBundles()) {
+				if (transitiveDependencyDesc.isOptional()) {
+					continue;
+				}
+				if (!visitedBundles.contains(transitiveDependencyDesc.getSupplier())) {
+					if (transitiveDependencyDesc.getSupplier() instanceof BundleDescription) {
+						bundleDescriptions.push((BundleDescription) transitiveDependencyDesc.getSupplier());
+					}
 				}
 			}
 			try {
