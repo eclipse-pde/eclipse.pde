@@ -13,19 +13,19 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.build;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import org.eclipse.pde.core.build.IBuildEntry;
 
 public class BuildUtil {
 
 	public static IBuildEntry[] getBuildLibraries(IBuildEntry[] entries) {
-		Vector<IBuildEntry> temp = new Vector<>();
+		ArrayList<IBuildEntry> temp = new ArrayList<>();
 		for (IBuildEntry entry : entries) {
 			if (entry.getName().startsWith(IBuildEntry.JAR_PREFIX))
 				temp.add(entry);
 		}
 		IBuildEntry[] result = new IBuildEntry[temp.size()];
-		temp.copyInto(result);
+		temp.toArray(result);
 		return result;
 	}
 

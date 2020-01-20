@@ -118,7 +118,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 				if (jarOrderEntry == null)
 					return libraries;
 
-				Vector<IBuildEntry> libList = new Vector<>();
+				ArrayList<org.eclipse.pde.core.build.IBuildEntry> libList = new ArrayList<>();
 				String[] tokens = jarOrderEntry.getTokens();
 				for (String token : tokens) {
 					IBuildEntry entry = build.getEntry(IBuildEntry.JAR_PREFIX + token);

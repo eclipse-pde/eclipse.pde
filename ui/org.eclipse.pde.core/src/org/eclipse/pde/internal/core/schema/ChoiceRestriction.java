@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import org.eclipse.pde.internal.core.ischema.ISchema;
@@ -57,13 +58,13 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 		if (children == null) {
 			return new String[0];
 		}
-		Vector<String> result = new Vector<>();
+		ArrayList<String> result = new ArrayList<>();
 		for (int i = 0; i < children.size(); i++) {
 			ISchemaEnumeration enumeration = children.get(i);
-			result.addElement(enumeration.getName());
+			result.add(enumeration.getName());
 		}
 		String[] choices = new String[result.size()];
-		result.copyInto(choices);
+		result.toArray(choices);
 		return choices;
 	}
 
