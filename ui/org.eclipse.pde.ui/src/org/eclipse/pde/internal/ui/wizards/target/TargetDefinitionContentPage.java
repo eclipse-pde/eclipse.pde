@@ -345,7 +345,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		fNLCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, fNLChoices.toArray(new String[fNLChoices.size()]));
 		fNLCombo.addModifyListener(e -> {
 			String value = fNLCombo.getText();
-			int index = value.indexOf('-'); 
+			int index = value.indexOf('-');
 			if (index > 0)
 				value = value.substring(0, index);
 			getTargetDefinition().setNL(getModelValue(value));

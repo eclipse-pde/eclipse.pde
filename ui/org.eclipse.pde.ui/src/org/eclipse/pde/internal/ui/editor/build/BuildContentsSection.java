@@ -238,7 +238,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		fTreeViewer.getTree().getDisplay().asyncExec(() -> BusyIndicator.showWhile(Display.getCurrent(), () -> {
 			if (fTreeViewer.getTree().isDisposed())
 				return;
-			Vector<String> fileExt = new Vector<>();
+			ArrayList<String> fileExt = new ArrayList<>();
 			String[] inclTokens, exclTokens = new String[0];
 			if (fBundleRoot == null || includes == null)
 				return;

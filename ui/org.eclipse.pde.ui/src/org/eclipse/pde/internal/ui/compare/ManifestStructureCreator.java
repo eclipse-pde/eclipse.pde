@@ -128,7 +128,7 @@ public class ManifestStructureCreator extends StructureCreator {
 	}
 
 	private String extractKey(String headerBuffer) {
-		int assign = headerBuffer.indexOf(':'); 
+		int assign = headerBuffer.indexOf(':');
 		if (assign != -1)
 			return headerBuffer.substring(0, assign);
 		return headerBuffer;

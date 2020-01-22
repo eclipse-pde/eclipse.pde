@@ -92,31 +92,28 @@ public class CreateApiFilterOperation extends Job {
 			HashSet<IProject> projects = new HashSet<>();
 
 			if (fAddingComment) {
-				getDisplay().syncExec(new Runnable() {
-					@Override
-					public void run() {
-						InputDialog dialog = new InputDialog(
-								PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-								MarkerMessages.CreateApiFilterOperation_add_filter_comment,
-								MarkerMessages.CreateApiFilterOperation_filter_comment, null, null) {
+				getDisplay().syncExec(() -> {
+					InputDialog dialog = new InputDialog(
+							PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+							MarkerMessages.CreateApiFilterOperation_add_filter_comment,
+							MarkerMessages.CreateApiFilterOperation_filter_comment, null, null) {
 
-							@Override
-							protected void createButtonsForButtonBar(Composite parent) {
-								super.createButtonsForButtonBar(parent);
-								getButton(IDialogConstants.OK_ID).setText(IDialogConstants.PROCEED_LABEL);
-							}
+						@Override
+						protected void createButtonsForButtonBar(Composite parent) {
+							super.createButtonsForButtonBar(parent);
+							getButton(IDialogConstants.OK_ID).setText(IDialogConstants.PROCEED_LABEL);
+						}
 
-						};
-						int okCancel = dialog.open();
-						if (okCancel == IDialogConstants.OK_ID) {
-							comment = dialog.getValue();
-							if (comment != null && comment.length() < 1) {
-								comment = null;
-							}
+					};
+					int okCancel = dialog.open();
+					if (okCancel == IDialogConstants.OK_ID) {
+						comment = dialog.getValue();
+						if (comment != null && comment.length() < 1) {
+							comment = null;
 						}
-						if (okCancel == IDialogConstants.CANCEL_ID) {
-							cancel = true;
-						}
+					}
+					if (okCancel == IDialogConstants.CANCEL_ID) {
+						cancel = true;
 					}
 				});
 

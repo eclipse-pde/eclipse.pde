@@ -996,7 +996,7 @@ public class FeatureBlock {
 			fRemovePluginButton.setEnabled(allPlugins);
 		});
 		fTree.addCheckStateListener(e -> fTree.update(e.getElement(), null));
-		
+
 		fTree.getTree().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {

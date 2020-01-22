@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -97,7 +97,7 @@ public class FeatureOutlinePage extends FormOutlinePage {
 			return new Object[0];
 		}
 		IFeature feature = model.getFeature();
-		Vector<Object> result = new Vector<>();
+		ArrayList<Object> result = new ArrayList<>();
 		for (int i = 0; i < 3; i++) {
 			IFeatureInfo info = feature.getFeatureInfo(i);
 			if (info != null)

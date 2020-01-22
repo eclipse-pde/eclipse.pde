@@ -142,9 +142,9 @@ public class DSLibPluginModelListener implements IPluginModelListener {
 				}
 
 				return Status.OK_STATUS;
-			};
+			}
 		};
-		
+
 		job.setSystem(true);
 
 		ISchedulingRule[] rules = changedProjects.stream().map(IJavaProject::getProject)

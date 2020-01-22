@@ -45,11 +45,12 @@ public class TagNameCompletionTests extends AbstractTargetEditorTest {
 
 		ITextViewer textViewer = getTextViewerForTarget("TagNamesTestCaseTarget");
 
-		for (int offset : expectedProposalsByOffset.keySet()) {
+		for (Map.Entry<Integer, String[]> entry : expectedProposalsByOffset.entrySet()) {
+			int offset = entry.getKey();
 			ICompletionProposal[] completionProposals = contentAssist.computeCompletionProposals(textViewer,
 					offset);
 			if (expectedProposalsByOffset.containsKey(offset)) {
-				checkProposals(expectedProposalsByOffset.get(offset), completionProposals, offset);
+				checkProposals(entry.getValue(), completionProposals, offset);
 			} else if (completionProposals.length != 0) {
 				Assert.fail("There should not be any proposals at index " + offset + ". Following proposals found: "
 						+ proposalListToString(completionProposals));

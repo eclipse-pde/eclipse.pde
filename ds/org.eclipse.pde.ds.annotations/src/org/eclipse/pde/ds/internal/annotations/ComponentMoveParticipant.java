@@ -41,6 +41,7 @@ public class ComponentMoveParticipant extends MoveParticipant implements ISharab
 		return Messages.ComponentMoveParticipant_name;
 	}
 
+	@Override
 	public void addElement(Object element, RefactoringArguments arguments) {
 		helper.addElement(element, arguments);
 	}
@@ -55,6 +56,7 @@ public class ComponentMoveParticipant extends MoveParticipant implements ISharab
 		return helper.createChange(pm);
 	}
 
+	@Override
 	public String getComponentNameRoot(IJavaElement element, RefactoringArguments args) {
 		IType type = (IType) element;
 		String compName = type.getFullyQualifiedName();

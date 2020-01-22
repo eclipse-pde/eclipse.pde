@@ -142,7 +142,7 @@ public abstract class TextUtil {
 		value = value.trim();
 		while (value.length() > 0 && !Character.isLetter(value.charAt(0)))
 			value = value.substring(1, value.length());
-		int loc = value.indexOf(':'); 
+		int loc = value.indexOf(':');
 		if (loc != -1 && loc > 0)
 			value = value.substring(0, loc);
 		else if (loc == 0)

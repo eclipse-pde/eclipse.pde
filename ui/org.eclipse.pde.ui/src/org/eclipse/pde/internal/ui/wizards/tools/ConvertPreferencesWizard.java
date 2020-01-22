@@ -247,7 +247,7 @@ public class ConvertPreferencesWizard extends Wizard {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		ITextFileBuffer buffer = manager.getTextFileBuffer(path, LocationKind.LOCATION);
 
-		Boolean pathNeededConnection = buffer == null;
+		boolean pathNeededConnection = buffer == null;
 		if (pathNeededConnection) {
 			manager.connect(path, LocationKind.LOCATION, null);
 			buffer = manager.getTextFileBuffer(path, LocationKind.LOCATION);

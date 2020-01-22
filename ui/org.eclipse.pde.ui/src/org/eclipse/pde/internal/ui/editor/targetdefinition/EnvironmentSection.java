@@ -183,7 +183,7 @@ public class EnvironmentSection extends SectionPart {
 						if (value == null) {
 							getTarget().setNL(null);
 						} else {
-							int index = value.indexOf('-'); 
+							int index = value.indexOf('-');
 							if (index > 0)
 								value = value.substring(0, index);
 							getTarget().setNL(value.trim());

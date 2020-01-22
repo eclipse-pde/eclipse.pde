@@ -127,7 +127,7 @@ public class TestPDETemplates {
 		String version = System.getProperty("java.specification.version"); //$NON-NLS-1$
 		int ver = -1;
 		try {
-			ver = Integer.valueOf(version);
+			ver = Integer.parseInt(version);
 		} catch (NumberFormatException e) {
 			// preJava9
 		}

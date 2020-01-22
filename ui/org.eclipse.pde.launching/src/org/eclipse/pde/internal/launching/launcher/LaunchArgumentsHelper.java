@@ -268,12 +268,7 @@ public class LaunchArgumentsHelper {
 				}
 
 				// Unjarred bundle, search for the built jar at the root of the folder
-				File[] files = bundleFile.listFiles(new FilenameFilter() {
-					@Override
-					public boolean accept(File dir, String name) {
-						return name.contains(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER);
-					}
-				});
+				File[] files = bundleFile.listFiles((FilenameFilter) (dir, name) -> name.contains(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER));
 				for (File file : files) {
 					if (file.isFile()) {
 						return file.getPath();

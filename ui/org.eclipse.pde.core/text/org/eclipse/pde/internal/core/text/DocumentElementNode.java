@@ -599,7 +599,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 
 	protected String getLineDelimiter() {
 		// Subclasses to override
-		return System.getProperty("line.separator"); //$NON-NLS-1$
+		return System.lineSeparator(); //$NON-NLS-1$
 	}
 
 	/**

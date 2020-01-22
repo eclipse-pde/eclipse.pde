@@ -1202,8 +1202,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 						bp.fSeverity, bp.fCategory);
 				addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,bp.fCompilerKey);
 				if (marker != null && bp.attributes != null) {
-					for (String attribute : bp.attributes.keySet()) {
-						marker.setAttribute(attribute, bp.attributes.get(attribute));
+					for (Map.Entry<String, String> entry : bp.attributes.entrySet()) {
+						String attribute = entry.getKey();
+						marker.setAttribute(attribute, entry.getValue());
 					}
 				}
 			}

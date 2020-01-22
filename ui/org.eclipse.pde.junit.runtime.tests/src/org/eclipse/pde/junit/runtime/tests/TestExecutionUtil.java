@@ -184,6 +184,7 @@ class TestExecutionUtil {
 	}
 
 	private static class TestLaunchShortcut extends JUnitWorkbenchLaunchShortcut {
+		@Override
 		public ILaunchConfigurationWorkingCopy createLaunchConfiguration(IJavaElement element) throws CoreException {
 			return super.createLaunchConfiguration(element);
 		}

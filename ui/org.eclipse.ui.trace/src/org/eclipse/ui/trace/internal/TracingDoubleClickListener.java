@@ -21,6 +21,7 @@ import org.eclipse.ui.trace.internal.datamodel.TracingNode;
  */
 public class TracingDoubleClickListener implements IDoubleClickListener {
 
+	@Override
 	public void doubleClick(final DoubleClickEvent event) {
 		// auto-expand or collapse the selected node
 		TreeViewer traceComponentViewer = (TreeViewer) event.getViewer();

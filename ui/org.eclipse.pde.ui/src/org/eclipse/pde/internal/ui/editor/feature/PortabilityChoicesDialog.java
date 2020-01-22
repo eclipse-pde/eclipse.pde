@@ -14,8 +14,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import java.util.ArrayList;
 import java.util.StringTokenizer;
-import java.util.Vector;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
@@ -102,7 +102,7 @@ public class PortabilityChoicesDialog extends TrayDialog {
 		choiceViewer.setInput(PDEPlugin.getDefault());
 
 		if (value != null) {
-			Vector<Choice> selected = new Vector<>();
+			ArrayList<Choice> selected = new ArrayList<>();
 			StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
 			while (stok.hasMoreElements()) {
 				String tok = stok.nextToken();

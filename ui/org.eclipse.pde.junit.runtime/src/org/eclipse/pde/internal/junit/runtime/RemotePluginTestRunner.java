@@ -180,7 +180,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 			throw new IllegalArgumentException("Bundle \"" + getfTestPluginName + "\" not found. Possible causes include missing dependencies, too restrictive version ranges, or a non-matching required execution environment."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		final String pluginId = getfTestPluginName;
-		List<String> engines = new ArrayList<String>();
+		List<String> engines = new ArrayList<>();
 		Bundle bund = FrameworkUtil.getBundle(RemotePluginTestRunner.class);
 		Bundle[] bundles = bund.getBundleContext().getBundles();
 		for (Bundle iBundle : bundles) {
@@ -194,7 +194,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 			}
 		}
 		engines.add(pluginId);
-		List<Bundle> platformEngineBundles = new ArrayList<Bundle>();
+		List<Bundle> platformEngineBundles = new ArrayList<>();
 		for (Iterator<String> iterator = engines.iterator(); iterator.hasNext();) {
 			String string = iterator.next();
 			Bundle bundle2 = Platform.getBundle(string);
@@ -240,7 +240,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 			ClassLoader currentTCCL = Thread.currentThread().getContextClassLoader();
 			try {
 				// Get all bundles with junit5 test engine
-				List<String> platformEngines = new ArrayList<String>();
+				List<String> platformEngines = new ArrayList<>();
 				Bundle bundle = FrameworkUtil.getBundle(getClass());
 				Bundle[] bundles = bundle.getBundleContext().getBundles();
 				for (Bundle iBundle : bundles) {
@@ -265,7 +265,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	}
 
 	private ClassLoader getJUnit5Classloader(List<String> platformEngine) {
-		List<Bundle> platformEngineBundles = new ArrayList<Bundle>();
+		List<Bundle> platformEngineBundles = new ArrayList<>();
 		for (Iterator<String> iterator = platformEngine.iterator(); iterator.hasNext();) {
 			String string = iterator.next();
 			Bundle bundle = Platform.getBundle(string);
@@ -282,11 +282,11 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		}
 		return false;
 	}
-	
+
 	private static boolean isJUnit5(String[] args) {
 		if (runAsJUnit5(args) == true)
 			return true;
-		
+
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("org.eclipse.jdt.internal.junit5.runner.JUnit5TestLoader")) //$NON-NLS-1$
 				return true;

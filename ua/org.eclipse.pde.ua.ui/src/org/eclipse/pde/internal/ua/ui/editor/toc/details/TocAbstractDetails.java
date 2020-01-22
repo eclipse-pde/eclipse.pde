@@ -118,7 +118,7 @@ public abstract class TocAbstractDetails extends PDEDetails {
 	protected void setPathEntry(IFile file) {
 		IPath path = file.getFullPath();
 		if (file.getProject().equals(getDataObject().getModel().getUnderlyingResource().getProject())) {
-			getPathEntryField().setValue(path.removeFirstSegments(1).toString()); //$NON-NLS-1$
+			getPathEntryField().setValue(path.removeFirstSegments(1).toString());
 		} else {
 			getPathEntryField().setValue(".." + path.toString()); //$NON-NLS-1$
 		}

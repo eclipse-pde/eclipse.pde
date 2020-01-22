@@ -63,7 +63,7 @@ public class ProjectClasspathPreferenceChangeListener implements IPreferenceChan
 			public IStatus runInWorkspace(IProgressMonitor monitor) {
 				updateClasspathContainer(project, monitor);
 				return Status.OK_STATUS;
-			};
+			}
 		};
 		job.setSystem(true);
 		job.setRule(project.getProject());

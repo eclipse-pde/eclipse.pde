@@ -81,7 +81,7 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 			return string;
 		}
 
-		String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
+		String lineSeparator = System.lineSeparator(); //$NON-NLS-1$
 		if (lineDelimiter.equals(lineSeparator)) {
 			return string;
 		}

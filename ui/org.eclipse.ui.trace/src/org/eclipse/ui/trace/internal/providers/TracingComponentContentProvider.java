@@ -22,6 +22,7 @@ import org.eclipse.ui.trace.internal.datamodel.TracingNode;
  */
 public class TracingComponentContentProvider implements ITreeContentProvider {
 
+	@Override
 	public TracingNode[] getChildren(final Object parentElement) {
 
 		TracingNode[] children = null;
@@ -32,6 +33,7 @@ public class TracingComponentContentProvider implements ITreeContentProvider {
 		return children;
 	}
 
+	@Override
 	public boolean hasChildren(final Object element) {
 
 		boolean hasChildren = false;
@@ -41,6 +43,7 @@ public class TracingComponentContentProvider implements ITreeContentProvider {
 		return hasChildren;
 	}
 
+	@Override
 	public Object[] getElements(final Object inputElement) {
 
 		TracingNode results[] = null;
@@ -55,6 +58,7 @@ public class TracingComponentContentProvider implements ITreeContentProvider {
 		return results;
 	}
 
+	@Override
 	public Object getParent(final Object element) {
 
 		TracingNode node = null;

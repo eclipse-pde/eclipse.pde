@@ -1,15 +1,16 @@
 /*******************************************************************************
-.
-. This
-* program and the accompanying materials are made available under the terms of
-* the Eclipse Public License 2.0 which accompanies this distribution, and is
-t https://www.eclipse.org/legal/epl-2.0/
-t
-t SPDX-License-Identifier: EPL-2.0
-*
-* Contributors:
-*   Mickael Istria (Red Hat Inc.) - 383795: <bundle...> support
-*   IBM Corporation - ongoing enhancements
+ * Copyright (c) 2013, 2015 Red Hat Inc. and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *   Mickael Istria (Red Hat Inc.) - 383795: <bundle...> support
+ *   IBM Corporation - ongoing enhancements
 ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
 

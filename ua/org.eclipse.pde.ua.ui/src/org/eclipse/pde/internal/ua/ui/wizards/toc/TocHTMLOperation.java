@@ -28,7 +28,7 @@ public class TocHTMLOperation extends WorkspaceModifyOperation {
 
 	private static byte[] getHTMLContent() throws CoreException {
 		String indent = "   "; //$NON-NLS-1$
-		String delimiter = System.getProperty("line.separator"); //$NON-NLS-1$
+		String delimiter = System.lineSeparator();
 
 		StringBuilder buf = new StringBuilder();
 		buf.append("<!DOCTYPE HTML PUBLIC"); //$NON-NLS-1$

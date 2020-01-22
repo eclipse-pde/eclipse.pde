@@ -152,7 +152,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 						lineDelimiter = TextUtilities.getDefaultLineDelimiter(document);
 					}
 
-					String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
+					String lineSeparator = System.lineSeparator();
 					if (lineDelimiter != null && !lineDelimiter.equals(lineSeparator)) {
 						xml = xml.replaceAll(lineSeparator, lineDelimiter);
 					}

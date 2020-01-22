@@ -246,7 +246,7 @@ public class ArgumentsSection extends PDESection {
 
 	private void updateArgumentPreview(IArgumentsInfo launcherArguments) {
 		StringBuilder buffer = new StringBuilder();
-		String delim = System.getProperty("line.separator"); //$NON-NLS-1$
+		String delim = System.lineSeparator();
 		String args = launcherArguments.getCompleteProgramArguments(TAB_LABELS[fLastTab], TAB_ARCHLABELS[fLastArch[fLastTab]]);
 		if (args.length() > 0) {
 			buffer.append(PDEUIMessages.ArgumentsSection_program);

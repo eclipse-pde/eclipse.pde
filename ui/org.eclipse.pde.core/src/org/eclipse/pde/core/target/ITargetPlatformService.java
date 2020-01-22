@@ -221,7 +221,7 @@ public interface ITargetPlatformService {
 	 * <li>STATUS_MISSING_FROM_STATE</li>
 	 * <li>STATUS_MISSING_FROM_TARGET_DEFINITION</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param target
 	 *            resolved target definition to compare with target platform
 	 *            state

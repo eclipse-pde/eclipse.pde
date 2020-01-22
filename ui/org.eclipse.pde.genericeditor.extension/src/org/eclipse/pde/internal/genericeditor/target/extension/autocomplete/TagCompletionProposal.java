@@ -23,7 +23,7 @@ public class TagCompletionProposal extends TargetCompletionProposal {
 	private static final HashMap<String, Attribute[]> tagStartingAttributesAndValues = new HashMap<>();
 
 	static {
-		tagStartingAttributesAndValues.put(ITargetConstants.TARGET_TAG, new Attribute[] { 
+		tagStartingAttributesAndValues.put(ITargetConstants.TARGET_TAG, new Attribute[] {
 				new Attribute(ITargetConstants.TARGET_NAME_ATTR, null),
 				new Attribute(ITargetConstants.TARGET_SEQ_NO_ATTR, "1") });
 		tagStartingAttributesAndValues.put(ITargetConstants.LOCATION_DIRECTORY_COMPLETION_LABEL, new Attribute[] {
@@ -93,7 +93,7 @@ public class TagCompletionProposal extends TargetCompletionProposal {
 		}
 		return tagName + handyAddition;
 	}
-	
+
 	private static String getTagNameFromTageType(String tagType) {
 		if (ITargetConstants.LOCATION_DIRECTORY_COMPLETION_LABEL.equals(tagType)
 				|| ITargetConstants.LOCATION_IU_COMPLETION_LABEL.equals(tagType)

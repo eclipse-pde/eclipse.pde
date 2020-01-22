@@ -125,10 +125,7 @@ public abstract class InputContext {
 	}
 
 	protected IDocumentSetupParticipant getDocumentSetupParticipant() {
-		return new IDocumentSetupParticipant() {
-			@Override
-			public void setup(IDocument document) {
-			}
+		return document -> {
 		};
 	}
 
@@ -145,20 +142,17 @@ public abstract class InputContext {
 			fDocumentProvider.connect(fEditorInput);
 			fModel = createModel(fEditorInput);
 			if (fModel instanceof IModelChangeProvider) {
-				fModelListener = new IModelChangedListener() {
-					@Override
-					public void modelChanged(IModelChangedEvent e) {
-						if (e.getChangeType() != IModelChangedEvent.WORLD_CHANGED) {
-							if (!fEditor.getLastDirtyState())
-								fEditor.fireSaveNeeded(fEditorInput, true);
-							IModelChangeProvider provider = e.getChangeProvider();
-							if (provider instanceof IEditingModel) {
-								// this is to guard against false notifications
-								// when a revert operation is performed, focus is taken away from a FormEntry
-								// and a text edit operation is falsely requested
-								if (((IEditingModel) provider).isDirty())
-									addTextEditOperation(fEditOperations, e);
-							}
+				fModelListener = e -> {
+					if (e.getChangeType() != IModelChangedEvent.WORLD_CHANGED) {
+						if (!fEditor.getLastDirtyState())
+							fEditor.fireSaveNeeded(fEditorInput, true);
+						IModelChangeProvider provider = e.getChangeProvider();
+						if (provider instanceof IEditingModel) {
+							// this is to guard against false notifications
+							// when a revert operation is performed, focus is taken away from a FormEntry
+							// and a text edit operation is falsely requested
+							if (((IEditingModel) provider).isDirty())
+								addTextEditOperation(fEditOperations, e);
 						}
 					}
 				};

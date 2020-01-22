@@ -40,6 +40,7 @@ public class ComponentRenameParticipant extends RenameParticipant implements ISh
 		return Messages.ComponentRenameParticipant_name;
 	}
 
+	@Override
 	public void addElement(Object element, RefactoringArguments arguments) {
 		helper.addElement(element, arguments);
 	}
@@ -54,6 +55,7 @@ public class ComponentRenameParticipant extends RenameParticipant implements ISh
 		return helper.createChange(pm);
 	}
 
+	@Override
 	public String getComponentNameRoot(IJavaElement element, RefactoringArguments args) {
 		String newName = ((RenameArguments) args).getNewName();
 		if (element.getElementType() == IJavaElement.PACKAGE_FRAGMENT) {
