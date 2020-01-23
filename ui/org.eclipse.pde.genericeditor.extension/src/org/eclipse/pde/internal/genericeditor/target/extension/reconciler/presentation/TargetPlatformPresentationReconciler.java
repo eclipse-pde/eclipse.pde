@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 Red Hat Inc. and others
+ * Copyright (c) 2016, 2020 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Sopot Cela (Red Hat Inc.)
  *     Lucas Bullen (Red Hat Inc.) - [Bug 531210] Target File Source Editor unreadable with dark theme
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 559432
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.reconciler.presentation;
 
@@ -34,6 +35,7 @@ import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
@@ -56,7 +58,7 @@ public class TargetPlatformPresentationReconciler extends PresentationReconciler
 				return;
 			}
 			setDamageRepairerScanner();
-			viewer.invalidateTextPresentation();
+			Display.getDefault().asyncExec(() -> viewer.invalidateTextPresentation());
 		}
 	}
 
