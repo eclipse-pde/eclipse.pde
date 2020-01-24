@@ -309,9 +309,9 @@ public class DependencyManager {
 			VersionConstraint[] unsatisfiedConstraints = input.values().stream()
 					.filter(ResolverError[].class::isInstance)
 					.map(ResolverError[].class::cast)
-					.flatMap(arr -> Arrays.stream(arr))
+					.flatMap(Arrays::stream)
 					.filter(err -> err.getUnsatisfiedConstraint() != null)
-					.map(err -> err.getUnsatisfiedConstraint())
+					.map(ResolverError::getUnsatisfiedConstraint)
 					.toArray(VersionConstraint[]::new);
 
 			for (VersionConstraint constraint : unsatisfiedConstraints) {

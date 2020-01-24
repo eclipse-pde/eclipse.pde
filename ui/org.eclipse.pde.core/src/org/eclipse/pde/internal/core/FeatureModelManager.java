@@ -95,7 +95,7 @@ public class FeatureModelManager {
 		fActiveModels = new FeatureTable();
 		fInactiveModels = new FeatureTable();
 
-		fProviderListener = e -> handleModelsChanged(e);
+		fProviderListener = this::handleModelsChanged;
 		fWorkspaceManager.addModelProviderListener(fProviderListener);
 
 		IFeatureModel[] models = fWorkspaceManager.getFeatureModels();
