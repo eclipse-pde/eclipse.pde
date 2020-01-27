@@ -292,7 +292,7 @@ public class RegistryBrowser extends ViewPart {
 		getViewSite().setSelectionProvider(fTreeViewer);
 
 		MenuManager popupMenuManager = new MenuManager();
-		IMenuListener listener = mng -> fillContextMenu(mng);
+		IMenuListener listener = this::fillContextMenu;
 		popupMenuManager.setRemoveAllWhenShown(true);
 		popupMenuManager.addMenuListener(listener);
 		Menu menu = popupMenuManager.createContextMenu(tree);
