@@ -799,7 +799,7 @@ public class ProjectModifyOperation {
 			model.getBuild().add(binEntry);
 		}
 		boolean modified = fillBinIncludes(project, binEntry, description, before);
-		modified = createSourceOutputBuildEntries(model, factory, description, before) | modified;
+		modified = createSourceOutputBuildEntries(model, factory, description, before) || modified;
 		if (modified) {
 			model.save();
 		}
