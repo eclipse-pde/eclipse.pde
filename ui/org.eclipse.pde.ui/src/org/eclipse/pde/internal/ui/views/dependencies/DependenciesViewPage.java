@@ -283,7 +283,7 @@ public abstract class DependenciesViewPage extends Page {
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(manager -> DependenciesViewPage.this.fillContextMenu(manager));
+		menuMgr.addMenuListener(DependenciesViewPage.this::fillContextMenu);
 		Menu menu = menuMgr.createContextMenu(fViewer.getControl());
 		fViewer.getControl().setMenu(menu);
 

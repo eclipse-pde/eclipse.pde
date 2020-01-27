@@ -184,7 +184,7 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 	}
 
 	public Image getImageFromPlugin(String bundleID, String path) {
-		return ResourceLocator.imageDescriptorFromBundle(bundleID, path).map(d-> get(d)).orElse(getBlankImage());
+		return ResourceLocator.imageDescriptorFromBundle(bundleID, path).map(this::get).orElse(getBlankImage());
 	}
 
 	public Image getImageFromPlugin(IPluginModelBase model, String relativePath) {

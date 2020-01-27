@@ -239,7 +239,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 250;
 		fInputViewer.getTree().setLayoutData(gd);
-		fInputViewer.addSelectionChangedListener(event -> handleSelectionChanged(event));
+		fInputViewer.addSelectionChangedListener(this::handleSelectionChanged);
 		fInputViewer.addCheckStateListener(event -> setPageComplete(hasCheckedElements()));
 		fInputViewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 

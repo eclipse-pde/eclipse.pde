@@ -346,7 +346,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), () -> handleDelete());
+			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), this::handleDelete);
 			return true;
 		}
 		if (actionId.equals(ActionFactory.CUT.getId())) {
@@ -360,7 +360,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			return true;
 		}
 		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
-			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), () -> handleSelectAll());
+			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), this::handleSelectAll);
 			return true;
 		}
 		return false;

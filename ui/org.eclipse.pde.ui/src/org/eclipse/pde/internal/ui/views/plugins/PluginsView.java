@@ -580,7 +580,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(manager -> PluginsView.this.fillContextMenu(manager));
+		menuMgr.addMenuListener(PluginsView.this::fillContextMenu);
 		Menu menu = menuMgr.createContextMenu(fTreeViewer.getControl());
 		fTreeViewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, fTreeViewer);

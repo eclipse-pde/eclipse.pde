@@ -276,7 +276,7 @@ public class EnvironmentSection extends SectionPart {
 		if (LOCALES_INITIALIZED)
 			return;
 		// kick off thread in background to find the NL values
-		new Thread(() -> initializeAllLocales()).start();
+		new Thread(this::initializeAllLocales).start();
 	}
 
 }

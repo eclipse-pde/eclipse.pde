@@ -27,7 +27,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class ListUtil {
 
-	private static final Comparator<String> stringComparator = (arg0, arg1) -> arg0.compareToIgnoreCase(arg1);
+	private static final Comparator<String> stringComparator = String::compareToIgnoreCase;
 
 	static class NameComparator extends ViewerComparator {
 		public NameComparator() {
