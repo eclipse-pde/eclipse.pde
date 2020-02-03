@@ -543,7 +543,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		if (baselinecache == null) {
 			return false;
 		}
-		return baselinecache.keySet().contains(name);
+		return baselinecache.containsKey(name);
 	}
 
 	/**

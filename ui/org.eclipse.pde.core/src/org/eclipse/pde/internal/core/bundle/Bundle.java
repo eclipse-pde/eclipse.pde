@@ -108,7 +108,7 @@ public class Bundle extends BundleObject implements IBundle {
 	 * @return a map containing all key/value pairs of manifest headers as strings, values may be empty strings, but not <code>null</code>
 	 */
 	protected Map<String, String> getHeaders() {
-		Map<String, String> result = new HashMap<>(fDocumentHeaders.values().size());
+		Map<String, String> result = new HashMap<>(fDocumentHeaders.size());
 		for (IManifestHeader header : fDocumentHeaders.values()) {
 			if (header.getValue() != null) {
 				result.put(header.getKey(), header.getValue());

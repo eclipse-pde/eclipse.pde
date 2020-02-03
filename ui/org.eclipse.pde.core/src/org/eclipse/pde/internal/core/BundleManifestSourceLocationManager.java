@@ -69,7 +69,7 @@ public class BundleManifestSourceLocationManager {
 	 * @return set of source locations, possibly empty
 	 */
 	public Collection<SourceLocation> getSourceLocations() {
-		Collection<SourceLocation> result = new ArrayList<>(fPluginToSourceBundle.values().size());
+		Collection<SourceLocation> result = new ArrayList<>(fPluginToSourceBundle.size());
 		for (IPluginModelBase bundle : fPluginToSourceBundle.values()) {
 			SourceLocation location = new SourceLocation(new Path(bundle.getInstallLocation()));
 			location.setUserDefined(false);

@@ -265,15 +265,15 @@ public class RegistryModel {
 	}
 
 	public Bundle[] getBundles() {
-		return bundles.values().toArray(new Bundle[bundles.values().size()]);
+		return bundles.values().toArray(new Bundle[bundles.size()]);
 	}
 
 	public ExtensionPoint[] getExtensionPoints() {
-		return extensionPoints.values().toArray(new ExtensionPoint[extensionPoints.values().size()]);
+		return extensionPoints.values().toArray(new ExtensionPoint[extensionPoints.size()]);
 	}
 
 	public ServiceRegistration[] getServices() {
-		return services.values().toArray(new ServiceRegistration[services.values().size()]);
+		return services.values().toArray(new ServiceRegistration[services.size()]);
 	}
 
 	public ServiceName[] getServiceNames() {
