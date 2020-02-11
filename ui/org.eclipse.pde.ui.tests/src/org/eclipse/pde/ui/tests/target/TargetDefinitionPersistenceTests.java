@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -25,6 +28,7 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
+import org.junit.Test;
 
 /**
  * Tests the persistence of target definitions.  Tests memento creation, reading of old target files, and writing of the model.
@@ -40,7 +44,7 @@ public class TargetDefinitionPersistenceTests extends MinimalTargetDefinitionPer
 	 * @throws Exception
 	 */
 
-	// @IgnoreWhen
+	@Test
 	public void testPersistComplexMetadataDefinition() throws Exception {
 		// org.junit.Assume.assumeTrue(false);
 		ITargetDefinition definitionA = getTargetService().newTarget();
@@ -61,6 +65,7 @@ public class TargetDefinitionPersistenceTests extends MinimalTargetDefinitionPer
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testPersistComplexWorkspaceDefinition() throws Exception {
 		// org.junit.Assume.assumeTrue(false);
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("TargetDefinitionPersistenceTests");

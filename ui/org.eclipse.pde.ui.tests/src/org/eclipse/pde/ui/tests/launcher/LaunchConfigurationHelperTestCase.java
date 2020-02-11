@@ -13,15 +13,17 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.launcher;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.pde.internal.launching.launcher.LaunchConfigurationHelper;
+import org.junit.Test;
 
 /**
  * Tests LaunchConfigurationHelper convenience methods
  * @since 3.5
  */
-public class LaunchConfigurationHelperTestCase extends TestCase {
-
+public class LaunchConfigurationHelperTestCase {
+	@Test
 	public void testgetStartData() {
 		assertEquals(LaunchConfigurationHelper.getStartData("", false), "");
 		assertEquals(LaunchConfigurationHelper.getStartData("", true), "@start");

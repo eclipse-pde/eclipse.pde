@@ -13,9 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.text.edits.TextEdit;
+import org.junit.Test;
 import org.osgi.framework.Constants;
 
 public class ImportPackageTestCase extends PackageHeaderTestCase {
@@ -24,6 +29,7 @@ public class ImportPackageTestCase extends PackageHeaderTestCase {
 		super(Constants.IMPORT_PACKAGE);
 	}
 
+	@Test
 	public void testReadOptionalPackage() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -41,6 +47,7 @@ public class ImportPackageTestCase extends PackageHeaderTestCase {
 		assertTrue(object.isOptional());
 	}
 
+	@Test
 	public void testMakePackageOptional() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -68,6 +75,7 @@ public class ImportPackageTestCase extends PackageHeaderTestCase {
 		assertEquals(fHeaderName + ": org.osgi.framework;resolution:=optional\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testRemoveOptionalDirective() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");

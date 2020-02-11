@@ -13,10 +13,15 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
 import org.eclipse.text.edits.TextEdit;
+import org.junit.Test;
 import org.osgi.framework.Constants;
 
 public class RequireBundleTestCase extends MultiLineHeaderTestCase {
@@ -25,6 +30,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		super(Constants.REQUIRE_BUNDLE);
 	}
 
+	@Test
 	public void testAddRequireBundleHeader() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -45,6 +51,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		assertEquals(buffer.toString() + header.write(), fDocument.get());
 	}
 
+	@Test
 	public void testRemoveExistingRequireBundleHeader() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -65,6 +72,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		assertEquals(4, fDocument.getNumberOfLines());
 	}
 
+	@Test
 	public void testAddBundle() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -91,6 +99,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testAddMultipleBundles() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -120,6 +129,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testRemoveBundle() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -147,6 +157,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testRemoveMultipleBundles() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -173,6 +184,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		assertEquals("Require-Bundle: com.example.ui\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testReadOptionalBundle() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -190,6 +202,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		assertTrue(bundle.isOptional());
 	}
 
+	@Test
 	public void testSetGetVersion() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -210,6 +223,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		assertEquals("(1.9.9,3.0.9]", bundle.getVersion());
 	}
 
+	@Test
 	public void testReadBundleWithVersion() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -227,6 +241,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		assertEquals("3.2.0", bundle.getVersion());
 	}
 
+	@Test
 	public void testMakeBundleOptional() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -254,6 +269,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		assertEquals("Require-Bundle: org.eclipse.osgi;resolution:=optional\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testRemoveOptionalDirective() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -281,6 +297,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		assertEquals("Require-Bundle: org.eclipse.osgi\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testAddVersionToBundle() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -308,6 +325,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		assertEquals("Require-Bundle: org.eclipse.osgi;bundle-version=\"3.2.0\"\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testRemoveVersionFromBundle() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -335,6 +353,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		assertEquals("Require-Bundle: org.eclipse.osgi\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testAddBundleWithWindowsDelimiter() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\r\n");
@@ -361,6 +380,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testRemoveBundleWithWindowsDelimiter() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\r\n");
@@ -388,6 +408,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testPreserveSpacing() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -417,6 +438,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 
 	}
 
+	@Test
 	public void testReadBundleReExport() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -434,6 +456,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		assertTrue(bundle.isReexported());
 	}
 
+	@Test
 	public void testMakeBundleReExport() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -461,6 +484,7 @@ public class RequireBundleTestCase extends MultiLineHeaderTestCase {
 		assertEquals("Require-Bundle: org.eclipse.osgi;visibility:=reexport\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testRemoveReExport() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");

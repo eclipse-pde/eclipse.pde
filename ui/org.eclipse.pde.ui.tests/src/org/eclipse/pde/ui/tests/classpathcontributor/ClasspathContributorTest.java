@@ -13,11 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.classpathcontributor;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.TestCase;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
@@ -25,28 +27,30 @@ import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.pde.ui.tests.classpathresolver.ClasspathResolverTest;
+import org.junit.*;
 
 /**
  * Tests {@link IClasspathContributor} API to add additional classpath
  * entries during project classpath computation. Requires {@link TestClasspathContributor}
  * to be installed as an extension.
  */
-public class ClasspathContributorTest extends TestCase {
+public class ClasspathContributorTest {
 
 	private static final IProgressMonitor monitor = new NullProgressMonitor();
 	private IWorkspace workspace = ResourcesPlugin.getWorkspace();
 	private IProject project;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		project = importProject(workspace);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		project.delete(true, true, monitor);
 	}
 
+	@Test
 	public void testAdditionalClasspathEntries() throws Exception {
 		List<IClasspathEntry> expected = new ArrayList<>(TestClasspathContributor.entries);
 		expected.addAll(TestClasspathContributor.entries2);

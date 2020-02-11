@@ -13,9 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.text.edits.TextEdit;
+import org.junit.Test;
 import org.osgi.framework.Constants;
 
 public class ExportPackageTestCase extends PackageHeaderTestCase {
@@ -35,6 +40,7 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 		return ((ExportPackageHeader) header).getPackage(packageName);
 	}
 
+	@Test
 	public void testReadInternalPackage() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -53,6 +59,7 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 		assertTrue(object.isInternal());
 	}
 
+	@Test
 	public void testReadOneFriend() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -73,6 +80,7 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 		assertTrue(friends[0].getName().equals("com.example.xyz"));
 	}
 
+	@Test
 	public void testReadMultipleFriend() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -95,6 +103,7 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 		assertTrue(friends[2].getName().equals("com.example.zzz"));
 	}
 
+	@Test
 	public void testSetPackageInternal() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -122,6 +131,7 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 		assertEquals(fHeaderName + ": org.osgi.framework;x-internal:=true\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testAddPackageFriend() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -148,6 +158,7 @@ public class ExportPackageTestCase extends PackageHeaderTestCase {
 		assertEquals(fHeaderName + ": org.osgi.framework;x-friends:=\"org.eclipse.pde.ui\"\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testAddPackageFriends() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");

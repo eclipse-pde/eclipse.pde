@@ -13,9 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleClasspathHeader;
 import org.eclipse.text.edits.TextEdit;
+import org.junit.Test;
 import org.osgi.framework.Constants;
 
 public class BundleClasspathTestCase extends MultiLineHeaderTestCase {
@@ -24,6 +27,7 @@ public class BundleClasspathTestCase extends MultiLineHeaderTestCase {
 		super(Constants.BUNDLE_CLASSPATH);
 	}
 
+	@Test
 	public void testAddLibrary() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -50,6 +54,7 @@ public class BundleClasspathTestCase extends MultiLineHeaderTestCase {
 		assertEquals(" com.example.xyz\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testRemoveLibrary() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -77,6 +82,7 @@ public class BundleClasspathTestCase extends MultiLineHeaderTestCase {
 		assertEquals(fHeaderName + ": com.example.xyz\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testRemoveOnlyLibrary() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");

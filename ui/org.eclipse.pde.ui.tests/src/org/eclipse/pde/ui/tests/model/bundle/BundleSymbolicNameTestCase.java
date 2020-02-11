@@ -13,9 +13,15 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
 import org.eclipse.text.edits.TextEdit;
+import org.junit.Test;
 import org.osgi.framework.Constants;
 
 public class BundleSymbolicNameTestCase extends BundleModelTestCase {
@@ -25,6 +31,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 	}
 
 	@Override
+	@Test
 	public void testAbsentHeader() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -36,6 +43,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 	}
 
 	@Override
+	@Test
 	public void testPresentHeader() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -48,6 +56,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 	}
 
 	@Override
+	@Test
 	public void testHeaderOffset1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -61,6 +70,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 	}
 
 	@Override
+	@Test
 	public void testHeaderOffset2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -75,6 +85,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 	}
 
 	@Override
+	@Test
 	public void testHeaderLength() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -88,6 +99,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 	}
 
 	@Override
+	@Test
 	public void testHeaderLengthWithWindowsDelimiter() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\r\n");
@@ -100,6 +112,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		assertEquals(fDocument.getLineLength(2), header.getLength());
 	}
 
+	@Test
 	public void testAddBundleSymbolicName() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -120,6 +133,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		assertEquals(buffer.toString() + header.write(), fDocument.get());
 	}
 
+	@Test
 	public void testRemoveBundleSymbolicName() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -140,6 +154,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		assertEquals(4, fDocument.getNumberOfLines());
 	}
 
+	@Test
 	public void testChangeBundleSymbolicName() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -164,6 +179,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		assertEquals("Bundle-SymbolicName: com.example.core\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testReadSingletonDirective() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -178,6 +194,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		assertTrue(((BundleSymbolicNameHeader) header).isSingleton());
 	}
 
+	@Test
 	public void testAddSingletonDirective() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -202,6 +219,7 @@ public class BundleSymbolicNameTestCase extends BundleModelTestCase {
 		assertEquals("Bundle-SymbolicName: com.example.xyz;singleton:=true\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testRemoveSingletonDirective() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");

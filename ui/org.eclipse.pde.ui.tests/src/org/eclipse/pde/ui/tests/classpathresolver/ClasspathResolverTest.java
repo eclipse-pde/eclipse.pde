@@ -14,10 +14,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.classpathresolver;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.*;
 import java.net.URL;
 import java.util.Properties;
-import junit.framework.TestCase;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
@@ -29,13 +30,14 @@ import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.launching.sourcelookup.PDESourceLookupDirector;
 import org.eclipse.pde.internal.launching.sourcelookup.PDESourceLookupQuery;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
+import org.junit.*;
 
 /**
  * Tests {@link IBundleClasspathResolver} API to extend how the classpath and source lookup path
  * is created.
  *
  */
-public class ClasspathResolverTest extends TestCase {
+public class ClasspathResolverTest {
 
 	private static final IProgressMonitor monitor = new NullProgressMonitor();
 
@@ -48,13 +50,13 @@ public class ClasspathResolverTest extends TestCase {
 	 */
 	public static final String bundleName = "classpathresolver";
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		project = importProject(workspace);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		project.delete(true, true, monitor);
 	}
 
@@ -71,9 +73,12 @@ public class ClasspathResolverTest extends TestCase {
 	}
 
 	/**
-	 * Checks that a created dev properties file will recognise the modified classpath
+	 * Checks that a created dev properties file will recognise the modified
+	 * classpath
+	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testDevProperties() throws Exception {
 		File devProperties = File.createTempFile("dev", ".properties");
 		ClasspathHelper.getDevEntriesProperties(devProperties.getCanonicalPath(), false);
@@ -88,8 +93,10 @@ public class ClasspathResolverTest extends TestCase {
 
 	/**
 	 * Checks that the source lookup path of a project is updated from the API
+	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testSourceLookupPath() throws Exception {
 		PDESourceLookupDirector d = new PDESourceLookupDirector();
 		_PDESourceLookupQuery q = new _PDESourceLookupQuery(d, project);

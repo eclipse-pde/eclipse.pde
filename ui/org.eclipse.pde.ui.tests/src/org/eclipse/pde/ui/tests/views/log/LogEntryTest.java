@@ -14,15 +14,17 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.views.log;
 
-import org.eclipse.ui.internal.views.log.LogEntry;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import junit.framework.TestCase;
+import org.eclipse.ui.internal.views.log.LogEntry;
+import org.junit.Test;
 
-public class LogEntryTest extends TestCase {
-
+public class LogEntryTest {
+	@Test
 	public void testProcessEntry() throws ParseException {
 		LogEntry entry = new LogEntry();
 		entry.processEntry("!ENTRY org.eclipse.pde.ui 1 100 2009-01-03 11:15:30.123");
@@ -36,6 +38,7 @@ public class LogEntryTest extends TestCase {
 		assertEquals(expectedDate.getTime(), entry.getDate());
 	}
 
+	@Test
 	public void testProcessFrameworkEntry() throws ParseException {
 		LogEntry entry = new LogEntry();
 		entry.processEntry("!ENTRY org.eclipse.osgi 2009-01-07 11:15:30.123");
@@ -49,6 +52,7 @@ public class LogEntryTest extends TestCase {
 		assertEquals(expectedDate.getTime(), entry.getDate());
 	}
 
+	@Test
 	public void testProcessSubEntry() throws ParseException {
 		LogEntry entry = new LogEntry();
 		int depth = entry.processSubEntry("!SUBENTRY 1 org.eclipse.osgi 1 101 2009-01-08 11:15:30.123");
@@ -64,6 +68,7 @@ public class LogEntryTest extends TestCase {
 		assertEquals(1, depth);
 	}
 
+	@Test
 	public void testProcessFrameworkSubEntry() throws ParseException {
 		LogEntry entry = new LogEntry();
 		int depth = entry.processSubEntry("!SUBENTRY 1 org.eclipse.osgi 2009-01-01 11:15:30.123");
@@ -79,6 +84,7 @@ public class LogEntryTest extends TestCase {
 		assertEquals(1, depth);
 	}
 
+	@Test
 	public void testInvalidEntry() {
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=271733
 

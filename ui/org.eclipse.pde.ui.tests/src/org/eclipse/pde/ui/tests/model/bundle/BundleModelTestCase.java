@@ -13,14 +13,20 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
+import org.junit.Before;
+import org.junit.Test;
 
-public abstract class BundleModelTestCase extends TestCase {
+public abstract class BundleModelTestCase {
 
 	protected Document fDocument;
 	protected BundleModel fModel;
@@ -31,8 +37,8 @@ public abstract class BundleModelTestCase extends TestCase {
 		fHeaderName = headerName;
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		fDocument = new Document();
 	}
 
@@ -55,6 +61,7 @@ public abstract class BundleModelTestCase extends TestCase {
 		}
 	}
 
+	@Test
 	public void testAbsentHeader() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -66,6 +73,7 @@ public abstract class BundleModelTestCase extends TestCase {
 		assertNull(fModel.getBundle().getManifestHeader(fHeaderName));
 	}
 
+	@Test
 	public void testPresentHeader() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -79,6 +87,7 @@ public abstract class BundleModelTestCase extends TestCase {
 		assertNotNull(fModel.getBundle().getManifestHeader(fHeaderName));
 	}
 
+	@Test
 	public void testHeaderOffset1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -93,6 +102,7 @@ public abstract class BundleModelTestCase extends TestCase {
 		assertEquals(fDocument.getLineOffset(3), header.getOffset());
 	}
 
+	@Test
 	public void testHeaderOffset2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -107,6 +117,7 @@ public abstract class BundleModelTestCase extends TestCase {
 		assertEquals(fDocument.getLineOffset(2), header.getOffset());
 	}
 
+	@Test
 	public void testHeaderLength() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -121,6 +132,7 @@ public abstract class BundleModelTestCase extends TestCase {
 		assertEquals(fDocument.getLineLength(3), header.getLength());
 	}
 
+	@Test
 	public void testHeaderLengthWithWindowsDelimiter() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\r\n");

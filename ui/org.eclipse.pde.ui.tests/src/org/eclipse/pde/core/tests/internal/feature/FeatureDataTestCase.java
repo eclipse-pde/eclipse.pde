@@ -13,20 +13,25 @@
  *******************************************************************************/
 package org.eclipse.pde.core.tests.internal.feature;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import junit.framework.TestCase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.feature.FeatureData;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.junit.Test;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
-public class FeatureDataTestCase extends TestCase {
+
+public class FeatureDataTestCase {
 
 	private static final String FEATURE_INDENT = "      ";
 
+	@Test
 	public void testSerialization() throws Exception {
 		String expected = String.format("<data%n" +
 				FEATURE_INDENT + "id=\"id.1\"%n" + FEATURE_INDENT + "os=\"win32\"%n" + FEATURE_INDENT
@@ -46,6 +51,7 @@ public class FeatureDataTestCase extends TestCase {
 		assertEquals(data.getDownloadSize(), data2.getDownloadSize());
 	}
 
+	@Test
 	public void testSerializationWithLdapFilter() throws CoreException {
 		String expected = String.format("<data%n" + FEATURE_INDENT + "id=\"id.1\"%n" + FEATURE_INDENT + "os=\"win32\"%n"
 				+ FEATURE_INDENT + "arch=\"x86_64\"%n" + FEATURE_INDENT

@@ -13,59 +13,72 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Dictionary;
 import java.util.Properties;
-import junit.framework.TestCase;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.junit.Test;
 import org.osgi.framework.Constants;
 
-public class TargetEnvironmentTestCase extends TestCase {
-
+public class TargetEnvironmentTestCase {
+	@Test
 	public void testOS() {
 		assertEquals(Platform.getOS(), TargetPlatform.getOS());
 	}
 
+	@Test
 	public void testWS() {
 		assertEquals(Platform.getWS(), TargetPlatform.getWS());
 	}
 
+	@Test
 	public void testArch() {
 		assertEquals(Platform.getOSArch(), TargetPlatform.getOSArch());
 	}
 
+	@Test
 	public void testNL() {
 		assertEquals(Platform.getNL(), TargetPlatform.getNL());
 	}
 
+	@Test
 	public void testEnvironmentDictionarySize() {
 		Dictionary<String, String> dictionary = TargetPlatformHelper.getTargetEnvironment();
 		assertEquals(6, dictionary.size());
 	}
 
+	@Test
 	public void testDictionaryOS() {
 		Dictionary<String, String> dictionary = TargetPlatformHelper.getTargetEnvironment();
 		assertEquals(Platform.getOS(), dictionary.get("osgi.os"));
 	}
 
+	@Test
 	public void testDictionaryWS() {
 		Dictionary<String, String> dictionary = TargetPlatformHelper.getTargetEnvironment();
 		assertEquals(Platform.getWS(), dictionary.get("osgi.ws"));
 	}
 
+	@Test
 	public void testDictionaryArch() {
 		Dictionary<String, String> dictionary = TargetPlatformHelper.getTargetEnvironment();
 		assertEquals(Platform.getOSArch(), dictionary.get("osgi.arch"));
 	}
 
+	@Test
 	public void testDictionaryNL() {
 		Dictionary<String, String> dictionary = TargetPlatformHelper.getTargetEnvironment();
 		assertEquals(Platform.getNL(), dictionary.get("osgi.nl"));
 	}
 
+	@Test
 	public void testResolveOptional() {
 		Dictionary<String, String> dictionary = TargetPlatformHelper.getTargetEnvironment();
 		assertTrue("true".equals(dictionary.get("osgi.resolveOptional")));
@@ -75,6 +88,7 @@ public class TargetEnvironmentTestCase extends TestCase {
 	 * Tests that the OSGi state for the PDE models has the correct properties set, based on known execution environments
 	 */
 	@SuppressWarnings("deprecation")
+	@Test
 	public void testStateEEProperties() {
 		Dictionary<?, ?>[] platformProps = TargetPlatformHelper.getState().getPlatformProperties();
 
