@@ -19,7 +19,6 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 import java.util.Map;
-import junit.framework.AssertionFailedError;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -56,7 +55,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 				false);
 		String actualLevels = bundleMap.entrySet().stream()
 				.filter(e -> pluginId.equals(e.getKey().getPluginBase().getId())).map(e -> e.getValue()).findFirst()
-				.orElseThrow(() -> new AssertionFailedError("no entry found for " + pluginId));
+				.orElseThrow(() -> new AssertionError("no entry found for " + pluginId));
 
 		assertThat("start levels of " + pluginId, actualLevels, is(equalTo(expectedStartLevels)));
 

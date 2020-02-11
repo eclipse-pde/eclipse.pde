@@ -13,17 +13,20 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.runtime;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.net.URISyntaxException;
 import java.util.EventListener;
-import junit.framework.TestCase;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.runtime.registry.model.*;
 import org.eclipse.pde.internal.runtime.registry.model.Bundle;
 import org.eclipse.pde.internal.runtime.registry.model.ServiceRegistration;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
+import org.junit.*;
 import org.osgi.framework.*;
 
-public abstract class AbstractRegistryModelTest extends TestCase implements ModelChangeListener  {
+public abstract class AbstractRegistryModelTest implements ModelChangeListener {
 
 	public static class MockFramework {
 		private EventListener listener;
@@ -95,8 +98,8 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		testExtPointBundle = Platform.getBundle(TEST_EXT_POINT_BUNDLE);
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		model = createModel();
 		model.connect(new NullProgressMonitor(), false);
 
@@ -104,8 +107,8 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		model.addModelChangeListener(this);
 	}
 
-	@Override
-	protected void tearDown() {
+	@After
+	public void tearDown() {
 		model.removeModelChangeListener(this);
 		model.disconnect();
 	}
@@ -113,6 +116,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 	/**
 	 * Verifies that model provides correct list of installed bundles
 	 */
+	@Test
 	public void testInstalledBundles() {
 		org.osgi.framework.Bundle[] origBundles = PDETestsPlugin.getBundleContext().getBundles();
 		model.initialize(new NullProgressMonitor());
@@ -121,6 +125,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		assertEquals(origBundles.length, bundles.length);
 	}
 
+	@Test
 	public void testBundleInstalled() {
 		mockFramework.createBundleEvent(BundleEvent.INSTALLED, testBundle);
 
@@ -130,6 +135,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		assertEquals(ModelChangeDelta.ADDED, deltas[0].getFlag());
 	}
 
+	@Test
 	public void testBundleStartedEvent() {
 		mockFramework.createBundleEvent(BundleEvent.STARTED, testBundle);
 
@@ -139,6 +145,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		assertEquals(ModelChangeDelta.STARTED, deltas[0].getFlag());
 	}
 
+	@Test
 	public void testBundleStoppedEvent() {
 		mockFramework.createBundleEvent(BundleEvent.STOPPED, testBundle);
 
@@ -148,6 +155,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		assertEquals(ModelChangeDelta.STOPPED, deltas[0].getFlag());
 	}
 
+	@Test
 	public void testBundleUpdatedEvent() {
 		mockFramework.createBundleEvent(BundleEvent.UPDATED, testBundle);
 
@@ -157,6 +165,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		assertEquals(ModelChangeDelta.UPDATED, deltas[0].getFlag());
 	}
 
+	@Test
 	public void testBundleUninstalledEvent() {
 		mockFramework.createBundleEvent(BundleEvent.UNINSTALLED, testBundle);
 
@@ -166,6 +175,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		assertEquals(ModelChangeDelta.REMOVED, deltas[0].getFlag());
 	}
 
+	@Test
 	public void testBundleResolvedEvent() {
 		mockFramework.createBundleEvent(BundleEvent.RESOLVED, testBundle);
 
@@ -175,6 +185,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		assertEquals(ModelChangeDelta.RESOLVED, deltas[0].getFlag());
 	}
 
+	@Test
 	public void testBundleUnresolvedEvent() {
 		mockFramework.createBundleEvent(BundleEvent.UNRESOLVED, testBundle);
 
@@ -184,6 +195,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		assertEquals(ModelChangeDelta.UNRESOLVED, deltas[0].getFlag());
 	}
 
+	@Test
 	public void testBundleStartingEvent() {
 		mockFramework.createBundleEvent(BundleEvent.STARTING, testBundle);
 
@@ -193,6 +205,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		assertEquals(ModelChangeDelta.STARTING, deltas[0].getFlag());
 	}
 
+	@Test
 	public void testBundleStoppingEvent() {
 		mockFramework.createBundleEvent(BundleEvent.STOPPING, testBundle);
 
@@ -202,6 +215,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		assertEquals(ModelChangeDelta.STOPPING, deltas[0].getFlag());
 	}
 
+	@Test
 	public void testServiceRegisteredEvent() {
 		mockFramework.createServiceEvent(ServiceEvent.REGISTERED, testServiceReference);
 
@@ -217,6 +231,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		assertEquals(ModelChangeDelta.ADDED, delta.getFlag());
 	}
 
+	@Test
 	public void testServiceUnregisteringEvent() {
 		mockFramework.createServiceEvent(ServiceEvent.UNREGISTERING, testServiceReference);
 
@@ -232,6 +247,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		assertEquals(ModelChangeDelta.REMOVED, delta.getFlag());
 	}
 
+	@Test
 	public void testServiceModifiedEvent() {
 		mockFramework.createServiceEvent(ServiceEvent.MODIFIED, testServiceReference);
 
@@ -241,6 +257,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		assertEquals(ModelChangeDelta.UPDATED, deltas[0].getFlag());
 	}
 
+	@Test
 	public void testExtensionAddedEvent() {
 		mockFramework.createRegistryAddedEvent(new IExtensionPoint[] {testExtPoint});
 
@@ -256,6 +273,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		assertEquals(ModelChangeDelta.ADDED, deltas[0].getFlag());
 	}
 
+	@Test
 	public void testExtensionRemovedEvent() {
 		mockFramework.createRegistryAddedEvent(new IExtensionPoint[] {testExtPoint});
 
@@ -272,6 +290,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		assertEquals(ModelChangeDelta.REMOVED, deltas[0].getFlag());
 	}
 
+	@Test
 	public void testExtensionPointAddedEvent() {
 		mockFramework.createRegistryAddedEvent(new IExtensionPoint[] {testExtPoint});
 
@@ -285,6 +304,7 @@ public abstract class AbstractRegistryModelTest extends TestCase implements Mode
 		assertEquals(ModelChangeDelta.ADDED, deltas[0].getFlag());
 	}
 
+	@Test
 	public void testExtensionPointRemovedEvent() {
 		mockFramework.createRegistryRemovedEvent(new IExtensionPoint[] {testExtPoint});
 
