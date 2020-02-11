@@ -13,11 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSReference;
+import org.junit.Test;
 
 public class DSReferenceTestCase extends AbstractDSModelTestCase {
-
+	@Test
 	public void testServiceReference() {
 		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer, LF);
@@ -61,6 +66,7 @@ public class DSReferenceTestCase extends AbstractDSModelTestCase {
 
 	}
 
+	@Test
 	public void testDefaultServiceReference() {
 		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer, LF);

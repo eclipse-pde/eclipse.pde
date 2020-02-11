@@ -13,13 +13,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSService;
+import org.junit.Test;
 
 public class DSProvideTestCase extends AbstractDSModelTestCase {
-
+	@Test
 	public void testAddCompleteProvidedService() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<service servicefactory=\"true\" >");
@@ -56,6 +61,7 @@ public class DSProvideTestCase extends AbstractDSModelTestCase {
 	/**
 	 * Tests to add a provided service by DSDocumentFactory
 	 */
+	@Test
 	public void testAddProvidedServicebyFactory() {
 		StringBuilder buffer = new StringBuilder();
 			setXMLContents(buffer , LF);

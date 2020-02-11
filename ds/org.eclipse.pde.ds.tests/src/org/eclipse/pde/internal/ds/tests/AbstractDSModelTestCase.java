@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -22,10 +24,9 @@ import org.eclipse.pde.internal.ds.core.text.DSModel;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
+import org.junit.Before;
 
-import junit.framework.TestCase;
-
-public abstract class AbstractDSModelTestCase extends TestCase {
+public abstract class AbstractDSModelTestCase {
 
 	protected static final String LF = "\n"; //$NON-NLS-1$
 	protected static final String CR = "\r"; //$NON-NLS-1$
@@ -37,11 +38,8 @@ public abstract class AbstractDSModelTestCase extends TestCase {
 	protected DSModel fModel;
 	protected IModelTextChangeListener fListener;
 
-	public AbstractDSModelTestCase() {
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		fDocument = new Document();
 	}
 

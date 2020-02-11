@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
@@ -20,12 +24,14 @@ import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSObject;
 import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSService;
+import org.junit.Test;
 
 public class DSServiceTestCase extends AbstractDSModelTestCase {
 
 	/**
 	 * Tests a service component with all Attributes and Child values
 	 */
+	@Test
 	public void testAddCompleteService() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<service servicefactory=\"true\" >");
@@ -72,6 +78,7 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 	/**
 	 * Tests a service component with multiple Childs
 	 */
+	@Test
 	public void testMultipleProvideService() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<service>");
@@ -128,6 +135,7 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 	/**
 	 * Tests a service component default values
 	 */
+	@Test
 	public void testDefaultValuesService() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<service>");
@@ -152,6 +160,7 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 	/**
 	 * Test to remove a provided service element from a service element.
 	 */
+	@Test
 	public void testRemoveChildService(){
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<service servicefactory=\"true\" >");
@@ -186,6 +195,7 @@ public class DSServiceTestCase extends AbstractDSModelTestCase {
 	/**
 	 * Tests to add a service by DSDocumentFactory
 	 */
+	@Test
 	public void testAddServiceFactory(){
 		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer , LF);
