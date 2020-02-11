@@ -155,11 +155,11 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 		private boolean containsAllTags(List<TagElement> tags) {
 			boolean allfound = true;
 			TagElement element = null;
-			for (int i = 0; i < expectedtags.length; i++) {
+			for (String expectedtag : expectedtags) {
 				boolean contained = false;
-				for (int j = 0; j < tags.size(); j++) {
-					element = tags.get(j);
-					if (expectedtags[i].equals(element.getTagName())) {
+				for (TagElement tag : tags) {
+					element = tag;
+					if (expectedtag.equals(element.getTagName())) {
 						contained = true;
 					}
 				}
@@ -282,7 +282,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 			IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
 			IType type = project.findType("javadoc", typename); //$NON-NLS-1$
 			assertNotNull("the type for javadoc." + typename + " must exist", type); //$NON-NLS-1$ //$NON-NLS-2$
-			ASTParser parser = ASTParser.newParser(AST.JLS8);
+			ASTParser parser = ASTParser.newParser(AST.JLS13);
 			parser.setSource(type.getCompilationUnit());
 			CompilationUnit cunit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
 			ChangeVisitor visitor = new ChangeVisitor(typename, innertypename, membername, signature, expectedtags);

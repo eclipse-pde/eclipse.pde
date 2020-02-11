@@ -163,8 +163,8 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 				List<TagElement> tags = (List<TagElement>) docnode.getStructuralProperty(Javadoc.TAGS_PROPERTY);
 				if (tags != null) {
 					TagElement tag = null;
-					for (int i = 0; i < tags.size(); i++) {
-						tag = tags.get(i);
+					for (TagElement tag2 : tags) {
+						tag = tag2;
 						if (tagname.equals(tag.getTagName())) {
 							lrewrite.remove(tag, null);
 						}
@@ -449,7 +449,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * @throws BadLocationException
 	 */
 	private void updateTagInSource(ICompilationUnit unit, String membername, String signature, String tagname, boolean remove) throws CoreException, MalformedTreeException, BadLocationException {
-		ASTParser parser = ASTParser.newParser(AST.JLS8);
+		ASTParser parser = ASTParser.newParser(AST.JLS13);
 		parser.setSource(unit);
 		CompilationUnit cunit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
 		assertNotNull("the ast compilation unit cannot be null", cunit); //$NON-NLS-1$
