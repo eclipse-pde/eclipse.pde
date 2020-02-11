@@ -67,7 +67,8 @@ public class PDEJavaHelper {
 		try {
 			IType type = project.findType(fullyQualifiedName.replace('$', '.'));
 			if (type != null && type.exists()) {
-				HashMap<String, IPackageFragment> map = PDEJavaHelper.getPackageFragmentsHash(project, Collections.EMPTY_LIST, false);
+				HashMap<String, IPackageFragment> map = PDEJavaHelper.getPackageFragmentsHash(project,
+						Collections.emptyList(), false);
 				if (map.containsValue(type.getPackageFragment())) {
 					return false;
 				}

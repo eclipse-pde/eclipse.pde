@@ -116,7 +116,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 				}
 			}
 		}
-		return Collections.EMPTY_LIST;
+		return Collections.emptyList();
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 				int offset = jcontext.getInvocationOffset();
 				IJavaElement element = cunit.getElementAt(offset);
 				if (!isVisible(element)) {
-					return Collections.EMPTY_LIST;
+					return Collections.emptyList();
 				}
 				ImageDescriptor imagedesc = jcontext.getLabelProvider().createImageDescriptor(org.eclipse.jdt.core.CompletionProposal.create(org.eclipse.jdt.core.CompletionProposal.JAVADOC_BLOCK_TAG, offset));
 				fImageHandle = (imagedesc == null ? null : imagedesc.createImage());
@@ -185,7 +185,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 				fErrorMessage = e.getMessage();
 			}
 		}
-		return Collections.EMPTY_LIST;
+		return Collections.emptyList();
 	}
 
 	/**
@@ -377,7 +377,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 
 	@Override
 	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
-		return Collections.EMPTY_LIST;
+		return Collections.emptyList();
 	}
 
 	@Override

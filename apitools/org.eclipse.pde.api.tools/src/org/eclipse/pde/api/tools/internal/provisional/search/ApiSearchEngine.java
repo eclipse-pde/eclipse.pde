@@ -160,7 +160,7 @@ public final class ApiSearchEngine {
 		IApiMember member = null;
 		for (Iterator<IReference> iter = references.iterator(); iter.hasNext();) {
 			if (localmonitor.isCanceled()) {
-				return Collections.EMPTY_LIST;
+				return Collections.emptyList();
 			}
 			ref = iter.next();
 			member = ref.getResolvedReference();

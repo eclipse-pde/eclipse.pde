@@ -281,7 +281,7 @@ public class ProjectComponent extends BundleComponent {
 			}
 			return super.createApiTypeContainers();
 		}
-		return Collections.EMPTY_LIST;
+		return Collections.emptyList();
 	}
 
 	private void retrieveContainers(String name, String prefix, IBuildEntry buildEntry) throws CoreException {

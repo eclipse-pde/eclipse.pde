@@ -38,7 +38,8 @@ public class TestUtils {
 	}
 
 	public static String findPath(String path) {
-		return FileLocator.find(PDETestsPlugin.getBundleContext().getBundle(), new Path(path), Collections.EMPTY_MAP).toString();
+		return FileLocator.find(PDETestsPlugin.getBundleContext().getBundle(), new Path(path), Collections.emptyMap())
+				.toString();
 	}
 
 	/**

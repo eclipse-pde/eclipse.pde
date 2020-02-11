@@ -501,7 +501,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	public List<IApiProblem> createProblems(IProgressMonitor monitor) {
 		List<IReference> references = getRetainedReferences();
 		if (references.isEmpty()) {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
 		List<IApiProblem> problems = new LinkedList<>();
 		Iterator<IReference> iterator = references.iterator();
