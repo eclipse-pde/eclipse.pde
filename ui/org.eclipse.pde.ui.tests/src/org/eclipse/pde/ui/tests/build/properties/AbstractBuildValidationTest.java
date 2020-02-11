@@ -13,13 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.build.properties;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.*;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.PropertyResourceBundle;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import junit.framework.TestCase;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -34,6 +37,7 @@ import org.eclipse.pde.internal.ui.correction.ResolutionGenerator;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.pde.ui.tests.target.LocalTargetDefinitionTests;
 import org.eclipse.ui.IMarkerResolution;
+import org.junit.Before;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -44,13 +48,13 @@ import org.osgi.service.prefs.BackingStoreException;
  * @since 3.6
  * @see BuildPropertiesValidationTest
  */
-public abstract class AbstractBuildValidationTest extends TestCase {
+public abstract class AbstractBuildValidationTest {
 
 	private static final String MARKER = "marker";
 	private static final String MULTIPLE_MARKERS = "multipleMarkers";
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		URL location = PDETestsPlugin.getBundleContext().getBundle().getEntry("/tests/build.properties/build.properties.tests.zip");
 		File projectFile = new File(FileLocator.toFileURL(location).getFile());
 		assertTrue("Could not find test zip file at " + projectFile, projectFile.isFile());
@@ -60,8 +64,8 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 		File[] projects = projectFile.listFiles((FileFilter) pathname -> {
 			int index = pathname.getName().lastIndexOf('.');
 			if (index > 1 && pathname.isDirectory()) { // look out for "CVS"
-														// files in the
-														// workspace
+				// files in the
+				// workspace
 				return true;
 			}
 			return false;

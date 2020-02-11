@@ -13,9 +13,15 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.target.ITargetDefinition;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * Tests for target definitions.  The tested targets will be backed by a workspace file.
@@ -27,8 +33,8 @@ public class WorkspaceTargetDefinitionTests extends LocalTargetDefinitionTests {
 
 	private static final String PROJECT_NAME = "WorkspaceTargetDefinitionTests";
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		if (!project.exists()){
 			project.create(null);
@@ -38,8 +44,8 @@ public class WorkspaceTargetDefinitionTests extends LocalTargetDefinitionTests {
 		assertTrue("Could not open test project", project.isOpen());
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		if (project.exists()){
 			project.delete(true, null);

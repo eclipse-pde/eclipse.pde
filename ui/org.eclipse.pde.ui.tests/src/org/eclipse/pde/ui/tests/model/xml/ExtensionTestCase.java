@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.xml;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.pde.core.plugin.IPluginExtension;
 
 public class ExtensionTestCase extends XMLModelTestCase {

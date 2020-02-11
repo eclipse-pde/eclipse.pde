@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.xml;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -21,8 +22,9 @@ import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.core.text.plugin.PluginModel;
 import org.eclipse.pde.internal.core.text.plugin.XMLTextChangeListener;
 import org.eclipse.text.edits.*;
+import org.junit.Before;
 
-public abstract class XMLModelTestCase extends TestCase {
+public abstract class XMLModelTestCase {
 
 	protected static final String LF = "\n";
 	protected static final String CR = "\r";
@@ -32,8 +34,8 @@ public abstract class XMLModelTestCase extends TestCase {
 	protected PluginModel fModel;
 	protected IModelTextChangeListener fListener;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		fDocument = new Document();
 	}
 

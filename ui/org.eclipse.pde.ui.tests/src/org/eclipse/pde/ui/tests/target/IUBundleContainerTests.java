@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
@@ -33,6 +38,7 @@ import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -87,6 +93,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		return null;
 	}
 
+	@Test
 	public void testResolveUsingProfile() throws Exception {
 		String[] features1 = new String[]{"feature.b.feature.group"};
 		String[] features2 = new String[]{"feature.a.feature.group"};
@@ -131,6 +138,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testResolveRequiredFeatures() throws Exception {
 		String[] bundles = new String[]{"bundle.a1", "bundle.a2", "bundle.a3", "bundle.b1", "bundle.b2", "bundle.b3"};
 		doResolutionTest(new String[]{"feature.b.feature.group"}, bundles);
@@ -141,6 +149,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testResolveSingleFeature() throws Exception {
 		String[] bundles = new String[]{"bundle.a1", "bundle.a2", "bundle.a3"};
 		doResolutionTest(new String[]{"feature.a.feature.group"}, bundles);
@@ -151,6 +160,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testResolveRequiredBundles() throws Exception {
 		String[] bundles = new String[]{"bundle.a1", "bundle.a2", "bundle.a3", "bundle.b1"};
 		doResolutionTest(new String[]{"bundle.b1"}, bundles);
@@ -161,6 +171,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testResolveSingleBundle() throws Exception {
 		String[] bundles = new String[]{"bundle.a1"};
 		doResolutionTest(new String[]{"bundle.a1"}, bundles);
@@ -171,6 +182,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testContentEqualNonNull() throws Exception {
 		IUBundleContainer c1 = createContainer(new String[]{"bundle.a1", "bundle.a2"});
 		IUBundleContainer c2 = createContainer(new String[]{"bundle.a1", "bundle.a2"});
@@ -182,6 +194,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testContentNotEqualNonNull() throws Exception {
 		IUBundleContainer c1 = createContainer(new String[]{"bundle.a1", "bundle.a2"});
 		IUBundleContainer c2 = createContainer(new String[]{"bundle.b1", "bundle.b2"});
@@ -193,6 +206,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testContentEqualNull() throws Exception {
 		ITargetPlatformService service = getTargetService();
 		IUBundleContainer c3 = (IUBundleContainer) service.newIULocation(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null, 0);
@@ -205,6 +219,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testContentNotEqualNull() throws Exception {
 		ITargetPlatformService service = getTargetService();
 		IUBundleContainer c3 = (IUBundleContainer) service.newIULocation(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null, 1);
@@ -282,6 +297,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testExternalModelManagerPreferences() throws Exception {
 		try {
 			// Set the active target to feature b (has 6 bundles)
@@ -358,17 +374,19 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testPersistIUDefinition() throws Exception {
 		String[] bundles = new String[]{"bundle.a1", "bundle.a2", "bundle.a3"};
 		doPersistanceTest(new String[]{"feature.a.feature.group"}, bundles);
 	}
 
 	/**
-	 * Tests that a target definition with IU containers can be serialized to xml, then deserialized without
-	 * any loss of data.
+	 * Tests that a target definition with IU containers can be serialized to
+	 * xml, then deserialized without any loss of data.
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testPersistMultipleIUDefinition() throws Exception {
 		String[] bundles = new String[]{"bundle.a1", "bundle.a2", "bundle.a3", "bundle.b1", "bundle.b2", "bundle.b3"};
 		doPersistanceTest(new String[]{"bundle.a3", "bundle.b3"}, bundles);
@@ -379,6 +397,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testAddIUs() throws Exception {
 		IUBundleContainer c1 = createContainer(new String[]{"feature.a.feature.group"});
 		ITargetDefinition target = getTargetService().newTarget();
@@ -413,6 +432,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testRemoveIUs() throws Exception {
 		IUBundleContainer c1 = createContainer(new String[]{"feature.b.feature.group"});
 		ITargetDefinition target = getTargetService().newTarget();
@@ -447,6 +467,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testOverlappingIUContainers() throws Exception {
 		IUBundleContainer c1 = createContainer(new String[]{"feature.a.feature.group"});
 		IUBundleContainer c2 = createContainer(new String[]{"feature.b.feature.group"});
@@ -477,6 +498,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		assertEquals(1, profiles.size());
 	}
 
+	@Test
 	public void testSerialization1() throws Exception {
 		URI uri = getURI("/tests/sites/site.a.b");
 		String[] unitIds = new String[]{"feature.a.feature.group"};
@@ -489,7 +511,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		deserializationTest(location);
 	}
 
-
+	@Test
 	public void testSerialization2() throws Exception {
 		IUBundleContainer location = createContainer(new String[]{"bundle.a1", "bundle.a2"});
 		String xml = location.serialize();
@@ -499,6 +521,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		deserializationTest(location);
 	}
 
+	@Test
 	public void testSerialization3() throws Exception {
 		URI uri = getURI("/tests/sites/site.a.b");
 		String[] unitIds = new String[]{"feature.b.feature.group"};

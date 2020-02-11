@@ -13,11 +13,15 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
+import org.junit.Test;
 
 public class BasicXMLTestCase extends XMLModelTestCase {
-
+	@Test
 	public void testReadSimpleExtension() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<extension point=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
@@ -31,6 +35,7 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 		assertEquals(extensions[0].getChildren()[0].getName(), "sample");
 	}
 
+	@Test
 	public void testReadSimpleExtensionOneLine() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<extension point=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
@@ -41,6 +46,7 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 		assertEquals(extensions.length, 1);
 	}
 
+	@Test
 	public void testReadMultilineSimpleExtension() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<extension ");
@@ -60,6 +66,7 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 		assertEquals(extensions[0].getChildren()[0].getName(), "sample");
 	}
 
+	@Test
 	public void testAddSimpleExtension() throws Exception {
 		setXMLContents(null, LF);
 		load(true);
@@ -84,6 +91,7 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 		assertEquals(extensions[0].getChildren()[0].getName(), "sample");
 	}
 
+	@Test
 	public void testRemoveSimpleExtension() throws Exception {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<extension id=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
@@ -102,6 +110,7 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 	}
 
 	// bug 220178
+	@Test
 	public void testRemoveChildNode() throws Exception {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<extension id=\"org.eclipse.pde.ui.samples\"><sample /></extension>");
@@ -121,6 +130,7 @@ public class BasicXMLTestCase extends XMLModelTestCase {
 	}
 
 	//bug 285134
+	@Test
 	public void testSingleQuoteAttribute() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<extension point='org.eclipse.pde.ui.samples'><sample /></extension>");

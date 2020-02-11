@@ -13,12 +13,19 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.junit.Test;
 
 /**
  * Tests whether targets and bundle containers manage features correctly. Runs
@@ -31,6 +38,7 @@ public class MinimalTargetDefinitionFeatureResolutionTests extends AbstractTarge
 	 * Tests that a directory bundle container provides the correct features to
 	 * a target
 	 */
+	@Test
 	public void testDirectoryBundleContainer() throws Exception {
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation directoryContainer = getTargetService()
@@ -62,6 +70,7 @@ public class MinimalTargetDefinitionFeatureResolutionTests extends AbstractTarge
 	 * Tests that a profile (installation) bundle container provides the correct
 	 * features to a target
 	 */
+	@Test
 	public void testProfileBundleContainer() throws Exception {
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation profileContainer = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(),
@@ -89,6 +98,7 @@ public class MinimalTargetDefinitionFeatureResolutionTests extends AbstractTarge
 				expectedIDs.isEmpty());
 	}
 
+	@Test
 	public void testExplicitIncludes() throws Exception {
 		// Use the modified JDT features as we know their versions
 		ITargetDefinition definition = getNewTarget();
@@ -143,6 +153,7 @@ public class MinimalTargetDefinitionFeatureResolutionTests extends AbstractTarge
 
 	}
 
+	@Test
 	public void testSingleInclude() throws Exception {
 		// Use the modified JDT features as we know their versions
 		ITargetDefinition definition = getNewTarget();
@@ -189,6 +200,7 @@ public class MinimalTargetDefinitionFeatureResolutionTests extends AbstractTarge
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
 	}
 
+	@Test
 	public void testMixedIncludes() throws Exception {
 		// Use the modified JDT features as we know their versions
 		ITargetDefinition definition = getNewTarget();
@@ -236,6 +248,7 @@ public class MinimalTargetDefinitionFeatureResolutionTests extends AbstractTarge
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
 	}
 
+	@Test
 	public void testMissingFeatures() throws Exception {
 		// Use the modified JDT features as we know their versions
 		ITargetDefinition definition = getNewTarget();
@@ -269,6 +282,7 @@ public class MinimalTargetDefinitionFeatureResolutionTests extends AbstractTarge
 		assertTrue(definition.getBundles().length > 4);
 	}
 
+	@Test
 	public void testMissingFeatureVersion() throws Exception {
 		// Use the modified JDT features as we know their versions
 		ITargetDefinition definition = getNewTarget();
@@ -315,6 +329,7 @@ public class MinimalTargetDefinitionFeatureResolutionTests extends AbstractTarge
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
 	}
 
+	@Test
 	public void testMissingMixed() throws Exception {
 		// Use the modified JDT features as we know their versions
 		ITargetDefinition definition = getNewTarget();
