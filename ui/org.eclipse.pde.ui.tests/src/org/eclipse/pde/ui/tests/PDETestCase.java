@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests;
 
-import junit.framework.TestCase;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -23,26 +22,29 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.progress.UIJob;
+import org.junit.*;
+import org.junit.rules.TestName;
 
 /**
  * Provides a default {@link #tearDown()} implementation to delete all
  * projects in the workspace.
  *
  */
-public abstract class PDETestCase extends TestCase {
+public abstract class PDETestCase {
 
 	private static boolean welcomeClosed;
+	@Rule
+	public TestName name = new TestName();
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		TestUtils.log(IStatus.INFO, getName(), "setUp");
+	@Before
+	public void setUp() throws Exception {
+		TestUtils.log(IStatus.INFO, name.getMethodName(), "setUp");
 		assertWelcomeScreenClosed();
 	}
 
-	@Override
-	protected void tearDown() {
-		TestUtils.log(IStatus.INFO, getName(), "tearDown");
+	@After
+	public void tearDown() {
+		TestUtils.log(IStatus.INFO, name.getMethodName(), "tearDown");
 		// Close any editors we opened
 		IWorkbenchWindow[] workbenchPages = PlatformUI.getWorkbench().getWorkbenchWindows();
 		for (IWorkbenchWindow workbenchPage : workbenchPages) {
@@ -52,7 +54,7 @@ public abstract class PDETestCase extends TestCase {
 			}
 		}
 		TestUtils.processUIEvents();
-		TestUtils.cleanUp(getName());
+		TestUtils.cleanUp(name.getMethodName());
 		// Delete any projects that were created
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject[] projects = workspaceRoot.getProjects();
@@ -62,7 +64,7 @@ public abstract class PDETestCase extends TestCase {
 			}
 		} catch (CoreException e) {
 		}
-		TestUtils.waitForJobs(getName(), 10, 10000);
+		TestUtils.waitForJobs(name.getMethodName(), 10, 10000);
 	}
 
 	/**

@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.wizards;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -27,6 +31,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.feature.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
+import org.junit.Test;
 
 public class NewFeatureProjectTestCase extends NewProjectTestCase {
 
@@ -72,12 +77,14 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 		assertTrue("Verifying feature nature...", hasNature(PDE.FEATURE_NATURE));
 	}
 
+	@Test
 	public void testCreationFeatureProject() throws Exception {
 		createFeature(DEFAULT_FEATURE_DATA, false, null);
 		verifyProjectExistence();
 		verifyFeatureNature();
 	}
 
+	@Test
 	public void testCreationFeaturePatch() throws Exception {
 		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
 		if (models.length == 0)
@@ -103,13 +110,14 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 		assertTrue(feature.getProviderName().equals(provider));
 		assertTrue(feature.getInstallHandler().getLibrary().equals(library));
 	} */
-
+	@Test
 	public void testSimpleFeature() throws Exception {
 		createFeature(DEFAULT_FEATURE_DATA, false, null);
 		verifyProjectExistence();
 		assertFalse("Testing simple project for no java nature...", hasNature(JavaCore.NATURE_ID));
 	}
 
+	@Test
 	public void testJavaFeature() throws Exception {
 		FeatureData fd = createDefaultFeatureData();
 		String library = "testLibrary";

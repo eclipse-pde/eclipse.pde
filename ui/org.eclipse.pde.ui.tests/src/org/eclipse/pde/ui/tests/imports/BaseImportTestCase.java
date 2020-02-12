@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.imports;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -21,6 +25,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
 import org.eclipse.pde.ui.tests.PDETestCase;
+import org.junit.Test;
 import org.osgi.framework.Version;
 
 public abstract class BaseImportTestCase extends PDETestCase {
@@ -28,31 +33,38 @@ public abstract class BaseImportTestCase extends PDETestCase {
 	protected abstract int getType();
 	protected abstract void verifyProject(String projectName, boolean isJava);
 
+	@Test
 	public void testImportJAR() {
 		doSingleImport("org.eclipse.jsch.core", true);
 	}
 
+	@Test
 	public void testImportFlat() {
 		doSingleImport("org.eclipse.jdt.debug", true);
 	}
 
+	@Test
 	public void testImportNotJavaFlat() {
 		doSingleImport("org.junit.source", false);
 	}
 
+	@Test
 	public void testImportNotJavaJARd() {
 		doSingleImport("org.eclipse.jdt.doc.user", false);
 		doSingleImport("org.eclipse.pde.ui.source", false);
 	}
 
+	@Test
 	public void testImportJUnit4() {
 		doSingleImport("org.junit", 4, true);
 	}
 
+	@Test
 	public void testImportICU(){
 		doSingleImport("com.ibm.icu", true);
 	}
 
+	@Test
 	public void testImportLinksMultiple() {
 		IPluginModelBase[] modelsToImport = getModels(new String[] {"org.eclipse.core.filebuffers", "org.eclipse.jdt.doc.user", "org.eclipse.pde.build"});
 		runOperation(modelsToImport, getType());

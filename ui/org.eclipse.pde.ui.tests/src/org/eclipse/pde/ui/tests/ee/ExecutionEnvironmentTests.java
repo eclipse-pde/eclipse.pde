@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.ee;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Hashtable;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -26,6 +30,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.ui.wizards.tools.UpdateClasspathJob;
 import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
+import org.junit.Test;
 
 /**
  * Tests projects with a custom execution environment
@@ -98,8 +103,10 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	/**
 	 * Validates the target level of a generated class file.
 	 *
-	 * @param classfile location of class file in local file system
-	 * @param major expected major class file version
+	 * @param classfile
+	 *            location of class file in local file system
+	 * @param major
+	 *            expected major class file version
 	 */
 	protected void validateTargetLevel(String classfile, int major) {
 		IClassFileReader reader = ToolFactory.createDefaultClassFileReader(classfile, IClassFileReader.ALL);
@@ -107,18 +114,21 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	}
 
 	/**
-	 * Creates a plug-in project with a custom execution environment. Validates that
-	 * compiler compliance settings and build path are correct and that class files
-	 * are generated with correct target level.
+	 * Creates a plug-in project with a custom execution environment. Validates
+	 * that compiler compliance settings and build path are correct and that
+	 * class files are generated with correct target level.
 	 *
-	 * TODO The VM this is run on must be included in the compatible JREs for the custom
-	 * environment. See {@link EnvironmentAnalyzerDelegate#analyze(org.eclipse.jdt.launching.IVMInstall, IProgressMonitor)}
+	 * TODO The VM this is run on must be included in the compatible JREs for
+	 * the custom environment. See
+	 * {@link EnvironmentAnalyzerDelegate#analyze(org.eclipse.jdt.launching.IVMInstall, IProgressMonitor)}
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testCustomEnvironment() throws Exception {
 		try {
-			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(EnvironmentAnalyzerDelegate.EE_NO_SOUND);
+			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager()
+					.getEnvironment(EnvironmentAnalyzerDelegate.EE_NO_SOUND);
 			IJavaProject project = ProjectUtils.createPluginProject("no.sound", env);
 			assertTrue("Project was not created", project.exists());
 
@@ -142,12 +152,13 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	}
 
 	/**
-	 * Creates a plug-in project with a J2SE-1.4 execution environment. Validates that
-	 * compiler compliance settings and build path are correct and that class files
-	 * are generated with correct target level.
+	 * Creates a plug-in project with a J2SE-1.4 execution environment.
+	 * Validates that compiler compliance settings and build path are correct
+	 * and that class files are generated with correct target level.
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testJava4Environment() throws Exception {
 		try {
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4");
@@ -173,22 +184,27 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	}
 
 	/**
-	 * Creates a plug-in project without an execution environment. Validates that
-	 * compiler compliance settings and build path reflect default workspace settings.
+	 * Creates a plug-in project without an execution environment. Validates
+	 * that compiler compliance settings and build path reflect default
+	 * workspace settings.
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testNoEnvironment() throws Exception {
 		try {
 			IJavaProject project = ProjectUtils.createPluginProject("no.env", null);
 			assertTrue("Project was not created", project.exists());
 
 			Hashtable<String, String> options = JavaCore.getOptions();
-			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, options.get(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM));
+			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM,
+					options.get(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM));
 			validateOption(project, JavaCore.COMPILER_SOURCE, options.get(JavaCore.COMPILER_SOURCE));
 			validateOption(project, JavaCore.COMPILER_COMPLIANCE, options.get(JavaCore.COMPILER_COMPLIANCE));
-			validateOption(project, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, options.get(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER));
-			validateOption(project, JavaCore.COMPILER_PB_ENUM_IDENTIFIER, options.get(JavaCore.COMPILER_PB_ENUM_IDENTIFIER));
+			validateOption(project, JavaCore.COMPILER_PB_ASSERT_IDENTIFIER,
+					options.get(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER));
+			validateOption(project, JavaCore.COMPILER_PB_ENUM_IDENTIFIER,
+					options.get(JavaCore.COMPILER_PB_ENUM_IDENTIFIER));
 
 			validateSystemLibrary(project, JavaRuntime.newDefaultJREContainerPath());
 		} finally {
@@ -197,13 +213,15 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	}
 
 	/**
-	 * Creates a plug-in project with a J2SE-1.4 execution environment. Validates that
-	 * compiler compliance settings and build path are correct. Modifies the compliance
-	 * options and then updates the class path again. Ensures that the enum and assert
-	 * identifier options get overwritten with minimum 'warning' severity.
+	 * Creates a plug-in project with a J2SE-1.4 execution environment.
+	 * Validates that compiler compliance settings and build path are correct.
+	 * Modifies the compliance options and then updates the class path again.
+	 * Ensures that the enum and assert identifier options get overwritten with
+	 * minimum 'warning' severity.
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testMinimumComplianceOverwrite() throws Exception {
 		try {
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4");
@@ -226,7 +244,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 
 			// updating class path should increase severity to warning
 			IPluginModelBase model = PluginRegistry.findModel(project.getProject());
-			UpdateClasspathJob job = new UpdateClasspathJob(new IPluginModelBase[]{model});
+			UpdateClasspathJob job = new UpdateClasspathJob(new IPluginModelBase[] { model });
 			job.schedule();
 			job.join();
 
@@ -243,13 +261,15 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	}
 
 	/**
-	 * Creates a plug-in project with a J2SE-1.4 execution environment. Validates that
-	 * compiler compliance settings and build path are correct. Modifies the compliance
-	 * options and then updates the class path again. Ensures that the enum and assert
-	 * identifier options do not overwrite existing 'error' severity.
+	 * Creates a plug-in project with a J2SE-1.4 execution environment.
+	 * Validates that compiler compliance settings and build path are correct.
+	 * Modifies the compliance options and then updates the class path again.
+	 * Ensures that the enum and assert identifier options do not overwrite
+	 * existing 'error' severity.
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testMinimumComplianceNoOverwrite() throws Exception {
 		try {
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4");
@@ -272,7 +292,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 
 			// updating class path should increase severity to warning
 			IPluginModelBase model = PluginRegistry.findModel(project.getProject());
-			UpdateClasspathJob job = new UpdateClasspathJob(new IPluginModelBase[]{model});
+			UpdateClasspathJob job = new UpdateClasspathJob(new IPluginModelBase[] { model });
 			job.schedule();
 			job.join();
 
