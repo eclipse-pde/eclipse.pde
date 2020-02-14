@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.*;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.equinox.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
 import org.eclipse.pde.core.target.ITargetDefinition;
@@ -24,10 +26,61 @@ public class ProfileContainerTests extends AbstractTargetTest {
 
 	@Test
 	public void testBundleResolutionWithConfigIni() {
-		File bundlesInfo = new File(new ProfileBundleContainer("${eclipse.home}", null).getConfigurationLocation(), SimpleConfiguratorManipulator.BUNDLES_INFO_PATH);
+		File bundlesInfo = new File(new ProfileBundleContainer("${eclipse.home}", null).getConfigurationLocation(),
+				SimpleConfiguratorManipulator.BUNDLES_INFO_PATH);
 		Assume.assumeFalse("Skip test when using regular p2 configurator", bundlesInfo.isFile());
 		ITargetDefinition defaultDefinition = getTargetService().newDefaultTarget();
 		defaultDefinition.resolve(new NullProgressMonitor());
 		assertTrue(defaultDefinition.getBundles().length > 10);
+	}
+
+	@Test
+	public void testParseBundleInfoFromConfigIni() {
+
+		Properties configIni = new Properties();
+		configIni.put("osgi.bundles", absoluteFile("plugins/some.bundle").toURI() + ","//
+				+ "reference:" + absoluteFile("plugins/some.bundle_startlevel").toURI() + "@1:start");
+
+		Collection<File> parsedBundles = ProfileBundleContainer.parseBundlesFromConfigIni(configIni);
+		assertEquals(Arrays.asList( //
+				absoluteFile("plugins/some.bundle"), //
+				absoluteFile("plugins/some.bundle_startlevel")), //
+				parsedBundles);
+	}
+
+	@Test
+	public void testParseBundleInfoFromConfigIni_relative() {
+		Properties configIni = new Properties();
+		configIni.put("osgi.bundles", "reference:file:plugins/some.bundle," //
+				+ "reference:file:plugins/some.bundle_startlevel@1:start," //
+				+ "reference:" + absoluteFile("absolute.bundle").toURI());
+
+		Collection<File> parsedBundles = ProfileBundleContainer.parseBundlesFromConfigIni(configIni);
+		assertEquals(Arrays.asList( //
+				new File("plugins/some.bundle"), //
+				new File("plugins/some.bundle_startlevel"), //
+				absoluteFile("absolute.bundle")), //
+				parsedBundles);
+	}
+
+	@Test
+	public void testParseBundleInfoFromConfigIni_relativeToFramework() {
+		Properties configIni = new Properties();
+		configIni.put("osgi.bundles", "reference:file:some.bundle," //
+				+ "reference:file:some.bundle_startlevel@1:start," //
+				+ "reference:" + absoluteFile("absolute.bundle").toURI());
+		configIni.put("osgi.framework", "file:plugins/o.e.osgi.jar");
+
+		Collection<File> parsedBundles = ProfileBundleContainer.parseBundlesFromConfigIni(configIni);
+		assertEquals(Arrays.asList( //
+				new File("plugins/o.e.osgi.jar"), //
+				new File("plugins/some.bundle"), //
+				new File("plugins/some.bundle_startlevel"), //
+				absoluteFile("absolute.bundle")), //
+				parsedBundles);
+	}
+
+	private static File absoluteFile(String path) {
+		return new File(path).getAbsoluteFile();
 	}
 }

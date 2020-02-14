@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.target;
 
 import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Stream.concat;
 
 import java.io.File;
@@ -24,7 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
@@ -133,9 +134,9 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		if (infos == null) {
 			if (configUrl != null) {
 				try {
-					TargetBundle[] osgiBundles = readBundleInfosFromConfigIni(configUrl.toURI());
-					if (osgiBundles != null && osgiBundles.length > 0) {
-						return osgiBundles;
+					Collection<TargetBundle> osgiBundles = readBundleInfosFromConfigIni(configUrl.toURI());
+					if (!osgiBundles.isEmpty()) {
+						return osgiBundles.toArray(new TargetBundle[0]);
 					}
 				} catch (URISyntaxException ex) {
 					throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, ex.getMessage(), ex));
@@ -173,42 +174,78 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		}).filter(Objects::nonNull).toArray(TargetBundle[]::new);
 	}
 
-	private TargetBundle[] readBundleInfosFromConfigIni(URI configArea) {
+	private Collection<TargetBundle> readBundleInfosFromConfigIni(URI configArea) {
 		File configIni = new File(configArea);
 		configIni = new File(configIni, CONFIG_INI);
 		if (!configIni.isFile()) {
-			return null;
+			return emptyList();
 		}
 		Properties configProps = new Properties();
 		try (FileInputStream fis = new FileInputStream(configIni)) {
 			configProps.load(fis);
 		} catch (IOException e) {
 			PDECore.log(e);
-			return null;
+			return emptyList();
 		}
+
+		List<File> bundleFiles = parseBundlesFromConfigIni(configProps);
+		ArrayList<TargetBundle> bundles = new ArrayList<>();
+		for (File file : bundleFiles) {
+			if (!file.exists()) {
+				continue;
+			}
+			TargetBundle bundle;
+			try {
+				bundle = new TargetBundle(file);
+			} catch (CoreException e) {
+				bundle = new InvalidTargetBundle(new BundleInfo(file.toURI()), e.getStatus());
+			}
+			bundles.add(bundle);
+		}
+		return bundles;
+	}
+
+	public static List<File> parseBundlesFromConfigIni(Properties configProps) {
 		String osgiBundles = configProps.getProperty("osgi.bundles"); //$NON-NLS-1$
 		if (osgiBundles == null || osgiBundles.isEmpty()) {
-			return null;
+			return emptyList();
 		}
+
+		ArrayList<File> bundles = new ArrayList<>();
+		File baseDir = null;
+
 		String osgiFramework = configProps.getProperty("osgi.framework"); //$NON-NLS-1$
-		if (osgiFramework != null && !osgiFramework.isEmpty()) {
-			osgiBundles = osgiFramework + ',' + osgiBundles;
+		if (osgiFramework != null) {
+			File frameworkBundle = parseBundleLocation(osgiFramework);
+			bundles.add(frameworkBundle);
+			baseDir = frameworkBundle.getParentFile();
 		}
-		return Arrays.stream(osgiBundles.split(",")) //$NON-NLS-1$
-				.map(entry -> entry.split("@")[0]) //$NON-NLS-1$
-				.map(location -> location.startsWith("reference:") ? location.substring("reference:".length()) //$NON-NLS-1$ //$NON-NLS-2$
-						: location)
-				.map(URI::create) //
-				.filter(URI::isAbsolute) //
-				.map(File::new) //
-				.map(file -> {
-					try {
-						return new TargetBundle(file);
-					} catch (CoreException e) {
-						return new InvalidTargetBundle(new BundleInfo(file.toURI()), e.getStatus());
-					}
-				}).filter(Objects::nonNull) //
-				.toArray(TargetBundle[]::new);
+
+		for (String spec : osgiBundles.split(",")) { //$NON-NLS-1$
+			File location = parseBundleLocation(spec);
+			if (baseDir == null || location.isAbsolute()) {
+				bundles.add(location);
+			} else {
+				bundles.add(new File(baseDir, location.getPath()));
+			}
+		}
+
+		return bundles;
+	}
+
+	private static File parseBundleLocation(String spec) {
+		String path = spec.split("@", 2)[0]; //$NON-NLS-1$
+		path = trimPrefix(path, "reference:"); //$NON-NLS-1$
+		path = trimPrefix(path, "file:"); //$NON-NLS-1$
+		return new File(path);
+	}
+
+	private static String trimPrefix(String string, String prefix) {
+		if (string.startsWith(prefix)) {
+			return string.substring(prefix.length());
+		}
+
+		return string;
 	}
 
 	@Override
