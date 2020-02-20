@@ -96,6 +96,12 @@ public class LaunchAction extends Action {
 	private ILaunchConfiguration refreshConfiguration(ILaunchConfigurationWorkingCopy wc) throws CoreException {
 		wc.setAttribute(IPDELauncherConstants.PRODUCT, fProduct.getProductId());
 		wc.setAttribute(IPDELauncherConstants.APPLICATION, fProduct.getApplication());
+
+		if (TargetPlatformHelper.usesNewApplicationModel())
+			wc.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
+		else if (TargetPlatformHelper.getTargetVersion() >= 3.2)
+			wc.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.2a"); //$NON-NLS-1$
+
 		String os = Platform.getOS();
 		String arch = Platform.getOSArch();
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, getVMArguments(os, arch));
