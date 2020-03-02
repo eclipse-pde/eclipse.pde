@@ -59,7 +59,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The factory implementation. It must implements &lt;code&gt;org.eclipse.pde.build.IFetchFactory&lt;/code&gt;.
+                  The factory implementation. It must implement &lt;code&gt;org.eclipse.pde.build.IFetchFactory&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.pde.build.IFetchFactory"/>
@@ -112,7 +112,7 @@
       <documentation>
          The following fetch task factories are provided by PDE Build.
 &lt;ul&gt;
-&lt;li&gt;a CVS fetch task factroy for fetching features and plug-ins from CVS repositories.&lt;/li&gt;
+&lt;li&gt;a CVS fetch task factory for fetching features and plug-ins from CVS repositories.&lt;/li&gt;
 &lt;li&gt;a COPY fetch task factory for copying features and plug-ins from arbitrary file system locations.&lt;/li&gt;
 &lt;/ul&gt;
       </documentation>
