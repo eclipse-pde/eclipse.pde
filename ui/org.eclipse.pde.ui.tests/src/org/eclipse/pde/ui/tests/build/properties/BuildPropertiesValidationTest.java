@@ -15,6 +15,7 @@ package org.eclipse.pde.ui.tests.build.properties;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.fail;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,6 +24,8 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
+import org.junit.Before;
+import org.junit.Test;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -37,13 +40,15 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 	private static boolean fOneTimeSetupComplete = false;
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		if (fOneTimeSetupComplete)
 			return;
 		super.setUp();
 		fOneTimeSetupComplete = true;
 	}
 
+	@Test
 	public void testSourceFolder() throws CoreException, BackingStoreException, IOException {
 		for (int i = 1; i <= 5; i++) {
 			IProject project = findProject("org.eclipse.pde.tests.build.properties." + i);
@@ -60,6 +65,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		}
 	}
 
+	@Test
 	public void testJavacEntries() throws CoreException, BackingStoreException, IOException {
 		IProject project = findProject("org.eclipse.pde.tests.build.properties.6");
 		setPreferences(project, CompilerFlags.WARNING);
@@ -76,6 +82,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		}
 	}
 
+	@Test
 	public void testJreCompliance() throws CoreException, BackingStoreException, IOException {
 		IProject project = findProject("org.eclipse.pde.tests.build.properties.7");
 		setPreferences(project, CompilerFlags.ERROR);
@@ -92,6 +99,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		}
 	}
 
+	@Test
 	public void testSimpleProject() throws CoreException, BackingStoreException, IOException {
 		IProject project = findProject("org.eclipse.pde.tests.build.properties.8");
 		setPreferences(project, CompilerFlags.ERROR);
@@ -107,6 +115,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 	}
 
 	//Bug 292763
+	@Test
 	public void testSrcExcludeQuickFix() throws CoreException, BackingStoreException, IOException {
 		IProject project = findProject("org.eclipse.pde.tests.build.properties.9");
 		setPreferences(project, CompilerFlags.ERROR);
@@ -122,6 +131,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 	}
 
 	// Bug 323774
+	@Test
 	public void testOsgiInf() throws Exception {
 		IProject project = findProject("org.eclipse.pde.tests.build.properties.10");
 		setPreferences(project, CompilerFlags.ERROR);
@@ -137,6 +147,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 	}
 
 	// Bug 540442
+	@Test
 	public void testTestSource() throws CoreException, BackingStoreException, IOException {
 		IProject project = findProject("org.eclipse.pde.tests.build.properties.11");
 		setPreferences(project, CompilerFlags.ERROR);
@@ -152,6 +163,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		}
 	}
 
+	@Test
 	public void testIncrementalMarkers() throws Exception {
 		IProject project = findProject("org.eclipse.pde.tests.build.properties.1");
 		setPreferences(project, CompilerFlags.ERROR);

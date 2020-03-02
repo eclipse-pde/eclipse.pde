@@ -236,7 +236,7 @@ public class SiteEditor extends MultiSourceEditor {
 	private void ensureContentSaved() {
 		if (isDirty()) {
 			try {
-				IRunnableWithProgress op = monitor -> doSave(monitor);
+				IRunnableWithProgress op = this::doSave;
 				PlatformUI.getWorkbench().getProgressService().runInUI(PDEPlugin.getActiveWorkbenchWindow(), op, PDEPlugin.getWorkspace().getRoot());
 			} catch (InvocationTargetException e) {
 				PDEPlugin.logException(e);

@@ -216,7 +216,7 @@ public class TracingPropertySource {
 			String key = (String) keys.nextElement();
 			keyArray[i++] = key;
 		}
-		Arrays.sort(keyArray, (o1, o2) -> compareKeys(o1, o2));
+		Arrays.sort(keyArray, this::compareKeys);
 		return keyArray;
 	}
 

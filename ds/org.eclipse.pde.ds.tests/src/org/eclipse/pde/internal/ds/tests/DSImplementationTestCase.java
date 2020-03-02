@@ -14,12 +14,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSImplementation;
+import org.junit.Test;
 
 public class DSImplementationTestCase extends AbstractDSModelTestCase {
 
+	@Test
 	public void testAddImplementationComponent() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<implementation class=\"");
@@ -44,6 +50,7 @@ public class DSImplementationTestCase extends AbstractDSModelTestCase {
 	/**
 	 * Tests a service component default values
 	 */
+	@Test
 	public void testDefaultValuesService() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<implementation>");
@@ -64,6 +71,7 @@ public class DSImplementationTestCase extends AbstractDSModelTestCase {
 	/**
 	 * Tests to add a implementation by DSDocumentFactory
 	 */
+	@Test
 	public void testAddImplementationFactory() {
 		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer, LF);

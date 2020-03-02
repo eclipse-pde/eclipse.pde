@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.*;
 import java.util.Iterator;
 import org.eclipse.core.resources.*;
@@ -26,6 +29,8 @@ import org.eclipse.pde.internal.ui.editor.plugin.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test cases for ensuring the source page in Manifest Editor for plug-in.xml
@@ -40,7 +45,8 @@ public class ManifestEditorSpellCheckTestCase extends XMLModelTestCase {
 	private static final String EDITOR_ID = "org.eclipse.pde.ui.manifestEditor";
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		fProject = root.getProject("model.tests.editor");
@@ -59,6 +65,7 @@ public class ManifestEditorSpellCheckTestCase extends XMLModelTestCase {
 	/**
 	 * Checks that no spelling annotations are created.
 	 */
+	@Test
 	public void testNoSpellingAnnotation(){
 
 		try {

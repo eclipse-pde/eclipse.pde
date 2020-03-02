@@ -13,31 +13,39 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.xml;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.*;
+import org.junit.Test;
 
 public class ExtensionElementTestCase extends ExtensionTestCase {
-
+	@Test
 	public void testAddNewExtensionElement1LF() throws Exception {
 		testAddNewExtensionElement1(LF);
 	}
 
+	@Test
 	public void testAddNewExtensionElement2LF() throws Exception {
 		testAddNewExtensionElement2(LF);
 	}
 
+	@Test
 	public void testAddNewExtensionElement3LF() throws Exception {
 		testAddNewExtensionElement3(LF);
 	}
 
+	@Test
 	public void testAddNewExtensionElement1CRLF() throws Exception {
 		testAddNewExtensionElement1(CRLF);
 	}
 
+	@Test
 	public void testAddNewExtensionElement2CRLF() throws Exception {
 		testAddNewExtensionElement2(CRLF);
 	}
 
+	@Test
 	public void testAddNewExtensionElement3CRLF() throws Exception {
 		testAddNewExtensionElement3(CRLF);
 	}
@@ -61,31 +69,37 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		testAddNewExtensionElement(buffer, newLine);
 	}
 
+	@Test
 	public void testAddExtensionElement1LF() throws Exception {
 		StringBuilder buffer = getSingleElementBuffer1(LF);
 		testAddExtensionElement(buffer, LF);
 	}
 
+	@Test
 	public void testAddExtensionElement2LF() throws Exception {
 		StringBuilder buffer = getSingleElementBuffer2(LF);
 		testAddExtensionElement(buffer, LF);
 	}
 
+	@Test
 	public void testAddExtensionElement3LF() throws Exception {
 		StringBuilder buffer = getSingleElementBuffer3(LF);
 		testAddExtensionElement(buffer, LF);
 	}
 
+	@Test
 	public void testAddExtensionElement1CRLF() throws Exception {
 		StringBuilder buffer = getSingleElementBuffer1(CRLF);
 		testAddExtensionElement(buffer, CRLF);
 	}
 
+	@Test
 	public void testAddExtensionElement2CRLF() throws Exception {
 		StringBuilder buffer = getSingleElementBuffer2(CRLF);
 		testAddExtensionElement(buffer, CRLF);
 	}
 
+	@Test
 	public void testAddExtensionElement3CRLF() throws Exception {
 		StringBuilder buffer = getSingleElementBuffer3(CRLF);
 		testAddExtensionElement(buffer, CRLF);
@@ -111,26 +125,32 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		return buffer.append("\t</extension>");
 	}
 
+	@Test
 	public void testAddNewMultipleExtensionElements1LF() throws Exception {
 		testAddNewMultipleExtensionElements1(LF);
 	}
 
+	@Test
 	public void testAddNewMultipleExtensionElements2LF() throws Exception {
 		testAddNewMultipleExtensionElements2(LF);
 	}
 
+	@Test
 	public void testAddNewMultipleExtensionElements3LF() throws Exception {
 		testAddNewMultipleExtensionElements3(LF);
 	}
 
+	@Test
 	public void testAddNewMultipleExtensionElements1CRLF() throws Exception {
 		testAddNewMultipleExtensionElements1(CRLF);
 	}
 
+	@Test
 	public void testAddNewMultipleExtensionElements2CRLF() throws Exception {
 		testAddNewMultipleExtensionElements2(CRLF);
 	}
 
+	@Test
 	public void testAddNewMultipleExtensionElements3CRLF() throws Exception {
 		testAddNewMultipleExtensionElements3(CRLF);
 	}
@@ -154,86 +174,104 @@ public class ExtensionElementTestCase extends ExtensionTestCase {
 		testAddNewMultipleExtensionElements(buffer, newLine);
 	}
 
+	@Test
 	public void testAddMultipleExtensionElements1LF() throws Exception {
 		StringBuilder buffer = getSingleElementBuffer1(LF);
 		testAddMultipleExtensionElements(buffer, LF);
 	}
 
+	@Test
 	public void testAddMultipleExtensionElements2LF() throws Exception {
 		StringBuilder buffer = getSingleElementBuffer2(LF);
 		testAddMultipleExtensionElements(buffer, LF);
 	}
 
+	@Test
 	public void testAddMultipleExtensionElements3LF() throws Exception {
 		StringBuilder buffer = getSingleElementBuffer3(LF);
 		testAddMultipleExtensionElements(buffer, LF);
 	}
 
+	@Test
 	public void testAddMultipleExtensionElements1CRLF() throws Exception {
 		StringBuilder buffer = getSingleElementBuffer1(CRLF);
 		testAddMultipleExtensionElements(buffer, CRLF);
 	}
 
+	@Test
 	public void testAddMultipleExtensionElements2CRLF() throws Exception {
 		StringBuilder buffer = getSingleElementBuffer2(CRLF);
 		testAddMultipleExtensionElements(buffer, CRLF);
 	}
 
+	@Test
 	public void testAddMultipleExtensionElements3CRLF() throws Exception {
 		StringBuilder buffer = getSingleElementBuffer3(CRLF);
 		testAddMultipleExtensionElements(buffer, CRLF);
 	}
 
+	@Test
 	public void testRemoveExtensionElement1LF() throws Exception {
 		StringBuilder buffer = getSingleElementBuffer1(LF);
 		testRemoveExtensionElement(buffer, LF);
 	}
 
+	@Test
 	public void testRemoveExtensionElement2LF() throws Exception {
 		StringBuilder buffer = getSingleElementBuffer2(LF);
 		testRemoveExtensionElement(buffer, LF);
 	}
 
+	@Test
 	public void testRemoveExtensionElement3LF() throws Exception {
 		StringBuilder buffer = getSingleElementBuffer3(LF);
 		testRemoveExtensionElement(buffer, LF);
 	}
 
+	@Test
 	public void testRemoveExtensionElement1CRLF() throws Exception {
 		StringBuilder buffer = getSingleElementBuffer1(CRLF);
 		testRemoveExtensionElement(buffer, CRLF);
 	}
 
+	@Test
 	public void testRemoveExtensionElement2CRLF() throws Exception {
 		StringBuilder buffer = getSingleElementBuffer2(CRLF);
 		testRemoveExtensionElement(buffer, CRLF);
 	}
 
+	@Test
 	public void testRemoveExtensionElement3CRLF() throws Exception {
 		StringBuilder buffer = getSingleElementBuffer3(CRLF);
 		testRemoveExtensionElement(buffer, CRLF);
 	}
 
+	@Test
 	public void testRemoveMultipleExtensionElements1LF() throws Exception {
 		testRemoveMultipleExtensionElements1(LF);
 	}
 
+	@Test
 	public void testRemoveMultipleExtensionElements2LF() throws Exception {
 		testRemoveMultipleExtensionElements2(LF);
 	}
 
+	@Test
 	public void testRemoveMultipleExtensionElements3LF() throws Exception {
 		testRemoveMultipleExtensionElements3(LF);
 	}
 
+	@Test
 	public void testRemoveMultipleExtensionElements1CRLF() throws Exception {
 		testRemoveMultipleExtensionElements1(CRLF);
 	}
 
+	@Test
 	public void testRemoveMultipleExtensionElements2CRLF() throws Exception {
 		testRemoveMultipleExtensionElements2(CRLF);
 	}
 
+	@Test
 	public void testRemoveMultipleExtensionElements3CRLF() throws Exception {
 		testRemoveMultipleExtensionElements3(CRLF);
 	}

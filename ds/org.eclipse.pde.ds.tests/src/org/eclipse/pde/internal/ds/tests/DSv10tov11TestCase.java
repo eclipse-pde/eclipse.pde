@@ -14,10 +14,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.eclipse.pde.internal.ds.core.IDSComponent;
+import org.junit.Test;
 
 public class DSv10tov11TestCase extends AbstractDSModelTestCase {
-
+	@Test
 	public void testAddDefaultComponent() {
 		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer, LF);

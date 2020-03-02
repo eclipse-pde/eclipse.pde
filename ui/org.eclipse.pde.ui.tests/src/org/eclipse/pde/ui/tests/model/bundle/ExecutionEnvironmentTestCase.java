@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
@@ -20,6 +23,7 @@ import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.ExecutionEnvironment;
 import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHeader;
 import org.eclipse.text.edits.TextEdit;
+import org.junit.Test;
 import org.osgi.framework.Constants;
 
 @SuppressWarnings("deprecation")
@@ -30,6 +34,7 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		super(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 	}
 
+	@Test
 	public void testAddExecutionEnvironmentHeader() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -50,6 +55,7 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		assertEquals(buffer.toString() + header.write(), fDocument.get());
 	}
 
+	@Test
 	public void testRemoveExistingExecutionEnvironment() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -71,6 +77,7 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		assertEquals(4, fDocument.getNumberOfLines());
 	}
 
+	@Test
 	public void testAddExecutionEnvironment() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -98,6 +105,7 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testAddMulitplieExecutionEnvironmnets() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -131,6 +139,7 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testRemoveExecutionEnvironment() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -159,6 +168,7 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testRemoveMultipleExecutionEnvironments() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -186,6 +196,7 @@ public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 		assertEquals("Bundle-RequiredExecutionEnvironment: OSGi/Minimum-1.1\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testPreserveSpacing() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");

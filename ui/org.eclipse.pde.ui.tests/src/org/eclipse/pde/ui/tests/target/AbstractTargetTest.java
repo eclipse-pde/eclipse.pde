@@ -14,12 +14,17 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import junit.framework.TestCase;
 import org.eclipse.core.filebuffers.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -37,7 +42,7 @@ import org.osgi.service.event.EventHandler;
 /**
  * Common utility methods for target definition tests
  */
-public abstract class AbstractTargetTest extends TestCase {
+public abstract class AbstractTargetTest {
 
 
 	/**
@@ -49,8 +54,6 @@ public abstract class AbstractTargetTest extends TestCase {
 		ServiceReference<ITargetPlatformService> reference = PDETestsPlugin.getBundleContext()
 				.getServiceReference(ITargetPlatformService.class);
 		assertNotNull("Missing target platform service", reference);
-		if (reference == null)
-			return null;
 		return PDETestsPlugin.getBundleContext().getService(reference);
 	}
 

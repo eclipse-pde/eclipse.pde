@@ -13,7 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+import org.junit.Test;
 
 public abstract class MultiLineHeaderTestCase extends BundleModelTestCase {
 
@@ -21,6 +24,7 @@ public abstract class MultiLineHeaderTestCase extends BundleModelTestCase {
 		super(headerName);
 	}
 
+	@Test
 	public void testHeaderLengthMultiLines1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -36,6 +40,7 @@ public abstract class MultiLineHeaderTestCase extends BundleModelTestCase {
 		assertEquals(fDocument.getLineLength(3) + fDocument.getLineLength(4), header.getLength());
 	}
 
+	@Test
 	public void testHeaderLengthMultiLines2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");

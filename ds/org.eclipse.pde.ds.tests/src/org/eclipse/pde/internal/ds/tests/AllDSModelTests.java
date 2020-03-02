@@ -14,23 +14,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ DSComponentTestCase.class, DSServiceTestCase.class, DSReferenceTestCase.class,
+		DSProvideTestCase.class, DSPropertyTestCase.class, DSPropertiesTestCase.class, DSImplementationTestCase.class,
+		DSObjectTestCase.class, DSv10tov11TestCase.class })
 public class AllDSModelTests {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for org.eclipse.pde.ds.core"); //$NON-NLS-1$
-		suite.addTestSuite(DSComponentTestCase.class);
-		suite.addTestSuite(DSServiceTestCase.class);
-		suite.addTestSuite(DSReferenceTestCase.class);
-		suite.addTestSuite(DSProvideTestCase.class);
-		suite.addTestSuite(DSPropertyTestCase.class);
-		suite.addTestSuite(DSPropertiesTestCase.class);
-		suite.addTestSuite(DSImplementationTestCase.class);
-		suite.addTestSuite(DSObjectTestCase.class);
-		suite.addTestSuite(DSv10tov11TestCase.class);
-		return suite;
-	}
-
 }

@@ -63,7 +63,7 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 
 	@Override
 	protected void browse() {
-		BusyIndicator.showWhile(text.getDisplay(), () -> doOpenSelectionDialog());
+		BusyIndicator.showWhile(text.getDisplay(), this::doOpenSelectionDialog);
 	}
 
 	private JavaAttributeValue createJavaAttributeValue(String name) {

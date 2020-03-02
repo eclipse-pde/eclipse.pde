@@ -19,8 +19,6 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.util.*;
 import java.util.function.Function;
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
@@ -40,7 +38,8 @@ public class TestUtils {
 	}
 
 	public static String findPath(String path) {
-		return FileLocator.find(PDETestsPlugin.getBundleContext().getBundle(), new Path(path), Collections.EMPTY_MAP).toString();
+		return FileLocator.find(PDETestsPlugin.getBundleContext().getBundle(), new Path(path), Collections.emptyMap())
+				.toString();
 	}
 
 	/**
@@ -113,8 +112,8 @@ public class TestUtils {
 	/**
 	 * Waits while given condition is {@code true} for a given amount of
 	 * milliseconds. If the actual wait time exceeds given timeout and condition
-	 * will be still {@code true}, throws {@link AssertionFailedError} with
-	 * given message.
+	 * will be still {@code true}, throws {@link AssertionError} with given
+	 * message.
 	 * <p>
 	 * Will process UI events while waiting in UI thread, if called from
 	 * background thread, just waits.
@@ -147,7 +146,7 @@ public class TestUtils {
 		}
 		Boolean stillTrue = condition.apply(context);
 		if (stillTrue) {
-			TestCase.fail(errorMessage.apply(context));
+			Assert.fail(errorMessage.apply(context));
 		}
 	}
 

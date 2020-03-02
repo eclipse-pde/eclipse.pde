@@ -267,7 +267,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 				}
 			}
 		}
-		return isAnyChildMatch | isAnyLeafMatch;
+		return isAnyChildMatch || isAnyLeafMatch;
 	}
 
 	/**

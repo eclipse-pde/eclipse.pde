@@ -13,30 +13,39 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.core.plugin.*;
+import org.junit.Test;
 
 public class ExtensionAttributeTestCase extends ExtensionTestCase {
-
+	@Test
 	public void testAddNewExtensionAttribute1LF() throws Exception {
 		testAddNewExtensionAttribute1(LF);
 	}
 
+	@Test
 	public void testAddNewExtensionAttribute2LF() throws Exception {
 		testAddNewExtensionAttribute2(LF);
 	}
 
+	@Test
 	public void testAddNewExtensionAttribute3LF() throws Exception {
 		testAddNewExtensionAttribute3(LF);
 	}
 
+	@Test
 	public void testAddNewExtensionAttribute1CRLF() throws Exception {
 		testAddNewExtensionAttribute1(CRLF);
 	}
 
+	@Test
 	public void testAddNewExtensionAttribute2CRLF() throws Exception {
 		testAddNewExtensionAttribute2(CRLF);
 	}
 
+	@Test
 	public void testAddNewExtensionAttribute3CRLF() throws Exception {
 		testAddNewExtensionAttribute3(CRLF);
 	}
@@ -64,26 +73,32 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		testAddNewExtensionAttribute(buffer, newLine);
 	}
 
+	@Test
 	public void testAddExtensionAttribute1LF() throws Exception {
 		testAddExtensionAttribute1(LF);
 	}
 
+	@Test
 	public void testAddExtensionAttribute2LF() throws Exception {
 		testAddExtensionAttribute2(LF);
 	}
 
+	@Test
 	public void testAddExtensionAttribute3LF() throws Exception {
 		testAddExtensionAttribute3(LF);
 	}
 
+	@Test
 	public void testAddExtensionAttribute1CRLF() throws Exception {
 		testAddExtensionAttribute1(CRLF);
 	}
 
+	@Test
 	public void testAddExtensionAttribute2CRLF() throws Exception {
 		testAddExtensionAttribute2(CRLF);
 	}
 
+	@Test
 	public void testAddExtensionAttribute3CRLF() throws Exception {
 		testAddExtensionAttribute3(CRLF);
 	}
@@ -112,26 +127,32 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		testAddExtensionAttribute(buffer, newLine);
 	}
 
+	@Test
 	public void testAddNewMultipleAttributes1LF() throws Exception {
 		testAddNewMultipleAttributes1(LF);
 	}
 
+	@Test
 	public void testAddNewMultipleAttributes2LF() throws Exception {
 		testAddNewMultipleAttributes2(LF);
 	}
 
+	@Test
 	public void testAddNewMultipleAttributes3LF() throws Exception {
 		testAddNewMultipleAttributes3(LF);
 	}
 
+	@Test
 	public void testAddNewMultipleAttributes1CRLF() throws Exception {
 		testAddNewMultipleAttributes1(CRLF);
 	}
 
+	@Test
 	public void testAddNewMultipleAttributes2CRLF() throws Exception {
 		testAddNewMultipleAttributes2(CRLF);
 	}
 
+	@Test
 	public void testAddNewMultipleAttributes3CRLF() throws Exception {
 		testAddNewMultipleAttributes3(CRLF);
 	}
@@ -159,26 +180,32 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		testAddNewMultipleExtensionAttributes(buffer, newLine);
 	}
 
+	@Test
 	public void testRemoveExtensionAttribute1LF() throws Exception {
 		testRemoveExtensionAttribute1(LF);
 	}
 
+	@Test
 	public void testRemoveExtensionAttribute2LF() throws Exception {
 		testRemoveExtensionAttribute2(LF);
 	}
 
+	@Test
 	public void testRemoveExtensionAttribute3LF() throws Exception {
 		testRemoveExtensionAttribute3(LF);
 	}
 
+	@Test
 	public void testRemoveExtensionAttribute1CRLF() throws Exception {
 		testRemoveExtensionAttribute1(CRLF);
 	}
 
+	@Test
 	public void testRemoveExtensionAttribute2CRLF() throws Exception {
 		testRemoveExtensionAttribute2(CRLF);
 	}
 
+	@Test
 	public void testRemoveExtensionAttribute3CRLF() throws Exception {
 		testRemoveExtensionAttribute3(CRLF);
 	}
@@ -207,26 +234,32 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		testRemoveExtensionAttribute(buffer, newLine);
 	}
 
+	@Test
 	public void testRemoveMultipleExtensionAttributes1LF() throws Exception {
 		testRemoveMultipleExtensionAttributes1(LF);
 	}
 
+	@Test
 	public void testRemoveMultipleExtensionAttributes2LF() throws Exception {
 		testRemoveMultipleExtensionAttributes2(LF);
 	}
 
+	@Test
 	public void testRemoveMultipleExtensionAttributes3LF() throws Exception {
 		testRemoveMultipleExtensionAttributes3(LF);
 	}
 
+	@Test
 	public void testRemoveMultipleExtensionAttributes1CRLF() throws Exception {
 		testRemoveMultipleExtensionAttributes1(CRLF);
 	}
 
+	@Test
 	public void testRemoveMultipleExtensionAttributes2CRLF() throws Exception {
 		testRemoveMultipleExtensionAttributes2(CRLF);
 	}
 
+	@Test
 	public void testRemoveMultipleExtensionAttributes3CRLF() throws Exception {
 		testRemoveMultipleExtensionAttributes3(CRLF);
 	}
@@ -255,26 +288,32 @@ public class ExtensionAttributeTestCase extends ExtensionTestCase {
 		testRemoveMultipleExtensionAttributes(buffer, newLine);
 	}
 
+	@Test
 	public void testChangeExtensionAttribute1LF() throws Exception {
 		testChangeExtensionAttribute1(LF);
 	}
 
+	@Test
 	public void testChangeExtensionAttribute2LF() throws Exception {
 		testChangeExtensionAttribute2(LF);
 	}
 
+	@Test
 	public void testChangeExtensionAttribute3LF() throws Exception {
 		testChangeExtensionAttribute3(LF);
 	}
 
+	@Test
 	public void testChangeExtensionAttribute1CRLF() throws Exception {
 		testChangeExtensionAttribute1(CRLF);
 	}
 
+	@Test
 	public void testChangeExtensionAttribute2CRLF() throws Exception {
 		testChangeExtensionAttribute2(CRLF);
 	}
 
+	@Test
 	public void testChangeExtensionAttribute3CRLF() throws Exception {
 		testChangeExtensionAttribute3(CRLF);
 	}

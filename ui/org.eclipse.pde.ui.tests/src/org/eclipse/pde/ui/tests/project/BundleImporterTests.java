@@ -13,28 +13,33 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Map;
-import junit.framework.TestCase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.project.BundleProjectService;
 import org.eclipse.team.core.ScmUrlImportDescription;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.importing.provisional.IBundleImporter;
+import org.junit.Test;
 
 /**
  * Tests for bundle importer extensions.
  *
  * @since 3.6
  */
-public class BundleImporterTests extends TestCase {
+public class BundleImporterTests {
 
 	private static final String CVS_IMPORTER = "org.eclipse.team.core.cvs.importer";
 
 	/**
 	 * Tests that a import description can be created for a known plug-in
+	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testGetImportDescriptions() throws CoreException {
 		String bundleId = "org.eclipse.jdt.core";
 		String expectedURL = "scm:cvs:pserver:dev.eclipse.org:/cvsroot/eclipse:org.eclipse.jdt.core";
@@ -59,6 +64,7 @@ public class BundleImporterTests extends TestCase {
 	/**
 	 * Tests that the team API returns all known bundle importers
 	 */
+	@Test
 	public void testBundleImporters() {
 		IBundleImporter[] importers = Team.getBundleImporters();
 		assertEquals(1, importers.length);

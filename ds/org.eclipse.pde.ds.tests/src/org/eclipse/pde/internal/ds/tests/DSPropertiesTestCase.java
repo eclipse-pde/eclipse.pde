@@ -13,12 +13,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSProperties;
+import org.junit.Test;
 
 public class DSPropertiesTestCase extends AbstractDSModelTestCase {
-
+	@Test
 	public void testAddPropertiesComponent() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<properties entry=\"");
@@ -41,8 +46,9 @@ public class DSPropertiesTestCase extends AbstractDSModelTestCase {
 	}
 
 	/**
-	 * Tests a  component with multiple properties
+	 * Tests a component with multiple properties
 	 */
+	@Test
 	public void testMultipleProperties() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<properties entry=\"");
@@ -85,6 +91,7 @@ public class DSPropertiesTestCase extends AbstractDSModelTestCase {
 	/**
 	 * Tests a properties component default values
 	 */
+	@Test
 	public void testDefaultValuesService() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<properties>");
@@ -109,6 +116,7 @@ public class DSPropertiesTestCase extends AbstractDSModelTestCase {
 	/**
 	 * Tests to add a properties by DSDocumentFactory
 	 */
+	@Test
 	public void testAddPropertiesFactory(){
 		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer , LF);

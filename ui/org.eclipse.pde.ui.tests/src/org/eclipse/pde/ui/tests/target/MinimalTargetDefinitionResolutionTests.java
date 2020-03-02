@@ -13,6 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
@@ -23,6 +29,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
+import org.junit.Test;
 
 /**
  * Runs on minimal bundles and don't require full eclipse SDK.This class is
@@ -30,7 +37,7 @@ import org.eclipse.pde.internal.core.target.TargetPlatformService;
  *
  */
 public class MinimalTargetDefinitionResolutionTests extends AbstractTargetTest {
-
+	@Test
 	public void testInvalidBundleContainers() throws Exception {
 		ITargetDefinition definition = getNewTarget();
 
@@ -64,10 +71,12 @@ public class MinimalTargetDefinitionResolutionTests extends AbstractTargetTest {
 	 * @see TargetBundle.STATUS_INVALID_MANIFEST
 	 * @throws Exception
 	 */
+	@Test
 	public void testInvalidManifest() throws Exception {
 		// TODO Should we have tests for this?
 	}
 
+	@Test
 	public void testResolutionCaching() throws Exception {
 		ITargetDefinition definition = getNewTarget();
 		assertTrue(definition.isResolved());
@@ -160,13 +169,13 @@ public class MinimalTargetDefinitionResolutionTests extends AbstractTargetTest {
 
 	}
 
-
 	/**
 	 * Tests that if users *don't* have the old preference to append .ini VM
 	 * arguments, target definitions are migrated properly *without* the
 	 * arguments appended.
 	 */
 	@SuppressWarnings("deprecation")
+	@Test
 	public void testVMArgumentsMigrationNoAppend() throws Exception {
 		Preferences store = PDECore.getDefault().getPluginPreferences();
 		boolean original = store.getBoolean(ICoreConstants.VM_LAUNCHER_INI);
@@ -189,6 +198,7 @@ public class MinimalTargetDefinitionResolutionTests extends AbstractTargetTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testTargetInSynch() throws Exception {
 		IPath location = extractAbcdePlugins();
 		IPath dirPath = location.append("plugins");
@@ -215,6 +225,7 @@ public class MinimalTargetDefinitionResolutionTests extends AbstractTargetTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testTargetInSynchWithDuplicates() throws Exception {
 		IPath location = extractAbcdePlugins();
 		IPath dirPath = location.append("plugins");
@@ -242,6 +253,7 @@ public class MinimalTargetDefinitionResolutionTests extends AbstractTargetTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testTargetMissingBundle() throws Exception {
 		IPath location = extractAbcdePlugins();
 		IPath dirPath = location.append("plugins");
@@ -277,6 +289,7 @@ public class MinimalTargetDefinitionResolutionTests extends AbstractTargetTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testTargetPlatformMissingBundle() throws Exception {
 		IPath location = extractAbcdePlugins();
 		IPath dirPath = location.append("plugins");
@@ -320,6 +333,7 @@ public class MinimalTargetDefinitionResolutionTests extends AbstractTargetTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testSiteContainerIncludeSettings() throws Exception {
 		ITargetDefinition target = getNewTarget();
 		IUBundleContainer containerA = (IUBundleContainer) getTargetService().newIULocation(new IInstallableUnit[0],
@@ -373,6 +387,7 @@ public class MinimalTargetDefinitionResolutionTests extends AbstractTargetTest {
 		assertTrue(containerB.getIncludeSource());
 	}
 
+	@Test
 	public void testNameVersionDescriptor() {
 		NameVersionDescriptor d1 = new NameVersionDescriptor("a.b.c", "1.0.0");
 		NameVersionDescriptor d2 = new NameVersionDescriptor("a.b.c", "1.0.0");

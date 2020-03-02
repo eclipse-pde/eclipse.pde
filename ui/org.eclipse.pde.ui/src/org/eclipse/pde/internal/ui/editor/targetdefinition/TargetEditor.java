@@ -85,7 +85,7 @@ public class TargetEditor extends FormEditor {
 
 	private ImageHyperlink fLoadHyperlink;
 
-	private EventHandler fEventHandler = e -> handleBrokerEvent(e);
+	private EventHandler fEventHandler = this::handleBrokerEvent;
 
 	@Override
 	protected FormToolkit createToolkit(Display display) {

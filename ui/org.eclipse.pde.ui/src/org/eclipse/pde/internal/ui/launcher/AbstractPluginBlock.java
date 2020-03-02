@@ -786,8 +786,8 @@ public abstract class AbstractPluginBlock {
 		Set<String> additionalIds = DependencyManager.getDependencies(toCheck.toArray(),
 				fIncludeOptionalButton.getSelection(), null);
 
-		additionalIds.stream().map(id -> PluginRegistry.findEntry(id))
-				.filter(Objects::nonNull).map(entry -> entry.getModel())
+		additionalIds.stream().map(org.eclipse.pde.core.plugin.PluginRegistry::findEntry)
+				.filter(Objects::nonNull).map(org.eclipse.pde.core.plugin.ModelEntry::getModel)
 				.forEach(model -> toCheck.add(model));
 
 		checked = toCheck.toArray();

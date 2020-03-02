@@ -414,7 +414,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 		@Override
 		public boolean visit(ImportDeclaration node) {
 			String name = node.getName().getFullyQualifiedName();
-			if (!ALL_API_IMPORTS.values().contains(name)) {
+			if (!ALL_API_IMPORTS.containsValue(name)) {
 				existingImports.add(name);
 			}
 			return super.visit(node);

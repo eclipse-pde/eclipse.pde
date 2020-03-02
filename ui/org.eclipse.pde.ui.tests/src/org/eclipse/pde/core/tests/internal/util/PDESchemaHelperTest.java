@@ -13,16 +13,19 @@
  *******************************************************************************/
 package org.eclipse.pde.core.tests.internal.util;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashSet;
 import java.util.Set;
-import junit.framework.TestCase;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationProperty;
 import org.eclipse.pde.internal.core.product.ProductModel;
 import org.eclipse.pde.internal.core.product.ProductModelFactory;
 import org.eclipse.pde.internal.core.util.PDESchemaHelper;
+import org.junit.Test;
 
-public class PDESchemaHelperTest extends TestCase {
+public class PDESchemaHelperTest {
 
 	private ProductModelFactory fProductModelFactory;
 
@@ -58,7 +61,7 @@ public class PDESchemaHelperTest extends TestCase {
 
 	}
 
-
+	@Test
 	public void testContainsMatchingProperty() {
 		// exact same property test
 		boolean containsMatchingProperty = PDESchemaHelper.containsMatchingProperty(fConfigurationProperties,

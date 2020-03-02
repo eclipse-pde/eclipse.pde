@@ -130,7 +130,7 @@ public class ApiJavadocTag implements IApiJavadocTag {
 
 	@Override
 	public boolean isApplicable(int type, int member) {
-		return fTagItems != null && fTagItems.keySet().contains(getTagKey(type, member));
+		return fTagItems != null && fTagItems.containsKey(getTagKey(type, member));
 	}
 
 	@Override

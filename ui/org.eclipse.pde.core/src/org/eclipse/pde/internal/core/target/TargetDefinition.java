@@ -1403,7 +1403,7 @@ public class TargetDefinition implements ITargetDefinition {
 		}
 
 		for (Entry<String, List<Element>> entry : oldContainersByRepo.entrySet()) {
-			entry.getValue().forEach(element -> TargetDefinitionDocumentTools.removeChildAndWhitespace(element));
+			entry.getValue().forEach(TargetDefinitionDocumentTools::removeChildAndWhitespace);
 		}
 	}
 

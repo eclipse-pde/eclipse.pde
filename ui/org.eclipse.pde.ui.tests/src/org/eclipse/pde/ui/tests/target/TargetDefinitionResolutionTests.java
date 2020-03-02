@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -21,9 +26,10 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
+import org.junit.Test;
 
 public class TargetDefinitionResolutionTests extends MinimalTargetDefinitionResolutionTests {
-
+	@Test
 	public void testMissingBundles() throws Exception {
 		ITargetDefinition definition = getNewTarget();
 
@@ -61,6 +67,7 @@ public class TargetDefinitionResolutionTests extends MinimalTargetDefinitionReso
 	 * are able to determine the bundle their source is for.
 	 * @throws Exception
 	 */
+	@Test
 	public void testSourceBundleRecognition() throws Exception {
 		ITargetDefinition definition = getNewTarget();
 
@@ -107,6 +114,7 @@ public class TargetDefinitionResolutionTests extends MinimalTargetDefinitionReso
 	 * target definitions are migrated properly with the arguments appended.
 	 */
 	@SuppressWarnings("deprecation")
+	@Test
 	public void testVMArgumentsMigrationAppend() throws Exception {
 		IEclipsePreferences store = InstanceScope.INSTANCE.getNode(PDECore.PLUGIN_ID);
 		boolean original = store.getBoolean(ICoreConstants.VM_LAUNCHER_INI, false);

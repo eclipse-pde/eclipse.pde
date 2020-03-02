@@ -13,8 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
+import org.junit.Test;
 
 public class StructureXMLModelTestCase extends XMLModelTestCase {
 
@@ -28,50 +32,62 @@ public class StructureXMLModelTestCase extends XMLModelTestCase {
 	// ~ line 37
 	static String ELEMENT_SHIFT = "   "; //$NON-NLS-1$
 
+	@Test
 	public void testStructureAddExtensionLF() throws Exception {
 		addExtension(LF);
 	}
 
+	@Test
 	public void testStructureAddExtensionCRLF() throws Exception {
 		addExtension(CRLF);
 	}
 
+	@Test
 	public void testStructureAddElementLF() throws Exception {
 		addElement(LF);
 	}
 
+	@Test
 	public void testStructureAddElementCRLF() throws Exception {
 		addElement(CRLF);
 	}
 
+	@Test
 	public void testStructureAddAttributeLF() throws Exception {
 		addAttributesToElement(LF);
 	}
 
+	@Test
 	public void testStructureAddAttributeCRLF() throws Exception {
 		addAttributesToElement(CRLF);
 	}
 
+	@Test
 	public void testStructureBreakOpenElementLF() throws Exception {
 		breakOpenElement(LF);
 	}
 
+	@Test
 	public void testStructureBreakOpenElementCRLF() throws Exception {
 		breakOpenElement(CRLF);
 	}
 
+	@Test
 	public void testStructurePreserveCommentInRootLF() throws Exception {
 		preserveCommentAddExtension(LF);
 	}
 
+	@Test
 	public void testStructurePreserveCommentInRootCRLF() throws Exception {
 		preserveCommentAddExtension(CRLF);
 	}
 
+	@Test
 	public void testStructurePreserveCommentInExtensionLF() throws Exception {
 		preserveContainedCommentAddElement(LF);
 	}
 
+	@Test
 	public void testStructurePreserveCommentInExtensionCRLF() throws Exception {
 		preserveContainedCommentAddElement(CRLF);
 	}

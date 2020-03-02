@@ -13,11 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.xml;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.core.plugin.*;
+import org.junit.Test;
 
 public class SwapXMLModelTestCase extends XMLModelTestCase {
 
 	// all one one line
+	@Test
 	public void testSwapTwoChildren() throws Exception {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<extension id=\"org.eclipse.pde.ui.samples\">");
@@ -28,6 +33,7 @@ public class SwapXMLModelTestCase extends XMLModelTestCase {
 	}
 
 	// all on diff line
+	@Test
 	public void testSwapTwoChildren2() throws Exception {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<extension id=\"org.eclipse.pde.ui.samples\">");
@@ -42,6 +48,7 @@ public class SwapXMLModelTestCase extends XMLModelTestCase {
 	}
 
 	// all on diff line with tabs
+	@Test
 	public void testSwapTwoChildren3() throws Exception {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<extension id=\"org.eclipse.pde.ui.samples\">");
@@ -56,6 +63,7 @@ public class SwapXMLModelTestCase extends XMLModelTestCase {
 	}
 
 	// some on diff lines with no spacing
+	@Test
 	public void testSwapTwoChildren4() throws Exception {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<extension id=\"org.eclipse.pde.ui.samples\">");
@@ -68,6 +76,7 @@ public class SwapXMLModelTestCase extends XMLModelTestCase {
 	}
 
 	// some on diff lines with spacing
+	@Test
 	public void testSwapTwoChildren5() throws Exception {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<extension id=\"org.eclipse.pde.ui.samples\">");

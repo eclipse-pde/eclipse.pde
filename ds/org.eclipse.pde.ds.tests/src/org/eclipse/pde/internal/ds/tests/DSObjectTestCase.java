@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.eclipse.pde.internal.ds.core.IDSComponent;
@@ -23,10 +27,11 @@ import org.eclipse.pde.internal.ds.core.IDSProperties;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
 import org.eclipse.pde.internal.ds.core.IDSReference;
 import org.eclipse.pde.internal.ds.core.IDSService;
+import org.junit.Test;
 
 public class DSObjectTestCase extends AbstractDSModelTestCase {
 
-
+	@Test
 	public void testObject(){
 		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer, LF);

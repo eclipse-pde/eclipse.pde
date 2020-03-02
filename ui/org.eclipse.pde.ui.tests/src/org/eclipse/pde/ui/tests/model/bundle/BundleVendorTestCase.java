@@ -13,9 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleVendorHeader;
 import org.eclipse.text.edits.TextEdit;
+import org.junit.Test;
 import org.osgi.framework.Constants;
 
 public class BundleVendorTestCase extends BundleModelTestCase {
@@ -24,6 +28,7 @@ public class BundleVendorTestCase extends BundleModelTestCase {
 		super(Constants.BUNDLE_VENDOR);
 	}
 
+	@Test
 	public void testAddBundleVendor() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -44,6 +49,7 @@ public class BundleVendorTestCase extends BundleModelTestCase {
 		assertEquals(buffer.toString() + header.write(), fDocument.get());
 	}
 
+	@Test
 	public void testRemoveBundleVendor() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -65,6 +71,7 @@ public class BundleVendorTestCase extends BundleModelTestCase {
 		assertEquals(0, fDocument.getLineLength(3));
 	}
 
+	@Test
 	public void testChangeBundleVendor() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");

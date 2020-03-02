@@ -14,21 +14,24 @@
 
 package org.eclipse.pde.ui.tests.util.xml;
 
+import static org.junit.Assert.assertFalse;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
-import junit.framework.TestCase;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.pde.internal.core.XMLDefaultHandler;
 import org.eclipse.pde.internal.core.util.SAXParserWrapper;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.pde.ui.tests.util.DOMParserWrapper;
+import org.junit.Before;
+import org.junit.Test;
 import org.osgi.framework.Bundle;
 import org.xml.sax.SAXException;
 
-public class ParserWrapperTestCase extends TestCase {
+public class ParserWrapperTestCase {
 
 	protected static final int FTHREADCOUNT = 5;
 	protected static final int FSAX = 0;
@@ -36,9 +39,8 @@ public class ParserWrapperTestCase extends TestCase {
 	protected static File fXMLFile;
 	protected static final String FFILENAME = "/plugin.xml"; //$NON-NLS-1$
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		PDETestsPlugin plugin = PDETestsPlugin.getDefault();
 		if (plugin == null)
 			throw new Exception("ERROR:  Macro plug-in uninitialized"); //$NON-NLS-1$
@@ -54,6 +56,7 @@ public class ParserWrapperTestCase extends TestCase {
 		fXMLFile = new File(path);
 	}
 
+	@Test
 	public void testSAXParserWrapperConcurrency() throws Exception {
 
 		ParserThread[] threads = new ParserThread[FTHREADCOUNT];
@@ -70,6 +73,7 @@ public class ParserWrapperTestCase extends TestCase {
 
 	}
 
+	@Test
 	public void testDOMParserWrapperConcurrency() throws Exception {
 
 		ParserThread[] threads = new ParserThread[FTHREADCOUNT];

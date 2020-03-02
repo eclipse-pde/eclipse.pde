@@ -13,10 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.util;
 
+import static org.junit.Assert.assertFalse;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.TestCase;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -27,7 +28,7 @@ import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
 import org.eclipse.pde.internal.core.exports.PluginExportOperation;
 import org.osgi.framework.Version;
 
-public class TestBundleCreator extends TestCase {
+public class TestBundleCreator {
 
 	private static final String TEST_BUNDLE_NAME = "TestBundle_";
 

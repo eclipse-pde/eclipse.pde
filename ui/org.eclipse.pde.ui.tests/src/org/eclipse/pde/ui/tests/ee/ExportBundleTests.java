@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.ee;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,6 +37,8 @@ import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests exporting bundles.
@@ -41,7 +48,8 @@ public class ExportBundleTests extends PDETestCase {
 	private static final IPath EXPORT_PATH = PDETestsPlugin.getDefault().getStateLocation().append(".export");
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		Path path = Files.createDirectories(EXPORT_PATH.toFile().toPath());
 		if (Files.exists(path)) {
@@ -106,6 +114,7 @@ public class ExportBundleTests extends PDETestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testExportCustomEnvironment() throws Exception {
 		try {
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(EnvironmentAnalyzerDelegate.EE_NO_SOUND);
@@ -134,31 +143,32 @@ public class ExportBundleTests extends PDETestCase {
 			assertTrue("Export job had errors", result.isOK());
 
 			TestUtils.processUIEvents(100);
-			TestUtils.waitForJobs(getName(), 100, 10000);
+			TestUtils.waitForJobs(name.getMethodName(), 100, 10000);
 
 			// verify exported bundle exists
 			IPath path = EXPORT_PATH.append("plugins/no.sound.export_1.0.0.jar");
 
 			// The jar file may not have been copied to the file system yet, see Bug 424597
 			if (!path.toFile().exists()) {
-				TestUtils.waitForJobs(getName(), 100, 30000);
+				TestUtils.waitForJobs(name.getMethodName(), 100, 30000);
 			}
 
 			assertTrue("Missing exported bundle", path.toFile().exists());
 			validateTargetLevel(path.toOSString(), "no/sound/export/Activator.class", 47);
 		} finally {
-			TestUtils.waitForJobs(getName(), 10, 5000);
+			TestUtils.waitForJobs(name.getMethodName(), 10, 5000);
 			deleteProject("no.sound.export");
 			deleteFolder(EXPORT_PATH.toFile());
 		}
 	}
 
 	/**
-	 * Exports a plug-in project with a J2SE-1.4 execution environment and validates class file
-	 * target level.
+	 * Exports a plug-in project with a J2SE-1.4 execution environment and
+	 * validates class file target level.
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testExport14Environment() throws Exception {
 		try {
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4");
@@ -197,13 +207,13 @@ public class ExportBundleTests extends PDETestCase {
 			long l7 = System.currentTimeMillis();
 
 			TestUtils.processUIEvents(100);
-			TestUtils.waitForJobs(getName(), 100, 10000);
+			TestUtils.waitForJobs(name.getMethodName(), 100, 10000);
 
 			boolean didPathExistBeforeSleep = path.toFile().exists();
 			/*		give a 30 second delay when the path doesn't exist
 					( JUST IN CASE - unlikely to work but worth trying)*/
 			if (!path.toFile().exists()) {
-				TestUtils.waitForJobs(getName(), 3000, 30000);
+				TestUtils.waitForJobs(name.getMethodName(), 3000, 30000);
 			}
 			boolean didPathExistAfterSleep = path.toFile().exists();
 
@@ -249,7 +259,7 @@ public class ExportBundleTests extends PDETestCase {
 			assertTrue("Missing exported bundle", path.toFile().exists());
 			validateTargetLevel(path.toOSString(), "j2se14/export/Activator.class", 46);
 		} finally {
-			TestUtils.waitForJobs(getName(), 10, 5000);
+			TestUtils.waitForJobs(name.getMethodName(), 10, 5000);
 			deleteProject("j2se14.export");
 			deleteFolder(EXPORT_PATH.toFile());
 		}

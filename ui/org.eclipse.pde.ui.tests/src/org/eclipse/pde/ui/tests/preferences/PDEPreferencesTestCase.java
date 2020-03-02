@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.preferences;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -23,13 +24,14 @@ import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.ui.*;
+import org.junit.Test;
 
 
 /**
  * Tests to ensure that the PDE Preferences manager, added in 3.5, is working
  * correctly and is compatible with the existing preference story.
  */
-public class PDEPreferencesTestCase extends TestCase {
+public class PDEPreferencesTestCase {
 
 	private static final String PLUGIN_ID = "org.eclipse.pde.core";
 
@@ -49,6 +51,7 @@ public class PDEPreferencesTestCase extends TestCase {
 		preferences.setDefault("intKey", -1);
 	}
 
+	@Test
 	public void testInstanceScopePDEPreferences(){
 		PDEPreferencesManager preferences = new PDEPreferencesManager(PLUGIN_ID);
 		assertEquals(preferences.getString("stringKey"), "stringValue");
@@ -56,6 +59,7 @@ public class PDEPreferencesTestCase extends TestCase {
 		assertEquals(preferences.getInt("intKey"), 0);
 	}
 
+	@Test
 	public void testDefaultPDEPreferences(){
 		PDEPreferencesManager preferences = new PDEPreferencesManager(PLUGIN_ID);
 		assertEquals(preferences.getDefaultString("stringKey"), "defaultValue");
@@ -63,6 +67,7 @@ public class PDEPreferencesTestCase extends TestCase {
 		assertEquals(preferences.getDefaultInt("intKey"), -1);
 	}
 
+	@Test
 	public void testPreferenceChangeListener1(){
 		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
 		final String key = "stringKey";
@@ -81,6 +86,7 @@ public class PDEPreferencesTestCase extends TestCase {
 			preferences.put(key, originalValue);
 	}
 
+	@Test
 	public void testPreferenceChangeListner2(){
 		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
 		final String key = "stringKey";
@@ -101,6 +107,7 @@ public class PDEPreferencesTestCase extends TestCase {
 			preferences.put(key, originalValue);
 	}
 
+	@Test
 	public void testCompilerPreferences(){
 		// Testing the compiler preferences set by PDECore in org.eclipse.pde
 		PDEPreferencesManager preferences = new PDEPreferencesManager(PDE.PLUGIN_ID);
@@ -109,6 +116,7 @@ public class PDEPreferencesTestCase extends TestCase {
 		assertEquals(preferences.getDefaultInt(CompilerFlags.P_MISSING_VERSION_EXP_PKG), CompilerFlags.IGNORE);
 	}
 
+	@Test
 	public void testCompatibilityWithPreferenceStore(){
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		PDEPreferencesManager preferencesManager = new PDEPreferencesManager(IPDEUIConstants.PLUGIN_ID);

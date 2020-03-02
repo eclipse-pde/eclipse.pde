@@ -14,11 +14,16 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.*;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.*;
-import junit.framework.TestCase;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -38,6 +43,9 @@ import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.text.bundle.BundleModelFactory;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestName;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
@@ -46,13 +54,16 @@ import org.osgi.framework.Version;
  *
  * @since 3.6
  */
-public class ProjectCreationTests extends TestCase {
+public class ProjectCreationTests {
 
 	protected static final IBundleClasspathEntry DEFAULT_BUNDLE_CLASSPATH_ENTRY;
 
 	static {
 		DEFAULT_BUNDLE_CLASSPATH_ENTRY = getBundleProjectService().newBundleClasspathEntry(null, null, new Path("."));
 	}
+
+	@Rule
+	public TestName testName = new TestName();
 
 	public static IBundleProjectService getBundleProjectService() {
 		return PDECore.getDefault().acquireService(IBundleProjectService.class);
@@ -79,12 +90,14 @@ public class ProjectCreationTests extends TestCase {
 	/**
 	 * Provides a project for the test case.
 	 *
-	 * @param test test case
+	 * @param test
+	 *            test case
 	 * @return project which does not yet exist
-	 * @exception CoreException on failure
+	 * @exception CoreException
+	 *                on failure
 	 */
 	protected IBundleProjectDescription newProject() throws CoreException {
-		String name = getName().toLowerCase().substring(4);
+		String name = testName.getMethodName().toLowerCase().substring(4);
 		name = "test." + name;
 		IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 		assertFalse("Project should not exist", proj.exists());
@@ -98,6 +111,7 @@ public class ProjectCreationTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testBundle() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
@@ -146,6 +160,7 @@ public class ProjectCreationTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testEmptyHeader() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
@@ -194,10 +209,12 @@ public class ProjectCreationTests extends TestCase {
 	}
 
 	/**
-	 * Tests that an empty package import header can be tolerated (see bug 312291)
+	 * Tests that an empty package import header can be tolerated (see bug
+	 * 312291)
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testEmptyPackageImportHeader() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
@@ -226,6 +243,7 @@ public class ProjectCreationTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testFragment() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
@@ -274,16 +292,19 @@ public class ProjectCreationTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testFragmentSrc() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		description.setBundleVersion(new Version("1.2.2"));
 		IBundleProjectService service = getBundleProjectService();
-		IHostDescription host = service.newHost("some.host", new VersionRange(new Version("1.0.0"), true, new Version("2.0.0"), false));
+		IHostDescription host = service.newHost("some.host",
+				new VersionRange(new Version("1.0.0"), true, new Version("2.0.0"), false));
 		description.setHost(host);
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
-		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(new Path("frag"), new Path("bin"), new Path("frag.jar"));
-		description.setBundleClasspath(new IBundleClasspathEntry[]{e1});
+		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(new Path("frag"), new Path("bin"),
+				new Path("frag.jar"));
+		description.setBundleClasspath(new IBundleClasspathEntry[] { e1 });
 		description.apply(null);
 
 		IBundleProjectDescription d2 = service.getDescription(project);
@@ -326,13 +347,14 @@ public class ProjectCreationTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testTwoSourceFoldersOneJar() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(new Path("src1"), null, new Path("the.jar"));
 		IBundleClasspathEntry e2 = service.newBundleClasspathEntry(new Path("src2"), null, new Path("the.jar"));
-		description.setBundleClasspath(new IBundleClasspathEntry[]{e1, e2});
+		description.setBundleClasspath(new IBundleClasspathEntry[] { e1, e2 });
 		description.setBundleVersion(new Version("1.2.3"));
 		description.apply(null);
 
@@ -385,13 +407,15 @@ public class ProjectCreationTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testTwoSourceFoldersTwoJars() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(new Path("src1"), null, new Path("."));
-		IBundleClasspathEntry e2 = service.newBundleClasspathEntry(new Path("src2"), new Path("bin2"), new Path("two.jar"));
-		description.setBundleClasspath(new IBundleClasspathEntry[]{e1, e2});
+		IBundleClasspathEntry e2 = service.newBundleClasspathEntry(new Path("src2"), new Path("bin2"),
+				new Path("two.jar"));
+		description.setBundleClasspath(new IBundleClasspathEntry[] { e1, e2 });
 		description.setBundleVersion(new Version("1.2.3"));
 		description.apply(null);
 
@@ -430,11 +454,13 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 	}
+
 	/**
 	 * Set a symbolic name and singleton property, and go.
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testSingleton() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
@@ -476,10 +502,12 @@ public class ProjectCreationTests extends TestCase {
 	}
 
 	/**
-	 * A simple project with a single source folder, default output folder, and bundle classpath (.).
+	 * A simple project with a single source folder, default output folder, and
+	 * bundle classpath (.).
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testBundleSrc() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
@@ -487,12 +515,14 @@ public class ProjectCreationTests extends TestCase {
 		IPath src = new Path("src");
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
-		description.setBundleClasspath(new IBundleClasspathEntry[] {spec});
+		description.setBundleClasspath(new IBundleClasspathEntry[] { spec });
 		IPackageExportDescription ex0 = service.newPackageExport("a.b.c", new Version("2.0.0"), true, null);
 		IPackageExportDescription ex1 = service.newPackageExport("a.b.c.interal", null, false, null);
-		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false, new String[]{"x.y.z"});
-		IPackageExportDescription ex3 = service.newPackageExport("a.b.c.interal.y", new Version("1.2.3"), false, new String[]{"d.e.f", "g.h.i"});
-		description.setPackageExports(new IPackageExportDescription[]{ex0, ex1, ex2, ex3});
+		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false,
+				new String[] { "x.y.z" });
+		IPackageExportDescription ex3 = service.newPackageExport("a.b.c.interal.y", new Version("1.2.3"), false,
+				new String[] { "d.e.f", "g.h.i" });
+		description.setPackageExports(new IPackageExportDescription[] { ex0, ex1, ex2, ex3 });
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.apply(null);
 
@@ -541,6 +571,7 @@ public class ProjectCreationTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testBundleToFrag() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
@@ -548,7 +579,7 @@ public class ProjectCreationTests extends TestCase {
 		IPath src = new Path("src");
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
-		description.setBundleClasspath(new IBundleClasspathEntry[] {spec});
+		description.setBundleClasspath(new IBundleClasspathEntry[] { spec });
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.apply(null);
 
@@ -594,11 +625,12 @@ public class ProjectCreationTests extends TestCase {
 	}
 
 	/**
-	 * A project with a source folder, plugin.xml, activator, execution environment,
-	 * required bundles, and package import.
+	 * A project with a source folder, plugin.xml, activator, execution
+	 * environment, required bundles, and package import.
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testPlugin() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
@@ -606,21 +638,19 @@ public class ProjectCreationTests extends TestCase {
 		IPath src = new Path("src");
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
-		description.setBundleClasspath(new IBundleClasspathEntry[] {spec});
-		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
+		description.setBundleClasspath(new IBundleClasspathEntry[] { spec });
+		description.setBinIncludes(new IPath[] { new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) });
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.setEquinox(true);
 		description.setExtensionRegistry(true);
-		description.setExecutionEnvironments(new String[]{"J2SE-1.4"});
-		IRequiredBundleDescription rb1 = service.newRequiredBundle(
-				"org.eclipse.core.resources",
-				new VersionRange(new Version(3,5,0), true, new Version(4,0,0), false),
-				true, false);
+		description.setExecutionEnvironments(new String[] { "J2SE-1.4" });
+		IRequiredBundleDescription rb1 = service.newRequiredBundle("org.eclipse.core.resources",
+				new VersionRange(new Version(3, 5, 0), true, new Version(4, 0, 0), false), true, false);
 		IRequiredBundleDescription rb2 = service.newRequiredBundle("org.eclipse.core.variables", null, false, false);
-		description.setRequiredBundles(new IRequiredBundleDescription[]{rb1, rb2});
+		description.setRequiredBundles(new IRequiredBundleDescription[] { rb1, rb2 });
 		IPackageImportDescription pi1 = service.newPackageImport("com.ibm.icu.text", null, false);
-		description.setPackageImports(new IPackageImportDescription[]{pi1});
+		description.setPackageImports(new IPackageImportDescription[] { pi1 });
 		description.setHeader("SomeHeader", "something");
 		// test version override with explicit header setting
 		description.setBundleVersion(new Version("2.0.0"));
@@ -676,32 +706,39 @@ public class ProjectCreationTests extends TestCase {
 	}
 
 	/**
-	 * Modify a simple project - change class path, add activator and plugin.xml.
+	 * Modify a simple project - change class path, add activator and
+	 * plugin.xml.
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testModifyBundle() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
 		IPath src = new Path("srcA");
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("a.jar"));
-		description.setBundleClasspath(new IBundleClasspathEntry[] {spec});
+		description.setBundleClasspath(new IBundleClasspathEntry[] { spec });
 		IPackageExportDescription ex0 = service.newPackageExport("a.b.c", new Version("2.0.0"), true, null);
 		IPackageExportDescription ex1 = service.newPackageExport("a.b.c.interal", null, false, null);
-		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false, new String[]{"x.y.z"});
-		IPackageExportDescription ex3 = service.newPackageExport("a.b.c.interal.y", new Version("1.2.3"), false, new String[]{"d.e.f", "g.h.i"});
-		description.setPackageExports(new IPackageExportDescription[]{ex0, ex1, ex2, ex3});
+		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false,
+				new String[] { "x.y.z" });
+		IPackageExportDescription ex3 = service.newPackageExport("a.b.c.interal.y", new Version("1.2.3"), false,
+				new String[] { "d.e.f", "g.h.i" });
+		description.setPackageExports(new IPackageExportDescription[] { ex0, ex1, ex2, ex3 });
 		description.apply(null);
 
 		// modify the project
 		IBundleProjectDescription modify = service.getDescription(project);
 		IPath srcB = new Path("srcB");
 		IBundleClasspathEntry specB = service.newBundleClasspathEntry(srcB, null, new Path("b.jar"));
-		modify.setBundleClasspath(new IBundleClasspathEntry[] {specB});
-		IPackageExportDescription ex4 = service.newPackageExport("x.y.z.interal", null, false, new String[]{"zz.top"});
-		modify.setPackageExports(new IPackageExportDescription[]{ex0, ex2, ex4, ex3}); // remove, add, re-order
-		modify.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
+		modify.setBundleClasspath(new IBundleClasspathEntry[] { specB });
+		IPackageExportDescription ex4 = service.newPackageExport("x.y.z.interal", null, false,
+				new String[] { "zz.top" });
+		modify.setPackageExports(new IPackageExportDescription[] { ex0, ex2, ex4, ex3 }); // remove,
+		// add,
+		// re-order
+		modify.setBinIncludes(new IPath[] { new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) });
 		modify.setActivator("org.eclipse.foo.Activator");
 		modify.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		modify.apply(null);
@@ -736,7 +773,9 @@ public class ProjectCreationTests extends TestCase {
 		assertEquals("Wrong number of exports", 4, exports.length);
 		assertEquals("Wrong export", ex0, exports[0]);
 		assertEquals("Wrong export", ex2, exports[1]);
-		assertEquals("Wrong export", ex3, exports[2]); // the manifest ends up sorted, so order changes
+		assertEquals("Wrong export", ex3, exports[2]); // the manifest ends up
+		// sorted, so order
+		// changes
 		assertEquals("Wrong export", ex4, exports[3]);
 		assertEquals("Wrong project", project, d2.getProject());
 		assertNull("Wrong required bundles", d2.getRequiredBundles());
@@ -750,33 +789,40 @@ public class ProjectCreationTests extends TestCase {
 	}
 
 	/**
-	 * Modify a simple project to add/remove/clear some entries.
-	 * See bug 380444 where previous settings weren't being cleared
+	 * Modify a simple project to add/remove/clear some entries. See bug 380444
+	 * where previous settings weren't being cleared
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testModifyRequiredBundles() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
 
 		IRequiredBundleDescription requireDesc = service.newRequiredBundle("requiredBundleOne", null, false, false);
-		IRequiredBundleDescription requireDesc2 = service.newRequiredBundle("requiredBundleTwo", new VersionRange("[1.0.0,2.0.0)"), false, false);
+		IRequiredBundleDescription requireDesc2 = service.newRequiredBundle("requiredBundleTwo",
+				new VersionRange("[1.0.0,2.0.0)"), false, false);
 		IRequiredBundleDescription requireDesc3 = service.newRequiredBundle("requiredBundleThree", null, true, false);
 		IRequiredBundleDescription requireDesc4 = service.newRequiredBundle("requiredBundleFour", null, false, true);
-		description.setRequiredBundles(new IRequiredBundleDescription[]{requireDesc, requireDesc2, requireDesc3, requireDesc4});
+		description.setRequiredBundles(
+				new IRequiredBundleDescription[] { requireDesc, requireDesc2, requireDesc3, requireDesc4 });
 
 		IPackageExportDescription ex0 = service.newPackageExport("a.b.c", new Version("2.0.0"), true, null);
 		IPackageExportDescription ex1 = service.newPackageExport("a.b.c.interal", null, false, null);
-		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false, new String[]{"x.y.z"});
-		IPackageExportDescription ex3 = service.newPackageExport("a.b.c.interal.y", new Version("1.2.3"), false, new String[]{"d.e.f", "g.h.i"});
-		description.setPackageExports(new IPackageExportDescription[]{ex0, ex1, ex2, ex3});
+		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false,
+				new String[] { "x.y.z" });
+		IPackageExportDescription ex3 = service.newPackageExport("a.b.c.interal.y", new Version("1.2.3"), false,
+				new String[] { "d.e.f", "g.h.i" });
+		description.setPackageExports(new IPackageExportDescription[] { ex0, ex1, ex2, ex3 });
 
 		IPackageImportDescription importDesc = service.newPackageImport("importPkgOne", null, false);
-		IPackageImportDescription importDesc2 = service.newPackageImport("importPkgTwo", new VersionRange("[1.0.0,2.0.0)"), false);
+		IPackageImportDescription importDesc2 = service.newPackageImport("importPkgTwo",
+				new VersionRange("[1.0.0,2.0.0)"), false);
 		IPackageImportDescription importDesc3 = service.newPackageImport("importPkgThree", null, true);
 		IPackageImportDescription importDesc4 = service.newPackageImport("importPkgFour", null, false);
-		description.setPackageImports(new IPackageImportDescription[]{importDesc, importDesc2, importDesc3, importDesc4});
+		description.setPackageImports(
+				new IPackageImportDescription[] { importDesc, importDesc2, importDesc3, importDesc4 });
 
 		description.apply(null);
 
@@ -789,15 +835,19 @@ public class ProjectCreationTests extends TestCase {
 		// add entries
 		IRequiredBundleDescription requireDesc5 = service.newRequiredBundle("requiredBundleFive", null, false, false);
 		IRequiredBundleDescription requireDesc6 = service.newRequiredBundle("requiredBundleSix", null, false, false);
-		description.setRequiredBundles(new IRequiredBundleDescription[]{requireDesc, requireDesc2, requireDesc3, requireDesc4, requireDesc5, requireDesc6});
+		description.setRequiredBundles(new IRequiredBundleDescription[] { requireDesc, requireDesc2, requireDesc3,
+				requireDesc4, requireDesc5, requireDesc6 });
 
-		IPackageExportDescription ex4 = service.newPackageExport("a.b.c.interal.x2", null, false, new String[]{"x.y.z"});
-		IPackageExportDescription ex5 = service.newPackageExport("a.b.c.interal.y2", new Version("1.2.3"), false, new String[]{"d.e.f", "g.h.i"});
-		description.setPackageExports(new IPackageExportDescription[]{ex0, ex1, ex2, ex3, ex4, ex5});
+		IPackageExportDescription ex4 = service.newPackageExport("a.b.c.interal.x2", null, false,
+				new String[] { "x.y.z" });
+		IPackageExportDescription ex5 = service.newPackageExport("a.b.c.interal.y2", new Version("1.2.3"), false,
+				new String[] { "d.e.f", "g.h.i" });
+		description.setPackageExports(new IPackageExportDescription[] { ex0, ex1, ex2, ex3, ex4, ex5 });
 
 		IPackageImportDescription importDesc5 = service.newPackageImport("importPkgFive", null, true);
 		IPackageImportDescription importDesc6 = service.newPackageImport("importPkgSix", null, false);
-		description.setPackageImports(new IPackageImportDescription[]{importDesc, importDesc2, importDesc3, importDesc4, importDesc5, importDesc6});
+		description.setPackageImports(new IPackageImportDescription[] { importDesc, importDesc2, importDesc3,
+				importDesc4, importDesc5, importDesc6 });
 
 		description.apply(null);
 
@@ -808,9 +858,9 @@ public class ProjectCreationTests extends TestCase {
 		assertEquals("Wrong number of package imports after additions", 6, d3.getPackageImports().length);
 
 		// remove most entries
-		description.setRequiredBundles(new IRequiredBundleDescription[]{requireDesc2, requireDesc5});
-		description.setPackageExports(new IPackageExportDescription[]{ex1, ex4});
-		description.setPackageImports(new IPackageImportDescription[]{importDesc2, importDesc5});
+		description.setRequiredBundles(new IRequiredBundleDescription[] { requireDesc2, requireDesc5 });
+		description.setPackageExports(new IPackageExportDescription[] { ex1, ex4 });
+		description.setPackageImports(new IPackageImportDescription[] { importDesc2, importDesc5 });
 		description.apply(null);
 
 		// verify attributes
@@ -837,6 +887,7 @@ public class ProjectCreationTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testFragToBundle() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
@@ -846,7 +897,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setHost(host);
 		description.apply(null);
 
-		//modify to a bundle and remove a header
+		// modify to a bundle and remove a header
 		IBundleProjectDescription modify = service.getDescription(project);
 		assertEquals("Wrong header value", "one", modify.getHeader("HeaderOne"));
 		modify.setHeader("HeaderOne", null);
@@ -895,18 +946,19 @@ public class ProjectCreationTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testJarsAsBundle() throws CoreException, IOException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry one = service.newBundleClasspathEntry(null, null, new Path("one.jar"));
 		IBundleClasspathEntry two = service.newBundleClasspathEntry(null, null, new Path("lib/two.jar"));
-		description.setBundleClasspath(new IBundleClasspathEntry[]{one, two});
+		description.setBundleClasspath(new IBundleClasspathEntry[] { one, two });
 		IPackageExportDescription exp1 = service.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, null);
 		IPackageExportDescription exp2 = service.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, null);
-		description.setPackageExports(new IPackageExportDescription[]{exp1, exp2});
+		description.setPackageExports(new IPackageExportDescription[] { exp1, exp2 });
 		description.setBundleVersion(new Version("1.0.0"));
-		description.setExecutionEnvironments(new String[]{"J2SE-1.5"});
+		description.setExecutionEnvironments(new String[] { "J2SE-1.5" });
 		description.apply(null);
 		// create bogus jar files
 		createBogusJar(project.getFile("one.jar"));
@@ -965,7 +1017,7 @@ public class ProjectCreationTests extends TestCase {
 		IContainer parent = file.getParent();
 		while (parent instanceof IFolder) {
 			if (!parent.exists()) {
-				((IFolder)parent).create(false, true, null);
+				((IFolder) parent).create(false, true, null);
 			}
 			parent = parent.getParent();
 		}
@@ -981,18 +1033,19 @@ public class ProjectCreationTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testClassFolders() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry one = service.newBundleClasspathEntry(null, new Path("bin1"), new Path("one.jar"));
 		IBundleClasspathEntry two = service.newBundleClasspathEntry(null, new Path("bin2"), new Path("two.jar"));
-		description.setBundleClasspath(new IBundleClasspathEntry[]{one, two});
+		description.setBundleClasspath(new IBundleClasspathEntry[] { one, two });
 		IPackageExportDescription exp1 = service.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, null);
 		IPackageExportDescription exp2 = service.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, null);
-		description.setPackageExports(new IPackageExportDescription[]{exp1, exp2});
+		description.setPackageExports(new IPackageExportDescription[] { exp1, exp2 });
 		description.setBundleVersion(new Version("1.0.0"));
-		description.setExecutionEnvironments(new String[]{"J2SE-1.5"});
+		description.setExecutionEnvironments(new String[] { "J2SE-1.5" });
 		description.apply(null);
 		// create folders
 		project.getFolder("bin1").create(false, true, null);
@@ -1046,10 +1099,11 @@ public class ProjectCreationTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testExportWizardLaunchShortcuts() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
-		description.setLaunchShortcuts(new String[]{"org.eclipse.jdt.debug.ui.javaAppletShortcut"});
+		description.setLaunchShortcuts(new String[] { "org.eclipse.jdt.debug.ui.javaAppletShortcut" });
 		description.setExportWizardId("org.eclipse.debug.internal.ui.importexport.breakpoints.WizardExportBreakpoints");
 		description.apply(null);
 
@@ -1084,7 +1138,9 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong extension registry support", d2.isExtensionRegistry());
 		assertFalse("Wrong Equinox headers", d2.isEquinox());
 		assertFalse("Wrong singleton", d2.isSingleton());
-		assertEquals("Wrong export wizard", "org.eclipse.debug.internal.ui.importexport.breakpoints.WizardExportBreakpoints", d2.getExportWizardId());
+		assertEquals("Wrong export wizard",
+				"org.eclipse.debug.internal.ui.importexport.breakpoints.WizardExportBreakpoints",
+				d2.getExportWizardId());
 		String[] ids = d2.getLaunchShortcuts();
 		assertNotNull("Wrong launch shortctus", ids);
 		assertEquals("Wrong number of shortcuts", 1, ids.length);
@@ -1096,6 +1152,7 @@ public class ProjectCreationTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testLazyAutostart() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
@@ -1103,22 +1160,20 @@ public class ProjectCreationTests extends TestCase {
 		IPath src = new Path("src");
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
-		description.setBundleClasspath(new IBundleClasspathEntry[] {spec});
-		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
+		description.setBundleClasspath(new IBundleClasspathEntry[] { spec });
+		description.setBinIncludes(new IPath[] { new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) });
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.setTargetVersion(IBundleProjectDescription.VERSION_3_1);
 		description.setEquinox(true);
 		description.setExtensionRegistry(true);
-		description.setExecutionEnvironments(new String[]{"J2SE-1.4"});
-		IRequiredBundleDescription rb1 = service.newRequiredBundle(
-				"org.eclipse.core.resources",
-				new VersionRange(new Version(3,5,0), true, new Version(4,0,0), false),
-				true, false);
+		description.setExecutionEnvironments(new String[] { "J2SE-1.4" });
+		IRequiredBundleDescription rb1 = service.newRequiredBundle("org.eclipse.core.resources",
+				new VersionRange(new Version(3, 5, 0), true, new Version(4, 0, 0), false), true, false);
 		IRequiredBundleDescription rb2 = service.newRequiredBundle("org.eclipse.core.variables", null, false, false);
-		description.setRequiredBundles(new IRequiredBundleDescription[]{rb1, rb2});
+		description.setRequiredBundles(new IRequiredBundleDescription[] { rb1, rb2 });
 		IPackageImportDescription pi1 = service.newPackageImport("com.ibm.icu.text", null, false);
-		description.setPackageImports(new IPackageImportDescription[]{pi1});
+		description.setPackageImports(new IPackageImportDescription[] { pi1 });
 		description.apply(null);
 
 		IBundleProjectDescription d2 = service.getDescription(project);
@@ -1178,8 +1233,10 @@ public class ProjectCreationTests extends TestCase {
 	/**
 	 * Returns a structured header from a bundle model
 	 *
-	 * @param bundle the bundle
-	 * @param header header name/key
+	 * @param bundle
+	 *            the bundle
+	 * @param header
+	 *            header name/key
 	 * @return header or <code>null</code>
 	 */
 	private IManifestHeader createHeader(IBundle bundle, String header) {
@@ -1196,6 +1253,7 @@ public class ProjectCreationTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testEagerAutostart() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
@@ -1203,8 +1261,8 @@ public class ProjectCreationTests extends TestCase {
 		IPath src = new Path("src");
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
-		description.setBundleClasspath(new IBundleClasspathEntry[] {spec});
-		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
+		description.setBundleClasspath(new IBundleClasspathEntry[] { spec });
+		description.setBinIncludes(new IPath[] { new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) });
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setTargetVersion(IBundleProjectDescription.VERSION_3_1);
 		description.setEquinox(true);
@@ -1262,6 +1320,7 @@ public class ProjectCreationTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testLazyEclipseLazyStart() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
@@ -1269,8 +1328,8 @@ public class ProjectCreationTests extends TestCase {
 		IPath src = new Path("src");
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
-		description.setBundleClasspath(new IBundleClasspathEntry[] {spec});
-		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
+		description.setBundleClasspath(new IBundleClasspathEntry[] { spec });
+		description.setBinIncludes(new IPath[] { new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) });
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.setTargetVersion(IBundleProjectDescription.VERSION_3_2);
@@ -1329,6 +1388,7 @@ public class ProjectCreationTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testEagerEclipseLazyStart() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
@@ -1336,8 +1396,8 @@ public class ProjectCreationTests extends TestCase {
 		IPath src = new Path("src");
 		IBundleProjectService service = getBundleProjectService();
 		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
-		description.setBundleClasspath(new IBundleClasspathEntry[] {spec});
-		description.setBinIncludes(new IPath[]{new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)});
+		description.setBundleClasspath(new IBundleClasspathEntry[] { spec });
+		description.setBinIncludes(new IPath[] { new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) });
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setTargetVersion(IBundleProjectDescription.VERSION_3_2);
 		description.setEquinox(true);
@@ -1391,12 +1451,16 @@ public class ProjectCreationTests extends TestCase {
 	}
 
 	/**
-	 * Returns the given input stream's contents as a character array.
-	 * If a length is specified (i.e. if length != -1), this represents the number of bytes in the stream.
-	 * Note the specified stream is not closed in this method
-	 * @param stream the stream to get convert to the char array
+	 * Returns the given input stream's contents as a character array. If a
+	 * length is specified (i.e. if length != -1), this represents the number of
+	 * bytes in the stream. Note the specified stream is not closed in this
+	 * method
+	 *
+	 * @param stream
+	 *            the stream to get convert to the char array
 	 * @return the given input stream's contents as a character array.
-	 * @throws IOException if a problem occurred reading the stream.
+	 * @throws IOException
+	 *             if a problem occurred reading the stream.
 	 */
 	public static char[] getInputStreamAsCharArray(InputStream stream) throws IOException {
 		Charset charset = StandardCharsets.UTF_8;
@@ -1411,8 +1475,11 @@ public class ProjectCreationTests extends TestCase {
 
 	/**
 	 * Returns the given input stream as a byte array
-	 * @param stream the stream to get as a byte array
-	 * @param length the length to read from the stream or -1 for unknown
+	 *
+	 * @param stream
+	 *            the stream to get as a byte array
+	 * @param length
+	 *            the length to read from the stream or -1 for unknown
 	 * @return the given input stream as a byte array
 	 * @throws IOException
 	 */
@@ -1427,9 +1494,7 @@ public class ProjectCreationTests extends TestCase {
 				int amountRequested = Math.max(stream.available(), 8192);
 				// resize contents if needed
 				if (contentsLength + amountRequested > contents.length) {
-					System.arraycopy(contents,
-							0,
-							contents = new byte[contentsLength + amountRequested],
+					System.arraycopy(contents, 0, contents = new byte[contentsLength + amountRequested],
 							0,
 							contentsLength);
 				}
@@ -1450,7 +1515,8 @@ public class ProjectCreationTests extends TestCase {
 			int readSize = 0;
 			while ((readSize != -1) && (len != length)) {
 				// See PR 1FMS89U
-				// We record first the read size. In this case length is the actual
+				// We record first the read size. In this case length is the
+				// actual
 				// read size.
 				len += readSize;
 				readSize = stream.read(contents, len, length - len);
@@ -1460,21 +1526,25 @@ public class ProjectCreationTests extends TestCase {
 	}
 
 	/**
-	 * Tests that package import/export headers don't get flattened when doing an unrelated edit.
+	 * Tests that package import/export headers don't get flattened when doing
+	 * an unrelated edit.
 	 *
 	 * @throws CoreException
 	 * @throws IOException
 	 */
+	@Test
 	public void testHeaderFormatting() throws CoreException, IOException {
 		IBundleProjectDescription description = newProject();
 		IPackageImportDescription imp1 = getBundleProjectService().newPackageImport("org.eclipse.osgi", null, false);
-		IPackageImportDescription imp2 = getBundleProjectService().newPackageImport("org.eclipse.core.runtime", null, false);
-		IPackageImportDescription imp3 = getBundleProjectService().newPackageImport("org.eclipse.core.resources", null, false);
-		description.setPackageImports(new IPackageImportDescription[]{imp1, imp2, imp3});
+		IPackageImportDescription imp2 = getBundleProjectService().newPackageImport("org.eclipse.core.runtime", null,
+				false);
+		IPackageImportDescription imp3 = getBundleProjectService().newPackageImport("org.eclipse.core.resources", null,
+				false);
+		description.setPackageImports(new IPackageImportDescription[] { imp1, imp2, imp3 });
 		IPackageExportDescription ex1 = getBundleProjectService().newPackageExport("a.b.c", null, true, null);
 		IPackageExportDescription ex2 = getBundleProjectService().newPackageExport("a.b.c.d", null, true, null);
 		IPackageExportDescription ex3 = getBundleProjectService().newPackageExport("a.b.c.e", null, true, null);
-		description.setPackageExports(new IPackageExportDescription[]{ex1, ex2, ex3});
+		description.setPackageExports(new IPackageExportDescription[] { ex1, ex2, ex3 });
 		IProject project = description.getProject();
 		description.apply(null);
 
@@ -1503,19 +1573,20 @@ public class ProjectCreationTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testNonBundleToBundle() throws CoreException {
 		IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject("test.non.bundle.to.bundle");
 		assertFalse("Project should not exist", proj.exists());
 		proj.create(null);
 		proj.open(null);
 		IProjectDescription pd = proj.getDescription();
-		pd.setNatureIds(new String[]{JavaCore.NATURE_ID});
+		pd.setNatureIds(new String[] { JavaCore.NATURE_ID });
 		proj.setDescription(pd, null);
 
 		IBundleProjectDescription description = getBundleProjectService().getDescription(proj);
 		assertTrue("Missing Java Nature", description.hasNature(JavaCore.NATURE_ID));
 		description.setSymbolicName("test.non.bundle.to.bundle");
-		description.setNatureIds(new String[]{IBundleProjectDescription.PLUGIN_NATURE, JavaCore.NATURE_ID});
+		description.setNatureIds(new String[] { IBundleProjectDescription.PLUGIN_NATURE, JavaCore.NATURE_ID });
 		description.apply(null);
 
 		// validate
@@ -1533,21 +1604,22 @@ public class ProjectCreationTests extends TestCase {
 	}
 
 	/**
-	 * Convert an existing Java project into a bundle project. Ensure it's build path
-	 * doesn't get toasted in the process.
+	 * Convert an existing Java project into a bundle project. Ensure it's build
+	 * path doesn't get toasted in the process.
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testJavaToBundle() throws CoreException {
 		// create a Java project
-		String name = getName().toLowerCase().substring(4);
+		String name = testName.getMethodName().toLowerCase().substring(4);
 		name = "test." + name;
 		IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 		assertFalse("Project should not exist", proj.exists());
 		proj.create(null);
 		proj.open(null);
 		IProjectDescription pd = proj.getDescription();
-		pd.setNatureIds(new String[]{JavaCore.NATURE_ID});
+		pd.setNatureIds(new String[] { JavaCore.NATURE_ID });
 		proj.setDescription(pd, null);
 		IFolder src = proj.getFolder("someSrc");
 		src.create(false, true, null);
@@ -1556,17 +1628,19 @@ public class ProjectCreationTests extends TestCase {
 		IJavaProject javaProject = JavaCore.create(proj);
 		javaProject.setOutputLocation(output.getFullPath(), null);
 		IClasspathEntry entry1 = JavaCore.newSourceEntry(src.getFullPath());
-		IClasspathEntry entry2 = JavaCore.newContainerEntry(JavaRuntime.newJREContainerPath(JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4")));
+		IClasspathEntry entry2 = JavaCore.newContainerEntry(JavaRuntime
+				.newJREContainerPath(JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4")));
 		IClasspathEntry entry3 = JavaCore.newContainerEntry(ClasspathContainerInitializer.PATH);
-		javaProject.setRawClasspath(new IClasspathEntry[]{entry1, entry2, entry3}, null);
+		javaProject.setRawClasspath(new IClasspathEntry[] { entry1, entry2, entry3 }, null);
 
 		// convert to a bundle
 		IBundleProjectDescription description = getBundleProjectService().getDescription(proj);
 		assertTrue("Missing Java Nature", description.hasNature(JavaCore.NATURE_ID));
 		description.setSymbolicName(proj.getName());
-		description.setNatureIds(new String[]{IBundleProjectDescription.PLUGIN_NATURE, JavaCore.NATURE_ID});
-		IBundleClasspathEntry entry = getBundleProjectService().newBundleClasspathEntry(src.getProjectRelativePath(), null, null);
-		description.setBundleClasspath(new IBundleClasspathEntry[]{entry});
+		description.setNatureIds(new String[] { IBundleProjectDescription.PLUGIN_NATURE, JavaCore.NATURE_ID });
+		IBundleClasspathEntry entry = getBundleProjectService().newBundleClasspathEntry(src.getProjectRelativePath(),
+				null, null);
+		description.setBundleClasspath(new IBundleClasspathEntry[] { entry });
 		description.apply(null);
 
 		// validate
@@ -1587,7 +1661,9 @@ public class ProjectCreationTests extends TestCase {
 
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
 		assertEquals("Wrong number of Bundle-Classpath entries", 1, classpath.length);
-		assertEquals("Wrong Bundle-Classpath entry", getBundleProjectService().newBundleClasspathEntry(src.getProjectRelativePath(), null, new Path(".")), classpath[0]);
+		assertEquals("Wrong Bundle-Classpath entry",
+				getBundleProjectService().newBundleClasspathEntry(src.getProjectRelativePath(), null, new Path(".")),
+				classpath[0]);
 
 		// raw class path should still be intact
 		IClasspathEntry[] rawClasspath = javaProject.getRawClasspath();
@@ -1599,21 +1675,24 @@ public class ProjectCreationTests extends TestCase {
 	}
 
 	/**
-	 * Tests creating a project that has a nested class file folders instead of a jar
+	 * Tests creating a project that has a nested class file folders instead of
+	 * a jar
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testClassFoldersNoJars() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
-		IBundleClasspathEntry one = service.newBundleClasspathEntry(new Path("src"), new Path("WebContent/WEB-INF/classes"), new Path("WebContent/WEB-INF/classes"));
-		description.setBundleClasspath(new IBundleClasspathEntry[]{one});
+		IBundleClasspathEntry one = service.newBundleClasspathEntry(new Path("src"),
+				new Path("WebContent/WEB-INF/classes"), new Path("WebContent/WEB-INF/classes"));
+		description.setBundleClasspath(new IBundleClasspathEntry[] { one });
 		IPackageExportDescription exp1 = service.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, null);
 		IPackageExportDescription exp2 = service.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, null);
-		description.setPackageExports(new IPackageExportDescription[]{exp1, exp2});
+		description.setPackageExports(new IPackageExportDescription[] { exp1, exp2 });
 		description.setBundleVersion(new Version("1.0.0"));
-		description.setExecutionEnvironments(new String[]{"J2SE-1.5"});
+		description.setExecutionEnvironments(new String[] { "J2SE-1.5" });
 		description.apply(null);
 
 		IBundleProjectDescription d2 = service.getDescription(project);
@@ -1663,23 +1742,23 @@ public class ProjectCreationTests extends TestCase {
 		assertEquals("Should be no errors", 0, markers.length);
 	}
 
-
 	/**
 	 * Tests that adding package exports incrementally works
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testExportUpdateSequence() throws CoreException {
 		IBundleProjectService service = getBundleProjectService();
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		IPackageExportDescription e1 = service.newPackageExport("a.b.c", null, true, null);
-		description.setPackageExports(new IPackageExportDescription[]{e1});
+		description.setPackageExports(new IPackageExportDescription[] { e1 });
 		description.apply(null);
 
 		IBundleProjectDescription d2 = service.getDescription(project);
 		IPackageExportDescription e2 = service.newPackageExport("a.b.c.internal", null, false, null);
-		d2.setPackageExports(new IPackageExportDescription[]{e1, e2});
+		d2.setPackageExports(new IPackageExportDescription[] { e1, e2 });
 		d2.apply(null);
 
 		IBundleProjectDescription d3 = service.getDescription(project);

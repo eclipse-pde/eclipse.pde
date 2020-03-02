@@ -13,9 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleVersionHeader;
 import org.eclipse.text.edits.TextEdit;
+import org.junit.Test;
 import org.osgi.framework.Constants;
 
 public class BundleVersionTestCase extends BundleModelTestCase {
@@ -24,6 +28,7 @@ public class BundleVersionTestCase extends BundleModelTestCase {
 		super(Constants.BUNDLE_VERSION);
 	}
 
+	@Test
 	public void testAddVersion() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -44,6 +49,7 @@ public class BundleVersionTestCase extends BundleModelTestCase {
 		assertEquals(buffer.toString() + header.write(), fDocument.get());
 	}
 
+	@Test
 	public void testRemoveVersion() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -64,6 +70,7 @@ public class BundleVersionTestCase extends BundleModelTestCase {
 		assertEquals(4, fDocument.getNumberOfLines());
 	}
 
+	@Test
 	public void testChangeVersion() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");

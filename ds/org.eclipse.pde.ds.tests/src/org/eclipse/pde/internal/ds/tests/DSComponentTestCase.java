@@ -14,6 +14,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
@@ -22,9 +27,10 @@ import org.eclipse.pde.internal.ds.core.IDSProperties;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
 import org.eclipse.pde.internal.ds.core.IDSReference;
 import org.eclipse.pde.internal.ds.core.IDSService;
+import org.junit.Test;
 
 public class DSComponentTestCase extends AbstractDSModelTestCase {
-
+	@Test
 	public void testAddDefaultComponent() {
 		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer, LF);
@@ -41,6 +47,7 @@ public class DSComponentTestCase extends AbstractDSModelTestCase {
 		assertTrue(component.getEnabled());
 	}
 
+	@Test
 	public void testAddComponentwithAllAttributes() {
 		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer, LF);
@@ -67,6 +74,7 @@ public class DSComponentTestCase extends AbstractDSModelTestCase {
 		assertEquals(component.getModifiedMethod(), "modified");
 	}
 
+	@Test
 	public void testAddMoveRemoveChildrens() {
 		StringBuilder buffer = new StringBuilder();
 		setXMLContents(buffer, LF);

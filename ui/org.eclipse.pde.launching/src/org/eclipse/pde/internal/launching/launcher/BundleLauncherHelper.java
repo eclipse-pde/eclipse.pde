@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
+import static java.util.Collections.emptySet;
+
 import java.util.*;
 import java.util.Map.Entry;
 import org.eclipse.core.runtime.CoreException;
@@ -517,6 +519,10 @@ public class BundleLauncherHelper {
 			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, value2);
 		}
 
+		convertToSet(wc, IPDELauncherConstants.SELECTED_TARGET_PLUGINS, IPDELauncherConstants.SELECTED_TARGET_BUNDLES);
+		convertToSet(wc, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES);
+		convertToSet(wc, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES);
+
 		String version = configuration.getAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, (String) null);
 		boolean newApp = TargetPlatformHelper.usesNewApplicationModel();
 		boolean upgrade = !"3.3".equals(version) && newApp; //$NON-NLS-1$
@@ -537,35 +543,26 @@ public class BundleLauncherHelper {
 				}
 				if (!"3.3".equals(version) && newApp) //$NON-NLS-1$
 					list.add("org.eclipse.equinox.app"); //$NON-NLS-1$
-				StringBuilder extensions = new StringBuilder(configuration.getAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, "")); //$NON-NLS-1$
-				StringBuilder target = new StringBuilder(configuration.getAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, "")); //$NON-NLS-1$
-				for (int i = 0; i < list.size(); i++) {
-					String plugin = list.get(i).toString();
+				Set<String> extensions = new LinkedHashSet<>(configuration.getAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, emptySet()));
+				Set<String> target = new LinkedHashSet<>(configuration.getAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, emptySet()));
+				for (String plugin : list) {
 					IPluginModelBase model = PluginRegistry.findModel(plugin);
 					if (model == null)
 						continue;
 					if (model.getUnderlyingResource() != null) {
 						if (automaticAdd)
 							continue;
-						if (extensions.length() > 0)
-							extensions.append(","); //$NON-NLS-1$
-						extensions.append(plugin);
+						extensions.add(plugin);
 					} else {
-						if (target.length() > 0)
-							target.append(","); //$NON-NLS-1$
-						target.append(plugin);
+						target.add(plugin);
 					}
 				}
-				if (extensions.length() > 0)
-					wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, extensions.toString());
-				if (target.length() > 0)
-					wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, target.toString());
+				if (!extensions.isEmpty())
+					wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, extensions);
+				if (!target.isEmpty())
+					wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, target);
 			}
 		}
-
-		convertToSet(wc, IPDELauncherConstants.SELECTED_TARGET_PLUGINS, IPDELauncherConstants.SELECTED_TARGET_BUNDLES);
-		convertToSet(wc, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES);
-		convertToSet(wc, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES);
 
 		if (wc.isDirty()) {
 			wc.doSave();

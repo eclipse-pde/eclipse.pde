@@ -107,7 +107,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 	@Override
 	protected void createViewerPartControl(Composite parent, int style, int span, FormToolkit toolkit) {
 		MenuManager popupMenuManager = new MenuManager();
-		IMenuListener listener = mng -> fillContextMenu(mng);
+		IMenuListener listener = this::fillContextMenu;
 		popupMenuManager.addMenuListener(listener);
 		popupMenuManager.setRemoveAllWhenShown(true);
 		Control control = fTreeViewer.getControl();

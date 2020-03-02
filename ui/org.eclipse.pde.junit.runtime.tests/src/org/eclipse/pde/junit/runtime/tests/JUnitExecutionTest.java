@@ -50,8 +50,6 @@ import org.junit.runners.Parameterized.Parameters;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
-import junit.framework.AssertionFailedError;
-
 @RunWith(Parameterized.class)
 public class JUnitExecutionTest {
 
@@ -131,16 +129,16 @@ public class JUnitExecutionTest {
 		if (ITestElement.Result.OK.equals(testResult))
 			return;
 
-		AssertionFailedError assertionFailedError = new AssertionFailedError("test completed with " + testResult);
+		AssertionError assertionFailedError = new AssertionError("test completed with " + testResult);
 		addFailureTraces(session, assertionFailedError);
 
 		throw assertionFailedError;
 	}
 
-	private void addFailureTraces(ITestElement element, AssertionFailedError assertionFailedError) {
+	private void addFailureTraces(ITestElement element, AssertionError assertionFailedError) {
 		FailureTrace trace = element.getFailureTrace();
 		if (trace != null) {
-			assertionFailedError.addSuppressed(new AssertionFailedError("FailureTrace of " + element + ":\n\n" + trace.getTrace()));
+			assertionFailedError.addSuppressed(new AssertionError("FailureTrace of " + element + ":\n\n" + trace.getTrace()));
 		}
 
 		if (element instanceof ITestElementContainer) {

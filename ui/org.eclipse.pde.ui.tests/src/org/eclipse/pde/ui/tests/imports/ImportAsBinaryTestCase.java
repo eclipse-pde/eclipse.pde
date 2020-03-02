@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.imports;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
@@ -20,6 +24,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
+import org.junit.Test;
 
 public class ImportAsBinaryTestCase extends BaseImportTestCase {
 
@@ -30,12 +35,14 @@ public class ImportAsBinaryTestCase extends BaseImportTestCase {
 		return TYPE;
 	}
 
+	@Test
 	public void testImportAnt() {
 		// Note: Ant is exempt from importing as source
 		doSingleImport("org.apache.ant", true);
 	}
 
 	@Override
+	@Test
 	public void testImportJUnit4() {
 		// Note: JUnit 4 does not have source but it is a java project
 		doSingleImport("org.junit", 4, true);

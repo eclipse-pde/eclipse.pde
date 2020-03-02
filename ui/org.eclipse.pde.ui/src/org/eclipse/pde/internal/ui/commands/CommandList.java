@@ -81,7 +81,7 @@ public class CommandList {
 
 		@Override
 		public void dispose() {
-			fImgMap.values().forEach(obj -> obj.dispose());
+			fImgMap.values().forEach(org.eclipse.swt.graphics.Resource::dispose);
 			if (fDefaultImage != null)
 				fDefaultImage.dispose();
 			super.dispose();

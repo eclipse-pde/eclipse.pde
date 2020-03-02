@@ -13,7 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
@@ -23,13 +27,19 @@ import org.eclipse.pde.core.project.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.project.PDEProject;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestName;
 import org.osgi.framework.Version;
 
 /**
  * Tests flexible bundle root location within PDE projects.
  * @since 3.6
  */
-public class BundleRootTests extends TestCase {
+public class BundleRootTests {
+
+	@Rule
+	public TestName testName = new TestName();
 
 	protected IBundleProjectService getBundleProjectService() {
 		return PDECore.getDefault().acquireService(IBundleProjectService.class);
@@ -43,7 +53,7 @@ public class BundleRootTests extends TestCase {
 	 * @exception CoreException on failure
 	 */
 	protected IProject createProject() throws CoreException {
-		String name = getName().toLowerCase().substring(4);
+		String name = testName.getMethodName().toLowerCase().substring(4);
 		name = "test." + name;
 		IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 		assertFalse("Project should not exist", proj.exists());
@@ -60,7 +70,7 @@ public class BundleRootTests extends TestCase {
 	 * @exception CoreException on failure
 	 */
 	protected IBundleProjectDescription newProject() throws CoreException {
-		String name = getName().toLowerCase().substring(4);
+		String name = testName.getMethodName().toLowerCase().substring(4);
 		name = "test." + name;
 		IProject proj = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 		assertFalse("Project should not exist", proj.exists());
@@ -72,6 +82,7 @@ public class BundleRootTests extends TestCase {
 	/**
 	 * Tests setting/getting the bundle root property for a project.
 	 */
+	@Test
 	public void testSetGetLocation() throws CoreException {
 		IProject project = createProject();
 		assertEquals("Bundle root unspecified - should be project itself", project, PDEProject.getBundleRoot(project));
@@ -88,8 +99,10 @@ public class BundleRootTests extends TestCase {
 	}
 
 	/**
-	 * Tests setting/getting the bundle root property for a project using IBundleProjectService and IBundleProjectDescription
+	 * Tests setting/getting the bundle root property for a project using
+	 * IBundleProjectService and IBundleProjectDescription
 	 */
+	@Test
 	public void testServiceSetGetLocation() throws CoreException {
 		IProject project = createProject();
 		IBundleProjectService service = getBundleProjectService();
@@ -109,16 +122,20 @@ public class BundleRootTests extends TestCase {
 	/**
 	 * Test getting a root location from a non-existent project
 	 */
+	@Test
 	public void testGetOnNonExistantProject() {
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(getName());
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(testName.getMethodName());
 		assertFalse("Project should not exist", project.exists());
 		assertEquals("Root location should be project root", project, PDEProject.getBundleRoot(project));
 	}
 
 	/**
-	 * Tests that IPluginModel.getInstallLocation() returns the bundle root location in a project.
+	 * Tests that IPluginModel.getInstallLocation() returns the bundle root
+	 * location in a project.
+	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testPluginModelInstallLocation() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
@@ -136,10 +153,12 @@ public class BundleRootTests extends TestCase {
 	}
 
 	/**
-	 * Minimal bundle project with a non-default root - set a symbolic name, and go.
+	 * Minimal bundle project with a non-default root - set a symbolic name, and
+	 * go.
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testBundleRoot() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
@@ -186,11 +205,12 @@ public class BundleRootTests extends TestCase {
 	}
 
 	/**
-	 * Creates a bundle project at a root location, and then removes PDE/Java natures. Then attempts create
-	 * a bundle project out of the existing data.
+	 * Creates a bundle project at a root location, and then removes PDE/Java
+	 * natures. Then attempts create a bundle project out of the existing data.
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testAssignRootToExistingProject() throws CoreException {
 		testBundleRoot(); // create a simple bundle
 

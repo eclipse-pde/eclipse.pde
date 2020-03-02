@@ -13,10 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.LazyStartHeader;
 import org.eclipse.text.edits.TextEdit;
+import org.junit.Test;
 
 public class LazyStartTestCase extends BundleModelTestCase {
 
@@ -24,6 +30,7 @@ public class LazyStartTestCase extends BundleModelTestCase {
 		super(ICoreConstants.ECLIPSE_AUTOSTART);
 	}
 
+	@Test
 	public void testGetAutoStart() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -39,6 +46,7 @@ public class LazyStartTestCase extends BundleModelTestCase {
 		assertTrue(((LazyStartHeader) header).isLazyStart());
 	}
 
+	@Test
 	public void testGetAutoStart2() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -54,6 +62,7 @@ public class LazyStartTestCase extends BundleModelTestCase {
 		assertTrue(!((LazyStartHeader) header).isLazyStart());
 	}
 
+	@Test
 	public void testSetLazyStart() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -79,6 +88,7 @@ public class LazyStartTestCase extends BundleModelTestCase {
 		assertEquals(fHeaderName + ": plugin\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testChangeExistingLazyStart() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");

@@ -13,10 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.junit.Test;
 
 /**
  * Tests whether targets and bundle containers manage features correctly.
@@ -28,6 +34,7 @@ public class TargetDefinitionFeatureResolutionTests extends MinimalTargetDefinit
 	/**
 	 * Tests that a feature bundle container provides the correct features to a target
 	 */
+	@Test
 	public void testFeatureBundleContainer() throws Exception{
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation featureContainer = getTargetService().newFeatureLocation(TargetPlatform.getDefaultLocation(), "org.eclipse.pde", null);

@@ -14,16 +14,19 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.nls;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.pde.internal.ui.nls.StringHelper;
+import org.junit.Test;
 
 /**
  * Tests StringHelper.java convenience methods
  * @since 3.4
  */
-public class StringHelperTestCase extends TestCase {
+public class StringHelperTestCase {
 	private static final String newLine = "\r\n";
 
+	@Test
 	public void testSimpleLines() {
 		String s1, s2;
 
@@ -38,6 +41,7 @@ public class StringHelperTestCase extends TestCase {
 		assertEquals("abc\\r\\n\\" + newLine + "def", s2);
 	}
 
+	@Test
 	public void testSpaces() {
 		String s1, s2;
 
@@ -70,7 +74,7 @@ public class StringHelperTestCase extends TestCase {
 	//		s2 = StringHelper.preparePropertiesString(s1, newLine.toCharArray());
 	//		assertEquals("ab\\u010D \\r\\n  \\" + newLine + "d  \\u00E9\\u03B5\\uFEDA f ", s2);
 	//	}
-
+	@Test
 	public void testSideEffects() {
 		String s1, s2;
 

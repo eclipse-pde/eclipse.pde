@@ -13,11 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSProperty;
+import org.junit.Test;
 
 public class DSPropertyTestCase extends AbstractDSModelTestCase {
-
+	@Test
 	public void testAddProperty() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<property ");

@@ -13,10 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BasePackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.PackageObject;
 import org.eclipse.text.edits.TextEdit;
+import org.junit.Test;
 
 public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 
@@ -24,6 +28,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		super(headerName);
 	}
 
+	@Test
 	public void testAddExportPackageHeader() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -44,6 +49,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		assertEquals(buffer.toString() + header.write(), fDocument.get());
 	}
 
+	@Test
 	public void testRemoveExistingExportPackageHeader() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -65,6 +71,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		assertEquals(4, fDocument.getNumberOfLines());
 	}
 
+	@Test
 	public void testAddPackage() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -92,6 +99,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testAddImportPackageHeader() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -112,6 +120,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		assertEquals(buffer.toString() + header.write(), fDocument.get());
 	}
 
+	@Test
 	public void testAddMultiplePackages() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -142,6 +151,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testRemovePackage() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -170,6 +180,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testRemoveMultiplePackages() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -197,6 +208,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		assertEquals(fHeaderName + ": com.example.abc.refactoring\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testReadPackageWithVersion() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -215,6 +227,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		assertEquals("1.3.0", object.getVersion());
 	}
 
+	@Test
 	public void testAddVersionToPackage() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -243,6 +256,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		assertEquals(fHeaderName + ": org.osgi.framework;version=\"1.3.0\"\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testRemoveVersionFromPackage() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -271,6 +285,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		assertEquals(fHeaderName + ": org.osgi.framework\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testAddPackageWithWindowsDelimiter() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\r\n");
@@ -298,6 +313,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testRemovePackageWithWindowsDelimiter() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\r\n");
@@ -326,6 +342,7 @@ public abstract class PackageHeaderTestCase extends MultiLineHeaderTestCase {
 		assertEquals(expected.toString(), fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testPreserveSpacing() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");

@@ -13,9 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.BundleActivatorHeader;
 import org.eclipse.text.edits.TextEdit;
+import org.junit.Test;
 import org.osgi.framework.Constants;
 
 public class BundleActivatorTestCase extends BundleModelTestCase {
@@ -24,6 +29,7 @@ public class BundleActivatorTestCase extends BundleModelTestCase {
 		super(Constants.BUNDLE_ACTIVATOR);
 	}
 
+	@Test
 	public void testGetActivator() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -39,6 +45,7 @@ public class BundleActivatorTestCase extends BundleModelTestCase {
 		assertEquals(((BundleActivatorHeader) header).getClassName(), "com.package.Activator");
 	}
 
+	@Test
 	public void testSetActivator() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");
@@ -64,6 +71,7 @@ public class BundleActivatorTestCase extends BundleModelTestCase {
 		assertEquals(fHeaderName + ": com.package.Activator\n", fDocument.get(pos, length));
 	}
 
+	@Test
 	public void testChangeExistingActivator() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("Manifest-Version: 1.0\n");

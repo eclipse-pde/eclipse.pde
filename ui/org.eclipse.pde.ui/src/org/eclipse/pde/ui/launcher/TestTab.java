@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Ketan Padegaonkar - initial API and implementation
+ *     Stefan Winkler - Bug 560156
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
@@ -21,6 +22,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationTab;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.launching.IPDELauncherConstants;
@@ -60,6 +62,8 @@ public class TestTab extends AbstractLaunchConfigurationTab {
 		Composite composite = (Composite) getControl();
 		createSpacer(composite);
 		createRunInUIThreadGroup(composite);
+
+		Dialog.applyDialogFont(composite);
 	}
 
 	private void createRunInUIThreadGroup(Composite comp) {

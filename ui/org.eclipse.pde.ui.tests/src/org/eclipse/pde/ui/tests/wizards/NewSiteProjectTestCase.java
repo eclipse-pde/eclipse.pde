@@ -13,10 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.wizards;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
-import junit.framework.TestCase;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.natures.PDE;
@@ -25,14 +28,16 @@ import org.eclipse.pde.internal.ui.wizards.site.NewSiteProjectCreationOperation;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
+import org.junit.*;
+import org.junit.rules.TestName;
 
-public class NewSiteProjectTestCase extends TestCase {
+public class NewSiteProjectTestCase {
 	private static final String EXISTING_PROJECT_NAME = "ExistingSiteProject"; //$NON-NLS-1$
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		if ("testExistingSiteProject".equalsIgnoreCase(getName())) { //$NON-NLS-1$
+	@Rule
+	public TestName name = new TestName();
+	@Before
+	public void setUp() throws Exception {
+		if ("testExistingSiteProject".equalsIgnoreCase(name.getMethodName())) { //$NON-NLS-1$
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(EXISTING_PROJECT_NAME);
 			project.create(new NullProgressMonitor());
 			project.open(new NullProgressMonitor());
@@ -50,8 +55,8 @@ public class NewSiteProjectTestCase extends TestCase {
 		}
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject[] projects = workspaceRoot.getProjects();
 		try {
@@ -61,7 +66,6 @@ public class NewSiteProjectTestCase extends TestCase {
 		} catch (CoreException e) {
 			// do nothing if deletion fails. No need to fail the test.
 		}
-		super.tearDown();
 	}
 
 	private void createSite(IProject project, IPath path, String webLocation) throws InvocationTargetException, InterruptedException {
@@ -91,6 +95,7 @@ public class NewSiteProjectTestCase extends TestCase {
 		model.dispose();
 	}
 
+	@Test
 	public void testExistingSiteProject() {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(EXISTING_PROJECT_NAME);
 		IPath path = Platform.getLocation();
@@ -109,6 +114,7 @@ public class NewSiteProjectTestCase extends TestCase {
 
 	}
 
+	@Test
 	public void testSiteProject() {
 		String projectName = "SiteProject"; //$NON-NLS-1$
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
@@ -124,6 +130,7 @@ public class NewSiteProjectTestCase extends TestCase {
 				.exists(new Path("index.html"))); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testSiteProjectWithWeb() {
 		String projectName = "SiteProjectWithWeb"; //$NON-NLS-1$
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);

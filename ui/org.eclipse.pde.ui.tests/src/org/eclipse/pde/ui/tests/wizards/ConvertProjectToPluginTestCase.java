@@ -14,6 +14,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.wizards;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -25,6 +30,7 @@ import org.eclipse.pde.internal.ui.wizards.tools.ConvertProjectToPluginOperation
 import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
+import org.junit.Test;
 
 /**
  * Test case to test the conversion of projects to plug-in projects
@@ -42,6 +48,7 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 	 * @throws Exception
 	 *             If there's a problem.
 	 */
+	@Test
 	public void testSingleProject() throws Exception {
 
 		IProject project = createProject(PROJECT_NAME_1);
@@ -65,6 +72,7 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 	 * @throws Exception
 	 *             If there's a problem.
 	 */
+	@Test
 	public void testMultipleProjects() throws Exception {
 
 		IProject project1 = createProject(PROJECT_NAME_1);
@@ -95,6 +103,7 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 	 * @throws Exception
 	 *             If there's a problem.
 	 */
+	@Test
 	public void testApiToolsSetup() throws Exception {
 
 		IProject project1 = createProject(PROJECT_NAME_1);

@@ -13,11 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.*;
 import java.net.*;
 import java.util.HashSet;
 import java.util.Set;
-import junit.framework.TestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -27,6 +32,7 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
+import org.junit.Test;
 import org.osgi.framework.ServiceReference;
 
 /**
@@ -36,7 +42,7 @@ import org.osgi.framework.ServiceReference;
  * TargetDefinitionPersistenceTests
  *
  */
-public class MinimalTargetDefinitionPersistenceTests extends TestCase {
+public class MinimalTargetDefinitionPersistenceTests {
 
 	protected void assertTargetDefinitionsEqual(ITargetDefinition targetA, ITargetDefinition targetB) {
 		assertTrue("Target content not equal", ((TargetDefinition) targetA).isContentEqual(targetB));
@@ -51,8 +57,6 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 		ServiceReference<ITargetPlatformService> reference = PDETestsPlugin.getBundleContext()
 				.getServiceReference(ITargetPlatformService.class);
 		assertNotNull("Missing target platform service", reference);
-		if (reference == null)
-			return null;
 		return PDETestsPlugin.getBundleContext().getService(reference);
 	}
 
@@ -96,6 +100,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testWorkspaceTargetHandleMemento() throws CoreException {
 		ITargetPlatformService service = getTargetService();
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("does/not/exist"));
@@ -116,6 +121,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 * @throws CoreException
 	 * @throws InterruptedException
 	 */
+	@Test
 	public void testLocalTargetHandleMemento() throws CoreException, InterruptedException {
 		ITargetPlatformService service = getTargetService();
 		ITargetHandle handle = service.newTarget().getHandle();
@@ -134,6 +140,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 * @throws CoreException
 	 * @throws InterruptedException
 	 */
+	@Test
 	public void testExternalFileTargetHandleMemento() throws CoreException, InterruptedException {
 		ITargetPlatformService service = getTargetService();
 		URI uri = null;
@@ -173,6 +180,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testPersistEmptyDefinition() throws Exception {
 		ITargetDefinition definitionA = getTargetService().newTarget();
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -208,6 +216,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testReadOldBasicTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("basic");
 
@@ -234,6 +243,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testReadOldBasicDirectoryTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("directory");
 
@@ -260,6 +270,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testReadOldSpecificTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("specific");
 
@@ -272,7 +283,8 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 		assertEquals("-Dfoo=\"bar\"", target.getVMArguments());
 		assertEquals(
 				JavaRuntime
-				.newJREContainerPath(JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4")),
+				.newJREContainerPath(JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(
+								"J2SE-1.4")),
 				target.getJREContainer());
 
 		NameVersionDescriptor[] infos = target.getImplicitDependencies();
@@ -298,6 +310,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testReadOldAdditionLocationsTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("additionalLocations");
 
@@ -335,6 +348,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testReadOldFeaturesTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("featureLocations");
 
@@ -365,6 +379,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testReadOldRestrictionsTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("restrictions");
 
@@ -413,6 +428,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testReadOldTargetFileWithUnknownTags() throws Exception {
 		ITargetDefinition target = readOldTarget("extratags");
 
@@ -460,6 +476,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testReadOldOptionalTargetFile() throws Exception {
 		ITargetDefinition target = readOldTarget("optional");
 
@@ -506,6 +523,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 * useAllPlugins=true setting, treat the file as though it did include all
 	 * plug-ins from the directory.
 	 */
+	@Test
 	public void testEmptyContentSection() throws Exception {
 		ITargetDefinition target = readOldTarget("emptycontent");
 
@@ -528,6 +546,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testMigrationOfUseAllWithRestrictions() throws Exception {
 		ITargetDefinition target = readOldTarget("eclipse-serverside");
 		ITargetLocation[] containers = target.getTargetLocations();
@@ -570,6 +589,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testSequenceNumberChange() throws Exception {
 		ITargetDefinition target = readOldTarget("featureLocations");
 
@@ -603,6 +623,7 @@ public class MinimalTargetDefinitionPersistenceTests extends TestCase {
 				targetDef.getSequenceNumber());
 	}
 
+	@Test
 	public void testIncludeSource() throws Exception {
 		ITargetDefinition target = readOldTarget("SoftwareSiteTarget");
 		ITargetLocation[] containers = target.getTargetLocations();

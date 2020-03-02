@@ -217,7 +217,7 @@ public class ArchiveSection extends PDESection {
 	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			BusyIndicator.showWhile(fTable.getDisplay(), () -> handleDelete());
+			BusyIndicator.showWhile(fTable.getDisplay(), this::handleDelete);
 			return true;
 		}
 

@@ -1,6 +1,5 @@
 package $packageName$;
 
-import $packageName$.$javaClassPrefix$ReconcilerStrategy;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.reconciler.Reconciler;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
