@@ -13,6 +13,7 @@
  *******************************************************************************/
 package verification.tests.junit4.platform;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
@@ -22,7 +23,12 @@ public class Test1 {
 
 	@Test
 	public void test1() {
-
+		try {
+			Thread.currentThread().getContextClassLoader().loadClass("doesnt.exist");
+			Assert.fail("ClassNotFoundException expected");
+		} catch (ClassNotFoundException e) {
+			// expected
+		}
 	}
 
 	@Test

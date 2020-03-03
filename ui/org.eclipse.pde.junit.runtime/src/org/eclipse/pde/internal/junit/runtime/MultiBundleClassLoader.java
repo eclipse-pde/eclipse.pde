@@ -18,26 +18,25 @@ import java.net.URL;
 import java.util.*;
 import org.osgi.framework.Bundle;
 
-class MultiBundleClassLoader2 extends ClassLoader {
+class MultiBundleClassLoader extends ClassLoader {
 	private List<Bundle> bundleList;
 
-	public MultiBundleClassLoader2(List<Bundle> platformEngineBundles) {
+	public MultiBundleClassLoader(List<Bundle> platformEngineBundles) {
 		this.bundleList = platformEngineBundles;
 
 	}
 
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
-		Class<?> c = null;
 		for (Bundle temp : bundleList) {
 			try {
-				c = temp.loadClass(name);
+				Class<?> c = temp.loadClass(name);
 				if (c != null)
 					return c;
 			} catch (ClassNotFoundException e) {
 			}
 		}
-		return c;
+		throw new ClassNotFoundException(name);
 	}
 
 	@Override

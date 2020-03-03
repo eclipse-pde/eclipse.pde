@@ -13,18 +13,24 @@
  *******************************************************************************/
 package verification.tests.junit5;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class Test1 {
 
 	@Test
 	void test1() {
-
+		try {
+			Thread.currentThread().getContextClassLoader().loadClass("doesnt.exist");
+			Assertions.fail("ClassNotFoundException expected");
+		} catch (ClassNotFoundException e) {
+			// expected
+		}
 	}
 
 	@Test
 	void test2() {
 
 	}
-	
+
 }

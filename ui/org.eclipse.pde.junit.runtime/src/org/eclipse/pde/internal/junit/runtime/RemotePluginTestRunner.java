@@ -93,60 +93,6 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		}
 	}
 
-	class MultiBundleClassLoader extends ClassLoader {
-		private List<Bundle> bundleList;
-
-		public MultiBundleClassLoader(List<Bundle> platformEngineBundles) {
-			this.bundleList = platformEngineBundles;
-
-		}
-		@Override
-		protected Class<?> findClass(String name) throws ClassNotFoundException {
-			Class<?> c = null;
-			for (Bundle temp : bundleList) {
-				try {
-					c = temp.loadClass(name);
-					if (c != null)
-						return c;
-				} catch (ClassNotFoundException e) {
-				}
-			}
-			return c;
-		}
-
-		@Override
-		protected URL findResource(String name) {
-			URL url = null;
-			for (Bundle temp : bundleList) {
-				url = temp.getResource(name);
-				if (url != null)
-					return url;
-			}
-			return url;
-		}
-
-		@Override
-		protected Enumeration<URL> findResources(String name) throws IOException {
-			Enumeration<URL> enumFinal = null;
-			for (int i = 0; i < bundleList.size(); i++) {
-				if (i == 0) {
-					enumFinal = bundleList.get(i).getResources(name);
-					continue;
-				}
-				Enumeration<URL> e2 = bundleList.get(i).getResources(name);
-				Vector<URL> temp = new Vector<>();
-				while (enumFinal != null && enumFinal.hasMoreElements()) {
-					temp.add(enumFinal.nextElement());
-				}
-				while (e2 != null && e2.hasMoreElements()) {
-					temp.add(e2.nextElement());
-				}
-				enumFinal = temp.elements();
-			}
-			return enumFinal;
-		}
-	}
-
 	/**
 	 * The main entry point. Supported arguments in addition
 	 * to the ones supported by RemoteTestRunner:
@@ -201,7 +147,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 			platformEngineBundles.add(bundle2);
 		}
 
-		return new MultiBundleClassLoader2(platformEngineBundles);
+		return new MultiBundleClassLoader(platformEngineBundles);
 	}
 
 	private static ClassLoader getPluginClassLoader(String getfTestPluginName) {
