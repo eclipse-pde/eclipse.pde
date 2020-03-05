@@ -18,6 +18,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -77,19 +78,17 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 			File site = getSite(dir);
 			File[] files = site.listFiles();
 			SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
-			List<TargetBundle> bundles = new ArrayList<>(files.length);
-			Arrays.stream(files).parallel().forEach(file -> {
-				try {
-					TargetBundle rb = new TargetBundle(file);
-					synchronized (bundles) {
-						bundles.add(rb);
-					}
-				} catch (CoreException e) {
-					// Ignore non-bundle files
-				}
-				localMonitor.split(1);
-			});
-			return bundles.toArray(new TargetBundle[bundles.size()]);
+			return Arrays.stream(files).parallel() //
+					.map(file -> {
+						localMonitor.split(1);
+						try {
+							return new TargetBundle(file);
+						} catch (CoreException e) {
+							// Ignore non-bundle files
+							return null;
+						}
+					}).filter(Objects::nonNull) //
+					.toArray(TargetBundle[]::new);
 		}
 		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.DirectoryBundleContainer_1, dir.toString())));
 	}
