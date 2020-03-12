@@ -137,6 +137,7 @@ org.osgi.framework.system.packages = \
  jdk.dynalink.linker,\
  jdk.dynalink.linker.support,\
  jdk.dynalink.support,\
+ jdk.incubator.foreign,\
  jdk.javadoc.doclet,\
  jdk.jfr,\
  jdk.jfr.consumer,\
