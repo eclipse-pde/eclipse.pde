@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -41,6 +41,7 @@ import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.core.dom.RecordDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -275,6 +276,16 @@ public class TagScanner {
 			return true;
 		}
 
+		@Override
+		public boolean visit(RecordDeclaration node) {
+			if (isNotVisible(node.getModifiers())) {
+				return false;
+			}
+			enterType(node.getName());
+			scanTypeJavaDoc(node);
+			return true;
+		}
+
 		/**
 		 * Scans the JavaDoc of a {@link TypeDeclaration}
 		 *
@@ -316,6 +327,42 @@ public class TagScanner {
 							}
 						}
 					}
+				}
+				if (restrictions != RestrictionModifiers.NO_RESTRICTIONS) {
+					fDescription.setRestrictions(fType, restrictions);
+				}
+			}
+		}
+
+		void scanTypeJavaDoc(RecordDeclaration node) {
+			Javadoc doc = node.getJavadoc();
+			if (doc != null) {
+				List<TagElement> tags = doc.tags();
+				IApiAnnotations annots = fDescription.resolveAnnotations(fType);
+				int restrictions = annots != null ? annots.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
+				for (TagElement tag : tags) {
+					String tagname = tag.getTagName();
+					if (!JavadocTagManager.ALL_TAGS.contains(tagname)) {
+						continue;
+					}
+					if (JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) {
+						restrictions |= RestrictionModifiers.NO_REFERENCE;
+					}
+
+					int flags = node.getModifiers();
+					if (JavadocTagManager.TAG_NOEXTEND.equals(tagname)) {
+						if (!Flags.isFinal(flags)) {
+							restrictions |= RestrictionModifiers.NO_EXTEND;
+							continue;
+						}
+					}
+					if (JavadocTagManager.TAG_NOINSTANTIATE.equals(tagname)) {
+						if (!Flags.isAbstract(flags)) {
+							restrictions |= RestrictionModifiers.NO_INSTANTIATE;
+							continue;
+						}
+					}
+
 				}
 				if (restrictions != RestrictionModifiers.NO_RESTRICTIONS) {
 					fDescription.setRestrictions(fType, restrictions);
@@ -610,7 +657,7 @@ public class TagScanner {
 	 */
 	public void scan(CompilationUnit source, IApiDescription description, IApiTypeContainer container, Map<String, String> options, IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, 2);
-		ASTParser parser = ASTParser.newParser(AST.JLS10);
+		ASTParser parser = ASTParser.newParser(AST.JLS14);
 		InputStream inputStream = null;
 		try {
 			inputStream = source.getInputStream();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.Initializer;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.RecordDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 /**
@@ -62,6 +63,10 @@ public class NodeFinder extends ASTVisitor {
 	}
 
 	@Override
+	public boolean visit(RecordDeclaration node) {
+		return visitNode(node);
+	}
+	@Override
 	public boolean visit(MethodDeclaration node) {
 		return visitNode(node);
 	}
@@ -98,6 +103,7 @@ public class NodeFinder extends ASTVisitor {
 		int end = bodyDeclaration.getLength() - 1 + start;
 		switch (bodyDeclaration.getNodeType()) {
 			case ASTNode.TYPE_DECLARATION:
+			case ASTNode.RECORD_DECLARATION:
 			case ASTNode.ENUM_DECLARATION:
 			case ASTNode.ANNOTATION_TYPE_DECLARATION:
 				if (start <= this.position && this.position <= end) {

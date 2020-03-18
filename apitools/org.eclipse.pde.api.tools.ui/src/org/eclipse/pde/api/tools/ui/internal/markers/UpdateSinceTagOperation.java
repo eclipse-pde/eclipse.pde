@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -87,7 +87,7 @@ public class UpdateSinceTagOperation {
 					// quickfix change
 					JavaUI.openInEditor(compilationUnit);
 				}
-				ASTParser parser = ASTParser.newParser(AST.JLS10);
+				ASTParser parser = ASTParser.newParser(AST.JLS14);
 				parser.setSource(compilationUnit);
 				if (intValue <= 0) {
 					// try to use the name range of the corresponding element
