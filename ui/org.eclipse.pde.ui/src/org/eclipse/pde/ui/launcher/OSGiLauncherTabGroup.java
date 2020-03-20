@@ -48,7 +48,7 @@ public class OSGiLauncherTabGroup extends AbstractLaunchConfigurationTabGroup {
 		BusyIndicator.showWhile(Display.getCurrent(), () -> {
 			try {
 				if (config instanceof ILaunchConfigurationWorkingCopy) {
-					BundleLauncherHelper.migrateOsgiLaunchConfiguration(config);
+					BundleLauncherHelper.migrateOsgiLaunchConfiguration((ILaunchConfigurationWorkingCopy) config);
 				}
 			} catch (CoreException e) {
 			}

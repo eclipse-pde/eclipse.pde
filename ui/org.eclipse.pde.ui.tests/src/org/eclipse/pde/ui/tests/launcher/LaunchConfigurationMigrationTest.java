@@ -57,6 +57,7 @@ public class LaunchConfigurationMigrationTest extends AbstractLaunchTest {
 
 		ILaunchConfigurationWorkingCopy wc = configuration.getWorkingCopy();
 		BundleLauncherHelper.migrateLaunchConfiguration(wc);
+		assertTrue(wc.isDirty());
 
 		assertOldPropertiesRemoved(wc);
 
@@ -75,6 +76,7 @@ public class LaunchConfigurationMigrationTest extends AbstractLaunchTest {
 
 		ILaunchConfigurationWorkingCopy wc = configuration.getWorkingCopy();
 		BundleLauncherHelper.migrateLaunchConfiguration(wc);
+		assertTrue(wc.isDirty());
 
 		assertOldPropertiesRemoved(wc);
 
@@ -92,6 +94,7 @@ public class LaunchConfigurationMigrationTest extends AbstractLaunchTest {
 
 		ILaunchConfigurationWorkingCopy wc = configuration.getWorkingCopy();
 		BundleLauncherHelper.migrateOsgiLaunchConfiguration(wc);
+		assertTrue(wc.isDirty());
 
 		assertOldOsgiPropertiesRemoved(wc);
 
@@ -113,7 +116,7 @@ public class LaunchConfigurationMigrationTest extends AbstractLaunchTest {
 	}
 
 	@SuppressWarnings("deprecation")
-	private void assertOldOsgiPropertiesRemoved(ILaunchConfigurationWorkingCopy wc) throws CoreException {
+	private void assertOldOsgiPropertiesRemoved(ILaunchConfiguration wc) throws CoreException {
 		assertFalse("workspace_bundles should not be present",
 				wc.hasAttribute(IPDELauncherConstants.WORKSPACE_BUNDLES));
 		assertFalse("target_bundles should not be present", wc.hasAttribute(IPDELauncherConstants.TARGET_BUNDLES));

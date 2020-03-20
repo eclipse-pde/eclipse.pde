@@ -54,11 +54,12 @@ public class BundleLauncherHelper {
 
 	public static Map<IPluginModelBase, String> getMergedBundleMap(ILaunchConfiguration configuration, boolean osgi) throws CoreException {
 
+		ILaunchConfigurationWorkingCopy wc = getWorkingCopy(configuration);
 		if (!osgi) {
 
-			migrateLaunchConfiguration(configuration);
+			migrateLaunchConfiguration(wc);
 
-			if (configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
+			if (wc.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
 				Map<IPluginModelBase, String> map = new LinkedHashMap<>();
 				IPluginModelBase[] models = PluginRegistry.getActiveModels();
 				for (IPluginModelBase model : models) {
@@ -68,16 +69,16 @@ public class BundleLauncherHelper {
 			}
 
 		} else {
-			migrateOsgiLaunchConfiguration(configuration);
+			migrateOsgiLaunchConfiguration(wc);
 		}
 
-		if (configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false)) {
-			return getMergedBundleMapFeatureBased(configuration, osgi);
+		if (wc.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false)) {
+			return getMergedBundleMapFeatureBased(wc, osgi);
 		}
 
 		Set<String> set = new HashSet<>();
-		Map<IPluginModelBase, String> map = getWorkspaceBundleMap(configuration, set);
-		map.putAll(getTargetBundleMap(configuration, set));
+		Map<IPluginModelBase, String> map = getWorkspaceBundleMap(wc, set);
+		map.putAll(getTargetBundleMap(wc, set));
 		return map;
 	}
 
@@ -493,12 +494,11 @@ public class BundleLauncherHelper {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static void migrateLaunchConfiguration(ILaunchConfiguration configuration) throws CoreException {
-		ILaunchConfigurationWorkingCopy wc = getWorkingCopy(configuration);
+	public static void migrateLaunchConfiguration(ILaunchConfigurationWorkingCopy configuration) throws CoreException {
 
 		String value = configuration.getAttribute("wsproject", (String) null); //$NON-NLS-1$
 		if (value != null) {
-			wc.setAttribute("wsproject", (String) null); //$NON-NLS-1$
+			configuration.setAttribute("wsproject", (String) null); //$NON-NLS-1$
 			if (value.indexOf(';') != -1) {
 				value = value.replace(';', ',');
 			} else if (value.indexOf(':') != -1) {
@@ -510,24 +510,24 @@ public class BundleLauncherHelper {
 
 			boolean automatic = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 			String attr = automatic ? IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS : IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS;
-			wc.setAttribute(attr, value);
+			configuration.setAttribute(attr, value);
 		}
 
 		String value2 = configuration.getAttribute("extplugins", (String) null); //$NON-NLS-1$
 		if (value2 != null) {
-			wc.setAttribute("extplugins", (String) null); //$NON-NLS-1$
+			configuration.setAttribute("extplugins", (String) null); //$NON-NLS-1$
 			if (value2.indexOf(';') != -1) {
 				value2 = value2.replace(';', ',');
 			} else if (value2.indexOf(':') != -1) {
 				value2 = value2.replace(':', ',');
 			}
 			value2 = (value2.length() == 0 || value2.equals(",")) ? null : value2.substring(0, value2.length() - 1); //$NON-NLS-1$
-			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, value2);
+			configuration.setAttribute(IPDELauncherConstants.SELECTED_TARGET_PLUGINS, value2);
 		}
 
-		convertToSet(wc, IPDELauncherConstants.SELECTED_TARGET_PLUGINS, IPDELauncherConstants.SELECTED_TARGET_BUNDLES);
-		convertToSet(wc, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES);
-		convertToSet(wc, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES);
+		convertToSet(configuration, IPDELauncherConstants.SELECTED_TARGET_PLUGINS, IPDELauncherConstants.SELECTED_TARGET_BUNDLES);
+		convertToSet(configuration, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS, IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES);
+		convertToSet(configuration, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES);
 
 		String version = configuration.getAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, (String) null);
 		boolean newApp = TargetPlatformHelper.usesNewApplicationModel();
@@ -535,7 +535,7 @@ public class BundleLauncherHelper {
 		if (!upgrade)
 			upgrade = TargetPlatformHelper.getTargetVersion() >= 3.2 && version == null;
 		if (upgrade) {
-			wc.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, newApp ? "3.3" : "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$
+			configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, newApp ? "3.3" : "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$
 			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 			boolean automaticAdd = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 			if (!usedefault) {
@@ -564,14 +564,10 @@ public class BundleLauncherHelper {
 					}
 				}
 				if (!extensions.isEmpty())
-					wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, extensions);
+					configuration.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, extensions);
 				if (!target.isEmpty())
-					wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, target);
+					configuration.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, target);
 			}
-		}
-
-		if (wc.isDirty()) {
-			wc.doSave();
 		}
 	}
 
@@ -583,16 +579,10 @@ public class BundleLauncherHelper {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static void migrateOsgiLaunchConfiguration(ILaunchConfiguration configuration) throws CoreException {
-		ILaunchConfigurationWorkingCopy wc = getWorkingCopy(configuration);
-
-		convertToSet(wc, IPDELauncherConstants.WORKSPACE_BUNDLES, IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES);
-		convertToSet(wc, IPDELauncherConstants.TARGET_BUNDLES, IPDELauncherConstants.SELECTED_TARGET_BUNDLES);
-		convertToSet(wc, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES);
-
-		if (wc.isDirty()) {
-			wc.doSave();
-		}
+	public static void migrateOsgiLaunchConfiguration(ILaunchConfigurationWorkingCopy configuration) throws CoreException {
+		convertToSet(configuration, IPDELauncherConstants.WORKSPACE_BUNDLES, IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES);
+		convertToSet(configuration, IPDELauncherConstants.TARGET_BUNDLES, IPDELauncherConstants.SELECTED_TARGET_BUNDLES);
+		convertToSet(configuration, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS, IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES);
 	}
 
 	private static void convertToSet(ILaunchConfigurationWorkingCopy wc, String stringAttribute, String listAttribute) throws CoreException {
