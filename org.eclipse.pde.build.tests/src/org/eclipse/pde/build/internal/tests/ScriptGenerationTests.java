@@ -13,6 +13,8 @@
 
 package org.eclipse.pde.build.internal.tests;
 
+import static org.junit.Assert.*;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -35,12 +37,15 @@ import org.eclipse.pde.build.tests.PDETestCase;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.site.*;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.osgi.framework.Version;
 
 public class ScriptGenerationTests extends PDETestCase {
 
 	// Test that script generation works when buildDirectory does not contain a
 	// plugins subdirectory
+	@Test
 	public void testBug147292() throws Exception {
 		IFolder buildFolder = newTest("147292");
 
@@ -58,6 +63,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 	// Test that the order in which archivesFormat and configInfo are set does not
 	// matter
+	@Test
 	public void testBug148288() throws Exception {
 		IProject buildProject = newTest();
 
@@ -101,6 +107,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 	// Test script generation for bundles using Bundle-RequiredExecutionEnvironment
 	// when the state does not contain org.eclipse.osgi
+	@Test
 	public void testBug178447() throws Exception {
 		IFolder buildFolder = newTest("178447");
 
@@ -119,6 +126,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	}
 
 	// Test the use of customBuildCallbacks.buildpath
+	@Test
 	public void testBug183869() throws Exception {
 		IFolder buildFolder = newTest("183869");
 
@@ -142,7 +150,9 @@ public class ScriptGenerationTests extends PDETestCase {
 	 * multiple features instead of just one. See
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=379182.
 	 */
-	public void _testBug183924() throws Exception {
+	@Test
+	@Ignore
+	public void testBug183924() throws Exception {
 		IFolder buildFolder = newTest("183924");
 		IFolder configFolder = Utils.createFolder(buildFolder, "configuration/org.eclipse.update");
 
@@ -183,7 +193,9 @@ public class ScriptGenerationTests extends PDETestCase {
 		}
 	}
 
-	public void _testBug221855() throws Exception {
+	@Test
+	@Ignore
+	public void testBug221855() throws Exception {
 		IFolder buildFolder = newTest("221855");
 		IFolder tempFolder = Utils.createFolder(buildFolder, "temp");
 		Utils.generateBundle(tempFolder, "org.eclipse.pde.build.test.221855");
@@ -233,6 +245,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	}
 
 	// test that the order of features passed to FeatureGenerator is preserved
+	@Test
 	public void testBug187809() throws Exception {
 		IFolder buildFolder = newTest("187809");
 
@@ -250,6 +263,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertEquals(included[2].getId(), "disco");
 	}
 
+	@Test
 	public void testBug203270() throws Exception {
 		// test the highest version of a bundle is selected when both are resolved
 		IFolder buildFolder = newTest("203270");
@@ -272,6 +286,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	}
 
 	// Test that & characters in classpath are escaped properly
+	@Test
 	public void testBug125577() throws Exception {
 		IFolder buildFolder = newTest("125577");
 		Utils.createFolder(buildFolder, "plugins");
@@ -298,6 +313,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertValidAntScript(bundleB.getFile("build.xml"));
 	}
 
+	@Test
 	public void testSimpleClasspath() throws Exception {
 		IFolder buildFolder = newTest("SimpleClasspath");
 
@@ -325,6 +341,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		}
 	}
 
+	@Test
 	public void testBug207500() throws Exception {
 		IFolder buildFolder = newTest("207500");
 
@@ -351,6 +368,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertTrue(path.indexOf(swtFragment) > 0);
 	}
 
+	@Test
 	public void testPluginPath() throws Exception {
 		IFolder buildFolder = newTest("PluginPath");
 		IFolder bundleA = Utils.createFolder(buildFolder, "plugins/bundleA");
@@ -367,6 +385,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		generateScripts(buildFolder, props);
 	}
 
+	@Test
 	public void testBug128901_filteredDependencyCheck() throws Exception {
 		IFolder buildFolder = newTest("128901");
 		IFolder bundleFolder = Utils.createFolder(buildFolder, "plugins/bundle");
@@ -396,6 +415,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertTrue(path.indexOf("org.eclipse.core.runtime.compatibility.registry") == -1);
 	}
 
+	@Test
 	public void testBug198536() throws Exception {
 		final IFolder buildFolder = newTest("198536");
 
@@ -439,6 +459,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertEquals(pluginEntryModels[2].getVersion(), "2.1.2");
 	}
 
+	@Test
 	public void testBug207335() throws Exception {
 		IFolder buildFolder = newTest("207335");
 
@@ -456,6 +477,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		generateScripts(buildFolder, properties);
 	}
 
+	@Test
 	public void testBug206679() throws Exception {
 		IFolder buildFolder = newTest("206679");
 
@@ -482,6 +504,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertTrue(false);
 	}
 
+	@Test
 	public void testBug193393() throws Exception {
 		IFolder buildFolder = newTest("193393");
 		IFolder bundleA = Utils.createFolder(buildFolder, "bundleA");
@@ -533,7 +556,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	// buildFolder.getFile("plugins/Plugin21/javaCompiler.Plugin21.jar.args");
 	// assertFalse(javaCompilerArgs.exists());
 	// }
-
+	@Test
 	public void testBug210464() throws Exception {
 		IFolder buildFolder = newTest("210464 space");
 
@@ -545,6 +568,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertResourceFile(buildFolder, "features/featureA/build.xml");
 	}
 
+	@Test
 	public void testBug212920() throws Exception {
 		IFolder buildFolder = newTest("212920");
 
@@ -556,6 +580,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "bundle"));
 	}
 
+	@Test
 	public void testBug224098() throws Exception {
 		IFolder buildFolder = newTest("224098");
 
@@ -577,6 +602,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		generateScripts(buildFolder, props);
 	}
 
+	@Test
 	public void testBug208011_simpleCycle() throws Exception {
 		IFolder buildFolder = newTest("208011");
 
@@ -589,6 +615,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		runBuild(buildFolder);
 	}
 
+	@Test
 	public void testBug199241() throws Exception {
 		IFolder buildFolder = newTest("199241");
 		IFolder fooFolder = Utils.createFolder(buildFolder, "plugins/foo");
@@ -609,6 +636,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertResourceFile(fooFolder, "foo_1.0.0.jar");
 	}
 
+	@Test
 	public void testBug237475() throws Exception {
 		IFolder buildFolder = newTest("237475");
 
@@ -616,6 +644,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "f"));
 	}
 
+	@Test
 	public void testBug247091() throws Exception {
 		IFolder buildFolder = newTest("247091");
 		// also tests bug 250942
@@ -638,6 +667,7 @@ public class ScriptGenerationTests extends PDETestCase {
 				new String[] { "../F1", "../F2", "../F3" });
 	}
 
+	@Test
 	public void testBug247091_2() throws Exception {
 		VersionRange range = org.eclipse.pde.internal.build.Utils.createVersionRange("1.0.0");
 		assertTrue(range.getIncludeMinimum());
@@ -683,6 +713,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 	}
 
+	@Test
 	public void testBug246127() throws Exception {
 		IFolder buildFolder = newTest("246127");
 
@@ -708,6 +739,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		// success if we found all the bundles and hence did not throw an exception
 	}
 
+	@Test
 	public void testBug247232() throws Exception {
 		IFolder buildFolder = newTest("247232");
 
@@ -725,6 +757,7 @@ public class ScriptGenerationTests extends PDETestCase {
 				"Problem occurred while considering plugin: Test Bundle org.foo.", "invalid qualifier" });
 	}
 
+	@Test
 	public void testBug248767_212467() throws Exception {
 		IFolder rootFolder = newTest("248767");
 		IFolder build1 = rootFolder.getFolder("build1");
@@ -760,6 +793,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		runBuild(build2);
 	}
 
+	@Test
 	public void testBug238177() throws Exception {
 		IFolder buildFolder = newTest("238177");
 		IFolder a = Utils.createFolder(buildFolder, "plugins/A");
@@ -848,6 +882,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		}
 	}
 
+	@Test
 	public void testQualifierSuffixes() throws Exception {
 		BuildTimeFeature f1 = new BuildTimeFeature("foo", "1.0.0.v1");
 		f1.addEntry(new FeatureEntry("a", "1.2.3.aaa-0z-aaa", true));
@@ -928,6 +963,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertTrue(director.getQualifierSuffix(f1).compareTo(director.getQualifierSuffix(f2)) < 0);
 	}
 
+	@Test
 	public void testBug156043() throws Exception {
 		IFolder buildFolder = newTest("156043");
 		IFolder p1 = Utils.createFolder(buildFolder, "plugins/p1");
@@ -964,6 +1000,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertZipContents(f1, "F1_1.0.0.log.zip", entries);
 	}
 
+	@Test
 	public void testBug239843_1() throws Exception {
 		IFolder buildFolder = newTest("239843_1");
 
@@ -999,6 +1036,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 	// NOTE: If this test fails, then the supported BREE probably increased and need
 	// to be adjusted below
+	@Test
 	public void testBug239843_2() throws Exception {
 		IFolder buildFolder = newTest("239843_2");
 
@@ -1031,6 +1069,7 @@ public class ScriptGenerationTests extends PDETestCase {
 
 	// NOTE: If this test fails, it might be because the supported BREE probably
 	// increased and need to be adjusted below
+	@Test
 	public void testBug239843_3() throws Exception {
 		IFolder buildFolder = newTest("239843_3");
 
@@ -1077,6 +1116,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		generateScripts(buildFolder, buildProperties);
 	}
 
+	@Test
 	public void testBug262294() throws Exception {
 		IFolder buildFolder = newTest("262294");
 
@@ -1101,6 +1141,7 @@ public class ScriptGenerationTests extends PDETestCase {
 				generateProperties);
 	}
 
+	@Test
 	public void testRootFiles_1() throws Exception {
 		IFolder buildFolder = newTest("RootFiles_1");
 		IFolder f = Utils.createFolder(buildFolder, "features/F");
@@ -1141,6 +1182,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertZipContents(buildFolder, "I.TestBuild/F-TestBuild.zip", zipEntries);
 	}
 
+	@Test
 	public void testBug256787() throws Exception {
 		IFolder buildFolder = newTest("256787");
 
@@ -1162,6 +1204,7 @@ public class ScriptGenerationTests extends PDETestCase {
 				"Bundle-RequiredExecutionEnvironment: J2SE-1.4");
 	}
 
+	@Test
 	public void testBug260634() throws Exception {
 		IFolder buildFolder = newTest("260634");
 
@@ -1182,6 +1225,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		}
 	}
 
+	@Test
 	public void testBug217005() throws Exception {
 		IFolder buildFolder = newTest("217005");
 		IFolder f = Utils.createFolder(buildFolder, "features/f");
@@ -1212,6 +1256,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertResourceFile(buildFolder, "tmp/eclipse/plugins/shape_1.0.0.jar");
 	}
 
+	@Test
 	public void testBug219832() throws Exception {
 		IFolder buildFolder = newTest("219832");
 
@@ -1245,6 +1290,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertJarVerifies(result.getLocation().toFile(), true);
 	}
 
+	@Test
 	public void testBug190041() throws Exception {
 		IFolder buildFolder = newTest("190041");
 
@@ -1310,6 +1356,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertJarVerifies(tempJar, true);
 	}
 
+	@Test
 	public void testBug279583() throws Exception {
 		IFolder buildFolder = newTest("279583");
 
@@ -1330,6 +1377,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		}
 	}
 
+	@Test
 	public void testBug281592() throws Exception {
 		IFolder buildFolder = newTest("281592");
 
@@ -1392,6 +1440,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		runBuild(buildFolder);
 	}
 
+	@Test
 	public void testBug279622() throws Exception {
 		IFolder buildFolder = newTest("279622");
 
@@ -1445,6 +1494,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		runBuild(buildFolder);
 	}
 
+	@Test
 	public void testBug284721() throws Exception {
 		IFolder buildFolder = newTest("284721");
 
@@ -1541,6 +1591,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		runBuild(buildFolder);
 	}
 
+	@Test
 	public void testBug252711() throws Exception {
 		IFolder buildFolder = newTest("252711");
 
@@ -1568,6 +1619,7 @@ public class ScriptGenerationTests extends PDETestCase {
 				&& failedMessage.indexOf("Another singleton version selected: a_3.4.2.v_833") > -1);
 	}
 
+	@Test
 	public void testCatchAllValue() throws Exception {
 		IFolder buildFolder = newTest("catchAll");
 
@@ -1592,6 +1644,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		runBuild(buildFolder);
 	}
 
+	@Test
 	public void testBug291527() throws Exception {
 		IFolder buildFolder = newTest("291527");
 
@@ -1658,6 +1711,7 @@ public class ScriptGenerationTests extends PDETestCase {
 				new String[] { "Discouraged access: The type 'A'", "3 problems (3 errors)" });
 	}
 
+	@Test
 	public void testBug243582() throws Exception {
 		IFolder buildFolder = newTest("243582");
 		IFolder A = Utils.createFolder(buildFolder, "plugins/A");
@@ -1706,6 +1760,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertEquals(m.getMainAttributes().getValue(IPDEBuildConstants.ECLIPSE_SOURCE_REF), "foo.bar;type:=mine");
 	}
 
+	@Test
 	public void testBug284806() throws Exception {
 		IFolder buildFolder = newTest("284806");
 		IFolder A = Utils.createFolder(buildFolder, "plugins/A");
@@ -1745,6 +1800,7 @@ public class ScriptGenerationTests extends PDETestCase {
 				properties);
 	}
 
+	@Test
 	public void testBug301311() throws Exception {
 		Properties antProperties = new Properties();
 		antProperties.put(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER, "true");
@@ -1775,6 +1831,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	}
 
 	// Tests sourceFileExtensions attribute in build.properties
+	@Test
 	public void test303960sourceFileExtensions1() throws Exception {
 		IFolder buildFolder = newTest("303960_sourceFileExtensions1");
 		Utils.createFolder(buildFolder, "plugins");
@@ -1833,6 +1890,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	}
 
 	// Tests sourceFileExtensions attribute in build.properties
+	@Test
 	public void test303960sourceFileExtensions2() throws Exception {
 		IFolder buildFolder = newTest("303960_sourceFileExtensions2");
 		Utils.createFolder(buildFolder, "plugins");
@@ -1878,6 +1936,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	}
 
 	// Tests compilerAdapter attribute in build.properties
+	@Test
 	public void test303960compilerAdapter() throws Exception {
 		IFolder buildFolder = newTest("303960_compilerAdapter");
 		Utils.createFolder(buildFolder, "plugins");
@@ -1903,6 +1962,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	}
 
 	// Tests compilerAdapter.useLog attribute in build.properties
+	@Test
 	public void test303960compilerAdapterUseLog1() throws Exception {
 		IFolder buildFolder = newTest("303960_compilerAdapterUseLog1");
 		Utils.createFolder(buildFolder, "plugins");
@@ -1940,6 +2000,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	}
 
 	// Tests compilerAdapter.useLog attribute in build.properties
+	@Test
 	public void test303960compilerAdapterUseLog2() throws Exception {
 		IFolder buildFolder = newTest("303960_compilerAdapterUseLog2");
 		Utils.createFolder(buildFolder, "plugins");
@@ -1978,6 +2039,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	}
 
 	// Tests compilerAdapter.useLog attribute in build.properties
+	@Test
 	public void test303960compilerAdapterUseLog3() throws Exception {
 		IFolder buildFolder = newTest("303960_compilerAdapterUseLog3");
 		Utils.createFolder(buildFolder, "plugins");
@@ -2015,6 +2077,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	}
 
 	// Tests compilerAdapter.useArgFile attribute in build.properties
+	@Test
 	public void test303960compilerAdapterUseArgFile1() throws Exception {
 		IFolder buildFolder = newTest("303960_compilerAdapterUseArgFile1");
 		Utils.createFolder(buildFolder, "plugins");
@@ -2053,6 +2116,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	}
 
 	// Tests compilerAdapter.useArgFile attribute in build.properties
+	@Test
 	public void test303960compilerAdapterUseArgFile2() throws Exception {
 		IFolder buildFolder = newTest("303960_compilerAdapterUseArgFile2");
 		Utils.createFolder(buildFolder, "plugins");
@@ -2092,6 +2156,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	}
 
 	// Tests compilerAdapter.useArgFile attribute in build.properties
+	@Test
 	public void test303960compilerAdapterUseArgFile3() throws Exception {
 		IFolder buildFolder = newTest("303960_compilerAdapterUseArgFile3");
 		Utils.createFolder(buildFolder, "plugins");
@@ -2130,6 +2195,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	}
 
 	// Tests compilerArgs attribute in build.properties
+	@Test
 	public void test303960compilerArgs1() throws Exception {
 		IFolder buildFolder = newTest("303960_compilerArgs1");
 		Utils.createFolder(buildFolder, "plugins");
@@ -2165,6 +2231,7 @@ public class ScriptGenerationTests extends PDETestCase {
 	}
 
 	// Tests compilerArgs attribute in build.properties
+	@Test
 	public void test303960compilerArgs2() throws Exception {
 		IFolder buildFolder = newTest("303960_compilerArgs2");
 		Utils.createFolder(buildFolder, "plugins");
@@ -2200,6 +2267,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		fail("Should have found compiler log entry:\n-foo -bar baz");
 	}
 
+	@Test
 	public void testBug309572() throws Exception {
 		IFolder buildFolder = newTest("309572");
 
@@ -2224,6 +2292,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		runBuild(buildFolder);
 	}
 
+	@Test
 	public void testBug265771() throws Exception {
 		IFolder buildFolder = newTest("265771");
 
@@ -2248,6 +2317,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		runBuild(buildFolder);
 	}
 
+	@Test
 	public void testBug157375_NestedJars() throws Exception {
 		IFolder root = newTest("157375");
 		IFolder buildFolder = Utils.createFolder(root, "first");

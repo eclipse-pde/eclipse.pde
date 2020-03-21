@@ -13,6 +13,8 @@
 
 package org.eclipse.pde.build.internal.tests;
 
+import static org.junit.Assert.*;
+
 import java.io.*;
 import java.util.*;
 import java.util.jar.Attributes;

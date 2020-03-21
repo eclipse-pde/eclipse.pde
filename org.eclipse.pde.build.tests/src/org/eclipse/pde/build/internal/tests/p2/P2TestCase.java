@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.build.internal.tests.p2;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.net.URI;
 import java.util.*;

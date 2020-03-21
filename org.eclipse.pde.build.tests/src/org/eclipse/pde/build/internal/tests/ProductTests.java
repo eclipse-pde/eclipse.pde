@@ -13,11 +13,12 @@
 
 package org.eclipse.pde.build.internal.tests;
 
+import static org.junit.Assert.*;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.jar.Attributes;
-import junit.framework.AssertionFailedError;
 import org.apache.tools.ant.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -31,6 +32,7 @@ import org.eclipse.pde.build.internal.tests.ant.TestBrandTask;
 import org.eclipse.pde.build.tests.*;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.swt.tools.IconExe;
+import org.junit.Test;
 import org.osgi.framework.Version;
 
 public class ProductTests extends PDETestCase {
@@ -77,6 +79,7 @@ public class ProductTests extends PDETestCase {
 		assertTrue(entries.size() == 1);
 	}
 
+	@Test
 	public void test218878() throws Exception {
 		// platform specific config.ini files
 		// files copied from resources folder
@@ -113,6 +116,7 @@ public class ProductTests extends PDETestCase {
 		assertEquals("linux", props.getProperty("os"));
 	}
 
+	@Test
 	public void test234032() throws Exception {
 		IFolder buildFolder = newTest("234032");
 
@@ -136,6 +140,7 @@ public class ProductTests extends PDETestCase {
 		assertLogContainsLine(iniFile, "-Dschemes2=archive zip jar");
 	}
 
+	@Test
 	public void test237922() throws Exception {
 		IFolder buildFolder = newTest("237922");
 
@@ -174,6 +179,7 @@ public class ProductTests extends PDETestCase {
 		assertEquals(subTasks.length, 2);
 	}
 
+	@Test
 	public void test186224() throws Exception {
 		IFolder buildFolder = newTest("186224");
 
@@ -191,6 +197,7 @@ public class ProductTests extends PDETestCase {
 				buildFolder.getLocation().toOSString(), properties);
 	}
 
+	@Test
 	public void test315792() throws Exception {
 		IFolder buildFolder = newTest("315792");
 
@@ -212,6 +219,7 @@ public class ProductTests extends PDETestCase {
 		assertLogContainsLine(buildFolder.getFile("log.log"), "[eclipse.generateFeature] Incorrect directory entry");
 	}
 
+	@Test
 	public void test237747() throws Exception {
 		IFolder buildFolder = newTest("237747");
 
@@ -236,6 +244,7 @@ public class ProductTests extends PDETestCase {
 		assertResourceFile(buildFolder, "I.TestBuild/eclipse-win32.win32.x86_64.zip");
 	}
 
+	@Test
 	public void testBug238001() throws Exception {
 		IFolder buildFolder = newTest("238001");
 
@@ -269,6 +278,7 @@ public class ProductTests extends PDETestCase {
 		assertEquals(0, new File(buildFolder.getLocation().toOSString(), "out.out").length());
 	}
 
+	@Test
 	public void testBug249410() throws Exception {
 		IFolder buildFolder = newTest("249410");
 		IFile product = buildFolder.getFile("foo.product");
@@ -317,6 +327,7 @@ public class ProductTests extends PDETestCase {
 		assertTrue(bundlesList.indexOf('c') > -1);
 	}
 
+	@Test
 	public void testBug252246() throws Exception {
 		IFolder buildFolder = newTest("252246");
 
@@ -364,7 +375,7 @@ public class ProductTests extends PDETestCase {
 		try {
 			assertLogContainsLine(info, "org.eclipse.swt.gtk.linux.x86_64");
 			swtNotThere = false;
-		} catch (AssertionFailedError e) {
+		} catch (AssertionError e) {
 			// good
 		}
 		assertTrue(swtNotThere);
@@ -375,6 +386,7 @@ public class ProductTests extends PDETestCase {
 		assertLogContainsLine(gtkInfo, "org.eclipse.swt.gtk.linux.x86_64");
 	}
 
+	@Test
 	public void testBug271373() throws Exception {
 		IFolder buildFolder = newTest("271373");
 
@@ -402,6 +414,7 @@ public class ProductTests extends PDETestCase {
 		assertResourceFile(buildFolder, "tmp/eclipse/plugins/A_1.0.0.jar");
 	}
 
+	@Test
 	public void testBug265438() throws Exception {
 		IFolder buildFolder = newTest("265438");
 
@@ -436,6 +449,7 @@ public class ProductTests extends PDETestCase {
 		assertLogContainsLine(buildFolder.getFile("tmp/eclipse/configuration/config.ini"), "osgi.bundles=A@start");
 	}
 
+	@Test
 	public void testBug246060() throws Exception {
 		IFolder buildFolder = newTest("246060");
 
@@ -466,6 +480,7 @@ public class ProductTests extends PDETestCase {
 		assertEquals(i.next().getVersion(), "1.2.1");
 	}
 
+	@Test
 	public void testBug262324() throws Exception {
 		IFolder buildFolder = newTest("262324");
 
@@ -486,6 +501,7 @@ public class ProductTests extends PDETestCase {
 		generateScripts(buildFolder, properties);
 	}
 
+	@Test
 	public void testBug266056() throws Exception {
 		IFolder buildFolder = newTest("266056");
 
@@ -532,6 +548,7 @@ public class ProductTests extends PDETestCase {
 				"org.eclipse.equinox.common_" + versions.get("org.eclipse.equinox.common") + ",1,true");
 	}
 
+	@Test
 	public void testBug266056_2() throws Exception {
 		IFolder buildFolder = newTest("266056_2");
 
@@ -565,6 +582,7 @@ public class ProductTests extends PDETestCase {
 
 	}
 
+	@Test
 	public void testBug269540() throws Exception {
 		IFolder buildFolder = newTest("269540");
 

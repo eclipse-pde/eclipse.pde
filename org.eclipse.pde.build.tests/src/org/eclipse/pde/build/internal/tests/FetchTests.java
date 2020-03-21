@@ -13,6 +13,7 @@
 
 package org.eclipse.pde.build.internal.tests;
 
+import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.File;

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.build.internal.tests.p2;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.util.*;
 import org.eclipse.core.resources.IFile;
@@ -28,6 +30,7 @@ import org.eclipse.pde.build.internal.tests.Utils;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.eclipse.pde.internal.build.site.BuildTimeFeatureFactory;
+import org.junit.Test;
 
 public class LicenseTests extends P2TestCase {
 	private static final int URL_EMPTY = 1;
@@ -36,6 +39,7 @@ public class LicenseTests extends P2TestCase {
 	private static final int DESC_EMPTY = 100;
 	private static final int DESC_NON_EMPTY = 101;
 
+	@Test
 	public void testLicenseFeatureOldP2() throws Exception {
 		IFolder buildFolder = newTest("testLicenseFeatureOldP2", "licenseFeature1");
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
@@ -75,7 +79,8 @@ public class LicenseTests extends P2TestCase {
 
 		assertZipContents(buildFolder, "repo/features/F1_1.0.0.jar", entries);
 
-		// Check that feature.properties contains all original properties PLUS properties from license
+		// Check that feature.properties contains all original properties PLUS
+		// properties from license
 		IFile licensePropertyFile = buildFolder.getFile("features/L1/feature.properties");
 		Properties licenseProperties = Utils.loadProperties(licensePropertyFile);
 
@@ -83,10 +88,12 @@ public class LicenseTests extends P2TestCase {
 		Properties originalProperties = Utils.loadProperties(originalPropertyFile);
 
 		IFile actualPropertiesFile = buildFolder.getFile("checkProperties");
-		Utils.extractFromZip(buildFolder, "I.TestBuild/F1-TestBuild.zip", "eclipse/features/F1_1.0.0/feature.properties", actualPropertiesFile);
+		Utils.extractFromZip(buildFolder, "I.TestBuild/F1-TestBuild.zip",
+				"eclipse/features/F1_1.0.0/feature.properties", actualPropertiesFile);
 		Properties actualProperties = Utils.loadProperties(actualPropertiesFile);
 
-		assertEquals("Result feature.properties has incorrect number of properties", originalProperties.size() + 2, actualProperties.size());
+		assertEquals("Result feature.properties has incorrect number of properties", originalProperties.size() + 2,
+				actualProperties.size());
 
 		Enumeration<Object> keys = originalProperties.keys();
 		while (keys.hasMoreElements()) {
@@ -114,7 +121,8 @@ public class LicenseTests extends P2TestCase {
 
 		// Check that license elements in feature.xml where changed.
 		IFile actualFeatureFile = buildFolder.getFile("checkFeature.xml");
-		Utils.extractFromZip(buildFolder, "I.TestBuild/F1-TestBuild.zip", "eclipse/features/F1_1.0.0/feature.xml", actualFeatureFile);
+		Utils.extractFromZip(buildFolder, "I.TestBuild/F1-TestBuild.zip", "eclipse/features/F1_1.0.0/feature.xml",
+				actualFeatureFile);
 		BuildTimeFeature actualFeature = factory.parseBuildFeature(actualFeatureFile.getLocationURI().toURL());
 
 		assertNotNull(actualFeature.getLicense());
@@ -129,6 +137,7 @@ public class LicenseTests extends P2TestCase {
 	}
 
 	// Test various combinations of empty and non-empty license and payload values
+	@Test
 	public void testEmptyCombosPDE() throws Exception {
 
 		// Prepare
@@ -161,6 +170,7 @@ public class LicenseTests extends P2TestCase {
 		}
 	}
 
+	@Test
 	public void testRootUsedWithNoLicenseRefPDE() throws Exception {
 		boolean expectedExceptionCaught = false;
 
@@ -171,13 +181,15 @@ public class LicenseTests extends P2TestCase {
 		try {
 			runBuild(buildFolder);
 		} catch (Exception e) {
-			assertTrue("Build throws wrong exception", e.getMessage().indexOf("uses 'license:' root keyword but does not reference a license feature") != -1);
+			assertTrue("Build throws wrong exception", e.getMessage()
+					.indexOf("uses 'license:' root keyword but does not reference a license feature") != -1);
 			expectedExceptionCaught = true;
 		}
 
 		assertTrue("Build should have failed", expectedExceptionCaught);
 	}
 
+	@Test
 	public void testLicenseFeaturePDE() throws Exception {
 		IFolder buildFolder = newTest("testLicenseFeaturePDE", "licenseFeature1");
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
@@ -196,7 +208,8 @@ public class LicenseTests extends P2TestCase {
 
 		assertZipContents(buildFolder, "I.TestBuild/F1-TestBuild.zip", entries);
 
-		// Check that feature.properties contains all original properties PLUS properties from license
+		// Check that feature.properties contains all original properties PLUS
+		// properties from license
 		IFile licensePropertyFile = buildFolder.getFile("features/L1/feature.properties");
 		Properties licenseProperties = Utils.loadProperties(licensePropertyFile);
 
@@ -204,10 +217,12 @@ public class LicenseTests extends P2TestCase {
 		Properties originalProperties = Utils.loadProperties(originalPropertyFile);
 
 		IFile actualPropertiesFile = buildFolder.getFile("checkProperties");
-		Utils.extractFromZip(buildFolder, "I.TestBuild/F1-TestBuild.zip", "eclipse/features/F1_1.0.0/feature.properties", actualPropertiesFile);
+		Utils.extractFromZip(buildFolder, "I.TestBuild/F1-TestBuild.zip",
+				"eclipse/features/F1_1.0.0/feature.properties", actualPropertiesFile);
 		Properties actualProperties = Utils.loadProperties(actualPropertiesFile);
 
-		assertEquals("Result feature.properties has incorrect number of properties", originalProperties.size() + 2, actualProperties.size());
+		assertEquals("Result feature.properties has incorrect number of properties", originalProperties.size() + 2,
+				actualProperties.size());
 
 		Enumeration<Object> keys = originalProperties.keys();
 		while (keys.hasMoreElements()) {
@@ -224,6 +239,7 @@ public class LicenseTests extends P2TestCase {
 		checkBuiltFeature(buildFolder, "");
 	}
 
+	@Test
 	public void testP2Gathering() throws Exception {
 		IFolder buildFolder = newTest("licenseP2Gathering", "licenseFeature1");
 
@@ -245,30 +261,39 @@ public class LicenseTests extends P2TestCase {
 		entries.add("license.html");
 		assertZipContents(buildFolder, "buildRepo/features/F1_1.0.0.jar", entries);
 
-		//also try using the gather task directly
+		// also try using the gather task directly
 		IFile testXML = buildFolder.getFile("test.xml");
 		IFolder repo2 = Utils.createFolder(buildFolder, "repo2");
 		StringBuffer test = new StringBuffer();
-		test.append("<project default=\"publish\">                                                                    \n");
-		test.append("  <target name=\"publish\">                                                                      \n");
-		test.append("    <eclipse.gatherFeature metadataRepository=\"${repo}\" artifactRepository=\"${repo}\"         \n");
-		test.append("                        buildResultFolder=\"${folder}\" baseDirectory=\"${folder}\"              \n");
-		test.append("                        licenseDirectory=\"${license}\" />                                       \n");
-		test.append("  </target>                                                                                     \n");
-		test.append("</project>                                                                                      \n");
+		test.append(
+				"<project default=\"publish\">                                                                    \n");
+		test.append(
+				"  <target name=\"publish\">                                                                      \n");
+		test.append(
+				"    <eclipse.gatherFeature metadataRepository=\"${repo}\" artifactRepository=\"${repo}\"         \n");
+		test.append(
+				"                        buildResultFolder=\"${folder}\" baseDirectory=\"${folder}\"              \n");
+		test.append(
+				"                        licenseDirectory=\"${license}\" />                                       \n");
+		test.append(
+				"  </target>                                                                                     \n");
+		test.append(
+				"</project>                                                                                      \n");
 		Utils.writeBuffer(testXML, test);
 
 		properties = new Properties();
 		properties.put("repo", URIUtil.toUnencodedString(repo2.getLocationURI()));
 		properties.put("folder", buildFolder.getFolder("features/F1").getLocation().toString());
 		properties.put("license", buildFolder.getFolder("features/L1").getLocation().toString());
-		runAntScript(testXML.getLocation().toOSString(), new String[] {"publish"}, buildFolder.getLocation().toOSString(), properties);
+		runAntScript(testXML.getLocation().toOSString(), new String[] { "publish" },
+				buildFolder.getLocation().toOSString(), properties);
 
 		entries = new HashSet<>();
 		entries.add("license.html");
 		assertZipContents(repo2, "features/F1_1.0.0.jar", entries);
 	}
 
+	@Test
 	public void testP2Gathering_Custom() throws Exception {
 		IFolder buildFolder = newTest("licenseP2GatheringCustom", "licenseFeature1");
 
@@ -314,6 +339,7 @@ public class LicenseTests extends P2TestCase {
 		assertZipContents(buildFolder, "buildRepo/binary/F1_root_1.0.0", entries);
 	}
 
+	@Test
 	public void testBinaryLicense() throws Exception {
 		IFolder buildFolder = newTest("binaryLicense", "licenseFeature1");
 
@@ -333,7 +359,8 @@ public class LicenseTests extends P2TestCase {
 		runBuild(buildFolder);
 
 		IFolder build2 = Utils.createFolder(buildFolder, "build2");
-		Utils.copy(buildFolder.getFolder("features/F1").getLocation().toFile(), build2.getFolder("features/F1").getLocation().toFile());
+		Utils.copy(buildFolder.getFolder("features/F1").getLocation().toFile(),
+				build2.getFolder("features/F1").getLocation().toFile());
 
 		properties = BuildConfiguration.getBuilderProperties(build2);
 		properties.put("topLevelElementId", "F1");
@@ -347,7 +374,8 @@ public class LicenseTests extends P2TestCase {
 		assertFalse(build2.getFolder("tmp/eclipse/features/F1_1.0.0/META-INF").exists());
 
 		IFolder build3 = Utils.createFolder(buildFolder, "build3");
-		Utils.copy(buildFolder.getFolder("features/F1").getLocation().toFile(), build3.getFolder("features/F1").getLocation().toFile());
+		Utils.copy(buildFolder.getFolder("features/F1").getLocation().toFile(),
+				build3.getFolder("features/F1").getLocation().toFile());
 
 		properties = BuildConfiguration.getBuilderProperties(build3);
 		properties.put("topLevelElementId", "F1");
@@ -363,23 +391,24 @@ public class LicenseTests extends P2TestCase {
 		assertResourceFile(build2, "tmp/eclipse/features/F1_1.0.0/sub/license.html");
 		assertFalse(build2.getFolder("tmp/eclipse/features/F1_1.0.0/META-INF").exists());
 		assertResourceFile(build3, "buildRepo/features/F1_1.0.0.jar");
-		assertFalse(Utils.extractFromZip(build3, "buildRepo/features/F1_1.0.0.jar", "META-INF/ECLIPSEF.RSA", build3.getFile("rsa.txt")));
+		assertFalse(Utils.extractFromZip(build3, "buildRepo/features/F1_1.0.0.jar", "META-INF/ECLIPSEF.RSA",
+				build3.getFile("rsa.txt")));
 	}
 
 	private String getStateMessage(int state) {
 		switch (state) {
-			case URL_NONE :
-				return "No URL";
-			case URL_EMPTY :
-				return "URL Empty";
-			case URL_NON_EMPTY :
-				return "URL Not Empty";
-			case DESC_EMPTY :
-				return "Description Empty";
-			case DESC_NON_EMPTY :
-				return "Description Not Empty";
-			default :
-				return "unknown";
+		case URL_NONE:
+			return "No URL";
+		case URL_EMPTY:
+			return "URL Empty";
+		case URL_NON_EMPTY:
+			return "URL Not Empty";
+		case DESC_EMPTY:
+			return "Description Empty";
+		case DESC_NON_EMPTY:
+			return "Description Not Empty";
+		default:
+			return "unknown";
 		}
 	}
 
@@ -394,9 +423,11 @@ public class LicenseTests extends P2TestCase {
 		// Check that license elements in feature.xml where changed.
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
 
-		//IFile actualFeatureFile = buildFolder.getFile("tmp/eclipse/features/F1_1.0.0/feature.xml");//buildFolder.getFile("checkFeature.xml");
+		// IFile actualFeatureFile =
+		// buildFolder.getFile("tmp/eclipse/features/F1_1.0.0/feature.xml");//buildFolder.getFile("checkFeature.xml");
 		IFile actualFeatureFile = buildFolder.getFile("checkFeature.xml");
-		assertTrue(Utils.extractFromZip(buildFolder, "I.TestBuild/F1-TestBuild.zip", "eclipse/features/F1_1.0.0/feature.xml", actualFeatureFile));
+		assertTrue(Utils.extractFromZip(buildFolder, "I.TestBuild/F1-TestBuild.zip",
+				"eclipse/features/F1_1.0.0/feature.xml", actualFeatureFile));
 		BuildTimeFeature actualFeature = factory.parseBuildFeature(actualFeatureFile.getLocationURI().toURL());
 
 		IFile licenseFeatureFile = buildFolder.getFile("features/L1/feature.xml");
@@ -409,32 +440,35 @@ public class LicenseTests extends P2TestCase {
 		assertEquals(errorMessage + "license text not equal", licenseFeature.getLicense(), actualFeature.getLicense());
 
 		assertNotNull(errorMessage + "license url was null", actualFeature.getLicenseURL());
-		assertEquals(errorMessage + "license url not equal", licenseFeature.getLicenseURL(), actualFeature.getLicenseURL());
+		assertEquals(errorMessage + "license url not equal", licenseFeature.getLicenseURL(),
+				actualFeature.getLicenseURL());
 
 		assertEquals(errorMessage + "feature ID corrupted", originalFeature.getId(), actualFeature.getId());
-		assertEquals(errorMessage + "feature description corrupted", originalFeature.getDescription(), actualFeature.getDescription());
-		assertEquals(errorMessage + "feature copyright corrupted", originalFeature.getCopyright(), actualFeature.getCopyright());
+		assertEquals(errorMessage + "feature description corrupted", originalFeature.getDescription(),
+				actualFeature.getDescription());
+		assertEquals(errorMessage + "feature copyright corrupted", originalFeature.getCopyright(),
+				actualFeature.getCopyright());
 	}
 
 	private void copyFeature(IFolder buildFolder, String featureID, int state) throws CoreException {
 		String sourceFileName = null;
 
 		switch (state) {
-			case URL_EMPTY :
-				sourceFileName = "emptyLicenseURLFeature.xml";
-				break;
-			case URL_NON_EMPTY :
-				sourceFileName = "nonEmptyLicenseURLFeature.xml";
-				break;
-			case URL_NONE :
-				sourceFileName = "noLicenseURLFeature.xml";
-				break;
-			case DESC_EMPTY :
-				sourceFileName = "emptyLicenseDescFeature.xml";
-				break;
-			case DESC_NON_EMPTY :
-				sourceFileName = "nonEmptyLicenseDescFeature.xml";
-				break;
+		case URL_EMPTY:
+			sourceFileName = "emptyLicenseURLFeature.xml";
+			break;
+		case URL_NON_EMPTY:
+			sourceFileName = "nonEmptyLicenseURLFeature.xml";
+			break;
+		case URL_NONE:
+			sourceFileName = "noLicenseURLFeature.xml";
+			break;
+		case DESC_EMPTY:
+			sourceFileName = "emptyLicenseDescFeature.xml";
+			break;
+		case DESC_NON_EMPTY:
+			sourceFileName = "nonEmptyLicenseDescFeature.xml";
+			break;
 		}
 
 		IFile source = buildFolder.getFile("features/" + featureID + "/" + sourceFileName);
@@ -445,6 +479,7 @@ public class LicenseTests extends P2TestCase {
 		source.copy(dest.getFullPath(), true, null);
 	}
 
+	@Test
 	public void testBug338835_MissingLicenseSection() throws Exception {
 		IFolder buildFolder = newTest("338835");
 		IFolder featureFolder = Utils.createFolder(buildFolder, "feature");
@@ -469,17 +504,25 @@ public class LicenseTests extends P2TestCase {
 		Utils.writeBuffer(licenseFolder.getFile("feature.xml"), buffer);
 
 		buffer = new StringBuffer();
-		buffer.append("<project name=\"build\" basedir=\".\" >														\n");
-		buffer.append("	<target name=\"test\">																	 	\n");
-		buffer.append("		<eclipse.licenseReplacer featureFilePath=\"" + featureFolder.getLocation().toOSString() + "\"	\n");
-		buffer.append("			licenseFilePath=\"" + licenseFolder.getLocation().toOSString() + "\" /> 					\n");
-		buffer.append("	</target>																					\n");
-		buffer.append("</project>																					\n");
+		buffer.append(
+				"<project name=\"build\" basedir=\".\" >														\n");
+		buffer.append(
+				"	<target name=\"test\">																	 	\n");
+		buffer.append("		<eclipse.licenseReplacer featureFilePath=\"" + featureFolder.getLocation().toOSString()
+				+ "\"	\n");
+		buffer.append("			licenseFilePath=\"" + licenseFolder.getLocation().toOSString()
+				+ "\" /> 					\n");
+		buffer.append(
+				"	</target>																					\n");
+		buffer.append(
+				"</project>																					\n");
 		IFile buildXml = buildFolder.getFile("build.xml");
 		Utils.writeBuffer(buildXml, buffer);
 
-		runAntScript(buildXml.getLocation().toOSString(), new String[] {"test"}, buildFolder.getLocation().toOSString(), null);
-		BuildTimeFeature feature = new BuildTimeFeatureFactory().parseBuildFeature(featureFolder.getFile("feature.xml").getLocationURI().toURL());
+		runAntScript(buildXml.getLocation().toOSString(), new String[] { "test" },
+				buildFolder.getLocation().toOSString(), null);
+		BuildTimeFeature feature = new BuildTimeFeatureFactory()
+				.parseBuildFeature(featureFolder.getFile("feature.xml").getLocationURI().toURL());
 
 		assertEquals(feature.getLicense().trim(), "This is legal stuff");
 	}

@@ -13,6 +13,8 @@
 
 package org.eclipse.pde.build.internal.tests.p2;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.net.URI;
@@ -21,7 +23,6 @@ import java.util.*;
 import java.util.jar.Attributes;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import junit.framework.AssertionFailedError;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
@@ -217,7 +218,7 @@ public class PublishingTests extends P2TestCase {
 		try {
 			assertTouchpoint(iu, "install", "chmod(targetDir:${installFolder}, targetFile:file, permissions:755)");
 			fail = true;
-		} catch (AssertionFailedError e) {
+		} catch (AssertionError e) {
 		}
 		assertFalse(fail);
 
@@ -279,7 +280,7 @@ public class PublishingTests extends P2TestCase {
 		try {
 			assertTouchpoint(iu, "zipped", "true");
 			hasZipped = true;
-		} catch (AssertionFailedError e) {
+		} catch (AssertionError e) {
 		}
 		assertFalse(hasZipped);
 

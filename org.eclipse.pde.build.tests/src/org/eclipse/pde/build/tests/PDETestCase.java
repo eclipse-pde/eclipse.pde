@@ -13,11 +13,12 @@
 
 package org.eclipse.pde.build.tests;
 
+import static org.junit.Assert.*;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
-import junit.framework.TestCase;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.helper.AntXMLContext;
 import org.apache.tools.ant.helper.ProjectHelper2;
@@ -34,10 +35,11 @@ import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
+import org.junit.After;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
-public abstract class PDETestCase extends TestCase {
+public abstract class PDETestCase {
 	public static final String PROJECT_NAME = "pde.build";
 	public static final String EQUINOX_COMMON = "org.eclipse.equinox.common";
 	public static final String SIMPLE_CONFIGURATOR = "org.eclipse.equinox.simpleconfigurator";
@@ -60,10 +62,8 @@ public abstract class PDETestCase extends TestCase {
 		BuildDirector.p2Gathering = false;
 	}
 
-	@Override
-	protected void runTest() throws Throwable {
-		super.runTest();
-
+	@After
+	public void cleanup() {
 		// clean up after success
 		if (buildFolder != null && buildFolder.exists() && !Boolean.getBoolean("pde.build.noCleanup")) {
 			try {
@@ -71,6 +71,7 @@ public abstract class PDETestCase extends TestCase {
 			} catch (CoreException e) {
 			}
 		}
+
 	}
 
 	protected IProject newTest() throws Exception {
