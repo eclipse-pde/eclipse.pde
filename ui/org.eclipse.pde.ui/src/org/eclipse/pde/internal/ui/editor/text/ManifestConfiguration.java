@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -87,6 +87,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 			rule.addWord(ICoreConstants.PROVIDE_PACKAGE, fToken);
 			rule.addWord(Constants.BUNDLE_ACTIVATIONPOLICY, fToken);
 			rule.addWord("Automatic-Module-Name", fToken); //$NON-NLS-1$
+			rule.addWord("Manifest-Version", fToken); //$NON-NLS-1$
 			setRules(new IRule[] {rule});
 			setDefaultReturnToken(new Token(createTextAttribute(IPDEColorConstants.P_HEADER_KEY)));
 		}
