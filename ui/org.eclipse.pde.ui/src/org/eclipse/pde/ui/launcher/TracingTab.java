@@ -40,7 +40,6 @@ public class TracingTab extends AbstractLauncherTab {
 
 	private Image fImage;
 	private TracingBlock fTracingBlock;
-	private boolean fInitialized;
 
 	/**
 	 * Constructor
@@ -65,10 +64,6 @@ public class TracingTab extends AbstractLauncherTab {
 
 	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
-		if (!fInitialized) {
-			fTracingBlock.initializeFrom(workingCopy);
-			fInitialized = true;
-		}
 		fTracingBlock.activated(workingCopy);
 	}
 
@@ -83,7 +78,7 @@ public class TracingTab extends AbstractLauncherTab {
 
 	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
-		// do nothing, initialize during activated
+		fTracingBlock.initializeFrom(config);
 	}
 
 	@Override
