@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2019 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -709,11 +709,11 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 		// Get the current models from the target platform
 		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getExternalModels();
-		Set<String> allLocations = new HashSet<>(models.length);
-		Map<String, IPluginModelBase> stateLocations = new LinkedHashMap<>(models.length);
+		Set<File> allFilesAtLocations = new HashSet<>(models.length);
+		Map<File, IPluginModelBase> stateLocations = new LinkedHashMap<>(models.length);
 		for (IPluginModelBase base : models) {
-			allLocations.add(base.getInstallLocation());
-			stateLocations.put(base.getInstallLocation(), base);
+			allFilesAtLocations.add(new File(base.getInstallLocation()));
+			stateLocations.put(new File(base.getInstallLocation()), base);
 		}
 
 		// Compare the platform bundles against the definition ones and collect any missing bundles
@@ -724,12 +724,13 @@ public class TargetPlatformService implements ITargetPlatformService {
 			BundleInfo info = bundle.getBundleInfo();
 			File file = URIUtil.toFile(info.getLocation());
 			String location = file.getAbsolutePath();
-			stateLocations.remove(location);
+			File fileAtLocation = new File(location);
+			stateLocations.remove(fileAtLocation);
 			NameVersionDescriptor desc = new NameVersionDescriptor(info.getSymbolicName(), info.getVersion());
 			if (!alreadyConsidered.contains(desc)) {
 				alreadyConsidered.add(desc);
 				// ignore duplicates (symbolic name & version)
-				if (!allLocations.contains(location)) {
+				if (!allFilesAtLocations.contains(fileAtLocation)) {
 					// it's not in the state... if it's not really in the target either (missing) this
 					// is not an error
 					IStatus status = bundle.getStatus();
