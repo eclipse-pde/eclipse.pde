@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import com.ibm.icu.text.MessageFormat;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import org.eclipse.core.runtime.*;

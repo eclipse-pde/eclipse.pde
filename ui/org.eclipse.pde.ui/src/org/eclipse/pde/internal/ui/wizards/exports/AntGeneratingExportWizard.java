@@ -15,10 +15,10 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
-import com.ibm.icu.text.MessageFormat;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;

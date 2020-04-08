@@ -17,6 +17,7 @@ package org.eclipse.pde.api.tools.internal.tasks;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,8 +42,6 @@ import org.eclipse.pde.api.tools.internal.search.UseSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.XmlSearchReporter;
 import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 import org.eclipse.pde.api.tools.internal.util.Util;
-
-import com.ibm.icu.text.DateFormat;
 
 /**
  * Ant task for performing the API use analysis of a given Eclipse SDK

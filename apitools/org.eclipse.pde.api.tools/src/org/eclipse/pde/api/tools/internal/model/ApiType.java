@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -40,8 +41,6 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Base implementation of {@link IApiType}

@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -78,8 +79,6 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Builder for creating API Tools resource markers

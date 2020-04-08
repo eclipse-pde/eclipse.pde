@@ -17,8 +17,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dialogs;
 
-import com.ibm.icu.text.BreakIterator;
 import java.io.File;
+import java.text.BreakIterator;
 import java.util.Comparator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.ui.JavaUI;

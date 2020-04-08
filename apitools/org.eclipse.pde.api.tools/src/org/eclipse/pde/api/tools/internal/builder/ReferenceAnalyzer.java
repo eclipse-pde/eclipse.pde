@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,8 +36,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The reference analyzer

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
+import java.text.MessageFormat;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IMarker;
@@ -30,8 +31,6 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Marker resolution for adding an API filter for the specific member the marker

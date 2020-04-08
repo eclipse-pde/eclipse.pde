@@ -14,6 +14,8 @@
 package org.eclipse.pde.api.tools.ui.internal.use;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -63,9 +65,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.UIJob;
-
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Job that performs a API use scan.

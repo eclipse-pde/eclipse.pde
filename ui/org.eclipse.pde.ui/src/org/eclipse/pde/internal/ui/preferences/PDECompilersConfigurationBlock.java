@@ -17,7 +17,7 @@ package org.eclipse.pde.internal.ui.preferences;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 import java.util.Map.Entry;

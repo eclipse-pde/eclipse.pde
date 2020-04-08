@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;

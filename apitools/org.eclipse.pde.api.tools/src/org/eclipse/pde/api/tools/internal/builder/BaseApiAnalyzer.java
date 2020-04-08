@@ -21,6 +21,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -115,8 +116,6 @@ import org.eclipse.pde.api.tools.internal.util.SinceTagVersion;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Base implementation of the analyzer used in the {@link ApiAnalysisBuilder}

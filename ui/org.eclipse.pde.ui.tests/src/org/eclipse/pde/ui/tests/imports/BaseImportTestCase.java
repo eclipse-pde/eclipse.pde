@@ -60,11 +60,6 @@ public abstract class BaseImportTestCase extends PDETestCase {
 	}
 
 	@Test
-	public void testImportICU(){
-		doSingleImport("com.ibm.icu", true);
-	}
-
-	@Test
 	public void testImportLinksMultiple() {
 		IPluginModelBase[] modelsToImport = getModels(new String[] {"org.eclipse.core.filebuffers", "org.eclipse.jdt.doc.user", "org.eclipse.pde.build"});
 		runOperation(modelsToImport, getType());

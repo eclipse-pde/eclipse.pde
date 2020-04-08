@@ -19,6 +19,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -59,8 +60,6 @@ import org.eclipse.text.edits.TextEdit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This class tests the {@link ApiDescriptionProcessor}

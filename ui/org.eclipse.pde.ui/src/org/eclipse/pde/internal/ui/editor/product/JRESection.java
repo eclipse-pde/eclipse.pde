@@ -17,7 +17,7 @@ package org.eclipse.pde.internal.ui.editor.product;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.launching.IVMInstall;

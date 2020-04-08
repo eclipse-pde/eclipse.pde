@@ -640,7 +640,6 @@ public class UtilTests {
 				"org.eclipse.pde.ui.templates", //$NON-NLS-1$
 				"org.eclipse.ecf.ssl", //$NON-NLS-1$
 				"org.eclipse.ui.cheatsheets", //$NON-NLS-1$
-				"com.ibm.icu", //$NON-NLS-1$
 				"org.eclipse.core.net.win32.x86", //$NON-NLS-1$
 				"org.eclipse.jdt.doc.user", //$NON-NLS-1$
 				"org.eclipse.equinox.app", //$NON-NLS-1$
@@ -648,8 +647,8 @@ public class UtilTests {
 				"org.eclipse.equinox.p2.publisher", //$NON-NLS-1$
 				"org.eclipse.ecf.provider.filetransfer.httpclient", //$NON-NLS-1$
 		};
-		for (int i = 0, max = componentNames.length; i < max; i++) {
-			allComponents.add(new LocalApiComponent(componentNames[i]));
+		for (String componentName : componentNames) {
+			allComponents.add(new LocalApiComponent(componentName));
 		}
 		IApiComponent[] components = new IApiComponent[allComponents.size()];
 		allComponents.toArray(components);

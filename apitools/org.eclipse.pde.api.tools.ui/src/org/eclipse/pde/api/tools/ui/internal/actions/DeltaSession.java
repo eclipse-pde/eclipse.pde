@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.actions;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -41,8 +42,6 @@ import org.eclipse.ui.views.properties.IPropertySheetEntry;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.IPropertySource2;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
-
-import com.ibm.icu.text.DateFormat;
 
 public class DeltaSession implements ISession {
 	static Object[] NO_CHILDREN = new Object[0];

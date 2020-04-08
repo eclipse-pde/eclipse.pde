@@ -19,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
 import java.util.Calendar;
 
 import org.eclipse.core.runtime.CoreException;
@@ -29,7 +30,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.ibm.icu.text.DateFormat;
 
 /**
  * Implementation of {@link IMetadata} for API Use Scan problem report

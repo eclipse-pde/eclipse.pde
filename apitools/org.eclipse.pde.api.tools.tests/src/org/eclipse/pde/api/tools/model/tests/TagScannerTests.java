@@ -19,6 +19,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -43,8 +44,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.junit.Test;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Class tests that the tag scanner for the API tools correctly scans source for

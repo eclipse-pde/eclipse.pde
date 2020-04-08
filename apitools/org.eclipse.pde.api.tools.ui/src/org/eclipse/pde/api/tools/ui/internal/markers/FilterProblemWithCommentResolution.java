@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -22,8 +24,6 @@ import org.eclipse.jdt.ui.JavaElementLabels;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Problem resolution that creates an {@link IApiProblemFilter} with a comment

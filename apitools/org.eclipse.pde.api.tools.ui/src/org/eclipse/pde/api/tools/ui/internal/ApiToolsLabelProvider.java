@@ -15,6 +15,7 @@ package org.eclipse.pde.api.tools.ui.internal;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -43,8 +44,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE.SharedImages;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Label provider for API tools objects.

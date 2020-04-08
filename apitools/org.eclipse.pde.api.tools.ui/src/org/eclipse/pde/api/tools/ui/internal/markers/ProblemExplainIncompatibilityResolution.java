@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
+import java.text.MessageFormat;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IMarker;
@@ -29,8 +30,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Marker resolution for explaining a specific API tool error as quickfix

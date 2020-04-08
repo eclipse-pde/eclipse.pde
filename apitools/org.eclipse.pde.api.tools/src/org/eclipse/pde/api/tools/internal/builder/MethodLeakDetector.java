@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
+import java.text.MessageFormat;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -37,8 +38,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Detects leaks in method return types and parameters

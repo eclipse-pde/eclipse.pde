@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -42,8 +43,6 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescri
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Implementation of an API description.

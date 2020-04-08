@@ -16,10 +16,10 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
-import com.ibm.icu.text.MessageFormat;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 import java.util.jar.JarFile;

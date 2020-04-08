@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;
 import java.util.*;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ProjectScope;

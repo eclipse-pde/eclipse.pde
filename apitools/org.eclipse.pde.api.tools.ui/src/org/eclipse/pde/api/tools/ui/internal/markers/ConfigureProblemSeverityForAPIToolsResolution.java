@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -42,8 +43,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class ConfigureProblemSeverityForAPIToolsResolution extends WorkbenchMarkerResolution
 		implements IJavaCompletionProposal, IMarkerResolutionRelevance {

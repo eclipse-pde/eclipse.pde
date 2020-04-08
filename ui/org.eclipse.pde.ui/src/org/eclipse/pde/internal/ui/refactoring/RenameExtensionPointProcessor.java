@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ltk.core.refactoring.*;

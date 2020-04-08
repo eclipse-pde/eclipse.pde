@@ -14,6 +14,7 @@
 package org.eclipse.pde.api.tools.internal.problems;
 
 import java.text.ChoiceFormat;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -32,8 +33,6 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Factory for creating {@link IApiProblem}s

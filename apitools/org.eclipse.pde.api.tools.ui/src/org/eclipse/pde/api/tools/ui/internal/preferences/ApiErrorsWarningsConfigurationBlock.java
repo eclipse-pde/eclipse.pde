@@ -15,6 +15,7 @@ package org.eclipse.pde.api.tools.ui.internal.preferences;
 
 import java.awt.Checkbox;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -76,8 +77,6 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
 import org.eclipse.ui.preferences.WorkingCopyManager;
 import org.osgi.service.prefs.BackingStoreException;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This block is used to add the API Tools notification settings UI to a parent

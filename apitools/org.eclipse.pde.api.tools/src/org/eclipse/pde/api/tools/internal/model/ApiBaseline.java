@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -71,8 +72,6 @@ import org.eclipse.pde.internal.core.BuildDependencyCollector;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Implementation of an {@link IApiBaseline}

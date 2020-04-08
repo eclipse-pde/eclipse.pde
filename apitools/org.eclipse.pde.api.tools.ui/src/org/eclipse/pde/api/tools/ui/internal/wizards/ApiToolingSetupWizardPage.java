@@ -16,6 +16,7 @@ package org.eclipse.pde.api.tools.ui.internal.wizards;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -76,8 +77,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The main page for the {@link ApiToolingSetupWizard}

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
+import java.text.MessageFormat;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -31,8 +32,6 @@ import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Detects leaked types.

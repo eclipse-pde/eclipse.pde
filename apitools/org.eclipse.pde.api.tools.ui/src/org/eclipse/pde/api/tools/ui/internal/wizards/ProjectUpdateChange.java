@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.wizards;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -30,8 +32,6 @@ import org.eclipse.pde.api.tools.internal.builder.BuildState;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Provides a {@link Change} for updating the nature, etc of a project

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,8 +36,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class PDEConfigureProblemSeverityAction extends Action {
 	private static final String CONFIGURE_PROBLEM_SEVERITY_DIALOG_ID = "configure_problem_severity_dialog_id"; //$NON-NLS-1$

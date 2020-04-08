@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.comparator;
 
+import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Locale;
@@ -23,8 +24,6 @@ import org.eclipse.jdt.core.Flags;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Class that manages the messages for compatible deltas.
