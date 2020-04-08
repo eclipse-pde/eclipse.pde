@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which accompanies this distribution,
@@ -596,19 +596,29 @@ public class P2Tests extends P2TestCase {
 				assertEquals(descriptors.length, 1);
 				continue;
 			}
-			assertEquals(descriptors.length, 2);
-
-			if (IArtifactDescriptor.FORMAT_PACKED.equals(descriptors[0].getProperty(IArtifactDescriptor.FORMAT))) {
-				assertMD5(repoFolder, descriptors[1]);
-			} else if (IArtifactDescriptor.FORMAT_PACKED
-					.equals(descriptors[1].getProperty(IArtifactDescriptor.FORMAT))) {
-				assertMD5(repoFolder, descriptors[0]);
+			boolean isJava14 = System.getProperty("java.specification.version").compareTo("14") >= 0;
+			if (isJava14) {
+				// no pack200 tool -> no pack.gz file
+				assertEquals(1, descriptors.length);
 			} else {
-				fail("No pack.gz desriptor");
+				assertEquals(2, descriptors.length);
+			}
+
+			if (!isJava14) { // no pack.gz on Java 14+
+				if (IArtifactDescriptor.FORMAT_PACKED.equals(descriptors[0].getProperty(IArtifactDescriptor.FORMAT))) {
+					assertMD5(repoFolder, descriptors[1]);
+				} else if (IArtifactDescriptor.FORMAT_PACKED
+						.equals(descriptors[1].getProperty(IArtifactDescriptor.FORMAT))) {
+					assertMD5(repoFolder, descriptors[0]);
+				} else {
+					fail("No pack.gz desriptor");
+				}
 			}
 
 			assertResourceFile(repoFolder, getArtifactLocation(descriptors[0]));
-			assertResourceFile(repoFolder, getArtifactLocation(descriptors[1]));
+			if (!isJava14) { // no pack.gz on Java 14+ thus only one descriptor in the array
+				assertResourceFile(repoFolder, getArtifactLocation(descriptors[1]));
+			}
 		}
 	}
 
