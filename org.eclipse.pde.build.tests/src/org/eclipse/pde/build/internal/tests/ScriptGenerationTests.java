@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which accompanies this distribution,
@@ -1342,9 +1342,14 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		runAntScript(buildXML.getLocation().toOSString(), new String[] { "default" },
 				buildFolder.getLocation().toOSString(), null);
-
-		zipEntries.add("plugins/p1_1.0.0.jar.pack.gz");
-		zipEntries.add("plugins/p2_1.0.0.jar.pack.gz");
+		if (System.getProperty("java.specification.version").compareTo("14") >= 0) {
+			// Java 14+ doesn't have pack200 tools so jars are put instead
+			zipEntries.add("plugins/p1_1.0.0.jar");
+			zipEntries.add("plugins/p2_1.0.0.jar");
+		} else {
+			zipEntries.add("plugins/p1_1.0.0.jar.pack.gz");
+			zipEntries.add("plugins/p2_1.0.0.jar.pack.gz");
+		}
 		assertZipContents(buildFolder, "I.TestBuild/f-TestBuild.zip", zipEntries);
 
 		File tempJar = new File(zipFile.getParentFile(), "temp.jar");
