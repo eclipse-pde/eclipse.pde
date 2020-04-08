@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -449,7 +449,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * @throws BadLocationException
 	 */
 	private void updateTagInSource(ICompilationUnit unit, String membername, String signature, String tagname, boolean remove) throws CoreException, MalformedTreeException, BadLocationException {
-		ASTParser parser = ASTParser.newParser(AST.JLS13);
+		ASTParser parser = ASTParser.newParser(AST.JLS14);
 		parser.setSource(unit);
 		CompilationUnit cunit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
 		assertNotNull("the ast compilation unit cannot be null", cunit); //$NON-NLS-1$

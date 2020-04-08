@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -550,7 +550,7 @@ public class ApiDescriptionProcessor {
 	 * @throws BadLocationException
 	 */
 	static void processTagUpdates(IType type, IReferenceTypeDescriptor desc, IApiDescription description, List<IElementDescriptor> members, Map<IFile, Set<TextEdit>> collector) throws CoreException, BadLocationException {
-		ASTParser parser = ASTParser.newParser(AST.JLS10);
+		ASTParser parser = ASTParser.newParser(AST.JLS14);
 		ICompilationUnit cunit = type.getCompilationUnit();
 		if (cunit != null) {
 			parser.setSource(cunit);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -281,7 +281,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 			IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
 			IType type = project.findType("javadoc", typename); //$NON-NLS-1$
 			assertNotNull("the type for javadoc." + typename + " must exist", type); //$NON-NLS-1$ //$NON-NLS-2$
-			ASTParser parser = ASTParser.newParser(AST.JLS13);
+			ASTParser parser = ASTParser.newParser(AST.JLS14);
 			parser.setSource(type.getCompilationUnit());
 			CompilationUnit cunit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
 			ChangeVisitor visitor = new ChangeVisitor(typename, innertypename, membername, signature, expectedtags);
