@@ -412,7 +412,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		Object child = AntUtils.getFirstChildByName(dot, "path");
 		assertTrue(child instanceof Path);
 		String path = child.toString();
-		assertTrue(path.indexOf("org.eclipse.core.runtime.compatibility.registry") == -1);
+		assertEquals(-1, path.indexOf("org.eclipse.core.runtime.compatibility.registry"));
 	}
 
 	@Test
@@ -837,10 +837,10 @@ public class ScriptGenerationTests extends PDETestCase {
 		Target main = antProject.getTargets().get("main");
 		assertNotNull(main);
 		Object[] children = AntUtils.getChildrenByName(main, "parallel");
-		assertTrue(children.length == 4);
+		assertEquals(4, children.length);
 
 		Task[] tasks = AntUtils.getParallelTasks((Parallel) children[0]);
-		assertTrue(tasks.length == 2);
+		assertEquals(2, tasks.length);
 		String dir0 = (String) tasks[0].getRuntimeConfigurableWrapper().getAttributeMap().get("dir");
 		String dir1 = (String) tasks[1].getRuntimeConfigurableWrapper().getAttributeMap().get("dir");
 		if (dir0.equals("plugins/B"))
@@ -851,7 +851,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		}
 
 		tasks = AntUtils.getParallelTasks((Parallel) children[1]);
-		assertTrue(tasks.length == 2);
+		assertEquals(2, tasks.length);
 		dir0 = (String) tasks[0].getRuntimeConfigurableWrapper().getAttributeMap().get("dir");
 		dir1 = (String) tasks[1].getRuntimeConfigurableWrapper().getAttributeMap().get("dir");
 		if (dir0.equals("plugins/C"))
@@ -862,11 +862,11 @@ public class ScriptGenerationTests extends PDETestCase {
 		}
 
 		tasks = AntUtils.getParallelTasks((Parallel) children[2]);
-		assertTrue(tasks.length == 1);
+		assertEquals(1, tasks.length);
 		assertEquals("plugins/E", tasks[0].getRuntimeConfigurableWrapper().getAttributeMap().get("dir"));
 
 		tasks = AntUtils.getParallelTasks((Parallel) children[3]);
-		assertTrue(tasks.length == 1);
+		assertEquals(1, tasks.length);
 		assertEquals("plugins/F", tasks[0].getRuntimeConfigurableWrapper().getAttributeMap().get("dir"));
 	}
 
