@@ -49,6 +49,7 @@ import org.eclipse.pde.internal.ds.ui.IConstants;
 import org.eclipse.pde.internal.ds.ui.Messages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
+import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -148,7 +149,7 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 			if (containsValue(header, filePath)) {
 				return;
 			}
-			filePath = header + ",\n " + filePath; //$NON-NLS-1$
+			filePath = header + "," + TextUtil.getDefaultLineDelimiter() + " " + filePath; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		bundleModel.getBundle().setHeader(DS_MANIFEST_KEY, filePath);
 	}

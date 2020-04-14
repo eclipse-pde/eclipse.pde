@@ -76,6 +76,7 @@ import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
+import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
@@ -495,7 +496,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 		StringBuilder buf = new StringBuilder();
 		for (IPath entry : entries) {
 			if (buf.length() > 0) {
-				buf.append(",\n "); //$NON-NLS-1$
+				buf.append("," + TextUtil.getDefaultLineDelimiter() + " "); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			buf.append(entry.toString());
