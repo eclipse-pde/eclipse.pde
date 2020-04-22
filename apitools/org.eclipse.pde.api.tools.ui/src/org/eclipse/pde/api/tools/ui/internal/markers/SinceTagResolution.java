@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
+import java.util.HashSet;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -24,8 +26,8 @@ import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
 /**
  * This resolution helps users to pick a default API profile when the tooling
@@ -33,11 +35,14 @@ import org.eclipse.ui.progress.UIJob;
  *
  * @since 1.0.0
  */
-public class SinceTagResolution implements IMarkerResolution2 {
+public class SinceTagResolution extends WorkbenchMarkerResolution {
 	int kind;
 	String newVersionValue;
+	IMarker marker;
+	IMarker[] otherMarkers;
 
 	public SinceTagResolution(IMarker marker) {
+		this.marker = marker;
 		this.kind = ApiProblemFactory.getProblemKind(marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
 		this.newVersionValue = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_VERSION, null);
 	}
@@ -71,6 +76,7 @@ public class SinceTagResolution implements IMarkerResolution2 {
 
 	@Override
 	public void run(final IMarker marker) {
+
 		String title = null;
 		if (IApiProblem.SINCE_TAG_INVALID == this.kind) {
 			title = NLS.bind(MarkerMessages.SinceTagResolution_change_since_tag, this.newVersionValue);
@@ -82,12 +88,37 @@ public class SinceTagResolution implements IMarkerResolution2 {
 		UIJob job = new UIJob(title) {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				UpdateSinceTagOperation updateSinceTagOperation = new UpdateSinceTagOperation(marker, SinceTagResolution.this.kind, SinceTagResolution.this.newVersionValue);
+				SinceTagResolution.this.kind = ApiProblemFactory
+						.getProblemKind(marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
+				SinceTagResolution.this.newVersionValue = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_VERSION,
+						null);
+				UpdateSinceTagOperation updateSinceTagOperation = new UpdateSinceTagOperation(marker, otherMarkers,
+						SinceTagResolution.this.kind,
+						marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_VERSION, null));
 				updateSinceTagOperation.run(monitor);
 				return Status.OK_STATUS;
 			}
 		};
 		job.setSystem(true);
 		job.schedule();
+	}
+
+	@Override
+	public IMarker[] findOtherMarkers(IMarker[] markers) {
+		HashSet<IMarker> mset = new HashSet<>(markers.length);
+		for (IMarker iMarker : markers) {
+			if (iMarker.equals(marker)) {
+				continue;
+			}
+			int kind2 = ApiProblemFactory
+					.getProblemKind(iMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
+
+			if (kind2 == this.kind) {
+				mset.add(iMarker);
+			}
+		}
+		int size = mset.size();
+		otherMarkers = mset.toArray(new IMarker[size]);
+		return otherMarkers;
 	}
 }

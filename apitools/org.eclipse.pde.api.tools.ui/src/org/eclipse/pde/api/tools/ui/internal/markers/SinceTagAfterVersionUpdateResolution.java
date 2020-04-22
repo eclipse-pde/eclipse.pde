@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 IBM Corporation and others.
+ * Copyright (c) 2019, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -48,6 +48,12 @@ public class SinceTagAfterVersionUpdateResolution extends SinceTagResolution {
 			}
 			this.newVersionValue = markerVersion.getAttribute(IApiMarkerConstants.MARKER_ATTR_VERSION, null);
 		}
+
+		try {
+			marker.setAttribute(IApiMarkerConstants.MARKER_ATTR_VERSION, this.newVersionValue);
+		} catch (CoreException e) {
+			ApiUIPlugin.log(e);
+		}
 		super.run(marker);
 	}
 
@@ -55,6 +61,12 @@ public class SinceTagAfterVersionUpdateResolution extends SinceTagResolution {
 	public String getDescription() {
 		return NLS.bind(MarkerMessages.SinceTagResolution_add_since_tag_after_version_update,
 				markerVersion.getAttribute(IApiMarkerConstants.MARKER_ATTR_VERSION, null));
+	}
+
+	@Override
+	public IMarker[] findOtherMarkers(IMarker[] markers) {
+
+		return new IMarker[0];
 	}
 
 }

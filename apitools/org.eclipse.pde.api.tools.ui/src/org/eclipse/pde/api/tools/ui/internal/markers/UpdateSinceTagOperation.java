@@ -44,11 +44,16 @@ import org.eclipse.text.edits.TextEdit;
 public class UpdateSinceTagOperation {
 
 	private IMarker fMarker;
+	private IMarker[] otherIMarkers;
 	private int sinceTagType;
 	private String sinceTagVersion;
 
-	public UpdateSinceTagOperation(IMarker marker, int sinceTagType, String sinceTagVersion) {
+	public UpdateSinceTagOperation(IMarker marker, IMarker[] otherMarkers, int sinceTagType, String sinceTagVersion) {
 		this.fMarker = marker;
+		this.otherIMarkers = otherMarkers;
+		if(this.otherIMarkers == null) {
+			this.otherIMarkers = new IMarker[0];
+		}
 		this.sinceTagType = sinceTagType;
 		this.sinceTagVersion = sinceTagVersion;
 	}
@@ -66,8 +71,9 @@ public class UpdateSinceTagOperation {
 			int intValue = charStartAttribute.intValue();
 			IJavaElement javaElement = null;
 			IJavaElement handleElement = null;
+			IResource resource = null;
 			if (intValue > 0) {
-				IResource resource = this.fMarker.getResource();
+				resource = this.fMarker.getResource();
 				javaElement = JavaCore.create(resource);
 			} else {
 				// this is a case where the marker is reported against the
@@ -125,65 +131,30 @@ public class UpdateSinceTagOperation {
 					unit.recordModifications();
 					AST ast = unit.getAST();
 					ASTRewrite rewrite = ASTRewrite.create(ast);
-					if (IApiProblem.SINCE_TAG_MISSING == this.sinceTagType) {
-						Javadoc docnode = node.getJavadoc();
-						if (docnode == null) {
-							docnode = ast.newJavadoc();
-							// we do not want to create a new empty Javadoc node
-							// in
-							// the AST if there are no missing tags
-							rewrite.set(node, node.getJavadocProperty(), docnode, null);
-						} else {
-							List<TagElement> tags = docnode.tags();
-							boolean found = false;
-							loop: for (TagElement element : tags) {
-								String tagName = element.getTagName();
-								if (TagElement.TAG_SINCE.equals(tagName)) {
-									found = true;
-									break loop;
-								}
+					processNode(unit, rewrite, node);
+					// check otherMarkers if same resource - process together
+					for (IMarker iMarker : otherIMarkers) {
+						BodyDeclaration node2 = null;
+						IResource otherResource = iMarker.getResource();
+						if (otherResource.equals(resource)) {
+							Integer charStartAttribute2 = (Integer) iMarker.getAttribute(IMarker.CHAR_START);
+							int intValue2 = charStartAttribute2.intValue();
+							NodeFinder nodeFinder2 = new NodeFinder(intValue2);
+							unit.accept(nodeFinder2);
+							if (monitor != null) {
+								monitor.worked(1);
 							}
-							if (found) {
-								return;
+							node2 = nodeFinder2.getNode();
+							if (node == node2) {
+								continue;
 							}
+							processNode(unit, rewrite, node2);
+
 						}
-						ListRewrite lrewrite = rewrite.getListRewrite(docnode, Javadoc.TAGS_PROPERTY);
-						// check the existing tags list
-						TagElement newtag = ast.newTagElement();
-						newtag.setTagName(TagElement.TAG_SINCE);
-						TextElement textElement = ast.newTextElement();
-						textElement.setText(this.sinceTagVersion);
-						newtag.fragments().add(textElement);
-						lrewrite.insertLast(newtag, null);
-					} else {
-						Javadoc docnode = node.getJavadoc();
-						List<TagElement> tags = docnode.tags();
-						TagElement sinceTag = null;
-						for (TagElement tagElement : tags) {
-							if (TagElement.TAG_SINCE.equals(tagElement.getTagName())) {
-								sinceTag = tagElement;
-								break;
-							}
-						}
-						if (sinceTag != null) {
-							List<TextElement> fragments = sinceTag.fragments();
-							if (fragments.size() >= 1) {
-								TextElement textElement = fragments.get(0);
-								StringBuilder buffer = new StringBuilder();
-								buffer.append(' ').append(this.sinceTagVersion);
-								rewrite.set(textElement, TextElement.TEXT_PROPERTY, String.valueOf(buffer), null);
-							} else {
-								ListRewrite lrewrite = rewrite.getListRewrite(docnode, Javadoc.TAGS_PROPERTY);
-								// check the existing tags list
-								TagElement newtag = ast.newTagElement();
-								newtag.setTagName(TagElement.TAG_SINCE);
-								TextElement textElement = ast.newTextElement();
-								textElement.setText(this.sinceTagVersion);
-								newtag.fragments().add(textElement);
-								lrewrite.replace(sinceTag, newtag, null);
-							}
-						}
+
 					}
+
+
 					try {
 						if (monitor != null) {
 							monitor.worked(1);
@@ -219,5 +190,72 @@ public class UpdateSinceTagOperation {
 				monitor.done();
 			}
 		}
+	}
+
+
+
+	private void processNode(CompilationUnit unit, ASTRewrite rewrite, BodyDeclaration node) {
+		AST ast = unit.getAST();
+
+		if (IApiProblem.SINCE_TAG_MISSING == this.sinceTagType) {
+			Javadoc docnode = node.getJavadoc();
+			if (docnode == null) {
+				docnode = ast.newJavadoc();
+				// we do not want to create a new empty Javadoc node
+				// in
+				// the AST if there are no missing tags
+				rewrite.set(node, node.getJavadocProperty(), docnode, null);
+			} else {
+				List<TagElement> tags = docnode.tags();
+				boolean found = false;
+				loop: for (TagElement element : tags) {
+					String tagName = element.getTagName();
+					if (TagElement.TAG_SINCE.equals(tagName)) {
+						found = true;
+						break loop;
+					}
+				}
+				if (found) {
+					return;
+				}
+			}
+			ListRewrite lrewrite = rewrite.getListRewrite(docnode, Javadoc.TAGS_PROPERTY);
+			// check the existing tags list
+			TagElement newtag = ast.newTagElement();
+			newtag.setTagName(TagElement.TAG_SINCE);
+			TextElement textElement = ast.newTextElement();
+			textElement.setText(this.sinceTagVersion);
+			newtag.fragments().add(textElement);
+			lrewrite.insertLast(newtag, null);
+		} else {
+			Javadoc docnode = node.getJavadoc();
+			List<TagElement> tags = docnode.tags();
+			TagElement sinceTag = null;
+			for (TagElement tagElement : tags) {
+				if (TagElement.TAG_SINCE.equals(tagElement.getTagName())) {
+					sinceTag = tagElement;
+					break;
+				}
+			}
+			if (sinceTag != null) {
+				List<TextElement> fragments = sinceTag.fragments();
+				if (fragments.size() >= 1) {
+					TextElement textElement = fragments.get(0);
+					StringBuilder buffer = new StringBuilder();
+					buffer.append(' ').append(this.sinceTagVersion);
+					rewrite.set(textElement, TextElement.TEXT_PROPERTY, String.valueOf(buffer), null);
+				} else {
+					ListRewrite lrewrite = rewrite.getListRewrite(docnode, Javadoc.TAGS_PROPERTY);
+					// check the existing tags list
+					TagElement newtag = ast.newTagElement();
+					newtag.setTagName(TagElement.TAG_SINCE);
+					TextElement textElement = ast.newTextElement();
+					textElement.setText(this.sinceTagVersion);
+					newtag.fragments().add(textElement);
+					lrewrite.replace(sinceTag, newtag, null);
+				}
+			}
+		}
+
 	}
 }
