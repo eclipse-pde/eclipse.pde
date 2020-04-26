@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2017, 2019 IBM Corporation and others.
+ *  Copyright (c) 2017, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.wizards.plugin.NewProjectCreationOperation;
 import org.osgi.framework.Constants;
 
 public class AddAutomaticModuleResolution extends AbstractManifestMarkerResolution {
@@ -59,7 +60,8 @@ public class AddAutomaticModuleResolution extends AbstractManifestMarkerResoluti
 				catch (Exception e) {
 					// for cases where ; not present
 				}
-				bundle.setHeader(ICoreConstants.AUTOMATIC_MODULE_NAME, val);
+				bundle.setHeader(ICoreConstants.AUTOMATIC_MODULE_NAME,
+						NewProjectCreationOperation.determineAutomaticModuleNameFromBSN(val));
 			}
 		}
 	}
