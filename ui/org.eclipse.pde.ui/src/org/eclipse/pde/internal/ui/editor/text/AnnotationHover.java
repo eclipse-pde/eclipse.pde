@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,8 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.*;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 
 public class AnnotationHover implements IAnnotationHover {
@@ -55,8 +57,18 @@ public class AnnotationHover implements IAnnotationHover {
 				if (compareRulerLine(model.getPosition(annotation), document, line)) {
 					IMarker marker = annotation.getMarker();
 					String message = marker.getAttribute(IMarker.MESSAGE, (String) null);
-					if (message != null && message.trim().length() > 0)
+					if (message != null && message.trim().length() > 0) {
+						// if version change marker, also put the description in
+						// hover
+						String problemKind = marker.getAttribute("version", null); //$NON-NLS-1$
+						if (problemKind != null) {
+							String descr = marker.getAttribute("description", null); //$NON-NLS-1$ //
+							message = NLS.bind(PDEUIMessages.AnnotationHover_version_change,
+									new String[] { message, descr });
+
+						}
 						messages.add(message);
+					}
 				}
 			}
 		}
