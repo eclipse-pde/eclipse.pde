@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2019 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -82,7 +82,7 @@ public class ReferenceExtractor extends ClassVisitor {
 		protected List<Reference> references;
 
 		public ClassFileSignatureVisitor() {
-			super(Opcodes.ASM7);
+			super(Util.LATEST_OPCODES_ASM);
 			this.references = new ArrayList<>();
 		}
 
@@ -250,7 +250,7 @@ public class ReferenceExtractor extends ClassVisitor {
 		 * @param mv
 		 */
 		public ClassFileMethodVisitor(MethodVisitor mv, String name, int argumentcount) {
-			super(Opcodes.ASM7, mv);
+			super(Util.LATEST_OPCODES_ASM, mv);
 			this.argumentcount = argumentcount;
 			this.linePositionTracker = new LinePositionTracker();
 			this.lastLineNumber = -1;
@@ -635,7 +635,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	class ClassFileFieldVisitor extends FieldVisitor {
 
 		ClassFileFieldVisitor() {
-			super(Opcodes.ASM7);
+			super(Util.LATEST_OPCODES_ASM);
 		}
 
 		@Override
@@ -991,7 +991,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	 *            {@link ReferenceModifiers}
 	 */
 	public ReferenceExtractor(IApiType type, Set<Reference> collector, int referenceKinds) {
-		super(Opcodes.ASM7, new ClassNode());
+		super(Util.LATEST_OPCODES_ASM, new ClassNode());
 		fType = type;
 		this.collector = collector;
 		fReferenceKinds = referenceKinds;
@@ -1008,7 +1008,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * @param tracker
 	 */
 	protected ReferenceExtractor(IApiType type, Set<Reference> collector, int referenceKinds, FieldTracker tracker) {
-		super(Opcodes.ASM7, new ClassNode());
+		super(Util.LATEST_OPCODES_ASM, new ClassNode());
 		fType = type;
 		this.collector = collector;
 		fReferenceKinds = referenceKinds;

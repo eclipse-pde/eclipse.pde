@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -318,6 +318,8 @@ public final class Util {
 	public static final IPath MANIFEST_PROJECT_RELATIVE_PATH = new Path(JarFile.MANIFEST_NAME);
 
 	public static final String ORG_ECLIPSE_SWT = "org.eclipse.swt"; //$NON-NLS-1$
+
+	public static final int LATEST_OPCODES_ASM = Opcodes.ASM8;
 
 	/**
 	 * Throws an exception with the given message and underlying exception.

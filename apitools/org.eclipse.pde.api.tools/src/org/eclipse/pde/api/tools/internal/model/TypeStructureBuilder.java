@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,6 +30,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -57,7 +58,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 	 *            unknown
 	 */
 	TypeStructureBuilder(ClassVisitor cv, IApiComponent component, IApiTypeRoot file) {
-		super(Opcodes.ASM7, cv);
+		super(Util.LATEST_OPCODES_ASM, cv);
 		fComponent = component;
 		fFile = file;
 	}
@@ -154,7 +155,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 			}
 		}
 		final ApiMethod method = fType.addMethod(name, desc, signature, laccess, names);
-		return new MethodVisitor(Opcodes.ASM7,
+		return new MethodVisitor(Util.LATEST_OPCODES_ASM,
 				super.visitMethod(laccess, name, desc, signature, exceptions)) {
 			@Override
 			public AnnotationVisitor visitAnnotation(String sig, boolean visible) {
@@ -190,7 +191,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 		int traceCount = 0;
 
 		public AnnotationDefaultVisitor(ApiMethod method) {
-			super(Opcodes.ASM7);
+			super(Util.LATEST_OPCODES_ASM);
 			this.method = method;
 		}
 
@@ -306,7 +307,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 		String typeName;
 
 		public EnclosingMethodSetter(ClassVisitor cv, String typeName) {
-			super(Opcodes.ASM7, cv);
+			super(Util.LATEST_OPCODES_ASM, cv);
 			this.typeName = typeName.replace('.', '/');
 		}
 
@@ -339,7 +340,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 		protected EnclosingMethodSetter setter;
 
 		public TypeNameFinder(MethodVisitor mv, EnclosingMethodSetter enclosingMethodSetter) {
-			super(Opcodes.ASM7, mv);
+			super(Util.LATEST_OPCODES_ASM, mv);
 			this.setter = enclosingMethodSetter;
 		}
 

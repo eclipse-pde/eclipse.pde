@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.comparator;
 
-import org.objectweb.asm.Opcodes;
+import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.signature.SignatureVisitor;
 
 /**
@@ -32,7 +32,7 @@ final class SignatureDecoder extends SignatureVisitor {
 	SignatureDescriptor signatureDescriptor;
 
 	public SignatureDecoder(SignatureDescriptor signatureDescriptor) {
-		super(Opcodes.ASM7);
+		super(Util.LATEST_OPCODES_ASM);
 		this.signatureDescriptor = signatureDescriptor;
 	}
 
