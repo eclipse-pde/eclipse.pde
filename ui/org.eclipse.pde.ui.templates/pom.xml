@@ -19,6 +19,6 @@
   </parent>
   <groupId>org.eclipse.pde</groupId>
   <artifactId>org.eclipse.pde.ui.templates</artifactId>
-  <version>3.6.900-SNAPSHOT</version>
+  <version>3.6.1000-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
