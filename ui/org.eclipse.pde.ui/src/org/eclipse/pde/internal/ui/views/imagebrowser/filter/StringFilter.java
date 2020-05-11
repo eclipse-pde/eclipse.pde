@@ -1,6 +1,6 @@
 package org.eclipse.pde.internal.ui.views.imagebrowser.filter;
 
-import org.eclipse.pde.internal.ui.util.StringMatcher;
+import org.eclipse.core.text.StringMatcher;
 import org.eclipse.pde.internal.ui.views.imagebrowser.ImageElement;
 
 /*******************************************************************************
@@ -22,15 +22,12 @@ t SPDX-License-Identifier: EPL-2.0
  *
  */
 public class StringFilter implements IFilter {
+	private final String mPatternString;
 	private final StringMatcher mPattern;
 
 	public StringFilter(final String pattern) {
-		mPattern = new StringMatcher(pattern, true, false) {
-			@Override
-			public String toString() {
-				return fPattern;
-			}
-		};
+		mPatternString = pattern;
+		mPattern = new StringMatcher(pattern, true, false);
 	}
 
 	@Override
@@ -40,6 +37,6 @@ public class StringFilter implements IFilter {
 
 	@Override
 	public String toString() {
-		return "match " + mPattern.toString(); //$NON-NLS-1$
+		return "match " + mPatternString; //$NON-NLS-1$
 	}
 }
