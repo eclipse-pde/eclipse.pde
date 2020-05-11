@@ -88,7 +88,7 @@
         <repository
             url="http://download.eclipse.org/cbi/updates/license"/>
         <repository
-            url="http://download.eclipse.org/reddeer/snapshots"/>
+            url="https://download.eclipse.org/reddeer/releases/latest/"/>
       </repositoryList>
     </targlet>
   </setupTask>
