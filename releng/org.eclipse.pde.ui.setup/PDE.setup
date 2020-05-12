@@ -89,6 +89,8 @@
             url="http://download.eclipse.org/cbi/updates/license"/>
         <repository
             url="https://download.eclipse.org/reddeer/releases/latest/"/>
+        <repository
+            url="https://download.eclipse.org/tools/orbit/downloads/latest-R/"/>
       </repositoryList>
     </targlet>
   </setupTask>
