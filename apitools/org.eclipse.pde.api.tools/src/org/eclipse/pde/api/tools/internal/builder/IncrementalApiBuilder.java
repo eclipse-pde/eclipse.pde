@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
@@ -437,7 +438,7 @@ public class IncrementalApiBuilder {
 					addInnerTypes(change.resource, change.changeKind);
 				} else {
 					// look up the source file
-					String path = (String) state.typeLocators.get(change.typeName);
+					String path = state.typeLocators.get(change.typeName);
 					if (path != null) {
 						IResource member = this.builder.getProject().findMember(path);
 						if (member != null && member.getType() == IResource.FILE) {
@@ -502,24 +503,19 @@ public class IncrementalApiBuilder {
 		if (internedSimpleNames.length < typenames.elementSize) {
 			internedSimpleNames = null;
 		}
-		Object[] keyTable = state.getReferences().keyTable;
-		Object[] valueTable = state.getReferences().valueTable;
-		IFile file = null;
-		String typeLocator = null;
-		for (int i = 0; i < valueTable.length; i++) {
-			typeLocator = (String) keyTable[i];
-			if (typeLocator != null) {
-				ReferenceCollection refs = (ReferenceCollection) valueTable[i];
-				if (refs.includes(internedQualifiedNames, internedSimpleNames, null)) {
-					file = project.getFile(typeLocator);
-					if (file == null) {
-						continue;
-					}
-					if (ApiPlugin.DEBUG_BUILDER) {
-						System.out.println("ApiAnalysisBuilder:   adding affected source file " + file.getName()); //$NON-NLS-1$
-					}
-					addDependentTypeToContext(file, kind);
+		Set<Entry<String, ReferenceCollection>> entrySet = state.getReferences().entrySet();
+		for (Entry<String, ReferenceCollection> entry : entrySet) {
+			String typeLocator = entry.getKey();
+			ReferenceCollection refs = entry.getValue();
+			if (refs.includes(internedQualifiedNames, internedSimpleNames, null)) {
+				IFile file = project.getFile(typeLocator);
+				if (file == null) {
+					continue;
 				}
+				if (ApiPlugin.DEBUG_BUILDER) {
+					System.out.println("ApiAnalysisBuilder:   adding affected source file " + file.getName()); //$NON-NLS-1$
+				}
+				addDependentTypeToContext(file, kind);
 			}
 		}
 	}
