@@ -17,7 +17,6 @@
 
    <plugins>
       <plugin id="$pluginId$"/>
-      <plugin id="com.ibm.icu"/>
       <plugin id="javax.annotation"/>
       <plugin id="javax.inject"/>
       <plugin id="org.apache.batik.constants"/>
