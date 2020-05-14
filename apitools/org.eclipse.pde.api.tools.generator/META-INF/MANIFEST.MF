@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.pde.api.tools.generator;singleton:=true
 Bundle-Version: 1.1.200.qualifier
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.objectweb.asm;bundle-version="[6.0.0,8.0.0)",
+Require-Bundle: org.objectweb.asm;bundle-version="[7.0.0,9.0.0)",
  org.eclipse.pde.api.tools;bundle-version="[1.0.600,2.0.0)",
  org.eclipse.jdt.core;bundle-version="[3.8.1,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.11.0,4.0.0)"
