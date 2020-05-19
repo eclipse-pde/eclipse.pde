@@ -105,6 +105,7 @@ public class LayoutSpyDialog {
 	private ISWTObservableValue<Boolean> overlayEnabled;
 	private Image upImage;
 	private Text diagnostics;
+	private Button showColoringButton;
 
 	private class LayoutSpyLabelProvider extends ColumnLabelProvider {
 		@Override
@@ -180,12 +181,12 @@ public class LayoutSpyDialog {
 		Button showOverlayButton = new Button(shell, SWT.CHECK);
 		showOverlayButton.setText(Messages.LayoutSpyDialog_button_show_overlay);
 
-		Button showColoringButton = new Button(shell, SWT.CHECK);
+		showColoringButton = new Button(shell, SWT.CHECK);
 		showColoringButton.setText(Messages.LayoutSpyDialog_button_show_coloring);
 		showColoringButton.addSelectionListener(widgetSelectedAdapter(e-> {
 			LayoutIssuesDebugFilter.activate(showColoringButton.getSelection(), true, 0);
 		}));
-
+		showColoringButton.addDisposeListener((e -> LayoutIssuesDebugFilter.activate(false, true, 0)));
 
 		Composite buttonBar = new Composite(shell, SWT.NONE);
 		{
@@ -270,6 +271,7 @@ public class LayoutSpyDialog {
 	 * Invoked as a callback when the main shell is disposed.
 	 */
 	private void disposed() {
+		showColoringButton.dispose();
 		listContents.dispose();
 		selectedChild.dispose();
 		parentControl.dispose();
