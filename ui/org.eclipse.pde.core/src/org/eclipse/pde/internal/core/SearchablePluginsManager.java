@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -178,12 +178,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		ArrayList<IClasspathEntry> result = new ArrayList<>();
 
 		IPluginModelBase[] wModels = PluginRegistry.getWorkspaceModels();
-		for (IPluginModelBase model : wModels) {
-			IProject project = model.getUnderlyingResource().getProject();
-			if (project.hasNature(JavaCore.NATURE_ID)) {
-				result.add(JavaCore.newProjectEntry(project.getFullPath()));
-			}
-		}
+
 		List<String> plugins;
 		synchronized (fPluginIdSet) {
 			plugins = new ArrayList<>(fPluginIdSet);
