@@ -21,7 +21,7 @@
       <plugin id="javax.xml"/>
       <plugin id="org.apache.batik.css"/>
       <plugin id="org.apache.batik.util"/>
-      <plugin id="org.apache.batik.util.gui"/>
+      <plugin id="org.apache.batik.i18n"/>
       <plugin id="org.apache.commons.jxpath"/>
       <plugin id="org.apache.commons.logging"/>
       <plugin id="org.eclipse.core.commands"/>
