@@ -131,13 +131,9 @@ public class TargetPlatformHelper {
 			buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
 			buffer.append("org.eclipse.equinox.event@2:start,"); //$NON-NLS-1$
 			buffer.append("org.eclipse.core.runtime@start"); //$NON-NLS-1$
-		} else if (targetVersion > 3.1) {
-			buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
-			buffer.append("org.eclipse.update.configurator@3:start,"); //$NON-NLS-1$
-			buffer.append("org.eclipse.core.runtime@start"); //$NON-NLS-1$
 		} else {
+			buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
 			buffer.append("org.eclipse.core.runtime@2:start,"); //$NON-NLS-1$
-			buffer.append("org.eclipse.update.configurator@3:start"); //$NON-NLS-1$
 		}
 		return buffer.toString();
 	}
