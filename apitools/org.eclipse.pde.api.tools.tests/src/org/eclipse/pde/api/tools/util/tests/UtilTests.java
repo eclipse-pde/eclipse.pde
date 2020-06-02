@@ -488,7 +488,6 @@ public class UtilTests {
 				"org.eclipse.team.cvs.ui", //$NON-NLS-1$
 				"org.eclipse.equinox.p2.metadata.generator", //$NON-NLS-1$
 				"org.eclipse.equinox.registry", //$NON-NLS-1$
-				"org.eclipse.update.ui", //$NON-NLS-1$
 				"org.eclipse.swt", //$NON-NLS-1$
 				"org.eclipse.ui.console", //$NON-NLS-1$
 				"org.junit4", //$NON-NLS-1$
@@ -630,7 +629,6 @@ public class UtilTests {
 				"org.eclipse.debug.core", //$NON-NLS-1$
 				"org.eclipse.jdt.core.manipulation", //$NON-NLS-1$
 				"org.eclipse.osgi", //$NON-NLS-1$
-				"org.eclipse.update.scheduler", //$NON-NLS-1$
 				"org.eclipse.equinox.p2.updatechecker", //$NON-NLS-1$
 				"org.eclipse.equinox.p2.console", //$NON-NLS-1$
 				"org.eclipse.equinox.frameworkadmin", //$NON-NLS-1$
