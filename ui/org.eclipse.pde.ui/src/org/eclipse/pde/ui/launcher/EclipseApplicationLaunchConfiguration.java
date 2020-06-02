@@ -100,18 +100,8 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 			programArgs.add("-dev"); //$NON-NLS-1$
 			programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", true)); //$NON-NLS-1$
 		} else {
-			String productID = LaunchConfigurationHelper.getProductID(configuration);
-			Properties prop = LaunchConfigurationHelper.createConfigIniFile(configuration, productID, fAllBundles, fModels, getConfigDir(configuration));
-			showSplash = prop.containsKey("osgi.splashPath") || prop.containsKey("splashLocation"); //$NON-NLS-1$ //$NON-NLS-2$
-			String brandingId = LaunchConfigurationHelper.getContributingPlugin(productID);
-			TargetPlatform.createPlatformConfiguration(getConfigDir(configuration), fAllBundles.values().toArray(new IPluginModelBase[fAllBundles.size()]), brandingId != null ? (IPluginModelBase) fAllBundles.get(brandingId) : null);
-			TargetPlatformHelper.checkPluginPropertiesConsistency(fAllBundles, getConfigDir(configuration));
-			programArgs.add("-configuration"); //$NON-NLS-1$
-			programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
 
-			// add the output folder names
-			programArgs.add("-dev"); //$NON-NLS-1$
-			programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles)); //$NON-NLS-1$
+			throw new CoreException(LauncherUtils.createErrorStatus(PDEMessages.PDE_updateManagerNotSupported));
 		}
 		// necessary for PDE to know how to load plugins when target platform = host platform
 		// see PluginPathFinder.getPluginPaths() and PluginPathFinder.isDevLaunchMode()
