@@ -14,12 +14,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.IWorkspace;
@@ -27,17 +22,14 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.eclipse.pde.core.IBundleClasspathResolver;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.builders.FeatureRebuilder;
@@ -46,7 +38,6 @@ import org.eclipse.pde.internal.core.project.BundleProjectService;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
-import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
@@ -80,7 +71,6 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	// Shared instance
 	private static PDECore inst;
 
-	private static IPluginModelBase[] registryPlugins;
 	private static PDEExtensionRegistry fExtensionRegistry = null;
 
 	/**
@@ -188,34 +178,6 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 
 	public PDECore() {
 		inst = this;
-	}
-
-	public IPluginModelBase findPluginInHost(String id) {
-		if (registryPlugins == null) {
-			URL[] pluginPaths = ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
-			URI[] paths = toUri(pluginPaths);
-			PDEState state = new PDEState(paths, false, false, new NullProgressMonitor());
-			registryPlugins = state.getTargetModels();
-		}
-
-		for (IPluginModelBase plugin : registryPlugins) {
-			if (plugin.getPluginBase().getId().equals(id)) {
-				return plugin;
-			}
-		}
-		return null;
-	}
-
-	private URI[] toUri(URL[] pluginPaths) {
-		List<URI> uris = new ArrayList<>();
-		for (URL url : pluginPaths) {
-			try {
-				uris.add(URIUtil.toURI(url));
-			} catch (URISyntaxException e) {
-				// ignore
-			}
-		}
-		return uris.toArray(new URI[0]);
 	}
 
 	public PluginModelManager getModelManager() {
