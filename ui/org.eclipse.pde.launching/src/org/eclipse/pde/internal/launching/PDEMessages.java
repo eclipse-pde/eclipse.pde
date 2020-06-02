@@ -44,4 +44,6 @@ public class PDEMessages extends NLS {
 	public static String EquinoxLaunchConfiguration_oldTarget;
 
 	public static String VMHelper_cannotFindExecEnv;
+
+	public static String PDE_updateManagerNotSupported;
 }
