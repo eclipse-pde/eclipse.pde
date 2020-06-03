@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2019 IBM Corporation and others.
+ *  Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -21,30 +21,30 @@ import org.osgi.framework.Constants;
 
 public class RemoveExportPackageResolution extends AbstractManifestMarkerResolution {
 
-	String fPackage;
 
-	public RemoveExportPackageResolution(int type, String pkgName, IMarker marker) {
+
+	public RemoveExportPackageResolution(int type, IMarker marker) {
 		super(type, marker);
-		fPackage = pkgName;
+
 	}
 
 	@Override
 	protected void createChange(BundleModel model) {
-		fPackage = marker.getAttribute("packageName", (String) null); //$NON-NLS-1$
+		String markerPackage = marker.getAttribute("packageName", (String) null); //$NON-NLS-1$
 		Bundle bundle = (Bundle) model.getBundle();
 		ExportPackageHeader header = (ExportPackageHeader) bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
 		if (header != null)
-			header.removePackage(fPackage);
+			header.removePackage(markerPackage);
 	}
 
 	@Override
 	public String getLabel() {
-		return NLS.bind(PDEUIMessages.RemoveExportPkgs_label, fPackage);
+		return NLS.bind(PDEUIMessages.RemoveExportPkgs_label, marker.getAttribute("packageName", (String) null)); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getDescription() {
-		return NLS.bind(PDEUIMessages.RemoveExportPkgs_description, fPackage);
+		return NLS.bind(PDEUIMessages.RemoveExportPkgs_description, marker.getAttribute("packageName", (String) null));//$NON-NLS-1$
 	}
 
 }

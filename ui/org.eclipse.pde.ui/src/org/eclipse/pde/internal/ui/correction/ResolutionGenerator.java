@@ -53,7 +53,7 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 			case PDEMarkerFactory.M_DEPRECATED_AUTOSTART :
 				// if targetVersion <= 3.3, we can add Eclipse-LazyStart header even if previous header's value was false.  We can't do this for 3.4+ since Bundle-AcativationPolicy does not have a "false" value.
 				if (marker.getAttribute(PDEMarkerFactory.ATTR_CAN_ADD, true) || TargetPlatformHelper.getTargetVersion() <= 3.3)
-					return new IMarkerResolution[] {new UpdateActivationResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker.getAttribute(PDEMarkerFactory.ATTR_HEADER, ICoreConstants.ECLIPSE_AUTOSTART),marker), new AddActivationHeaderResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker.getAttribute("header", ICoreConstants.ECLIPSE_AUTOSTART), marker)}; //$NON-NLS-1$
+					return new IMarkerResolution[] {new UpdateActivationResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker.getAttribute(PDEMarkerFactory.ATTR_HEADER, ICoreConstants.ECLIPSE_AUTOSTART),marker), new AddActivationHeaderResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker)};
 				return new IMarkerResolution[] {new UpdateActivationResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker.getAttribute(PDEMarkerFactory.ATTR_HEADER, ICoreConstants.ECLIPSE_AUTOSTART), marker)};
 			case PDEMarkerFactory.M_JAVA_PACKAGE__PORTED :
 				return new IMarkerResolution[] {new CreateJREBundleHeaderResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker)};
@@ -92,7 +92,7 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 			case PDEMarkerFactory.M_UNECESSARY_DEP :
 				return new IMarkerResolution[] {new RemoveRequireBundleResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker.getAttribute("bundleId", null), marker)}; //$NON-NLS-1$
 			case PDEMarkerFactory.M_MISSING_EXPORT_PKGS :
-				return new IMarkerResolution[] { new AddExportPackageMarkerResolution(marker,AbstractPDEMarkerResolution.CREATE_TYPE, marker.getAttribute("packages", null)), new AddExportPackageInternalDirectiveMarkerResolution(marker,AbstractPDEMarkerResolution.CREATE_TYPE, marker.getAttribute("packages", null))  }; //$NON-NLS-1$//$NON-NLS-2$
+				return new IMarkerResolution[] { new AddExportPackageMarkerResolution(marker,AbstractPDEMarkerResolution.CREATE_TYPE), new AddExportPackageInternalDirectiveMarkerResolution(marker,AbstractPDEMarkerResolution.CREATE_TYPE, marker.getAttribute("packages", null))  }; //$NON-NLS-1$
 			case PDEMarkerFactory.B_REMOVE_SLASH_FILE_ENTRY :
 				return new IMarkerResolution[] {new RemoveSeperatorBuildEntryResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
 			case PDEMarkerFactory.B_APPEND_SLASH_FOLDER_ENTRY :
@@ -118,9 +118,9 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 			case PDEMarkerFactory.M_DEPRECATED_PROVIDE_PACKAGE :
 				return new IMarkerResolution[] {new RenameProvidePackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE,marker)};
 			case PDEMarkerFactory.M_EXECUTION_ENVIRONMENT_NOT_SET :
-				return new IMarkerResolution[] {new AddDefaultExecutionEnvironmentResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker.getAttribute("ee_id", null),marker)}; //$NON-NLS-1$
+				return new IMarkerResolution[] {new AddDefaultExecutionEnvironmentResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker)};
 			case PDEMarkerFactory.M_MISSING_BUNDLE_CLASSPATH_ENTRY :
-				return new IMarkerResolution[] {new AddBundleClassPathMarkerResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker.getAttribute("entry", null), marker)}; //$NON-NLS-1$
+				return new IMarkerResolution[] {new AddBundleClassPathMarkerResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker)};
 			case PDEMarkerFactory.M_LAZYLOADING_HAS_NO_EFFECT :
 				return new IMarkerResolution[] {new RemoveLazyLoadingDirectiveResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker.getAttribute("header", ICoreConstants.ECLIPSE_LAZYSTART), marker)}; //$NON-NLS-1$
 			case PDEMarkerFactory.M_NO_LINE_TERMINATION :
@@ -201,7 +201,7 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		if (packageName != null) {
 			IResource res = marker.getResource();
 			if (res != null)
-				return new IMarkerResolution[] {new RemoveExportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, packageName, marker)};
+				return new IMarkerResolution[] {new RemoveExportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker)};
 		}
 		return NO_RESOLUTIONS;
 	}
@@ -238,7 +238,7 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 
 		//		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		//		boolean removeImports = store.getString(IPreferenceConstants.PROP_RESOLVE_IMPORTS).equals(IPreferenceConstants.VALUE_REMOVE_IMPORT);
-		return new IMarkerResolution[] {new RemoveRequireBundleResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, bundleId, marker), new OptionalRequireBundleResolution(AbstractPDEMarkerResolution.RENAME_TYPE, bundleId, marker), new ConfigureTargetPlatformResolution()
+		return new IMarkerResolution[] {new RemoveRequireBundleResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, bundleId, marker), new OptionalRequireBundleResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker), new ConfigureTargetPlatformResolution()
 		//				new OrganizeRequireBundleResolution(AbstractPDEMarkerResolution.RENAME_TYPE, removeImports)
 		};
 	}

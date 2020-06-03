@@ -22,7 +22,7 @@ import org.osgi.framework.Constants;
 public class AddExportPackageInternalDirectiveMarkerResolution extends AddExportPackageMarkerResolution {
 
 	public AddExportPackageInternalDirectiveMarkerResolution(IMarker mark, int type, String values) {
-		super(mark, type, values);
+		super(mark, type);
 	}
 
 	@Override

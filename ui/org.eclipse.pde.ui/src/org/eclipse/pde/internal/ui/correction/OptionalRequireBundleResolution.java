@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2019 IBM Corporation and others.
+ *  Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -21,22 +21,21 @@ import org.osgi.framework.Constants;
 
 public class OptionalRequireBundleResolution extends AbstractManifestMarkerResolution {
 
-	private String fBundleId;
 
-	public OptionalRequireBundleResolution(int type, String bundleId, IMarker marker) {
+	public OptionalRequireBundleResolution(int type, IMarker marker) {
 		super(type, marker);
-		fBundleId = bundleId;
+
 	}
 
 	@Override
 	protected void createChange(BundleModel model) {
-		fBundleId= marker.getAttribute("bundleId", (String) null); //$NON-NLS-1$
+		String bundleId = marker.getAttribute("bundleId", (String) null); //$NON-NLS-1$
 		Bundle bundle = (Bundle) model.getBundle();
 		RequireBundleHeader header = (RequireBundleHeader) bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
 		if (header != null) {
 			RequireBundleObject[] requiredBundles = header.getRequiredBundles();
 			for (RequireBundleObject requiredBundle : requiredBundles) {
-				if (fBundleId.equals(requiredBundle.getId()))
+				if (bundleId.equals(requiredBundle.getId()))
 					requiredBundle.setOptional(true);
 			}
 		}
@@ -44,12 +43,12 @@ public class OptionalRequireBundleResolution extends AbstractManifestMarkerResol
 
 	@Override
 	public String getDescription() {
-		return NLS.bind(PDEUIMessages.OptionalRequireBundleResolution_description, fBundleId);
+		return NLS.bind(PDEUIMessages.OptionalRequireBundleResolution_description,  marker.getAttribute("bundleId", (String) null)); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getLabel() {
-		return NLS.bind(PDEUIMessages.OptionalRequireBundleResolution_label, fBundleId);
+		return NLS.bind(PDEUIMessages.OptionalRequireBundleResolution_label,  marker.getAttribute("bundleId", (String) null)); //$NON-NLS-1$
 	}
 
 }

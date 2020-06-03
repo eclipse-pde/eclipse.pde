@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2019 IBM Corporation and others.
+ *  Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -27,14 +27,9 @@ import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResolution {
 
-	protected String fLocationPath;
-
 	public AbstractXMLMarkerResolution(int resolutionType, IMarker marker) {
 		super(resolutionType, marker);
-		try {
-			fLocationPath = (String) marker.getAttribute(PDEMarkerFactory.MPK_LOCATION_PATH);
-		} catch (CoreException e) {
-		}
+
 	}
 
 	protected abstract void createChange(IPluginModelBase model);
@@ -46,21 +41,22 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 	}
 
 	protected Object findNode(IPluginModelBase base) {
+		String locationPath = null;
 		try {
-			fLocationPath = (String) marker.getAttribute(PDEMarkerFactory.MPK_LOCATION_PATH);
+			locationPath = (String) marker.getAttribute(PDEMarkerFactory.MPK_LOCATION_PATH);
 		} catch (CoreException e) {
 		}
-		if (fLocationPath == null)
+		if (locationPath == null)
 			return null;
 
 		// special case for externalizing strings in manifest.mf
-		if (fLocationPath.charAt(0) != '(' && base instanceof IBundlePluginModelBase) {
+		if (locationPath.charAt(0) != '(' && base instanceof IBundlePluginModelBase) {
 			IBundle bundle = ((IBundlePluginModelBase) base).getBundleModel().getBundle();
-			return bundle.getManifestHeader(fLocationPath);
+			return bundle.getManifestHeader(locationPath);
 		}
 
 		IDocumentElementNode node = null;
-		StringTokenizer strtok = new StringTokenizer(fLocationPath, Character.toString(XMLErrorReporter.F_CHILD_SEP));
+		StringTokenizer strtok = new StringTokenizer(locationPath, Character.toString(XMLErrorReporter.F_CHILD_SEP));
 		while (strtok.hasMoreTokens()) {
 			String token = strtok.nextToken();
 			if (node != null) {
@@ -89,6 +85,11 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 	}
 
 	protected String getNameOfNode() {
+		String fLocationPath = null;
+		try {
+			fLocationPath = (String) marker.getAttribute(PDEMarkerFactory.MPK_LOCATION_PATH);
+		} catch (CoreException e) {
+		}
 		int lastChild = fLocationPath.lastIndexOf(')');
 		if (lastChild < 0)
 			return fLocationPath;
@@ -103,6 +104,11 @@ public abstract class AbstractXMLMarkerResolution extends AbstractPDEMarkerResol
 	}
 
 	protected boolean isAttrNode() {
+		String fLocationPath = null;
+		try {
+			fLocationPath = (String) marker.getAttribute(PDEMarkerFactory.MPK_LOCATION_PATH);
+		} catch (CoreException e) {
+		}
 		return fLocationPath.indexOf(XMLErrorReporter.F_ATT_PREFIX) != -1;
 	}
 }
