@@ -58,15 +58,13 @@ public class TracingOptionsManager {
 		}
 	}
 
-	public synchronized Hashtable<String, Object> getTemplateTable(String pluginId) {
-		if (template == null) {
-			template = createTemplate();
-		}
+	public Hashtable<String, Object> getTemplateTable(String pluginId) {
+		Properties tracingTemplate = getTracingTemplate();
 		Hashtable<String, Object> defaults = new Hashtable<>();
-		for (Enumeration<Object> keys = template.keys(); keys.hasMoreElements();) {
+		for (Enumeration<Object> keys = tracingTemplate.keys(); keys.hasMoreElements();) {
 			String key = keys.nextElement().toString();
 			if (belongsTo(key, pluginId)) {
-				defaults.put(key, template.get(key));
+				defaults.put(key, tracingTemplate.get(key));
 			}
 		}
 		return defaults;
@@ -94,11 +92,15 @@ public class TracingOptionsManager {
 		return defaults;
 	}
 
-	public synchronized Properties getTracingTemplateCopy() {
+	public Properties getTracingTemplateCopy() {
+		return (Properties) getTracingTemplate().clone();
+	}
+
+	private synchronized Properties getTracingTemplate() {
 		if (template == null) {
 			template = createTemplate();
 		}
-		return (Properties) createTemplate().clone();
+		return template;
 	}
 
 	public static boolean isTraceable(IPluginModelBase model) {
