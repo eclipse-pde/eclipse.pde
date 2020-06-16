@@ -40,6 +40,7 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.ui.*;
 import org.eclipse.swt.widgets.Display;
@@ -575,7 +576,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		Iterator<String> iter = values.iterator();
 		while (iter.hasNext()) {
 			if (buffer.length() > 0) {
-				buffer.append(",\n "); //$NON-NLS-1$ // space required for multiline headers
+				// space required for multiline headers
+				buffer.append("," + TextUtil.getDefaultLineDelimiter() + " "); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			String value = iter.next().toString();
 			buffer.append(value);

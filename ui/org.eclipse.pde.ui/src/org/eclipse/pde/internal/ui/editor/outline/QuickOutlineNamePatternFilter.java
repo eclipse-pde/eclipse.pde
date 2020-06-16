@@ -14,8 +14,8 @@
 
 package org.eclipse.pde.internal.ui.editor.outline;
 
+import org.eclipse.core.text.StringMatcher;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.util.StringMatcher;
 
 public class QuickOutlineNamePatternFilter extends ViewerFilter {
 

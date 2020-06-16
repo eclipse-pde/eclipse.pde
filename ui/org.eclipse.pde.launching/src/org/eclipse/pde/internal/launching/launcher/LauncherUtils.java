@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -59,8 +59,8 @@ public class LauncherUtils {
 	 * @param configuration launch configuration used to lookup workspace clear settings
 	 * @param workspace the absolute workspace location to be checked with all variables replaced or the empty string for no workspace
 	 * @param monitor progress monitor
-	 * @return whether to continue launching
 	 * @throws CoreException
+	 * 			if unable to retrieve launch attribute values or the clear operation was cancelled
 	 */
 	public static void clearWorkspace(ILaunchConfiguration configuration, String workspace, IProgressMonitor monitor) throws CoreException {
 
@@ -101,7 +101,7 @@ public class LauncherUtils {
 			IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
 			if (statusHandler != null)
 				statusHandler.handleStatus(status, new Object[] {workspace, configuration, fLastLaunchMode});
-			return;
+			throw new CoreException(Status.CANCEL_STATUS);
 		}
 
 		File workspaceFile = new Path(workspace).toFile().getAbsoluteFile();
@@ -121,7 +121,7 @@ public class LauncherUtils {
 				}
 
 				if (result == 2 /*Cancel Button*/|| result == -1 /*Dialog close button*/) {
-					// nothing to do
+					throw new CoreException(Status.CANCEL_STATUS);
 				} else if (result == 0) {
 					if (configuration.getAttribute(IPDEConstants.DOCLEARLOG, false)) {
 						LauncherUtils.clearWorkspaceLog(workspace);

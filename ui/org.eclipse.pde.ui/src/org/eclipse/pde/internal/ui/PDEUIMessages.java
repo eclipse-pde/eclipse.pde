@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2019 IBM Corporation and others.
+ * Copyright (c) 2014, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -3267,6 +3267,8 @@ public class PDEUIMessages extends NLS {
 	public static String AddBundleManifestVersionResolution_label;
 
 	public static String AddToJavaSearchJob_0;
+
+	public static String AnnotationHover_version_change;
 
 	public static String AntGeneratingExportWizard_0;
 	public static String AntGeneratingExportWizard_1;

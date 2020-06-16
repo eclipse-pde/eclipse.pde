@@ -14,11 +14,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.sourcelookup;
 
+import com.sun.jdi.VMDisconnectedException;
 import java.io.File;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.model.*;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.jdt.debug.core.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -68,6 +69,21 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 
 	@Override
 	public void run() throws Exception {
+		try {
+			findSourceElement();
+		} catch (DebugException e) {
+			boolean isDebugTargetRunning = isDebugTargetRunning();
+			if (isDebugTargetRunning) {
+				throw e;
+			}
+			boolean isVmDisconnectException = e.getCause() instanceof VMDisconnectedException;
+			if (!isVmDisconnectException) {
+				throw e;
+			}
+		}
+	}
+
+	private void findSourceElement() throws Exception {
 		IJavaReferenceType declaringType = null;
 		String sourcePath = null;
 		if (fElement instanceof IJavaStackFrame) {
@@ -323,6 +339,16 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 		if (index >= 0)
 			qualifiedTypeName = qualifiedTypeName.substring(0, index);
 		return qualifiedTypeName.replace('.', File.separatorChar) + ".java"; //$NON-NLS-1$
+	}
+
+	private boolean isDebugTargetRunning() {
+		boolean isDebugTargetRunning = false;
+		if (fElement instanceof IDebugElement) {
+			IDebugElement debugElement = (IDebugElement) fElement;
+			IDebugTarget debugTarget = debugElement.getDebugTarget();
+			isDebugTargetRunning = debugTarget != null && !debugTarget.isDisconnected() && !debugTarget.isTerminated();
+		}
+		return isDebugTargetRunning;
 	}
 
 }

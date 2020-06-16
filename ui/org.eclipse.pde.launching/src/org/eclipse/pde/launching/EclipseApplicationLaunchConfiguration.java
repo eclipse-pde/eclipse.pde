@@ -154,7 +154,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	 * @param monitor
 	 * 			the progress monitor
 	 * @throws CoreException
-	 * 			if unable to retrieve launch attribute values
+	 * 			if unable to retrieve launch attribute values or the clear operation was cancelled
 	 * @since 3.3
 	 */
 	@Override

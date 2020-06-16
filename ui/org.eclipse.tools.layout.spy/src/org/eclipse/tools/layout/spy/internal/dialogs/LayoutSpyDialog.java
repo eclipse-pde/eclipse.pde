@@ -42,6 +42,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -104,7 +105,22 @@ public class LayoutSpyDialog {
 	private ISWTObservableValue<Boolean> overlayEnabled;
 	private Image upImage;
 	private Text diagnostics;
+	private Button showColoringButton;
 
+	private class LayoutSpyLabelProvider extends ColumnLabelProvider {
+		@Override
+		public Color getForeground(Object element) {
+			Control child = (Control) element;
+			if (child == null || child.isDisposed()) {
+				return null;
+			}
+			if (!child.isVisible()) {
+				return child.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DISABLED_FOREGROUND);
+			}
+			return null;
+		}
+
+	}
 	/**
 	 * Creates the dialog but does not make it visible.
 	 *
@@ -165,12 +181,12 @@ public class LayoutSpyDialog {
 		Button showOverlayButton = new Button(shell, SWT.CHECK);
 		showOverlayButton.setText(Messages.LayoutSpyDialog_button_show_overlay);
 
-		Button showColoringButton = new Button(shell, SWT.CHECK);
+		showColoringButton = new Button(shell, SWT.CHECK);
 		showColoringButton.setText(Messages.LayoutSpyDialog_button_show_coloring);
 		showColoringButton.addSelectionListener(widgetSelectedAdapter(e-> {
 			LayoutIssuesDebugFilter.activate(showColoringButton.getSelection(), true, 0);
 		}));
-
+		showColoringButton.addDisposeListener((e -> LayoutIssuesDebugFilter.activate(false, true, 0)));
 
 		Composite buttonBar = new Composite(shell, SWT.NONE);
 		{
@@ -200,6 +216,7 @@ public class LayoutSpyDialog {
 		selectedChild = ViewerProperties.singleSelection(Control.class).observe(childList);
 		overlayEnabled = WidgetProperties.buttonSelection().observe(showOverlayButton);
 		childList.setContentProvider(new ObservableListContentProvider<>());
+		childList.setLabelProvider(new LayoutSpyLabelProvider());
 		listContents = new ComputedList<Control>() {
 			@Override
 			protected List<Control> calculate() {
@@ -219,17 +236,17 @@ public class LayoutSpyDialog {
 
 		// ignore controls to the layout spy from coloring
 		shell.setData(LayoutIssuesDebugFilter.IGNORE_BY_LAYOUT_ISSUES_DEBUG_FILTER);
-		setChildremColoring(shell);
+		setChildrenColoring(shell);
 
 		openComposite(parentShell);
 	}
 
-	private void setChildremColoring(Control control) {
+	private void setChildrenColoring(Control control) {
 		control.setData(LayoutIssuesDebugFilter.IGNORE_BY_LAYOUT_ISSUES_DEBUG_FILTER);
 		if (control instanceof Composite) {
 			Composite c = (Composite) control;
 			for (Control child : c.getChildren()) {
-				setChildremColoring(child);
+				setChildrenColoring(child);
 			}
 		}
 	}
@@ -254,6 +271,7 @@ public class LayoutSpyDialog {
 	 * Invoked as a callback when the main shell is disposed.
 	 */
 	private void disposed() {
+		showColoringButton.dispose();
 		listContents.dispose();
 		selectedChild.dispose();
 		parentControl.dispose();
@@ -701,8 +719,8 @@ public class LayoutSpyDialog {
 
 	/**
 	 * Computes the string that will be shown in the text box which displays
-	 * information about the selected layout. This is a tracked getter: if it
-	 * reads from an observable, the text box will update automatically when the
+	 * information about the selected layout. This is a tracked getter: if it reads
+	 * from an observable, the text box will update automatically when the
 	 * observable changes.
 	 *
 	 * @TrackedGetter

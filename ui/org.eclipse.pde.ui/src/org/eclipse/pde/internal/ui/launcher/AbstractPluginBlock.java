@@ -1035,7 +1035,10 @@ public abstract class AbstractPluginBlock {
 		resetGroup(fWorkspacePlugins);
 		resetGroup(fExternalPlugins);
 
-		handleFilterButton(); // Once the page is initialized, apply any filtering.
+		if (fFilterButton.getSelection()) {
+			// Once the page is initialized, apply any filtering.
+			handleFilterButton();
+		}
 		updateCounter();
 	}
 

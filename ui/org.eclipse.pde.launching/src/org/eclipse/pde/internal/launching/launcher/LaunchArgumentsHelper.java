@@ -33,7 +33,6 @@ import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.Version;
 
 public class LaunchArgumentsHelper {
 
@@ -181,17 +180,23 @@ public class LaunchArgumentsHelper {
 				IVMInstall vmInstall = VMHelper.getVMInstall(config);
 				if (vmInstall instanceof AbstractVMInstall) {
 					String javaVersion = ((AbstractVMInstall) vmInstall).getJavaVersion();
-					Version osgiVersion = new Version(javaVersion);
-					if (osgiVersion.getMajor() == 1 && osgiVersion.getMinor() < 7) {
-						IPluginModelBase[] models = entry.getExternalModels();
-						for (IPluginModelBase model : models) {
-							File file = new File(model.getInstallLocation());
-							if (!file.isFile())
-								file = new File(file, "jdi.jar"); //$NON-NLS-1$
-							if (file.exists()) {
-								map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND, new String[] {file.getAbsolutePath()});
-								break;
+					String[] javaVersionSegments = javaVersion.split("\\."); //$NON-NLS-1$
+					if (javaVersionSegments.length >= 2) {
+						try {
+							if (Integer.parseInt(javaVersionSegments[0]) == 1 && Integer.parseInt(javaVersionSegments[1]) < 7) {
+								IPluginModelBase[] models = entry.getExternalModels();
+								for (IPluginModelBase model : models) {
+									File file = new File(model.getInstallLocation());
+									if (!file.isFile())
+										file = new File(file, "jdi.jar"); //$NON-NLS-1$
+									if (file.exists()) {
+										map.put(IJavaLaunchConfigurationConstants.ATTR_BOOTPATH_PREPEND, new String[] {file.getAbsolutePath()});
+										break;
+									}
+								}
 							}
+						} catch (NumberFormatException e) {
+							// ignored
 						}
 					}
 				}

@@ -230,6 +230,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (bcontext == null) {
 				bcontext = new BuildContext();
 			}
+			boolean isNested = checkIfNested(component);
+			if (isNested) {
+				return;
+			}
 			boolean checkfilters = false;
 			if (baseline != null) {
 				IApiComponent reference = baseline.getApiComponent(component.getSymbolicName());
@@ -306,6 +310,26 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 	}
 
+
+	private boolean checkIfNested(IApiComponent component) {
+		if (fJavaProject != null) {
+			return false;
+		}
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+		IProject[] projects = root.getProjects();
+		Path componentLocation = new Path(component.getLocation());
+		for (IProject project : projects) {
+			if (project.getLocation().isPrefixOf(componentLocation)) {
+				// if same project, skipped here
+				if (componentLocation.segmentCount() == project.getLocation().segmentCount()
+						+ 1) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	private IApiComponent getBestMatchFromMultipleComponents(Set<IApiComponent> baselineAllComponents, IApiComponent component) {
 		// baseline already sorted from higher to lower version. see

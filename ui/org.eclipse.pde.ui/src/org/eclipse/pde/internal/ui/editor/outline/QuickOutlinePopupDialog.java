@@ -14,6 +14,7 @@
 
 package org.eclipse.pde.internal.ui.editor.outline;
 
+import org.eclipse.core.text.StringMatcher;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
@@ -22,7 +23,6 @@ import org.eclipse.jface.text.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
-import org.eclipse.pde.internal.ui.util.StringMatcher;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
