@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Red Hat, Inc. and others.
+ * Copyright (c) 2018, 2020 Red Hat, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -76,7 +76,9 @@ public abstract class ProjectTestTemplate {
 
 	private List<DefaultProject> getProjects() {
 		try {
-			return new ProjectExplorer().getProjects();
+			ProjectExplorer explorer = new ProjectExplorer();
+			explorer.open();
+			return explorer.getProjects();
 		} catch (NullPointerException e) {
 			// TODO: remove workaround when
 			// https://github.com/eclipse/reddeer/issues/2005 is fixed
