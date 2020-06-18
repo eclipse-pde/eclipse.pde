@@ -53,8 +53,8 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 			case PDEMarkerFactory.M_DEPRECATED_AUTOSTART :
 				// if targetVersion <= 3.3, we can add Eclipse-LazyStart header even if previous header's value was false.  We can't do this for 3.4+ since Bundle-AcativationPolicy does not have a "false" value.
 				if (marker.getAttribute(PDEMarkerFactory.ATTR_CAN_ADD, true) || TargetPlatformHelper.getTargetVersion() <= 3.3)
-					return new IMarkerResolution[] {new UpdateActivationResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker.getAttribute(PDEMarkerFactory.ATTR_HEADER, ICoreConstants.ECLIPSE_AUTOSTART),marker), new AddActivationHeaderResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker)};
-				return new IMarkerResolution[] {new UpdateActivationResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker.getAttribute(PDEMarkerFactory.ATTR_HEADER, ICoreConstants.ECLIPSE_AUTOSTART), marker)};
+					return new IMarkerResolution[] {new UpdateActivationResolution(AbstractPDEMarkerResolution.RENAME_TYPE,marker), new AddActivationHeaderResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker)};
+				return new IMarkerResolution[] {new UpdateActivationResolution(AbstractPDEMarkerResolution.RENAME_TYPE,  marker)};
 			case PDEMarkerFactory.M_JAVA_PACKAGE__PORTED :
 				return new IMarkerResolution[] {new CreateJREBundleHeaderResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker)};
 			case PDEMarkerFactory.M_SINGLETON_DIR_NOT_SET :
@@ -213,9 +213,9 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 
 		boolean optionalPkg = marker.getAttribute("optional", false); //$NON-NLS-1$
 		if (optionalPkg)
-			return new IMarkerResolution[] {new RemoveImportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, packageName, marker), new ConfigureTargetPlatformResolution()};
+			return new IMarkerResolution[] {new RemoveImportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker), new ConfigureTargetPlatformResolution()};
 
-		return new IMarkerResolution[] {new RemoveImportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, packageName, marker), new OptionalImportPackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE, packageName, marker), new ConfigureTargetPlatformResolution()};
+		return new IMarkerResolution[] {new RemoveImportPackageResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker), new OptionalImportPackageResolution(AbstractPDEMarkerResolution.RENAME_TYPE, packageName, marker), new ConfigureTargetPlatformResolution()};
 	}
 
 	private IMarkerResolution[] getUnresolvedBundle(IMarker marker) {
