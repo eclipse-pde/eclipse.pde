@@ -35,8 +35,12 @@ import org.eclipse.pde.internal.launching.launcher.*;
  * <p>
  * Clients may subclass and instantiate this class.
  * </p>
+ *
  * @since 3.2
- * @deprecated use {@link org.eclipse.pde.launching.EquinoxLaunchConfiguration} instead.
+ * @deprecated use {@link org.eclipse.pde.launching.EquinoxLaunchConfiguration}
+ *             instead.
+ * @noreference This method is planned for removal. See bug 564563 for details.
+ * @noextend This method is planned for removal. See bug 564563 for details.
  * @see org.eclipse.pde.launching.EquinoxLaunchConfiguration
  */
 @Deprecated

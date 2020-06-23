@@ -14,13 +14,15 @@
 package org.eclipse.pde.ui.launcher;
 
 /**
- * A launch configuration tab that displays and edits the VM install
- * launch configuration attributes.
+ * A launch configuration tab that displays and edits the VM install launch
+ * configuration attributes.
  * <p>
  * This class may be instantiated. This class is not intended to be subclassed.
  * </p>
+ *
  * @since 3.2
  * @deprecated use {@link OSGiSettingsTab}
+ * @noreference This method is planned for removal. See bug 564563 for details.
  * @noextend This class is not intended to be subclassed by clients.
  */
 @Deprecated

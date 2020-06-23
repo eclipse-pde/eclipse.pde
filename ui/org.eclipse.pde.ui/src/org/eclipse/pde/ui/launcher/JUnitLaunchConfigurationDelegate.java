@@ -20,7 +20,11 @@ package org.eclipse.pde.ui.launcher;
  * A launch delegate for launching JUnit Plug-in tests.
  *
  * @since 3.3
- * @deprecated use {@link org.eclipse.pde.launching.JUnitLaunchConfigurationDelegate} instead.
+ * @deprecated use
+ *             {@link org.eclipse.pde.launching.JUnitLaunchConfigurationDelegate}
+ *             instead.
+ * @noreference This method is planned for removal. See bug 564563 for details.
+ * @noextend This method is planned for removal. See bug 564563 for details.
  * @see org.eclipse.pde.launching.JUnitLaunchConfigurationDelegate
  */
 @Deprecated

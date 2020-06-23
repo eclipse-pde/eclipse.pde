@@ -22,7 +22,11 @@ package org.eclipse.pde.ui.launcher;
  * </p>
  *
  * @since 3.3
- * @deprecated use {@link org.eclipse.pde.launching.OSGiLaunchConfigurationInitializer} instead.
+ * @deprecated use
+ *             {@link org.eclipse.pde.launching.OSGiLaunchConfigurationInitializer}
+ *             instead.
+ * @noreference This method is planned for removal. See bug 564563 for details.
+ * @noextend This method is planned for removal. See bug 564563 for details.
  * @see org.eclipse.pde.launching.OSGiLaunchConfigurationInitializer
  */
 @Deprecated

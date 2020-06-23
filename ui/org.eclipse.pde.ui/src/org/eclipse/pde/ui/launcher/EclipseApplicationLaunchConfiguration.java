@@ -36,8 +36,12 @@ import org.osgi.framework.Version;
  * <p>
  * Clients may subclass and instantiate this class.
  * </p>
+ *
  * @since 3.2
- * @deprecated use {@link org.eclipse.pde.launching.EclipseApplicationLaunchConfiguration}
+ * @deprecated use
+ *             {@link org.eclipse.pde.launching.EclipseApplicationLaunchConfiguration}
+ * @noreference This method is planned for removal. See bug 564563 for details.
+ * @noextend This method is planned for removal. See bug 564563 for details.
  * @see org.eclipse.pde.launching.AbstractPDELaunchConfiguration
  */
 @Deprecated
