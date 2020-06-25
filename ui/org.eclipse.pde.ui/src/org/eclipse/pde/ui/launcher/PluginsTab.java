@@ -147,9 +147,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			int index = DEFAULT_SELECTION;
-			if (configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false)) {
-				index = FEATURE_SELECTION;
-			} else if (configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false)) {
+			if (configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false)) {
 				index = FEATURE_SELECTION;
 			} else if (!configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
 				index = PLUGIN_SELECTION;
@@ -170,8 +168,6 @@ public class PluginsTab extends AbstractLauncherTab {
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
-		// The use features option was removed in 3.6
-		configuration.removeAttribute(IPDELauncherConstants.USEFEATURES);
 		configuration.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false);
 		fBlock.setDefaults(configuration);
 	}
