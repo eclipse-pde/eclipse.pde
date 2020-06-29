@@ -26,9 +26,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.target.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.target.TargetDefinition;
-import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
+import org.eclipse.pde.internal.core.P2Utils;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.junit.Test;
@@ -292,29 +292,6 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	}
 
 	/**
-	 * Tests that a target definition equivalent to the default target platform
-	 * contains the same bundles as the default target platform using the
-	 * platform's configuration location (which will do target weaving). This is
-	 * really only tested when run as a JUnit plug-in test suite from within
-	 * Eclipse.
-	 *
-	 * @throws Exception
-	 */
-	@Test
-	public void testWovenTargetPlatform() throws Exception {
-		// the new way
-		ITargetDefinition definition = getNewTarget();
-		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(),
-				new File(Platform.getConfigurationLocation().getURL().getFile()).getAbsolutePath());
-		definition.setTargetLocations(new ITargetLocation[] { container });
-		Set<URI> uris = getAllBundleURIs(definition);
-
-		// the old way
-		URL[] pluginPaths = PluginPathFinder.getPluginPaths(TargetPlatform.getDefaultLocation(), true);
-		assertBundlePathsEqual(pluginPaths, uris);
-	}
-
-	/**
 	 * Tests that a bundle directory container is equivalent to scanning
 	 * locations.
 	 *
@@ -322,16 +299,13 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	@Test
 	public void testDirectoryBundleContainer() throws Exception {
-		// the new way
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService()
 				.newDirectoryLocation(TargetPlatform.getDefaultLocation() + "/plugins");
 		definition.setTargetLocations(new ITargetLocation[] { container });
 		Set<URI> uris = getAllBundleURIs(definition);
 
-		// the old way
-		URL[] pluginPaths = PluginPathFinder.getPluginPaths(TargetPlatform.getDefaultLocation(), false);
-		assertBundlePathsEqual(pluginPaths, uris);
+		assertEquals(getAllBundleURIs(TargetPlatformService.getDefault().newDefaultTarget()), uris);
 	}
 
 	/**
@@ -342,15 +316,12 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	@Test
 	public void testVariableDirectoryBundleContainer() throws Exception {
-		// the new way
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newDirectoryLocation("${eclipse_home}/plugins");
 		definition.setTargetLocations(new ITargetLocation[] { container });
 		Set<URI> uris = getAllBundleURIs(definition);
 
-		// the old way
-		URL[] pluginPaths = PluginPathFinder.getPluginPaths(TargetPlatform.getDefaultLocation(), false);
-		assertBundlePathsEqual(pluginPaths, uris);
+		assertEquals(getAllBundleURIs(TargetPlatformService.getDefault().newDefaultTarget()), uris);
 	}
 
 	/**
