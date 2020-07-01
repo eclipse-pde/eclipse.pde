@@ -92,8 +92,9 @@ public class UpdateManagerHelperDeprecated {
 				comma = true;
 				writer.write(relative(model));
 			}
+
 			writer.write("\" policy=\"USER-INCLUDE\" updateable=\"true\" url=\""); //$NON-NLS-1$
-			writer.write(getURL().toString());
+			writer.write(new File(getURL().getFile()).toURL().toString());
 			writer.write("/\">\n"); //$NON-NLS-1$
 			writer.write("</site>\n"); //$NON-NLS-1$
 		}
