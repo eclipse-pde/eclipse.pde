@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -64,7 +65,7 @@ public class TargetPlatformTests {
 	private void checkPlatformXML(File location, IPluginModelBase[] plugins) throws Exception {
 		File parent = new File(location, "org.eclipse.update");
 		File platform_xml = new File(parent, "platform.xml");
-		assertTrue(platform_xml.exists());
+		assertThat(platform_xml).exists();
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document document = builder.parse(platform_xml);
 		assertEquals("1.0", document.getXmlVersion());
@@ -74,7 +75,7 @@ public class TargetPlatformTests {
 		assertEquals("true", config.getAttribute("transient"));
 		assertEquals("3.0", config.getAttribute("version"));
 		Date date = new Date(Long.parseLong(config.getAttribute("date")));
-		assertTrue(date.before(new Date()));
+		assertThat(date).isBefore(new Date());
 		NodeList sites = config.getElementsByTagName("site");
 		if (plugins.length == 0) {
 			assertEquals(0, sites.getLength());
@@ -87,7 +88,7 @@ public class TargetPlatformTests {
 			assertEquals("true", node.getAttribute("enabled"));
 			assertTrueIfNotEmpty(node.getAttribute("updatable"));
 			assertEquals("USER-INCLUDE", node.getAttribute("policy"));
-			assertTrue(node.getAttribute("url").startsWith("file:/"));
+			assertThat(node.getAttribute("url")).startsWith("file:/");
 			assertNotNull(node.getAttribute("list"));
 			assertTrue(hasNoChildren(node));
 			String[] list = node.getAttribute("list").split(",");
@@ -104,7 +105,7 @@ public class TargetPlatformTests {
 			Element node = (Element) features.item(i);
 			assertTrueIfNotEmpty(node.getAttribute("enabled"));
 			String url = node.getAttribute("url");
-			assertTrue(url.startsWith("features"));
+			assertThat(url).startsWith("features");
 			Matcher matcher = featurePattern.matcher(url);
 			if (matcher.matches()) {
 				// Relies on naming convention feature/id_version
