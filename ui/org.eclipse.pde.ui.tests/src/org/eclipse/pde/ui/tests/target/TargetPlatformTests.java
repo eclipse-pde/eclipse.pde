@@ -75,7 +75,7 @@ public class TargetPlatformTests {
 		assertEquals("true", config.getAttribute("transient"));
 		assertEquals("3.0", config.getAttribute("version"));
 		Date date = new Date(Long.parseLong(config.getAttribute("date")));
-		assertThat(date).isBefore(new Date());
+		assertThat(date).isBeforeOrEqualTo(new Date());
 		NodeList sites = config.getElementsByTagName("site");
 		if (plugins.length == 0) {
 			assertEquals(0, sites.getLength());
