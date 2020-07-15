@@ -312,6 +312,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 
 	private boolean checkIfNested(IApiComponent component) {
+		if (!ApiPlugin.isRunningInFramework()) {
+			return false;
+		}
 		if (fJavaProject != null) {
 			return false;
 		}
