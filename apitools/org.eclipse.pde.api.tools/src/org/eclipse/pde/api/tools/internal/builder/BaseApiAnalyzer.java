@@ -42,6 +42,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -323,9 +324,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		IProject[] projects = root.getProjects();
 		Path componentLocation = new Path(component.getLocation());
 		for (IProject project : projects) {
-			if (project.getLocation().isPrefixOf(componentLocation)) {
+			IPath projectLocation = project.getLocation();
+			if (projectLocation != null && projectLocation.isPrefixOf(componentLocation)) {
 				// if same project, skipped here
-				if (componentLocation.segmentCount() == project.getLocation().segmentCount()
+				if (componentLocation.segmentCount() == projectLocation.segmentCount()
 						+ 1) {
 					return true;
 				}
