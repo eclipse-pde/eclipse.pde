@@ -31,6 +31,7 @@ import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.ui.*;
@@ -318,10 +319,8 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 			store.setValue(IPreferenceConstants.ADD_TO_JAVA_SEARCH, synchJavaSearch);
 			try {
 				if (synchJavaSearch) {
-					ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
-					if (service != null) {
-						AddToJavaSearchJob.synchWithTarget(service.getWorkspaceTargetDefinition());
-					}
+					ITargetPlatformService service = TargetPlatformService.getDefault();
+					AddToJavaSearchJob.synchWithTarget(service.getWorkspaceTargetDefinition());
 				} else {
 					AddToJavaSearchJob.clearAll();
 				}

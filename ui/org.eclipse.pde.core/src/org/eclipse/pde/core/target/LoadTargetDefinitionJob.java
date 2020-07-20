@@ -101,7 +101,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 		fTarget = target;
 		if (target == null) {
 			fNone = true;
-			ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
+			ITargetPlatformService service = TargetPlatformService.getDefault();
 			fTarget = service.newTarget();
 		}
 	}

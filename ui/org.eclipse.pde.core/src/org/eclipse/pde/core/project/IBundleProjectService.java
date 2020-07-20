@@ -16,23 +16,19 @@ package org.eclipse.pde.core.project;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.ServiceCaller;
 import org.eclipse.osgi.service.resolver.VersionRange;
-import org.osgi.framework.BundleContext;
 import org.osgi.framework.Version;
 
 /**
  * Service used to create and configure bundle project descriptions.
  * <p>
- * An instance of this service can be obtained from a {@link BundleContext} as
+ * An instance of this service can be obtained from a {@link ServiceCaller} as
  * follows
  * </p>
  *
  * <pre>
- * BundleContext context = ...
- * ServiceReference&lt;IBundleContextService&gt; ref = context.getServiceReference(IBundleContextService.class);
- * IBundleContextService service = context.getService(ref);
- * ...
- * context.ungetService(ref);
+ * ServiceCaller.callOnce(getClass(), IBundleContextService.class, (service) -> ...);
  * </pre>
  *
  * @since 3.6

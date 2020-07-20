@@ -43,6 +43,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.config.*;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
 public class ShowSampleAction extends Action implements IIntroAction {
@@ -240,7 +241,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	 * Apply the profile changes to the currently running configuration.
 	 */
 	void applyConfiguration() throws CoreException {
-		BundleContext context = PDEPlugin.getDefault().getBundle().getBundleContext();
+		BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
 		ServiceReference<Configurator> reference = context.getServiceReference(Configurator.class);
 		Configurator configurator = context.getService(reference);
 		try {

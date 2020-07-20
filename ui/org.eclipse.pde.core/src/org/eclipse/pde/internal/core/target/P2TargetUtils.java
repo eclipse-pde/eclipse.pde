@@ -229,7 +229,7 @@ public class P2TargetUtils {
 	public static List<String> cleanOrphanedTargetDefinitionProfiles() throws CoreException {
 		List<String> list = new ArrayList<>();
 		IProfileRegistry registry = getProfileRegistry();
-		ITargetPlatformService tps = PDECore.getDefault().acquireService(ITargetPlatformService.class);
+		ITargetPlatformService tps = TargetPlatformService.getDefault();
 		if (registry != null && tps != null) {
 			IProfile[] profiles = registry.getProfiles();
 			for (IProfile profile : profiles) {
