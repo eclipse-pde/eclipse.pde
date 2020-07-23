@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -100,20 +101,13 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		}
 	}
 
-	public void disposeColors(boolean resetSingleton) {
-		Iterator<Color> e = fColorTable.values().iterator();
-		while (e.hasNext())
-			e.next().dispose();
-		if (resetSingleton)
-			fColorManager = null;
-
-	}
-
 	@Override
 	public void dispose() {
 		counter--;
-		if (counter == 0)
-			disposeColors(true);
+		if (counter == 0) {
+			fColorManager = null;
+
+		}
 	}
 
 	private void putColor(IPreferenceStore pstore, String property) {
@@ -123,9 +117,9 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 	private void putColor(String property, RGB setting) {
 		Color oldColor = fColorTable.get(property);
 		if (oldColor != null) {
-			if (oldColor.getRGB().equals(setting))
+			if (oldColor.getRGB().equals(setting)) {
 				return;
-			oldColor.dispose();
+			}
 		}
 		fColorTable.put(property, new Color(Display.getCurrent(), setting));
 	}
