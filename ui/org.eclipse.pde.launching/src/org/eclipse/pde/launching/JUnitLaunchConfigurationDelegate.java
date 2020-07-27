@@ -146,12 +146,6 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		programArgs.add("-dev"); //$NON-NLS-1$
 		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigurationDirectory(configuration).toString() + "/dev.properties", fAllBundles)); //$NON-NLS-1$
 
-		// necessary for PDE to know how to load plugins when target platform = host platform
-		// see PluginPathFinder.getPluginPaths()
-		IPluginModelBase base = findPlugin(PDECore.PLUGIN_ID);
-		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(), new Version("3.3.1")) < 0) //$NON-NLS-1$
-			programArgs.add("-pdelaunch"); //$NON-NLS-1$
-
 		// Create the .options file if tracing is turned on
 		if (configuration.getAttribute(IPDELauncherConstants.TRACING, false) && !IPDELauncherConstants.TRACING_NONE.equals(configuration.getAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null))) {
 			programArgs.add("-debug"); //$NON-NLS-1$
@@ -257,8 +251,6 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 	private IPluginModelBase findPlugin(String id) throws CoreException {
 		IPluginModelBase model = PluginRegistry.findModel(id);
-		if (model == null)
-			model = PDECore.getDefault().findPluginInHost(id);
 		if (model == null)
 			abort(NLS.bind(PDEMessages.JUnitLaunchConfiguration_error_missingPlugin, id), null, IStatus.OK);
 		return model;

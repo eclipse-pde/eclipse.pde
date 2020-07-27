@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.emptyArray;
-import static org.hamcrest.Matchers.is;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -52,7 +51,7 @@ public class DynamicPluginProjectReferencesTest {
 		ProjectUtils.importTestProject("tests/projects/host-fragment-" + type + "/testframework");
 
 		IBuildConfiguration[] referenced = host.getReferencedBuildConfigs(host.getActiveBuildConfig().getName(), false);
-		assertThat(referenced, is(emptyArray()));
+		assertThat(referenced).isEmpty();
 	}
 
 	@Test
@@ -110,7 +109,7 @@ public class DynamicPluginProjectReferencesTest {
 
 		IBuildConfiguration[] referenced = consumer.getReferencedBuildConfigs(consumer.getActiveBuildConfig().getName(),
 				false);
-		assertThat(referenced, is(emptyArray()));
+		assertThat(referenced).isEmpty();
 	}
 
 }

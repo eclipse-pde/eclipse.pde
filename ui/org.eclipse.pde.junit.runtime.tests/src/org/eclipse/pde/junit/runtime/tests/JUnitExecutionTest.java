@@ -13,9 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.junit.runtime.tests;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsArrayWithSize.arrayWithSize;
-import static org.hamcrest.core.Is.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 import java.net.URL;
@@ -94,7 +92,7 @@ public class JUnitExecutionTest {
 		IType testClass = input.findType("Test1");
 		ITestRunSession session = TestExecutionUtil.runTest(testClass);
 
-		assertThat(session.getChildren(), is(arrayWithSize(1)));
+		assertThat(session.getChildren()).hasSize(1);
 		assertSuccessful(session);
 	}
 
@@ -103,7 +101,7 @@ public class JUnitExecutionTest {
 		IPackageFragment testPackage = input.findType("Test1").getPackageFragment();
 		ITestRunSession session = TestExecutionUtil.runTest(testPackage);
 
-		assertThat(session.getChildren(), is(arrayWithSize(2)));
+		assertThat(session.getChildren()).hasSize(2);
 		assertSuccessful(session);
 	}
 
@@ -111,7 +109,7 @@ public class JUnitExecutionTest {
 	public void executeProject() throws Exception {
 		ITestRunSession session = TestExecutionUtil.runTest(input.project);
 
-		assertThat(session.getChildren(), is(arrayWithSize(2)));
+		assertThat(session.getChildren()).hasSize(2);
 		assertSuccessful(session);
 	}
 
@@ -120,7 +118,7 @@ public class JUnitExecutionTest {
 		IMethod testMethod = input.findType("Test1").getMethod("test1", new String[0]);
 		ITestRunSession session = TestExecutionUtil.runTest(testMethod);
 
-		assertThat(session.getChildren(), is(arrayWithSize(1)));
+		assertThat(session.getChildren()).hasSize(1);
 		assertSuccessful(session);
 	}
 

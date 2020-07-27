@@ -26,19 +26,18 @@ import org.osgi.framework.Constants;
 
 public class UpdateActivationResolution extends AbstractManifestMarkerResolution {
 
-	private String fHeader = null;
 
-	public UpdateActivationResolution(int type, String currentHeader, IMarker marker) {
+	public UpdateActivationResolution(int type, IMarker marker) {
 		super(type, marker);
-		fHeader = currentHeader;
+
 	}
 
 	@Override
 	protected void createChange(BundleModel model) {
-		fHeader = marker.getAttribute(PDEMarkerFactory.ATTR_HEADER, ICoreConstants.ECLIPSE_AUTOSTART);
+		String localHeader = marker.getAttribute(PDEMarkerFactory.ATTR_HEADER, ICoreConstants.ECLIPSE_AUTOSTART);
 		if (TargetPlatformHelper.getTargetVersion() >= 3.4) {
 			// get the header we wish to replace
-			LazyStartHeader header = (LazyStartHeader) model.getBundle().getManifestHeader(fHeader);
+			LazyStartHeader header = (LazyStartHeader) model.getBundle().getManifestHeader(localHeader);
 			if (header != null) {
 				// create a new header and copy over information
 				LazyStartHeader newHeader = (LazyStartHeader) model.getFactory().createHeader(Constants.BUNDLE_ACTIVATIONPOLICY, Constants.ACTIVATION_LAZY);
@@ -61,7 +60,7 @@ public class UpdateActivationResolution extends AbstractManifestMarkerResolution
 				// remove old header from Bundle object.  Add new header to Bundle object
 				Bundle bundle = (Bundle) model.getBundle();
 				Map<String, IManifestHeader> map = bundle.getHeaders();
-				map.remove(fHeader);
+				map.remove(localHeader);
 				map.put(Constants.BUNDLE_ACTIVATIONPOLICY, newHeader);
 				// fire ModelChanged so that way the BundleTextChangeListener will make proper ReplaceTextEdits
 				model.fireModelObjectChanged(newHeader, Constants.BUNDLE_ACTIVATIONPOLICY, null, header.getValue());
@@ -82,7 +81,7 @@ public class UpdateActivationResolution extends AbstractManifestMarkerResolution
 	@Override
 	public String getLabel() {
 		if (TargetPlatformHelper.getTargetVersion() >= 3.4)
-			return NLS.bind(PDEUIMessages.UpdateActivationResolution_bundleActivationPolicy_desc, fHeader);
+			return NLS.bind(PDEUIMessages.UpdateActivationResolution_bundleActivationPolicy_desc,  marker.getAttribute(PDEMarkerFactory.ATTR_HEADER, ICoreConstants.ECLIPSE_AUTOSTART));
 		return PDEUIMessages.UpdateActivationResolution_lazyStart_desc;
 	}
 }

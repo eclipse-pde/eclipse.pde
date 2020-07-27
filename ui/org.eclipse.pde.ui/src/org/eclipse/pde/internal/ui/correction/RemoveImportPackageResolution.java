@@ -21,30 +21,28 @@ import org.osgi.framework.Constants;
 
 public class RemoveImportPackageResolution extends AbstractManifestMarkerResolution {
 
-	private String fPkgName;
 
-	public RemoveImportPackageResolution(int type, String packageName, IMarker marker) {
+	public RemoveImportPackageResolution(int type, IMarker marker) {
 		super(type, marker);
-		fPkgName = packageName;
+
 	}
 
 	@Override
 	protected void createChange(BundleModel model) {
-		fPkgName = marker.getAttribute("packageName", (String) null); //$NON-NLS-1$
 		Bundle bundle = (Bundle) model.getBundle();
 		ImportPackageHeader header = (ImportPackageHeader) bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
 		if (header != null)
-			header.removePackage(fPkgName);
+			header.removePackage(marker.getAttribute("packageName", (String) null)); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getDescription() {
-		return NLS.bind(PDEUIMessages.RemoveImportPkgResolution_description, fPkgName);
+		return NLS.bind(PDEUIMessages.RemoveImportPkgResolution_description, marker.getAttribute("packageName", (String) null)); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getLabel() {
-		return NLS.bind(PDEUIMessages.RemoveImportPkgResolution_label, fPkgName);
+		return NLS.bind(PDEUIMessages.RemoveImportPkgResolution_label, marker.getAttribute("packageName", (String) null)); //$NON-NLS-1$
 	}
 
 }

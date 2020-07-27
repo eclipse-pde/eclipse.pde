@@ -28,7 +28,7 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.UpdateManagerHelper;
+import org.eclipse.pde.internal.core.UpdateManagerHelperDeprecated;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 
 /**
@@ -277,7 +277,7 @@ public class TargetPlatform {
 	 */
 	@Deprecated
 	public static void createPlatformConfiguration(File location, IPluginModelBase[] plugins, IPluginModelBase brandingPlugin) throws CoreException {
-		UpdateManagerHelper.createPlatformConfiguration(location, plugins, brandingPlugin);
+		UpdateManagerHelperDeprecated.createPlatformConfiguration(location, plugins, brandingPlugin);
 	}
 
 	/**

@@ -14,9 +14,7 @@
 package org.eclipse.pde.junit.runtime.tests;
 
 import static java.util.stream.Collectors.toList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.core.Is.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -63,7 +61,7 @@ class TestExecutionUtil {
 		List<IMarker> errorMarkers = Arrays.stream(project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE)) //
 				.filter(m -> m.getAttribute(IMarker.SEVERITY, 0) == IMarker.SEVERITY_ERROR) //
 				.collect(toList());
-		assertThat("error markers in " + project, errorMarkers, is(empty()));
+		assertThat(errorMarkers).as("error markers in " + project).isEmpty();
 
 		TestLaunchShortcut launchShortcut = new TestLaunchShortcut();
 		ILaunchConfigurationWorkingCopy launchConfiguration = launchShortcut.createLaunchConfiguration(element);

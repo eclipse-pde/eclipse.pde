@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2019 IBM Corporation and others.
+ *  Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -26,16 +26,16 @@ import org.osgi.framework.Constants;
 
 public class AddDefaultExecutionEnvironmentResolution extends AbstractManifestMarkerResolution {
 
-	private String id;
 
-	public AddDefaultExecutionEnvironmentResolution(int type, String id, IMarker marker) {
+
+	public AddDefaultExecutionEnvironmentResolution(int type, IMarker marker) {
 		super(type, marker);
-		this.id = id;
+
 	}
 
 	@Override
 	protected void createChange(BundleModel model) {
-		id = this.marker.getAttribute("ee_id", null); //$NON-NLS-1$
+		String id = this.marker.getAttribute("ee_id", null); //$NON-NLS-1$
 
 		IManifestHeader header = model.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 		if (header == null) {
@@ -54,6 +54,6 @@ public class AddDefaultExecutionEnvironmentResolution extends AbstractManifestMa
 
 	@Override
 	public String getLabel() {
-		return NLS.bind(PDEUIMessages.AddDefaultExecutionEnvironment_label, id);
+		return NLS.bind(PDEUIMessages.AddDefaultExecutionEnvironment_label, this.marker.getAttribute("ee_id", null));
 	}
 }

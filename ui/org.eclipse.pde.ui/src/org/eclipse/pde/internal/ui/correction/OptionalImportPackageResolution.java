@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2019 IBM Corporation and others.
+ *  Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -21,20 +21,20 @@ import org.osgi.framework.Constants;
 
 public class OptionalImportPackageResolution extends AbstractManifestMarkerResolution {
 
-	private String fPackageName;
+
 
 	public OptionalImportPackageResolution(int type, String packageName, IMarker marker) {
 		super(type, marker);
-		fPackageName = packageName;
+
 	}
 
 	@Override
 	protected void createChange(BundleModel model) {
-		fPackageName = marker.getAttribute("packageName", (String) null); //$NON-NLS-1$
+		String packageName = marker.getAttribute("packageName", (String) null); //$NON-NLS-1$
 		Bundle bundle = (Bundle) model.getBundle();
 		ImportPackageHeader header = (ImportPackageHeader) bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
 		if (header != null) {
-			ImportPackageObject pkg = header.getPackage(fPackageName);
+			ImportPackageObject pkg = header.getPackage(packageName);
 			if (pkg != null)
 				pkg.setOptional(true);
 		}
@@ -42,12 +42,12 @@ public class OptionalImportPackageResolution extends AbstractManifestMarkerResol
 
 	@Override
 	public String getDescription() {
-		return NLS.bind(PDEUIMessages.OptionalImportPkgResolution_description, fPackageName);
+		return NLS.bind(PDEUIMessages.OptionalImportPkgResolution_description,marker.getAttribute("packageName", (String) null)); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getLabel() {
-		return NLS.bind(PDEUIMessages.OptionalImportPkgResolution_label, fPackageName);
+		return NLS.bind(PDEUIMessages.OptionalImportPkgResolution_label,marker.getAttribute("packageName", (String) null)); //$NON-NLS-1$
 	}
 
 }

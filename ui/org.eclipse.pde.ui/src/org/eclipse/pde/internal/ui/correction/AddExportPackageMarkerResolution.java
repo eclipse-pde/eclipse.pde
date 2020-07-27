@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2019 IBM Corporation and others.
+ *  Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -25,11 +25,9 @@ import org.osgi.framework.Constants;
 
 public class AddExportPackageMarkerResolution extends AbstractManifestMarkerResolution {
 
-	private String fValues;
 
-	public AddExportPackageMarkerResolution(IMarker mark, int type, String values) {
+	public AddExportPackageMarkerResolution(IMarker mark, int type) {
 		super(type, mark);
-		this.fValues = values;
 		this.marker = mark;
 	}
 
@@ -53,11 +51,11 @@ public class AddExportPackageMarkerResolution extends AbstractManifestMarkerReso
 	}
 
 	protected void processPackages(ExportPackageHeader header, boolean setInternal) {
-		fValues = marker.getAttribute("packages", null); //$NON-NLS-1$
-		if (fValues == null) {
+		String values = marker.getAttribute("packages", null); //$NON-NLS-1$
+		if (values == null) {
 			return;
 		}
-		String[] packages = fValues.split(","); //$NON-NLS-1$
+		String[] packages = values.split(","); //$NON-NLS-1$
 		String filter = PDEPlugin.getDefault().getDialogSettings().get(IOrganizeManifestsSettings.PROP_INTERAL_PACKAGE_FILTER);
 		if (filter == null)
 			filter = IOrganizeManifestsSettings.VALUE_DEFAULT_FILTER;

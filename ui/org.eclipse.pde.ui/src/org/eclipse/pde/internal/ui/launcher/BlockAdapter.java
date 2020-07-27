@@ -141,6 +141,7 @@ public class BlockAdapter {
 				}
 				fLayout.topControl = fPluginBlockComposite;
 			}
+			fLayout.topControl.requestLayout();
 			fActiveIndex = index;
 		} catch (CoreException ex) {
 			PDEPlugin.log(ex);

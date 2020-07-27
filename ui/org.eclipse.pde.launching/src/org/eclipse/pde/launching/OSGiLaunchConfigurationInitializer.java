@@ -19,6 +19,8 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.PDEState;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 
 /**
@@ -80,13 +82,22 @@ public class OSGiLaunchConfigurationInitializer {
 		Set<String> targetBundles = new HashSet<>();
 		Set<String> workspaceBundles = new HashSet<>();
 		IPluginModelBase[] models = PluginRegistry.getActiveModels();
+		PDEState pdeState = TargetPlatformHelper.getPDEState();
 		for (IPluginModelBase model : models) {
+			if (isSourceBundle(pdeState, model)) {
+				continue;
+			}
+
 			boolean inWorkspace = model.getUnderlyingResource() != null;
 			appendBundle(inWorkspace ? workspaceBundles : targetBundles, model);
 		}
 		configuration.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, workspaceBundles);
 		configuration.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, targetBundles);
 		configuration.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+	}
+
+	private boolean isSourceBundle(PDEState pdeState, IPluginModelBase model) {
+		return pdeState.getBundleSourceEntry(model.getBundleDescription().getBundleId()) != null;
 	}
 
 	private void appendBundle(Set<String> bundleSet, IPluginModelBase model) {

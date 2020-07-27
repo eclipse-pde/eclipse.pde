@@ -35,8 +35,12 @@ import org.eclipse.pde.internal.launching.launcher.*;
  * <p>
  * Clients may subclass and instantiate this class.
  * </p>
+ *
  * @since 3.2
- * @deprecated use {@link org.eclipse.pde.launching.EquinoxLaunchConfiguration} instead.
+ * @deprecated use {@link org.eclipse.pde.launching.EquinoxLaunchConfiguration}
+ *             instead.
+ * @noreference This method is planned for removal. See bug 564563 for details.
+ * @noextend This method is planned for removal. See bug 564563 for details.
  * @see org.eclipse.pde.launching.EquinoxLaunchConfiguration
  */
 @Deprecated
@@ -80,9 +84,6 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 			URL bundlesTxt = P2Utils.writeBundlesTxt(fModels, start, autostart, getConfigDir(configuration), null);
 			if (bundlesTxt != null) {
 				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
-				if (fAllBundles.get("org.eclipse.update.configurator") != null) { //$NON-NLS-1$
-					properties.setProperty("org.eclipse.update.reconcile", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-				}
 			}
 			StringBuilder buffer = new StringBuilder();
 			IPluginModelBase model = fAllBundles.get(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR);

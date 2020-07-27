@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
@@ -46,7 +45,6 @@ import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.core.target.TargetFeature;
 import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PluginPathFinder;
 
 /**
  * A bundle container representing an installed profile.
@@ -142,9 +140,11 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 					throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, ex.getMessage(), ex));
 				}
 			}
-			TargetBundle[] platformXML = resolvePlatformXML(definition, home, monitor);
-			if (platformXML != null) {
-				return platformXML;
+			DirectoryBundleContainer directoryBundleContainer = new DirectoryBundleContainer(home);
+			directoryBundleContainer.resolve(definition, monitor);
+			TargetBundle[] platformBundles = directoryBundleContainer.getBundles();
+			if (platformBundles != null) {
+				return platformBundles;
 			}
 			infos = new BundleInfo[0];
 		}
@@ -254,43 +254,6 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			return ((TargetDefinition) definition).resolveFeatures(getLocation(false), monitor);
 		}
 		return new TargetFeature[0];
-	}
-
-	/**
-	 * Resolves installed bundles based on update manager's platform XML or scans the plugins directory if
-	 * no platform.xml is available
-	 *
-	 * TODO When we are willing to drop support for platform.xml (pre Eclipse 3.4) we should
-	 * replace this method with a simple directory scan like {@link DirectoryBundleContainer}
-	 *
-	 * @param definition
-	 * @param home
-	 * @param monitor
-	 * @return resolved bundles or <code>null</code> if none
-	 * @throws CoreException
-	 */
-	protected TargetBundle[] resolvePlatformXML(ITargetDefinition definition, String home, IProgressMonitor monitor) throws CoreException {
-		URL[] files = PluginPathFinder.getPlatformXMLPaths(home, false);
-		if (files.length > 0) {
-			List<TargetBundle> all = new ArrayList<>(files.length);
-			SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
-			for (URL file : files) {
-				if (localMonitor.isCanceled()) {
-					throw new OperationCanceledException();
-				}
-				try {
-					File plugin = new File(file.getFile());
-					all.add(new TargetBundle(plugin));
-				} catch (CoreException e) {
-					// Ignore non-bundle files
-				}
-				localMonitor.split(1);
-			}
-			if (!all.isEmpty()) {
-				return all.toArray(new TargetBundle[all.size()]);
-			}
-		}
-		return null;
 	}
 
 	/**

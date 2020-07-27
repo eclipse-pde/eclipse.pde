@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2019 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,18 +26,16 @@ import org.osgi.framework.Constants;
 
 public class AddActivationHeaderResolution extends AbstractManifestMarkerResolution {
 
-	String fHeader = null;
 
-	public AddActivationHeaderResolution(int type, String currentHeader, IMarker marker) {
+	public AddActivationHeaderResolution(int type, IMarker marker) {
 		super(type, marker);
-		fHeader = currentHeader;
 	}
 
 	@Override
 	protected void createChange(BundleModel model) {
-		marker.getAttribute("header", ICoreConstants.ECLIPSE_AUTOSTART); //$NON-NLS-1$
+		String markerHeader = marker.getAttribute("header", ICoreConstants.ECLIPSE_AUTOSTART); //$NON-NLS-1$
 		IBundle bundle = model.getBundle();
-		IManifestHeader header = bundle.getManifestHeader(fHeader);
+		IManifestHeader header = bundle.getManifestHeader(markerHeader);
 		if (header instanceof LazyStartHeader) {
 			LazyStartHeader lheader = (LazyStartHeader) header;
 			String exceptions = lheader.getAttribute("exceptions"); //$NON-NLS-1$

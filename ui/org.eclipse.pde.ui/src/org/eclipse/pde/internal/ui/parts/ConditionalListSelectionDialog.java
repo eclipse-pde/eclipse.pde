@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.ui.parts;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.text.StringMatcher;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -24,7 +25,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.FilteredList;
 import org.eclipse.ui.dialogs.FilteredList.FilterMatcher;
-import org.eclipse.ui.internal.misc.StringMatcher;
 
 public class ConditionalListSelectionDialog extends ElementListSelectionDialog {
 

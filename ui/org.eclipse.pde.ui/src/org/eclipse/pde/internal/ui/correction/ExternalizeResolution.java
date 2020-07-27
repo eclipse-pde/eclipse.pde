@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2019 IBM Corporation and others.
+ *  Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -25,6 +25,7 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDEManager;
+import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.project.PDEProject;
@@ -61,7 +62,6 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 				ITextFileBuffer buffer = manager.getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
 				if (buffer.isDirty())
 					buffer.commit(null, true);
-
 				IDocument document = buffer.getDocument();
 				ExternalizeStringsOperation.getPropertiesInsertEdit(document, element).apply(document);
 				buffer.commit(null, true);
@@ -79,11 +79,16 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 
 	@Override
 	public String getLabel() {
+		String locationPath = null;
+		try {
+			locationPath = (String) marker.getAttribute(PDEMarkerFactory.MPK_LOCATION_PATH);
+		} catch (CoreException e) {
+		}
 		if (isAttrNode())
 			return NLS.bind(PDEUIMessages.ExternalizeResolution_attrib, getNameOfNode());
-		if (fLocationPath.charAt(0) == '(')
+		if (locationPath.charAt(0) == '(')
 			return NLS.bind(PDEUIMessages.ExternalizeResolution_text, getNameOfNode());
-		return NLS.bind(PDEUIMessages.ExternalizeResolution_header, fLocationPath);
+		return NLS.bind(PDEUIMessages.ExternalizeResolution_header, locationPath);
 	}
 
 	private void addLocalization(IPluginModelBase model, String localizationValue) {

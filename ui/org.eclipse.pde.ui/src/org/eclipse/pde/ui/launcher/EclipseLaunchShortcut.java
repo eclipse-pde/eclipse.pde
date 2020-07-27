@@ -225,7 +225,6 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(wc.getName()));
 		initializeProgramArguments(wc);
 		initializeVMArguments(wc);
-		wc.setAttribute(IPDELauncherConstants.USEFEATURES, false);
 		wc.setAttribute(IPDELauncherConstants.DOCLEAR, false);
 		wc.setAttribute(IPDELauncherConstants.ASKCLEAR, true);
 		wc.setAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, true);

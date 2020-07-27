@@ -14,13 +14,16 @@
 package org.eclipse.pde.ui.launcher;
 
 /**
- * A launch configuration tab that lets the user customize the list of plug-ins to launch with,
- * their start level and their auto-start attributes.
+ * A launch configuration tab that lets the user customize the list of plug-ins
+ * to launch with, their start level and their auto-start attributes.
  * <p>
- * This class may be instantiated. This class is not intended to be subclassed by clients.
+ * This class may be instantiated. This class is not intended to be subclassed
+ * by clients.
  * </p>
+ *
  * @since 3.2
  * @deprecated use {@link BundlesTab}
+ * @noreference This method is planned for removal. See bug 564563 for details.
  * @noextend This class is not intended to be subclassed by clients.
  */
 @Deprecated

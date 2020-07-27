@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,10 +14,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.build;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.SequenceInputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import org.eclipse.core.resources.IFile;
@@ -94,6 +97,35 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 		updateTimeStamp(fUnderlyingResource.getLocation().toFile());
 	}
 
+
+	private String getLineDelimiter(IFile f) {
+		String lineDelimiter = getLineDelimiterPreference(f);
+		if (lineDelimiter == null) {
+			lineDelimiter = System.lineSeparator();
+		}
+		return lineDelimiter;
+
+	}
+
+	private StringBuilder getHeaderComments(IFile f) throws IOException, CoreException {
+		StringBuilder str = null;
+		String lineDelimiter = getLineDelimiter(f);
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(f.getContents()))) {
+			for (String line; (line = br.readLine()) != null;) {
+				if (line.startsWith("#")) { //$NON-NLS-1$
+					if (str == null) {
+						str = new StringBuilder();
+					}
+					str.append(line + lineDelimiter);
+				} else {
+					break;
+				}
+			}
+		}
+		// returns null for no header comment case
+		return str;
+	}
+
 	@Override
 	public void save() {
 		if (fUnderlyingResource == null) {
@@ -102,7 +134,18 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 		String contents = fixLineDelimiter(getContents(), fUnderlyingResource);
 		try (ByteArrayInputStream stream = new ByteArrayInputStream(contents.getBytes(StandardCharsets.ISO_8859_1))) {
 			if (fUnderlyingResource.exists()) {
-				fUnderlyingResource.setContents(stream, false, false, null);
+
+				StringBuilder str = getHeaderComments(fUnderlyingResource);
+				if (str != null) {
+					ByteArrayInputStream headerComment = new ByteArrayInputStream(str.toString().getBytes());
+					InputStream totalContent = new SequenceInputStream(headerComment, stream);
+					fUnderlyingResource.setContents(totalContent, false, false, null);
+					totalContent.close();
+
+				}
+				if (str == null) {
+					fUnderlyingResource.setContents(stream, false, false, null);
+				}
 			} else {
 				fUnderlyingResource.create(stream, false, null);
 			}

@@ -47,7 +47,6 @@ public class EditorPreferencePage extends PreferencePage implements IWorkbenchPr
 
 	@Override
 	public void dispose() {
-		fColorManager.disposeColors(false);
 		fXMLTab.dispose();
 		fManifestTab.dispose();
 		super.dispose();

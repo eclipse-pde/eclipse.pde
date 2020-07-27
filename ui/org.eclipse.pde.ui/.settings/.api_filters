@@ -66,12 +66,46 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/pde/ui/launcher/AbstractPDELaunchConfiguration.java" type="org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration">
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/pde/ui/launcher/ConfigurationTab.java" type="org.eclipse.pde.ui.launcher.ConfigurationTab">
         <filter comment="Code was moved to pde.launching, but we can't make breaking API changes" id="574668824">
             <message_arguments>
                 <message_argument value="IPDELauncherConstants"/>
                 <message_argument value="ConfigurationTab"/>
                 <message_argument value="IPDELauncherConstants"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/launcher/EclipseApplicationLaunchConfiguration.java" type="org.eclipse.pde.ui.launcher.EclipseApplicationLaunchConfiguration">
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.pde.ui.launcher.EclipseApplicationLaunchConfiguration"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.launcher.EclipseApplicationLaunchConfiguration"/>
+                <message_argument value="getProgramArguments(ILaunchConfiguration)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.launcher.EclipseApplicationLaunchConfiguration"/>
+                <message_argument value="getVMArguments(ILaunchConfiguration)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.launcher.EclipseApplicationLaunchConfiguration"/>
+                <message_argument value="EclipseApplicationLaunchConfiguration()"/>
             </message_arguments>
         </filter>
     </resource>
@@ -83,11 +117,67 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/pde/ui/launcher/EquinoxLaunchConfiguration.java" type="org.eclipse.pde.ui.launcher.EquinoxLaunchConfiguration">
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.pde.ui.launcher.EquinoxLaunchConfiguration"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.launcher.EquinoxLaunchConfiguration"/>
+                <message_argument value="getProgramArguments(ILaunchConfiguration)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.launcher.EquinoxLaunchConfiguration"/>
+                <message_argument value="EquinoxLaunchConfiguration()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/launcher/EquinoxPluginsTab.java" type="org.eclipse.pde.ui.launcher.EquinoxPluginsTab">
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.launcher.EquinoxPluginsTab"/>
+                <message_argument value="getDefaultStartLevel()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.launcher.EquinoxPluginsTab"/>
+                <message_argument value="EquinoxPluginsTab()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/launcher/EquinoxSettingsTab.java" type="org.eclipse.pde.ui.launcher.EquinoxSettingsTab">
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.launcher.EquinoxSettingsTab"/>
+                <message_argument value="EquinoxSettingsTab()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/pde/ui/launcher/IPDELauncherConstants.java" type="org.eclipse.pde.ui.launcher.IPDELauncherConstants">
         <filter comment="Code was moved to pde.launching, but we can't make breaking API changes" id="571473929">
             <message_arguments>
                 <message_argument value="IPDELauncherConstants"/>
                 <message_argument value="IPDELauncherConstants"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/launcher/JUnitLaunchConfigurationDelegate.java" type="org.eclipse.pde.ui.launcher.JUnitLaunchConfigurationDelegate">
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.pde.ui.launcher.JUnitLaunchConfigurationDelegate"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.launcher.JUnitLaunchConfigurationDelegate"/>
+                <message_argument value="JUnitLaunchConfigurationDelegate()"/>
             </message_arguments>
         </filter>
     </resource>
@@ -105,6 +195,48 @@
                 <message_argument value="IPDELauncherConstants"/>
                 <message_argument value="MainTab"/>
                 <message_argument value="IPDELauncherConstants"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/launcher/OSGiLaunchConfigurationDelegate.java" type="org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationDelegate">
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationDelegate"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationDelegate"/>
+                <message_argument value="OSGiLaunchConfigurationDelegate()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/launcher/OSGiLaunchConfigurationInitializer.java" type="org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationInitializer">
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationInitializer"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationInitializer"/>
+                <message_argument value="OSGiLaunchConfigurationInitializer()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/launcher/PDESourcePathProvider.java" type="org.eclipse.pde.ui.launcher.PDESourcePathProvider">
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.pde.ui.launcher.PDESourcePathProvider"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 564563 - Mark deprecated API from o.e.pde.ui.launcher for removal" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.pde.ui.launcher.PDESourcePathProvider"/>
+                <message_argument value="PDESourcePathProvider()"/>
             </message_arguments>
         </filter>
     </resource>

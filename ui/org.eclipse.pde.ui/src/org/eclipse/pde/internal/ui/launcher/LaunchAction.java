@@ -362,7 +362,6 @@ public class LaunchAction extends Action {
 		String computedName = getComputedName(new Path(fPath).lastSegment());
 		ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);
 		wc.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(computedName));
-		wc.setAttribute(IPDELauncherConstants.USEFEATURES, false);
 		wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, false);
 		wc.setAttribute(IPDELauncherConstants.DOCLEAR, false);
 		wc.setAttribute(IPDEConstants.DOCLEARLOG, false);
