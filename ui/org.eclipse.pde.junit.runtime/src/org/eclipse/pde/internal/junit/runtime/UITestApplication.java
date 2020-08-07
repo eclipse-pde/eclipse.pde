@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.junit.runtime;
 
+import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.ui.PlatformUI;
 
@@ -32,7 +33,7 @@ public class UITestApplication extends NonUIThreadTestApplication {
 	}
 
 	@Override
-	protected Object runApp(Object app, IApplicationContext context, String[] args) throws Exception {
+	protected Object runApp(IApplication app, IApplicationContext context) throws Exception {
 		// Get the testable object from the service
 		Object testableObject = PDEJUnitRuntimePlugin.getDefault().getTestableObject();
 		// If the service doesn't return a testable object ask PlatformUI directly
@@ -43,6 +44,6 @@ public class UITestApplication extends NonUIThreadTestApplication {
 		fTestHarness = new PlatformUITestHarness(testableObject, false);
 
 		// continue application launch
-		return super.runApp(app, context, args);
+		return super.runApp(app, context);
 	}
 }

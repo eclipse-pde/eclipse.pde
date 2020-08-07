@@ -34,8 +34,7 @@ public class NonUIThreadTestApplication implements IApplication {
 		String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 
 		String appId = getApplicationToRun(args);
-		Object app = getApplication(appId);
-
+		IApplication app = getApplication(appId);
 		Assert.assertNotNull(app);
 
 		if (!DEFAULT_HEADLESSAPP.equals(appId)) {
@@ -46,15 +45,12 @@ public class NonUIThreadTestApplication implements IApplication {
 			installPlatformUITestHarness();
 		}
 
-		return runApp(app, context, args);
+		return runApp(app, context);
 	}
 
-	protected Object runApp(Object app, IApplicationContext context, String[] args) throws Exception {
-		if (app instanceof IApplication) {
-			fApplication = (IApplication) app;
-			return fApplication.start(context);
-		}
-		return ((IPlatformRunnable) app).run(args);
+	protected Object runApp(IApplication app, IApplicationContext context) throws Exception {
+		fApplication = app;
+		return fApplication.start(context);
 	}
 
 	/**
@@ -93,7 +89,7 @@ public class NonUIThreadTestApplication implements IApplication {
 	 * return the application to run, or null if not even the default application
 	 * is found.
 	 */
-	private Object getApplication(String appId) throws CoreException {
+	private IApplication getApplication(String appId) throws CoreException {
 		// Find the name of the application as specified by the PDE JUnit launcher.
 		// If no application is specified, the 3.0 default workbench application
 		// is returned.
@@ -108,8 +104,8 @@ public class NonUIThreadTestApplication implements IApplication {
 			IConfigurationElement[] runs = elements[0].getChildren("run"); //$NON-NLS-1$
 			if (runs.length > 0) {
 				Object runnable = runs[0].createExecutableExtension("class"); //$NON-NLS-1$
-				if (runnable instanceof IPlatformRunnable || runnable instanceof IApplication)
-					return runnable;
+				if (runnable instanceof IApplication)
+					return (IApplication) runnable;
 			}
 		}
 		return null;
