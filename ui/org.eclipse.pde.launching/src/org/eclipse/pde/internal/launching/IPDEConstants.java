@@ -18,7 +18,6 @@ public interface IPDEConstants {
 	String UI_PLUGIN_ID = "org.eclipse.pde.ui"; //$NON-NLS-1$
 
 	// JUnit application identifiers
-	String LEGACY_UI_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.legacytestapplication"; //$NON-NLS-1$
 	String NON_UI_THREAD_APPLICATION = "org.eclipse.pde.junit.runtime.nonuithreadtestapplication"; //$NON-NLS-1$
 	String UI_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$
 	String CORE_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$

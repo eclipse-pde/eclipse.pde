@@ -24,7 +24,6 @@ import org.eclipse.debug.core.*;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.junit.launcher.*;
 import org.eclipse.jdt.launching.*;
-import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -224,23 +223,6 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 			// if application is set, it must be a headless app.
 			application = configuration.getAttribute(IPDELauncherConstants.APPLICATION, (String) null);
 		} catch (CoreException e) {
-		}
-
-		// if application is not set, we should launch the default UI test app
-		// Check to see if we should launch the legacy UI app
-		if (application == null) {
-			IPluginModelBase model = fAllBundles.get("org.eclipse.pde.junit.runtime"); //$NON-NLS-1$
-			BundleDescription desc = model != null ? model.getBundleDescription() : null;
-			if (desc != null) {
-				Version version = desc.getVersion();
-				int major = version.getMajor();
-				// launch legacy UI app only if we are launching a target that does
-				// not use the new application model and we are launching with a
-				// org.eclipse.pde.junit.runtime whose version is >= 3.3
-				if (major >= 3 && version.getMinor() >= 3 && !TargetPlatformHelper.usesNewApplicationModel()) {
-					application = IPDEConstants.LEGACY_UI_TEST_APPLICATION;
-				}
-			}
 		}
 
 		// launch the UI test application
