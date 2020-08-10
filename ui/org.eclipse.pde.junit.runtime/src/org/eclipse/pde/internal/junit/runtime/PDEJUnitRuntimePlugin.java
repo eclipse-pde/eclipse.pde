@@ -40,9 +40,6 @@ import org.osgi.util.tracker.ServiceTracker;
  *
  * 5) Headless tests with no application (no UI, no workbench, no application)
  *    Runs directly with no application
- *
- * 6) Legacy UI test application (deprecated)
- *    Runs LegacyUITestApplication with an IPlatformRunnable
  * </pre>
  * @since 4.3
  */
