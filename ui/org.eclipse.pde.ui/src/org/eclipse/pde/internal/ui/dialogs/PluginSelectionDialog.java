@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,12 +38,14 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 
 	private static final String DIALOG_SETTINGS = "org.eclipse.pde.ui.dialogs.PluginSelectionDialog"; //$NON-NLS-1$
 	private IPluginModelBase[] fModels;
+	String originalPattern;
 
 	private class PluginSearchItemsFilter extends ItemsFilter {
 
 		public PluginSearchItemsFilter() {
 			super();
-			String pattern = patternMatcher.getPattern();
+			originalPattern = patternMatcher.getPattern();
+			String pattern = originalPattern;
 			if (pattern.indexOf('*') != 0 && pattern.indexOf('?') != 0 && pattern.indexOf('.') != 0) {
 				pattern = "*" + pattern; //$NON-NLS-1$
 				patternMatcher.setPattern(pattern);
@@ -97,6 +99,12 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 
 		private int comparePlugins(IPluginBase ipmb1, IPluginBase ipmb2) {
+			if (ipmb1.getId().startsWith(originalPattern) && !ipmb2.getId().startsWith(originalPattern)) {
+				return -1;
+			}
+			if (!ipmb1.getId().startsWith(originalPattern) && ipmb2.getId().startsWith(originalPattern)) {
+				return 1;
+			}
 			return ipmb1.getId().compareTo(ipmb2.getId());
 		}
 
