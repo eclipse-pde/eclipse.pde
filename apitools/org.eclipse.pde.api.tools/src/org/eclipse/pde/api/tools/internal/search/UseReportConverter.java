@@ -395,36 +395,33 @@ public class UseReportConverter extends HTMLConvertor {
 	/**
 	 * Comparator for use report items
 	 */
-	static Comparator<Object> compare = new Comparator<Object>() {
-		@Override
-		public int compare(Object o1, Object o2) {
-			if (o1 instanceof String && o2 instanceof String) {
-				return ((String) o1).compareTo((String) o2);
-			}
-			if (o1 instanceof Type && o2 instanceof Type) {
-				return compare(((Type) o1).desc, ((Type) o2).desc);
-			}
-			if (o1 instanceof IReferenceTypeDescriptor && o2 instanceof IReferenceTypeDescriptor) {
-				return ((IReferenceTypeDescriptor) o1).getQualifiedName()
-						.compareTo(((IReferenceTypeDescriptor) o2).getQualifiedName());
-			}
-			if (o1 instanceof IMethodDescriptor && o2 instanceof IMethodDescriptor) {
-				try {
-					return Signatures.getQualifiedMethodSignature((IMethodDescriptor) o1)
-							.compareTo(Signatures.getQualifiedMethodSignature((IMethodDescriptor) o2));
-				} catch (CoreException ce) {
-					return -1;
-				}
-			}
-			if (o1 instanceof IFieldDescriptor && o2 instanceof IFieldDescriptor) {
-				return Signatures.getQualifiedFieldSignature((IFieldDescriptor) o1)
-						.compareTo(Signatures.getQualifiedFieldSignature((IFieldDescriptor) o2));
-			}
-			if (o1 instanceof IComponentDescriptor && o2 instanceof IComponentDescriptor) {
-				return ((IComponentDescriptor) o1).getId().compareTo(((IComponentDescriptor) o2).getId());
-			}
-			return -1;
+	static Comparator<Object> compare = (o1, o2) -> {
+		if (o1 instanceof String && o2 instanceof String) {
+			return ((String) o1).compareTo((String) o2);
 		}
+		if (o1 instanceof Type && o2 instanceof Type) {
+			return UseReportConverter.compare.compare(((Type) o1).desc, ((Type) o2).desc);
+		}
+		if (o1 instanceof IReferenceTypeDescriptor && o2 instanceof IReferenceTypeDescriptor) {
+			return ((IReferenceTypeDescriptor) o1).getQualifiedName()
+					.compareTo(((IReferenceTypeDescriptor) o2).getQualifiedName());
+		}
+		if (o1 instanceof IMethodDescriptor && o2 instanceof IMethodDescriptor) {
+			try {
+				return Signatures.getQualifiedMethodSignature((IMethodDescriptor) o1)
+						.compareTo(Signatures.getQualifiedMethodSignature((IMethodDescriptor) o2));
+			} catch (CoreException ce) {
+				return -1;
+			}
+		}
+		if (o1 instanceof IFieldDescriptor && o2 instanceof IFieldDescriptor) {
+			return Signatures.getQualifiedFieldSignature((IFieldDescriptor) o1)
+					.compareTo(Signatures.getQualifiedFieldSignature((IFieldDescriptor) o2));
+		}
+		if (o1 instanceof IComponentDescriptor && o2 instanceof IComponentDescriptor) {
+			return ((IComponentDescriptor) o1).getId().compareTo(((IComponentDescriptor) o2).getId());
+		}
+		return -1;
 	};
 
 	/**
@@ -1472,12 +1469,7 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @param reportsRoot
 	 */
 	protected void writeIndexPage(List<?> scanResult) throws Exception {
-		Collections.sort(scanResult, new Comparator<Object>() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				return ((Report) o1).name.compareTo(((Report) o2).name);
-			}
-		});
+		Collections.sort(scanResult, (o1, o2) -> ((Report) o1).name.compareTo(((Report) o2).name));
 
 		PrintWriter writer = null;
 		try {

@@ -409,7 +409,7 @@ public class TarFile {
 	 * @return enumeration of all files in the archive
 	 */
 	public Enumeration<?> entries() {
-		return new Enumeration<Object>() {
+		return new Enumeration<>() {
 			@Override
 			public boolean hasMoreElements() {
 				return (curEntry != null);
