@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2020 IBM Corporation and others.
+ *  Copyright (c) 2005, 2017 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -87,9 +87,6 @@ public abstract class ErrorReporter {
 			return addMarker(message, line, IMarker.SEVERITY_ERROR, problemID, category);
 		} else if (severity == CompilerFlags.WARNING) {
 			return addMarker(message, line, IMarker.SEVERITY_WARNING, problemID, category);
-		}
-		else if (severity == CompilerFlags.INFO) {
-			return addMarker(message, line, IMarker.SEVERITY_INFO, problemID, category);
 		}
 		return null;
 	}
