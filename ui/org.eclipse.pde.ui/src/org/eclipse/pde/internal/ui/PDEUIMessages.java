@@ -313,8 +313,6 @@ public class PDEUIMessages extends NLS {
 	public static String PluginsTab_AttributeLabel_DefaultAutoStart;
 	public static String PluginsTab_AttributeLabel_DefaultStartLevel;
 	public static String PluginsTab_AttributeLabel_DeselectedWorkspacePlugins;
-	public static String PluginsTab_AttributeLabel_WorkspaceBundles;
-	public static String PluginsTab_AttributeLabel_TargetBundles;
 	public static String PluginsTab_AttributeLabel_SelectedWorkspacePlugins;
 	public static String PluginsTab_AttributeLabel_SelectedTargetPlugins;
 	public static String PluginsTab_AttributeLabel_FeaturePluginResolution;
@@ -1125,7 +1123,6 @@ public class PDEUIMessages extends NLS {
 	public static String LauncherSection_ico;
 	public static String LauncherSection_file;
 	public static String LauncherSection_icon;
-	public static String LauncherSection_tiny;
 	public static String Launcher_error_code13;
 	public static String Launcher_error_displayInLogView;
 	public static String Launcher_error_displayInSystemEditor;
@@ -1141,9 +1138,6 @@ public class PDEUIMessages extends NLS {
 	public static String LauncherSection_48High;
 	public static String LauncherSection_256High;
 	public static String LauncherSection_linuxLabel;
-	public static String LauncherSection_large;
-	public static String LauncherSection_medium;
-	public static String LauncherSection_small;
 	public static String LauncherSection_macLabel;
 	public static String OSGiBundlesTab_frameworkLabel;
 
@@ -2007,13 +2001,11 @@ public class PDEUIMessages extends NLS {
 	public static String ClasspathSection_jarsMessage;
 	public static String OverviewPage_exportingTitle;
 	public static String OverviewPage_content;
-	public static String OverviewPage_osgi;
 	public static String OverviewPage_testing;
 	public static String OverviewPage_OSGiTesting;
 	public static String OverviewPage_tabName;
 	public static String OverviewPage_title;
 	public static String OverviewPage_deploying;
-	public static String OverviewPage_fOsgi;
 	public static String OverviewPage_NoPluginConverterFragment;
 	public static String OverviewPage_NoPluginConverterPlugin;
 	public static String OverviewPage_error;
@@ -2603,18 +2595,6 @@ public class PDEUIMessages extends NLS {
 	public static String OptionalImportPkgResolution_description;
 
 	public static String OptionalImportPkgResolution_label;
-
-	public static String OrganizeRequireBundleResolution_Description;
-
-	public static String OrganizeRequireBundleResolution_Label;
-
-	public static String OrganizeImportPackageResolution_Description;
-
-	public static String OrganizeImportPackageResolution_Label;
-
-	public static String OrganizeExportPackageResolution_Description;
-
-	public static String OrganizeExportPackageResolution_Label;
 
 	public static String PluginImportOperation_Importing_plugin;
 
@@ -3316,6 +3296,7 @@ public class PDEUIMessages extends NLS {
 
 	public static String PDECompilersConfigurationBlock_error;
 	public static String PDECompilersConfigurationBlock_warning;
+	public static String PDECompilersConfigurationBlock_info;
 	public static String PDECompilersConfigurationBlock_ignore;
 
 	public static String PDEJUnitLaunchConfigurationTab_Run_Tests_In_UI_Thread;

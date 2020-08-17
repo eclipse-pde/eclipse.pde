@@ -219,7 +219,7 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 
 	private Comparator<Object> getComparator() {
 		if (fComparator == null) {
-			fComparator = new Comparator<Object>() {
+			fComparator = new Comparator<>() {
 				@Override
 				public int compare(Object arg0, Object arg1) {
 					if (arg0 instanceof ICompletionProposal && arg1 instanceof ICompletionProposal) {
@@ -230,7 +230,7 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 					return 0;
 				}
 
-				protected String getSortKey(ICompletionProposal p) {
+				private String getSortKey(ICompletionProposal p) {
 					return p.getDisplayString();
 				}
 

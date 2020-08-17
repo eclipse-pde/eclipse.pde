@@ -13,19 +13,24 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.junit.runtime;
 
-import org.eclipse.core.runtime.IPlatformRunnable;
+import org.eclipse.equinox.app.IApplication;
+import org.eclipse.equinox.app.IApplicationContext;
 
-public class CoreTestApplication implements IPlatformRunnable {
+public class CoreTestApplication implements IApplication {
 
 	/**
-	 * Runs a set of tests as defined by the given command line args.
-	 * This is the platform application entry point.
-	 * @see IPlatformRunnable
-	 */
+	* Runs a set of tests as defined by the given command line args.
+	* This is the platform application entry point.
+	*/
 	@Override
-	public Object run(Object arguments) throws Exception {
-		RemotePluginTestRunner.main((String[]) arguments);
+	public Object start(IApplicationContext context) throws Exception {
+		String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
+		RemotePluginTestRunner.main(args);
 		return null;
+	}
+
+	@Override
+	public void stop() {
 	}
 
 }

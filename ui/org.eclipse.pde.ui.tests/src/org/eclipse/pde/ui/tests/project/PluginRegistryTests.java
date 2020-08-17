@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 IBM Corporation and others.
+ * Copyright (c) 2010, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,7 +28,7 @@ public class PluginRegistryTests extends PluginRegistryTestsMinimal {
 
 	@Test
 	public void testMatchEquivalent() {
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.pde.ui.tests", "3.10.100",
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.pde.ui.tests", "3.11.0",
 				IMatchRules.EQUIVALENT,
 				null);
 		assertNotNull("NOTE: This test might also fail because the version of the bundle got changed.", model);

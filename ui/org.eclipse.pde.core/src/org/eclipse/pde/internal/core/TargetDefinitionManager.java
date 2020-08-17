@@ -66,12 +66,12 @@ public class TargetDefinitionManager implements IRegistryChangeListener {
 			loadElements();
 		}
 		IConfigurationElement[] result = fTargets.values().toArray(new IConfigurationElement[fTargets.size()]);
-		Arrays.sort(result, new Comparator<Object>() {
+		Arrays.sort(result, new Comparator<>() {
 
 			@Override
-			public int compare(Object o1, Object o2) {
-				String value1 = getString((IConfigurationElement) o1);
-				String value2 = getString((IConfigurationElement) o2);
+			public int compare(IConfigurationElement o1, IConfigurationElement o2) {
+				String value1 = getString(o1);
+				String value2 = getString(o2);
 				return value1.compareTo(value2);
 			}
 

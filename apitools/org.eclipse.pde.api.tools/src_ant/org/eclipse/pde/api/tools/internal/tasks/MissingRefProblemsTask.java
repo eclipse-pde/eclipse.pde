@@ -24,7 +24,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -372,13 +371,8 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 		root.appendChild(apiProblems);
 		Element element = null;
 		// sort the problem by type name
-		Collections.sort(problems, new Comparator<Object>() {
-			@Override
-			public int compare(Object o1, Object o2) {
-				IApiProblem p1 = (IApiProblem) o1;
-				IApiProblem p2 = (IApiProblem) o2;
-				return p1.getTypeName().compareTo(p2.getTypeName());
-			}
+		Collections.sort(problems, (p1, p2) -> {
+			return p1.getTypeName().compareTo(p2.getTypeName());
 		});
 		for (IApiProblem problem : problems) {
 			element = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM);
