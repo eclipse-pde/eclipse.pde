@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2020 Code 9 Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -280,7 +280,10 @@ public class PluginConfigurationSection extends TableSection {
 			if (!pluginConfigurationContainsProductPlugin(configs, productPlugin)) {
 				if (!(PluginRegistry.findModel(productPlugin.getId()) instanceof IFragmentModel)) {
 					IPluginModelBase pluginModelBase = PluginRegistry.findModel(productPlugin.getId());
-					pluginModelBases.add(pluginModelBase);
+					// null check for workbench.renderers.swt.cocoa in linux etc
+					if (pluginModelBase != null) {
+						pluginModelBases.add(pluginModelBase);
+					}
 				}
 			}
 		}
