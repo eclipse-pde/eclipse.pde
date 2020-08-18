@@ -1,2 +1,3 @@
 Bug 534597 - Unanticipated comparator errors in I20180511-2000
 Bug 566115 - Comparator error in I build (I20200816-1800)
+Bug 566147 - Comparator errors in I20200817-1800
