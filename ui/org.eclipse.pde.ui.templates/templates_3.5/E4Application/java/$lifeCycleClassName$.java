@@ -12,7 +12,6 @@ import org.eclipse.e4.ui.workbench.lifecycle.ProcessRemovals;
  * <em>org.eclipse.core.runtime.products' extension point</em>) that references
  * this class.
  **/
-@SuppressWarnings("restriction")
 public class $lifeCycleClassName$ {
 
 	@PostContextCreate
