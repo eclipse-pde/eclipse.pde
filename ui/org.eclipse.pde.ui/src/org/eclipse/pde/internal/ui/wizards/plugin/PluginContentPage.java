@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,8 +16,7 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
-import java.util.ArrayList;
-import java.util.Locale;
+import java.util.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.JavaConventions;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -168,7 +167,23 @@ public class PluginContentPage extends ContentPage {
 				}
 			}
 		}
-
+		int selectionIndex = fEEChoice.getSelectionIndex();
+		if (selectionIndex == -1) {
+			// if nothing selected, select the highest EE which is compatible
+			for (int i = EEChoices.length - 1; i >= 0; i--) {
+				if (!EEChoices[i].equals(NO_EXECUTION_ENVIRONMENT)) {
+					IVMInstall[] vm = VMUtil.getExecutionEnvironment(EEChoices[i]).getCompatibleVMs();
+					if (vm == null || vm.length == 0) {
+						continue;
+					}
+					java.util.List<IVMInstall> vmList = Arrays.asList(vm);
+					if (vmList.contains(defaultVM)) {
+						fEEChoice.select(i);
+						break;
+					}
+				}
+			}
+		}
 		// Create button
 		fExeEnvButton = new Button(container, SWT.PUSH);
 		fExeEnvButton.setLayoutData(new GridData());
