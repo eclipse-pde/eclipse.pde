@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -136,6 +136,10 @@ public class CoreUtility {
 	 * @param monitor progress monitor for reporting and cancellation, can be <code>null</code>
 	 */
 	public static void deleteContent(File fileToDelete, IProgressMonitor monitor) {
+		// can be symlinks
+		if (!fileToDelete.exists()) {
+			fileToDelete.delete();
+		}
 		if (fileToDelete.exists()) {
 			SubMonitor subMon = SubMonitor.convert(monitor, 100);
 
