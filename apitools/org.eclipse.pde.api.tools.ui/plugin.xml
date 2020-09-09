@@ -562,7 +562,7 @@
       <command
             defaultHandler="org.eclipse.pde.api.tools.ui.internal.commands.ConvertJavadocTagsHandler"
             description="%ConvertJavadocCommand.description"
-            helpContextId="convert_javaodc_tags_command"
+            helpContextId="convert_javadoc_tags_command"
             id="org.eclipse.pde.api.tools.ui.convert.javadocs"
             name="%ConvertJavadocCommand.name">
       </command>
