@@ -226,14 +226,12 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		if (fChildren == null) {
 			fChildren = new ArrayList<>();
 			if (fExtension != null) {
-				if (fExtension != null) {
-					IConfigurationElement[] elements = fExtension.getConfigurationElements();
-					for (IConfigurationElement element : elements) {
-						PluginElement pluginElement = new PluginElement(element);
-						pluginElement.setModel(getModel());
-						pluginElement.setParent(this);
-						fChildren.add(pluginElement);
-					}
+				IConfigurationElement[] elements = fExtension.getConfigurationElements();
+				for (IConfigurationElement element : elements) {
+					PluginElement pluginElement = new PluginElement(element);
+					pluginElement.setModel(getModel());
+					pluginElement.setParent(this);
+					fChildren.add(pluginElement);
 				}
 			}
 		}
