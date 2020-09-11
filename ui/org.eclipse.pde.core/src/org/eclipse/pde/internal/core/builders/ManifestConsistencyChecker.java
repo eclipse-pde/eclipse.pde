@@ -249,7 +249,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			validateProjectStructure(type, subMonitor.split(1));
 		}
 
-		if ((type & MANIFEST | EXTENSIONS) != 0) {
+		if ((type & (MANIFEST | EXTENSIONS)) != 0) {
 			IProject project = getProject();
 			IFile file = PDEProject.getPluginXml(project);
 			if (!file.exists()) {
@@ -272,7 +272,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 	private int getWorkAmount(int type) {
 		int work = 1;
-		if ((type & MANIFEST | EXTENSIONS) != 0) {
+		if ((type & (MANIFEST | EXTENSIONS)) != 0) {
 			++work;
 		}
 		if ((type & BUILD) != 0) {
