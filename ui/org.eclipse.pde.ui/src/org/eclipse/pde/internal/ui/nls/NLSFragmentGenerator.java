@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -371,7 +371,7 @@ public class NLSFragmentGenerator {
 						worked();
 
 						String relativePath = file.getAbsolutePath().substring(installLocation.length())
-								.replaceAll(File.separator, SLASH);
+								.replace(File.separatorChar, SLASH.charAt(0));
 						String[] segments = relativePath.split(SLASH);
 						IPath path = Path.fromPortableString(join(SLASH, segments, 0, segments.length - 1));
 						String resourceName = segments[segments.length - 1];
