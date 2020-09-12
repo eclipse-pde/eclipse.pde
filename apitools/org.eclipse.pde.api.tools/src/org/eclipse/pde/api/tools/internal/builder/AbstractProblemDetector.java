@@ -946,7 +946,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 				// what if space between the two?
 				start = line.indexOf(METHOD_REFERENCE + CONSTRUCTOR_NEW);
 				if (start < 0) {
-					line.indexOf(CONSTRUCTOR_NEW);
+					start = line.indexOf(CONSTRUCTOR_NEW);
 					if (start < 0) {
 						start = 0;
 					}

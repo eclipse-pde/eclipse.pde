@@ -30,7 +30,7 @@ public class SchemaEnumeration extends SchemaObject implements ISchemaEnumeratio
 		writer.println(indent + "<enumeration value=\"" + getName() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 		String description = getDescription();
 		if (description != null) {
-			description.trim();
+			description = description.trim();
 		}
 		if (description != null && description.length() > 0) {
 			String indent2 = indent + Schema.INDENT;
