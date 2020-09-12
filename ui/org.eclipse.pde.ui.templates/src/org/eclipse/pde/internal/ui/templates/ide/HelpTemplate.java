@@ -95,16 +95,24 @@ public class HelpTemplate extends PDETemplateSection {
 	protected boolean isOkToCreateFolder(File sourceFolder) {
 		boolean isOk = true;
 		String folderName = sourceFolder.getName();
-		if (folderName.equals("concepts")) { //$NON-NLS-1$
+		switch (folderName) {
+		case "concepts": //$NON-NLS-1$
 			isOk = conceptsOption.isEnabled() && conceptsOption.isSelected();
-		} else if (folderName.equals("gettingstarted")) { //$NON-NLS-1$
+			break;
+		case "gettingstarted": //$NON-NLS-1$
 			isOk = gettingStartedOption.isEnabled() && gettingStartedOption.isSelected();
-		} else if (folderName.equals("reference")) { //$NON-NLS-1$
+			break;
+		case "reference": //$NON-NLS-1$
 			isOk = referenceOption.isEnabled() && referenceOption.isSelected();
-		} else if (folderName.equals("samples")) { //$NON-NLS-1$
+			break;
+		case "samples": //$NON-NLS-1$
 			isOk = samplesOption.isEnabled() && samplesOption.isSelected();
-		} else if (folderName.equals("tasks")) { //$NON-NLS-1$
+			break;
+		case "tasks": //$NON-NLS-1$
 			isOk = tasksOption.isEnabled() && tasksOption.isSelected();
+			break;
+		default:
+			break;
 		}
 		return isOk;
 	}

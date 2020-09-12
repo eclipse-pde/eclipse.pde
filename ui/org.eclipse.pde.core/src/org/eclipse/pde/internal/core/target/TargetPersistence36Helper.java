@@ -195,15 +195,22 @@ public class TargetPersistence36Helper {
 			}
 		}
 		ITargetLocation container = null;
-		if (DirectoryBundleContainer.TYPE.equals(type)) {
+		switch (type)
+			{
+		case DirectoryBundleContainer.TYPE:
 			container = TargetDefinitionPersistenceHelper.getTargetPlatformService().newDirectoryLocation(path);
-		} else if (ProfileBundleContainer.TYPE.equals(type)) {
+			break;
+		case ProfileBundleContainer.TYPE:
 			String configArea = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_CONFIGURATION);
 			container = TargetDefinitionPersistenceHelper.getTargetPlatformService().newProfileLocation(path, configArea.length() > 0 ? configArea : null);
-		} else if (FeatureBundleContainer.TYPE.equals(type)) {
-			String version = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION);
-			container = TargetDefinitionPersistenceHelper.getTargetPlatformService().newFeatureLocation(path, location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID), version.length() > 0 ? version : null);
-		} else if (IUBundleContainer.TYPE.equals(type)) {
+			break;
+		case FeatureBundleContainer.TYPE:
+			String featureversion = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION);
+			container = TargetDefinitionPersistenceHelper.getTargetPlatformService().newFeatureLocation(path,
+					location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID),
+					featureversion.length() > 0 ? featureversion : null);
+			break;
+		case IUBundleContainer.TYPE:
 			String includeMode = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_MODE);
 			String includeAllPlatforms = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_ALL_PLATFORMS);
 			String includeSource = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_SOURCE);
@@ -240,7 +247,6 @@ public class TargetPersistence36Helper {
 			String[] iuIDs = ids.toArray(new String[ids.size()]);
 			String[] iuVer = versions.toArray(new String[versions.size()]);
 			URI[] uris = repos.toArray(new URI[repos.size()]);
-
 			int flags = IUBundleContainer.INCLUDE_REQUIRED;
 			if (includeMode != null && includeMode.trim().length() > 0) {
 				if (includeMode.equals(TargetDefinitionPersistenceHelper.MODE_SLICER)) {
@@ -250,6 +256,9 @@ public class TargetPersistence36Helper {
 			flags |= Boolean.parseBoolean(includeAllPlatforms) ? IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS : 0;
 			flags |= Boolean.parseBoolean(includeSource) ? IUBundleContainer.INCLUDE_SOURCE : 0;
 			container = new IUBundleContainer(iuIDs, iuVer, uris, flags);
+			break;
+		default:
+			break;
 		}
 		return container;
 	}

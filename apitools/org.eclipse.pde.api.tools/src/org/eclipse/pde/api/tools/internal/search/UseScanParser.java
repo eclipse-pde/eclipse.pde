@@ -115,39 +115,40 @@ public class UseScanParser {
 	 * @throws SAXException
 	 */
 	protected void processElement(String uri, String localName, String name, Attributes attributes, int type) throws SAXException {
-		if (IApiXmlConstants.REFERENCES.equals(name)) {
-			// Check that the current target component and referencing component
-			// match what is in the file
-			String target = attributes.getValue(IApiXmlConstants.ATTR_REFEREE);
-			String[] idv = getIdVersion(target);
-			IComponentDescriptor tcomp = Factory.componentDescriptor(idv[0], idv[1]);
-			if (!tcomp.equals(this.targetComponent)) {
-				System.out.println("WARNING: The referee in the xml file (" + tcomp + ") does not match the directory name (" + this.targetComponent + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			}
-
-			String source = attributes.getValue(IApiXmlConstants.ATTR_ORIGIN);
-			idv = getIdVersion(source);
-			IComponentDescriptor sourceComponent = Factory.componentDescriptor(idv[0], idv[1]);
-			if (!sourceComponent.equals(this.referencingComponent)) {
-				System.out.println("WARNING: The origin in the xml file (" + sourceComponent + ") does not match the directory name (" + this.referencingComponent + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			}
-
-			// Track the current reference visibility
-			String visString = attributes.getValue(IApiXmlConstants.ATTR_REFERENCE_VISIBILITY);
-			try {
-				int vis = Integer.parseInt(visString);
-				enterVisibility(vis);
-			} catch (NumberFormatException e) {
-				// TODO:
-				enterVisibility(-1);
-				System.out.println("Internal error: invalid visibility: " + visString); //$NON-NLS-1$
-			}
-		} else if (IApiXmlConstants.ELEMENT_TARGET.equals(name)) {
-			String qName = attributes.getValue(IApiXmlConstants.ATTR_TYPE);
-			String memberName = attributes.getValue(IApiXmlConstants.ATTR_MEMBER_NAME);
-			String signature = attributes.getValue(IApiXmlConstants.ATTR_SIGNATURE);
-			IMemberDescriptor member = null;
-			switch (type) {
+		if (name != null) {
+			switch (name) {
+			case IApiXmlConstants.REFERENCES:
+				// Check that the current target component and referencing component
+				// match what is in the file
+				String target = attributes.getValue(IApiXmlConstants.ATTR_REFEREE);
+				String[] idv = getIdVersion(target);
+				IComponentDescriptor tcomp = Factory.componentDescriptor(idv[0], idv[1]);
+				if (!tcomp.equals(this.targetComponent)) {
+					System.out.println("WARNING: The referee in the xml file (" + tcomp + ") does not match the directory name (" + this.targetComponent + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
+				String source = attributes.getValue(IApiXmlConstants.ATTR_ORIGIN);
+				idv = getIdVersion(source);
+				IComponentDescriptor sourceComponent = Factory.componentDescriptor(idv[0], idv[1]);
+				if (!sourceComponent.equals(this.referencingComponent)) {
+					System.out.println("WARNING: The origin in the xml file (" + sourceComponent + ") does not match the directory name (" + this.referencingComponent + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
+				// Track the current reference visibility
+				String visString = attributes.getValue(IApiXmlConstants.ATTR_REFERENCE_VISIBILITY);
+				try {
+					int vis = Integer.parseInt(visString);
+					enterVisibility(vis);
+				} catch (NumberFormatException e) {
+					// TODO:
+					enterVisibility(-1);
+					System.out.println("Internal error: invalid visibility: " + visString); //$NON-NLS-1$
+				}
+				break;
+			case IApiXmlConstants.ELEMENT_TARGET:{
+				String qName = attributes.getValue(IApiXmlConstants.ATTR_TYPE);
+				String memberName = attributes.getValue(IApiXmlConstants.ATTR_MEMBER_NAME);
+				String signature = attributes.getValue(IApiXmlConstants.ATTR_SIGNATURE);
+				IMemberDescriptor member = null;
+				switch (type) {
 				case IReference.T_TYPE_REFERENCE:
 					member = Factory.typeDescriptor(qName);
 					break;
@@ -159,48 +160,53 @@ public class UseScanParser {
 					break;
 				default:
 					break;
-			}
-			enterTargetMember(member);
-		} else if (IApiXmlConstants.REFERENCE_KIND.equals(name)) {
-			String value = attributes.getValue(IApiXmlConstants.ATTR_KIND);
-			if (value != null) {
-				try {
-					enterReferenceKind(Integer.parseInt(value));
-				} catch (NumberFormatException e) {
-					// ERROR
-					System.out.println(NLS.bind("Internal error: invalid reference kind: {0}", value)); //$NON-NLS-1$
+				}	enterTargetMember(member);
+					break;
 				}
-			}
-		} else if (IApiXmlConstants.ATTR_REFERENCE.equals(name)) {
-			String qName = attributes.getValue(IApiXmlConstants.ATTR_TYPE);
-
-			if (qName != null) {
-
-				String memberName = attributes.getValue(IApiXmlConstants.ATTR_MEMBER_NAME);
-				String signature = attributes.getValue(IApiXmlConstants.ATTR_SIGNATURE);
-				IMemberDescriptor origin = null;
-				if (signature != null) {
-					origin = Factory.methodDescriptor(qName, memberName, signature);
-				} else if (memberName != null) {
-					origin = Factory.fieldDescriptor(qName, memberName);
-				} else {
-					origin = Factory.typeDescriptor(qName);
-				}
-				String line = attributes.getValue(IApiXmlConstants.ATTR_LINE_NUMBER);
-				String flags = attributes.getValue(IApiXmlConstants.ATTR_FLAGS);
-				try {
-					int num = Integer.parseInt(line);
-					int flgs = 0;
-					if (flags != null) {
-						flgs = Integer.parseInt(flags);
+			case IApiXmlConstants.REFERENCE_KIND:
+				String value = attributes.getValue(IApiXmlConstants.ATTR_KIND);
+				if (value != null) {
+					try {
+						enterReferenceKind(Integer.parseInt(value));
+					} catch (NumberFormatException e) {
+						// ERROR
+						System.out.println(NLS.bind("Internal error: invalid reference kind: {0}", value)); //$NON-NLS-1$
 					}
-					setReference(Factory.referenceDescriptor(referencingComponent, origin, num, targetComponent, targetMember, referenceKind, flgs, visibility, parseMessages(attributes)));
-				} catch (NumberFormatException e) {
-					// TODO:
-					System.out.println("Internal error: invalid line number: " + line); //$NON-NLS-1$
 				}
-			} else {
-				System.out.println(NLS.bind("Element {0} is missing type attribute and will be skipped", targetMember.getName())); //$NON-NLS-1$
+				break;
+			case IApiXmlConstants.ATTR_REFERENCE:{
+				String qName = attributes.getValue(IApiXmlConstants.ATTR_TYPE);
+				if (qName != null) {
+
+					String memberName = attributes.getValue(IApiXmlConstants.ATTR_MEMBER_NAME);
+					String signature = attributes.getValue(IApiXmlConstants.ATTR_SIGNATURE);
+					IMemberDescriptor origin = null;
+					if (signature != null) {
+						origin = Factory.methodDescriptor(qName, memberName, signature);
+					} else if (memberName != null) {
+						origin = Factory.fieldDescriptor(qName, memberName);
+					} else {
+						origin = Factory.typeDescriptor(qName);
+					}
+					String line = attributes.getValue(IApiXmlConstants.ATTR_LINE_NUMBER);
+					String flags = attributes.getValue(IApiXmlConstants.ATTR_FLAGS);
+					try {
+						int num = Integer.parseInt(line);
+						int flgs = 0;
+						if (flags != null) {
+							flgs = Integer.parseInt(flags);
+						}
+						setReference(Factory.referenceDescriptor(referencingComponent, origin, num, targetComponent, targetMember, referenceKind, flgs, visibility, parseMessages(attributes)));
+					} catch (NumberFormatException e) {
+						// TODO:
+						System.out.println("Internal error: invalid line number: " + line); //$NON-NLS-1$
+					}
+				} else {
+					System.out.println(NLS.bind("Element {0} is missing type attribute and will be skipped", targetMember.getName())); //$NON-NLS-1$
+				}	break;
+				}
+			default:
+				break;
 			}
 		}
 	}

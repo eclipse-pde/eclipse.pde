@@ -161,12 +161,17 @@ public class TargetPlatformService implements ITargetPlatformService {
 		try {
 			URI uri = new URI(memento);
 			String scheme = uri.getScheme();
-			if (WorkspaceFileTargetHandle.SCHEME.equals(scheme)) {
-				return WorkspaceFileTargetHandle.restoreHandle(uri);
-			} else if (LocalTargetHandle.SCHEME.equals(scheme)) {
-				return LocalTargetHandle.restoreHandle(uri);
-			} else if (ExternalFileTargetHandle.SCHEME.equals(scheme)) {
-				return ExternalFileTargetHandle.restoreHandle(uri);
+			if (scheme != null) {
+				switch (scheme) {
+				case WorkspaceFileTargetHandle.SCHEME:
+					return WorkspaceFileTargetHandle.restoreHandle(uri);
+				case LocalTargetHandle.SCHEME:
+					return LocalTargetHandle.restoreHandle(uri);
+				case ExternalFileTargetHandle.SCHEME:
+					return ExternalFileTargetHandle.restoreHandle(uri);
+				default:
+					break;
+				}
 			}
 		} catch (URISyntaxException e) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.TargetPlatformService_0, e));

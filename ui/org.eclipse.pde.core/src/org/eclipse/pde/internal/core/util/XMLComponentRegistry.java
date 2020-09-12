@@ -95,12 +95,18 @@ public class XMLComponentRegistry {
 
 	private Map<String, HashMap<String, String>> getTargetMap(int mask) {
 		Map<String, HashMap<String, String>> targetMap = null;
-		if (mask == F_SCHEMA_COMPONENT) {
+		switch (mask) {
+		case F_SCHEMA_COMPONENT:
 			targetMap = fSchemaComponentMap;
-		} else if (mask == F_ATTRIBUTE_COMPONENT) {
+			break;
+		case F_ATTRIBUTE_COMPONENT:
 			targetMap = fAttributeComponentMap;
-		} else if (mask == F_ELEMENT_COMPONENT) {
+			break;
+		case F_ELEMENT_COMPONENT:
 			targetMap = fElementComponentMap;
+			break;
+		default:
+			break;
 		}
 		return targetMap;
 	}

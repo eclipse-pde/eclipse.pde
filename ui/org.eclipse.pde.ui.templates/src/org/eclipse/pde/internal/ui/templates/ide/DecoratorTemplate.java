@@ -120,12 +120,18 @@ public class DecoratorTemplate extends PDETemplateSection {
 		//Define rules for creating files from the Templates_3.X folders
 		boolean isOk = true;
 		String fileName = sourceFile.getName();
-		if (fileName.equals("read_only.gif")) { //$NON-NLS-1$
+		switch (fileName) {
+		case "read_only.gif": //$NON-NLS-1$
 			isOk = readOnlyOption.isEnabled() && readOnlyOption.isSelected();
-		} else if (fileName.equals("sample_decorator.gif")) { //$NON-NLS-1$
+			break;
+		case "sample_decorator.gif": //$NON-NLS-1$
 			isOk = !readOnlyOption.isSelected();
-		} else if (fileName.equals("$decoratorClassName$.java")) { //$NON-NLS-1$
+			break;
+		case "$decoratorClassName$.java": //$NON-NLS-1$
 			isOk = readOnlyOption.isEnabled() && readOnlyOption.isSelected();
+			break;
+		default:
+			break;
 		}
 		return isOk;
 	}

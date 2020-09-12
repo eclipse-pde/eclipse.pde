@@ -229,15 +229,20 @@ public class TargetPersistence38Helper {
 		}
 
 		ITargetLocation container = null;
-		if (DirectoryBundleContainer.TYPE.equals(type)) {
+		switch (type)
+			{
+		case DirectoryBundleContainer.TYPE:
 			container = TargetDefinitionPersistenceHelper.getTargetPlatformService().newDirectoryLocation(path);
-		} else if (ProfileBundleContainer.TYPE.equals(type)) {
+			break;
+		case ProfileBundleContainer.TYPE:
 			String configArea = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_CONFIGURATION);
 			container = TargetDefinitionPersistenceHelper.getTargetPlatformService().newProfileLocation(path, configArea.length() > 0 ? configArea : null);
-		} else if (FeatureBundleContainer.TYPE.equals(type)) {
+			break;
+		case FeatureBundleContainer.TYPE:
 			String version = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION);
 			container = TargetDefinitionPersistenceHelper.getTargetPlatformService().newFeatureLocation(path, location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID), version.length() > 0 ? version : null);
-		} else {
+			break;
+		default:
 			// The container is of an unknown type, should have a contribution through
 			try {
 				// Convert the xml to a string to pass to the extension
@@ -253,6 +258,7 @@ public class TargetPersistence38Helper {
 			} catch (TransformerException | TransformerFactoryConfigurationError e) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.TargetDefinitionPersistenceHelper_0, e));
 			}
+			break;
 		}
 		return container;
 	}
