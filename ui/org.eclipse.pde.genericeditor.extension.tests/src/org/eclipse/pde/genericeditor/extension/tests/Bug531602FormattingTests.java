@@ -118,7 +118,7 @@ public class Bug531602FormattingTests extends AbstractTargetEditorTest {
 			if (spacesForTabs) {
 				char[] chars = new char[preferences.getInt("tabWidth", 4)];
 				Arrays.fill(chars, ' ');
-				result.replace("\t", new String(chars));
+				result = result.replace("\t", new String(chars));
 			}
 			ByteArrayOutputStream actualOutput = new ByteArrayOutputStream();
 			TargetDefinitionPersistenceHelper.persistXML(targetDefinition, actualOutput);
