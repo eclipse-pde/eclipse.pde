@@ -301,9 +301,10 @@ public class ImportPackageSection extends TableSection {
 					// Value needs to be empty string so no import package
 					// object is created as the initial value
 					bundle.setHeader(getImportedPackageHeader(), ""); //$NON-NLS-1$
+				} else {
+					// Add the import package to the header
+					fHeader.addPackage(importPackageObject);
 				}
-				// Add the import package to the header
-				fHeader.addPackage(importPackageObject);
 			}
 		}
 	}

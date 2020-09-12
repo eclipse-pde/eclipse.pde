@@ -201,7 +201,7 @@ public class PluginContentPage extends ContentPage {
 
 		IDialogSettings settings = getDialogSettings();
 
-		boolean generateActivator = settings == null ? null : settings.getBoolean(S_GENERATE_ACTIVATOR);
+		boolean generateActivator = settings == null ? false : settings.getBoolean(S_GENERATE_ACTIVATOR);
 
 		fGenerateActivator = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_generate, null,
 				generateActivator, 2);
