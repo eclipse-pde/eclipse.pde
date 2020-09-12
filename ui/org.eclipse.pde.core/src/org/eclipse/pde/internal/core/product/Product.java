@@ -356,47 +356,65 @@ public class Product extends ProductObject implements IProduct {
 				Node child = children.item(i);
 				if (child.getNodeType() == Node.ELEMENT_NODE) {
 					String name = child.getNodeName();
-					if (name.equals("aboutInfo")) { //$NON-NLS-1$
+					switch (name) {
+						case "aboutInfo": //$NON-NLS-1$
 						fAboutInfo = factory.createAboutInfo();
 						fAboutInfo.parse(child);
-					} else if (name.equals("plugins")) { //$NON-NLS-1$
+						break;
+					case "plugins": //$NON-NLS-1$
 						parsePlugins(child.getChildNodes());
-					} else if (name.equals("features")) { //$NON-NLS-1$
+						break;
+					case "features": //$NON-NLS-1$
 						parseFeatures(child.getChildNodes());
-					} else if (name.equals("configurations")) { //$NON-NLS-1$
+						break;
+					case "configurations": //$NON-NLS-1$
 						parseConfigations(child.getChildNodes());
-					} else if (name.equals("configIni")) { //$NON-NLS-1$
+						break;
+					case "configIni": //$NON-NLS-1$
 						fConfigIniInfo = factory.createConfigFileInfo();
 						fConfigIniInfo.parse(child);
-					} else if (name.equals("windowImages")) { //$NON-NLS-1$
+						break;
+					case "windowImages": //$NON-NLS-1$
 						fWindowImages = factory.createWindowImages();
 						fWindowImages.parse(child);
-					} else if (name.equals("splash")) { //$NON-NLS-1$
+						break;
+					case "splash": //$NON-NLS-1$
 						fSplashInfo = factory.createSplashInfo();
 						fSplashInfo.parse(child);
-					} else if (name.equals("launcher")) { //$NON-NLS-1$
+						break;
+					case "launcher": //$NON-NLS-1$
 						fLauncherInfo = factory.createLauncherInfo();
 						fLauncherInfo.parse(child);
-					} else if (name.equals("launcherArgs")) { //$NON-NLS-1$
+						break;
+					case "launcherArgs": //$NON-NLS-1$
 						fLauncherArgs = factory.createLauncherArguments();
 						fLauncherArgs.parse(child);
-					} else if (name.equals("intro")) { //$NON-NLS-1$
+						break;
+					case "intro": //$NON-NLS-1$
 						fIntroInfo = factory.createIntroInfo();
 						fIntroInfo.parse(child);
-					} else if (name.equals("vm")) { //$NON-NLS-1$
+						break;
+					case "vm": //$NON-NLS-1$
 						fJVMInfo = factory.createJVMInfo();
 						fJVMInfo.parse(child);
-					} else if (name.equals("license")) { //$NON-NLS-1$
+						break;
+					case "license": //$NON-NLS-1$
 						fLicenseInfo = factory.createLicenseInfo();
 						fLicenseInfo.parse(child);
-					} else if (name.equals("repositories")) { //$NON-NLS-1$
+						break;
+					case "repositories": //$NON-NLS-1$
 						parseRepositories(child.getChildNodes());
-					} else if (name.equals("preferencesInfo")) { //$NON-NLS-1$
+						break;
+					case "preferencesInfo": //$NON-NLS-1$
 						fPreferencesInfo = factory.createPreferencesInfo();
 						fPreferencesInfo.parse(child);
-					} else if (name.equals("cssInfo")) { //$NON-NLS-1$
+						break;
+					case "cssInfo": //$NON-NLS-1$
 						fCSSInfo = factory.createCSSInfo();
 						fCSSInfo.parse(child);
+						break;
+					default:
+						break;
 					}
 				}
 			}

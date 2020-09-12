@@ -460,18 +460,17 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	}
 
 	private boolean isSourcePageID(String pageID) {
-		// Determine whether the page ID is a source page ID
 		if (pageID == null) {
 			return false;
-		} else if (pageID.equals(BuildInputContext.CONTEXT_ID)) {
-			// build.properites
+		}
+		// Determine whether the page ID is a source page ID
+		switch (pageID) {
+			case BuildInputContext.CONTEXT_ID: // build.properites
+			case PluginInputContext.CONTEXT_ID: // plugin.xml
+			case BundleInputContext.CONTEXT_ID: // MANIFEST.MF
 			return true;
-		} else if (pageID.equals(PluginInputContext.CONTEXT_ID)) {
-			// plugin.xml
-			return true;
-		} else if (pageID.equals(BundleInputContext.CONTEXT_ID)) {
-			// MANIFEST.MF
-			return true;
+		default:
+			break;
 		}
 		return false;
 	}

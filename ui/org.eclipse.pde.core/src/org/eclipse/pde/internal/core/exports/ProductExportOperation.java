@@ -356,12 +356,18 @@ public class ProductExportOperation extends FeatureExportOperation {
 			String icons = ""; //$NON-NLS-1$
 			for (String[] config : configs) {
 				String images = null;
-				if (config[0].equals("win32")) { //$NON-NLS-1$
+				switch (config[0]) {
+					case "win32": //$NON-NLS-1$
 					images = getWin32Images(info);
-				} else if (config[0].equals("linux")) { //$NON-NLS-1$
+					break;
+				case "linux": //$NON-NLS-1$
 					images = getExpandedPath(info.getIconPath(ILauncherInfo.LINUX_ICON));
-				} else if (config[0].equals("macosx")) { //$NON-NLS-1$
+					break;
+				case "macosx": //$NON-NLS-1$
 					images = getExpandedPath(info.getIconPath(ILauncherInfo.MACOSX_ICON));
+					break;
+				default:
+					break;
 				}
 				if (images != null) {
 					if (icons.length() > 0) {

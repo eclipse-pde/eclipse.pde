@@ -90,14 +90,19 @@ public class SiteDescription extends SiteObject implements ISiteDescription {
 
 	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
-		if (name.equals(P_NAME)) {
+		switch (name) {
+		case P_NAME:
 			setName(newValue != null ? newValue.toString() : null);
-		} else if (name.equals(P_URL)) {
+			break;
+		case P_URL:
 			setURL(newValue != null ? newValue.toString() : null);
-		} else if (name.equals(P_TEXT)) {
+			break;
+		case P_TEXT:
 			setText(newValue != null ? newValue.toString() : null);
-		} else {
+			break;
+		default:
 			super.restoreProperty(name, oldValue, newValue);
+			break;
 		}
 	}
 

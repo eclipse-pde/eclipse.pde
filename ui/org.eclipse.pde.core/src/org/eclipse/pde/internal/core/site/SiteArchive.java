@@ -83,12 +83,16 @@ public class SiteArchive extends SiteObject implements ISiteArchive {
 
 	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
-		if (name.equals(P_PATH)) {
+		switch (name) {
+		case P_PATH:
 			setPath(newValue != null ? newValue.toString() : null);
-		} else if (name.equals(P_URL)) {
+			break;
+		case P_URL:
 			setURL(newValue != null ? newValue.toString() : null);
-		} else {
+			break;
+		default:
 			super.restoreProperty(name, oldValue, newValue);
+			break;
 		}
 	}
 

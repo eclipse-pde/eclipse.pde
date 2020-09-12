@@ -140,22 +140,31 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 
 	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
-		if (name.equals(P_TYPE)) {
+		switch (name) {
+		case P_TYPE:
 			setType(newValue != null ? newValue.toString() : null);
-		} else if (name.equals(P_URL)) {
+			break;
+		case P_URL:
 			setURL(newValue != null ? newValue.toString() : null);
-		} else if (name.equals(P_ARCH)) {
+			break;
+		case P_ARCH:
 			setArch(newValue != null ? newValue.toString() : null);
-		} else if (name.equals(P_NL)) {
+			break;
+		case P_NL:
 			setNL(newValue != null ? newValue.toString() : null);
-		} else if (name.equals(P_OS)) {
+			break;
+		case P_OS:
 			setOS(newValue != null ? newValue.toString() : null);
-		} else if (name.equals(P_WS)) {
+			break;
+		case P_WS:
 			setWS(newValue != null ? newValue.toString() : null);
-		} else if (name.equals(P_PATCH)) {
+			break;
+		case P_PATCH:
 			setIsPatch(((Boolean) newValue).booleanValue());
-		} else {
+			break;
+		default:
 			super.restoreProperty(name, oldValue, newValue);
+			break;
 		}
 	}
 

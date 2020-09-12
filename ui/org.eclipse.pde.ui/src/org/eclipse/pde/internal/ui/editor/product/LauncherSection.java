@@ -187,15 +187,23 @@ public class LauncherSection extends PDESection {
 		addTab("win32"); //$NON-NLS-1$
 
 		String currentTarget = TargetPlatform.getOS();
-		if ("win32".equals(currentTarget)) { //$NON-NLS-1$
+		if (currentTarget == null) {
+			currentTarget = "linux"; //$NON-NLS-1$
+		}
+		switch (currentTarget)
+			{
+		case "win32": //$NON-NLS-1$
 			fTabFolder.setSelection(3);
 			fNotebookLayout.topControl = fWin32Section;
-		} else if ("macosx".equals(currentTarget)) { //$NON-NLS-1$
+			break;
+		case "macosx": //$NON-NLS-1$
 			fTabFolder.setSelection(1);
 			fNotebookLayout.topControl = fMacSection;
-		} else {
+			break;
+		default:
 			fTabFolder.setSelection(0);
 			fNotebookLayout.topControl = fLinuxSection;
+			break;
 		}
 	}
 

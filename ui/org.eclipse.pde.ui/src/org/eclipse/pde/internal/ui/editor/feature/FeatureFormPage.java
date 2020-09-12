@@ -169,26 +169,37 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 	public void linkActivated(HyperlinkEvent e) {
 		String href = (String) e.getHref();
 		// try page references
-		if (href.equals("info")) //$NON-NLS-1$
+		switch (href) {
+		case "info": //$NON-NLS-1$
 			getEditor().setActivePage(InfoFormPage.PAGE_ID);
-		if (href.equals("plugins")) //$NON-NLS-1$
+			break;
+		case "plugins": //$NON-NLS-1$
 			getEditor().setActivePage(FeatureReferencePage.PAGE_ID);
-		else if (href.equals("features")) //$NON-NLS-1$
+			break;
+		case "features": //$NON-NLS-1$
 			getEditor().setActivePage(FeatureIncludesPage.PAGE_ID);
-		else if (href.equals("dependencies")) //$NON-NLS-1$
+			break;
+		case "dependencies": //$NON-NLS-1$
 			getEditor().setActivePage(FeatureDependenciesPage.PAGE_ID);
-		else if (href.equals("build")) //$NON-NLS-1$
+			break;
+		case "build": //$NON-NLS-1$
 			getEditor().setActivePage(BuildPage.PAGE_ID);
-		else if (href.equals("synchronize")) { //$NON-NLS-1$ {
+			break;
+		case "synchronize": //$NON-NLS-1$
 			getEditor().setActivePage(FeatureReferencePage.PAGE_ID);
-			final FeatureEditorContributor contributor = (FeatureEditorContributor) getPDEEditor().getContributor();
-			BusyIndicator.showWhile(e.display, () -> contributor.getSynchronizeAction().run());
-		} else if (href.equals("export")) { //$NON-NLS-1$
+			BusyIndicator.showWhile(e.display,
+					() -> ((FeatureEditorContributor) getPDEEditor().getContributor()).getSynchronizeAction().run());
+			break;
+		case "export": //$NON-NLS-1$
 			((FeatureEditor) getPDEEditor()).getFeatureExportAction().run();
-		} else if (href.equals("siteProject")) { //$NON-NLS-1$
+			break;
+		case "siteProject": //$NON-NLS-1$
 			getEditor().doSave(null);
-			final FeatureEditorContributor contributor = (FeatureEditorContributor) getPDEEditor().getContributor();
-			BusyIndicator.showWhile(e.display, () -> contributor.getNewSiteAction().run());
+			BusyIndicator.showWhile(e.display,
+					() -> ((FeatureEditorContributor) getPDEEditor().getContributor()).getNewSiteAction().run());
+			break;
+		default:
+			break;
 		}
 	}
 

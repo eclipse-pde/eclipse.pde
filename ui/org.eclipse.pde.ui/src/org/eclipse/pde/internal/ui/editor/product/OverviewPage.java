@@ -85,19 +85,26 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 	@Override
 	public void linkActivated(HyperlinkEvent e) {
 		String href = (String) e.getHref();
-		if (href.equals("action.synchronize")) { //$NON-NLS-1$
+		switch (href) {
+		case "action.synchronize": //$NON-NLS-1$
 			((ProductLauncherFormPageHelper) getLauncherHelper()).handleSynchronize(true);
-		} else if (href.equals("action.export")) { //$NON-NLS-1$
+			break;
+		case "action.export": //$NON-NLS-1$
 			if (getPDEEditor().isDirty())
 				getPDEEditor().doSave(null);
 			new ProductExportAction(getPDEEditor()).run();
-		} else if (href.equals("configuration")) { //$NON-NLS-1$
+			break;
+		case "configuration": //$NON-NLS-1$
 			String pageId = ((ProductLauncherFormPageHelper) getLauncherHelper()).getProduct().useFeatures() ? DependenciesPage.FEATURE_ID : DependenciesPage.PLUGIN_ID;
 			getEditor().setActivePage(pageId);
-		} else if (href.equals("multi-platform-wiki")) { //$NON-NLS-1$
+			break;
+		case "multi-platform-wiki": //$NON-NLS-1$
 			openBrowser("https://wiki.eclipse.org/Building#Cross-platform_build"); //$NON-NLS-1$
-		} else
+			break;
+		default:
 			super.linkActivated(e);
+			break;
+		}
 	}
 
 	private static void openBrowser(String url) {

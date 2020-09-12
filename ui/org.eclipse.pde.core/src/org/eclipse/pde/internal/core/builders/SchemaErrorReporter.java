@@ -135,12 +135,16 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child instanceof Element) {
-				if (child.getNodeName().equals(ANNOTATION)) {
+				switch (child.getNodeName()) {
+				case ANNOTATION:
 					validateAnnotation((Element) child);
-				} else if (child.getNodeName().equals(ELEMENT)) {
+					break;
+				case ELEMENT:
 					validateElementReference((Element) child);
-				} else {
+					break;
+				default:
 					validate((Element) child);
+					break;
 				}
 			}
 		}

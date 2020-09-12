@@ -73,13 +73,16 @@ public class CategoryDetailsSection extends PDESection implements IPartSelection
 	private void applyValue(String property, String value) throws CoreException {
 		if (fCurrentCategoryDefinition == null)
 			return;
-		if (property.equals(PROPERTY_NAME)) {
+		switch (property) {
+		case PROPERTY_NAME:
 			String oldName = fCurrentCategoryDefinition.getName();
 			fCurrentCategoryDefinition.setName(value);
 			updateBundlesAndFeatures(oldName);
-		} else if (property.equals(PROPERTY_TYPE))
+			break;
+		case PROPERTY_TYPE:
 			fCurrentCategoryDefinition.setLabel(value);
-		else if (property.equals(PROPERTY_DESC)) {
+			break;
+		case PROPERTY_DESC:
 			if (value == null || value.length() == 0) {
 				fCurrentCategoryDefinition.setDescription(null);
 			} else {
@@ -92,6 +95,9 @@ public class CategoryDetailsSection extends PDESection implements IPartSelection
 					siteDesc.setText(value);
 				}
 			}
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -117,12 +123,19 @@ public class CategoryDetailsSection extends PDESection implements IPartSelection
 	}
 
 	private void clearField(String property) {
-		if (property.equals(PROPERTY_NAME))
+		switch (property) {
+		case PROPERTY_NAME:
 			fNameText.setValue(null, true);
-		else if (property.equals(PROPERTY_TYPE))
+			break;
+		case PROPERTY_TYPE:
 			fLabelText.setValue(null, true);
-		else if (property.equals(PROPERTY_DESC))
+			break;
+		case PROPERTY_DESC:
 			fDescriptionText.setValue(null, true);
+			break;
+		default:
+			break;
+		}
 	}
 
 	private void clearFields() {
@@ -308,18 +321,23 @@ public class CategoryDetailsSection extends PDESection implements IPartSelection
 		if (fCurrentCategoryDefinition == null) {
 			clearField(property);
 		} else {
-			if (property.equals(PROPERTY_NAME))
+			switch (property) {
+			case PROPERTY_NAME:
 				fNameText.setValue(fCurrentCategoryDefinition.getName(), true);
-			else if (property.equals(PROPERTY_TYPE))
+				break;
+			case PROPERTY_TYPE:
 				fLabelText.setValue(fCurrentCategoryDefinition.getLabel(), true);
-			else if (property.equals(PROPERTY_DESC)) {
+				break;
+			case PROPERTY_DESC:
 				ISiteDescription siteDesc = fCurrentCategoryDefinition.getDescription();
 				if (siteDesc == null) {
 					clearField(property);
 				} else {
 					fDescriptionText.setValue(siteDesc.getText(), true);
 				}
-
+				break;
+			default:
+				break;
 			}
 		}
 	}

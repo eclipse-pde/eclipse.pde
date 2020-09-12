@@ -311,43 +311,53 @@ public class Site extends SiteObject implements ISite {
 
 	protected void parseChild(Node child) {
 		String tag = child.getNodeName().toLowerCase(Locale.ENGLISH);
-		if (tag.equals("feature")) { //$NON-NLS-1$
+		switch (tag) {
+			case "feature": //$NON-NLS-1$
 			ISiteFeature feature = getModel().getFactory().createFeature();
 			((SiteFeature) feature).parse(child);
 			((SiteFeature) feature).setInTheModel(true);
 			features.add(feature);
-		} else if (tag.equals("bundle")) { //$NON-NLS-1$
+			break;
+		case "bundle": //$NON-NLS-1$
 			ISiteBundle bundle = getModel().getFactory().createBundle();
 			((SiteBundle) bundle).parse(child);
 			((SiteBundle) bundle).setInTheModel(true);
 			bundles.add(bundle);
-		} else if (tag.equals("archive")) { //$NON-NLS-1$
+			break;
+		case "archive": //$NON-NLS-1$
 			ISiteArchive archive = getModel().getFactory().createArchive();
 			((SiteArchive) archive).parse(child);
 			((SiteArchive) archive).setInTheModel(true);
 			archives.add(archive);
-		} else if (tag.equals("category-def")) { //$NON-NLS-1$
+			break;
+		case "category-def": //$NON-NLS-1$
 			ISiteCategoryDefinition def = getModel().getFactory().createCategoryDefinition();
 			((SiteCategoryDefinition) def).parse(child);
 			((SiteCategoryDefinition) def).setInTheModel(true);
 			categoryDefs.add(def);
-		} else if (tag.equals("repository-reference")) { //$NON-NLS-1$
+			break;
+		case "repository-reference": //$NON-NLS-1$
 			IRepositoryReference ref = getModel().getFactory().createRepositoryReference();
 			((RepositoryReference) ref).parse(child);
 			((RepositoryReference) ref).setInTheModel(true);
 			repositoryReferences.add(ref);
-		} else if (tag.equals("stats")) { //$NON-NLS-1$
+			break;
+		case "stats": //$NON-NLS-1$
 			IStatsInfo info = getModel().getFactory().createStatsInfo();
 			((StatsInfo) info).parse(child);
 			((StatsInfo) info).setInTheModel(true);
 			statsInfo = info;
-		} else if (tag.equals(P_DESCRIPTION)) {
+			break;
+		case P_DESCRIPTION:
 			if (description != null) {
 				return;
 			}
 			description = getModel().getFactory().createDescription(this);
 			((SiteDescription) description).parse(child);
 			((SiteDescription) description).setInTheModel(true);
+			break;
+		default:
+			break;
 		}
 	}
 

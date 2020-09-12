@@ -239,24 +239,34 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 	private void synchronizeVersion(int mode, String featureVersion, IFeaturePlugin ref, IProgressMonitor monitor) throws CoreException, BadLocationException {
 		String id = ref.getId();
 
-		if (mode == USE_PLUGINS_AT_BUILD) {
+		switch (mode) {
+		case USE_PLUGINS_AT_BUILD:
 			if (!ICoreConstants.DEFAULT_VERSION.equals(ref.getVersion()))
 				ref.setVersion(ICoreConstants.DEFAULT_VERSION);
-		} else if (mode == USE_PLUGINS) {
-			IPluginModelBase modelBase = PluginRegistry.findModel(id);
-			if (modelBase == null)
-				return;
-			String baseVersion = modelBase.getPluginBase().getVersion();
-			if (!ref.getVersion().equals(baseVersion))
-				ref.setVersion(baseVersion);
-		} else /* mode == USE_FEATURE */{
-			IPluginModelBase modelBase = findModel(id);
-			if (modelBase == null)
-				return;
-			ref.setVersion(featureVersion);
-			String baseVersion = modelBase.getPluginBase().getVersion();
-			if (!featureVersion.equals(baseVersion))
-				forceVersion(featureVersion, modelBase, monitor);
+			break;
+		case USE_PLUGINS:
+			{
+				IPluginModelBase modelBase = PluginRegistry.findModel(id);
+				if (modelBase == null)
+					return;
+				String baseVersion = modelBase.getPluginBase().getVersion();
+				if (!ref.getVersion().equals(baseVersion))
+					ref.setVersion(baseVersion);
+				break;
+			}
+		case USE_FEATURE:
+		default:
+			/* mode == USE_FEATURE */
+			{
+				IPluginModelBase modelBase = findModel(id);
+				if (modelBase == null)
+					return;
+				ref.setVersion(featureVersion);
+				String baseVersion = modelBase.getPluginBase().getVersion();
+				if (!featureVersion.equals(baseVersion))
+					forceVersion(featureVersion, modelBase, monitor);
+				break;
+			}
 		}
 		monitor.worked(1);
 	}
@@ -265,10 +275,12 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 			throws CoreException {
 		String id = ref.getId();
 
-		if (mode == USE_PLUGINS_AT_BUILD) {
+		switch (mode) {
+		case USE_PLUGINS_AT_BUILD:
 			if (!ICoreConstants.DEFAULT_VERSION.equals(ref.getVersion()))
 				ref.setVersion(ICoreConstants.DEFAULT_VERSION);
-		} else if (mode == USE_PLUGINS) {
+			break;
+		case USE_PLUGINS:
 			FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
 			IFeatureModel modelBase = fmm.findFeatureModel(id);
 			if (modelBase == null)
@@ -277,8 +289,11 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 			if (!ref.getVersion().equals(baseVersion)) {
 				ref.setVersion(baseVersion);
 			}
-		} else /* mode == USE_FEATURE */ {
-			// not supported yet
+			break;
+		// not supported yet
+		/* mode == USE_FEATURE */
+		default:
+			break;
 		}
 		monitor.worked(1);
 	}
