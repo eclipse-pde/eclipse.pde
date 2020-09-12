@@ -41,11 +41,6 @@ public abstract class ClassCompatibilityTests extends CompatibilityTest {
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
-		// Hack to load all classes before computing their suite of test cases
-		// this allow to reset test cases subsets while running all Builder
-		// tests...
-		Class<?>[] classes = getAllTestClasses();
-
 		// Reset forgotten subsets of tests
 		TestCase.TESTS_PREFIX = null;
 		TestCase.TESTS_NAMES = null;
@@ -53,9 +48,11 @@ public abstract class ClassCompatibilityTests extends CompatibilityTest {
 		TestCase.TESTS_RANGE = null;
 		TestCase.RUN_ONLY_ID = null;
 
+		// Hack to load all classes before computing their suite of test cases
+		// this allow to reset test cases subsets while running all Builder
+		// tests...
 		/* tests */
-		for (int i = 0, length = classes.length; i < length; i++) {
-			Class<?> clazz = classes[i];
+		for (Class<?> clazz : getAllTestClasses()) {
 			Method suiteMethod;
 			try {
 				suiteMethod = clazz.getDeclaredMethod("suite"); //$NON-NLS-1$

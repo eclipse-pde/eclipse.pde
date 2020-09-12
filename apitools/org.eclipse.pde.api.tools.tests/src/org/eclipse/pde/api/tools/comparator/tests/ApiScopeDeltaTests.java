@@ -84,9 +84,8 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
 		ApiScope scope = new ApiScope();
-		IApiComponent[] apiComponents = after.getApiComponents();
-		for (int i = 0, max = apiComponents.length; i < max; i++) {
-			scope.addElement(apiComponents[i]);
+		for (IApiComponent apiComponent : after.getApiComponents()) {
+			scope.addElement(apiComponent);
 		}
 		IDelta delta = ApiComparator.compare(scope, before, VisibilityModifiers.API, true, null);
 		assertNotNull("No delta", delta); //$NON-NLS-1$
@@ -112,11 +111,8 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
 		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
 		ApiScope scope = new ApiScope();
-		IApiComponent[] apiComponents = after.getApiComponents();
-		for (IApiComponent apiComponent : apiComponents) {
-			IApiTypeContainer[] apiTypeContainers = apiComponent.getApiTypeContainers();
-			for (int j = 0; j < apiTypeContainers.length; j++) {
-				IApiTypeContainer iApiTypeContainer = apiTypeContainers[j];
+		for (IApiComponent apiComponent : after.getApiComponents()) {
+			for (IApiTypeContainer iApiTypeContainer : apiComponent.getApiTypeContainers()) {
 				scope.addElement(iApiTypeContainer);
 			}
 		}
@@ -193,9 +189,8 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 		}
 		if (root != null) {
 			IApiType structure = root.getStructure();
-			IApiMethod[] methods = structure.getMethods();
-			for (int i = 0, max = methods.length; i < max; i++) {
-				scope.addElement(methods[i]);
+			for (IApiMethod method : structure.getMethods()) {
+				scope.addElement(method);
 			}
 		}
 		try {

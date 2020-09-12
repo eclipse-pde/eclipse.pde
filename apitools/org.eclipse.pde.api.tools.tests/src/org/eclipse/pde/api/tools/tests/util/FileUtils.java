@@ -69,13 +69,12 @@ public class FileUtils {
 	 * @throws IOException
 	 */
 	public static void addJavaFiles(File dir, List<File> collection) throws IOException {
-		File[] files = dir.listFiles();
 		List<File> subDirs = new ArrayList<>(2);
-		for (int i = 0; i < files.length; i++) {
-			if (files[i].isFile()) {
-				collection.add(files[i]);
-			} else if (files[i].isDirectory()) {
-				subDirs.add(files[i]);
+		for (File file : dir.listFiles()) {
+			if (file.isFile()) {
+				collection.add(file);
+			} else if (file.isDirectory()) {
+				subDirs.add(file);
 			}
 		}
 		Iterator<File> iter = subDirs.iterator();
@@ -191,8 +190,8 @@ public class FileUtils {
 		if (files == null) {
 			return;
 		}
-		for (int i = 0, max = files.length; i < max; i++) {
-			Util.delete(files[i]);
+		for (File file : files) {
+			Util.delete(file);
 		}
 	}
 
@@ -342,8 +341,7 @@ public class FileUtils {
 	public static void zip(File dir, ZipOutputStream zip, int rootPathLength) throws IOException {
 		File[] files = dir.listFiles();
 		if (files != null) {
-			for (int i = 0, length = files.length; i < length; i++) {
-				File file = files[i];
+			for (File file : files) {
 				if (file.isFile()) {
 					String path = file.getPath();
 					path = path.substring(rootPathLength);
@@ -408,8 +406,7 @@ public class FileUtils {
 		if (source.isDirectory()) {
 			String[] files = source.list();
 			if (files != null) {
-				for (int i = 0; i < files.length; i++) {
-					String file = files[i];
+				for (String file : files) {
 					File sourceFile = new File(source, file);
 					if (sourceFile.isDirectory()) {
 						File destSubDir = new File(dest, file);
@@ -479,9 +476,7 @@ public class FileUtils {
 	 * @param dir local directory
 	 */
 	public static void copyFolder(IFolder folder, File dir) throws Exception {
-		IResource[] members = folder.members();
-		for (int i = 0; i < members.length; i++) {
-			IResource res = members[i];
+		for (IResource res : folder.members()) {
 			if (res.getType() == IResource.FILE) {
 				IFile file = (IFile) res;
 				FileUtils.copyFile(dir, file);

@@ -212,8 +212,8 @@ public class ProjectUtils {
 			addNatureToProject(project, JavaCore.NATURE_ID, monitor);
 		}
 		if (additionalNatures != null) {
-			for (int i = 0; i < additionalNatures.length; i++) {
-				addNatureToProject(project, additionalNatures[i], monitor);
+			for (String additionalNature : additionalNatures) {
+				addNatureToProject(project, additionalNature, monitor);
 			}
 		}
 		IJavaProject jproject = JavaCore.create(project);
@@ -325,9 +325,9 @@ public class ProjectUtils {
 	public static void removeFromClasspath(IJavaProject project, IClasspathEntry entry) throws JavaModelException {
 		IClasspathEntry[] oldEntries = project.getRawClasspath();
 		ArrayList<IClasspathEntry> entries = new ArrayList<>();
-		for (int i = 0; i < oldEntries.length; i++) {
-			if (!oldEntries[i].equals(entry)) {
-				entries.add(oldEntries[i]);
+		for (IClasspathEntry oldEntry : oldEntries) {
+			if (!oldEntry.equals(entry)) {
+				entries.add(oldEntry);
 			}
 		}
 		if (entries.size() != oldEntries.length) {
@@ -404,9 +404,9 @@ public class ProjectUtils {
 		IPackageExportDescription[] exports = description.getPackageExports();
 		if (exports != null) {
 			List<IPackageExportDescription> list = new ArrayList<>();
-			for (int i = 0; i < exports.length; i++) {
-				if (!packagename.equals(exports[i].getName())) {
-					list.add(exports[i]);
+			for (IPackageExportDescription export : exports) {
+				if (!packagename.equals(export.getName())) {
+					list.add(export);
 				}
 			}
 			if (list.size() < exports.length) {
@@ -437,8 +437,8 @@ public class ProjectUtils {
 		IPackageExportDescription[] exports = description.getPackageExports();
 		List<IPackageExportDescription> list = new ArrayList<>();
 		if (exports != null) {
-			for (int i = 0; i < exports.length; i++) {
-				list.add(exports[i]);
+			for (IPackageExportDescription export : exports) {
+				list.add(export);
 			}
 		}
 		list.add(service.newPackageExport(packagename, null, !internal, friends));

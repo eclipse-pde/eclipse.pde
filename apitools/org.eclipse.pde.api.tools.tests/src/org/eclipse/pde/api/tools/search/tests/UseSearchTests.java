@@ -69,11 +69,11 @@ public class UseSearchTests extends SearchTest {
 		assertFalse("The files list should be not be less than the expected used projects", flength < epsize); //$NON-NLS-1$
 		HashSet<String> names = null;
 		File[] projects = null;
-		for (int i = 0; i < files.length; i++) {
-			names = this.usedprojects.get(files[i].getName());
+		for (File file : files) {
+			names = this.usedprojects.get(file.getName());
 			assertNotNull("the expeced set of using project names should exist", names); //$NON-NLS-1$
-			projects = files[i].listFiles();
-			assertTrue("the only files should be the folders for the projects using ["+files[i].getName()+"]", projects.length == names.size()); //$NON-NLS-1$ //$NON-NLS-2$
+			projects = file.listFiles();
+			assertTrue("the only files should be the folders for the projects using ["+file.getName()+"]", projects.length == names.size()); //$NON-NLS-1$ //$NON-NLS-2$
 			for (File project : projects) {
 				if (!project.isDirectory()) {
 					reportFailure("Unexpected non-folder entry found: [" + project.getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -92,13 +92,12 @@ public class UseSearchTests extends SearchTest {
 	 */
 	private void scrubReportLocation(File file) {
 		if(file.exists() && file.isDirectory()) {
-			File[] files = file.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				if(files[i].isDirectory()) {
-					scrubReportLocation(files[i]);
+			for (File file2 : file.listFiles()) {
+				if(file2.isDirectory()) {
+					scrubReportLocation(file2);
 				}
 				else {
-					files[i].delete();
+					file2.delete();
 				}
 			}
 			file.delete();

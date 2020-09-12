@@ -146,8 +146,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	 */
 	private IPackageExportDescription getExport(IPackageExportDescription[] exports, String packageName) {
 		if (exports != null) {
-			for (int i = 0; i < exports.length; i++) {
-				IPackageExportDescription export = exports[i];
+			for (IPackageExportDescription export : exports) {
 				if (export.getName().equals(packageName)) {
 					return export;
 				}

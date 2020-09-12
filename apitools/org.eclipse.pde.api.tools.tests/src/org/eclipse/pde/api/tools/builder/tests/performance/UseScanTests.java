@@ -68,12 +68,11 @@ public class UseScanTests extends PerformanceTestCase {
 	 */
 	private void scrubReportLocation(File file) {
 		if (file.exists() && file.isDirectory()) {
-			File[] files = file.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				if (files[i].isDirectory()) {
-					scrubReportLocation(files[i]);
+			for (File file2 : file.listFiles()) {
+				if (file2.isDirectory()) {
+					scrubReportLocation(file2);
 				} else {
-					files[i].delete();
+					file2.delete();
 				}
 			}
 			file.delete();
@@ -94,9 +93,7 @@ public class UseScanTests extends PerformanceTestCase {
 
 		Set<IApiComponent> scope = new HashSet<>();
 		// add equinox and eclipse core components
-		IApiComponent[] components = fBaseline.getApiComponents();
-		for (int i = 0; i < components.length; i++) {
-			IApiComponent component = components[i];
+		for (IApiComponent component : fBaseline.getApiComponents()) {
 			if (component.toString().contains("org.eclipse.core") //$NON-NLS-1$
 					|| component.toString().contains("org.eclipse.equinox")) { //$NON-NLS-1$
 				if (!component.toString().contains("test")) { //$NON-NLS-1$
@@ -136,11 +133,11 @@ public class UseScanTests extends PerformanceTestCase {
 		List<IApiComponent> components = new ArrayList<>();
 		IApiBaseline profile = ApiModelFactory.newApiBaseline(definition.getName());
 		localmonitor.setWorkRemaining(bundles.length);
-		for (int i = 0; i < bundles.length; i++) {
+		for (TargetBundle bundle : bundles) {
 			localmonitor.split(1);
-			if (bundles[i].getStatus().isOK() && !bundles[i].isSourceBundle()) {
+			if (bundle.getStatus().isOK() && !bundle.isSourceBundle()) {
 				IApiComponent component = ApiModelFactory.newApiComponent(profile,
-						URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
+						URIUtil.toFile(bundle.getBundleInfo().getLocation()).getAbsolutePath());
 				if (component != null) {
 					components.add(component);
 				}

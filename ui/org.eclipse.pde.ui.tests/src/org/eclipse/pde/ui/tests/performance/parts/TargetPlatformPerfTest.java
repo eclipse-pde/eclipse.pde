@@ -216,10 +216,10 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 	private void openRequiredBundles(IPluginModelBase model, Set<String> allBundleNames) {
 		assertNotNull(model);
 		BundleSpecification[] required = model.getBundleDescription().getRequiredBundles();
-		for (int i = 0; i < required.length; i++) {
-			if (!allBundleNames.contains(required[i].getName())) {
-				allBundleNames.add(required[i].getName());
-				model = PluginRegistry.findModel(required[i].getBundle());
+		for (BundleSpecification element : required) {
+			if (!allBundleNames.contains(element.getName())) {
+				allBundleNames.add(element.getName());
+				model = PluginRegistry.findModel(element.getBundle());
 				openRequiredBundles(model, allBundleNames);
 			}
 		}

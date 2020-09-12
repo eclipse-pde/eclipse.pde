@@ -38,8 +38,8 @@ public class ErrorProjectTest extends CompilationParticipantTest {
 		IResource cu = getFixture("DuplicateConfigurationPidComponent");
 		IMarker[] markers = cu.findMarkers(DS_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 		assertEquals(2, markers.length);
-		for (int i = 0; i < markers.length; ++i) {
-			assertEquals("Duplicate configuration PID.", markers[i].getAttribute(IMarker.MESSAGE));
+		for (IMarker marker : markers) {
+			assertEquals("Duplicate configuration PID.", marker.getAttribute(IMarker.MESSAGE));
 		}
 	}
 
@@ -64,8 +64,8 @@ public class ErrorProjectTest extends CompilationParticipantTest {
 		IResource cu = getFixture("NonSingletonFactoryOrImmediateComponent");
 		IMarker[] markers = cu.findMarkers(DS_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 		assertEquals(2, markers.length);
-		for (int i = 0; i < markers.length; ++i) {
-			assertEquals("Factory or immediate component must have singleton scope.", markers[i].getAttribute(IMarker.MESSAGE));
+		for (IMarker marker : markers) {
+			assertEquals("Factory or immediate component must have singleton scope.", marker.getAttribute(IMarker.MESSAGE));
 		}
 	}
 
@@ -83,8 +83,8 @@ public class ErrorProjectTest extends CompilationParticipantTest {
 		IResource cu = getFixture("FactoryOrImmediateServiceFactoryComponent");
 		IMarker[] markers = cu.findMarkers(DS_PROBLEM_MARKER, true, IResource.DEPTH_ZERO);
 		assertEquals(2, markers.length);
-		for (int i = 0; i < markers.length; ++i) {
-			assertEquals("Factory or immediate component cannot be a service factory.", markers[i].getAttribute(IMarker.MESSAGE));
+		for (IMarker marker : markers) {
+			assertEquals("Factory or immediate component cannot be a service factory.", marker.getAttribute(IMarker.MESSAGE));
 		}
 	}
 

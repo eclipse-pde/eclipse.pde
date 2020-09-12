@@ -71,8 +71,8 @@ public class FullSourceBuildTests extends PerformanceTest {
 			startMeasuring();
 
 			// *** build each project ***
-			for (int i = 0; i < projects.length; i++) {
-				projects[i].build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, null);
+			for (IProject project : projects) {
+				project.build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, null);
 			}
 
 			stopMeasuring();
@@ -105,9 +105,9 @@ public class FullSourceBuildTests extends PerformanceTest {
 			startMeasuring();
 
 			// *** build each project ***
-			for (int i = 0; i < projects.length; i++) {
-				projects[i].build(IncrementalProjectBuilder.CLEAN_BUILD, ApiPlugin.BUILDER_ID, null, null);
-				projects[i].build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, null);
+			for (IProject project : projects) {
+				project.build(IncrementalProjectBuilder.CLEAN_BUILD, ApiPlugin.BUILDER_ID, null, null);
+				project.build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, null);
 			}
 
 			stopMeasuring();

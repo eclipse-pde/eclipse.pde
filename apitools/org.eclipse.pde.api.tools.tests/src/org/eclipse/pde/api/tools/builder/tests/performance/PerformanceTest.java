@@ -99,8 +99,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		TestCase.RUN_ONLY_ID = null;
 
 		/* tests */
-		for (int i = 0, length = classes.length; i < length; i++) {
-			Class<?> clazz = classes[i];
+		for (Class<?> clazz : classes) {
 			Method suiteMethod;
 			try {
 				suiteMethod = clazz.getDeclaredMethod("suite"); //$NON-NLS-1$
@@ -152,9 +151,9 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	 * @throws CoreException
 	 */
 	protected void orderedBuild(IProject[] projects) throws CoreException {
-		for (int i = 0; i < projects.length; i++) {
-			projects[i].build(IncrementalProjectBuilder.CLEAN_BUILD, null);
-			projects[i].build(IncrementalProjectBuilder.FULL_BUILD, null);
+		for (IProject project : projects) {
+			project.build(IncrementalProjectBuilder.CLEAN_BUILD, null);
+			project.build(IncrementalProjectBuilder.FULL_BUILD, null);
 		}
 	}
 
@@ -243,9 +242,9 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		System.out.println("Importing projects... "); //$NON-NLS-1$
 		File root = dir;
 		File[] projects = root.listFiles();
-		for (int i = 0; i < projects.length; i++) {
-			System.out.println("\t" + projects[i].getName()); //$NON-NLS-1$
-			createExistingProject(projects[i], true, false);
+		for (File project : projects) {
+			System.out.println("\t" + project.getName()); //$NON-NLS-1$
+			createExistingProject(project, true, false);
 		}
 		System.out.println(" done in " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -257,8 +256,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	 */
 	protected void deleteDir(File dir) {
 		File[] listFiles = dir.listFiles();
-		for (int i = 0; i < listFiles.length; i++) {
-			File file = listFiles[i];
+		for (File file : listFiles) {
 			if (file.isDirectory()) {
 				deleteDir(file);
 			}

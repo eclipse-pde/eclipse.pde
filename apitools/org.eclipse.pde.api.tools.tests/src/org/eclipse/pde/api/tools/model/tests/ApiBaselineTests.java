@@ -205,11 +205,9 @@ public class ApiBaselineTests {
 		IApiTypeContainer[] containers = component.getApiTypeContainers();
 		assertTrue("Missing containers:", containers.length > 0); //$NON-NLS-1$
 		IApiTypeRoot file = null;
-		for (int i = 0; i < containers.length; i++) {
-			IApiTypeContainer container = containers[i];
-			String[] names = container.getPackageNames();
-			for (int j = 0; j < names.length; j++) {
-				if (names[j].equals(COMPONENT_A)) {
+		for (IApiTypeContainer container : containers) {
+			for (String name : container.getPackageNames()) {
+				if (name.equals(COMPONENT_A)) {
 					file = container.findTypeRoot("component.a.A"); //$NON-NLS-1$
 					break;
 				}
@@ -300,8 +298,7 @@ public class ApiBaselineTests {
 	public void testPrerequisites() throws CoreException {
 		IApiComponent component = fBaseline.getApiComponent(COMPONENT_A);
 		IApiComponent[] prerequisiteComponents = fBaseline.getPrerequisiteComponents(new IApiComponent[] { component });
-		for (int i = 0; i < prerequisiteComponents.length; i++) {
-			IApiComponent apiComponent = prerequisiteComponents[i];
+		for (IApiComponent apiComponent : prerequisiteComponents) {
 			if (apiComponent.getSymbolicName().equals("org.eclipse.osgi")) { //$NON-NLS-1$
 				// done
 				return;

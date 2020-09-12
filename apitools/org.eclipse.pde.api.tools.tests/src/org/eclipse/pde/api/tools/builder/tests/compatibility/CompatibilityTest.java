@@ -85,11 +85,6 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
-		// Hack to load all classes before computing their suite of test cases
-		// this allow to reset test cases subsets while running all Builder
-		// tests...
-		Class<?>[] classes = getAllTestClasses();
-
 		// Reset forgotten subsets of tests
 		TestCase.TESTS_PREFIX = null;
 		TestCase.TESTS_NAMES = null;
@@ -97,9 +92,11 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 		TestCase.TESTS_RANGE = null;
 		TestCase.RUN_ONLY_ID = null;
 
+		// Hack to load all classes before computing their suite of test cases
+		// this allow to reset test cases subsets while running all Builder
+		// tests...
 		/* tests */
-		for (int i = 0, length = classes.length; i < length; i++) {
-			Class<?> clazz = classes[i];
+		for (Class<?> clazz : getAllTestClasses()) {
 			Method suiteMethod;
 			try {
 				suiteMethod = clazz.getDeclaredMethod("suite"); //$NON-NLS-1$
@@ -158,10 +155,10 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			projects = getEnv().getWorkspace().getRoot().getProjects();
 			IPath baselineLocation = ApiTestsPlugin.getDefault().getStateLocation().append(BASELINE);
 			IApiComponent component = null;
-			for (int i = 0; i < projects.length; i++) {
-				component = manager.getWorkspaceComponent(projects[i].getName());
-				assertNotNull("The project was not found in the workspace baseline: " + projects[i].getName(), component); //$NON-NLS-1$
-				exportApiComponent(projects[i], component, baselineLocation);
+			for (IProject project : projects) {
+				component = manager.getWorkspaceComponent(project.getName());
+				assertNotNull("The project was not found in the workspace baseline: " + project.getName(), component); //$NON-NLS-1$
+				exportApiComponent(project, component, baselineLocation);
 			}
 			baseline = ApiModelFactory.newApiBaseline("API-baseline"); //$NON-NLS-1$
 			IApiComponent[] components = new IApiComponent[projects.length];

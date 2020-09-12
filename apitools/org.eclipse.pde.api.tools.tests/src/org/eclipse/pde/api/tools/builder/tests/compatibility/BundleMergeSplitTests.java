@@ -93,7 +93,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 
 	/*
 	 * Ensure a baseline has been created to compare against.
-	 * 
+	 *
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#setUp()
 	 */
 	@Override
@@ -116,9 +116,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		if (wsbaseline != null) {
 			wsbaseline.dispose();
 		}
-		IProject[] projects = getEnv().getWorkspace().getRoot().getProjects();
-		for (int i = 0, length = projects.length; i < length; i++) {
-			getEnv().removeProject(projects[i].getFullPath());
+		for (IProject project : getEnv().getWorkspace().getRoot().getProjects()) {
+			getEnv().removeProject(project.getFullPath());
 		}
 		super.tearDown();
 		getEnv().setRevert(false);

@@ -94,8 +94,7 @@ public abstract class LeakTest extends ApiBuilderTest {
 		TestCase.RUN_ONLY_ID = null;
 
 		/* tests */
-		for (int i = 0, length = classes.length; i < length; i++) {
-			Class<?> clazz = classes[i];
+		for (Class<?> clazz : classes) {
 			Method suiteMethod;
 			try {
 				suiteMethod = clazz.getDeclaredMethod("suite"); //$NON-NLS-1$

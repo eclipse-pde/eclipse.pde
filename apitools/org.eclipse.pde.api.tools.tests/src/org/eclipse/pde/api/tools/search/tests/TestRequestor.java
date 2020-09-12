@@ -121,15 +121,14 @@ public class TestRequestor implements IApiSearchRequestor {
 		}
 		if(this.scope == null) {
 			try {
-				IApiComponent[] comps = this.scopebaseline.getApiComponents();
 				this.scope = new ApiScope();
-				for (int i = 0; i < comps.length; i++) {
-					if(comps[i].isSystemComponent()) {
+				for (IApiComponent comp : this.scopebaseline.getApiComponents()) {
+					if(comp.isSystemComponent()) {
 						//never include system libraries in the tests
 						continue;
 					}
-					if(acceptComponent0(comps[i])) {
-						this.scope.addElement(comps[i]);
+					if(acceptComponent0(comp)) {
+						this.scope.addElement(comp);
 					}
 				}
 			}

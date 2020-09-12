@@ -84,14 +84,11 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 
 	protected IPackageFragment[] getAllPackages() throws CoreException {
 		IJavaProject project = JavaCore.create(getEnv().getProject("bundle.a")); //$NON-NLS-1$
-		IPackageFragmentRoot[] roots = project.getAllPackageFragmentRoots();
 		List<IPackageFragment> pkgs = new ArrayList<>();
-		for (int i = 0; i < roots.length; i++) {
-			IPackageFragmentRoot root = roots[i];
+		for (IPackageFragmentRoot root : project.getAllPackageFragmentRoots()) {
 			if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
-				IJavaElement[] children = root.getChildren();
-				for (int j = 0; j < children.length; j++) {
-					IPackageFragment frag = (IPackageFragment) children[j];
+				for (IJavaElement child : root.getChildren()) {
+					IPackageFragment frag = (IPackageFragment) child;
 					pkgs.add(frag);
 					collectAllPackages(frag, pkgs);
 				}
@@ -101,9 +98,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	}
 
 	protected void collectAllPackages(IPackageFragment pkg, List<IPackageFragment> collect) throws CoreException {
-		IJavaElement[] children = pkg.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			IJavaElement element = children[i];
+		for (IJavaElement element : pkg.getChildren()) {
 			if (element.getElementType() == IJavaElement.PACKAGE_FRAGMENT) {
 				IPackageFragment frag = (IPackageFragment) element;
 				collect.add(frag);
@@ -152,16 +147,10 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 	}
 
 	protected Set<String> collectAllTypeNames() throws CoreException {
-		IPackageFragment[] allPackages = getAllPackages();
 		Set<String> names = new HashSet<>();
-		for (int i = 0; i < allPackages.length; i++) {
-			IPackageFragment pkg = allPackages[i];
-			ICompilationUnit[] units = pkg.getCompilationUnits();
-			for (int j = 0; j < units.length; j++) {
-				ICompilationUnit unit = units[j];
-				IType[] types = unit.getTypes();
-				for (int k = 0; k < types.length; k++) {
-					IType iType = types[k];
+		for (IPackageFragment pkg : getAllPackages()) {
+			for (ICompilationUnit unit : pkg.getCompilationUnits()) {
+				for (IType iType : unit.getTypes()) {
 					names.add(iType.getFullyQualifiedName('$'));
 				}
 			}
@@ -181,11 +170,10 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 		// build expected list
 		Set<String> set = getAllPackageNames();
 
-		String[] names = container.getPackageNames();
 		// assertEquals("Wrong number of package names", set.size(),
 		// names.length);
-		for (int i = 0; i < names.length; i++) {
-			set.remove(names[i]);
+		for (String name : container.getPackageNames()) {
+			set.remove(name);
 		}
 		if (!set.isEmpty()) {
 			System.out.println("LEFTOVERS"); //$NON-NLS-1$

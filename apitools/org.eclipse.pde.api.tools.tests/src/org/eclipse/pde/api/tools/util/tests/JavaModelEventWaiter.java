@@ -84,9 +84,7 @@ public class JavaModelEventWaiter extends AbstractApiEventWaiter implements IEle
 	 * @param deltas
 	 */
 	protected boolean processDelta(IJavaElementDelta[] deltas) {
-		IJavaElementDelta delta = null;
-		for(int i = 0; i < deltas.length; i++) {
-			delta = deltas[i];
+		for (IJavaElementDelta delta : deltas) {
 			if(delta.getKind() == fDKind) {
 				if(fElementType == delta.getElement().getElementType()) {
 					if(delta.getElement().getElementName().equals(fElementName) &&
