@@ -248,20 +248,28 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 
 	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
-		if (name.equals(P_OS)) {
+		switch (name) {
+		case P_OS:
 			setOS((String) newValue);
-		} else if (name.equals(P_WS)) {
+			break;
+		case P_WS:
 			setWS((String) newValue);
-		} else if (name.equals(P_NL)) {
+			break;
+		case P_NL:
 			setNL((String) newValue);
-		} else if (name.equals(P_ARCH)) {
+			break;
+		case P_ARCH:
 			setArch((String) newValue);
-		} else if (name.equals(P_DOWNLOAD_SIZE)) {
+			break;
+		case P_DOWNLOAD_SIZE:
 			setDownloadSize(newValue != null ? ((Integer) newValue).intValue() : 0);
-		} else if (name.equals(P_INSTALL_SIZE)) {
+			break;
+		case P_INSTALL_SIZE:
 			setInstallSize(newValue != null ? ((Integer) newValue).intValue() : 0);
-		} else {
+			break;
+		default:
 			super.restoreProperty(name, oldValue, newValue);
+			break;
 		}
 	}
 

@@ -285,16 +285,22 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 		int index = fTabFolder.getSelectionIndex();
 		Control oldControl = fNotebookLayout.topControl;
 
-		if (index == F_NO_TAB) {
+		switch (index) {
+		case F_NO_TAB:
 			// Select the introduction contents by default
 			fNotebookLayout.topControl = fIntroductionComposite;
 			// Select the introduction tab by default to match
 			// Does not trigger selection adapter (only user UI selections do)
 			fTabFolder.setSelection(F_INTRODUCTION_TAB);
-		} else if (index == F_INTRODUCTION_TAB) {
+			break;
+		case F_INTRODUCTION_TAB:
 			fNotebookLayout.topControl = fIntroductionComposite;
-		} else if (index == F_CONCLUSION_TAB) {
+			break;
+		case F_CONCLUSION_TAB:
 			fNotebookLayout.topControl = fConclusionComposite;
+			break;
+		default:
+			break;
 		}
 
 		if (oldControl != fNotebookLayout.topControl) {

@@ -51,12 +51,16 @@ public class FeatureInstallHandler extends FeatureObject implements IFeatureInst
 
 	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
-		if (name.equals(P_LIBRARY)) {
+		switch (name) {
+		case P_LIBRARY:
 			setLibrary((String) newValue);
-		} else if (name.equals(P_HANDLER_NAME)) {
+			break;
+		case P_HANDLER_NAME:
 			setHandlerName((String) newValue);
-		} else {
+			break;
+		default:
 			super.restoreProperty(name, oldValue, newValue);
+			break;
 		}
 	}
 

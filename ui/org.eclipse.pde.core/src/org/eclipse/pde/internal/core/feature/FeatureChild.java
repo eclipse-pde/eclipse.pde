@@ -75,12 +75,18 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 			searchLocationName = getNodeAttribute(node, "search-location"); //$NON-NLS-1$
 		}
 		if (searchLocationName != null) {
-			if (searchLocationName.equals("root")) { //$NON-NLS-1$
+			switch (searchLocationName) {
+				case "root": //$NON-NLS-1$
 				fSearchLocation = ROOT;
-			} else if (searchLocationName.equals("self")) { //$NON-NLS-1$
+				break;
+			case "self": //$NON-NLS-1$
 				fSearchLocation = SELF;
-			} else if (searchLocationName.equals("both")) { //$NON-NLS-1$
+				break;
+			case "both": //$NON-NLS-1$
 				fSearchLocation = BOTH;
+				break;
+			default:
+				break;
 			}
 		}
 		//hookWithWorkspace();
@@ -239,26 +245,37 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 
 	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
-		if (name.equals(P_VERSION)) {
+		switch (name) {
+		case P_VERSION:
 			setVersion((String) newValue);
-		} else if (name.equals(P_OPTIONAL)) {
+			break;
+		case P_OPTIONAL:
 			setOptional(((Boolean) newValue).booleanValue());
-		} else if (name.equals(P_NAME)) {
+			break;
+		case P_NAME:
 			setName((String) newValue);
-		} else if (name.equals(P_MATCH)) {
+			break;
+		case P_MATCH:
 			setMatch(newValue != null ? ((Integer) newValue).intValue() : NONE);
-		} else if (name.equals(P_OS)) {
+			break;
+		case P_OS:
 			setOS((String) newValue);
-		} else if (name.equals(P_WS)) {
+			break;
+		case P_WS:
 			setWS((String) newValue);
-		} else if (name.equals(P_ARCH)) {
+			break;
+		case P_ARCH:
 			setArch((String) newValue);
-		} else if (name.equals(P_NL)) {
+			break;
+		case P_NL:
 			setNL((String) newValue);
-		} else if (name.equals(P_SEARCH_LOCATION)) {
+			break;
+		case P_SEARCH_LOCATION:
 			setSearchLocation(newValue != null ? ((Integer) newValue).intValue() : ROOT);
-		} else {
+			break;
+		default:
 			super.restoreProperty(name, oldValue, newValue);
+			break;
 		}
 	}
 

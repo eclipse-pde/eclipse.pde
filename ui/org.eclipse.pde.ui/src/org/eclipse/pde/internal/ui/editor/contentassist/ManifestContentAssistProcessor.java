@@ -625,16 +625,24 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		TypeCompletionProposal proposal = null;
 		for (int i = 0; i < attrs.length; i++)
 			if (attrs[i].regionMatches(true, 0, value, 0, length)) {
-				if (types[i] == F_TYPE_ATTRIBUTE) {
-					proposal = new TypeCompletionProposal(attrs[i] + "=", getImage(F_TYPE_ATTRIBUTE), attrs[i], offset - length, length); //$NON-NLS-1$
-					proposal.setAdditionalProposalInfo(getJavaDoc(attrs[i] + "_ATTRIBUTE")); //$NON-NLS-1$
-				} else if (types[i] == F_TYPE_DIRECTIVE) {
-					proposal = new TypeCompletionProposal(attrs[i] + ":=", getImage(F_TYPE_DIRECTIVE), attrs[i], offset - length, length); //$NON-NLS-1$
-					proposal.setAdditionalProposalInfo(getJavaDoc(attrs[i] + "_DIRECTIVE")); //$NON-NLS-1$
-				} else {
-					proposal = new TypeCompletionProposal(attrs[i], getImage(types[i]), attrs[i], offset - length, length);
-					proposal.setAdditionalProposalInfo(getJavaDoc(prefixCostant + attrs[i]));
-				}
+				switch (types[i])
+					{
+					case F_TYPE_ATTRIBUTE:
+						proposal = new TypeCompletionProposal(attrs[i] + "=", getImage(F_TYPE_ATTRIBUTE), attrs[i], //$NON-NLS-1$
+								offset - length, length);
+						proposal.setAdditionalProposalInfo(getJavaDoc(attrs[i] + "_ATTRIBUTE")); //$NON-NLS-1$
+						break;
+					case F_TYPE_DIRECTIVE:
+						proposal = new TypeCompletionProposal(attrs[i] + ":=", getImage(F_TYPE_DIRECTIVE), attrs[i], //$NON-NLS-1$
+								offset - length, length);
+						proposal.setAdditionalProposalInfo(getJavaDoc(attrs[i] + "_DIRECTIVE")); //$NON-NLS-1$
+						break;
+					default:
+						proposal = new TypeCompletionProposal(attrs[i], getImage(types[i]), attrs[i], offset - length,
+								length);
+						proposal.setAdditionalProposalInfo(getJavaDoc(prefixCostant + attrs[i]));
+						break;
+					}
 				list.add(proposal);
 			}
 		return list.toArray(new ICompletionProposal[list.size()]);

@@ -238,19 +238,25 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		String name = element.getNodeName();
 		ICompCSModelFactory factory = getModel().getFactory();
 
-		if (name.equals(ELEMENT_INTRO)) {
+		switch (name) {
+		case ELEMENT_INTRO:
 			// Process intro element
 			fFieldIntro = factory.createCompCSIntro(this);
 			fFieldIntro.parse(element);
-		} else if (name.equals(ELEMENT_ONCOMPLETION)) {
+			break;
+		case ELEMENT_ONCOMPLETION:
 			// Process onCompletion element
 			fFieldOnCompletion = factory.createCompCSOnCompletion(this);
 			fFieldOnCompletion.parse(element);
-		} else if (name.equals(ELEMENT_DEPENDENCY)) {
+			break;
+		case ELEMENT_DEPENDENCY:
 			// Process dependency element
 			ICompCSDependency dependency = factory.createCompCSDependency(this);
 			fFieldDependencies.add(dependency);
 			dependency.parse(element);
+			break;
+		default:
+			break;
 		}
 	}
 

@@ -84,12 +84,16 @@ public class FeatureURLElement extends FeatureObject implements IFeatureURLEleme
 
 	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
-		if (name.equals(P_URL)) {
+		switch (name) {
+		case P_URL:
 			setURL((URL) newValue);
-		} else if (name.equals(P_SITE_TYPE)) {
+			break;
+		case P_SITE_TYPE:
 			setSiteType(((Integer) newValue).intValue());
-		} else {
+			break;
+		default:
 			super.restoreProperty(name, oldValue, newValue);
+			break;
 		}
 	}
 

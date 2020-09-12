@@ -284,13 +284,20 @@ public class CompareTask extends CommonUtilsTask {
 		if (this.debug) {
 			System.out.println("Visibility : " + value); //$NON-NLS-1$
 		}
-		if (VISIBILITY_ALL.equals(value)) {
-			this.visibilityModifiers = VisibilityModifiers.ALL_VISIBILITIES;
-		} else if (VISIBILITY_API.equals(value)) {
-			this.visibilityModifiers = VisibilityModifiers.API;
-		} else {
+		if (value == null) {
 			throw new BuildException("The given value " + value + " is not equals to \"ALL \" or \"API\"."); //$NON-NLS-1$//$NON-NLS-2$
 		}
+		switch (value)
+			{
+			case VISIBILITY_ALL:
+				this.visibilityModifiers = VisibilityModifiers.ALL_VISIBILITIES;
+				break;
+			case VISIBILITY_API:
+				this.visibilityModifiers = VisibilityModifiers.API;
+				break;
+			default:
+				throw new BuildException("The given value " + value + " is not equals to \"ALL \" or \"API\"."); //$NON-NLS-1$//$NON-NLS-2$
+			}
 	}
 
 	/**

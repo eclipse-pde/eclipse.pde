@@ -231,49 +231,67 @@ public class Feature extends VersionableObject implements IFeature {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				String tag = child.getNodeName().toLowerCase(Locale.ENGLISH);
-				if (tag.equals("description")) { //$NON-NLS-1$
-					IFeatureInfo info = getModel().getFactory().createInfo(IFeature.INFO_DESCRIPTION);
-					((FeatureInfo) info).setInTheModel(true);
-					((FeatureInfo) info).parse(child);
-					fInfos[IFeature.INFO_DESCRIPTION] = info;
-				} else if (tag.equals("license")) { //$NON-NLS-1$
-					IFeatureInfo info = getModel().getFactory().createInfo(IFeature.INFO_LICENSE);
-					((FeatureInfo) info).setInTheModel(true);
-					((FeatureInfo) info).parse(child);
-					fInfos[IFeature.INFO_LICENSE] = info;
-				} else if (tag.equals("copyright")) { //$NON-NLS-1$
-					IFeatureInfo info = getModel().getFactory().createInfo(IFeature.INFO_COPYRIGHT);
-					((FeatureInfo) info).setInTheModel(true);
-					((FeatureInfo) info).parse(child);
-					fInfos[IFeature.INFO_COPYRIGHT] = info;
-				} else if (tag.equals("url")) { //$NON-NLS-1$
+				switch (tag) {
+					case "description": //$NON-NLS-1$
+					{
+						IFeatureInfo info = getModel().getFactory().createInfo(IFeature.INFO_DESCRIPTION);
+						((FeatureInfo) info).setInTheModel(true);
+						((FeatureInfo) info).parse(child);
+						fInfos[IFeature.INFO_DESCRIPTION] = info;
+						break;
+					}
+					case "license": //$NON-NLS-1$
+					{
+						IFeatureInfo info = getModel().getFactory().createInfo(IFeature.INFO_LICENSE);
+						((FeatureInfo) info).setInTheModel(true);
+						((FeatureInfo) info).parse(child);
+						fInfos[IFeature.INFO_LICENSE] = info;
+						break;
+					}
+					case "copyright": //$NON-NLS-1$
+					{
+						IFeatureInfo info = getModel().getFactory().createInfo(IFeature.INFO_COPYRIGHT);
+						((FeatureInfo) info).setInTheModel(true);
+						((FeatureInfo) info).parse(child);
+						fInfos[IFeature.INFO_COPYRIGHT] = info;
+						break;
+					}
+					case "url": //$NON-NLS-1$
 					if (fUrl == null) {
 						fUrl = getModel().getFactory().createURL();
 						((FeatureURL) fUrl).setInTheModel(true);
 						((FeatureURL) fUrl).parse(child);
 					}
-				} else if (tag.equals("requires")) { //$NON-NLS-1$
+					break;
+				case "requires": //$NON-NLS-1$
 					parseRequires(child);
-				} else if (tag.equals("install-handler")) { //$NON-NLS-1$
+					break;
+				case "install-handler": //$NON-NLS-1$
 					IFeatureInstallHandler handler = getModel().getFactory().createInstallHandler();
 					((FeatureInstallHandler) handler).parse(child);
 					((FeatureInstallHandler) handler).setInTheModel(true);
 					this.fHandler = handler;
-				} else if (tag.equals("plugin")) { //$NON-NLS-1$
+					break;
+				case "plugin": //$NON-NLS-1$
 					IFeaturePlugin plugin = getModel().getFactory().createPlugin();
 					((FeaturePlugin) plugin).parse(child);
 					((FeaturePlugin) plugin).setInTheModel(true);
 					fPlugins.add(plugin);
-				} else if (tag.equals("data")) { //$NON-NLS-1$
+					break;
+				case "data": //$NON-NLS-1$
 					IFeatureData newData = getModel().getFactory().createData();
 					((FeatureData) newData).parse(child);
 					((FeatureData) newData).setInTheModel(true);
 					fData.add(newData);
-				} else if (tag.equals("includes")) { //$NON-NLS-1$
+					break;
+				case "includes": //$NON-NLS-1$
 					IFeatureChild newChild = getModel().getFactory().createChild();
 					((FeatureChild) newChild).parse(child);
 					((FeatureChild) newChild).setInTheModel(true);
 					this.fChildren.add(newChild);
+					break;
+				default:
+					break;
 				}
 			}
 		}
@@ -664,40 +682,58 @@ public class Feature extends VersionableObject implements IFeature {
 
 	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
-		if (name.equals(P_OS)) {
+		switch (name) {
+		case P_OS:
 			setOS((String) newValue);
-		} else if (name.equals(P_WS)) {
+			break;
+		case P_WS:
 			setWS((String) newValue);
-		} else if (name.equals(P_NL)) {
+			break;
+		case P_NL:
 			setNL((String) newValue);
-		} else if (name.equals(P_ARCH)) {
+			break;
+		case P_ARCH:
 			setArch((String) newValue);
-		} else if (name.equals(P_COLLOCATION_AFFINITY)) {
+			break;
+		case P_COLLOCATION_AFFINITY:
 			setColocationAffinity((String) newValue);
-		} else if (name.equals(P_APPLICATION)) {
+			break;
+		case P_APPLICATION:
 			setApplication((String) newValue);
-		} else if (name.equals(P_PRIMARY)) {
+			break;
+		case P_PRIMARY:
 			setPrimary(newValue != null ? ((Boolean) newValue).booleanValue() : false);
-		} else if (name.equals(P_EXCLUSIVE)) {
+			break;
+		case P_EXCLUSIVE:
 			setExclusive(newValue != null ? ((Boolean) newValue).booleanValue() : false);
-		} else if (name.equals(P_PROVIDER)) {
+			break;
+		case P_PROVIDER:
 			setProviderName((String) newValue);
-		} else if (name.equals(P_PLUGIN)) {
+			break;
+		case P_PLUGIN:
 			setPlugin((String) newValue);
-		} else if (name.equals(P_URL)) {
+			break;
+		case P_URL:
 			setURL((IFeatureURL) newValue);
-		} else if (name.equals(P_INSTALL_HANDLER)) {
+			break;
+		case P_INSTALL_HANDLER:
 			setInstallHandler((IFeatureInstallHandler) newValue);
-		} else if (name.equals(P_DESCRIPTION)) {
+			break;
+		case P_DESCRIPTION:
 			setFeatureInfo((IFeatureInfo) newValue, INFO_DESCRIPTION);
-		} else if (name.equals(P_LICENSE)) {
+			break;
+		case P_LICENSE:
 			setFeatureInfo((IFeatureInfo) newValue, INFO_LICENSE);
-		} else if (name.equals(P_COPYRIGHT)) {
+			break;
+		case P_COPYRIGHT:
 			setFeatureInfo((IFeatureInfo) newValue, INFO_COPYRIGHT);
-		} else if (name.equals(P_IMAGE)) {
+			break;
+		case P_IMAGE:
 			setImageName((String) newValue);
-		} else {
+			break;
+		default:
 			super.restoreProperty(name, oldValue, newValue);
+			break;
 		}
 	}
 
