@@ -18,8 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
@@ -64,7 +63,7 @@ public class ClasspathContributorTest {
 				assertTrue("Unexpected classpath entry found: " + element, expected.remove(element));
 			}
 		}
-		assertTrue("Expected classpath entry not found: " + expected.toArray(), expected.isEmpty());
+		assertTrue("Expected classpath entry not found: " + Arrays.toString(expected.toArray()), expected.isEmpty());
 	}
 
 	/**
