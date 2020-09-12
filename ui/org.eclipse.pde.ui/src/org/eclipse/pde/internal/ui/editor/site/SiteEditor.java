@@ -58,7 +58,7 @@ public class SiteEditor extends MultiSourceEditor {
 			siteFile = file;
 			if (siteFile.exists()) {
 				IEditorInput in = new FileEditorInput(siteFile);
-				manager.putContext(in, new SiteInputContext(this, in, file == siteFile));
+				manager.putContext(in, new SiteInputContext(this, in, true));
 			}
 			manager.monitorFile(siteFile);
 		}
@@ -106,7 +106,7 @@ public class SiteEditor extends MultiSourceEditor {
 				try {
 					store = EFS.getStore(siteFile.toURI());
 					IEditorInput in = new FileStoreEditorInput(store);
-					manager.putContext(in, new SiteInputContext(this, in, file == siteFile));
+					manager.putContext(in, new SiteInputContext(this, in, true));
 				} catch (CoreException e) {
 					PDEPlugin.logException(e);
 				}
