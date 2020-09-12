@@ -502,7 +502,7 @@ public class FeatureBlock {
 
 		@Override
 		public Object getValue(Object element, String property) {
-			if (property == PROPERTY_RESOLUTION) {
+			if (PROPERTY_RESOLUTION.equals(property)) {
 				if (element instanceof FeatureLaunchModel) {
 					String location = ((FeatureLaunchModel) element).getResolutionValue();
 					return getLocationIndex(location);
