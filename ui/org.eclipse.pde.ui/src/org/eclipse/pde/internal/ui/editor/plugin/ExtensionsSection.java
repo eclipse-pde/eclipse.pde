@@ -562,10 +562,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 						int index = getNewSelectionIndex(parent.getIndexOf(ee), parent.getChildCount());
 						newSelection = index == -1 ? new StructuredSelection(parent) : new StructuredSelection(parent.getChildren()[index]);
 					} else {
-						IPluginObject original[] = parent.getChildren();
-						IPluginObject objects[] = new IPluginObject[original.length];
-						for (int i = 0; i < original.length; i++)
-							objects[i] = original[i];
+						IPluginObject objects[] = parent.getChildren().clone();
 						fExtensionTree.getComparator().sort(fExtensionTree, objects);
 						int index = getNewSelectionIndex(getArrayIndex(objects, ee), objects.length);
 						newSelection = index == -1 ? new StructuredSelection(parent) : new StructuredSelection(objects[index]);
@@ -579,10 +576,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 						if (index != -1)
 							newSelection = new StructuredSelection(plugin.getExtensions()[index]);
 					} else {
-						IPluginExtension original[] = plugin.getExtensions();
-						IPluginExtension extensions[] = new IPluginExtension[original.length];
-						for (int i = 0; i < original.length; i++)
-							extensions[i] = original[i];
+						IPluginExtension extensions[] = plugin.getExtensions().clone();
 						fExtensionTree.getComparator().sort(fExtensionTree, extensions);
 						int index = getNewSelectionIndex(getArrayIndex(extensions, extension), extensions.length);
 						if (index != -1)

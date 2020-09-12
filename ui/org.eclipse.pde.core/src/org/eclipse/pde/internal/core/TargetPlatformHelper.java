@@ -598,11 +598,7 @@ public class TargetPlatformHelper {
 				result[i] = libs[i].getName();
 			}
 		} else {
-			String[] libs = state.getLibraryNames(bundle.getBundleId());
-			result = new String[libs.length];
-			for (int i = 0; i < libs.length; i++) {
-				result[i] = libs[i];
-			}
+			result = state.getLibraryNames(bundle.getBundleId()).clone();
 		}
 		if (result.length == 0) {
 			return new String[] {"."}; //$NON-NLS-1$

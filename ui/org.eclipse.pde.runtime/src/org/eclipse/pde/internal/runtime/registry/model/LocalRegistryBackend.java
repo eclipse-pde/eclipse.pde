@@ -378,9 +378,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 			IConfigurationElement child = children[i];
 			result[i] = createConfigurationElement(child);
 		}
-		for (int i = 0; i < catts.length; i++) {
-			result[children.length + i] = catts[i];
-		}
+		System.arraycopy(catts, 0, result, children.length, catts.length);
 		return result;
 	}
 
