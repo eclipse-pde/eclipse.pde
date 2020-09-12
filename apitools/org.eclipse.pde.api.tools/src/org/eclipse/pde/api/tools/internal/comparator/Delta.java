@@ -15,6 +15,7 @@ package org.eclipse.pde.api.tools.internal.comparator;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
 
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
@@ -340,7 +341,7 @@ public class Delta implements IDelta {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.datas == null) ? 0 : this.datas.hashCode());
+		result = prime * result + ((this.datas == null) ? 0 : Arrays.hashCode(this.datas));
 		result = prime * result + this.elementType;
 		result = prime * result + this.flags;
 		result = prime * result + ((this.key == null) ? 0 : this.key.hashCode());
