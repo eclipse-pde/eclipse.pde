@@ -995,7 +995,7 @@ public class ReferenceExtractor extends ClassVisitor {
 		fType = type;
 		this.collector = collector;
 		fReferenceKinds = referenceKinds;
-		fIsVisitMembers = (VISIT_MEMBERS_MASK & fReferenceKinds) > 0;
+		fIsVisitMembers = (VISIT_MEMBERS_MASK & fReferenceKinds) != 0;
 		fieldtracker = new FieldTracker(this);
 	}
 
@@ -1012,7 +1012,7 @@ public class ReferenceExtractor extends ClassVisitor {
 		fType = type;
 		this.collector = collector;
 		fReferenceKinds = referenceKinds;
-		fIsVisitMembers = (VISIT_MEMBERS_MASK & fReferenceKinds) > 0;
+		fIsVisitMembers = (VISIT_MEMBERS_MASK & fReferenceKinds) != 0;
 		fieldtracker = tracker;
 	}
 
