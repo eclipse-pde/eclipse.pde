@@ -120,7 +120,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 
 		//C3
 		resource = project.findMember(new Path("src/x/y/C3.java")); //$NON-NLS-1$
-		assertNotNull("the resource src/x/y/C3.java must exist"); //$NON-NLS-1$
+		assertNotNull("the resource src/x/y/C3.java must exist", resource); //$NON-NLS-1$
 		filters = store.getFilters(resource);
 		assertEquals("there should be 2 filters for src/x/y/C3.java", 2, filters.length); //$NON-NLS-1$
 		problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_VERSION, 7, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS);
