@@ -27,7 +27,7 @@ public class TarFileSet extends ZipFileSet {
 	 * @param casesensitive
 	 */
 	public TarFileSet(String dir, boolean file, String defaultexcludes, String includes, String includesfile, String excludes, String excludesfile, String prefix, String casesensitive, String permission) {
-		super(dir, file, defaultexcludes, includes, includesfile, excludes, excludesfile, prefix, casesensitive, null);
+		super(dir, file, defaultexcludes, includes, includesfile, excludes, excludesfile, prefix, casesensitive, permission);
 	}
 
 	@Override
