@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -46,6 +46,7 @@ import org.eclipse.ant.core.AntRunner;
 import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.core.Property;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -58,6 +59,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -87,6 +89,7 @@ import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
+import org.eclipse.pde.internal.core.bundle.BundlePluginModel;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
@@ -118,6 +121,7 @@ public class FeatureExportOperation extends Job {
 
 	private static final String[] GENERIC_CONFIG = new String[] {"*", "*", "*", ""}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	protected FeatureExportInfo fInfo;
+	private boolean isPreviewFeatureEnabled;
 
 	public FeatureExportOperation(FeatureExportInfo info, String name) {
 		super(name);
@@ -518,6 +522,9 @@ public class FeatureExportOperation extends Job {
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_FAIL_ON_ERROR, "false"); //$NON-NLS-1$
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, "false"); //$NON-NLS-1$
+			if (isPreviewFeatureEnabled){
+				fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_COMPILERARG, "--enable-preview"); //$NON-NLS-1$
+			}
 
 			IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JavaCore.PLUGIN_ID);
 			IEclipsePreferences def = DefaultScope.INSTANCE.getNode(JavaCore.PLUGIN_ID);
@@ -1108,6 +1115,16 @@ public class FeatureExportOperation extends Job {
 					}
 				} else {
 					BundleDescription bundle = null;
+					if (item instanceof BundlePluginModel) {
+						IProject project = ((BundlePluginModel) item).getUnderlyingResource().getProject();
+						IJavaProject javaProject = JavaCore.create(project);
+						if (javaProject != null) {
+							String option = javaProject.getOption(JavaCore.COMPILER_PB_ENABLE_PREVIEW_FEATURES, true);
+							if (option != null && option.equals("enabled")) { //$NON-NLS-1$
+								isPreviewFeatureEnabled = true;
+							}
+						}
+					}
 					if (item instanceof IPluginModelBase) {
 						bundle = ((IPluginModelBase) item).getBundleDescription();
 					}
