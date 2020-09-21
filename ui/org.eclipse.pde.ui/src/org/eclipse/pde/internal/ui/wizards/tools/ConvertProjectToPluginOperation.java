@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,6 +38,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
+import org.eclipse.pde.internal.ui.wizards.plugin.NewProjectCreationOperation;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.osgi.framework.Constants;
 
@@ -251,6 +252,18 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 		pluginBundle.setHeader(Constants.BUNDLE_SYMBOLICNAME, pluginId);
 		pluginBundle.setHeader(Constants.BUNDLE_VERSION, pluginVersion);
 		pluginBundle.setHeader(Constants.BUNDLE_NAME, pluginName);
+		IJavaProject jp = JavaCore.create(file.getProject());
+		IModuleDescription moduleDescription = null;
+		if (jp != null) {
+			try {
+				moduleDescription = jp.getModuleDescription();
+			} catch (JavaModelException e) {
+			}
+		}
+		if (moduleDescription == null) {
+			pluginBundle.setHeader(ICoreConstants.AUTOMATIC_MODULE_NAME,
+					NewProjectCreationOperation.determineAutomaticModuleNameFromBSN(pluginId));
+		}
 
 		if (missingInfo) {
 			IPluginModelFactory factory = model.getPluginFactory();
