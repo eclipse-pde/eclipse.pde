@@ -250,7 +250,7 @@ public class AnalysisReportConversionTask extends Task {
 	private String xmlReportsLocation;
 
 	private void dumpFooter(PrintWriter writer) {
-		writer.println(Messages.W3C_page_footer);
+		writer.println(Messages.fullReportTask_apiproblemfooter);
 	}
 
 	private void dumpHeader(PrintWriter writer, Report report) {

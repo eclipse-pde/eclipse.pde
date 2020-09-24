@@ -41,7 +41,7 @@ public class Messages extends NLS {
 	public static String fullReportTask_bundlesentry_odd;
 	public static String fullReportTask_bundlesfooter;
 
-	public static String W3C_page_footer;
+	public static String fullReportTask_apiproblemfooter;
 	public static String fullReportTask_apiproblemheader;
 	public static String fullReportTask_apiproblemsummary;
 
