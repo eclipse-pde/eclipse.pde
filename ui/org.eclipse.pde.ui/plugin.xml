@@ -665,7 +665,7 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            icon="$nl$/icons/etool16/eclipse16.png"
+            icon="$nl$/icons/etool16/eclipse.png"
             configTypeID="org.eclipse.pde.ui.RuntimeWorkbench"
             id="org.eclipse.pde.ui.runtimeWorkbenchLaunchImage">
       </launchConfigurationTypeImage>
@@ -766,7 +766,7 @@
       <shortcut
             class="org.eclipse.pde.ui.launcher.EclipseLaunchShortcut"
             helpContextId="org.eclipse.pde.doc.user.launcher_eclipse_application"
-            icon="$nl$/icons/etool16/eclipse16.png"
+            icon="$nl$/icons/etool16/eclipse.png"
             id="org.eclipse.pde.ui.runtimeWorkbenchShortcut"
             label="%launcher.shortcut.label"
             modes="run, debug">

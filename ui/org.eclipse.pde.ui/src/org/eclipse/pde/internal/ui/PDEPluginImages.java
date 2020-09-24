@@ -172,7 +172,7 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_TARGET_ENVIRONMENT = create(PATH_OBJ, "environment.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PRODUCT_DEFINITION = create(PATH_OBJ, "product_xml_obj.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PRODUCT_LAUNCHING = create(PATH_OBJ, "start_application.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PRODUCT_BRANDING = create(PATH_OBJ, "eclipse16.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_PRODUCT_BRANDING = create(PATH_OBJ, "eclipse.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PLUGINS_FRAGMENTS = create(PATH_OBJ, "plugins_and_fragments.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_SITE_XML_OBJ = create(PATH_OBJ, "site_xml_obj.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_IMAGE_APPLICATION = create(PATH_OBJ, "image_application.png"); //$NON-NLS-1$
