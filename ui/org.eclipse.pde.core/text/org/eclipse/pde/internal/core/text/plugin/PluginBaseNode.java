@@ -388,7 +388,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 
 	@Override
 	public String writeShallow(boolean terminate) {
-		String newLine = System.lineSeparator(); //$NON-NLS-1$
+		String newLine = System.lineSeparator();
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<" + getXMLTagName()); //$NON-NLS-1$
 		buffer.append(newLine);

@@ -110,7 +110,7 @@ public abstract class BundleModel extends AbstractModel implements IBundleModel 
 			for (String library : libraries) {
 				if (buffer.length() > 0) {
 					buffer.append(","); //$NON-NLS-1$
-					buffer.append(System.lineSeparator()); //$NON-NLS-1$
+					buffer.append(System.lineSeparator());
 					buffer.append(" "); //$NON-NLS-1$
 				}
 				buffer.append(library);

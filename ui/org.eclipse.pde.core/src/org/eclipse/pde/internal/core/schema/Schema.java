@@ -1128,7 +1128,7 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 
 	private String getWritableDescription() {
-		String lineDelimiter = System.lineSeparator(); //$NON-NLS-1$
+		String lineDelimiter = System.lineSeparator();
 		String description = PDEXMLHelper.getWritableString(getDescription());
 		String platformDescription = description.replaceAll("\\r\\n|\\r|\\n", lineDelimiter); //$NON-NLS-1$
 
