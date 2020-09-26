@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -322,15 +323,31 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 		if (obj instanceof FeatureImport) {
 			FeatureImport featureImport = (FeatureImport) obj;
-			if (featureImport.getType() == IFeatureImport.PLUGIN)
-				ManifestEditor.open(featureImport.getPlugin(), false);
+			if (featureImport.getType() == IFeatureImport.PLUGIN) {
+				IPlugin plugin = featureImport.getPlugin();
+				if (plugin == null) {
+					logNullFeatureImport(obj);
+					return;
+
+				}
+				ManifestEditor.open(plugin, false);
+			}
 			else if (featureImport.getType() == IFeatureImport.FEATURE) {
 				IFeature feature = featureImport.getFeature();
+				if (feature == null) {
+					logNullFeatureImport(obj);
+					return;
+				}
 				FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 				IFeatureModel model = manager.findFeatureModel(feature.getId(), feature.getVersion());
 				FeatureEditor.openFeatureEditor(model);
 			}
 		}
+	}
+
+	private void logNullFeatureImport(Object obj) {
+		PDEPlugin.log(new Status(IStatus.WARNING, PDEPlugin.getPluginId(),
+				NLS.bind(PDEUIMessages.RequiresSection_nullLog, obj)));
 	}
 
 	@Override

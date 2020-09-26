@@ -1995,6 +1995,8 @@ public class PDEUIMessages extends NLS {
 	public static String RequiresSection_up;
 	public static String RequiresSection_open;
 	public static String RequiresSection_delete;
+
+	public static String RequiresSection_nullLog;
 	public static String LoopDialog_title;
 	public static String MatchSection_title;
 	public static String MatchSection_desc;
