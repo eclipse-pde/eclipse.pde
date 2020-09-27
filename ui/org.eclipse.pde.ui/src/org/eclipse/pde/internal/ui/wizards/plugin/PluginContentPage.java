@@ -350,7 +350,8 @@ public class PluginContentPage extends ContentPage {
 	protected void validatePage() {
 		String errorMessage = validateProperties();
 		if (errorMessage == null && fGenerateActivator.getSelection()) {
-			IStatus status = JavaConventions.validateJavaTypeName(fClassText.getText().trim(), PDEJavaHelper.getJavaSourceLevel(null), PDEJavaHelper.getJavaComplianceLevel(null));
+			IStatus status = JavaConventions.validateJavaTypeName(fClassText.getText().trim(),
+					PDEJavaHelper.getJavaSourceLevel(null), PDEJavaHelper.getJavaComplianceLevel(null), null);
 			if (status.getSeverity() == IStatus.ERROR) {
 				errorMessage = status.getMessage();
 			} else if (status.getSeverity() == IStatus.WARNING) {
