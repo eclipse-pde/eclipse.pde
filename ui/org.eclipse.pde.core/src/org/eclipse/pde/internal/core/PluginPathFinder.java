@@ -19,14 +19,22 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Properties;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.pde.internal.core.update.configurator.PlatformConfiguration;
+import org.eclipse.pde.internal.core.update.configurator.SiteEntry;
 
 @SuppressWarnings("deprecation")
 // PDE still supports searching the platform.xml for plug-in/feature listings
 public class PluginPathFinder {
+
+	private static final String URL_PROPERTY = "org.eclipse.update.resolution_url"; //$NON-NLS-1$
 
 	/**
 	 *
@@ -98,11 +106,90 @@ public class PluginPathFinder {
 	}
 
 	public static URL[] getFeaturePaths(String platformHome) {
+		File file = getPlatformFile(platformHome);
+		if (file != null) {
+			try {
+				String value = new Path(platformHome).toFile().toURL().toExternalForm();
+				System.setProperty(URL_PROPERTY, value);
+				try {
+					PlatformConfiguration config = new PlatformConfiguration(file.toURL());
+					return getConfiguredSitesPaths(platformHome, config);
+				} finally {
+					System.setProperty(URL_PROPERTY, ""); //$NON-NLS-1$
+				}
+			} catch (Exception e) {
+				PDECore.log(e);
+			}
+		}
 		return scanLocations(getSites(platformHome, true));
 	}
 
 	/**
+	 * Returns a File object representing the platform.xml or null if the file
+	 * cannot be found.
+	 *
+	 * @return File representing platform.xml or <code>null</code>
+	 */
+	private static File getPlatformFile(String platformHome) {
+		String location = System.getProperty("org.eclipse.pde.platform_location"); //$NON-NLS-1$
+		File file = null;
+		if (location != null) {
+			try {
+				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+				location = manager.performStringSubstitution(location);
+				Path path = new Path(location);
+				if (path.isAbsolute()) {
+					file = path.toFile();
+				} else {
+					file = new File(platformHome, location);
+				}
+				if (file.exists()) {
+					return file;
+				}
+			} catch (CoreException e) {
+				PDECore.log(e);
+			}
+		}
+		file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
+		return file.exists() ? file : null;
+	}
+
+	private static URL[] getConfiguredSitesPaths(String platformHome, PlatformConfiguration configuration) {
+		URL[] installPlugins = scanLocations(new File[] { new File(platformHome, "features") }); //$NON-NLS-1$
+		URL[] extensionPlugins = getExtensionPluginURLs(configuration);
+
+		URL[] all = new URL[installPlugins.length + extensionPlugins.length];
+		System.arraycopy(installPlugins, 0, all, 0, installPlugins.length);
+		System.arraycopy(extensionPlugins, 0, all, installPlugins.length, extensionPlugins.length);
+		return all;
+	}
+
+	/**
+	 *
+	 * @param config
+	 * @return URLs for features or plugins on the site
+	 */
+	private static URL[] getExtensionPluginURLs(PlatformConfiguration config) {
+		ArrayList<URL> extensionPlugins = new ArrayList<>();
+		SiteEntry[] sites = config.getConfiguredSites();
+		for (SiteEntry site : sites) {
+			URL url = site.getURL();
+			if ("file".equalsIgnoreCase(url.getProtocol())) { //$NON-NLS-1$
+				String[] entries = site.getFeatures();
+				for (String entry : entries) {
+					try {
+						extensionPlugins.add(new File(url.getFile(), entry).toURL());
+					} catch (MalformedURLException e) {
+					}
+				}
+			}
+		}
+		return extensionPlugins.toArray(new URL[extensionPlugins.size()]);
+	}
+
+	/**
 	 * Scan given plugin/feature directories or jars for existence
+	 *
 	 * @param sites
 	 * @return URLs to plugins/features
 	 */
