@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
+ *     Christoph Läubrich - Bug 567506
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
@@ -242,7 +243,7 @@ public class TargetContentsGroup {
 			@Override
 			public Image getImage(Object element) {
 				if (element instanceof ITargetLocation) {
-					ILabelProvider provider = Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);
+					ILabelProvider provider = Adapters.adapt(element, ILabelProvider.class);
 					if (provider != null) {
 						return provider.getImage(element);
 					}
@@ -253,7 +254,7 @@ public class TargetContentsGroup {
 			@Override
 			public String getText(Object element) {
 				if (element instanceof ITargetLocation) {
-					ILabelProvider provider = Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);
+					ILabelProvider provider = Adapters.adapt(element, ILabelProvider.class);
 					if (provider != null) {
 						return provider.getText(element);
 					}

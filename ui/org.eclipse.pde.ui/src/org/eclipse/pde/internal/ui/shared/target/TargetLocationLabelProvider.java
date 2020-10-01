@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 IBM Corporation and others.
+ * Copyright (c) 2011, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,10 +11,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
+ *     Christoph Läubrich - Bug 567506
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.graphics.Image;
@@ -38,7 +39,7 @@ public class TargetLocationLabelProvider extends StyledBundleLabelProvider {
 
 	@Override
 	public Image getImage(Object element) {
-		ILabelProvider provider = Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);
+		ILabelProvider provider = Adapters.adapt(element, ILabelProvider.class);
 		if (provider != null) {
 			return provider.getImage(element);
 		}
@@ -50,7 +51,7 @@ public class TargetLocationLabelProvider extends StyledBundleLabelProvider {
 
 	@Override
 	public String getText(Object element) {
-		ILabelProvider provider = Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);
+		ILabelProvider provider = Adapters.adapt(element, ILabelProvider.class);
 		if (provider != null) {
 			return provider.getText(element);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - Bug 567506
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
@@ -315,7 +316,7 @@ public class TargetLocationsGroup {
 			Object currentSelection = iterator.next();
 			if (currentSelection instanceof ITargetLocation) {
 				ITargetLocation location = (ITargetLocation) currentSelection;
-				ITargetLocationEditor editor = Platform.getAdapterManager().getAdapter(location, ITargetLocationEditor.class);
+				ITargetLocationEditor editor = Adapters.adapt(location, ITargetLocationEditor.class);
 				if (editor != null) {
 					if (editor.canEdit(fTarget, location)) {
 						IWizard editWizard = editor.getEditWizard(fTarget, location);
@@ -505,7 +506,7 @@ public class TargetLocationsGroup {
 				canRemove = true;
 				if (!canEdit) {
 					ITargetLocation location = (ITargetLocation) currentSelection;
-					ITargetLocationEditor editor = Platform.getAdapterManager().getAdapter(location, ITargetLocationEditor.class);
+					ITargetLocationEditor editor = Adapters.adapt(location, ITargetLocationEditor.class);
 					if (editor != null) {
 						canEdit = editor.canEdit(fTarget, location);
 					}
@@ -516,7 +517,7 @@ public class TargetLocationsGroup {
 				}
 				if (!canUpdate) {
 					ITargetLocation location = (ITargetLocation) currentSelection;
-					ITargetLocationUpdater updater = Platform.getAdapterManager().getAdapter(location, ITargetLocationUpdater.class);
+					ITargetLocationUpdater updater = Adapters.adapt(location, ITargetLocationUpdater.class);
 					if (updater != null) {
 						canUpdate = updater.canUpdate(fTarget, location);
 					}

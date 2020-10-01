@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 EclipseSource Inc. and others.
+ * Copyright (c) 2010, 2020 EclipseSource Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,11 +11,13 @@
  * Contributors:
  *    EclipseSource Inc. - initial API and implementation
  *    Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
+ *    Christoph Läubrich - Bug 567506
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import java.util.*;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
@@ -103,8 +105,7 @@ public class UpdateTargetJob extends Job {
 					errors.add(e.getStatus());
 				}
 			} else {
-				ITargetLocationUpdater provider = Platform.getAdapterManager().getAdapter(location,
-						ITargetLocationUpdater.class);
+				ITargetLocationUpdater provider = Adapters.adapt(location, ITargetLocationUpdater.class);
 				if (provider != null) {
 					if (provider.canUpdate(fTarget, location)) {
 						IStatus result = provider.update(fTarget, location, progress.split(100));
