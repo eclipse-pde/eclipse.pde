@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+@SuppressWarnings("deprecation")
 class Configuration implements IConfigurationConstants {
 
 	private HashMap<String, SiteEntry> sites = new HashMap<>();
@@ -83,11 +84,11 @@ class Configuration implements IConfigurationConstants {
 				URL pURL;
 				try {
 					URL relSite = null;
-					if (url != null && url.startsWith("platform:/config")) {
+					if (url.startsWith("platform:/config")) { //$NON-NLS-1$
 						// url for location of configuration is relative to
 						// platform.xml
 						URL config_loc = getURL();
-						relSite = new URL(config_loc, "..");
+						relSite = new URL(config_loc, ".."); //$NON-NLS-1$
 					} else {
 						relSite = getInstallURL();
 					}
@@ -110,11 +111,11 @@ class Configuration implements IConfigurationConstants {
 			URL pURL;
 			try {
 				URL relSite = null;
-				if (url != null && url.startsWith("platform:/config")) {
+				if (url.startsWith("platform:/config")) { //$NON-NLS-1$
 					// url for location of configuration is relative to
 					// platform.xml
 					URL config_loc = getURL();
-					relSite = new URL(config_loc, "..");
+					relSite = new URL(config_loc, ".."); //$NON-NLS-1$
 				} else {
 					relSite = getInstallURL();
 				}
@@ -185,7 +186,6 @@ class Configuration implements IConfigurationConstants {
 	 * unchanged
 	 *
 	 * @param url
-	 * @return
 	 */
 	public URL asPlatformURL(URL url) {
 		try {

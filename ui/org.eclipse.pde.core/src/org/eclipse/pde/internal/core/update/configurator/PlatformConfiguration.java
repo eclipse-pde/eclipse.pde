@@ -51,8 +51,8 @@ public class PlatformConfiguration implements IConfigurationConstants {
 		URL installLocation = Utils.getInstallURL();
 		// Retrieve install location with respect to given url if possible
 		try {
-			if (url != null && url.getProtocol().equals("file")
-					&& url.getPath().endsWith("configuration/org.eclipse.update/platform.xml")) {
+			if (url != null && url.getProtocol().equals("file") //$NON-NLS-1$
+					&& url.getPath().endsWith("configuration/org.eclipse.update/platform.xml")) { //$NON-NLS-1$
 				installLocation = new Path(url.getPath()).removeLastSegments(3).toFile().toURL();
 			}
 		} catch (Exception e) {
@@ -129,7 +129,7 @@ public class PlatformConfiguration implements IConfigurationConstants {
 						File workingDir = cfigFile.getParentFile();
 						if (workingDir != null && workingDir.exists()) {
 							File[] backups = workingDir.listFiles(
-									(FileFilter) pathname -> pathname.isFile() && pathname.getName().endsWith(".xml"));
+									(FileFilter) pathname -> pathname.isFile() && pathname.getName().endsWith(".xml")); //$NON-NLS-1$
 							if (backups != null && backups.length > 0) {
 								URL backupUrl = backups[backups.length - 1].toURL();
 								config = parser.parse(backupUrl, installLocation);
@@ -153,7 +153,7 @@ public class PlatformConfiguration implements IConfigurationConstants {
 
 	public static boolean supportsDetection(URL url, URL installLocation) {
 		String protocol = url.getProtocol();
-		if (protocol.equals("file")) {
+		if (protocol.equals("file")) { //$NON-NLS-1$
 			return true;
 		} else if (protocol.equals("platform")) { //$NON-NLS-1$
 			URL resolved = null;
@@ -175,8 +175,8 @@ public class PlatformConfiguration implements IConfigurationConstants {
 				File f = new File(url.getFile());
 				url = f.toURL();
 			} else {
-				final String BASE = "platform:/base/";
-				final String CONFIG = "platform:/config/";
+				final String BASE = "platform:/base/"; //$NON-NLS-1$
+				final String CONFIG = "platform:/config/"; //$NON-NLS-1$
 				String toResolve = url.toExternalForm();
 				if (toResolve.startsWith(BASE)) {
 					url = new URL(base_path_Location, toResolve.substring(BASE.length()));

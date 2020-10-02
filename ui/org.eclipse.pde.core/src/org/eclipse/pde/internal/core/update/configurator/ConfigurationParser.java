@@ -26,7 +26,6 @@ import java.util.StringTokenizer;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.osgi.util.NLS;
 import org.xml.sax.Attributes;
@@ -37,7 +36,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * parse the default site.xml
  */
-
+@SuppressWarnings("deprecation")
 class ConfigurationParser extends DefaultHandler implements IConfigurationConstants {
 
 	private static final String URL_PROPERTY = "org.eclipse.update.resolution_url"; //$NON-NLS-1$
@@ -133,16 +132,13 @@ class ConfigurationParser extends DefaultHandler implements IConfigurationConsta
 		} catch (MalformedURLException e) {
 			throw new SAXException(
 					NLS.bind(Messages.InstalledSiteParser_UnableToCreateURL, (new String[] { e.getMessage() })), e);
-		} catch (CoreException e) {
-			throw new SAXException(
-					NLS.bind(Messages.InstalledSiteParser_ErrorParsingFile, (new String[] { e.toString() })), e);
 		}
 	}
 
 	/**
 	 * process the Site info
 	 */
-	private void processSite(Attributes attributes) throws MalformedURLException, CoreException {
+	private void processSite(Attributes attributes) throws MalformedURLException {
 
 		if (config == null) {
 			return;
@@ -211,7 +207,7 @@ class ConfigurationParser extends DefaultHandler implements IConfigurationConsta
 
 		String flag = attributes.getValue(CFG_UPDATEABLE);
 		if (flag != null) {
-			if (flag.equals("true")) {
+			if (flag.equals("true")) { //$NON-NLS-1$
 				site.setUpdateable(true);
 			} else {
 				site.setUpdateable(false);
@@ -219,7 +215,7 @@ class ConfigurationParser extends DefaultHandler implements IConfigurationConsta
 		}
 
 		flag = attributes.getValue(CFG_ENABLED);
-		if (flag != null && flag.equals("false")) {
+		if (flag != null && flag.equals("false")) { //$NON-NLS-1$
 			site.setEnabled(false);
 		} else {
 			site.setEnabled(true);
@@ -240,7 +236,7 @@ class ConfigurationParser extends DefaultHandler implements IConfigurationConsta
 	/**
 	 * process the DefaultFeature info
 	 */
-	private void processFeature(Attributes attributes) throws MalformedURLException, CoreException {
+	private void processFeature(Attributes attributes) {
 
 		if (currentSiteURL == null)
 		 {
@@ -280,7 +276,7 @@ class ConfigurationParser extends DefaultHandler implements IConfigurationConsta
 		boolean primary = false;
 		String flag = attributes.getValue(CFG_FEATURE_ENTRY_PRIMARY);
 		if (flag != null) {
-			if (flag.equals("true")) {
+			if (flag.equals("true")) { //$NON-NLS-1$
 				primary = true;
 			}
 		}
@@ -341,7 +337,7 @@ class ConfigurationParser extends DefaultHandler implements IConfigurationConsta
 					ConfigurationParser parser = new ConfigurationParser();
 					Configuration sharedConfig = parser.parse(sharedURL, installLocation);
 					if (sharedConfig == null) {
-						throw new Exception("Failed to parse shared configuration: " + sharedURL);
+						throw new Exception("Failed to parse shared configuration: " + sharedURL); //$NON-NLS-1$
 					}
 					config.setLinkedConfig(sharedConfig);
 				}
@@ -365,8 +361,8 @@ class ConfigurationParser extends DefaultHandler implements IConfigurationConsta
 		if (url.getProtocol().equals("platform")) { //$NON-NLS-1$
 			try {
 				// resolve the config location relative to the configURL
-				if (url.getPath().startsWith("/config")) {
-					URL config_loc = new URL(configURL, "..");
+				if (url.getPath().startsWith("/config")) { //$NON-NLS-1$
+					URL config_loc = new URL(configURL, ".."); //$NON-NLS-1$
 					resolvedURL = PlatformConfiguration.resolvePlatformURL(url, config_loc); // 19536
 				}
 				else {

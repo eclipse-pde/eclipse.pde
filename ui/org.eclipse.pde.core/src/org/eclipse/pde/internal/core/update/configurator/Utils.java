@@ -113,7 +113,7 @@ class Utils {
 		if (siteValues == null) {
 			return false;
 		}
-		if ("*".equalsIgnoreCase(candidateValues)) {
+		if ("*".equalsIgnoreCase(candidateValues)) { //$NON-NLS-1$
 			return true;
 		}
 		siteValues = siteValues.toUpperCase();
@@ -134,7 +134,7 @@ class Utils {
 		if (locale == null) {
 			return false;
 		}
-		if ("*".equalsIgnoreCase(candidateValues)) {
+		if ("*".equalsIgnoreCase(candidateValues)) { //$NON-NLS-1$
 			return true;
 		}
 
@@ -160,7 +160,7 @@ class Utils {
 	 * return it as is.
 	 */
 	public static URL makeAbsolute(URL base, URL relativeLocation) {
-		if (!"file".equals(base.getProtocol())) {
+		if (!"file".equals(base.getProtocol())) { //$NON-NLS-1$
 			// we only deal with file: URLs
 			return relativeLocation;
 		}
@@ -188,7 +188,7 @@ class Utils {
 	 * separator, drive letter in lower case, etc)
 	 */
 	public static String canonicalizeURL(String url) {
-		if (!(isWindows && url.startsWith("file:"))) {
+		if (!(isWindows && url.startsWith("file:"))) { //$NON-NLS-1$
 			return url;
 		}
 		try {

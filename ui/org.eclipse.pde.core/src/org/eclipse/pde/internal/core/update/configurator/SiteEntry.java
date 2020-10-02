@@ -86,9 +86,9 @@ public class SiteEntry implements IConfigurationConstants {
 		if (url.getProtocol().equals("platform")) { //$NON-NLS-1$
 			try {
 				// resolve the config location relative to the configURL
-				if (url.getPath().startsWith("/config")) {
+				if (url.getPath().startsWith("/config")) { //$NON-NLS-1$
 					URL configURL = config.getURL();
-					URL config_loc = new URL(configURL, "..");
+					URL config_loc = new URL(configURL, ".."); //$NON-NLS-1$
 					resolvedURL = PlatformConfiguration.resolvePlatformURL(url, config_loc); // 19536
 				}
 				else {
@@ -239,7 +239,6 @@ public class SiteEntry implements IConfigurationConstants {
 			return featuresChangeStamp;
 		}
 
-		long start = 0;
 		String[] features = getFeatures();
 
 		// compute stamp for the features directory
@@ -334,8 +333,7 @@ public class SiteEntry implements IConfigurationConstants {
 				pluginsChangeStamp = 0;
 			} else if (existingVersion.equals(newVersion)) {
 				// log error if same feature version/id but a different url
-				if (feature instanceof FeatureEntry && existing instanceof FeatureEntry
-						&& !feature.getURL().equals(existing.getURL())) {
+				if (!feature.getURL().equals(existing.getURL())) {
 					Utils.log(NLS.bind(Messages.SiteEntry_duplicateFeature,
 							(new String[] { getURL().toExternalForm(), existing.getFeatureIdentifier() })));
 				}
@@ -344,9 +342,7 @@ public class SiteEntry implements IConfigurationConstants {
 			featureEntries.put(feature.getFeatureIdentifier(), feature);
 			pluginsChangeStamp = 0;
 		}
-		if (feature instanceof FeatureEntry) {
-			feature.setSite(this);
-		}
+		feature.setSite(this);
 	}
 
 	public FeatureEntry[] getFeatureEntries() {

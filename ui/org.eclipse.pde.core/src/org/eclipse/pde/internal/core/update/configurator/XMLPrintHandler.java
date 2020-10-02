@@ -52,7 +52,7 @@ class XMLPrintHandler {
 		xmlWriter.write(temp.toString());
 	}
 
-	public static String wrapAttributeForPrint(String attribute, String value) throws IOException {
+	public static String wrapAttributeForPrint(String attribute, String value) {
 		StringBuilder temp = new StringBuilder(XML_SPACE);
 		temp.append(attribute).append(XML_EQUAL).append(XML_DBL_QUOTES).append(encode(value).toString())
 				.append(XML_DBL_QUOTES);

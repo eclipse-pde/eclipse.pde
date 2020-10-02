@@ -19,6 +19,7 @@ import java.net.URL;
  *
  * Feature information
  */
+@SuppressWarnings("deprecation")
 class FeatureEntry implements IConfigurationConstants {
 	private String id;
 	private String version;
