@@ -14,7 +14,11 @@
 package org.eclipse.pde.internal.core;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.IWorkspace;
@@ -22,6 +26,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.QualifiedName;
@@ -30,7 +35,9 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.eclipse.pde.core.IBundleClasspathResolver;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.project.IBundleProjectService;
+import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.builders.FeatureRebuilder;
 import org.eclipse.pde.internal.core.builders.PluginRebuilder;
@@ -79,6 +86,8 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	 * @since 3.5
 	 */
 	private static PDEPreferencesManager fPreferenceManager;
+
+	private Map<String, IPluginModelBase> fHostPlugins;
 
 	public static PDECore getDefault() {
 		return inst;
@@ -178,6 +187,31 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 
 	public PDECore() {
 		inst = this;
+	}
+
+	public synchronized IPluginModelBase findPluginInHost(String id) {
+		if (fHostPlugins == null) {
+			fHostPlugins = new HashMap<>();
+
+			ITargetDefinition defaultTarget = TargetPlatformService.getDefault().newDefaultTarget();
+			IStatus status = defaultTarget.resolve(new NullProgressMonitor());
+			if (!status.isOK()) {
+				log(status);
+				return null;
+			}
+
+			URI[] pluginPaths = Arrays.stream(defaultTarget.getBundles()) //
+					.filter(b -> !b.isSourceBundle()) //
+					.map(b -> b.getBundleInfo().getLocation()) //
+					.toArray(URI[]::new);
+			PDEState state = new PDEState(pluginPaths, false, false, new NullProgressMonitor());
+
+			for (IPluginModelBase plugin : state.getTargetModels()) {
+				fHostPlugins.put(plugin.getPluginBase().getId(), plugin);
+			}
+		}
+
+		return fHostPlugins.get(id);
 	}
 
 	public PluginModelManager getModelManager() {

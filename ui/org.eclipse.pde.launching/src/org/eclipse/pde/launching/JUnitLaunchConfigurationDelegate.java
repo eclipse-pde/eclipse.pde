@@ -231,10 +231,14 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		return application;
 	}
 
-	private IPluginModelBase findPlugin(String id) throws CoreException {
+	private IPluginModelBase findRequiredPluginInTargetOrHost(String id) throws CoreException {
 		IPluginModelBase model = PluginRegistry.findModel(id);
-		if (model == null)
+		if (model == null) {
+			model = PDECore.getDefault().findPluginInHost(id);
+		}
+		if (model == null) {
 			abort(NLS.bind(PDEMessages.JUnitLaunchConfiguration_error_missingPlugin, id), null, IStatus.OK);
+		}
 		return model;
 	}
 
@@ -379,7 +383,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		for (String requiredPlugin : requiredPlugins) {
 			String id = requiredPlugin;
 			if (!fAllBundles.containsKey(id)) {
-				IPluginModelBase model = findPlugin(id);
+				IPluginModelBase model = findRequiredPluginInTargetOrHost(id);
 				fAllBundles.put(id, model);
 				fModels.put(model, "default:default"); //$NON-NLS-1$
 			}

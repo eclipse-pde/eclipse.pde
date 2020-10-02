@@ -57,6 +57,7 @@ public class TargetPlatformUtil {
 				.map(dir -> tps.newDirectoryLocation(dir.getAbsolutePath())).toArray(ITargetLocation[]::new);
 
 		NameVersionDescriptor[] included = Arrays.stream(installedBundles)
+				.filter(b -> !isJunitRuntime(b)) //
 				.map(b -> new NameVersionDescriptor(b.getSymbolicName(), b.getVersion().toString()))
 				.toArray(NameVersionDescriptor[]::new);
 		targetDefinition.setIncluded(included);
@@ -69,6 +70,16 @@ public class TargetPlatformUtil {
 
 		tps.saveTargetDefinition(targetDefinition);
 		return targetDefinition;
+	}
+
+	private static boolean isJunitRuntime(Bundle bundle) {
+		// filter out junit.runtime bundles from the target platform
+		// this tests the scenario where PDE supplies them from the host installation
+		
+		// XXX: this filter does not match the junit5.runtime bundle
+		// JUnitLaunchConfigurationDelegate::getRequiredPlugins currently does not handle junit5
+		// (which is a bug), so that's fine for now
+		return bundle.getSymbolicName().contains("junit.runtime");
 	}
 
 }
