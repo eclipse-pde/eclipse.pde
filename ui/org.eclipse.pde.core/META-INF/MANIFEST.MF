@@ -65,6 +65,7 @@ Export-Package:
    org.eclipse.pde.ds.tests,
    org.eclipse.pde.ua.core,
    org.eclipse.pde.ua.tests",
+ org.eclipse.pde.internal.core.update.configurator;x-internal:=true,
  org.eclipse.pde.internal.core.util;
   x-friends:="org.eclipse.pde.ui,
    org.eclipse.pde.ua.ui,
