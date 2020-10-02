@@ -239,11 +239,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 							if (javaElements[j] instanceof IPackageFragment) {
 								IPackageFragment fragment = (IPackageFragment) javaElements[j];
 								String name = fragment.getElementName();
-								if (name.length() == 0)
-								 {
-									name = "."; //$NON-NLS-1$
+								if (name.length() == 0) {
+									continue;
 								}
 								if (fragment.containsJavaResources() || fragment.getNonJavaResources().length > 0) {
+									if (isInternalPackage(name)) {
+										continue;
+									}
 									if (!containsPackage(header, name)) {
 										packages.append(name);
 										packages.append(","); //$NON-NLS-1$
@@ -274,6 +276,19 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				addMarkerAttribute(marker, "packages", packages.toString()); //$NON-NLS-1$
 			}
 		}
+	}
+
+	private boolean isInternalPackage(String name) {
+		String[] split = name.split("\\."); //$NON-NLS-1$
+		for (String section : split) {
+			// dont consider packages with "internal" or "impl" section in it
+			// for exporting
+			if (section.equals("internal") || section.equals("impl")) { //$NON-NLS-1$ //$NON-NLS-2$
+				return true;
+			}
+
+		}
+		return false;
 	}
 
 	/**
