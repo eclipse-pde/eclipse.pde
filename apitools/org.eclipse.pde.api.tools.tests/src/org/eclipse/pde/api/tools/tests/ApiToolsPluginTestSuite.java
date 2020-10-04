@@ -15,6 +15,7 @@
 package org.eclipse.pde.api.tools.tests;
 
 import org.eclipse.pde.api.tools.anttasks.tests.ApiToolsAntTasksTestSuite;
+import org.eclipse.pde.api.tools.applications.BundleJarFilesTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.model.tests.ApiFilterStoreTests;
@@ -39,7 +40,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 		ProjectCreationTests.class, ApiDescriptionProcessorTests.class, PreferencesTests.class,
 		ApiBaselineManagerTests.class, ApiFilterStoreTests.class, FilterStoreTests.class, ApiProblemTests.class,
-		TargetAsBaselineTests.class, ApiBuilderTest.class, ApiToolsAntTasksTestSuite.class
+		TargetAsBaselineTests.class, ApiBuilderTest.class, ApiToolsAntTasksTestSuite.class,
+		BundleJarFilesTest.class
 })
 public class ApiToolsPluginTestSuite {
 

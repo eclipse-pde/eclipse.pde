@@ -15,7 +15,6 @@ package org.eclipse.pde.api.tools.internal;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -171,6 +170,9 @@ public class ApiAnalysisApplication implements IApplication {
 				return IStatus.ERROR;
 			}
 			return IStatus.OK;
+		} catch (CoreException e) {
+			System.err.println(e.getStatus());
+			return IStatus.ERROR;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return IStatus.ERROR;
@@ -183,25 +185,10 @@ public class ApiAnalysisApplication implements IApplication {
 				throw new IllegalArgumentException(
 						"dependencyList argument points to non readable file: " + dependencyList.getAbsolutePath());//$NON-NLS-1$
 			}
-			// File is typically the output of `mvn dependnecy:list
-			// -DoutputAbsoluteArtifactFilename=true -DoutputScope=false -DoutputFile=...`
-			// like
-			// ```
-			// The following files have been resolved:
-			// p2.eclipse-plugin:org.eclipse.equinoxz.event:jar:1.5.0.v20181008-1938:/home/mistria/.m2/repository/p2/osgi/bundle/org.eclipse.equinox.event/1.5.0.v20181008-1938/org.eclipse.equinox.event-1.5.0.v20181008-1938.jar
-			// p2.eclipse-plugin:org.eclipse.equinox.p2.core:jar:2.6.0.v20190215-2242:/home/mistria/.m2/repository/p2/osgi/bundle/org.eclipse.equinox.p2.core/2.6.0.v20190215-2242/org.eclipse.equinox.p2.core-2.6.0.v20190215-2242.jar
-			// p2.eclipse-plugin:org.eclipse.osgi.compatibility.state:jar:1.1.400.v20190208-1533:/home/mistria/.m2/repository/p2/osgi/bundle/org.eclipse.osgi.compatibility.state/1.1.400.v20190208-1533/org.eclipse.osgi.compatibility.state-1.1.400.v20190208-1533.jar
-			// ```
 			ITargetPlatformService service = TargetPlatformService.getDefault();
 			ITargetDefinition target = service.newTarget();
 			target.setName("buildpath"); //$NON-NLS-1$
-			TargetBundle[] bundles = Files.readAllLines(dependencyList.toPath()).stream()//
-					.filter(line -> line.contains("jar")) //$NON-NLS-1$
-					.flatMap(line -> Arrays.stream(line.split(":"))) //$NON-NLS-1$
-					.filter(maybePath -> !maybePath.trim().isEmpty())
-					.map(File::new)//
-					.filter(File::isAbsolute)//
-					.filter(File::isFile)//
+			TargetBundle[] bundles = new BundleJarFiles(dependencyList).list().stream()//
 					.map(absoluteFile -> {
 						try {
 							return new TargetBundle(absoluteFile);
