@@ -98,8 +98,7 @@ public class ClasspathComputer {
 			for (IClasspathEntry entry : entries) {
 				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE
 						|| entry.getEntryKind() == IClasspathEntry.CPE_PROJECT
-						|| entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY
-						|| entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
+						|| entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
 					if (paths.add(entry.getPath())) {
 						result.add(updateTestAttribute(isTestPlugin, entry));
 					}
