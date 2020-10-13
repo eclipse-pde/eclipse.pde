@@ -164,6 +164,11 @@ public class LaunchConfigurationHelper {
 			// Add bundles.txt as p2 config data
 			if (bundlesTxt != null) {
 				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
+				if (bundles.get("org.eclipse.update.configurator") != null) { //$NON-NLS-1$
+					// this argument is required as long as we support old target platforms containing o.e.update.configurator
+					// otherwise both simpleconfigurator and update.configurator will try to install bundles, slowing down launches.
+					properties.setProperty("org.eclipse.update.reconcile", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			}
 
 			// Make the p2 data area in the configuration area itself, rather than a sibling of the configuration
