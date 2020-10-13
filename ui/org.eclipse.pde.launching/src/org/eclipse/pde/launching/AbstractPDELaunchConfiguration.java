@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2018 IBM Corporation and others.
+ *  Copyright (c) 2005, 2018, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Vincent LORENZO (CEA-LIST) vincent.lorenzo@cea.fr - bug 567833
  *******************************************************************************/
 package org.eclipse.pde.launching;
 
@@ -58,7 +59,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 
 	@Override
 	protected boolean isLaunchProblem(IMarker problemMarker) throws CoreException {
-		return super.isLaunchProblem(problemMarker) && (problemMarker.getType().equals(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER) || problemMarker.getType().equals(PDEMarkerFactory.MARKER_ID));
+		return super.isLaunchProblem(problemMarker) && (problemMarker.isSubtypeOf(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER) || problemMarker.isSubtypeOf(PDEMarkerFactory.MARKER_ID));
 	}
 
 	@Override
