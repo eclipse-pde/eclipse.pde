@@ -498,7 +498,9 @@ public class ApiDescription implements IApiDescription {
 			buffer.append(RestrictionModifiers.getRestrictionText(res));
 			System.out.println(buffer.toString());
 		}
-		return new ApiAnnotations(vis, res);
+		ApiAnnotations apiAno = new ApiAnnotations(vis, res);
+		apiAno.setExact(node.element.equals(element));
+		return apiAno;
 	}
 
 	/**

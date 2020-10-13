@@ -62,13 +62,22 @@ public class CompositeApiDescription implements IApiDescription {
 
 	@Override
 	public IApiAnnotations resolveAnnotations(IElementDescriptor element) {
+		IApiAnnotations bestMatchAnnotation = null;
 		for (IApiDescription fDescription : fDescriptions) {
 			IApiAnnotations ann = fDescription.resolveAnnotations(element);
+			boolean isExact = false;
 			if (ann != null) {
-				return ann;
+				bestMatchAnnotation = ann;
 			}
+			if (ann instanceof ApiAnnotations) {
+				isExact = ((ApiAnnotations) ann).isExact();
+			}
+			if (isExact) {
+				return ann; // if exact, return else keep looking for best match
+			}
+
 		}
-		return null;
+		return bestMatchAnnotation;
 	}
 
 	@Override

@@ -29,6 +29,7 @@ public class ApiAnnotations implements IApiAnnotations {
 	public static final int OFFSET_VISIBILITY = 0;
 	public static final int OFFSET_RESTRICTIONS = 4;
 	private int bits;
+	boolean isExact;
 
 	public ApiAnnotations(int visibility, int restrictions) {
 		this.bits = (visibility << OFFSET_VISIBILITY) | (restrictions << OFFSET_RESTRICTIONS);
@@ -66,6 +67,14 @@ public class ApiAnnotations implements IApiAnnotations {
 	@Override
 	public int hashCode() {
 		return this.bits;
+	}
+
+	public void setExact(boolean equals) {
+		isExact = equals;
+	}
+
+	public boolean isExact() {
+		return isExact;
 	}
 
 }
