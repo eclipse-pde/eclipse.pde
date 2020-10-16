@@ -319,7 +319,7 @@ public final class Util {
 
 	public static final String ORG_ECLIPSE_SWT = "org.eclipse.swt"; //$NON-NLS-1$
 
-	public static final int LATEST_OPCODES_ASM = Opcodes.ASM8;
+	public static final int LATEST_OPCODES_ASM = Opcodes.ASM9;
 
 	/**
 	 * Throws an exception with the given message and underlying exception.
