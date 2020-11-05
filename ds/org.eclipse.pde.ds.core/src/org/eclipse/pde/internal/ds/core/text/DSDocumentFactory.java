@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.ds.core.text;
 
 import org.eclipse.pde.internal.core.text.DocumentNodeFactory;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.core.text.IDocumentNodeFactory;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
@@ -36,7 +35,7 @@ import org.eclipse.pde.internal.ds.core.IDSService;
  * @see DSDocumentHandler
  */
 public class DSDocumentFactory extends DocumentNodeFactory implements
-		IDocumentNodeFactory, IDSDocumentFactory {
+		IDSDocumentFactory {
 	private DSModel fModel;
 
 	public DSDocumentFactory(DSModel model) {

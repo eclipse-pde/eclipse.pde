@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,8 +13,6 @@
  *     Rafael Oliveira Nóbrega <rafael.oliveira@gmail.com> - bug 223738
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.core.text;
-
-import java.io.Serializable;
 
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.text.DocumentObject;
@@ -32,7 +30,7 @@ import org.eclipse.pde.internal.ds.core.IDSObject;
  * @see DSDocumentFactory
  */
 public abstract class DSObject extends DocumentObject implements IDSConstants,
-		Serializable, IDSObject {
+		IDSObject {
 
 	private static final long serialVersionUID = 1L;
 
