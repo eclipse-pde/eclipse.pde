@@ -53,7 +53,6 @@ public class Messages extends NLS {
 	public static String LocalTargetHandle_5;
 	public static String P2TargetUtils_ProvisioningSourceTask;
 	public static String ProfileBundleContainer_0;
-	public static String ProfileBundleContainer_1;
 	public static String ProfileBundleContainer_2;
 	public static String TargetBundle_ErrorReadingManifest;
 	public static String TargetDefinition_0;
