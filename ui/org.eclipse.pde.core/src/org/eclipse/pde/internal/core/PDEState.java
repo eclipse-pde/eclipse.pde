@@ -76,9 +76,17 @@ public class PDEState extends MinimalState {
 	private void createNewTargetState(boolean resolve, URI[] uris, IProgressMonitor monitor) {
 		fState = stateObjectFactory.createState(resolve);
 		if (resolve) {
+			final String systemBSN = getSystemBundle();
 			fState.getResolver().setSelectionPolicy(new Comparator<BaseDescription>() {
 				@Override
 				public int compare(BaseDescription bd1, BaseDescription bd2) {
+					if (systemBSN.equals(bd1.getSupplier().getSymbolicName())
+							&& !systemBSN.equals(bd2.getSupplier().getSymbolicName())) {
+						return -1;
+					} else if (!systemBSN.equals(bd1.getSupplier().getSymbolicName())
+							&& systemBSN.equals(bd2.getSupplier().getSymbolicName())) {
+						return 1;
+					}
 					Version v1 = bd1.getVersion();
 					Version v2 = bd2.getVersion();
 					int versionCompare = versionCompare(v1, v2);
