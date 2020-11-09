@@ -22,6 +22,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -43,6 +44,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.compiler.env.IModule.IPackageExport;
+import org.eclipse.jdt.internal.compiler.util.JRTUtil;
+import org.eclipse.jdt.internal.core.builder.ClasspathJrt;
+import org.eclipse.jdt.internal.core.builder.ClasspathLocation;
+import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -104,9 +111,10 @@ public class TargetPlatformHelper {
 	}
 
 	/**
-	 * Returns the list of bundles in the osgi.bundles property of the
-	 * platform config ini, or a set of default bundles if the property
-	 * could not be found.
+	 * Returns the list of bundles in the osgi.bundles property of the platform
+	 * config ini, or a set of default bundles if the property could not be
+	 * found.
+	 *
 	 * @return string list of bundles
 	 */
 	public static String getBundleList() {
@@ -139,11 +147,14 @@ public class TargetPlatformHelper {
 	}
 
 	/**
-	 * Removes path information from the given string containing one or more comma separated
-	 * osgi bundles.  Replaces escaped '\:' with ':'.  Removes, reference, platform and file
-	 * prefixes.  Removes any other path information converting the location or the last
-	 * segment to a bundle id.
-	 * @param osgiBundles list of bundles to strip path information from (commma separated)
+	 * Removes path information from the given string containing one or more
+	 * comma separated osgi bundles. Replaces escaped '\:' with ':'. Removes,
+	 * reference, platform and file prefixes. Removes any other path information
+	 * converting the location or the last segment to a bundle id.
+	 *
+	 * @param osgiBundles
+	 *            list of bundles to strip path information from (commma
+	 *            separated)
 	 * @return list of bundles with path information stripped
 	 */
 	// String.subString() does not return null
@@ -170,7 +181,8 @@ public class TargetPlatformHelper {
 				bundle = bundle.substring(FILE_URL_PREFIX.length());
 			}
 
-			// if the path is relative, the last segment is the bundle symbolic name
+			// if the path is relative, the last segment is the bundle symbolic
+			// name
 			// Otherwise, we need to retrieve the bundle symbolic name ourselves
 			IPath path = new Path(bundle);
 			String id = null;
@@ -204,7 +216,8 @@ public class TargetPlatformHelper {
 			return fgCachedLocations.get(path);
 		}
 
-		// TODO Loading the entire manifest to get a name is an unecessary performance hit
+		// TODO Loading the entire manifest to get a name is an unecessary
+		// performance hit
 		File file = new File(path);
 		if (file.exists()) {
 			try {
@@ -215,7 +228,8 @@ public class TargetPlatformHelper {
 					return name;
 				}
 			} catch (CoreException e) {
-				// Should have already been reported when creating the target platform
+				// Should have already been reported when creating the target
+				// platform
 			}
 		}
 		return null;
@@ -255,18 +269,22 @@ public class TargetPlatformHelper {
 	}
 
 	/**
-	 * Utility method to check if the workspace active target platform
-	 * contains unresolved p2 repositories
+	 * Utility method to check if the workspace active target platform contains
+	 * unresolved p2 repositories
 	 *
-	 * @return unresolved repository based  workspace active target platform
-	 * or <code>null</code> if no repository based target or if such target is resolved.
-	 * @throws CoreException if there is a problem accessing the workspace target definition
+	 * @return unresolved repository based workspace active target platform or
+	 *         <code>null</code> if no repository based target or if such target
+	 *         is resolved.
+	 * @throws CoreException
+	 *             if there is a problem accessing the workspace target
+	 *             definition
 	 */
 
 	public static ITargetDefinition getUnresolvedRepositoryBasedWorkspaceTarget() throws CoreException {
 		ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		if (service == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.TargetPlatformHelper_CouldNotAcquireTargetService));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
+					PDECoreMessages.TargetPlatformHelper_CouldNotAcquireTargetService));
 		}
 		final ITargetDefinition target = service.getWorkspaceTargetDefinition();
 		if (target != null && !target.isResolved()) {
@@ -290,7 +308,8 @@ public class TargetPlatformHelper {
 
 	public static Set<String> getApplicationNameSet() {
 		TreeSet<String> result = new TreeSet<>();
-		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
+		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry()
+				.findExtensions("org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
 		for (IExtension extension : extensions) {
 			String id = extension.getUniqueIdentifier();
 			IConfigurationElement[] elements = extension.getConfigurationElements();
@@ -314,7 +333,8 @@ public class TargetPlatformHelper {
 
 	public static TreeSet<String> getProductNameSet() {
 		TreeSet<String> result = new TreeSet<>();
-		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
+		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry()
+				.findExtensions("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] elements = extension.getConfigurationElements();
 			if (elements.length != 1) {
@@ -356,10 +376,11 @@ public class TargetPlatformHelper {
 	@SuppressWarnings("unchecked")
 	public static Dictionary<String, String>[] getPlatformProperties(String[] profiles, MinimalState state) {
 		if (profiles == null || profiles.length == 0) {
-			return new Dictionary[] {getTargetEnvironment(state)};
+			return new Dictionary[] { getTargetEnvironment(state) };
 		}
 
-		// add java profiles for those EE's that have a .profile file in the current system bundle
+		// add java profiles for those EE's that have a .profile file in the
+		// current system bundle
 		ArrayList<Dictionary<String, String>> result = new ArrayList<>(profiles.length);
 		for (String profile : profiles) {
 			IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(profile);
@@ -368,6 +389,9 @@ public class TargetPlatformHelper {
 				if (profileProps != null) {
 					Dictionary<String, String> props = TargetPlatformHelper.getTargetEnvironment(state);
 					String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
+					if (systemPackages == null) {
+						systemPackages = querySystemPackages(environment);
+					}
 					if (systemPackages != null) {
 						props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
 					}
@@ -382,7 +406,56 @@ public class TargetPlatformHelper {
 		if (!result.isEmpty()) {
 			return result.toArray(new Dictionary[result.size()]);
 		}
-		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment(state)};
+		return new Dictionary[] { TargetPlatformHelper.getTargetEnvironment(state) };
+	}
+
+	public static String querySystemPackages(IExecutionEnvironment environment) {
+		IVMInstall vm = bestVmInstallFor(environment);
+		if (vm == null || !JavaRuntime.isModularJava(vm)) {
+			return null;
+		}
+
+		String release = null;
+		Map<String, String> complianceOptions = environment.getComplianceOptions();
+		if (complianceOptions != null) {
+			release = complianceOptions.get(JavaCore.COMPILER_COMPLIANCE);
+		}
+
+		try {
+			Collection<String> packages = new TreeSet<>();
+			File jrtPath = new File(vm.getInstallLocation(), "lib/" + JRTUtil.JRT_FS_JAR); //$NON-NLS-1$
+			ClasspathJrt jrt = ClasspathLocation.forJrtSystem(jrtPath.toString(), null, null, release);
+			for (String moduleName : jrt.getModuleNames(null)) {
+				for (IPackageExport packageExport : jrt.getModule(moduleName).exports()) {
+					if (!packageExport.isQualified()) {
+						packages.add(new String(packageExport.name()));
+					}
+				}
+			}
+			return String.join(",", packages); //$NON-NLS-1$
+		} catch (CoreException e) {
+			PDECore.logException(e, "failed to read system packages for " + environment); //$NON-NLS-1$
+		}
+		return null;
+	}
+
+	private static IVMInstall bestVmInstallFor(IExecutionEnvironment environment) {
+		IVMInstall defaultVM = environment.getDefaultVM();
+		if (defaultVM != null) {
+			return defaultVM;
+		}
+
+		IVMInstall[] compatible = environment.getCompatibleVMs();
+		if (compatible.length == 0) {
+			return null;
+		}
+
+		for (IVMInstall vm : compatible) {
+			if (environment.isStrictlyCompatible(vm)) {
+				return vm;
+			}
+		}
+		return compatible[0];
 	}
 
 	public static String[] getKnownExecutionEnvironments() {
@@ -391,7 +464,7 @@ public class TargetPlatformHelper {
 			if ("none".equals(jreProfile)) { //$NON-NLS-1$
 				return new String[0];
 			}
-			return new String[] {jreProfile};
+			return new String[] { jreProfile };
 		}
 		IExecutionEnvironment[] environments = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
 		String[] ids = new String[environments.length];
@@ -402,10 +475,12 @@ public class TargetPlatformHelper {
 	}
 
 	/**
-	 * Returns the version of Eclipse the target platform is pointing to or {@link ICoreConstants#TARGET_VERSION_LATEST}
-	 * if the target platform does not contain <code>org.eclipse.osgi</code>.
+	 * Returns the version of Eclipse the target platform is pointing to or
+	 * {@link ICoreConstants#TARGET_VERSION_LATEST} if the target platform does
+	 * not contain <code>org.eclipse.osgi</code>.
 	 *
-	 * @return the target version of Eclipse or the latest version PDE knows about.
+	 * @return the target version of Eclipse or the latest version PDE knows
+	 *         about.
 	 */
 	public static String getTargetVersionString() {
 		IPluginModelBase model = PluginRegistry.findModel(IPDEBuildConstants.BUNDLE_OSGI);
@@ -450,20 +525,24 @@ public class TargetPlatformHelper {
 	}
 
 	/**
-	 * Returns the version of Eclipse the target platform is pointing to or {@link ICoreConstants#TARGET_VERSION_LATEST}
-	 * if the target platform does not contain <code>org.eclipse.osgi</code>.
+	 * Returns the version of Eclipse the target platform is pointing to or
+	 * {@link ICoreConstants#TARGET_VERSION_LATEST} if the target platform does
+	 * not contain <code>org.eclipse.osgi</code>.
 	 *
-	 * @return the target version of Eclipse or the latest version PDE knows about.
+	 * @return the target version of Eclipse or the latest version PDE knows
+	 *         about.
 	 */
 	public static double getTargetVersion() {
 		return Double.parseDouble(getTargetVersionString());
 	}
 
 	/**
-	 * Returns the schema version to use when targetting a specific version.
-	 * If <code>null</code> is* passed as the version, the current target platform's
-	 * version is used (result of getTargetVersion()).
-	 * @param targetVersion the plugin version being targeted or <code>null</code>
+	 * Returns the schema version to use when targetting a specific version. If
+	 * <code>null</code> is* passed as the version, the current target
+	 * platform's version is used (result of getTargetVersion()).
+	 *
+	 * @param targetVersion
+	 *            the plugin version being targeted or <code>null</code>
 	 * @return a string version
 	 */
 	public static String getSchemaVersionForTargetVersion(String targetVersion) {
@@ -473,7 +552,8 @@ public class TargetPlatformHelper {
 		} else {
 			target = Double.parseDouble(targetVersion);
 		}
-		// In 3.4 the schemas changed the spelling of appInfo to appinfo to be w3c compliant, see bug 213255.
+		// In 3.4 the schemas changed the spelling of appInfo to appinfo to be
+		// w3c compliant, see bug 213255.
 		String schemaVersion = ICoreConstants.TARGET34;
 		if (target < 3.2) {
 			// Default schema version is 3.0
@@ -486,17 +566,20 @@ public class TargetPlatformHelper {
 	}
 
 	/**
-	 * Reverse engineer the target version based on a schema version.
-	 * If <code>null</code> is* passed as the version, the current target platform's
-	 * version is used (result of getTargetVersion()).
-	 * @param schemaVersion the schema version being targeted or <code>null</code>
+	 * Reverse engineer the target version based on a schema version. If
+	 * <code>null</code> is* passed as the version, the current target
+	 * platform's version is used (result of getTargetVersion()).
+	 *
+	 * @param schemaVersion
+	 *            the schema version being targeted or <code>null</code>
 	 * @return a compatible target version
 	 */
 	public static String getTargetVersionForSchemaVersion(String schemaVersion) {
 		if (schemaVersion == null) {
 			return getTargetVersionString();
 		}
-		// In 3.4 the schemas changed the spelling of appInfo to appinfo to be w3c compliant, see bug 213255.
+		// In 3.4 the schemas changed the spelling of appInfo to appinfo to be
+		// w3c compliant, see bug 213255.
 		if (schemaVersion.equals(ICoreConstants.TARGET30)) {
 			// 3.0 schema version was good up to 3.1
 			return ICoreConstants.TARGET31;
@@ -511,6 +594,7 @@ public class TargetPlatformHelper {
 
 	/**
 	 * Gets the schema version to use for the current target platform
+	 *
 	 * @return String schema version for the current target platform
 	 */
 	public static String getSchemaVersion() {
@@ -527,17 +611,22 @@ public class TargetPlatformHelper {
 
 	/**
 	 * Utility method to get the workspace active target platform and ensure it
-	 * has been resolved.  This is potentially a long running operation. If a
+	 * has been resolved. This is potentially a long running operation. If a
 	 * monitor is provided, progress is reported to it.
 	 *
-	 * @param monitor optional progress monitor to report progress to
-	 * @return a resolved target definition or <code>null</code> if the resolution was cancelled
-	 * @throws CoreException if there is a problem accessing the workspace target definition
+	 * @param monitor
+	 *            optional progress monitor to report progress to
+	 * @return a resolved target definition or <code>null</code> if the
+	 *         resolution was cancelled
+	 * @throws CoreException
+	 *             if there is a problem accessing the workspace target
+	 *             definition
 	 */
 	public static ITargetDefinition getWorkspaceTargetResolved(IProgressMonitor monitor) throws CoreException {
 		ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		if (service == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.TargetPlatformHelper_CouldNotAcquireTargetService));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
+					PDECoreMessages.TargetPlatformHelper_CouldNotAcquireTargetService));
 		}
 		final ITargetDefinition target = service.getWorkspaceTargetDefinition();
 
@@ -550,8 +639,10 @@ public class TargetPlatformHelper {
 			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 			String memento = target.getHandle().getMemento();
 			if (memento != null) {
-				// Same target has been re-resolved upon loading, clear the preference  and
-				// update the target so listeners can react to the change - see TargetStatus
+				// Same target has been re-resolved upon loading, clear the
+				// preference and
+				// update the target so listeners can react to the change - see
+				// TargetStatus
 				if (memento.equals(preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE))) {
 					preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, ""); //$NON-NLS-1$
 					preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
@@ -601,7 +692,7 @@ public class TargetPlatformHelper {
 			result = state.getLibraryNames(bundle.getBundleId()).clone();
 		}
 		if (result.length == 0) {
-			return new String[] {"."}; //$NON-NLS-1$
+			return new String[] { "." }; //$NON-NLS-1$
 		}
 		return result;
 	}
@@ -635,8 +726,8 @@ public class TargetPlatformHelper {
 	}
 
 	/**
-	 * Reads and returns the VM arguments specified in the running platform's .ini file,
-	 * or am empty string if none.
+	 * Reads and returns the VM arguments specified in the running platform's
+	 * .ini file, or am empty string if none.
 	 *
 	 * @return VM arguments specified in the running platform's .ini file
 	 */
