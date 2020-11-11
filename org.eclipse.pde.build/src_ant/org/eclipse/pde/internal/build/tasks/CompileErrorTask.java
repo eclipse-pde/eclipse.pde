@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 IBM Corporation and others.
+ * Copyright (c) 2010, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,7 +23,7 @@ import org.apache.tools.ant.types.resources.Union;
 
 public class CompileErrorTask extends Task {
 	private static final Object LOCK = new Object();
-	private static final String NEW_LINE = System.getProperty("line.separator"); //$NON-NLS-1$
+	private static final String NEW_LINE = System.lineSeparator();
 	private static final String ANT_PREFIX = "${"; //$NON-NLS-1$
 
 	private final Files problemFiles = new Files();
