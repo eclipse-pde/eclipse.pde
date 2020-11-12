@@ -907,7 +907,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (fJavaProject == null) {
 			return null;
 		}
-		ASTParser parser = ASTParser.newParser(AST.JLS14);
+		ASTParser parser = ASTParser.newParser(AST.JLS15);
 		parser.setFocalPosition(offset);
 		parser.setResolveBindings(false);
 		parser.setSource(root);
