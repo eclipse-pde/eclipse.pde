@@ -128,7 +128,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		BundleInfo[] infos = P2Utils.readBundles(home, configurationArea);
 		if (infos == null) {
 			if (configurationArea != null) {
-				Collection<TargetBundle> osgiBundles = readBundleInfosFromConfigIni(configurationArea);
+				Collection<TargetBundle> osgiBundles = readBundleInfosFromConfigIni(configurationArea, new File(home));
 				if (!osgiBundles.isEmpty()) {
 					return osgiBundles.toArray(new TargetBundle[0]);
 				}
@@ -167,7 +167,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		}).filter(Objects::nonNull).toArray(TargetBundle[]::new);
 	}
 
-	private Collection<TargetBundle> readBundleInfosFromConfigIni(File configArea) {
+	private Collection<TargetBundle> readBundleInfosFromConfigIni(File configArea, File home) {
 		File configIni = new File(configArea, CONFIG_INI);
 		if (!configIni.isFile()) {
 			return emptyList();
@@ -180,7 +180,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			return emptyList();
 		}
 
-		List<File> bundleFiles = parseBundlesFromConfigIni(configProps);
+		List<File> bundleFiles = parseBundlesFromConfigIni(configProps, home);
 		ArrayList<TargetBundle> bundles = new ArrayList<>();
 		for (File file : bundleFiles) {
 			if (!file.exists()) {
@@ -197,7 +197,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		return bundles;
 	}
 
-	public static List<File> parseBundlesFromConfigIni(Properties configProps) {
+	public static List<File> parseBundlesFromConfigIni(Properties configProps, File home) {
 		String osgiBundles = configProps.getProperty("osgi.bundles"); //$NON-NLS-1$
 		if (osgiBundles == null || osgiBundles.isEmpty()) {
 			return emptyList();
@@ -209,6 +209,9 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		String osgiFramework = configProps.getProperty("osgi.framework"); //$NON-NLS-1$
 		if (osgiFramework != null) {
 			File frameworkBundle = parseBundleLocation(osgiFramework);
+			if (!frameworkBundle.isAbsolute()) {
+				frameworkBundle = new File(home, frameworkBundle.getPath());
+			}
 			bundles.add(frameworkBundle);
 			baseDir = frameworkBundle.getParentFile();
 		}

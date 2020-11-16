@@ -41,7 +41,7 @@ public class ProfileContainerTests extends AbstractTargetTest {
 		configIni.put("osgi.bundles", absoluteFile("plugins/some.bundle").toURI() + ","//
 				+ "reference:" + absoluteFile("plugins/some.bundle_startlevel").toURI() + "@1:start");
 
-		Collection<File> parsedBundles = ProfileBundleContainer.parseBundlesFromConfigIni(configIni);
+		Collection<File> parsedBundles = ProfileBundleContainer.parseBundlesFromConfigIni(configIni, new File("."));
 		assertEquals(Arrays.asList( //
 				absoluteFile("plugins/some.bundle"), //
 				absoluteFile("plugins/some.bundle_startlevel")), //
@@ -55,7 +55,7 @@ public class ProfileContainerTests extends AbstractTargetTest {
 				+ "reference:file:plugins/some.bundle_startlevel@1:start," //
 				+ "reference:" + absoluteFile("absolute.bundle").toURI());
 
-		Collection<File> parsedBundles = ProfileBundleContainer.parseBundlesFromConfigIni(configIni);
+		Collection<File> parsedBundles = ProfileBundleContainer.parseBundlesFromConfigIni(configIni, new File("."));
 		assertEquals(Arrays.asList( //
 				new File("plugins/some.bundle"), //
 				new File("plugins/some.bundle_startlevel"), //
@@ -71,12 +71,27 @@ public class ProfileContainerTests extends AbstractTargetTest {
 				+ "reference:" + absoluteFile("absolute.bundle").toURI());
 		configIni.put("osgi.framework", "file:plugins/o.e.osgi.jar");
 
-		Collection<File> parsedBundles = ProfileBundleContainer.parseBundlesFromConfigIni(configIni);
+		Collection<File> parsedBundles = ProfileBundleContainer.parseBundlesFromConfigIni(configIni, new File("/home"));
 		assertEquals(Arrays.asList( //
-				new File("plugins/o.e.osgi.jar"), //
-				new File("plugins/some.bundle"), //
-				new File("plugins/some.bundle_startlevel"), //
+				new File("/home/plugins/o.e.osgi.jar"), //
+				new File("/home/plugins/some.bundle"), //
+				new File("/home/plugins/some.bundle_startlevel"), //
 				absoluteFile("absolute.bundle")), //
+				parsedBundles);
+	}
+
+	@Test
+	public void testParseBundleInfoFromConfigIni_relativeToAbsoluteFramework() {
+		Properties configIni = new Properties();
+		configIni.put("osgi.bundles", "reference:file:some.bundle," //
+				+ "reference:file:some.bundle_startlevel@1:start");
+		configIni.put("osgi.framework", absoluteFile("plugins/o.e.osgi.jar").toURI().toString());
+
+		Collection<File> parsedBundles = ProfileBundleContainer.parseBundlesFromConfigIni(configIni, new File("/home"));
+		assertEquals(Arrays.asList( //
+				absoluteFile("plugins/o.e.osgi.jar"), //
+				absoluteFile("plugins/some.bundle"), //
+				absoluteFile("plugins/some.bundle_startlevel")), //
 				parsedBundles);
 	}
 
