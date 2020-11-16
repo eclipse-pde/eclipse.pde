@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - Bug 568865 - [target] add advanced editing capabilities for custom target platforms
  *******************************************************************************/
 package org.eclipse.pde.ui.target;
 
@@ -19,12 +20,13 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
 
 /**
- * Contributed target locations that want to support updating in the target wizard and editor must adapt
- * their {@link ITargetLocation} to this interface.
+ * Contributed target locations that want to support updating in the target
+ * wizard and editor must adapt their {@link ITargetLocation} to this interface.
  *
  * @noextend This interface is not intended to be extended by clients.
  * @since 3.7
  */
+@Deprecated
 public interface ITargetLocationUpdater {
 
 	/**
@@ -33,7 +35,7 @@ public interface ITargetLocationUpdater {
 	 * If this status code is set, the target will not resolve the target after the update completes.
 	 * </p>
 	 */
-	public static final int STATUS_CODE_NO_CHANGE = 101;
+	public static final int STATUS_CODE_NO_CHANGE = ITargetLocationHandler.STATUS_CODE_NO_CHANGE;
 
 	/**
 	 * Returns whether this updater can update the given target location. This method will be called
