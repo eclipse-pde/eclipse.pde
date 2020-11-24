@@ -65,7 +65,7 @@ public final class ApiModelCache {
 		}
 	}
 
-	static final int DEFAULT_CACHE_SIZE = 1500;
+	static final int DEFAULT_CACHE_SIZE = 1000;
 	static final int DEFAULT_OVERFLOW = (int) (DEFAULT_CACHE_SIZE * 0.1f);
 	static ApiModelCache fInstance = null;
 
@@ -134,7 +134,7 @@ public final class ApiModelCache {
 					}
 					Cache<String, IApiElement> typecache = compcache.get(id);
 					if (typecache == null) {
-						typecache = new Cache<>(DEFAULT_CACHE_SIZE, DEFAULT_OVERFLOW);
+						typecache = new Cache<>(DEFAULT_CACHE_SIZE * 2, DEFAULT_OVERFLOW);
 						compcache.put(comp.getSymbolicName(), typecache);
 					}
 					ApiType type = (ApiType) element;
