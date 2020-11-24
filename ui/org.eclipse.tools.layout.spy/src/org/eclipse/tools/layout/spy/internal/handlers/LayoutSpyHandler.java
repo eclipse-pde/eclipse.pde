@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Google Inc and others.
+ * Copyright (c) 2016, 2020 Google Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,6 +19,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tools.layout.spy.internal.dialogs.LayoutSpyDialog;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 public class LayoutSpyHandler extends AbstractHandler {
@@ -31,7 +32,16 @@ public class LayoutSpyHandler extends AbstractHandler {
 		}
 
 		Shell shell = HandlerUtil.getActiveShell(event);
-		if (shell != null) {
+		if (shell == null || shell.isDisposed()) {
+			// The active shell may have been disposed since the user initiated the command,
+			// such as when it was started via Find Actions dialog whose shell is disposed
+			// as a side effect of launching this handler
+			IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
+			if (activeWorkbenchWindow != null) {
+				shell = activeWorkbenchWindow.getShell();
+			}
+		}
+		if (shell != null && !shell.isDisposed()) {
 			popupDialog = new LayoutSpyDialog(shell);
 			popupDialog.open();
 		}
