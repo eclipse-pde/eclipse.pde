@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
+import java.util.Enumeration;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.internal.core.OverflowingLRUCache;
 import org.eclipse.jdt.internal.core.util.LRUCache;
@@ -233,7 +235,11 @@ public final class ApiModelCache {
 						if (compcache != null) {
 							Cache<String, IApiElement> typecache = compcache.get(componentid);
 							if (typecache != null && updatedIdentifier != null) {
-								return typecache.get(updatedIdentifier);
+								IApiElement ele = typecache.get(updatedIdentifier);
+								if (ele != null) {
+									return ele;
+								}
+
 							}
 						}
 					}
@@ -242,9 +248,39 @@ public final class ApiModelCache {
 			}
 			default:
 				break;
+			}
+		if (componentid.startsWith("JavaSE-")) { //$NON-NLS-1$
+			// for system component, retrieve element from any baseline instead
+			// of recreating the structure and caching the equivalent element info
+			IApiElement element = getElementInfoFromAnyBaseline(baselineid, componentid, updatedIdentifier);
+			if (element != null) {
+				return element;
+			}
 		}
 		return null;
 	}
+
+	private IApiElement getElementInfoFromAnyBaseline(String baselineid, String componentid, String updatedIdentifier) {
+			Enumeration<String> elements = fRootCache.keys();
+			while (elements.hasMoreElements()) {
+				String otherBaselines = elements.nextElement();
+				if (otherBaselines.equals(baselineid)) {
+					continue;
+				}
+				Cache<String, Cache<String, IApiElement>> compcache = fRootCache.get(otherBaselines);
+				if (compcache != null) {
+					Cache<String, IApiElement> typecache = compcache.get(componentid);
+					if (typecache != null && updatedIdentifier != null) {
+						IApiElement ele = typecache.get(updatedIdentifier);
+						if (ele != null) {
+							return ele;
+						}
+					}
+				}
+			}
+		return null;
+	}
+
 
 	/**
 	 * Removes the {@link IApiElement} from the given component (given its id)
