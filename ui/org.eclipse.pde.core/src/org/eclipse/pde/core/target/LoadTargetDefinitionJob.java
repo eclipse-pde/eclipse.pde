@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -138,7 +138,6 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			}
 			preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
 
-			clearDeprecatedPreferences(preferences, subMon.split(3));
 
 			loadJRE(subMon.split(3));
 
@@ -149,40 +148,6 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			return Status.CANCEL_STATUS;
 		}
 		return Status.OK_STATUS;
-	}
-
-	/**
-	 * Clears any existing target preferences that have been deprecated in 4.4 Luna
-	 *
-	 * @param pref preference manager
-	 * @param monitor progress monitor
-	 */
-	@SuppressWarnings("deprecation")
-	private void clearDeprecatedPreferences(PDEPreferencesManager pref, IProgressMonitor monitor) {
-		String empty = ""; //$NON-NLS-1$
-		pref.setValue(ICoreConstants.ARCH, empty);
-		pref.setValue(ICoreConstants.NL, empty);
-		pref.setValue(ICoreConstants.OS, empty);
-		pref.setValue(ICoreConstants.WS, empty);
-
-		pref.setValue(ICoreConstants.PROGRAM_ARGS, empty);
-		pref.setValue(ICoreConstants.VM_ARGS, empty);
-
-		pref.setValue(ICoreConstants.TARGET_MODE, empty);
-		pref.setValue(ICoreConstants.CHECKED_PLUGINS, empty);
-		pref.setValue(ICoreConstants.CHECKED_VERSION_PLUGINS, empty);
-
-		pref.setValue(ICoreConstants.VM_LAUNCHER_INI, empty);
-		pref.setValue(ICoreConstants.IMPLICIT_DEPENDENCIES, empty);
-
-		pref.setValue(ICoreConstants.ADDITIONAL_LOCATIONS, empty);
-		pref.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, empty);
-
-		pref.setValue(ICoreConstants.POOLED_BUNDLES, empty);
-		pref.setValue(ICoreConstants.POOLED_URLS, empty);
-
-		pref.setValue(ICoreConstants.EXTERNAL_FEATURES, empty);
-		pref.setValue(ICoreConstants.TARGET_PROFILE, empty);
 	}
 
 	/**

@@ -19,13 +19,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.*;
-import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.junit.Test;
 
 public class TargetDefinitionResolutionTests extends MinimalTargetDefinitionResolutionTests {
@@ -109,28 +105,6 @@ public class TargetDefinitionResolutionTests extends MinimalTargetDefinitionReso
 		}
 	}
 
-	/**
-	 * Tests that if users have the old preference to append .ini VM arguments,
-	 * target definitions are migrated properly with the arguments appended.
-	 */
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testVMArgumentsMigrationAppend() throws Exception {
-		IEclipsePreferences store = InstanceScope.INSTANCE.getNode(PDECore.PLUGIN_ID);
-		boolean original = store.getBoolean(ICoreConstants.VM_LAUNCHER_INI, false);
-		store.putBoolean(ICoreConstants.VM_LAUNCHER_INI, true);
-		String originalTarget = store.get(ICoreConstants.TARGET_MODE, "");
-		store.put(ICoreConstants.TARGET_MODE, ICoreConstants.VALUE_USE_THIS);
-		try {
-			ITargetDefinition target = ((TargetPlatformService) getTargetService()).newTargetFromPreferences();
-			assertNotNull("No target was created from old preferences", target);
-			String vmArguments = target.getVMArguments();
-			String iniVmArgs = TargetPlatformHelper.getIniVMArgs();
-			assertEquals(vmArguments, iniVmArgs);
-		} finally {
-			store.putBoolean(ICoreConstants.VM_LAUNCHER_INI, original);
-			store.put(ICoreConstants.TARGET_MODE, originalTarget);
-		}
-	}
+
 
 }
