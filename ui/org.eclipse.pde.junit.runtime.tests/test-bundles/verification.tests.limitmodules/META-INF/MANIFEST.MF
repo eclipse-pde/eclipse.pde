@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: verification.tests.limitmodules
+Bundle-SymbolicName: verification.tests.limitmodules
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: TestLimitModules
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: org.junit;bundle-version="4.12.0"
+Export-Package: verification.tests.limitmodules
