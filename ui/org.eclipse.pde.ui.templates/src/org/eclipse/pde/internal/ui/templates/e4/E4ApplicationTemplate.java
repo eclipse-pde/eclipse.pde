@@ -62,7 +62,8 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 
 	/* Create options expected in the page */
 	private void createOptions() {
-		addOption(KEY_WINDOW_TITLE, PDETemplateMessages.E4ApplicationTemplate_windowTitle, "Eclipse 4 RCP Application", 0); //$NON-NLS-1$
+		addOption(KEY_WINDOW_TITLE, PDETemplateMessages.E4ApplicationTemplate_windowTitle, "Eclipse RCP Application", //$NON-NLS-1$
+				0);
 		addOption(KEY_CREATE_SAMPLE_CONTENT, PDETemplateMessages.E4ApplicationTemplate_createSampleContent, false, 0);
 		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.E4ApplicationTemplate_packageName, (String) null, 0);
 		addOption(KEY_CREATE_LIFE_CYCLE, PDETemplateMessages.E4ApplicationTemplate_createLifeCycle, false, 0);
