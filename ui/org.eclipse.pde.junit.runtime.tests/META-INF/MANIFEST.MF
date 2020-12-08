@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PDE JUnit Runtime Tests
 Bundle-SymbolicName: org.eclipse.pde.junit.runtime.tests;singleton:=true
-Bundle-Version: 3.6.100.qualifier
+Bundle-Version: 3.6.200.qualifier
 Automatic-Module-Name: org.eclipse.pde.junit.runtime.tests
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: Eclipse.org
