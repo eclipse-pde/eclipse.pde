@@ -93,16 +93,19 @@ public class APIDeprecationReportConversionTask extends Task {
 
 		@Override
 		public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
-			if (IApiXmlConstants.DELTA_ELEMENT_NAME.equals(name)) {
+			if (name == null) {
+				return;
+			}
+			switch (name)
+				{
+			case IApiXmlConstants.DELTA_ELEMENT_NAME:
 				if (this.debug) {
 					System.out.println("name : " + name); //$NON-NLS-1$
 					/*
-					 * <delta compatible="true"
-					 * componentId="org.eclipse.equinox.p2.ui_0.1.0"
+					 * <delta compatible="true" componentId="org.eclipse.equinox.p2.ui_0.1.0"
 					 * element_type="CLASS_ELEMENT_TYPE" flags="25" key=
 					 * "schedule(Lorg/eclipse/equinox/internal/provisional/p2/ui/operations/ProvisioningOperation;Lorg/eclipse/swt/widgets/Shell;I)Lorg/eclipse/core/runtime/jobs/Job;"
-					 * kind="ADDED" oldModifiers="9" newModifiers="9"
-					 * restrictions="0" type_name=
+					 * kind="ADDED" oldModifiers="9" newModifiers="9" restrictions="0" type_name=
 					 * "org.eclipse.equinox.internal.provisional.p2.ui.ProvisioningOperationRunner"
 					 * />
 					 */
@@ -123,14 +126,19 @@ public class APIDeprecationReportConversionTask extends Task {
 				this.typename = attributes.getValue(IApiXmlConstants.ATTR_NAME_TYPE_NAME);
 				this.key = attributes.getValue(IApiXmlConstants.ATTR_KEY);
 				this.kind = attributes.getValue(IApiXmlConstants.ATTR_KIND);
-			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS.equals(name)) {
+				break;
+			case IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS:
 				if (this.argumentsList == null) {
 					this.argumentsList = new ArrayList<>();
 				} else {
 					this.argumentsList.clear();
 				}
-			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENT.equals(name)) {
+				break;
+			case IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENT:
 				this.argumentsList.add(attributes.getValue(IApiXmlConstants.ATTR_VALUE));
+				break;
+			default:
+				break;
 			}
 		}
 	}

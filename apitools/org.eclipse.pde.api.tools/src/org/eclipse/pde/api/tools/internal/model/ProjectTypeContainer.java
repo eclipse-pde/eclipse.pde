@@ -40,6 +40,8 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  */
 public class ProjectTypeContainer extends ApiElement implements IApiTypeContainer {
 
+	private ResourceApiTypeRoot lastResourceApiTypeRoot = null;
+
 	/**
 	 * Proxy visitor for collecting package names, etc for our type containers
 	 *
@@ -184,7 +186,15 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 		if (folder.exists()) {
 			IFile file = folder.getFile(cfName + Util.DOT_CLASS_SUFFIX);
 			if (file.exists()) {
-				return new ResourceApiTypeRoot(this, file, qualifiedName);
+				if (lastResourceApiTypeRoot != null) {
+					// check if same file and qualified name
+					if (lastResourceApiTypeRoot.getName().equals(qualifiedName)
+							&& lastResourceApiTypeRoot.getFile().equals(file)) {
+						return lastResourceApiTypeRoot;
+					}
+				}
+				lastResourceApiTypeRoot = new ResourceApiTypeRoot(this, file, qualifiedName);
+				return lastResourceApiTypeRoot;
 			}
 		}
 		return null;

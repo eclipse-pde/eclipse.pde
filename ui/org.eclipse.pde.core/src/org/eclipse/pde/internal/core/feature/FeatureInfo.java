@@ -59,12 +59,16 @@ public class FeatureInfo extends FeatureObject implements IFeatureInfo {
 
 	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
-		if (name.equals(P_DESC)) {
+		switch (name) {
+		case P_DESC:
 			setDescription(newValue != null ? newValue.toString() : null);
-		} else if (name.equals(P_URL)) {
+			break;
+		case P_URL:
 			setURL(newValue != null ? newValue.toString() : null);
-		} else {
+			break;
+		default:
 			super.restoreProperty(name, oldValue, newValue);
+			break;
 		}
 	}
 

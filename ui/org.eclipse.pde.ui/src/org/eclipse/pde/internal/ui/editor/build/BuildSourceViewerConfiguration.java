@@ -210,8 +210,7 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 		int length = PARTITIONS.length;
 		String[] contentTypes = new String[length + 1];
 		contentTypes[0] = IDocument.DEFAULT_CONTENT_TYPE;
-		for (int i = 0; i < length; i++)
-			contentTypes[i + 1] = PARTITIONS[i];
+		System.arraycopy(PARTITIONS, 0, contentTypes, 1, length);
 
 		return contentTypes;
 	}

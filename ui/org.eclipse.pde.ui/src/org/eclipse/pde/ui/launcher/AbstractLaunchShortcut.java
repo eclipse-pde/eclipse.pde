@@ -63,12 +63,16 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 	protected ILaunchConfiguration findLaunchConfiguration(String mode) {
 		ILaunchConfiguration[] configs = getLaunchConfigurations();
 		ILaunchConfiguration configuration = null;
-		if (configs.length == 0) {
+		switch (configs.length) {
+		case 0:
 			configuration = createNewConfiguration();
-		} else if (configs.length == 1) {
+			break;
+		case 1:
 			configuration = configs[0];
-		} else {
+			break;
+		default:
 			configuration = chooseConfiguration(configs, mode);
+			break;
 		}
 		return configuration;
 	}

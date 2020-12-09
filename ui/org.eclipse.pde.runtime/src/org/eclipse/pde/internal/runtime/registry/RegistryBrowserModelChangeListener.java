@@ -56,7 +56,8 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 	 * @return if returns array, then appears under all top level elements of that array
 	 */
 	private Object getTopLevelElement(Object object) {
-		if (fRegistryBrowser.getGroupBy() == RegistryBrowser.BUNDLES) {
+		switch (fRegistryBrowser.getGroupBy()) {
+		case RegistryBrowser.BUNDLES:
 			if (object instanceof Bundle) {
 				return object;
 			} else if (object instanceof ExtensionPoint) {
@@ -79,20 +80,25 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 
 				return result;
 			}
-		} else if (fRegistryBrowser.getGroupBy() == RegistryBrowser.EXTENSION_REGISTRY) {
+			break;
+		case RegistryBrowser.EXTENSION_REGISTRY:
 			if (object instanceof ExtensionPoint) {
 				return object;
 			} else if (object instanceof Extension) {
 				Extension ext = (Extension) object;
 				return ext.getExtensionPoint();
 			}
-		} else if (fRegistryBrowser.getGroupBy() == RegistryBrowser.SERVICES) {
+			break;
+		case RegistryBrowser.SERVICES:
 			if (object instanceof ServiceRegistration) {
 				ServiceRegistration service = (ServiceRegistration) object;
 				return service.getName();
 			} else if (object instanceof Bundle) {
 				return ((Bundle) object).getServicesInUse();
 			}
+			break;
+		default:
+			break;
 		}
 
 		return null;

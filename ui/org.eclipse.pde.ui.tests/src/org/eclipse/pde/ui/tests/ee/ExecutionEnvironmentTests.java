@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.ee;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -27,6 +28,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.wizards.tools.UpdateClasspathJob;
 import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
@@ -306,5 +308,13 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 		} finally {
 			deleteProject("j2se14.error");
 		}
+	}
+
+	@Test
+	public void testDynamicSystemPackages() throws Exception {
+		IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-11");
+		String systemPackages = TargetPlatformHelper.querySystemPackages(env);
+		assertThat(systemPackages).isNotNull();
+		assertThat(systemPackages.split(",")).contains("java.lang", "javax.sql", "org.w3c.dom.css");
 	}
 }

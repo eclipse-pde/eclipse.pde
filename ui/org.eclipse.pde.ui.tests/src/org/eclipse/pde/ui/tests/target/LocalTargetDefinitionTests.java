@@ -133,8 +133,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 		// the old way
 		IPath location = new Path(TargetPlatform.getDefaultLocation());
-		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(),
-				location.append("configuration").toFile().toURI().toURL());
+		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile());
 		// pluginPaths will be null (and NPE) when self-hosting and the target
 		// platform is not a real installation
 		assertBundlePathsEqual(pluginPaths, uris);
@@ -258,8 +257,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 		// the old way
 		IPath location = new Path(TargetPlatform.getDefaultLocation());
-		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(),
-				location.append("configuration").toFile().toURI().toURL());
+		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile());
 		// pluginPaths will be null (and NPE) when self-hosting and the target
 		// platform is not a real installation
 		assertBundlePathsEqual(pluginPaths, uris);
@@ -284,8 +282,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 
 		// the old way
 		IPath location = new Path(TargetPlatform.getDefaultLocation());
-		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(),
-				location.append("configuration").toFile().toURI().toURL());
+		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile());
 		// pluginPaths will be null (and NPE) when self-hosting and the target
 		// platform is not a real installation
 		assertBundlePathsEqual(pluginPaths, uris);

@@ -48,19 +48,26 @@ public abstract class PluginBaseErrorReporter extends ExtensionsErrorReporter {
 				}
 				Element child = (Element) children.item(i);
 				String name = child.getNodeName();
-				if (name.equals("extension")) { //$NON-NLS-1$
+				switch (name)
+				{
+				case "extension": //$NON-NLS-1$
 					validateExtension(child);
-				} else if (name.equals("extension-point")) { //$NON-NLS-1$
+					break;
+				case "extension-point": //$NON-NLS-1$
 					validateExtensionPoint(child);
-				} else if (name.equals("runtime")) { //$NON-NLS-1$
+					break;
+				case "runtime": //$NON-NLS-1$
 					validateRuntime(child);
-				} else if (name.equals("requires")) { //$NON-NLS-1$
+					break;
+				case "requires": //$NON-NLS-1$
 					validateRequires(child);
-				} else {
+					break;
+				default:
 					int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ELEMENT);
 					if (severity != CompilerFlags.IGNORE) {
 						reportIllegalElement(element, severity);
 					}
+					break;
 				}
 			}
 		}

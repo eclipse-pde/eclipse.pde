@@ -312,7 +312,9 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 	private void restoreNode(ProjectApiDescription apiDesc, Element element, ManifestNode parentNode, Map<IElementDescriptor, ManifestNode> childrenMap) throws CoreException {
 		ManifestNode node = null;
 		IElementDescriptor elementDesc = null;
-		if (element.getTagName().equals(IApiXmlConstants.ELEMENT_PACKAGE)) {
+		switch (element.getTagName()) {
+		case IApiXmlConstants.ELEMENT_PACKAGE:
+		{
 			int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
 			int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
 			// collect fragments
@@ -336,13 +338,15 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 			}
 			if (!fragments.isEmpty()) {
 				elementDesc = Factory.packageDescriptor(pkgName);
-				node = apiDesc.newPackageNode(fragments.toArray(new IPackageFragment[fragments.size()]), parentNode, elementDesc, vis, res);
+				node = apiDesc.newPackageNode(fragments.toArray(new IPackageFragment[fragments.size()]), parentNode,
+						elementDesc, vis, res);
 			} else {
 				abort(ScannerMessages.ApiDescriptionManager_2, null);
 			}
-		} else if (element.getTagName().equals(IApiXmlConstants.ELEMENT_PACKAGE_FRAGMENT)) {
-			return; // nothing to do
-		} else if (element.getTagName().equals(IApiXmlConstants.ELEMENT_TYPE)) {
+			break;
+		}
+		case IApiXmlConstants.ELEMENT_TYPE:
+		{
 			String handle = element.getAttribute(IApiXmlConstants.ATTR_HANDLE);
 			int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
 			int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
@@ -355,7 +359,9 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 			TypeNode tn = apiDesc.newTypeNode(type, parentNode, elementDesc, vis, res);
 			node = tn;
 			tn.fTimeStamp = getLong(element, IApiXmlConstants.ATTR_MODIFICATION_STAMP);
-		} else if (element.getTagName().equals(IApiXmlConstants.ELEMENT_FIELD)) {
+			break;
+		}
+		case IApiXmlConstants.ELEMENT_FIELD:
 			if (parentNode.element instanceof IReferenceTypeDescriptor) {
 				IReferenceTypeDescriptor type = (IReferenceTypeDescriptor) parentNode.element;
 				int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
@@ -364,7 +370,8 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 				elementDesc = type.getField(name);
 				node = apiDesc.newNode(parentNode, elementDesc, vis, res);
 			}
-		} else if (element.getTagName().equals(IApiXmlConstants.ELEMENT_METHOD)) {
+			break;
+		case IApiXmlConstants.ELEMENT_METHOD:
 			if (parentNode.element instanceof IReferenceTypeDescriptor) {
 				IReferenceTypeDescriptor type = (IReferenceTypeDescriptor) parentNode.element;
 				int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
@@ -378,6 +385,11 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 				elementDesc = type.getMethod(name, sig);
 				node = apiDesc.newNode(parentNode, elementDesc, vis, res);
 			}
+			break;
+		case IApiXmlConstants.ELEMENT_PACKAGE_FRAGMENT:
+			return; // nothing to do
+		default:
+			break;
 		}
 		if (node != null) {
 			childrenMap.put(elementDesc, node);

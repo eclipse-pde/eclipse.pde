@@ -540,6 +540,10 @@ public class FeatureExportOperation extends Job {
 				target = def.get(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, null);
 			}
 			if (target != null) {
+				float tar = Float.parseFloat(target);
+				if (tar < 1.8) {
+					target = "1.8"; //$NON-NLS-1$
+				}
 				fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_TARGET, target);
 			}
 

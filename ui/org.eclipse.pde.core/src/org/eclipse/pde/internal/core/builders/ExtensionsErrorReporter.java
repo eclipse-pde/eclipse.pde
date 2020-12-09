@@ -121,11 +121,14 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				}
 				Element child = (Element) children.item(i);
 				String name = child.getNodeName();
-				if (name.equals("extension")) { //$NON-NLS-1$
+				switch (name) {
+					case "extension": //$NON-NLS-1$
 					validateExtension(child);
-				} else if (name.equals("extension-point")) { //$NON-NLS-1$
+					break;
+				case "extension-point": //$NON-NLS-1$
 					validateExtensionPoint(child);
-				} else {
+					break;
+				default:
 					if (!name.equals("runtime") && !name.equals("requires")) { //$NON-NLS-1$ //$NON-NLS-2$
 						severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ELEMENT);
 						if (severity != CompilerFlags.IGNORE) {
@@ -137,6 +140,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 							reportUnusedElement(child, severity);
 						}
 					}
+					break;
 				}
 			}
 

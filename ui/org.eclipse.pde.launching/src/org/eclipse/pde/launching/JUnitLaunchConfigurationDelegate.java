@@ -93,6 +93,12 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	}
 
 	@Override
+	public String getModuleCLIOptions(ILaunchConfiguration configuration) throws CoreException {
+		// The JVM options should be specified in target platform, see getVMArguments()
+		return ""; //$NON-NLS-1$ 
+	}
+
+	@Override
 	protected void collectExecutionArguments(ILaunchConfiguration configuration, List<String> vmArguments, List<String> programArgs) throws CoreException {
 		super.collectExecutionArguments(configuration, vmArguments, programArgs);
 

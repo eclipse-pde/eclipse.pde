@@ -96,9 +96,16 @@ public class ClasspathComputer {
 		if (!clear) {
 			IClasspathEntry[] entries = JavaCore.create(project).getRawClasspath();
 			for (IClasspathEntry entry : entries) {
+				if (entry.getPath() != null ) {
+					if (PDECore.JRE_CONTAINER_PATH.isPrefixOf(entry.getPath())
+							|| PDECore.REQUIRED_PLUGINS_CONTAINER_PATH.equals(entry.getPath())) {
+						continue;
+					}
+				}
 				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE
 						|| entry.getEntryKind() == IClasspathEntry.CPE_PROJECT
-						|| entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
+						|| entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY
+						|| entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
 					if (paths.add(entry.getPath())) {
 						result.add(updateTestAttribute(isTestPlugin, entry));
 					}

@@ -477,12 +477,18 @@ public class Schema extends PlatformObject implements ISchema {
 		//attribute.bindSourceLocation(elementNode, lineTable);
 		if (ause != null) {
 			int use = ISchemaAttribute.OPTIONAL;
-			if (ause.equals("required")) { //$NON-NLS-1$
+			switch (ause) {
+				case "required": //$NON-NLS-1$
 				use = ISchemaAttribute.REQUIRED;
-			} else if (ause.equals("optional")) { //$NON-NLS-1$
+				break;
+			case "optional": //$NON-NLS-1$
 				use = ISchemaAttribute.OPTIONAL;
-			} else if (ause.equals("default")) { //$NON-NLS-1$
+				break;
+			case "default": //$NON-NLS-1$
 				use = ISchemaAttribute.DEFAULT;
+				break;
+			default:
+				break;
 			}
 			attribute.setUse(use);
 		}
@@ -1026,7 +1032,8 @@ public class Schema extends PlatformObject implements ISchema {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				String nodeName = child.getNodeName().toLowerCase(Locale.ENGLISH);
-				if (nodeName.equals("element")) { //$NON-NLS-1$
+				switch (nodeName) {
+					case "element": //$NON-NLS-1$
 					ISchemaElement element = processElement(this, child);
 					if (element == null) {
 						fValid = false;
@@ -1040,10 +1047,15 @@ public class Schema extends PlatformObject implements ISchema {
 						}
 					}
 					fElements.add(element);
-				} else if (nodeName.equals("annotation")) { //$NON-NLS-1$
+					break;
+				case "annotation": //$NON-NLS-1$
 					processSchemaAnnotation(child);
-				} else if (nodeName.equals("include")) { //$NON-NLS-1$
+					break;
+				case "include": //$NON-NLS-1$
 					processInclude(child);
+					break;
+				default:
+					break;
 				}
 			}
 		}

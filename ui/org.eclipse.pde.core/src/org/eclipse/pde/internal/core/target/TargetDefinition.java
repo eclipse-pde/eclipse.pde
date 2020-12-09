@@ -1291,13 +1291,18 @@ public class TargetDefinition implements ITargetDefinition {
 					&& node.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.LOCATION)) {
 				Element element = (Element) node;
 				String type = (element).getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE);
-				if (type.equals(IUBundleContainer.TYPE)) {
+				switch (type) {
+				case IUBundleContainer.TYPE:
 					oldIUContainers.add(element);
-				} else if (type.equals(DirectoryBundleContainer.TYPE) || type.equals(FeatureBundleContainer.TYPE)
-						|| type.equals(ProfileBundleContainer.TYPE)) {
+					break;
+				case DirectoryBundleContainer.TYPE:
+				case FeatureBundleContainer.TYPE:
+				case ProfileBundleContainer.TYPE:
 					oldContainers.add(element);
-				} else {
+					break;
+				default:
 					oldGenericContainers.add(element);
+					break;
 				}
 			}
 		}

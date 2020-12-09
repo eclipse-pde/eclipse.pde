@@ -262,30 +262,41 @@ public class ArgumentsInfo extends ProductObject implements IArgumentsInfo {
 			Node child = list.item(i);
 			String[] parentArgs = fProgramArgs;
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (child.getNodeName().equals(P_PROG_ARGS)) {
+				switch (child.getNodeName()) {
+				case P_PROG_ARGS:
 					parentArgs = fProgramArgs;
 					fProgramArgs[L_ARGS_ARCH_ALL] = getText(child).trim();
-				} else if (child.getNodeName().equals(P_PROG_ARGS_LIN)) {
+					break;
+				case P_PROG_ARGS_LIN:
 					parentArgs = fProgramArgsLin;
 					fProgramArgsLin[L_ARGS_ARCH_ALL] = getText(child).trim();
-				} else if (child.getNodeName().equals(P_PROG_ARGS_MAC)) {
+					break;
+				case P_PROG_ARGS_MAC:
 					parentArgs = fProgramArgsMac;
 					fProgramArgsMac[L_ARGS_ARCH_ALL] = getText(child).trim();
-				} else if (child.getNodeName().equals(P_PROG_ARGS_WIN)) {
+					break;
+				case P_PROG_ARGS_WIN:
 					parentArgs = fProgramArgsWin;
 					fProgramArgsWin[L_ARGS_ARCH_ALL] = getText(child).trim();
-				} else if (child.getNodeName().equals(P_VM_ARGS)) {
+					break;
+				case P_VM_ARGS:
 					parentArgs = fVMArgs;
 					fVMArgs[L_ARGS_ARCH_ALL] = getText(child).trim();
-				} else if (child.getNodeName().equals(P_VM_ARGS_LIN)) {
+					break;
+				case P_VM_ARGS_LIN:
 					parentArgs = fVMArgsLin;
 					fVMArgsLin[L_ARGS_ARCH_ALL] = getText(child).trim();
-				} else if (child.getNodeName().equals(P_VM_ARGS_MAC)) {
+					break;
+				case P_VM_ARGS_MAC:
 					parentArgs = fVMArgsMac;
 					fVMArgsMac[L_ARGS_ARCH_ALL] = getText(child).trim();
-				} else if (child.getNodeName().equals(P_VM_ARGS_WIN)) {
+					break;
+				case P_VM_ARGS_WIN:
 					parentArgs = fVMArgsWin;
 					fVMArgsWin[L_ARGS_ARCH_ALL] = getText(child).trim();
+					break;
+				default:
+					break;
 				}
 				// Look for child nodes which would be arch specific.
 				NodeList childNodes = child.getChildNodes();

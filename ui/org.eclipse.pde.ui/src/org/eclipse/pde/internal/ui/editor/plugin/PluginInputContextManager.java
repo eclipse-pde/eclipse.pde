@@ -65,22 +65,28 @@ public class PluginInputContextManager extends InputContextManager {
 	@Override
 	protected void fireContextChange(InputContext context, boolean added) {
 		super.fireContextChange(context, added);
-		if (context.getId().equals(BundleInputContext.CONTEXT_ID)) {
+		switch (context.getId()) {
+		case BundleInputContext.CONTEXT_ID:
 			if (added)// bundle arriving
 				bundleAdded(context);
 			else
 				// bundle going away
 				bundleRemoved(context);
-		} else if (context.getId().equals(BuildInputContext.CONTEXT_ID)) {
+			break;
+		case BuildInputContext.CONTEXT_ID:
 			if (added)
 				buildAdded(context);
 			else
 				buildRemoved(context);
-		} else if (context.getId().equals(PluginInputContext.CONTEXT_ID)) {
+			break;
+		case PluginInputContext.CONTEXT_ID:
 			if (added)
 				pluginAdded(context);
 			else
 				pluginRemoved(context);
+			break;
+		default:
+			break;
 		}
 	}
 

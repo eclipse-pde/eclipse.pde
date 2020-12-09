@@ -79,12 +79,15 @@ public class JUnitExecutionTest {
 
 	@Parameters(name = "{0}")
 	public static Collection<TestInput> parameters() {
-		return Arrays.asList(new TestInput("JUnit5", "verification.tests.junit5"),
+		return Arrays.asList(
+				new TestInput("JUnit5", "verification.tests.junit5"),
 				new TestInput("JUnit5 Fragment", "verification.tests.junit5.fragment"),
 				new TestInput("JUnit4", "verification.tests.junit4"),
 				new TestInput("JUnit4 Fragment", "verification.tests.junit4.fragment"),
 				new TestInput("JUnit4 (JUnitPlatform)", "verification.tests.junit4.platform"),
-				new TestInput("JUnit4 (JUnitPlatform) Fragment", "verification.tests.junit4.platform.fragment"));
+				new TestInput("JUnit4 (JUnitPlatform) Fragment", "verification.tests.junit4.platform.fragment"),
+				new TestInput("Java 11 bundle with module limit", "verification.tests.limitmodules")
+				);
 	}
 
 	@Test

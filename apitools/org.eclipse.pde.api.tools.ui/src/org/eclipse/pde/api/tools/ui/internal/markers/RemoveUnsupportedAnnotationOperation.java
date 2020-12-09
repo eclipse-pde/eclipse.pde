@@ -141,7 +141,7 @@ public class RemoveUnsupportedAnnotationOperation extends UIJob {
 						localMonitor.split(1);
 					}
 					localMonitor.split(1);
-					ASTParser parser = ASTParser.newParser(AST.JLS14);
+					ASTParser parser = ASTParser.newParser(AST.JLS15);
 					parser.setSource(compilationUnit);
 					Integer charStartAttribute = null;
 					charStartAttribute = (Integer) fMarker.getAttribute(IMarker.CHAR_START);

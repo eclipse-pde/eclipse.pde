@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.ds.core.text;
 
 import org.eclipse.pde.internal.core.text.DocumentNodeFactory;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.core.text.IDocumentNodeFactory;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSConstants;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
@@ -36,7 +35,7 @@ import org.eclipse.pde.internal.ds.core.IDSService;
  * @see DSDocumentHandler
  */
 public class DSDocumentFactory extends DocumentNodeFactory implements
-		IDocumentNodeFactory, IDSDocumentFactory {
+		IDSDocumentFactory {
 	private DSModel fModel;
 
 	public DSDocumentFactory(DSModel model) {
@@ -55,30 +54,30 @@ public class DSDocumentFactory extends DocumentNodeFactory implements
 		}
 
 		if (isRoot(name)) { // Root
-			return (IDocumentElementNode) createComponent();
+			return createComponent();
 		}
 
 		if (parent.getXMLTagName().equals(IDSConstants.ELEMENT_COMPONENT)) {
 			if (isImplementation(name)) {
-				return (IDocumentElementNode) createImplementation();
+				return createImplementation();
 			}
 			if (isProperties(name)) {
-				return (IDocumentElementNode) createProperties();
+				return createProperties();
 			}
 			if (isProperty(name)) {
-				return (IDocumentElementNode) createProperty();
+				return createProperty();
 			}
 			if (isService(name)) {
-				return (IDocumentElementNode) createService();
+				return createService();
 			}
 			if (isReference(name)) {
-				return (IDocumentElementNode) createReference();
+				return createReference();
 			}
 		}
 
 		if (parent.getXMLTagName().equals(IDSConstants.ELEMENT_SERVICE)) {
 			if (isProvide(name)) {
-				return (IDocumentElementNode) createProvide();
+				return createProvide();
 			}
 		}
 

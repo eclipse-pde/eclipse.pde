@@ -14,7 +14,7 @@
   <parent>
     <artifactId>eclipse.pde.ui</artifactId>
     <groupId>eclipse.pde.ui</groupId>
-    <version>4.18.0-SNAPSHOT</version>
+    <version>4.19.0-SNAPSHOT</version>
   </parent>
   <artifactId>eclipse.pde.ui.apitools</artifactId>
   <packaging>pom</packaging>
@@ -25,15 +25,6 @@
     <module>org.eclipse.pde.api.tools.ee.cdcfoundation10</module>
     <module>org.eclipse.pde.api.tools.ee.cdcfoundation11</module>
     <module>org.eclipse.pde.api.tools.ee.feature</module>
-    <module>org.eclipse.pde.api.tools.ee.j2se12</module>
-    <module>org.eclipse.pde.api.tools.ee.j2se13</module>
-    <module>org.eclipse.pde.api.tools.ee.j2se14</module>
-    <module>org.eclipse.pde.api.tools.ee.j2se15</module>
-    <module>org.eclipse.pde.api.tools.ee.javase16</module>
-    <module>org.eclipse.pde.api.tools.ee.javase17</module>
-    <module>org.eclipse.pde.api.tools.ee.javase18</module>
-    <module>org.eclipse.pde.api.tools.ee.javase9</module>
-    <module>org.eclipse.pde.api.tools.ee.jre11</module>
     <module>org.eclipse.pde.api.tools.ee.osgiminimum10</module>
     <module>org.eclipse.pde.api.tools.ee.osgiminimum11</module>
     <module>org.eclipse.pde.api.tools.ee.osgiminimum12</module>

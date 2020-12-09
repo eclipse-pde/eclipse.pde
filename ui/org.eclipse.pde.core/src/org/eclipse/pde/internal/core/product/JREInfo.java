@@ -104,18 +104,25 @@ public class JREInfo extends ProductObject implements IJREInfo {
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				Node includeNode = child.getAttributes().getNamedItem("include"); //$NON-NLS-1$
 				boolean include = includeNode != null ? Boolean.parseBoolean(includeNode.getNodeValue()) : true;
-				if (child.getNodeName().equals(JRE_LIN)) {
+				switch (child.getNodeName()) {
+				case JRE_LIN:
 					fJVMLin = getPath(child);
 					bIncludeLin = include;
-				} else if (child.getNodeName().equals(JRE_MAC)) {
+					break;
+				case JRE_MAC:
 					fJVMMac = getPath(child);
 					bIncludeMac = include;
-				} else if (child.getNodeName().equals(JRE_SOL)) {
+					break;
+				case JRE_SOL:
 					fJVMSol = getPath(child);
 					bIncludeSol = include;
-				} else if (child.getNodeName().equals(JRE_WIN)) {
+					break;
+				case JRE_WIN:
 					fJVMWin = getPath(child);
 					bIncludeWin = include;
+					break;
+				default:
+					break;
 				}
 			}
 		}

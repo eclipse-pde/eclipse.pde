@@ -550,7 +550,7 @@ public class ApiDescriptionProcessor {
 	 * @throws BadLocationException
 	 */
 	static void processTagUpdates(IType type, IReferenceTypeDescriptor desc, IApiDescription description, List<IElementDescriptor> members, Map<IFile, Set<TextEdit>> collector) throws CoreException, BadLocationException {
-		ASTParser parser = ASTParser.newParser(AST.JLS14);
+		ASTParser parser = ASTParser.newParser(AST.JLS15);
 		ICompilationUnit cunit = type.getCompilationUnit();
 		if (cunit != null) {
 			parser.setSource(cunit);

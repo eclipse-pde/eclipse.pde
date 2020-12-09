@@ -20,10 +20,7 @@ import static java.util.stream.Stream.concat;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -121,23 +118,19 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_0, home)));
 		}
 
-		URL configUrl = getConfigurationArea();
-		if (configUrl != null) {
-			if (!new File(configUrl.getFile()).isDirectory()) {
+		File configurationArea = getConfigurationArea();
+		if (configurationArea != null) {
+			if (!configurationArea.isDirectory()) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_2, home)));
 			}
 		}
 
-		BundleInfo[] infos = P2Utils.readBundles(home, configUrl);
+		BundleInfo[] infos = P2Utils.readBundles(home, configurationArea);
 		if (infos == null) {
-			if (configUrl != null) {
-				try {
-					Collection<TargetBundle> osgiBundles = readBundleInfosFromConfigIni(configUrl.toURI());
-					if (!osgiBundles.isEmpty()) {
-						return osgiBundles.toArray(new TargetBundle[0]);
-					}
-				} catch (URISyntaxException ex) {
-					throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, ex.getMessage(), ex));
+			if (configurationArea != null) {
+				Collection<TargetBundle> osgiBundles = readBundleInfosFromConfigIni(configurationArea, new File(home));
+				if (!osgiBundles.isEmpty()) {
+					return osgiBundles.toArray(new TargetBundle[0]);
 				}
 			}
 			DirectoryBundleContainer directoryBundleContainer = new DirectoryBundleContainer(home);
@@ -153,7 +146,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			return new TargetBundle[0];
 		}
 
-		BundleInfo[] source = P2Utils.readSourceBundles(home, configUrl);
+		BundleInfo[] source = P2Utils.readSourceBundles(home, configurationArea);
 		if (source == null) {
 			source = new BundleInfo[0];
 		}
@@ -174,9 +167,8 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		}).filter(Objects::nonNull).toArray(TargetBundle[]::new);
 	}
 
-	private Collection<TargetBundle> readBundleInfosFromConfigIni(URI configArea) {
-		File configIni = new File(configArea);
-		configIni = new File(configIni, CONFIG_INI);
+	private Collection<TargetBundle> readBundleInfosFromConfigIni(File configArea, File home) {
+		File configIni = new File(configArea, CONFIG_INI);
 		if (!configIni.isFile()) {
 			return emptyList();
 		}
@@ -188,7 +180,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			return emptyList();
 		}
 
-		List<File> bundleFiles = parseBundlesFromConfigIni(configProps);
+		List<File> bundleFiles = parseBundlesFromConfigIni(configProps, home);
 		ArrayList<TargetBundle> bundles = new ArrayList<>();
 		for (File file : bundleFiles) {
 			if (!file.exists()) {
@@ -205,7 +197,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		return bundles;
 	}
 
-	public static List<File> parseBundlesFromConfigIni(Properties configProps) {
+	public static List<File> parseBundlesFromConfigIni(Properties configProps, File home) {
 		String osgiBundles = configProps.getProperty("osgi.bundles"); //$NON-NLS-1$
 		if (osgiBundles == null || osgiBundles.isEmpty()) {
 			return emptyList();
@@ -217,6 +209,9 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		String osgiFramework = configProps.getProperty("osgi.framework"); //$NON-NLS-1$
 		if (osgiFramework != null) {
 			File frameworkBundle = parseBundleLocation(osgiFramework);
+			if (!frameworkBundle.isAbsolute()) {
+				frameworkBundle = new File(home, frameworkBundle.getPath());
+			}
 			bundles.add(frameworkBundle);
 			baseDir = frameworkBundle.getParentFile();
 		}
@@ -273,7 +268,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	 * @return configuration area URL or <code>null</code>
 	 * @throws CoreException if unable to generate a URL or the user specified location does not exist
 	 */
-	private URL getConfigurationArea() throws CoreException {
+	private File getConfigurationArea() throws CoreException {
 		IPath home = resolveHomeLocation();
 		IPath configuration = null;
 		if (fConfiguration == null) {
@@ -283,11 +278,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		}
 		File file = configuration.toFile();
 		if (file.exists()) {
-			try {
-				return file.toURL();
-			} catch (MalformedURLException e) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_1, home.toOSString()), e));
-			}
+			return file;
 		} else if (fConfiguration != null) {
 			// If the user specified config area does not exist throw an error
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_2, configuration.toOSString())));
@@ -330,11 +321,8 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		if (!new File(home).isDirectory()) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_0, home)));
 		}
-		File configArea = null;
-		URL configURL = getConfigurationArea();
-		if (configURL != null) {
-			configArea = new File(configURL.getFile());
-		} else {
+		File configArea = getConfigurationArea();
+		if (configArea == null) {
 			configArea = new File(home);
 		}
 		if (!configArea.isDirectory()) {

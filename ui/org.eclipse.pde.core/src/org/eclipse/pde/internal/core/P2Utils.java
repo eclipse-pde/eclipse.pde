@@ -15,10 +15,12 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -93,7 +95,7 @@ public class P2Utils {
 	 * @return URLs of all bundles in the installation or <code>null</code> if not able
 	 * 	to locate a bundles.info
 	 */
-	public static URL[] readBundlesTxt(String platformHome, URL configurationArea) {
+	public static URL[] readBundlesTxt(String platformHome, File configurationArea) {
 		if (configurationArea == null) {
 			return null;
 		}
@@ -131,15 +133,15 @@ public class P2Utils {
 	 * @return all bundles in the installation or <code>null</code> if not able
 	 * 	to locate a bundles.info
 	 */
-	public static BundleInfo[] readBundles(String platformHome, URL configurationArea) {
+	public static BundleInfo[] readBundles(String platformHome, File configurationArea) {
 		IPath basePath = new Path(platformHome);
 		if (configurationArea == null) {
 			return null;
 		}
 		try {
-			URL bundlesTxt = new URL(configurationArea.getProtocol(), configurationArea.getHost(), new File(configurationArea.getFile(), SimpleConfiguratorManipulator.BUNDLES_INFO_PATH).getAbsolutePath());
+			File bundlesTxt = new File(configurationArea, SimpleConfiguratorManipulator.BUNDLES_INFO_PATH);
 			File home = basePath.toFile();
-			BundleInfo bundles[] = getBundlesFromFile(bundlesTxt, home);
+			BundleInfo[] bundles = getBundlesFromFile(bundlesTxt, home);
 			if (bundles == null || bundles.length == 0) {
 				return null;
 			}
@@ -160,15 +162,15 @@ public class P2Utils {
 	 * @return all source bundles in the installation or <code>null</code> if not able
 	 * 	to locate a source.info
 	 */
-	public static BundleInfo[] readSourceBundles(String platformHome, URL configurationArea) {
+	public static BundleInfo[] readSourceBundles(String platformHome, File configurationArea) {
 		IPath basePath = new Path(platformHome);
 		if (configurationArea == null) {
 			return null;
 		}
 		try {
 			File home = basePath.toFile();
-			URL srcBundlesTxt = new URL(configurationArea.getProtocol(), configurationArea.getHost(), configurationArea.getFile().concat(SimpleConfiguratorManipulator.SOURCE_INFO_PATH));
-			BundleInfo srcBundles[] = getBundlesFromFile(srcBundlesTxt, home);
+			File srcBundlesTxt = new File(configurationArea, SimpleConfiguratorManipulator.SOURCE_INFO_PATH);
+			BundleInfo[] srcBundles = getBundlesFromFile(srcBundlesTxt, home);
 			if (srcBundles == null || srcBundles.length == 0) {
 				return null;
 			}
@@ -194,24 +196,26 @@ public class P2Utils {
 	}
 
 	/**
-	 * Returns a list of {@link BundleInfo} for each bundle entry or <code>null</code> if there
-	 * is a problem reading the file.
+	 * Returns a list of {@link BundleInfo} for each bundle entry or
+	 * <code>null</code> if there is a problem reading the file.
 	 *
-	 * @param fileURL the URL of the file to read
-	 * @param home the path describing the base location of the platform install
+	 * @param filePath
+	 *            the file to read
+	 * @param home
+	 *            the path describing the base location of the platform install
 	 * @return list containing URL locations or <code>null</code>
 	 * @throws IOException
 	 */
-	private static BundleInfo[] getBundlesFromFile(URL fileURL, File home) throws IOException {
+	private static BundleInfo[] getBundlesFromFile(File filePath, File home) throws IOException {
 		SimpleConfiguratorManipulator manipulator = PDECore.getDefault()
 				.acquireService(SimpleConfiguratorManipulator.class);
 		if (manipulator == null) {
 			return null;
 		}
-		// the input stream will be buffered and closed for us
-		try {
-			return manipulator.loadConfiguration(fileURL.openStream(), home.toURI());
-		} catch (FileNotFoundException e) {
+		// the input stream will be buffered for us
+		try (InputStream in = Files.newInputStream(filePath.toPath())) {
+			return manipulator.loadConfiguration(in, home.toURI());
+		} catch (NoSuchFileException e) {
 			return null;
 		}
 	}

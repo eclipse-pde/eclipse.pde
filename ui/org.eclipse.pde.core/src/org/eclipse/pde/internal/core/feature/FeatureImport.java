@@ -182,16 +182,22 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 
 	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
-		if (name.equals(P_MATCH)) {
+		switch (name) {
+		case P_MATCH:
 			setMatch(newValue != null ? ((Integer) newValue).intValue() : 0);
-		} else if (name.equals(P_ID_MATCH)) {
+			break;
+		case P_ID_MATCH:
 			setIdMatch(newValue != null ? ((Integer) newValue).intValue() : 0);
-		} else if (name.equals(P_TYPE)) {
+			break;
+		case P_TYPE:
 			setType(newValue != null ? ((Integer) newValue).intValue() : PLUGIN);
-		} else if (name.equals(P_PATCH)) {
+			break;
+		case P_PATCH:
 			setPatch(newValue != null ? ((Boolean) newValue).booleanValue() : false);
-		} else {
+			break;
+		default:
 			super.restoreProperty(name, oldValue, newValue);
+			break;
 		}
 	}
 

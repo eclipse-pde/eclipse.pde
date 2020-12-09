@@ -69,9 +69,15 @@ public class APIFreezeReportConversionTask extends Task {
 
 		@Override
 		public void endElement(String uri, String localName, String name) throws SAXException {
-			if (IApiXmlConstants.ELEMENT_RESOLVER_ERRORS.equals(name)) {
+			if (name == null) {
+				return;
+			}
+			switch (name)
+				{
+			case IApiXmlConstants.ELEMENT_RESOLVER_ERRORS:
 				isResolverSection = false;
-			} else if (IApiXmlConstants.DELTA_ELEMENT_NAME.equals(name)) {
+				break;
+			case IApiXmlConstants.DELTA_ELEMENT_NAME:
 				Entry entry = new Entry(this.flags, this.elementType, this.key, this.typename, this.arguments, this.kind);
 				List<Entry> list = this.map.get(this.componentID);
 				if (list != null) {
@@ -81,11 +87,15 @@ public class APIFreezeReportConversionTask extends Task {
 					value.add(entry);
 					this.map.put(componentID, value);
 				}
-			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS.equals(name)) {
+				break;
+			case IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS:
 				if (this.argumentsList != null && this.argumentsList.size() != 0) {
 					this.arguments = new String[this.argumentsList.size()];
 					this.argumentsList.toArray(this.arguments);
 				}
+				break;
+			default:
+				break;
 			}
 		}
 

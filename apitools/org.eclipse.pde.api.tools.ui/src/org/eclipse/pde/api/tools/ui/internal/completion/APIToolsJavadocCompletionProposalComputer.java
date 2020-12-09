@@ -400,7 +400,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 
 	@Override
 	public void sessionStarted() {
-		fParser = ASTParser.newParser(AST.JLS14);
+		fParser = ASTParser.newParser(AST.JLS15);
 		fErrorMessage = null;
 	}
 

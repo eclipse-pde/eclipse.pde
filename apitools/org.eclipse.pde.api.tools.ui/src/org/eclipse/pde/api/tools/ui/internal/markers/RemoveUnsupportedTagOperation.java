@@ -90,7 +90,7 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 						localMonitor.split(1);
 					}
 					localMonitor.split(1);
-					ASTParser parser = ASTParser.newParser(AST.JLS14);
+					ASTParser parser = ASTParser.newParser(AST.JLS15);
 					parser.setSource(compilationUnit);
 					Integer charStartAttribute = null;
 					charStartAttribute = (Integer) this.markers[i].getAttribute(IMarker.CHAR_START);

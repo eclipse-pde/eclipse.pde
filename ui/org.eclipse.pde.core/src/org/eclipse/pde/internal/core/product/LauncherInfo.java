@@ -88,12 +88,18 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 				Node child = children.item(i);
 				if (child.getNodeType() == Node.ELEMENT_NODE) {
 					String name = child.getNodeName();
-					if (name.equals("linux")) { //$NON-NLS-1$
+					switch (name) {
+					case "linux": //$NON-NLS-1$
 						parseLinux((Element) child);
-					} else if (name.equals("macosx")) { //$NON-NLS-1$
+						break;
+					case "macosx": //$NON-NLS-1$
 						parseMac((Element) child);
-					} else if (name.equals("win")) { //$NON-NLS-1$
+						break;
+					case "win": //$NON-NLS-1$
 						parseWin((Element) child);
+						break;
+					default:
+						break;
 					}
 				}
 			}

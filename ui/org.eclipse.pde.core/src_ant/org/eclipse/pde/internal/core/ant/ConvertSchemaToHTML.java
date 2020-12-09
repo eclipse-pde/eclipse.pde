@@ -265,11 +265,14 @@ public class ConvertSchemaToHTML extends Task {
 
 		ExternalPluginModelBase model = null;
 		try {
-			if (file.getName().toLowerCase(Locale.ENGLISH).equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
+			switch (file.getName().toLowerCase(Locale.ENGLISH)) {
+			case ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR:
 				model = new ExternalFragmentModel();
-			} else if (file.getName().toLowerCase(Locale.ENGLISH).equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)) {
+				break;
+			case ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR:
 				model = new ExternalPluginModel();
-			} else {
+				break;
+			default:
 				stream.close();
 				throw new BuildException(NLS.bind(PDECoreMessages.Builders_Convert_illegalValue, "manifest")); //$NON-NLS-1$
 			}

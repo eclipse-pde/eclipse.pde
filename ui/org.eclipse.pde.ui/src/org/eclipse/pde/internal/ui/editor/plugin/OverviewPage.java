@@ -219,17 +219,22 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 	public void linkActivated(HyperlinkEvent e) {
 		String href = (String) e.getHref();
 		// try page references
-		if (href.equals("dependencies")) //$NON-NLS-1$
+		switch (href) {
+			case "dependencies": //$NON-NLS-1$
 			getEditor().setActivePage(DependenciesPage.PAGE_ID);
-		else if (href.equals("runtime")) //$NON-NLS-1$
+			break;
+		case "runtime": //$NON-NLS-1$
 			getEditor().setActivePage(RuntimePage.PAGE_ID);
-		else if (href.equals("extensions")) { //$NON-NLS-1$
+			break;
+		case "extensions": //$NON-NLS-1$
 			if (getEditor().setActivePage(ExtensionsPage.PAGE_ID) == null)
 				activateExtensionPages(ExtensionsPage.PAGE_ID);
-		} else if (href.equals("ex-points")) { //$NON-NLS-1$
+			break;
+		case "ex-points": //$NON-NLS-1$
 			if (getEditor().setActivePage(ExtensionPointsPage.PAGE_ID) == null)
 				activateExtensionPages(ExtensionPointsPage.PAGE_ID);
-		} else if (href.equals("build")) { //$NON-NLS-1$
+			break;
+		case "build": //$NON-NLS-1$
 			if (!getPDEEditor().hasInputContext(BuildInputContext.CONTEXT_ID)) {
 				if (!MessageDialog.openQuestion(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OverviewPage_buildTitle, PDEUIMessages.OverviewPage_buildQuestion))
 					return;
@@ -240,22 +245,30 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 				getPDEEditor().getContextManager().putContext(in, new BuildInputContext(getPDEEditor(), in, false));
 			}
 			getEditor().setActivePage(BuildPage.PAGE_ID);
-		} else if (href.equals("export")) { //$NON-NLS-1$
+			break;
+		case "export": //$NON-NLS-1$
 			getExportAction().run();
-		} else if (href.equals("action.convert")) { //$NON-NLS-1$
+			break;
+		case "action.convert": //$NON-NLS-1$
 			handleConvert();
-		} else if (href.equals("action.installPluginConverter")) { //$NON-NLS-1$
+			break;
+		case "action.installPluginConverter": //$NON-NLS-1$
 			handleInstallPluginConverter();
-		} else if (href.equals("organize")) { //$NON-NLS-1$
+			break;
+		case "organize": //$NON-NLS-1$
 			getEditor().doSave(null);
 			OrganizeManifestsAction organizeAction = new OrganizeManifestsAction();
 			organizeAction.runOrganizeManfestsAction(new StructuredSelection(getPDEEditor().getCommonProject()));
-		} else if (href.equals("externalize")) { //$NON-NLS-1$
+			break;
+		case "externalize": //$NON-NLS-1$
 			getEditor().doSave(null);
 			GetNonExternalizedStringsAction externalizeAction = new GetNonExternalizedStringsAction();
 			externalizeAction.runGetNonExternalizedStringsAction(new StructuredSelection(getPDEEditor().getCommonProject()));
-		} else
+			break;
+		default:
 			super.linkActivated(e);
+			break;
+		}
 	}
 
 	private PluginExportAction getExportAction() {
