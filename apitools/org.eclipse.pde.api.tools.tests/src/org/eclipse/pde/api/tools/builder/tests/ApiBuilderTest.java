@@ -819,6 +819,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		inode.put(IApiProblemTypes.CHANGED_EXECUTION_ENV, ApiPlugin.VALUE_ERROR);
 
 		inode.put(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE, ApiPlugin.VALUE_WARNING);
+		inode.put(IApiProblemTypes.MISSING_PLUGIN_IN_API_BASELINE, ApiPlugin.VALUE_IGNORE);
 		try {
 			inode.flush();
 		} catch (BackingStoreException e) {

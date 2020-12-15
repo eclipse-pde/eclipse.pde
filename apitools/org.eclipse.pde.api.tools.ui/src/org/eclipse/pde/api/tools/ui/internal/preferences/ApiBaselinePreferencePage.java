@@ -68,6 +68,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 
 	public static final String DATA_SELECT_OPTION_KEY = "select_option_key"; //$NON-NLS-1$
 	public static final String MISSING_BASELINE_OPTION = "MISSING_BASELINE_OPTION"; //$NON-NLS-1$
+	public static final String MISSING_PLUGIN_IN_BASELINE_OPTION = "MISSING_PLUGIN_IN_BASELINE_OPTION"; //$NON-NLS-1$
 	public static final String ID = "org.eclipse.pde.api.tools.ui.apiprofiles.prefpage"; //$NON-NLS-1$
 
 	/**
@@ -437,7 +438,10 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 			if (key instanceof String) {
 				String option = (String) key;
 				if (option.equals(ApiBaselinePreferencePage.MISSING_BASELINE_OPTION)) {
-					block.selectOption();
+					block.selectOption(0);
+				}
+				if (option.equals(ApiBaselinePreferencePage.MISSING_PLUGIN_IN_BASELINE_OPTION)) {
+					block.selectOption(1);
 				}
 			}
 		}

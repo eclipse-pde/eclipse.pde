@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -445,6 +445,9 @@ public class ApiProblem implements IApiProblem {
 			case IApiProblem.API_BASELINE_MISSING:
 			case IApiProblem.API_BASELINE_MISMATCH:
 				return "API_BASELINE_MISSING"; //$NON-NLS-1$
+			case IApiProblem.API_PLUGIN_NOT_PRESENT_IN_BASELINE:
+				return "API_NOT_BASELINE"; //$NON-NLS-1$
+
 			default:
 				return Util.UNKNOWN_KIND;
 		}

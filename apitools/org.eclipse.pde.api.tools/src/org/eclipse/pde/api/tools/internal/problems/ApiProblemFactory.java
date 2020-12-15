@@ -584,6 +584,9 @@ public class ApiProblemFactory {
 						return 1;
 					case IApiProblem.API_BASELINE_MISMATCH:
 						return 57;
+					case IApiProblem.API_PLUGIN_NOT_PRESENT_IN_BASELINE:
+						return 60;
+
 					default:
 						break;
 				}
@@ -1030,6 +1033,8 @@ public class ApiProblemFactory {
 					case IApiProblem.API_BASELINE_MISSING:
 					case IApiProblem.API_BASELINE_MISMATCH:
 						return IApiProblemTypes.MISSING_DEFAULT_API_BASELINE;
+					case IApiProblem.API_PLUGIN_NOT_PRESENT_IN_BASELINE:
+						return IApiProblemTypes.MISSING_PLUGIN_IN_API_BASELINE;
 					default:
 						break;
 				}

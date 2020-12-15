@@ -140,6 +140,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 	protected void setUp() throws Exception {
 		// If we have an existing environment, set it to revert rather than
 		// delete the workspace to improve performance
+		resetBuilderOptions();
 		ApiTestingEnvironment env = getEnv();
 		if (env != null) {
 			env.setRevert(true);

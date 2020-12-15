@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 IBM Corporation and others.
+ * Copyright (c) 2017, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,6 +30,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
@@ -139,9 +140,20 @@ public class ConfigureProblemSeverityForAPIToolsResolution extends WorkbenchMark
 				if (fBackingMarker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID,
 						-1) == IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID) {
 					Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+					int id = ApiProblemFactory.getProblemId(fBackingMarker);
+					String type =ApiBaselinePreferencePage.MISSING_BASELINE_OPTION;
+					if (id > -1) {
+						if  (id == ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_API_BASELINE,
+								IElementDescriptor.RESOURCE, IApiProblem.API_PLUGIN_NOT_PRESENT_IN_BASELINE,
+								IApiProblem.NO_FLAGS)) {
+							type =ApiBaselinePreferencePage.MISSING_PLUGIN_IN_BASELINE_OPTION;
+						}
+
+					}
 					Map<String, Object> data = new HashMap<>();
+
 					data.put(ApiBaselinePreferencePage.DATA_SELECT_OPTION_KEY,
-							ApiBaselinePreferencePage.MISSING_BASELINE_OPTION);
+							type);
 					PreferencesUtil
 							.createPreferenceDialogOn(shell, IApiToolsConstants.ID_BASELINES_PREF_PAGE, null, data)
 							.open();

@@ -248,6 +248,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							reference = bestMatchReference;
 						}
 					}
+				} else {
+					// report that plugin not in baseline
+					reportMissingComponentInBaseline();
 				}
 
 				this.fBuildState = state;
@@ -1044,6 +1047,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			return true;
 		}
 		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE, fJavaProject.getProject().getProject()) == ApiPlugin.SEVERITY_IGNORE;
+	}
+
+	private boolean ignoreMissingComponentInBaseline() {
+		if (fJavaProject == null) {
+			return true;
+		}
+		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_PLUGIN_IN_API_BASELINE,
+				fJavaProject.getProject().getProject()) == ApiPlugin.SEVERITY_IGNORE;
 	}
 
 	/**
@@ -2491,6 +2502,17 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			System.out.println("Checking if the default API baseline is set"); //$NON-NLS-1$
 		}
 		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem(Path.EMPTY.toString(), new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { Integer.valueOf(IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID) }, IElementDescriptor.RESOURCE, IApiProblem.API_BASELINE_MISSING);
+		addProblem(problem);
+	}
+
+	private void reportMissingComponentInBaseline() {
+		if (ignoreMissingComponentInBaseline()) {
+			return;
+		}
+		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem(Path.EMPTY.toString(),
+				new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID },
+				new Object[] { Integer.valueOf(IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID) },
+				IElementDescriptor.RESOURCE, IApiProblem.API_PLUGIN_NOT_PRESENT_IN_BASELINE);
 		addProblem(problem);
 	}
 

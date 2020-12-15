@@ -514,6 +514,15 @@ public interface IApiProblem {
 	 * @see #CATEGORY_API_BASELINE
 	 */
 	public static final int API_BASELINE_MISMATCH = 2;
+	/**
+	 * Constant representing that a plugin is not present in the baseline
+	 * {@link IApiProblem} kind. <br>
+	 * Value is: <code>3</code>
+	 *
+	 * @see #getKind()
+	 * @see #CATEGORY_API_BASELINE
+	 */
+	public static final int API_PLUGIN_NOT_PRESENT_IN_BASELINE = 3;
 
 	/**
 	 * Constant representing the value of a API component resolution
