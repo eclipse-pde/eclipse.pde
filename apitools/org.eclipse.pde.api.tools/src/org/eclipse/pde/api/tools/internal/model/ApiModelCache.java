@@ -249,7 +249,7 @@ public final class ApiModelCache {
 			default:
 				break;
 			}
-		if (componentid.startsWith("JavaSE-")) { //$NON-NLS-1$
+		if (componentid.startsWith("JavaSE-") && this.fRootCache != null) { //$NON-NLS-1$
 			// for system component, retrieve element from any baseline instead
 			// of recreating the structure and caching the equivalent element info
 			IApiElement element = getElementInfoFromAnyBaseline(baselineid, componentid, updatedIdentifier);
