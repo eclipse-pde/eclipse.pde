@@ -79,6 +79,7 @@ import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
 import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
+import org.eclipse.pde.api.tools.internal.model.WorkspaceBaseline;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -2521,6 +2522,42 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * project in the workspace
 	 */
 	public void checkBaselineMismatch(IApiBaseline baseline, IApiBaseline workspaceBaseline) {
+		int severityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE,
+				null);
+		if (severityLevel == ApiPlugin.SEVERITY_IGNORE) {
+			return;
+		}
+		if (workspaceBaseline instanceof WorkspaceBaseline && baseline != null) {
+			// if this workspace has been processed before for this baseline, get it from
+			// past processing
+			if (((WorkspaceBaseline) workspaceBaseline).containsBaseline(baseline)) {
+				IApiProblem pro = ((WorkspaceBaseline) workspaceBaseline).getProblem(baseline);
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				try {
+					IMarker[] findMarkers = root.findMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER,
+							false, IResource.DEPTH_ZERO);
+					if (pro != null && findMarkers.length == 1) {
+						return; // since we have baseline, so cant be missing baseline
+					}
+					if (pro == null && findMarkers.length == 0) {
+						return;
+					}
+					if (pro == null && findMarkers.length == 1) {
+						for (IMarker iMarker : findMarkers) {
+							iMarker.delete();
+						}
+						return;
+					}
+					if (pro != null && findMarkers.length == 0) {
+						addProblem(pro);
+						return;
+					}
+				} catch (CoreException e) {
+					ApiPlugin.log(e);
+				}
+				return;
+			}
+		}
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		try {
 			IMarker[] findMarkers = root.findMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, false,
@@ -2534,11 +2571,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (baseline == null || workspaceBaseline == null) {
 			return;
 		}
-		int severityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE,
-				null);
-		if (severityLevel == ApiPlugin.SEVERITY_IGNORE) {
-			return;
-		}
+
 		IApiComponent[] workspacesComponents = workspaceBaseline.getApiComponents();
 		boolean found = false;
 		for (IApiComponent iApiComponent : workspacesComponents) {
@@ -2549,15 +2582,21 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					break;
 				}
 			}
+
 		}
 		if (found) {
+			if (workspaceBaseline instanceof WorkspaceBaseline) {
+				((WorkspaceBaseline) workspaceBaseline).putMismatchInfo(baseline, null);
+			}
 			return;
 		}
-
 		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem(Path.EMPTY.toString(),
 				new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID },
 				new Object[] { Integer.valueOf(IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID) },
 				IElementDescriptor.RESOURCE, IApiProblem.API_BASELINE_MISMATCH);
+		if (workspaceBaseline instanceof WorkspaceBaseline) {
+			((WorkspaceBaseline) workspaceBaseline).putMismatchInfo(baseline, problem);
+		}
 		addProblem(problem);
 	}
 
