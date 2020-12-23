@@ -121,7 +121,7 @@ public interface ITargetLocationHandler {
 	 *
 	 * @param target
 	 *            the target definition being edited
-	 * @param childElementPath
+	 * @param treePath
 	 *            the path to be edited
 	 * @return wizard to open for editing the {@link TreePath} or
 	 *         <code>null</code> if editing of the element is not possible
@@ -135,14 +135,17 @@ public interface ITargetLocationHandler {
 	 * version
 	 *
 	 * @param target
-	 * @param treePath
+	 *            the target definition being updated
+	 * @param treePaths
+	 *            the array of path to be updated
 	 * @param monitor
+	 *            to report progress of the update operation
 	 * @return result of the update, use an OK status with
 	 *         {@link #STATUS_CODE_NO_CHANGE} to indicate everything is up to
 	 *         date, and {@link #STATUS_FORCE_RELOAD} to force a reload of the
 	 *         target platform
 	 */
-	default IStatus update(ITargetDefinition target, TreePath[] treePath, IProgressMonitor monitor) {
+	default IStatus update(ITargetDefinition target, TreePath[] treePaths, IProgressMonitor monitor) {
 		return Status.CANCEL_STATUS;
 	}
 
@@ -151,7 +154,11 @@ public interface ITargetLocationHandler {
 	 * and the user wants to completely reload any cached state.
 	 *
 	 * @param target
+	 *            the target definition being edited
 	 * @param targetLocations
+	 *            the locations to reload
+	 * @param monitor
+	 *            to report progress of the reload operation
 	 * @return the result of the reload
 	 */
 	default IStatus reload(ITargetDefinition target, ITargetLocation[] targetLocations, IProgressMonitor monitor) {
@@ -163,12 +170,14 @@ public interface ITargetLocationHandler {
 	 * Called when the user request to remove the given items from the target
 	 *
 	 * @param target
-	 * @param treePath
+	 *            the target definition being edited
+	 * @param treePaths
+	 *            the array of path to be removed
 	 * @return result of the update, use an OK status with
 	 *         {@link #STATUS_FORCE_RELOAD} to force a reload of the target
 	 *         platform
 	 */
-	default IStatus remove(ITargetDefinition target, TreePath[] treePath) {
+	default IStatus remove(ITargetDefinition target, TreePath[] treePaths) {
 		return Status.CANCEL_STATUS;
 	}
 
@@ -177,12 +186,14 @@ public interface ITargetLocationHandler {
 	 * given items from the target
 	 *
 	 * @param target
-	 * @param treePath
+	 *            the target definition being edited
+	 * @param treePaths
+	 *            the array of path to toggle
 	 * @return result of the update, use an OK status with
 	 *         {@link #STATUS_FORCE_RELOAD} to force a reload of the target
 	 *         platform
 	 */
-	default IStatus toggle(ITargetDefinition target, TreePath[] treePath) {
+	default IStatus toggle(ITargetDefinition target, TreePath[] treePaths) {
 		return Status.CANCEL_STATUS;
 	}
 
