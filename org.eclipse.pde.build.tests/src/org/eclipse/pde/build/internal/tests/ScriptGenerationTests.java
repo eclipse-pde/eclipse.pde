@@ -1292,6 +1292,9 @@ public class ScriptGenerationTests extends PDETestCase {
 
 	@Test
 	public void testBug190041() throws Exception {
+		if (Platform.getOS().equals(Platform.OS_WIN32) || Platform.getOS().equals(Platform.WS_WIN32)) {
+			return;
+		}
 		IFolder buildFolder = newTest("190041");
 
 		IFolder p1 = Utils.createFolder(buildFolder, "plugins/p1");

@@ -311,6 +311,9 @@ public class P2Tests extends P2TestCase {
 
 	@Test
 	public void offBug237662() throws Exception {
+		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+			return;
+		}
 		IFolder buildFolder = newTest("237662");
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 		IFile productFile = buildFolder.getFile("rcp.product");
