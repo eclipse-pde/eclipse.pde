@@ -24,6 +24,7 @@ import org.eclipse.pde.core.target.ITargetLocation;
  * wizard and editor must adapt their {@link ITargetLocation} to this interface.
  *
  * @noextend This interface is not intended to be extended by clients.
+ * @deprecated use {@link ITargetLocationHandler} instead
  * @since 3.7
  */
 @Deprecated
