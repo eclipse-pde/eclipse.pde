@@ -17,7 +17,8 @@ package org.eclipse.pde.internal.runtime.spy.sections;
 import java.lang.reflect.Field;
 import java.util.*;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
@@ -25,11 +26,11 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.internal.PartSite;
-import org.eclipse.ui.internal.PopupMenuExtender;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.PageBookView;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * @since 3.4
@@ -60,12 +61,26 @@ public class ActivePartSection implements ISpySection {
 
 		//toolkit.createImageAction(section, part.getTitleImage());
 
+		// e4?
+		MPart mPart = null;
+		if (part instanceof E4PartWrapper) {
+			EPartService service = part.getSite().getService(EPartService.class);
+			mPart = service.findPart(part.getSite().getId());
+		}
+
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<form>"); //$NON-NLS-1$
 
 		// time to analyze the active part
-		buffer.append(toolkit.createClassSection(text, NLS.bind(PDERuntimeMessages.SpyDialog_activePart_desc, partType),
-				part.getClass()));
+		if (mPart == null || mPart.getObject() == null) {
+			buffer.append(toolkit.createClassSection(text,
+					NLS.bind(PDERuntimeMessages.SpyDialog_activePart_desc, partType), part.getClass()));
+		} else {
+			buffer.append(toolkit.createClassSection(text,
+					NLS.bind(PDERuntimeMessages.SpyDialog_activePart_desc, partType),
+					new Class<?>[] { part.getClass(), mPart.getObject().getClass() }));
+		}
+
 		if (part instanceof PageBookView) {
 			PageBookView outline = (PageBookView) part;
 			IPage currentPage = outline.getCurrentPage();
@@ -75,8 +90,13 @@ public class ActivePartSection implements ISpySection {
 			}
 		}
 
-		// time to analyze the contributing plug-in
-		final Bundle bundle = Platform.getBundle(part.getSite().getPluginId());
+		// Best effort to find the contributing plug-in
+		Bundle bundle = null;
+		if (mPart == null) {
+			bundle = FrameworkUtil.getBundle(part.getClass());
+		} else if (mPart.getObject() != null) {
+			bundle = FrameworkUtil.getBundle(mPart.getObject().getClass());
+		}
 
 		toolkit.generatePluginDetailsText(bundle, part.getSite().getId(), partType, buffer, text);
 
