@@ -1216,19 +1216,23 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						if (range != null && !range.isIncluded(version)) {
 							VirtualMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_unsatisfiedConstraint,importSpec.toString()),getPackageLine(header, element), severity, PDEMarkerFactory.CAT_FATAL);
 							addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,CompilerFlags.P_UNRESOLVED_IMPORTS);
+							return;
 						}
 					} else {
 						VirtualMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_unresolvedExporter,new String[] { export.getSupplier().getSymbolicName(), name }),getPackageLine(header, element), severity, PDEMarkerFactory.CAT_OTHER);
 						addMarkerAttribute(marker,PDEMarkerFactory.compilerKey, CompilerFlags.P_UNRESOLVED_IMPORTS);
+						return;
 					}
-				} else {
-					VirtualMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_PackageNotExported, name), getPackageLine(header, element), severity, PDEMarkerFactory.M_IMPORT_PKG_NOT_AVAILABLE, PDEMarkerFactory.CAT_FATAL);
-					addMarkerAttribute(marker,PDEMarkerFactory.compilerKey, CompilerFlags.P_UNRESOLVED_IMPORTS);
-					if (marker != null) {
-						marker.setAttribute("packageName", name); //$NON-NLS-1$
-						if (optional) {
-							marker.setAttribute("optional", true); //$NON-NLS-1$
-						}
+				}
+
+				VirtualMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_PackageNotExported, name),
+						getPackageLine(header, element), severity, PDEMarkerFactory.M_IMPORT_PKG_NOT_AVAILABLE,
+						PDEMarkerFactory.CAT_FATAL);
+				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_UNRESOLVED_IMPORTS);
+				if (marker != null) {
+					marker.setAttribute("packageName", name); //$NON-NLS-1$
+					if (optional) {
+						marker.setAttribute("optional", true); //$NON-NLS-1$
 					}
 				}
 			}
