@@ -574,9 +574,6 @@ public class ApiType extends ApiMember implements IApiType {
 		return members;
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();

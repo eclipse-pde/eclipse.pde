@@ -769,17 +769,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		return null;
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.model.ApiElement#setName(java.lang.String)
-	 */
 	@Override
 	public void setName(String name) {
 		super.setName(name);
 	}
 
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IApiBaseline) {
@@ -789,9 +783,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		return super.equals(obj);
 	}
 
-	/**
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return this.getName().hashCode();

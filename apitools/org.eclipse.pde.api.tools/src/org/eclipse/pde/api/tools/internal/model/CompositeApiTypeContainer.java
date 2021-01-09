@@ -44,9 +44,6 @@ public class CompositeApiTypeContainer extends AbstractApiTypeContainer {
 		return fContainers;
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuilder buff = new StringBuilder();
