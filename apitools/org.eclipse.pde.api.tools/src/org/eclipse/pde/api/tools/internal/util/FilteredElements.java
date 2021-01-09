@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,14 +25,14 @@ public class FilteredElements {
 
 	public Set<String> getExactMatches() {
 		if (this.exactMatches == null) {
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 		}
 		return this.exactMatches;
 	}
 
 	public Set<String> getPartialMatches() {
 		if (this.partialMatches == null) {
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 		}
 		return this.partialMatches;
 	}
