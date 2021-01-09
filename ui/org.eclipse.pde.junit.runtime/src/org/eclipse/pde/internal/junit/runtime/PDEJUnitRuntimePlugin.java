@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.junit.runtime;
 
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.testing.TestableObject;
 import org.osgi.framework.BundleActivator;
@@ -96,7 +95,7 @@ public class PDEJUnitRuntimePlugin implements BundleActivator {
 	 * application lifecycle.
 	 * <p>
 	 * It is recommended the testable object is obtained via service
-	 * over {@link Workbench#getWorkbenchTestable()} to avoid the
+	 * over Workbench#getWorkbenchTestable() to avoid the
 	 * tests having a dependency on the Workbench.
 	 * </p>
 	 * @return TestableObject provided via service or <code>null</code>
