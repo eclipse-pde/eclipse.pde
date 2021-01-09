@@ -184,8 +184,10 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 	public abstract void adaptToPreferenceChange(PropertyChangeEvent event);
 
 	public void dispose() {
-		if (fQuickAssistant != null)
+		if (fQuickAssistant != null) {
 			fQuickAssistant.dispose();
+			fQuickAssistant = null;
+		}
 	}
 
 }

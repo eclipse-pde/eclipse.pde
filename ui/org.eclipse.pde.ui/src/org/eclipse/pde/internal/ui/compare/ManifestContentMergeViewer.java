@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.compare;
 
+import java.util.*;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
 import org.eclipse.jface.resource.JFaceResources;
@@ -30,20 +31,28 @@ import org.eclipse.swt.widgets.Composite;
 public class ManifestContentMergeViewer extends TextMergeViewer {
 
 	private IColorManager fColorManager;
+	private Set<ManifestConfiguration> manifestConfigurations;
 
 	public ManifestContentMergeViewer(Composite parent, CompareConfiguration configuration) {
 		super(parent, SWT.LEFT_TO_RIGHT, configuration);
+		manifestConfigurations = Collections.newSetFromMap(new IdentityHashMap<>());
 	}
 
 	@Override
 	protected void configureTextViewer(TextViewer textViewer) {
 		if (textViewer instanceof SourceViewer) {
-			if (fColorManager == null)
+			if (fColorManager == null) {
 				fColorManager = ColorManager.getDefault();
-			((SourceViewer) textViewer).configure(new ManifestConfiguration(fColorManager, null, getDocumentPartitioning()));
+			}
+			ManifestConfiguration manifestConfiguration = new ManifestConfiguration(fColorManager, null,
+					getDocumentPartitioning());
+			manifestConfigurations.add(manifestConfiguration);
+			((SourceViewer) textViewer).configure(manifestConfiguration);
+
 			Font font = JFaceResources.getFont(ManifestContentMergeViewer.class.getName());
-			if (font != null)
+			if (font != null) {
 				((SourceViewer) textViewer).getTextWidget().setFont(font);
+			}
 		}
 	}
 
@@ -64,9 +73,12 @@ public class ManifestContentMergeViewer extends TextMergeViewer {
 
 	@Override
 	protected void handleDispose(DisposeEvent event) {
-		super.handleDispose(event);
-		if (fColorManager != null)
+		if (fColorManager != null) {
 			fColorManager.dispose();
+		}
+		manifestConfigurations.forEach(c -> c.dispose());
+		manifestConfigurations.clear();
+		super.handleDispose(event);
 	}
 
 }

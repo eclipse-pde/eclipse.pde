@@ -246,9 +246,10 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 
 	@Override
 	public void dispose() {
-		super.dispose();
-		if (fContentAssistant != null)
+		if (fContentAssistantProcessor != null) {
 			fContentAssistantProcessor.dispose();
+		}
+		super.dispose();
 	}
 
 	@Override
