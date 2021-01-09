@@ -73,11 +73,6 @@ public class TracingComponentDebugOption extends AbstractTracingNode {
 		return builder.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -87,11 +82,6 @@ public class TracingComponentDebugOption extends AbstractTracingNode {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -121,9 +111,6 @@ public class TracingComponentDebugOption extends AbstractTracingNode {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.trace.internal.datamodel.TracingNode#isEnabled()
-	 */
 	@Override
 	public boolean isEnabled() {
 		boolean isEnabled = false;

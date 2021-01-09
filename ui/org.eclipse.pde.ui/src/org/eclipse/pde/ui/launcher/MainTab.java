@@ -196,10 +196,6 @@ public class MainTab extends AbstractLauncherTab
 		return org.eclipse.pde.launching.IPDELauncherConstants.TAB_MAIN_ID;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#initializeAttributes()
-	 */
 	@Override
 	protected void initializeAttributes() {
 		super.initializeAttributes();

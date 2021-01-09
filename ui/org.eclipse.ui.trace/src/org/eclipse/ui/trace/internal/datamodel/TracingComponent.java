@@ -89,10 +89,6 @@ public class TracingComponent extends AbstractTracingNode {
 		return builder.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.trace.internal.datamodel.AbstractTracingNode#isEnabled()
-	 */
 	@Override
 	public boolean isEnabled() {
 

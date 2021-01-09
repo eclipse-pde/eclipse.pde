@@ -30,43 +30,28 @@ public abstract class AbstractTracingNode implements TracingNode {
 
 	protected abstract void populateChildren();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.trace.internal.datamodel.TracingNode#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		return label;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.trace.internal.datamodel.TracingNode#getParent()
-	 */
 	@Override
 	public TracingNode getParent() {
 		return parent;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.trace.internal.datamodel.TracingNode#getChildren()
-	 */
 	@Override
 	public TracingNode[] getChildren() {
 		initialize();
 		return children.toArray(new TracingNode[children.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.trace.internal.datamodel.TracingNode#hasChildren()
-	 */
 	@Override
 	public boolean hasChildren() {
 		initialize();
 		return children != null && children.size() > 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.trace.internal.datamodel.TracingNode#addChild(org.eclipse.ui.trace.internal.datamodel.TracingNode)
-	 */
 	@Override
 	public void addChild(final TracingNode childNode) {
 		if (!children.contains(childNode)) {
@@ -84,17 +69,11 @@ public abstract class AbstractTracingNode implements TracingNode {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.trace.internal.datamodel.TracingNode#setLabel(java.lang.String)
-	 */
 	@Override
 	public void setLabel(final String label) {
 		this.label = label;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.trace.internal.datamodel.TracingNode#setParent(org.eclipse.ui.trace.internal.datamodel.TracingNode)
-	 */
 	@Override
 	public void setParent(final TracingNode parent) {
 		if (this.parent == null) {

@@ -112,9 +112,6 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		// empty implementation
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();

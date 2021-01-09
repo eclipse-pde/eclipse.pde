@@ -63,21 +63,10 @@ public class TocModel extends XMLEditingModel {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ITocModel#getFactory()
-	 */
 	public TocDocumentFactory getFactory() {
 		return fFactory;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ua.core.icheatsheet.simple.ITocModel#getToc()
-	 */
 	public Toc getToc() {
 		if (fToc == null) {
 			fToc = getFactory().createToc();
