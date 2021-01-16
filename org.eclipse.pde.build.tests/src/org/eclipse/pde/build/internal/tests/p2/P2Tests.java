@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2020 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which accompanies this distribution,
@@ -631,7 +631,7 @@ public class P2Tests extends P2TestCase {
 			return;
 
 		IFile artifact = repository.getFile(getArtifactLocation(descriptor));
-		String actualMD5 = ChecksumProducer.computeMD5(artifact.getLocation().toFile());
+		String actualMD5 = ChecksumProducer.produce(artifact.getLocation().toFile(), "MD5", null);
 		assertEquals(md5, actualMD5);
 	}
 
