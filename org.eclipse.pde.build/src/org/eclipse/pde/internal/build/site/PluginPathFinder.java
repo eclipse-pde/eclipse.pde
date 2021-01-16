@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -74,8 +74,8 @@ public class PluginPathFinder {
 
 		File[] linkFiles = new File(platformHome + IPath.SEPARATOR + "links").listFiles(); //$NON-NLS-1$	
 		if (linkFiles != null) {
-			for (int i = 0; i < linkFiles.length; i++) {
-				String path = getSitePath(platformHome, linkFiles[i], features);
+			for (File linkFile : linkFiles) {
+				String path = getSitePath(platformHome, linkFile, features);
 				if (path != null) {
 					sites.add(new File(path));
 				}
@@ -93,39 +93,39 @@ public class PluginPathFinder {
 		ArrayList<File> results = new ArrayList<>();
 
 		File[] contents = dropins.listFiles();
-		for (int i = 0; i < contents.length; i++) {
-			if (contents[i].isFile()) {
-				if (contents[i].getName().endsWith(LINK)) {
-					String path = getSitePath(platformHome, contents[i], features);
+		for (File content : contents) {
+			if (content.isFile()) {
+				if (content.getName().endsWith(LINK)) {
+					String path = getSitePath(platformHome, content, features);
 					if (path != null)
 						sites.add(new File(path));
 				} else {
 					//bundle
-					results.add(contents[i]);
+					results.add(content);
 				}
 			} else { //folder
 				//dropins/features or dropins/plugins
-				if (contents[i].isDirectory() && contents[i].getName().equals(features ? IPDEBuildConstants.DEFAULT_FEATURE_LOCATION : IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION)) {
-					results.addAll(Arrays.asList(contents[i].listFiles()));
+				if (content.isDirectory() && content.getName().equals(features ? IPDEBuildConstants.DEFAULT_FEATURE_LOCATION : IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION)) {
+					results.addAll(Arrays.asList(content.listFiles()));
 					continue;
 				}
 
 				//dropins/*/features or dropins/*/plugins
-				File temp = new File(contents[i], features ? IPDEBuildConstants.DEFAULT_FEATURE_LOCATION : IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION);
+				File temp = new File(content, features ? IPDEBuildConstants.DEFAULT_FEATURE_LOCATION : IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION);
 				if (temp.isDirectory()) {
 					sites.add(temp);
 					continue;
 				}
 
 				//dropins/*/eclipse/features or dropins/*/eclipse/plugins
-				temp = new File(contents[i], ECLIPSE + File.separator + (features ? IPDEBuildConstants.DEFAULT_FEATURE_LOCATION : IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION));
+				temp = new File(content, ECLIPSE + File.separator + (features ? IPDEBuildConstants.DEFAULT_FEATURE_LOCATION : IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION));
 				if (temp.isDirectory()) {
 					sites.add(temp);
 					continue;
 				}
 
 				//else treat as a bundle/feature
-				results.add(contents[i]);
+				results.add(content);
 			}
 		}
 
@@ -166,10 +166,10 @@ public class PluginPathFinder {
 	 */
 	private static List<File> scanLocations(File[] sites) {
 		ArrayList<File> result = new ArrayList<>();
-		for (int i = 0; i < sites.length; i++) {
-			if (sites[i] == null || !sites[i].exists())
+		for (File site : sites) {
+			if (site == null || !site.exists())
 				continue;
-			File[] children = sites[i].listFiles();
+			File[] children = site.listFiles();
 			if (children != null)
 				result.addAll(Arrays.asList(children));
 		}

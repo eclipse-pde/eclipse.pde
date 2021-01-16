@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,7 @@
 package org.eclipse.pde.internal.build.tasks;
 
 import java.io.File;
-import java.util.*;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Ant;
@@ -36,8 +36,7 @@ public class AntScriptRunner implements IScriptRunner {
 		task.setProject(parentTask.getProject());
 		task.init();
 
-		for (Iterator<Entry<String, String>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
-			Map.Entry<String, String> entry = iterator.next();
+		for (Entry<String, String> entry : properties.entrySet()) {
 			Property antProperty = task.createProperty();
 			antProperty.setName(entry.getKey());
 			antProperty.setValue(entry.getValue());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -546,9 +546,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		Set<URI> uriSet = new HashSet<>();
 		uriSet.addAll(Arrays.asList(uris));
 
-		for (int i = 0; i < uris.length; i++) {
+		for (URI element : uris) {
 			//try and find additional repos associated with a profile
-			File uriFile = URIUtil.toFile(uris[i]);
+			File uriFile = URIUtil.toFile(element);
 			uriSet.addAll(getAssociatedRepositories(uriFile));
 		}
 
@@ -583,15 +583,15 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		if (contexts == null)
 			return null;
 		ArrayList<URI> result = new ArrayList<>();
-		for (int i = 0; i < contexts.length; i++) {
-			File repo = URIUtil.toFile(contexts[i]);
+		for (URI context : contexts) {
+			File repo = URIUtil.toFile(context);
 			if (repo == null) {
 				//remote, not sure, just use it
-				result.add(contexts[i]);
+				result.add(context);
 			} else {
 				String[] list = repo.list(repoFilter);
 				if (list != null && list.length > 0)
-					result.add(contexts[i]);
+					result.add(context);
 			}
 		}
 		return result;

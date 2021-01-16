@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -93,8 +93,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 	private void collectSourceEntries(BuildTimeFeature feature) throws CoreException {
 		FeatureEntry[] pluginList = feature.getPluginEntries();
-		for (int i = 0; i < pluginList.length; i++) {
-			FeatureEntry entry = pluginList[i];
+		for (FeatureEntry entry : pluginList) {
 			BundleDescription model;
 			if (director.selectConfigs(entry).size() == 0)
 				continue;
@@ -104,7 +103,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			if (model == null)
 				continue;
 
-			collectSourcePlugins(feature, pluginList[i], model);
+			collectSourcePlugins(feature, entry, model);
 		}
 	}
 
@@ -122,8 +121,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		}
 		// Here we fan the plugins into the source fragment where they should go
 		List<Config> correctConfigs = director.selectConfigs(pluginEntry);
-		for (Iterator<Config> iter = correctConfigs.iterator(); iter.hasNext();) {
-			Config configInfo = iter.next();
+		for (Config configInfo : correctConfigs) {
 			director.sourceToGather.addElementEntry(sourceId + "." + configInfo.toString("."), model); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
@@ -153,10 +151,10 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			}
 
 			FeatureEntry[] plugins = feature.getPluginEntries();
-			for (int i = 0; i < plugins.length; i++) {
-				if (director.selectConfigs(plugins[i]).size() == 0)
+			for (FeatureEntry plugin2 : plugins) {
+				if (director.selectConfigs(plugin2).size() == 0)
 					continue;
-				createSourceBundle(sourceFeature, plugins[i]);
+				createSourceBundle(sourceFeature, plugin2);
 			}
 		} else {
 			/* one source bundle + platform fragments */
@@ -215,8 +213,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 	private void generateSourceFragments(BuildTimeFeature sourceFeature, FeatureEntry sourcePlugin) throws CoreException {
 		Map<String, Set<BundleDescription>> fragments = director.sourceToGather.getElementEntries();
-		for (Iterator<Config> iter = AbstractScriptGenerator.getConfigInfos().iterator(); iter.hasNext();) {
-			Config configInfo = iter.next();
+		for (Config configInfo : AbstractScriptGenerator.getConfigInfos()) {
 			if (configInfo.equals(Config.genericConfig()))
 				continue;
 			String sourceFragmentId = sourceFeature.getId() + "." + configInfo.toString("."); //$NON-NLS-1$ //$NON-NLS-2$
@@ -266,8 +263,8 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		result.setUpdateSiteURL(featureExample.getUpdateSiteURL());
 
 		URLEntry[] siteEntries = featureExample.getDiscoverySites();
-		for (int i = 0; i < siteEntries.length; i++) {
-			result.addDiscoverySite(siteEntries[i].getAnnotation(), siteEntries[i].getURL());
+		for (URLEntry siteEntry : siteEntries) {
+			result.addDiscoverySite(siteEntry.getAnnotation(), siteEntry.getURL());
 		}
 
 		result.setEnvironment(featureExample.getOS(), featureExample.getWS(), featureExample.getArch(), null);
@@ -455,8 +452,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 		if (excludedEntries != null && excludedEntries.containsKey(bundle.getSymbolicName())) {
 			List<Version> excludedVersions = excludedEntries.get(bundle.getSymbolicName());
-			for (Iterator<Version> iterator = excludedVersions.iterator(); iterator.hasNext();) {
-				Version version = iterator.next();
+			for (Version version : excludedVersions) {
 				if (Utils.matchVersions(bundle.getVersion().toString(), version.toString()))
 					return null;
 			}

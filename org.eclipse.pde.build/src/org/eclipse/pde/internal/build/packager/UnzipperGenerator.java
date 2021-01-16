@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -95,8 +95,8 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 
 		List<String[]> toUnzipWithOrder = new ArrayList<>(unzipOrder.length);
 		String[] allZipEntries = Utils.getArrayFromString(zipEntries, ENTRY_SEPARATOR);
-		for (int i = 0; i < allZipEntries.length; i++) {
-			String[] entryDetail = Utils.getArrayFromString(allZipEntries[i], DATA_SEPARATOR);
+		for (String zipEntry : allZipEntries) {
+			String[] entryDetail = Utils.getArrayFromString(zipEntry, DATA_SEPARATOR);
 			script.printComment("Uncompress " + entryDetail[ARCHIVE_NAME]); //$NON-NLS-1$
 
 			if (!entryDetail[FOLDER].equals(".")) //$NON-NLS-1$
@@ -112,10 +112,10 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 		}
 
 		//Deal with the entries that have a specific order.
-		for (int i = 0; i < unzipOrder.length; i++) {
+		for (String element : unzipOrder) {
 			for (Iterator<String[]> iter = toUnzipWithOrder.iterator(); iter.hasNext();) {
 				String[] entry = iter.next();
-				if (entry[ARCHIVE_NAME].startsWith(unzipOrder[i])) {
+				if (entry[ARCHIVE_NAME].startsWith(element)) {
 					generateUncompress(entry);
 					iter.remove();
 				}
@@ -137,8 +137,8 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 	}
 
 	private boolean delayed(String fileName) {
-		for (int i = 0; i < unzipOrder.length; i++) {
-			if (fileName.startsWith(unzipOrder[i]))
+		for (String element : unzipOrder) {
+			if (fileName.startsWith(element))
 				return true;
 		}
 		return false;
@@ -151,8 +151,8 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 		} else {
 			String[] configs = Utils.getArrayFromString(entryDetail[CONFIGS], "&"); //$NON-NLS-1$
 			applyingConfigs = new ArrayList<>(configs.length);
-			for (int i = 0; i < configs.length; i++) {
-				applyingConfigs.add(new Config(configs[i]));
+			for (String config : configs) {
+				applyingConfigs.add(new Config(config));
 			}
 		}
 		return applyingConfigs;
@@ -168,8 +168,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 	//Uncompress the root files into a platform specific folder
 	private void generateUnzipRootFiles(String[] entryDetail) {
 		//Unzip the root files in a "config specific folder" for all the configurations that matched this entry
-		for (Iterator<Config> iter = getMatchingConfig(entryDetail).iterator(); iter.hasNext();) {
-			Config config = iter.next();
+		for (Config config : getMatchingConfig(entryDetail)) {
 			List<String> parameters = new ArrayList<>(3);
 			String rootFilesFolder = "${tempDirectory}/" + config.toString(".") + '/' + entryDetail[FOLDER]; //$NON-NLS-1$ //$NON-NLS-2$
 			script.printMkdirTask(rootFilesFolder);
@@ -189,8 +188,7 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 
 	private void generateUntarRootFiles(String[] entryDetail) {
 		//Unzip the root files in a "config specific folder" for all the configurations that matched this entry
-		for (Iterator<Config> iter = getMatchingConfig(entryDetail).iterator(); iter.hasNext();) {
-			Config config = iter.next();
+		for (Config config : getMatchingConfig(entryDetail)) {
 			List<String> parameters = new ArrayList<>(4);
 			String rootFilesFolder = "${tempDirectory}/" + config.toString(".") + '/' + entryDetail[FOLDER]; //$NON-NLS-1$ //$NON-NLS-2$
 			script.printMkdirTask(rootFilesFolder);

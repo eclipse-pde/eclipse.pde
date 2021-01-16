@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2020 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -43,8 +43,7 @@ public class BuildApplication implements IApplication {
 	}
 
 	private String[] updateArgs(String[] args) throws IOException {
-		for (int i = 0; i < args.length; i++) {
-			String string = args[i];
+		for (String string : args) {
 			if (string.equals("-f") || string.equals("-buildfile")) //$NON-NLS-1$ //$NON-NLS-2$
 				return args;
 		}

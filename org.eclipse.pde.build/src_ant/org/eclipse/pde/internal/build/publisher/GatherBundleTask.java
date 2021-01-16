@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This
  * program and the accompanying materials are made available under the terms of
@@ -116,8 +116,7 @@ public class GatherBundleTask extends AbstractPublisherTask {
 		fileSet.setProject(getProject());
 		fileSet.setDir(new File(baseDirectory));
 
-		for (int i = 0; i < splitIncludes.length; i++) {
-			String entry = splitIncludes[i];
+		for (String entry : splitIncludes) {
 			if (entry.equals(ModelBuildScriptGenerator.DOT))
 				continue;
 
@@ -138,9 +137,9 @@ public class GatherBundleTask extends AbstractPublisherTask {
 			}
 
 			String[] splitExcludes = Utils.getArrayFromString(exclude != null ? exclude + "," + extraExcludes : extraExcludes); //$NON-NLS-1$
-			for (int i = 0; i < splitExcludes.length; i++) {
+			for (String splitExclude : splitExcludes) {
 				NameEntry fileExclude = fileSet.createExclude();
-				fileExclude.setName(splitExcludes[i]);
+				fileExclude.setName(splitExclude);
 			}
 
 			List<String> includedFiles = Arrays.asList(fileSet.getDirectoryScanner().getIncludedFiles());
@@ -174,19 +173,19 @@ public class GatherBundleTask extends AbstractPublisherTask {
 			fileSet = new FileSet();
 			fileSet.setProject(getProject());
 			fileSet.setDir(new File(buildResultFolder));
-			for (int i = 0; i < entries.length; i++) {
-				String name = entries[i].getName(false);
+			for (CompiledEntry entry : entries) {
+				String name = entry.getName(false);
 				if (name.equals(ModelBuildScriptGenerator.DOT)) {
 					dotIncluded = true;
 					continue;
 				}
 
-				if (sourceMap.containsKey(name) && entries[i].getType() == CompiledEntry.FOLDER) {
+				if (sourceMap.containsKey(name) && entry.getType() == CompiledEntry.FOLDER) {
 					Set<OutputFileSet> folders = sourceMap.get(name);
 					processOutputFolders(folders, name, computer);
 				} else {
 					NameEntry fileInclude = fileSet.createInclude();
-					fileInclude.setName(name + ((entries[i].getType() == CompiledEntry.FOLDER) ? "/" : "")); //$NON-NLS-1$ //$NON-NLS-2$
+					fileInclude.setName(name + ((entry.getType() == CompiledEntry.FOLDER) ? "/" : "")); //$NON-NLS-1$ //$NON-NLS-2$
 					haveEntries = true;
 				}
 			}
@@ -208,9 +207,9 @@ public class GatherBundleTask extends AbstractPublisherTask {
 				fileInclude.setName("**"); //$NON-NLS-1$
 				if (exclude != null) {
 					String[] splitExcludes = Utils.getArrayFromString(exclude);
-					for (int i = 0; i < splitExcludes.length; i++) {
+					for (String splitExclude : splitExcludes) {
 						NameEntry fileExclude = fileSet.createExclude();
-						fileExclude.setName(splitExcludes[i]);
+						fileExclude.setName(splitExclude);
 					}
 				}
 
@@ -235,8 +234,7 @@ public class GatherBundleTask extends AbstractPublisherTask {
 
 	private void processOutputFolders(Set<OutputFileSet> folders, String key, GatheringComputer computer) {
 		boolean dot = key.equals(ModelBuildScriptGenerator.DOT);
-		for (Iterator<OutputFileSet> iterator = folders.iterator(); iterator.hasNext();) {
-			OutputFileSet outputFiles = iterator.next();
+		for (OutputFileSet outputFiles : folders) {
 			File baseDir = outputFiles.getDir();
 			String[] includes = outputFiles.mergeIncludes(getProject());
 			//handling more than one include here would involve correlating the includes files
@@ -245,10 +243,10 @@ public class GatherBundleTask extends AbstractPublisherTask {
 				IPath prefix = new Path(includes[0]).removeLastSegments(1);
 				int count = prefix.segmentCount();
 				String[] files = outputFiles.getDirectoryScanner().getIncludedFiles();
-				for (int i = 0; i < files.length; i++) {
-					IPath suffix = new Path(files[i]).removeFirstSegments(count);
+				for (String file : files) {
+					IPath suffix = new Path(file).removeFirstSegments(count);
 					String computerPath = dot ? suffix.toString() : key + '/' + suffix.toString();
-					computer.addFile(computerPath, new File(baseDir, files[i]));
+					computer.addFile(computerPath, new File(baseDir, file));
 				}
 			}
 		}

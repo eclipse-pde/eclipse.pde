@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2013 Eclipse Foundation and others.
+ * Copyright (c) 2004, 2021 Eclipse Foundation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -75,8 +75,7 @@ public class COPYFetchTasksFactory implements IFetchFactory, IPDEBuildConstants 
 		String root = (String) entryInfos.get(KEY_ROOT);
 		String path = (String) entryInfos.get(KEY_PATH);
 
-		for (int i = 0; i < files.length; i++) {
-			String file = files[i];
+		for (String file : files) {
 			IPath filePath = new Path(root);
 			if (path != null) {
 				filePath = filePath.append(path).append(file);
@@ -127,10 +126,10 @@ public class COPYFetchTasksFactory implements IFetchFactory, IPDEBuildConstants 
 			script.println("/>"); //$NON-NLS-1$
 		else {
 			script.println(">"); //$NON-NLS-1$
-			for (int i = 0; i < dirs.length; i++) {
+			for (String dir : dirs) {
 				script.printTabs();
 				script.print("\t<fileset"); //$NON-NLS-1$
-				script.printAttribute("dir", dirs[i], true); //$NON-NLS-1$
+				script.printAttribute("dir", dir, true); //$NON-NLS-1$
 				script.println("/>"); //$NON-NLS-1$
 			}
 			script.println("</copy>"); //$NON-NLS-1$

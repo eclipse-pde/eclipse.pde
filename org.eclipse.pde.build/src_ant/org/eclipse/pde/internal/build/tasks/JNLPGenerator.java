@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2017 IBM Corporation and others.
+ *  Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -156,16 +156,16 @@ public class JNLPGenerator extends DefaultHandler {
 
 		Map<String, File> validEntries = new HashMap<>();
 		File[] files = root.listFiles();
-		for (int i = 0; i < files.length; i++) {
-			String filename = files[i].getName();
+		for (File file : files) {
+			String filename = file.getName();
 			if (filename.endsWith(appendix)) {
-				validEntries.put(filename, files[i]);
+				validEntries.put(filename, file);
 			}
 		}
 		InputStream stream = null;
 		if (validEntries.size() > 0) {
-			for (int i = 0; i < potentials.length; i++) {
-				File file = validEntries.get(potentials[i]);
+			for (String potential : potentials) {
+				File file = validEntries.get(potential);
 				if (file != null) {
 					try {
 						stream = new BufferedInputStream(new FileInputStream(file));
@@ -207,8 +207,8 @@ public class JNLPGenerator extends DefaultHandler {
 		}
 		InputStream stream = null;
 		if (validEntries.size() > 0) {
-			for (int i = 0; i < potentials.length; i++) {
-				ZipEntry entry = validEntries.get(potentials[i]);
+			for (String potential : potentials) {
+				ZipEntry entry = validEntries.get(potential);
 				if (entry != null) {
 					try {
 						stream = featureArchive.getInputStream(entry);
@@ -477,8 +477,8 @@ public class JNLPGenerator extends DefaultHandler {
 	private boolean isValidEnvironment(String os, String ws, String arch) {
 		if (configs.length == 0)
 			return true;
-		for (int i = 0; i < configs.length; i++) {
-			if (isMatching(os, configs[i].getOs()) && isMatching(ws, configs[i].getWs()) && isMatching(arch, configs[i].getArch()))
+		for (Config config : configs) {
+			if (isMatching(os, config.getOs()) && isMatching(ws, config.getWs()) && isMatching(arch, config.getArch()))
 				return true;
 		}
 		return false;

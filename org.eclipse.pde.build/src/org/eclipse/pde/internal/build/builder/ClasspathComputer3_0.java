@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -178,8 +178,8 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			model.setUserObject(bundleProperties);
 		}
 		StringBuffer buffer = new StringBuffer();
-		for (Iterator<Long> iterator = requiredIds.iterator(); iterator.hasNext();) {
-			buffer.append(iterator.next().toString());
+		for (Long requiredId : requiredIds) {
+			buffer.append(requiredId.toString());
 			buffer.append(':');
 		}
 		bundleProperties.setProperty(PROPERTY_REQUIRED_BUNDLE_IDS, buffer.toString());
@@ -196,13 +196,13 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 	private void addVisiblePackagesFromState(StateHelper helper, BundleDescription model, Map<String, String> packages) {
 		ExportPackageDescription[] exports = helper.getVisiblePackages(model);
-		for (int i = 0; i < exports.length; i++) {
-			BundleDescription exporter = exports[i].getExporter();
+		for (ExportPackageDescription export : exports) {
+			BundleDescription exporter = export.getExporter();
 			if (exporter == null)
 				continue;
 
-			boolean discouraged = helper.getAccessCode(model, exports[i]) == StateHelper.ACCESS_DISCOURAGED;
-			String pattern = exports[i].getName().replaceAll("\\.", "/") + "/*"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			boolean discouraged = helper.getAccessCode(model, export) == StateHelper.ACCESS_DISCOURAGED;
+			String pattern = export.getName().replaceAll("\\.", "/") + "/*"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			String rule = (discouraged ? '~' : '+') + pattern;
 
 			String packagesKey = exporter.getSymbolicName() + "_" + exporter.getVersion(); //$NON-NLS-1$
@@ -253,9 +253,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		Properties modelProps = getBuildPropertiesFor(model);
 		if (modelProps != AbstractScriptGenerator.MissingProperties.getInstance())
 			ModelBuildScriptGenerator.specialDotProcessing(modelProps, libraries);
-		for (int i = 0; i < libraries.length; i++) {
-			addDevEntries(model, baseLocation, classpath, Utils.getArrayFromString(modelProps.getProperty(PROPERTY_OUTPUT_PREFIX + libraries[i])), modelProps);
-			addPathAndCheck(model, base, libraries[i], modelProps, classpath);
+		for (String element : libraries) {
+			addDevEntries(model, baseLocation, classpath, Utils.getArrayFromString(modelProps.getProperty(PROPERTY_OUTPUT_PREFIX + element)), modelProps);
+			addPathAndCheck(model, base, element, modelProps, classpath);
 		}
 	}
 
@@ -272,22 +272,22 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		if (fragments == null)
 			return;
 
-		for (int i = 0; i < fragments.length; i++) {
-			if (fragments[i] == generator.getModel())
+		for (BundleDescription fragment2 : fragments) {
+			if (fragment2 == generator.getModel())
 				continue;
-			if (matchFilter(fragments[i]) == false)
+			if (matchFilter(fragment2) == false)
 				continue;
 
-			requiredIds.add(Long.valueOf(fragments[i].getBundleId()));
+			requiredIds.add(Long.valueOf(fragment2.getBundleId()));
 
-			if (!afterPlugin && isPatchFragment(fragments[i])) {
-				addPluginLibrariesToFragmentLocations(plugin, fragments[i], classpath, baseLocation);
-				addRuntimeLibraries(fragments[i], classpath, baseLocation);
+			if (!afterPlugin && isPatchFragment(fragment2)) {
+				addPluginLibrariesToFragmentLocations(plugin, fragment2, classpath, baseLocation);
+				addRuntimeLibraries(fragment2, classpath, baseLocation);
 				continue;
 			}
-			if ((afterPlugin && !isPatchFragment(fragments[i])) || all) {
-				addRuntimeLibraries(fragments[i], classpath, baseLocation);
-				addPluginLibrariesToFragmentLocations(plugin, fragments[i], classpath, baseLocation);
+			if ((afterPlugin && !isPatchFragment(fragment2)) || all) {
+				addRuntimeLibraries(fragment2, classpath, baseLocation);
+				addPluginLibrariesToFragmentLocations(plugin, fragment2, classpath, baseLocation);
 				continue;
 			}
 		}
@@ -318,8 +318,8 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		String root = generator.getLocation(fragment);
 		IPath base = Utils.makeRelative(new Path(root), new Path(baseLocation));
 		Properties modelProps = getBuildPropertiesFor(fragment);
-		for (int i = 0; i < libraries.length; i++) {
-			addPathAndCheck(fragment, base, libraries[i], modelProps, classpath);
+		for (String element : libraries) {
+			addPathAndCheck(fragment, base, element, modelProps, classpath);
 		}
 	}
 
@@ -415,8 +415,8 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		HostSpecification host = model.getHost();
 		if (host != null) {
 			BundleDescription[] hosts = host.getHosts();
-			for (int i = 0; i < hosts.length; i++)
-				addPluginAndPrerequisites(hosts[i], classpath, location, pluginChain, addedPlugins);
+			for (BundleDescription host2 : hosts)
+				addPluginAndPrerequisites(host2, classpath, location, pluginChain, addedPlugins);
 		}
 
 		// Add the libraries
@@ -427,8 +427,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			// based on the order specified by the plugin.xml. Both library that we compile and .jar provided are processed
 			String[] libraries = getClasspathEntries(model);
 			if (libraries != null) {
-				for (int i = 0; i < libraries.length; i++) {
-					String libraryName = libraries[i];
+				for (String libraryName : libraries) {
 					if (jar.getName(false).equals(libraryName))
 						continue;
 
@@ -445,16 +444,15 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		} else {
 			// otherwise we add all the predecessor jars
 			String[] order = Utils.getArrayFromString(jarOrder);
-			for (int i = 0; i < order.length; i++) {
-				if (order[i].equals(jar.getName(false)))
+			for (String element : order) {
+				if (element.equals(jar.getName(false)))
 					break;
-				addDevEntries(model, location, classpath, Utils.getArrayFromString((String) modelProperties.get(PROPERTY_OUTPUT_PREFIX + order[i])), modelProperties);
-				addPathAndCheck(model, Path.EMPTY, order[i], modelProperties, classpath);
+				addDevEntries(model, location, classpath, Utils.getArrayFromString((String) modelProperties.get(PROPERTY_OUTPUT_PREFIX + element)), modelProperties);
+				addPathAndCheck(model, Path.EMPTY, element, modelProperties, classpath);
 			}
 			// Then we add all the "pure libraries" (the one that does not contain source)
 			String[] libraries = getClasspathEntries(model);
-			for (int i = 0; i < libraries.length; i++) {
-				String libraryName = libraries[i];
+			for (String libraryName : libraries) {
 				if (modelProperties.get(PROPERTY_SOURCE_PREFIX + libraryName) == null) {
 					//Potential pb: if the pure library is something that is being compiled (which is supposetly not the case, but who knows...)
 					//the user will get $basexx instead of $ws 
@@ -468,10 +466,10 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		if (extraClasspath != null) {
 			String[] extra = Utils.getArrayFromString(extraClasspath, ";,"); //$NON-NLS-1$
 
-			for (int i = 0; i < extra.length; i++) {
+			for (String element : extra) {
 				//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
 				//the user will get $basexx instead of $ws 
-				String[] toAdd = computeExtraPath(extra[i], classpath, location);
+				String[] toAdd = computeExtraPath(element, classpath, location);
 				if (toAdd != null && toAdd.length == 2)
 					addPathAndCheck(null, new Path(toAdd[0]), toAdd[1], modelProperties, classpath);
 			}
@@ -479,10 +477,10 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 		//	add extra classpath if it is specified for the given jar
 		String[] jarSpecificExtraClasspath = jar.getExtraClasspath();
-		for (int i = 0; i < jarSpecificExtraClasspath.length; i++) {
+		for (String element : jarSpecificExtraClasspath) {
 			//Potential pb: if the path refers to something that is being compiled (which is supposetly not the case, but who knows...)
 			//the user will get $basexx instead of $ws 
-			String[] toAdd = computeExtraPath(jarSpecificExtraClasspath[i], classpath, location);
+			String[] toAdd = computeExtraPath(element, classpath, location);
 			if (toAdd != null && toAdd.length == 2)
 				addPathAndCheck(null, new Path(toAdd[0]), toAdd[1], modelProperties, classpath);
 		}
@@ -559,8 +557,8 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			}
 			// else exception
 			String cycleString = ""; //$NON-NLS-1$
-			for (Iterator<BundleDescription> iter = pluginChain.iterator(); iter.hasNext();)
-				cycleString += iter.next().toString() + ", "; //$NON-NLS-1$
+			for (BundleDescription bundleDescription : pluginChain)
+				cycleString += bundleDescription.toString() + ", "; //$NON-NLS-1$
 			cycleString += target.toString();
 			String message = NLS.bind(Messages.error_pluginCycle, cycleString);
 			throw new CoreException(new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_CLASSPATH_CYCLE, message, null));
@@ -572,8 +570,8 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		// as all required plugins may be required for compilation.
 		BundleDescription[] requires = PDEState.getDependentBundles(target);
 		pluginChain.add(target);
-		for (int i = 0; i < requires.length; i++) {
-			addPluginAndPrerequisites(requires[i], classpath, baseLocation, pluginChain, addedPlugins);
+		for (BundleDescription require : requires) {
+			addPluginAndPrerequisites(require, classpath, baseLocation, pluginChain, addedPlugins);
 		}
 		pluginChain.remove(target);
 		addedPlugins.add(target);
@@ -583,8 +581,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	private boolean isAllowableCycle(BundleDescription target, List<BundleDescription> pluginChain) {
 		boolean haveNonBinary = false;
 		boolean inCycle = false;
-		for (Iterator<BundleDescription> iterator = pluginChain.iterator(); iterator.hasNext();) {
-			BundleDescription bundle = iterator.next();
+		for (BundleDescription bundle : pluginChain) {
 			if (bundle == target) {
 				inCycle = true;
 				haveNonBinary = !Utils.isBinary(bundle);
@@ -681,8 +678,8 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			entries = generator.devEntries.getDevClassPath(model.getSymbolicName());
 
 		IPath root = Utils.makeRelative(new Path(generator.getLocation(model)), new Path(baseLocation));
-		for (int i = 0; i < entries.length; i++) {
-			addPathAndCheck(model, root, entries[i], modelProperties, classpath);
+		for (String entry : entries) {
+			addPathAndCheck(model, root, entry, modelProperties, classpath);
 		}
 	}
 

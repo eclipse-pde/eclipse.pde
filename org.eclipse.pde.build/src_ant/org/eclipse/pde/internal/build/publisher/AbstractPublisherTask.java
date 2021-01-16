@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -116,15 +116,15 @@ public abstract class AbstractPublisherTask extends Task {
 		}
 
 		buildProperties = new Properties();
-		for (Iterator<Object> iterator = properties.keySet().iterator(); iterator.hasNext();) {
-			String key = (String) iterator.next();
+		for (Object object : properties.keySet()) {
+			String key = (String) object;
 			String value = properties.getProperty(key);
 			buildProperties.put(key, getProject().replaceProperties(value));
 		}
 
 		if (overrideProperties != null) {
-			for (Iterator<Object> iterator = overrideProperties.keySet().iterator(); iterator.hasNext();) {
-				String key = (String) iterator.next();
+			for (Object object : overrideProperties.keySet()) {
+				String key = (String) object;
 				String value = overrideProperties.getProperty(key);
 				buildProperties.put(key, getProject().replaceProperties(value));
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -133,8 +133,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 	public void generateRetrieveFilesCall(final Map<String, Object> entryInfos, IPath destination, final String[] files, IAntScript script) {
 		generateAuthentificationAntTask(entryInfos, script);
 		String path = (String) entryInfos.get(KEY_PATH);
-		for (int i = 0; i < files.length; i++) {
-			String file = files[i];
+		for (String file : files) {
 			IPath filePath;
 			if (path != null) {
 				filePath = new Path(path).append(file);
@@ -180,8 +179,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 
 		// build up the table of arguments in the map file entry
 		Map<String, String> table = new HashMap<>();
-		for (int i = 0; i < arguments.length; i++) {
-			String arg = arguments[i];
+		for (String arg : arguments) {
 			// if we have at least one arg without an equals sign, then
 			// revert back to the legacy parsing
 			int index = arg.indexOf('=');

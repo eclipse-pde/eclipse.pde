@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -117,8 +117,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		Set<BundleDescription> computedElements = new LinkedHashSet<>(5);
 		Properties featureProperties = getBuildProperties(feature);
 		FeatureEntry[] pluginList = feature.getPluginEntries();
-		for (int i = 0; i < pluginList.length; i++) {
-			FeatureEntry entry = pluginList[i];
+		for (FeatureEntry entry : pluginList) {
 			BundleDescription model;
 			if (selectConfigs(entry).size() == 0)
 				continue;
@@ -152,7 +151,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			associateModelAndEntry(model, entry);
 
 			computedElements.add(model);
-			collectElementToAssemble(pluginList[i]);
+			collectElementToAssemble(entry);
 		}
 		return computedElements;
 	}
@@ -251,9 +250,9 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 
 	protected void generateIncludedFeatureBuildFile(BuildTimeFeature feature) throws CoreException {
 		FeatureEntry[] referencedFeatures = feature.getIncludedFeatureReferences();
-		for (int i = 0; i < referencedFeatures.length; i++) {
-			String featureId = referencedFeatures[i].getId();
-			String featureVersion = referencedFeatures[i].getVersion();
+		for (FeatureEntry referencedFeature : referencedFeatures) {
+			String featureId = referencedFeature.getId();
+			String featureVersion = referencedFeature.getVersion();
 
 			BuildTimeFeature nestedFeature = null;
 			Properties featureProperties = getBuildProperties(feature);
@@ -268,7 +267,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 				nestedFeature = getSite(false).findFeature(featureId, featureVersion, true);
 				generate(nestedFeature, false);
 			} catch (CoreException exception) {
-				absorbExceptionIfOptionalFeature(referencedFeatures[i], exception);
+				absorbExceptionIfOptionalFeature(referencedFeature, exception);
 			}
 		}
 	}
@@ -392,8 +391,8 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 
 		// Loop through the included features, adding the version number parts
 		// to the running totals and storing the qualifier suffixes.
-		for (int i = 0; i < referencedFeatures.length; i++) {
-			BuildTimeFeature refFeature = getSite(false).findFeature(referencedFeatures[i].getId(), null, false);
+		for (FeatureEntry referencedFeature : referencedFeatures) {
+			BuildTimeFeature refFeature = getSite(false).findFeature(referencedFeature.getId(), null, false);
 			if (refFeature == null) {
 				qualifiers[++idx] = ""; //$NON-NLS-1$
 				continue;
@@ -425,9 +424,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		// Loop through the included plug-ins and fragments, adding the version
 		// number parts to the running totals and storing the qualifiers.
 
-		for (int i = 0; i < pluginList.length; i++) {
-			FeatureEntry entry = pluginList[i];
-
+		for (FeatureEntry entry : pluginList) {
 			String versionRequested = entry.getVersion();
 			BundleDescription model = getSite(false).getRegistry().getBundle(entry.getId(), versionRequested, false);
 			Version version = null;
@@ -517,8 +514,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			return;
 
 		Set<BundleDescription> generatedScripts = new HashSet<>(models.size());
-		for (Iterator<BundleDescription> iterator = models.iterator(); iterator.hasNext();) {
-			BundleDescription model = iterator.next();
+		for (BundleDescription model : models) {
 			if (generatedScripts.contains(model))
 				continue;
 			generatedScripts.add(model);
@@ -619,8 +615,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		List<Config> correctConfigs = selectConfigs(featureToCollect);
 		// Here, we could sort if the feature is a common one or not by
 		// comparing the size of correctConfigs
-		for (Iterator<Config> iter = correctConfigs.iterator(); iter.hasNext();) {
-			Config config = iter.next();
+		for (Config config : correctConfigs) {
 			assemblyData.addFeature(config, featureToCollect);
 		}
 	}
@@ -700,8 +695,8 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		String versionRequested = entryToCollect.getVersion();
 		BundleDescription effectivePlugin = null;
 		effectivePlugin = getSite(false).getRegistry().getResolvedBundle(entryToCollect.getId(), versionRequested);
-		for (Iterator<Config> iter = correctConfigs.iterator(); iter.hasNext();) {
-			assemblyData.addPlugin(iter.next(), effectivePlugin);
+		for (Config correctConfig : correctConfigs) {
+			assemblyData.addPlugin(correctConfig, effectivePlugin);
 		}
 	}
 

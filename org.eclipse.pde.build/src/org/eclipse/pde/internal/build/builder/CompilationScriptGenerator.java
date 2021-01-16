@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which accompanies this distribution,
@@ -96,8 +96,7 @@ public class CompilationScriptGenerator extends AbstractScriptGenerator {
 			script.printParallel(threadCount, threadsPerProcessor);
 		}
 
-		for (Iterator<BundleDescription> iterator = sortedPlugins.iterator(); iterator.hasNext();) {
-			BundleDescription bundle = iterator.next();
+		for (BundleDescription bundle : sortedPlugins) {
 			// Individual source bundles have empty build.jars targets, skip them
 			if (Utils.isSourceBundle(bundle))
 				continue;
@@ -125,9 +124,9 @@ public class CompilationScriptGenerator extends AbstractScriptGenerator {
 			String required = properties.getProperty(PROPERTY_REQUIRED_BUNDLE_IDS);
 			if (required != null) {
 				String[] ids = Utils.getArrayFromString(required, ":"); //$NON-NLS-1$
-				for (int i = 0; i < ids.length; i++) {
+				for (String id2 : ids) {
 					try {
-						if (bucket.contains(Long.valueOf(ids[i]))) {
+						if (bucket.contains(Long.valueOf(id2))) {
 							return true;
 						}
 					} catch (NumberFormatException e) {

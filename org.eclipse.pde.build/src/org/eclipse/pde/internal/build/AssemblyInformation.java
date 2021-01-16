@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -28,8 +28,8 @@ public class AssemblyInformation implements IPDEBuildConstants {
 
 	public AssemblyInformation() {
 		// Initialize the content of the assembly information with the configurations 
-		for (Iterator<Config> iter = AbstractScriptGenerator.getConfigInfos().iterator(); iter.hasNext();) {
-			assembleInformation.put(iter.next(), new AssemblyLevelConfigInfo());
+		for (Config config : AbstractScriptGenerator.getConfigInfos()) {
+			assembleInformation.put(config, new AssemblyLevelConfigInfo());
 		}
 	}
 
@@ -73,8 +73,8 @@ public class AssemblyInformation implements IPDEBuildConstants {
 	public Set<BundleDescription> getAllPlugins() {
 		Collection<AssemblyLevelConfigInfo> pluginsByConfig = assembleInformation.values();
 		Set<BundleDescription> result = new LinkedHashSet<>();
-		for (Iterator<AssemblyLevelConfigInfo> iter = pluginsByConfig.iterator(); iter.hasNext();) {
-			Collection<BundleDescription> allPlugins = iter.next().getPlugins();
+		for (AssemblyLevelConfigInfo assemblyLevelConfigInfo : pluginsByConfig) {
+			Collection<BundleDescription> allPlugins = assemblyLevelConfigInfo.getPlugins();
 			result.addAll(allPlugins);
 		}
 		return result;
@@ -83,8 +83,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 	public Collection<BundleDescription> getBinaryPlugins(Config config) {
 		Collection<BundleDescription> allPlugins = getPlugins(config);
 		Set<BundleDescription> result = new LinkedHashSet<>(allPlugins.size());
-		for (Iterator<BundleDescription> iter = allPlugins.iterator(); iter.hasNext();) {
-			BundleDescription bundle = iter.next();
+		for (BundleDescription bundle : allPlugins) {
 			Properties bundleProperties = ((Properties) bundle.getUserObject());
 			if (bundleProperties == null || bundleProperties.get(IS_COMPILED) == null || Boolean.FALSE == bundleProperties.get(IS_COMPILED))
 				result.add(bundle);
@@ -95,8 +94,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 	public Collection<BundleDescription> getCompiledPlugins(Config config) {
 		Collection<BundleDescription> allPlugins = getPlugins(config);
 		Set<BundleDescription> result = new LinkedHashSet<>(allPlugins.size());
-		for (Iterator<BundleDescription> iter = allPlugins.iterator(); iter.hasNext();) {
-			BundleDescription bundle = iter.next();
+		for (BundleDescription bundle : allPlugins) {
 			Properties bundleProperties = ((Properties) bundle.getUserObject());
 			if (bundleProperties != null && Boolean.TRUE == bundleProperties.get(IS_COMPILED))
 				result.add(bundle);
@@ -107,10 +105,9 @@ public class AssemblyInformation implements IPDEBuildConstants {
 	public Set<BundleDescription> getAllCompiledPlugins() {
 		Collection<AssemblyLevelConfigInfo> pluginsByConfig = assembleInformation.values();
 		Set<BundleDescription> result = new LinkedHashSet<>();
-		for (Iterator<AssemblyLevelConfigInfo> iter2 = pluginsByConfig.iterator(); iter2.hasNext();) {
-			Collection<BundleDescription> allPlugins = iter2.next().getPlugins();
-			for (Iterator<BundleDescription> iter = allPlugins.iterator(); iter.hasNext();) {
-				BundleDescription bundle = iter.next();
+		for (AssemblyLevelConfigInfo assemblyLevelConfigInfo : pluginsByConfig) {
+			Collection<BundleDescription> allPlugins = assemblyLevelConfigInfo.getPlugins();
+			for (BundleDescription bundle : allPlugins) {
 				if (!Utils.isBinary(bundle)) {
 					result.add(bundle);
 				}
@@ -122,8 +119,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 	public Collection<BuildTimeFeature> getCompiledFeatures(Config config) {
 		Collection<BuildTimeFeature> allFeatures = getFeatures(config);
 		ArrayList<BuildTimeFeature> result = new ArrayList<>(allFeatures.size());
-		for (Iterator<BuildTimeFeature> iter = allFeatures.iterator(); iter.hasNext();) {
-			BuildTimeFeature tmp = iter.next();
+		for (BuildTimeFeature tmp : allFeatures) {
 			if (!tmp.isBinary())
 				result.add(tmp);
 		}
@@ -133,8 +129,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 	public Collection<BuildTimeFeature> getBinaryFeatures(Config config) {
 		Collection<BuildTimeFeature> allFeatures = getFeatures(config);
 		ArrayList<BuildTimeFeature> result = new ArrayList<>(allFeatures.size());
-		for (Iterator<BuildTimeFeature> iter = allFeatures.iterator(); iter.hasNext();) {
-			BuildTimeFeature tmp = iter.next();
+		for (BuildTimeFeature tmp : allFeatures) {
 			if (tmp.isBinary())
 				result.add(tmp);
 		}
@@ -175,8 +170,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		public void addRootFileProvider(BuildTimeFeature feature) {
 			if (rootFileProviders.contains(feature))
 				return;
-			for (Iterator<BuildTimeFeature> iter = rootFileProviders.iterator(); iter.hasNext();) {
-				BuildTimeFeature featureDescriptor = iter.next();
+			for (BuildTimeFeature featureDescriptor : rootFileProviders) {
 				if (feature == featureDescriptor)
 					return;
 				if (feature.getId().equals(featureDescriptor.getId()) && feature.getVersion().equals(featureDescriptor.getVersion()))
@@ -202,8 +196,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		}
 
 		public void addFeature(BuildTimeFeature feature) {
-			for (Iterator<BuildTimeFeature> iter = features.iterator(); iter.hasNext();) {
-				BuildTimeFeature featureDescriptor = iter.next();
+			for (BuildTimeFeature featureDescriptor : features) {
 				if (feature.getId().equals(featureDescriptor.getId()) && (feature).getVersion().equals(featureDescriptor.getVersion()))
 					return;
 			}
@@ -215,8 +208,7 @@ public class AssemblyInformation implements IPDEBuildConstants {
 		}
 
 		public void removeFeature(BuildTimeFeature feature) {
-			for (Iterator<BuildTimeFeature> iter = features.iterator(); iter.hasNext();) {
-				BuildTimeFeature featureDescriptor = iter.next();
+			for (BuildTimeFeature featureDescriptor : features) {
 				if (feature.getId().equals(featureDescriptor.getId()) && feature.getVersion().equals(featureDescriptor.getVersion())) {
 					features.remove(featureDescriptor);
 					return;

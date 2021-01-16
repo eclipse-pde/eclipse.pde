@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -140,10 +140,10 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	protected void sortElements(List<String> features, List<String> plugins) {
 		if (elements == null)
 			return;
-		for (int i = 0; i < elements.length; i++) {
-			int index = elements[i].indexOf('@');
-			String type = elements[i].substring(0, index);
-			String element = elements[i].substring(index + 1);
+		for (String element2 : elements) {
+			int index = element2.indexOf('@');
+			String type = element2.substring(0, index);
+			String element = element2.substring(index + 1);
 			if (type.equals(PLUGIN) || type.equals(FRAGMENT))
 				plugins.add(element);
 			else if (type.equals(FEATURE))
@@ -159,12 +159,12 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	protected void generateModels(List<String> models) throws CoreException {
 		ModelBuildScriptGenerator generator = null;
 		try {
-			for (Iterator<String> iterator = models.iterator(); iterator.hasNext();) {
+			for (String model : models) {
 				generator = new ModelBuildScriptGenerator();
 				generator.setReportResolutionErrors(reportResolutionErrors);
 				generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
 				//Filtering is not required here, since we are only generating the build for a plugin or a fragment
-				String[] modelInfo = getNameAndVersion(iterator.next());
+				String[] modelInfo = getNameAndVersion(model);
 				generator.setBuildSiteFactory(siteFactory);
 				generator.setModelId(modelInfo[0], modelInfo[1]);
 				generator.setFeatureGenerator(new BuildDirector());
@@ -176,13 +176,13 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 				generator.generate();
 			}
 			if (bundlesToBuild != null)
-				for (int i = 0; i < bundlesToBuild.length; i++) {
+				for (BundleDescription element : bundlesToBuild) {
 					generator = new ModelBuildScriptGenerator();
 					generator.setReportResolutionErrors(reportResolutionErrors);
 					generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
 					//Filtering is not required here, since we are only generating the build for a plugin or a fragment
 					generator.setBuildSiteFactory(siteFactory);
-					generator.setModel(bundlesToBuild[i]);
+					generator.setModel(element);
 					generator.setFeatureGenerator(new BuildDirector());
 					generator.setPluginPath(pluginPath);
 					generator.setDevEntries(devEntries);
@@ -247,8 +247,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		if (generator != null) {
 			try {
 				String[] featureInfo = null;
-				for (Iterator<String> i = features.iterator(); i.hasNext();) {
-					featureInfo = getNameAndVersion(i.next());
+				for (String feature2 : features) {
+					featureInfo = getNameAndVersion(feature2);
 					BuildTimeFeature feature = getSite(false).findFeature(featureInfo[0], featureInfo[1], true);
 					generator.generate(feature);
 				}
@@ -298,8 +298,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		if (sourceBundleFeatureId == null)
 			sourceBundleFeatureId = sourceBundleTemplateFeature + ".source"; //$NON-NLS-1$
 
-		for (Iterator<? extends Object> iterator = allBundles.iterator(); iterator.hasNext();) {
-			BundleDescription bundle = (BundleDescription) iterator.next();
+		for (Object bundle2 : allBundles) {
+			BundleDescription bundle = (BundleDescription) bundle2;
 			if (!Utils.isSourceBundle(bundle))
 				feature.addEntry(new FeatureEntry(bundle.getSymbolicName(), bundle.getVersion().toString(), true));
 		}
@@ -324,8 +324,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 		//For each configuration, save the version of all the features in a file 
 		//and save the version of all the plug-ins in another file
-		for (Iterator<Config> iter = configs.iterator(); iter.hasNext();) {
-			Config config = iter.next();
+		for (Config config : configs) {
 			String configString = config.toStringReplacingAny("_", ANY_STRING); //$NON-NLS-1$
 
 			//Features
@@ -334,8 +333,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			features.addAll(featureList);
 			String featureFile = DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + '.' + configString + PROPERTIES_FILE_SUFFIX;
 			readVersions(versions, featureFile);
-			for (Iterator<BuildTimeFeature> i = featureList.iterator(); i.hasNext();) {
-				BuildTimeFeature feature = i.next();
+			for (BuildTimeFeature feature : featureList) {
 				recordVersion(feature.getId(), new Version(feature.getVersion()), versions);
 			}
 			saveVersions(versions, featureFile);
@@ -346,8 +344,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			plugins.addAll(bundleList);
 			String pluginFile = DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + '.' + configString + PROPERTIES_FILE_SUFFIX;
 			readVersions(versions, pluginFile);
-			for (Iterator<BundleDescription> i = bundleList.iterator(); i.hasNext();) {
-				BundleDescription bundle = i.next();
+			for (BundleDescription bundle : bundleList) {
 				recordVersion(bundle.getSymbolicName(), bundle.getVersion(), versions);
 			}
 			saveVersions(versions, pluginFile);
@@ -357,8 +354,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		versions.clear();
 		String featureFile = DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX;
 		readVersions(versions, featureFile);
-		for (Iterator<BuildTimeFeature> i = features.iterator(); i.hasNext();) {
-			BuildTimeFeature feature = i.next();
+		for (BuildTimeFeature feature : features) {
 			recordVersion(feature.getId(), new Version(feature.getVersion()), versions);
 		}
 		saveVersions(versions, featureFile);
@@ -367,8 +363,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		versions.clear();
 		String pluginVersion = DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX;
 		readVersions(versions, pluginVersion);
-		for (Iterator<BundleDescription> i = plugins.iterator(); i.hasNext();) {
-			BundleDescription bundle = i.next();
+		for (BundleDescription bundle : plugins) {
 			recordVersion(bundle.getSymbolicName(), bundle.getVersion(), versions);
 		}
 		saveVersions(versions, pluginVersion);
@@ -603,10 +598,10 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 		archivesFormat = new ArchiveTable(getConfigInfos().size() + 1);
 		String[] configs = Utils.getArrayFromStringWithBlank(formatString, "&"); //$NON-NLS-1$
-		for (int i = 0; i < configs.length; i++) {
-			String[] configElements = Utils.getArrayFromStringWithBlank(configs[i], ","); //$NON-NLS-1$
+		for (String config : configs) {
+			String[] configElements = Utils.getArrayFromStringWithBlank(config, ","); //$NON-NLS-1$
 			if (configElements.length != 3) {
-				IStatus error = new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_CONFIG_FORMAT, NLS.bind(Messages.error_configWrongFormat, configs[i]), null);
+				IStatus error = new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_CONFIG_FORMAT, NLS.bind(Messages.error_configWrongFormat, config), null);
 				throw new CoreException(error);
 			}
 			String[] archAndFormat = Utils.getArrayFromStringWithBlank(configElements[2], "-"); //$NON-NLS-1$

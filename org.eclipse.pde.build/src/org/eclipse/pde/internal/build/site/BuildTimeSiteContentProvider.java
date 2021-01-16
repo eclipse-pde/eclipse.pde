@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -59,22 +59,22 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 	//For every entry, return all the children of this entry is it is named plugins, otherwise return the entry itself  
 	private Collection<File> findPluginXML(File[] location) {
 		Collection<File> collectedElements = new ArrayList<>(10);
-		for (int i = 0; i < location.length; i++) {
-			File f = new File(location[i], DEFAULT_PLUGIN_LOCATION);
+		for (File element : location) {
+			File f = new File(element, DEFAULT_PLUGIN_LOCATION);
 			if (f.exists()) {
 				//location was the root of an eclipse install, list everything from the plugins directory
 				collectedElements.addAll(Arrays.asList(f.listFiles()));
-			} else if (new File(location[i], JarFile.MANIFEST_NAME).exists() || new File(location[i], Constants.PLUGIN_FILENAME_DESCRIPTOR).exists() || new File(location[i], Constants.FRAGMENT_FILENAME_DESCRIPTOR).exists()) {
-				collectedElements.add(location[i]);
-			} else if (location[i].isDirectory()) {
+			} else if (new File(element, JarFile.MANIFEST_NAME).exists() || new File(element, Constants.PLUGIN_FILENAME_DESCRIPTOR).exists() || new File(element, Constants.FRAGMENT_FILENAME_DESCRIPTOR).exists()) {
+				collectedElements.add(element);
+			} else if (element.isDirectory()) {
 				//at this point Manifest, plugin.xml, feature.xml and fragment.xml don't exist here
 				//consider a project with "flexible root"
-				if (new File(location[i], PDE_CORE_PREFS).exists()) {
+				if (new File(element, PDE_CORE_PREFS).exists()) {
 					try {
-						Properties properties = AbstractScriptGenerator.readProperties(location[i].getAbsolutePath(), PDE_CORE_PREFS, IStatus.OK);
+						Properties properties = AbstractScriptGenerator.readProperties(element.getAbsolutePath(), PDE_CORE_PREFS, IStatus.OK);
 						String root = properties.getProperty(BUNDLE_ROOT_PATH);
 						if (root != null) {
-							File actualRoot = new File(location[i], root);
+							File actualRoot = new File(element, root);
 							if (actualRoot.exists())
 								collectedElements.add(actualRoot);
 						}
@@ -83,10 +83,10 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 					}
 				} else {
 					//a "workspace"
-					collectedElements.addAll(Arrays.asList(location[i].listFiles()));
+					collectedElements.addAll(Arrays.asList(element.listFiles()));
 				}
-			} else if (location[i].isFile() && location[i].getName().endsWith(".jar")) {//$NON-NLS-1$
-				collectedElements.add(location[i]);
+			} else if (element.isFile() && element.getName().endsWith(".jar")) {//$NON-NLS-1$
+				collectedElements.add(element);
 			}
 		}
 		return collectedElements;

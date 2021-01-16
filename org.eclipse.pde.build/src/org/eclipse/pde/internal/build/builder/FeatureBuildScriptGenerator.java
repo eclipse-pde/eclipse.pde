@@ -107,8 +107,8 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 			}
 			/* need to do root files here because we won't be doing the gatherBinParts where it normally happens */
 			List<Config> configs = getConfigInfos();
-			for (Iterator<Config> iter = configs.iterator(); iter.hasNext();) {
-				director.getAssemblyData().addRootFileProvider(iter.next(), feature);
+			for (Config config : configs) {
+				director.getAssemblyData().addRootFileProvider(config, feature);
 			}
 
 			//Feature had a custom build script, we need to update the version in it.
@@ -204,8 +204,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	private void generateBuildZipsTarget() throws CoreException {
 		StringBuffer zips = new StringBuffer();
 		Properties props = getBuildProperties();
-		for (Iterator<Entry<Object, Object>> iterator = props.entrySet().iterator(); iterator.hasNext();) {
-			Map.Entry<Object, Object> entry = iterator.next();
+		for (Entry<Object, Object> entry : props.entrySet()) {
 			String key = (String) entry.getKey();
 			if (key.startsWith(PROPERTY_SOURCE_PREFIX) && key.endsWith(PROPERTY_ZIP_SUFFIX)) {
 				String zipName = key.substring(PROPERTY_SOURCE_PREFIX.length());
@@ -295,8 +294,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		Properties properties = getBuildProperties();
 		Map<String, Map<String, String>> root = Utils.processRootProperties(properties, true);
 		Map<String, String> common = root.get(Utils.ROOT_COMMON);
-		for (Iterator<Config> iter = getConfigInfos().iterator(); iter.hasNext();) {
-			Config aConfig = iter.next();
+		for (Config aConfig : getConfigInfos()) {
 			String configKey = aConfig.toString("."); //$NON-NLS-1$
 			if (root.containsKey(configKey) || common.size() > 0)
 				director.getAssemblyData().addRootFileProvider(aConfig, feature);
@@ -484,16 +482,14 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetEnd();
 		script.println();
 
-		for (Iterator<Config> iter = getConfigInfos().iterator(); iter.hasNext();) {
-			Config aConfig = iter.next();
+		for (Config aConfig : getConfigInfos()) {
 			script.printTargetDeclaration(TARGET_ROOTFILES_PREFIX + aConfig.toString("_"), null, null, null, null); //$NON-NLS-1$
 			generateCopyRootFiles(aConfig);
 			Utils.generatePermissions(getBuildProperties(), aConfig, PROPERTY_FEATURE_BASE, script);
 			script.printTargetEnd();
 		}
 		script.printTargetDeclaration(TARGET_ROOTFILES_PREFIX + "group_group_group", null, null, null, null); //$NON-NLS-1$
-		for (Iterator<Config> iter = getConfigInfos().iterator(); iter.hasNext();) {
-			Config aConfig = iter.next();
+		for (Config aConfig : getConfigInfos()) {
 			script.printAntCallTask(TARGET_ROOTFILES_PREFIX + aConfig.toString("_"), true, null);//.getPropertyFormat(PROPERTY_OS) + '_' + Utils.getPropertyFormat(PROPERTY_WS) + '_' + Utils.getPropertyFormat(PROPERTY_ARCH)) //$NON-NLS-1$
 		}
 		script.printTargetEnd();
@@ -515,8 +511,8 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 
 		Object[] folders = foldersToCopy.keySet().toArray();
 		String fileList = null;
-		for (int i = 0; i < folders.length; i++) {
-			String folder = (String) folders[i];
+		for (Object folder2 : folders) {
+			String folder = (String) folder2;
 			if (folder.equals(Utils.ROOT_LINK) || folder.startsWith(Utils.ROOT_PERMISSIONS))
 				continue;
 			fileList = foldersToCopy.get(folder);
@@ -642,8 +638,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.println();
 		script.printTargetDeclaration(TARGET_ALL_PLUGINS, TARGET_INIT, null, null, null);
 		Set<BundleDescription> writtenCalls = new HashSet<>(sortedPlugins.size());
-		for (Iterator<BundleDescription> iter = sortedPlugins.iterator(); iter.hasNext();) {
-			BundleDescription current = iter.next();
+		for (BundleDescription current : sortedPlugins) {
 			//If it is not a compiled element, then we don't generate a call
 			Properties bundleProperties = (Properties) current.getUserObject();
 			if (bundleProperties == null || bundleProperties.get(IS_COMPILED) == null || bundleProperties.get(IS_COMPILED) == Boolean.FALSE)
@@ -653,8 +648,8 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 				continue;
 			writtenCalls.add(current);
 			FeatureEntry[] entries = Utils.getPluginEntry(feature, current.getSymbolicName(), false); //TODO This can be improved to use the value from the user object in the bundleDescription
-			for (int j = 0; j < entries.length; j++) {
-				List<Config> list = director.selectConfigs(entries[j]);
+			for (FeatureEntry entry : entries) {
+				List<Config> list = director.selectConfigs(entry);
 				if (list.size() == 0)
 					continue;
 				Map<String, String> params = null;
@@ -676,8 +671,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	protected Set<BundleDescription> computeElements() throws CoreException {
 		Set<BundleDescription> computedElements = new LinkedHashSet<>(5);
 		FeatureEntry[] pluginList = feature.getPluginEntries();
-		for (int i = 0; i < pluginList.length; i++) {
-			FeatureEntry entry = pluginList[i];
+		for (FeatureEntry entry : pluginList) {
 			BundleDescription model;
 			if (director.selectConfigs(entry).size() == 0)
 				continue;
@@ -698,12 +692,12 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetDeclaration(TARGET_ALL_FEATURES, TARGET_INIT, null, null, null);
 		//if (analyseIncludedFeatures) {
 		FeatureEntry[] features = feature.getIncludedFeatureReferences();
-		for (int i = 0; i < features.length; i++) {
-			String featureId = features[i].getId();
-			String versionId = features[i].getVersion();
+		for (FeatureEntry feature2 : features) {
+			String featureId = feature2.getId();
+			String versionId = feature2.getVersion();
 			BuildTimeFeature includedFeature = getSite(false).findFeature(featureId, versionId, false);
 			if (includedFeature == null) {
-				if (features[i].isOptional())
+				if (feature2.isOptional())
 					continue;
 				String message = NLS.bind(Messages.exception_missingFeature, featureId + ' ' + versionId);
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));

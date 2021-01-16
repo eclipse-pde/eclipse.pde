@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -255,9 +255,8 @@ public class LicenseReplaceTask extends Task {
 
 		private int scan(StringBuffer buf, int start, String[] targets, boolean wholeWord) {
 			for (int i = start; i < buf.length(); i++) {
-				for (int j = 0; j < targets.length; j++) {
-					if (i < buf.length() - targets[j].length()) {
-						String candidate = targets[j];
+				for (String candidate : targets) {
+					if (i < buf.length() - candidate.length()) {
 						String match = buf.substring(i, i + candidate.length());
 						if (candidate.equalsIgnoreCase(match)) {
 							if (!wholeWord || Character.isWhitespace(buf.charAt(i + candidate.length())))
@@ -317,9 +316,7 @@ public class LicenseReplaceTask extends Task {
 
 		String[] propertyFiles = fileSet.getDirectoryScanner().getIncludedFiles();
 
-		for (int i = 0; i < propertyFiles.length; i++) {
-			String propertyFile = propertyFiles[i];
-
+		for (String propertyFile : propertyFiles) {
 			File featurePropertyFile = new File(filePath, propertyFile);
 			File licensePropertyFile = new File(licensePath, propertyFile);
 			FileInputStream fis = null;

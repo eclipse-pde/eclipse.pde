@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -53,8 +53,8 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 			readDirectory();
 			try (PrintWriter output = new PrintWriter(new BufferedOutputStream(new FileOutputStream(destination)))) {
 				List<String> entries = new ArrayList<>(20);
-				for (int i = 0; i < elements.length; i++)
-					collectEntries(entries, elements[i]);
+				for (String element : elements)
+					collectEntries(entries, element);
 				generatePrologue(output);
 				generateEntries(output, entries);
 			}
@@ -129,8 +129,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	 */
 	protected void generateEntries(PrintWriter output, List<String> entries) {
 		Collections.sort(entries);
-		for (Iterator<String> iterator = entries.iterator(); iterator.hasNext();) {
-			String entry = iterator.next();
+		for (String entry : entries) {
 			output.println(entry);
 		}
 	}
@@ -170,9 +169,9 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	 */
 	protected void collectChildrenEntries(List<String> entries, BuildTimeFeature feature) throws CoreException {
 		FeatureEntry[] pluginEntries = feature.getPluginEntries();
-		for (int i = 0; i < pluginEntries.length; i++) {
-			String elementId = pluginEntries[i].getId();
-			if (pluginEntries[i].isFragment())
+		for (FeatureEntry pluginEntry : pluginEntries) {
+			String elementId = pluginEntry.getId();
+			if (pluginEntry.isFragment())
 				collectEntries(entries, "fragment@" + elementId); //$NON-NLS-1$
 			else
 				collectEntries(entries, "plugin@" + elementId); //$NON-NLS-1$

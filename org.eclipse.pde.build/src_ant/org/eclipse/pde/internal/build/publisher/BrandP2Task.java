@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2021 IBM Corporation and others.
  *
  * This
  * program and the accompanying materials are made available under the terms of
@@ -222,8 +222,8 @@ public class BrandP2Task extends Repo2RunnableTask {
 		newIUDescription.setFilter(originalIU.getFilter());
 
 		List<ITouchpointData> data = brandTouchpointData(originalIU.getTouchpointData());
-		for (int i = 0; i < data.size(); i++) {
-			newIUDescription.addTouchpointData(data.get(i));
+		for (ITouchpointData element : data) {
+			newIUDescription.addTouchpointData(element);
 		}
 
 		IArtifactKey key = artifactRepo.createArtifactKey(PublisherHelper.BINARY_ARTIFACT_CLASSIFIER, newIUDescription.getId(), newIUDescription.getVersion());
@@ -289,8 +289,8 @@ public class BrandP2Task extends Repo2RunnableTask {
 			Map<String, ITouchpointInstruction> instructions = new HashMap<>(td.getInstructions());
 
 			String[] phases = new String[] {INSTALL, CONFIGURE};
-			for (int phase = 0; phase < phases.length; phase++) {
-				ITouchpointInstruction instruction = td.getInstruction(phases[phase]);
+			for (String element : phases) {
+				ITouchpointInstruction instruction = td.getInstruction(element);
 				if (instruction == null)
 					continue;
 
@@ -319,7 +319,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 				}
 				if (phaseChanged) {
 					TouchpointInstruction newInstruction = new TouchpointInstruction(toString(actions, ";"), instruction.getImportAttribute()); //$NON-NLS-1$
-					instructions.put(phases[phase], newInstruction);
+					instructions.put(element, newInstruction);
 				}
 			}
 
@@ -387,9 +387,9 @@ public class BrandP2Task extends Repo2RunnableTask {
 		int close = action.lastIndexOf(')');
 		String parameterString = action.substring(open + 1, close);
 		String[] parameters = Utils.getArrayFromString(parameterString, ","); //$NON-NLS-1$
-		for (int i = 0; i < parameters.length; i++) {
-			int colon = parameters[i].indexOf(':');
-			result.put(parameters[i].substring(0, colon).trim(), parameters[i].substring(colon + 1).trim());
+		for (String parameter : parameters) {
+			int colon = parameter.indexOf(':');
+			result.put(parameter.substring(0, colon).trim(), parameter.substring(colon + 1).trim());
 		}
 		return result;
 	}

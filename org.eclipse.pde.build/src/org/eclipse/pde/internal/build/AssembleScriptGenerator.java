@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -119,9 +119,9 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			Collection<BuildTimeFeature> allFeatures = new LinkedHashSet<>();
 			Collection<BuildTimeFeature> features = new LinkedHashSet<>();
 			Collection<BuildTimeFeature> rootFiles = new LinkedHashSet<>();
-			for (Iterator<Config> allConfigs = getConfigInfos().iterator(); allConfigs.hasNext();) {
+			for (Config config : getConfigInfos()) {
 				@SuppressWarnings("rawtypes")
-				Collection[] configInfo = getConfigInfos(allConfigs.next());
+				Collection[] configInfo = getConfigInfos(config);
 				allPlugins.addAll(configInfo[0]);
 				allFeatures.addAll(configInfo[1]);
 				features.addAll(configInfo[2]);
@@ -129,8 +129,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			}
 			basicGenerateAssembleConfigFileTargetCall(new Config("group", "group", "group"), allPlugins, allFeatures, features, rootFiles); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
-			for (Iterator<Config> allConfigs = getConfigInfos().iterator(); allConfigs.hasNext();) {
-				Config current = allConfigs.next();
+			for (Config current : getConfigInfos()) {
 				@SuppressWarnings("rawtypes")
 				Collection[] configInfo = getConfigInfos(current);
 				basicGenerateAssembleConfigFileTargetCall(current, configInfo[0], configInfo[1], configInfo[2], configInfo[3]);

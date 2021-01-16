@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -82,8 +82,7 @@ public class AntScript implements IAntScript {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
 			Set<Map.Entry<String, String>> entries = params.entrySet();
-			for (Iterator<Map.Entry<String, String>> iter = entries.iterator(); iter.hasNext();) {
-				Entry<String, String> entry = iter.next();
+			for (Entry<String, String> entry : entries) {
 				printParam(entry.getKey(), entry.getValue());
 			}
 			indent--;
@@ -107,11 +106,11 @@ public class AntScript implements IAntScript {
 		printAttribute("categoryVersion", categoryVersion, false); //$NON-NLS-1$
 		output.println(">"); //$NON-NLS-1$
 		indent++;
-		for (int i = 0; i < features.length; i++) {
-			features[i].printAs("features", this); //$NON-NLS-1$
+		for (FileSet feature : features) {
+			feature.printAs("features", this); //$NON-NLS-1$
 		}
-		for (int i = 0; i < bundles.length; i++) {
-			bundles[i].printAs("bundles", this); //$NON-NLS-1$
+		for (FileSet bundle : bundles) {
+			bundle.printAs("bundles", this); //$NON-NLS-1$
 		}
 
 		for (int i = 0; contextMetadata != null && i < contextMetadata.length; i++) {
@@ -153,9 +152,9 @@ public class AntScript implements IAntScript {
 		//printAttribute("filesetmanifest", filesetManifest, false); //$NON-NLS-1$
 		output.println(">"); //$NON-NLS-1$
 		indent++;
-		for (int i = 0; i < files.length; i++)
-			if (files[i] != null)
-				files[i].print(this);
+		for (FileSet file : files)
+			if (file != null)
+				file.print(this);
 		indent--;
 		printTab();
 		output.println("</jar>"); //$NON-NLS-1$
@@ -208,9 +207,9 @@ public class AntScript implements IAntScript {
 		printAttribute("duplicate", duplicate, false); //$NON-NLS-1$
 		output.println(">"); //$NON-NLS-1$
 		indent++;
-		for (int i = 0; i < otherFiles.length; i++)
-			if (otherFiles[i] != null)
-				otherFiles[i].print(this);
+		for (FileSet otherFile : otherFiles)
+			if (otherFile != null)
+				otherFile.print(this);
 		indent--;
 		output.println("</jar>"); //$NON-NLS-1$
 	}
@@ -290,15 +289,13 @@ public class AntScript implements IAntScript {
 			indent++;
 			if (properties != null) {
 				Set<Map.Entry<String, String>> entries = properties.entrySet();
-				for (Iterator<Entry<String, String>> iter = entries.iterator(); iter.hasNext();) {
-					Map.Entry<String, String> entry = iter.next();
+				for (Entry<String, String> entry : entries) {
 					printProperty(entry.getKey(), entry.getValue());
 				}
 			}
 			if (references != null) {
 				Set<Map.Entry<String, String>> entries = references.entrySet();
-				for (Iterator<Entry<String, String>> iter = entries.iterator(); iter.hasNext();) {
-					Map.Entry<String, String> entry = iter.next();
+				for (Entry<String, String> entry : entries) {
 					printTab();
 					print("<reference refid=\"" + entry.getKey() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					if (entry.getValue() != null) {
@@ -329,15 +326,13 @@ public class AntScript implements IAntScript {
 			indent++;
 			if (properties != null) {
 				Set<Map.Entry<String, String>> entries = properties.entrySet();
-				for (Iterator<Entry<String, String>> iter = entries.iterator(); iter.hasNext();) {
-					Map.Entry<String, String> entry = iter.next();
+				for (Entry<String, String> entry : entries) {
 					printProperty(entry.getKey(), entry.getValue());
 				}
 			}
 			if (references != null) {
 				Set<Map.Entry<String, String>> entries = references.entrySet();
-				for (Iterator<Entry<String, String>> iter = entries.iterator(); iter.hasNext();) {
-					Map.Entry<String, String> entry = iter.next();
+				for (Entry<String, String> entry : entries) {
 					printTab();
 					print("<reference refid=\"" + entry.getKey() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					if (entry.getValue() != null) {
@@ -375,9 +370,9 @@ public class AntScript implements IAntScript {
 		else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
-			for (int i = 0; i < fileSets.length; i++)
-				if (fileSets[i] != null)
-					fileSets[i].print(this);
+			for (FileSet fileSet : fileSets)
+				if (fileSet != null)
+					fileSet.print(this);
 			indent--;
 			printTab();
 			output.println("</zip>"); //$NON-NLS-1$
@@ -417,9 +412,9 @@ public class AntScript implements IAntScript {
 		else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
-			for (int i = 0; i < fileSets.length; i++)
-				if (fileSets[i] != null)
-					fileSets[i].print(this);
+			for (FileSet fileSet : fileSets)
+				if (fileSet != null)
+					fileSet.print(this);
 			indent--;
 			printTab();
 			output.println("</tar>"); //$NON-NLS-1$
@@ -511,9 +506,9 @@ public class AntScript implements IAntScript {
 		else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
-			for (int i = 0; i < fileSets.length; i++)
-				if (fileSets[i] != null)
-					fileSets[i].print(this);
+			for (FileSet fileSet : fileSets)
+				if (fileSet != null)
+					fileSet.print(this);
 			indent--;
 			printTab();
 			output.println("</copy>"); //$NON-NLS-1$
@@ -527,9 +522,9 @@ public class AntScript implements IAntScript {
 		printAttribute("failonerror", failOnError ? "true" : "false", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		output.println(">"); //$NON-NLS-1$
 		indent++;
-		for (int i = 0; i < fileSets.length; i++)
-			if (fileSets[i] != null)
-				fileSets[i].print(this);
+		for (FileSet fileSet : fileSets)
+			if (fileSet != null)
+				fileSet.print(this);
 		indent--;
 		printTab();
 		output.println("</move>"); //$NON-NLS-1$
@@ -575,9 +570,9 @@ public class AntScript implements IAntScript {
 		else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
-			for (int i = 0; i < fileSets.length; i++)
-				if (fileSets[i] != null)
-					fileSets[i].print(this);
+			for (FileSet fileSet : fileSets)
+				if (fileSet != null)
+					fileSet.print(this);
 			indent--;
 			printTab();
 			output.println("</delete>"); //$NON-NLS-1$
@@ -614,8 +609,7 @@ public class AntScript implements IAntScript {
 		else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
-			for (int i = 0; i < lineArgs.size(); i++) {
-				String arg = lineArgs.get(i);
+			for (String arg : lineArgs) {
 				printArg(arg, useValue && arg.indexOf(' ') == -1);
 			}
 			indent--;
@@ -695,8 +689,7 @@ public class AntScript implements IAntScript {
 
 		if (paths != null) {
 			indent++;
-			for (Iterator<Object> iter = paths.iterator(); iter.hasNext();) {
-				Object path = iter.next();
+			for (Object path : paths) {
 				printTab();
 				print("<pathelement"); //$NON-NLS-1$
 				printAttribute("path", path.toString(), false); //$NON-NLS-1$
@@ -804,8 +797,7 @@ public class AntScript implements IAntScript {
 		output.print("<"); //$NON-NLS-1$
 		output.print(tag);
 		Set<Map.Entry<String, String>> entries = arguments.entrySet();
-		for (Iterator<Entry<String, String>> iter = entries.iterator(); iter.hasNext();) {
-			Map.Entry<String, String> entry = iter.next();
+		for (Entry<String, String> entry : entries) {
 			printAttribute(entry.getKey(), entry.getValue(), true);
 		}
 		output.println(">"); //$NON-NLS-1$
@@ -834,8 +826,7 @@ public class AntScript implements IAntScript {
 		output.print(tag);
 		if (null != arguments) {
 			Set<Map.Entry<String, String>> entries = arguments.entrySet();
-			for (Iterator<Entry<String, String>> iter = entries.iterator(); iter.hasNext();) {
-				Map.Entry<String, String> entry = iter.next();
+			for (Entry<String, String> entry : entries) {
 				printAttribute(entry.getKey(), entry.getValue(), true);
 			}
 		}
@@ -1059,8 +1050,7 @@ public class AntScript implements IAntScript {
 		println("<macrodef name=\"" + macroName + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 		indent++;
 		if (null != attributes)
-			for (Iterator<String> iterator = attributes.iterator(); iterator.hasNext();) {
-				String attribute = iterator.next();
+			for (String attribute : attributes) {
 				println("<attribute name=\"" + attribute + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		println("<sequential>"); //$NON-NLS-1$

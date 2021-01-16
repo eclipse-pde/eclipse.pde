@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -119,8 +119,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 
 		mapContent = readProperties(mapLocation, "", IStatus.ERROR); //$NON-NLS-1$
 
-		for (Iterator<Entry<Object, Object>> iter = mapContent.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry<Object, Object> mapEntry = iter.next();
+		for (Entry<Object, Object> mapEntry : mapContent.entrySet()) {
 			String fileName = (String) mapEntry.getKey();
 			String[] fileDescription = Utils.getArrayFromStringWithBlank((String) mapEntry.getValue(), DATA_SEPARATOR);
 
@@ -160,9 +159,9 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 		if (entryFilters.length == 0)
 			return true;
 
-		for (int i = 0; i < entryFilters.length; i++) {
-			for (int j = 0; j < filters.length; j++) {
-				if (filters[j].equals(entryFilters[i]))
+		for (String entryFilter : entryFilters) {
+			for (String filter : filters) {
+				if (filter.equals(entryFilter))
 					return true;
 			}
 		}
@@ -175,9 +174,9 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 		if (entryConfigs.length == 0 || containsGenericConfig(getConfigInfos()))
 			return true;
 
-		for (int i = 0; i < entryConfigs.length; i++) {
+		for (String entryConfig : entryConfigs) {
 			Iterator<Config> iter = getConfigInfos().iterator();
-			Config aConfig = new Config(entryConfigs[i]);
+			Config aConfig = new Config(entryConfig);
 			while (iter.hasNext()) {
 				if (aConfig.equals(iter.next()) || aConfig.equals(Config.genericConfig())) {
 					return true;
@@ -203,8 +202,8 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 		if (componentName.equals(UNKNOWN) || componentFilter == null)
 			return true;
 
-		for (int i = 0; i < componentFilter.length; i++) {
-			if (componentFilter[i].equalsIgnoreCase(componentName) || componentFilter[i].equalsIgnoreCase(UNKNOWN))
+		for (String element : componentFilter) {
+			if (element.equalsIgnoreCase(componentName) || element.equalsIgnoreCase(UNKNOWN))
 				return true;
 		}
 		return false;

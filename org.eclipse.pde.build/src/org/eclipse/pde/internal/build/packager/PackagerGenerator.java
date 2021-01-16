@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,8 +36,8 @@ public class PackagerGenerator extends BuildScriptGenerator {
 	@Override
 	protected void sortElements(List<String> features, List<String> plugins) {
 		String[] allFeatures = Utils.getArrayFromString(featureList);
-		for (int i = 0; i < allFeatures.length; i++) {
-			features.add(allFeatures[i]);
+		for (String feature2 : allFeatures) {
+			features.add(feature2);
 		}
 	}
 

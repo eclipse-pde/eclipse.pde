@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -87,8 +87,8 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 
 		ArrayList<FileSet> p2Features = BuildDirector.p2Gathering ? new ArrayList<>() : null;
 		ArrayList<FileSet> p2Bundles = BuildDirector.p2Gathering ? new ArrayList<>() : null;
-		for (int i = 0; i < plugins.length; i++) {
-			Path pluginLocation = new Path(plugins[i].getLocation());
+		for (BundleDescription plugin2 : plugins) {
+			Path pluginLocation = new Path(plugin2.getLocation());
 			String location = pluginLocation.toOSString();
 			boolean isFolder = isFolder(pluginLocation);
 
@@ -100,14 +100,14 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 			if (BuildDirector.p2Gathering) {
 				p2Bundles.add(new FileSet(pluginLocation.removeLastSegments(1).toOSString(), null, pluginLocation.lastSegment(), null, null, null, null));
 			} else if (isFolder) {
-				script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) + '/' + getFinalName(plugins[i], ShapeAdvisor.FOLDER), new FileSet[] {new FileSet(location, null, null, null, excludedFiles, null, null)}, false, false);
+				script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) + '/' + getFinalName(plugin2, ShapeAdvisor.FOLDER), new FileSet[] {new FileSet(location, null, null, null, excludedFiles, null, null)}, false, false);
 			} else {
-				script.printCopyFileTask(location, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) + '/' + getFinalName(plugins[i], ShapeAdvisor.FILE), false);
+				script.printCopyFileTask(location, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS) + '/' + getFinalName(plugin2, ShapeAdvisor.FILE), false);
 			}
 		}
 
-		for (int i = 0; i < features.length; i++) {
-			IPath featureLocation = new Path(features[i].getRootLocation()); // Here we assume that all the features are local
+		for (BuildTimeFeature feature2 : features) {
+			IPath featureLocation = new Path(feature2.getRootLocation()); // Here we assume that all the features are local
 			String location = featureLocation.toOSString();
 			if (baseLocation != null && baseLocation.isPrefixOf(featureLocation)) {
 				IPath relative = featureLocation.removeFirstSegments(baseLocation.segmentCount());
@@ -117,7 +117,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 			if (BuildDirector.p2Gathering) {
 				p2Features.add(new FileSet(featureLocation.removeLastSegments(1).toOSString(), null, featureLocation.lastSegment(), null, null, null, null));
 			} else {
-				script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES) + '/' + getFinalName(features[i]), new FileSet[] {new FileSet(location, null, null, null, null, null, null)}, false, false);
+				script.printCopyTask(null, Utils.getPropertyFormat(PROPERTY_ECLIPSE_FEATURES) + '/' + getFinalName(feature2), new FileSet[] {new FileSet(location, null, null, null, null, null, null)}, false, false);
 			}
 		}
 

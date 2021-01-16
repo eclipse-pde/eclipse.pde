@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2017 Eclipse Foundation and others.
+ * Copyright (c) 2004, 2021 Eclipse Foundation and others.
  *
  *   This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -92,8 +92,7 @@ public class FetchTaskFactoriesRegistry implements IPDEBuildConstants {
 	 */
 	private void initializeRegistry() {
 		IConfigurationElement[] extensions = Platform.getExtensionRegistry().getConfigurationElementsFor(EXT_FETCH_TASK_FACTORIES);
-		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement extension = extensions[i];
+		for (IConfigurationElement extension : extensions) {
 			if (ELEM_FACTORY.equals(extension.getName())) {
 				String id = extension.getAttribute(ATTR_ID);
 				if (null != id && id.trim().length() > 0) {

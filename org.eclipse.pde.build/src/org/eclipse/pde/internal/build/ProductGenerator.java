@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation and others.
+ * Copyright (c) 2006, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -61,8 +61,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			return;
 
 		String location = null, fileList = null;
-		for (Iterator<Config> iter = getConfigInfos().iterator(); iter.hasNext();) {
-			Config config = iter.next();
+		for (Config config : getConfigInfos()) {
 			location = DEFAULT_PRODUCT_ROOT_FILES_DIR + '/' + config.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$
 
 			String rootLocation = root + location;
@@ -255,8 +254,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			}
 
 			List<Config> configs = getConfigInfos();
-			for (int i = 0; i < configs.size(); i++) {
-				Config config = configs.get(i);
+			for (Config config : configs) {
 				if (config.equals(Config.genericConfig()))
 					continue;
 				String fragmentName = BUNDLE_EQUINOX_LAUNCHER + '.' + config.getWs() + '.' + config.getOs();
@@ -301,12 +299,12 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 		Properties properties = AbstractScriptGenerator.readProperties(new Path(rootFeature.getRootLocation()).toOSString(), PROPERTIES_FILE, IStatus.OK);
 		String[] extraEntries = Utils.getArrayFromString(properties.getProperty(PRODUCT_PREFIX + productFile.getId()));
-		for (int i = 0; i < extraEntries.length; i++) {
-			Map<String, Object> entry = Utils.parseExtraBundlesString(extraEntries[i], true);
+		for (String extraEntry : extraEntries) {
+			Map<String, Object> entry = Utils.parseExtraBundlesString(extraEntry, true);
 			String id = (String) entry.get(Utils.EXTRA_ID);
 			Version version = (Version) entry.get(Utils.EXTRA_VERSION);
 
-			boolean feature = extraEntries[i].startsWith("feature@");//$NON-NLS-1$
+			boolean feature = extraEntry.startsWith("feature@");//$NON-NLS-1$
 			VersionRange range = null;
 			String versionString = version.toString();
 			if (feature) {
@@ -360,8 +358,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 		List<FeatureEntry> pluginList = productFile.getProductEntries();
 		List<BundleDescription> results = new ArrayList<>(pluginList.size());
-		for (Iterator<FeatureEntry> iter = pluginList.iterator(); iter.hasNext();) {
-			FeatureEntry entry = iter.next();
+		for (FeatureEntry entry : pluginList) {
 			if (!entry.isPlugin())
 				continue;
 
@@ -464,8 +461,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		BundleHelper helper = BundleHelper.getDefault();
 		Map<String, BundleInfo> infos = productFile.getConfigurationInfo();
 		boolean first = true;
-		for (Iterator<BundleDescription> iter = bundles.iterator(); iter.hasNext();) {
-			BundleDescription bundle = iter.next();
+		for (BundleDescription bundle : bundles) {
 			String id = bundle.getSymbolicName();
 			if (BUNDLE_OSGI.equals(id) || BUNDLE_EQUINOX_LAUNCHER.equals(id))
 				continue;
@@ -525,8 +521,8 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		if (!properties.containsKey("osgi.bundles.defaultStartLevel")) //$NON-NLS-1$
 			properties.put("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		for (Iterator<Object> iterator = properties.keySet().iterator(); iterator.hasNext();) {
-			String key = (String) iterator.next();
+		for (Object object : properties.keySet()) {
+			String key = (String) object;
 			buffer.append(key);
 			buffer.append('=');
 			buffer.append(properties.getProperty(key));
@@ -611,10 +607,10 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		BundleDescription bundle = state.getResolvedBundle(plugin);
 		if (bundle != null) {
 			BundleDescription[] fragments = bundle.getFragments();
-			for (int i = 0; i < fragments.length; i++) {
-				Filter filter = helper.getFilter(fragments[i]);
+			for (BundleDescription fragment2 : fragments) {
+				Filter filter = helper.getFilter(fragment2);
 				if (filter == null || filter.match(environment)) {
-					String fragmentId = fragments[i].getSymbolicName();
+					String fragmentId = fragment2.getSymbolicName();
 					if (productFile.containsPlugin(fragmentId)) {
 						buffer.append(",platform:/base/plugins/"); //$NON-NLS-1$
 						buffer.append(fragmentId);

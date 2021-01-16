@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -52,14 +52,10 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 	private List<String> rootPluginsForFiler;
 	private boolean filter = false;
 
-	private final Comparator<Feature> featureComparator = new Comparator<Feature>() {
-		// Sort highest to lowest version, they are assumed to have the same id
-		@Override
-		public int compare(Feature arg0, Feature arg1) {
-			Version v0 = new Version(arg0.getVersion());
-			Version v1 = new Version(arg1.getVersion());
-			return -1 * v0.compareTo(v1);
-		}
+	private final Comparator<Feature> featureComparator = (arg0, arg1) -> {
+		Version v0 = new Version(arg0.getVersion());
+		Version v1 = new Version(arg1.getVersion());
+		return -1 * v0.compareTo(v1);
 	};
 
 	public void setReportResolutionErrors(boolean value) {
@@ -91,8 +87,7 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 
 	private Collection<File> removeDuplicates(Collection<File> bundles) {
 		Set<File> result = new LinkedHashSet<>(bundles.size() / 2);
-		for (Iterator<File> iterator = bundles.iterator(); iterator.hasNext();) {
-			File bundle = iterator.next();
+		for (File bundle : bundles) {
 			try {
 				bundle = bundle.getCanonicalFile();
 			} catch (IOException e) {
@@ -146,18 +141,18 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 				MultiStatus errors = new MultiStatus(IPDEBuildConstants.PI_PDEBUILD, 1, Messages.exception_registryResolution, null);
 				BundleDescription[] all = state.getState().getBundles();
 				StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
-				for (int i = 0; i < all.length; i++) {
-					if (!all[i].isResolved()) {
-						ResolverError[] resolutionErrors = state.getState().getResolverErrors(all[i]);
-						VersionConstraint[] versionErrors = helper.getUnsatisfiedConstraints(all[i]);
+				for (BundleDescription element : all) {
+					if (!element.isResolved()) {
+						ResolverError[] resolutionErrors = state.getState().getResolverErrors(element);
+						VersionConstraint[] versionErrors = helper.getUnsatisfiedConstraints(element);
 
 						//ignore problems when they are caused by bundles not being built for the right config
-						if (isConfigError(all[i], resolutionErrors, AbstractScriptGenerator.getConfigInfos()))
+						if (isConfigError(element, resolutionErrors, AbstractScriptGenerator.getConfigInfos()))
 							continue;
 
-						String errorMessage = "Bundle " + all[i].getSymbolicName() + ":\n" + getResolutionErrorMessage(resolutionErrors); //$NON-NLS-1$ //$NON-NLS-2$
-						for (int j = 0; j < versionErrors.length; j++) {
-							errorMessage += '\t' + getResolutionFailureMessage(versionErrors[j]) + '\n';
+						String errorMessage = "Bundle " + element.getSymbolicName() + ":\n" + getResolutionErrorMessage(resolutionErrors); //$NON-NLS-1$ //$NON-NLS-2$
+						for (VersionConstraint versionError : versionErrors) {
+							errorMessage += '\t' + getResolutionFailureMessage(versionError) + '\n';
 						}
 						errors.add(new Status(IStatus.WARNING, IPDEBuildConstants.PI_PDEBUILD, IStatus.WARNING, errorMessage, null));
 					}
@@ -199,8 +194,8 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 		if (containingFeature != null)
 			message = NLS.bind(Messages.includedFromFeature, containingFeature.getId(), message);
 		message += ":\n" + BuildTimeSite.getResolutionErrorMessage(resolutionErrors); //$NON-NLS-1$
-		for (int j = 0; j < versionErrors.length; j++) {
-			message += '\t' + BuildTimeSite.getResolutionFailureMessage(versionErrors[j]) + '\n';
+		for (VersionConstraint versionError : versionErrors) {
+			message += '\t' + BuildTimeSite.getResolutionFailureMessage(versionError) + '\n';
 		}
 
 		IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null);
@@ -214,8 +209,7 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 		Dictionary<String, String> environment = new Hashtable<>(3);
 		Filter bundleFilter = BundleHelper.getDefault().getFilter(bundle);
 		if (bundleFilter != null && hasPlatformFilterError(errors) != null) {
-			for (Iterator<Config> iter = configs.iterator(); iter.hasNext();) {
-				Config aConfig = iter.next();
+			for (Config aConfig : configs) {
 				environment.put("osgi.os", aConfig.getOs()); //$NON-NLS-1$
 				environment.put("osgi.ws", aConfig.getWs()); //$NON-NLS-1$
 				environment.put("osgi.arch", aConfig.getArch()); //$NON-NLS-1$
@@ -230,20 +224,20 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 
 	//Check if the set of errors contain a platform filter
 	static private ResolverError hasPlatformFilterError(ResolverError[] errors) {
-		for (int i = 0; i < errors.length; i++) {
-			if ((errors[i].getType() & ResolverError.PLATFORM_FILTER) != 0)
-				return errors[i];
-			if ((errors[i].getType() & ResolverError.NO_NATIVECODE_MATCH) != 0)
-				return errors[i];
+		for (ResolverError error : errors) {
+			if ((error.getType() & ResolverError.PLATFORM_FILTER) != 0)
+				return error;
+			if ((error.getType() & ResolverError.NO_NATIVECODE_MATCH) != 0)
+				return error;
 		}
 		return null;
 	}
 
 	static public String getResolutionErrorMessage(ResolverError[] errors) {
 		String errorMessage = ""; //$NON-NLS-1$
-		for (int i = 0; i < errors.length; i++) {
-			if ((errors[i].getType() & (ResolverError.SINGLETON_SELECTION | ResolverError.FRAGMENT_CONFLICT | ResolverError.IMPORT_PACKAGE_USES_CONFLICT | ResolverError.REQUIRE_BUNDLE_USES_CONFLICT | ResolverError.MISSING_EXECUTION_ENVIRONMENT)) != 0)
-				errorMessage += '\t' + errors[i].toString() + '\n';
+		for (ResolverError error : errors) {
+			if ((error.getType() & (ResolverError.SINGLETON_SELECTION | ResolverError.FRAGMENT_CONFLICT | ResolverError.IMPORT_PACKAGE_USES_CONFLICT | ResolverError.REQUIRE_BUNDLE_USES_CONFLICT | ResolverError.MISSING_EXECUTION_ENVIRONMENT)) != 0)
+				errorMessage += '\t' + error.toString() + '\n';
 		}
 		return errorMessage;
 	}
@@ -285,8 +279,7 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 		if (featureCache.containsKey(featureId)) {
 			//Set is ordered highest version to lowest, return the first that matches the range
 			Set<BuildTimeFeature> featureSet = featureCache.get(featureId);
-			for (Iterator<BuildTimeFeature> iterator = featureSet.iterator(); iterator.hasNext();) {
-				BuildTimeFeature feature = iterator.next();
+			for (BuildTimeFeature feature : featureSet) {
 				Version featureVersion = new Version(feature.getVersion());
 				if (range.isIncluded(featureVersion)) {
 					return feature;
@@ -308,13 +301,13 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 
 	private void resolveFeatureReferences() {
 		FeatureReference[] features = getFeatureReferences();
-		for (int i = 0; i < features.length; i++) {
+		for (FeatureReference feature2 : features) {
 			try {
 				//getting the feature for the first time will result in it being added to featureCache
-				features[i].getFeature();
+				feature2.getFeature();
 			} catch (CoreException e) {
 				// just log the exception, but do not re-throw it - let other features to be resolved 
-				String message = NLS.bind(Messages.exception_featureParse, features[i].getURL());
+				String message = NLS.bind(Messages.exception_featureParse, feature2.getURL());
 				IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, e);
 				BundleHelper.getDefault().getLog().log(status);
 			}
@@ -354,14 +347,14 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 	private SortedSet<ReachablePlugin> findAllReferencedPlugins() throws CoreException {
 		ArrayList<BuildTimeFeature> rootFeatures = new ArrayList<>();
 		SortedSet<ReachablePlugin> allPlugins = new TreeSet<>();
-		for (Iterator<String> iter = rootFeaturesForFilter.iterator(); iter.hasNext();) {
-			BuildTimeFeature correspondingFeature = findFeature(iter.next(), (String) null, true);
+		for (String string : rootFeaturesForFilter) {
+			BuildTimeFeature correspondingFeature = findFeature(string, (String) null, true);
 			if (correspondingFeature == null)
 				return null;
 			rootFeatures.add(correspondingFeature);
 		}
-		for (Iterator<String> iter = rootPluginsForFiler.iterator(); iter.hasNext();) {
-			allPlugins.add(new ReachablePlugin(iter.next(), ReachablePlugin.WIDEST_RANGE));
+		for (String string : rootPluginsForFiler) {
+			allPlugins.add(new ReachablePlugin(string, ReachablePlugin.WIDEST_RANGE));
 		}
 		int it = 0;
 		while (it < rootFeatures.size()) {
@@ -406,15 +399,15 @@ public class BuildTimeSite /*extends Site*/ implements IPDEBuildConstants, IXMLC
 				}
 			}
 			FeatureEntry[] entries = toAnalyse.getPluginEntries();
-			for (int i = 0; i < entries.length; i++) {
-				allPlugins.add(new ReachablePlugin(entries[i]));
+			for (FeatureEntry entry : entries) {
+				allPlugins.add(new ReachablePlugin(entry));
 			}
 			FeatureEntry[] imports = toAnalyse.getImports();
-			for (int i = 0; i < imports.length; i++) {
-				if (!imports[i].isPlugin()) {
-					rootFeatures.add(findFeature(imports[i].getId(), Utils.createVersionRange(imports[i]), true));
+			for (FeatureEntry import1 : imports) {
+				if (!import1.isPlugin()) {
+					rootFeatures.add(findFeature(import1.getId(), Utils.createVersionRange(import1), true));
 				} else {
-					allPlugins.add(new ReachablePlugin(imports[i]));
+					allPlugins.add(new ReachablePlugin(import1));
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -111,9 +111,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		if (contents == null)
 			return new LinkedHashSet<>(0);
 		Set<Entry> result = new LinkedHashSet<>(contents.length);
-		for (int i = 0; i < contents.length; i++)
-			if (contents[i] != null) {
-				StringTokenizer tokenizer = new StringTokenizer(contents[i], ";"); //$NON-NLS-1$
+		for (String content : contents)
+			if (content != null) {
+				StringTokenizer tokenizer = new StringTokenizer(content, ";"); //$NON-NLS-1$
 				Entry entry = new Entry(tokenizer.nextToken());
 				while (tokenizer.hasMoreTokens()) {
 					String token = tokenizer.nextToken();
@@ -151,8 +151,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 			if (product != null) {
 				List<FeatureEntry> entries = product.getProductEntries();
-				for (Iterator<FeatureEntry> iterator = entries.iterator(); iterator.hasNext();) {
-					FeatureEntry featureEntry = iterator.next();
+				for (FeatureEntry featureEntry : entries) {
 					Entry newEntry = new Entry(featureEntry.getId(), featureEntry.getVersion());
 					if (featureEntry.unpackSet())
 						newEntry.addAttribute(Utils.EXTRA_UNPACK, String.valueOf(featureEntry.isUnpack()));
@@ -317,8 +316,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				List<Config> configs = getConfigInfos();
 				// only include the fragments for the platforms we are attempting to build, since the others
 				// probably aren't around
-				for (Iterator<Config> iterator = configs.iterator(); iterator.hasNext();) {
-					Config config = iterator.next();
+				for (Config config : configs) {
 					String fragment = BUNDLE_EQUINOX_LAUNCHER + '.' + config.getWs() + '.' + config.getOs();
 					//macosx doesn't have the arch on its fragment 
 					if (config.getOs().compareToIgnoreCase("macosx") != 0 || config.getArch().equals("x86_64")) //$NON-NLS-1$ //$NON-NLS-2$
@@ -465,8 +463,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				}
 			}
 
-			for (Iterator<Entry> iter = features.iterator(); iter.hasNext();) {
-				Entry entry = iter.next();
+			for (Entry entry : features) {
 				String name = entry.getId();
 				String featureVersion = entry.getVersion();
 				if (verify) {

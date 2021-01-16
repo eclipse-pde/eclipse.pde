@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -75,8 +75,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		Collection<Object> p = new LinkedHashSet<>();
 		Collection<Object> f = new LinkedHashSet<>();
 		Collection<BuildTimeFeature> r = new LinkedHashSet<>();
-		for (Iterator<Config> iterator = getConfigInfos().iterator(); iterator.hasNext();) {
-			Config config = iterator.next();
+		for (Config config : getConfigInfos()) {
 			p.addAll(assemblyInformation.getPlugins(config));
 			f.addAll(assemblyInformation.getFeatures(config));
 			r.addAll(assemblyInformation.getRootFileProviders(config));
@@ -142,8 +141,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		ProductFile product = getProductFile();
 		if (product != null) {
 			List<Config> configs = getConfigInfos();
-			for (Iterator<Config> iterator = configs.iterator(); iterator.hasNext();) {
-				Config config = iterator.next();
+			for (Config config : configs) {
 				if (Config.genericConfig().equals(config))
 					continue;
 				script.printTab();
@@ -178,18 +176,18 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			script.printAttribute("alias", Utils.getPropertyFormat(PROPERTY_SIGN_ALIAS), true); //$NON-NLS-1$
 			script.printAttribute("unsign", Utils.getPropertyFormat(PROPERTY_UNSIGN), true); //$NON-NLS-1$
 			script.print(" />\n"); //$NON-NLS-1$
-			for (int i = 0; i < plugins.length; i++) {
+			for (BundleDescription plugin2 : plugins) {
 				script.printTab();
 				script.print("\t<plugin"); //$NON-NLS-1$
-				script.printAttribute("id", plugins[i].getSymbolicName(), true); //$NON-NLS-1$
-				script.printAttribute("version", plugins[i].getVersion().toString(), true); //$NON-NLS-1$
+				script.printAttribute("id", plugin2.getSymbolicName(), true); //$NON-NLS-1$
+				script.printAttribute("version", plugin2.getVersion().toString(), true); //$NON-NLS-1$
 				script.print(" /> \n"); //$NON-NLS-1$
 			}
-			for (int i = 0; i < features.length; i++) {
+			for (BuildTimeFeature feature2 : features) {
 				script.printTab();
 				script.print("\t<feature"); //$NON-NLS-1$
-				script.printAttribute("id", features[i].getId(), true); //$NON-NLS-1$
-				script.printAttribute("version", features[i].getVersion(), true); //$NON-NLS-1$
+				script.printAttribute("id", feature2.getId(), true); //$NON-NLS-1$
+				script.printAttribute("version", feature2.getVersion(), true); //$NON-NLS-1$
 				script.print(" />\n"); //$NON-NLS-1$
 			}
 			script.println("</p2.process.artifacts>"); //$NON-NLS-1$
@@ -252,8 +250,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 				script.println("/>"); //$NON-NLS-1$
 			}
 
-			for (Iterator<Config> iterator = getConfigInfos().iterator(); iterator.hasNext();) {
-				Config config = iterator.next();
+			for (Config config : getConfigInfos()) {
 				if (Config.genericConfig().equals(config))
 					continue;
 
@@ -287,8 +284,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	protected void generateCopyConfigs(ProductFile product, String productDir) {
 		if (!product.haveCustomConfig())
 			return;
-		for (Iterator<Config> iterator = getConfigInfos().iterator(); iterator.hasNext();) {
-			Config config = iterator.next();
+		for (Config config : getConfigInfos()) {
 			String entry = product.getConfigIniPath(config.getOs());
 			if (entry == null)
 				continue;
@@ -309,8 +305,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		ArrayList<BuildTimeFeature> binaryFeatures = null;
 		if (product == null) {
 			binaryFeatures = new ArrayList<>();
-			for (int i = 0; i < features.length; i++) {
-				BuildTimeFeature feature = features[i];
+			for (BuildTimeFeature feature : features) {
 				if (feature.isBinary())
 					binaryFeatures.add(feature);
 			}
@@ -383,8 +378,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			script.printAttribute(VERSION, version, true);
 			script.println("/>"); //$NON-NLS-1$
 		} else {
-			for (int i = 0; i < features.length; i++) {
-				BuildTimeFeature feature = features[i];
+			for (BuildTimeFeature feature : features) {
 				if (feature.isBinary()) {
 					binaryFeatures.add(feature);
 					script.print("\t<iu"); //$NON-NLS-1$
@@ -446,8 +440,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		ArrayList<FileSet> binaryFeatures = new ArrayList<>();
 		ArrayList<FileSet> binaryBundles = new ArrayList<>();
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, null, null, null, null);
-		for (int i = 0; i < plugins.length; i++) {
-			BundleDescription plugin = plugins[i];
+		for (BundleDescription plugin : plugins) {
 			Path pluginLocation = new Path(plugin.getLocation());
 			if (Utils.isBinary(plugin))
 				binaryBundles.add(new FileSet(pluginLocation.removeLastSegments(1).toOSString(), null, pluginLocation.lastSegment(), null, null, null, null));
@@ -456,8 +449,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		}
 
 		Set<BuildTimeFeature> featureSet = BuildDirector.p2Gathering ? new HashSet<>() : null;
-		for (int i = 0; i < features.length; i++) {
-			BuildTimeFeature feature = features[i];
+		for (BuildTimeFeature feature : features) {
 			IPath featureLocation = new Path(feature.getRootLocation());
 			if (feature.isBinary()) {
 				binaryFeatures.add(new FileSet(featureLocation.removeLastSegments(1).toOSString(), null, featureLocation.lastSegment(), null, null, null, null));
@@ -469,8 +461,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		}
 
 		//This will generate gather.bin.parts call to features that provides files for the root
-		for (Iterator<BuildTimeFeature> iter = rootFileProviders.iterator(); iter.hasNext();) {
-			BuildTimeFeature feature = iter.next();
+		for (BuildTimeFeature feature : rootFileProviders) {
 			if (featureSet.contains(feature))
 				continue;
 			if (isOldExecutableFeature(feature)) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -106,8 +106,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 		script.printTargetDeclaration(TARGET_GET_IUS_FROM_REPO, null, null, null, null);
 
 		Map<String, String> args = new LinkedHashMap<>(2);
-		for (Iterator<Entry<String, ArrayList<IUFetchInfo>>> stream = iusToFetchBySource.entrySet().iterator(); stream.hasNext();) {
-			Entry<String, ArrayList<IUFetchInfo>> entry = stream.next();
+		for (Entry<String, ArrayList<IUFetchInfo>> entry : iusToFetchBySource.entrySet()) {
 			String sourceRepository = entry.getKey();
 			ArrayList<IUFetchInfo> iusToFetch = entry.getValue();
 
@@ -118,8 +117,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 			script.printStartTag(TASK_REPO2RUNNABLE, args);
 			script.incrementIdent();
 
-			for (Iterator<IUFetchInfo> stream2 = iusToFetch.iterator(); stream2.hasNext();) {
-				IUFetchInfo iuFetchInfo = stream2.next();
+			for (IUFetchInfo iuFetchInfo : iusToFetch) {
 				args.clear();
 				args.put(ATTRIBUTE_ID, iuFetchInfo.id);
 				args.put(ATTRIBUTE_VERSION, iuFetchInfo.version);
@@ -191,8 +189,8 @@ public class P2IUFetchFactory implements IFetchFactory {
 		script.incrementIdent();
 		args.clear();
 		args.put("dir", destination.toOSString()); //$NON-NLS-1$
-		for (int i = 0; i < files.length; i++) {
-			args.put("includes", "features/*/" + files[i]); //$NON-NLS-1$ //$NON-NLS-2$
+		for (String file : files) {
+			args.put("includes", "features/*/" + file); //$NON-NLS-1$ //$NON-NLS-2$
 			script.printElement("fileset", args); //$NON-NLS-1$
 		}
 		script.decrementIdent();
@@ -205,8 +203,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 
 		// build up the table of arguments in the map file entry
 		Map<String, String> table = new HashMap<>();
-		for (int i = 0; i < arguments.length; i++) {
-			String arg = arguments[i];
+		for (String arg : arguments) {
 			// if we have at least one arg without an equals sign then we are malformed and should bail
 			int index = arg.indexOf('=');
 			if (index == -1)

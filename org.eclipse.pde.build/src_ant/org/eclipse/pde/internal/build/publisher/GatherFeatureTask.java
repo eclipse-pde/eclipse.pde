@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -129,8 +129,7 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 		fileSet.setProject(getProject());
 		fileSet.setDir(new File(folder));
 		String[] splitIncludes = Utils.getArrayFromString(includes);
-		for (int i = 0; i < splitIncludes.length; i++) {
-			String entry = splitIncludes[i];
+		for (String entry : splitIncludes) {
 			if (entry.equals(ModelBuildScriptGenerator.DOT))
 				continue;
 
@@ -139,9 +138,9 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 		}
 
 		String[] splitExcludes = Utils.getArrayFromString(excludes);
-		for (int i = 0; i < splitExcludes.length; i++) {
+		for (String splitExclude : splitExcludes) {
 			NameEntry fileExclude = fileSet.createExclude();
-			fileExclude.setName(splitExcludes[i]);
+			fileExclude.setName(splitExclude);
 		}
 		return fileSet;
 	}
@@ -155,8 +154,7 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 		FeatureRootAdvice advice = new FeatureRootAdvice();
 
 		Map<String, Map<String, String>> configMap = Utils.processRootProperties(getBuildProperties(), true);
-		for (Iterator<String> iterator = configMap.keySet().iterator(); iterator.hasNext();) {
-			String config = iterator.next();
+		for (String config : configMap.keySet()) {
 			Map<String, String> rootMap = configMap.get(config);
 			if (config.equals(Utils.ROOT_COMMON))
 				config = ""; //$NON-NLS-1$
@@ -165,8 +163,7 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 			GatheringComputer computer = new GatheringComputer();
 			Map<FileSet, String> configFileSets = new HashMap<>();
 			ArrayList<String> permissionsKeys = new ArrayList<>();
-			for (Iterator<String> rootEntries = rootMap.keySet().iterator(); rootEntries.hasNext();) {
-				String key = rootEntries.next();
+			for (String key : rootMap.keySet()) {
 				if (key.startsWith(Utils.ROOT_PERMISSIONS)) {
 					permissionsKeys.add(key);
 					continue;
@@ -177,8 +174,8 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 					//files!
 					String fileList = rootMap.get(key);
 					String[] files = Utils.getArrayFromString(fileList, ","); //$NON-NLS-1$
-					for (int i = 0; i < files.length; i++) {
-						String file = files[i];
+					for (String file2 : files) {
+						String file = file2;
 						String fromDir = baseDirectory;
 						File base = null;
 						if (file.startsWith("absolute:")) { //$NON-NLS-1$
@@ -208,11 +205,11 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 							include.setName(file);
 
 							String[] found = fileset.getDirectoryScanner().getIncludedFiles();
-							for (int k = 0; k < found.length; k++) {
+							for (String element : found) {
 								if (key.length() > 0)
-									computer.addFile(key + "/" + found[k], new File(base, found[k])); //$NON-NLS-1$
+									computer.addFile(key + "/" + element, new File(base, element)); //$NON-NLS-1$
 								else
-									computer.addFile(base.getAbsolutePath(), found[k]);
+									computer.addFile(base.getAbsolutePath(), element);
 							}
 							configFileSets.put(fileset, key);
 						}
@@ -223,21 +220,19 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 				advice.addRootfiles(config, computer);
 
 			//do permissions, out of the configFileSets, select the files to change permissions on.
-			for (Iterator<String> p = permissionsKeys.iterator(); p.hasNext();) {
-				String permissionKey = p.next();
+			for (String permissionKey : permissionsKeys) {
 				String permissionString = rootMap.get(permissionKey);
 				String[] names = Utils.getArrayFromString(permissionString);
 
 				OrSelector orSelector = new OrSelector();
 				orSelector.setProject(getProject());
-				for (int i = 0; i < names.length; i++) {
+				for (String name : names) {
 					FilenameSelector nameSelector = new FilenameSelector();
 					nameSelector.setProject(getProject());
-					nameSelector.setName(names[i]);
+					nameSelector.setName(name);
 					orSelector.addFilename(nameSelector);
 				}
-				for (Iterator<FileSet> s = configFileSets.keySet().iterator(); s.hasNext();) {
-					FileSet fileset = s.next();
+				for (FileSet fileset : configFileSets.keySet()) {
 					String finalFolder = configFileSets.get(fileset);
 					String[] found = selectFiles(orSelector, finalFolder, fileset.getDirectoryScanner().getIncludedFiles());
 					if (found.length > 0)
@@ -258,8 +253,8 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 		String prefix = (folder.length() > 0) ? folder + '/' : ""; //$NON-NLS-1$
 		ArrayList<String> result = new ArrayList<>();
 
-		for (int i = 0; i < files.length; i++) {
-			String finalLocation = prefix + files[i];
+		for (String file : files) {
+			String finalLocation = prefix + file;
 			//FilenameSelector is checking based on File.separatorChar, so normalize
 			finalLocation = finalLocation.replace('/', File.separatorChar).replace('\\', File.separatorChar);
 			//FilenameSelector objects only care about the filename and not the other arguments

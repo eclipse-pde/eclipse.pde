@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -55,10 +55,10 @@ public class BuildTimeFeature extends Feature {
 	public FeatureEntry[] getRawIncludedFeatureReferences() {
 		ArrayList<FeatureEntry> included = new ArrayList<>();
 		FeatureEntry[] entries = getEntries();
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].isRequires() || entries[i].isPlugin())
+		for (FeatureEntry entry : entries) {
+			if (entry.isRequires() || entry.isPlugin())
 				continue;
-			included.add(entries[i]);
+			included.add(entry);
 		}
 		return included.toArray(new FeatureEntry[included.size()]);
 	}
@@ -66,12 +66,12 @@ public class BuildTimeFeature extends Feature {
 	public FeatureEntry[] getIncludedFeatureReferences() {
 		ArrayList<FeatureEntry> included = new ArrayList<>();
 		FeatureEntry[] entries = getEntries();
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].isRequires() || entries[i].isPlugin())
+		for (FeatureEntry entry : entries) {
+			if (entry.isRequires() || entry.isPlugin())
 				continue;
 
-			if (SiteManager.isValidEnvironment(entries[i])) {
-				included.add(entries[i]);
+			if (SiteManager.isValidEnvironment(entry)) {
+				included.add(entry);
 			}
 		}
 
@@ -81,11 +81,11 @@ public class BuildTimeFeature extends Feature {
 	public FeatureEntry[] getPluginEntries() {
 		ArrayList<FeatureEntry> plugins = new ArrayList<>();
 		FeatureEntry[] entries = getEntries();
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].isRequires() || !entries[i].isPlugin())
+		for (FeatureEntry entry : entries) {
+			if (entry.isRequires() || !entry.isPlugin())
 				continue;
-			if (SiteManager.isValidEnvironment(entries[i])) {
-				plugins.add(entries[i]);
+			if (SiteManager.isValidEnvironment(entry)) {
+				plugins.add(entry);
 			}
 		}
 		return plugins.toArray(new FeatureEntry[plugins.size()]);
@@ -94,10 +94,10 @@ public class BuildTimeFeature extends Feature {
 	public FeatureEntry[] getRawPluginEntries() {
 		ArrayList<FeatureEntry> plugins = new ArrayList<>();
 		FeatureEntry[] entries = getEntries();
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].isRequires() || !entries[i].isPlugin())
+		for (FeatureEntry entry : entries) {
+			if (entry.isRequires() || !entry.isPlugin())
 				continue;
-			plugins.add(entries[i]);
+			plugins.add(entry);
 		}
 		return plugins.toArray(new FeatureEntry[plugins.size()]);
 	}
@@ -105,10 +105,10 @@ public class BuildTimeFeature extends Feature {
 	public FeatureEntry[] getImports() {
 		ArrayList<FeatureEntry> imports = new ArrayList<>();
 		FeatureEntry[] entries = getEntries();
-		for (int i = 0; i < entries.length; i++) {
-			if (!entries[i].isRequires())
+		for (FeatureEntry entry : entries) {
+			if (!entry.isRequires())
 				continue;
-			imports.add(entries[i]);
+			imports.add(entry);
 		}
 		return imports.toArray(new FeatureEntry[imports.size()]);
 	}
@@ -184,10 +184,10 @@ public class BuildTimeFeature extends Feature {
 
 	public FeatureEntry findPluginEntry(String id, String version) {
 		FeatureEntry[] entries = getEntries();
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].isPlugin() && entries[i].getId().equals(id))
-				if (Utils.matchVersions(version, entries[i].getVersion()))
-					return entries[i];
+		for (FeatureEntry entry : entries) {
+			if (entry.isPlugin() && entry.getId().equals(id))
+				if (Utils.matchVersions(version, entry.getVersion()))
+					return entry;
 		}
 		return null;
 	}

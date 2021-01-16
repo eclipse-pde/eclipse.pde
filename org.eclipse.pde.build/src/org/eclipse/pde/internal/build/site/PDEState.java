@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2020 IBM Corporation and others.
+ *  Copyright (c) 2004, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -145,10 +145,10 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			descriptor.setUserObject(properties);
 		}
 
-		for (int i = 0; i < entries.length; i++) {
-			String entry = BundleHelper.getManifestHeader(manifest, entries[i]);
+		for (String entry2 : entries) {
+			String entry = BundleHelper.getManifestHeader(manifest, entry2);
 			if (entry != null) {
-				properties.put(entries[i], entry);
+				properties.put(entry2, entry);
 			}
 		}
 	}
@@ -357,8 +357,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	}
 
 	public void addBundles(Collection<File> bundles) {
-		for (Iterator<File> iter = bundles.iterator(); iter.hasNext();) {
-			File bundle = iter.next();
+		for (File bundle : bundles) {
 			addBundle(bundle);
 		}
 	}
@@ -373,8 +372,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		String systemPackages = null;
 		String ee = null;
 
-		for (Iterator<Config> iter = configs.iterator(); iter.hasNext();) {
-			Config aConfig = iter.next();
+		for (Config aConfig : configs) {
 			prop = new Hashtable<>();
 			if (AbstractScriptGenerator.getPropertyAsBoolean(RESOLVER_DEV_MODE))
 				prop.put(PROPERTY_RESOLVER_MODE, VALUE_DEVELOPMENT);
@@ -485,9 +483,9 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			return new BundleDescription[0];
 		ExportPackageDescription[] packages = root.getResolvedImports();
 		ArrayList<BundleDescription> resolvedImports = new ArrayList<>(packages.length);
-		for (int i = 0; i < packages.length; i++)
-			if (!root.getLocation().equals(packages[i].getExporter().getLocation()) && !resolvedImports.contains(packages[i].getExporter()))
-				resolvedImports.add(packages[i].getExporter());
+		for (ExportPackageDescription package1 : packages)
+			if (!root.getLocation().equals(package1.getExporter().getLocation()) && !resolvedImports.contains(package1.getExporter()))
+				resolvedImports.add(package1.getExporter());
 		return resolvedImports.toArray(new BundleDescription[resolvedImports.size()]);
 	}
 
@@ -539,12 +537,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	 */
 	private BundleDescription[] sortByVersion(BundleDescription[] bundles) {
 		if (bundles.length > 1) {
-			Arrays.sort(bundles, new Comparator<BundleDescription>() {
-				@Override
-				public int compare(BundleDescription o1, BundleDescription o2) {
-					return o1.getVersion().compareTo(o2.getVersion());
-				}
-			});
+			Arrays.sort(bundles, (o1, o2) -> o1.getVersion().compareTo(o2.getVersion()));
 		}
 		return bundles;
 	}
@@ -586,10 +579,10 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	public static BundleDescription[] getImportedByFragments(BundleDescription root) {
 		BundleDescription[] fragments = root.getFragments();
 		List<BundleDescription> importedByFragments = new ArrayList<>();
-		for (int i = 0; i < fragments.length; i++) {
-			if (!fragments[i].isResolved())
+		for (BundleDescription fragment2 : fragments) {
+			if (!fragment2.isResolved())
 				continue;
-			merge(importedByFragments, getImportedBundles(fragments[i]));
+			merge(importedByFragments, getImportedBundles(fragment2));
 		}
 		BundleDescription[] result = new BundleDescription[importedByFragments.size()];
 		return importedByFragments.toArray(result);
@@ -598,19 +591,19 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	public static BundleDescription[] getRequiredByFragments(BundleDescription root) {
 		BundleDescription[] fragments = root.getFragments();
 		List<BundleDescription> importedByFragments = new ArrayList<>();
-		for (int i = 0; i < fragments.length; i++) {
-			if (!fragments[i].isResolved())
+		for (BundleDescription fragment2 : fragments) {
+			if (!fragment2.isResolved())
 				continue;
-			merge(importedByFragments, getRequiredBundles(fragments[i]));
+			merge(importedByFragments, getRequiredBundles(fragment2));
 		}
 		BundleDescription[] result = new BundleDescription[importedByFragments.size()];
 		return importedByFragments.toArray(result);
 	}
 
 	public static void merge(List<BundleDescription> source, BundleDescription[] toAdd) {
-		for (int i = 0; i < toAdd.length; i++) {
-			if (!source.contains(toAdd[i]))
-				source.add(toAdd[i]);
+		for (BundleDescription element : toAdd) {
+			if (!source.contains(element))
+				source.add(element);
 		}
 	}
 
@@ -647,22 +640,20 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		if (addedBundle == null && unqualifiedBundles == null)
 			return;
 
-		for (Iterator<BundleDescription> iter = addedBundle.iterator(); iter.hasNext();) {
-			BundleDescription added = iter.next();
+		for (BundleDescription added : addedBundle) {
 			state.removeBundle(added);
 		}
 		addedBundle.clear();
 
-		for (Iterator<BundleDescription> iter = unqualifiedBundles.iterator(); iter.hasNext();) {
-			BundleDescription toAddBack = iter.next();
+		for (BundleDescription toAddBack : unqualifiedBundles) {
 			state.removeBundle(toAddBack.getBundleId());
 			addBundleDescription(toAddBack);
 		}
 		unqualifiedBundles.clear();
 
 		BundleDescription[] allBundles = state.getBundles();
-		for (int i = 0; i < allBundles.length; i++) {
-			allBundles[i].setUserObject(null);
+		for (BundleDescription bundle : allBundles) {
+			bundle.setUserObject(null);
 		}
 		state.resolve();
 	}
@@ -681,9 +672,8 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	//Replace the version numbers that ends with .qualifier
 	private void forceQualifiers() {
 		BundleDescription[] resolvedBundles = state.getResolvedBundles(); //We only get the resolved bundles since, changing the qualifier should not change the resolution state 
-		for (int i = 0; i < resolvedBundles.length; i++) {
-			if (resolvedBundles[i].getVersion().getQualifier().endsWith(PROPERTY_QUALIFIER)) {
-				BundleDescription b = resolvedBundles[i];
+		for (BundleDescription b : resolvedBundles) {
+			if (b.getVersion().getQualifier().endsWith(PROPERTY_QUALIFIER)) {
 				unqualifiedBundles.add(state.removeBundle(b.getBundleId())); //We keep the removed bundle so we can reinsert it in the state when we are done
 				String newVersion = QualifierReplacer.replaceQualifierInVersion(b.getVersion().toString(), b.getSymbolicName(), getQualifierPropery(b.getLocation()), null);
 

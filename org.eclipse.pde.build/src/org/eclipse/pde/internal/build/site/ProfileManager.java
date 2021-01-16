@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2019 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which accompanies this distribution,
@@ -55,10 +55,10 @@ public class ProfileManager {
 
 	public void copyEEProfileProperties(Dictionary<String, Object> source, Properties target) {
 		String[] profiles = getJavaProfiles();
-		for (int i = 0; i < profiles.length; i++) {
-			Object value = source.get(profiles[i]);
+		for (String profile : profiles) {
+			Object value = source.get(profile);
 			if (value != null && value instanceof String) {
-				target.put(profiles[i], value);
+				target.put(profile, value);
 			}
 		}
 	}
@@ -98,26 +98,23 @@ public class ProfileManager {
 	}
 
 	protected String[] sortProfiles(String[] profiles) {
-		Arrays.sort(profiles, new Comparator<String>() {
-			@Override
-			public int compare(String profile1, String profile2) {
-				// need to make sure JavaSE, J2SE profiles are sorted ahead of all other profiles
-				String p1 = profile1;
-				String p2 = profile2;
-				if (p1.startsWith("JavaSE-") && !p2.startsWith("JavaSE-")) //$NON-NLS-1$ //$NON-NLS-2$
-					return -1;
-				if (!p1.startsWith("JavaSE-") && p2.startsWith("JavaSE-")) //$NON-NLS-1$ //$NON-NLS-2$
-					return 1;
-				if (p1.startsWith("J2SE-") && !p2.startsWith("J2SE-")) //$NON-NLS-1$ //$NON-NLS-2$
-					return -1;
-				if (!p1.startsWith("J2SE-") && p2.startsWith("J2SE-")) //$NON-NLS-1$ //$NON-NLS-2$
-					return 1;
-				if (p1.startsWith("JavaSE/compact") && !p2.startsWith("JavaSE/compact")) //$NON-NLS-1$ //$NON-NLS-2$
-					return -1;
-				if (!p1.startsWith("JavaSE/compact") && p2.startsWith("JavaSE/compact")) //$NON-NLS-1$ //$NON-NLS-2$
-					return 1;
-				return -p1.compareTo(p2);
-			}
+		Arrays.sort(profiles, (profile1, profile2) -> {
+			// need to make sure JavaSE, J2SE profiles are sorted ahead of all other profiles
+			String p1 = profile1;
+			String p2 = profile2;
+			if (p1.startsWith("JavaSE-") && !p2.startsWith("JavaSE-")) //$NON-NLS-1$ //$NON-NLS-2$
+				return -1;
+			if (!p1.startsWith("JavaSE-") && p2.startsWith("JavaSE-")) //$NON-NLS-1$ //$NON-NLS-2$
+				return 1;
+			if (p1.startsWith("J2SE-") && !p2.startsWith("J2SE-")) //$NON-NLS-1$ //$NON-NLS-2$
+				return -1;
+			if (!p1.startsWith("J2SE-") && p2.startsWith("J2SE-")) //$NON-NLS-1$ //$NON-NLS-2$
+				return 1;
+			if (p1.startsWith("JavaSE/compact") && !p2.startsWith("JavaSE/compact")) //$NON-NLS-1$ //$NON-NLS-2$
+				return -1;
+			if (!p1.startsWith("JavaSE/compact") && p2.startsWith("JavaSE/compact")) //$NON-NLS-1$ //$NON-NLS-2$
+				return 1;
+			return -p1.compareTo(p2);
 		});
 		return profiles;
 	}
@@ -127,8 +124,8 @@ public class ProfileManager {
 			loadRuntimeJavaProfiles();
 		}
 		if (profileSources != null) {
-			for (int i = 0; i < profileSources.length; i++) {
-				File source = new File(profileSources[i]);
+			for (String element : profileSources) {
+				File source = new File(element);
 				if (source.isDirectory()) {
 					loadJavaProfiles(source);
 				} else {
@@ -203,12 +200,7 @@ public class ProfileManager {
 		if (profiles != null) {
 			return Utils.getArrayEnumerator(profiles);
 		} else if (container instanceof File) {
-			File[] files = ((File) container).listFiles(new FilenameFilter() {
-				@Override
-				public boolean accept(File dir, String name) {
-					return name.endsWith(PROFILE_EXTENSION);
-				}
-			});
+			File[] files = ((File) container).listFiles((FilenameFilter) (dir, name) -> name.endsWith(PROFILE_EXTENSION));
 			return Utils.getArrayEnumerator(files);
 		} else if (container instanceof ZipFile) {
 			return ((ZipFile) container).entries();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which accompanies this distribution,
@@ -79,8 +79,8 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 
 			// extract features from platform.xml
 			File[] featureDirectories = PluginPathFinder.getFeaturePaths(installedBaseURL);
-			for (int i = 0; i < featureDirectories.length; i++) {
-				File featureXML = new File(featureDirectories[i], Constants.FEATURE_FILENAME_DESCRIPTOR);
+			for (File element : featureDirectories) {
+				File featureXML = new File(element, Constants.FEATURE_FILENAME_DESCRIPTOR);
 				if (featureXML.exists())
 					featureXMLs.add(featureXML);
 			}
@@ -90,8 +90,7 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 		URL featureURL;
 		FeatureReference featureRef;
 
-		for (Iterator<File> iter = featureXMLs.iterator(); iter.hasNext();) {
-			File featureXML = iter.next();
+		for (File featureXML : featureXMLs) {
 			if (featureXML.exists()) {
 				// Here we could not use toURL() on currentFeatureDir, because the URL has a slash after the colons (file:/c:/foo) whereas the plugins don't
 				// have it (file:d:/eclipse/plugins) and this causes problems later to compare URLs... and compute relative paths
@@ -140,8 +139,8 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 		boolean found = true;
 		while (found && i < sitePaths.length) {
 			found = false;
-			for (int j = 0; j < urls.length; j++) {
-				if (sitePaths[i].equals(urls[j])) {
+			for (String url : urls) {
+				if (sitePaths[i].equals(url)) {
 					found = true;
 					break;
 				}
@@ -162,18 +161,18 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBui
 	private Collection<File> findFeatureXMLs() {
 		Collection<File> features = new ArrayList<>();
 		Collection<File> foundFeatures = null;
-		for (int i = 0; i < sitePaths.length; i++) {
-			File file = new File(sitePaths[i], Constants.FEATURE_FILENAME_DESCRIPTOR);
+		for (String sitePath : sitePaths) {
+			File file = new File(sitePath, Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (file.exists()) {
 				//path is a feature itself
 				features.add(file);
 				continue;
-			} else if (new File(sitePaths[i], DEFAULT_FEATURE_LOCATION).exists()) {
+			} else if (new File(sitePath, DEFAULT_FEATURE_LOCATION).exists()) {
 				//path is a eclipse root and contains a features subdirectory
-				foundFeatures = Utils.findFiles(new File(sitePaths[i]), DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
+				foundFeatures = Utils.findFiles(new File(sitePath), DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
 			} else {
 				// treat as a flat directory containing features
-				foundFeatures = Utils.findFiles(new File(sitePaths[i]), ".", Constants.FEATURE_FILENAME_DESCRIPTOR); //$NON-NLS-1$
+				foundFeatures = Utils.findFiles(new File(sitePath), ".", Constants.FEATURE_FILENAME_DESCRIPTOR); //$NON-NLS-1$
 			}
 			if (foundFeatures != null)
 				features.addAll(foundFeatures);

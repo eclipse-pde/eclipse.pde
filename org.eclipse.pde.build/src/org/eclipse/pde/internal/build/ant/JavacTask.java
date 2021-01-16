@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -87,10 +87,10 @@ public class JavacTask implements ITask {
 		}
 		script.println("<classpath refid=\"" + classpathId + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		for (int i = 0; i < srcdir.length; i++) {
+		for (String element : srcdir) {
 			script.printTab();
 			script.print("<src path="); //$NON-NLS-1$
-			script.printQuotes(srcdir[i]);
+			script.printQuotes(element);
 			script.println("/>"); //$NON-NLS-1$
 		}
 

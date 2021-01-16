@@ -20,6 +20,7 @@ package org.eclipse.pde.internal.build;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.jar.JarFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
@@ -98,9 +99,9 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (getProductFile() == null)
 			return result;
 		String[] icons = os != null ? productFile.getIcons(os) : productFile.getIcons();
-		for (int i = 0; i < icons.length; i++) {
+		for (String icon2 : icons) {
 
-			String icon = Utils.makeRelative(new Path(icons[i]), new Path(productFile.getLocation().getParent())).toOSString();
+			String icon = Utils.makeRelative(new Path(icon2), new Path(productFile.getLocation().getParent())).toOSString();
 
 			String location = findFile(icon, true);
 			if (location == null) {
@@ -205,8 +206,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.println("/>"); //$NON-NLS-1$
 			script.printTab();
 
-			for (int i = 0; i < plugins.length; i++) {
-				BundleDescription plugin = plugins[i];
+			for (BundleDescription plugin : plugins) {
 				script.printTab();
 				script.print("\t<iu "); //$NON-NLS-1$
 				script.printAttribute(ID, plugin.getSymbolicName(), true);
@@ -214,8 +214,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				script.println("/>"); //$NON-NLS-1$
 			}
 
-			for (int i = 0; i < features.length; i++) {
-				BuildTimeFeature feature = features[i];
+			for (BuildTimeFeature feature : features) {
 				script.printTab();
 				script.print("\t<iu"); //$NON-NLS-1$
 				script.printAttribute(ID, getFeatureGroupId(feature), true);
@@ -223,8 +222,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				script.println("/>"); //$NON-NLS-1$
 			}
 
-			for (Iterator<BuildTimeFeature> iterator = rootFileProviders.iterator(); iterator.hasNext();) {
-				BuildTimeFeature rootProvider = iterator.next();
+			for (BuildTimeFeature rootProvider : rootFileProviders) {
 				if (!(havePDEUIState() && rootProvider.getId().equals("org.eclipse.pde.container.feature"))) { //$NON-NLS-1$
 					script.printTab();
 					script.print("\t<iu"); //$NON-NLS-1$
@@ -400,8 +398,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (rootFileProviders.size() == 0 || BuildDirector.p2Gathering)
 			return;
 
-		for (Iterator<BuildTimeFeature> iter = rootFileProviders.iterator(); iter.hasNext();) {
-			Properties featureProperties = getFeatureBuildProperties(iter.next());
+		for (BuildTimeFeature rootFileProvider : rootFileProviders) {
+			Properties featureProperties = getFeatureBuildProperties(rootFileProvider);
 			Utils.generatePermissions(featureProperties, configInfo, PROPERTY_ECLIPSE_BASE, script);
 		}
 
@@ -437,8 +435,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		Map<String, String> properties = new HashMap<>(1);
 		properties.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS));
 
-		for (int i = 0; i < plugins.length; i++) {
-			BundleDescription plugin = plugins[i];
+		for (BundleDescription plugin : plugins) {
 			String placeToGather = getLocation(plugin);
 
 			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), TARGET_GATHER_SOURCES, null, null, properties);
@@ -461,8 +458,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 		properties = new HashMap<>(1);
 		properties.put(PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE));
-		for (int i = 0; i < features.length; i++) {
-			BuildTimeFeature feature = features[i];
+		for (BuildTimeFeature feature : features) {
 			String placeToGather = feature.getRootLocation();
 			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), TARGET_GATHER_SOURCES, null, null, properties);
 		}
@@ -617,13 +613,11 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	protected void generatePostProcessingTarget() {
 		script.printTargetDeclaration(TARGET_JAR_PROCESSING, null, null, null, null);
-		for (int i = 0; i < plugins.length; i++) {
-			BundleDescription plugin = plugins[i];
+		for (BundleDescription plugin : plugins) {
 			generatePostProcessingSteps(plugin.getSymbolicName(), plugin.getVersion().toString(), (String) shapeAdvisor.getFinalShape(plugin)[1], BUNDLE_TYPE);
 		}
 
-		for (int i = 0; i < features.length; i++) {
-			BuildTimeFeature feature = features[i];
+		for (BuildTimeFeature feature : features) {
 			generatePostProcessingSteps(feature.getId(), feature.getVersion(), (String) shapeAdvisor.getFinalShape(feature)[1], FEATURE_TYPE);
 		}
 		printCustomAssemblyAntCall(PROPERTY_POST + TARGET_JARUP, null);
@@ -633,15 +627,13 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	protected void generateGatherBinPartsTarget() {
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, null, null, null, null);
-		for (int i = 0; i < plugins.length; i++) {
-			BundleDescription plugin = plugins[i];
+		for (BundleDescription plugin : plugins) {
 			String placeToGather = getLocation(plugin);
 			printCustomGatherCall(ModelBuildScriptGenerator.getNormalizedName(plugin), Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS), null);
 		}
 
 		Set<BuildTimeFeature> featureSet = new HashSet<>();
-		for (int i = 0; i < features.length; i++) {
-			BuildTimeFeature feature = features[i];
+		for (BuildTimeFeature feature : features) {
 			String placeToGather = feature.getRootLocation();
 			String featureFullName = feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
 			printCustomGatherCall(featureFullName, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
@@ -649,8 +641,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 
 		//This will generate gather.bin.parts call to features that provides files for the root
-		for (Iterator<BuildTimeFeature> iter = rootFileProviders.iterator(); iter.hasNext();) {
-			BuildTimeFeature feature = iter.next();
+		for (BuildTimeFeature feature : rootFileProviders) {
 			if (featureSet.contains(feature))
 				continue;
 			String placeToGather = feature.getRootLocation();
@@ -947,21 +938,20 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			fileSets.add(new ZipFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), false, null, "**/**", null, toExcludeFromArchive, null, productFile != null ? Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) : null, null, null)); //$NON-NLS-1$
 			fileSets.addAll(Arrays.asList(permissions));
 		} else {
-			for (int i = 0; i < plugins.length; i++) {
-				Object[] shape = shapeAdvisor.getFinalShape(plugins[i]);
+			for (BundleDescription plugin2 : plugins) {
+				Object[] shape = shapeAdvisor.getFinalShape(plugin2);
 				fileSets.add(new ZipFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], shape[1] == ShapeAdvisor.FILE, null, null, null, null, null, Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null));
 			}
 
-			for (int i = 0; i < features.length; i++) {
-				Object[] shape = shapeAdvisor.getFinalShape(features[i]);
+			for (BuildTimeFeature feature2 : features) {
+				Object[] shape = shapeAdvisor.getFinalShape(feature2);
 				fileSets.add(new ZipFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION + '/' + (String) shape[0], shape[1] == ShapeAdvisor.FILE, null, null, null, null, null, Utils.getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null));
 			}
 
 			if (rootFileProviders.size() > 0) {
 				if (groupConfigs) {
 					List<Config> allConfigs = getConfigInfos();
-					for (Iterator<Config> iter = allConfigs.iterator(); iter.hasNext();) {
-						Config elt = iter.next();
+					for (Config elt : allConfigs) {
 						fileSets.add(new ZipFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + elt.toStringReplacingAny(".", ANY_STRING), false, null, "**/**", null, null, null, elt.toStringReplacingAny(".", ANY_STRING), null, null)); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 					}
 				} else {
@@ -988,29 +978,28 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		String commonPermissions = ROOT_PREFIX + PERMISSIONS + '.';
 		ArrayList<ZipFileSet> fileSets = new ArrayList<>();
 
-		for (Iterator<BuildTimeFeature> iter = getArchiveRootFileProviders().iterator(); iter.hasNext();) {
-			Properties featureProperties = getFeatureBuildProperties(iter.next());
-			for (Iterator<Map.Entry<Object, Object>> iter2 = featureProperties.entrySet().iterator(); iter2.hasNext();) {
-				Map.Entry<Object, Object> permission = iter2.next();
+		for (BuildTimeFeature buildTimeFeature : getArchiveRootFileProviders()) {
+			Properties featureProperties = getFeatureBuildProperties(buildTimeFeature);
+			for (Entry<Object, Object> permission : featureProperties.entrySet()) {
 				String instruction = (String) permission.getKey();
 				String parameters = (String) permission.getValue();
 				String[] values = Utils.getArrayFromString(parameters);
-				for (int i = 0; i < values.length; i++) {
-					boolean isFile = !values[i].endsWith("/"); //$NON-NLS-1$
+				for (String value : values) {
+					boolean isFile = !value.endsWith("/"); //$NON-NLS-1$
 					if (instruction.startsWith(prefixPermissions)) {
-						addedByPermissions.add(values[i]);
+						addedByPermissions.add(value);
 						if (zip)
-							fileSets.add(new ZipFileSet(root + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + (isFile ? '/' + values[i] : ""), null, instruction.substring(prefixPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							fileSets.add(new ZipFileSet(root + (isFile ? '/' + value : ""), isFile, null, isFile ? null : value + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + (isFile ? '/' + value : ""), null, instruction.substring(prefixPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 						else
-							fileSets.add(new TarFileSet(root + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + (isFile ? '/' + values[i] : ""), null, instruction.substring(prefixPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							fileSets.add(new TarFileSet(root + (isFile ? '/' + value : ""), isFile, null, isFile ? null : value + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + (isFile ? '/' + value : ""), null, instruction.substring(prefixPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 						continue;
 					}
 					if (instruction.startsWith(commonPermissions)) {
-						addedByPermissions.add(values[i]);
+						addedByPermissions.add(value);
 						if (zip)
-							fileSets.add(new ZipFileSet(root + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + (isFile ? '/' + values[i] : ""), null, instruction.substring(commonPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							fileSets.add(new ZipFileSet(root + (isFile ? '/' + value : ""), isFile, null, isFile ? null : value + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + (isFile ? '/' + value : ""), null, instruction.substring(commonPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 						else
-							fileSets.add(new TarFileSet(root + (isFile ? '/' + values[i] : ""), isFile, null, isFile ? null : values[i] + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + (isFile ? '/' + values[i] : ""), null, instruction.substring(commonPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							fileSets.add(new TarFileSet(root + (isFile ? '/' + value : ""), isFile, null, isFile ? null : value + "/**", null, null, null, Utils.getPropertyFormat(PROPERTY_ARCHIVE_PREFIX) + (isFile ? '/' + value : ""), null, instruction.substring(commonPermissions.length()))); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 						continue;
 					}
 				}
@@ -1030,13 +1019,13 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			fileSets.addAll(Arrays.asList(permissions));
 		} else {
 			//FileSet[] filesPlugins = new FileSet[plugins.length];
-			for (int i = 0; i < plugins.length; i++) {
-				Object[] shape = shapeAdvisor.getFinalShape(plugins[i]);
+			for (BundleDescription plugin2 : plugins) {
+				Object[] shape = shapeAdvisor.getFinalShape(plugin2);
 				fileSets.add(new TarFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_PLUGIN_LOCATION + '/' + (String) shape[0], shape[1] == ShapeAdvisor.FILE, null, null, null, null, null, Utils.getPropertyFormat(PROPERTY_PLUGIN_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null));
 			}
 
-			for (int i = 0; i < features.length; i++) {
-				Object[] shape = shapeAdvisor.getFinalShape(features[i]);
+			for (BuildTimeFeature feature2 : features) {
+				Object[] shape = shapeAdvisor.getFinalShape(feature2);
 				fileSets.add(new TarFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION + '/' + (String) shape[0], shape[1] == ShapeAdvisor.FILE, null, null, null, null, null, Utils.getPropertyFormat(PROPERTY_FEATURE_ARCHIVE_PREFIX) + '/' + (String) shape[0], null, null));
 			}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -53,8 +53,8 @@ public class AntLogAdapter implements ILog {
 				log.invoke(antLog, new Object[] {exceptionMessage, Integer.valueOf(mapLogLevels(status.getSeverity()))});
 			IStatus[] nestedStatus = status.getChildren();
 			if (nestedStatus != null) {
-				for (int i = 0; i < nestedStatus.length; i++) {
-					log(nestedStatus[i]);
+				for (IStatus element : nestedStatus) {
+					log(element);
 				}
 			}
 		} catch (IllegalArgumentException e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -134,10 +134,10 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 				printTag("update", parameters, true, true, true); //$NON-NLS-1$
 			}
 
-			for (int i = 0; i < siteEntries.length; i++) {
+			for (URLEntry siteEntry : siteEntries) {
 				parameters.clear();
-				parameters.put("url", siteEntries[i].getURL()); //$NON-NLS-1$
-				parameters.put("label", siteEntries[i].getAnnotation()); //$NON-NLS-1$
+				parameters.put("url", siteEntry.getURL()); //$NON-NLS-1$
+				parameters.put("label", siteEntry.getAnnotation()); //$NON-NLS-1$
 				printTag("discovery", parameters, true, true, true); //$NON-NLS-1$
 			}
 			endTag("url"); //$NON-NLS-1$
@@ -146,17 +146,17 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 
 	public void printIncludes() throws CoreException {
 		FeatureEntry[] entries = feature.getEntries();
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].isRequires() || entries[i].isPlugin())
+		for (FeatureEntry entry : entries) {
+			if (entry.isRequires() || entry.isPlugin())
 				continue;
 
 			parameters.clear();
 			try {
-				parameters.put(ID, entries[i].getId());
-				BuildTimeFeature tmpFeature = site.findFeature(entries[i].getId(), null, true);
+				parameters.put(ID, entry.getId());
+				BuildTimeFeature tmpFeature = site.findFeature(entry.getId(), null, true);
 				parameters.put(VERSION, tmpFeature.getVersion());
 			} catch (CoreException e) {
-				String message = NLS.bind(Messages.exception_missingFeature, entries[i].getId());
+				String message = NLS.bind(Messages.exception_missingFeature, entry.getId());
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
 			}
 
@@ -168,8 +168,8 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 		boolean haveRequires = false;
 
 		FeatureEntry[] entries = feature.getEntries();
-		for (int i = 0; i < entries.length; i++) {
-			if (!entries[i].isRequires())
+		for (FeatureEntry entry : entries) {
+			if (!entry.isRequires())
 				continue;
 
 			if (!haveRequires) {
@@ -177,15 +177,15 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 				haveRequires = true;
 			}
 			parameters.clear();
-			if (entries[i].isPlugin()) {
-				parameters.put(PLUGIN, entries[i].getId());
-				parameters.put(VERSION, entries[i].getVersion());
+			if (entry.isPlugin()) {
+				parameters.put(PLUGIN, entry.getId());
+				parameters.put(VERSION, entry.getVersion());
 			} else {
 				//The import refers to a feature
-				parameters.put(FEATURE, entries[i].getId());
-				parameters.put(VERSION, entries[i].getVersion());
+				parameters.put(FEATURE, entry.getId());
+				parameters.put(VERSION, entry.getVersion());
 			}
-			parameters.put("match", entries[i].getMatch()); //$NON-NLS-1$
+			parameters.put("match", entry.getMatch()); //$NON-NLS-1$
 			printTag("import", parameters, true, true, true); //$NON-NLS-1$
 		}
 		if (haveRequires)
@@ -214,32 +214,32 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 
 	public void printPlugins() throws CoreException {
 		FeatureEntry[] entries = feature.getEntries();
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i].isRequires() || !entries[i].isPlugin())
+		for (FeatureEntry entry : entries) {
+			if (entry.isRequires() || !entry.isPlugin())
 				continue;
 			parameters.clear();
-			parameters.put(ID, entries[i].getId());
+			parameters.put(ID, entry.getId());
 
-			String versionRequested = entries[i].getVersion();
+			String versionRequested = entry.getVersion();
 			BundleDescription effectivePlugin = null;
 			try {
-				effectivePlugin = site.getRegistry().getResolvedBundle(entries[i].getId(), versionRequested);
+				effectivePlugin = site.getRegistry().getResolvedBundle(entry.getId(), versionRequested);
 			} catch (CoreException e) {
-				String message = NLS.bind(Messages.exception_missingPlugin, entries[i].getId() + "_" + entries[i].getVersion()); //$NON-NLS-1$
+				String message = NLS.bind(Messages.exception_missingPlugin, entry.getId() + "_" + entry.getVersion()); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
 			}
 			if (effectivePlugin == null) {
-				String message = NLS.bind(Messages.exception_missingPlugin, entries[i].getId() + "_" + entries[i].getVersion()); //$NON-NLS-1$
+				String message = NLS.bind(Messages.exception_missingPlugin, entry.getId() + "_" + entry.getVersion()); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
 			}
 			parameters.put(VERSION, effectivePlugin.getVersion().toString());
-			if (entries[i].isFragment())
-				parameters.put(FRAGMENT, String.valueOf(entries[i].isFragment()));
-			parameters.put("os", entries[i].getOS()); //$NON-NLS-1$
-			parameters.put("arch", entries[i].getArch()); //$NON-NLS-1$
-			parameters.put("ws", entries[i].getWS()); //$NON-NLS-1$
-			parameters.put("nl", entries[i].getNL()); //$NON-NLS-1$
-			if (!entries[i].isUnpack())
+			if (entry.isFragment())
+				parameters.put(FRAGMENT, String.valueOf(entry.isFragment()));
+			parameters.put("os", entry.getOS()); //$NON-NLS-1$
+			parameters.put("arch", entry.getArch()); //$NON-NLS-1$
+			parameters.put("ws", entry.getWS()); //$NON-NLS-1$
+			parameters.put("nl", entry.getNL()); //$NON-NLS-1$
+			if (!entry.isUnpack())
 				parameters.put("unpack", Boolean.FALSE.toString()); //$NON-NLS-1$
 			//			parameters.put("download-size", new Long(entries[i].getDownloadSize() != -1 ? entries[i].getDownloadSize() : 0)); //$NON-NLS-1$
 			//			parameters.put("install-size", new Long(entries[i].getInstallSize() != -1 ? entries[i].getInstallSize() : 0)); //$NON-NLS-1$

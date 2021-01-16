@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2013 IBM Corporation and others.
+ *  Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.site;
 
-import java.util.Iterator;
 import java.util.SortedSet;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 
@@ -31,8 +30,7 @@ public class FilteringState extends PDEState {
 		}
 
 		SortedSet<ReachablePlugin> includedMatches = allPlugins.subSet(new ReachablePlugin(toAdd.getSymbolicName(), ReachablePlugin.WIDEST_RANGE), new ReachablePlugin(toAdd.getSymbolicName(), ReachablePlugin.NARROWEST_RANGE));
-		for (Iterator<ReachablePlugin> iterator = includedMatches.iterator(); iterator.hasNext();) {
-			ReachablePlugin constraint = iterator.next();
+		for (ReachablePlugin constraint : includedMatches) {
 			if (constraint.getRange().isIncluded(toAdd.getVersion()))
 				return super.addBundleDescription(toAdd);
 		}

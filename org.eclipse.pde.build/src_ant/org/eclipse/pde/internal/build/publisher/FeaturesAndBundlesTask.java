@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -67,9 +67,7 @@ public class FeaturesAndBundlesTask extends AbstractPublisherTask {
 
 	private File[] getLocations(List<FileSet> collection) {
 		ArrayList<File> results = new ArrayList<>();
-		for (Iterator<FileSet> iterator = collection.iterator(); iterator.hasNext();) {
-			FileSet set = iterator.next();
-
+		for (FileSet set : collection) {
 			DirectoryScanner scanner = set.getDirectoryScanner(getProject());
 			String[][] elements = new String[][] {scanner.getIncludedDirectories(), scanner.getIncludedFiles()};
 			for (int i = 0; i < 2; i++) {

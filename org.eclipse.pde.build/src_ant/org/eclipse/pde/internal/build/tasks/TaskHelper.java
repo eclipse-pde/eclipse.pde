@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,9 +21,9 @@ public class TaskHelper {
 		if (b == null)
 			b = new StringBuffer();
 		b.append(status.getMessage());
-		for (int i = 0; i < nestedStatus.length; i++) {
+		for (IStatus element : nestedStatus) {
 			b.append('\n');
-			b.append(statusToString(nestedStatus[i], b));
+			b.append(statusToString(element, b));
 		}
 		return b;
 	}

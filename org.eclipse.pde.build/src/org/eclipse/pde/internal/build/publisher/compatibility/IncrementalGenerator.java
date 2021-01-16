@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -43,8 +43,8 @@ public class IncrementalGenerator {
 			if (configs != null)
 				provider.setConfigurations(configs.toArray(new String[configs.size()]));
 			if (advice != null) {
-				for (Iterator<IPublisherAdvice> iterator = advice.iterator(); iterator.hasNext();) {
-					provider.addAdvice(iterator.next());
+				for (IPublisherAdvice iPublisherAdvice : advice) {
+					provider.addAdvice(iPublisherAdvice);
 				}
 			}
 		}

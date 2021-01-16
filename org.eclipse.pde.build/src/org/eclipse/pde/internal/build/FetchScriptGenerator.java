@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -167,12 +167,12 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 */
 	private void generateFetchFilesForIncludedFeatures() throws CoreException {
 		FeatureEntry[] referencedFeatures = feature.getIncludedFeatureReferences();
-		for (int i = 0; i < referencedFeatures.length; i++) {
-			String featureId = referencedFeatures[i].getId();
+		for (FeatureEntry referencedFeature : referencedFeatures) {
+			String featureId = referencedFeature.getId();
 			if (featureProperties.containsKey(GENERATION_SOURCE_FEATURE_PREFIX + featureId))
 				continue;
 
-			FetchScriptGenerator generator = new FetchScriptGenerator("feature@" + featureId + ',' + referencedFeatures[i].getVersion()); //$NON-NLS-1$
+			FetchScriptGenerator generator = new FetchScriptGenerator("feature@" + featureId + ',' + referencedFeature.getVersion()); //$NON-NLS-1$
 			generator.setDirectoryLocation(directoryLocation);
 			generator.setFetchChildren(fetchChildren);
 			generator.setFetchCache(fetchCache);
@@ -329,8 +329,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetDeclaration(TARGET_FETCH_RECURSIVELY, null, FEATURES_RECURSIVELY, null, null);
 
 		FeatureEntry[] compiledFeatures = feature.getIncludedFeatureReferences();
-		for (int i = 0; i < compiledFeatures.length; i++) {
-			String featureId = compiledFeatures[i].getId();
+		for (FeatureEntry compiledFeature : compiledFeatures) {
+			String featureId = compiledFeature.getId();
 			if (featureProperties.containsKey(GENERATION_SOURCE_FEATURE_PREFIX + featureId)) {
 				String[] extraElementsToFetch = Utils.getArrayFromString(featureProperties.getProperty(GENERATION_SOURCE_FEATURE_PREFIX + featureId), ","); //$NON-NLS-1$
 				for (int j = 1; j < extraElementsToFetch.length; j++) {
@@ -341,7 +341,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			}
 
 			//Included features can be available in the baseLocation.
-			if (getRepositoryInfo(IFetchFactory.ELEMENT_TYPE_FEATURE + '@' + featureId, new Version(compiledFeatures[i].getVersion())) != null)
+			if (getRepositoryInfo(IFetchFactory.ELEMENT_TYPE_FEATURE + '@' + featureId, new Version(compiledFeature.getVersion())) != null)
 				script.printAntTask(Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY) + '/' + FETCH_FILE_PREFIX + featureId + ".xml", null, TARGET_FETCH, null, null, null); //$NON-NLS-1$
 			else if (getSite(false).findFeature(featureId, null, false) == null) {
 				String message = NLS.bind(Messages.error_cannotFetchNorFindFeature, featureId);
@@ -426,9 +426,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		FeatureEntry[] compiledChildren = feature.getPluginEntries();
 
 		String elementId;
-		for (int i = 0; i < allChildren.length; i++) {
-			elementId = allChildren[i].getId();
-			Version versionId = new Version(allChildren[i].getVersion());
+		for (FeatureEntry child : allChildren) {
+			elementId = child.getId();
+			Version versionId = new Version(child.getVersion());
 			// We are not fetching the elements that are said to be generated, but we are fetching some elements that can be associated
 			if (featureProperties.containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + elementId)) {
 				String[] extraElementsToFetch = Utils.getArrayFromString(featureProperties.getProperty(GENERATION_SOURCE_PLUGIN_PREFIX + elementId), ","); //$NON-NLS-1$
@@ -440,12 +440,12 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			}
 
 			boolean generated = true;
-			if (allChildren[i].isFragment())
-				generated = generateFetchEntry(IFetchFactory.ELEMENT_TYPE_FRAGMENT + '@' + elementId, versionId, !Utils.isIn(compiledChildren, allChildren[i]));
+			if (child.isFragment())
+				generated = generateFetchEntry(IFetchFactory.ELEMENT_TYPE_FRAGMENT + '@' + elementId, versionId, !Utils.isIn(compiledChildren, child));
 			else
-				generated = generateFetchEntry(IFetchFactory.ELEMENT_TYPE_PLUGIN + '@' + elementId, versionId, !Utils.isIn(compiledChildren, allChildren[i]));
+				generated = generateFetchEntry(IFetchFactory.ELEMENT_TYPE_PLUGIN + '@' + elementId, versionId, !Utils.isIn(compiledChildren, child));
 			if (generated == false)
-				generateFetchEntry(IFetchFactory.ELEMENT_TYPE_BUNDLE + '@' + elementId, versionId, !Utils.isIn(compiledChildren, allChildren[i]));
+				generateFetchEntry(IFetchFactory.ELEMENT_TYPE_BUNDLE + '@' + elementId, versionId, !Utils.isIn(compiledChildren, child));
 		}
 
 		elementId = feature.getLicenseFeature();
@@ -582,8 +582,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			// for some unknown reason, list() can return null.  
 			// Just skip the children If it does.
 			if (list != null)
-				for (int i = 0; i < list.length; i++)
-					result &= clear(new java.io.File(root, list[i]));
+				for (String element2 : list)
+					result &= clear(new java.io.File(root, element2));
 		}
 		try {
 			if (root.exists())
@@ -655,8 +655,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			return null;
 
 		Map.Entry<MapFileEntry, Object> bestMatch = null;
-		for (Iterator<Entry<MapFileEntry, Object>> iterator = candidates.entrySet().iterator(); iterator.hasNext();) {
-			Map.Entry<MapFileEntry, Object> entry = iterator.next();
+		for (Entry<MapFileEntry, Object> entry : candidates.entrySet()) {
 			MapFileEntry aCandidate = entry.getKey();
 			//Find the exact match
 			if (aCandidate.v.equals(version))
@@ -681,8 +680,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		if (directory != null)
 			return;
 		directory = new TreeMap<>();
-		for (Iterator<Entry<Object, Object>> iter = directoryFile.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry<Object, Object> entry = iter.next();
+		for (Entry<Object, Object> entry : directoryFile.entrySet()) {
 			String[] entryInfo = Utils.getArrayFromString((String) entry.getKey());
 			if (entryInfo.length == 0)
 				continue;
@@ -749,8 +747,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 * Generates additional targets submitted by the fetch task factory.
 	 */
 	private void generateAdditionalTargets() {
-		for (Iterator<IFetchFactory> iter = encounteredTypeOfRepo.iterator(); iter.hasNext();) {
-			iter.next().addTargets(script);
+		for (IFetchFactory iFetchFactory : encounteredTypeOfRepo) {
+			iFetchFactory.addTargets(script);
 		}
 	}
 
@@ -803,11 +801,11 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		fetchTags = new Properties();
 
 		String[] entries = Utils.getArrayFromString(value);
-		for (int i = 0; i < entries.length; i++) {
-			if (entries[i] == null)
+		for (String entry : entries) {
+			if (entry == null)
 				continue;
 
-			String[] elements = Utils.getArrayFromString(entries[i], ";"); //$NON-NLS-1$
+			String[] elements = Utils.getArrayFromString(entry, ";"); //$NON-NLS-1$
 
 			// REPO=tag;project=otherTag;project2=tag3
 			if (elements.length > 0) {
@@ -833,7 +831,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 					if (idx != -1)
 						overrides.setProperty(projectOverride.substring(0, idx), projectOverride.substring(idx + 1, projectOverride.length()).trim());
 					else
-						throw new IllegalArgumentException("FetchTag " + entries[i]); //$NON-NLS-1$
+						throw new IllegalArgumentException("FetchTag " + entry); //$NON-NLS-1$
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -73,8 +73,7 @@ public class ManifestModifier extends Task {
 	}
 
 	private void applyChanges() {
-		for (Iterator<Entry<String, String>> iter = newValues.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry<String, String> entry = iter.next();
+		for (Entry<String, String> entry : newValues.entrySet()) {
 			String key = entry.getKey();
 			String value = entry.getValue();
 			if (value == null) {
