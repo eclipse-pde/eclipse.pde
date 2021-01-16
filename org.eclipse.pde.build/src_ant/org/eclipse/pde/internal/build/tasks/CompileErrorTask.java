@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2020 IBM Corporation and others.
+ * Copyright (c) 2010, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,18 +38,14 @@ public class CompileErrorTask extends Task {
 		Union union = new Union(problemFiles);
 		String[] prereqFiles = union.list();
 		List<String> problems = new ArrayList<>();
-		BufferedReader reader = null;
 		for (int i = 0; i < prereqFiles.length; i++) {
 			File file = new File(prereqFiles[i]);
-			try {
-				reader = new BufferedReader(new FileReader(file));
+			try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 				String line = reader.readLine();
 				if (line != null)
 					problems.add(line);
 			} catch (IOException e) {
 				// 
-			} finally {
-				close(reader);
 			}
 		}
 
@@ -58,9 +54,7 @@ public class CompileErrorTask extends Task {
 			if (!log.getParentFile().exists())
 				log.getParentFile().mkdirs();
 			synchronized (LOCK) {
-				FileWriter writer = null;
-				try {
-					writer = new FileWriter(log, true);
+				try (FileWriter writer = new FileWriter(log, true)) {
 					writer.write(bundle + ": the following prerequisites contain compile errors" + NEW_LINE); //$NON-NLS-1$
 					for (Iterator<String> iterator = problems.iterator(); iterator.hasNext();) {
 						writer.write("\t"); //$NON-NLS-1$
@@ -69,25 +63,9 @@ public class CompileErrorTask extends Task {
 					}
 				} catch (IOException e) {
 					// 
-				} finally {
-					close(writer);
 				}
 
 			}
-		}
-
-	}
-
-	private void close(Object o) {
-		if (o == null)
-			return;
-		try {
-			if (o instanceof Reader)
-				((Reader) o).close();
-			if (o instanceof Writer)
-				((Writer) o).close();
-		} catch (IOException e) {
-			// ignore
 		}
 
 	}
