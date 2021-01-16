@@ -15,7 +15,8 @@
 package org.eclipse.pde.internal.build.tasks;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.PatternSet;
 import org.apache.tools.ant.types.resources.Files;
@@ -38,8 +39,8 @@ public class CompileErrorTask extends Task {
 		Union union = new Union(problemFiles);
 		String[] prereqFiles = union.list();
 		List<String> problems = new ArrayList<>();
-		for (int i = 0; i < prereqFiles.length; i++) {
-			File file = new File(prereqFiles[i]);
+		for (String prereqFile : prereqFiles) {
+			File file = new File(prereqFile);
 			try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 				String line = reader.readLine();
 				if (line != null)
@@ -56,9 +57,9 @@ public class CompileErrorTask extends Task {
 			synchronized (LOCK) {
 				try (FileWriter writer = new FileWriter(log, true)) {
 					writer.write(bundle + ": the following prerequisites contain compile errors" + NEW_LINE); //$NON-NLS-1$
-					for (Iterator<String> iterator = problems.iterator(); iterator.hasNext();) {
+					for (String problem : problems) {
 						writer.write("\t"); //$NON-NLS-1$
-						writer.write(iterator.next());
+						writer.write(problem);
 						writer.write(NEW_LINE);
 					}
 				} catch (IOException e) {
