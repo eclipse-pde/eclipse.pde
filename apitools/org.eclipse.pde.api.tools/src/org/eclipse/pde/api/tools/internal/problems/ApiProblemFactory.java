@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -727,8 +727,7 @@ public class ApiProblemFactory {
 						}
 					case IApiProblem.UNUSED_PROBLEM_FILTERS:
 						return 30;
-					case IApiProblem.MISSING_EE_DESCRIPTIONS:
-						return 38;
+
 					default:
 						break;
 				}
@@ -1112,8 +1111,7 @@ public class ApiProblemFactory {
 						return IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES;
 					case IApiProblem.UNUSED_PROBLEM_FILTERS:
 						return IApiProblemTypes.UNUSED_PROBLEM_FILTERS;
-					case IApiProblem.MISSING_EE_DESCRIPTIONS:
-						return IApiProblemTypes.MISSING_EE_DESCRIPTIONS;
+
 					default:
 						break;
 				}

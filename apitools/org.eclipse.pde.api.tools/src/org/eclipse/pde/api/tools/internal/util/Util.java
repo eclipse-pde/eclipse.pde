@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2020 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -2837,9 +2837,6 @@ public final class Util {
 
 			case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES:
 				return IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES;
-
-			case IApiProblem.MISSING_EE_DESCRIPTIONS:
-				return IApiProblemTypes.MISSING_EE_DESCRIPTIONS;
 
 			// this is usage??
 			case IApiProblem.UNUSED_PROBLEM_FILTERS:

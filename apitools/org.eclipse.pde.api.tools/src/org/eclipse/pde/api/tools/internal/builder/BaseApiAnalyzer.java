@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2020 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -78,7 +78,6 @@ import org.eclipse.pde.api.tools.internal.ApiFilterStore;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
-import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
 import org.eclipse.pde.api.tools.internal.model.WorkspaceBaseline;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
@@ -286,9 +285,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				localMonitor.split(2);
 			}
 
-			// check EE description status
-			checkEEDescriptions();
-
 			// usage checks
 			checkApiUsage(bcontext, component, localMonitor.split(1));
 			// tag validation
@@ -385,40 +381,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		return fContinueOnResolutionError;
 	}
 
-	/**
-	 * Checks if the setting to scan for invalid references is not set to be
-	 * ignored AND there are no descriptions installed
-	 *
-	 * @param component
-	 * @param monitor
-	 * @since 1.0.400
-	 */
-	void checkEEDescriptions() {
-		if (ignoreEEDescriptionCheck()) {
-			if (ApiPlugin.DEBUG_API_ANALYZER) {
-				System.out.println("Ignoring check for API EE descriptions"); //$NON-NLS-1$
-			}
-			return;
-		}
-		if (ApiPlugin.DEBUG_API_ANALYZER) {
-			System.out.println("Checking if there are any API EE descriptions installed if the preference is set to not be 'ignore'"); //$NON-NLS-1$
-		}
-		String[] ees = StubApiComponent.getInstalledMetadata();
-		if (ees.length < 1) {
-			IApiProblem problem = ApiProblemFactory.newApiUsageProblem(Path.EMPTY.toString(), null, new String[] { fJavaProject.getElementName() }, new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { Integer.valueOf(IApiMarkerConstants.API_USAGE_MARKER_ID) }, -1, -1, -1, IElementDescriptor.RESOURCE, IApiProblem.MISSING_EE_DESCRIPTIONS);
-			addProblem(problem);
-		}
-	}
-
-	/**
-	 * @return if the API EE description check should be ignored or not
-	 */
-	private boolean ignoreEEDescriptionCheck() {
-		if (fJavaProject == null) {
-			return true;
-		}
-		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, fJavaProject.getProject().getProject()) == ApiPlugin.SEVERITY_IGNORE;
-	}
 
 	/**
 	 * Processes the API Use Scan report for the given API Component
