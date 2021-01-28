@@ -179,4 +179,16 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 */
 	void setSchemaVersion(String schemaVersion) throws CoreException;
 
+	/**
+	 * Returns whether this plugin exports its external annotations (.eea files)
+	 * to be considered by clients performing annotation based null analysis.
+	 * This is read from the manifest header
+	 * {@code Eclipse-ExportExternalAnnotations}.
+	 *
+	 * @since 3.15
+	 */
+	default boolean exportsExternalAnnotations() {
+		return false;
+	}
+
 }

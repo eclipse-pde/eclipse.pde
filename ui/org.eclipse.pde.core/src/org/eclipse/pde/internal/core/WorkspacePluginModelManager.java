@@ -84,7 +84,8 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager<IPluginMo
 					Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, //
 					IPDEBuildConstants.ECLIPSE_PLATFORM_FILTER, //
 					ICoreConstants.ECLIPSE_SYSTEM_BUNDLE, //
-					ICoreConstants.ECLIPSE_SOURCE_BUNDLE)));
+					ICoreConstants.ECLIPSE_SOURCE_BUNDLE, //
+					ICoreConstants.ECLIPSE_EXPORT_EXTERNAL_ANNOTATIONS)));
 
 	private final ArrayList<IExtensionDeltaListener> fExtensionListeners = new ArrayList<>();
 	private ArrayList<ModelChange> fChangedExtensions = null;

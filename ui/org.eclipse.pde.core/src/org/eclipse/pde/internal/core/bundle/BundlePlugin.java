@@ -52,4 +52,9 @@ public class BundlePlugin extends BundlePluginBase implements IBundlePlugin {
 		return "true".equals(getValue(ICoreConstants.EXTENSIBLE_API, false)); //$NON-NLS-1$
 	}
 
+	@Override
+	public boolean exportsExternalAnnotations() {
+		return "true".equals(getValue(ICoreConstants.ECLIPSE_EXPORT_EXTERNAL_ANNOTATIONS, false)); //$NON-NLS-1$
+	}
+
 }

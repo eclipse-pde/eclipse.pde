@@ -51,6 +51,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	private String fVersion;
 	private boolean fHasBundleStructure;
 	private String fBundleSourceEntry;
+	private boolean fExportsExternalAnnotations;
 
 	public PluginBase(boolean readOnly) {
 		super(readOnly);
@@ -123,6 +124,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		fProviderName = state.getProviderName(bundleDesc.getBundleId());
 		fHasBundleStructure = state.hasBundleStructure(bundleDesc.getBundleId());
 		fBundleSourceEntry = state.getBundleSourceEntry(bundleDesc.getBundleId());
+		fExportsExternalAnnotations = state.exportsExternalAnnotations(bundleDesc.getBundleId());
 		loadRuntime(bundleDesc, state);
 		loadImports(bundleDesc);
 	}
@@ -441,6 +443,10 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	 */
 	public String getBundleSourceEntry() {
 		return fBundleSourceEntry;
+	}
+
+	public boolean exportsExternalAnnotations() {
+		return fExportsExternalAnnotations;
 	}
 
 }

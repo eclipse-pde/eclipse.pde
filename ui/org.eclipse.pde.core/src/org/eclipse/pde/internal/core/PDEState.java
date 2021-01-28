@@ -306,4 +306,8 @@ public class PDEState extends MinimalState {
 		return fAuxiliaryState.getBundleSourceEntry(bundleID);
 	}
 
+	public boolean exportsExternalAnnotations(long bundleID) {
+		return fAuxiliaryState.exportsExternalAnnotations(bundleID);
+	}
+
 }

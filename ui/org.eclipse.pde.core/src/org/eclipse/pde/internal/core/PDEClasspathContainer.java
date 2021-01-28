@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -24,6 +25,7 @@ import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -54,19 +56,26 @@ public class PDEClasspathContainer {
 
 	private static final IAccessRule EXCLUDE_ALL_RULE = JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE | IAccessRule.IGNORE_IF_BETTER); //$NON-NLS-1$
 
-	protected void addProjectEntry(IProject project, Rule[] rules, ArrayList<IClasspathEntry> entries) throws CoreException {
+	protected void addProjectEntry(IProject project, Rule[] rules, boolean exportsExternalAnnotations,
+			ArrayList<IClasspathEntry> entries) throws CoreException {
 		if (project.hasNature(JavaCore.NATURE_ID)) {
-			IClasspathEntry entry = null;
-			if (rules != null) {
-				IAccessRule[] accessRules = getAccessRules(rules);
-				entry = JavaCore.newProjectEntry(project.getFullPath(), accessRules, true, new IClasspathAttribute[0], false);
-			} else {
-				entry = JavaCore.newProjectEntry(project.getFullPath());
-			}
+			IAccessRule[] accessRules = rules != null ? getAccessRules(rules) : null;
+			IClasspathAttribute[] extraAttribs = getClasspathAttributesForProject(project, exportsExternalAnnotations);
+			IClasspathEntry entry = JavaCore.newProjectEntry(project.getFullPath(), accessRules, true, extraAttribs, false);
 			if (!entries.contains(entry)) {
 				entries.add(entry);
 			}
 		}
+	}
+
+	private IClasspathAttribute[] getClasspathAttributesForProject(IProject project, boolean exportsExternalAnnotations)
+			throws JavaModelException {
+		if (exportsExternalAnnotations) {
+			String annotationPath = JavaCore.create(project).getOutputLocation().toString();
+			return new IClasspathAttribute[] {
+					JavaCore.newClasspathAttribute(IClasspathAttribute.EXTERNAL_ANNOTATION_PATH, annotationPath) };
+		}
+		return new IClasspathAttribute[0];
 	}
 
 	public static IClasspathEntry[] getExternalEntries(IPluginModelBase model) {
@@ -153,12 +162,20 @@ public class PDEClasspathContainer {
 	}
 
 	private static IClasspathAttribute[] getClasspathAttributes(IPluginModelBase model) {
+		List<IClasspathAttribute> attributes = new ArrayList<>();
 		JavadocLocationManager manager = PDECore.getDefault().getJavadocLocationManager();
 		String location = manager.getJavadocLocation(model);
-		if (location == null) {
-			return new IClasspathAttribute[0];
+		if (location != null) {
+			attributes
+					.add(JavaCore.newClasspathAttribute(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, location));
 		}
-		return new IClasspathAttribute[] {JavaCore.newClasspathAttribute(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, location)};
+		if (model.getPluginBase().exportsExternalAnnotations()) {
+			String installLocation = model.getInstallLocation();
+			attributes.add(
+					JavaCore.newClasspathAttribute(IClasspathAttribute.EXTERNAL_ANNOTATION_PATH,
+							installLocation));
+		}
+		return attributes.toArray(IClasspathAttribute[]::new);
 	}
 
 	private static synchronized IAccessRule getDiscouragedRule(IPath path) {

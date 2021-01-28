@@ -95,6 +95,7 @@ public class PDEAuxiliaryState {
 		String project;
 		String localization;
 		String bundleSourceEntry;
+		boolean exportsExternalAnnotations;
 	}
 
 	/**
@@ -186,6 +187,11 @@ public class PDEAuxiliaryState {
 	public String getBundleSourceEntry(long bundleID) {
 		PluginInfo info = fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? null : info.bundleSourceEntry;
+	}
+
+	public boolean exportsExternalAnnotations(long bundleID) {
+		PluginInfo info = fPluginInfos.get(Long.toString(bundleID));
+		return info == null ? false : info.exportsExternalAnnotations;
 	}
 
 	/**
@@ -375,6 +381,8 @@ public class PDEAuxiliaryState {
 		info.localization = manifest.get(Constants.BUNDLE_LOCALIZATION);
 		info.hasBundleStructure = hasBundleStructure;
 		info.bundleSourceEntry = manifest.get(ICoreConstants.ECLIPSE_SOURCE_BUNDLE);
+		info.exportsExternalAnnotations = "true" //$NON-NLS-1$
+				.equals(manifest.get(ICoreConstants.ECLIPSE_EXPORT_EXTERNAL_ANNOTATIONS));
 		fPluginInfos.put(Long.toString(desc.getBundleId()), info);
 	}
 

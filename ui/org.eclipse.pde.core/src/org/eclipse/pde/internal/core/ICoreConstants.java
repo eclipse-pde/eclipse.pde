@@ -285,6 +285,7 @@ public interface ICoreConstants {
 	String ECLIPSE_SOURCE_REFERENCES = "Eclipse-SourceReferences"; //$NON-NLS-1$
 	String SERVICE_COMPONENT = "Service-Component"; //$NON-NLS-1$
 	String AUTOMATIC_MODULE_NAME = "Automatic-Module-Name"; //$NON-NLS-1$
+	String ECLIPSE_EXPORT_EXTERNAL_ANNOTATIONS = "Eclipse-ExportExternalAnnotations"; //$NON-NLS-1$
 
 	// Equinox-specific system properties
 	String OSGI_SYSTEM_BUNDLE = "osgi.system.bundle"; //$NON-NLS-1$

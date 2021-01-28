@@ -347,7 +347,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		}
 
 		if (resource != null) {
-			addProjectEntry(resource.getProject(), rules, entries);
+			addProjectEntry(resource.getProject(), rules, model.getPluginBase().exportsExternalAnnotations(), entries);
 		} else {
 			addExternalPlugin(model, rules, entries);
 		}
