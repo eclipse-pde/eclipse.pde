@@ -16,16 +16,23 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.service.resolver.StateDelta;
@@ -36,6 +43,7 @@ import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.pde.internal.core.util.UtilMessages;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 
 public class MinimalState {
 
@@ -84,7 +92,9 @@ public class MinimalState {
 		BundleDescription desc = model.getBundleDescription();
 		long bundleId = desc == null || !update ? -1 : desc.getBundleId();
 		try {
-			BundleDescription newDesc = addBundle(new File(model.getInstallLocation()), bundleId);
+			File bundleLocation = new File(model.getInstallLocation());
+			BundleDescription newDesc = addBundle(bundleLocation, bundleId,
+					loadWorkspaceBundleManifest(bundleLocation, model.getUnderlyingResource()));
 			model.setBundleDescription(newDesc);
 			if (newDesc == null && update) {
 				fState.removeBundle(desc);
@@ -93,6 +103,34 @@ public class MinimalState {
 			PDECore.log(e);
 			model.setBundleDescription(null);
 		}
+	}
+
+	@SuppressWarnings("deprecation")
+	private Map<String, String> loadWorkspaceBundleManifest(File bundleLocation, IResource resource)
+			throws CoreException {
+		Map<String, String> manifest = ManifestUtils.loadManifest(bundleLocation);
+		if (manifest.containsKey(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT) || resource == null) {
+			return manifest;
+		}
+
+		// inject BREE based on the project's JDK, otherwise packages from all
+		// JREs are eligible for dependency resolution
+		// e.g. a project compiled against Java 11 may get its java.xml
+		// Import-Package resolved with a Java 8 profile
+
+		IJavaProject javaProject = JavaCore.create(resource.getProject());
+		IVMInstall projectVmInstall = JavaRuntime.getVMInstall(javaProject);
+
+		IExecutionEnvironment executionEnvironment = Arrays
+				.stream(JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments())
+				.filter(env -> env.isStrictlyCompatible(projectVmInstall)) //
+				.findFirst().orElse(null);
+
+		if (executionEnvironment != null) {
+			manifest.put(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, executionEnvironment.getId());
+		}
+
+		return manifest;
 	}
 
 	public BundleDescription addBundle(Map<String, String> manifest, File bundleLocation, long bundleId) throws CoreException {
@@ -119,6 +157,11 @@ public class MinimalState {
 
 	public BundleDescription addBundle(File bundleLocation, long bundleId) throws CoreException {
 		Map<String, String> manifest = ManifestUtils.loadManifest(bundleLocation);
+		return addBundle(bundleLocation, bundleId, manifest);
+	}
+
+	private BundleDescription addBundle(File bundleLocation, long bundleId, Map<String, String> manifest)
+			throws CoreException {
 		// update for development mode
 		TargetWeaver.weaveManifest(manifest);
 
