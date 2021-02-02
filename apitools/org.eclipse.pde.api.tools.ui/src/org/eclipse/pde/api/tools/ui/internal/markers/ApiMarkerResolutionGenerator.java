@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2019 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -48,8 +48,6 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 	 */
 	private final IMarkerResolution[] NO_RESOLUTIONS = new IMarkerResolution[0];
 
-
-	private InstallEEDescriptionProblemResolution installEEResolution = new InstallEEDescriptionProblemResolution();
 	private DefaultApiProfileResolution profileResolution = new DefaultApiProfileResolution();
 
 	@Override
@@ -59,11 +57,6 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 		}
 		switch (marker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1)) {
 			case IApiMarkerConstants.API_USAGE_MARKER_ID: {
-				int id = ApiProblemFactory.getProblemId(marker);
-				if (id > -1 && ApiProblemFactory.getProblemKind(id) == IApiProblem.MISSING_EE_DESCRIPTIONS) {
-					return new IMarkerResolution[] {
-						installEEResolution, new ConfigureProblemSeverityForAPIToolsResolution(marker) };
-				}
 			return new IMarkerResolution[] { new ConfigureProblemSeverityForAPIToolsResolution(marker),
 						new FilterProblemResolution(marker),
 						new FilterProblemWithCommentResolution(marker) };

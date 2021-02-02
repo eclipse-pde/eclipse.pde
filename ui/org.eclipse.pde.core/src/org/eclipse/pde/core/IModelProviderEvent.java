@@ -39,18 +39,20 @@ public interface IModelProviderEvent {
 	 * Event is sent when the target platform changes
 	 *
 	 * @since 3.2
-	 * @deprecated Since the 4.4 Luna release, target platform changes are not tracked as model events
+	 * @deprecated Since the 4.4 Luna release, target platform changes are not
+	 *             tracked as model events
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	int TARGET_CHANGED = 0x8;
 
 	/**
 	 * Event is sent when the target environment changes
 	 *
 	 * @since 3.5
-	 * @deprecated Since the 4.4 Luna release, target platform changes are not tracked as model events
+	 * @deprecated Since the 4.4 Luna release, target platform changes are not
+	 *             tracked as model events
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	int ENVIRONMENT_CHANGED = 0x10;
 
 	/**

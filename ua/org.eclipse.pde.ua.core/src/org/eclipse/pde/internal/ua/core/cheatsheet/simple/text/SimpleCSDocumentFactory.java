@@ -285,14 +285,6 @@ public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 		return new SimpleCSIntro(fModel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSModelFactory
-	 * #createSimpleCSItem
-	 * (org.eclipse.pde.internal.ua.core.icheatsheet.simple.ISimpleCSObject)
-	 */
 	@Override
 	public ISimpleCSItem createSimpleCSItem(ISimpleCSObject parent) {
 		return new SimpleCSItem(fModel);

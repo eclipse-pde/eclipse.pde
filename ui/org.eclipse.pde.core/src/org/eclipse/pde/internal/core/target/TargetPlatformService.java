@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.StringTokenizer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
@@ -58,7 +57,6 @@ import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.core.target.ITargetLocation;
@@ -68,10 +66,8 @@ import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.core.target.TargetEvents;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.TargetDefinitionManager;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -372,20 +368,10 @@ public class TargetPlatformService implements ITargetPlatformService {
 				defaultTarget.setName(Messages.TargetPlatformService_7);
 				saveTargetDefinition(defaultTarget);
 
-				// Add target from preferences
-				TargetDefinition preferencesTarget = (TargetDefinition) newTargetFromPreferences();
-				if (preferencesTarget != null) {
-					if (PDECore.DEBUG_MODEL) {
-						System.out.println("Old target preferences found, loading them into active target."); //$NON-NLS-1$
-					}
-					preferencesTarget.setName(PDECoreMessages.PluginModelManager_0);
-					saveTargetDefinition(preferencesTarget);
-				}
 
 				// Set active platform
 				PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-				ITargetHandle active = preferencesTarget != null ? preferencesTarget.getHandle()
-						: defaultTarget.getHandle();
+				ITargetHandle active = defaultTarget.getHandle();
 				preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, active.getMemento());
 			} catch (CoreException e) {
 				PDECore.log(e);
@@ -441,195 +427,6 @@ public class TargetPlatformService implements ITargetPlatformService {
 		} else {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetPlatformService_4, path)));
 		}
-	}
-
-	/**
-	 * Returns a target definition initialized with existing settings from the deprecated
-	 * target platform preferences or <code>null</code> if no deprecated preferences are
-	 * found.
-	 *
-	 * @return a target definition initialized with existing settings or <code>null</code>
-	 */
-	@SuppressWarnings("deprecation")
-	public ITargetDefinition newTargetFromPreferences() {
-		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-		// See if the old preference for the primary target platform location exist
-		boolean useThis = preferences.getString(ICoreConstants.TARGET_MODE).equals(ICoreConstants.VALUE_USE_THIS);
-		String platformPath = preferences.getString(ICoreConstants.PLATFORM_PATH);
-		if (useThis || (platformPath != null && platformPath.length() > 0)) {
-			ITargetDefinition target = newTarget();
-			initializeArgumentsInfo(preferences, target);
-			initializeEnvironmentInfo(preferences, target);
-			initializeImplicitInfo(preferences, target);
-			initializeLocationInfo(preferences, target);
-			initializeAdditionalLocsInfo(preferences, target);
-			initializeJREInfo(target);
-			initializePluginContent(preferences, target);
-			return target;
-		}
-		return null;
-	}
-
-	/**
-	 * Returns the given string or <code>null</code> if the empty string.
-	 *
-	 * @param value
-	 * @return value or <code>null</code>
-	 */
-	private String getValueOrNull(String value) {
-		if (value == null) {
-			return null;
-		}
-		if (value.length() == 0) {
-			return null;
-		}
-		return value;
-	}
-
-	@SuppressWarnings("deprecation")
-	private void initializeArgumentsInfo(PDEPreferencesManager preferences, ITargetDefinition target) {
-		target.setProgramArguments(getValueOrNull(preferences.getString(ICoreConstants.PROGRAM_ARGS)));
-		StringBuilder result = new StringBuilder();
-		String vmArgs = getValueOrNull(preferences.getString(ICoreConstants.VM_ARGS));
-		if (vmArgs != null) {
-			result.append(vmArgs);
-		}
-		if (preferences.getBoolean(ICoreConstants.VM_LAUNCHER_INI)) {
-			// hack on the arguments from eclipse.ini
-			result.append(TargetPlatformHelper.getIniVMArgs());
-		}
-		if (result.length() == 0) {
-			target.setVMArguments(null);
-		} else {
-			target.setVMArguments(result.toString());
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	private void initializeEnvironmentInfo(PDEPreferencesManager preferences, ITargetDefinition target) {
-		target.setOS(getValueOrNull(preferences.getString(ICoreConstants.OS)));
-		target.setWS(getValueOrNull(preferences.getString(ICoreConstants.WS)));
-		target.setNL(getValueOrNull(preferences.getString(ICoreConstants.NL)));
-		target.setArch(getValueOrNull(preferences.getString(ICoreConstants.ARCH)));
-	}
-
-	@SuppressWarnings("deprecation")
-	private void initializeImplicitInfo(PDEPreferencesManager preferences, ITargetDefinition target) {
-		String value = preferences.getString(ICoreConstants.IMPLICIT_DEPENDENCIES);
-		if (value.length() > 0) {
-			StringTokenizer tokenizer = new StringTokenizer(value, ","); //$NON-NLS-1$
-			NameVersionDescriptor[] plugins = new NameVersionDescriptor[tokenizer.countTokens()];
-			int i = 0;
-			while (tokenizer.hasMoreTokens()) {
-				String id = tokenizer.nextToken();
-				plugins[i++] = new NameVersionDescriptor(id, null);
-			}
-			target.setImplicitDependencies(plugins);
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	private void initializeLocationInfo(PDEPreferencesManager preferences, ITargetDefinition target) {
-		boolean useThis = preferences.getString(ICoreConstants.TARGET_MODE).equals(ICoreConstants.VALUE_USE_THIS);
-		boolean profile = preferences.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION);
-		String home = null;
-		// Target weaving
-		Location configArea = Platform.getConfigurationLocation();
-		String configLocation = null;
-		if (configArea != null) {
-			configLocation = configArea.getURL().getFile();
-		}
-		if (configLocation != null) {
-			Location location = Platform.getInstallLocation();
-			if (location != null) {
-				URL url = location.getURL();
-				if (url != null) {
-					IPath installPath = new Path(url.getFile());
-					IPath configPath = new Path(configLocation);
-					if (installPath.isPrefixOf(configPath)) {
-						// if it is the default configuration area, do not specify explicitly
-						configPath = configPath.removeFirstSegments(installPath.segmentCount());
-						configPath = configPath.setDevice(null);
-						if (configPath.segmentCount() == 1 && configPath.lastSegment().equals("configuration")) { //$NON-NLS-1$
-							configLocation = null;
-						}
-					}
-				}
-			}
-		}
-		if (useThis) {
-			home = "${eclipse_home}"; //$NON-NLS-1$
-		} else {
-			home = preferences.getString(ICoreConstants.PLATFORM_PATH);
-		}
-		ITargetLocation primary = null;
-		if (profile) {
-			primary = newProfileLocation(home, configLocation);
-		} else {
-			primary = newDirectoryLocation(home);
-		}
-		target.setName(Messages.TargetPlatformService_5);
-		target.setTargetLocations(new ITargetLocation[] {primary});
-	}
-
-	@SuppressWarnings("deprecation")
-	private void initializeAdditionalLocsInfo(PDEPreferencesManager preferences, ITargetDefinition target) {
-		String additional = preferences.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
-		StringTokenizer tokenizer = new StringTokenizer(additional, ","); //$NON-NLS-1$
-		int size = tokenizer.countTokens();
-		if (size > 0) {
-			List<ITargetLocation> locations = new ArrayList<>(size + 1);
-			ITargetLocation[] targetLocations = target.getTargetLocations();
-			if (targetLocations != null) {
-				locations.add(targetLocations[0]);
-			}
-			while (tokenizer.hasMoreTokens()) {
-				locations.add(newDirectoryLocation(tokenizer.nextToken().trim()));
-			}
-			target.setTargetLocations(locations.toArray(targetLocations));
-		}
-	}
-
-	private void initializeJREInfo(ITargetDefinition target) {
-		target.setJREContainer(null);
-	}
-
-	@SuppressWarnings("deprecation")
-	private void initializePluginContent(PDEPreferencesManager preferences, ITargetDefinition target) {
-		String value = preferences.getString(ICoreConstants.CHECKED_PLUGINS);
-		if (value.length() == 0 || value.equals(ICoreConstants.VALUE_SAVED_NONE)) {
-			// no bundles
-			target.setTargetLocations(null);
-			return;
-		}
-		if (!value.equals(ICoreConstants.VALUE_SAVED_ALL)) {
-			// restrictions on container
-			IPluginModelBase[] models = PluginRegistry.getExternalModels();
-			ArrayList<NameVersionDescriptor> list = new ArrayList<>(models.length);
-			Set<String> disabledIDs = new HashSet<>();
-			for (int i = 0; i < models.length; i++) {
-				if (!models[i].isEnabled()) {
-					disabledIDs.add(models[i].getPluginBase().getId());
-				}
-			}
-			for (IPluginModelBase model : models) {
-				if (model.isEnabled()) {
-					String id = model.getPluginBase().getId();
-					if (id != null) {
-						if (disabledIDs.contains(id)) {
-							// include version info since some versions are disabled
-							list.add(new NameVersionDescriptor(id, model.getPluginBase().getVersion()));
-						} else {
-							list.add(new NameVersionDescriptor(id, null));
-						}
-					}
-				}
-			}
-			if (!list.isEmpty()) {
-				target.setIncluded(list.toArray(new NameVersionDescriptor[list.size()]));
-			}
-		}
-
 	}
 
 	@Override

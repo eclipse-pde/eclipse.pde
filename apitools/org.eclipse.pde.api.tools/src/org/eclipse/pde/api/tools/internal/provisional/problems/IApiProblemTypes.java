@@ -130,6 +130,7 @@ public interface IApiProblemTypes {
 	public static final String INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MAJOR_WITHOUT_BREAKING_CHANGE = "incompatible_api_component_version_report_major_without_breaking_change"; //$NON-NLS-1$
 
 	public static final String MISSING_DEFAULT_API_BASELINE = "missing_default_api_profile"; //$NON-NLS-1$
+	public static final String MISSING_PLUGIN_IN_API_BASELINE = "missing_plugin_in_baseline"; //$NON-NLS-1$
 	public static final String REPORT_RESOLUTION_ERRORS_API_COMPONENT = "report_resolution_errors_api_component"; //$NON-NLS-1$
 
 	// API usage problems

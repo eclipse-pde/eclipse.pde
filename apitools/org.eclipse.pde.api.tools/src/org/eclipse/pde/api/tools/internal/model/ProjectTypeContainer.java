@@ -40,7 +40,6 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  */
 public class ProjectTypeContainer extends ApiElement implements IApiTypeContainer {
 
-	private ResourceApiTypeRoot lastResourceApiTypeRoot = null;
 
 	/**
 	 * Proxy visitor for collecting package names, etc for our type containers
@@ -90,9 +89,6 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 		this.fRoot = container;
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#accept(org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor)
-	 */
 	@Override
 	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
 		if (visitor.visit(this)) {
@@ -101,17 +97,11 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 		visitor.end(this);
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#close()
-	 */
 	@Override
 	public void close() throws CoreException {
 		fPackageNames = null;
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuilder buff = new StringBuilder();
@@ -170,9 +160,6 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 		}
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findTypeRoot(java.lang.String)
-	 */
 	@Override
 	public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException {
 		int index = qualifiedName.lastIndexOf('.');
@@ -186,23 +173,12 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 		if (folder.exists()) {
 			IFile file = folder.getFile(cfName + Util.DOT_CLASS_SUFFIX);
 			if (file.exists()) {
-				if (lastResourceApiTypeRoot != null) {
-					// check if same file and qualified name
-					if (lastResourceApiTypeRoot.getName().equals(qualifiedName)
-							&& lastResourceApiTypeRoot.getFile().equals(file)) {
-						return lastResourceApiTypeRoot;
-					}
-				}
-				lastResourceApiTypeRoot = new ResourceApiTypeRoot(this, file, qualifiedName);
-				return lastResourceApiTypeRoot;
+				return new ResourceApiTypeRoot(this, file, qualifiedName);
 			}
 		}
 		return null;
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#getPackageNames()
-	 */
 	@Override
 	public String[] getPackageNames() throws CoreException {
 		if (fPackageNames == null) {
@@ -225,10 +201,6 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 		dir.accept(new ContainerVisitor(names, dir), IResource.NONE);
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findTypeRoot(java.lang.String,
-	 *      java.lang.String)
-	 */
 	@Override
 	public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {
 		return findTypeRoot(qualifiedName);

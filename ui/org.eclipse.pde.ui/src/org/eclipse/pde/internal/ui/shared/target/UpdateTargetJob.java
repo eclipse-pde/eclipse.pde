@@ -11,56 +11,59 @@
  * Contributors:
  *    EclipseSource Inc. - initial API and implementation
  *    Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
- *    Christoph Läubrich - Bug 567506
+ *    Christoph Läubrich 	Bug 567506 - TargetLocationsGroup.handleEdit() should activate bundles if necessary
+ *    						Bug 568865 - [target] add advanced editing capabilities for custom target platforms
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.IUBundleContainer;
-import org.eclipse.pde.ui.target.ITargetLocationUpdater;
+import org.eclipse.pde.ui.target.ITargetLocationHandler;
 
 /**
- * Updates selected target locations using {@link ITargetLocationUpdater}s in an asynchronous job
+ * Updates selected target locations using a list of {@link IJobFunction}s in an
+ * asynchronous job
  * <p>
- * If all calls to {@link ITargetLocationUpdater#update(org.eclipse.pde.core.target.ITargetDefinition, ITargetLocation, IProgressMonitor)}
- * return an OK status with {@link ITargetLocationUpdater#STATUS_CODE_NO_CHANGE}, the returned status will also have that status code,
- * indicating that no changes were made to the target.
+ * If all calls to {@link IJobFunction#run(IProgressMonitor)} return an OK
+ * status with {@link ITargetLocationHandler#STATUS_CODE_NO_CHANGE}, the
+ * returned status will also have that status code, indicating that no changes
+ * were made to the target.
  */
 public class UpdateTargetJob extends Job {
 
 	public static final String JOB_FAMILY_ID = "UpdateTargetJob"; //$NON-NLS-1$
 
-	private Map<ITargetLocation, Set<Object>> toUpdate;
-	private ITargetDefinition fTarget;
+	private List<IJobFunction> toUpdate;
 
 	/**
-	 * Schedules a new update job that will update all target locations in the provided map.  A target's selected
-	 * children can be added as a set to the values of the map so that only certain portions of the target
-	 * location get updated.
+	 * Schedules a new update job that will update all target locations in the
+	 * provided map. A target's selected children can be added as a set to the
+	 * values of the map so that only certain portions of the target location
+	 * get updated.
 	 * <p>
-	 * TODO The {@link ITargetLocationUpdater} does not currently support updating children
-	 * </p><p>
-	 *  If all calls to {@link ITargetLocationUpdater#update(org.eclipse.pde.core.target.ITargetDefinition, ITargetLocation, IProgressMonitor)}
-	 * return an OK status with {@link ITargetLocationUpdater#STATUS_CODE_NO_CHANGE}, the returned status will also have that status code,
-	 * indicating that no changes were made to the target.
+	 * If all calls to {@link IJobFunction#run(IProgressMonitor)} return an OK
+	 * status with {@link ITargetLocationHandler#STATUS_CODE_NO_CHANGE}, the
+	 * returned status will also have that status code, indicating that no
+	 * changes were made to the target.
 	 * </p>
-	 * @param target the target being updated
-	 * @param toUpdate maps {@link ITargetLocation}s to the {@link Set} of selected children items
-	 * that should be updated.  The sets may be empty, but not <code>null</code>
-	 * @param listener job change listener that will be added to the created job, can be <code>null</code>
+	 *
+	 * @param target
+	 *            the target being updated
+	 * @param updateActions
+	 *            maps {@link ITargetLocation}s to the {@link Set} of selected
+	 *            children items that should be updated. The sets may be empty,
+	 *            but not <code>null</code>
+	 * @param listener
+	 *            job change listener that will be added to the created job, can
+	 *            be <code>null</code>
 	 */
-	public static void update(ITargetDefinition target, Map<ITargetLocation, Set<Object>> toUpdate, IJobChangeListener listener) {
+	public static void update(List<IJobFunction> updateActions, IJobChangeListener listener) {
 		Job.getJobManager().cancel(JOB_FAMILY_ID);
-		Job job = new UpdateTargetJob(toUpdate, target);
+		Job job = new UpdateTargetJob(updateActions);
 		job.setUser(true);
 		if (listener != null) {
 			job.addJobChangeListener(listener);
@@ -71,60 +74,31 @@ public class UpdateTargetJob extends Job {
 	/**
 	 * Use {@link #update(ITargetDefinition, Map, IJobChangeListener)} instead
 	 */
-	private UpdateTargetJob(Map<ITargetLocation, Set<Object>> toUpdate, ITargetDefinition target) {
+	private UpdateTargetJob(List<IJobFunction> updateActions) {
 		super(Messages.UpdateTargetJob_UpdateJobName);
-		this.toUpdate = toUpdate;
-		fTarget = target;
+		this.toUpdate = updateActions;
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		SubMonitor progress = SubMonitor.convert(monitor, Messages.UpdateTargetJob_UpdatingTarget, toUpdate.size() * 100);
-		MultiStatus errors = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.UpdateTargetJob_TargetUpdateFailedStatus, null);
+		SubMonitor progress = SubMonitor.convert(monitor, Messages.UpdateTargetJob_UpdatingTarget,
+				toUpdate.size() * 100);
+		MultiStatus errors = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.UpdateTargetJob_TargetUpdateFailedStatus,
+				null);
 		boolean noChange = true;
-		for (Entry<ITargetLocation, Set<Object>> entry : toUpdate.entrySet()) {
-			ITargetLocation location = entry.getKey();
-			Set<Object> children = entry.getValue();
-
-			String path = null;
-			try {
-				path = location.getLocation(false);
-			} catch (CoreException e1) {
-				// Ignore as this is just for the subtask
-			}
-			progress.subTask(NLS.bind(Messages.UpdateTargetJob_UpdatingContainer, path));
-
-			// TODO Custom code for IUBundleContainers with children selected
-			if (location instanceof IUBundleContainer && !children.isEmpty()) {
-				try {
-					boolean result = ((IUBundleContainer) location).update(children, progress.split(100));
-					if (result) {
-						noChange = false;
-					}
-				} catch (CoreException e) {
-					errors.add(e.getStatus());
-				}
-			} else {
-				ITargetLocationUpdater provider = Adapters.adapt(location, ITargetLocationUpdater.class);
-				if (provider != null) {
-					if (provider.canUpdate(fTarget, location)) {
-						IStatus result = provider.update(fTarget, location, progress.split(100));
-						if (result.isOK() && result.getCode() != ITargetLocationUpdater.STATUS_CODE_NO_CHANGE) {
-							noChange = false;
-						} else if (!result.isOK()) {
-							noChange = false;
-							errors.add(result);
-						}
-					}
-				} else {
-					// If the button enablement is correct, this should not get hit
-					progress.worked(100);
-				}
+		for (IJobFunction action : toUpdate) {
+			IStatus result = action.run(progress.split(100));
+			if (result.isOK() && result.getCode() != ITargetLocationHandler.STATUS_CODE_NO_CHANGE) {
+				noChange = false;
+			} else if (!result.isOK()) {
+				noChange = false;
+				errors.add(result);
 			}
 		}
 		progress.done();
 		if (noChange) {
-			return new Status(IStatus.OK, PDECore.PLUGIN_ID, ITargetLocationUpdater.STATUS_CODE_NO_CHANGE, Messages.UpdateTargetJob_TargetUpdateSuccessStatus, null);
+			return new Status(IStatus.OK, PDECore.PLUGIN_ID, ITargetLocationHandler.STATUS_CODE_NO_CHANGE,
+					Messages.UpdateTargetJob_TargetUpdateSuccessStatus, null);
 		} else if (!errors.isOK()) {
 			return errors;
 		} else {

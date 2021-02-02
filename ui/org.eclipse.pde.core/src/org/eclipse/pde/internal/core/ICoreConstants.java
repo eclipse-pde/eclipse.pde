@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,143 +18,13 @@ package org.eclipse.pde.internal.core;
 import java.util.Locale;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
-import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.osgi.framework.Constants;
 
 /**
  *	Contains constants for the core PDE models including the target platform.
  */
 public interface ICoreConstants {
-
-	// Target Platform
-	/**
-	 * Preference key that stores the string path to the root location of the
-	 * target platform.  Should be accessed through {@link TargetPlatform#getLocation()}.
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String PLATFORM_PATH = "platform_path"; //$NON-NLS-1$
-	/**
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String TARGET_MODE = "target_mode"; //$NON-NLS-1$
-	/**
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String VALUE_USE_THIS = "useThis"; //$NON-NLS-1$
-	/**
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String VALUE_USE_OTHER = "useOther"; //$NON-NLS-1$
-	/**
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String CHECKED_PLUGINS = "checkedPlugins"; //$NON-NLS-1$
-	/**
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String VALUE_SAVED_NONE = "[savedNone]"; //$NON-NLS-1$
-	/**
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String VALUE_SAVED_ALL = "[savedAll]"; //$NON-NLS-1$
-	/**
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String VALUE_SAVED_SOME = "savedSome"; //$NON-NLS-1$
-	/**
-	 * @since 3.6 - Bug 282708: [target] issues with two versions of the same bundle
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String CHECKED_VERSION_PLUGINS = "checkedVersionPlugins"; //$NON-NLS-1$
-	/**
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String PROGRAM_ARGS = "program_args"; //$NON-NLS-1$
-	/**
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String VM_ARGS = "vm_args"; //$NON-NLS-1$
-	/**
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String VM_LAUNCHER_INI = "vm_launcher_ini"; //$NON-NLS-1$
-	/**
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String IMPLICIT_DEPENDENCIES = "implicit_dependencies"; //$NON-NLS-1$
-	/**
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String ADDITIONAL_LOCATIONS = "additional_locations"; //$NON-NLS-1$
-	/**
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String TARGET_PLATFORM_REALIZATION = "target_platform_realization"; //$NON-NLS-1$
-	/**
-	 * @deprecated This preference was only used during 3.5, it has been replaced in 3.6 with {@link #POOLED_URLS}
-	 */
-	@Deprecated
-	String POOLED_BUNDLES = "pooled_bundles"; //$NON-NLS-1$
-	/**
-	 * Comma separated list of bundle URLs used from the bundle pool.
-	 * @since 3.6
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String POOLED_URLS = "pooled_urls"; //$NON-NLS-1$
-	/**
-	 * List of feature ids and versions that are available in the target platform.  Features
-	 * are comma separated, with each entry taking the form of [id]@[version]
-	 *
-	 * @since 3.6
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String EXTERNAL_FEATURES = "external_features"; //$NON-NLS-1$
-
-	// Target Environment
-	/**
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String OS = "org.eclipse.pde.ui.os"; //$NON-NLS-1$
-	/**
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String WS = "org.eclipse.pde.ui.ws"; //$NON-NLS-1$
-	/**
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String NL = "org.eclipse.pde.ui.nl"; //$NON-NLS-1$
-	/**
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String ARCH = "org.eclipse.pde.ui.arch"; //$NON-NLS-1$
-	/**
-	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
-	 */
-	@Deprecated
-	String TARGET_PROFILE = "target.profile"; //$NON-NLS-1$
 
 	// Preferences to allow products to add additional options in the target environment combos
 	// Unknown if they are being used
@@ -164,31 +34,31 @@ public interface ICoreConstants {
 	String ARCH_EXTRA = "org.eclipse.pde.arch.extra"; //$NON-NLS-1$
 
 	/** Constant for the string <code>extension</code> */
-	public final static String EXTENSION_NAME = "extension"; //$NON-NLS-1$
+	String EXTENSION_NAME = "extension"; //$NON-NLS-1$
 
 	/** Constant for the string <code>plugin.xml</code> */
-	public final static String PLUGIN_FILENAME_DESCRIPTOR = "plugin.xml"; //$NON-NLS-1$
+	String PLUGIN_FILENAME_DESCRIPTOR = "plugin.xml"; //$NON-NLS-1$
 
 	/** Constant for the string <code>feature.xml</code> */
-	public final static String FEATURE_FILENAME_DESCRIPTOR = "feature.xml"; //$NON-NLS-1$
+	String FEATURE_FILENAME_DESCRIPTOR = "feature.xml"; //$NON-NLS-1$
 
 	/** Constant for the string <code>fragment.xml</code> */
-	public final static String FRAGMENT_FILENAME_DESCRIPTOR = "fragment.xml"; //$NON-NLS-1$
+	String FRAGMENT_FILENAME_DESCRIPTOR = "fragment.xml"; //$NON-NLS-1$
 
 	/** Constant for the string <code>META-INF/MANIFEST.MF</code> */
-	public final static String BUNDLE_FILENAME_DESCRIPTOR = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
+	String BUNDLE_FILENAME_DESCRIPTOR = "META-INF/MANIFEST.MF"; //$NON-NLS-1$
 
 	/** Constant for the string <code>MANIFEST.MF</code> */
-	public final static String MANIFEST_FILENAME = "MANIFEST.MF"; //$NON-NLS-1$
+	String MANIFEST_FILENAME = "MANIFEST.MF"; //$NON-NLS-1$
 
 	/** Constant for the string <code>.options</code> */
-	public final static String OPTIONS_FILENAME = ".options"; //$NON-NLS-1$
+	String OPTIONS_FILENAME = ".options"; //$NON-NLS-1$
 
 	/** Constant for the string <code>manifest.mf</code> */
-	public final static String MANIFEST_FILENAME_LOWER_CASE = MANIFEST_FILENAME.toLowerCase(Locale.ENGLISH);
+	String MANIFEST_FILENAME_LOWER_CASE = MANIFEST_FILENAME.toLowerCase(Locale.ENGLISH);
 
 	/** Constant for the string <code>build.properties</code> */
-	public final static String BUILD_FILENAME_DESCRIPTOR = "build.properties"; //$NON-NLS-1$
+	String BUILD_FILENAME_DESCRIPTOR = "build.properties"; //$NON-NLS-1$
 
 	/**
 	 * Default version number for plugin and feature
@@ -208,7 +78,7 @@ public interface ICoreConstants {
 	 * new version.
 	 * </p>
 	 */
-	public final static String TARGET30 = "3.0"; //$NON-NLS-1$
+	String TARGET30 = "3.0"; //$NON-NLS-1$
 
 	/**
 	 * Target version of <code>3.1</code>
@@ -223,7 +93,7 @@ public interface ICoreConstants {
 	 * new version.
 	 * </p>
 	 */
-	public final static String TARGET31 = "3.1"; //$NON-NLS-1$
+	String TARGET31 = "3.1"; //$NON-NLS-1$
 
 	/**
 	 * Target version of <code>3.2</code>
@@ -238,7 +108,7 @@ public interface ICoreConstants {
 	 * new version.
 	 * </p>
 	 */
-	public final static String TARGET32 = "3.2"; //$NON-NLS-1$
+	String TARGET32 = "3.2"; //$NON-NLS-1$
 
 	/**
 	 * Target version of <code>3.3</code>
@@ -253,7 +123,7 @@ public interface ICoreConstants {
 	 * new version.
 	 * </p>
 	 */
-	public final static String TARGET33 = "3.3"; //$NON-NLS-1$
+	String TARGET33 = "3.3"; //$NON-NLS-1$
 
 	/**
 	 * Target version of <code>3.4</code>
@@ -268,7 +138,7 @@ public interface ICoreConstants {
 	 * new version.
 	 * </p>
 	 */
-	public final static String TARGET34 = "3.4"; //$NON-NLS-1$
+	String TARGET34 = "3.4"; //$NON-NLS-1$
 
 	/**
 	 * Target version of <code>3.5</code>
@@ -283,7 +153,7 @@ public interface ICoreConstants {
 	 * new version.
 	 * </p>
 	 */
-	public final static String TARGET35 = "3.5"; //$NON-NLS-1$
+	String TARGET35 = "3.5"; //$NON-NLS-1$
 
 	/**
 	 * Target version of <code>3.6</code>
@@ -298,7 +168,7 @@ public interface ICoreConstants {
 	 * new version.
 	 * </p>
 	 */
-	public final static String TARGET36 = "3.6"; //$NON-NLS-1$
+	String TARGET36 = "3.6"; //$NON-NLS-1$
 
 	/**
 	 * Target version of <code>3.7</code>
@@ -313,7 +183,7 @@ public interface ICoreConstants {
 	 * new version.
 	 * </p>
 	 */
-	public final static String TARGET37 = "3.7"; //$NON-NLS-1$
+	String TARGET37 = "3.7"; //$NON-NLS-1$
 
 	/**
 	 * Target version of <code>3.8</code>
@@ -328,7 +198,7 @@ public interface ICoreConstants {
 	 * new version.
 	 * </p>
 	 */
-	public final static String TARGET38 = "3.8"; //$NON-NLS-1$
+	String TARGET38 = "3.8"; //$NON-NLS-1$
 
 	/**
 	 * The highest version of of Eclipse that PDE recognizes as having a special file structure. The value of
@@ -342,7 +212,7 @@ public interface ICoreConstants {
 	 * NewProjectCreationPage, and {@link IBundleProjectDescription} must all be updated.
 	 * </p>
 	 */
-	public final static String TARGET_VERSION_LATEST = TARGET38;
+	String TARGET_VERSION_LATEST = TARGET38;
 
 	/**
 	 * Preference key that stores a list of user specified source locations.
@@ -352,13 +222,13 @@ public interface ICoreConstants {
 	@Deprecated
 	String P_SOURCE_LOCATIONS = "source_locations"; //$NON-NLS-1$
 
-	public final static String EQUINOX = "Equinox"; //$NON-NLS-1$
+	String EQUINOX = "Equinox"; //$NON-NLS-1$
 
 	// project preferences
-	public static final String SELFHOSTING_BIN_EXCLUDES = "selfhosting.binExcludes"; //$NON-NLS-1$
-	public static final String EQUINOX_PROPERTY = "pluginProject.equinox"; //$NON-NLS-1$
-	public static final String EXTENSIONS_PROPERTY = "pluginProject.extensions"; //$NON-NLS-1$
-	public static final String RESOLVE_WITH_REQUIRE_BUNDLE = "resolve.requirebundle"; //$NON-NLS-1$
+	String SELFHOSTING_BIN_EXCLUDES = "selfhosting.binExcludes"; //$NON-NLS-1$
+	String EQUINOX_PROPERTY = "pluginProject.equinox"; //$NON-NLS-1$
+	String EXTENSIONS_PROPERTY = "pluginProject.extensions"; //$NON-NLS-1$
+	String RESOLVE_WITH_REQUIRE_BUNDLE = "resolve.requirebundle"; //$NON-NLS-1$
 
 	/**
 	 * Configures launch shortcuts visible in the manifest editor for a project.
@@ -367,7 +237,7 @@ public interface ICoreConstants {
 	 *
 	 * @since 3.6
 	 */
-	public static final String MANIFEST_LAUNCH_SHORTCUTS = "manifest.launchShortcuts"; //$NON-NLS-1$
+	String MANIFEST_LAUNCH_SHORTCUTS = "manifest.launchShortcuts"; //$NON-NLS-1$
 
 	/**
 	 * Configures the export wizard used in the manifest editor for a project.
@@ -375,124 +245,124 @@ public interface ICoreConstants {
 	 *
 	 * @since 3.6
 	 */
-	public static final String MANIFEST_EXPORT_WIZARD = "manifest.exportWizard"; //$NON-NLS-1$
+	String MANIFEST_EXPORT_WIZARD = "manifest.exportWizard"; //$NON-NLS-1$
 
 	// for backwards compatibility with Eclipse 3.0 bundle manifest files
-	public final static String PROVIDE_PACKAGE = "Provide-Package"; //$NON-NLS-1$
-	public final static String REPROVIDE_ATTRIBUTE = "reprovide"; //$NON-NLS-1$
-	public final static String OPTIONAL_ATTRIBUTE = "optional"; //$NON-NLS-1$
-	public final static String REQUIRE_PACKAGES_ATTRIBUTE = "require-packages"; //$NON-NLS-1$
-	public final static String SINGLETON_ATTRIBUTE = "singleton"; //$NON-NLS-1$
-	public final static String PACKAGE_SPECIFICATION_VERSION = "specification-version"; //$NON-NLS-1$
-	public static final String IMPORT_SERVICE = "Import-Service"; //$NON-NLS-1$
-	public static final String EXPORT_SERVICE = "Export-Service"; //$NON-NLS-1$
+	String PROVIDE_PACKAGE = "Provide-Package"; //$NON-NLS-1$
+	String REPROVIDE_ATTRIBUTE = "reprovide"; //$NON-NLS-1$
+	String OPTIONAL_ATTRIBUTE = "optional"; //$NON-NLS-1$
+	String REQUIRE_PACKAGES_ATTRIBUTE = "require-packages"; //$NON-NLS-1$
+	String SINGLETON_ATTRIBUTE = "singleton"; //$NON-NLS-1$
+	String PACKAGE_SPECIFICATION_VERSION = "specification-version"; //$NON-NLS-1$
+	String IMPORT_SERVICE = "Import-Service"; //$NON-NLS-1$
+	String EXPORT_SERVICE = "Export-Service"; //$NON-NLS-1$
 
 	// Equinox-specific headers
-	public final static String EXTENSIBLE_API = "Eclipse-ExtensibleAPI"; //$NON-NLS-1$
-	public final static String PATCH_FRAGMENT = "Eclipse-PatchFragment"; //$NON-NLS-1$
-	public final static String PLUGIN_CLASS = "Plugin-Class"; //$NON-NLS-1$
+	String EXTENSIBLE_API = "Eclipse-ExtensibleAPI"; //$NON-NLS-1$
+	String PATCH_FRAGMENT = "Eclipse-PatchFragment"; //$NON-NLS-1$
+	String PLUGIN_CLASS = "Plugin-Class"; //$NON-NLS-1$
 	/**
 	 * The 'Eclipse-AutoStart=true' header was used up to and including 3.1 to mean LAZY.
 	 * However, this was a poorly named header, since "auto-start" sounds UN-LAZY, and
 	 * was replaced with 'Eclipse-LazyStart=true' in 3.2.
 	 */
-	public final static String ECLIPSE_AUTOSTART = "Eclipse-AutoStart"; //$NON-NLS-1$
+	String ECLIPSE_AUTOSTART = "Eclipse-AutoStart"; //$NON-NLS-1$
 	/**
 	 * The 'Eclipse-LazyStart=true' header replaced the 'Eclipse-AutoStart' header
 	 * with a better name in 3.2. And since 3.4 (OSGi R4.1), the 'Bundle-ActivationPolicy: lazy'
 	 * replaces all of these.
 	 */
-	public final static String ECLIPSE_LAZYSTART = "Eclipse-LazyStart"; //$NON-NLS-1$
-	public final static String ECLIPSE_JREBUNDLE = "Eclipse-JREBundle"; //$NON-NLS-1$
-	public static final String ECLIPSE_BUDDY_POLICY = "Eclipse-BuddyPolicy"; //$NON-NLS-1$
-	public static final String ECLIPSE_REGISTER_BUDDY = "Eclipse-RegisterBuddy"; //$NON-NLS-1$
-	public static final String ECLIPSE_GENERIC_CAPABILITY = "Eclipse-GenericCapability"; //$NON-NLS-1$
-	public static final String ECLIPSE_GENERIC_REQUIRED = "Eclipse-GenericRequire"; //$NON-NLS-1$
-	public static final String PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
-	public static final String ECLIPSE_SOURCE_BUNDLE = "Eclipse-SourceBundle"; //$NON-NLS-1$
-	public static final String ECLIPSE_SYSTEM_BUNDLE = "Eclipse-SystemBundle"; //$NON-NLS-1$
-	public static final String ECLIPSE_BUNDLE_SHAPE = "Eclipse-BundleShape"; //$NON-NLS-1$
-	public static final String ECLIPSE_SOURCE_REFERENCES = "Eclipse-SourceReferences"; //$NON-NLS-1$
-	public static final String SERVICE_COMPONENT = "Service-Component"; //$NON-NLS-1$
-	public static final String AUTOMATIC_MODULE_NAME = "Automatic-Module-Name"; //$NON-NLS-1$
+	String ECLIPSE_LAZYSTART = "Eclipse-LazyStart"; //$NON-NLS-1$
+	String ECLIPSE_JREBUNDLE = "Eclipse-JREBundle"; //$NON-NLS-1$
+	String ECLIPSE_BUDDY_POLICY = "Eclipse-BuddyPolicy"; //$NON-NLS-1$
+	String ECLIPSE_REGISTER_BUDDY = "Eclipse-RegisterBuddy"; //$NON-NLS-1$
+	String ECLIPSE_GENERIC_CAPABILITY = "Eclipse-GenericCapability"; //$NON-NLS-1$
+	String ECLIPSE_GENERIC_REQUIRED = "Eclipse-GenericRequire"; //$NON-NLS-1$
+	String PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
+	String ECLIPSE_SOURCE_BUNDLE = "Eclipse-SourceBundle"; //$NON-NLS-1$
+	String ECLIPSE_SYSTEM_BUNDLE = "Eclipse-SystemBundle"; //$NON-NLS-1$
+	String ECLIPSE_BUNDLE_SHAPE = "Eclipse-BundleShape"; //$NON-NLS-1$
+	String ECLIPSE_SOURCE_REFERENCES = "Eclipse-SourceReferences"; //$NON-NLS-1$
+	String SERVICE_COMPONENT = "Service-Component"; //$NON-NLS-1$
+	String AUTOMATIC_MODULE_NAME = "Automatic-Module-Name"; //$NON-NLS-1$
 
 	// Equinox-specific system properties
-	public static final String OSGI_SYSTEM_BUNDLE = "osgi.system.bundle"; //$NON-NLS-1$
-	public static final String OSGI_OS = "osgi.os"; //$NON-NLS-1$
-	public static final String OSGI_WS = "osgi.ws"; //$NON-NLS-1$
-	public static final String OSGI_NL = "osgi.nl"; //$NON-NLS-1$
-	public static final String OSGI_ARCH = "osgi.arch"; //$NON-NLS-1$
-	public static final String OSGI_RESOLVE_OPTIONAL = "osgi.resolveOptional"; //$NON-NLS-1$
-	public static final String OSGI_RESOLVER_MODE = "osgi.resolverMode"; //$NON-NLS-1$
+	String OSGI_SYSTEM_BUNDLE = "osgi.system.bundle"; //$NON-NLS-1$
+	String OSGI_OS = "osgi.os"; //$NON-NLS-1$
+	String OSGI_WS = "osgi.ws"; //$NON-NLS-1$
+	String OSGI_NL = "osgi.nl"; //$NON-NLS-1$
+	String OSGI_ARCH = "osgi.arch"; //$NON-NLS-1$
+	String OSGI_RESOLVE_OPTIONAL = "osgi.resolveOptional"; //$NON-NLS-1$
+	String OSGI_RESOLVER_MODE = "osgi.resolverMode"; //$NON-NLS-1$
 
 	// Equinox-specific directives
-	public static final String INTERNAL_DIRECTIVE = "x-internal"; //$NON-NLS-1$
-	public static final String FRIENDS_DIRECTIVE = "x-friends"; //$NON-NLS-1$
+	String INTERNAL_DIRECTIVE = "x-internal"; //$NON-NLS-1$
+	String FRIENDS_DIRECTIVE = "x-friends"; //$NON-NLS-1$
 
-	public static final String SHAPE_JAR = "jar"; //$NON-NLS-1$
-	public static final String SHAPE_DIR = "dir"; //$NON-NLS-1$
-	public static final String[] SHAPE_VALUES = new String[] {SHAPE_DIR, SHAPE_JAR};
+	String SHAPE_JAR = "jar"; //$NON-NLS-1$
+	String SHAPE_DIR = "dir"; //$NON-NLS-1$
+	String[] SHAPE_VALUES = new String[] {SHAPE_DIR, SHAPE_JAR};
 
-	public static final String[] TRANSLATABLE_HEADERS = new String[] {Constants.BUNDLE_VENDOR, Constants.BUNDLE_NAME, Constants.BUNDLE_DESCRIPTION, Constants.BUNDLE_COPYRIGHT, Constants.BUNDLE_CATEGORY, Constants.BUNDLE_CONTACTADDRESS};
+	String[] TRANSLATABLE_HEADERS = new String[] {Constants.BUNDLE_VENDOR, Constants.BUNDLE_NAME, Constants.BUNDLE_DESCRIPTION, Constants.BUNDLE_COPYRIGHT, Constants.BUNDLE_CATEGORY, Constants.BUNDLE_CONTACTADDRESS};
 
 	// EASTER EGG
-	public static final String[] EE_TOKENS = new String[] {"wassim", "zx", "bbauman", "cherie", "jlb", "cwindatt" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+	String[] EE_TOKENS = new String[] {"wassim", "zx", "bbauman", "cherie", "jlb", "cwindatt" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 	};
 
 	// Common folder names
-	public static String MANIFEST_FOLDER_NAME = "META-INF/"; //$NON-NLS-1$
-	public static String OSGI_INF_FOLDER_NAME = "OSGI-INF/"; //$NON-NLS-1$
-	public static String FEATURE_FOLDER_NAME = "features"; //$NON-NLS-1$
+	String MANIFEST_FOLDER_NAME = "META-INF/"; //$NON-NLS-1$
+	String OSGI_INF_FOLDER_NAME = "OSGI-INF/"; //$NON-NLS-1$
+	String FEATURE_FOLDER_NAME = "features"; //$NON-NLS-1$
 
 	// Common paths
-	public static IPath MANIFEST_PATH = new Path(BUNDLE_FILENAME_DESCRIPTOR);
-	public static IPath PLUGIN_PATH = new Path(PLUGIN_FILENAME_DESCRIPTOR);
-	public static IPath FRAGMENT_PATH = new Path(FRAGMENT_FILENAME_DESCRIPTOR);
-	public static IPath FEATURE_PATH = new Path(FEATURE_FILENAME_DESCRIPTOR);
-	public static IPath BUILD_PROPERTIES_PATH = new Path(BUILD_FILENAME_DESCRIPTOR);
-	public static IPath OSGI_INF_PATH = new Path(OSGI_INF_FOLDER_NAME);
+	IPath MANIFEST_PATH = new Path(BUNDLE_FILENAME_DESCRIPTOR);
+	IPath PLUGIN_PATH = new Path(PLUGIN_FILENAME_DESCRIPTOR);
+	IPath FRAGMENT_PATH = new Path(FRAGMENT_FILENAME_DESCRIPTOR);
+	IPath FEATURE_PATH = new Path(FEATURE_FILENAME_DESCRIPTOR);
+	IPath BUILD_PROPERTIES_PATH = new Path(BUILD_FILENAME_DESCRIPTOR);
+	IPath OSGI_INF_PATH = new Path(OSGI_INF_FOLDER_NAME);
 
 	// Extension point identifiers
-	public static final String EXTENSION_POINT_SOURCE = PDECore.PLUGIN_ID + ".source"; //$NON-NLS-1$
-	public static final String EXTENSION_POINT_BUNDLE_IMPORTERS = PDECore.PLUGIN_ID + ".bundleImporters"; //$NON-NLS-1$
+	String EXTENSION_POINT_SOURCE = PDECore.PLUGIN_ID + ".source"; //$NON-NLS-1$
+	String EXTENSION_POINT_BUNDLE_IMPORTERS = PDECore.PLUGIN_ID + ".bundleImporters"; //$NON-NLS-1$
 
 	// file extensions
 
 	/**
 	 * File extension for target definitions
 	 */
-	public static final String TARGET_FILE_EXTENSION = "target"; //$NON-NLS-1$
+	String TARGET_FILE_EXTENSION = "target"; //$NON-NLS-1$
 
 	/**
 	 * Preference key for the active workspace target platform handle memento.  If not set,
 	 * old target preferences will be used to create a default.  If no external bundles are
 	 * wanted, this value should be set to {@link #NO_TARGET}.
 	 */
-	public static final String WORKSPACE_TARGET_HANDLE = "workspace_target_handle"; //$NON-NLS-1$
+	String WORKSPACE_TARGET_HANDLE = "workspace_target_handle"; //$NON-NLS-1$
 
 	/**
 	 * Preference key for the workspace bundle overriding target bundle for the
 	 * same id
 	 */
-	public static final String WORKSPACE_PLUGINS_OVERRIDE_TARGET = "workspace_plugins_override_target"; //$NON-NLS-1$
+	String WORKSPACE_PLUGINS_OVERRIDE_TARGET = "workspace_plugins_override_target"; //$NON-NLS-1$
 	/**
 	 * Boolean preference whether API analysis has been disabled
 	 */
-	public static final String DISABLE_API_ANALYSIS_BUILDER = "Preferences.MainPage.disableAPIAnalysisBuilder";//$NON-NLS-1$
+	String DISABLE_API_ANALYSIS_BUILDER = "Preferences.MainPage.disableAPIAnalysisBuilder";//$NON-NLS-1$
 
 	/**
 	 * Explicit preference value for {@link #WORKSPACE_TARGET_HANDLE} when the user chooses no
 	 * target for the workspace (no external bundles).
 	 */
-	public static final String NO_TARGET = "NO_TARGET"; //$NON-NLS-1$
+	String NO_TARGET = "NO_TARGET"; //$NON-NLS-1$
 
 	/**
 	 * Preference key for the patterns that determine if a plugin project should be
 	 * treated as test code
 	 */
-	public static final String TEST_PLUGIN_PATTERN = "test_plugin_pattern"; //$NON-NLS-1$
+	String TEST_PLUGIN_PATTERN = "test_plugin_pattern"; //$NON-NLS-1$
 
 	// default value for
-	public static final String TEST_PLUGIN_PATTERN_DEFAULTVALUE = "[.]test[s]?$|[.]tests[.]"; //$NON-NLS-1$
+	String TEST_PLUGIN_PATTERN_DEFAULTVALUE = "[.]test[s]?$|[.]tests[.]"; //$NON-NLS-1$
 
 }

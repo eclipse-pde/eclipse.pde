@@ -23,18 +23,12 @@ public class TracingStartupMonitor implements StartupMonitor {
 
 	private ServiceRegistration<StartupMonitor> registration;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.osgi.service.runnable.StartupMonitor#update()
-	 */
 	@Override
 	public void update() {
 
 		// empty implementation
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.osgi.service.runnable.StartupMonitor#applicationRunning()
-	 */
 	@Override
 	public void applicationRunning() {
 

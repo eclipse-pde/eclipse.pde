@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - Bug 568865 - [target] add advanced editing capabilities for custom target platforms
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
@@ -412,6 +413,10 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	public String toString() {
 		return new StringBuilder("Installation ").append(fHome).append(' ') //$NON-NLS-1$
 				.append(fConfiguration == null ? "Default Configuration" : fConfiguration).toString(); //$NON-NLS-1$
+	}
+
+	public void reload() {
+		clearResolutionStatus();
 	}
 
 }

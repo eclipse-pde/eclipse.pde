@@ -59,11 +59,6 @@ public class TracingComponentViewerFilter extends PatternFilter {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.dialogs.PatternFilter#isElementVisible(org.eclipse.jface.viewers.Viewer, java.lang.Object)
-	 */
 	@Override
 	public boolean isElementVisible(final Viewer viewer, final Object element) {
 

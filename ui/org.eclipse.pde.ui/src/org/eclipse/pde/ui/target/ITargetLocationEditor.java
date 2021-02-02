@@ -18,12 +18,14 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
 
 /**
- * Contributed target locations that want to support editing in the target wizard and editor must adapt
- * their {@link ITargetLocation} to this interface.
+ * Contributed target locations that want to support editing in the target
+ * wizard and editor must adapt their {@link ITargetLocation} to this interface.
  *
  * @noextend This interface is not intended to be extended by clients.
+ * @deprecated use {@link ITargetLocationHandler} instead
  * @since 3.7
  */
+@Deprecated
 public interface ITargetLocationEditor {
 
 	/**

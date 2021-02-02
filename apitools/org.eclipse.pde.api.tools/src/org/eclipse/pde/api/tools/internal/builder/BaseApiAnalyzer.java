@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2020 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -78,7 +78,7 @@ import org.eclipse.pde.api.tools.internal.ApiFilterStore;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
-import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
+import org.eclipse.pde.api.tools.internal.model.WorkspaceBaseline;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -248,6 +248,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							reference = bestMatchReference;
 						}
 					}
+				} else {
+					// report that plugin not in baseline
+					reportMissingComponentInBaseline();
 				}
 
 				this.fBuildState = state;
@@ -281,9 +284,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				checkDefaultBaselineSet();
 				localMonitor.split(2);
 			}
-
-			// check EE description status
-			checkEEDescriptions();
 
 			// usage checks
 			checkApiUsage(bcontext, component, localMonitor.split(1));
@@ -381,40 +381,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		return fContinueOnResolutionError;
 	}
 
-	/**
-	 * Checks if the setting to scan for invalid references is not set to be
-	 * ignored AND there are no descriptions installed
-	 *
-	 * @param component
-	 * @param monitor
-	 * @since 1.0.400
-	 */
-	void checkEEDescriptions() {
-		if (ignoreEEDescriptionCheck()) {
-			if (ApiPlugin.DEBUG_API_ANALYZER) {
-				System.out.println("Ignoring check for API EE descriptions"); //$NON-NLS-1$
-			}
-			return;
-		}
-		if (ApiPlugin.DEBUG_API_ANALYZER) {
-			System.out.println("Checking if there are any API EE descriptions installed if the preference is set to not be 'ignore'"); //$NON-NLS-1$
-		}
-		String[] ees = StubApiComponent.getInstalledMetadata();
-		if (ees.length < 1) {
-			IApiProblem problem = ApiProblemFactory.newApiUsageProblem(Path.EMPTY.toString(), null, new String[] { fJavaProject.getElementName() }, new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { Integer.valueOf(IApiMarkerConstants.API_USAGE_MARKER_ID) }, -1, -1, -1, IElementDescriptor.RESOURCE, IApiProblem.MISSING_EE_DESCRIPTIONS);
-			addProblem(problem);
-		}
-	}
-
-	/**
-	 * @return if the API EE description check should be ignored or not
-	 */
-	private boolean ignoreEEDescriptionCheck() {
-		if (fJavaProject == null) {
-			return true;
-		}
-		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, fJavaProject.getProject().getProject()) == ApiPlugin.SEVERITY_IGNORE;
-	}
 
 	/**
 	 * Processes the API Use Scan report for the given API Component
@@ -1044,6 +1010,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			return true;
 		}
 		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE, fJavaProject.getProject().getProject()) == ApiPlugin.SEVERITY_IGNORE;
+	}
+
+	private boolean ignoreMissingComponentInBaseline() {
+		if (fJavaProject == null) {
+			return true;
+		}
+		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_PLUGIN_IN_API_BASELINE,
+				fJavaProject.getProject().getProject()) == ApiPlugin.SEVERITY_IGNORE;
 	}
 
 	/**
@@ -2494,11 +2468,58 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		addProblem(problem);
 	}
 
+	private void reportMissingComponentInBaseline() {
+		if (ignoreMissingComponentInBaseline()) {
+			return;
+		}
+		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem(Path.EMPTY.toString(),
+				new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID },
+				new Object[] { Integer.valueOf(IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID) },
+				IElementDescriptor.RESOURCE, IApiProblem.API_PLUGIN_NOT_PRESENT_IN_BASELINE);
+		addProblem(problem);
+	}
+
 	/**
 	 * Checks to see if the baseline set in the workspace has at least 1 matching
 	 * project in the workspace
 	 */
 	public void checkBaselineMismatch(IApiBaseline baseline, IApiBaseline workspaceBaseline) {
+		int severityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE,
+				null);
+		if (severityLevel == ApiPlugin.SEVERITY_IGNORE) {
+			return;
+		}
+		if (workspaceBaseline instanceof WorkspaceBaseline && baseline != null) {
+			// if this workspace has been processed before for this baseline, get it from
+			// past processing
+			if (((WorkspaceBaseline) workspaceBaseline).containsBaseline(baseline)) {
+				IApiProblem pro = ((WorkspaceBaseline) workspaceBaseline).getProblem(baseline);
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				try {
+					IMarker[] findMarkers = root.findMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER,
+							false, IResource.DEPTH_ZERO);
+					if (pro != null && findMarkers.length == 1) {
+						return; // since we have baseline, so cant be missing baseline
+					}
+					if (pro == null && findMarkers.length == 0) {
+						return;
+					}
+					if (pro == null && findMarkers.length == 1) {
+						for (IMarker iMarker : findMarkers) {
+							iMarker.delete();
+						}
+						return;
+					}
+					if (pro != null && findMarkers.length == 0) {
+						addProblem(pro);
+						return;
+					}
+				} catch (CoreException e) {
+					ApiPlugin.log(e);
+				}
+				return;
+			}
+		}
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		try {
 			IMarker[] findMarkers = root.findMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, false,
@@ -2512,11 +2533,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (baseline == null || workspaceBaseline == null) {
 			return;
 		}
-		int severityLevel = ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE,
-				null);
-		if (severityLevel == ApiPlugin.SEVERITY_IGNORE) {
-			return;
-		}
+
 		IApiComponent[] workspacesComponents = workspaceBaseline.getApiComponents();
 		boolean found = false;
 		for (IApiComponent iApiComponent : workspacesComponents) {
@@ -2527,15 +2544,21 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					break;
 				}
 			}
+
 		}
 		if (found) {
+			if (workspaceBaseline instanceof WorkspaceBaseline) {
+				((WorkspaceBaseline) workspaceBaseline).putMismatchInfo(baseline, null);
+			}
 			return;
 		}
-
 		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem(Path.EMPTY.toString(),
 				new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID },
 				new Object[] { Integer.valueOf(IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID) },
 				IElementDescriptor.RESOURCE, IApiProblem.API_BASELINE_MISMATCH);
+		if (workspaceBaseline instanceof WorkspaceBaseline) {
+			((WorkspaceBaseline) workspaceBaseline).putMismatchInfo(baseline, problem);
+		}
 		addProblem(problem);
 	}
 

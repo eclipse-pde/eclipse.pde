@@ -127,25 +127,11 @@ public class CtxHelpContext extends CtxHelpObject {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject#canAddChild(
-	 * org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject)
-	 */
 	@Override
 	public boolean canAddChild(int objectType) {
 		return objectType == TYPE_TOPIC || objectType == TYPE_COMMAND;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.pde.internal.core.text.ctxhelp.CtxHelpObject#canAddSibling
-	 * (int)
-	 */
 	@Override
 	public boolean canAddSibling(int objectType) {
 		return objectType == TYPE_CONTEXT;

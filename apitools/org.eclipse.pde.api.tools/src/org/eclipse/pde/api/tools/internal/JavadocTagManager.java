@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -348,7 +348,7 @@ public final class JavadocTagManager {
 		if (values != null) {
 			return values;
 		}
-		return Collections.EMPTY_SET;
+		return Collections.emptySet();
 	}
 
 	/**

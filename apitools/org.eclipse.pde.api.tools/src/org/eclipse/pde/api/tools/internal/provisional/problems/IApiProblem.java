@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -320,17 +320,6 @@ public interface IApiProblem {
 	 */
 	public static final int UNUSED_PROBLEM_FILTERS = 10;
 	/**
-	 * Constant representing the value of missing EE descriptions if the
-	 * preferences are configured to perform the system library scans
-	 * {@link IApiProblem} kind <br>
-	 * Value is:<code>11</code>
-	 *
-	 * @see #getKind()
-	 * @see #CATEGORY_USAGE
-	 * @since 1.0.400
-	 */
-	public static final int MISSING_EE_DESCRIPTIONS = 11;
-	/**
 	 * Constant representing the value of a duplicate annotation in use <br>
 	 * <br>
 	 * Value is: <code>12</code>
@@ -514,6 +503,15 @@ public interface IApiProblem {
 	 * @see #CATEGORY_API_BASELINE
 	 */
 	public static final int API_BASELINE_MISMATCH = 2;
+	/**
+	 * Constant representing that a plugin is not present in the baseline
+	 * {@link IApiProblem} kind. <br>
+	 * Value is: <code>3</code>
+	 *
+	 * @see #getKind()
+	 * @see #CATEGORY_API_BASELINE
+	 */
+	public static final int API_PLUGIN_NOT_PRESENT_IN_BASELINE = 3;
 
 	/**
 	 * Constant representing the value of a API component resolution

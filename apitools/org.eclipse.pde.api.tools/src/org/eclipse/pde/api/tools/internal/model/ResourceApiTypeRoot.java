@@ -81,9 +81,9 @@ public class ResourceApiTypeRoot extends AbstractApiTypeRoot {
 		return getName();
 	}
 
-	public IFile getFile() {
-		return fFile;
-	}
+//	public IFile getFile() {
+//		return fFile;
+//	}
 
 	@Override
 	public String toString() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2019 IBM Corporation and others.
+ * Copyright (c) 2009, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *     EclipseSource, Inc. - ongoing development
  *     Manumitting Technologies Inc - bug 437726: wrong error messages opening target definition
  *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 542425
+ *     Christoph Läubrich - Bug 568865 - [target] add advanced editing capabilities for custom target platforms
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
@@ -385,7 +386,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @return whether this container was changed as part of this update and must be resolved
 	 * @exception CoreException if unable to retrieve IU's
 	 */
-	public synchronized boolean update(Set<Object> toUpdate, IProgressMonitor monitor) throws CoreException {
+	public synchronized boolean update(Set<String> toUpdate, IProgressMonitor monitor) throws CoreException {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		IQueryable<IInstallableUnit> source = P2TargetUtils.getQueryableMetadata(fRepos, progress.split(30));
 		boolean updated = false;

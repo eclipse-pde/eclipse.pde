@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -73,7 +73,7 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 	protected Map<String, HashSet<String>> findPackageReferences(Collection<String> packages, IProgressMonitor monitor) {
 		IJavaProject jp = JavaCore.create(fProject);
 		HashMap<String, HashSet<String>> pkgsAndUses = new HashMap<>();
-		IPackageFragment[] frags = PDEJavaHelper.getPackageFragments(jp, Collections.EMPTY_SET, false);
+		IPackageFragment[] frags = PDEJavaHelper.getPackageFragments(jp, Collections.emptySet(), false);
 		SubMonitor subMonitor = SubMonitor.convert(monitor, frags.length * 2);
 		for (IPackageFragment fragment : frags) {
 			SubMonitor iterationMonitor = subMonitor.split(2);

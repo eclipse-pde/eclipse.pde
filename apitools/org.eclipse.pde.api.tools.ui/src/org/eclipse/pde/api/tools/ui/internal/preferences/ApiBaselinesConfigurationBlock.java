@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2019 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -208,10 +208,11 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 
 	private static final Key KEY_MISSING_DEFAULT_API_PROFILE = getApiToolsKey(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE);
 
+	private static final Key KEY_PLUGIN_MISSING_IN_BASELINE = getApiToolsKey(IApiProblemTypes.MISSING_PLUGIN_IN_API_BASELINE);
 	/**
 	 * An array of all of the keys for the page
 	 */
-	private static Key[] fgAllKeys = { KEY_MISSING_DEFAULT_API_PROFILE };
+	private static Key[] fgAllKeys = { KEY_MISSING_DEFAULT_API_PROFILE, KEY_PLUGIN_MISSING_IN_BASELINE };
 
 	/**
 	 * Constant representing the severity values presented in the combo boxes
@@ -249,11 +250,12 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Listing of all of the {@link Combo}s added to the block
 	 */
-	private Combo fCombo = null;
+
+	private ArrayList<Combo> fCombos = new ArrayList<>();
 	/**
 	 * Listing of the label in the block
 	 */
-	private Label fLabel = null;
+	private ArrayList<Label> fLabels = new ArrayList<>();
 
 	/**
 	 * The context of settings locations to search for values in
@@ -307,7 +309,14 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 		fParent = parent;
 		fMainComp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		Group optionsProfileGroup = SWTFactory.createGroup(fMainComp, PreferenceMessages.ApiProfilesConfigurationBlock_options_group_title, 2, 1, GridData.FILL_BOTH);
-		this.fCombo = createComboControl(optionsProfileGroup, PreferenceMessages.ApiProfilesConfigurationBlock_missing_default_api_profile_message, KEY_MISSING_DEFAULT_API_PROFILE);
+		Combo combo = createComboControl(optionsProfileGroup,
+				PreferenceMessages.ApiProfilesConfigurationBlock_missing_default_api_profile_message,
+				KEY_MISSING_DEFAULT_API_PROFILE);
+		fCombos.add(combo);
+		combo = createComboControl(optionsProfileGroup,
+				PreferenceMessages.ApiProfilesConfigurationBlock_plugin_missing_in_baseline_message,
+				KEY_PLUGIN_MISSING_IN_BASELINE);
+		fCombos.add(combo);
 		Dialog.applyDialogFont(fMainComp);
 		return fMainComp;
 	}
@@ -334,8 +343,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 			try {
 				ArrayList<Key> changes = new ArrayList<>();
 				collectChanges(fLookupOrder[0], changes);
-				if (changes.size() == 1) {
-					// Note that there is only 1 key in ApiBaselineConfigBlock
+				if (changes.size() == 1 && changes.get(0).equals(KEY_MISSING_DEFAULT_API_PROFILE)) {
 					Key k = changes.get(0);
 
 					String original = k.getStoredValue(fLookupOrder[0], null);
@@ -542,9 +550,12 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	 * fCombos
 	 */
 	private void updateCombos() {
-		if (this.fCombo != null) {
-			ControlData data = (ControlData) fCombo.getData();
-			this.fCombo.select(data.getSelection(data.getKey().getStoredValue(fLookupOrder, false, fManager)));
+		for (Combo combo : fCombos) {
+			if (combo != null) {
+				ControlData data = (ControlData) combo.getData();
+				combo.select(data.getSelection(data.getKey().getStoredValue(fLookupOrder, false, fManager)));
+			}
+
 		}
 	}
 
@@ -577,7 +588,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 		combo.addSelectionListener(selectionlistener);
 		combo.select(data.getSelection(key.getStoredValue(fLookupOrder, false, fManager)));
 		addHighlight(parent, lbl, combo);
-		fLabel = lbl;
+		fLabels.add(lbl);
 		return combo;
 	}
 
@@ -611,13 +622,14 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 		return fgAllKeys;
 	}
 
-	public void selectOption() {
-		if (fCombo != null && !fCombo.isDisposed()) {
-			fCombo.setFocus();
-			if (fLabel != null && !fLabel.isDisposed()) {
+	public void selectOption(int index) {
+		if (fCombos.get(index) != null && !fCombos.get(index).isDisposed()) {
+			fCombos.get(index).setFocus();
+			if (fLabels.get(index) != null && !(fLabels.get(index).isDisposed())) {
 				if (org.eclipse.jface.util.Util.isMac()) {
-					if (fLabel != null) {
-						highlight(fCombo.getParent(), fLabel, fCombo, ConfigurationBlock.HIGHLIGHT_FOCUS);
+					if (fLabels.get(index) != null) {
+						highlight(fCombos.get(index).getParent(), fLabels.get(index), fCombos.get(index),
+								ConfigurationBlock.HIGHLIGHT_FOCUS);
 					}
 				}
 			}

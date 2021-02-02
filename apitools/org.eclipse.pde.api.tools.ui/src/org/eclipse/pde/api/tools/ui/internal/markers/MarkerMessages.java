@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2020 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -44,8 +44,7 @@ public class MarkerMessages extends NLS {
 	public static String FilterProblemWithCommentResolution_create_commented_filters;
 	public static String ExplainProblemResolution_explain_incompatibility;
 	public static String ExplainProblemResolution_explain_incompatibility_desc;
-	public static String InstallEEDescriptionProblemResolution_0;
-	public static String InstallEEDescriptionProblemResolution_1;
+
 
 	public static String OpenPropertyPageResolution_element_cannot_be_null;
 	public static String OpenPropertyPageResolution_open_the_property_page;

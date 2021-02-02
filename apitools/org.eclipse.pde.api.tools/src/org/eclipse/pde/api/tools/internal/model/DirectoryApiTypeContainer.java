@@ -129,9 +129,6 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 		super(parent, IApiElement.API_TYPE_CONTAINER, location);
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#accept(org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor)
-	 */
 	@Override
 	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
 		if (visitor.visit(this)) {
@@ -171,9 +168,6 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 		visitor.end(this);
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuilder buff = new StringBuilder();
@@ -266,10 +260,6 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 		}
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findClassFile(java.lang.String,
-	 *      java.lang.String)
-	 */
 	@Override
 	public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {
 		return findTypeRoot(qualifiedName);

@@ -71,11 +71,6 @@ public class RequiredComponentDescription implements IRequiredComponentDescripti
 		return fId;
 	}
 
-	/**
-	 * (non-Javadoc)
-	 *
-	 * @see IRequiredComponentDescription#getVersionRange()
-	 */
 	@Override
 	public IVersionRange getVersionRange() {
 		return fRange;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - Bug 568865 - [target] add advanced editing capabilities for custom target platforms
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
@@ -255,5 +256,9 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 	@Override
 	public String[] getVMArguments() {
 		return null;
+	}
+
+	public void reload() {
+		clearResolutionStatus();
 	}
 }

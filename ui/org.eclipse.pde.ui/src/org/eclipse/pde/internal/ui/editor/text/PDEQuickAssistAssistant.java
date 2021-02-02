@@ -299,8 +299,23 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 	}
 
 	public void dispose() {
-		fCreateImage.dispose();
-		fRemoveImage.dispose();
-		fRenameImage.dispose();
+		if (fCreateImage != null) {
+			fCreateImage.dispose();
+			fCreateImage = null;
+		}
+		if (fRemoveImage != null) {
+			fRemoveImage.dispose();
+			fRemoveImage = null;
+		}
+		if (fRenameImage != null) {
+			fRenameImage.dispose();
+			fRenameImage = null;
+		}
+	}
+
+	@Override
+	public void uninstall() {
+		dispose();
+		super.uninstall();
 	}
 }

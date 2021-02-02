@@ -78,9 +78,6 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 			return getTypeName().compareTo(((ArchiveApiTypeRoot) o).getTypeName());
 		}
 
-		/**
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof ArchiveApiTypeRoot) {
@@ -90,9 +87,6 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 			return false;
 		}
 
-		/**
-		 * @see java.lang.Object#hashCode()
-		 */
 		@Override
 		public int hashCode() {
 			return getName().hashCode();
@@ -162,9 +156,6 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 		this.fLocation = path;
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#accept(org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor)
-	 */
 	@Override
 	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
 		if (visitor.visit(this)) {
@@ -190,9 +181,6 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 		visitor.end(this);
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuilder buff = new StringBuilder();
@@ -200,9 +188,6 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 		return buff.toString();
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#close()
-	 */
 	@Override
 	public synchronized void close() throws CoreException {
 		if (fZipFile != null) {
@@ -215,9 +200,6 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 		}
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findTypeRoot(java.lang.String)
-	 */
 	@Override
 	public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException {
 		init();
@@ -236,9 +218,6 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 		return null;
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#getPackageNames()
-	 */
 	@Override
 	public String[] getPackageNames() throws CoreException {
 		init();
@@ -312,10 +291,6 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 		return this.fLocation.hashCode();
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findTypeRoot(java.lang.String,
-	 *      java.lang.String)
-	 */
 	@Override
 	public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {
 		return findTypeRoot(qualifiedName);

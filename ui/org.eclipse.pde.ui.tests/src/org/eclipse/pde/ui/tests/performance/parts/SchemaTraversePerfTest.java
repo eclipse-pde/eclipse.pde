@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,7 +40,7 @@ public class SchemaTraversePerfTest extends AbstractSchemaPerfTest {
 
 	@Override
 	protected void executeTest() throws Exception {
-		URLConnection connection = SchemaUtil.getURLConnection(fXSDFile.toURL());
+		URLConnection connection = SchemaUtil.getURLConnection(fXSDFile.toURI().toURL());
 		try (InputStream input = connection.getInputStream()) {
 			SAXParserWrapper parser = new SAXParserWrapper();
 			XMLDefaultHandler handler = new XMLDefaultHandler(true);

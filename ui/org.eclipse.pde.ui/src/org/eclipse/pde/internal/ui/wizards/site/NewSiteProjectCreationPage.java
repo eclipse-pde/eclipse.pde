@@ -41,9 +41,6 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		super(pageName);
 	}
 
-	/** (non-Javadoc)
-	 * Method declared on IDialogPage.
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
