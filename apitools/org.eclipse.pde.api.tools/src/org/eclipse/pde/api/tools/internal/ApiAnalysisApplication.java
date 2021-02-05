@@ -284,7 +284,10 @@ public class ApiAnalysisApplication implements IApplication {
 		projectDescription.setLocation(Path.fromOSString(projectPath.getAbsolutePath()));
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectDescription.getName());
 
+		ICoreRunnable projectRemover;
 		if (project.exists()) {
+			projectRemover = !project.isOpen() ? project::close : m -> {
+				/* do nothing */ };
 			project.open(new NullProgressMonitor());
 			project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 
@@ -293,6 +296,7 @@ public class ApiAnalysisApplication implements IApplication {
 				return null;
 			}
 		} else {
+			projectRemover = m -> project.delete(IResource.NEVER_DELETE_PROJECT_CONTENT | IResource.FORCE, m);
 			project.create(projectDescription, new NullProgressMonitor());
 			project.open(new NullProgressMonitor());
 		}
@@ -326,7 +330,10 @@ public class ApiAnalysisApplication implements IApplication {
 
 			restoreOriginalProjectState = m -> {
 				projectFile.setContents(new ByteArrayInputStream(originalContent), IResource.FORCE, m);
+				projectRemover.run(m);
 			};
+		} else {
+			restoreOriginalProjectState = projectRemover;
 		}
 		return project;
 	}
