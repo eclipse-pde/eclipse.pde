@@ -117,8 +117,10 @@ public class MinimalState {
 		// JREs are eligible for dependency resolution
 		// e.g. a project compiled against Java 11 may get its java.xml
 		// Import-Package resolved with a Java 8 profile
-
 		IJavaProject javaProject = JavaCore.create(resource.getProject());
+		if (!javaProject.exists()) {
+			return manifest;
+		}
 		IVMInstall projectVmInstall = JavaRuntime.getVMInstall(javaProject);
 
 		IExecutionEnvironment executionEnvironment = Arrays
