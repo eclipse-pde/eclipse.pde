@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Red Hat Inc. and others.
+ * Copyright (c) 2019, 2021 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,8 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +24,7 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -32,6 +35,7 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -99,8 +103,11 @@ public class ApiAnalysisApplication implements IApplication {
 		public File tpFile;
 	}
 
+	private ICoreRunnable restoreOriginalProjectState = null;
+
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
+		restoreOriginalProjectState = null;
 		try {
 			IWorkspaceDescription desc = ResourcesPlugin.getWorkspace().getDescription();
 			desc.setAutoBuilding(false);
@@ -174,6 +181,10 @@ public class ApiAnalysisApplication implements IApplication {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return IStatus.ERROR;
+		} finally {
+			if (restoreOriginalProjectState != null) {
+				restoreOriginalProjectState.run(new NullProgressMonitor());
+			}
 		}
 	}
 
@@ -262,7 +273,7 @@ public class ApiAnalysisApplication implements IApplication {
 		return ApiBaselineManager.getManager().getDefaultApiBaseline();
 	}
 
-	private IProject importProject(File projectPath) throws CoreException {
+	private IProject importProject(File projectPath) throws CoreException, IOException {
 		File dotProject = new File(projectPath, IProjectDescription.DESCRIPTION_FILE_NAME);
 		if (!dotProject.isFile()) {
 			System.err.println("Expected `" + dotProject.getAbsolutePath() + "` file doesn't exist."); //$NON-NLS-1$ //$NON-NLS-2$
@@ -287,8 +298,7 @@ public class ApiAnalysisApplication implements IApplication {
 		}
 
 		projectDescription = project.getDescription();
-		final ICommand[] originalBuildSpec = projectDescription.getBuildSpec();
-		ICommand[] buildSpec = originalBuildSpec;
+		ICommand[] buildSpec = projectDescription.getBuildSpec();
 
 		if (Arrays.stream(buildSpec).map(ICommand::getBuilderName).noneMatch(ApiPlugin.BUILDER_ID::equals)) {
 
@@ -303,9 +313,20 @@ public class ApiAnalysisApplication implements IApplication {
 
 		ICommand[] newBuilders = removeManifestAndSchemaBuilders(buildSpec);
 
-		if (!Arrays.equals(newBuilders, originalBuildSpec)) {
+		if (!Arrays.equals(newBuilders, projectDescription.getBuildSpec())) {
+
+			IFile projectFile = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
+			byte[] originalContent; // save the raw byte-content to avoid encoding and formatting issues
+			try (InputStream contentStream = projectFile.getContents()) {
+				originalContent = contentStream.readAllBytes();
+			}
+
 			projectDescription.setBuildSpec(newBuilders);
-			project.setDescription(projectDescription, new NullProgressMonitor());
+			project.setDescription(projectDescription, IResource.NONE, new NullProgressMonitor());
+
+			restoreOriginalProjectState = m -> {
+				projectFile.setContents(new ByteArrayInputStream(originalContent), IResource.FORCE, m);
+			};
 		}
 		return project;
 	}
