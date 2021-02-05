@@ -17,11 +17,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IMarker;
@@ -273,46 +271,50 @@ public class ApiAnalysisApplication implements IApplication {
 		IProjectDescription projectDescription = ResourcesPlugin.getWorkspace()
 				.loadProjectDescription(Path.fromOSString(dotProject.getAbsolutePath()));
 		projectDescription.setLocation(Path.fromOSString(projectPath.getAbsolutePath()));
-		IProject res = ResourcesPlugin.getWorkspace().getRoot().getProject(projectDescription.getName());
-		if (res.exists()) {
-			if (!res.getDescription().getLocationURI().equals(projectDescription.getLocationURI())) {
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectDescription.getName());
+
+		if (project.exists()) {
+			project.open(new NullProgressMonitor());
+			project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+
+			if (!project.getDescription().getLocationURI().equals(projectDescription.getLocationURI())) {
 				System.err.println("Project with same name and different location exists in workspace."); //$NON-NLS-1$
 				return null;
 			}
-			res.open(new NullProgressMonitor());
-			res.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 		} else {
-			res.create(projectDescription, new NullProgressMonitor());
-			res.open(new NullProgressMonitor());
+			project.create(projectDescription, new NullProgressMonitor());
+			project.open(new NullProgressMonitor());
 		}
 
-		projectDescription = res.getDescription();
-		if (Arrays.stream(res.getDescription().getBuildSpec()).map(ICommand::getBuilderName)
-				.noneMatch(ApiPlugin.BUILDER_ID::equals)) {
-			ICommand[] builders = new ICommand[projectDescription.getBuildSpec().length + 1];
-			System.arraycopy(projectDescription.getBuildSpec(), 0, builders, 0,
-					projectDescription.getBuildSpec().length);
-			ICommand buildCommand = projectDescription.newCommand();
-			buildCommand.setBuilderName(ApiPlugin.BUILDER_ID);
-			builders[builders.length - 1] = buildCommand;
-			projectDescription.setBuildSpec(builders);
-			res.setDescription(projectDescription, 0, new NullProgressMonitor());
+		projectDescription = project.getDescription();
+		final ICommand[] originalBuildSpec = projectDescription.getBuildSpec();
+		ICommand[] buildSpec = originalBuildSpec;
+
+		if (Arrays.stream(buildSpec).map(ICommand::getBuilderName).noneMatch(ApiPlugin.BUILDER_ID::equals)) {
+
+			ICommand apiAnalysisBuilderCommand = projectDescription.newCommand();
+			apiAnalysisBuilderCommand.setBuilderName(ApiPlugin.BUILDER_ID);
+
+			ICommand[] builders = new ICommand[buildSpec.length + 1];
+			System.arraycopy(buildSpec, 0, builders, 0, buildSpec.length);
+			builders[builders.length - 1] = apiAnalysisBuilderCommand;
+			buildSpec = builders;
 		}
-		ICommand[] buildSpec = projectDescription.getBuildSpec();
-		List<ICommand> newBuilders = removeManifestAndSchemaBuilders(buildSpec);
-		projectDescription.setBuildSpec(
-				newBuilders.toArray(new ICommand[newBuilders.size()]));
-		res.setDescription(projectDescription, new NullProgressMonitor());
-		return res;
+
+		ICommand[] newBuilders = removeManifestAndSchemaBuilders(buildSpec);
+
+		if (!Arrays.equals(newBuilders, originalBuildSpec)) {
+			projectDescription.setBuildSpec(newBuilders);
+			project.setDescription(projectDescription, new NullProgressMonitor());
+		}
+		return project;
 	}
 
-	private static List<ICommand> removeManifestAndSchemaBuilders(ICommand[] buildSpec) {
+	private static ICommand[] removeManifestAndSchemaBuilders(ICommand[] buildSpec) {
 		// remove manifest and schema builders
-		return Arrays.stream(buildSpec)
-				.filter(x -> !("org.eclipse.pde.ManifestBuilder".equals(x.getBuilderName()) //$NON-NLS-1$
+		return Arrays.stream(buildSpec).filter(x -> !("org.eclipse.pde.ManifestBuilder".equals(x.getBuilderName()) //$NON-NLS-1$
 				|| "org.eclipse.pde.SchemaBuilder".equals(x.getBuilderName())) //$NON-NLS-1$
-
-				).collect(Collectors.toList());
+		).toArray(ICommand[]::new);
 	}
 
 	@Override
