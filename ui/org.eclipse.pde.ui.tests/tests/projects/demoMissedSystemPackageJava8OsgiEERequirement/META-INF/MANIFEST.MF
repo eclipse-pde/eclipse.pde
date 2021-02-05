@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: DemoMissedSystemModulePackage
+Bundle-SymbolicName: demoMissedSystemModulePackage
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: demoMissedSystemModulePackage
+Import-Package: javax.annotation
+Require-Capability: osgi.ee; filter:="(| (&(osgi.ee=JavaSE)(version=1.8)) (&(osgi.ee=JavaSE/compact1)(version=1.8)) )"

@@ -114,11 +114,26 @@ public class ClasspathResolutionTest {
 
 	@Test
 	public void testImportSystemPackageDoesntAddExtraBundleJava8() throws Exception {
-		loadTargetPlatform("javax.xml");
+		loadTargetPlatform("javax.annotation");
 		project = ProjectUtils.importTestProject("tests/projects/demoMissedSystemPackageJava8");
 		project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 		// In Java 8, javax.annotation is present, so the bundle must *NOT* be
 		// part of classpath
+		RequiredPluginsClasspathContainer container = new RequiredPluginsClasspathContainer(
+				PDECore.getDefault().getModelManager().findModel(project));
+		assertTrue("javax.annotations shouldn't be present in required bundles",
+				Arrays.stream(container.getClasspathEntries()).map(IClasspathEntry::getPath).map(IPath::lastSegment)
+				.noneMatch(fileName -> fileName.contains("javax.annotation")));
+	}
+
+	@Test
+	public void testImportSystemPackageDoesntAddExtraBundleJava8_osgiEERequirement() throws Exception {
+		loadTargetPlatform("javax.annotation");
+		project = ProjectUtils.importTestProject("tests/projects/demoMissedSystemPackageJava8OsgiEERequirement");
+		project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
+		// bundle is build with java 11, but declares java 8 requirement via
+		// Require-Capability
+		// --> javax.annotation bundle must not be on the classpath
 		RequiredPluginsClasspathContainer container = new RequiredPluginsClasspathContainer(
 				PDECore.getDefault().getModelManager().findModel(project));
 		assertTrue("javax.annotations shouldn't be present in required bundles",

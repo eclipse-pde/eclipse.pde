@@ -37,6 +37,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.service.resolver.StateDelta;
 import org.eclipse.osgi.service.resolver.StateObjectFactory;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
@@ -44,6 +45,7 @@ import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.pde.internal.core.util.UtilMessages;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
+import org.osgi.framework.namespace.ExecutionEnvironmentNamespace;
 
 public class MinimalState {
 
@@ -55,7 +57,9 @@ public class MinimalState {
 	// this could be due to the system bundle changing location
 	// or initially when the ee list is first created.
 
-	private String[] fExecutionEnvironments; // an ordered list of known/supported execution environments
+	private String[] fExecutionEnvironments; // an ordered list of
+												// known/supported execution
+												// environments
 
 	private boolean fNoProfile;
 
@@ -109,7 +113,7 @@ public class MinimalState {
 	private Map<String, String> loadWorkspaceBundleManifest(File bundleLocation, IResource resource)
 			throws CoreException {
 		Map<String, String> manifest = ManifestUtils.loadManifest(bundleLocation);
-		if (manifest.containsKey(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT) || resource == null) {
+		if (resource == null || hasDeclaredRequiredEE(manifest)) {
 			return manifest;
 		}
 
@@ -135,11 +139,39 @@ public class MinimalState {
 		return manifest;
 	}
 
-	public BundleDescription addBundle(Map<String, String> manifest, File bundleLocation, long bundleId) throws CoreException {
+	@SuppressWarnings("deprecation")
+	private boolean hasDeclaredRequiredEE(Map<String, String> manifest) {
+		if (manifest.containsKey(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT)) {
+			return true;
+		}
+
+		try {
+			ManifestElement[] requireCapabilityHeader = ManifestElement.parseHeader(Constants.REQUIRE_CAPABILITY,
+					manifest.get(Constants.REQUIRE_CAPABILITY));
+			if (requireCapabilityHeader == null) {
+				return false;
+			}
+
+			for (ManifestElement manifestElement : requireCapabilityHeader) {
+				if (ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE.equals(manifestElement.getValue())) {
+					return true;
+				}
+			}
+
+		} catch (BundleException e) {
+			// ignore
+		}
+
+		return false;
+	}
+
+	public BundleDescription addBundle(Map<String, String> manifest, File bundleLocation, long bundleId)
+			throws CoreException {
 		try {
 			// OSGi requires a dictionary over any map
 			Hashtable<String, String> dictionaryManifest = new Hashtable<>(manifest);
-			BundleDescription descriptor = stateObjectFactory.createBundleDescription(fState, dictionaryManifest, bundleLocation.getAbsolutePath(), bundleId == -1 ? getNextId() : bundleId);
+			BundleDescription descriptor = stateObjectFactory.createBundleDescription(fState, dictionaryManifest,
+					bundleLocation.getAbsolutePath(), bundleId == -1 ? getNextId() : bundleId);
 			// new bundle
 			if (bundleId == -1) {
 				fState.addBundle(descriptor);
@@ -148,8 +180,10 @@ public class MinimalState {
 			}
 			return descriptor;
 		} catch (BundleException e) {
-			// A stack trace isn't helpful here, but need to list the plug-in location causing the issue
-			MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, NLS.bind(UtilMessages.ErrorReadingManifest, bundleLocation.toString()), null);
+			// A stack trace isn't helpful here, but need to list the plug-in
+			// location causing the issue
+			MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0,
+					NLS.bind(UtilMessages.ErrorReadingManifest, bundleLocation.toString()), null);
 			status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage()));
 			throw new CoreException(status);
 		} catch (IllegalArgumentException e) {
