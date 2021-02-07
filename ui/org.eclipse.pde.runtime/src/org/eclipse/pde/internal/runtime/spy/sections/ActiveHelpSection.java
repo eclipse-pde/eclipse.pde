@@ -83,7 +83,7 @@ public class ActiveHelpSection implements ISpySection {
 			buffer.append("</p>"); //$NON-NLS-1$
 			buffer.append(helpBuffer.toString());
 			buffer.append("</form>"); //$NON-NLS-1$
-			String content = buffer.toString().replaceAll("&", "&amp;"); //$NON-NLS-1$ //$NON-NLS-2$
+			String content = buffer.toString().replace("&", "&amp;"); //$NON-NLS-1$ //$NON-NLS-2$
 			text.setText(content, true, false);
 		}
 

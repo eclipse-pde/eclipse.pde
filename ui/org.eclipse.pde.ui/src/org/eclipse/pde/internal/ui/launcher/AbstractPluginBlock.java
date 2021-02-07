@@ -332,7 +332,9 @@ public abstract class AbstractPluginBlock {
 		} else if (fTab instanceof BundlesTab) {
 			fAutoValidate = createButton(parent, span - 1, indent, PDEUIMessages.PluginsTabToolBar_auto_validate_bundles);
 		} else{
-			fAutoValidate = createButton(parent, span - 1, indent, NLS.bind(PDEUIMessages.PluginsTabToolBar_auto_validate, fTab.getName().replaceAll("&", "").toLowerCase(Locale.ENGLISH))); //$NON-NLS-1$ //$NON-NLS-2$
+			fAutoValidate = createButton(parent, span - 1, indent,
+					NLS.bind(PDEUIMessages.PluginsTabToolBar_auto_validate,
+							fTab.getName().replace("&", "").toLowerCase(Locale.ENGLISH))); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		fValidateButton = new Button(parent, SWT.PUSH);
@@ -343,7 +345,8 @@ public abstract class AbstractPluginBlock {
 		} else if (fTab instanceof BundlesTab) {
 			fValidateButton.setText(PDEUIMessages.PluginsTabToolBar_validate_bundles);
 		} else {
-			fValidateButton.setText(NLS.bind(PDEUIMessages.PluginsTabToolBar_validate, fTab.getName().replaceAll("&", ""))); //$NON-NLS-1$ //$NON-NLS-2$
+			fValidateButton
+					.setText(NLS.bind(PDEUIMessages.PluginsTabToolBar_validate, fTab.getName().replace("&", ""))); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		SWTUtil.setButtonDimensionHint(fValidateButton);

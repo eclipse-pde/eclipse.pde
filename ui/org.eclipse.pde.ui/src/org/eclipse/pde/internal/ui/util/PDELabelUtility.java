@@ -68,12 +68,12 @@ public class PDELabelUtility {
 		// Get rid of the trailing colon (if any)
 		int colonIndex = labelText.indexOf(':');
 		if (colonIndex >= 0) {
-			labelText = labelText.replaceAll(":", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			labelText = labelText.replace(":", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		// Get rid of mnemonics (if any)
 		int ampIndex = labelText.indexOf('&');
 		if (ampIndex >= 0) {
-			labelText = labelText.replaceAll("&", ""); //$NON-NLS-1$ //$NON-NLS-2$
+			labelText = labelText.replace("&", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		return labelText;

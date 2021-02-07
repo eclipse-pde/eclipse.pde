@@ -874,7 +874,10 @@ public class FeatureBlock {
 		} else if (fTab instanceof BundlesTab) {
 			fAutoValidate = SWTFactory.createCheckButton(validatecomp, PDEUIMessages.PluginsTabToolBar_auto_validate_bundles, null, false, 1);
 		} else {
-			fAutoValidate = SWTFactory.createCheckButton(validatecomp, NLS.bind(PDEUIMessages.PluginsTabToolBar_auto_validate, fTab.getName().replaceAll("&", "").toLowerCase(Locale.ENGLISH)), null, false, 1); //$NON-NLS-1$ //$NON-NLS-2$
+			fAutoValidate = SWTFactory.createCheckButton(validatecomp,
+					NLS.bind(PDEUIMessages.PluginsTabToolBar_auto_validate,
+							fTab.getName().replace("&", "").toLowerCase(Locale.ENGLISH)), //$NON-NLS-1$ //$NON-NLS-2$
+					null, false, 1);
 		}
 
 		fAutoValidate.addSelectionListener(fListener);
@@ -886,7 +889,8 @@ public class FeatureBlock {
 		} else if (fTab instanceof BundlesTab) {
 			fValidateButton = SWTFactory.createPushButton(rightAlignComp,PDEUIMessages.PluginsTabToolBar_validate_bundles, null);
 		} else {
-			fValidateButton = SWTFactory.createPushButton(rightAlignComp, NLS.bind(PDEUIMessages.PluginsTabToolBar_validate, fTab.getName().replaceAll("&", "")), null); //$NON-NLS-1$//$NON-NLS-2$
+			fValidateButton = SWTFactory.createPushButton(rightAlignComp,
+					NLS.bind(PDEUIMessages.PluginsTabToolBar_validate, fTab.getName().replace("&", "")), null); //$NON-NLS-1$//$NON-NLS-2$
 		}
 
 		fValidateButton.addSelectionListener(fListener);
@@ -1064,7 +1068,8 @@ public class FeatureBlock {
 		}else if (fTab instanceof BundlesTab) {
 			fAddPluginButton = SWTFactory.createPushButton(buttonComp,PDEUIMessages.FeatureBlock_AddPluginsLabel_bundles, null);
 		}else{
-			fAddPluginButton = SWTFactory.createPushButton(buttonComp, NLS.bind(PDEUIMessages.FeatureBlock_AddPluginsLabel, fTab.getName().replaceAll("&", "")), null); //$NON-NLS-1$//$NON-NLS-2$
+			fAddPluginButton = SWTFactory.createPushButton(buttonComp,
+					NLS.bind(PDEUIMessages.FeatureBlock_AddPluginsLabel, fTab.getName().replace("&", "")), null); //$NON-NLS-1$//$NON-NLS-2$
 		}
 		fAddPluginButton.addSelectionListener(fListener);
 		if (fTab instanceof PluginsTab) {
@@ -1072,7 +1077,8 @@ public class FeatureBlock {
 		}else if (fTab instanceof BundlesTab) {
 			fRemovePluginButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.FeatureBlock_RemovePluginsLabel_bundles, null);
 		}else{
-			fRemovePluginButton = SWTFactory.createPushButton(buttonComp, NLS.bind(PDEUIMessages.FeatureBlock_RemovePluginsLabel, fTab.getName().replaceAll("&", "")), null); //$NON-NLS-1$//$NON-NLS-2$
+			fRemovePluginButton = SWTFactory.createPushButton(buttonComp,
+					NLS.bind(PDEUIMessages.FeatureBlock_RemovePluginsLabel, fTab.getName().replace("&", "")), null); //$NON-NLS-1$//$NON-NLS-2$
 		}
 
 		fRemovePluginButton.addSelectionListener(fListener);
@@ -1100,7 +1106,9 @@ public class FeatureBlock {
 		}else if (fTab instanceof BundlesTab) {
 			fAdditionalPluginsParentElement = new NamedElement(PDEUIMessages.FeatureBlock_AdditionalPluginsEntry_bundles, siteImage);
 		}else{
-			fAdditionalPluginsParentElement = new NamedElement(NLS.bind(PDEUIMessages.FeatureBlock_AdditionalPluginsEntry, fTab.getName().replaceAll("&", "")), siteImage); //$NON-NLS-1$ //$NON-NLS-2$
+			fAdditionalPluginsParentElement = new NamedElement(
+					NLS.bind(PDEUIMessages.FeatureBlock_AdditionalPluginsEntry, fTab.getName().replace("&", "")), //$NON-NLS-1$ //$NON-NLS-2$
+					siteImage);
 		}
 	}
 
