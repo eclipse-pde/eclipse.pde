@@ -889,45 +889,42 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			return;
 		}
 		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_on_0, 4);
-		try {
-			BuildState.setLastBuiltState(this.currentproject, null);
-			this.buildstate = new BuildState();
-			localMonitor.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_initializing_analyzer, currentproject.getName()));
-			cleanupMarkers(this.currentproject);
-			IPluginModelBase currentModel = getCurrentModel();
-			if (currentModel != null) {
-				localMonitor.subTask(NLS.bind(BuilderMessages.building_workspace_profile, currentproject.getName()));
-				localMonitor.split(1);
-				String id = currentModel.getBundleDescription().getSymbolicName();
-				// Compatibility checks
-				IApiComponent apiComponent = wbaseline.getApiComponent(id);
-				Set<IApiComponent> apiComponentMultiple = wbaseline.getAllApiComponents(id);
-				if (!apiComponentMultiple.isEmpty()) {
-					// add the exact match
-					for (Iterator<IApiComponent> iterator = apiComponentMultiple.iterator(); iterator.hasNext();) {
-						IApiComponent iApiComponent = iterator.next();
-						Version workspaceBaselineVersion = new Version(iApiComponent.getVersion());// removes
-																									// qualifier
-						Version currentProjectVersion = currentModel.getBundleDescription().getVersion();
-						if (new Version(currentProjectVersion.getMajor(), currentProjectVersion.getMinor(), currentProjectVersion.getMicro()).compareTo(workspaceBaselineVersion) == 0) {
-							apiComponent = iApiComponent;
-							break;
-						}
+		BuildState.setLastBuiltState(this.currentproject, null);
+		this.buildstate = new BuildState();
+		localMonitor
+				.subTask(NLS.bind(BuilderMessages.ApiAnalysisBuilder_initializing_analyzer, currentproject.getName()));
+		cleanupMarkers(this.currentproject);
+		IPluginModelBase currentModel = getCurrentModel();
+		if (currentModel != null) {
+			localMonitor.subTask(NLS.bind(BuilderMessages.building_workspace_profile, currentproject.getName()));
+			localMonitor.split(1);
+			String id = currentModel.getBundleDescription().getSymbolicName();
+			// Compatibility checks
+			IApiComponent apiComponent = wbaseline.getApiComponent(id);
+			Set<IApiComponent> apiComponentMultiple = wbaseline.getAllApiComponents(id);
+			if (!apiComponentMultiple.isEmpty()) {
+				// add the exact match
+				for (Iterator<IApiComponent> iterator = apiComponentMultiple.iterator(); iterator.hasNext();) {
+					IApiComponent iApiComponent = iterator.next();
+					Version workspaceBaselineVersion = new Version(iApiComponent.getVersion());// removes
+																								// qualifier
+					Version currentProjectVersion = currentModel.getBundleDescription().getVersion();
+					if (new Version(currentProjectVersion.getMajor(), currentProjectVersion.getMinor(),
+							currentProjectVersion.getMicro()).compareTo(workspaceBaselineVersion) == 0) {
+						apiComponent = iApiComponent;
+						break;
 					}
-				}
-				if (apiComponent != null) {
-					if (getAnalyzer() instanceof BaseApiAnalyzer) {
-						((BaseApiAnalyzer)getAnalyzer()).checkBaselineMismatch(baseline, wbaseline);
-					}
-					getAnalyzer().analyzeComponent(this.buildstate, null, null, baseline, apiComponent, new BuildContext(), localMonitor.split(1));
-					localMonitor.split(1);
-					createMarkers();
-					localMonitor.split(1);
 				}
 			}
-		} finally {
-			if (localMonitor != null) {
-				localMonitor.done();
+			if (apiComponent != null) {
+				if (getAnalyzer() instanceof BaseApiAnalyzer) {
+					((BaseApiAnalyzer) getAnalyzer()).checkBaselineMismatch(baseline, wbaseline);
+				}
+				getAnalyzer().analyzeComponent(this.buildstate, null, null, baseline, apiComponent, new BuildContext(),
+						localMonitor.split(1));
+				localMonitor.split(1);
+				createMarkers();
+				localMonitor.split(1);
 			}
 		}
 	}
