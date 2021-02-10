@@ -19,6 +19,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +48,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.equinox.app.IApplication;
@@ -64,6 +67,7 @@ import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
@@ -75,9 +79,10 @@ public class ApiAnalysisApplication implements IApplication {
 		private static final String PROJECT_ARG = "project"; //$NON-NLS-1$
 		private static final String BASELINE_ARG = "baseline"; //$NON-NLS-1$
 		private static final String BASELINE_DEFAULT_VALUE = "default"; //$NON-NLS-1$
+		private static final String BASELINE_REPO_URI_ARG = "baselineRepositoryURI"; //$NON-NLS-1$
 		private static final String DEPENDENCY_LIST_ARG = "dependencyList"; //$NON-NLS-1$
 
-		static Request readApplicationArguments(IApplicationContext context) {
+		static Request readApplicationArguments(IApplicationContext context) throws URISyntaxException {
 			String[] params = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 			Request res = new Request();
 			String currentKey = null;
@@ -91,6 +96,8 @@ public class ApiAnalysisApplication implements IApplication {
 					res.project = new File(param).getAbsoluteFile();
 				} else if (BASELINE_ARG.equals(currentKey) && !BASELINE_DEFAULT_VALUE.equals(param)) {
 					res.baselinePath = new File(param).getAbsoluteFile();
+				} else if (BASELINE_REPO_URI_ARG.equals(currentKey)) {
+					res.baselineRepoURI = URIUtil.fromString(param);
 				} else if (FAIL_ON_ERROR_ARG.equals(currentKey)) {
 					res.failOnError = Boolean.parseBoolean(param);
 				} else if (DEPENDENCY_LIST_ARG.equals(currentKey)) {
@@ -105,6 +112,7 @@ public class ApiAnalysisApplication implements IApplication {
 
 		private File project;
 		private File baselinePath;
+		private URI baselineRepoURI;
 		private boolean failOnError;
 		private File tpFile;
 	}
@@ -127,7 +135,7 @@ public class ApiAnalysisApplication implements IApplication {
 				printError("Project not loaded."); //$NON-NLS-1$
 				return IStatus.ERROR;
 			}
-			IApiBaseline baseline = setBaseline(args.baselinePath);
+			IApiBaseline baseline = setBaseline(args.baselinePath, args.baselineRepoURI, project);
 			if (baseline == null) {
 				printError("Baseline shouldn't be null."); //$NON-NLS-1$
 				return IStatus.ERROR;
@@ -259,9 +267,11 @@ public class ApiAnalysisApplication implements IApplication {
 		});
 	}
 
-	private IApiBaseline setBaseline(File baselinePath) throws CoreException {
+	private static final String LATEST_VERSION = "0.0.0"; //$NON-NLS-1$
+
+	private IApiBaseline setBaseline(File baselinePath, URI baselineRepoURI, IProject project) throws CoreException {
 		ApiBaseline baseline = new ApiBaseline("pluginAPICheckBaseline"); //$NON-NLS-1$
-		if (baselinePath == null) {
+		if (baselinePath == null && baselineRepoURI == null) {
 			for (Bundle bundle : ApiPlugin.getDefault().getBundle().getBundleContext().getBundles()) {
 				if (bundle.getBundleId() != Constants.SYSTEM_BUNDLE_ID) {
 					File bundleFile = FileLocator.getBundleFileLocation(bundle).orElseThrow();
@@ -272,13 +282,27 @@ public class ApiAnalysisApplication implements IApplication {
 		} else {
 			ITargetPlatformService service = TargetPlatformService.getDefault();
 			ITargetDefinition target;
-			if (baselinePath.isFile() && baselinePath.getName().endsWith(".target")) { //$NON-NLS-1$
+
+			if (baselineRepoURI != null) {
+				String[] unitIds = new String[] { project.getName() };
+				String[] versions = new String[] { LATEST_VERSION };
+				URI[] repositories = new URI[] { baselineRepoURI };
+				int resolutionFlags = IUBundleContainer.INCLUDE_REQUIRED; // all others not included
+				ITargetLocation location = service.newIULocation(unitIds, versions, repositories, resolutionFlags);
+
+				target = service.newTarget();
+				target.setTargetLocations(new ITargetLocation[] { location });
+
+			} else if (baselinePath.isFile() && baselinePath.getName().endsWith(".target")) { //$NON-NLS-1$
 				target = service.getTarget(baselinePath.toURI()).getTargetDefinition();
 
 			} else if (baselinePath.isDirectory()) {
-				printError(
-						"Support for directories not implemented yet, use `default` or a `</path/to/baseline.target>` baseline for currently running application."); //$NON-NLS-1$
-				return null;
+
+				ITargetLocation location = service.newDirectoryLocation(baselinePath.getAbsolutePath());
+
+				target = service.newTarget();
+				target.setTargetLocations(new ITargetLocation[] { location });
+
 			} else {
 				return ApiBaselineManager.getManager().getDefaultApiBaseline();
 			}
