@@ -54,19 +54,19 @@ public class ClasspathResolutionTest {
 
 	@Test
 	public void testImportSystemPackageDoesntAddExtraBundleJava11() throws Exception {
-		loadTargetPlatform("javax.xml");
+		loadTargetPlatform("org.w3c.dom.events");
 		project = ProjectUtils.importTestProject("tests/projects/demoMissedSystemModulePackage");
 		project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 		IJavaProject javaProject = (IJavaProject) project.getNature(JavaCore.NATURE_ID);
 		RequiredPluginsClasspathContainer container = new RequiredPluginsClasspathContainer(
 				PDECore.getDefault().getModelManager().findModel(project));
 		for (IClasspathEntry entry : container.getClasspathEntries()) {
-			if (entry.getPath().lastSegment().contains("javax.xml")) {
+			if (entry.getPath().lastSegment().contains("org.w3c.dom.events")) {
 				fail(entry.getPath() + " erronesously present in container");
 			}
 		}
 		for (IClasspathEntry entry : javaProject.getResolvedClasspath(false)) {
-			if (entry.getPath().lastSegment().contains("javax.xml")) {
+			if (entry.getPath().lastSegment().contains("org.w3c.dom.events")) {
 				fail(entry.getPath() + " erronesously present in classpath");
 			}
 		}
