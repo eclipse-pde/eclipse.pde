@@ -36,7 +36,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
  */
 public abstract class Validator extends ASTVisitor {
 
-	class Item {
+	static class Item {
 		String typename;
 		int flags;
 		boolean visible = false;
