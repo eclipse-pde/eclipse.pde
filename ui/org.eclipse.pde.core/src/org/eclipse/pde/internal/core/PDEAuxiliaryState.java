@@ -84,7 +84,7 @@ public class PDEAuxiliaryState {
 	/**
 	 * Provides a simple way of storing auxiliary data for a plugin
 	 */
-	class PluginInfo {
+	static class PluginInfo {
 		String name;
 		String providerName;
 		String className;
