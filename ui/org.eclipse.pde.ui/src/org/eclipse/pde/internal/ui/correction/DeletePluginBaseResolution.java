@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import java.util.Map;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -50,9 +51,11 @@ public class DeletePluginBaseResolution extends AbstractPDEMarkerResolution {
 			if (buildProperties == null)
 				return;
 
-			IMarker removePluginEntryMarker = buildProperties.createMarker(String.valueOf(AbstractPDEMarkerResolution.REMOVE_TYPE));
-			removePluginEntryMarker.setAttribute(PDEMarkerFactory.BK_BUILD_ENTRY, IBuildEntry.BIN_INCLUDES);
-			removePluginEntryMarker.setAttribute(PDEMarkerFactory.BK_BUILD_TOKEN, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
+			IMarker removePluginEntryMarker = buildProperties.createMarker(
+					String.valueOf(AbstractPDEMarkerResolution.REMOVE_TYPE),
+							Map.of(PDEMarkerFactory.BK_BUILD_ENTRY, IBuildEntry.BIN_INCLUDES,
+									PDEMarkerFactory.BK_BUILD_TOKEN, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)
+					);
 
 			IMarkerResolution removeBuildEntryResolution = new RemoveBuildEntryResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, removePluginEntryMarker);
 			removeBuildEntryResolution.run(removePluginEntryMarker);

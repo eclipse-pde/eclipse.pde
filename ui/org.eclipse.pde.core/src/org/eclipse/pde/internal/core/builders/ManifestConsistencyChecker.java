@@ -19,6 +19,7 @@ package org.eclipse.pde.internal.core.builders;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -371,10 +372,12 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			}
 			// if build.properties doesn't exist and build problems != IGNORE, create a marker on the project bug 172451
 			try {
-				IMarker marker = project.createMarker(PDEMarkerFactory.MARKER_ID);
-				marker.setAttribute(IMarker.SEVERITY, CompilerFlags.ERROR == severity ? IMarker.SEVERITY_ERROR : IMarker.SEVERITY_WARNING);
-				marker.setAttribute(IMarker.MESSAGE, PDECoreMessages.ManifestConsistencyChecker_buildDoesNotExist);
-				marker.setAttribute(PDEMarkerFactory.compilerKey, CompilerFlags.P_BUILD);
+				Map<String, Object> attributes = new HashMap<>();
+				attributes.put(IMarker.SEVERITY, CompilerFlags.ERROR == severity ? IMarker.SEVERITY_ERROR : IMarker.SEVERITY_WARNING);
+				attributes.put(IMarker.MESSAGE, PDECoreMessages.ManifestConsistencyChecker_buildDoesNotExist);
+				attributes.put(PDEMarkerFactory.compilerKey, CompilerFlags.P_BUILD);
+
+				project.createMarker(PDEMarkerFactory.MARKER_ID, attributes);
 			} catch (CoreException e) {
 			}
 		}
@@ -401,9 +404,11 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				if (fileList == null || fileList.length == 0) {
 					// no MANIFEST.MF at all -> flag the project
 					try {
-						IMarker marker = project.createMarker(PDEMarkerFactory.MARKER_ID);
-						marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-						marker.setAttribute(IMarker.MESSAGE, PDECoreMessages.ManifestConsistencyChecker_manifestDoesNotExist);
+						project.createMarker(PDEMarkerFactory.MARKER_ID,
+								Map.of(//
+										IMarker.SEVERITY, IMarker.SEVERITY_ERROR, //
+										IMarker.MESSAGE,
+										PDECoreMessages.ManifestConsistencyChecker_manifestDoesNotExist));
 					} catch (CoreException e) {
 					}
 				} else {

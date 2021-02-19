@@ -175,11 +175,11 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		String value = null;
 		Matcher matcher = null;
 		if (fSearchFor == S_FOR_TYPES) {
-			value = removeInitializationData(attr.getValue()).replaceAll("\\$", "."); //$NON-NLS-1$ //$NON-NLS-2$
+			value = removeInitializationData(attr.getValue()).replace('$', '.');
 			matcher = getMatcher(value);
 		}
 		if (value == null || (matcher != null && !matcher.matches())) {
-			value = removeInitializationData(getProperValue(attr.getValue())).replaceAll("\\$", "."); //$NON-NLS-1$ //$NON-NLS-2$
+			value = removeInitializationData(getProperValue(attr.getValue())).replace('$', '.');
 			matcher = getMatcher(value);
 		}
 		if (matcher.matches()) {

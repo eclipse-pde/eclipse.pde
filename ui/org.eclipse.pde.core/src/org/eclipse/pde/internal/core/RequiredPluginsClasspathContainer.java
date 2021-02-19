@@ -255,7 +255,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		Rule rule = new Rule();
 		rule.discouraged = helper.getAccessCode(desc, export) == StateHelper.ACCESS_DISCOURAGED;
 		String name = export.getName();
-		rule.path = (name.equals(".")) ? new Path("*") : new Path(name.replaceAll("\\.", "/") + "/*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		rule.path = (name.equals(".")) ? new Path("*") : new Path(name.replace('.', '/') + "/*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return rule;
 	}
 
@@ -538,7 +538,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				for (ExportPackageDescription expkg : expkgs) {
 					Rule rule = new Rule();
 					rule.discouraged = restrictPackage(projectDesc, expkg);
-					rule.path = new Path(expkg.getName().replaceAll("\\.", "/") + "/*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					rule.path = new Path(expkg.getName().replace('.', '/') + "/*"); //$NON-NLS-1$
 					rules.add(rule);
 				}
 				map.put(bdesc, rules);

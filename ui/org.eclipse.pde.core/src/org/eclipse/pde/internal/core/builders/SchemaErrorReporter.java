@@ -38,7 +38,7 @@ import org.w3c.dom.Text;
 
 public class SchemaErrorReporter extends XMLErrorReporter {
 
-	class StackEntry {
+	static class StackEntry {
 		String tag;
 		int line;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005,2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests;
 
+import org.eclipse.pde.core.tests.internal.classpath.ClasspathResolutionTest;
 import org.eclipse.pde.ui.tests.build.properties.AllValidatorTests;
 import org.eclipse.pde.ui.tests.classpathcontributor.ClasspathContributorTest;
 import org.eclipse.pde.ui.tests.classpathresolver.ClasspathResolverTest;
@@ -51,7 +52,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	PluginRegistryTests.class,
 	ClasspathResolverTest.class,
 	ClasspathContributorTest.class,
-	DynamicPluginProjectReferencesTest.class
+	DynamicPluginProjectReferencesTest.class,
+	ClasspathResolutionTest.class
 })
 public class AllPDETests {
 

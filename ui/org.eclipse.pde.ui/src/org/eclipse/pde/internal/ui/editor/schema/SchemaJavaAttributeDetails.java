@@ -32,7 +32,8 @@ import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -167,8 +168,8 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 	}
 
 	private void setBasedOn() {
-		String classEntry = fClassEntry.getValue().replaceAll(":", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		String interfaceEntry = fInterfaceEntry.getValue().replaceAll(":", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		String classEntry = fClassEntry.getValue().replace(":", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		String interfaceEntry = fInterfaceEntry.getValue().replace(":", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		StringBuilder sb = new StringBuilder();
 		if (classEntry.length() > 0)
 			sb.append(classEntry);

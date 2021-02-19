@@ -357,11 +357,11 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 					if (markerNeeded) {
 						if (cpMarkers.length == 0) {
-							IMarker marker = project.getProject().createMarker(BUILDPATH_PROBLEM_MARKER);
-							marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
-							marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
-							marker.setAttribute(IMarker.MESSAGE, Messages.DSAnnotationCompilationParticipant_buildpathProblemMarker_message);
-							marker.setAttribute(IMarker.LOCATION, Messages.DSAnnotationCompilationParticipant_buildpathProblemMarker_location);
+							project.getProject().createMarker(BUILDPATH_PROBLEM_MARKER,
+									Map.of(IMarker.SEVERITY, IMarker.SEVERITY_WARNING,
+											IMarker.PRIORITY, IMarker.PRIORITY_HIGH,
+											IMarker.MESSAGE, Messages.DSAnnotationCompilationParticipant_buildpathProblemMarker_message,
+											IMarker.LOCATION, Messages.DSAnnotationCompilationParticipant_buildpathProblemMarker_location));
 						}
 					} else {
 						for (IMarker marker : cpMarkers) {

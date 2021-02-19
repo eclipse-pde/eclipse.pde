@@ -565,7 +565,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 
 	@Override
 	public boolean setBooleanAttributeValue(String name, boolean value) {
-		String newValue = Boolean.valueOf(value).toString();
+		String newValue = Boolean.toString(value);
 		return setXMLAttribute(name, newValue);
 	}
 

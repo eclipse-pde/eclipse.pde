@@ -230,7 +230,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		}
 		// Print skip attribute
 		buffer.append(XMLPrintHandler.wrapAttribute(ATTRIBUTE_SKIP,
-				Boolean.valueOf(fFieldSkip).toString()));
+				Boolean.toString(fFieldSkip)));
 	}
 
 	@Override

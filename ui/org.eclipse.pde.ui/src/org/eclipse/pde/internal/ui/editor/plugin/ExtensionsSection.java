@@ -610,7 +610,8 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			if (trimmedValue.length() > 0 && !ExtensionsFilterUtil.isBoolean(trimmedValue)) {
 				if (trimmedValue.startsWith("%")) {//$NON-NLS-1$
 					IPluginModelBase model = getPluginModelBase();
-					trimmedValue = ((model != null) ? model.getResourceString(trimmedValue) : trimmedValue).replaceAll("\"", ""); //$NON-NLS-1$ //$NON-NLS-2$
+					trimmedValue = ((model != null) ? model.getResourceString(trimmedValue) : trimmedValue)
+							.replace("\"", ""); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				String filterPattern;
 				if (clearFilterText) {

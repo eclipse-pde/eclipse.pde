@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.ua.core.ctxhelp.text;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -57,12 +58,10 @@ public class CtxHelpMarkerManager {
 			if (exception instanceof SAXParseException) {
 				int line = ((SAXParseException) exception).getLineNumber();
 				try {
-
-					IMarker marker = model.getUnderlyingResource().createMarker(IMarker.PROBLEM);
-
-					marker.setAttribute(IMarker.LINE_NUMBER, line);
-					marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-					marker.setAttribute(IMarker.MESSAGE, exception.getLocalizedMessage());
+					Map<String, Object> attributes = Map.of(IMarker.LINE_NUMBER, line,//
+							IMarker.SEVERITY, IMarker.SEVERITY_ERROR,//
+							IMarker.MESSAGE, exception.getLocalizedMessage());
+					model.getUnderlyingResource().createMarker(IMarker.PROBLEM, attributes);
 				} catch (CoreException e) {
 				}
 			}

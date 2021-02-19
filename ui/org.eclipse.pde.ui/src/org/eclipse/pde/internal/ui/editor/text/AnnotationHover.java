@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2020 IBM Corporation and others.
+ *  Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -63,8 +63,13 @@ public class AnnotationHover implements IAnnotationHover {
 						String problemKind = marker.getAttribute("version", null); //$NON-NLS-1$
 						if (problemKind != null) {
 							String descr = marker.getAttribute("description", null); //$NON-NLS-1$ //
-							message = NLS.bind(PDEUIMessages.AnnotationHover_version_change,
-									new String[] { message, descr });
+							if (descr != null) {
+								// for some cases like version increase due to
+								// BREE change
+								if (!descr.isEmpty())
+									message = NLS.bind(PDEUIMessages.AnnotationHover_version_change,
+											new String[] { message, descr });
+							}
 
 						}
 						messages.add(message);

@@ -4,5 +4,4 @@ Bundle-Name: DemoMissedSystemModulePackage
 Bundle-SymbolicName: demoMissedSystemModulePackage
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: demoMissedSystemModulePackage
-Bundle-RequiredExecutionEnvironment: JavaSE-11
-Import-Package: org.w3c.dom.events
+Import-Package: javax.annotation

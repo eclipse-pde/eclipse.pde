@@ -16,9 +16,7 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -91,32 +89,29 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 					}).filter(Objects::nonNull) //
 					.toArray(TargetBundle[]::new);
 		}
-		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.DirectoryBundleContainer_1, dir.toString())));
+		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
+				NLS.bind(Messages.DirectoryBundleContainer_1, dir.toString())));
 	}
 
 	@Override
 	protected TargetFeature[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		File dir = getDirectory();
-		if (!dir.isDirectory()) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
-					NLS.bind(Messages.DirectoryBundleContainer_1, dir.toString())));
-		}
-		File site = getFeatureSite(dir);
-		File[] files = site.listFiles();
-		SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
-		List<TargetFeature> features = new ArrayList<>(files.length);
-		Arrays.stream(files).parallel().forEach(file -> {
-			try {
-				TargetFeature rf = new TargetFeature(file);
-				synchronized (features) {
-					features.add(rf);
+		if (dir.isDirectory()) {
+			File site = getFeatureSite(dir);
+			File[] files = site.listFiles();
+			SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
+			return Arrays.stream(files).parallel().map(file -> {
+				localMonitor.split(1);
+				try {
+					return new TargetFeature(file);
+				} catch (CoreException e) {
+					// Ignore non-feature files
+					return null;
 				}
-			} catch (CoreException e) {
-				// Ignore non-feature files
-			}
-			localMonitor.split(1);
-		});
-		return features.toArray(new TargetFeature[features.size()]);
+			}).filter(Objects::nonNull).toArray(TargetFeature[]::new);
+		}
+		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
+				NLS.bind(Messages.DirectoryBundleContainer_1, dir.toString())));
 	}
 
 	/**

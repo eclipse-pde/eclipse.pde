@@ -111,7 +111,7 @@ public class IncrementalErrorReporter {
 		// Create only new markers
 		for (VirtualMarker reportedMarker : fReportedMarkers) {
 			try {
-				fResource.createMarker(PDEMarkerFactory.MARKER_ID).setAttributes(reportedMarker.getAttributes());
+				fResource.createMarker(PDEMarkerFactory.MARKER_ID, reportedMarker.getAttributes());
 			} catch (CoreException e) {
 				PDECore.logException(e);
 			}

@@ -16,10 +16,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
-
 public class PDEMarkerFactory {
 
 	/**
@@ -114,12 +110,5 @@ public class PDEMarkerFactory {
 	public static final String CAT_DEPRECATION = "deprecation"; //$NON-NLS-1$
 	public static final String CAT_EE = "ee"; //$NON-NLS-1$
 	public static final String CAT_OTHER = ""; //$NON-NLS-1$
-
-	public IMarker createMarker(IFile file, int id, String category) throws CoreException {
-		IMarker marker = file.createMarker(MARKER_ID);
-		marker.setAttribute(PROBLEM_ID, id);
-		marker.setAttribute(CAT_ID, category);
-		return marker;
-	}
 
 }

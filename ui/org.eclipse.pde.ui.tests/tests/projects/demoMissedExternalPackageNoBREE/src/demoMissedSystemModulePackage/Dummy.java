@@ -1,8 +1,8 @@
 package demoMissedSystemModulePackage;
 
-import org.w3c.dom.events.Event;
+import javax.annotation.Generated;
 
+@Generated
 public class Dummy {
 
-	Event decl = null;
 }

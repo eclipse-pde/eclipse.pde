@@ -54,7 +54,7 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 	public static final char F_ATT_VALUE_PREFIX = '!';
 	public static final char F_CHILD_SEP = '>';
 
-	class ElementData {
+	static class ElementData {
 		int offset;
 		boolean fErrorNode;
 

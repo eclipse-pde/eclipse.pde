@@ -1,8 +1,8 @@
 package demoMissedSystemModulePackage;
 
-import org.w3c.dom.events.Event;
+import org.w3c.dom.Attr;
 
 public class Dummy {
 
-	Event decl = null;
+	Attr decl = null;
 }
