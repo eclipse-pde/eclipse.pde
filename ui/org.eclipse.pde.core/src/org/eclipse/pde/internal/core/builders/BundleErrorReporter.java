@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -53,6 +53,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -639,8 +640,19 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						// Check if the user is using a perfect match JRE
 						IVMInstall vm = JavaRuntime.getVMInstall(currentPath);
 						if (vm == null || !env.isStrictlyCompatible(vm)) {
+							IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+							IExecutionEnvironment[] environments = manager.getExecutionEnvironments();
+							String systemEE =null;
+							for (IExecutionEnvironment environment : environments) {
+								if (environment.isStrictlyCompatible(vm)) {
+									systemEE = environment.getId();
+									break;
+								}
+							}
 							VirtualMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_reqExecEnv_conflict, bundleEnvs[0]),getLine(header, bundleEnvs[0]), sev, PDEMarkerFactory.M_MISMATCHED_EXEC_ENV,PDEMarkerFactory.CAT_EE);
 							addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,CompilerFlags.P_INCOMPATIBLE_ENV);
+							if(systemEE!=null)
+								addMarkerAttribute(marker, "BREE", systemEE); //$NON-NLS-1$
 						}
 					}
 				}

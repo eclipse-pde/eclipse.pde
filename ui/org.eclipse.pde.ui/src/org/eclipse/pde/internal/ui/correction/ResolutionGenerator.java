@@ -78,7 +78,9 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 			case PDEMarkerFactory.M_DIRECTIVE_HAS_NO_EFFECT :
 				return getRemoveInternalDirectiveResolution(marker);
 			case PDEMarkerFactory.M_MISMATCHED_EXEC_ENV :
-				return new IMarkerResolution[] {new UpdateClasspathResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker)};
+				return new IMarkerResolution[] {
+						new UpdateClasspathResolution(AbstractPDEMarkerResolution.RENAME_TYPE, marker),
+						new UpdateExecutionEnvironment(AbstractPDEMarkerResolution.RENAME_TYPE, marker) };
 			case PDEMarkerFactory.M_UNKNOW_EXEC_ENV :
 				return new IMarkerResolution[] {
 						new RemoveUnknownExecEnvironments(AbstractPDEMarkerResolution.REMOVE_TYPE, marker) };

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2020 IBM Corporation and others.
+ * Copyright (c) 2014, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -652,6 +652,7 @@ public class PDEUIMessages extends NLS {
 	public static String TableSection_itemCount;
 
 	public static String UpdateClasspathResolution_label;
+	public static String UpdateExecutionEnvironment_label;
 
 	//
 	// PDE resource strings
