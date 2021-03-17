@@ -31,7 +31,7 @@ import org.osgi.framework.*;
 // This class provides a higher level API on the state
 public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private static final String[] MANIFEST_ENTRIES = {Constants.BUNDLE_LOCALIZATION, Constants.BUNDLE_NAME, Constants.BUNDLE_VENDOR, ECLIPSE_BUNDLE_SHAPE, ECLIPSE_SOURCE_BUNDLE, ECLIPSE_SOURCE_REF};
-	private static int LAST_SUPPORTED_JDK = 15;
+	private static int LAST_SUPPORTED_JDK = 16;
 	private StateObjectFactory factory;
 	protected State state;
 	private long id;
