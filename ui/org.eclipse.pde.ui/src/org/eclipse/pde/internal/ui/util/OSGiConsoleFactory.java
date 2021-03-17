@@ -36,8 +36,10 @@ public class OSGiConsoleFactory implements IConsoleFactory {
 		IConsole[] existing = fConsoleManager.getConsoles();
 		boolean exists = false;
 		for (IConsole existingConsole : existing) {
-			if (console == existingConsole)
+			if (console == existingConsole) {
 				exists = true;
+				break;
+			}
 		}
 		if (!exists)
 			fConsoleManager.addConsoles(new IConsole[] {console});
