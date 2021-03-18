@@ -28,10 +28,6 @@
 	<version>3.6.200-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
 	
-	<properties>
-		<skipAPIAnalysis>true</skipAPIAnalysis>
-	</properties>
-
 	<build>
 		<plugins>
 			<plugin>
