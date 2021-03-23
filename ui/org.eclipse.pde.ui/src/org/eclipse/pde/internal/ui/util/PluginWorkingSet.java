@@ -36,7 +36,7 @@ import org.eclipse.ui.dialogs.*;
 
 public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 
-	class ContentProvider implements ITreeContentProvider {
+	static class ContentProvider implements ITreeContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return PluginRegistry.getAllModels();

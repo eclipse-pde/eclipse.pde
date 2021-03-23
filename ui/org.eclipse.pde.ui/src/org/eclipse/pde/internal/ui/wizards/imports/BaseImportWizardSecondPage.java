@@ -50,7 +50,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	protected TableViewer fImportListViewer;
 	private boolean fRefreshNeeded = true;
 
-	class ContentProvider implements IStructuredContentProvider {
+	static class ContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object element) {
 			return new Object[0];

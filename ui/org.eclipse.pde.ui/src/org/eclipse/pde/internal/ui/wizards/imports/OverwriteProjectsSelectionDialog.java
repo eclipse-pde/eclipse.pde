@@ -45,7 +45,7 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 
 	private static final String ID = "id"; //$NON-NLS-1$
 
-	private class PluginContentProvider implements ITreeContentProvider {
+	private static class PluginContentProvider implements ITreeContentProvider {
 
 		@Override
 		public Object[] getChildren(Object parentElement) {

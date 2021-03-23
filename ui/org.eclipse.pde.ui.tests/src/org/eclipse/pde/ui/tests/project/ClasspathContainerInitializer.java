@@ -31,7 +31,7 @@ public class ClasspathContainerInitializer extends org.eclipse.jdt.core.Classpat
 		JavaCore.setClasspathContainer(containerPath, new IJavaProject[]{project}, new IClasspathContainer[]{new ClasspathContainer(PATH)}, null);
 	}
 
-	class ClasspathContainer implements IClasspathContainer {
+	static class ClasspathContainer implements IClasspathContainer {
 
 		private IPath fPath;
 

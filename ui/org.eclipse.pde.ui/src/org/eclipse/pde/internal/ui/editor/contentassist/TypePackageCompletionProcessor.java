@@ -33,7 +33,7 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 	private SearchEngine fSearchEngine;
 	private Comparator<Object> fComparator;
 
-	abstract class ProposalGenerator {
+	abstract static class ProposalGenerator {
 		abstract protected ICompletionProposal generateClassCompletion(String pName, String cName, boolean isClass);
 
 		abstract protected ICompletionProposal generatePackageCompletion(String pName);

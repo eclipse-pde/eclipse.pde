@@ -20,7 +20,7 @@ public class ControlStack {
 	private Stack<Entry> stack;
 	private PreprocessorParser parser;
 
-	class Entry {
+	static class Entry {
 		boolean value;
 	}
 

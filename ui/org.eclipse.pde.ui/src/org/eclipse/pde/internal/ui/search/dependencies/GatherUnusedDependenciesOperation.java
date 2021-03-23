@@ -33,7 +33,7 @@ import org.osgi.framework.Constants;
 
 public class GatherUnusedDependenciesOperation implements IRunnableWithProgress {
 
-	class Requestor extends SearchRequestor {
+	static class Requestor extends SearchRequestor {
 		boolean fFound = false;
 
 		@Override

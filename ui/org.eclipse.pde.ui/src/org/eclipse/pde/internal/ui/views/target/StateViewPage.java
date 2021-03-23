@@ -73,7 +73,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		}
 	};
 
-	class DependencyGroup {
+	static class DependencyGroup {
 		Object[] dependencies;
 
 		public DependencyGroup(Object[] constraints) {

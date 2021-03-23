@@ -46,7 +46,7 @@ public class PreprocessorParser {
 	private int loc;
 	private String tvalue;
 
-	abstract class Node {
+	abstract static class Node {
 		abstract Object getValue();
 	}
 
@@ -132,7 +132,7 @@ public class PreprocessorParser {
 		}
 	}
 
-	class RootEntry {
+	static class RootEntry {
 		Node root;
 	}
 

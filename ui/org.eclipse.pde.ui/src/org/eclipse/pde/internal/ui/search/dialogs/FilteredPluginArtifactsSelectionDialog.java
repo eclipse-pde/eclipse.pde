@@ -215,7 +215,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 	}
 
-	private class ExtensionsFilter extends ViewerFilter {
+	private static class ExtensionsFilter extends ViewerFilter {
 
 		private boolean enabled = true;
 
@@ -235,7 +235,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		}
 	}
 
-	private class ExtensionPointsFilter extends ViewerFilter {
+	private static class ExtensionPointsFilter extends ViewerFilter {
 
 		private boolean enabled = true;
 
@@ -256,7 +256,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 	}
 
-	private class ExportedPackagesFilter extends ViewerFilter {
+	private static class ExportedPackagesFilter extends ViewerFilter {
 
 		private boolean enabled = true;
 
@@ -277,7 +277,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 	}
 
-	private class FeaturesFilter extends ViewerFilter {
+	private static class FeaturesFilter extends ViewerFilter {
 
 		private boolean enabled = true;
 

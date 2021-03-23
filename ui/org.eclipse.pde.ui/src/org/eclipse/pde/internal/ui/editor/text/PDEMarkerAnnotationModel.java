@@ -20,7 +20,7 @@ import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
 public class PDEMarkerAnnotationModel extends ResourceMarkerAnnotationModel {
 
-	class PDEMarkerAnnotation extends MarkerAnnotation {
+	static class PDEMarkerAnnotation extends MarkerAnnotation {
 		boolean quickFixableState;
 		boolean isQuickFixable;
 
