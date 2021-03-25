@@ -681,7 +681,7 @@ public class UtilTests {
 				if (zEntry.isDirectory() || !zEntry.getName().endsWith(".xml")) { //$NON-NLS-1$
 					continue;
 				}
-				s = new String(Util.getInputStreamAsCharArray(inputStream, -1, StandardCharsets.UTF_8));
+				s = new String(Util.getInputStreamAsCharArray(inputStream, StandardCharsets.UTF_8));
 			}
 		} catch (IOException e) {
 			// ignore

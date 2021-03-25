@@ -113,7 +113,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 						return null;
 					}
 					try {
-						fContents = Util.getInputStreamAsByteArray(stream, -1);
+						fContents = stream.readAllBytes();
 						return fContents;
 					} catch (IOException ioe) {
 						abort("Unable to read class file: " + getTypeName(), ioe); //$NON-NLS-1$

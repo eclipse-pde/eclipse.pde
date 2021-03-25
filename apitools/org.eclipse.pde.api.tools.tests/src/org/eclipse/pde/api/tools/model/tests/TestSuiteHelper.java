@@ -13,18 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -665,24 +661,11 @@ public class TestSuiteHelper {
 				}
 			}
 		} else {
-			byte[] bytes = null;
-			try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(f))) {
-				bytes = Util.getInputStreamAsByteArray(inputStream, -1);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+			try {
+				Files.copy(f.toPath(), new File(dest, f.getName()).toPath(),
+						java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
-			if (bytes != null) {
-				try (BufferedOutputStream outputStream = new BufferedOutputStream(
-						new FileOutputStream(new File(dest, f.getName())))) {
-					outputStream.write(bytes);
-					outputStream.flush();
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
 			}
 		}
 	}

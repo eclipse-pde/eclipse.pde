@@ -39,6 +39,7 @@ import java.nio.charset.CodingErrorAction;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
+import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -278,11 +279,6 @@ public final class Util {
 	public static final String DOT_CLASS_SUFFIX = ".class"; //$NON-NLS-1$
 	public static final String DOT_JAVA_SUFFIX = ".java"; //$NON-NLS-1$
 
-	/**
-	 * Constant representing the default size to read from an input stream
-	 */
-	private static final int DEFAULT_READING_SIZE = 8192;
-
 	private static final String JAVA_LANG_OBJECT = "java.lang.Object"; //$NON-NLS-1$
 	private static final String JAVA_LANG_RUNTIMEEXCEPTION = "java.lang.RuntimeException"; //$NON-NLS-1$
 	public static final String LINE_DELIMITER = System.lineSeparator();
@@ -460,40 +456,11 @@ public final class Util {
 	 * @return if the copy succeeded
 	 */
 	public static boolean copy(File file, File newFile) {
-		byte[] bytes = null;
-		BufferedInputStream inputStream = null;
 		try {
-			inputStream = new BufferedInputStream(new FileInputStream(file));
-			bytes = Util.getInputStreamAsByteArray(inputStream, -1);
+			Files.copy(file.toPath(), newFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+			return true;
 		} catch (IOException e) {
 			ApiPlugin.log(e);
-		} finally {
-			if (inputStream != null) {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					ApiPlugin.log(e);
-				}
-			}
-		}
-		if (bytes != null) {
-			BufferedOutputStream outputStream = null;
-			try {
-				outputStream = new BufferedOutputStream(new FileOutputStream(newFile));
-				outputStream.write(bytes);
-				outputStream.flush();
-			} catch (IOException e) {
-				ApiPlugin.log(e);
-			} finally {
-				if (outputStream != null) {
-					try {
-						outputStream.close();
-					} catch (IOException e) {
-						// ignore
-					}
-				}
-			}
-			return true;
 		}
 		return false;
 	}
@@ -1505,66 +1472,17 @@ public final class Util {
 	}
 
 	/**
-	 * Returns the given input stream as a byte array
-	 *
-	 * @param stream the stream to get as a byte array
-	 * @param length the length to read from the stream or -1 for unknown
-	 * @return the given input stream as a byte array
-	 * @throws IOException
-	 */
-	public static byte[] getInputStreamAsByteArray(InputStream stream, int length) throws IOException {
-		byte[] contents;
-		if (length == -1) {
-			contents = new byte[0];
-			int contentsLength = 0;
-			int amountRead = -1;
-			do {
-				// read at least 8K
-				int amountRequested = Math.max(stream.available(), DEFAULT_READING_SIZE);
-				// resize contents if needed
-				if (contentsLength + amountRequested > contents.length) {
-					System.arraycopy(contents, 0, contents = new byte[contentsLength + amountRequested], 0, contentsLength);
-				}
-				// read as many bytes as possible
-				amountRead = stream.read(contents, contentsLength, amountRequested);
-				if (amountRead > 0) {
-					// remember length of contents
-					contentsLength += amountRead;
-				}
-			} while (amountRead != -1);
-			// resize contents if necessary
-			if (contentsLength < contents.length) {
-				System.arraycopy(contents, 0, contents = new byte[contentsLength], 0, contentsLength);
-			}
-		} else {
-			contents = new byte[length];
-			int len = 0;
-			int readSize = 0;
-			while ((readSize != -1) && (len != length)) {
-				// See PR 1FMS89U
-				// We record first the read size. In this case length is the
-				// actual
-				// read size.
-				len += readSize;
-				readSize = stream.read(contents, len, length - len);
-			}
-		}
-		return contents;
-	}
-
-	/**
 	 * Returns the given input stream's contents as a character array. If a
 	 * length is specified (i.e. if length != -1), this represents the number of
 	 * bytes in the stream. Note the specified stream is not closed in this
 	 * method
 	 *
 	 * @param stream the stream to get convert to the char array
-	 * @param length the length of the input stream, or -1 if unknown
 	 * @param encoding the encoding to use when reading the stream
 	 * @return the given input stream's contents as a character array.
 	 * @throws IOException if a problem occurred reading the stream.
 	 */
-	public static char[] getInputStreamAsCharArray(InputStream stream, int length, String encoding) throws IOException {
+	public static char[] getInputStreamAsCharArray(InputStream stream, String encoding) throws IOException {
 		Charset charset = null;
 		try {
 			charset = Charset.forName(encoding);
@@ -1575,7 +1493,7 @@ public final class Util {
 			System.err.println("Unsupported charset : " + encoding); //$NON-NLS-1$
 			return null;
 		}
-		return getInputStreamAsCharArray(stream, length, charset);
+		return getInputStreamAsCharArray(stream, charset);
 	}
 
 	/**
@@ -1585,16 +1503,15 @@ public final class Util {
 	 * method
 	 *
 	 * @param stream the stream to get convert to the char array
-	 * @param length the length of the input stream, or -1 if unknown
 	 * @param charset the encoding to use when reading the stream
 	 * @return the given input stream's contents as a character array.
 	 * @throws IOException if a problem occurred reading the stream.
 	 */
-	public static char[] getInputStreamAsCharArray(InputStream stream, int length, Charset charset) throws IOException {
+	public static char[] getInputStreamAsCharArray(InputStream stream, Charset charset) throws IOException {
 		CharsetDecoder charsetDecoder = charset.newDecoder();
 
 		charsetDecoder.onMalformedInput(CodingErrorAction.REPLACE).onUnmappableCharacter(CodingErrorAction.REPLACE);
-		byte[] contents = getInputStreamAsByteArray(stream, length);
+		byte[] contents = stream.readAllBytes();
 		ByteBuffer byteBuffer = ByteBuffer.allocate(contents.length);
 		byteBuffer.put(contents);
 		byteBuffer.flip();
@@ -1954,7 +1871,7 @@ public final class Util {
 		FileInputStream stream = null;
 		try {
 			stream = new FileInputStream(file);
-			char[] array = getInputStreamAsCharArray(stream, -1, StandardCharsets.UTF_8);
+			char[] array = getInputStreamAsCharArray(stream, StandardCharsets.UTF_8);
 			contents = new String(array);
 		} catch (IOException ioe) {
 			ApiPlugin.log(ioe);
@@ -2637,7 +2554,7 @@ public final class Util {
 			File file = new File(location);
 			char[] contents = null;
 			try (InputStream stream = new BufferedInputStream(new FileInputStream(file));) {
-				contents = getInputStreamAsCharArray(stream, -1, StandardCharsets.ISO_8859_1);
+				contents = getInputStreamAsCharArray(stream, StandardCharsets.ISO_8859_1);
 			} catch (FileNotFoundException e) {
 				abort(NLS.bind(UtilMessages.Util_couldNotFindFilterFile, location), e);
 			} catch (IOException e) {

@@ -2390,7 +2390,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			LineNumberReader reader = null;
 			try {
 				inputStream = file.getContents(true);
-				contents = Util.getInputStreamAsCharArray(inputStream, -1, StandardCharsets.UTF_8);
+				contents = Util.getInputStreamAsCharArray(inputStream, StandardCharsets.UTF_8);
 				reader = new LineNumberReader(new BufferedReader(new StringReader(new String(contents))));
 				int lineCounter = 0;
 				String line = null;

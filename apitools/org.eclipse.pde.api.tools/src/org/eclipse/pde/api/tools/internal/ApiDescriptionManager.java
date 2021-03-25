@@ -270,7 +270,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 			BufferedInputStream stream = null;
 			try {
 				stream = new BufferedInputStream(new FileInputStream(file));
-				String xml = new String(Util.getInputStreamAsCharArray(stream, -1, StandardCharsets.UTF_8));
+				String xml = new String(Util.getInputStreamAsCharArray(stream, StandardCharsets.UTF_8));
 				Element root = Util.parseDocument(xml);
 				if (!root.getNodeName().equals(IApiXmlConstants.ELEMENT_COMPONENT)) {
 					abort(ScannerMessages.ComponentXMLScanner_0, null);

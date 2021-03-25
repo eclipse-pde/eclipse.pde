@@ -15,10 +15,9 @@ package org.eclipse.pde.api.tools.internal.model;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
@@ -87,24 +85,14 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 
 		@Override
 		public byte[] getContents() throws CoreException {
-			InputStream stream = null;
 			try {
-				stream = new FileInputStream(new File(fLocation));
+				return Files.readAllBytes(new File(fLocation).toPath());
 			} catch (FileNotFoundException e) {
 				abort("File not found", e); //$NON-NLS-1$
 				return null;
-			}
-			try {
-				return Util.getInputStreamAsByteArray(stream, -1);
 			} catch (IOException ioe) {
 				abort("Unable to read class file: " + getTypeName(), ioe); //$NON-NLS-1$
 				return null;
-			} finally {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					ApiPlugin.log(e);
-				}
 			}
 		}
 	}
