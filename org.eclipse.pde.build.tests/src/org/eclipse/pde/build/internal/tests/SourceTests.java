@@ -56,7 +56,7 @@ public class SourceTests extends PDETestCase {
 
 		Properties props = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "sdk");
 		// tests bug 247198
-		props.put("filteredDependencyCheck", "true");
+		props.put("filteredDependencyCheck", "false");
 		generateScripts(buildFolder, props);
 
 		IFolder jdtSource = buildFolder.getFolder("features").getFolder("jdt.source");
