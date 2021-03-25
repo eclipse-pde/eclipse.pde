@@ -23,7 +23,6 @@
    <extension-point id="newExtension" name="%expoint.newExtension.name" schema="schema/newExtension.exsd"/>
    <extension-point id="templates" name="%expoint.templates.name" schema="schema/templates.exsd"/>
    <extension-point id="samples" name="%expoint.samples.name" schema="schema/samples.exsd"/>
-   <extension-point id="targetProvisioners" name="%extension-point.name.0" schema="schema/targetProvisioners.exsd"/>
    <extension-point id="targetLocationProvisioners" name="%extension-point.name.2" schema="schema/targetLocationProvisioners.exsd"/>
    <extension-point id="launchShortcuts" name="%extension-point.name.1" schema="schema/launchShortcuts.exsd"/>
 
