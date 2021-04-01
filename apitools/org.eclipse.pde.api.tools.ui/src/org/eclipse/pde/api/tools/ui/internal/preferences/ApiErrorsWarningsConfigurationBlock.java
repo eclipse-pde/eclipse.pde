@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -259,7 +259,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	private static final Key KEY_INVALID_ANNOTATION = getApiToolsKey(IApiProblemTypes.INVALID_ANNOTATION);
 	private static final Key KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES = getApiToolsKey(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES);
 	private static final Key KEY_UNUSED_PROBLEM_FILTERS = getApiToolsKey(IApiProblemTypes.UNUSED_PROBLEM_FILTERS);
-	private static final Key KEY_MISSING_EE_DESCRIPTIONS = getApiToolsKey(IApiProblemTypes.MISSING_EE_DESCRIPTIONS);
+
 
 	// compatibility keys
 	private static final Key KEY_API_COMPONENT_REMOVED_API_TYPE = getApiToolsKey(IApiProblemTypes.API_COMPONENT_REMOVED_API_TYPE);
@@ -447,7 +447,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 			KEY_LEAK_IMPLEMENT, KEY_LEAK_METHOD_PARAM,
 			KEY_LEAK_METHOD_RETURN_TYPE, KEY_INVALID_JAVADOC_TAG,
 			KEY_INVALID_ANNOTATION, KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES,
-			KEY_MISSING_EE_DESCRIPTIONS };
+	};
 
 	static Key[] fgAllVersionManagementKeys = {
 			KEY_MISSING_SINCE_TAG, KEY_MALFORMED_SINCE_TAG,
@@ -478,7 +478,6 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 			KEY_INVALID_ANNOTATION,
 			KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES,
 			KEY_UNUSED_PROBLEM_FILTERS,
-			KEY_MISSING_EE_DESCRIPTIONS,
 			KEY_API_COMPONENT_REMOVED_API_TYPE,
 			KEY_API_COMPONENT_REMOVED_TYPE,
 			KEY_API_COMPONENT_REMOVED_REEXPORTED_API_TYPE,
@@ -1162,7 +1161,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 				KEY_INVALID_JAVADOC_TAG, KEY_INVALID_ANNOTATION,
 				KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES });
 		initializeInstalledMetatadata(client);
-		initializeComboControls(client, new String[] { PreferenceMessages.ApiErrorsWarningsConfigurationBlock_3 }, new Key[] { KEY_MISSING_EE_DESCRIPTIONS });
+
 		client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_restrictions);
 		initializeComboControls(client, new String[] {
 				PreferenceMessages.ApiProblemSeveritiesNoImplement,

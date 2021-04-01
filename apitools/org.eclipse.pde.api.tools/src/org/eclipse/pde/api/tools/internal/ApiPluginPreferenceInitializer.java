@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2020 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -73,7 +73,7 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 
 		node.put(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE, ApiPlugin.VALUE_ERROR);
 		node.put(IApiProblemTypes.MISSING_PLUGIN_IN_API_BASELINE, ApiPlugin.VALUE_WARNING);
-		node.put(IApiProblemTypes.MISSING_EE_DESCRIPTIONS, ApiPlugin.VALUE_WARNING);
+
 
 		// api component resolution
 		node.put(IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT, ApiPlugin.VALUE_WARNING);
