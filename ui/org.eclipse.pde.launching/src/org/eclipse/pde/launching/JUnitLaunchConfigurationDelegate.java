@@ -13,6 +13,7 @@
  *     EclipseSource Corporation - ongoing enhancements
  *     David Saff <saff@mit.edu> - bug 102632
  *     Ketan Padegaonkar <KetanPadegaonkar@gmail.com> - bug 250340
+ *     Christoph Läubrich - Bug 572520 - Run As > JUnit Plugin Test fails if the test is in a source-folder marked as 'includes test sources'
  *******************************************************************************/
 package org.eclipse.pde.launching;
 
@@ -21,6 +22,7 @@ import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.junit.launcher.*;
 import org.eclipse.jdt.launching.*;
@@ -141,6 +143,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 		// Create the platform configuration for the runtime workbench
 		String productID = LaunchConfigurationHelper.getProductID(configuration);
+		String testPluginId = getTestPluginId(configuration);
 		LaunchConfigurationHelper.createConfigIniFile(configuration, productID, fAllBundles, fModels, getConfigurationDirectory(configuration));
 		TargetPlatformHelper.checkPluginPropertiesConsistency(fAllBundles, getConfigurationDirectory(configuration));
 
@@ -149,7 +152,25 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 		// Specify the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
-		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigurationDirectory(configuration).toString() + "/dev.properties", fAllBundles)); //$NON-NLS-1$
+
+		IJavaProject javaProject = getJavaProject(configuration);
+		Properties devProperties = ClasspathHelper.getDevEntriesProperties(fAllBundles);
+		if (javaProject != null) {
+			// source-folders of type "test" are omitted in the previous search so the need to be added here as they are part of the test but not part of the build.properties
+			Arrays.stream(javaProject.getRawClasspath())//
+					.filter(entry -> entry.getEntryKind() == IClasspathEntry.CPE_SOURCE)//
+					.filter(IClasspathEntry::isTest)//
+					.filter(entry -> entry.getOutputLocation() != null).forEach(entry -> {
+						IPath relativePath = entry.getOutputLocation().removeFirstSegments(1).makeRelative();
+						String currentProperty = devProperties.getProperty(testPluginId);
+						if (currentProperty == null) {
+							devProperties.setProperty(testPluginId, relativePath.toString());
+						} else {
+							devProperties.setProperty(testPluginId, currentProperty + "," + relativePath.toString()); //$NON-NLS-1$
+						}
+					});
+		}
+		programArgs.add(ClasspathHelper.writeDevEntries(getConfigurationDirectory(configuration).toString() + "/dev.properties", devProperties)); //$NON-NLS-1$
 
 		// Create the .options file if tracing is turned on
 		if (configuration.getAttribute(IPDELauncherConstants.TRACING, false) && !IPDELauncherConstants.TRACING_NONE.equals(configuration.getAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null))) {
@@ -184,7 +205,8 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		}
 
 		programArgs.add("-testpluginname"); //$NON-NLS-1$
-		programArgs.add(getTestPluginId(configuration));
+		programArgs.add(testPluginId);
+
 		IVMInstall launcher = VMHelper.createLauncher(configuration);
 		boolean isModular = JavaRuntime.isModularJava(launcher);
 		if (isModular) {
