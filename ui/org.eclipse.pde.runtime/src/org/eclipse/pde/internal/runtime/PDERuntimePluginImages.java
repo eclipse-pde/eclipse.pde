@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -59,23 +59,17 @@ public class PDERuntimePluginImages {
 	public static final ImageDescriptor DESC_REFRESH_DISABLED = create(PATH_DCL, "refresh.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_REFRESH = create(PATH_LCL, "refresh.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_COLLAPSE_ALL = create(PATH_LCL, "collapseall.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_ERROR_ST_OBJ = create(PATH_OBJ, "error_st_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_ERROR_STACK_OBJ = create(PATH_OBJ, "error_stack.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXT_POINT_OBJ = create(PATH_OBJ, "ext_point_obj.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXT_POINTS_OBJ = create(PATH_OBJ, "ext_points_obj.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXTENSION_OBJ = create(PATH_OBJ, "extension_obj.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXTENSIONS_OBJ = create(PATH_OBJ, "extensions_obj.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_GENERIC_XML_OBJ = create(PATH_OBJ, "generic_xml_obj.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ATTR_XML_OBJ = create(PATH_OBJ, "attr_xml_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_INFO_ST_OBJ = create(PATH_OBJ, "info_st_obj.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_JAVA_LIB_OBJ = create(PATH_OBJ, "java_lib_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_NATIVE_LIB_OBJ = create(PATH_OBJ, "native_lib_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OK_ST_OBJ = create(PATH_OBJ, "ok_st_obj.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PLUGIN_OBJ = create(PATH_OBJ, "plugin_obj.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_REQ_PLUGIN_OBJ = create(PATH_OBJ, "req_plugin_obj.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_REQ_PLUGINS_OBJ = create(PATH_OBJ, "req_plugins_obj.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_RUNTIME_OBJ = create(PATH_OBJ, "runtime_obj.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_WARNING_ST_OBJ = create(PATH_OBJ, "warning_st_obj.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_LOCATION = create(PATH_OBJ, "location_obj.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_IMP_OBJ = create(PATH_OBJ, "bundle-importer.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_EXP_OBJ = create(PATH_OBJ, "bundle-exporter.png"); //$NON-NLS-1$

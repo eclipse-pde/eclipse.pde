@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2019 IBM Corporation and others.
+ *  Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -38,7 +39,6 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 	public PDERuntimePlugin() {
 		inst = this;
 	}
-
 	private static boolean isBundleAvailable(String bundleID) {
 		Bundle bundle = Platform.getBundle(bundleID);
 		return bundle != null && (bundle.getState() & (Bundle.ACTIVE | Bundle.STARTING | Bundle.RESOLVED)) != 0;
@@ -57,14 +57,6 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 		} catch (Throwable exception) { // do nothing
 		}
 		HAS_IDE_BUNDLES = result;
-	}
-
-	public static IWorkbenchPage getActivePage() {
-		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (activeWindow != null) {
-			return activeWindow.getActivePage();
-		}
-		return null;
 	}
 
 	public static Shell getActiveWorkbenchShell() {
