@@ -322,16 +322,10 @@ public class XmlReferenceDescriptorWriter {
 				File out = new File(parent, name + ".xml"); //$NON-NLS-1$
 				if (out.exists()) {
 					try {
-						FileInputStream inputStream = null;
-						try {
-							inputStream = new FileInputStream(out);
+						try (FileInputStream inputStream = new FileInputStream(out)) {
 							doc = this.parser.parse(inputStream);
 						} catch (IOException e) {
 							e.printStackTrace();
-						} finally {
-							if (inputStream != null) {
-								inputStream.close();
-							}
 						}
 						if (doc == null) {
 							return;

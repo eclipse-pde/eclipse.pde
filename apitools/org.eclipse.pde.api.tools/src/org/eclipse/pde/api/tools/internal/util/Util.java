@@ -476,14 +476,8 @@ public final class Util {
 	public static File createEEFile(IVMInstall jre, String eeid) throws IOException {
 		String string = Util.generateEEContents(jre, eeid);
 		File eeFile = createTempFile("eed", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
-		FileOutputStream outputStream = null;
-		try {
-			outputStream = new FileOutputStream(eeFile);
+		try (FileOutputStream outputStream = new FileOutputStream(eeFile)) {
 			outputStream.write(string.getBytes(StandardCharsets.UTF_8));
-		} finally {
-			if (outputStream != null) {
-				outputStream.close();
-			}
 		}
 		return eeFile;
 	}
