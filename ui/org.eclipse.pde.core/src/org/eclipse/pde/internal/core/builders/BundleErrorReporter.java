@@ -679,22 +679,27 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		// Check for highest BREE of bundle dependencies
 		int compilerFlag = CompilerFlags.getFlag(fProject, CompilerFlags.P_EXEC_ENV_TOO_LOW);
 		if (compilerFlag != CompilerFlags.IGNORE) {
-		String highestDependencyEE = checkBREE(desc);
-		String highestBundleEE = getHighestBREE(bundleEnvs);
-		try {
-			if (highestBundleEE != getHighestEE(highestDependencyEE, highestBundleEE)) {
-
+			ArrayList<Object> checkBREE = checkBREE(desc);
+			String highestDependencyEE = checkBREE.size() > 0 ? (String) checkBREE.get(0) : ""; //$NON-NLS-1$
+			String highestBundleEE = getHighestBREE(bundleEnvs);
+			try {
+				if (highestBundleEE != getHighestEE(highestDependencyEE, highestBundleEE)) {
+					BundleDescription object = null;
+					if (checkBREE.size() == 2) {
+						object = (BundleDescription) checkBREE.get(1);
+					}
 					VirtualMarker marker = report(
 							NLS.bind(PDECoreMessages.BundleErrorReporter_ExecEnv_tooLow, highestDependencyEE,
-									highestDependencyEE),
+									object != null ? object.getName() : ""), //$NON-NLS-1$
 							getLine(header, highestBundleEE), compilerFlag, PDEMarkerFactory.M_EXEC_ENV_TOO_LOW,
 							PDEMarkerFactory.CAT_EE);
 					addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_EXEC_ENV_TOO_LOW);
 					addMarkerAttribute(marker, PDEMarkerFactory.REQUIRED_EXEC_ENV, highestDependencyEE);
+				}
+			} catch (Exception e) {
+				PDECore.log(e);
 			}
-		} catch (Exception e) {
-			PDECore.log(e);
-		}
+			checkBREE.clear();
 		}
 	}
 
@@ -825,11 +830,14 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 	 * @param desc
 	 *            The bundle description of the bundle which we wish to check
 	 *            for it's highest required Execution Environment
-	 * @return The highest Execution Environment required by the bundle or any
-	 *         of it's dependencies
+	 * @return List containing the highest Execution Environment &
+	 *         BundleDescription with the highest BREE required by the bundle or
+	 *         any of it's dependencies
 	 */
-	private String checkBREE(BundleDescription desc) {
+	private ArrayList<Object> checkBREE(BundleDescription desc) {
+		ArrayList<Object> ret = new ArrayList<>();
 		String highestBREE = getHighestBREE(desc.getExecutionEnvironments());
+		ret.add(highestBREE);
 		HashSet<BundleDescription> visitedBundles = new HashSet<>();
 		Deque<BundleDescription> bundleDescriptions = new ArrayDeque<>();
 		bundleDescriptions.push(desc);
@@ -847,14 +855,19 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				}
 			}
 			try {
-				highestBREE = getHighestEE(highestBREE, getHighestBREE(dependencyDesc.getExecutionEnvironments()));
+				String high = getHighestEE(highestBREE, getHighestBREE(dependencyDesc.getExecutionEnvironments()));
+				if (!high.equals(highestBREE)) {
+					highestBREE = high;
+					ret.clear();
+					ret.add(highestBREE);
+					ret.add(dependencyDesc);
+				}
 			} catch (Exception e) {
 				PDECore.log(e);
 			}
 		}
-		return highestBREE;
+		return ret;
 	}
-
 	/**
 	 * Validates the Eclipse-BundleShape header
 	 *
