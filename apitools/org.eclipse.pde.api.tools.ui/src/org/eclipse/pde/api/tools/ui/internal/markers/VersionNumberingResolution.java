@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2019 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -61,9 +61,9 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 			case IApiProblem.MINOR_VERSION_CHANGE_EXECUTION_ENV_CHANGED:
 				return MarkerMessages.VersionNumberingResolution_breeMinor;
 			case IApiProblem.MICRO_VERSION_CHANGE_UNNECESSARILY:
-				return MarkerMessages.VersionNumberingResolution_unnecessaryMicroIncrease;
+				return MarkerMessages.VersionNumberingResolution_unnecessaryMicro;
 			case IApiProblem.MINOR_VERSION_CHANGE_UNNECESSARILY:
-				return MarkerMessages.VersionNumberingResolution_unnecessaryMinorIncrease;
+				return MarkerMessages.VersionNumberingResolution_unnecessaryMinor;
 			default:
 				// reexported minor
 				return MarkerMessages.VersionNumberingResolution_reexportedMinor0;
@@ -89,9 +89,11 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE:
 				return NLS.bind(MarkerMessages.VersionNumberingResolution_major1, this.newVersionValue);
 			case IApiProblem.MICRO_VERSION_CHANGE_UNNECESSARILY:
-				return MarkerMessages.VersionNumberingResolution_unnecessaryMicroIncrease;
+				return NLS.bind(MarkerMessages.VersionNumberingResolution_unnecessaryMicroIncrease,
+						this.newVersionValue);
 			case IApiProblem.MINOR_VERSION_CHANGE_UNNECESSARILY:
-				return MarkerMessages.VersionNumberingResolution_unnecessaryMinorIncrease;
+				return NLS.bind(MarkerMessages.VersionNumberingResolution_unnecessaryMinorIncrease,
+						this.newVersionValue);
 
 			default:
 				// IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE
