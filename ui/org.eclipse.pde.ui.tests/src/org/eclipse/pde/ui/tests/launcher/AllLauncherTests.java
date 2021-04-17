@@ -22,7 +22,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({ FeatureBasedLaunchTest.class, LaunchConfigurationHelperTestCase.class,
-		LaunchConfigurationMigrationTest.class })
+	LaunchConfigurationMigrationTest.class, LaunchConfigurationSetupTests.class })
 public class AllLauncherTests {
 
 }

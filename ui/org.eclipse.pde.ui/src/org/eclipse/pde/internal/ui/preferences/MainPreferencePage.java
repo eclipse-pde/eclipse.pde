@@ -140,6 +140,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 	private Button fShowTargetStatus;
 	private Button fAlwaysPreferWorkspace;
 	private Button fDisableAPIAnalysisBuilder;
+	private Button fAddSwtNonDisposalReporting;
 
 	private Text fRuntimeWorkspaceLocation;
 	private Button fRuntimeWorkspaceLocationRadio;
@@ -197,6 +198,12 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fDisableAPIAnalysisBuilder = new Button(optionComp, SWT.CHECK);
 		fDisableAPIAnalysisBuilder.setText(PDEUIMessages.MainPreferencePage_DisableAPIAnalysisBuilder);
 		fDisableAPIAnalysisBuilder.setSelection(store.getBoolean(IPreferenceConstants.DISABLE_API_ANALYSIS_BUILDER));
+
+		fAddSwtNonDisposalReporting = new Button(optionComp, SWT.CHECK);
+		fAddSwtNonDisposalReporting.setText(PDEUIMessages.MainPreferencePage_AddSwtNonDisposedToVMArguments);
+		fAddSwtNonDisposalReporting
+				.setToolTipText(PDEUIMessages.MainPreferencePage_AddSwtNonDisposedToVMArgumentsToolTop);
+		fAddSwtNonDisposalReporting.setSelection(store.getBoolean(IPreferenceConstants.ADD_SWT_NON_DISPOSAL_REPORTING));
 
 		Composite pathComposite = new Composite(optionComp, SWT.NONE);
 		pathComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
@@ -374,6 +381,13 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 
 		}
 
+		boolean addSwtNonDisposalReporting = fAddSwtNonDisposalReporting.getSelection();
+		if (store.getBoolean(IPreferenceConstants.ADD_SWT_NON_DISPOSAL_REPORTING) != addSwtNonDisposalReporting) {
+			store.setValue(IPreferenceConstants.ADD_SWT_NON_DISPOSAL_REPORTING, addSwtNonDisposalReporting);
+			PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
+			prefs.setValue(ICoreConstants.ADD_SWT_NON_DISPOSAL_REPORTING, addSwtNonDisposalReporting);
+		}
+
 		PDEPlugin.getDefault().getPreferenceManager().savePluginPreferences();
 
 		PDEPreferencesManager launchingStore = PDELaunchingPlugin.getDefault().getPreferenceManager();
@@ -410,6 +424,8 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fShowTargetStatus.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TARGET_STATUS));
 		fAlwaysPreferWorkspace.setSelection(store.getDefaultBoolean(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET));
 		fDisableAPIAnalysisBuilder.setSelection(store.getDefaultBoolean(IPreferenceConstants.DISABLE_API_ANALYSIS_BUILDER));
+		fAddSwtNonDisposalReporting
+				.setSelection(store.getDefaultBoolean(IPreferenceConstants.ADD_SWT_NON_DISPOSAL_REPORTING));
 		fTestPluginPatternText.setText(store.getDefaultString(IPreferenceConstants.TEST_PLUGIN_PATTERN));
 		PDEPreferencesManager launchingStore = PDELaunchingPlugin.getDefault().getPreferenceManager();
 		boolean runtimeLocationIsContainer = launchingStore.getDefaultBoolean(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION_IS_CONTAINER);

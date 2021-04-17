@@ -120,22 +120,34 @@ public class LaunchArgumentsHelper {
 	}
 
 	/**
-	 * Fetches the VM Arguments from the current Target Platform
+	 * Fetches the initial VM Arguments from the current Target Platform and defaults
+	 * set in the preferences
 	 *
-	 * @return	VM Arguments from the current Target Platform or empty string if none found
+	 * @return VM Arguments from the current Target Platform and defaults
+	 * set in the preferences or empty string if none found
 	 */
 	public static String getInitialVMArguments() {
+		String result = ""; //$NON-NLS-1$
 		try {
 			ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 			if (service != null) {
-				String result = service.getWorkspaceTargetDefinition().getVMArguments();
+				result = service.getWorkspaceTargetDefinition().getVMArguments();
 				result = result != null ? result : ""; //$NON-NLS-1$
-				return result;
 			}
 		} catch (CoreException e) {
 			PDECore.log(e);
 		}
-		return ""; //$NON-NLS-1$
+
+		if (getAddSwtNonDisposalReportingPreference()) {
+			if (result.indexOf("-Dorg.eclipse.swt.graphics.Resource.reportNonDisposed") == -1) { //$NON-NLS-1$
+				if (result.length() > 0) {
+					result += " "; //$NON-NLS-1$
+				}
+				result += "-Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true"; //$NON-NLS-1$
+			}
+		}
+
+		return result;
 	}
 
 	public static String getInitialProgramArguments() {
@@ -392,6 +404,15 @@ public class LaunchArgumentsHelper {
 
 	public static String getDefaultJUnitConfigurationLocation() {
 		return "${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/pde-junit"; //$NON-NLS-1$
+	}
+
+	/**
+	 * Return true if the default VM args for a launch configuration should contain
+	 * '-Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true'
+	 */
+	public static boolean getAddSwtNonDisposalReportingPreference() {
+		PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
+		return prefs.getBoolean(ICoreConstants.ADD_SWT_NON_DISPOSAL_REPORTING);
 	}
 
 }
