@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,14 +16,17 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.*;
+import java.util.stream.Stream;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jdt.internal.junit.launcher.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.launching.launcher.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.launching.IPDELauncherConstants;
+import org.eclipse.pde.launching.JUnitLaunchConfigurationDelegate;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 
 public class PluginBlock extends AbstractPluginBlock {
@@ -166,6 +169,11 @@ public class PluginBlock extends AbstractPluginBlock {
 		// Check that the application or product we are launching has its requirements included
 		try {
 			String[] requiredIds = RequirementHelper.getApplicationRequirements(fLaunchConfig);
+			ITestKind testKind = JUnitLaunchConfigurationConstants.getTestRunnerKind(fLaunchConfig);
+			if (TestKindRegistry.JUNIT4_TEST_KIND_ID.equals(testKind.getId()) || TestKindRegistry.JUNIT5_TEST_KIND_ID.equals(testKind.getId())) {
+				requiredIds = addJunitPlugins(requiredIds, testKind);
+			}
+
 			for (String requiredId : requiredIds) {
 				// see if launcher plugin is already included
 				IPluginModelBase base = findPlugin(requiredId);
@@ -180,6 +188,25 @@ public class PluginBlock extends AbstractPluginBlock {
 			PDEPlugin.log(e);
 		}
 		super.addRequiredPlugins();
+	}
+
+	private String[] addJunitPlugins(String[] requiredIds, ITestKind testKind) throws CoreException {
+		String[] requiredPlugins;
+		requiredPlugins = JUnitLaunchConfigurationDelegate.getRequiredPlugins(fLaunchConfig);
+		if (requiredIds != null) {
+			Object[] plugins = null;
+			if (TestKindRegistry.JUNIT5_TEST_KIND_ID.equals(testKind.getId())) {
+				String[] additionJunit5 = { "org.junit.jupiter.api", "org.eclipse.jdt.junit5.runtime" }; //$NON-NLS-1$ //$NON-NLS-2$
+				plugins = Stream.of(requiredIds, requiredPlugins, additionJunit5).flatMap(Stream::of)
+						.toArray();
+
+			} else {
+				plugins = Stream.of(requiredIds, requiredPlugins).flatMap(Stream::of).toArray();
+			}
+			requiredIds = Arrays.copyOf(plugins, plugins.length, String[].class);
+
+		}
+		return requiredIds;
 	}
 
 	@Override

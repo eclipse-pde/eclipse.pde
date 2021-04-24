@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation and others.
+ * Copyright (c) 2006, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -385,7 +385,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		}
 
 		// implicitly add the plug-ins required for JUnit testing if necessary
-		String[] requiredPlugins = getRequiredPlugins(configuration);
+		String[] requiredPlugins = JUnitLaunchConfigurationDelegate.getRequiredPlugins(configuration);
 		for (String requiredPlugin : requiredPlugins) {
 			String id = requiredPlugin;
 			if (!fAllBundles.containsKey(id)) {
@@ -413,7 +413,12 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		synchronizeManifests(configuration, subMonitor.split(1));
 	}
 
-	private String[] getRequiredPlugins(ILaunchConfiguration configuration) {
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @param configuration
+	 * @return required plugins
+	 */
+	public static String[] getRequiredPlugins(ILaunchConfiguration configuration) {
 		// if we are using JUnit4, we need to include the junit4 specific bundles
 		ITestKind testKind = JUnitLaunchConfigurationConstants.getTestRunnerKind(configuration);
 		if (TestKindRegistry.JUNIT4_TEST_KIND_ID.equals(testKind.getId()))
