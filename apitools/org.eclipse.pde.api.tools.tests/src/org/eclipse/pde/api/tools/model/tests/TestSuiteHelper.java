@@ -400,7 +400,7 @@ public class TestSuiteHelper {
 	public static File getEEDescriptionFile() {
 		String eePath = System.getProperty("ee.file"); //$NON-NLS-1$
 		if (eePath == null) {
-			// generate a fake 1.8 ee file
+			// generate a fake 11 ee file
 			File fakeEEFile = null;
 			try {
 				fakeEEFile = Util.createTempFile("eefile", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -409,8 +409,8 @@ public class TestSuiteHelper {
 				writer.println(System.getProperty("java.home")); //$NON-NLS-1$
 				writer.print("-Dee.bootclasspath="); //$NON-NLS-1$
 				writer.println(org.eclipse.pde.api.tools.internal.util.Util.getJavaClassLibsAsString());
-				writer.println("-Dee.language.level=1.8"); //$NON-NLS-1$
-				writer.println("-Dee.class.library.level=JavaSE-1.8"); //$NON-NLS-1$
+				writer.println("-Dee.language.level=11"); //$NON-NLS-1$
+				writer.println("-Dee.class.library.level=JavaSE-11"); //$NON-NLS-1$
 				writer.flush();
 				}
 			} catch (IOException e) {
