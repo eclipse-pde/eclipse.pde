@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.launcher;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
@@ -29,10 +29,11 @@ public class LaunchConfigurationSetupTests {
 		PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
 		try {
 			prefs.setValue(ICoreConstants.ADD_SWT_NON_DISPOSAL_REPORTING, true);
-			assertEquals("-Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true",
-					LaunchArgumentsHelper.getInitialVMArguments());
+			assertThat(LaunchArgumentsHelper.getInitialVMArguments())
+					.contains("-Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true");
 			prefs.setValue(ICoreConstants.ADD_SWT_NON_DISPOSAL_REPORTING, false);
-			assertEquals("", LaunchArgumentsHelper.getInitialVMArguments());
+			assertThat(LaunchArgumentsHelper.getInitialVMArguments())
+					.doesNotContain("-Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=");
 		} finally {
 			prefs.setToDefault(ICoreConstants.ADD_SWT_NON_DISPOSAL_REPORTING);
 		}
@@ -40,4 +41,3 @@ public class LaunchConfigurationSetupTests {
 	}
 
 }
-
