@@ -437,7 +437,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
-	 * @param configuration
+	 * @param configuration non null config
 	 * @return required plugins
 	 */
 	public static String[] getRequiredPlugins(ILaunchConfiguration configuration) {
