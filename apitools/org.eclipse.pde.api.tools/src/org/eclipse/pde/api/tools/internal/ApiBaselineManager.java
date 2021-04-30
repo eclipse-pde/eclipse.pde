@@ -40,7 +40,6 @@ import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -402,7 +401,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 * @throws CoreException
 	 */
 	private static void abort(String message, Throwable e) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, message, e));
+		throw new CoreException(Status.error(message, e));
 	}
 
 	/**

@@ -36,15 +36,14 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.config.*;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
+import org.osgi.framework.*;
 
 public class ShowSampleAction extends Action implements IIntroAction {
 	private static final String SAMPLE_FEATURE_ID = "org.eclipse.sdk.samples"; //$NON-NLS-1$
@@ -247,7 +246,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 		try {
 			configurator.applyConfiguration();
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, "Unexpected failure applying configuration", e)); //$NON-NLS-1$
+			throw new CoreException(Status.error("Unexpected failure applying configuration", e)); //$NON-NLS-1$
 		} finally {
 			context.ungetService(reference);
 		}

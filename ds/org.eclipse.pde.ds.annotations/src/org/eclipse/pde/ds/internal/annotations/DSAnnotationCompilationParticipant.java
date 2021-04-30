@@ -377,7 +377,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 				try {
 					saveState(project.getProject(), state);
 				} catch (IOException e) {
-					Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error saving file mappings.", e)); //$NON-NLS-1$
+					Activator.log(Status.error("Error saving file mappings.", e)); //$NON-NLS-1$
 				}
 			}
 

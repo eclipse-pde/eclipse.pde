@@ -325,7 +325,7 @@ public final class Util {
 	 * @throws CoreException
 	 */
 	private static void abort(String message, Throwable exception) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, message, exception);
+		IStatus status = Status.error(message, exception);
 		throw new CoreException(status);
 	}
 

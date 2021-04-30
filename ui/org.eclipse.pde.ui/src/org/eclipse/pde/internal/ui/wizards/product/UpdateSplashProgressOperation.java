@@ -211,7 +211,7 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 	}
 
 	private CoreException createCoreException(String message, Throwable exception) {
-		IStatus status = new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, message, exception);
+		IStatus status = Status.error(message, exception);
 		return new CoreException(status);
 	}
 

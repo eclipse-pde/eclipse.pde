@@ -14,9 +14,7 @@
 package org.eclipse.pde.api.tools.internal.model;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 
@@ -103,7 +101,7 @@ public abstract class ApiElement implements IApiElement {
 	 * @throws CoreException
 	 */
 	protected void abort(String message, Throwable e) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, message, e));
+		throw new CoreException(Status.error(message, e));
 	}
 
 	@Override

@@ -72,7 +72,7 @@ public abstract class AbstractRepository extends Job {
 		try (InputStream s = new BufferedInputStream(file.getContents())) {
 			return new ImageData(s);
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(),
+			throw new CoreException(Status.error(
 					"Failed to close stream on: " + file.getLocation(), e)); //$NON-NLS-1$
 		}
 	}
