@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2020 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -269,7 +269,16 @@ public class TagScanner {
 		@Override
 		public boolean visit(TypeDeclaration node) {
 			if (isNotVisible(node.getModifiers())) {
-				return false;
+				boolean isInterface = node.isInterface();
+				boolean isParentInterface = false;
+				ASTNode parent = node.getParent();
+				if(parent instanceof TypeDeclaration) {
+					isParentInterface = ((TypeDeclaration) parent).isInterface();
+				}
+				boolean nestedInterface = isInterface && isParentInterface;
+				if (!nestedInterface) {
+					return false;
+				}
 			}
 			enterType(node.getName());
 			scanTypeJavaDoc(node);

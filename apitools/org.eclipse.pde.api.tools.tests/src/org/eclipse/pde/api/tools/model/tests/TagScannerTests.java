@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -495,8 +495,12 @@ public class TagScannerTests {
 
 		// Bug 402393 - The description returned is for the parent element
 		// and is expected because the root type has a restricted sub-type
+		//Bug 539513 - Incorrect warning on nested interface 
+		// Api description of inner nested interface should contain the relevant restrictions
+		// only when there is no restriction, then parent's restriction should be used
 		assertNotNull("the description for TestInterface4$Inner2 should exist", description); //$NON-NLS-1$
-		assertTrue("The root type should be unrestricted", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
+		assertTrue("The root type should be unrestricted", //$NON-NLS-1$
+				description.getRestrictions() == RestrictionModifiers.NO_IMPLEMENT);
 	}
 
 	/**
@@ -522,8 +526,12 @@ public class TagScannerTests {
 
 		// Bug 402393 - The description returned is for the parent element
 		// and is expected because the root type has a restricted sub-type
+		//Bug 539513 - Incorrect warning on nested interface 
+		// Api description of inner nested interface should contain the relevant restrictions
+		// only when there is no restriction, then parent's restriction should be used
 		assertNotNull("the description for TestInterface5$Inner2 should exist", description); //$NON-NLS-1$
-		assertTrue("The root type should be unrestricted", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
+		assertTrue("The root type should be unrestricted", //$NON-NLS-1$
+				description.getRestrictions() == RestrictionModifiers.NO_IMPLEMENT);
 	}
 
 	/**
