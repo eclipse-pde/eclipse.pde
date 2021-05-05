@@ -61,7 +61,7 @@ public class ApiDescriptionTests {
 	/**
 	 * Wraps an element with its API description
 	 */
-	class ElementDescription {
+	static class ElementDescription {
 
 		public IElementDescriptor fElement;
 		public int fVis, fRes;

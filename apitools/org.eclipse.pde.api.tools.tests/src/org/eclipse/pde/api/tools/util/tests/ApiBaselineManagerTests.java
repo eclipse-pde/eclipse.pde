@@ -92,7 +92,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	static final String TESTDEFAULT = "testdefault"; //$NON-NLS-1$
 	static final String ADDTEST = "addtest"; //$NON-NLS-1$
 
-	class SourceChangeVisitor extends ASTVisitor {
+	static class SourceChangeVisitor extends ASTVisitor {
 		String name = null;
 		String signature = null;
 		String tagname = null;

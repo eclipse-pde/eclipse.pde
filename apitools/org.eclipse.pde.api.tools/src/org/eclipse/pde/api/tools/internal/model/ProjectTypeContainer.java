@@ -46,7 +46,7 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 	 *
 	 * @since 1.1
 	 */
-	class ContainerVisitor implements IResourceProxyVisitor {
+	static class ContainerVisitor implements IResourceProxyVisitor {
 
 		List<String> collector = null;
 		int segmentcount = 0;

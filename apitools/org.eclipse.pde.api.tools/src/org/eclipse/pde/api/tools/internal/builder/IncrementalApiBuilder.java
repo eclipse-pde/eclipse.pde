@@ -67,7 +67,7 @@ public class IncrementalApiBuilder {
 	private static final int STRUCTURAL = 0x0001;
 	private static final int DESCRIPTION = 0x0002;
 
-	class Change {
+	static class Change {
 		int changeKind; // STUCTURAL | DESCRIPTION
 		int fileKind; // JAVA | CLASS
 		int deltaKind;

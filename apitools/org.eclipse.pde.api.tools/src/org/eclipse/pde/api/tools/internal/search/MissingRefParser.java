@@ -39,7 +39,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 class MissingRefParser extends UseScanParser {
 
-	class MissingRefProblemHandler extends DefaultHandler {
+	static class MissingRefProblemHandler extends DefaultHandler {
 
 		List<IApiProblem> problems = new ArrayList<>();
 		private String typename;

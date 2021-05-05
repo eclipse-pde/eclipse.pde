@@ -81,7 +81,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * added to ensure the tags as specified in the component.xml file were
 	 * added.
 	 */
-	class ChangeVisitor extends ASTVisitor {
+	static class ChangeVisitor extends ASTVisitor {
 		String type, membername, signature, innertypename;
 
 		String[] expectedtags = null;

@@ -77,7 +77,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * {@link IApiType} when we do not have any enclosing method infos (pre Java
 	 * 1.5 class files
 	 */
-	class MethodFinder extends ASTVisitor {
+	static class MethodFinder extends ASTVisitor {
 		IMethod method = null;
 		private IType jtype = null;
 		private ApiType type = null;
