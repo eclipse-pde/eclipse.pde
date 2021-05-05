@@ -26,7 +26,7 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class TargetPreferenceModifyListener extends PreferenceModifyListener {
 
-	class Visitor implements IPreferenceNodeVisitor {
+	static class Visitor implements IPreferenceNodeVisitor {
 
 		@Override
 		public boolean visit(IEclipsePreferences node) throws BackingStoreException {

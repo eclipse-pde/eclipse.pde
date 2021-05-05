@@ -65,7 +65,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 	private final ClassChangeVisitor fClassFileVisitor = new ClassChangeVisitor();
 
-	class ClassChangeVisitor implements IResourceDeltaVisitor {
+	static class ClassChangeVisitor implements IResourceDeltaVisitor {
 		boolean hasChanged = false;
 		boolean veto = false;
 
@@ -427,7 +427,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		}
 	}
 
-	class ManifestFilter implements FilenameFilter {
+	static class ManifestFilter implements FilenameFilter {
 
 		@Override
 		public boolean accept(File dir, String name) {

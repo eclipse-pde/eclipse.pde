@@ -46,7 +46,7 @@ import org.eclipse.ui.forms.widgets.*;
 
 public class JRESection extends PDESection {
 
-	private final class EELabelProvider extends LabelProvider {
+	private static final class EELabelProvider extends LabelProvider {
 		@Override
 		public String getText(Object element) {
 			if (!(element instanceof IExecutionEnvironment))

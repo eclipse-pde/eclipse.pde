@@ -49,7 +49,7 @@ public class ElementSection extends TreeSection {
 	private SchemaRearranger fRearranger;
 	private CollapseAction fCollapseAction;
 
-	class ContentProvider implements ITreeContentProvider {
+	static class ContentProvider implements ITreeContentProvider {
 		@Override
 		public Object[] getElements(Object object) {
 			if (object instanceof Schema) {

@@ -61,7 +61,7 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 		}
 	}
 
-	class TableContentProvider implements IStructuredContentProvider {
+	static class TableContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object input) {
 			if (input instanceof IPluginModelBase) {

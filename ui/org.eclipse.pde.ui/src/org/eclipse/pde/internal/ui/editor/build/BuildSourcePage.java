@@ -37,7 +37,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 public class BuildSourcePage extends KeyValueSourcePage {
-	class BuildOutlineContentProvider implements ITreeContentProvider {
+	static class BuildOutlineContentProvider implements ITreeContentProvider {
 		@Override
 		public Object[] getChildren(Object parent) {
 			return new Object[0];

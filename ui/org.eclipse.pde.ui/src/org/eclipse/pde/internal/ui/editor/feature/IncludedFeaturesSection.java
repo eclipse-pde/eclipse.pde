@@ -66,7 +66,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 
 	private SortAction fSortAction;
 
-	class IncludedFeaturesContentProvider implements IStructuredContentProvider {
+	static class IncludedFeaturesContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IFeature) {

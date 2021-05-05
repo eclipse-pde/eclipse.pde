@@ -92,7 +92,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	private static final String JavaSE_1_6 = "JavaSE-1.6"; //$NON-NLS-1$
 	private static final String JavaSE_1_7 = "JavaSE-1.7"; //$NON-NLS-1$
 
-	class BuildProblem {
+	static class BuildProblem {
 		String fEntryToken;
 		String fEntryName;
 		String fMessage;
@@ -153,7 +153,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		}
 	}
 
-	class WildcardFilenameFilter implements FilenameFilter {
+	static class WildcardFilenameFilter implements FilenameFilter {
 
 		private final Pattern pattern;
 

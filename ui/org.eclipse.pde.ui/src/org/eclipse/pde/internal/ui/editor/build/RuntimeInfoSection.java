@@ -107,7 +107,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		}
 	}
 
-	public class LibraryContentProvider implements IStructuredContentProvider {
+	public static class LibraryContentProvider implements IStructuredContentProvider {
 
 		@Override
 		public Object[] getElements(Object parent) {
@@ -134,7 +134,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		}
 	}
 
-	public class LibraryLabelProvider extends LabelProvider implements ITableLabelProvider {
+	public static class LibraryLabelProvider extends LabelProvider implements ITableLabelProvider {
 		@Override
 		public String getColumnText(Object obj, int index) {
 			String name = ((IBuildEntry) obj).getName();
@@ -161,14 +161,14 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		}
 	}
 
-	public class FolderContentProvider implements IStructuredContentProvider {
+	public static class FolderContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			return (parent instanceof IBuildEntry) ? ((IBuildEntry) parent).getTokens() : new Object[0];
 		}
 	}
 
-	public class FolderLabelProvider extends LabelProvider implements ITableLabelProvider {
+	public static class FolderLabelProvider extends LabelProvider implements ITableLabelProvider {
 		@Override
 		public String getColumnText(Object obj, int index) {
 			return obj.toString();

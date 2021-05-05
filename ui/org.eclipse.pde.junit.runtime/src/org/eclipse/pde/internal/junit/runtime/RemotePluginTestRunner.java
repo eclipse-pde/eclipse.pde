@@ -32,7 +32,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	private String fTestPluginName;
 	private ClassLoader fLoaderClassLoader;
 
-	class BundleClassLoader extends ClassLoader {
+	static class BundleClassLoader extends ClassLoader {
 		private Bundle bundle;
 
 		public BundleClassLoader(Bundle target) {

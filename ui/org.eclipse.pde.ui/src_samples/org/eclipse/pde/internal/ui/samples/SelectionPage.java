@@ -59,7 +59,7 @@ public class SelectionPage extends WizardPage {
 		}
 	}
 
-	class SampleLabelProvider extends LabelProvider {
+	static class SampleLabelProvider extends LabelProvider {
 		private Image image;
 
 		public SampleLabelProvider() {

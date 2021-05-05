@@ -50,7 +50,7 @@ public class PreprocessorParser {
 		abstract Object getValue();
 	}
 
-	class LeafNode extends Node {
+	static class LeafNode extends Node {
 		Object value;
 
 		LeafNode(Object value) {
@@ -70,7 +70,7 @@ public class PreprocessorParser {
 		}
 	}
 
-	class ExpressionNode extends Node {
+	static class ExpressionNode extends Node {
 		int opcode;
 		Node left;
 		Node right;

@@ -67,7 +67,7 @@ public class SpyFormToolkit extends FormToolkit {
 		}
 	}
 
-	private class SaveImageAction extends Action {
+	private static class SaveImageAction extends Action {
 
 		private Image image;
 

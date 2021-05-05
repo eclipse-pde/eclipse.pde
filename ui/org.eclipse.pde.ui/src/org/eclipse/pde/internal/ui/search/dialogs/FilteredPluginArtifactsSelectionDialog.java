@@ -531,7 +531,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		settings.put(S_FEATURES, featuresAction.isChecked());
 	}
 
-	private class PluginSearchSelectionHistory extends SelectionHistory {
+	private static class PluginSearchSelectionHistory extends SelectionHistory {
 
 		private static final String M_ID = "id"; //$NON-NLS-1$
 		private static final String M_PLUGIN_VERSION = "p_version"; //$NON-NLS-1$
@@ -717,7 +717,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		}
 	}
 
-	private class PluginSearchComparator implements Comparator<Object> {
+	private static class PluginSearchComparator implements Comparator<Object> {
 
 		@Override
 		public int compare(Object o1, Object o2) {

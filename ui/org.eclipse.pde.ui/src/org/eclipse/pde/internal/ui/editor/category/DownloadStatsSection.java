@@ -53,7 +53,7 @@ public class DownloadStatsSection extends TableSection {
 	private TableViewer fArtifactTable;
 	private ISiteModel fModel;
 
-	class ArtifactsContentProvider implements IStructuredContentProvider {
+	static class ArtifactsContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			// model = (IStatsInfo) inputElement;

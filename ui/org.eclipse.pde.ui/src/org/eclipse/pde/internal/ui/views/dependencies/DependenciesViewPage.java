@@ -78,7 +78,7 @@ public abstract class DependenciesViewPage extends Page {
 
 	private static final String HIDE_OPTIONAL = "hideOptional"; //$NON-NLS-1$
 
-	class FragmentFilter extends ViewerFilter {
+	static class FragmentFilter extends ViewerFilter {
 
 		@Override
 		public boolean select(Viewer v, Object parent, Object element) {

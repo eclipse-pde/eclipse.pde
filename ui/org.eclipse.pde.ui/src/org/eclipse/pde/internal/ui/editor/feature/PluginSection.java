@@ -64,7 +64,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 
 	private SortAction fSortAction;
 
-	class PluginContentProvider implements IStructuredContentProvider {
+	static class PluginContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IFeature) {

@@ -19,7 +19,7 @@ import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 
 public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPage {
 
-	class ContentProvider implements IStructuredContentProvider {
+	static class ContentProvider implements IStructuredContentProvider {
 
 		private TableViewer fTableViewer;
 		private AbstractTextSearchResult fSearchResult;

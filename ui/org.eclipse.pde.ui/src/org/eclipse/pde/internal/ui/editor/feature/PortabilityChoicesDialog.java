@@ -42,7 +42,7 @@ public class PortabilityChoicesDialog extends TrayDialog {
 		}
 	}
 
-	class ChoiceLabelProvider extends LabelProvider implements ITableLabelProvider {
+	static class ChoiceLabelProvider extends LabelProvider implements ITableLabelProvider {
 		@Override
 		public String getColumnText(Object obj, int index) {
 			return ((Choice) obj).getLabel();

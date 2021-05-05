@@ -30,7 +30,7 @@ import org.eclipse.ui.actions.ActionContext;
 
 public class PluginSearchResultPage extends AbstractSearchResultPage {
 
-	class SearchLabelProvider extends LabelProvider {
+	static class SearchLabelProvider extends LabelProvider {
 		@Override
 		public Image getImage(Object element) {
 			if (element instanceof IFeaturePlugin) {

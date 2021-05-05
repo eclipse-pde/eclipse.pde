@@ -47,7 +47,7 @@ public class URLSection extends TableSection {
 
 	private Image fUrlImage;
 
-	class URLContentProvider implements IStructuredContentProvider {
+	static class URLContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object input) {
 			IFeature feature = (IFeature) input;

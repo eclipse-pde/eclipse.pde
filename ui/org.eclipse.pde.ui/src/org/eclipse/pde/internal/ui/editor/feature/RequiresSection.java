@@ -70,7 +70,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	private SortAction fSortAction;
 	private Action fOpenAction;
 
-	class ImportContentProvider implements IStructuredContentProvider {
+	static class ImportContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IFeature) {

@@ -62,7 +62,7 @@ public class ArchiveSection extends PDESection {
 		}
 	}
 
-	class ContentProvider implements IStructuredContentProvider {
+	static class ContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			ISiteModel model = (ISiteModel) parent;
@@ -70,7 +70,7 @@ public class ArchiveSection extends PDESection {
 		}
 	}
 
-	class ArchiveLabelProvider extends LabelProvider implements ITableLabelProvider {
+	static class ArchiveLabelProvider extends LabelProvider implements ITableLabelProvider {
 		@Override
 		public String getColumnText(Object obj, int index) {
 			ISiteArchive archive = (ISiteArchive) obj;

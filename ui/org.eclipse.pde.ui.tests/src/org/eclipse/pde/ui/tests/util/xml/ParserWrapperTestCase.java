@@ -90,7 +90,7 @@ public class ParserWrapperTestCase {
 
 	}
 
-	public class ParserThread extends Thread {
+	public static class ParserThread extends Thread {
 
 		protected final int FITERATIONS = 100;
 		protected File fParserXMLFile;

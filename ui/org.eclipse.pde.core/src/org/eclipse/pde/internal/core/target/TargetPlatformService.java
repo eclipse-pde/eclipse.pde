@@ -100,7 +100,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	/**
 	 * Collects target files in the workspace
 	 */
-	class ResourceProxyVisitor implements IResourceProxyVisitor {
+	static class ResourceProxyVisitor implements IResourceProxyVisitor {
 
 		private List<IResource> fList;
 

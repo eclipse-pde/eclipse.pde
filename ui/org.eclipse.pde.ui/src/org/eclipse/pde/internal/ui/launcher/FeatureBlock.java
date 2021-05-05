@@ -701,7 +701,7 @@ public class FeatureBlock {
 
 	}
 
-	class FeatureLaunchModel {
+	static class FeatureLaunchModel {
 		public IFeatureModel fWorkspaceModel;
 		public IFeatureModel fTargetModel;
 		public String fPluginResolution;

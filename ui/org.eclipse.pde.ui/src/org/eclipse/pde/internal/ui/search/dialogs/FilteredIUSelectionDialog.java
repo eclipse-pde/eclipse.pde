@@ -51,7 +51,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 //	private static final int TYPE_FEATURE = 1;
 //	private static final int TYPE_PACKAGE = 2;
 
-	private class IUWrapperLabelProvider extends LabelProvider implements DelegatingStyledCellLabelProvider.IStyledLabelProvider {
+	private static class IUWrapperLabelProvider extends LabelProvider implements DelegatingStyledCellLabelProvider.IStyledLabelProvider {
 
 		private PDELabelProvider labelProvider;
 

@@ -44,7 +44,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 	protected IResource fOriginalResource, fParentResource;
 	protected boolean isChecked;
 
-	public class TreeContentProvider implements ITreeContentProvider {
+	public static class TreeContentProvider implements ITreeContentProvider {
 
 		@Override
 		public Object[] getElements(Object parent) {

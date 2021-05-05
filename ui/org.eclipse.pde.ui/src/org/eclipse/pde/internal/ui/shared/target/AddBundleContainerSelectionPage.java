@@ -403,7 +403,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	 * Abstract implementation of the IWizardNode interface providing a consistent look and feel
 	 * for the table displaying a list of possible bundle container types.
 	 */
-	abstract class AbstractBundleContainerNode implements IWizardNode {
+	abstract static class AbstractBundleContainerNode implements IWizardNode {
 		private String fTypeName;
 		private String fTypeDescription;
 		private Image fTypeImage;

@@ -54,7 +54,7 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 
 	}
 
-	private class OptionalAttributesFilter extends ViewerFilter {
+	private static class OptionalAttributesFilter extends ViewerFilter {
 
 		private boolean enabled = true;
 
