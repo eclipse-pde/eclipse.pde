@@ -73,7 +73,7 @@ public class DSProvideSection extends TableSection implements
 	private Action fAddAction;
 	private Action fEditAction;
 
-	class ContentProvider implements IStructuredContentProvider {
+	static class ContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IDSModel) {

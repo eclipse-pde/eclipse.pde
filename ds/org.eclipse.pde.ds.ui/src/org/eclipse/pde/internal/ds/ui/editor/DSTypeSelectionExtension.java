@@ -27,7 +27,7 @@ public class DSTypeSelectionExtension extends TypeSelectionExtension {
 
 	private IDSModel fModel;
 
-	class TypeInfoFilterExtension implements ITypeInfoFilterExtension {
+	static class TypeInfoFilterExtension implements ITypeInfoFilterExtension {
 
 		List<String> fProvides = new ArrayList<>(3);
 
