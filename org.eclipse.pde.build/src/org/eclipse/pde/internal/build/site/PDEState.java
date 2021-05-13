@@ -10,6 +10,11 @@
  * 
  *  Contributors:
  *      IBM Corporation - initial API and implementation
+ *      
+ * This is an implementation of an early-draft specification developed under the Java
+ * Community Process (JCP) and is made available for testing and evaluation purposes
+ * only. The code is not compatible with any specification of the JCP.
+ *
  *******************************************************************************/
 package org.eclipse.pde.internal.build.site;
 
@@ -31,7 +36,7 @@ import org.osgi.framework.*;
 // This class provides a higher level API on the state
 public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private static final String[] MANIFEST_ENTRIES = {Constants.BUNDLE_LOCALIZATION, Constants.BUNDLE_NAME, Constants.BUNDLE_VENDOR, ECLIPSE_BUNDLE_SHAPE, ECLIPSE_SOURCE_BUNDLE, ECLIPSE_SOURCE_REF};
-	private static int LAST_SUPPORTED_JDK = 16;
+	private static int LAST_SUPPORTED_JDK = 17;
 	private StateObjectFactory factory;
 	protected State state;
 	private long id;
