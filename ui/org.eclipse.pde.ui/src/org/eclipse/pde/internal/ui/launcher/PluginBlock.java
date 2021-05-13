@@ -190,7 +190,7 @@ public class PluginBlock extends AbstractPluginBlock {
 		super.addRequiredPlugins();
 	}
 
-	private String[] addJunitPlugins(String[] requiredIds, ITestKind testKind) throws CoreException {
+	private String[] addJunitPlugins(String[] requiredIds, ITestKind testKind) {
 		String[] requiredPlugins;
 		requiredPlugins = JUnitLaunchConfigurationDelegate.getRequiredPlugins(fLaunchConfig);
 		if (requiredIds != null) {
