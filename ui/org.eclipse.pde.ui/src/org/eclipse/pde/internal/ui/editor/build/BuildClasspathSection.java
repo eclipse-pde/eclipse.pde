@@ -56,7 +56,7 @@ public class BuildClasspathSection extends TableSection {
 	 * type of an element.
 	 * Empty selections are not accepted.
 	 */
-	class ElementSelectionValidator implements ISelectionStatusValidator {
+	static class ElementSelectionValidator implements ISelectionStatusValidator {
 
 		private Class<?>[] fAcceptedTypes;
 		private boolean fAllowMultipleSelection;
@@ -109,7 +109,7 @@ public class BuildClasspathSection extends TableSection {
 		}
 	}
 
-	class TableContentProvider implements IStructuredContentProvider {
+	static class TableContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IBuildModel) {
@@ -123,7 +123,7 @@ public class BuildClasspathSection extends TableSection {
 		}
 	}
 
-	class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
+	static class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
 		@Override
 		public String getColumnText(Object obj, int index) {
 			return obj.toString();

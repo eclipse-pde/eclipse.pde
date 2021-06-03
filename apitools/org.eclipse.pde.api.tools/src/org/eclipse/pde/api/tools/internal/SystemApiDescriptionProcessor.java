@@ -86,7 +86,7 @@ public class SystemApiDescriptionProcessor {
 					}
 				}
 				if (stream != null) {
-					return new String(Util.getInputStreamAsCharArray(stream, -1, StandardCharsets.UTF_8));
+					return new String(Util.getInputStreamAsCharArray(stream, StandardCharsets.UTF_8));
 				}
 			} catch (IOException e) {
 				ApiPlugin.log(e);

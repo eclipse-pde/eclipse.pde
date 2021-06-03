@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -201,13 +201,8 @@ public interface IApiProblemTypes {
 	 */
 	public static final String UNUSED_PROBLEM_FILTERS = "UNUSED_PROBLEM_FILTERS"; //$NON-NLS-1$
 	/**
-	 * Key for the severity of no EE descriptions being installed
-	 *
-	 * @since 1.0.400
-	 */
-	public static final String MISSING_EE_DESCRIPTIONS = "MISSING_EE_DESCRIPTIONS"; //$NON-NLS-1$
-	/**
-	 * Key for the severity of API Use Scan Type breakage problems.
+	 * 
+	 * /** Key for the severity of API Use Scan Type breakage problems.
 	 */
 	public static final String API_USE_SCAN_TYPE_SEVERITY = "API_USE_SCAN_TYPE_SEVERITY"; //$NON-NLS-1$
 	/**

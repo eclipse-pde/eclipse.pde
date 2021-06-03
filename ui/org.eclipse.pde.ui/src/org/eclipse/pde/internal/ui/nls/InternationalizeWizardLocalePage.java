@@ -70,7 +70,7 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 
 	private ILabelProvider fLabelProvider = PDEPlugin.getDefault().getLabelProvider();
 
-	private class ContentProvider implements IStructuredContentProvider {
+	private static class ContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((InternationalizeModelTable) inputElement).getModels();

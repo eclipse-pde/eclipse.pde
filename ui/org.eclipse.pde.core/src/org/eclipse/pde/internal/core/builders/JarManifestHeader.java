@@ -62,7 +62,7 @@ public class JarManifestHeader implements IHeader {
 					fManifestElements = new ManifestElement[0];
 					if (fErrorReporter != null) {
 						String message = NLS.bind(PDECoreMessages.BundleErrorReporter_parseHeader, getName());
-						fErrorReporter.report(message, getLineNumber() + 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+						fErrorReporter.report(message, getLineNumber(), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 					}
 				}
 			} else {

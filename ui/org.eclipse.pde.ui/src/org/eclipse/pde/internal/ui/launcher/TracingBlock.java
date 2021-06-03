@@ -485,7 +485,7 @@ public class TracingBlock {
 		fPropertySources.clear();
 	}
 
-	private class PageBookKey {
+	private static class PageBookKey {
 		IPluginModelBase fModel;
 		boolean fEnabled;
 

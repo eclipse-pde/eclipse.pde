@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.pde.ui" version="2">
-    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.pde.core.IModelProvider">
-        <filter id="305422471">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.pde.ui.IProvisionerWizard">
+        <filter comment="API was marked for removal" id="305324134">
             <message_arguments>
-                <message_argument value="org.eclipse.pde.core.IModelProvider"/>
-                <message_argument value="org.eclipse.pde.ui_3.12.100"/>
+                <message_argument value="org.eclipse.pde.ui.IProvisionerWizard"/>
+                <message_argument value="org.eclipse.pde.ui_3.13.100"/>
             </message_arguments>
         </filter>
     </resource>

@@ -104,6 +104,12 @@ public class ClasspathHelper {
 	}
 
 	public static String getDevEntriesProperties(String fileName, Map<?, ?> map) {
+		@SuppressWarnings("unchecked")
+		Properties properties = getDevEntriesProperties((Map<?, IPluginModelBase>) map);
+		return writeDevEntries(fileName, properties);
+	}
+
+	public static String writeDevEntries(String fileName, Properties properties) {
 		File file = new File(fileName);
 		if (!file.exists()) {
 			File directory = file.getParentFile();
@@ -111,14 +117,25 @@ public class ClasspathHelper {
 				directory.mkdirs();
 			}
 		}
+		try (FileOutputStream stream = new FileOutputStream(fileName)) {
+			properties.store(stream, ""); //$NON-NLS-1$
+			stream.flush();
+			return new URL("file:" + fileName).toString(); //$NON-NLS-1$
+		} catch (IOException e) {
+			PDECore.logException(e);
+		}
+		return getDevEntries(true);
+	}
+
+	public static Properties getDevEntriesProperties(Map<?, IPluginModelBase> bundlesMap) {
 		Properties properties = new Properties();
 		// account for cascading workspaces
 		TargetWeaver.weaveDevProperties(properties);
-		Iterator<?> iter = map.values().iterator();
+		Iterator<?> iter = bundlesMap.values().iterator();
 		while (iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) iter.next();
 			if (model.getUnderlyingResource() != null) {
-				String entry = writeEntry(getDevPaths(model, true, map));
+				String entry = writeEntry(getDevPaths(model, true, bundlesMap));
 				if (entry.length() > 0) {
 					String id = model.getPluginBase().getId();
 					String currentValue = (String) properties.get(id);
@@ -132,15 +149,7 @@ public class ClasspathHelper {
 			}
 		}
 		properties.put("@ignoredot@", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		try (FileOutputStream stream = new FileOutputStream(fileName)) {
-			properties.store(stream, ""); //$NON-NLS-1$
-			stream.flush();
-			return new URL("file:" + fileName).toString(); //$NON-NLS-1$
-		} catch (IOException e) {
-			PDECore.logException(e);
-		}
-		return getDevEntries(true);
+		return properties;
 	}
 
 	private static String getDevEntries(boolean checkExcluded) {

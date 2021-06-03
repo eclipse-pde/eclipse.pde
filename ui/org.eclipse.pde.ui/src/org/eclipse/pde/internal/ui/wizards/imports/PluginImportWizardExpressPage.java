@@ -48,7 +48,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	private IStructuredSelection fInitialSelection;
 	private Label fCounterLabel;
 
-	class PluginContentProvider implements IStructuredContentProvider {
+	static class PluginContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();

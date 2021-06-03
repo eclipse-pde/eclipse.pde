@@ -27,7 +27,7 @@ import org.eclipse.search.ui.text.Match;
 
 public class DependencyExtentOperation {
 
-	class TypeReferenceSearchRequestor extends SearchRequestor {
+	static class TypeReferenceSearchRequestor extends SearchRequestor {
 		boolean fUsed = false;
 
 		@Override
@@ -42,7 +42,7 @@ public class DependencyExtentOperation {
 		}
 	}
 
-	class TypeDeclarationSearchRequestor extends SearchRequestor {
+	static class TypeDeclarationSearchRequestor extends SearchRequestor {
 
 		private Match fMatch;
 

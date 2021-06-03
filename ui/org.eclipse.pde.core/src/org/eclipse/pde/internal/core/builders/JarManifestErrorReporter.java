@@ -68,10 +68,11 @@ public class JarManifestErrorReporter extends ErrorReporter {
 
 		// check for this exact package on the last line
 		try {
-			IRegion lineRegion = fTextDocument.getLineInformation(header.getLineNumber() + header.getLinesSpan() - 1);
+			int lineNumberZeroBased = header.getLineNumber() - 1;
+			IRegion lineRegion = fTextDocument.getLineInformation(lineNumberZeroBased + header.getLinesSpan() - 1);
 			String lineStr = fTextDocument.get(lineRegion.getOffset(), lineRegion.getLength());
 			if (lineStr.endsWith(packageName)) {
-				return header.getLineNumber() + header.getLinesSpan();
+				return lineNumberZeroBased + header.getLinesSpan();
 			}
 		} catch (BadLocationException ble) {
 			PDECore.logException(ble);
@@ -82,7 +83,8 @@ public class JarManifestErrorReporter extends ErrorReporter {
 	}
 
 	protected int getLine(IHeader header, String valueSubstring) {
-		for (int l = header.getLineNumber(); l < header.getLineNumber() + header.getLinesSpan(); l++) {
+		int lineNumberZeroBased = header.getLineNumber() - 1;
+		for (int l = lineNumberZeroBased; l < lineNumberZeroBased + header.getLinesSpan(); l++) {
 			try {
 				IRegion lineRegion = fTextDocument.getLineInformation(l);
 				String lineStr = fTextDocument.get(lineRegion.getOffset(), lineRegion.getLength());
@@ -95,9 +97,9 @@ public class JarManifestErrorReporter extends ErrorReporter {
 		}
 		// it might span mutliple lines, try a longer algorithm
 		try {
-			IRegion lineRegion = fTextDocument.getLineInformation(header.getLineNumber());
+			IRegion lineRegion = fTextDocument.getLineInformation(lineNumberZeroBased);
 			String lineStr = fTextDocument.get(lineRegion.getOffset(), lineRegion.getLength());
-			for (int l = header.getLineNumber() + 1; l < header.getLineNumber() + header.getLinesSpan(); l++) {
+			for (int l = lineNumberZeroBased + 1; l < lineNumberZeroBased + header.getLinesSpan(); l++) {
 				lineRegion = fTextDocument.getLineInformation(l);
 				lineStr += fTextDocument.get(lineRegion.getOffset() + 1/* the space */, lineRegion.getLength());
 				if (lineStr.contains(valueSubstring)) {
@@ -107,7 +109,7 @@ public class JarManifestErrorReporter extends ErrorReporter {
 		} catch (BadLocationException ble) {
 			PDECore.logException(ble);
 		}
-		return header.getLineNumber() + 1;
+		return header.getLineNumber();
 	}
 
 	/**
@@ -130,8 +132,9 @@ public class JarManifestErrorReporter extends ErrorReporter {
 					lineDelimiter = ""; //$NON-NLS-1$
 				}
 				ByteBuffer byteBuf = StandardCharsets.UTF_8.encode(line);
+				int lineNumber = l + 1;
 				if (byteBuf.limit() + lineDelimiter.length() > 512) {
-					report(PDECoreMessages.BundleErrorReporter_lineTooLong, l + 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+					report(PDECoreMessages.BundleErrorReporter_lineTooLong, lineNumber, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
 				// parse
@@ -168,25 +171,25 @@ public class JarManifestErrorReporter extends ErrorReporter {
 
 				int colon = line.indexOf(':');
 				if (colon == -1) { /* no colon */
-					report(PDECoreMessages.BundleErrorReporter_noColon, l + 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+					report(PDECoreMessages.BundleErrorReporter_noColon, lineNumber, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
 				String headerName = getHeaderName(line);
 				if (headerName == null) {
-					report(PDECoreMessages.BundleErrorReporter_invalidHeaderName, l + 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+					report(PDECoreMessages.BundleErrorReporter_invalidHeaderName, lineNumber, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
 				if (line.length() < colon + 2 || line.charAt(colon + 1) != ' ') {
-					report(PDECoreMessages.BundleErrorReporter_noSpaceValue, l + 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+					report(PDECoreMessages.BundleErrorReporter_noSpaceValue, lineNumber, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
 				if ("Name".equals(headerName)) { //$NON-NLS-1$
-					report(PDECoreMessages.BundleErrorReporter_nameHeaderInMain, l + 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+					report(PDECoreMessages.BundleErrorReporter_nameHeaderInMain, lineNumber, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
-				header = new JarManifestHeader(headerName, line.substring(colon + 2), l, this);
+				header = new JarManifestHeader(headerName, line.substring(colon + 2), lineNumber, this);
 				if (fHeaders.containsKey(header.getName().toLowerCase())) {
-					report(PDECoreMessages.BundleErrorReporter_duplicateHeader, l + 1, CompilerFlags.WARNING, PDEMarkerFactory.CAT_OTHER);
+					report(PDECoreMessages.BundleErrorReporter_duplicateHeader, lineNumber, CompilerFlags.WARNING, PDEMarkerFactory.CAT_OTHER);
 				}
 
 			}

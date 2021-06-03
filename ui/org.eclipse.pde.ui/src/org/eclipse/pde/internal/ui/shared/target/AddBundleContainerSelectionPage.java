@@ -13,17 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.pde.core.target.*;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.WizardElement;
-import org.eclipse.pde.ui.IProvisionerWizard;
 import org.eclipse.pde.ui.target.ITargetLocationWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -49,17 +48,11 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	private static final String TARGET_LOCATION_PROVISIONER_POINT = "targetLocationProvisioners"; //$NON-NLS-1$
 
 	/**
-	 * Deprecated extension point providing target provisioner wizards
-	 */
-	private static final String TARGET_PROVISIONER_POINT = "targetProvisioners"; //$NON-NLS-1$
-
-	/**
 	 * Section in the dialog settings for this wizard and the wizards created with selection
 	 * Shared with the EditBundleContainerWizard
 	 */
 	static final String SETTINGS_SECTION = "editBundleContainerWizard"; //$NON-NLS-1$
 
-	private static ITargetPlatformService fTargetService;
 	private Text fDescription;
 	private ITargetDefinition fTarget;
 
@@ -69,21 +62,6 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		setMessage(Messages.AddBundleContainerSelectionPage_2);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fTarget = target;
-	}
-
-	/**
-	 * Gets the target platform service provided by PDE Core
-	 * @return the target platform service
-	 * @throws CoreException if unable to acquire the service
-	 */
-	private static ITargetPlatformService getTargetPlatformService() throws CoreException {
-		if (fTargetService == null) {
-			fTargetService = PDECore.getDefault().acquireService(ITargetPlatformService.class);
-			if (fTargetService == null) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.AddDirectoryContainerPage_9));
-			}
-		}
-		return fTargetService;
 	}
 
 	@Override
@@ -159,7 +137,6 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		List<AbstractBundleContainerNode> choices = new ArrayList<>();
 		choices.addAll(getStandardChoices());
 		choices.addAll(getTargetLocationProvisionerChoices()); // Extension point contributions
-		choices.addAll(getTargetProvisionerChoices()); // Deprecated extension point contributions
 
 		choices.sort(Comparator.comparing(element -> element.isPreferredOption() ? 0 : 1));
 
@@ -344,45 +321,6 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	}
 
 	/**
-	 * Returns a list of choices created from the ITargetProvisioner extension
-	 * The extension point was deprecated in 3.5 but we need to retain some compatibility.
-	 * @return list of wizard nodes
-	 */
-	private List<AbstractBundleContainerNode> getTargetProvisionerChoices() {
-		List<AbstractBundleContainerNode> list = new ArrayList<>();
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		IExtensionPoint point = registry.getExtensionPoint(PDEPlugin.getPluginId(), TARGET_PROVISIONER_POINT);
-		if (point == null)
-			return list;
-		IExtension[] extensions = point.getExtensions();
-		for (IExtension extension : extensions) {
-			IConfigurationElement[] confElements = extension.getConfigurationElements();
-			for (IConfigurationElement confElement : confElements) {
-				WizardElement element = createWizardElement(confElement);
-				if (element != null) {
-					final String pluginId = element.getPluginId();
-					final String contributionId = element.getID();
-					IPluginContribution pc = new IPluginContribution() {
-						@Override
-						public String getLocalId() {
-							return contributionId;
-						}
-
-						@Override
-						public String getPluginId() {
-							return pluginId;
-						}
-					};
-					if (!WorkbenchActivityHelper.filterItem(pc)) {
-						list.add(createDeprecatedExtensionNode(element));
-					}
-				}
-			}
-		}
-		return list;
-	}
-
-	/**
 	 * Returns a Wizard element representing an extension contributed wizard
 	 * @param config config for the extensino
 	 * @return new wizard element
@@ -462,77 +400,10 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	}
 
 	/**
-	 * Creates a wizard node that will get the pages from the contributed wizard and create a directory bundle container from the result
-	 * @param element wizard element representing the extension
-	 * @return wizard node
-	 */
-	private AbstractBundleContainerNode createDeprecatedExtensionNode(final WizardElement element) {
-		return new AbstractBundleContainerNode(element.getLabel(), element.getDescription(), element.getImage()) {
-			@Override
-			public IWizard createWizard() {
-				Wizard wizard = new Wizard() {
-					private IProvisionerWizard fWizard;
-
-					@Override
-					public void addPages() {
-						try {
-							fWizard = (IProvisionerWizard) element.createExecutableExtension();
-						} catch (CoreException e) {
-							PDEPlugin.log(e);
-							MessageDialog.openError(getContainer().getShell(), Messages.Errors_CreationError, Messages.Errors_CreationError_NoWizard);
-						}
-						fWizard.setContainer(getContainer());
-						fWizard.addPages();
-						IWizardPage[] pages = fWizard.getPages();
-						for (IWizardPage page : pages)
-							addPage(page);
-					}
-
-					@Override
-					public boolean performFinish() {
-						if (fWizard != null) {
-							if (!fWizard.performFinish()) {
-								return false;
-							}
-							File[] dirs = fWizard.getLocations();
-							for (int i = 0; i < dirs.length; i++) {
-								if (dirs[i] == null || !dirs[i].isDirectory()) {
-									ErrorDialog.openError(getShell(), Messages.AddBundleContainerSelectionPage_0, Messages.AddBundleContainerSelectionPage_5, new Status(IStatus.ERROR, PDEPlugin.getPluginId(), Messages.AddDirectoryContainerPage_6));
-									return false;
-								}
-								try {
-									// First try the specified dir, then try the plugins dir
-									ITargetLocation container = getTargetPlatformService().newDirectoryLocation(dirs[i].getPath());
-									ITargetLocation[] oldContainers = fTarget.getTargetLocations();
-									if (oldContainers == null) {
-										fTarget.setTargetLocations(new ITargetLocation[] {container});
-									} else {
-										ITargetLocation[] newContainers = new ITargetLocation[oldContainers.length + 1];
-										System.arraycopy(oldContainers, 0, newContainers, 0, oldContainers.length);
-										newContainers[oldContainers.length] = container;
-										fTarget.setTargetLocations(newContainers);
-									}
-								} catch (CoreException ex) {
-									ErrorDialog.openError(getShell(), Messages.AddBundleContainerSelectionPage_0, Messages.AddBundleContainerSelectionPage_5, ex.getStatus());
-									return false;
-								}
-							}
-						}
-						return true;
-					}
-				};
-				wizard.setContainer(getContainer());
-				wizard.setWindowTitle(Messages.AddBundleContainerSelectionPage_1);
-				return wizard;
-			}
-		};
-	}
-
-	/**
 	 * Abstract implementation of the IWizardNode interface providing a consistent look and feel
 	 * for the table displaying a list of possible bundle container types.
 	 */
-	abstract class AbstractBundleContainerNode implements IWizardNode {
+	abstract static class AbstractBundleContainerNode implements IWizardNode {
 		private String fTypeName;
 		private String fTypeDescription;
 		private Image fTypeImage;

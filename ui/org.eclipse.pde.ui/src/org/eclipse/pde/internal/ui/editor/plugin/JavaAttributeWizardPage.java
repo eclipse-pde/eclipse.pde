@@ -35,7 +35,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 	private InitialClassProperties initialValues;
 	private IJavaProject javaProject;
 
-	class InitialClassProperties {
+	static class InitialClassProperties {
 		// populate new wizard page
 		IType superClassType;
 		String superClassName;

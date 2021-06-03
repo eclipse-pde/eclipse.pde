@@ -13,18 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.model.tests;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -404,7 +400,7 @@ public class TestSuiteHelper {
 	public static File getEEDescriptionFile() {
 		String eePath = System.getProperty("ee.file"); //$NON-NLS-1$
 		if (eePath == null) {
-			// generate a fake 1.8 ee file
+			// generate a fake 11 ee file
 			File fakeEEFile = null;
 			try {
 				fakeEEFile = Util.createTempFile("eefile", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -413,8 +409,8 @@ public class TestSuiteHelper {
 				writer.println(System.getProperty("java.home")); //$NON-NLS-1$
 				writer.print("-Dee.bootclasspath="); //$NON-NLS-1$
 				writer.println(org.eclipse.pde.api.tools.internal.util.Util.getJavaClassLibsAsString());
-				writer.println("-Dee.language.level=1.8"); //$NON-NLS-1$
-				writer.println("-Dee.class.library.level=JavaSE-1.8"); //$NON-NLS-1$
+				writer.println("-Dee.language.level=11"); //$NON-NLS-1$
+				writer.println("-Dee.class.library.level=JavaSE-11"); //$NON-NLS-1$
 				writer.flush();
 				}
 			} catch (IOException e) {
@@ -665,24 +661,11 @@ public class TestSuiteHelper {
 				}
 			}
 		} else {
-			byte[] bytes = null;
-			try (BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(f))) {
-				bytes = Util.getInputStreamAsByteArray(inputStream, -1);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+			try {
+				Files.copy(f.toPath(), new File(dest, f.getName()).toPath(),
+						java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
-			if (bytes != null) {
-				try (BufferedOutputStream outputStream = new BufferedOutputStream(
-						new FileOutputStream(new File(dest, f.getName())))) {
-					outputStream.write(bytes);
-					outputStream.flush();
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
 			}
 		}
 	}

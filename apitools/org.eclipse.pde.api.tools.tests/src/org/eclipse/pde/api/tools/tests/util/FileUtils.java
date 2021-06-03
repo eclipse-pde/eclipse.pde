@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -496,14 +497,9 @@ public class FileUtils {
 	 * @param file
 	 */
 	public static void copyFile(File dir, IFile file) throws Exception {
-		File local = new File(dir, file.getName());
-		local.createNewFile();
-		try (
-				FileOutputStream stream = new FileOutputStream(local);
-				InputStream contents = file.getContents()
-		) {
-			byte[] bytes = Util.getInputStreamAsByteArray(contents, -1);
-			stream.write(bytes);
+		File dst = new File(dir, file.getName());
+		try (InputStream contents = file.getContents()) {
+			Files.copy(contents, dst.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 		}
 	}
 }

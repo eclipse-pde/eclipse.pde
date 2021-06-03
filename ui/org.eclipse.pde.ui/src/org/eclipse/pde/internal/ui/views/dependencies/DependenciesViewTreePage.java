@@ -41,7 +41,7 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 		}
 	}
 
-	class OptionalFilter extends ViewerFilter {
+	static class OptionalFilter extends ViewerFilter {
 
 		@Override
 		public boolean select(Viewer v, Object parent, Object element) {

@@ -64,7 +64,6 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 
 	public static final QualifiedName SCHEMA_PREVIEW_FILE = new QualifiedName(PLUGIN_ID, "SCHEMA_PREVIEW_FILE"); //$NON-NLS-1$
 
-	private static boolean DEBUG = false;
 	public static boolean DEBUG_CLASSPATH = false;
 	public static boolean DEBUG_MODEL = false;
 	public static boolean DEBUG_TARGET_PROFILE = false;
@@ -412,7 +411,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 
 	@Override
 	public void optionsChanged(DebugOptions options) {
-		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
+		boolean DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
 		DEBUG_CLASSPATH = DEBUG && options.getBooleanOption(CLASSPATH_DEBUG, false);
 		DEBUG_MODEL = DEBUG && options.getBooleanOption(MODEL_DEBUG, false);
 		DEBUG_TARGET_PROFILE = DEBUG && options.getBooleanOption(TARGET_PROFILE_DEBUG, false);

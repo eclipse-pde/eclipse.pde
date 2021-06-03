@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -595,19 +595,20 @@ public class TargetEditor extends FormEditor {
 					fLocationTree.setInput(getTarget());
 				}
 				Job.getJobManager().cancel(getJobFamily());
-				// delete profile
-				try {
-					P2TargetUtils.forceCheckTarget(getTarget());
-					P2TargetUtils.deleteProfile(getTarget().getHandle());
-				} catch (CoreException e) {
-					PDEPlugin.log(e);
-				}
+
 				String name = getTarget().getName();
 				if (name == null)
 					name = ""; //$NON-NLS-1$
 				Job resolveJob = new Job(NLS.bind(PDEUIMessages.TargetEditor_1, name)) {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
+						// delete profile
+						try {
+							P2TargetUtils.forceCheckTarget(getTarget());
+							P2TargetUtils.deleteProfile(getTarget().getHandle());
+						} catch (CoreException e) {
+							PDEPlugin.log(e);
+						}
 						getTarget().resolve(monitor);
 						if (monitor.isCanceled()) {
 							return Status.CANCEL_STATUS;

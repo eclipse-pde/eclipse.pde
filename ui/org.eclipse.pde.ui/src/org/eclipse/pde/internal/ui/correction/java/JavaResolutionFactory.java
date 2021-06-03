@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -194,6 +194,16 @@ public class JavaResolutionFactory {
 					for (int i = 0; i < pluginIdStrings.length; i++) {
 						String pluginId = pluginIdStrings[i];
 						if (!isUndo()) {
+							IPluginImport[] imports = base.getPluginBase().getImports();
+							boolean duplicate = false;
+							for (IPluginImport iPluginImport : imports) {
+								if (iPluginImport.getId().equals(pluginId)) {
+									duplicate = true;
+									break;
+								}
+							}
+							if (duplicate)
+								continue;
 							IPluginImport impt = base.getPluginFactory().createImport();
 							impt.setId(pluginId);
 							base.getPluginBase().add(impt);

@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
  * Idver stays unchanged until the models reinserted.
  */
 class FeatureTable {
-	public class Idver {
+	public static class Idver {
 		private final String fId;
 
 		private final String fVer;

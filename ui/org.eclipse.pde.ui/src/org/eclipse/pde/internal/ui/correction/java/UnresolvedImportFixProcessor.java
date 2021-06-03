@@ -33,7 +33,7 @@ import org.eclipse.pde.internal.ui.correction.java.FindClassResolutionsOperation
  */
 public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 
-	private class ClasspathFixCollector extends AbstractClassResolutionCollector {
+	private static class ClasspathFixCollector extends AbstractClassResolutionCollector {
 
 		private ArrayList<Object> fList = new ArrayList<>();
 

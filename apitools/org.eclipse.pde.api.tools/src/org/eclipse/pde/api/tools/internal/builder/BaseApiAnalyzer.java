@@ -873,7 +873,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (fJavaProject == null) {
 			return null;
 		}
-		ASTParser parser = ASTParser.newParser(AST.JLS15);
+		ASTParser parser = ASTParser.newParser(AST.JLS_Latest);
 		parser.setFocalPosition(offset);
 		parser.setResolveBindings(false);
 		parser.setSource(root);
@@ -2151,6 +2151,26 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						refversionval }, String.valueOf(newversion), Util.EMPTY_STRING);
 
 			}
+			if (reportUnnecessaryMinorMicroVersionCheck()) {
+				boolean multipleMicroIncrease = reportMultipleIncreaseMicroVersion(compversion,refversion);
+				if(multipleMicroIncrease) {
+					newversion = new Version(compversion.getMajor(), compversion.getMinor(),
+							refversion.getMicro() + 100,
+							compversion.getQualifier() != null ? QUALIFIER : null);
+					problem = createVersionProblem(IApiProblem.MICRO_VERSION_CHANGE_UNNECESSARILY,
+							new String[] { compversionval, refversionval }, String.valueOf(newversion),
+							Util.EMPTY_STRING);
+				}
+				boolean multipleMinorIncrease = reportMultipleIncreaseMinorVersion(compversion, refversion);
+				if (multipleMinorIncrease) {
+					newversion = new Version(compversion.getMajor(), refversion.getMinor() + 1, 0,
+							compversion.getQualifier() != null ? QUALIFIER : null);
+					problem = createVersionProblem(IApiProblem.MINOR_VERSION_CHANGE_UNNECESSARILY,
+							new String[] { compversionval, refversionval }, String.valueOf(newversion),
+							Util.EMPTY_STRING);
+
+				}
+			}
 			// analyze version of required components
 			ReexportedBundleVersionInfo info = null;
 			if (problem != null) {
@@ -2303,6 +2323,28 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 	}
 
+	private boolean reportMultipleIncreaseMinorVersion(Version compversion, Version refversion) {
+		if (compversion.getMajor() == refversion.getMajor()) {
+			if (((compversion.getMinor() - refversion.getMinor()) > 1)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean reportMultipleIncreaseMicroVersion(Version compversion, Version refversion) {
+		if (compversion.getMajor() == refversion.getMajor()) {
+			if (compversion.getMinor() == refversion.getMinor()) {
+				if ((compversion.getMicro() - refversion.getMicro()) > 100) {
+					return true;
+
+				}
+
+			}
+		}
+		return false;
+	}
+
 	private boolean hasMinorVersionIncreased(Version compversion) {
 		if (compversion.getMinor() > 0) {
 			return true;
@@ -2390,7 +2432,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			LineNumberReader reader = null;
 			try {
 				inputStream = file.getContents(true);
-				contents = Util.getInputStreamAsCharArray(inputStream, -1, StandardCharsets.UTF_8);
+				contents = Util.getInputStreamAsCharArray(inputStream, StandardCharsets.UTF_8);
 				reader = new LineNumberReader(new BufferedReader(new StringReader(new String(contents))));
 				int lineCounter = 0;
 				String line = null;

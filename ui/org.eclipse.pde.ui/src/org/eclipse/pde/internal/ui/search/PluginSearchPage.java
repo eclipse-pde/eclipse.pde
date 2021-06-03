@@ -37,7 +37,7 @@ import org.eclipse.ui.*;
 
 public class PluginSearchPage extends DialogPage implements ISearchPage {
 
-	class QueryData {
+	static class QueryData {
 		public String text;
 		public boolean isCaseSensitive;
 		public int searchElement;

@@ -305,7 +305,7 @@ public class FilterStore implements IApiFilterStore {
 		if (contents == null) {
 			throw new IOException(CoreMessages.FilterStore_0);
 		}
-		String xml = new String(Util.getInputStreamAsCharArray(contents, -1, StandardCharsets.UTF_8));
+		String xml = new String(Util.getInputStreamAsCharArray(contents, StandardCharsets.UTF_8));
 		Element root = null;
 		try {
 			root = Util.parseDocument(xml);

@@ -77,7 +77,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * {@link IApiType} when we do not have any enclosing method infos (pre Java
 	 * 1.5 class files
 	 */
-	class MethodFinder extends ASTVisitor {
+	static class MethodFinder extends ASTVisitor {
 		IMethod method = null;
 		private IType jtype = null;
 		private ApiType type = null;
@@ -735,7 +735,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 				if (method == null) {
 					// look it up the hard way
 					ISourceRange range = jtype.getCompilationUnit().getSourceRange();
-					ASTParser parser = ASTParser.newParser(AST.JLS15);
+					ASTParser parser = ASTParser.newParser(AST.JLS_Latest);
 					parser.setSource(jtype.getCompilationUnit());
 					parser.setSourceRange(range.getOffset(), range.getLength());
 					parser.setResolveBindings(true);

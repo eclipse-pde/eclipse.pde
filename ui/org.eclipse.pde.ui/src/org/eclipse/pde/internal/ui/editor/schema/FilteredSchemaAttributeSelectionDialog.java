@@ -54,7 +54,7 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 
 	}
 
-	private class OptionalAttributesFilter extends ViewerFilter {
+	private static class OptionalAttributesFilter extends ViewerFilter {
 
 		private boolean enabled = true;
 
@@ -169,7 +169,7 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 		}
 	}
 
-	private class SchemaComparator implements Comparator<Object> {
+	private static class SchemaComparator implements Comparator<Object> {
 
 		@Override
 		public int compare(Object arg0, Object arg1) {

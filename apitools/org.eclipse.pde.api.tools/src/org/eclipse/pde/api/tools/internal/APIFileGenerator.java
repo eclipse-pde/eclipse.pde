@@ -436,7 +436,7 @@ public class APIFileGenerator {
 		BufferedInputStream stream = null;
 		try {
 			stream = new BufferedInputStream(new FileInputStream(dotProjectFile));
-			String contents = new String(Util.getInputStreamAsCharArray(stream, -1, StandardCharsets.UTF_8));
+			String contents = new String(Util.getInputStreamAsCharArray(stream, StandardCharsets.UTF_8));
 			return containsAPIToolsNature(contents);
 		} catch (IOException e) {
 			e.printStackTrace();

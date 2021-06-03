@@ -62,7 +62,7 @@ public class TemplateSelectionPage extends WizardPage {
 		}
 	}
 
-	class ListLabelProvider extends LabelProvider implements ITableLabelProvider {
+	static class ListLabelProvider extends LabelProvider implements ITableLabelProvider {
 		@Override
 		public String getColumnText(Object obj, int index) {
 			ITemplateSection section = (ITemplateSection) obj;

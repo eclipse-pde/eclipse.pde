@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.pde.api.tools" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter id="931135546">
+            <message_arguments>
+                <message_argument value="1.2.500"/>
+                <message_argument value="1.2.300"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

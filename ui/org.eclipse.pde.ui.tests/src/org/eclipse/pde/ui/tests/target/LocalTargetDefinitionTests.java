@@ -26,8 +26,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.target.*;
-import org.eclipse.pde.internal.core.P2Utils;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
@@ -738,16 +737,38 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		definition.setVMArguments(vmArgs);
 		assertEquals(vmArgs, definition.getVMArguments());
 
+		PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
 		try {
 			getTargetService().saveTargetDefinition(definition);
 			setTargetPlatform(definition);
 
 			// Check that new launch configs will be prepopulated from target
-			assertEquals(vmArgs, LaunchArgumentsHelper.getInitialVMArguments());
+			// along with the default preference values
+			assertEquals(vmArgs + " -Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true",
+					LaunchArgumentsHelper.getInitialVMArguments());
 			assertEquals("-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog "
 					.concat(programArgs), LaunchArgumentsHelper.getInitialProgramArguments());
 
+			// Check that new launch configs will be prepopulated from target
+			// along with ADD_SWT_NON_DISPOSAL_REPORTING == false
+			prefs.setValue(ICoreConstants.ADD_SWT_NON_DISPOSAL_REPORTING, false);
+			assertEquals(vmArgs, LaunchArgumentsHelper.getInitialVMArguments());
+
+			// Check that new launch configs will be prepopulated from target
+			// along with ADD_SWT_NON_DISPOSAL_REPORTING == true
+			prefs.setValue(ICoreConstants.ADD_SWT_NON_DISPOSAL_REPORTING, true);
+			assertEquals(vmArgs + " -Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true",
+					LaunchArgumentsHelper.getInitialVMArguments());
+
+			// Check that new launch configs will be prepopulated from target
+			// along with ADD_SWT_NON_DISPOSAL_REPORTING == true but the define
+			// is already set in the target platform to false
+			prefs.setValue(ICoreConstants.ADD_SWT_NON_DISPOSAL_REPORTING, true);
+			vmArgs = "-testVMArgument -Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=false -testVMArgument2";
+			definition.setVMArguments(vmArgs);
+			assertEquals(vmArgs, LaunchArgumentsHelper.getInitialVMArguments());
 		} finally {
+			prefs.setToDefault(ICoreConstants.ADD_SWT_NON_DISPOSAL_REPORTING);
 			getTargetService().deleteTarget(definition.getHandle());
 			resetTargetPlatform();
 		}

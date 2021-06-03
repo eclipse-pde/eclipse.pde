@@ -150,7 +150,7 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 	 *
 	 * @since 3.4
 	 */
-	private class DebugPluginUtil {
+	private static class DebugPluginUtil {
 		private ILaunchConfigurationListener fLaunchConfigurationListener;
 
 		public void addListener() {

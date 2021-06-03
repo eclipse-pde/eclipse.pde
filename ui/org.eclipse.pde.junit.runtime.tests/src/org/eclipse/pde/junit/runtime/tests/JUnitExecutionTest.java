@@ -86,7 +86,8 @@ public class JUnitExecutionTest {
 				new TestInput("JUnit4 Fragment", "verification.tests.junit4.fragment"),
 				new TestInput("JUnit4 (JUnitPlatform)", "verification.tests.junit4.platform"),
 				new TestInput("JUnit4 (JUnitPlatform) Fragment", "verification.tests.junit4.platform.fragment"),
-				new TestInput("Java 11 bundle with module limit", "verification.tests.limitmodules")
+				new TestInput("Java 11 bundle with module limit", "verification.tests.limitmodules"),
+				new TestInput("Using a 'test' source folder", "verification.tests.testfolder")
 				);
 	}
 

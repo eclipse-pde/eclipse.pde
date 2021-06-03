@@ -87,7 +87,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	private Clipboard fClipboard;
 	private Object fRoot = null;
 
-	class DisabledFilter extends ViewerFilter {
+	static class DisabledFilter extends ViewerFilter {
 
 		boolean fEnabled;
 
@@ -105,7 +105,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		}
 	}
 
-	class WorkspaceFilter extends ViewerFilter {
+	static class WorkspaceFilter extends ViewerFilter {
 		@Override
 		public boolean select(Viewer v, Object parent, Object element) {
 			if (element instanceof IPluginModelBase) {
@@ -116,7 +116,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		}
 	}
 
-	class JavaFilter extends ViewerFilter {
+	static class JavaFilter extends ViewerFilter {
 		@Override
 		public boolean select(Viewer v, Object parent, Object element) {
 			if (element instanceof IPackageFragment) {

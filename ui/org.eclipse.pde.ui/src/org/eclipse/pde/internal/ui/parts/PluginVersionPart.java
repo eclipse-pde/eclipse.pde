@@ -77,7 +77,7 @@ public class PluginVersionPart {
 
 	}
 
-	private class PluginVersionContentProvider implements IStructuredContentProvider {
+	private static class PluginVersionContentProvider implements IStructuredContentProvider {
 
 		@Override
 		public Object[] getElements(Object element) {

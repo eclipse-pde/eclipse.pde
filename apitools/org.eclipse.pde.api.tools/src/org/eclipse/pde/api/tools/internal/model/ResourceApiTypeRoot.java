@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
-import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * A class file corresponding to a resource in the workspace.
@@ -62,7 +61,7 @@ public class ResourceApiTypeRoot extends AbstractApiTypeRoot {
 		modifiedTimeStamp = fFile.getModificationStamp();
 		InputStream stream = fFile.getContents(true);
 		try {
-			fContents = Util.getInputStreamAsByteArray(stream, -1);
+			fContents = stream.readAllBytes();
 			return fContents;
 		} catch (IOException ioe) {
 			abort("Unable to read class file: " + getTypeName(), ioe); //$NON-NLS-1$

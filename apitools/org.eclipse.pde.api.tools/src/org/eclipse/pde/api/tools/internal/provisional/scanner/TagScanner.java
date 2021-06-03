@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2020 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -269,7 +269,16 @@ public class TagScanner {
 		@Override
 		public boolean visit(TypeDeclaration node) {
 			if (isNotVisible(node.getModifiers())) {
-				return false;
+				boolean isInterface = node.isInterface();
+				boolean isParentInterface = false;
+				ASTNode parent = node.getParent();
+				if(parent instanceof TypeDeclaration) {
+					isParentInterface = ((TypeDeclaration) parent).isInterface();
+				}
+				boolean nestedInterface = isInterface && isParentInterface;
+				if (!nestedInterface) {
+					return false;
+				}
 			}
 			enterType(node.getName());
 			scanTypeJavaDoc(node);
@@ -657,11 +666,11 @@ public class TagScanner {
 	 */
 	public void scan(CompilationUnit source, IApiDescription description, IApiTypeContainer container, Map<String, String> options, IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, 2);
-		ASTParser parser = ASTParser.newParser(AST.JLS15);
+		ASTParser parser = ASTParser.newParser(AST.JLS_Latest);
 		InputStream inputStream = null;
 		try {
 			inputStream = source.getInputStream();
-			parser.setSource(Util.getInputStreamAsCharArray(inputStream, -1, source.getEncoding()));
+			parser.setSource(Util.getInputStreamAsCharArray(inputStream, source.getEncoding()));
 		} catch (FileNotFoundException e) {
 			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format("Compilation unit source not found: {0}", source.getName()), e)); //$NON-NLS-1$
 		} catch (IOException e) {

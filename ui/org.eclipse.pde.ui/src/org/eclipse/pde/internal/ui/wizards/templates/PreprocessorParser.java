@@ -46,11 +46,11 @@ public class PreprocessorParser {
 	private int loc;
 	private String tvalue;
 
-	abstract class Node {
+	abstract static class Node {
 		abstract Object getValue();
 	}
 
-	class LeafNode extends Node {
+	static class LeafNode extends Node {
 		Object value;
 
 		LeafNode(Object value) {
@@ -70,7 +70,7 @@ public class PreprocessorParser {
 		}
 	}
 
-	class ExpressionNode extends Node {
+	static class ExpressionNode extends Node {
 		int opcode;
 		Node left;
 		Node right;
@@ -132,7 +132,7 @@ public class PreprocessorParser {
 		}
 	}
 
-	class RootEntry {
+	static class RootEntry {
 		Node root;
 	}
 

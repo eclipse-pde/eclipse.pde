@@ -92,7 +92,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	static final String TESTDEFAULT = "testdefault"; //$NON-NLS-1$
 	static final String ADDTEST = "addtest"; //$NON-NLS-1$
 
-	class SourceChangeVisitor extends ASTVisitor {
+	static class SourceChangeVisitor extends ASTVisitor {
 		String name = null;
 		String signature = null;
 		String tagname = null;
@@ -449,7 +449,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * @throws BadLocationException
 	 */
 	private void updateTagInSource(ICompilationUnit unit, String membername, String signature, String tagname, boolean remove) throws CoreException, MalformedTreeException, BadLocationException {
-		ASTParser parser = ASTParser.newParser(AST.JLS14);
+		ASTParser parser = ASTParser.newParser(AST.JLS_Latest);
 		parser.setSource(unit);
 		CompilationUnit cunit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
 		assertNotNull("the ast compilation unit cannot be null", cunit); //$NON-NLS-1$

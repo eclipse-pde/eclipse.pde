@@ -105,7 +105,7 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 	}
 
-	private class FeatureSearchComparator implements Comparator<Object> {
+	private static class FeatureSearchComparator implements Comparator<Object> {
 
 		@Override
 		public int compare(Object o1, Object o2) {

@@ -49,7 +49,7 @@ import org.eclipse.ui.forms.widgets.Section;
  */
 public class PropertiesSection extends TableSection {
 
-	private class ContentProvider implements IStructuredContentProvider {
+	private static class ContentProvider implements IStructuredContentProvider {
 
 		ContentProvider() {
 		}

@@ -106,7 +106,7 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 					return null;
 				}
 				try {
-					return Util.getInputStreamAsByteArray(stream, -1);
+					return stream.readAllBytes();
 				} catch (IOException ioe) {
 					abort("Unable to read class file: " + getTypeName(), ioe); //$NON-NLS-1$
 					return null; // never gets here

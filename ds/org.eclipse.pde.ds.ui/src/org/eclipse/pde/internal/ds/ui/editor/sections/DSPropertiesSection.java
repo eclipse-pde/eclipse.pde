@@ -76,7 +76,7 @@ public class DSPropertiesSection extends TableSection {
 	private static final int F_UP_FLAG = -1;
 	private static final int F_DOWN_FLAG = 1;
 
-	class ContentProvider implements IStructuredContentProvider {
+	static class ContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IDSModel) {

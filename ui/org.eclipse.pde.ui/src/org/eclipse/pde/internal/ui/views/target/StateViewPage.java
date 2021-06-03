@@ -73,7 +73,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		}
 	};
 
-	class DependencyGroup {
+	static class DependencyGroup {
 		Object[] dependencies;
 
 		public DependencyGroup(Object[] constraints) {
@@ -90,7 +90,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		}
 	}
 
-	class StateContentProvider implements ITreeContentProvider {
+	static class StateContentProvider implements ITreeContentProvider {
 
 		@Override
 		public Object[] getChildren(Object parentElement) {

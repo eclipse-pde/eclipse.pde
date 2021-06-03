@@ -31,7 +31,7 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 
 public class PDEClasspathContainer {
 
-	public class Rule {
+	public static class Rule {
 		IPath path;
 		boolean discouraged;
 

@@ -58,7 +58,7 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 	private Action fAddAction;
 	private Action fRemoveAction;
 
-	class TableContentProvider implements IStructuredContentProvider {
+	static class TableContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IPluginLibrary) {
@@ -69,7 +69,7 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 		}
 	}
 
-	class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
+	static class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 		@Override
 		public String getColumnText(Object obj, int index) {

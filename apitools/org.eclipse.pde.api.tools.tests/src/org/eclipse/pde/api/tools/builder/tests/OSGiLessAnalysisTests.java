@@ -15,10 +15,11 @@ package org.eclipse.pde.api.tools.builder.tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -67,11 +68,10 @@ public class OSGiLessAnalysisTests {
 																		IElementDescriptor.RESOURCE,
 																		IApiProblem.MAJOR_VERSION_CHANGE,
 																		IApiProblem.NO_FLAGS));
-		assertEquals("Wrong number of problems", 4, problems.length); //$NON-NLS-1$
-		for (IApiProblem problem : problems) {
-			expectedIds.remove(Integer.valueOf(problem.getId()));
-		}
-		assertTrue("Did not find expected problems", expectedIds.isEmpty()); //$NON-NLS-1$
+
+		assertEquals(
+				"Mismatch in problems reported by analyzer.getProblems, returned values:" + Arrays.toString(problems), //$NON-NLS-1$
+				expectedIds, Arrays.stream(problems).map(IApiProblem::getId).collect(Collectors.toSet()));
 		baseline.dispose();
 		current.dispose();
 	}

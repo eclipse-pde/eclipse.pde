@@ -177,8 +177,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 */
 	private BundleContext fBundleContext = null;
 
-	private static boolean DEBUG = false;
-
 	/**
 	 * Private debug options
 	 */
@@ -854,7 +852,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 
 	@Override
 	public void optionsChanged(DebugOptions options) {
-		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
+		boolean DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
 		boolean option = options.getBooleanOption(DELTA_DEBUG, false);
 		DEBUG_CLASSFILE_COMPARATOR = DEBUG && option;
 		DEBUG_API_COMPARATOR = DEBUG_CLASSFILE_COMPARATOR;

@@ -62,7 +62,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 	private Image fImage;
 	private Button fVisibleButton;
 
-	class TableContentProvider implements IStructuredContentProvider {
+	static class TableContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object parent) {
 			ExportPackageObject object = (ExportPackageObject) parent;

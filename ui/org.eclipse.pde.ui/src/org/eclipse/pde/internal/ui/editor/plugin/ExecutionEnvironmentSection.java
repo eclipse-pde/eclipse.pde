@@ -84,7 +84,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 		}
 	}
 
-	class ContentProvider implements IStructuredContentProvider {
+	static class ContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IBundleModel) {

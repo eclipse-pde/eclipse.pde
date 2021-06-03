@@ -30,7 +30,7 @@ import org.eclipse.ui.actions.ActionContext;
 
 public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 
-	class Comparator extends ViewerComparator {
+	static class Comparator extends ViewerComparator {
 		@Override
 		public int category(Object element) {
 			try {

@@ -849,7 +849,7 @@ public class BundleComponent extends Component {
 			if (stream == null) {
 				return null;
 			}
-			return new String(Util.getInputStreamAsCharArray(stream, -1, StandardCharsets.UTF_8));
+			return new String(Util.getInputStreamAsCharArray(stream, StandardCharsets.UTF_8));
 		} catch (IOException e) {
 			ApiPlugin.log(e);
 		} finally {
@@ -889,7 +889,7 @@ public class BundleComponent extends Component {
 			if (stream == null) {
 				return null;
 			}
-			char[] charArray = Util.getInputStreamAsCharArray(stream, -1, StandardCharsets.UTF_8);
+			char[] charArray = Util.getInputStreamAsCharArray(stream, StandardCharsets.UTF_8);
 			contents = new String(charArray);
 		} finally {
 			closingZipFileAndStream(stream, jarFile);

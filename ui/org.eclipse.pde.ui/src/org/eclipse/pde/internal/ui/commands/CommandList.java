@@ -88,7 +88,7 @@ public class CommandList {
 		}
 	}
 
-	protected class CommandTreeComparator extends ViewerComparator {
+	protected static class CommandTreeComparator extends ViewerComparator {
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			return getText(e1).compareTo(getText(e2));

@@ -56,7 +56,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		fBuild = model;
 	}
 
-	class ProjectFolder {
+	static class ProjectFolder {
 		IPath fPath;
 		String fToken;
 		ArrayList<String> fLibs = new ArrayList<>(1);
@@ -98,7 +98,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		}
 	}
 
-	class SourceFolder extends ProjectFolder {
+	static class SourceFolder extends ProjectFolder {
 
 		OutputFolder fOutputFolder;
 
@@ -119,7 +119,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 	}
 
-	class OutputFolder extends ProjectFolder {
+	static class OutputFolder extends ProjectFolder {
 
 		private final ArrayList<SourceFolder> fSourceFolders = new ArrayList<>();
 		/**
@@ -168,7 +168,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 	 * Represents a default or custom encoding property for a resource
 	 * within a library.
 	 */
-	class EncodingEntry {
+	static class EncodingEntry {
 
 		private final String fEncoding;
 		private final IResource fResource;

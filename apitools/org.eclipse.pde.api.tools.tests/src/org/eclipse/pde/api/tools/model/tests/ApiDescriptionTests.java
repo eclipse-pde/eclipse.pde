@@ -61,7 +61,7 @@ public class ApiDescriptionTests {
 	/**
 	 * Wraps an element with its API description
 	 */
-	class ElementDescription {
+	static class ElementDescription {
 
 		public IElementDescriptor fElement;
 		public int fVis, fRes;
@@ -385,7 +385,7 @@ public class ApiDescriptionTests {
 		String readXML = null;
 		if (descfile.exists()) {
 			try (FileInputStream stream = new FileInputStream(descfile)) {
-				char[] charArray = Util.getInputStreamAsCharArray(stream, -1, StandardCharsets.UTF_8);
+				char[] charArray = Util.getInputStreamAsCharArray(stream, StandardCharsets.UTF_8);
 				 readXML = new String(charArray);
 			}
 		}

@@ -53,7 +53,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	 * Use scan visitor that collects a list of the bundles (as
 	 * {@link IComponentDescriptor}s) that consume api references.
 	 */
-	class ListConsumersVisitor extends UseScanVisitor {
+	static class ListConsumersVisitor extends UseScanVisitor {
 		/**
 		 * Set of {@link IComponentDescriptor}s representing the consumers of
 		 * references

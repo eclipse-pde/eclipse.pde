@@ -58,7 +58,7 @@ public class ConvertedProjectsPage extends WizardPage {
 	/**
 	 * Label provider for the table
 	 */
-	public class ProjectLabelProvider extends LabelProvider {
+	public static class ProjectLabelProvider extends LabelProvider {
 		@Override
 		public Image getImage(Object element) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(IDE.SharedImages.IMG_OBJ_PROJECT);

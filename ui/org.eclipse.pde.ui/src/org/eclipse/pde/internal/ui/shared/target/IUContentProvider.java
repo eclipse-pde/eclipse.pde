@@ -76,7 +76,7 @@ public class IUContentProvider implements ITreeContentProvider {
 	 * Wraps an installable unit so that it knows what bundle container parent it belongs to
 	 * in the tree.
 	 */
-	public class IUWrapper {
+	public static class IUWrapper {
 		private IInstallableUnit fIU;
 		private IUBundleContainer fParent;
 
