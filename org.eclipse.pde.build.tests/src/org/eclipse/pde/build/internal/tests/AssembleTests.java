@@ -129,6 +129,8 @@ public class AssembleTests extends PDETestCase {
 
 		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
 		buildProperties.put("archivesFormat", "*, *, * - folder");
+		buildProperties.put("jarProcessor.unsign", "true");
+		buildProperties.put("signJars", "true");
 		if (!executable.equals(new File((String) buildProperties.get("baseLocation"))))
 			buildProperties.put("pluginPath", executable.getAbsolutePath());
 		Utils.storeBuildProperties(buildFolder, buildProperties);

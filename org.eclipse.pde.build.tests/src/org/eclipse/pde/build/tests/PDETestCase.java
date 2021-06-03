@@ -18,6 +18,8 @@ import static org.junit.Assert.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.helper.AntXMLContext;
@@ -155,6 +157,11 @@ public abstract class PDETestCase {
 			AntRunner runner = new AntRunner();
 			runner.run(args);
 		} catch (InvocationTargetException e) {
+			java.nio.file.Path logPath = Paths.get(antHome, "log.log");
+			String logContent = Files.readString(logPath);
+			System.err.println("### Ant log file content from " + logPath + ":");
+			System.err.println(logContent);
+			System.err.println("### log file end");
 			Throwable target = e.getTargetException();
 			if (target instanceof Exception)
 				throw (Exception) target;

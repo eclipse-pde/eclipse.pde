@@ -533,6 +533,7 @@ public class P2Tests extends P2TestCase {
 		assertResourceFile(outRepo2, "content.jar");
 	}
 
+	@SuppressWarnings("removal")
 	@Test
 	public void testBug265564() throws Exception {
 		IFolder buildFolder = newTest("265564");
