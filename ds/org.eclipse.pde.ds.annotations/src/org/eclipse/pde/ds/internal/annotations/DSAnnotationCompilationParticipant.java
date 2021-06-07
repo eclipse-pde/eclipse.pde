@@ -419,7 +419,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			pattern = pattern.append("**"); //$NON-NLS-1$
 		}
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		// TODO escape additional regex chars?
 		Matcher m = ACCESS_RULE_PATTERN.matcher(pattern.toString().replace(".", "\\.")); //$NON-NLS-1$  //$NON-NLS-2$
 		while (m.find()) {
