@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -197,7 +198,11 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 				// remove from filesystem
 				File file = savelocation.append(name + BASELINE_FILE_EXTENSION).toFile();
 				if (file.exists()) {
-					success &= file.delete();
+					try {
+						success &= Files.deleteIfExists(file.toPath());
+					} catch (IOException e) {
+						ApiPlugin.log(e);
+					}
 				}
 				fNeedsSaving = true;
 
@@ -225,20 +230,10 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		if (filename != null) {
 			File file = new File(filename);
 			if (file.exists()) {
-				FileInputStream inputStream = null;
-				try {
-					inputStream = new FileInputStream(file);
+				try (FileInputStream inputStream = new FileInputStream(file)) {
 					restoreBaseline(baseline, inputStream);
 				} catch (IOException e) {
 					ApiPlugin.log(e);
-				} finally {
-					if (inputStream != null) {
-						try {
-							inputStream.close();
-						} catch (IOException e) {
-							// ignore
-						}
-					}
 				}
 				hasinfos.add(baseline.getName());
 			}
@@ -308,23 +303,18 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		}
 		if (baselinecache != null && hasinfos != null) {
 			File dir = new File(savelocation.toOSString());
-			if (!dir.exists()) {
-				dir.mkdirs();
-			}
-			String id = null;
-			File file = null;
-			FileOutputStream fout = null;
+			Files.createDirectories(dir.toPath());
 			IApiBaseline baseline = null;
 			for (Entry<String, IApiBaseline> entry : baselinecache.entrySet()) {
-				id = entry.getKey();
+				String id = entry.getKey();
 				baseline = entry.getValue();
 				if (!hasinfos.contains(baseline.getName())) {
 					continue;
 				}
-				file = savelocation.append(id + BASELINE_FILE_EXTENSION).toFile();
+				File file = savelocation.append(id + BASELINE_FILE_EXTENSION).toFile();
 				if (!file.exists()) {
 					try {
-						file.createNewFile();
+						Files.createFile(file.toPath());
 					} catch (IOException ioe) {
 						// Bug 567045: java.io.IOException: No such file or directory - but which?
 						if (dir.exists()) { // was supposed to be created
@@ -336,17 +326,12 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 						}
 					}
 				}
-				try {
-					fout = new FileOutputStream(file);
+				try (FileOutputStream fout = new FileOutputStream(file)) {
 					writeBaselineDescription(baseline, fout);
 					// need to save the api baseline state in order to be able
 					// to reload it later
 					handlecache.put(baseline.getName(), file.getAbsolutePath());
 					fout.flush();
-				} finally {
-					if (fout != null) {
-						fout.close();
-					}
 				}
 			}
 		}
