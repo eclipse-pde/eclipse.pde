@@ -316,14 +316,8 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 					try {
 						Files.createFile(file.toPath());
 					} catch (IOException ioe) {
-						// Bug 567045: java.io.IOException: No such file or directory - but which?
-						if (dir.exists()) { // was supposed to be created
-							throw new IOException(ioe.getMessage() + " for " + file.getAbsolutePath(), ioe); //$NON-NLS-1$
-						} else {
-							throw new IOException(
-									"Missing directory " + dir.getAbsolutePath() + " for " + file.getAbsolutePath(), //$NON-NLS-1$//$NON-NLS-2$
-									ioe);
-						}
+						ApiPlugin.log(new IOException("Unable to save API baseline with id: '" + id + "'", ioe)); //$NON-NLS-1$ //$NON-NLS-2$
+						continue;
 					}
 				}
 				try (FileOutputStream fout = new FileOutputStream(file)) {
