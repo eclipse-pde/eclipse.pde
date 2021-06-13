@@ -108,6 +108,7 @@ public class ApiAnalysisApplication implements IApplication {
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		restoreOriginalProjectState = null;
+		configureP2Preferences();
 		try {
 			IWorkspaceDescription desc = ResourcesPlugin.getWorkspace().getDescription();
 			desc.setAutoBuilding(false);
@@ -186,6 +187,18 @@ public class ApiAnalysisApplication implements IApplication {
 				restoreOriginalProjectState.run(new NullProgressMonitor());
 			}
 		}
+	}
+
+	/**
+	 * Temporary workaround for bug 567045, see also bug 574173
+	 */
+	private void configureP2Preferences() {
+		// default is false
+		System.setProperty("p2.RepositoryPreferences.retryOnSocketTimeout", "true"); //$NON-NLS-1$//$NON-NLS-2$
+		// default is 1
+		System.setProperty("p2.RepositoryPreferences.connectionRetryCount", "3"); //$NON-NLS-1$//$NON-NLS-2$
+		// default is 200
+		System.setProperty("p2.RepositoryPreferences.connectionMsRetryDelay", "500"); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	private void setTargetPlatform(File dependencyList) throws IOException, CoreException, InterruptedException {
