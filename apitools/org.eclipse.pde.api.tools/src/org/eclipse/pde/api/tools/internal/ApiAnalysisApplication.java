@@ -44,6 +44,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.internal.p2.repository.RepositoryPreferences;
 import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.model.BundleComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -199,6 +200,18 @@ public class ApiAnalysisApplication implements IApplication {
 		System.setProperty("p2.RepositoryPreferences.connectionRetryCount", "3"); //$NON-NLS-1$//$NON-NLS-2$
 		// default is 200
 		System.setProperty("p2.RepositoryPreferences.connectionMsRetryDelay", "500"); //$NON-NLS-1$//$NON-NLS-2$
+
+		reportP2Preferences();
+	}
+
+	@SuppressWarnings("restriction")
+	private void reportP2Preferences() {
+		long connectionRetryCount = RepositoryPreferences.getConnectionRetryCount();
+		long connectionMsRetryDelay = RepositoryPreferences.getConnectionMsRetryDelay();
+		boolean retryOnSocketTimeout = RepositoryPreferences.getRetryOnSocketTimeout();
+		ApiPlugin.logInfoMessage(
+				"p2.RepositoryPreferences: " + connectionRetryCount + "/" + connectionMsRetryDelay + "/" //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+						+ retryOnSocketTimeout);
 	}
 
 	private void setTargetPlatform(File dependencyList) throws IOException, CoreException, InterruptedException {
