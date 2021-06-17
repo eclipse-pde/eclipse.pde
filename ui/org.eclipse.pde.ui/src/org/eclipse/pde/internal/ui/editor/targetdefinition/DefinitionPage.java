@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
-import org.eclipse.pde.core.target.ITargetDefinition;
-
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -58,7 +57,6 @@ public class DefinitionPage extends FormPage implements IHyperlinkListener {
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText(PDEUIMessages.DefinitionPage_1);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_DEFINITION));
 		toolkit.decorateFormHeading(form.getForm());
 		fillBody(managedForm, toolkit);
 		((TargetEditor) getEditor()).contributeToToolbar(managedForm.getForm(), IHelpContextIds.TARGET_EDITOR_DEFINITION_PAGE);

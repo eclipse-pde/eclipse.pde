@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
 import org.eclipse.pde.core.target.ITargetDefinition;
-
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.swt.widgets.Composite;
@@ -52,7 +51,6 @@ public class ContentPage extends FormPage {
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText(PDEUIMessages.ContentPage_1);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_DEFINITION));
 		toolkit.decorateFormHeading(form.getForm());
 		fillBody(managedForm, toolkit);
 		((TargetEditor) getEditor()).contributeToToolbar(managedForm.getForm(), IHelpContextIds.TARGET_EDITOR_CONTENT_PAGE);
