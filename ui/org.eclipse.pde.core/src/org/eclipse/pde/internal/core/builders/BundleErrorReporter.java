@@ -1103,8 +1103,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private int getRequireBundleSeverity(ManifestElement requireBundleElement, boolean optional) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNRESOLVED_IMPORTS);
-		if (optional && severity != CompilerFlags.IGNORE) {
-			severity += 1;
+		// only for error, optional dependency should be shown as warning
+		if (optional && severity == CompilerFlags.ERROR) {
+			severity = CompilerFlags.WARNING;
 		}
 		return severity;
 	}
