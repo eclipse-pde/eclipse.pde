@@ -28,6 +28,7 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
@@ -349,7 +350,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 * A set of listeners that want to participate in the saving life-cycle of
 	 * the workbench via this plug-in
 	 */
-	private HashSet<ISaveParticipant> savelisteners = new HashSet<>();
+	private ListenerList<ISaveParticipant> savelisteners = new ListenerList<>();
 
 	/**
 	 * This is used to log resolution errors only once per session

@@ -144,7 +144,6 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 			if (task != null) {
 				File buildFile = new File(dir, buildFilename);
 				XMLPrintHandler.writeFile(task, buildFile);
-				generateAntTask();
 				setDefaultValues(dir, buildFilename);
 			}
 		} catch (IOException e) {

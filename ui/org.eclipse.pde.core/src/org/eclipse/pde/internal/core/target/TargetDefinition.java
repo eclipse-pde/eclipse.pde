@@ -403,6 +403,7 @@ public class TargetDefinition implements ITargetDefinition {
 							synchronizer.synchronize(this,
 									subMonitor.split(synchronizerNumContainerMap.get(synchronizer).intValue() * 95));
 						} catch (CoreException e) {
+							PDECore.log(e.getStatus());
 							status.add(e.getStatus());
 						}
 					}

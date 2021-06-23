@@ -241,7 +241,9 @@ public class ApiAnalysisApplication implements IApplication {
 			ApiBaselineManager.getManager().addApiBaseline(baseline);
 			ApiBaselineManager.getManager().setDefaultApiBaseline(baseline.getName());
 			return baseline;
-		} else if (baselinePath.isFile() && baselinePath.getName().endsWith(".target")) { //$NON-NLS-1$
+		}
+		String baselineFileName = baselinePath.getName();
+		if (baselinePath.isFile() && baselineFileName.endsWith(".target")) { //$NON-NLS-1$
 			ITargetPlatformService service = TargetPlatformService.getDefault();
 			ITargetDefinition definition = service.getTarget(baselinePath.toURI()).getTargetDefinition();
 			IStatus resolutionStatus = definition.resolve(new NullProgressMonitor());
@@ -254,7 +256,9 @@ public class ApiAnalysisApplication implements IApplication {
 					throw new CoreException(resolutionStatus);
 				default: // Nothing
 				}
-			ApiBaseline baseline = new ApiBaseline(baselinePath.getAbsolutePath());
+			// remove ".target"
+			String baselineName = baselineFileName.substring(0, baselineFileName.lastIndexOf('.'));
+			ApiBaseline baseline = new ApiBaseline(baselineName);
 			for (TargetBundle bundle : definition.getAllBundles()) {
 				BundleInfo bundleInfo = bundle.getBundleInfo();
 				if (bundleInfo.getBundleId() != 0) {

@@ -834,7 +834,11 @@ public class P2TargetUtils {
 		} catch (CoreException e) {
 			// There was at least one problem getting the contents, delete the profile so we don't cache in a bad state, Bug 439034
 			// TODO ALL we really want to delete is the sequence property, so that checkProfile will compare settings and contents
-			deleteProfile(target.getHandle());
+			try {
+				deleteProfile(target.getHandle());
+			} catch (CoreException e2) {
+				PDECore.log(e2.getStatus());
+			}
 			throw e;
 		}
 	}
@@ -1046,7 +1050,11 @@ public class P2TargetUtils {
 		} catch (CoreException e) {
 			// XXX Review required: is adding in the source critical or optional?
 			// We failed adding in the source so remove the intermediate profile and rethrow
-			getProfileRegistry().removeProfile(fProfile.getProfileId(), fProfile.getTimestamp());
+			try {
+				getProfileRegistry().removeProfile(fProfile.getProfileId(), fProfile.getTimestamp());
+			} catch (CoreException e2) {
+				PDECore.log(e2.getStatus());
+			}
 			throw e;
 		}
 	}
