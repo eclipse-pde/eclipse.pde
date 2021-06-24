@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2020 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -343,6 +343,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 			try {
 				ArrayList<Key> changes = new ArrayList<>();
 				collectChanges(fLookupOrder[0], changes);
+				filterOutChanges(changes);
 				if (changes.size() == 1 && changes.get(0).equals(KEY_MISSING_DEFAULT_API_PROFILE)) {
 					Key k = changes.get(0);
 
@@ -406,6 +407,37 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 			} catch (BackingStoreException bse) {
 				ApiPlugin.log(bse);
 			}
+		}
+	}
+
+	// Filter out redundant change
+	private void filterOutChanges(ArrayList<Key> changes) {
+		if (changes.size() == 2) {
+			Key k1 = changes.get(0);
+			String original1 = k1.getStoredValue(fLookupOrder[0], null);
+			String newval1 = k1.getStoredValue(fLookupOrder[0], fManager);
+			if (original1 == null && newval1 == null) {
+				changes.remove(0);
+			}
+			if (original1 != null && newval1 != null) {
+				if (original1.equals(newval1)) {
+					changes.remove(0);
+				}
+			}
+			if (changes.size() == 2) {
+				Key k2 = changes.get(1);
+				String original2 = k2.getStoredValue(fLookupOrder[1], null);
+				String newval2 = k2.getStoredValue(fLookupOrder[1], fManager);
+				if (original2 == null && newval2 == null) {
+					changes.remove(1);
+				}
+				if (original2 != null && newval2 != null) {
+					if (original2.equals(newval2)) {
+						changes.remove(1);
+					}
+				}
+			}
+
 		}
 	}
 
