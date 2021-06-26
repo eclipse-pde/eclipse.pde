@@ -630,11 +630,9 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	 * @param changes the {@link List} to collect changed keys into
 	 */
 	private void collectChanges(IScopeContext context, List<Key> changes) {
-		Key key = null;
 		String origval = null, newval = null;
 		boolean complete = true;
-		for (Key fgAllKey : fgAllKeys) {
-			key = fgAllKey;
+		for (Key key : fgAllKeys) {
 			origval = key.getStoredValue(context, null);
 			newval = key.getStoredValue(context, fManager);
 			if (newval == null) {
