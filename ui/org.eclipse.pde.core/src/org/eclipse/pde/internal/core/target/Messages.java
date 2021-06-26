@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -73,7 +73,7 @@ public class Messages extends NLS {
 	public static String TargetPlatformService_2;
 	public static String TargetPlatformService_3;
 	public static String TargetPlatformService_4;
-	public static String TargetPlatformService_5;
+
 	public static String TargetPlatformService_6;
 	public static String TargetPlatformService_7;
 	public static String WorkspaceFileTargetHandle_0;

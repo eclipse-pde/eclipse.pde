@@ -21,7 +21,6 @@ public class UtilMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.core.util.UtilMessages"; //$NON-NLS-1$
 	public static String ErrorReadingManifest;
 	public static String ErrorManifestFileAbsent;
-	public static String ErrorReadingOldStyleManifest;
 	public static String VMHelper_noJreForExecEnv;
 	public static String BundleErrorReporter_InvalidFormatInBundleVersion;
 	public static String BundleErrorReporter_invalidVersionRangeFormat;

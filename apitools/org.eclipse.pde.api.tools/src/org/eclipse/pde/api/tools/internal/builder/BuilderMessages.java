@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -46,7 +46,6 @@ public class BuilderMessages extends NLS {
 	public static String reportUnsatisfiedConstraint;
 
 	public static String ReferenceAnalyzer_analyzing_api_checking_use;
-	public static String ReferenceAnalyzer_analyzing_api;
 	public static String ReferenceAnalyzer_api_analysis_error;
 	public static String ReferenceAnalyzer_checking_api_used_by;
 	public static String ReferenceExtractor_failed_to_lookup_method;

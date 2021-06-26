@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2021 EclipseSource Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,7 +33,6 @@ public class PDEMessages extends NLS {
 
 	public static String WorkbenchLauncherConfigurationDelegate_noJRE;
 	public static String WorkbenchLauncherConfigurationDelegate_jrePathNotFound;
-	public static String WorkbenchLauncherConfigurationDelegate_badFeatureSetup;
 	public static String WorkbenchLauncherConfigurationDelegate_noStartup;
 	public static String JUnitLaunchConfiguration_error_notaplugin;
 	public static String JUnitLaunchConfiguration_error_missingPlugin;

@@ -21,7 +21,6 @@ public class PreferenceMessages extends NLS {
 	public static String ApiErrorsWarningsConfigurationBlock_0;
 	public static String ApiErrorsWarningsConfigurationBlock_1;
 	public static String ApiErrorsWarningsConfigurationBlock_2;
-	public static String ApiErrorsWarningsConfigurationBlock_3;
 	public static String ApiErrorsWarningsConfigurationBlock_4;
 	public static String ApiErrorsWarningsConfigurationBlock_5;
 	public static String ApiErrorsWarningsConfigurationBlock_automatically_remove_problem_filters;
@@ -62,7 +61,7 @@ public class PreferenceMessages extends NLS {
 	public static String CompatibilityReportApiBreakageWhenMajorVersionIncremented;
 
 	public static String ReportApiComponentResolutionFailure;
-	public static String ReportApiComponentResolutionFailureDescription;
+
 
 	public static String ApiErrorsWarningsConfigurationBlock_error;
 	public static String ApiErrorsWarningsConfigurationBlock_warning;

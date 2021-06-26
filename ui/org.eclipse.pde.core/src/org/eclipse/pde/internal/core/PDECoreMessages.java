@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -80,7 +80,6 @@ public class PDECoreMessages extends NLS {
 
 	public static String TargetPlatformHelper_CouldNotAcquireTargetService;
 
-	public static String TargetPlatformHelper_LoadingTargetPlatform;
 
 	public static String TargetPlatformProvisionTask_ErrorDefinitionNotFoundAtSpecifiedLocation;
 	public static String TargetPlatformProvisionTask_ErrorDefinitionNotSet;
@@ -315,7 +314,6 @@ public class PDECoreMessages extends NLS {
 
 	public static String ExtensionsErrorReporter_InvalidSchema;
 
-	public static String PluginModelManager_0;
 	public static String PluginModelManager_1;
 
 	public static String PluginModelManager_CurrentTargetPlatformContainsErrors;

@@ -52,7 +52,6 @@ public class MarkerMessages extends NLS {
 	public static String OpenPropertyPageResolution_opens_the_property_page;
 	public static String OpenPropertyPageResolution_page_id_cannot_be_null;
 	public static String OpenPropertyPageResolution_the_page_name_cannot_be_null;
-	public static String OptionalMessageDialog_0;
 	public static String PDEConfigureProblemSeverityAction_0;
 	public static String PDEConfigureProblemSeverityAction_1;
 	public static String PDEConfigureProblemSeverityAction_2;
@@ -101,7 +100,7 @@ public class MarkerMessages extends NLS {
 	public static String VersionNumberingResolution_unnecessaryMicro;
 	public static String VersionNumberingResolution_unnecessaryMinor;
 	public static String VersionNumberingResolution_breeMinor;
-	public static String VersionNumberingResolution_unnecessary;
+
 
 	public static String UpdateVersionNumberingOperation_title;
 
