@@ -57,7 +57,6 @@ public class WizardMessages extends NLS {
 	public static String JavadocConversionPage_convert_javadoc_tags_in;
 	public static String JavadocConversionPage_convert_tags_to_annotations_description;
 	public static String JavadocConversionPage_delete_tags_during_conversion;
-	public static String JavadocConversionPage_error_computing_packe_fragment_roots;
 	public static String JavadocConversionPage_scan_javadoc_to_convert;
 	public static String JavadocConversionPage_scanning_projects_for_javadoc_tags;
 	public static String JavadocConversionPage_select_pjs_to_convert;

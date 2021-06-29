@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2016 IBM Corporation and others.
+ *  Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -17,13 +17,12 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ui.shared.target.messages"; //$NON-NLS-1$
-	public static String AddBundleContainerSelectionPage_0;
+
 	public static String AddBundleContainerSelectionPage_1;
 	public static String AddBundleContainerSelectionPage_10;
 	public static String AddBundleContainerSelectionPage_2;
 	public static String AddBundleContainerSelectionPage_3;
 	public static String AddBundleContainerSelectionPage_4;
-	public static String AddBundleContainerSelectionPage_5;
 	public static String AddBundleContainerSelectionPage_6;
 	public static String AddBundleContainerSelectionPage_7;
 	public static String AddBundleContainerSelectionPage_9;
@@ -142,7 +141,6 @@ public class Messages extends NLS {
 	public static String UpdateTargetJob_TargetUpdateFailedStatus;
 	public static String UpdateTargetJob_TargetUpdateSuccessStatus;
 	public static String UpdateTargetJob_UpdateJobName;
-	public static String UpdateTargetJob_UpdatingContainer;
 	public static String UpdateTargetJob_UpdatingTarget;
 	static {
 		// initialize resource bundle

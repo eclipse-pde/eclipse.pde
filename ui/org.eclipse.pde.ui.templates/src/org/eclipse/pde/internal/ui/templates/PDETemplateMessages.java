@@ -28,9 +28,7 @@ public class PDETemplateMessages extends NLS {
 	public static String ExtensibleEditorNewWizard_wtitle;
 	public static String ExtensibleEditorTemplate_title;
 	public static String ExtensibleEditorTemplate_desc;
-	public static String ExtensibleEditorTemplate_reconcilerClass;
-	public static String ExtensibleEditorTemplate_hoverClass;
-	public static String ExtensibleEditorTemplate_completionClass;
+
 	public static String ExtensibleEditorTemplate_targetFileExtension;
 
 
@@ -53,14 +51,9 @@ public class PDETemplateMessages extends NLS {
 	public static String HelloNonUIRCPTemplate_appClass;
 	public static String HelloNonUIRCPTemplate_messageText;
 	public static String HelloNonUIRCPTemplate_defaultMessage;
-	public static String HelloWorldTemplate_packageName;
-	public static String HelloWorldTemplate_className;
+
 	public static String HelloRCPTemplate_windowTitle;
-	public static String HelloWorldTemplate_messageText;
-	public static String HelloWorldTemplate_defaultMessage;
-	public static String HelloWorldTemplate_sampleActionSet;
-	public static String HelloWorldTemplate_sampleMenu;
-	public static String HelloWorldTemplate_sampleAction;
+
 
 	public static String HelloWorldCmdNewWizard_wtitle;
 	public static String HelloWorldCmdTemplate_title;
