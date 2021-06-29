@@ -281,7 +281,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 			IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
 			IType type = project.findType("javadoc", typename); //$NON-NLS-1$
 			assertNotNull("the type for javadoc." + typename + " must exist", type); //$NON-NLS-1$ //$NON-NLS-2$
-			ASTParser parser = ASTParser.newParser(AST.JLS_Latest);
+			ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 			parser.setSource(type.getCompilationUnit());
 			CompilationUnit cunit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
 			ChangeVisitor visitor = new ChangeVisitor(typename, innertypename, membername, signature, expectedtags);

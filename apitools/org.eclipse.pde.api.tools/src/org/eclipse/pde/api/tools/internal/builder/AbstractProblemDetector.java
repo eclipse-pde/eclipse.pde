@@ -735,7 +735,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 				if (method == null) {
 					// look it up the hard way
 					ISourceRange range = jtype.getCompilationUnit().getSourceRange();
-					ASTParser parser = ASTParser.newParser(AST.JLS_Latest);
+					ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 					parser.setSource(jtype.getCompilationUnit());
 					parser.setSourceRange(range.getOffset(), range.getLength());
 					parser.setResolveBindings(true);
