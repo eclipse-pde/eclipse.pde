@@ -138,6 +138,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 	 */
 	@Override
 	protected void setUp() throws Exception {
+		indexDisabledForTest = false;
 		// If we have an existing environment, set it to revert rather than
 		// delete the workspace to improve performance
 		resetBuilderOptions();
