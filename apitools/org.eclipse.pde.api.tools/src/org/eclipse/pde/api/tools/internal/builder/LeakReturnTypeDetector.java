@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2019 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,8 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
+import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
@@ -57,6 +59,20 @@ public class LeakReturnTypeDetector extends MethodLeakDetector {
 		}
 		IApiType type = (IApiType) reference.getResolvedReference();
 		int modifiers = type.getModifiers();
+		if( Flags.isPackageDefault(modifiers) == false) {
+			if (reference instanceof Reference) {
+				try {
+					List<IApiType> parameterList = ((Reference) reference).getParameterList();
+					for (IApiType iApiType : parameterList) {
+						if (Flags.isPackageDefault(iApiType.getModifiers())) {
+							return true;
+						}
+					}
+				}catch (CoreException e) {
+					// do nothing, skip it
+				}
+			}
+		}
 		return Flags.isPackageDefault(modifiers);
 	}
 
