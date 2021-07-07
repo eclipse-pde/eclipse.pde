@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
+import java.util.Objects;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IRepositoryInfo;
 import org.w3c.dom.Element;
@@ -82,6 +83,23 @@ public class RepositoryInfo extends ProductObject implements IRepositoryInfo {
 
 	private boolean isURLDefined() {
 		return fURL != null && fURL.length() > 0;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(fURL);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof RepositoryInfo)) {
+			return false;
+		}
+		RepositoryInfo other = (RepositoryInfo) obj;
+		return Objects.equals(fURL, other.fURL);
 	}
 
 }
