@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -605,7 +605,8 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 		// validate workspace encodings with those specified in build.properties
 
-		if (fEncodingSeverity == CompilerFlags.ERROR || fEncodingSeverity == CompilerFlags.WARNING) {
+		if (fEncodingSeverity == CompilerFlags.ERROR || fEncodingSeverity == CompilerFlags.WARNING
+				|| fEncodingSeverity == CompilerFlags.INFO) {
 			// build map of expected encodings
 			Iterator<SourceFolder> iterator = toValidate.iterator();
 			while (iterator.hasNext()) {
