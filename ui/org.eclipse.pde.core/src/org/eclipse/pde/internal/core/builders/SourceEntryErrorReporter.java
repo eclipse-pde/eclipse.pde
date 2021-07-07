@@ -647,7 +647,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 							String expected = fDefaultLibraryEncodings.remove(lib);
 							if (expected != null) {
 								if (!specified.equals(expected)) {
-									prepareError(name, specified, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_0, new String[] {expected, specified, lib}), PDEMarkerFactory.M_ONLY_CONFIG_SEV, fEncodingSeverity,CompilerFlags.P_BUILD_ENCODINGS, PDEMarkerFactory.CAT_OTHER);
+									prepareError(name, expected, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_0, new String[] {expected, specified, lib}), PDEMarkerFactory.B_REPLACE, fEncodingSeverity,CompilerFlags.P_BUILD_ENCODINGS, PDEMarkerFactory.CAT_OTHER);
 								}
 							} else {
 								// encoding is specified, but workspace does not specify one
