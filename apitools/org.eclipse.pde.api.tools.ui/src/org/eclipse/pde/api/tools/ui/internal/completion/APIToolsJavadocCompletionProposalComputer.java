@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2020 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -400,7 +400,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 
 	@Override
 	public void sessionStarted() {
-		fParser = ASTParser.newParser(AST.JLS15);
+		fParser = ASTParser.newParser(AST.getJLSLatest());
 		fErrorMessage = null;
 	}
 
