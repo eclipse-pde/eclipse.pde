@@ -323,6 +323,9 @@ public class Reference implements IReference {
 				String substring = fSignature.substring(fSignature.indexOf('<') + 1, fSignature.indexOf('>'));
 				String[] split = substring.split(";"); //$NON-NLS-1$
 				for (String string : split) {
+					if (string.lastIndexOf('/') == -1) {
+						continue;
+					}
 					String pack = string.substring(1, string.lastIndexOf('/')).replace('/', '.');
 					IApiTypeRoot param = Util.getClassFile(
 							sourceComponent.getBaseline().resolvePackage(sourceComponent, pack),
