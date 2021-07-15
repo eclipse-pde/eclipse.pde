@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2020 IBM Corporation and others.
+ * Copyright (c) 2009, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,7 @@
  *     Sonatype, Inc. - ongoing development
  *     EclipseSource, Inc. - ongoing development
  *     Manumitting Technologies Inc - bug 437726: wrong error messages opening target definition
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 542425
+ *     Alexander Fedorov (ArSysOp) - Bug 542425, Bug 574629
  *     Christoph Läubrich - Bug 568865 - [target] add advanced editing capabilities for custom target platforms
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
@@ -131,7 +131,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	/**
 	 * Repositories to consider, or <code>null</code> if default.
 	 */
-	private URI[] fRepos;
+	private final URI[] fRepos;
 
 	/**
 	 * A set of bitmask flags that indicate how this container gets elements from its
@@ -795,10 +795,12 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	public String toString() {
 		StringBuilder sb = new StringBuilder(getClass().getSimpleName());
 		sb.append('[');
-		for (int i = 0; i < fRepos.length; i++) {
-			sb.append(fRepos[i]);
-			if (i > 0) {
-				sb.append(',');
+		if (fRepos != null) {
+			for (int i = 0; i < fRepos.length; i++) {
+				sb.append(fRepos[i]);
+				if (i > 0) {
+					sb.append(',');
+				}
 			}
 		}
 		sb.append(']');

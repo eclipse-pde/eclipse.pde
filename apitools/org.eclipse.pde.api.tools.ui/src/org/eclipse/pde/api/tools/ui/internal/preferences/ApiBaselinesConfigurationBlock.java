@@ -29,8 +29,11 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
@@ -528,6 +531,8 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 
 	private ArrayList<IMarker> findMissingBaselineMarker() {
 		ArrayList<IMarker> markList = new ArrayList<>();
+		int missing_plugin = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_API_BASELINE,
+				IElementDescriptor.RESOURCE, IApiProblem.API_PLUGIN_NOT_PRESENT_IN_BASELINE, IApiProblem.NO_FLAGS);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		try {
 			IMarker[] findMarkers = root.findMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, false,
@@ -548,6 +553,10 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 				findMarkers = iProject.findMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, false,
 						IResource.DEPTH_ZERO);
 				for (IMarker iMarker : findMarkers) {
+					int id = ApiProblemFactory.getProblemId(iMarker);
+					if (id == missing_plugin) {
+						continue;
+					}
 					markList.add(iMarker);
 				}
 			} catch (CoreException e) {

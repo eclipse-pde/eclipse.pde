@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -605,7 +605,8 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 		// validate workspace encodings with those specified in build.properties
 
-		if (fEncodingSeverity == CompilerFlags.ERROR || fEncodingSeverity == CompilerFlags.WARNING) {
+		if (fEncodingSeverity == CompilerFlags.ERROR || fEncodingSeverity == CompilerFlags.WARNING
+				|| fEncodingSeverity == CompilerFlags.INFO) {
 			// build map of expected encodings
 			Iterator<SourceFolder> iterator = toValidate.iterator();
 			while (iterator.hasNext()) {
@@ -646,7 +647,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 							String expected = fDefaultLibraryEncodings.remove(lib);
 							if (expected != null) {
 								if (!specified.equals(expected)) {
-									prepareError(name, specified, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_0, new String[] {expected, specified, lib}), PDEMarkerFactory.M_ONLY_CONFIG_SEV, fEncodingSeverity,CompilerFlags.P_BUILD_ENCODINGS, PDEMarkerFactory.CAT_OTHER);
+									prepareError(name, expected, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_0, new String[] {expected, specified, lib}), PDEMarkerFactory.B_REPLACE, fEncodingSeverity,CompilerFlags.P_BUILD_ENCODINGS, PDEMarkerFactory.CAT_OTHER);
 								}
 							} else {
 								// encoding is specified, but workspace does not specify one

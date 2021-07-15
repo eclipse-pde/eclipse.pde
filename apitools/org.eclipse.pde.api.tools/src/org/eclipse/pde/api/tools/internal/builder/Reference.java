@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -309,10 +309,41 @@ public class Reference implements IReference {
 	}
 
 	/**
-	 * Resolves this reference
+	 * Gets the parameters if return has generics
 	 *
 	 * @throws CoreException
 	 */
+
+	public List<IApiType> getParameterList() throws CoreException {
+		ArrayList<IApiType> paramList = new ArrayList<>();
+		IApiComponent sourceComponent = getMember().getApiComponent();
+		if (sourceComponent != null) {
+			//  add the parameter types
+			if (fSignature != null && fSignature.indexOf('<') >= 0) {
+				String substring = fSignature.substring(fSignature.indexOf('<') + 1, fSignature.indexOf('>'));
+				String[] split = substring.split(";"); //$NON-NLS-1$
+				for (String string : split) {
+					if (string.lastIndexOf('/') == -1) {
+						continue;
+					}
+					String pack = string.substring(1, string.lastIndexOf('/')).replace('/', '.');
+					IApiTypeRoot param = Util.getClassFile(
+							sourceComponent.getBaseline().resolvePackage(sourceComponent, pack),
+							pack + '.' + string.substring(string.lastIndexOf('/') + 1, string.length()));
+					if (param != null) {
+						IApiType structure = param.getStructure();
+						if (structure != null) {
+							paramList.add(structure);
+						}
+					}
+				}
+			}
+		}
+
+		return paramList;
+
+	}
+
 	public void resolve() throws CoreException {
 		if (!this.fStatus) {
 			return;

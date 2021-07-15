@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2019 IBM Corporation and others.
+ * Copyright (c) 2009, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -546,8 +546,14 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				break;
 			}
 			default: {
-				radioBaseline.setSelection(true);
-				radioTarget.setSelection(false);
+				int itemCount = ApiUseScanTab.this.baseline.getItemCount();
+				if (itemCount > 0) {
+					radioBaseline.setSelection(true);
+					radioTarget.setSelection(false);
+				} else {
+					radioBaseline.setSelection(false);
+					radioTarget.setSelection(true);
+				}
 				radioInstall.setSelection(false);
 				radioReportOnly.setSelection(false);
 			}
