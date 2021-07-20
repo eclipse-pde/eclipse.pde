@@ -22,6 +22,7 @@ import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -39,6 +40,7 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionListener;
@@ -553,6 +555,8 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				} else {
 					radioBaseline.setSelection(false);
 					radioTarget.setSelection(true);
+					TargetPlatformHelper.getWorkspaceTargetResolved(new NullProgressMonitor());
+					updateAvailableTargets();
 				}
 				radioInstall.setSelection(false);
 				radioReportOnly.setSelection(false);
