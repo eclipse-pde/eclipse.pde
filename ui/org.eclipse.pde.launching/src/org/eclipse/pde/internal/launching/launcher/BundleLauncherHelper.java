@@ -17,6 +17,7 @@
  *     Hannes Wellmann - Bug 576887 - Handle multiple versions of features and plug-ins for feature-launches
  *     Hannes Wellmann - Bug 576888, Bug 576889 - Consider included child-features and required dependency-features for feature-launches
  *     Hannes Wellmann - Bug 576890 - Ignore included features/plug-ins not matching target-environment
+ *     Hannes Wellmann - Bug 544838 - Option to automatically add requirements at launch
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
@@ -93,7 +94,12 @@ public class BundleLauncherHelper {
 			return getMergedBundleMapFeatureBased(wc);
 		}
 
-		return getAllSelectedPluginBundles(wc);
+		Map<IPluginModelBase, String> selectedBundles = getAllSelectedPluginBundles(wc);
+		boolean autoAddRequirements = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS, false);
+		if (autoAddRequirements) {
+			addRequiredBundles(selectedBundles, configuration);
+		}
+		return selectedBundles;
 	}
 
 	public static Map<IPluginModelBase, String> getAllSelectedPluginBundles(ILaunchConfiguration config) throws CoreException {
@@ -103,14 +109,29 @@ public class BundleLauncherHelper {
 		return map;
 	}
 
+	private static void addRequiredBundles(Map<IPluginModelBase, String> bundle2startLevel, ILaunchConfiguration configuration) throws CoreException {
+
+		RequirementHelper.addApplicationLaunchRequirements(bundle2startLevel, configuration);
+
+		boolean includeOptional = configuration.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true);
+		Set<BundleDescription> requiredDependencies = includeOptional //
+				? DependencyManager.getDependencies(bundle2startLevel.keySet(), DependencyManager.Options.INCLUDE_OPTIONAL_DEPENDENCIES)
+				: DependencyManager.getDependencies(bundle2startLevel.keySet());
+
+		requiredDependencies.stream() //
+				.map(PluginRegistry::findModel).filter(Objects::nonNull) //
+				.forEach(p -> addDefaultStartingBundle(bundle2startLevel, p));
+	}
+
 	// --- feature based launches ---
 
 	private static Map<IPluginModelBase, String> getMergedBundleMapFeatureBased(ILaunchConfiguration configuration) throws CoreException {
 
 		String defaultPluginResolution = configuration.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
 		ITargetDefinition target = PDECore.getDefault().acquireService(ITargetPlatformService.class).getWorkspaceTargetDefinition();
+		boolean addRequirements = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS, true);
 
-		Map<IFeature, String> feature2resolution = getSelectedFeatures(configuration, target);
+		Map<IFeature, String> feature2resolution = getSelectedFeatures(configuration, target, addRequirements);
 
 		// Get the feature model for each selected feature id and resolve its plugins
 		Set<IPluginModelBase> launchPlugins = new HashSet<>();
@@ -128,12 +149,14 @@ public class BundleLauncherHelper {
 					}
 				}
 			}
-			IFeatureImport[] featureImports = feature.getImports();
-			for (IFeatureImport featureImport : featureImports) {
-				if (featureImport.getType() == IFeatureImport.PLUGIN) {
-					IPluginModelBase plugin = getRequiredPlugin(featureImport.getId(), featureImport.getVersion(), featureImport.getMatch(), pluginResolution);
-					if (plugin != null) {
-						launchPlugins.add(plugin);
+			if (addRequirements) {
+				IFeatureImport[] featureImports = feature.getImports();
+				for (IFeatureImport featureImport : featureImports) {
+					if (featureImport.getType() == IFeatureImport.PLUGIN) {
+						IPluginModelBase plugin = getRequiredPlugin(featureImport.getId(), featureImport.getVersion(), featureImport.getMatch(), pluginResolution);
+						if (plugin != null) {
+							launchPlugins.add(plugin);
+						}
 					}
 				}
 			}
@@ -142,19 +165,16 @@ public class BundleLauncherHelper {
 		Map<IPluginModelBase, AdditionalPluginData> additionalPlugins = getAdditionalPlugins(configuration, true);
 		launchPlugins.addAll(additionalPlugins.keySet());
 
-		// Get any plug-ins required by the application/product set on the config
-		List<String> applicationIds = RequirementHelper.getApplicationLaunchRequirements(configuration);
-		for (String applicationId : applicationIds) {
-			IPluginModelBase plugin = getLatestPlugin(applicationId, defaultPluginResolution);
-			if (plugin != null) {
-				launchPlugins.add(plugin);
+		if (addRequirements) {
+			// Add all missing  plug-ins required by the application/product set in the config
+			RequirementHelper.addApplicationLaunchRequirements(configuration, launchPlugins, launchPlugins::add);
+
+			// Get all required plugins
+			Set<BundleDescription> additionalBundles = DependencyManager.getDependencies(launchPlugins);
+			for (BundleDescription bundle : additionalBundles) {
+				IPluginModelBase plugin = getRequiredPlugin(bundle.getSymbolicName(), bundle.getVersion().toString(), IMatchRules.PERFECT, defaultPluginResolution);
+				launchPlugins.add(Objects.requireNonNull(plugin));// should never be null
 			}
-		}
-		// Get all required plugins
-		Set<BundleDescription> additionalBundles = DependencyManager.getDependencies(launchPlugins);
-		for (BundleDescription bundle : additionalBundles) {
-			IPluginModelBase plugin = getRequiredPlugin(bundle.getSymbolicName(), bundle.getVersion().toString(), IMatchRules.PERFECT, defaultPluginResolution);
-			launchPlugins.add(Objects.requireNonNull(plugin));// should never be null
 		}
 
 		// Create the start levels for the selected plugins and add them to the map
@@ -167,7 +187,7 @@ public class BundleLauncherHelper {
 		return map;
 	}
 
-	private static Map<IFeature, String> getSelectedFeatures(ILaunchConfiguration configuration, ITargetDefinition target) throws CoreException {
+	private static Map<IFeature, String> getSelectedFeatures(ILaunchConfiguration configuration, ITargetDefinition target, boolean addRequirements) throws CoreException {
 		String featureLocation = configuration.getAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_WORKSPACE);
 
 		Predicate<IFeature> targetEnvironmentFilter = f -> f.matchesEnvironment(target);
@@ -201,11 +221,13 @@ public class BundleLauncherHelper {
 				}
 			}
 
-			IFeatureImport[] featureImports = feature.getImports();
-			for (IFeatureImport featureImport : featureImports) {
-				if (featureImport.getType() == IFeatureImport.FEATURE) {
-					IFeature dependency = getRequiredFeature(featureImport.getId(), featureImport.getVersion(), featureImport.getMatch(), targetEnvironmentFilter, featureMaps);
-					addFeatureIfAbsent(dependency, pluginResolution, feature2pluginResolution, pendingFeatures);
+			if (addRequirements) {
+				IFeatureImport[] featureImports = feature.getImports();
+				for (IFeatureImport featureImport : featureImports) {
+					if (featureImport.getType() == IFeatureImport.FEATURE) {
+						IFeature dependency = getRequiredFeature(featureImport.getId(), featureImport.getVersion(), featureImport.getMatch(), targetEnvironmentFilter, featureMaps);
+						addFeatureIfAbsent(dependency, pluginResolution, feature2pluginResolution, pendingFeatures);
+					}
 				}
 			}
 		}
@@ -453,13 +475,15 @@ public class BundleLauncherHelper {
 		BundleDescription desc = bundle.getBundleDescription();
 		boolean defaultsl = startData == null || startData.equals(DEFAULT_START_LEVELS);
 		if (desc != null && defaultsl) {
-			String runLevelText = resolveSystemRunLevelText(bundle);
-			String autoText = resolveSystemAutoText(bundle);
-			if (runLevelText != null && autoText != null) {
-				startData = runLevelText + AUTO_START_SEPARATOR + autoText;
-			}
+			startData = getStartData(desc, startData);
 		}
 		map.put(bundle, startData);
+	}
+
+	public static String getStartData(BundleDescription desc, String defaultStartData) {
+		String runLevel = resolveSystemRunLevelText(desc);
+		String auto = resolveSystemAutoText(desc);
+		return runLevel != null && auto != null ? (runLevel + AUTO_START_SEPARATOR + auto) : defaultStartData;
 	}
 
 	public static void addDefaultStartingBundle(Map<IPluginModelBase, String> map, IPluginModelBase bundle) {
@@ -474,13 +498,11 @@ public class BundleLauncherHelper {
 			Map.entry(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, DEFAULT), //
 			Map.entry(IPDEBuildConstants.BUNDLE_FELIX_SCR, "1")); //$NON-NLS-1$
 
-	public static String resolveSystemRunLevelText(IPluginModelBase model) {
-		BundleDescription description = model.getBundleDescription();
+	public static String resolveSystemRunLevelText(BundleDescription description) {
 		return AUTO_STARTED_BUNDLE_LEVELS.get(description.getSymbolicName());
 	}
 
-	public static String resolveSystemAutoText(IPluginModelBase model) {
-		BundleDescription description = model.getBundleDescription();
+	public static String resolveSystemAutoText(BundleDescription description) {
 		return AUTO_STARTED_BUNDLE_LEVELS.containsKey(description.getSymbolicName()) ? "true" : null; //$NON-NLS-1$
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -217,6 +217,15 @@ public interface IPDELauncherConstants {
 	 * the traversal of optional dependencies.
 	 */
 	String INCLUDE_OPTIONAL = "includeOptional"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is a boolean specifying
+	 * whether required plug-ins and/or features should be added automatically
+	 * to the list of plug-ins to launch with.
+	 * 
+	 * @since 3.10 
+	 */
+	String AUTOMATIC_INCLUDE_REQUIREMENTS = "automaticIncludeRequirements"; //$NON-NLS-1$ 
 
 	/**
 	 * Launch configuration attribute key. The value is a boolean indicating

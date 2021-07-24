@@ -798,6 +798,8 @@ public class FeatureBlock {
 	private Button fSelectAllButton;
 	private Button fDeselectAllButton;
 
+	private Button fAutoIncludeRequirementsButton;
+	private boolean fAutoIncludeRequirementsButtonChanged;
 	private Button fWorkspacePluginButton;
 	private Button fExternalPluginButton;
 	private Button fFilterButton;
@@ -849,6 +851,15 @@ public class FeatureBlock {
 		treeGroup.setLayoutData(gd);
 		createCheckBoxTree(treeGroup);
 		createButtonContainer(treeGroup, 10);
+
+		if (fTab instanceof PluginsTab) {
+			fAutoIncludeRequirementsButton = SWTFactory.createCheckButton(treeGroup, PDEUIMessages.AdvancedLauncherTab_autoIncludeRequirements_features_withPlugins, null, false, 1);
+		} else if (fTab instanceof BundlesTab) {
+			fAutoIncludeRequirementsButton = SWTFactory.createCheckButton(treeGroup, PDEUIMessages.AdvancedLauncherTab_autoIncludeRequirements_features_withBundles, null, false, 1);
+		}
+		fAutoIncludeRequirementsButton.addSelectionListener(fListener);
+		fAutoIncludeRequirementsButton.addSelectionListener(
+				SelectionListener.widgetSelectedAdapter(e -> this.fAutoIncludeRequirementsButtonChanged = true));
 
 		fFeatureWorkspaceButton = SWTFactory.createCheckButton(treeGroup, PDEUIMessages.FeatureBlock_UseWorkspaceFeatures, null, true, 2);
 		fFeatureWorkspaceButton.addSelectionListener(fListener);
@@ -1114,6 +1125,8 @@ public class FeatureBlock {
 		setInput(config, fTree);
 
 		// Setup other buttons
+		boolean autoIncludeRequired = config.getAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS, true);
+		fAutoIncludeRequirementsButton.setSelection(autoIncludeRequired);
 		String pluginResolution = config.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
 		if (pluginResolution.equalsIgnoreCase(IPDELauncherConstants.LOCATION_WORKSPACE)) {
 			fWorkspacePluginButton.setSelection(true);
@@ -1147,6 +1160,11 @@ public class FeatureBlock {
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
+		if (fAutoIncludeRequirementsButtonChanged) {
+			boolean includeRequirements = fAutoIncludeRequirementsButton.getSelection();
+			config.setAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS, includeRequirements);
+			fAutoIncludeRequirementsButtonChanged = false;
+		}
 		config.setAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, fFilterButton.getSelection());
 		config.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, fFeatureWorkspaceButton.getSelection() ? IPDELauncherConstants.LOCATION_WORKSPACE : IPDELauncherConstants.LOCATION_EXTERNAL);
 		config.setAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, fWorkspacePluginButton.getSelection() ? IPDELauncherConstants.LOCATION_WORKSPACE : IPDELauncherConstants.LOCATION_EXTERNAL);

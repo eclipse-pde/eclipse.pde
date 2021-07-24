@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2021 IBM Corporation and others.
+ * Copyright (c) 2014, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1055,6 +1055,10 @@ public class PDEUIMessages extends NLS {
 	public static String AdvancedLauncherTab_subset;
 	public static String AdvancedLauncherTab_subset_plugins;
 	public static String AdvancedLauncherTab_subset_bundles;
+	public static String AdvancedLauncherTab_autoIncludeRequirements_bundles;
+	public static String AdvancedLauncherTab_autoIncludeRequirements_plugins;
+	public static String AdvancedLauncherTab_autoIncludeRequirements_features_withBundles;
+	public static String AdvancedLauncherTab_autoIncludeRequirements_features_withPlugins;
 	public static String AdvancedLauncherTab_addNew;
 	public static String AdvancedLauncherTab_addNew_plugins;
 	public static String AdvancedLauncherTab_addNew_bundles;

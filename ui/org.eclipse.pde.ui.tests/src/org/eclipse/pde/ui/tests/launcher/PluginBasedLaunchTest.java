@@ -13,9 +13,15 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.launcher;
 
+import static java.util.Map.entry;
 import static java.util.Map.ofEntries;
+import static org.eclipse.pde.ui.tests.launcher.FeatureBasedLaunchTest.concat;
+import static org.eclipse.pde.ui.tests.launcher.FeatureBasedLaunchTest.toDefaultStartData;
 import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.bundle;
+import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.resolution;
 import static org.junit.Assert.assertEquals;
+import static org.osgi.framework.Constants.REQUIRE_BUNDLE;
+import static org.osgi.framework.Constants.RESOLUTION_OPTIONAL;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -25,6 +31,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
+import org.eclipse.pde.internal.core.DependencyManager;
+import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
@@ -731,6 +739,68 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
 	}
 
+	// --- miscellaneous cases ---
+
+	@Test
+	public void testGetMergedBundleMap_automaticallyAddRequirements() throws Exception {
+
+		var targetPlatformBundles = Map.ofEntries( //
+				bundle("plugin.a", "1.0.0", //
+						entry(REQUIRE_BUNDLE, "plugin.b,plugin.c" + resolution(RESOLUTION_OPTIONAL))),
+				bundle("plugin.b", "1.0.0"), //
+				bundle("plugin.c", "1.0.0"));
+
+		Map<BundleLocationDescriptor, String> requiredRPBundlesWithoutOptional = FeatureBasedLaunchTest
+				.getEclipseAppRequirementClosureForRunningPlatform();
+
+		Map<BundleLocationDescriptor, String> requiredRPBundlesWithOptional = FeatureBasedLaunchTest
+				.getEclipseAppRequirementClosureForRunningPlatform(
+						DependencyManager.Options.INCLUDE_OPTIONAL_DEPENDENCIES);
+
+		TargetPlatformUtil.setRunningPlatformWithDummyBundlesAsTarget(null, targetPlatformBundles, List.of(),
+				tpJarDirectory);
+
+		Consumer<ILaunchConfigurationWorkingCopy> basicSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.a*1.0.0"));
+			wc.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
+			wc.setAttribute(IPDELauncherConstants.PRODUCT, "org.eclipse.platform.ide");
+			// prevent BundleLaunchHelper.migrateLaunchConfiguration() from
+			// adding more target plug-ins:
+			wc.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3");
+		};
+
+		// test automatic-add-requirements disabled (which is the default)
+		for (Boolean autoAddRequirements : Arrays.asList(false, null)) {
+			assertGetMergedBundleMap(wc -> {
+				basicSetup.accept(wc);
+				wc.setAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS, autoAddRequirements);
+			}, toDefaultStartData(Set.of( //
+					targetBundle("plugin.a", "1.0.0"))));
+		}
+
+		// test enabled automatic-add-requirements
+		// with optional requirements enabled (which is the default)
+		for (Boolean includeOptional : Arrays.asList(true, null)) {
+			assertGetMergedBundleMap(wc -> {
+				basicSetup.accept(wc);
+				wc.setAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS, true);
+				wc.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, includeOptional);
+			}, concat(requiredRPBundlesWithOptional, toDefaultStartData(Set.of( //
+					targetBundle("plugin.a", "1.0.0"), //
+					targetBundle("plugin.b", "1.0.0"), //
+					targetBundle("plugin.c", "1.0.0")))));
+		}
+
+		// test automatic-add-requirements enabled without optional requirements
+		assertGetMergedBundleMap(wc -> {
+			basicSetup.accept(wc);
+			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS, true);
+			wc.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, false);
+		}, concat(requiredRPBundlesWithoutOptional, toDefaultStartData(Set.of( //
+				targetBundle("plugin.a", "1.0.0"), //
+				targetBundle("plugin.b", "1.0.0")))));
+	}
+
 	// --- test cases for writeBundleEntry() ----
 
 	@Test
@@ -828,6 +898,11 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		setUpWorkspace(workspacePlugins, targetPlugins);
 
+		assertGetMergedBundleMap(launchConfigPreparer, expectedBundleMap);
+	}
+
+	private static void assertGetMergedBundleMap(Consumer<ILaunchConfigurationWorkingCopy> launchConfigPreparer,
+			Map<BundleLocationDescriptor, String> expectedBundleMap) throws CoreException {
 		ILaunchConfigurationWorkingCopy wc = createPluginLaunchConfig("plugin-based-Eclipse-app");
 		launchConfigPreparer.accept(wc);
 

@@ -40,7 +40,9 @@ Require-Bundle: org.junit,
  org.eclipse.ui.views.log,
  org.eclipse.debug.core,
  org.eclipse.pde.genericeditor.extension,
- org.eclipse.equinox.simpleconfigurator.manipulator;bundle-version="2.1.300"
+ org.eclipse.equinox.simpleconfigurator.manipulator;bundle-version="2.1.300",
+ org.eclipse.platform,
+ org.eclipse.ui.ide.application
 Import-Package: org.assertj.core.api;version="3.14.0",
  org.assertj.core.presentation;version="3.21.0",
  org.junit.jupiter.api.function;version="5.8.1"

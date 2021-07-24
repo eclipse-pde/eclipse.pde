@@ -17,11 +17,15 @@
 package org.eclipse.pde.ui.tests.launcher;
 
 import static java.util.Collections.emptySet;
+import static java.util.Map.entry;
 import static java.util.Map.ofEntries;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.pde.internal.core.ICoreConstants.DEFAULT_VERSION;
 import static org.eclipse.pde.ui.tests.util.ProjectUtils.createPluginProject;
 import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.bundle;
+import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.resolution;
+import static org.osgi.framework.Constants.REQUIRE_BUNDLE;
+import static org.osgi.framework.Constants.RESOLUTION_OPTIONAL;
 
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -33,17 +37,17 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.pde.core.plugin.IMatchRules;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
-import org.eclipse.pde.internal.core.FeatureModelManager;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.ui.wizards.feature.AbstractCreateFeatureOperation;
 import org.eclipse.pde.internal.ui.wizards.feature.FeatureData;
+import org.eclipse.pde.launching.EclipseApplicationLaunchConfiguration;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.junit.*;
@@ -1302,6 +1306,84 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 				workspaceBundle("plugin.d", "1.0.0")));
 	}
 
+	@Test
+	public void testGetMergedBundleMap_automaticallyAddRequirements() throws Throwable {
+
+		var targetBundles = Map.ofEntries( //
+				bundle("plugin.b", "1.0.0"), //
+				bundle("plugin.c", "1.0.0"), //
+
+				bundle("plugin.z", "1.0.0", //
+						entry(REQUIRE_BUNDLE, "plugin.x,plugin.w" + resolution(RESOLUTION_OPTIONAL))),
+				bundle("plugin.y", "1.0.0"), //
+				bundle("plugin.x", "1.0.0"), //
+				bundle("plugin.w", "1.0.0"));
+
+		List<NameVersionDescriptor> targetFeatures = List.of( //
+				targetFeature("feature.a", "1.0.0", f -> {
+					addIncludedFeature(f, "feature.b", "1.0.0");
+					addRequiredFeature(f, "feature.c", "", IMatchRules.COMPATIBLE);
+					addIncludedPlugin(f, "plugin.z", "1.0.0");
+					addRequiredPlugin(f, "plugin.y", "", IMatchRules.COMPATIBLE);
+				}), //
+				targetFeature("feature.b", "1.0.0", f -> {
+					addIncludedPlugin(f, "plugin.b", "1.0.0");
+				}), //
+				targetFeature("feature.c", "1.0.0", f -> {
+					addIncludedPlugin(f, "plugin.c", "1.0.0");
+				}));
+
+		// Gather requirements of the product used below
+		Map<BundleLocationDescriptor, String> requiredRPBundles = getEclipseAppRequirementClosureForRunningPlatform();
+
+		TargetPlatformUtil.setRunningPlatformWithDummyBundlesAsTarget(null, targetBundles, targetFeatures,
+				tpJarDirectory);
+
+		ILaunchConfigurationWorkingCopy wc = createFeatureLaunchConfig();
+		wc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of("feature.a:external"));
+		wc.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
+		wc.setAttribute(IPDELauncherConstants.PRODUCT, "org.eclipse.platform.ide");
+
+		// test AUTOMATIC_ADD_REQUIREMENTS=true and its default (true)
+		for (Boolean autoAddRequirements : Arrays.asList(true, null)) {
+			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS, autoAddRequirements);
+			assertGetMergedBundleMap(wc, concat(requiredRPBundles, toDefaultStartData(Set.of(//
+					targetBundle("plugin.b", "1.0.0"), //
+					targetBundle("plugin.c", "1.0.0"), //
+					targetBundle("plugin.z", "1.0.0"), //
+					targetBundle("plugin.y", "1.0.0"), //
+					targetBundle("plugin.x", "1.0.0")))));
+		}
+
+		// test AUTOMATIC_ADD_REQUIREMENTS=false
+		wc.setAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS, false);
+		assertGetMergedBundleMap(wc, Set.of( //
+				targetBundle("plugin.b", "1.0.0"), //
+				targetBundle("plugin.z", "1.0.0")));
+	}
+
+	static Map<BundleLocationDescriptor, String> getEclipseAppRequirementClosureForRunningPlatform(
+			DependencyManager.Options... closureOptions) throws Exception {
+		// ensure app requirements are registered (done at class initialization)
+		new EclipseApplicationLaunchConfiguration();
+		@SuppressWarnings("unused") // prevent bundle removal
+		org.eclipse.platform.internal.LaunchUpdateIntroAction a;
+		@SuppressWarnings("unused") // prevent bundle removal
+		org.eclipse.ui.internal.ide.application.IDEApplication app;
+
+		TargetPlatformUtil.setRunningPlatformAsTarget();
+
+		List<String> productPlugins = List.of("org.eclipse.platform", "org.eclipse.ui.ide.application");
+		Set<BundleDescription> appBundles = productPlugins.stream().map(PluginRegistry::findModel)
+				.map(IPluginModelBase::getBundleDescription).collect(Collectors.toSet());
+
+		Set<BundleDescription> appBundleClosure = DependencyManager.findRequirementsClosure(appBundles, closureOptions);
+		assertThat(appBundleClosure).hasSizeGreaterThanOrEqualTo(productPlugins.size());
+		return DependencyManager.findRequirementsClosure(appBundles, closureOptions).stream().collect(Collectors.toMap( //
+				d -> targetBundle(d.getSymbolicName(), d.getVersion().toString()),
+				d -> BundleLauncherHelper.getStartData(d, "default:default")));
+	}
+
 	// --- utility methods ---
 
 	private static interface CoreConsumer<E> {
@@ -1444,10 +1526,11 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 
 	private static void assertGetMergedBundleMap(String message, ILaunchConfiguration launchConfig,
 			Set<BundleLocationDescriptor> expectedBundles) throws Exception {
+		assertGetMergedBundleMap(message, launchConfig, toDefaultStartData(expectedBundles));
+	}
 
-		Map<BundleLocationDescriptor, String> expectedBundleMap = expectedBundles.stream()
-				.collect(Collectors.toMap(b -> b, b -> "default:default"));
-		assertGetMergedBundleMap(message, launchConfig, expectedBundleMap);
+	static Map<BundleLocationDescriptor, String> toDefaultStartData(Collection<BundleLocationDescriptor> bundles) {
+		return bundles.stream().collect(Collectors.toMap(b -> b, b -> "default:default"));
 	}
 
 	private static void assertGetMergedBundleMap(ILaunchConfiguration launchConfig,
@@ -1466,5 +1549,12 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 		});
 
 		assertPluginMapsEquals(message, expectedPluginMap, bundleMap);
+	}
+
+	@SafeVarargs
+	static <K, V> Map<K, V> concat(Map<K, V>... maps) {
+		Map<K, V> map = new HashMap<>();
+		Arrays.stream(maps).forEach(map::putAll);
+		return map;
 	}
 }

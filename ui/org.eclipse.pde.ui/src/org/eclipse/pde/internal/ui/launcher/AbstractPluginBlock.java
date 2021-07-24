@@ -54,8 +54,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.TreeEditor;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -78,6 +77,8 @@ public abstract class AbstractPluginBlock {
 	protected int fNumExternalChecked;
 	protected int fNumWorkspaceChecked;
 
+	private Button fAutoIncludeRequirementsButton;
+	private boolean fAutoIncludeRequirementsButtonChanged;
 	private Button fIncludeOptionalButton;
 	protected Button fAddWorkspaceButton;
 	private Button fAutoValidate;
@@ -312,6 +313,15 @@ public abstract class AbstractPluginBlock {
 	public void createControl(Composite parent, int span, int indent) {
 		createPluginViewer(parent, span - 1, indent);
 		createButtonContainer(parent);
+
+		if (fTab instanceof PluginsTab) {
+			fAutoIncludeRequirementsButton = createButton(parent, span, indent, PDEUIMessages.AdvancedLauncherTab_autoIncludeRequirements_plugins );
+		} else if (fTab instanceof BundlesTab) {
+			fAutoIncludeRequirementsButton = createButton(parent, span, indent, PDEUIMessages.AdvancedLauncherTab_autoIncludeRequirements_bundles);
+		}
+		fAutoIncludeRequirementsButton.addSelectionListener(
+				SelectionListener.widgetSelectedAdapter(e -> this.fAutoIncludeRequirementsButtonChanged = true));
+
 		if (fTab instanceof PluginsTab) {
 			fIncludeOptionalButton = createButton(parent, span, indent,PDEUIMessages.AdvancedLauncherTab_includeOptional_plugins);
 		}else if (fTab instanceof BundlesTab) {
@@ -652,10 +662,10 @@ public abstract class AbstractPluginBlock {
 			autoText = autoText == null || autoText.length() == 0 ? "default" : autoText; //$NON-NLS-1$
 
 			// Replace run levels and auto start values for certain important system bundles
-			String systemValue = BundleLauncherHelper.resolveSystemRunLevelText(model);
+			String systemValue = BundleLauncherHelper.resolveSystemRunLevelText(model.getBundleDescription());
 			levelText = systemValue != null ? systemValue : levelText;
 
-			systemValue = BundleLauncherHelper.resolveSystemAutoText(model);
+			systemValue = BundleLauncherHelper.resolveSystemAutoText(model.getBundleDescription());
 			autoText = systemValue != null ? systemValue : autoText;
 
 			// Recache the values in case they changed.  I believe the code to only recache
@@ -791,6 +801,8 @@ public abstract class AbstractPluginBlock {
 	}
 
 	protected void initializeButtonsFrom(ILaunchConfiguration config) throws CoreException {
+		boolean autoIncludeRequired = config.getAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS, false);
+		fAutoIncludeRequirementsButton.setSelection(autoIncludeRequired);
 		fIncludeOptionalButton.setSelection(config.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true));
 		fAddWorkspaceButton.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true));
 		fAutoValidate.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, true));
@@ -876,6 +888,11 @@ public abstract class AbstractPluginBlock {
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
+		if (fAutoIncludeRequirementsButtonChanged) {
+			boolean includeRequirements = fAutoIncludeRequirementsButton.getSelection();
+			config.setAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS, includeRequirements);
+			fAutoIncludeRequirementsButtonChanged = false;
+		}
 		config.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, fIncludeOptionalButton.getSelection());
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, fAddWorkspaceButton.getSelection());
 		config.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, fAutoValidate.getSelection());
@@ -900,6 +917,7 @@ public abstract class AbstractPluginBlock {
 		fWorkingSetButton.setEnabled(enable);
 		fSelectAllButton.setEnabled(enable);
 		fDeselectButton.setEnabled(enable);
+		fAutoIncludeRequirementsButton.setEnabled(enable);
 		fIncludeOptionalButton.setEnabled(enable);
 		fAddWorkspaceButton.setEnabled(enable);
 		fCounter.setEnabled(enable);

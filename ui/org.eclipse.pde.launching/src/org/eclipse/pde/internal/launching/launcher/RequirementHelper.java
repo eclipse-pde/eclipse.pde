@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 IBM Corporation and others.
+ * Copyright (c) 2010, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,12 +11,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Karsten Thoms (itemis) - Bug 530406
+ *     Hannes Wellmann - Bug 576860 - Specify all launch-type requirements in RequirementHelper
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
@@ -77,6 +79,11 @@ public class RequirementHelper {
 	}
 
 	public static boolean addApplicationLaunchRequirements(Map<IPluginModelBase, String> bundle2startLevel, ILaunchConfiguration configuration) throws CoreException {
+		Consumer<IPluginModelBase> addPlugin = b -> BundleLauncherHelper.addDefaultStartingBundle(bundle2startLevel, b);
+		return addApplicationLaunchRequirements(configuration, bundle2startLevel.keySet(), addPlugin);
+	}
+
+	public static boolean addApplicationLaunchRequirements(ILaunchConfiguration configuration, Set<IPluginModelBase> containedPlugins, Consumer<IPluginModelBase> addPlugin) throws CoreException {
 		boolean isFeatureBasedLaunch = configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false);
 		String pluginResolution = isFeatureBasedLaunch ? configuration.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE) : IPDELauncherConstants.LOCATION_WORKSPACE;
 
@@ -87,9 +94,9 @@ public class RequirementHelper {
 			if (entry != null) {
 				// add required plug-in if not yet already included
 				var allPluginsWithId = Stream.of(entry.getWorkspaceModels(), entry.getExternalModels()).flatMap(Arrays::stream);
-				if (allPluginsWithId.noneMatch(bundle2startLevel::containsKey)) {
+				if (allPluginsWithId.noneMatch(containedPlugins::contains)) {
 					IPluginModelBase plugin = BundleLauncherHelper.getLatestPlugin(requiredBundleId, pluginResolution);
-					BundleLauncherHelper.addDefaultStartingBundle(bundle2startLevel, plugin);
+					addPlugin.accept(plugin);
 				}
 			} else {
 				missingRequirements = true;
