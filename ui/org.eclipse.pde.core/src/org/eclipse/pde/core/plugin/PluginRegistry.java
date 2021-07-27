@@ -222,29 +222,6 @@ public class PluginRegistry {
 	}
 
 	/**
-	 * Returns whether the given model matches the given id, version, and match rule.
-	 *
-	 * @param base match candidate
-	 * @param id id to match
-	 * @param version version to match or <code>null</code>
-	 * @param match version match rule
-	 * @return whether the model is a match
-	 */
-	private static boolean isMatch(IPluginBase base, String id, String version, int match) {
-		// if version is null, then match any version with same ID
-		if (base == null) {
-			return false; // guard against invalid plug-ins
-		}
-		if (base.getId() == null) {
-			return false; // guard against invalid plug-ins
-		}
-		if (version == null) {
-			return base.getId().equals(id);
-		}
-		return VersionUtil.compare(base.getId(), base.getVersion(), id, version, match);
-	}
-
-	/**
 	 * Returns a model matching the given id, version, match rule, and optional
 	 * filter, or <code>null</code> if none.
 	 * <p>
@@ -304,14 +281,19 @@ public class PluginRegistry {
 	 * @since 3.6
 	 */
 	public static IPluginModelBase[] findModels(String id, String version, int match, PluginFilter filter) {
-		IPluginModelBase[] models = PluginRegistry.getAllModels();
+		IPluginModelBase[] models = findModels(id);
 		List<IPluginModelBase> results = new ArrayList<>();
 		for (IPluginModelBase model : models) {
-			if ((filter == null || filter.accept(model)) && isMatch(model.getPluginBase(), id, version, match)) {
+			IPluginBase base = model.getPluginBase();
+			if (base == null || base.getId() == null) {
+				continue; // guard against invalid plug-ins
+			}
+			if ((filter == null || filter.accept(model))
+					&& (version == null || VersionUtil.compare(base.getVersion(), version, match))) {
 				results.add(model);
 			}
 		}
-		return results.toArray(new IPluginModelBase[results.size()]);
+		return results.toArray(IPluginModelBase[]::new);
 	}
 
 	/**
@@ -390,10 +372,10 @@ public class PluginRegistry {
 	 * @since 3.6
 	 */
 	public static IPluginModelBase[] findModels(String id, VersionRange range, PluginFilter filter) {
-		IPluginModelBase[] models = PluginRegistry.getAllModels();
+		IPluginModelBase[] models = findModels(id);
 		List<IPluginModelBase> results = new ArrayList<>();
 		for (IPluginModelBase model : models) {
-			if ((filter == null || filter.accept(model)) && id.equals(model.getPluginBase().getId())) {
+			if (filter == null || filter.accept(model)) {
 				String versionStr = model.getPluginBase().getVersion();
 				Version version = VersionUtil.validateVersion(versionStr).isOK() ? new Version(versionStr) : Version.emptyVersion;
 				if (range == null || range.isIncluded(version)) {
@@ -401,7 +383,15 @@ public class PluginRegistry {
 				}
 			}
 		}
-		return results.toArray(new IPluginModelBase[results.size()]);
+		return results.toArray(IPluginModelBase[]::new);
+	}
+
+	private static IPluginModelBase[] findModels(String id) {
+		ModelEntry entry = PluginRegistry.findEntry(id);
+		if (entry != null) {
+			return entry.hasWorkspaceModels() ? entry.getWorkspaceModels() : entry.getExternalModels();
+		}
+		return new IPluginModelBase[0];
 	}
 
 	/**
