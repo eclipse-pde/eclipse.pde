@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests;
 
+import org.eclipse.pde.core.tests.internal.DependencyManagerTest;
 import org.eclipse.pde.core.tests.internal.classpath.ClasspathResolutionTest;
 import org.eclipse.pde.core.tests.internal.util.PDESchemaHelperTest;
 import org.eclipse.pde.ui.tests.build.properties.AllValidatorTests;
@@ -45,9 +46,10 @@ import org.junit.runners.Suite.SuiteClasses;
 	// ExportBundleTests.class,
 	AllLauncherTests.class, AllLogViewTests.class, ProjectCreationTests.class, BundleRootTests.class,
 	PluginRegistryTestsMinimal.class, ClasspathResolverTest.class, PDESchemaHelperTest.class,
-		DynamicPluginProjectReferencesTest.class,
+	DynamicPluginProjectReferencesTest.class,
 	// ClasspathContributorTest.class
-		ClasspathResolutionTest.class
+	ClasspathResolutionTest.class,
+	DependencyManagerTest.class
 })
 public class AllPDEMinimalTests {
 

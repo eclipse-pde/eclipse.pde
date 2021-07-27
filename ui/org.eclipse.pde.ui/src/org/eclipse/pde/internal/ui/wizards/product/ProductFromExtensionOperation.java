@@ -15,9 +15,9 @@ package org.eclipse.pde.internal.ui.wizards.product;
 
 import java.util.*;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.DependencyManager;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
 
@@ -45,11 +45,11 @@ public class ProductFromExtensionOperation extends BaseProductCreationOperation 
 		if (lastDot == -1)
 			return new String[0];
 
-		Set<IPluginModelBase> plugins = new HashSet<>();
+		List<BundleDescription> plugins = new ArrayList<>();
 		// add plugin declaring product and its pre-reqs
 		IPluginModelBase model = PluginRegistry.findModel(fId.substring(0, lastDot));
 		if (model != null) {
-			plugins.add(model);
+			plugins.add(model.getBundleDescription());
 		}
 
 		// add plugin declaring product application and its pre-reqs
@@ -62,14 +62,13 @@ public class ProductFromExtensionOperation extends BaseProductCreationOperation 
 				if (lastDot != -1) {
 					model = PluginRegistry.findModel(appId.substring(0, lastDot));
 					if (model != null) {
-						plugins.add(model);
+						plugins.add(model.getBundleDescription());
 					}
 				}
 			}
 		}
-		Set<String> bundles = DependencyManager.getDependencies(plugins, new String[0],
-				TargetPlatformHelper.getState(), false, false, Collections.emptySet());
-		return bundles.toArray(String[]::new);
+		Set<BundleDescription> bundles = DependencyManager.findRequirementsClosure(plugins, false);
+		return bundles.stream().map(BundleDescription::getSymbolicName).toArray(String[]::new);
 	}
 
 }

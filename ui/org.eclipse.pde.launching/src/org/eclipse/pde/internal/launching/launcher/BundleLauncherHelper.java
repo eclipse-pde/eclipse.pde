@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -179,13 +179,11 @@ public class BundleLauncherHelper {
 		}
 
 		// Get all required plugins
-		Set<String> additionalIds = DependencyManager.getDependencies(launchPlugins.toArray(), false, null);
-		Iterator<String> it = additionalIds.iterator();
-		while (it.hasNext()) {
-			String id = it.next();
-			ModelEntry modelEntry = PluginRegistry.findEntry(id);
+		Set<BundleDescription> additionalBundles = DependencyManager.getDependencies(launchPlugins, false);
+		for (BundleDescription bundle : additionalBundles) {
+			ModelEntry modelEntry = PluginRegistry.findEntry(bundle.getSymbolicName());
 			if (modelEntry != null) {
-				IPluginModelBase model = findModel(modelEntry, null, defaultPluginResolution);
+				IPluginModelBase model = findModel(modelEntry, bundle.getVersion().toString(), defaultPluginResolution);
 				if (model != null)
 					launchPlugins.add(model);
 			}

@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Bundle with Import-Package
+Bundle-SymbolicName: bundle.requireBundle
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: bundle.requireBundle
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: bundle.a;bundle-version="[1.0.0,2.0.0)"

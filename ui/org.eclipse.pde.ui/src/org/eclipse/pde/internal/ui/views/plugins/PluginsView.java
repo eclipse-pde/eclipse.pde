@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,8 @@ package org.eclipse.pde.internal.ui.views.plugins;
 
 import java.io.*;
 import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IResource;
@@ -32,6 +34,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -638,13 +641,12 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		if (selection.isEmpty())
 			return;
 
-		IPluginModelBase[] models = new IPluginModelBase[selection.size()];
-		System.arraycopy(selection.toArray(), 0, models, 0, selection.size());
-		Set<?> set = DependencyManager.getSelfandDependencies(models, null);
-		Object[] symbolicNames = set.toArray();
+		List<IPluginModelBase> models = Arrays.stream(selection.toArray()).filter(IPluginModelBase.class::isInstance)
+				.map(IPluginModelBase.class::cast).collect(Collectors.toList());
+		Set<BundleDescription> set = DependencyManager.getSelfAndDependencies(models);
 		ArrayList<IPluginModelBase> result = new ArrayList<>(set.size());
-		for (Object symbolicName : symbolicNames) {
-			IPluginModelBase model = PluginRegistry.findModel(symbolicName.toString());
+		for (BundleDescription bundle : set) {
+			IPluginModelBase model = PluginRegistry.findModel(bundle);
 			if (model != null)
 				result.add(model);
 		}

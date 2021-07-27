@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests;
 
+import org.eclipse.pde.core.tests.internal.DependencyManagerTest;
 import org.eclipse.pde.core.tests.internal.classpath.ClasspathResolutionTest;
 import org.eclipse.pde.ui.tests.build.properties.AllValidatorTests;
 import org.eclipse.pde.ui.tests.classpathcontributor.ClasspathContributorTest;
@@ -53,7 +54,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	ClasspathResolverTest.class,
 	ClasspathContributorTest.class,
 	DynamicPluginProjectReferencesTest.class,
-	ClasspathResolutionTest.class
+	ClasspathResolutionTest.class,
+	DependencyManagerTest.class
 })
 public class AllPDETests {
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2020 IBM Corporation and others.
+ * Copyright (c) 2003, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,6 +23,7 @@ import org.eclipse.debug.core.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.*;
@@ -322,8 +323,8 @@ public class LauncherUtils {
 				if (project instanceof IProject) {
 					IPluginModelBase model = PluginRegistry.findModel((IProject) project);
 					if (model != null) {
-						Set<String> plugins = DependencyManager.getSelfAndDependencies(model, null);
-						return plugins.contains("org.eclipse.swt"); //$NON-NLS-1$
+						Set<BundleDescription> plugins = DependencyManager.getSelfAndDependencies(Set.of(model));
+						return plugins.stream().anyMatch(d -> "org.eclipse.swt".equals(d.getSymbolicName())); //$NON-NLS-1$
 					}
 				}
 			}

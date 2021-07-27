@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2019 IBM Corporation and others.
+ * Copyright (c) 2006, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,6 +23,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -285,11 +286,9 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	private void initializePluginsList(ILaunchConfigurationWorkingCopy wc) {
 		Set<String> wsplugins = new HashSet<>();
 		Set<String> explugins = new HashSet<>();
-		Set<?> plugins = DependencyManager.getSelfAndDependencies(fModel, null);
-		Iterator<?> iter = plugins.iterator();
-		while (iter.hasNext()) {
-			String id = iter.next().toString();
-			IPluginModelBase model = PluginRegistry.findModel(id);
+		Set<BundleDescription> plugins = DependencyManager.getSelfAndDependencies(Set.of(fModel));
+		for (BundleDescription plugin : plugins) {
+			IPluginModelBase model = PluginRegistry.findModel(plugin);
 			if (model == null || !model.isEnabled())
 				continue;
 			if (model.getUnderlyingResource() == null) {

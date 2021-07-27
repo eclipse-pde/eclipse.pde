@@ -349,19 +349,18 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		if (plugins.length == 0)
 			return;
 
-		Set<IPluginModelBase> list = Arrays.stream(plugins).map(plugin -> {
+		List<BundleDescription> list = Arrays.stream(plugins).map(plugin -> {
 			String version = VersionUtil.isEmptyVersion(plugin.getVersion()) ? null : plugin.getVersion();
 			return PluginRegistry.findModel(plugin.getId(), version, IMatchRules.PERFECT, null);
-		}).filter(Objects::nonNull).collect(Collectors.toSet());
+		}).filter(Objects::nonNull).map(IPluginModelBase::getBundleDescription).collect(Collectors.toList());
 
-		Set<String> dependencies = DependencyManager.getDependencies(list, new String[0],
-				TargetPlatformHelper.getState(), true, includeOptional, Collections.emptySet());
+		Set<BundleDescription> dependencies = DependencyManager.findRequirementsClosure(list, includeOptional);
 
 		IProduct product = plugins[0].getProduct();
 		IProductModelFactory factory = product.getModel().getFactory();
-		IProductPlugin[] requiredPlugins = dependencies.stream().map(id -> {
+		IProductPlugin[] requiredPlugins = dependencies.stream().map(d -> {
 			IProductPlugin plugin = factory.createPlugin();
-			plugin.setId(id);
+			plugin.setId(d.getSymbolicName());
 			return plugin;
 		}).toArray(IProductPlugin[]::new);
 		product.addPlugins(requiredPlugins);

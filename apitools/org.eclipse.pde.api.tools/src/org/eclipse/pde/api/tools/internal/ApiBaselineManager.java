@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -47,6 +48,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.model.ApiModelCache;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
@@ -634,13 +636,14 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		try {
 			baseline = new WorkspaceBaseline();
 			// populate it with only projects that are API aware
-			Set<String> ids = DependencyManager.getSelfandDependencies(PluginRegistry.getWorkspaceModels(), null);
-			List<IApiComponent> componentsList = new ArrayList<>(ids.size());
-			IApiComponent apiComponent = null;
-			ModelEntry modelEntry = null;
-			for (String id : ids) {
-				modelEntry = PluginRegistry.findEntry(id);
+			List<IPluginModelBase> models = Arrays.asList(PluginRegistry.getWorkspaceModels());
+			Set<BundleDescription> bundles = DependencyManager.getSelfAndDependencies(models);
+			List<IApiComponent> componentsList = new ArrayList<>(bundles.size());
+			for (BundleDescription bundle : bundles) {
+				String id = bundle.getSymbolicName();
+				ModelEntry modelEntry = PluginRegistry.findEntry(id);
 				IPluginModelBase[] workspaceModels = modelEntry.getWorkspaceModels();
+				IApiComponent apiComponent = null;
 				if (workspaceModels.length == 0) {
 					// external model - reexported case
 					IPluginModelBase externalModel = PluginRegistry.findModel(id);

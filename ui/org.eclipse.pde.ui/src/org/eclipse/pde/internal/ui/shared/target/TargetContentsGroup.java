@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2020 IBM Corporation and others.
+ * Copyright (c) 2009, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -733,20 +733,13 @@ public class TargetContentsGroup {
 			}
 
 			// Get implicit dependencies as a list of strings
-			// This is wasteful since the dependency calculation puts them
-			// back into BundleInfos
-			NameVersionDescriptor[] implicitDependencies = fTargetDefinition.getImplicitDependencies();
-			List<String> implicitIDs = new ArrayList<>();
-			if (implicitDependencies != null) {
-				for (NameVersionDescriptor dependency : implicitDependencies) {
-					implicitIDs.add(dependency.getId());
-				}
-			}
+			NameVersionDescriptor[] im = fTargetDefinition.getImplicitDependencies();
+			List<NameVersionDescriptor> implicitDependencies = im != null ? List.of(im) : Collections.emptyList();
 			subMonitor.worked(10);
 
 			// Get all dependency bundles
-			dependencies.addAll(DependencyManager.getDependencies(checkedModels.toArray(),
-					implicitIDs.toArray(new String[implicitIDs.size()]), state.getState(), null));
+			DependencyManager.getDependencies(checkedModels, implicitDependencies, state.getState(), true)
+					.forEach(d -> dependencies.add(d.getSymbolicName()));
 			subMonitor.worked(50);
 		};
 		try {

@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Bundle A
+Bundle-SymbolicName: bundle.a
+Bundle-Version: 2.0.0.qualifier
+Automatic-Module-Name: bundle.a
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Export-Package: bundle.a.pack

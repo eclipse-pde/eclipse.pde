@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,6 +20,7 @@ package org.eclipse.pde.internal.ui.launcher;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.*;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import org.eclipse.core.resources.IProject;
@@ -32,6 +33,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
@@ -783,15 +785,13 @@ public abstract class AbstractPluginBlock {
 	 */
 	protected void addRequiredPlugins() {
 		Object[] checked = fPluginTreeViewer.getCheckedLeafElements();
-		Set<IPluginModelBase> toCheck = Arrays.stream(checked).filter(IPluginModelBase.class::isInstance)
-				.map(IPluginModelBase.class::cast).collect(Collectors.toSet());
+		List<IPluginModelBase> toCheck = Arrays.stream(checked).filter(IPluginModelBase.class::isInstance)
+				.map(IPluginModelBase.class::cast).collect(Collectors.toList());
 
-		Set<String> additionalIds = DependencyManager.getDependencies(toCheck.toArray(),
-				fIncludeOptionalButton.getSelection(), null);
+		boolean includeOptional = fIncludeOptionalButton.getSelection();
+		Set<BundleDescription> additionalBundles = DependencyManager.getDependencies(toCheck, includeOptional);
 
-		additionalIds.stream().map(org.eclipse.pde.core.plugin.PluginRegistry::findEntry)
-				.filter(Objects::nonNull).map(org.eclipse.pde.core.plugin.ModelEntry::getModel)
-				.forEach(model -> toCheck.add(model));
+		additionalBundles.stream().map(PluginRegistry::findModel).filter(Objects::nonNull).forEach(toCheck::add);
 
 		checked = toCheck.toArray();
 		setCheckedElements(checked);
