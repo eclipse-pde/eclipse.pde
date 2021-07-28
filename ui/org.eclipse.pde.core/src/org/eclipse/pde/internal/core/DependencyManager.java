@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2018 IBM Corporation and others.
+ *  Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -159,7 +159,7 @@ public class DependencyManager {
 	 *            from the dependency resolution
 	 * @return a set of bundle IDs
 	 */
-	private static Set<String> getDependencies(Set<IPluginModelBase> selected, String[] implicit, State state,
+	public static Set<String> getDependencies(Set<IPluginModelBase> selected, String[] implicit, State state,
 			boolean removeSelf,
 			boolean includeOptional, Set<String> excludeFragments) {
 		Set<String> bundleIds = new TreeSet<>();

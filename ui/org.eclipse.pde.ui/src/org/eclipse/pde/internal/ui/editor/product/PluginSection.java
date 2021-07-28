@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,6 +22,7 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
@@ -31,18 +32,17 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.parts.TablePart;
-import org.eclipse.pde.internal.ui.search.dependencies.DependencyCalculator;
 import org.eclipse.pde.internal.ui.util.PersistablePluginObject;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewFragmentProjectWizard;
@@ -349,34 +349,21 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		if (plugins.length == 0)
 			return;
 
-		ArrayList<BundleDescription> list = new ArrayList<>(plugins.length);
-		for (IProductPlugin plugin : plugins) {
-			list.add(TargetPlatformHelper.getState().getBundle(plugin.getId(), null));
-		}
-		DependencyCalculator calculator = new DependencyCalculator(includeOptional);
-		calculator.findDependencies(list.toArray());
+		Set<IPluginModelBase> list = Arrays.stream(plugins).map(plugin -> {
+			String version = VersionUtil.isEmptyVersion(plugin.getVersion()) ? null : plugin.getVersion();
+			return PluginRegistry.findModel(plugin.getId(), version, IMatchRules.PERFECT, null);
+		}).filter(Objects::nonNull).collect(Collectors.toSet());
 
-		BundleDescription[] bundles = TargetPlatformHelper.getState().getBundles();
-		for (BundleDescription bundle : bundles) {
-			HostSpecification host = bundle.getHost();
-			if (host != null && calculator.containsPluginId(host.getName())) {
-				calculator.findDependency(bundle);
-			}
-		}
-
-		Collection<?> dependencies = calculator.getBundleIDs();
+		Set<String> dependencies = DependencyManager.getDependencies(list, new String[0],
+				TargetPlatformHelper.getState(), true, includeOptional, Collections.emptySet());
 
 		IProduct product = plugins[0].getProduct();
 		IProductModelFactory factory = product.getModel().getFactory();
-		IProductPlugin[] requiredPlugins = new IProductPlugin[dependencies.size()];
-		int i = 0;
-		Iterator<?> iter = dependencies.iterator();
-		while (iter.hasNext()) {
-			String id = iter.next().toString();
+		IProductPlugin[] requiredPlugins = dependencies.stream().map(id -> {
 			IProductPlugin plugin = factory.createPlugin();
 			plugin.setId(id);
-			requiredPlugins[i++] = plugin;
-		}
+			return plugin;
+		}).toArray(IProductPlugin[]::new);
 		product.addPlugins(requiredPlugins);
 	}
 

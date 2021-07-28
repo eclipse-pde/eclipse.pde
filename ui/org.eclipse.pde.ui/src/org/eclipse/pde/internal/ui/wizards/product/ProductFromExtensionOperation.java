@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -13,12 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
-import java.util.Set;
+import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.DependencyManager;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
-import org.eclipse.pde.internal.ui.search.dependencies.DependencyCalculator;
 
 public class ProductFromExtensionOperation extends BaseProductCreationOperation {
 
@@ -44,11 +45,12 @@ public class ProductFromExtensionOperation extends BaseProductCreationOperation 
 		if (lastDot == -1)
 			return new String[0];
 
-		DependencyCalculator calculator = new DependencyCalculator(false);
+		Set<IPluginModelBase> plugins = new HashSet<>();
 		// add plugin declaring product and its pre-reqs
 		IPluginModelBase model = PluginRegistry.findModel(fId.substring(0, lastDot));
-		if (model != null)
-			calculator.findDependency(model);
+		if (model != null) {
+			plugins.add(model);
+		}
 
 		// add plugin declaring product application and its pre-reqs
 		IPluginElement element = getProductExtension(fId);
@@ -60,13 +62,14 @@ public class ProductFromExtensionOperation extends BaseProductCreationOperation 
 				if (lastDot != -1) {
 					model = PluginRegistry.findModel(appId.substring(0, lastDot));
 					if (model != null) {
-						calculator.findDependency(model);
+						plugins.add(model);
 					}
 				}
 			}
 		}
-		Set<?> ids = calculator.getBundleIDs();
-		return ids.toArray(new String[ids.size()]);
+		Set<String> bundles = DependencyManager.getDependencies(plugins, new String[0],
+				TargetPlatformHelper.getState(), false, false, Collections.emptySet());
+		return bundles.toArray(String[]::new);
 	}
 
 }
