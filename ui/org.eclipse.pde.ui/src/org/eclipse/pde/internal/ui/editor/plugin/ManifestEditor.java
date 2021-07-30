@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -23,9 +23,11 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.service.resolver.BaseDescription;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IIdentifiable;
 import org.eclipse.pde.core.build.*;
@@ -180,11 +182,17 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			manifestFile = file;
 			buildFile = container.getFile(ICoreConstants.BUILD_PROPERTIES_PATH);
 			pluginFile = createPluginFile(container);
-		} else if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
+		} else if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)
+				|| name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
 			pluginFile = file;
 			fragment = name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
 			buildFile = container.getFile(ICoreConstants.BUILD_PROPERTIES_PATH);
 			manifestFile = container.getFile(ICoreConstants.MANIFEST_PATH);
+		}
+		if (manifestFile == null) {
+			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OpenPluginManifestsAction_title,
+					NLS.bind(PDEUIMessages.OpenManifestsAction_cannotOpenThisFile, name));
+			return;
 		}
 		if (manifestFile.exists()) {
 			IEditorInput in = new FileEditorInput(manifestFile);
