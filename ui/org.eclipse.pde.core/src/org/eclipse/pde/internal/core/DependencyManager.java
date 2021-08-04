@@ -34,7 +34,6 @@ import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.service.resolver.VersionConstraint;
-import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -170,17 +169,6 @@ public class DependencyManager {
 		// Also consider plugin extensions and their dependencies.
 		for (IPluginModelBase model : selected) {
 			addBundleAndDependencies(model.getBundleDescription(), bundleIds, includeOptional, excludeFragments);
-			IPluginExtension[] extensions = model.getPluginBase().getExtensions();
-			for (IPluginExtension extension : extensions) {
-				String point = extension.getPoint();
-				if (point != null) {
-					int dot = point.lastIndexOf('.');
-					if (dot != -1) {
-						String id = point.substring(0, dot);
-						addBundleAndDependencies(state.getBundle(id, null), bundleIds, includeOptional, excludeFragments);
-					}
-				}
-			}
 		}
 
 		for (String element : implicit) {
