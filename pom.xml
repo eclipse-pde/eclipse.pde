@@ -24,7 +24,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/pde/eclipse.pde.build.git</tycho.scmUrl>
+    <tycho.scmUrl>scm:git:https://git.eclipse.org/r/pde/eclipse.pde.build.git</tycho.scmUrl>
     <defaultSigning-excludeInnerJars>true</defaultSigning-excludeInnerJars>
   </properties>
 
