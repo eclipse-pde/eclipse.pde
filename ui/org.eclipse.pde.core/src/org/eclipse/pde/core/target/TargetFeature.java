@@ -22,13 +22,11 @@ import java.util.List;
 import java.util.Objects;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
@@ -164,8 +162,7 @@ public class TargetFeature {
 	 */
 	private static IFeatureModel loadModel(File file) throws CoreException {
 		if (file == null || !file.exists()) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
-					NLS.bind(Messages.TargetFeature_FileDoesNotExist, file)));
+			throw new CoreException(Status.error(NLS.bind(Messages.TargetFeature_FileDoesNotExist, file)));
 		}
 		File featureXML;
 		if (ICoreConstants.FEATURE_FILENAME_DESCRIPTOR.equalsIgnoreCase(file.getName())) {
@@ -173,8 +170,7 @@ public class TargetFeature {
 		} else {
 			featureXML = new File(file, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 			if (!featureXML.exists()) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
-						NLS.bind(Messages.TargetFeature_FileDoesNotExist, featureXML)));
+				throw new CoreException(Status.error(NLS.bind(Messages.TargetFeature_FileDoesNotExist, featureXML)));
 			}
 		}
 		return ExternalFeatureModelManager.createModel(featureXML);

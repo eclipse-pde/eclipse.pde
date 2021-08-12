@@ -69,10 +69,6 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	private static final String ELCL = ICONS_PATH + "elcl16/"; //basic colors - size 16x16 //$NON-NLS-1$
 
 	/**
-	 * Status code indicating an unexpected internal error.
-	 */
-	public static final int INTERNAL_ERROR = 120;
-	/**
 	 * Relative path to object model icons.
 	 */
 	private final static String OBJECT = ICONS_PATH + "obj16/"; //basic colors - size 16x16 //$NON-NLS-1$
@@ -236,7 +232,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 	 * @return a new error status
 	 */
 	public static IStatus newErrorStatus(String message, Throwable exception) {
-		return new Status(IStatus.ERROR, getPluginIdentifier(), INTERNAL_ERROR, message, exception);
+		return Status.error(message, exception);
 	}
 
 	private ISessionListener sessionListener = new ISessionListener() {

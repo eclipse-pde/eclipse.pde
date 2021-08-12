@@ -54,7 +54,6 @@ import org.eclipse.pde.api.tools.internal.search.UseReportConverter;
 import org.eclipse.pde.api.tools.internal.search.UseSearchRequestor;
 import org.eclipse.pde.api.tools.internal.search.XmlSearchReporter;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.core.target.ITargetPlatformService;
@@ -205,7 +204,7 @@ public class ApiUseScanJob extends Job {
 	 * @throws CoreException
 	 */
 	void abort(String message) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, ApiUIPlugin.PLUGIN_ID, message));
+		throw new CoreException(Status.error(message));
 	}
 
 	/**

@@ -142,7 +142,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	 * @param message message to add to the error log
 	 */
 	public static void log(String message) {
-		log(new Status(IStatus.ERROR, getPluginId(), message));
+		log(Status.error(message));
 	}
 
 	public static void logException(Throwable e, final String title, String message) {
@@ -164,7 +164,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 			if (message == null) {
 				message = e.toString();
 			}
-			status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
+			status = Status.error(message, e);
 		}
 		getDefault().getLog().log(status);
 		Display display = SWTUtil.getStandardDisplay();
@@ -189,7 +189,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 			}
 		}
 		if (status == null) {
-			status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, e.getMessage(), e);
+			status = Status.error(e.getMessage(), e);
 		}
 		log(status);
 	}

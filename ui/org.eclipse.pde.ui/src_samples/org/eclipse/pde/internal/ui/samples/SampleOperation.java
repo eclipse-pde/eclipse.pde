@@ -23,7 +23,8 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
@@ -99,9 +100,7 @@ public class SampleOperation implements IRunnableWithProgress {
 	}
 
 	private void throwCoreException(InvocationTargetException e) throws CoreException {
-		Throwable t = e.getCause();
-		Status status = new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.OK, e.getMessage(), t);
-		throw new CoreException(status);
+		throw new CoreException(Status.error(e.getMessage(), e.getCause()));
 	}
 
 	private IFile importProject(String name, IConfigurationElement config, IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
@@ -193,9 +192,7 @@ public class SampleOperation implements IRunnableWithProgress {
 			URL starterURL = FileLocator.resolve(bundle.getEntry(pluginRelativePath));
 			return new ZipFile(FileLocator.toFileURL(starterURL).getFile());
 		} catch (IOException e) {
-			String message = pluginRelativePath + ": " + e.getMessage(); //$NON-NLS-1$
-			Status status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, message, e);
-			throw new CoreException(status);
+			throw new CoreException(Status.error(pluginRelativePath + ": " + e.getMessage(), e)); //$NON-NLS-1$
 		}
 	}
 

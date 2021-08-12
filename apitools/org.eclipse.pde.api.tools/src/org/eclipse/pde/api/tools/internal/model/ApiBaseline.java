@@ -171,7 +171,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	public ApiBaseline(String name) {
 		super(null, IApiElement.BASELINE, name);
 		fAutoResolve = true;
-		fEEStatus = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_0);
+		fEEStatus = Status.error(CoreMessages.ApiBaseline_0);
 	}
 
 	/**
@@ -200,9 +200,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		if (eeDescription != null) {
 			fAutoResolve = false;
 			ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(eeDescription);
-			String profile = ee.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL);
 			initialize(ee);
-			fEEStatus = new Status(IStatus.OK, ApiPlugin.PLUGIN_ID, MessageFormat.format(CoreMessages.ApiBaseline_1, profile));
+			fEEStatus = Status.OK_STATUS;
 		}
 		this.fLocation = location;
 	}
@@ -491,13 +490,13 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 							ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
 							initialize(ee);
 						} catch (CoreException | IOException e) {
-							error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_2, e);
+							error = Status.error(CoreMessages.ApiBaseline_2, e);
 						}
 					}
 				}
 			} else {
 				// no VMs match any required EE
-				error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_6);
+				error = Status.error(CoreMessages.ApiBaseline_6);
 			}
 			if (error == null) {
 				// build status for unbound required EE's
@@ -508,11 +507,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 				}
 				missing.removeAll(covered);
 				if (missing.isEmpty()) {
-					fEEStatus = new Status(IStatus.OK, ApiPlugin.PLUGIN_ID, MessageFormat.format(CoreMessages.ApiBaseline_1, systemEE));
+					fEEStatus = Status.OK_STATUS;
 				} else {
 					MultiStatus multi = new MultiStatus(ApiPlugin.PLUGIN_ID, 0, CoreMessages.ApiBaseline_4, null);
 					for (String id : missing) {
-						multi.add(new Status(IStatus.WARNING, ApiPlugin.PLUGIN_ID, MessageFormat.format(CoreMessages.ApiBaseline_5, id)));
+						multi.add(Status.warning(MessageFormat.format(CoreMessages.ApiBaseline_5, id)));
 					}
 					fEEStatus = multi;
 				}

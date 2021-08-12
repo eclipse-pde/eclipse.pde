@@ -63,8 +63,12 @@ public class TargetBundle {
 	public static final int STATUS_VERSION_DOES_NOT_EXIST = 101;
 
 	/**
-	 * Status code indicating that a bundle's manifest could not be read, or did not exist.
+	 * Status code indicating that a bundle's manifest could not be read, or did
+	 * not exist.
+	 *
+	 * @deprecated not used anymore
 	 */
+	@Deprecated(forRemoval = true)
 	public static final int STATUS_INVALID_MANIFEST = 102;
 
 	protected BundleInfo fInfo;
@@ -162,7 +166,7 @@ public class TargetBundle {
 	 */
 	private void initialize(File file) throws CoreException {
 		if (file == null || !file.exists()) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetFeature_FileDoesNotExist, file)));
+			throw new CoreException(Status.error(NLS.bind(Messages.TargetFeature_FileDoesNotExist, file)));
 		}
 		Map<String, String> manifest = ManifestUtils.loadManifest(file);
 		try {
@@ -188,7 +192,7 @@ public class TargetBundle {
 			}
 			fIsFragment = manifest.containsKey(Constants.FRAGMENT_HOST);
 		} catch (BundleException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, STATUS_INVALID_MANIFEST, NLS.bind(Messages.TargetBundle_ErrorReadingManifest, file.getAbsolutePath()), e));
+			throw new CoreException(Status.error(NLS.bind(Messages.TargetBundle_ErrorReadingManifest, file.getAbsolutePath()), e));
 		}
 	}
 

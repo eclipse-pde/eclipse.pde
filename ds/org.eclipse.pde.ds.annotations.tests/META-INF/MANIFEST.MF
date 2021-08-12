@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: DS Annotations Tests
 Bundle-SymbolicName: org.eclipse.pde.ds.annotations.tests
-Bundle-Version: 1.2.0.qualifier
+Bundle-Version: 1.2.100.qualifier
 Bundle-Activator: org.eclipse.pde.ds.internal.annotations.tests.Activator
 Bundle-Vendor: Eclipse.org
 Bundle-RequiredExecutionEnvironment: JavaSE-11

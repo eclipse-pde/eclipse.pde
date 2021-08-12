@@ -21,7 +21,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.ManifestElement;
@@ -116,7 +115,7 @@ public class BundleManifestSourceLocationManager {
 						try {
 							version = new Version(versionEntry);
 						} catch (IllegalArgumentException e) {
-							PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, pluginName, pluginVersion), e));
+							PDECore.log(Status.error(NLS.bind(PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, pluginName, pluginVersion), e));
 						}
 						if (pluginVersion.equals(version)) {
 							addSourceRoots(currentElement.getDirective("roots"), pluginSourceRoots); //$NON-NLS-1$
@@ -168,7 +167,7 @@ public class BundleManifestSourceLocationManager {
 					try {
 						return ManifestElement.parseHeader(ICoreConstants.ECLIPSE_SOURCE_BUNDLE, bundleSourceEntry);
 					} catch (BundleException e) {
-						PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, pluginName, pluginVersion), e));
+						PDECore.log(Status.error(NLS.bind(PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, pluginName, pluginVersion), e));
 					}
 				}
 			}
@@ -206,7 +205,7 @@ public class BundleManifestSourceLocationManager {
 					try {
 						manifestElements = ManifestElement.parseHeader(ICoreConstants.ECLIPSE_SOURCE_BUNDLE, bundleSourceEntry);
 					} catch (BundleException e) {
-						PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, currentPlugin.getId(), currentPlugin.getVersion()), e));
+						PDECore.log(Status.error(NLS.bind(PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, currentPlugin.getId(), currentPlugin.getVersion()), e));
 					}
 					if (manifestElements != null) {
 						IPath path = new Path(model.getInstallLocation());
@@ -220,12 +219,12 @@ public class BundleManifestSourceLocationManager {
 									try {
 										version = new Version(versionEntry);
 									} catch (IllegalArgumentException e) {
-										PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, new Object[] {currentPlugin.getName(), versionEntry, path.toString()}), e));
+										PDECore.log(Status.error(NLS.bind(PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, new Object[] {currentPlugin.getName(), versionEntry, path.toString()}), e));
 
 									}
 									fPluginToSourceBundle.put(new SourceLocationKey(binaryPluginName, version), model);
 								} else {
-									PDECore.log(new Status(IStatus.WARNING, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.BundleManifestSourceLocationManager_problemProcessBundleManifestHeaderAttributeMissing, currentPlugin.getName())));
+									PDECore.log(Status.warning(NLS.bind(PDECoreMessages.BundleManifestSourceLocationManager_problemProcessBundleManifestHeaderAttributeMissing, currentPlugin.getName())));
 								}
 							}
 						}

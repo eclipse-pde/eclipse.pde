@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.io.File;
@@ -29,6 +27,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.FileNameFilter;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -133,10 +132,10 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 		dialog.setTitle(PDEUIMessages.ConfigurationTab_fileSelection);
 		dialog.setMessage(PDEUIMessages.ConfigurationTab_fileDialogMessage);
 		dialog.setValidator(selection -> {
-			if (selection.length > 0 && selection[0] instanceof IFile)
-				return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
-
-			return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, "", null); //$NON-NLS-1$
+			if (selection.length > 0 && selection[0] instanceof IFile) {
+				return Status.OK_STATUS;
+			}
+			return Status.error(""); //$NON-NLS-1$
 		});
 		if (dialog.open() == Window.OK) {
 			file = (IFile) dialog.getFirstResult();

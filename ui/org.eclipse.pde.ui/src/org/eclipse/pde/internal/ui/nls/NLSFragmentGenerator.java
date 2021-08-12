@@ -455,9 +455,8 @@ public class NLSFragmentGenerator {
 		}
 		}
 		catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(),
-					MessageFormat.format("IOException while processing: {0}", fragmentProject.getName()), //$NON-NLS-1$
-					null));
+			throw new CoreException(
+					Status.error(MessageFormat.format("IOException while processing: {0}", fragmentProject.getName()))); //$NON-NLS-1$
 		}
 	}
 

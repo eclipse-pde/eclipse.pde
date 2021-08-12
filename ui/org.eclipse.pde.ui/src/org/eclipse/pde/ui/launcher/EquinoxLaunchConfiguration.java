@@ -169,7 +169,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 				fAllBundles.put(IPDEBuildConstants.BUNDLE_OSGI, model);
 			} else {
 				String message = PDEMessages.EquinoxLaunchConfiguration_oldTarget;
-				throw new CoreException(LauncherUtils.createErrorStatus(message));
+				throw new CoreException(Status.error((String) message));
 			}
 		}
 		super.preLaunchCheck(configuration, launch, monitor);

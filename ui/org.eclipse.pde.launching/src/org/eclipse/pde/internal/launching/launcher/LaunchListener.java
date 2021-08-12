@@ -78,7 +78,7 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 			copy.setAttribute(IPDEConstants.RESTART, true);
 			copy.launch(launch.getLaunchMode(), new NullProgressMonitor());
 		} catch (CoreException e) {
-			Status status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, 42, null, e);
+			IStatus status = Status.error(null, e);
 			IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
 			if (statusHandler == null)
 				PDELaunchingPlugin.log(e);
@@ -139,7 +139,7 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 			}
 			// launch failed for reasons printed to the log.
 			if (returnValue == 13) {
-				Status status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, returnValue, PDEMessages.Launcher_error_code13, null);
+				IStatus status = Status.error(PDEMessages.Launcher_error_code13);
 				IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
 				if (statusHandler == null)
 					PDELaunchingPlugin.log(status);

@@ -219,7 +219,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		String[] classpath = LaunchArgumentsHelper.constructClasspath(configuration);
 		if (classpath == null) {
 			String message = PDEMessages.WorkbenchLauncherConfigurationDelegate_noStartup;
-			throw new CoreException(LauncherUtils.createErrorStatus(message));
+			throw new CoreException(Status.error(message));
 		}
 		return classpath;
 	}

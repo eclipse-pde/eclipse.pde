@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
 import org.eclipse.osgi.util.NLS;
@@ -174,8 +173,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 
 	private static IApiType logAndReturn(IApiTypeRoot file, Exception e) {
 		if (ApiPlugin.DEBUG_BUILDER) {
-			IStatus status = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, NLS.bind(Messages.TypeStructureBuilder_badClassFileEncountered, file.getTypeName()), e);
-			ApiPlugin.log(status);
+			ApiPlugin.log(Status.error(NLS.bind(Messages.TypeStructureBuilder_badClassFileEncountered, file.getTypeName()), e));
 		}
 		return null;
 	}

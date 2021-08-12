@@ -172,9 +172,9 @@ public class TargetPlatformService implements ITargetPlatformService {
 				}
 			}
 		} catch (URISyntaxException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.TargetPlatformService_0, e));
+			throw new CoreException(Status.error(Messages.TargetPlatformService_0, e));
 		}
-		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.TargetPlatformService_1, null));
+		throw new CoreException(Status.error(Messages.TargetPlatformService_1, null));
 	}
 
 	@Override
@@ -414,7 +414,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	public void loadTargetDefinition(ITargetDefinition definition, String targetExtensionId) throws CoreException {
 		IConfigurationElement elem = PDECore.getDefault().getTargetProfileManager().getTarget(targetExtensionId);
 		if (elem == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetPlatformService_2, targetExtensionId)));
+			throw new CoreException(Status.error(NLS.bind(Messages.TargetPlatformService_2, targetExtensionId)));
 		}
 		String path = elem.getAttribute("definition"); //$NON-NLS-1$
 		String symbolicName = elem.getDeclaringExtension().getContributor().getName();
@@ -423,11 +423,10 @@ public class TargetPlatformService implements ITargetPlatformService {
 			try {
 				((TargetDefinition) definition).setContents(new BufferedInputStream(url.openStream()));
 			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
-						NLS.bind(Messages.TargetPlatformService_3, path), e));
+				throw new CoreException(Status.error(NLS.bind(Messages.TargetPlatformService_3, path), e));
 			}
 		} else {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetPlatformService_4, path)));
+			throw new CoreException(Status.error(NLS.bind(Messages.TargetPlatformService_4, path)));
 		}
 	}
 

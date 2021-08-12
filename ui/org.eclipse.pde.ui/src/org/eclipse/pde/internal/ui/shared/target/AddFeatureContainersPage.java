@@ -261,11 +261,11 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 		try (InputStream stream = new BufferedInputStream(new FileInputStream(manifest));) {
 			model.load(stream, false);
 			if (!model.isValid()) {
-				status = new Status(IStatus.WARNING, IPDEUIConstants.PLUGIN_ID, IStatus.OK, NLS.bind(Messages.FeatureImportWizardPage_importHasInvalid, dir), null);
+				status = Status.warning(NLS.bind(Messages.FeatureImportWizardPage_importHasInvalid, dir), null);
 			}
 		} catch (Exception e) {
 			// Errors in the file
-			status = new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.OK, e.getMessage(), e);
+			status = Status.error(e.getMessage(), e);
 		}
 		if (status == null)
 			result.add(model);

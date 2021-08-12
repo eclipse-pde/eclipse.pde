@@ -667,7 +667,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		List<IPluginModelBase> targetBundles = new ArrayList<>();
 
 		if (allTargetBundles == null || allTargetBundles.length == 0) {
-			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
+			throw new CoreException(Status.warning(PDEUIMessages.ImplicitDependenciesSection_0));
 		}
 		for (TargetBundle targetBundle : allTargetBundles) {
 			BundleInfo bundleInfo = targetBundle.getBundleInfo();
@@ -700,7 +700,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		List<BundleInfo> targetBundles = new ArrayList<>();
 		TargetBundle[] allTargetBundles = getTargetDefinition().getAllBundles();
 		if (allTargetBundles == null || allTargetBundles.length == 0) {
-			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
+			throw new CoreException(Status.warning(PDEUIMessages.ImplicitDependenciesSection_0));
 		}
 
 		for (TargetBundle targetBundle : allTargetBundles) {

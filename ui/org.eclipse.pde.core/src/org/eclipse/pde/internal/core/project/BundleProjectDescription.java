@@ -27,7 +27,6 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -169,7 +168,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 				try {
 					return ManifestElement.parseHeader(key, value);
 				} catch (BundleException e) {
-					throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage(), e));
+					throw new CoreException(Status.error(e.getMessage(), e));
 				}
 			}
 			// empty header
@@ -208,7 +207,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 				headers = ManifestElement.parseBundleManifest(manifest.getContents(), null);
 				fReadHeaders = headers;
 			} catch (IOException | BundleException e) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage(), e));
+				throw new CoreException(Status.error(e.getMessage(), e));
 			}
 			setActivator(getHeaderValue(headers, Constants.BUNDLE_ACTIVATOR));
 			setBundleName(getHeaderValue(headers, Constants.BUNDLE_NAME));

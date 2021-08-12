@@ -75,7 +75,7 @@ public class AllDSAnnotationsTests {
 							projectFile.renameTo(projectLocation.resolve(".project").toFile());
 						}
 					} catch (IOException e) {
-						throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error copying test project content.", e));
+						throw new CoreException(Status.error("Error copying test project content.", e));
 					}
 
 					project.create(monitor);

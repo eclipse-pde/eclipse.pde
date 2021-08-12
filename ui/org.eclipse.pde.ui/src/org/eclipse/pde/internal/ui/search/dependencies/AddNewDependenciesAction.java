@@ -65,7 +65,7 @@ public class AddNewDependenciesAction extends Action {
 				} finally {
 					monitor.done();
 				}
-				return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+				return Status.OK_STATUS;
 			}
 		};
 		job.setUser(true);

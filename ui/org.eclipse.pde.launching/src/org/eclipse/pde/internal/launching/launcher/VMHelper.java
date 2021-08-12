@@ -164,9 +164,9 @@ public class VMHelper {
 				String id = JavaRuntime.getExecutionEnvironmentId(jrePath);
 				if (id == null) {
 					String name = JavaRuntime.getVMInstallName(jrePath);
-					throw new CoreException(LauncherUtils.createErrorStatus(NLS.bind(PDEMessages.WorkbenchLauncherConfigurationDelegate_noJRE, name)));
+					throw new CoreException(Status.error(NLS.bind(PDEMessages.WorkbenchLauncherConfigurationDelegate_noJRE, name)));
 				}
-				throw new CoreException(LauncherUtils.createErrorStatus(NLS.bind(PDEMessages.VMHelper_cannotFindExecEnv, id)));
+				throw new CoreException(Status.error(NLS.bind(PDEMessages.VMHelper_cannotFindExecEnv, id)));
 			}
 			return vm;
 		}
@@ -192,7 +192,7 @@ public class VMHelper {
 		}
 
 		// No valid vm available, throw exception
-		throw new CoreException(LauncherUtils.createErrorStatus(NLS.bind(PDEMessages.WorkbenchLauncherConfigurationDelegate_noJRE, defaultVMName)));
+		throw new CoreException(Status.error(NLS.bind(PDEMessages.WorkbenchLauncherConfigurationDelegate_noJRE, defaultVMName)));
 
 	}
 
@@ -210,7 +210,7 @@ public class VMHelper {
 	public static IVMInstall createLauncher(ILaunchConfiguration configuration) throws CoreException {
 		IVMInstall launcher = getVMInstall(configuration);
 		if (!launcher.getInstallLocation().exists())
-			throw new CoreException(LauncherUtils.createErrorStatus(PDEMessages.WorkbenchLauncherConfigurationDelegate_jrePathNotFound));
+			throw new CoreException(Status.error(PDEMessages.WorkbenchLauncherConfigurationDelegate_jrePathNotFound));
 		return launcher;
 	}
 

@@ -121,13 +121,13 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		}
 		IStatus status = null;
 		if (e instanceof CoreException || e.getMessage() != null) {
-			status = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, e.getMessage(), e);
+			status = Status.error(e.getMessage(), e);
 		}
 		log(status);
 	}
 
 	public static void logErrorMessage(String message) {
-		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, message, null));
+		log(Status.error(message));
 	}
 
 	public static void logException(Throwable e) {
@@ -140,7 +140,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		}
 		IStatus status = null;
 		if (e instanceof CoreException) {
-			status = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, e);
+			status = Status.error(message, e);
 		} else {
 			if (message == null) {
 				message = e.getMessage();
@@ -148,7 +148,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 			if (message == null) {
 				message = e.toString();
 			}
-			status = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, e);
+			status = Status.error(message, e);
 		}
 		log(status);
 	}

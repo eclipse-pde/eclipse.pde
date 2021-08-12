@@ -287,7 +287,7 @@ public final class ApiSearchEngine {
 					if (mstatus == null) {
 						mstatus = new MultiStatus(ApiPlugin.PLUGIN_ID, IStatus.ERROR, null, null);
 					}
-					mstatus.add(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ce.getMessage(), ce));
+					mstatus.add(Status.error(ce.getMessage(), ce));
 				}
 			}
 			if (ApiPlugin.DEBUG_SEARCH_ENGINE) {

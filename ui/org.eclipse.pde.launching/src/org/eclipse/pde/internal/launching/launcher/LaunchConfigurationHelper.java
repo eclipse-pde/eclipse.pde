@@ -28,7 +28,6 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.launching.IPDEConstants;
-import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 
 /**
@@ -277,7 +276,7 @@ public class LaunchConfigurationHelper {
 			} catch (Exception e) {
 				String message = e.getMessage();
 				if (message != null)
-					throw new CoreException(new Status(IStatus.ERROR, PDELaunchingPlugin.getPluginId(), IStatus.ERROR, message, e));
+					throw new CoreException(Status.error(message, e));
 			}
 		}
 		return properties;

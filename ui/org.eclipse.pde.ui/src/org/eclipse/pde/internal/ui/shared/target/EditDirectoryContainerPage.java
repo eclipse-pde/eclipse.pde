@@ -348,7 +348,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 		if (fTargetService == null) {
 			fTargetService = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 			if (fTargetService == null) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.AddDirectoryContainerPage_9));
+				throw new CoreException(Status.error(Messages.AddDirectoryContainerPage_9));
 			}
 		}
 		return fTargetService;

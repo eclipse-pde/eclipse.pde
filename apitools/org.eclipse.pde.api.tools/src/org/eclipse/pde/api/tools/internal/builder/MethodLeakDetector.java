@@ -17,7 +17,6 @@ import java.text.MessageFormat;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IType;
@@ -100,7 +99,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 					String typeName = type.getName();
 					if (typeName != null) {
 						if (!typeName.startsWith("javax.")) { //$NON-NLS-1$
-							ApiPlugin.log(new Status(IStatus.INFO, ApiPlugin.PLUGIN_ID, MessageFormat.format(BuilderMessages.AbstractTypeLeakDetector_vis_type_has_no_api_description, typeName)));
+							ApiPlugin.log(Status.info(MessageFormat.format(BuilderMessages.AbstractTypeLeakDetector_vis_type_has_no_api_description, typeName)));
 						}
 					}
 				} else {

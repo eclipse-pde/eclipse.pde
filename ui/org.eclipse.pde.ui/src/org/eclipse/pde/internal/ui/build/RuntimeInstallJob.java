@@ -37,7 +37,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
@@ -95,17 +94,16 @@ public class RuntimeInstallJob extends Job {
 
 			IProfileRegistry profileRegistry = (IProfileRegistry) session.getProvisioningAgent().getService(IProfileRegistry.SERVICE_NAME);
 			if (profileRegistry == null) {
-				return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), PDEUIMessages.RuntimeInstallJob_ErrorCouldntOpenProfile);
+				return Status.error(PDEUIMessages.RuntimeInstallJob_ErrorCouldntOpenProfile);
 			}
 			IProfile profile = profileRegistry.getProfile(IProfileRegistry.SELF);
 			if (profile == null) {
-				return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), PDEUIMessages.RuntimeInstallJob_ErrorCouldntOpenProfile);
+				return Status.error(PDEUIMessages.RuntimeInstallJob_ErrorCouldntOpenProfile);
 			}
 
 			List<IInstallableUnit> toInstall = new ArrayList<>();
 			for (Object item : fInfo.items) {
-				subMonitor.subTask(
-						NLS.bind(PDEUIMessages.RuntimeInstallJob_Creating_installable_unit, item.toString()));
+				subMonitor.subTask(NLS.bind(PDEUIMessages.RuntimeInstallJob_Creating_installable_unit, item));
 
 				//Get the installable unit from the repo
 				String id = null;
@@ -119,7 +117,7 @@ public class RuntimeInstallJob extends Job {
 				}
 
 				if (id == null && version == null) {
-					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotGetIdOrVersion, item.toString()));
+					return Status.error(NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotGetIdOrVersion, item));
 				}
 
 				// Use the same qualifier replacement as the export operation used
@@ -129,7 +127,7 @@ public class RuntimeInstallJob extends Job {
 				Version newVersion = Version.parseVersion(version);
 				IQueryResult<?> queryMatches = metaRepo.query(QueryUtil.createIUQuery(id, newVersion), monitor);
 				if (queryMatches.isEmpty()) {
-					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotFindUnitInRepo, new String[] {id, version}));
+					return Status.error(NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotFindUnitInRepo, id, version));
 				}
 
 				IInstallableUnit iuToInstall = (IInstallableUnit) queryMatches.iterator().next();

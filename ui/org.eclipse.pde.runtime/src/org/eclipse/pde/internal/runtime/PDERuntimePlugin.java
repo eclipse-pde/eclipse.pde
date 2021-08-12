@@ -120,7 +120,7 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 		if (e instanceof CoreException) {
 			status = ((CoreException) e).getStatus();
 		} else if (e.getMessage() != null) {
-			status = new Status(IStatus.ERROR, ID, IStatus.OK, e.getMessage(), e);
+			status = Status.error(e.getMessage(), e);
 		}
 		if (status != null)
 			getDefault().getLog().log(status);

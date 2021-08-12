@@ -15,11 +15,9 @@ package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.isite.ISite;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
@@ -152,10 +150,7 @@ public abstract class SiteObject extends PlatformObject implements ISiteObject {
 	}
 
 	protected void throwCoreException(String message) throws CoreException {
-		Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, null);
-		CoreException ce = new CoreException(status);
-		ce.fillInStackTrace();
-		throw ce;
+		throw new CoreException(Status.error(message));
 	}
 
 	public static String getWritableString(String source) {

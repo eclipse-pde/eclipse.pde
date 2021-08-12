@@ -87,9 +87,9 @@ public class UpdateClasspathJob extends Job {
 			String title = PDEUIMessages.UpdateClasspathJob_error_title;
 			String message = PDEUIMessages.UpdateClasspathJob_error_message;
 			PDEPlugin.logException(e, title, message);
-			return new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.OK, message, e);
+			return Status.error(message, e);
 		}
-		return new Status(IStatus.OK, IPDEUIConstants.PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
+		return Status.OK_STATUS;
 	}
 
 }

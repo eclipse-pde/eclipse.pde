@@ -110,7 +110,7 @@ public abstract class AbstractRepository extends Job {
 						PDEPlugin.log(e);
 					} catch (SWTException e) {
 						// invalid image format
-						PDEPlugin.log(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.AbstractRepository_ErrorLoadingImageFromJar, jarFile.getAbsolutePath(), entry.getName()), e));
+						PDEPlugin.log(Status.error(NLS.bind(PDEUIMessages.AbstractRepository_ErrorLoadingImageFromJar, jarFile.getAbsolutePath(), entry.getName()), e));
 					}
 				}
 			}

@@ -17,14 +17,14 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.*;
 import java.util.List;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -76,7 +76,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 						fAllArguments.put(container, args);
 						foundArguments = true;
 					} else {
-						fAllArguments.put(container, new Object[] {new Status(IStatus.ERROR, PDEPlugin.getPluginId(), Messages.ArgumentsFromContainerSelectionDialog_1)});
+						fAllArguments.put(container, new Object[] { Status.error(Messages.ArgumentsFromContainerSelectionDialog_1) });
 					}
 				}
 			}

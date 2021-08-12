@@ -19,7 +19,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
 
 public class JarEntryFile extends PlatformObject implements IStorage {
 
@@ -37,7 +36,7 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 			ZipEntry zipEntry = fZipFile.getEntry(fEntryName);
 			return fZipFile.getInputStream(zipEntry);
 		} catch (Exception e) {
-			throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e));
+			throw new CoreException(Status.error(e.getMessage(), e));
 		}
 	}
 

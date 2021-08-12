@@ -18,7 +18,8 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.*;
 import java.util.List;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -219,7 +220,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 		List<BundleInfo> targetBundles = new ArrayList<>();
 		TargetBundle[] allTargetBundles = getTarget().getAllBundles();
 		if (allTargetBundles == null || allTargetBundles.length == 0) {
-			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
+			throw new CoreException(Status.warning(PDEUIMessages.ImplicitDependenciesSection_0));
 		}
 		for (int i = 0; i < allTargetBundles.length; i++) {
 			if (!currentBundles.contains(allTargetBundles[i].getBundleInfo().getSymbolicName())) {

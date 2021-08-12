@@ -21,7 +21,6 @@ import java.util.Set;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -82,7 +81,7 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 					alreadyDuplicated.add(bundle.getSymbolicName());
 					MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, NLS.bind(PDECoreMessages.BundleValidationOperation_multiple_singletons, new String[] {Integer.toString(dups.length), bundle.getSymbolicName()}), null);
 					for (BundleDescription dup : dups) {
-						status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, dup.getLocation()));
+						status.add(Status.error(dup.getLocation()));
 					}
 					map.put(bundle, new Object[] {status});
 				}

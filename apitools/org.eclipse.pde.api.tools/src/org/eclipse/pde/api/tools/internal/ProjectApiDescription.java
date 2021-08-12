@@ -26,7 +26,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClassFile;
@@ -630,7 +629,7 @@ public class ProjectApiDescription extends ApiDescription {
 	synchronized IApiTypeContainer getApiTypeContainer(IPackageFragmentRoot root) throws CoreException {
 		IApiTypeContainer container = getApiComponent().getTypeContainer(root);
 		if (container == null) {
-			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, "Unable to resolve type conatiner for package fragment root")); //$NON-NLS-1$
+			throw new CoreException(Status.error("Unable to resolve type conatiner for package fragment root")); //$NON-NLS-1$
 		}
 		return container;
 	}
@@ -737,7 +736,7 @@ public class ProjectApiDescription extends ApiDescription {
 		IApiBaseline baseline = ApiBaselineManager.getManager().getWorkspaceBaseline();
 		ProjectComponent component = (ProjectComponent) baseline.getApiComponent(getJavaProject().getProject());
 		if (component == null) {
-			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, "Unable to resolve project API component for API description")); //$NON-NLS-1$
+			throw new CoreException(Status.error("Unable to resolve project API component for API description")); //$NON-NLS-1$
 		}
 		return component;
 	}

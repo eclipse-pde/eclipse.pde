@@ -26,7 +26,6 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.PDECore;
 
 public class VMUtil {
 
@@ -102,6 +101,6 @@ public class VMUtil {
 	}
 
 	public static IStatus createErrorStatus(String message) {
-		return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, null);
+		return Status.error(message, null);
 	}
 }

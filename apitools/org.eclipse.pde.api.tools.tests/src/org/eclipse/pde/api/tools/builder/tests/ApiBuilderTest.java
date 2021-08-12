@@ -1198,7 +1198,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			IStatus infos = new Status(severity, PDECore.PLUGIN_ID, infosContent, new Exception());
 			log.log(infos);
 		} catch (Exception e) {
-			IStatus error = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "error occurred while logging extra info", e); //$NON-NLS-1$
+			IStatus error = Status.error("error occurred while logging extra info", e); //$NON-NLS-1$
 			log.log(error);
 		}
 	}

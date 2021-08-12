@@ -559,7 +559,7 @@ public class ApiDescription implements IApiDescription {
 			node.restrictions = restrictions;
 			return Status.OK_STATUS;
 		}
-		return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ELEMENT_NOT_FOUND, MessageFormat.format("Failed to set API restriction: {0} not found in {1}", element.toString(), fOwningComponentId), null); //$NON-NLS-1$
+		return Status.error(MessageFormat.format("Failed to set API restriction: {0} not found in {1}", element, fOwningComponentId), null); //$NON-NLS-1$
 	}
 
 	@Override
@@ -578,7 +578,7 @@ public class ApiDescription implements IApiDescription {
 			node.visibility = visibility;
 			return Status.OK_STATUS;
 		}
-		return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ELEMENT_NOT_FOUND, MessageFormat.format("Failed to set API visibility: {0} not found in {1}", element.toString(), fOwningComponentId), null);//$NON-NLS-1$
+		return Status.error(MessageFormat.format("Failed to set API visibility: {0} not found in {1}", element, fOwningComponentId), null);//$NON-NLS-1$
 	}
 
 	@Override

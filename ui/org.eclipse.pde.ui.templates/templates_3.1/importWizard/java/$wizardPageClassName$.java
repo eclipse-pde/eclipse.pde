@@ -96,6 +96,6 @@ public class $wizardPageClassName$ extends WizardNewFileCreationPage {
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validateLinkedResource()
 	 */
 	protected IStatus validateLinkedResource() {
-		return new Status(IStatus.OK, "$pluginId$", IStatus.OK, "", null); //$NON-NLS-1$ //$NON-NLS-2$
+		return Status.OK_STATUS;
 	}
 }

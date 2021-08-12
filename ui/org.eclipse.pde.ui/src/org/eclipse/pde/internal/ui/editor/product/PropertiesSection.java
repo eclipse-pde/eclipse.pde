@@ -15,14 +15,14 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import java.util.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.iproduct.*;
-import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.util.PDESchemaHelper;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -176,7 +176,7 @@ public class PropertiesSection extends TableSection {
 			}
 
 			// Disable ok button on startup
-			updateStatus(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, "")); //$NON-NLS-1$
+			updateStatus(Status.error("")); //$NON-NLS-1$
 
 			return comp;
 		}
@@ -184,12 +184,12 @@ public class PropertiesSection extends TableSection {
 		protected void validate() {
 			String name = fName.getText().trim();
 			if (name.length() == 0) {
-				updateStatus(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, PDEUIMessages.PropertiesSection_ErrorPropertyNoName));
+				updateStatus(Status.error(PDEUIMessages.PropertiesSection_ErrorPropertyNoName));
 			} else if (PDESchemaHelper.containsMatchingProperty(fExistingProperties, name,
 					fOS.getSelectionIndex() == 0 ? PDESchemaHelper.ALL_OS : COMBO_OSLABELS[fOS.getSelectionIndex()],
 					fArch.getSelectionIndex() == 0 ? PDESchemaHelper.ALL_ARCH
 							: COMBO_ARCHLABELS[fArch.getSelectionIndex()])) {
-				updateStatus(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, NLS.bind(PDEUIMessages.PropertiesSection_ErrorPropertyExists, name)));
+				updateStatus(Status.error(NLS.bind(PDEUIMessages.PropertiesSection_ErrorPropertyExists, name)));
 			} else {
 				updateStatus(Status.OK_STATUS);
 			}

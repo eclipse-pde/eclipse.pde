@@ -372,15 +372,15 @@ public class PluginImportOperation extends WorkspaceJob {
 					if (RepositoryProvider.isShared(project))
 						RepositoryProvider.unmap(project);
 					if (!safeDeleteCheck(project, monitor)) {
-						status.add(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(
-								PDEUIMessages.PluginImportOperation_could_not_delete_project, project.getName())));
+						status.add(Status.error(NLS.bind(PDEUIMessages.PluginImportOperation_could_not_delete_project,
+								project.getName())));
 					}
 					boolean deleteContent = project.getWorkspace().getRoot().getLocation()
 							.equals(project.getLocation().removeLastSegments(1));
 					deleteProject(project, deleteContent, monitor);
 
 				} catch (CoreException ex) {
-					status.add(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK,
+					status.add(Status.error(
 							NLS.bind(PDEUIMessages.PluginImportOperation_could_not_delete_project, project.getName()),
 							ex));
 				}
@@ -644,8 +644,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			subMonitor.worked(1);
 
 		} catch (IOException e) {
-			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
-			throw new CoreException(status);
+			throw new CoreException(Status.error(e.getMessage(), e));
 		}
 
 	}
@@ -1087,8 +1086,7 @@ public class PluginImportOperation extends WorkspaceJob {
 						PluginImportHelper.collectNonJavaNonBuildFiles(provider, provider.getRoot(), collected);
 						PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
 					} catch (IOException e) {
-						IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
-						throw new CoreException(status);
+						throw new CoreException(Status.error(e.getMessage(), e));
 					} finally {
 						if (zip != null) {
 							try {
@@ -1124,8 +1122,7 @@ public class PluginImportOperation extends WorkspaceJob {
 				PluginImportHelper.collectRequiredBundleFiles(provider, provider.getRoot(), collected);
 				PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
 			} catch (IOException e) {
-				IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
-				throw new CoreException(status);
+				throw new CoreException(Status.error(e.getMessage(), e));
 			} finally {
 				if (zip != null) {
 					try {

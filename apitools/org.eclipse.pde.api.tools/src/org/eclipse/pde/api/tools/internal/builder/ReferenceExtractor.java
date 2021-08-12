@@ -24,7 +24,6 @@ import java.util.Stack;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.model.AbstractApiTypeRoot;
@@ -1277,8 +1276,8 @@ public class ReferenceExtractor extends ClassVisitor {
 			IApiType owner = (IApiType) this.getMember();
 			IApiField field = owner.getField(name);
 			if (field == null) {
-				ApiPlugin.log(new Status(IStatus.WARNING, ApiPlugin.PLUGIN_ID, NLS.bind(BuilderMessages.ReferenceExtractor_failed_to_lookup_field, new String[] {
-						name, Signatures.getQualifiedTypeSignature(owner) })));
+				ApiPlugin.log(Status.warning(NLS.bind(BuilderMessages.ReferenceExtractor_failed_to_lookup_field, name,
+						Signatures.getQualifiedTypeSignature(owner))));
 				// if we can't find the method there is no point trying to
 				// process it
 				return null;
@@ -1385,8 +1384,8 @@ public class ReferenceExtractor extends ClassVisitor {
 			}
 			IApiMethod method = owner.getMethod(name, desc);
 			if (method == null) {
-				ApiPlugin.log(new Status(IStatus.WARNING, ApiPlugin.PLUGIN_ID, NLS.bind(BuilderMessages.ReferenceExtractor_failed_to_lookup_method, new String[] {
-						name, desc, Signatures.getQualifiedTypeSignature(owner) })));
+				ApiPlugin.log(Status.warning(NLS.bind(BuilderMessages.ReferenceExtractor_failed_to_lookup_method,
+						new String[] { name, desc, Signatures.getQualifiedTypeSignature(owner) })));
 				// if we can't find the method there is no point trying to
 				// process it
 				return null;

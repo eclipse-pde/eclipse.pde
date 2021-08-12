@@ -2485,7 +2485,7 @@ public class ClassFileComparator {
 			if (ApiPlugin.DEBUG_CLASSFILE_COMPARATOR) {
 				System.err.println("TYPE LOOKUP: " + msg); //$NON-NLS-1$
 			}
-			reportStatus(new Status(IStatus.ERROR, component.getSymbolicName(), msg));
+			reportStatus(Status.error(msg));
 			return null;
 		}
 		IApiTypeRoot result = Util.getClassFile(components, typeName);
@@ -2494,7 +2494,7 @@ public class ClassFileComparator {
 			if (ApiPlugin.DEBUG_CLASSFILE_COMPARATOR) {
 				System.err.println("TYPE LOOKUP: " + msg); //$NON-NLS-1$
 			}
-			reportStatus(new Status(IStatus.ERROR, component.getSymbolicName(), msg));
+			reportStatus(Status.error(msg));
 			return null;
 		}
 		return result;

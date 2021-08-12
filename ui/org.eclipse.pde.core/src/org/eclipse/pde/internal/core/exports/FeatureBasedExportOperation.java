@@ -65,11 +65,11 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 			}
 			return status;
 		} catch (IOException e) {
-			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e);
+			return Status.error(PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e);
 		} catch (CoreException e) {
 			return e.getStatus();
 		} catch (InvocationTargetException e) {
-			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
+			return Status.error(PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
 		} finally {
 			for (Object item : fInfo.items) {
 				if (item instanceof IModel) {

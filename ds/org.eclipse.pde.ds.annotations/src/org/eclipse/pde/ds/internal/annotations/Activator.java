@@ -90,7 +90,7 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, e.getMessage(), e));
+		log(Status.error(e.getMessage(), e));
 	}
 
 	void listenForClasspathPreferenceChanges(IJavaProject project) {

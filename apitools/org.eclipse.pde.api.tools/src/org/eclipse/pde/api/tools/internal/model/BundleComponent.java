@@ -273,7 +273,7 @@ public class BundleComponent extends Component {
 		try {
 			Map<String, String> manifest = getManifest();
 			if (manifest == null) {
-				ApiPlugin.log(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, "Unable to find a manifest for the component from: " + fLocation, //$NON-NLS-1$
+				ApiPlugin.log(Status.error("Unable to find a manifest for the component from: " + fLocation, //$NON-NLS-1$
 				null));
 				return;
 			}
@@ -282,7 +282,7 @@ public class BundleComponent extends Component {
 			fVersion = fBundleDescription.getVersion();
 			setName(manifest.get(Constants.BUNDLE_NAME));
 		} catch (BundleException e) {
-			ApiPlugin.log(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, "Unable to create API component from specified location: " + fLocation, //$NON-NLS-1$
+			ApiPlugin.log(Status.error("Unable to create API component from specified location: " + fLocation, //$NON-NLS-1$
 			e));
 		} catch (CoreException ce) {
 			ApiPlugin.log(ce);
@@ -386,7 +386,8 @@ public class BundleComponent extends Component {
 			if (component != null) {
 				descriptions.add(component.getApiDescription());
 			} else {
-				ApiPlugin.log(new Status(IStatus.WARNING, ApiPlugin.PLUGIN_ID, NLS.bind(Messages.BundleComponent_failed_to_lookup_fragment, fragments[i].getSymbolicName())));
+				ApiPlugin.log(Status.warning(
+						NLS.bind(Messages.BundleComponent_failed_to_lookup_fragment, fragments[i].getSymbolicName())));
 			}
 		}
 		return new CompositeApiDescription(descriptions.toArray(new IApiDescription[descriptions.size()]));
@@ -745,7 +746,7 @@ public class BundleComponent extends Component {
 				file = new File(parent, entry.getName());
 				String destCanonicalPath = file.getCanonicalPath();
 				if (!destCanonicalPath.startsWith(parentDirCanonicalPath + File.separator)) {
-					throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format("Entry is outside of the target dir: : {0}", entry.getName()), null)); //$NON-NLS-1$
+					throw new CoreException(Status.error(MessageFormat.format("Entry is outside of the target dir: : {0}", entry.getName()))); //$NON-NLS-1$
 				}
 				if (entry.isDirectory()) {
 					file.mkdir();

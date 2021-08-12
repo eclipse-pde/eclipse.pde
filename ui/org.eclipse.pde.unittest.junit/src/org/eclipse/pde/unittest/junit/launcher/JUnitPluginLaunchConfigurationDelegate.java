@@ -253,8 +253,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 							System.arraycopy(classpath, 0, classpath = new String[length + 1], 0, length);
 							classpath[length] = entryString;
 						} catch (IOException | URISyntaxException e) {
-							throw new CoreException(
-									new Status(IStatus.ERROR, JUnitPluginTestPlugin.PLUGIN_ID, IStatus.ERROR, "", e)); //$NON-NLS-1$
+							throw new CoreException(Status.error("", e)); //$NON-NLS-1$
 						}
 					}
 				}
@@ -809,7 +808,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 			}
 			return file.getAbsolutePath();
 		} catch (IOException | JavaModelException e) {
-			throw new CoreException(new Status(IStatus.ERROR, JUnitPluginTestPlugin.PLUGIN_ID, IStatus.ERROR, "", e)); //$NON-NLS-1$
+			throw new CoreException(Status.error("", e)); //$NON-NLS-1$
 		}
 	}
 
@@ -850,7 +849,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 			}
 			return file.getAbsolutePath();
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, JUnitPluginTestPlugin.PLUGIN_ID, IStatus.ERROR, "", e)); //$NON-NLS-1$
+			throw new CoreException(Status.error("", e)); //$NON-NLS-1$
 		}
 	}
 

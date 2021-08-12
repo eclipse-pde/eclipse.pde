@@ -75,11 +75,9 @@ public class BuildClasspathSection extends TableSection {
 		@Override
 		public IStatus validate(Object[] elements) {
 			if (isValid(elements)) {
-				return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", //$NON-NLS-1$
-						null);
+				return Status.OK_STATUS;
 			}
-			return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, "", //$NON-NLS-1$
-					null);
+			return Status.error(""); //$NON-NLS-1$
 		}
 
 		private boolean isOfAcceptedType(Object o) {

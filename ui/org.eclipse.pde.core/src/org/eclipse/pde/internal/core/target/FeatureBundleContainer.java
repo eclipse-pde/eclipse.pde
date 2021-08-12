@@ -20,7 +20,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -133,28 +132,28 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 
 			TargetFeature[] features = resolveFeatures(definition, null);
 			if (features.length == 0) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_1, fId)));
+				throw new CoreException(Status.error(NLS.bind(Messages.FeatureBundleContainer_1, fId)));
 			}
 			File location = new File(features[0].getLocation());
 			if (!location.exists()) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_0, location.toString())));
+				throw new CoreException(Status.error(NLS.bind(Messages.FeatureBundleContainer_0, location.toString())));
 			}
 			File manifest = new File(location, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 			if (!manifest.exists() || !manifest.isFile()) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_2, fId)));
+				throw new CoreException(Status.error(NLS.bind(Messages.FeatureBundleContainer_2, fId)));
 			}
 			model = ExternalFeatureModelManager.createModel(manifest);
 			if (model == null || !model.isLoaded()) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_2, fId)));
+				throw new CoreException(Status.error(NLS.bind(Messages.FeatureBundleContainer_2, fId)));
 			}
 			// search bundles in plug-ins directory
 			ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 			if (service == null) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.FeatureBundleContainer_4));
+				throw new CoreException(Status.error(Messages.FeatureBundleContainer_4));
 			}
 //			File dir = new File(manifest.getParentFile().getParentFile().getParentFile(), "plugins"); //$NON-NLS-1$
 //			if (!dir.exists() || !dir.isDirectory()) {
-//				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_5, fId)));
+//				throw new CoreException(Status.error(NLS.bind(Messages.FeatureBundleContainer_5, fId)));
 //			}
 			if (monitor.isCanceled()) {
 				return new TargetBundle[0];

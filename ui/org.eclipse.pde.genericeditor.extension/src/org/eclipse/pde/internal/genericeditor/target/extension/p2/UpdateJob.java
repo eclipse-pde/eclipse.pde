@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.LocationNode;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.RepositoryCache;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.UnitNode;
-import org.osgi.framework.FrameworkUtil;
 
 /**
  * Fetching P2 repository information is a costly operation time-wise. Thus we
@@ -41,7 +40,7 @@ public class UpdateJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		List<UnitNode> list = RepositoryCache.getDefault().fetchP2UnitsFromRepo(node.getRepositoryLocation(), true);
 		if (list == null) {
-			return new Status(IStatus.ERROR, FrameworkUtil.getBundle(UpdateJob.class).getSymbolicName(), Messages.UpdateJob_ErrorMessage);
+			return Status.error(Messages.UpdateJob_ErrorMessage);
 		}
 		return Status.OK_STATUS;
 	}

@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Flags;
@@ -672,12 +671,12 @@ public class TagScanner {
 			inputStream = source.getInputStream();
 			parser.setSource(Util.getInputStreamAsCharArray(inputStream, source.getEncoding()));
 		} catch (FileNotFoundException e) {
-			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format("Compilation unit source not found: {0}", source.getName()), e)); //$NON-NLS-1$
+			throw new CoreException(Status.error(MessageFormat.format("Compilation unit source not found: {0}", source.getName()), e)); //$NON-NLS-1$
 		} catch (IOException e) {
 			if (ApiPlugin.DEBUG_TAG_SCANNER) {
 				System.err.println(source.getName());
 			}
-			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format("Error reading compilation unit: {0}", source.getName()), e)); //$NON-NLS-1$
+			throw new CoreException(Status.error(MessageFormat.format("Error reading compilation unit: {0}", source.getName()), e)); //$NON-NLS-1$
 		} finally {
 			if (inputStream != null) {
 				try {

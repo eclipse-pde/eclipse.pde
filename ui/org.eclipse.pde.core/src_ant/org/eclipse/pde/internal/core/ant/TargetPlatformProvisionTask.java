@@ -26,7 +26,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.tasks.TaskHelper;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.target.ExportTargetJob;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
@@ -90,13 +89,13 @@ public class TargetPlatformProvisionTask extends Task {
 
 	private void run() throws CoreException {
 		if (null == targetFile) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.TargetPlatformProvisionTask_ErrorDefinitionNotSet));
+			throw new CoreException(Status.error(PDECoreMessages.TargetPlatformProvisionTask_ErrorDefinitionNotSet));
 		}
 		if (!targetFile.isFile() || !targetFile.canRead()) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.TargetPlatformProvisionTask_ErrorDefinitionNotFoundAtSpecifiedLocation, targetFile)));
+			throw new CoreException(Status.error(NLS.bind(PDECoreMessages.TargetPlatformProvisionTask_ErrorDefinitionNotFoundAtSpecifiedLocation, targetFile)));
 		}
 		if (null == destinationDirectory) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.TargetPlatformProvisionTask_ErrorDestinationNotSet));
+			throw new CoreException(Status.error(PDECoreMessages.TargetPlatformProvisionTask_ErrorDestinationNotSet));
 		}
 
 		final ITargetDefinition targetDefinition = TargetPlatformService.getDefault().getTarget(targetFile.toURI()).getTargetDefinition();

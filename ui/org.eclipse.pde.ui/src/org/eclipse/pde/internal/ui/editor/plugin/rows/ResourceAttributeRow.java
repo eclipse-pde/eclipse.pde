@@ -20,7 +20,8 @@
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.ui.actions.ShowInNavigatorViewAction;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -128,10 +129,10 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 		dialog.setTitle(PDEUIMessages.ResourceAttributeCellEditor_title);
 		dialog.setMessage(PDEUIMessages.ResourceAttributeCellEditor_message);
 		dialog.setValidator(selection -> {
-			if (selection != null && selection.length > 0 && (selection[0] instanceof IFile || selection[0] instanceof IContainer))
-				return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
-
-			return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, "", null); //$NON-NLS-1$
+			if (selection != null && selection.length > 0 && (selection[0] instanceof IFile || selection[0] instanceof IContainer)) {
+				return Status.OK_STATUS;
+			}
+			return Status.error(""); //$NON-NLS-1$
 		});
 		if (dialog.open() == Window.OK) {
 			IResource res = (IResource) dialog.getFirstResult();

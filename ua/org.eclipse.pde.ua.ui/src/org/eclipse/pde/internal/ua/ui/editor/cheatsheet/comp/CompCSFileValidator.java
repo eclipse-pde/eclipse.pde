@@ -35,19 +35,19 @@ public class CompCSFileValidator implements ISelectionStatusValidator {
 
 		// Ensure something was selected
 		if (selection.length == 0) {
-			return errorStatus(""); //$NON-NLS-1$
+			return Status.error(""); //$NON-NLS-1$
 		}
 		// Ensure we have a file
 		if ((selection[0] instanceof IFile) == false) {
-			return errorStatus(""); //$NON-NLS-1$
+			return Status.error(""); //$NON-NLS-1$
 		}
 		IFile file = (IFile) selection[0];
 		// Ensure we have a simple cheat sheet file
 		if (isSimpleCSFile(file) == false) {
-			return errorStatus(Messages.CompCSFileValidator_0);
+			return Status.error(Messages.CompCSFileValidator_0);
 		}
 		// If we got this far, we have a valid file
-		return okStatus(""); //$NON-NLS-1$
+		return Status.OK_STATUS;
 
 	}
 
@@ -62,15 +62,4 @@ public class CompCSFileValidator implements ISelectionStatusValidator {
 		}
 		return false;
 	}
-
-	private IStatus errorStatus(String message) {
-		return new Status(IStatus.ERROR, PDEUserAssistanceUIPlugin.PLUGIN_ID,
-				IStatus.ERROR, message, null);
-	}
-
-	private IStatus okStatus(String message) {
-		return new Status(IStatus.OK, PDEUserAssistanceUIPlugin.PLUGIN_ID,
-				IStatus.OK, message, null);
-	}
-
 }

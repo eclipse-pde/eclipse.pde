@@ -17,7 +17,6 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Vector;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.IModel;
@@ -29,7 +28,6 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelProvider;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
@@ -194,10 +192,7 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 	}
 
 	protected void throwCoreException(String message) throws CoreException {
-		Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, null);
-		CoreException ce = new CoreException(status);
-		ce.fillInStackTrace();
-		throw ce;
+		throw new CoreException(Status.error(message));
 	}
 
 	@Override

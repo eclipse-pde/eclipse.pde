@@ -15,12 +15,10 @@ package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -156,10 +154,7 @@ public abstract class FeatureObject extends PlatformObject implements IFeatureOb
 	}
 
 	protected void throwCoreException(String message) throws CoreException {
-		Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, null);
-		CoreException ce = new CoreException(status);
-		ce.fillInStackTrace();
-		throw ce;
+		throw new CoreException(Status.error(message));
 	}
 
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {

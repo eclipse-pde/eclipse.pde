@@ -42,22 +42,22 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 	class DuplicateStatusValidator {
 		public IStatus validate(String text) {
 			if (text.length() == 0)
-				return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, PDEUIMessages.AddLibraryDialog_emptyLibraries, null);
+				return Status.error(PDEUIMessages.AddLibraryDialog_emptyLibraries);
 
 			if (text.indexOf(' ') != -1)
-				return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, PDEUIMessages.AddLibraryDialog_nospaces, null);
+				return Status.error(PDEUIMessages.AddLibraryDialog_nospaces);
 
 			if (libraries == null || libraries.length == 0)
-				return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+				return Status.OK_STATUS;
 
 			if (!text.endsWith(".jar") && !text.endsWith("/") && !text.equals(".")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				text += "/"; //$NON-NLS-1$
 
 			for (String library : libraries) {
 				if (library.equals(text))
-					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, PDEUIMessages.BuildEditor_RuntimeInfoSection_duplicateLibrary, null);
+					return Status.error(PDEUIMessages.BuildEditor_RuntimeInfoSection_duplicateLibrary);
 			}
-			return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+			return Status.OK_STATUS;
 		}
 	}
 

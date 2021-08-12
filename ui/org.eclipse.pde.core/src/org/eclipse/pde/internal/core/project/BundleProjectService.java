@@ -30,7 +30,6 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.VersionRange;
@@ -44,7 +43,6 @@ import org.eclipse.pde.core.project.IHostDescription;
 import org.eclipse.pde.core.project.IPackageExportDescription;
 import org.eclipse.pde.core.project.IPackageImportDescription;
 import org.eclipse.pde.core.project.IRequiredBundleDescription;
-import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.Messages;
 import org.eclipse.team.core.ScmUrlImportDescription;
@@ -286,7 +284,7 @@ public final class BundleProjectService implements IBundleProjectService {
 			}
 			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable<String, String>(10));
 		} catch (BundleException | IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, TargetBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.TargetBundle_ErrorReadingManifest, bundleLocation.getAbsolutePath()), e));
+			throw new CoreException(Status.error(NLS.bind(Messages.TargetBundle_ErrorReadingManifest, bundleLocation.getAbsolutePath()), e));
 		} finally {
 			closeZipFileAndStream(manifestStream, jarFile);
 		}

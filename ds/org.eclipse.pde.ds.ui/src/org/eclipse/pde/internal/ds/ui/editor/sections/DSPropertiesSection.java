@@ -24,7 +24,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -372,11 +371,9 @@ public class DSPropertiesSection extends TableSection {
 		dialog.setValidator(selection -> {
 			if (selection != null && selection.length > 0
 					&& selection[0] instanceof IFile)
-				return new Status(IStatus.OK, Activator.PLUGIN_ID,
-						IStatus.OK, "", null); //$NON-NLS-1$
+				return Status.OK_STATUS;
 
-			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-					IStatus.ERROR, "", null); //$NON-NLS-1$
+			return Status.error("", null); //$NON-NLS-1$
 		});
 		if (dialog.open() == Window.OK) {
 			IResource res = (IResource) dialog.getFirstResult();

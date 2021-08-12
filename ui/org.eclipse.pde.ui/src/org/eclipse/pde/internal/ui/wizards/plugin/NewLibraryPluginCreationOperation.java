@@ -40,7 +40,8 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
 import org.eclipse.pde.internal.core.project.PDEProject;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.search.dependencies.AddNewBinaryDependenciesOperation;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.ui.IFieldData;
@@ -349,8 +350,8 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 					pathString -> IOverwriteQuery.ALL);
 			op.run(monitor);
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.OK,
-					NLS.bind(PDEUIMessages.NewProjectCreationOperation_errorImportingJar, jar), e));
+			throw new CoreException(
+					Status.error(NLS.bind(PDEUIMessages.NewProjectCreationOperation_errorImportingJar, jar), e));
 		}
 	}
 

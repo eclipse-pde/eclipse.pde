@@ -341,10 +341,6 @@ public class LauncherUtils {
 		return true;
 	}
 
-	public static IStatus createErrorStatus(String message) {
-		return new Status(IStatus.ERROR, PDELaunchingPlugin.getPluginId(), IStatus.OK, message, null);
-	}
-
 	/**
 	 * Updates the stores launch mode.  This should be called on any PDE Eclipse launch.  The launch mode
 	 * is passed to the status handler so it can open the correct launch configuration dialog

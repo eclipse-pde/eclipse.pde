@@ -223,8 +223,8 @@ public class PluginVersionPart {
 				// For everything else:  Field assist, wizards
 				errorMessage = UtilMessages.BundleErrorReporter_InvalidFormatInBundleVersion;
 			}
-			return new Status(IStatus.ERROR, "org.eclipse.pde.ui", //$NON-NLS-1$
-					IStatus.ERROR, PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(textWidget), errorMessage), null);
+			return Status.error(PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(textWidget), errorMessage),
+					null);
 		}
 
 		return Status.OK_STATUS;
@@ -250,8 +250,8 @@ public class PluginVersionPart {
 		try {
 			v1 = new Version(getMinVersion());
 		} catch (IllegalArgumentException e) {
-			return new Status(IStatus.ERROR, "org.eclipse.pde.ui", //$NON-NLS-1$
-					IStatus.ERROR, PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(fMinVersionText), errorMessage), null);
+			return Status.error(
+					PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(fMinVersionText), errorMessage));
 		}
 		if (!fRangeAllowed) // version created fine
 			return Status.OK_STATUS;
@@ -259,15 +259,14 @@ public class PluginVersionPart {
 		try {
 			v2 = new Version(getMaxVersion());
 		} catch (IllegalArgumentException e) {
-			return new Status(IStatus.ERROR, "org.eclipse.pde.ui", //$NON-NLS-1$
-					IStatus.ERROR, PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(fMaxVersionText), errorMessage), null);
+			return Status.error(
+					PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(fMaxVersionText), errorMessage));
 		}
 		if (v1.compareTo(v2) == 0 || v1.compareTo(v2) < 0) {
 			fIsRanged = true;
 			return Status.OK_STATUS;
 		}
-		return new Status(IStatus.ERROR, "org.eclipse.pde.ui", //$NON-NLS-1$
-				IStatus.ERROR, PDEUIMessages.DependencyPropertiesDialog_versionRangeError, null);
+		return Status.error(PDEUIMessages.DependencyPropertiesDialog_versionRangeError);
 	}
 
 	/**

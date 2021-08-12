@@ -20,7 +20,6 @@ import java.util.*;
 import java.util.zip.ZipFile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.*;
 
@@ -50,7 +49,7 @@ public class PluginImportHelper {
 			}
 			op.run(monitor);
 		} catch (InvocationTargetException e) {
-			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
+			IStatus status = Status.error(e.getMessage(), e);
 			throw new CoreException(status);
 		} catch (InterruptedException e) {
 			throw new OperationCanceledException(e.getMessage());
@@ -78,7 +77,7 @@ public class PluginImportHelper {
 
 			importContent(provider.getRoot(), dstPath, provider, null, monitor);
 		} catch (IOException e) {
-			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
+			IStatus status = Status.error(e.getMessage(), e);
 			throw new CoreException(status);
 		}
 	}
@@ -103,7 +102,7 @@ public class PluginImportHelper {
 			}
 			importContent(provider.getRoot(), dstPath, provider, collected, monitor);
 		} catch (IOException e) {
-			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
+			IStatus status = Status.error(e.getMessage(), e);
 			throw new CoreException(status);
 		}
 	}
@@ -129,7 +128,7 @@ public class PluginImportHelper {
 			}
 			importContent(provider.getRoot(), dstPath, provider, collected, monitor);
 		} catch (IOException e) {
-			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
+			IStatus status = Status.error(e.getMessage(), e);
 			throw new CoreException(status);
 		}
 	}
@@ -182,7 +181,7 @@ public class PluginImportHelper {
 				dstFile.create(fstream, true, monitor);
 			}
 		} catch (IOException e) {
-			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK, e.getMessage(), e);
+			IStatus status = Status.error(e.getMessage(), e);
 			throw new CoreException(status);
 		}
 	}

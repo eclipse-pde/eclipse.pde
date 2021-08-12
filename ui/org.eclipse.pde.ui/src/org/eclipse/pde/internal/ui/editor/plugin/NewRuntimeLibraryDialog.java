@@ -13,13 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import org.eclipse.core.runtime.Path;
-
 import java.util.HashSet;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -36,19 +35,18 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 
 	class DuplicateStatusValidator {
 		public IStatus validate(String text) {
-			String id = PDEPlugin.getPluginId();
 			if (text.length() == 0)
-				return new Status(IStatus.ERROR, id, IStatus.ERROR, PDEUIMessages.AddLibraryDialog_emptyLibraries, null);
+				return Status.error(PDEUIMessages.AddLibraryDialog_emptyLibraries);
 
 			if (text.indexOf(' ') != -1)
-				return new Status(IStatus.ERROR, id, IStatus.ERROR, PDEUIMessages.AddLibraryDialog_nospaces, null);
+				return Status.error(PDEUIMessages.AddLibraryDialog_nospaces);
 
 			if (libraries == null || libraries.length == 0)
-				return new Status(IStatus.OK, id, IStatus.OK, "", null); //$NON-NLS-1$
+				return Status.OK_STATUS;
 
 			if (librarySet.contains(new Path(ClasspathUtilCore.expandLibraryName(text))))
-				return new Status(IStatus.ERROR, id, IStatus.ERROR, PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_validationError, null);
-			return new Status(IStatus.OK, id, IStatus.OK, "", null); //$NON-NLS-1$
+				return Status.error(PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_validationError);
+			return Status.OK_STATUS;
 		}
 	}
 

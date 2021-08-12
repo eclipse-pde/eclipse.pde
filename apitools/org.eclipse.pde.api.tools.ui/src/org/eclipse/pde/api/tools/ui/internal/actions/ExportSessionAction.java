@@ -110,8 +110,7 @@ public class ExportSessionAction extends Action {
 						} else {
 							File parent = xmlOutputFile.getParentFile();
 							if (!parent.exists() && !parent.mkdirs()) {
-								return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
-										ActionMessages.ExportSessionAction_failed_to_create_parent_folders);
+								return Status.error(ActionMessages.ExportSessionAction_failed_to_create_parent_folders);
 							}
 						}
 						writer = new BufferedWriter(new FileWriter(xmlOutputFile));
@@ -149,7 +148,7 @@ public class ExportSessionAction extends Action {
 							} else {
 								File parent = reportFile.getParentFile();
 								if (!parent.exists() && !parent.mkdirs()) {
-									return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ActionMessages.ExportSessionAction_failed_to_create_parent_folders);
+									return Status.error(ActionMessages.ExportSessionAction_failed_to_create_parent_folders);
 								}
 							}
 							writer = new BufferedWriter(new FileWriter(reportFile));

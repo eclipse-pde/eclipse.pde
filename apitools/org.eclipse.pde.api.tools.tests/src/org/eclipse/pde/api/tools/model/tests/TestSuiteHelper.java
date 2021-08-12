@@ -29,7 +29,6 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -51,7 +50,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.search.IReferenceCollection;
 import org.eclipse.pde.api.tools.internal.search.UseScanReferences;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.junit.Assert;
 import org.osgi.framework.Bundle;
@@ -491,7 +489,7 @@ public class TestSuiteHelper {
 			}
 		}
 		if (error) {
-			throw new CoreException(new Status(IStatus.ERROR, ApiTestsPlugin.PLUGIN_ID, "Check the property : -DrequiredBundles=...\nMissing required bundle(s): " + String.valueOf(buffer))); //$NON-NLS-1$
+			throw new CoreException(Status.error("Check the property : -DrequiredBundles=...\nMissing required bundle(s): " + String.valueOf(buffer))); //$NON-NLS-1$
 		}
 	}
 

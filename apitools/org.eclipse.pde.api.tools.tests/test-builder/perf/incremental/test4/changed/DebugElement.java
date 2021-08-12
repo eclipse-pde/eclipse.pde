@@ -158,7 +158,7 @@ public abstract class DebugElement extends PlatformObject implements IDebugEleme
 	 * @throws DebugException
 	 */
 	protected void requestFailed(String message, Throwable e) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
+		throw new DebugException(Status.error(DebugPlugin.getUniqueIdentifier(), 
 				DebugException.TARGET_REQUEST_FAILED, message, e));
 	}
 	
@@ -170,7 +170,7 @@ public abstract class DebugElement extends PlatformObject implements IDebugEleme
 	 * @throws DebugException
 	 */
 	protected void notSupported(String message, Throwable e) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
+		throw new DebugException(Status.error(DebugPlugin.getUniqueIdentifier(), 
 				DebugException.NOT_SUPPORTED, message, e));
 	}
 }

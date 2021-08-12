@@ -594,7 +594,7 @@ public class PluginModelManager implements IModelProviderListener {
 			if (PDECore.DEBUG_MODEL) {
 				System.out.println("Target platform initialization cancelled by user"); //$NON-NLS-1$
 			}
-			PDECore.log(new Status(IStatus.WARNING, PDECore.PLUGIN_ID, PDECoreMessages.PluginModelManager_TargetInitCancelledLog));
+			PDECore.log(Status.warning(PDECoreMessages.PluginModelManager_TargetInitCancelledLog));
 			// Set a flag so the feature model manager can avoid starting the target resolve again
 			fCancelled = true;
 		}
@@ -679,7 +679,7 @@ public class PluginModelManager implements IModelProviderListener {
 		// Log any known issues with the target platform to warn user
 		if (target.isResolved()) {
 			if (target.getStatus().getSeverity() == IStatus.ERROR) {
-				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.PluginModelManager_CurrentTargetPlatformContainsErrors, new CoreException(target.getStatus())));
+				PDECore.log(Status.error(PDECoreMessages.PluginModelManager_CurrentTargetPlatformContainsErrors, new CoreException(target.getStatus())));
 				if (target.getStatus() instanceof MultiStatus) {
 					MultiStatus multiStatus = (MultiStatus) target.getStatus();
 					for (IStatus childStatus : multiStatus.getChildren()) {

@@ -39,7 +39,6 @@ import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.core.target.TargetFeature;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 
 /**
@@ -86,7 +85,7 @@ public class ExportTargetJob extends Job {
 			}
 			exportProfile(fTarget, fDestination, monitor);
 		} catch (CoreException e) {
-			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Failed to export the target", e); //$NON-NLS-1$
+			return Status.error("Failed to export the target", e); //$NON-NLS-1$
 		} finally {
 			monitor.done();
 		}
@@ -115,7 +114,7 @@ public class ExportTargetJob extends Job {
 	private void setupDestination(IProgressMonitor monitor) throws CoreException {
 		fileSystem = EFS.getLocalFileSystem();
 		if (!fileSystem.canWrite()) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Destination directory not writable.")); //$NON-NLS-1$
+			throw new CoreException(Status.error("Destination directory not writable.")); //$NON-NLS-1$
 		}
 		IFileStore destination = fileSystem.getStore(fDestination);
 		featureDir = destination.getChild("features"); //$NON-NLS-1$ExportTargetJob
@@ -248,6 +247,7 @@ public class ExportTargetJob extends Job {
 		return result;
 	}
 
+	@SuppressWarnings("restriction")
 	private void exportProfile(ITargetDefinition target, URI destination, IProgressMonitor monitor) throws CoreException {
 		Repo2Runnable exporter = new Repo2Runnable();
 		exporter.addDestination(createRepoDescriptor(destination, P2TargetUtils.getProfileId(target), RepositoryDescriptor.KIND_METADATA));

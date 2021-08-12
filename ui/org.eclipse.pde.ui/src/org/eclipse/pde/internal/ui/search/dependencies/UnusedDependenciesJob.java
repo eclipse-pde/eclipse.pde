@@ -18,8 +18,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Display;
 
 public class UnusedDependenciesJob extends Job {
@@ -44,7 +42,7 @@ public class UnusedDependenciesJob extends Job {
 		} finally {
 			monitor.done();
 		}
-		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, PDEUIMessages.UnusedDependenciesJob_viewResults, null);
+		return Status.OK_STATUS;
 	}
 
 	private Action getShowResultsAction(Object[] unused) {

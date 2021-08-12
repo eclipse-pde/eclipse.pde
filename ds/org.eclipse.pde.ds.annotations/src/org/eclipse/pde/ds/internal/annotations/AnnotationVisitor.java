@@ -45,7 +45,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IType;
@@ -370,7 +369,7 @@ public class AnnotationVisitor extends ASTVisitor {
 				try {
 					oldFile.move(file.getFullPath(), true, true, null);
 				} catch (CoreException e) {
-					Activator.log(new Status(IStatus.WARNING, Activator.PLUGIN_ID, String.format("Unable to move model file from '%s' to '%s'.", oldPath, file.getFullPath()), e)); //$NON-NLS-1$
+					Activator.log(Status.warning(String.format("Unable to move model file from '%s' to '%s'.", oldPath, file.getFullPath()), e)); //$NON-NLS-1$
 				}
 			}
 		}
@@ -478,7 +477,7 @@ public class AnnotationVisitor extends ASTVisitor {
 			LinkedModeModel.closeAllModels(document);
 			edit.apply(document);
 		} catch (MalformedTreeException | BadLocationException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error applying changes to component model.", e)); //$NON-NLS-1$
+			throw new CoreException(Status.error("Error applying changes to component model.", e)); //$NON-NLS-1$
 		} finally {
 			if (session != null) {
 				((IDocumentExtension4) document).stopRewriteSession(session);

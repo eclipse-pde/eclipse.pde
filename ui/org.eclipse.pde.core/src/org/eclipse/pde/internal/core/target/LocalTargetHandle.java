@@ -26,7 +26,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
@@ -94,9 +93,9 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 				long stamp = Long.parseLong(lng);
 				return new LocalTargetHandle(stamp);
 			}
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LocalTargetHandle_0, null));
+			throw new CoreException(Status.error(Messages.LocalTargetHandle_0));
 		} catch (NumberFormatException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LocalTargetHandle_0, e));
+			throw new CoreException(Status.error(Messages.LocalTargetHandle_0, e));
 		}
 	}
 
@@ -121,7 +120,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 		try {
 			return new BufferedInputStream(new FileInputStream(getFile()));
 		} catch (FileNotFoundException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LocalTargetHandle_1, e));
+			throw new CoreException(Status.error(Messages.LocalTargetHandle_1, e));
 		}
 	}
 
@@ -131,7 +130,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 			URI uri = new URI(SCHEME, getFile().getName(), null);
 			return uri.toString();
 		} catch (URISyntaxException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LocalTargetHandle_2, e));
+			throw new CoreException(Status.error(Messages.LocalTargetHandle_2, e));
 		}
 	}
 
@@ -173,7 +172,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 		if (file.exists()) {
 			file.delete();
 			if (file.exists()) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.LocalTargetHandle_3, file.getName())));
+				throw new CoreException(Status.error(NLS.bind(Messages.LocalTargetHandle_3, file.getName())));
 			}
 		}
 		P2TargetUtils.deleteProfile(this);
@@ -188,9 +187,9 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 			}
 			return new BufferedOutputStream(new FileOutputStream(file));
 		} catch (FileNotFoundException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LocalTargetHandle_1, e));
+			throw new CoreException(Status.error(Messages.LocalTargetHandle_1, e));
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.LocalTargetHandle_5, e));
+			throw new CoreException(Status.error(Messages.LocalTargetHandle_5, e));
 		}
 	}
 
@@ -201,8 +200,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 		try {
 			stream.close();
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
-					NLS.bind(Messages.LocalTargetHandle_4, getFile().getName()), e));
+			throw new CoreException(Status.error(NLS.bind(Messages.LocalTargetHandle_4, getFile().getName()), e));
 		}
 	}
 

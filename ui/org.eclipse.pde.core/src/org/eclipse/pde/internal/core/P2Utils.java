@@ -302,7 +302,8 @@ public class P2Utils {
 						try {
 							level = Integer.parseInt(levelString);
 						} catch (NumberFormatException e) {
-							PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Error writing bundles, could not parse start level for bundle " + currentModel)); //$NON-NLS-1$
+							PDECore.log(Status.error(
+									"Error writing bundles, could not parse start level for bundle " + currentModel)); //$NON-NLS-1$
 						}
 					}
 					info.setMarkedAsStarted(isAuto);
@@ -310,7 +311,8 @@ public class P2Utils {
 					bundleInfo.add(info);
 				}
 			} else {
-				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Error writing bundles, could not find the bundle location for bundle " + currentModel)); //$NON-NLS-1$
+				PDECore.log(Status
+						.error("Error writing bundles, could not find the bundle location for bundle " + currentModel)); //$NON-NLS-1$
 			}
 		}
 
@@ -352,17 +354,17 @@ public class P2Utils {
 	public static boolean profileExists(String profileID, File p2DataArea) throws CoreException {
 		IProvisioningAgentProvider provider = PDECore.getDefault().acquireService(IProvisioningAgentProvider.class);
 		if (provider == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
 		IProvisioningAgent agent = provider.createAgent(p2DataArea.toURI());
 		if (agent == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
 		IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
 		if (registry == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
 		return registry.containsProfile(profileID);
@@ -383,22 +385,22 @@ public class P2Utils {
 		// Acquire the required p2 services, creating an agent in the target p2 metadata area
 		IProvisioningAgentProvider provider = PDECore.getDefault().acquireService(IProvisioningAgentProvider.class);
 		if (provider == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
 		IProvisioningAgent agent = provider.createAgent(p2DataArea.toURI());
 		if (agent == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
 		IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
 		if (registry == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
 		IEngine engine = (IEngine) agent.getService(IEngine.SERVICE_NAME);
 		if (engine == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
 		// Delete any previous profiles with the same ID
