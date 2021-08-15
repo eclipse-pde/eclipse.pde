@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.core.resources.IContainer;
@@ -1288,8 +1289,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					continue;
 				}
 
-				/* The exported package does not exist in the bundle.  Allow project folders to be packages (see bug 166680 comment 17)*/
-				if (!getExportedPackages().contains(name) && !(fProject.getFolder(name.replace('.', '/')).exists())) {
+				/* The exported package does not exist in the bundle.  Allow project folders to be packages (see bug 166680 comment 17 and bug 575419)*/
+				if (!getExportedPackages().contains(name) && !isFolderOnClasspath(name)) {
 					message = NLS.bind(PDECoreMessages.BundleErrorReporter_NotExistInProject, name);
 					VirtualMarker marker = report(message, getPackageLine(header, element), CompilerFlags.P_UNRESOLVED_IMPORTS, PDEMarkerFactory.M_EXPORT_PKG_NOT_EXIST, PDEMarkerFactory.CAT_OTHER);
 					addMarkerAttribute(marker, "packageName", name); //$NON-NLS-1$
@@ -1299,6 +1300,30 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 		}
 
+	}
+
+	private boolean isFolderOnClasspath(String name) {
+		if (name.contains("/") || name.contains("\\")) { //$NON-NLS-1$ //$NON-NLS-2$
+			// According to the OSGi specification package name elements may
+			// only be separated by a dot. But the subsequent code would find
+			// corresponding folders even if the names where separated by
+			// slashes (forward or backward). This premature checks prevents it.
+			return false;
+		}
+		String folderName = name.replace('.', '/');
+		if (fProject.getFolder(folderName).exists()) {
+			return true; // package is a folder in the project
+		}
+		IHeader bundleClasspath = getHeader(Constants.BUNDLE_CLASSPATH);
+		// Search jars on the bundle-classpath for the given package
+		return bundleClasspath != null && Arrays.stream(bundleClasspath.getElements()).map(e -> e.getValue().strip())
+				.filter(e -> e.endsWith(".jar")).map(fProject::getFile).filter(IFile::exists).anyMatch(f -> { //$NON-NLS-1$
+					try (JarFile jar = new JarFile(new File(f.getLocationURI()))) {
+						return jar.getJarEntry(folderName) != null;
+					} catch (Exception e) {
+						return false;
+					}
+				});
 	}
 
 	private boolean containsPackage(IHeader header, String name) {
