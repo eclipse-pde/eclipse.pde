@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2020 IBM Corporation and others.
+ * Copyright (c) 2013, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -324,7 +324,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 		 * @throws CoreException
 		 */
 		void collectUpdates(IType type, IElementDescriptor element, IApiDescription description) throws CoreException {
-			ASTParser parser = ASTParser.newParser(AST.JLS15);
+			ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 			ICompilationUnit cunit = type.getCompilationUnit();
 			if (cunit != null) {
 				if (this.monitor.isCanceled()) {

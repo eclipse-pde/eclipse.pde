@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2020 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -677,7 +677,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			String name = apitype.getSimpleName();
 			ICompilationUnit cunit = type.getCompilationUnit();
 			if (cunit.isWorkingCopy()) {
-				cunit.reconcile(AST.JLS15, false, null, null);
+				cunit.reconcile(AST.getJLSLatest(), false, null, null);
 			}
 			IMethod method = getEnclosingMethod(type, reference, doc);
 			if (method != null) {

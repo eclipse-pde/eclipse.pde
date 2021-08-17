@@ -183,6 +183,12 @@ public class FeatureBlock {
 			}
 			return getColumnText(element, 0);
 		}
+
+		@Override
+		public void dispose() {
+			pdeLabelProvider.dispose();
+			super.dispose();
+		}
 	}
 
 	class ButtonSelectionListener extends SelectionAdapter {

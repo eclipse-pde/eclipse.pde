@@ -14,21 +14,56 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.launcher;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.eclipse.pde.internal.ui.wizards.feature.CreateFeatureProjectOperation;
+import org.eclipse.pde.internal.ui.wizards.feature.FeatureData;
+import org.junit.*;
 
 public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 
+	private static IProject featureProject;
+
 	private ILaunchConfiguration fFeatureBasedWithStartLevels;
+
+	@BeforeClass
+	public static void createTestFeature() throws Exception {
+
+		FeatureData featureData = new FeatureData();
+		featureData.id = FeatureBasedLaunchTest.class.getName() + "-feature";
+		featureData.version = "1.0.0";
+
+		IPluginBase[] contents = Stream.of("javax.inject", "org.eclipse.core.runtime", "org.eclipse.ui") //
+				.map(id -> PluginRegistry.findModel(id).getPluginBase()) //
+				.toArray(IPluginBase[]::new);
+
+		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		featureProject = workspaceRoot.getProject(featureData.id);
+		IPath location = workspaceRoot.getLocation().append(featureProject.getName());
+		CreateFeatureProjectOperation operation = new CreateFeatureProjectOperation(featureProject, location,
+				featureData, contents, null) {
+			@Override
+			protected void openFeatureEditor(IFile manifestFile) {
+				// don't open in headless tests
+			}
+		};
+		operation.run(null);
+	}
+
+	@AfterClass
+	public static void cleanup() throws Exception {
+		featureProject.delete(true, null);
+	}
 
 	@Before
 	public void setupLaunchConfig() throws Exception {
@@ -53,11 +88,12 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 	private void checkStartLevels(String pluginId, String expectedStartLevels) throws CoreException {
 		Map<IPluginModelBase, String> bundleMap = BundleLauncherHelper.getMergedBundleMap(fFeatureBasedWithStartLevels,
 				false);
-		String actualLevels = bundleMap.entrySet().stream()
-				.filter(e -> pluginId.equals(e.getKey().getPluginBase().getId())).map(e -> e.getValue()).findFirst()
-				.orElseThrow(() -> new AssertionError("no entry found for " + pluginId));
 
-		assertThat("start levels of " + pluginId, actualLevels, is(equalTo(expectedStartLevels)));
+		Map<String, String> byId = new LinkedHashMap<>();
+		for (Entry<IPluginModelBase, String> entry : bundleMap.entrySet()) {
+			byId.put(entry.getKey().getPluginBase().getId(), entry.getValue());
+		}
 
+		assertThat(byId).containsEntry(pluginId, expectedStartLevels);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2017 Ecliptical Software Inc. and others.
+ * Copyright (c) 2012, 2021 Ecliptical Software Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Ecliptical Software Inc. - initial API and implementation
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 490062
+ *     Christoph Läubrich - Bug 573557 - [ds] use deterministic order in component descriptors
  *******************************************************************************/
 package org.eclipse.pde.ds.internal.annotations;
 
@@ -26,10 +27,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -377,7 +380,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 				try {
 					saveState(project.getProject(), state);
 				} catch (IOException e) {
-					Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error saving file mappings.", e)); //$NON-NLS-1$
+					Activator.log(Status.error("Error saving file mappings.", e)); //$NON-NLS-1$
 				}
 			}
 
@@ -493,17 +496,8 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			return;
 		}
 
-		StringBuilder buf = new StringBuilder();
-		for (IPath entry : entries) {
-			if (buf.length() > 0) {
-				buf.append("," + TextUtil.getDefaultLineDelimiter() + " "); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-
-			buf.append(entry.toString());
-		}
-
-		String value = buf.toString();
-
+		String value = entries.stream().map(IPath::toString).sorted()
+				.collect(Collectors.joining("," + TextUtil.getDefaultLineDelimiter() + " "));//$NON-NLS-1$ //$NON-NLS-2$
 		if (debug.isDebugging()) {
 			debug.trace(String.format("Setting manifest header in %s to %s: %s", model.getUnderlyingResource().getFullPath(), DS_MANIFEST_KEY, value)); //$NON-NLS-1$
 		}
@@ -588,7 +582,9 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			LinkedHashSet<IPath> entries = new LinkedHashSet<>();
 			collectBuildEntries(includes, entries);
 
-			for (String dsKey : retained) {
+			Iterator<String> iterator = retained.stream().sorted().iterator();
+			while (iterator.hasNext()) {
+				String dsKey = iterator.next();
 				IPath path = Path.fromPortableString(dsKey);
 				if (!isBuildEntryIncluded(entries, path)) {
 					includes.addToken(path.toString());

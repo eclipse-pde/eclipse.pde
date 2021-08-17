@@ -171,7 +171,7 @@ public class ApiDescriptionProcessor {
 				} catch (CoreException e) {
 					addStatus(e.getStatus());
 				} catch (BadLocationException e) {
-					addStatus(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ScannerMessages.ComponentXMLScanner_0 + element.toString(), e));
+					addStatus(Status.error(ScannerMessages.ComponentXMLScanner_0 + element.toString(), e));
 				}
 				members.clear();
 			}
@@ -592,7 +592,7 @@ public class ApiDescriptionProcessor {
 	 * @throws CoreException
 	 */
 	private static void abort(String message, Throwable exception) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, message, exception);
+		IStatus status = Status.error(message, exception);
 		throw new CoreException(status);
 	}
 

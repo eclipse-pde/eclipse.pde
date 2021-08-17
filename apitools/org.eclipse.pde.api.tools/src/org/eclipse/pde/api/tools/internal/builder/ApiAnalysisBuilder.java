@@ -486,7 +486,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						try {
 							this.buildstate.setManifestState(ManifestElement.parseBundleManifest(manifest.getContents(), null));
 						} catch (Exception e) {
-							ApiPlugin.log(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, "Error parsing the manifest of: " + currentproject.getName(), e));//$NON-NLS-1$
+							ApiPlugin
+									.log(Status.error("Error parsing the manifest of: " + currentproject.getName(), e));//$NON-NLS-1$
 						}
 					}
 					IPluginModelBase base = PluginRegistry.findModel(currentproject);

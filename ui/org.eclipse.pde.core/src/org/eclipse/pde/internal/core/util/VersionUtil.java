@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2013 IBM Corporation and others.
+ *  Copyright (c) 2006, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,9 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.osgi.framework.Version;
 
 public class VersionUtil {
+
+	private VersionUtil() { // static use only
+	}
 
 	public static IStatus validateVersion(String versionString) {
 		try {
@@ -46,22 +49,27 @@ public class VersionUtil {
 		if (!(id1.equals(id2))) {
 			return false;
 		}
+		return compare(version1, version2, match);
+	}
+
+	public static boolean compare(String version1, String version2, int match) {
 		try {
 			Version v1 = Version.parseVersion(version1);
 			Version v2 = Version.parseVersion(version2);
 
-			switch (match) {
-				case IMatchRules.NONE :
-				case IMatchRules.COMPATIBLE :
+			switch (match)
+				{
+				case IMatchRules.NONE:
+				case IMatchRules.COMPATIBLE:
 					return isCompatibleWith(v1, v2);
-				case IMatchRules.EQUIVALENT :
+				case IMatchRules.EQUIVALENT:
 					return isEquivalentTo(v1, v2);
-				case IMatchRules.PERFECT :
+				case IMatchRules.PERFECT:
 					return v1.equals(v2);
-				case IMatchRules.GREATER_OR_EQUAL :
+				case IMatchRules.GREATER_OR_EQUAL:
 					return isGreaterOrEqualTo(v1, v2);
-			}
-		} catch (RuntimeException e) {
+				}
+		} catch (RuntimeException e) { // ignore
 		}
 		return version1.equals(version2);
 	}

@@ -832,7 +832,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @throws CoreException
 	 */
 	private void abort(String message, Exception e) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, message, e));
+		throw new CoreException(Status.error(message, e));
 	}
 
 	@Override

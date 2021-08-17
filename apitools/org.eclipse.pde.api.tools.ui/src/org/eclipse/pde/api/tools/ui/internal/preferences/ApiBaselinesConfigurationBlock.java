@@ -429,8 +429,8 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 			}
 			if (changes.size() == 2) {
 				Key k2 = changes.get(1);
-				String original2 = k2.getStoredValue(fLookupOrder[1], null);
-				String newval2 = k2.getStoredValue(fLookupOrder[1], fManager);
+				String original2 = k2.getStoredValue(fLookupOrder[0], null);
+				String newval2 = k2.getStoredValue(fLookupOrder[0], fManager);
 				if (original2 == null && newval2 == null) {
 					changes.remove(1);
 				}

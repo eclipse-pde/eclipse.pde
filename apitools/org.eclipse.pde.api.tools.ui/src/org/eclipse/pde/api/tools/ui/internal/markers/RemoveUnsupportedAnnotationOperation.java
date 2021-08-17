@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) Sep 12, 2018, 2020 IBM Corporation and others.
+ * Copyright (c) Sep 12, 2018, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -141,7 +141,7 @@ public class RemoveUnsupportedAnnotationOperation extends UIJob {
 						localMonitor.split(1);
 					}
 					localMonitor.split(1);
-					ASTParser parser = ASTParser.newParser(AST.JLS15);
+					ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 					parser.setSource(compilationUnit);
 					Integer charStartAttribute = null;
 					charStartAttribute = (Integer) fMarker.getAttribute(IMarker.CHAR_START);

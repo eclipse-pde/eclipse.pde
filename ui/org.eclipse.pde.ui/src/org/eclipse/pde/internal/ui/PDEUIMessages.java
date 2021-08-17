@@ -3186,8 +3186,10 @@ public class PDEUIMessages extends NLS {
 	public static String OpenManifestsAction_cannotFind;
 
 	public static String OpenManifestsAction_cannotOpen;
+	public static String OpenManifestsAction_cannotOpenThisFile;
 
 	public static String OpenManifestsAction_title;
+	public static String OpenPluginManifestsAction_title;
 
 	public static String NewProjectCreationPage_invalidProjectName;
 	public static String NewProjectCreationPage_invalidLocationPath;

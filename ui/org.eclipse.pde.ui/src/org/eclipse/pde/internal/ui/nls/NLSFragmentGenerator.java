@@ -446,7 +446,7 @@ public class NLSFragmentGenerator {
 			File file = folder.getFullPath().toFile();
 			String canonicalFilePath = file.getCanonicalPath();
 			if (!canonicalFilePath.startsWith(destCanonicalPath + File.separator)) {
-				throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(),
+				throw new CoreException(Status.error(
 						MessageFormat.format("Entry is outside of the target dir: : {0}", file.getName()), null)); //$NON-NLS-1$
 			}
 			if (!folder.exists()) {
