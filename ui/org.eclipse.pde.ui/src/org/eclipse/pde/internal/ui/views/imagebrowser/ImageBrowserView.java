@@ -181,8 +181,13 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		spinMaxImages.setSelection(250);
 		spinMaxImages.setLayoutData(GridDataFactory.fillDefaults().create());
 		spinMaxImages.addModifyListener(e -> {
-			page = 0; // reset to 1st page
-			scanImages();
+			Display.getCurrent().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					page = 0; // reset to 1st page
+					scanImages();
+				}
+			});
 		});
 
 		Composite filterComp = SWTFactory.createComposite(topComp, 2, 1, SWT.NONE, 0, 0);
