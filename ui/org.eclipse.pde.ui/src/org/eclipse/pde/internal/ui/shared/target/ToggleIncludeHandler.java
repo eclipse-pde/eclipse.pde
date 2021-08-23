@@ -92,7 +92,8 @@ public class ToggleIncludeHandler<DescriptorType> implements ITargetLocationHand
 					.collect(Collectors.partitioningBy(t -> getIndex(t, included) > -1));
 			Set<NameVersionDescriptor> exclude = new HashSet<>(lists.get(Boolean.TRUE));
 			List<NameVersionDescriptor> include = lists.get(Boolean.FALSE);
-			stream = Stream.concat(Arrays.stream(included).filter(Predicate.not(exclude::contains)), include.stream());
+			stream = Stream.concat(Arrays.stream(included).distinct().filter(Predicate.not(exclude::contains)),
+					include.stream());
 		}
 		target.setIncluded(stream.toArray(NameVersionDescriptor[]::new));
 		if (target instanceof TargetDefinition) {
