@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2019 IBM Corporation and others.
+ * Copyright (c) 2006, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -48,7 +48,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	private IJavaProject fJP;
 
 	// if we order the headers alphabetically in the array, there is no need to sort and we can save time
-	private static final String[] fHeader = {Constants.BUNDLE_ACTIVATIONPOLICY, Constants.BUNDLE_ACTIVATOR, Constants.BUNDLE_CATEGORY, Constants.BUNDLE_CLASSPATH, Constants.BUNDLE_CONTACTADDRESS, Constants.BUNDLE_COPYRIGHT, Constants.BUNDLE_DESCRIPTION, Constants.BUNDLE_DOCURL, Constants.BUNDLE_LOCALIZATION, Constants.BUNDLE_MANIFESTVERSION, Constants.BUNDLE_NAME, Constants.BUNDLE_NATIVECODE, Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, Constants.BUNDLE_SYMBOLICNAME, Constants.BUNDLE_UPDATELOCATION, Constants.BUNDLE_VENDOR, Constants.BUNDLE_VERSION, Constants.DYNAMICIMPORT_PACKAGE, ICoreConstants.ECLIPSE_BUDDY_POLICY, ICoreConstants.ECLIPSE_BUNDLE_SHAPE, ICoreConstants.ECLIPSE_GENERIC_CAPABILITY, ICoreConstants.ECLIPSE_GENERIC_REQUIRED, ICoreConstants.ECLIPSE_LAZYSTART,
+	private static final String[] fHeader = { ICoreConstants.AUTOMATIC_MODULE_NAME, Constants.BUNDLE_ACTIVATIONPOLICY, Constants.BUNDLE_ACTIVATOR, Constants.BUNDLE_CATEGORY, Constants.BUNDLE_CLASSPATH, Constants.BUNDLE_CONTACTADDRESS, Constants.BUNDLE_COPYRIGHT, Constants.BUNDLE_DESCRIPTION, Constants.BUNDLE_DOCURL, Constants.BUNDLE_LOCALIZATION, Constants.BUNDLE_MANIFESTVERSION, Constants.BUNDLE_NAME, Constants.BUNDLE_NATIVECODE, Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, Constants.BUNDLE_SYMBOLICNAME, Constants.BUNDLE_UPDATELOCATION, Constants.BUNDLE_VENDOR, Constants.BUNDLE_VERSION, Constants.DYNAMICIMPORT_PACKAGE, ICoreConstants.ECLIPSE_BUDDY_POLICY, ICoreConstants.ECLIPSE_BUNDLE_SHAPE, ICoreConstants.ECLIPSE_GENERIC_CAPABILITY, ICoreConstants.ECLIPSE_GENERIC_REQUIRED, ICoreConstants.ECLIPSE_LAZYSTART,
 			ICoreConstants.PLATFORM_FILTER, ICoreConstants.ECLIPSE_REGISTER_BUDDY, ICoreConstants.ECLIPSE_SOURCE_REFERENCES, Constants.EXPORT_PACKAGE, ICoreConstants.EXPORT_SERVICE, Constants.FRAGMENT_HOST, Constants.IMPORT_PACKAGE, ICoreConstants.IMPORT_SERVICE, Constants.PROVIDE_CAPABILITY, Constants.REQUIRE_BUNDLE, Constants.REQUIRE_CAPABILITY};
 
 
