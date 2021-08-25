@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -74,6 +74,8 @@ public class PDEMarkerFactory {
 	public static final int M_ONLY_CONFIG_SEV = 0x1027; // other problem
 	public static final int M_NO_AUTOMATIC_MODULE = 0x1028; // other problem
 	public static final int M_EXEC_ENV_TOO_LOW = 0x1029; // other problem
+	public static final int M_CONFLICTING_AUTOMATIC_MODULE = 0x1030; // other
+																		// problem
 
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;

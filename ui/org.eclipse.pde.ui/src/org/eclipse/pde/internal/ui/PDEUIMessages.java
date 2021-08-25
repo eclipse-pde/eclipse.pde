@@ -2633,6 +2633,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String RemoveLazyLoadingDirectiveResolution_remove;
 
+	public static String RemoveAutomaticModuleResolution_remove;
+
 	public static String EditorPreferencePage_link;
 
 	public static String ManifestSyntaxColorTab_keys;

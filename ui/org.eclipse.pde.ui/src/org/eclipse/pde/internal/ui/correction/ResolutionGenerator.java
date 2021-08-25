@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -138,6 +138,9 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		case PDEMarkerFactory.M_NO_AUTOMATIC_MODULE:
 			return new IMarkerResolution[] {
 					new AddAutomaticModuleResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker) };
+		case PDEMarkerFactory.M_CONFLICTING_AUTOMATIC_MODULE:
+			return new IMarkerResolution[] {
+					new RemoveRedundantAutomaticModuleHeader(AbstractPDEMarkerResolution.REMOVE_TYPE, marker) };
 		}
 		return NO_RESOLUTIONS;
 	}

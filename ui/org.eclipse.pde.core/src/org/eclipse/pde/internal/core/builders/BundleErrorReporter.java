@@ -201,7 +201,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			IHeader header = fHeaders.get(ICoreConstants.AUTOMATIC_MODULE_NAME.toLowerCase());
 			if( header != null) {
 				report(PDECoreMessages.BundleErrorReporter_ConflictingAutoModule, header.getLineNumber(),
-						CompilerFlags.WARNING, PDEMarkerFactory.CAT_OTHER);
+						CompilerFlags.WARNING, PDEMarkerFactory.M_CONFLICTING_AUTOMATIC_MODULE, PDEMarkerFactory.CAT_OTHER);
 			}
 
 		}
