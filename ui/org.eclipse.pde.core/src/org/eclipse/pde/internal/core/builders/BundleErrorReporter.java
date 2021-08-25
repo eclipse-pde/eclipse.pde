@@ -660,6 +660,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 		}
 		IExecutionEnvironment[] systemEnvs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
+		int numInvalidExecEnv = 0;
 		for (String bundleEnv : bundleEnvs) {
 			boolean found = false;
 			for (IExecutionEnvironment systemEnv : systemEnvs) {
@@ -669,6 +670,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				}
 			}
 			if (!found) {
+				numInvalidExecEnv++;
 				VirtualMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_reqExecEnv_unknown, bundleEnv),
 						getLine(header, bundleEnv), sev, PDEMarkerFactory.M_UNKNOW_EXEC_ENV, PDEMarkerFactory.CAT_EE);
 				addMarkerAttribute(marker,PDEMarkerFactory.compilerKey, CompilerFlags.P_INCOMPATIBLE_ENV);
@@ -676,6 +678,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 		}
 
+		if (numInvalidExecEnv == bundleEnvs.length) {
+			return;
+		}
 		// Check for highest BREE of bundle dependencies
 		int compilerFlag = CompilerFlags.getFlag(fProject, CompilerFlags.P_EXEC_ENV_TOO_LOW);
 		if (compilerFlag != CompilerFlags.IGNORE) {
