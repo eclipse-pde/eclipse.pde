@@ -21,11 +21,10 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -244,7 +243,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 		if (fInfo.exportSource && fInfo.exportSourceBundle) {
 			properties.put(IBuildPropertiesConstants.PROPERTY_INDIVIDUAL_SOURCE, "true"); //$NON-NLS-1$
-			List<IPluginModelBase> workspacePlugins = Arrays.asList(PluginRegistry.getWorkspaceModels());
+			Set<IPluginModelBase> workspacePlugins = Set.of(PluginRegistry.getWorkspaceModels());
 			for (Object item : fInfo.items) {
 				if (item instanceof IFeatureModel) {
 					IFeature feature = ((IFeatureModel) item).getFeature();

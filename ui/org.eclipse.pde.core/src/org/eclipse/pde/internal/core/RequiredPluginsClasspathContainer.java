@@ -18,13 +18,13 @@ import static java.util.Collections.singletonMap;
 import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -57,9 +57,9 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 public class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
 
 	@SuppressWarnings("nls")
-	private static final Collection<String> JUNIT5_RUNTIME_PLUGINS = new HashSet<>(
-			Arrays.asList("org.junit", "org.junit.jupiter.api", "org.junit.jupiter.engine",
-					"org.junit.platform.commons", "org.junit.platform.engine", "org.hamcrest.core", "org.opentest4j"));
+	private static final Set<String> JUNIT5_RUNTIME_PLUGINS = Set.of("org.junit", "org.junit.jupiter.api",
+			"org.junit.jupiter.engine", "org.junit.platform.commons", "org.junit.platform.engine", "org.hamcrest.core",
+			"org.opentest4j");
 
 	private final IPluginModelBase fModel;
 	private IBuild fBuild;

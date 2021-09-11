@@ -1,16 +1,14 @@
 package $packageName$;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.*;
 
 @Component
 public class DictionaryImpl implements Dictionary {
 
-	private List<String> fWords = new ArrayList<>(Arrays.asList("$word1$", "$word2$", "$word3$"));
-	private String fLanguage = "en_US";
+	private final Set<String> fWords = Set.of("$word1$", "$word2$", "$word3$");
+	private final String fLanguage = "en_US";
 	
 	@Override
 	public String getLanguage() {

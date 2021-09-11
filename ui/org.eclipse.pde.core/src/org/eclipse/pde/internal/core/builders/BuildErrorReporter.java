@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
@@ -78,7 +79,8 @@ import org.w3c.dom.NodeList;
 public class BuildErrorReporter extends ErrorReporter implements IBuildPropertiesConstants {
 
 	private static final String DEF_SOURCE_ENTRY = PROPERTY_SOURCE_PREFIX + '.';
-	private static final String[] RESERVED_NAMES = new String[] {"meta-inf", "osgi-inf", ICoreConstants.BUILD_FILENAME_DESCRIPTOR, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR, "plugin.properties"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private static final Set<String> RESERVED_NAMES = Set.of("meta-inf", "osgi-inf", //$NON-NLS-1$ //$NON-NLS-2$
+			ICoreConstants.BUILD_FILENAME_DESCRIPTOR, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR, "plugin.properties"); //$NON-NLS-1$
 
 	private static final String ASSERT_IDENTIFIER = "assertIdentifier"; //$NON-NLS-1$
 	private static final String ENUM_IDENTIFIER = "enumIdentifier"; //$NON-NLS-1$
@@ -1004,8 +1006,6 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		} catch (JavaModelException e) { //do nothing
 		}
 
-		List<String> reservedTokens = Arrays.asList(RESERVED_NAMES);
-
 		String[] tokens = includes.getTokens();
 		for (String token : tokens) {
 			IResource res = fProject.findMember(token);
@@ -1015,8 +1015,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			String errorMessage = null;
 			if (sourceFolderList.contains(res.getFullPath())) {
 				errorMessage = PDECoreMessages.BuildErrorReporter_srcIncludesSourceFolder;
-			} else if (token.startsWith(".") || reservedTokens.contains(res.getName().toLowerCase())) { //$NON-NLS-1$
-				if (!res.getName().toLowerCase().equals(".settings")) {//$NON-NLS-1$
+			} else if (token.startsWith(".") || RESERVED_NAMES.contains(res.getName().toLowerCase())) { //$NON-NLS-1$
+				if (!res.getName().equalsIgnoreCase(".settings")) {//$NON-NLS-1$
 					errorMessage = NLS.bind(PDECoreMessages.BuildErrorReporter_srcIncludesSourceFolder1, res.getName());
 				}
 			}

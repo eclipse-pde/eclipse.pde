@@ -14,7 +14,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
@@ -43,6 +44,9 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 		super(file);
 		fLaunchConfiguration = config;
 	}
+
+	private static final Set<String> UNWANTED_ARGS = Set.of('-' + IEnvironment.P_ARCH, '-' + IEnvironment.P_NL,
+			'-' + IEnvironment.P_OS, '-' + IEnvironment.P_WS);
 
 	@Override
 	protected void initializeProduct(IProduct product) {
@@ -104,10 +108,9 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 					arguments.setVMArguments(vmargs, IArgumentsInfo.L_ARGS_ALL);
 				if (programArgs != null) {
 					String[] parsedArgs = DebugPlugin.splitArguments(programArgs);
-					List<String> unwantedArgs = Arrays.asList(new String[] {'-' + IEnvironment.P_ARCH, '-' + IEnvironment.P_NL, '-' + IEnvironment.P_OS, '-' + IEnvironment.P_WS});
 					StringBuilder filteredArgs = new StringBuilder();
 					for (int i = 0; i < parsedArgs.length; i++) {
-						if (unwantedArgs.contains(parsedArgs[i].toLowerCase())) {
+						if (UNWANTED_ARGS.contains(parsedArgs[i].toLowerCase())) {
 							if (!parsedArgs[i + 1].startsWith("-")) { //$NON-NLS-1$
 								i++; // skip its value too
 								continue;

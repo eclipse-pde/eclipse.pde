@@ -1101,7 +1101,7 @@ public class FeatureExportOperation extends Job {
 				}
 			}
 
-			List<IPluginModelBase> workspacePlugins = Arrays.asList(PluginRegistry.getWorkspaceModels());
+			Set<IPluginModelBase> workspacePlugins = Set.of(PluginRegistry.getWorkspaceModels());
 
 			for (Object item : fInfo.items) {
 				if (item instanceof IFeatureModel) {

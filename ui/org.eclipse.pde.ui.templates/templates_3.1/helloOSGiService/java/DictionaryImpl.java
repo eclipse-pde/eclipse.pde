@@ -1,12 +1,11 @@
 package $packageName$;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
 public class DictionaryImpl implements Dictionary {
 
-	private List<String> fWords = Arrays.asList("$word1$", "$word2$", "$word3$");
-	private String fLanguage = "$language$";
+	private final Set<String> fWords = Set.of("$word1$", "$word2$", "$word3$");
+	private final String fLanguage = "$language$";
 
 	public String getLanguage() {
 		return fLanguage;

@@ -189,39 +189,38 @@ public class LaunchAction extends Action {
 		return concatArgs(buffer, userArgs);
 	}
 
+	private static final Set<String> PROG_ARGUMENTS = Set.of('-' + IEnvironment.P_OS, '-' + IEnvironment.P_WS,
+			'-' + IEnvironment.P_ARCH, '-' + IEnvironment.P_NL);
+
 	private String concatArgs(StringBuilder initialArgs, String userArgs) {
-		List<String> initialArgsList = Arrays.asList(DebugPlugin.splitArguments(initialArgs.toString()));
 		if (userArgs != null && userArgs.length() > 0) {
-			List<String> userArgsList = Arrays.asList(DebugPlugin.splitArguments(userArgs));
+			Set<String> initialArgsList = new HashSet<>(
+					Arrays.asList(DebugPlugin.splitArguments(initialArgs.toString())));
+			String[] userArgsList = DebugPlugin.splitArguments(userArgs);
 			boolean previousHasSubArgument = false;
 			for (String userArg : userArgsList) {
-				boolean hasSubArgument = userArg.toString().equals('-' + IEnvironment.P_OS) || userArg.toString().equals('-' + IEnvironment.P_WS);
-				hasSubArgument = hasSubArgument || userArg.toString().equals('-' + IEnvironment.P_ARCH) || userArg.toString().equals('-' + IEnvironment.P_NL);
-				if (!initialArgsList.contains(userArg) || hasSubArgument || previousHasSubArgument) {
+				boolean hasSubArgument = PROG_ARGUMENTS.contains(userArg);
+				if (hasSubArgument || previousHasSubArgument || !initialArgsList.contains(userArg)) {
 					initialArgs.append(' ');
 					initialArgs.append(userArg);
 				}
 				previousHasSubArgument = hasSubArgument;
 			}
 		}
-		String arguments = null;
 		try {
-			arguments = removeDuplicateArguments(initialArgs);
+			return removeDuplicateArguments(initialArgs);
 		} catch (Exception e) {
 			PDEPlugin.log(e);
 			return initialArgs.toString();
 		}
-		return arguments;
 	}
 
 	private String removeDuplicateArguments(StringBuilder initialArgs) {
-		String[] progArguments = { '-' + IEnvironment.P_OS, '-' + IEnvironment.P_WS, '-' + IEnvironment.P_ARCH,
-				'-' + IEnvironment.P_NL };
 		String defaultStart = "${target."; //$NON-NLS-1$ // see
 											// LaunchArgumentHelper
 		ArrayList<String> userArgsList = new ArrayList<>(
 				Arrays.asList(DebugPlugin.splitArguments(initialArgs.toString())));
-		for (String progArgument : progArguments) {
+		for (String progArgument : PROG_ARGUMENTS) {
 			int index1 = userArgsList.indexOf(progArgument);
 			int index2 = userArgsList.lastIndexOf(progArgument);
 			if (index1 != index2) {
