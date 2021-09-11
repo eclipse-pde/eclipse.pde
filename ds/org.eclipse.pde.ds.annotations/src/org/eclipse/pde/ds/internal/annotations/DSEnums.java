@@ -13,83 +13,45 @@
  *******************************************************************************/
 package org.eclipse.pde.ds.internal.annotations;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 public class DSEnums {
 
-	private static final Map<String, String> CONFIGURATION_OPTION;
+	private static final Map<String, String> CONFIGURATION_OPTION = Map.of( //
+			"OPTIONAL", "optional", //
+			"REQUIRE", "require", //
+			"IGNORE", "ignore");
 
-	static {
-		HashMap<String, String> m = new HashMap<>(3);
-		m.put("OPTIONAL", "optional"); //$NON-NLS-1$ //$NON-NLS-2$
-		m.put("REQUIRE", "require"); //$NON-NLS-1$ //$NON-NLS-2$
-		m.put("IGNORE", "ignore"); //$NON-NLS-1$ //$NON-NLS-2$
-		CONFIGURATION_OPTION = Collections.unmodifiableMap(m);
-	}
+	private static final Map<String, String> REFERENCE_CARDINALITY = Map.of( //
+			"OPTIONAL", "0..1", //
+			"MANDATORY", "1..1", //
+			"MULTIPLE", "0..n", //
+			"AT_LEAST_ONE", "1..n");
 
-	private static final Map<String, String> REFERENCE_CARDINALITY;
+	private static final Map<String, String> REFERENCE_POLICY = Map.of( //
+			"STATIC", "static", //
+			"DYNAMIC", "dynamic");
 
-	static {
-		HashMap<String, String> m = new HashMap<>(4);
-		m.put("OPTIONAL", "0..1"); //$NON-NLS-1$ //$NON-NLS-2$
-		m.put("MANDATORY", "1..1"); //$NON-NLS-1$ //$NON-NLS-2$
-		m.put("MULTIPLE", "0..n"); //$NON-NLS-1$ //$NON-NLS-2$
-		m.put("AT_LEAST_ONE", "1..n"); //$NON-NLS-1$ //$NON-NLS-2$
-		REFERENCE_CARDINALITY = Collections.unmodifiableMap(m);
-	}
+	private static final Map<String, String> REFERENCE_POLICY_OPTION = Map.of( //
+			"RELUCTANT", "reluctant", //
+			"GREEDY", "greedy");
 
-	private static final Map<String, String> REFERENCE_POLICY;
+	private static final Map<String, String> SERVICE_SCOPE = Map.of( //
+			"SINGLETON", "singleton", //
+			"BUNDLE", "bundle", //
+			"PROTOTYPE", "prototype", //
+			"DEFAULT", "<<default>>");
 
-	static {
-		HashMap<String, String> m = new HashMap<>(2);
-		m.put("STATIC", "static"); //$NON-NLS-1$ //$NON-NLS-2$
-		m.put("DYNAMIC", "dynamic"); //$NON-NLS-1$ //$NON-NLS-2$
-		REFERENCE_POLICY = Collections.unmodifiableMap(m);
-	}
+	private static final Map<String, String> REFERENCE_SCOPE = Map.of( //
+			"BUNDLE", "bundle", //
+			"PROTOTYPE", "prototype", //
+			"PROTOTYPE_REQUIRED", "prototype_required");
 
-	private static final Map<String, String> REFERENCE_POLICY_OPTION;
-
-	static {
-		HashMap<String, String> m = new HashMap<>(2);
-		m.put("RELUCTANT", "reluctant"); //$NON-NLS-1$ //$NON-NLS-2$
-		m.put("GREEDY", "greedy"); //$NON-NLS-1$ //$NON-NLS-2$
-		REFERENCE_POLICY_OPTION = Collections.unmodifiableMap(m);
-	}
-
-	private static final Map<String, String> SERVICE_SCOPE;
-
-	static {
-		HashMap<String, String> m = new HashMap<>(4);
-		m.put("SINGLETON", "singleton"); //$NON-NLS-1$ //$NON-NLS-2$
-		m.put("BUNDLE", "bundle"); //$NON-NLS-1$ //$NON-NLS-2$
-		m.put("PROTOTYPE", "prototype"); //$NON-NLS-1$ //$NON-NLS-2$
-		m.put("DEFAULT", "<<default>>"); //$NON-NLS-1$ //$NON-NLS-2$
-		SERVICE_SCOPE = Collections.unmodifiableMap(m);
-	}
-
-	private static final Map<String, String> REFERENCE_SCOPE;
-
-	static {
-		HashMap<String, String> m = new HashMap<>(3);
-		m.put("BUNDLE", "bundle"); //$NON-NLS-1$ //$NON-NLS-2$
-		m.put("PROTOTYPE", "prototype"); //$NON-NLS-1$ //$NON-NLS-2$
-		m.put("PROTOTYPE_REQUIRED", "prototype_required"); //$NON-NLS-1$ //$NON-NLS-2$
-		REFERENCE_SCOPE = Collections.unmodifiableMap(m);
-	}
-
-	private static final Map<String, String> FIELD_OPTION;
-
-	static {
-		HashMap<String, String> m = new HashMap<>(2);
-		m.put("UPDATE", "update"); //$NON-NLS-1$ //$NON-NLS-2$
-		m.put("REPLACE", "replace"); //$NON-NLS-1$ //$NON-NLS-2$
-		FIELD_OPTION = Collections.unmodifiableMap(m);
-	}
+	private static final Map<String, String> FIELD_OPTION = Map.of( //
+			"UPDATE", "update", //
+			"REPLACE", "replace");
 
 	private DSEnums() {
-		super();
 	}
 
 	public static String getConfigurationPolicy(String literal) {

@@ -73,6 +73,7 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
@@ -1104,8 +1105,6 @@ public class FeatureExportOperation extends Job {
 				}
 			}
 
-			List<IPluginModelBase> workspacePlugins = Arrays.asList(PluginRegistry.getWorkspaceModels());
-
 			for (Object item : fInfo.items) {
 				if (item instanceof IFeatureModel) {
 					IFeature feature = ((IFeatureModel) item).getFeature();
@@ -1163,7 +1162,7 @@ public class FeatureExportOperation extends Job {
 							root.appendChild(plugin);
 
 							if (fInfo.exportSource && fInfo.exportSourceBundle) {
-								if (workspacePlugins.contains(PluginRegistry.findModel(bundle))) { // Is it a workspace plugin?
+								if (isWorkspacePlugin(bundle)) {
 									plugin = doc.createElement("plugin"); //$NON-NLS-1$
 									plugin.setAttribute("id", bundle.getSymbolicName() + ".source"); //$NON-NLS-1$ //$NON-NLS-2$
 									plugin.setAttribute("version", bundle.getVersion().toString()); //$NON-NLS-1$
@@ -1196,6 +1195,11 @@ public class FeatureExportOperation extends Job {
 			XMLPrintHandler.writeFile(doc, new File(file, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR));
 		} catch (DOMException | FactoryConfigurationError | ParserConfigurationException e1) {
 		}
+	}
+
+	static boolean isWorkspacePlugin(BundleDescription bundle) {
+		ModelEntry entry = PluginRegistry.findEntry(bundle.getSymbolicName());
+		return entry != null && Arrays.asList(entry.getWorkspaceModels()).contains(PluginRegistry.findModel(bundle));
 	}
 
 	protected void setAdditionalAttributes(Element plugin, BundleDescription bundle) {

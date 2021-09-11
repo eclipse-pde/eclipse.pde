@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag;
@@ -152,7 +153,12 @@ public final class JavadocTagManager {
 	 * @see #TAG_NOOVERRIDE
 	 * @see #TAG_NOREFERENCE
 	 */
-	public static final Set<String> ALL_TAGS;
+	public static final Set<String> ALL_TAGS = Set.of( //
+			TAG_NOEXTEND, //
+			TAG_NOIMPLEMENT, //
+			TAG_NOINSTANTIATE, //
+			TAG_NOOVERRIDE, //
+			TAG_NOREFERENCE);
 
 	/**
 	 * The collection of all annotation names
@@ -165,39 +171,24 @@ public final class JavadocTagManager {
 	 *
 	 * @sine 1.0.600
 	 */
-	public static final Set<String> ALL_ANNOTATIONS;
+	public static final Set<String> ALL_ANNOTATIONS = Set.of( //
+			ANNOTATION_NOEXTEND, //
+			ANNOTATION_NOIMPLEMENT, //
+			ANNOTATION_NOINSTANTIATE, //
+			ANNOTATION_NOOVERRIDE, //
+			ANNOTATION_NOREFERENCE);
 
 	/**
 	 * Cache for simple annotation names mapped to their fully qualified name
 	 *
 	 * @since 1.0.600
 	 */
-	private static final HashMap<String, String> fqAnnotationNames;
-
-	static {
-		HashSet<String> tags = new HashSet<>(5, 1);
-		tags.add(TAG_NOEXTEND);
-		tags.add(TAG_NOIMPLEMENT);
-		tags.add(TAG_NOINSTANTIATE);
-		tags.add(TAG_NOOVERRIDE);
-		tags.add(TAG_NOREFERENCE);
-		ALL_TAGS = Collections.unmodifiableSet(tags);
-
-		tags = new HashSet<>();
-		tags.add(ANNOTATION_NOEXTEND);
-		tags.add(ANNOTATION_NOIMPLEMENT);
-		tags.add(ANNOTATION_NOINSTANTIATE);
-		tags.add(ANNOTATION_NOOVERRIDE);
-		tags.add(ANNOTATION_NOREFERENCE);
-		ALL_ANNOTATIONS = Collections.unmodifiableSet(tags);
-
-		fqAnnotationNames = new HashMap<>();
-		fqAnnotationNames.put(ANNOTATION_NOEXTEND, "org.eclipse.pde.api.tools.annotations.NoExtend"); //$NON-NLS-1$
-		fqAnnotationNames.put(ANNOTATION_NOIMPLEMENT, "org.eclipse.pde.api.tools.annotations.NoImplement"); //$NON-NLS-1$
-		fqAnnotationNames.put(ANNOTATION_NOINSTANTIATE, "org.eclipse.pde.api.tools.annotations.NoInstantiate"); //$NON-NLS-1$
-		fqAnnotationNames.put(ANNOTATION_NOOVERRIDE, "org.eclipse.pde.api.tools.annotations.NoOverride"); //$NON-NLS-1$
-		fqAnnotationNames.put(ANNOTATION_NOREFERENCE, "org.eclipse.pde.api.tools.annotations.NoReference"); //$NON-NLS-1$
-	}
+	private static final Map<String, String> fqAnnotationNames = Map.of( //
+			ANNOTATION_NOEXTEND, "org.eclipse.pde.api.tools.annotations.NoExtend", //$NON-NLS-1$
+			ANNOTATION_NOIMPLEMENT, "org.eclipse.pde.api.tools.annotations.NoImplement", //$NON-NLS-1$
+			ANNOTATION_NOINSTANTIATE, "org.eclipse.pde.api.tools.annotations.NoInstantiate", //$NON-NLS-1$
+			ANNOTATION_NOOVERRIDE, "org.eclipse.pde.api.tools.annotations.NoOverride", //$NON-NLS-1$
+			ANNOTATION_NOREFERENCE, "org.eclipse.pde.api.tools.annotations.NoReference"); //$NON-NLS-1$
 
 	/**
 	 * Cache for the contributed javadoc tags. Cache form:
@@ -224,24 +215,15 @@ public final class JavadocTagManager {
 	private void initializeAnnotations() {
 		if (fAnnotationCache == null) {
 			fAnnotationCache = new HashMap<>();
-			HashSet<String> annots = new HashSet<>();
-			annots.add(ANNOTATION_NOEXTEND);
-			annots.add(ANNOTATION_NOINSTANTIATE);
-			annots.add(ANNOTATION_NOREFERENCE);
+			Set<String> annots = Set.of(ANNOTATION_NOEXTEND, ANNOTATION_NOINSTANTIATE, ANNOTATION_NOREFERENCE);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE), annots);
-			annots = new HashSet<>();
-			annots.add(ANNOTATION_NOEXTEND);
-			annots.add(ANNOTATION_NOIMPLEMENT);
-			annots.add(ANNOTATION_NOREFERENCE);
+			annots = Set.of(ANNOTATION_NOEXTEND, ANNOTATION_NOIMPLEMENT, ANNOTATION_NOREFERENCE);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_NONE), annots);
-			annots = new HashSet<>();
-			annots.add(ANNOTATION_NOOVERRIDE);
-			annots.add(ANNOTATION_NOREFERENCE);
+			annots = Set.of(ANNOTATION_NOOVERRIDE, ANNOTATION_NOREFERENCE);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_METHOD), annots);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_CONSTRUCTOR), annots);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_METHOD), annots);
-			annots = new HashSet<>();
-			annots.add(ANNOTATION_NOREFERENCE);
+			annots = Set.of(ANNOTATION_NOREFERENCE);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_FIELD), annots);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_FIELD), annots);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_NONE), annots);
@@ -366,7 +348,7 @@ public final class JavadocTagManager {
 	 * @since 1.0.600
 	 */
 	public synchronized String getQualifiedNameForAnnotation(String typename) {
-		return fqAnnotationNames.get(typename);
+		return typename != null ? fqAnnotationNames.get(typename) : null;
 	}
 
 	/**
