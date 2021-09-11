@@ -653,8 +653,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 							}
 							VirtualMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_reqExecEnv_conflict, bundleEnvs[0]),getLine(header, bundleEnvs[0]), sev, PDEMarkerFactory.M_MISMATCHED_EXEC_ENV,PDEMarkerFactory.CAT_EE);
 							addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,CompilerFlags.P_INCOMPATIBLE_ENV);
-							if(systemEE!=null)
+							if (systemEE != null) {
 								addMarkerAttribute(marker, "BREE", systemEE); //$NON-NLS-1$
+							}
 						}
 					}
 				}
@@ -710,9 +711,11 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 	}
 
-	static final List<String> EXECUTION_ENVIRONMENT_NAMES = Arrays.asList("OSGi/Minimum", //$NON-NLS-1$
+	private static final List<String> EXECUTION_ENVIRONMENT_NAMES = List.of("OSGi/Minimum", //$NON-NLS-1$
 			"CDC-1.0/Foundation", //$NON-NLS-1$
 			"CDC-1.1/Foundation", "JRE", "J2SE", "JavaSE"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+
+	private static final Pattern EE_PATTERN = Pattern.compile("(.*)-(\\d+)\\.?(\\d+)?(.*)?"); //$NON-NLS-1$
 
 	/**
 	 * <p>
@@ -747,9 +750,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			return execEnv1;
 		}
 
-		Pattern p = Pattern.compile("(.*)-(\\d+)\\.?(\\d+)?(.*)?"); //$NON-NLS-1$
-		Matcher eeMatcher1 = p.matcher(execEnv1);
-		Matcher eeMatcher2 = p.matcher(execEnv2);
+		Matcher eeMatcher1 = EE_PATTERN.matcher(execEnv1);
+		Matcher eeMatcher2 = EE_PATTERN.matcher(execEnv2);
 
 		if (!eeMatcher1.matches()) {
 			throw new IllegalArgumentException(String.format("%s is not a valid Execution Environment", execEnv1)); //$NON-NLS-1$

@@ -812,9 +812,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 		}
 
-		if (exportedRequiredComponentsInReference.size() > 0) {
-			String[] compNames = component.getPackageNames();
-			List<String> compNamesList = new ArrayList<>(Arrays.asList(compNames));
+		if (!exportedRequiredComponentsInReference.isEmpty()) {
+			Set<String> compNames = Set.of(component.getPackageNames());
 			for (String comp : exportedRequiredComponentsInReference) {
 				IApiComponent baselineComponent = baseline.getApiComponent(comp);
 				if (baselineComponent == null) {
@@ -822,10 +821,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							IApiProblem.REEXPORTED_REMOVAL_OF_REEXPORT_MAJOR_VERSION_CHANGE);
 				}
 				String[] packNames = baselineComponent.getPackageNames();
-				List<String> packNamesList = new ArrayList<>(Arrays.asList(packNames));
 				// if the exported packages contains all exported package of
 				// dependency for which reexport was removed, we are good
-				if (!compNamesList.containsAll(packNamesList)) {
+				if (!compNames.containsAll(Arrays.asList(packNames))) {
 					return new ReexportedBundleVersionInfo(exportedRequiredComponentsInReference.iterator().next(), IApiProblem.REEXPORTED_REMOVAL_OF_REEXPORT_MAJOR_VERSION_CHANGE);
 				}
 			}
@@ -1594,21 +1592,13 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
-		if (refExecutionEnv == null && compExecutionEnv != null) {
-			return true;
-		}
-		if (refExecutionEnv != null && compExecutionEnv == null) {
+		if (refExecutionEnv == null && compExecutionEnv == null) {
+			return false;
+		} else if (refExecutionEnv == null || compExecutionEnv == null) {
 			return true;
 		}
 		// any change in BREE list would generate a minor version increase
-		if (refExecutionEnv != null && compExecutionEnv != null) {
-			List<String> refExecutionEnvList = new ArrayList<>(Arrays.asList(refExecutionEnv));
-			List<String> compExecutionEnvList = new ArrayList<>(Arrays.asList(compExecutionEnv));
-			if (!(refExecutionEnvList.containsAll(compExecutionEnvList) && compExecutionEnvList.containsAll(refExecutionEnvList))) {
-				return true;
-			}
-		}
-		return false;
+		return !new HashSet<>(Arrays.asList(refExecutionEnv)).equals(new HashSet<>(Arrays.asList(compExecutionEnv)));
 	}
 
 	/**

@@ -14,13 +14,12 @@
 package org.eclipse.pde.ds.internal.annotations;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.ListIterator;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.jdt.core.JavaCore;
 
@@ -63,19 +62,9 @@ public class ProjectState implements Serializable, Cloneable {
 	public Collection<String> getCompilationUnits() {
 		if (types == null) {
 			// fall back to (deprecated) mappings
-			ArrayList<String> translated = new ArrayList<>(mappings.keySet());
-			for (ListIterator<String> i = translated.listIterator(); i.hasNext();) {
-				i.set(fromLegacyCUKey(i.next()));
-			}
-
-			return translated;
+			return mappings.keySet().stream().map(k -> k.replace('.', '/') + ".java").collect(Collectors.toList());
 		}
-
 		return Collections.unmodifiableCollection(types.keySet());
-	}
-
-	private String fromLegacyCUKey(String cuKey) {
-		return String.format("%s.java", cuKey.replace('.', '/')); //$NON-NLS-1$
 	}
 
 	public Collection<String> removeMappings(String cuKey) {

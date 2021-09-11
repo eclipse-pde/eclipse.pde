@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ds.internal.annotations;
 
+import static java.util.Map.entry;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -133,45 +135,37 @@ public class AnnotationVisitor extends ASTVisitor {
 
 	private static final String VALUE_SERVICE_SCOPE_BUNDLE = DSEnums.getServiceScope("BUNDLE"); //$NON-NLS-1$
 
-	private static final Set<String> PROPERTY_TYPES = Collections.unmodifiableSet(
-			new HashSet<>(
-					Arrays.asList(
-							null,
-							IDSConstants.VALUE_PROPERTY_TYPE_STRING,
-							IDSConstants.VALUE_PROPERTY_TYPE_LONG,
-							IDSConstants.VALUE_PROPERTY_TYPE_DOUBLE,
-							IDSConstants.VALUE_PROPERTY_TYPE_FLOAT,
-							IDSConstants.VALUE_PROPERTY_TYPE_INTEGER,
-							IDSConstants.VALUE_PROPERTY_TYPE_BYTE,
-							IDSConstants.VALUE_PROPERTY_TYPE_CHAR,
-							IDSConstants.VALUE_PROPERTY_TYPE_BOOLEAN,
-							IDSConstants.VALUE_PROPERTY_TYPE_SHORT)));
+	private static final Set<String> PROPERTY_TYPES = Set.of( //
+			IDSConstants.VALUE_PROPERTY_TYPE_STRING, //
+			IDSConstants.VALUE_PROPERTY_TYPE_LONG, //
+			IDSConstants.VALUE_PROPERTY_TYPE_DOUBLE, //
+			IDSConstants.VALUE_PROPERTY_TYPE_FLOAT, //
+			IDSConstants.VALUE_PROPERTY_TYPE_INTEGER, //
+			IDSConstants.VALUE_PROPERTY_TYPE_BYTE, //
+			IDSConstants.VALUE_PROPERTY_TYPE_CHAR, //
+			IDSConstants.VALUE_PROPERTY_TYPE_BOOLEAN, //
+			IDSConstants.VALUE_PROPERTY_TYPE_SHORT);
 
-	private static final Map<String, String> PRIMITIVE_TYPE_MAP;
+	private static final Map<String, String> PRIMITIVE_TYPE_MAP = Map.ofEntries( //
+			entry(Long.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_LONG), //
+			entry(Double.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_DOUBLE), //
+			entry(Float.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_FLOAT), //
+			entry(Integer.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_INTEGER), //
+			entry(Byte.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_BYTE), //
+			entry(Character.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_CHAR), //
+			entry(Boolean.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_BOOLEAN), //
+			entry(Short.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_SHORT), //
+			entry(Long.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_LONG), //
+			entry(Double.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_DOUBLE), //
+			entry(Float.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_FLOAT), //
+			entry(Integer.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_INTEGER), //
+			entry(Byte.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_BYTE), //
+			entry(Character.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_CHAR), //
+			entry(Boolean.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_BOOLEAN), //
+			entry(Short.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_SHORT));
 
-	static {
-		HashMap<String, String> map = new HashMap<>(16);
-		map.put(Long.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_LONG);
-		map.put(Double.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_DOUBLE);
-		map.put(Float.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_FLOAT);
-		map.put(Integer.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_INTEGER);
-		map.put(Byte.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_BYTE);
-		map.put(Character.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_CHAR);
-		map.put(Boolean.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_BOOLEAN);
-		map.put(Short.class.getName(), IDSConstants.VALUE_PROPERTY_TYPE_SHORT);
-		map.put(Long.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_LONG);
-		map.put(Double.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_DOUBLE);
-		map.put(Float.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_FLOAT);
-		map.put(Integer.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_INTEGER);
-		map.put(Byte.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_BYTE);
-		map.put(Character.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_CHAR);
-		map.put(Boolean.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_BOOLEAN);
-		map.put(Short.TYPE.getName(), IDSConstants.VALUE_PROPERTY_TYPE_SHORT);
-		PRIMITIVE_TYPE_MAP = Collections.unmodifiableMap(map);
-	}
-
-	private static final Comparator<IDSReference> REF_NAME_COMPARATOR = (o1, o2) -> o1.getReferenceName()
-			.compareTo(o2.getReferenceName());
+	private static final Comparator<IDSReference> REF_NAME_COMPARATOR = Comparator
+			.comparing(IDSReference::getReferenceName);
 
 	private static final Debug debug = AnnotationProcessor.debug;
 
@@ -1577,7 +1571,7 @@ public class AnnotationVisitor extends ASTVisitor {
 			return;
 		}
 
-		if (PROPERTY_TYPES.contains(type)) {
+		if (type == null || PROPERTY_TYPES.contains(type)) {
 			if (name == null || name.trim().length() == 0) {
 				problemReporter.reportProblem(annotation, "property", index, Messages.AnnotationProcessor_invalidComponentProperty_nameRequired, name); //$NON-NLS-1$
 			}

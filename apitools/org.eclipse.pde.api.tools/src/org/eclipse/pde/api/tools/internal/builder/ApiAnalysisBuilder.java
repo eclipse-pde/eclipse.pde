@@ -116,22 +116,13 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	static final Comparator<ManifestElement> fgManifestElementComparator = (o1, o2) -> o1.getValue().compareTo(o2.getValue());
 
 	/**
-	 * Array of header names that we care about when a manifest delta is
-	 * discovered
+	 * Array of header names that we care about when a manifest delta is discovered
 	 *
 	 * @since 1.0.3
 	 */
-	public static final HashSet<String> IMPORTANT_HEADERS = new HashSet<>(7);
-
-	static {
-		IMPORTANT_HEADERS.add(Constants.SYSTEM_BUNDLE_SYMBOLICNAME);
-		IMPORTANT_HEADERS.add(Constants.BUNDLE_VERSION);
-		IMPORTANT_HEADERS.add(Constants.REQUIRE_BUNDLE);
-		IMPORTANT_HEADERS.add(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-		IMPORTANT_HEADERS.add(Constants.EXPORT_PACKAGE);
-		IMPORTANT_HEADERS.add(Constants.IMPORT_PACKAGE);
-		IMPORTANT_HEADERS.add(Constants.BUNDLE_CLASSPATH);
-	}
+	public static final Set<String> IMPORTANT_HEADERS = Set.of(Constants.SYSTEM_BUNDLE_SYMBOLICNAME,
+			Constants.BUNDLE_VERSION, Constants.REQUIRE_BUNDLE, Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT,
+			Constants.EXPORT_PACKAGE, Constants.IMPORT_PACKAGE, Constants.BUNDLE_CLASSPATH);
 
 	/**
 	 * Project relative path to the .api_filters file
