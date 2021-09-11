@@ -96,15 +96,13 @@ import org.eclipse.text.edits.TextEdit;
  */
 public class JavadocConversionRefactoring extends Refactoring {
 
-	static Map<String, String> ALL_API_IMPORTS;
-	static {
-		ALL_API_IMPORTS = new HashMap<>();
-		ALL_API_IMPORTS.put(JavadocTagManager.ANNOTATION_NOEXTEND, "org.eclipse.pde.api.tools.annotations.NoExtend"); //$NON-NLS-1$
-		ALL_API_IMPORTS.put(JavadocTagManager.ANNOTATION_NOIMPLEMENT, "org.eclipse.pde.api.tools.annotations.NoImplement"); //$NON-NLS-1$
-		ALL_API_IMPORTS.put(JavadocTagManager.ANNOTATION_NOINSTANTIATE, "org.eclipse.pde.api.tools.annotations.NoInstantiate"); //$NON-NLS-1$
-		ALL_API_IMPORTS.put(JavadocTagManager.ANNOTATION_NOOVERRIDE, "org.eclipse.pde.api.tools.annotations.NoOverride"); //$NON-NLS-1$
-		ALL_API_IMPORTS.put(JavadocTagManager.ANNOTATION_NOREFERENCE, "org.eclipse.pde.api.tools.annotations.NoReference"); //$NON-NLS-1$
-	}
+	private static final Map<String, String> ALL_API_IMPORTS = Map.of(JavadocTagManager.ANNOTATION_NOEXTEND,
+			"org.eclipse.pde.api.tools.annotations.NoExtend", //$NON-NLS-1$
+			JavadocTagManager.ANNOTATION_NOIMPLEMENT, "org.eclipse.pde.api.tools.annotations.NoImplement", //$NON-NLS-1$
+			JavadocTagManager.ANNOTATION_NOINSTANTIATE, "org.eclipse.pde.api.tools.annotations.NoInstantiate", //$NON-NLS-1$
+			JavadocTagManager.ANNOTATION_NOOVERRIDE, "org.eclipse.pde.api.tools.annotations.NoOverride", //$NON-NLS-1$
+			JavadocTagManager.ANNOTATION_NOREFERENCE, "org.eclipse.pde.api.tools.annotations.NoReference" //$NON-NLS-1$
+	);
 
 	/**
 	 * The projects to check
@@ -115,12 +113,6 @@ public class JavadocConversionRefactoring extends Refactoring {
 	 * Whether to remove the existing javadoc tags
 	 */
 	private boolean removeTags = true;
-
-	/**
-	 * Constructor
-	 */
-	public JavadocConversionRefactoring() {
-	}
 
 	/**
 	 * Whether to remove the existing javadoc tags as part of the refactoring
@@ -576,7 +568,8 @@ public class JavadocConversionRefactoring extends Refactoring {
 					List<TagElement> tags = docnode.tags();
 					lrewrite = rewrite.getListRewrite(docnode, Javadoc.TAGS_PROPERTY);
 					for (TagElement tag : tags) {
-						if (JavadocTagManager.ALL_TAGS.contains(tag.getTagName())) {
+						String tagName = tag.getTagName();
+						if (tagName != null && JavadocTagManager.ALL_TAGS.contains(tagName)) {
 							lrewrite.remove(tag, null);
 						}
 					}
@@ -591,12 +584,10 @@ public class JavadocConversionRefactoring extends Refactoring {
 		 *
 		 * @param added
 		 */
-		void ensureImport(String added) {
+		private void ensureImport(String added) {
 			String annot = ALL_API_IMPORTS.get(added);
-			if (annot != null) {
-				if (!existingImports.contains(annot)) {
-					missingImports.add(annot);
-				}
+			if (annot != null && !existingImports.contains(annot)) {
+				missingImports.add(annot);
 			}
 		}
 

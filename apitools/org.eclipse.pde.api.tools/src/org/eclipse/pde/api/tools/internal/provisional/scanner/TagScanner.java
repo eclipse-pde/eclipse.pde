@@ -308,7 +308,7 @@ public class TagScanner {
 				int restrictions = annots != null ? annots.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
 				for (TagElement tag : tags) {
 					String tagname = tag.getTagName();
-					if (!JavadocTagManager.ALL_TAGS.contains(tagname)) {
+					if (tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
 						continue;
 					}
 					if (JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) {
@@ -350,7 +350,7 @@ public class TagScanner {
 				int restrictions = annots != null ? annots.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
 				for (TagElement tag : tags) {
 					String tagname = tag.getTagName();
-					if (!JavadocTagManager.ALL_TAGS.contains(tagname)) {
+					if (tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
 						continue;
 					}
 					if (JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) {
@@ -416,7 +416,7 @@ public class TagScanner {
 				int restrictions = annots != null ? annots.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
 				for (TagElement tag : tags) {
 					String tagname = tag.getTagName();
-					if (!JavadocTagManager.ALL_TAGS.contains(tagname)) {
+					if (tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
 						continue;
 					}
 					if (JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) {
@@ -451,7 +451,7 @@ public class TagScanner {
 				int restrictions = annots != null ? annots.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
 				for (TagElement tag : tags) {
 					String tagname = tag.getTagName();
-					if (!JavadocTagManager.ALL_TAGS.contains(tagname)) {
+					if (tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
 						continue;
 					}
 					if (JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) {
@@ -521,7 +521,7 @@ public class TagScanner {
 					int restrictions = annots != null ? annots.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
 					for (TagElement tag : tags) {
 						String tagname = tag.getTagName();
-						if (!JavadocTagManager.ALL_TAGS.contains(tagname)) {
+						if (tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
 							continue;
 						}
 						if (JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) {
@@ -576,7 +576,7 @@ public class TagScanner {
 				int flags = node.getModifiers();
 				for (TagElement tag : tags) {
 					String tagname = tag.getTagName();
-					if (!JavadocTagManager.ALL_TAGS.contains(tagname)) {
+					if (tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
 						continue;
 					}
 					if (!Flags.isFinal(flags) && JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) {

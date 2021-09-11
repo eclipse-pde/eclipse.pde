@@ -145,7 +145,7 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 	}
 
 	private static TreeSet<String> toFeatureIds(IFeatureModel[] models) {
-		return new TreeSet<>(Arrays.asList(models).stream().map(m -> m.getFeature())
+		return new TreeSet<>(Arrays.stream(models).map(m -> m.getFeature())
 				.filter(x -> x != null).map(f -> f.getId()).collect(Collectors.toSet()));
 	}
 
