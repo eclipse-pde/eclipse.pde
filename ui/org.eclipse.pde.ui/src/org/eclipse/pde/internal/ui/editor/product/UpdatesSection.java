@@ -16,122 +16,27 @@ package org.eclipse.pde.internal.ui.editor.product;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.equinox.internal.p2.ui.dialogs.TextURLDropAdapter;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.dialogs.RepositoryDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class UpdatesSection extends TableSection {
-
-	private class RepositoryDialog extends StatusDialog {
-		private Text fLocation;
-		private IRepositoryInfo fEdit;
-
-		public RepositoryDialog(Shell shell, IRepositoryInfo repo) {
-			super(shell);
-			fEdit = repo;
-			setTitle(PDEUIMessages.UpdatesSection_RepositoryDialogTitle);
-		}
-
-		@Override
-		protected Control createDialogArea(Composite parent) {
-			Composite comp = (Composite) super.createDialogArea(parent);
-			((GridLayout) comp.getLayout()).numColumns = 2;
-			SWTFactory.createLabel(comp, PDEUIMessages.UpdatesSection_Location, 1);
-			fLocation = SWTFactory.createSingleText(comp, 1);
-			GridData data = new GridData(GridData.FILL_HORIZONTAL);
-			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
-			fLocation.setLayoutData(data);
-			DropTarget target = new DropTarget(fLocation, DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK);
-			target.setTransfer(new Transfer[] {URLTransfer.getInstance(), FileTransfer.getInstance()});
-			target.addDropListener(new TextURLDropAdapter(fLocation, true));
-			fLocation.addModifyListener(e -> validate());
-
-			if (fEdit != null) {
-				if (fEdit.getURL() != null) {
-					fLocation.setText(fEdit.getURL());
-				}
-			} else {
-				String initialText = "http://"; //$NON-NLS-1$
-				fLocation.setText(initialText);
-				fLocation.setSelection(initialText.length());
-			}
-
-			validate();
-
-			return comp;
-		}
-
-		protected void validate() {
-			String location = fLocation.getText().trim();
-			if (location.length() == 0) {
-				updateStatus(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, PDEUIMessages.UpdatesSection_ErrorLocationNoName));
-				return;
-			}
-			try {
-				new URL(location);
-			} catch (MalformedURLException e) {
-				updateStatus(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, PDEUIMessages.UpdatesSection_ErrorInvalidURL));
-				return;
-			}
-			updateStatus(Status.OK_STATUS);
-		}
-
-		@Override
-		protected void okPressed() {
-			if (fEdit != null) {
-				// Remove the repository and add a new one
-				getProduct().removeRepositories(new IRepositoryInfo[] {fEdit});
-			}
-
-			IProductModelFactory factory = getModel().getFactory();
-			fEdit = factory.createRepositoryInfo();
-			String location = fLocation.getText().trim();
-			if (!location.startsWith("http://") && !location.startsWith("file:")) //$NON-NLS-1$ //$NON-NLS-2$
-				location = "http://" + location; //$NON-NLS-1$
-			fEdit.setURL(location);
-			fEdit.setEnabled(true);
-			getProduct().addRepositories(new IRepositoryInfo[] {fEdit});
-			super.okPressed();
-		}
-
-		@Override
-		protected Control createHelpControl(Composite parent) {
-			return parent;
-		}
-
-		/**
-		 * @return a repository info containing the values set in the dialog or <code>null</code>
-		 */
-		public IRepositoryInfo getResult() {
-			return fEdit;
-		}
-
-	}
-
 
 	private static class ContentProvider implements IStructuredContentProvider {
 
@@ -146,7 +51,6 @@ public class UpdatesSection extends TableSection {
 			return new Object[0];
 		}
 
-
 	}
 
 	private class LabelProvider extends PDELabelProvider {
@@ -160,12 +64,13 @@ public class UpdatesSection extends TableSection {
 		@Override
 		public String getColumnText(Object obj, int index) {
 			IRepositoryInfo repo = (IRepositoryInfo) obj;
-			switch (index) {
-				case 0 :
+			switch (index)
+				{
+				case 0:
 					return repo.getURL();
-				case 1 :
+				case 1:
 					return Boolean.toString(repo.getEnabled());
-			}
+				}
 			return null;
 		}
 
@@ -236,8 +141,6 @@ public class UpdatesSection extends TableSection {
 
 		});
 
-
-
 		fRepositoryTable.setLabelProvider(new LabelProvider());
 		fRepositoryTable.setContentProvider(new ContentProvider());
 		fRepositoryTable.setComparator(new ViewerComparator() {
@@ -257,25 +160,24 @@ public class UpdatesSection extends TableSection {
 		section.setDescription(PDEUIMessages.UpdatesSection_description);
 	}
 
-
 	@Override
 	protected void buttonSelected(int index) {
-		switch (index) {
-			case 0 :
+		switch (index)
+			{
+			case 0:
 				handleAdd();
 				break;
-			case 1 :
-			handleEdit(fRepositoryTable.getStructuredSelection());
+			case 1:
+				handleEdit(fRepositoryTable.getStructuredSelection());
 				break;
-			case 2 :
+			case 2:
 				handleDelete();
 				break;
-			case 3 :
+			case 3:
 				handleRemoveAll();
 				break;
-		}
+			}
 	}
-
 
 	@Override
 	protected void handleDoubleClick(IStructuredSelection selection) {
@@ -295,21 +197,35 @@ public class UpdatesSection extends TableSection {
 		return super.doGlobalAction(actionId);
 	}
 
-
 	private void handleEdit(IStructuredSelection selection) {
 		clearEditors();
 		if (!selection.isEmpty()) {
-			Object[] objects = selection.toArray();
-			RepositoryDialog dialog = new RepositoryDialog(PDEPlugin.getActiveWorkbenchShell(), (IRepositoryInfo) objects[0]);
+			IRepositoryInfo repoInfo = (IRepositoryInfo) selection.toArray()[0];
+			RepositoryDialog dialog = getRepositoryDialog(repoInfo.getURL());
 			if (dialog.open() == Window.OK) {
-				IRepositoryInfo result = dialog.getResult();
-				if (result != null) {
-					fRepositoryTable.refresh();
-					fRepositoryTable.setSelection(new StructuredSelection(result));
-					updateButtons();
-				}
+				updateModel(repoInfo, dialog.getResult());
 			}
 		}
+	}
+
+	private RepositoryDialog getRepositoryDialog(String repoURL) {
+		RepositoryDialog dialog = new RepositoryDialog(PDEPlugin.getActiveWorkbenchShell(), repoURL);
+		dialog.setTitle(PDEUIMessages.UpdatesSection_RepositoryDialogTitle);
+		return dialog;
+	}
+
+	private void updateModel(IRepositoryInfo pRepositoryInfo, String pURL) {
+		if (pRepositoryInfo != null) {
+			getProduct().removeRepositories(new IRepositoryInfo[] { pRepositoryInfo });
+		}
+		IProductModelFactory factory = getModel().getFactory();
+		IRepositoryInfo repo = factory.createRepositoryInfo();
+		repo.setURL(pURL.trim());
+		repo.setEnabled(true);
+		getProduct().addRepositories(new IRepositoryInfo[] { repo });
+		fRepositoryTable.refresh();
+		fRepositoryTable.setSelection(new StructuredSelection(repo));
+		updateButtons();
 	}
 
 	private void handleDelete() {
@@ -334,14 +250,9 @@ public class UpdatesSection extends TableSection {
 
 	private void handleAdd() {
 		clearEditors();
-		RepositoryDialog dialog = new RepositoryDialog(PDEPlugin.getActiveWorkbenchShell(), null);
+		RepositoryDialog dialog = getRepositoryDialog(null);
 		if (dialog.open() == Window.OK) {
-			IRepositoryInfo result = dialog.getResult();
-			if (result != null) {
-				fRepositoryTable.refresh();
-				fRepositoryTable.setSelection(new StructuredSelection(result));
-				updateButtons();
-			}
+			updateModel(null, dialog.getResult());
 		}
 	}
 
@@ -359,7 +270,6 @@ public class UpdatesSection extends TableSection {
 		updateButtons();
 		super.refresh();
 	}
-
 
 	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
@@ -388,7 +298,8 @@ public class UpdatesSection extends TableSection {
 	private void updateButtons() {
 		TablePart tablePart = getTablePart();
 		ISelection selection = getViewerSelection();
-		boolean enabled = isEditable() && !selection.isEmpty() && selection instanceof IStructuredSelection && ((IStructuredSelection) selection).getFirstElement() instanceof IRepositoryInfo;
+		boolean enabled = isEditable() && !selection.isEmpty() && selection instanceof IStructuredSelection
+				&& ((IStructuredSelection) selection).getFirstElement() instanceof IRepositoryInfo;
 		tablePart.setButtonEnabled(1, enabled);
 		tablePart.setButtonEnabled(2, enabled);
 		tablePart.setButtonEnabled(3, isEditable() && getProduct().getRepositories().length > 0);
@@ -428,7 +339,7 @@ public class UpdatesSection extends TableSection {
 		if (item != null) {
 			final IRepositoryInfo repo = (IRepositoryInfo) selection.getFirstElement();
 			final CCombo combo = new CCombo(table, SWT.BORDER | SWT.READ_ONLY);
-			combo.setItems(new String[] {Boolean.toString(true), Boolean.toString(false)});
+			combo.setItems(new String[] { Boolean.toString(true), Boolean.toString(false) });
 			combo.setText(item.getText(1));
 			combo.pack();
 			combo.addSelectionListener(widgetSelectedAdapter(e -> {

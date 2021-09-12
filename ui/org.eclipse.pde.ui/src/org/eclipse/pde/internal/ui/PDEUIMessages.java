@@ -3056,6 +3056,8 @@ public class PDEUIMessages extends NLS {
 	public static String UpdatesSection_ErrorLocationNoName;
 	public static String UpdatesSection_ErrorInvalidURL;
 	public static String UpdatesSection_LocationColumn;
+
+	public static String UpdatesSection_LocationMessage;
 	public static String UpdatesSection_EnabledColumn;
 
 	public static String CustomizationPage_title;

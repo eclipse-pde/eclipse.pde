@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 Rapicorp Corporation and others.
+ * Copyright (c) 2014, 2021 Rapicorp Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,126 +16,28 @@ package org.eclipse.pde.internal.ui.editor.category;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.internal.p2.ui.dialogs.TextURLDropAdapter;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.StatusDialog;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.dialogs.RepositoryDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class RepositoryReferenceSection extends TableSection {
-
-	private class RepositoryReferenceDialog extends StatusDialog {
-		private Text fLocation;
-		private IRepositoryReference fEdit;
-
-		public RepositoryReferenceDialog(Shell shell, IRepositoryReference repo) {
-			super(shell);
-			fEdit = repo;
-			setTitle(PDEUIMessages.RepositorySection_title);
-		}
-
-		@Override
-		protected Control createDialogArea(Composite parent) {
-			Composite comp = (Composite) super.createDialogArea(parent);
-			((GridLayout) comp.getLayout()).numColumns = 2;
-			SWTFactory.createLabel(comp, PDEUIMessages.UpdatesSection_Location, 1);
-			fLocation = SWTFactory.createSingleText(comp, 1);
-			GridData data = new GridData(GridData.FILL_HORIZONTAL);
-			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
-			fLocation.setLayoutData(data);
-			DropTarget target = new DropTarget(fLocation, DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK);
-			target.setTransfer(URLTransfer.getInstance(), FileTransfer.getInstance());
-			target.addDropListener(new TextURLDropAdapter(fLocation, true));
-			fLocation.addModifyListener(e -> validate());
-
-			if (fEdit != null) {
-				if (fEdit.getURL() != null) {
-					fLocation.setText(fEdit.getURL());
-				}
-			} else {
-				String initialText = "http://"; //$NON-NLS-1$
-				fLocation.setText(initialText);
-				fLocation.setSelection(initialText.length());
-			}
-
-			validate();
-
-			return comp;
-		}
-
-		protected void validate() {
-			String location = fLocation.getText().trim();
-			if (location.length() == 0) {
-				updateStatus(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, PDEUIMessages.UpdatesSection_ErrorLocationNoName));
-				return;
-			}
-			try {
-				new URL(location);
-			} catch (MalformedURLException e) {
-				updateStatus(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, PDEUIMessages.UpdatesSection_ErrorInvalidURL));
-				return;
-			}
-			updateStatus(Status.OK_STATUS);
-		}
-
-		@Override
-		protected void okPressed() {
-			try {
-				if (fEdit != null) {
-					// Remove the repository and add a new one
-					getSite().removeRepositoryReferences(new IRepositoryReference[] {fEdit});
-				}
-
-				ISiteModelFactory factory = getModel().getFactory();
-				fEdit = factory.createRepositoryReference();
-				String location = fLocation.getText().trim();
-				if (!location.startsWith("http://") && !location.startsWith("file:")) //$NON-NLS-1$ //$NON-NLS-2$
-					location = "http://" + location; //$NON-NLS-1$
-				fEdit.setURL(location);
-				fEdit.setEnabled(true);
-				getSite().addRepositoryReferences(new IRepositoryReference[] {fEdit});
-			} catch (CoreException e) {
-				PDEPlugin.log(e);
-			} finally {
-				super.okPressed();
-			}
-		}
-
-		@Override
-		protected Control createHelpControl(Composite parent) {
-			return parent;
-		}
-
-		/**
-		 * @return a repository info containing the values set in the dialog or <code>null</code>
-		 */
-		public IRepositoryReference getResult() {
-			return fEdit;
-		}
-
-	}
-
 
 	private static class ContentProvider implements IStructuredContentProvider {
 
@@ -243,8 +145,6 @@ public class RepositoryReferenceSection extends TableSection {
 
 		});
 
-
-
 		fRepositoryTable.setLabelProvider(new LabelProvider());
 		fRepositoryTable.setContentProvider(new ContentProvider());
 		fRepositoryTable.setComparator(new ViewerComparator() {
@@ -306,16 +206,35 @@ public class RepositoryReferenceSection extends TableSection {
 	private void handleEdit(IStructuredSelection selection) {
 		clearEditors();
 		if (!selection.isEmpty()) {
-			Object[] objects = selection.toArray();
-			RepositoryReferenceDialog dialog = new RepositoryReferenceDialog(PDEPlugin.getActiveWorkbenchShell(), (IRepositoryReference) objects[0]);
+			IRepositoryReference repo = (IRepositoryReference) selection.toArray()[0];
+			RepositoryDialog dialog = getRepositoryDialog(repo.getURL());
 			if (dialog.open() == Window.OK) {
-				IRepositoryReference result = dialog.getResult();
-				if (result != null) {
-					fRepositoryTable.refresh();
-					fRepositoryTable.setSelection(new StructuredSelection(result));
-					updateButtons();
-				}
+				updateModel(repo, dialog.getResult());
 			}
+		}
+	}
+
+	private RepositoryDialog getRepositoryDialog(String repoURL) {
+		RepositoryDialog dialog = new RepositoryDialog(PDEPlugin.getActiveWorkbenchShell(), repoURL);
+		dialog.setTitle(PDEUIMessages.RepositorySection_title);
+		return dialog;
+	}
+
+	private void updateModel(IRepositoryReference repo, String repoURL) {
+		try {
+			if (repo != null) {
+				getSite().removeRepositoryReferences(new IRepositoryReference[] { repo });
+			}
+			ISiteModelFactory factory = getModel().getFactory();
+			IRepositoryReference newRepo = factory.createRepositoryReference();
+			newRepo.setURL(repoURL.trim());
+			newRepo.setEnabled(true);
+			getSite().addRepositoryReferences(new IRepositoryReference[] { newRepo });
+			fRepositoryTable.refresh();
+			fRepositoryTable.setSelection(new StructuredSelection(newRepo));
+			updateButtons();
+		} catch (CoreException e) {
+			PDEPlugin.log(e);
 		}
 	}
 
@@ -349,14 +268,9 @@ public class RepositoryReferenceSection extends TableSection {
 
 	private void handleAdd() {
 		clearEditors();
-		RepositoryReferenceDialog dialog = new RepositoryReferenceDialog(PDEPlugin.getActiveWorkbenchShell(), null);
+		RepositoryDialog dialog = getRepositoryDialog(null);
 		if (dialog.open() == Window.OK) {
-			IRepositoryReference result = dialog.getResult();
-			if (result != null) {
-				fRepositoryTable.refresh();
-				fRepositoryTable.setSelection(new StructuredSelection(result));
-				updateButtons();
-			}
+			updateModel(null, dialog.getResult());
 		}
 	}
 
