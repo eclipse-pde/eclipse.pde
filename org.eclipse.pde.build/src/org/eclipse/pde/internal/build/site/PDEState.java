@@ -1,15 +1,15 @@
 /*******************************************************************************
  *  Copyright (c) 2004, 2021 IBM Corporation and others.
  *
- *  This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License 2.0
- *  which accompanies this distribution, and is available at
- *  https://www.eclipse.org/legal/epl-2.0/
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
  *
- *  SPDX-License-Identifier: EPL-2.0
- * 
- *  Contributors:
- *      IBM Corporation - initial API and implementation
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.build.site;
 
@@ -31,7 +31,7 @@ import org.osgi.framework.*;
 // This class provides a higher level API on the state
 public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private static final String[] MANIFEST_ENTRIES = {Constants.BUNDLE_LOCALIZATION, Constants.BUNDLE_NAME, Constants.BUNDLE_VENDOR, ECLIPSE_BUNDLE_SHAPE, ECLIPSE_SOURCE_BUNDLE, ECLIPSE_SOURCE_REF};
-	private static int LAST_SUPPORTED_JDK = 16;
+	private static int LAST_SUPPORTED_JDK = 17;
 	private StateObjectFactory factory;
 	protected State state;
 	private long id;
