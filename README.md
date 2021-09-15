@@ -32,6 +32,14 @@ Before your contribution can be accepted by the project, you need to create and 
 - <http://www.eclipse.org/legal/CLA.php>
 
 
+How to build on the command line
+--------------------------------
+
+You need Maven 3.3.1 installed. After this you can run the build via the following command:
+
+mvn clean verify -Pbuild-individual-bundles
+
+
 Search for bugs:
 ----------------
 
