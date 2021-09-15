@@ -3,3 +3,4 @@
 [Bug 430892] PDE feature needs to be "touched" (for I-build)
 [Bug 399749] update to Orbit M7 S-build URL
 [Bug 486479] pde feature needs to be 'touched'
+For Java 17  pde feature needs to be 'touched'
