@@ -361,7 +361,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		File file = new File(directory, Constants.FEATURE_FILENAME_DESCRIPTOR);
 		OutputStream output = new BufferedOutputStream(new FileOutputStream(file));
 		XMLWriter writer = new XMLWriter(output);
-		try {
+		try (writer) {
 			Map<String, String> parameters = new LinkedHashMap<>();
 			Dictionary<String, String> environment = new Hashtable<>(3);
 
@@ -480,8 +480,6 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				writer.printTag("includes", parameters, true, true, true); //$NON-NLS-1$
 			}
 			writer.endTag(FEATURE);
-		} finally {
-			writer.close();
 		}
 
 		createBuildProperties(directory);

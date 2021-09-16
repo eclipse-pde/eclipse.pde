@@ -91,9 +91,7 @@ public class JNLPGenerator extends DefaultHandler {
 		try {
 			parserFactory.setNamespaceAware(true);
 			parser = parserFactory.newSAXParser();
-		} catch (ParserConfigurationException e) {
-			System.out.println(e);
-		} catch (SAXException e) {
+		} catch (ParserConfigurationException | SAXException e) {
 			System.out.println(e);
 		}
 		setConfigInfo(configs);

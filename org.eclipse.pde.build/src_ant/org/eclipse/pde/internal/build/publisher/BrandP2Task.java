@@ -254,9 +254,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 			new File(root, "content.jar").delete(); //$NON-NLS-1$
 			new File(root, "artifacts.jar").delete(); //$NON-NLS-1$
 			FileUtils.zip(output, root, Collections.<File> emptySet(), FileUtils.createRootPathComputer(root));
-		} catch (ProvisionException e) {
-			throw new BuildException(e.getMessage(), e);
-		} catch (IOException e) {
+		} catch (ProvisionException | IOException e) {
 			throw new BuildException(e.getMessage(), e);
 		} finally {
 			Utils.close(output);

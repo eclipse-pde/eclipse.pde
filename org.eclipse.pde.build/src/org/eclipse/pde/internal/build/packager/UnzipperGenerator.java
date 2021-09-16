@@ -64,9 +64,6 @@ public class UnzipperGenerator extends AbstractScriptGenerator {
 			} finally {
 				propertyStream.close();
 			}
-		} catch (FileNotFoundException e) {
-			//			String message = Policy.bind("exception.readingFile", packagingPropertiesLocation); //$NON-NLS-1$
-			////			Log.throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
 		} catch (IOException e) {
 			//			String message = Policy.bind("exception.readingFile", packagingPropertiesLocation); //$NON-NLS-1$
 			//			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));

@@ -305,9 +305,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			Hashtable<String, String> result = new Hashtable<>();
 			result.putAll(ManifestElement.parseBundleManifest(manifestStream, null));
 			return result;
-		} catch (IOException ioe) {
-			return null;
-		} catch (BundleException e) {
+		} catch (IOException | BundleException e) {
 			return null;
 		} finally {
 			try {

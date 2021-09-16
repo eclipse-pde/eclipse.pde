@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which accompanies this distribution,
@@ -31,10 +31,8 @@ public class BuildTimeFeatureParser extends FeatureManifestParser {
 
 	public Feature parse(URL featureURL) throws SAXException, IOException {
 		InputStream in = featureURL.openStream();
-		try {
+		try (in) {
 			return super.parse(in, featureURL);
-		} finally {
-			in.close();
 		}
 	}
 }

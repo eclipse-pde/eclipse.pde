@@ -54,9 +54,6 @@ public class P2Utils {
 				infos.addAll(Arrays.asList(manipulator.loadConfiguration(new FileInputStream(bundlesTxt), root.toURI())));
 			if (sourceTxt.exists())
 				infos.addAll(Arrays.asList(manipulator.loadConfiguration(new FileInputStream(sourceTxt), root.toURI())));
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

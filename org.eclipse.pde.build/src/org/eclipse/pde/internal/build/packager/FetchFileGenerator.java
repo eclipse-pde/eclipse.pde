@@ -101,9 +101,6 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 		selectedFiles.put("toUnzip", collectedFiles); //$NON-NLS-1$
 		try (OutputStream stream = new BufferedOutputStream(new FileOutputStream(workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR))) {
 			selectedFiles.store(stream, null);
-		} catch (FileNotFoundException e) {
-			String message = NLS.bind(Messages.exception_writingFile, workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR);
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.exception_writingFile, workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));

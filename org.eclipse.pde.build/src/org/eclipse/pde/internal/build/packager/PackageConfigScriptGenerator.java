@@ -166,9 +166,6 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 
 		try (InputStream propertyStream = new BufferedInputStream(new FileInputStream(packagingPropertiesLocation))) {
 			packagingProperties.load(propertyStream);
-		} catch (FileNotFoundException e) {
-			String message = NLS.bind(Messages.exception_readingFile, packagingPropertiesLocation);
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.exception_readingFile, packagingPropertiesLocation);
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
