@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -58,10 +58,7 @@ class ConfigurationParser extends DefaultHandler implements IConfigurationConsta
 		try {
 			parserFactory.setNamespaceAware(true);
 			this.parser = parserFactory.newSAXParser();
-		} catch (ParserConfigurationException e) {
-			Utils.log(Utils.newStatus("ConfigurationParser", e)); //$NON-NLS-1$
-			throw new InvocationTargetException(e);
-		} catch (SAXException e) {
+		} catch (ParserConfigurationException | SAXException e) {
 			Utils.log(Utils.newStatus("ConfigurationParser", e)); //$NON-NLS-1$
 			throw new InvocationTargetException(e);
 		}

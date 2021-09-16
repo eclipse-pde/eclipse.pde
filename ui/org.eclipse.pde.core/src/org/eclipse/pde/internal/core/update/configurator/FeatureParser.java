@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -48,9 +48,7 @@ class FeatureParser extends DefaultHandler {
 		try {
 			parserFactory.setNamespaceAware(true);
 			this.parser = parserFactory.newSAXParser();
-		} catch (ParserConfigurationException e) {
-			System.out.println(e);
-		} catch (SAXException e) {
+		} catch (ParserConfigurationException | SAXException e) {
 			System.out.println(e);
 		}
 	}
@@ -65,8 +63,7 @@ class FeatureParser extends DefaultHandler {
 			this.url = featureURL;
 			in = featureURL.openStream();
 			parser.parse(new InputSource(in), this);
-		} catch (SAXException e) {
-		} catch (IOException e) {
+		} catch (SAXException | IOException e) {
 		} finally {
 			if (in != null) {
 				try {
