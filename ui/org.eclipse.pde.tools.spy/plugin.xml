@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+   <extension-point id="spyPart" name="spyPart" schema="schema/spyPart.exsd"/>
+   <extension
+         id="id2"
+         point="org.eclipse.e4.workbench.model">
+      <processor
+            beforefragment="false"
+            class="org.eclipse.pde.tools.spy.SpyProcessor">
+      </processor>
+      <fragment
+            apply="always"
+            uri="fragment.e4xmi">
+      </fragment>
+   </extension>
+  
+
+
+</plugin>

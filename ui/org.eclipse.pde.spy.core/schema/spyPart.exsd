@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.tools.spy.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.tools.spy.core" id="spyPart" name="spyPart"/>
+      </appinfo>
+      <documentation>
+         &lt;p&gt;A spy is a specific window used to help the debug of your application. &lt;/p&gt;
+&lt;p&gt;It can be opened with a key board short cut, and the first time, all the spies will appear in the same window (called &apos;E4 spies&apos;). This window reminds to the developper all the available spies in a main toolbar.&lt;/p&gt;
+&lt;br/&gt;To add a spy, just describe the part, and the shortcut. 
+This extension point is then managed by this plugin to add automatically short cut, handlers, command and icon in the application model.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="spyPart" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="spyPart">
+      <complexType>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  The name of the spy (displayed in the tab)
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="part" type="string">
+            <annotation>
+               <documentation>
+                  The pojo class of the spy part. There is no contraints of ihneritance for this part. There must be a @PostConstruct method to create the contents : 
+
+&lt;br/&gt;
+&lt;p&gt;
+@PostConstruct
+public void mySpyContent(Composite parent)
+{
+    // Create your contents here.
+}
+&lt;/p&gt;
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="shortcut" type="string">
+            <annotation>
+               <documentation>
+                  &lt;p&gt;The keyboard short cut to apply (must be something like : M2+M3+F10 for ALT SHIFT F10) &lt;/p&gt;
+
+&lt;p&gt;
+This key sequence should consist of one or more key strokes.  Key strokes are separated by spaces.  Key strokes consist of one or more keys held down at the same time.  This should be zero or more modifier keys, and one other key.  The keys are separated by the &lt;code&gt;+&lt;/code&gt; character.
+&lt;/p&gt;
+&lt;p&gt;
+The recognized modifiers keys are &lt;code&gt;M1&lt;/code&gt;, &lt;code&gt;M2&lt;/code&gt;, &lt;code&gt;M3&lt;/code&gt;, &lt;code&gt;M4&lt;/code&gt;, &lt;code&gt;ALT&lt;/code&gt;, &lt;code&gt;COMMAND&lt;/code&gt;, &lt;code&gt;CTRL&lt;/code&gt;, and &lt;code&gt;SHIFT&lt;/code&gt;.  The &quot;M&quot; modifier keys are a platform-independent way of representing keys, and these are generally preferred.  &lt;code&gt;M1&lt;/code&gt; is the &lt;code&gt;COMMAND&lt;/code&gt; key on MacOS X, and the &lt;code&gt;CTRL&lt;/code&gt; key on most other platforms.  &lt;code&gt;M2&lt;/code&gt; is the &lt;code&gt;SHIFT&lt;/code&gt; key.  &lt;code&gt;M3&lt;/code&gt; is the &lt;code&gt;Option&lt;/code&gt; key on MacOS X, and the &lt;code&gt;ALT&lt;/code&gt; key on most other platforms.  &lt;code&gt;M4&lt;/code&gt; is the &lt;code&gt;CTRL&lt;/code&gt; key on MacOS X, and is undefined on other platforms.
+Since &lt;code&gt;M2+M3+&amp;lt;Letter&amp;gt;&lt;/code&gt; (&lt;code&gt;Alt+Shift+&amp;lt;Letter&amp;gt;&lt;/code&gt;) is reserved on MacOS X for writing special characters, such bindings are commonly undefined for &lt;code&gt;platform=&quot;carbon&quot;&lt;/code&gt; and redefined as &lt;code&gt;M1+M3+&amp;lt;Letter&amp;gt;&lt;/code&gt;.
+&lt;/p&gt;
+&lt;p&gt;
+The actual key is generally specified simply as the ASCII character, in uppercase.  So, for example &lt;code&gt;F&lt;/code&gt; or &lt;code&gt;,&lt;/code&gt; are examples of such keys.  However, there are some special keys; keys that have no printable ASCII representation.  The following is a list of the current special keys: &lt;code&gt;ARROW_DOWN&lt;/code&gt;, &lt;code&gt;ARROW_LEFT&lt;/code&gt;, &lt;code&gt;ARROW_RIGHT&lt;/code&gt;, &lt;code&gt;ARROW_UP&lt;/code&gt;, &lt;code&gt;BREAK&lt;/code&gt;, &lt;code&gt;BS&lt;/code&gt;, &lt;code&gt;CAPS_LOCK&lt;/code&gt;, &lt;code&gt;CR&lt;/code&gt;, &lt;code&gt;DEL&lt;/code&gt;, &lt;code&gt;END&lt;/code&gt;, &lt;code&gt;ESC&lt;/code&gt;, &lt;code&gt;F1&lt;/code&gt;, &lt;code&gt;F2&lt;/code&gt;, &lt;code&gt;F3&lt;/code&gt;, &lt;code&gt;F4&lt;/code&gt;, &lt;code&gt;F5&lt;/code&gt;, &lt;code&gt;F6&lt;/code&gt;, &lt;code&gt;F7&lt;/code&gt;, &lt;code&gt;F8&lt;/code&gt;, &lt;code&gt;F9&lt;/code&gt;, &lt;code&gt;F10&lt;/code&gt;, &lt;code&gt;F11&lt;/code&gt;, &lt;code&gt;F12&lt;/code&gt;, &lt;code&gt;F13&lt;/code&gt;, &lt;code&gt;F14&lt;/code&gt;, &lt;code&gt;F15&lt;/code&gt;, &lt;code&gt;FF&lt;/code&gt;, &lt;code&gt;HOME&lt;/code&gt;, &lt;code&gt;INSERT&lt;/code&gt;, &lt;code&gt;LF&lt;/code&gt;, &lt;code&gt;NUL&lt;/code&gt;, &lt;code&gt;NUM_LOCK&lt;/code&gt;, &lt;code&gt;NUMPAD_0&lt;/code&gt;, &lt;code&gt;NUMPAD_1&lt;/code&gt;, &lt;code&gt;NUMPAD_2&lt;/code&gt;, &lt;code&gt;NUMPAD_3&lt;/code&gt;, &lt;code&gt;NUMPAD_4&lt;/code&gt;, &lt;code&gt;NUMPAD_5&lt;/code&gt;, &lt;code&gt;NUMPAD_6&lt;/code&gt;, &lt;code&gt;NUMPAD_7&lt;/code&gt;, &lt;code&gt;NUMPAD_8&lt;/code&gt;, &lt;code&gt;NUMPAD_9&lt;/code&gt;, &lt;code&gt;NUMPAD_ADD&lt;/code&gt;, &lt;code&gt;NUMPAD_DECIMAL&lt;/code&gt;, &lt;code&gt;NUMPAD_DIVIDE&lt;/code&gt;, &lt;code&gt;NUMPAD_ENTER&lt;/code&gt;, &lt;code&gt;NUMPAD_EQUAL&lt;/code&gt;, &lt;code&gt;NUMPAD_MULTIPLY&lt;/code&gt;, &lt;code&gt;NUMPAD_SUBTRACT&lt;/code&gt;, &lt;code&gt;PAGE_UP&lt;/code&gt;, &lt;code&gt;PAGE_DOWN&lt;/code&gt;, &lt;code&gt;PAUSE&lt;/code&gt;, &lt;code&gt;PRINT_SCREEN&lt;/code&gt;, &lt;code&gt;SCROLL_LOCK&lt;/code&gt;, &lt;code&gt;SPACE&lt;/code&gt;, &lt;code&gt;TAB&lt;/code&gt; and &lt;code&gt;VT&lt;/code&gt;.
+&lt;/p&gt;
+&lt;p&gt;
+We also understand some alternative names for some common special keys.  For example, we accept both &lt;code&gt;ESC&lt;/code&gt; and &lt;code&gt;ESCAPE&lt;/code&gt;, and &lt;code&gt;CR&lt;/code&gt;, &lt;code&gt;ENTER&lt;/code&gt; and &lt;code&gt;RETURN&lt;/code&gt; are all the same.
+&lt;/p&gt;
+&lt;p&gt;
+It is also strongly recommended that you keep the key sequences short.  One or two is the most you should need.  Use contexts to give key sequences different meanings in different parts of your application.  At the very most, you should not use any key sequence that contains more than four key strokes.
+&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  Description of the spy
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  Path to the icon of this spy (used in the E4 spies window toolbar).
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         Luna M7
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         Here is an example of usage. Associate icon, name and shorcut to the spy part to be displayed
+ 
+ This is the sample definition for the context spy part. 
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension point=&quot;org.eclipse.e4.tools.spy.spyPart&quot;&gt;
+      &lt;spyPart
+            description=&quot;Context Spy to understand what is behind the scene of injection&quot;
+            icon=&quot;icons/annotation_obj.gif&quot;
+            name=&quot;Context spy&quot;
+            part=&quot;org.eclipse.e4.tools.context.spy.ContextSpyPart&quot;
+            shortcut=&quot;M2+M3+F10&quot;&gt;
+      &lt;/spyPart&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         The value of the &lt;samp&gt;part&lt;/samp&gt; element&apos;s &lt;samp&gt;class&lt;/samp&gt; attribute must be a simple POJO displaying the &apos;spied&apos; information.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         The E4 tools project provides 4 implementations of this extension point : 
+
+&lt;ul&gt;
+&lt;li&gt; the live model editor (ie : model spy) &lt;/li&gt;
+&lt;li&gt; the context spy (to display E4 contexts)&lt;/li&gt;
+&lt;li&gt; the event spy (to trace IEventBroker events) &lt;/li&gt;
+&lt;li&gt; the css spy (to display css information)&lt;/li&gt;
+&lt;/ul&gt;
+      </documentation>
+   </annotation>
+
+
+</schema>
