@@ -45,10 +45,10 @@ import org.osgi.framework.FrameworkUtil;
 public class SpyProcessor {
 	static final String SPY_TAG = "Spy";
 
-	public static final String SPY_COMMAND = "org.eclipse.e4.tools.spy.command";
-	public static final String SPY_COMMAND_PARAM = "org.eclipse.e4.tools.spy.command.partID";
+	public static final String SPY_COMMAND = "org.eclipse.pde.spy.core.command";
+	public static final String SPY_COMMAND_PARAM = "org.eclipse.pde.spy.core.command.partID";
 
-	private static final String E4_SPIES_BINDING_TABLE = "org.eclipse.e4.tools.spy.bindings";
+	private static final String E4_SPIES_BINDING_TABLE = "org.eclipse.pde.spy.core.bindings";
 
 	MApplication application;
 	EModelService modelService;
@@ -67,7 +67,7 @@ public class SpyProcessor {
 		MCommand command = getSpyCommand();
 		MBindingTable bindingTable = getBindingTable();
 
-		for (IConfigurationElement e : extRegistry.getConfigurationElementsFor("org.eclipse.e4.tools.spy.spyPart")) {
+		for (IConfigurationElement e : extRegistry.getConfigurationElementsFor("org.eclipse.pde.spy.core.spyPart")) {
 			String partName = e.getAttribute("name");
 			String shortCut = e.getAttribute("shortcut");
 			String iconPath = e.getAttribute("icon");

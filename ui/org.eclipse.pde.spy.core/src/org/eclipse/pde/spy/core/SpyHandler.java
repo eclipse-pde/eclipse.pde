@@ -36,8 +36,8 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 
 public class SpyHandler {
-	private static final String E4_SPIES_WINDOW = "org.eclipse.tools.spy.core.window";
-	private static final String E4_SPIES_PART_STACK = "org.eclipse.tools.spy.core.partStack";
+	private static final String E4_SPIES_WINDOW = "org.eclipse.pde.spy.core.window";
+	private static final String E4_SPIES_PART_STACK = "org.eclipse.pde.spy.core.partStack";
 
 	/**
 	 * This method open the spy view part at the correct location : - if it has
