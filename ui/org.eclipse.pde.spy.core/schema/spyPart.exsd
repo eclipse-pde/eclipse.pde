@@ -16,7 +16,7 @@ This extension point is then managed by this plugin to add automatically short c
    <element name="extension">
       <annotation>
          <appinfo>
-            <meta.element />
+            <meta.element internal="true" />
          </appinfo>
       </annotation>
       <complexType>
@@ -127,7 +127,7 @@ It is also strongly recommended that you keep the key sequences short.  One or t
          <meta.section type="since"/>
       </appinfo>
       <documentation>
-         Luna M7
+         2021-12
       </documentation>
    </annotation>
 
@@ -141,12 +141,12 @@ It is also strongly recommended that you keep the key sequences short.  One or t
  This is the sample definition for the context spy part. 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point=&quot;org.eclipse.e4.tools.spy.spyPart&quot;&gt;
+   &lt;extension point=&quot;org.eclipse.tools.spy.core.spyPart&quot;&gt;
       &lt;spyPart
             description=&quot;Context Spy to understand what is behind the scene of injection&quot;
-            icon=&quot;icons/annotation_obj.gif&quot;
+            icon=&quot;icons/annotation_obj.png&quot;
             name=&quot;Context spy&quot;
-            part=&quot;org.eclipse.e4.tools.context.spy.ContextSpyPart&quot;
+            part=&quot;org.eclipse.tools.spy.context.ContextSpyPart&quot;
             shortcut=&quot;M2+M3+F10&quot;&gt;
       &lt;/spyPart&gt;
    &lt;/extension&gt;
@@ -169,12 +169,11 @@ It is also strongly recommended that you keep the key sequences short.  One or t
          <meta.section type="implementation"/>
       </appinfo>
       <documentation>
-         The E4 tools project provides 4 implementations of this extension point : 
+         The PDE project provides multiple implementations of this extension point : 
 
 &lt;ul&gt;
 &lt;li&gt; the live model editor (ie : model spy) &lt;/li&gt;
 &lt;li&gt; the context spy (to display E4 contexts)&lt;/li&gt;
-&lt;li&gt; the event spy (to trace IEventBroker events) &lt;/li&gt;
 &lt;li&gt; the css spy (to display css information)&lt;/li&gt;
 &lt;/ul&gt;
       </documentation>
