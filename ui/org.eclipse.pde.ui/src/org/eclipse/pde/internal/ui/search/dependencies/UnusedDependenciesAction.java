@@ -36,7 +36,7 @@ public class UnusedDependenciesAction extends Action {
 	public void run() {
 		Job job = new UnusedDependenciesJob(PDEUIMessages.UnusedDependenciesAction_jobName, fModel, fReadOnly);
 		job.setUser(true);
-		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PSEARCH_OBJ.createImage());
+		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PSEARCH_OBJ);
 		job.schedule();
 	}
 

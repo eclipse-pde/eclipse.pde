@@ -69,7 +69,7 @@ public class AddNewDependenciesAction extends Action {
 			}
 		};
 		job.setUser(true);
-		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PSEARCH_OBJ.createImage());
+		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PSEARCH_OBJ);
 		job.schedule();
 	}
 

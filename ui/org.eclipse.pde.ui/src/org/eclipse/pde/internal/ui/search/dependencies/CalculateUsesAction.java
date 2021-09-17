@@ -40,7 +40,7 @@ public class CalculateUsesAction extends Action {
 	public void run() {
 		Job job = createJob();
 		job.setUser(true);
-		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PSEARCH_OBJ.createImage());
+		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_PSEARCH_OBJ);
 		job.schedule();
 	}
 
