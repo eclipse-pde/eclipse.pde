@@ -16,7 +16,7 @@ This extension point is then managed by this plugin to add automatically short c
    <element name="extension">
       <annotation>
          <appinfo>
-            <meta.element internal="true" />
+            <meta.element />
          </appinfo>
       </annotation>
       <complexType>

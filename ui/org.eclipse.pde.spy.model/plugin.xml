@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.pde.spy.core.spyPart">
+      <spyPart
+            description="Open the live model spy"
+            icon="icons/full/obj16/application_lightning.png"
+            name="Model Spy"
+            part="org.eclipse.pde.spy.model.ModelSpyPart"
+            shortcut="M2+M3+F9">
+      </spyPart>
+   </extension>
+
+</plugin>
