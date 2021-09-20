@@ -220,6 +220,8 @@ public class SpyProcessor {
 			spyBindingTable = modelService.createModelElement(MBindingTable.class);
 			spyBindingTable.setElementId(E4_SPIES_BINDING_TABLE);
 			spyBindingTable.setBindingContext(bc);
+			spyBindingTable.getPersistedState().put(IWorkbench.PERSIST_STATE, "false");
+
 			application.getBindingTables().add(spyBindingTable);
 
 		}
@@ -240,12 +242,12 @@ public class SpyProcessor {
 		// If descriptor not yet in descriptor list, add it now
 		MPartDescriptor descriptor = modelService.createModelElement(MPartDescriptor.class);
 		descriptor.setCategory("Eclipse runtime spies");
+		descriptor.getPersistedState().put(IWorkbench.PERSIST_STATE, "false");
 		descriptor.setElementId(partId);
 		descriptor.setDescription(desc);
 		descriptor.getTags().add("View");
 		descriptor.getTags().add(SPY_TAG);
 		descriptor.getTags().add("categoryTag:Eclipse runtime spies");
-
 		descriptor.setLabel(partLabel);
 		descriptor.setCloseable(true);
 		String bundleId = FrameworkUtil.getBundle(spyPartClass).getSymbolicName();
@@ -268,6 +270,7 @@ public class SpyProcessor {
 				hi.setContributorURI(mp.getContributorURI());
 				hi.setIconURI(mp.getIconURI());
 				hi.setTooltip(mp.getDescription());
+				hi.getPersistedState().put(IWorkbench.PERSIST_STATE, "false");
 
 				MParameter p = modelService.createModelElement(MParameter.class);
 				p.setName(SPY_COMMAND_PARAM);
