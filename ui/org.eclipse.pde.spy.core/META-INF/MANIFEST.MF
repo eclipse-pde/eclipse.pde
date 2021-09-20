@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Spy
+Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.pde.spy.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: org.eclipse.pde.spy.core
@@ -15,3 +15,4 @@ Require-Bundle: org.eclipse.e4.ui.model.workbench,
  org.eclipse.e4.ui.di
 Import-Package: javax.annotation;version="1.2.0",
  javax.inject;version="1.0.0"
+Bundle-Vendor: %provider-name
