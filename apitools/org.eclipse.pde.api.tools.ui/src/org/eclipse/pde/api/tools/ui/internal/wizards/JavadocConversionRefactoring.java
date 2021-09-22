@@ -172,9 +172,11 @@ public class JavadocConversionRefactoring extends Refactoring {
 			localmonitor.setTaskName(NLS.bind(WizardMessages.JavadocConversionPage_scan_javadoc_to_convert, new Object[] { project.getName() }));
 			pchange = new CompositeChange(project.getName());
 			IFile build = project.getFile("build.properties"); //$NON-NLS-1$
+			Change createBuildPropertiesChange = null;
 			if (ApiQuickFixProcessor.needsBuildPropertiesChange(build)) {
 				try {
-					pchange.add(ApiQuickFixProcessor.createBuildPropertiesChange(build));
+					createBuildPropertiesChange = ApiQuickFixProcessor.createBuildPropertiesChange(build);
+					pchange.add(createBuildPropertiesChange);
 				} catch (CoreException ce) {
 					// do nothing and continue, the quick fix is
 					// available if for some
@@ -190,6 +192,13 @@ public class JavadocConversionRefactoring extends Refactoring {
 
 			if (localmonitor.isCanceled()) {
 				throw new OperationCanceledException();
+			}
+
+			if (pchange.getChildren().length == 1 && createBuildPropertiesChange != null) {
+				// if build change is the only change, skip the project
+				if (createBuildPropertiesChange.equals(pchange.getChildren()[0])) {
+					continue;
+				}
 			}
 
 			if (pchange.getChildren().length > 0) {
