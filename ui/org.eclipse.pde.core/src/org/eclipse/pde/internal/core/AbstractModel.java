@@ -14,7 +14,9 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -140,7 +142,8 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 	}
 
 	protected boolean isInSync(File localFile) {
-		return localFile.exists() && localFile.lastModified() == getTimeStamp();
+		Long timeStamp = getTimeStamp(localFile);
+		return timeStamp != null && timeStamp.longValue() == getTimeStamp();
 	}
 
 	@Override
@@ -155,9 +158,19 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 
 	protected abstract void updateTimeStamp();
 
+	protected Long getTimeStamp(File localFile) {
+		try {
+			long lastModified = Files.getLastModifiedTime(localFile.toPath()).toMillis();
+			return lastModified;
+		} catch (IOException e) {
+			return null; // NoSuchFileException -> does not exist
+		}
+	}
+
 	protected void updateTimeStamp(File localFile) {
-		if (localFile.exists()) {
-			fTimestamp = localFile.lastModified();
+		Long timeStamp = getTimeStamp(localFile);
+		if (timeStamp != null) {
+			fTimestamp = timeStamp.longValue();
 		}
 	}
 
