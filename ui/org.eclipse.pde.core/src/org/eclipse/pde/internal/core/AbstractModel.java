@@ -141,10 +141,34 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 		return null;
 	}
 
+	final protected boolean isResourceInSync() {
+		Long timeStamp = getResourceTimeStamp();
+		return timeStamp != null && timeStamp.longValue() == getTimeStamp();
+	}
+
+	final protected Long getResourceTimeStamp() {
+		IResource underlyingResource = getUnderlyingResource();
+		if (underlyingResource == null) {
+			return null;
+		} else if (underlyingResource.getLocation() == null) {
+			// If we have no underlying resource, it probably got deleted from
+			// right
+			// underneath us; thus, the model is not in sync
+			return null;
+		}
+		long modificationStamp = underlyingResource.getModificationStamp();
+		return modificationStamp == IResource.NULL_STAMP ? null : modificationStamp;
+	}
+
+	@Override
+	public boolean isInSync() {
+		return isResourceInSync();
+	}
+
 	protected boolean isInSync(File localFile) {
 		Long timeStamp = getTimeStamp(localFile);
 		return timeStamp != null && timeStamp.longValue() == getTimeStamp();
-	}
+ 	}
 
 	@Override
 	public boolean isValid() {
@@ -156,9 +180,8 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 		return fTimestamp;
 	}
 
-	protected abstract void updateTimeStamp();
 
-	protected Long getTimeStamp(File localFile) {
+	static protected Long getTimeStamp(File localFile) {
 		try {
 			long lastModified = Files.getLastModifiedTime(localFile.toPath()).toMillis();
 			return lastModified;
@@ -167,11 +190,20 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 		}
 	}
 
-	protected void updateTimeStamp(File localFile) {
-		Long timeStamp = getTimeStamp(localFile);
-		if (timeStamp != null) {
-			fTimestamp = timeStamp.longValue();
+	protected final void updateTimeStampWith(Long resourceTimeStamp) {
+		// If we have no underlying resource, it probably got deleted from right
+		// underneath us; thus, there is nothing to update the time stamp for
+		if (resourceTimeStamp != null) {
+			fTimestamp = resourceTimeStamp;
 		}
+	}
+
+	protected void updateTimeStamp() {
+		updateTimeStampWith(getResourceTimeStamp());
+	}
+
+	protected void updateTimeStamp(File localFile) {
+		updateTimeStampWith(getTimeStamp(localFile));
 	}
 
 	@Override

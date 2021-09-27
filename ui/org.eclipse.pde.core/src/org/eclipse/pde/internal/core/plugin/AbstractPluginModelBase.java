@@ -159,9 +159,6 @@ public abstract class AbstractPluginModelBase extends AbstractNLModel implements
 	}
 
 	@Override
-	protected abstract void updateTimeStamp();
-
-	@Override
 	public IPluginAttribute createAttribute(IPluginElement element) {
 		PluginAttribute attribute = new PluginAttribute();
 		attribute.setModel(this);

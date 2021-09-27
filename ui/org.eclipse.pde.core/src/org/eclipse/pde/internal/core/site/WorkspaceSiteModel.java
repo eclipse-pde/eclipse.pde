@@ -99,16 +99,6 @@ public class WorkspaceSiteModel extends AbstractSiteModel implements IEditableMo
 	}
 
 	@Override
-	public boolean isInSync() {
-		return isInSync(fFile.getLocation().toFile());
-	}
-
-	@Override
-	protected void updateTimeStamp() {
-		updateTimeStamp(fFile.getLocation().toFile());
-	}
-
-	@Override
 	public void load() {
 		if (fFile.exists()) {
 			try (InputStream stream = new BufferedInputStream(fFile.getContents(true));) {

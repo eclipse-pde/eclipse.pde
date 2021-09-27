@@ -24,7 +24,6 @@ import java.nio.charset.StandardCharsets;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.IWorkspaceModel;
 import org.eclipse.pde.internal.core.PDECore;
@@ -58,12 +57,6 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 				PDECore.logException(e);
 			}
 		}
-	}
-
-	@Override
-	public boolean isInSync() {
-		IPath path = fFile.getLocation();
-		return path == null ? false : isInSync(path.toFile());
 	}
 
 	@Override

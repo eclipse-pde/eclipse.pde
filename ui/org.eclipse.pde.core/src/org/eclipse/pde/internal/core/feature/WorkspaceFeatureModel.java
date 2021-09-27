@@ -113,16 +113,6 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEdit
 	}
 
 	@Override
-	public boolean isInSync() {
-		return isInSync(file.getLocation().toFile());
-	}
-
-	@Override
-	protected void updateTimeStamp() {
-		updateTimeStamp(file.getLocation().toFile());
-	}
-
-	@Override
 	public void load() {
 		if (file == null) {
 			return;

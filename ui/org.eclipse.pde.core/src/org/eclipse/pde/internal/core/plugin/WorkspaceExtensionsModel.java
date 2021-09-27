@@ -26,7 +26,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.IEditableModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -92,18 +91,6 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 	}
 
 	@Override
-	public boolean isInSync() {
-		if (fUnderlyingResource == null) {
-			return true;
-		}
-		IPath path = fUnderlyingResource.getLocation();
-		if (path == null) {
-			return false;
-		}
-		return super.isInSync(path.toFile());
-	}
-
-	@Override
 	public boolean isDirty() {
 		return fDirty;
 	}
@@ -119,11 +106,6 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 			return;
 		}
 		getExtensions(true);
-	}
-
-	@Override
-	protected void updateTimeStamp() {
-		updateTimeStamp(fUnderlyingResource.getLocation().toFile());
 	}
 
 	@Override

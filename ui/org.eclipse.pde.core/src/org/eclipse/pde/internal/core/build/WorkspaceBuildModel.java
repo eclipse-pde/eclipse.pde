@@ -92,12 +92,6 @@ public class WorkspaceBuildModel extends BuildModel implements IEditableModel {
 		return true;
 	}
 
-	@Override
-	protected void updateTimeStamp() {
-		updateTimeStamp(fUnderlyingResource.getLocation().toFile());
-	}
-
-
 	private String getLineDelimiter(IFile f) {
 		String lineDelimiter = getLineDelimiterPreference(f);
 		if (lineDelimiter == null) {

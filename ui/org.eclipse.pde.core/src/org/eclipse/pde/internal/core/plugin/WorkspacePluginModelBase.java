@@ -107,18 +107,6 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 	}
 
 	@Override
-	public boolean isInSync() {
-		if (fUnderlyingResource == null) {
-			return true;
-		}
-		IPath path = fUnderlyingResource.getLocation();
-		if (path == null) {
-			return false;
-		}
-		return super.isInSync(path.toFile());
-	}
-
-	@Override
 	public boolean isDirty() {
 		return fDirty;
 	}
@@ -143,11 +131,6 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 			fPluginBase = createPluginBase();
 			setLoaded(true);
 		}
-	}
-
-	@Override
-	protected void updateTimeStamp() {
-		updateTimeStamp(fUnderlyingResource.getLocation().toFile());
 	}
 
 	@Override
