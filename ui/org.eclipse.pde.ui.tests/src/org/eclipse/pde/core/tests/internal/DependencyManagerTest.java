@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -19,6 +18,7 @@ import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
+import org.eclipse.pde.ui.tests.target.IUBundleContainerTests;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.junit.*;
 import org.osgi.framework.Version;
@@ -52,9 +52,9 @@ public class DependencyManagerTest {
 	}
 
 	@Test
-	public void testFindRequirementsClosure_RequireBundle2() {
-		Map<URI, List<Entry<String, Version>>> locationIUs = Map.of(
-				Path.of("tests", "sites", "site.a.b").toAbsolutePath().toUri(),
+	public void testFindRequirementsClosure_RequireBundle2() throws Exception {
+		URI locationURI = IUBundleContainerTests.getURI("tests/sites/site.a.b");
+		Map<URI, List<Entry<String, Version>>> locationIUs = Map.of(locationURI,
 				List.of(Map.entry("feature.a.feature.group", Version.emptyVersion)));
 		PDEState pdeState = createTPState(locationIUs);
 

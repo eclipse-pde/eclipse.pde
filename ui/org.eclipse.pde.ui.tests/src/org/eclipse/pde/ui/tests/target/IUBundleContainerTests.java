@@ -70,7 +70,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @return URI
 	 * @throws Exception
 	 */
-	protected URI getURI(String relativePath) throws Exception {
+	public static URI getURI(String relativePath) throws Exception {
 		URL url = PDETestsPlugin.getBundleContext().getBundle().getEntry(relativePath);
 		Path path = new Path(new File(FileLocator.toFileURL(url).getFile()).getAbsolutePath());
 		return URIUtil.toURI(path);
