@@ -145,4 +145,10 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 		}
 	}
 
+	// parent did override
+	@Override
+	public boolean isInSync() {
+		return isResourceInSync();
+	}
+
 }

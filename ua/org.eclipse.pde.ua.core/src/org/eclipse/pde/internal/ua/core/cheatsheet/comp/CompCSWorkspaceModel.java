@@ -20,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.IWorkspaceModel;
 import org.eclipse.pde.internal.core.PDECore;
@@ -106,13 +105,10 @@ public class CompCSWorkspaceModel extends CompCSModel implements
 		return fFile;
 	}
 
+	// parent did override
 	@Override
 	public boolean isInSync() {
-		IPath path = fFile.getLocation();
-		if (path == null) {
-			return false;
-		}
-		return isInSync(path.toFile());
+		return isResourceInSync();
 	}
 
 	@Override

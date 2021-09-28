@@ -146,7 +146,7 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 		return timeStamp != null && timeStamp.longValue() == getTimeStamp();
 	}
 
-	final protected Long getResourceTimeStamp() {
+	protected Long getResourceTimeStamp() {
 		IResource underlyingResource = getUnderlyingResource();
 		if (underlyingResource == null) {
 			return null;
@@ -165,11 +165,6 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 		return isResourceInSync();
 	}
 
-	protected boolean isInSync(File localFile) {
-		Long timeStamp = getTimeStamp(localFile);
-		return timeStamp != null && timeStamp.longValue() == getTimeStamp();
- 	}
-
 	@Override
 	public boolean isValid() {
 		return !isDisposed() && isLoaded();
@@ -179,7 +174,6 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 	public final long getTimeStamp() {
 		return fTimestamp;
 	}
-
 
 	static protected Long getTimeStamp(File localFile) {
 		try {
@@ -199,6 +193,10 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 	}
 
 	protected void updateTimeStamp() {
+		updateTimeStampFromResource();
+	}
+
+	protected void updateTimeStampFromResource() {
 		updateTimeStampWith(getResourceTimeStamp());
 	}
 

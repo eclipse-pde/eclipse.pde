@@ -14,8 +14,11 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -88,27 +91,31 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	}
 
 	@Override
-	public boolean isInSync() {
-		return isInSync(getLocalFile());
-	}
-
-	private File getLocalFile() {
-		File file = new File(getInstallLocation());
-		if (file.isFile()) {
-			return file;
+	protected Long getResourceTimeStamp() {
+		java.nio.file.Path installFile = java.nio.file.Path.of(getInstallLocation());
+		BasicFileAttributes installFileAttribute;
+		try {
+			installFileAttribute = Files.readAttributes(installFile, BasicFileAttributes.class);
+		} catch (IOException e) {
+			return null;
 		}
-
-		file = new File(file, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
-		if (!file.exists()) {
-			String manifest = isFragmentModel() ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
-			file = new File(getInstallLocation(), manifest);
+		if (!installFileAttribute.isDirectory()) {
+			return installFileAttribute.lastModifiedTime().toMillis();
 		}
-		return file;
-	}
-
-	@Override
-	protected void updateTimeStamp() {
-		updateTimeStamp(getLocalFile());
+		try {
+			java.nio.file.Path manifestFile = java.nio.file.Path.of(getInstallLocation(),
+					ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+			return Files.getLastModifiedTime(manifestFile).toMillis();
+		} catch (IOException e) {
+			try {
+				String xml = isFragmentModel() ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR
+						: ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
+				File xmlFile = new File(getInstallLocation(), xml);
+				return Files.getLastModifiedTime(xmlFile.toPath()).toMillis();
+			} catch (IOException e2) {
+				return null;
+			}
+		}
 	}
 
 	public void setInstallLocation(String newInstallLocation) {
@@ -118,4 +125,5 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	public String getLocalization() {
 		return fLocalization;
 	}
+
 }
