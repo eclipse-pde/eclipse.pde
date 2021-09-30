@@ -74,6 +74,7 @@
     <module>ui/org.eclipse.pde.ui.tests</module>
     <module>ui/org.eclipse.pde.ui.tests.smartimport</module>
     <module>ui/org.eclipse.pde.spy.core</module>
+    <module>ui/org.eclipse.pde.spy.css</module>
     <module>ui/org.eclipse.pde.spy.model</module> 
     <module>ui/org.eclipse.tools.layout.spy</module>
     <module>ui/org.eclipse.pde.ui.templates.tests</module>
