@@ -8,7 +8,7 @@
     <elements xsi:type="menu:MenuContribution" xmi:id="_dFxLkLnQEeWXX4KE4W3FyQ" elementId="org.eclipse.pde.spy.core.menucontribution" positionInParent="after=additions" parentId="window">
       <persistedState key="persistState" value="false"/>
       <children xsi:type="menu:MenuSeparator" xmi:id="_Xncg4LoAEeWJoqtWvx7b2g" elementId="org.eclipse.pde.spy.core.menuseparator.0"/>
-      <children xsi:type="menu:Menu" xmi:id="_9DJHILnQEeWXX4KE4W3FyQ" elementId="org.eclipse.pde.spy.core.menu.e4spies" label="Spies" iconURI="platform:/plugin/org.eclipse.pde.spy.core/icons/spyicon.png" tooltip="">
+      <children xsi:type="menu:Menu" xmi:id="_9DJHILnQEeWXX4KE4W3FyQ" elementId="org.eclipse.pde.spy.core.menu.e4spies" label="Spies" iconURI="" tooltip="">
         <children xsi:type="menu:DynamicMenuContribution" xmi:id="_iCu00LnQEeWXX4KE4W3FyQ" elementId="org.eclipse.pde.spy.core.dynamicmenucontribution.0" label="E4 Spies" contributionURI="bundleclass://org.eclipse.pde.spy.core/org.eclipse.pde.spy.core.SpyProcessor"/>
       </children>
     </elements>
