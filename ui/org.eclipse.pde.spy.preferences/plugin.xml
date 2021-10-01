@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+   <extension
+         id="org.eclipse.pde.spy.preferences.fragment"
+         point="org.eclipse.e4.workbench.model">
+      <fragment
+            uri="fragment.e4xmi">
+      </fragment>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.eclipse.pde.spy.preferences.preferencepage.TracePreferencePage"
+            id="org.eclipse.pde.spy.preferences.tracepreferencespage"
+            name="Preference Spy">
+      </page>
+   </extension>
+   <extension
+		 point="org.eclipse.pde.spy.core.spyPart">
+      <spyPart
+            description="Spy to display preferences"
+            icon="icons/preference_spy.png"
+            name="Preference Spy"
+            part="org.eclipse.pde.spy.preferences.parts.PreferenceSpyPart"
+            shortcut="M2+M3+F11">
+      </spyPart>
+   </extension>
+</plugin>
