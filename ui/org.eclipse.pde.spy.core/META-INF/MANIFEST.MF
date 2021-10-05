@@ -4,6 +4,7 @@ Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.pde.spy.core;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: org.eclipse.pde.spy.core
+Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.e4.ui.model.workbench,
  org.eclipse.core.runtime;bundle-version="3.9.0",
