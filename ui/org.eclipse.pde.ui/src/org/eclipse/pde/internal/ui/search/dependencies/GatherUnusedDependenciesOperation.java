@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2017 IBM Corporation and others.
+ *  Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -21,9 +21,11 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.search.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.osgi.container.namespaces.EquinoxModuleDataNamespace;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.plugin.PluginImport;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -109,6 +111,25 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		}
 		if (!subMonitor.isCanceled()) {
 			minimizeDependencies(usedPlugins, usedPackages, subMonitor);
+
+		}
+		if (ClasspathUtilCore.hasBundleStructure(fModel)) {
+			IBundle bundle = ((IBundlePluginModelBase) fModel).getBundleModel().getBundle();
+			IManifestHeader header = bundle.getManifestHeader(EquinoxModuleDataNamespace.REGISTERED_BUDDY_HEADER);
+			String values = header.getValue();
+			String[] registerBud = values.split("\\s*,\\s*"); //$NON-NLS-1$
+			List<Object> found = new ArrayList<>();
+			for (String string : registerBud) {
+				for (Object obj : fList) {
+					if(obj instanceof PluginImport) {
+						String id = ((PluginImport)obj).getId();
+						if (string.equals(id))
+							found.add(obj);
+					}
+				}
+			}
+			if (found.size() > 0)
+				fList.removeAll(found);
 		}
 	}
 
