@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2020 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -143,9 +143,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 			rule.addWord(ICoreConstants.FRIENDS_DIRECTIVE, fAttributeToken);
 			rule.addWord(ICoreConstants.INTERNAL_DIRECTIVE, fAttributeToken);
 			rule.addWord(ICoreConstants.PACKAGE_SPECIFICATION_VERSION, fAttributeToken);
-			// EASTER EGG
-			for (String token : ICoreConstants.EE_TOKENS)
-				rule.addWord(token, fAttributeToken);
+
 			rules[1] = rule;
 
 			setRules(rules);

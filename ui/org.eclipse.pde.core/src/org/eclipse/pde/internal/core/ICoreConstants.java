@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -305,9 +305,6 @@ public interface ICoreConstants {
 
 	String[] TRANSLATABLE_HEADERS = new String[] {Constants.BUNDLE_VENDOR, Constants.BUNDLE_NAME, Constants.BUNDLE_DESCRIPTION, Constants.BUNDLE_COPYRIGHT, Constants.BUNDLE_CATEGORY, Constants.BUNDLE_CONTACTADDRESS};
 
-	// EASTER EGG
-	String[] EE_TOKENS = new String[] {"wassim", "zx", "bbauman", "cherie", "jlb", "cwindatt" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-	};
 
 	// Common folder names
 	String MANIFEST_FOLDER_NAME = "META-INF/"; //$NON-NLS-1$
