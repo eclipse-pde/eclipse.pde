@@ -12,3 +12,5 @@ Snap.*
 # maven
 /*/*/target/
 .DS_Store
+.polyglot.META-INF
+.polyglot.feature.xml
