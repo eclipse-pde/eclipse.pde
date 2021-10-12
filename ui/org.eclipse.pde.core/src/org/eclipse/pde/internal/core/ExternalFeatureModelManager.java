@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - Bug 576568
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -40,7 +41,8 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.target.Messages;
 
 /**
- * Manages the features known to the PDE state that come from the target platform.
+ * Manages the features known to the PDE state that come from the target
+ * platform.
  * <p>
  * Contains utility methods to create feature models for locations.
  * </p>
@@ -51,9 +53,12 @@ public class ExternalFeatureModelManager {
 	 * Creates a feature model for the feature based on the given feature XML
 	 * file.
 	 *
-	 * @param manifest feature XML file in the local file system
-	 * @return {@link ExternalFeatureModel} containing information loaded from the xml
-	 * @throws CoreException if there is a problem reading the feature xml
+	 * @param manifest
+	 *            feature XML file in the local file system
+	 * @return {@link ExternalFeatureModel} containing information loaded from
+	 *         the xml
+	 * @throws CoreException
+	 *             if there is a problem reading the feature xml
 	 */
 	public static IFeatureModel createModel(File manifest) throws CoreException {
 		ExternalFeatureModel model = new ExternalFeatureModel();
@@ -62,7 +67,8 @@ public class ExternalFeatureModelManager {
 			model.load(stream, false);
 			return model;
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetFeature_FileDoesNotExist, manifest)));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
+					NLS.bind(Messages.TargetFeature_FileDoesNotExist, manifest)));
 		}
 	}
 
@@ -84,14 +90,16 @@ public class ExternalFeatureModelManager {
 	 * Loads new feature models from preferences and notifies listeners.
 	 */
 	public void initialize() {
-		// Do the model loading in a synch block in case other changes cause the models to load
+		// Do the model loading in a synch block in case other changes cause the
+		// models to load
 		IFeatureModel[] oldModels = null;
 		synchronized (this) {
 			oldModels = fModels != null ? fModels : new IFeatureModel[0];
 			long startTime = System.currentTimeMillis();
 			fModels = getExternalModels();
 			if (PDECore.DEBUG_MODEL) {
-				System.out.println("Time to load features from target platform (ms): " + (System.currentTimeMillis() - startTime)); //$NON-NLS-1$
+				System.out.println(
+						"Time to load features from target platform (ms): " + (System.currentTimeMillis() - startTime)); //$NON-NLS-1$
 				System.out.println("External features loaded: " + fModels.length); //$NON-NLS-1$
 			}
 		}
@@ -106,12 +114,13 @@ public class ExternalFeatureModelManager {
 	 * @return list of external feature models, possibly empty
 	 */
 	private IFeatureModel[] getExternalModels() {
-		// Plug-in resolution was cancelled by the user so skip resolving the target
+		// Plug-in resolution was cancelled by the user so skip resolving the
+		// target
 		if (PDECore.getDefault().getModelManager().isCancelled()) {
 			return new IFeatureModel[0];
 		}
 
-		ITargetDefinition target = null;
+		ITargetDefinition target;
 		try {
 			target = TargetPlatformHelper.getWorkspaceTargetResolved(null);
 		} catch (CoreException e) {
@@ -128,18 +137,9 @@ public class ExternalFeatureModelManager {
 		TargetFeature[] features = target.getAllFeatures();
 		if (features != null) {
 			for (TargetFeature feature : features) {
-				String location = feature.getLocation();
-				File manifest = new File(location, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
-				if (!manifest.exists() || !manifest.isFile()) {
-					continue;
-				}
-				try {
-					IFeatureModel model = createModel(manifest);
-					if (model != null && model.isLoaded()) {
-						result.add(model);
-					}
-				} catch (CoreException e) {
-					PDECore.log(e);
+				IFeatureModel model = getFreshFeatureModel(feature);
+				if (model.isLoaded()) {
+					result.add(model);
 				}
 			}
 		}
@@ -169,7 +169,33 @@ public class ExternalFeatureModelManager {
 		return fModels;
 	}
 
-	public static TargetFeature[] createFeatures(String platformHome, ArrayList<?> additionalLocations, IProgressMonitor monitor) {
+	/**
+	 * Loads the model freshly from the location if it is is a valid file and
+	 * can be read, otherwise returns the internal model
+	 *
+	 * @param feature
+	 *            the feature to load the model for
+	 * @return the (possibly refreshed) model for this feature
+	 */
+	private static IFeatureModel getFreshFeatureModel(TargetFeature feature) {
+		String location = feature.getLocation();
+		if (location != null) {
+			File manifest = new File(location, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
+			if (manifest.exists() && manifest.isFile()) {
+				try {
+					return createModel(manifest);
+				} catch (CoreException e) {
+					PDECore.log(e);
+				}
+			}
+		}
+		// IFeatureModel is an internal class and thus can't be declared public
+		// but TargetFeature ensures the correct type so the cast is safe here.
+		return (IFeatureModel) feature.getFeatureModel();
+	}
+
+	public static TargetFeature[] createFeatures(String platformHome, ArrayList<?> additionalLocations,
+			IProgressMonitor monitor) {
 		if (platformHome != null && platformHome.length() > 0) {
 			URL[] featureURLs = PluginPathFinder.getFeaturePaths(platformHome);
 

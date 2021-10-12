@@ -199,7 +199,10 @@ public class ExportTargetJob extends Job {
 			monitor.subTask(PDECoreMessages.ExportTargetExportFeatures);
 			for (TargetFeature feature : features) {
 				if (shouldExport(feature)) {
-					copy(feature.getLocation(), featureDir, fileSystem, monitor);
+					String location = feature.getLocation();
+					if (location != null) {
+						copy(location, featureDir, fileSystem, monitor);
+					}
 				}
 			}
 		}
