@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 262564
+ *     Christoph Läubrich - Bug 576610 - FeatureEditor should support display of non-file-based feature models
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
@@ -63,6 +64,10 @@ public class FeatureInputContext extends XMLInputContext {
 			return createStorageModel((IStorageEditorInput) input);
 		if (input instanceof IURIEditorInput) {
 			return createSystemFileModel((IURIEditorInput) input);
+		}
+		if (input instanceof FeatureModelEditorInput) {
+			IFeatureModel featureModel = input.getAdapter(IFeatureModel.class);
+			return featureModel;
 		}
 		return null;
 	}

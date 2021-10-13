@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 438509
+ *     Christoph Läubrich - Bug 576610 - FeatureEditor should support display of non-file-based feature models
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
@@ -67,7 +68,8 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	 * Opens Feature Editor on "Included Plug-ins" page and preselects the
 	 * featurePlugin.
 	 *
-	 * @param featurePlugin is included plug-in in feature
+	 * @param featurePlugin
+	 *            is included plug-in in feature
 	 */
 	public static void openFeatureEditor(final IFeaturePlugin featurePlugin) {
 		if (featurePlugin != null) {
@@ -91,9 +93,14 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 				if (resource != null)
 					input = new FileEditorInput((IFile) resource);
 				else {
-					File file = new File(model.getInstallLocation(), ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
-					IFileStore store = EFS.getStore(file.toURI());
-					input = new FileStoreEditorInput(store);
+					String installLocation = model.getInstallLocation();
+					if (installLocation == null) {
+						input = new FeatureModelEditorInput(model);
+					} else {
+						File file = new File(installLocation, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
+						IFileStore store = EFS.getStore(file.toURI());
+						input = new FileStoreEditorInput(store);
+					}
 				}
 				return IDE.openEditor(PDEPlugin.getActivePage(), input, IPDEUIConstants.FEATURE_EDITOR_ID, true);
 			} catch (CoreException e) {
@@ -106,6 +113,16 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	}
 
 	public FeatureEditor() {
+	}
+
+	@Override
+	protected void createInputContexts(InputContextManager contextManager) {
+		IEditorInput editorInput = getEditorInput();
+		if (editorInput instanceof FeatureModelEditorInput) {
+			contextManager.putContext(editorInput, new FeatureInputContext(this, editorInput, true));
+		} else {
+			super.createInputContexts(contextManager);
+		}
 	}
 
 	@Override
@@ -248,6 +265,10 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
+		if (getEditorInput() instanceof FeatureModelEditorInput) {
+			// a model input has no source!
+			return;
+		}
 		addSourcePage(FeatureInputContext.CONTEXT_ID);
 		addSourcePage(BuildInputContext.CONTEXT_ID);
 	}
@@ -320,7 +341,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	protected boolean hasKnownTypes() {
 		try {
 			TransferData[] types = getClipboard().getAvailableTypes();
-			Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
+			Transfer[] transfers = new Transfer[] { TextTransfer.getInstance(), RTFTransfer.getInstance() };
 			for (TransferData type : types) {
 				for (Transfer transfer : transfers) {
 					if (transfer.isSupportedType(type))
