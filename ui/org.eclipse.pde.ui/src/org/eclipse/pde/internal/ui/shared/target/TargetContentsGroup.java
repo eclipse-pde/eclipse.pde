@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Johannes Ahlers <Johannes.Ahlers@gmx.de> - bug 477677
- *     Christoph Läubrich - Bug 567506
+ *     Christoph Läubrich - Bug 567506, Bug 576630
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
@@ -47,7 +47,6 @@ import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
 import org.eclipse.pde.internal.ui.shared.FilteredCheckboxTree;
 import org.eclipse.pde.internal.ui.wizards.target.TargetDefinitionContentPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -237,31 +236,7 @@ public class TargetContentsGroup {
 		fTree.getControl().setFont(parent.getFont());
 		fTree.setUseHashlookup(true);
 		fTree.setContentProvider(new TreeContentProvider());
-		fTree.setLabelProvider(new StyledBundleLabelProvider(true, false) {
-			// If there is a custom target location and the user groups by location,
-			// we need to use the label provider adapter similar to TargetLocationLabelProvider
-			@Override
-			public Image getImage(Object element) {
-				if (element instanceof ITargetLocation) {
-					ILabelProvider provider = Adapters.adapt(element, ILabelProvider.class);
-					if (provider != null) {
-						return provider.getImage(element);
-					}
-				}
-				return super.getImage(element);
-			}
-
-			@Override
-			public String getText(Object element) {
-				if (element instanceof ITargetLocation) {
-					ILabelProvider provider = Adapters.adapt(element, ILabelProvider.class);
-					if (provider != null) {
-						return provider.getText(element);
-					}
-				}
-				return super.getText(element);
-			}
-		});
+		fTree.setLabelProvider(new StyledBundleLabelProvider(true, false));
 		fTree.addDoubleClickListener(event -> {
 			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 			Object first = selection.getFirstElement();

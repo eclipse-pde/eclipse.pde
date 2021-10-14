@@ -516,7 +516,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		sash.setWeights(new int[] { 70, 30 });
 		SWTFactory.createLabel(detailsComposite, PDEUIMessages.TargetPlatformPreferencePage2_25, 1);
 		fDetails = new TreeViewer(detailsComposite);
-		fDetails.setLabelProvider(new TargetLocationLabelProvider(true, true));
+		fDetails.setLabelProvider(new StyledBundleLabelProvider(true, true));
 		fDetails.setContentProvider(new TargetLocationContentProvider());
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 50;

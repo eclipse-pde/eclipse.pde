@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,13 +10,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - Bug 576630 - Target Editor renders custom target locations using Object.toString() in the content tab
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
 import java.net.URI;
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.p2.metadata.TranslationSupport;
@@ -35,7 +35,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Provides labels for resolved bundles, bundle information objects, and bundle containers.
+ * Provides labels for resolved bundles, bundle information objects, and bundle
+ * containers.
  *
  * @since 3.5
  */
@@ -48,9 +49,11 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	/**
 	 * Creates a label provider.
 	 *
-	 * @param showVersion whether version information should be shown in labels
-	 * @param appendResolvedVariables whether locations with variables should be shown
-	 *  with variables resolved, in addition to unresolved
+	 * @param showVersion
+	 *            whether version information should be shown in labels
+	 * @param appendResolvedVariables
+	 *            whether locations with variables should be shown with
+	 *            variables resolved, in addition to unresolved
 	 */
 	public StyledBundleLabelProvider(boolean showVersion, boolean appendResolvedVariables) {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
@@ -75,12 +78,44 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 		super.update(cell);
 	}
 
-	private StyledString getStyledString(Object element) {
+	protected StyledString getStyledString(Object element) {
+		return Optional
+				.ofNullable(Adapters.adapt(element,
+						DelegatingStyledCellLabelProvider.IStyledLabelProvider.class))
+				.map(styleProvider -> styleProvider.getStyledText(element)).or(() -> {
+					return Optional.ofNullable(Adapters.adapt(element, ILabelProvider.class)).map(provider -> {
+						if (provider instanceof StyledBundleLabelProvider) {
+							// just in case someone return this class itself...
+							StyledBundleLabelProvider bundleLabelProvider = (StyledBundleLabelProvider) provider;
+							return bundleLabelProvider.getInternalStyledString(element);
+						}
+						String text = provider.getText(element);
+						if (text == null) {
+							// trigger the default handling
+							return null;
+						}
+						StyledString styledString = new StyledString(text);
+						if (element instanceof ITargetLocation) {
+							appendBundleCount(styledString, (ITargetLocation) element);
+						}
+						return styledString;
+					});
+				}).orElseGet(() -> getInternalStyledString(element));
+	}
+
+	/**
+	 * Returns a styled string for some internal objects
+	 *
+	 * @param element
+	 * @return the styled string
+	 */
+	private StyledString getInternalStyledString(Object element) {
 		StyledString styledString = new StyledString();
 		if (element instanceof BundleInfo) {
 			appendBundleInfo(styledString, ((BundleInfo) element));
 		} else if (element instanceof NameVersionDescriptor) {
-			appendBundleInfo(styledString, new BundleInfo(((NameVersionDescriptor) element).getId(), ((NameVersionDescriptor) element).getVersion(), null, BundleInfo.NO_LEVEL, false));
+			appendBundleInfo(styledString, new BundleInfo(((NameVersionDescriptor) element).getId(),
+					((NameVersionDescriptor) element).getVersion(), null, BundleInfo.NO_LEVEL, false));
 		} else if (element instanceof TargetBundle) {
 			TargetBundle bundle = ((TargetBundle) element);
 			if (bundle.getStatus().isOK()) {
@@ -95,7 +130,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			styledString.append(((IPath) element).removeFirstSegments(1).toString());
 		} else if (element instanceof TargetFeature) {
 			// Use a bundle info to reuse existing code
-			appendBundleInfo(styledString, new BundleInfo(((TargetFeature) element).getId(), ((TargetFeature) element).getVersion(), null, BundleInfo.NO_LEVEL, false));
+			appendBundleInfo(styledString, new BundleInfo(((TargetFeature) element).getId(),
+					((TargetFeature) element).getVersion(), null, BundleInfo.NO_LEVEL, false));
 		} else if (element instanceof FeatureBundleContainer) {
 			FeatureBundleContainer container = (FeatureBundleContainer) element;
 			styledString.append(container.getFeatureId());
@@ -153,10 +189,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			styledString.append(name);
 			styledString.append(' ');
 			styledString.append(iu.getVersion().toString(), StyledString.QUALIFIER_STYLER);
-		} else if (element instanceof String) {
-			styledString.append((String) element);
 		} else {
-			styledString.append(element.toString());
+			styledString.append(String.valueOf(element));
 		}
 		return styledString;
 	}
@@ -164,8 +198,10 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	/**
 	 * Generates a styled string for a bundle information object.
 	 *
-	 * @param styledString string to append to
-	 * @param info element to append
+	 * @param styledString
+	 *            string to append to
+	 * @param info
+	 *            element to append
 	 */
 	private void appendBundleInfo(StyledString styledString, BundleInfo info) {
 		String name = info.getSymbolicName();
@@ -193,9 +229,12 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	/**
 	 * Appends the container location to the string.
 	 *
-	 * @param styledString label to append to
-	 * @param container container to append
-	 * @param resolved whether to resolve the location
+	 * @param styledString
+	 *            label to append to
+	 * @param container
+	 *            container to append
+	 * @param resolved
+	 *            whether to resolve the location
 	 */
 	private void appendLocation(StyledString styledString, ITargetLocation container, boolean resolved) {
 		try {
@@ -207,42 +246,78 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	}
 
 	/**
-	 * Appends a label describing the number of bundles included (ex. 5 of 10 plug-ins).
+	 * Appends a label describing the number of bundles included (ex. 5 of 10
+	 * plug-ins).
 	 *
-	 * @param styledString label to append to
-	 * @param container bundle container to check for inclusions
+	 * @param styledString
+	 *            label to append to
+	 * @param container
+	 *            bundle container to check for inclusions
 	 */
 	private void appendBundleCount(StyledString styledString, ITargetLocation container) {
-		if (!container.isResolved() || (!container.getStatus().isOK() && !container.getStatus().isMultiStatus()) || container.getBundles() == null) {
+		if (!container.isResolved() || (!container.getStatus().isOK() && !container.getStatus().isMultiStatus())
+				|| container.getBundles() == null) {
 			return;
 		}
 		int bundleCount = container.getBundles().length;
 		String bundleCountString = Integer.toString(bundleCount);
 
 		styledString.append(' ');
-		styledString.append(MessageFormat.format(Messages.BundleContainerTable_10, bundleCountString), StyledString.COUNTER_STYLER);
+		styledString.append(MessageFormat.format(Messages.BundleContainerTable_10, bundleCountString),
+				StyledString.COUNTER_STYLER);
 	}
 
 	/**
 	 * Returns an image for the given object or <code>null</code> if none.
 	 *
 	 * @param element
+	 *            the element to get an image for
 	 * @return image or <code>null</code>
 	 */
 	@Override
 	public Image getImage(Object element) {
-		if (element instanceof TargetBundle) {
+		return Optional
+				.ofNullable(Adapters.adapt(element,
+						DelegatingStyledCellLabelProvider.IStyledLabelProvider.class))
+				.map(styleProvider -> styleProvider.getImage(element)).or(() -> {
 
+					return Optional.ofNullable(Adapters.adapt(element, ILabelProvider.class)).map(provider -> {
+						if (provider instanceof StyledBundleLabelProvider) {
+							// just in case someone return this class itself...
+							StyledBundleLabelProvider styleLabelProvider = (StyledBundleLabelProvider) provider;
+							return styleLabelProvider.getInternalImage(element);
+						}
+						Image image = provider.getImage(element);
+						if (image == null) {
+							// trigger the default handling
+							return null;
+						}
+						return image;
+					});
+				}).orElseGet(() -> getInternalImage(element));
+	}
+
+	/**
+	 *
+	 * @param element
+	 *            the element to get an image for
+	 * @return an image for some PDE specific objects
+	 */
+	private Image getInternalImage(Object element) {
+		if (element instanceof TargetBundle) {
 			TargetBundle bundle = (TargetBundle) element;
 			int flag = 0;
-			if (bundle.getStatus().getSeverity() == IStatus.WARNING || bundle.getStatus().getSeverity() == IStatus.INFO) {
+			if (bundle.getStatus().getSeverity() == IStatus.WARNING
+					|| bundle.getStatus().getSeverity() == IStatus.INFO) {
 				flag = SharedLabelProvider.F_WARNING;
 			} else if (bundle.getStatus().getSeverity() == IStatus.ERROR) {
 				flag = SharedLabelProvider.F_ERROR;
 			}
 
-			if (bundle.getStatus().getSeverity() == IStatus.ERROR && bundle.getStatus().getCode() == TargetBundle.STATUS_FEATURE_DOES_NOT_EXIST) {
-				// Missing features are represented by resolved bundles in the tree
+			if (bundle.getStatus().getSeverity() == IStatus.ERROR
+					&& bundle.getStatus().getCode() == TargetBundle.STATUS_FEATURE_DOES_NOT_EXIST) {
+				// Missing features are represented by resolved bundles in the
+				// tree
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ, flag);
 			} else if (bundle.isFragment()) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FRAGMENT_OBJ, flag);
@@ -307,7 +382,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			if (element instanceof FeatureBundleContainer) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ, flag);
 			} else if (element instanceof DirectoryBundleContainer) {
-				ImageDescriptor image = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
+				ImageDescriptor image = PlatformUI.getWorkbench().getSharedImages()
+						.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 				return PDEPlugin.getDefault().getLabelProvider().get(image, flag);
 			} else if (element instanceof ProfileBundleContainer) {
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_DEFINITION, flag);

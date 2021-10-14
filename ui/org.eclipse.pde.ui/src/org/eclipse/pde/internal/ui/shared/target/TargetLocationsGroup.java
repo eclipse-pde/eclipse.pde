@@ -255,7 +255,7 @@ public class TargetLocationsGroup {
 	private void initializeTreeViewer(Tree tree) {
 		fTreeViewer = new TreeViewer(tree);
 		fTreeViewer.setContentProvider(new TargetLocationContentProvider());
-		fTreeViewer.setLabelProvider(new TargetLocationLabelProvider(true, false));
+		fTreeViewer.setLabelProvider(new StyledBundleLabelProvider(true, false));
 		fTreeViewer.setComparator(new ViewerComparator() {
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
