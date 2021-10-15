@@ -13,15 +13,15 @@
       <page
             class="org.eclipse.pde.spy.preferences.preferencepage.TracePreferencePage"
             id="org.eclipse.pde.spy.preferences.tracepreferencespage"
-            name="Preference Spy">
+            name="%name">
       </page>
    </extension>
    <extension
 		 point="org.eclipse.pde.spy.core.spyPart">
       <spyPart
-            description="Spy to display preferences"
-            icon="icons/preference_spy.png"
-            name="Preference Spy"
+            description="%description"
+            icon="$nl$/icons/preference_spy.png"
+            name="%name"
             part="org.eclipse.pde.spy.preferences.parts.PreferenceSpyPart"
             shortcut="M2+M3+F11">
       </spyPart>

@@ -4,15 +4,16 @@
    <extension
          point="org.eclipse.pde.spy.core.spyPart">
       <spyPart
-            description="Open Css Spy"
-            icon="icons/cssspy.png"
-            name="CSS Spy"
+            description="%description"
+            icon="$nl$/icons/cssspy.png"
+            name="%name"
             part="org.eclipse.pde.spy.css.CssSpyPart"
-            shortcut="M2+M3+F5"></spyPart>
+            shortcut="M2+M3+F5">
+      </spyPart>
       <spyPart
-            description="Open Css Scratch Pad"
-            icon="icons/css_scratchpad.png"
-            name="CSS Scratch pad"
+            description="%css_scratchpad_description"
+            icon="$nl$/icons/css_scratchpad.png"
+            name="%css_scratchpad_name"
             part="org.eclipse.pde.spy.css.CSSScratchPadPart"
             shortcut="M2+M3+F6">
       </spyPart>
@@ -25,5 +26,4 @@
                refid="org.eclipse.e4.ui.css.theme.e4_dark"></themeid>
       </stylesheet>
    </extension>
-
 </plugin>
