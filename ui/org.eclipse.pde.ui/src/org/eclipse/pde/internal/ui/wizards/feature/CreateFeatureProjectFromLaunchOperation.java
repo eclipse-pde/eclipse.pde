@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,10 +15,8 @@
 
 package org.eclipse.pde.internal.ui.wizards.feature;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
-import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
-
+import java.util.Collections;
+import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -28,6 +26,8 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.EclipseLaunchShortcut;
 import org.eclipse.swt.widgets.Shell;
 
@@ -47,22 +47,20 @@ public class CreateFeatureProjectFromLaunchOperation extends CreateFeatureProjec
 	}
 
 	private IPluginBase[] getPlugins() {
-		IPluginModelBase[] models = null;
+		Set<IPluginModelBase> models = Collections.emptySet();
 		try {
 			ILaunchConfigurationType type = fLaunchConfig.getType();
 			String id = type.getIdentifier();
 			// if it is an Eclipse launch
-			if (id.equals(EclipseLaunchShortcut.CONFIGURATION_TYPE))
-				models = BundleLauncherHelper.getMergedBundles(fLaunchConfig, false);
-			// else if it is an OSGi launch
-			else if (id.equals(IPDELauncherConstants.OSGI_CONFIGURATION_TYPE))
-				models = BundleLauncherHelper.getMergedBundles(fLaunchConfig, true);
+			if (id.equals(EclipseLaunchShortcut.CONFIGURATION_TYPE)) {
+				models = BundleLauncherHelper.getMergedBundleMap(fLaunchConfig, false).keySet();
+			} else if (id.equals(IPDELauncherConstants.OSGI_CONFIGURATION_TYPE)) {
+				// else if it is an OSGi launch
+				models = BundleLauncherHelper.getMergedBundleMap(fLaunchConfig, true).keySet();
+			}
 		} catch (CoreException e) {
 		}
-		IPluginBase[] result = new IPluginBase[models == null ? 0 : models.length];
-		for (int i = 0; i < result.length; i++)
-			result[i] = models[i].getPluginBase(true);
-		return result;
+		return models.stream().map(IPluginModelBase::getPluginBase).toArray(IPluginBase[]::new);
 	}
 
 }

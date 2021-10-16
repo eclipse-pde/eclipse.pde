@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
+import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -25,8 +26,8 @@ public class OSGiValidationOperation extends LaunchValidationOperation {
 	}
 
 	@Override
-	protected IPluginModelBase[] getModels() throws CoreException {
-		return BundleLauncherHelper.getMergedBundles(fLaunchConfiguration, true);
+	protected Set<IPluginModelBase> getModels() throws CoreException {
+		return BundleLauncherHelper.getMergedBundleMap(fLaunchConfiguration, true).keySet();
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -55,7 +55,7 @@ public class VMHelper {
 
 		// Iterate through all launch models
 		boolean isOSGiLaunch = configuration instanceof EquinoxLaunchConfiguration; // TODO Test this
-		IPluginModelBase[] plugins = BundleLauncherHelper.getMergedBundles(configuration, isOSGiLaunch);
+		Set<IPluginModelBase> plugins = BundleLauncherHelper.getMergedBundleMap(configuration, isOSGiLaunch).keySet();
 		for (IPluginModelBase plugin : plugins) {
 			if (validEEs.isEmpty()) {
 				break; // No valid EEs left, short circuit

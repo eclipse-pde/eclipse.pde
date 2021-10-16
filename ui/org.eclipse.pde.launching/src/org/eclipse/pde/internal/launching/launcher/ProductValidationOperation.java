@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2022 EclipseSource Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,8 +14,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -25,15 +24,15 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class ProductValidationOperation extends LaunchValidationOperation {
 
-	private IPluginModelBase[] fModels;
+	private Set<IPluginModelBase> fModels;
 
-	public ProductValidationOperation(IPluginModelBase[] models) {
+	public ProductValidationOperation(Set<IPluginModelBase> models) {
 		super(null);
 		fModels = models;
 	}
 
 	@Override
-	protected IPluginModelBase[] getModels() throws CoreException {
+	protected Set<IPluginModelBase> getModels() throws CoreException {
 		return fModels;
 	}
 

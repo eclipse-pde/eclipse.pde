@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 IBM Corporation and others.
+ * Copyright (c) 2010, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -338,10 +338,10 @@ public class FeatureBlock {
 				// Unlike PluginBlock, we don't want to validate the application/product requirements because we will grab them automatically at launch time
 				fOperation = new LaunchValidationOperation(fLaunchConfig) {
 					@Override
-					protected IPluginModelBase[] getModels() throws CoreException {
+					protected Set<IPluginModelBase> getModels() throws CoreException {
 						// The feature block is used in both the OSGi config and Eclipse configs, use the tab id to determine which we are using
 						boolean isOSGiTab = fTab.getId().equals(IPDELauncherConstants.TAB_BUNDLES_ID);
-						return BundleLauncherHelper.getMergedBundles(fLaunchConfiguration, isOSGiTab);
+						return BundleLauncherHelper.getMergedBundleMap(fLaunchConfiguration, isOSGiTab).keySet();
 					}
 				};
 			try {

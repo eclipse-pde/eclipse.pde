@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,15 +35,15 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 
 	private static StateObjectFactory FACTORY;
 
-	private final IPluginModelBase[] fModels;
+	private final Set<IPluginModelBase> fModels;
 	private final Dictionary<?, ?>[] fProperties;
 	private State fState;
 
-	public BundleValidationOperation(IPluginModelBase[] models) {
+	public BundleValidationOperation(Set<IPluginModelBase> models) {
 		this(models, new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()});
 	}
 
-	public BundleValidationOperation(IPluginModelBase[] models, Dictionary<?, ?>[] properties) {
+	public BundleValidationOperation(Set<IPluginModelBase> models, Dictionary<?, ?>[] properties) {
 		fModels = models;
 		fProperties = properties;
 	}
@@ -53,7 +53,7 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 		if (FACTORY == null) {
 			FACTORY = Platform.getPlatformAdmin().getFactory();
 		}
-		SubMonitor subMonitor = SubMonitor.convert(monitor, fModels.length + 1);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, fModels.size() + 1);
 		fState = FACTORY.createState(true);
 		for (IPluginModelBase fModel : fModels) {
 			BundleDescription bundle = fModel.getBundleDescription();
