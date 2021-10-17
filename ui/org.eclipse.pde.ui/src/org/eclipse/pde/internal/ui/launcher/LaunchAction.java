@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
+ *     Hannes Wellmann - Bug 570760 - Option to automatically add requirements to product-launch
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -128,6 +129,8 @@ public class LaunchAction extends Action {
 			wc.removeAttribute(IPDELauncherConstants.SELECTED_FEATURES);
 			wc.removeAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS);
 		}
+		wc.setAttribute(IPDELauncherConstants.AUTOMATIC_INCLUDE_REQUIREMENTS,
+				fProduct.includeRequirementsAutomatically());
 
 		String configIni = getTemplateConfigIni(os);
 		wc.setAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, configIni == null);
