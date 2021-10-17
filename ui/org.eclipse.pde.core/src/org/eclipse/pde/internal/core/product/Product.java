@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 265931
  *     Rapicorp Corporation - ongoing enhancements
  *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 547323
+ *     Hannes Wellmann - Bug 570760 - Option to automatically add requirements to product-launch
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -70,7 +71,8 @@ public class Product extends ProductObject implements IProduct {
 	private IConfigurationFileInfo fConfigIniInfo;
 	private IJREInfo fJVMInfo;
 	private boolean fUseFeatures;
-	private boolean fIncludeLaunchers;
+	private boolean fIncludeLaunchers = true;
+	private boolean fAutoIncludeRequirements = true;
 	private IWindowImages fWindowImages;
 	private ISplashInfo fSplashInfo;
 	private ILauncherInfo fLauncherInfo;
@@ -83,7 +85,6 @@ public class Product extends ProductObject implements IProduct {
 
 	public Product(IProductModel model) {
 		super(model);
-		fIncludeLaunchers = true;
 	}
 
 	public String getCopyright() {
@@ -201,6 +202,7 @@ public class Product extends ProductObject implements IProduct {
 		}
 		writer.print(" " + P_USEFEATURES + "=\"" + fUseFeatures + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.print(" " + P_INCLUDE_LAUNCHERS + "=\"" + fIncludeLaunchers + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		writer.print(" " + P_INCLUDE_REQUIREMENTS_AUTOMATICALLY + "=\"" + fAutoIncludeRequirements + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.println(">"); //$NON-NLS-1$
 
 		if (fAboutInfo != null) {
@@ -323,6 +325,7 @@ public class Product extends ProductObject implements IProduct {
 		fName = null;
 		fUseFeatures = false;
 		fIncludeLaunchers = true;
+		fAutoIncludeRequirements = true;
 		fAboutInfo = null;
 		fPlugins.clear();
 		fPluginConfigurations.clear();
@@ -349,7 +352,10 @@ public class Product extends ProductObject implements IProduct {
 			fVersion = element.getAttribute(P_VERSION);
 			fUseFeatures = "true".equals(element.getAttribute(P_USEFEATURES)); //$NON-NLS-1$
 			String launchers = element.getAttribute(P_INCLUDE_LAUNCHERS);
-			fIncludeLaunchers = ("true".equals(launchers) || launchers.length() == 0); //$NON-NLS-1$
+			fIncludeLaunchers = launchers.isBlank() || "true".equals(launchers); //$NON-NLS-1$
+			String autoAdd = element.getAttribute(P_INCLUDE_REQUIREMENTS_AUTOMATICALLY);
+			fAutoIncludeRequirements = autoAdd.isBlank() || "true".equals(autoAdd); //$NON-NLS-1$
+
 			NodeList children = node.getChildNodes();
 			IProductModelFactory factory = getModel().getFactory();
 			for (int i = 0; i < children.getLength(); i++) {
@@ -544,7 +550,6 @@ public class Product extends ProductObject implements IProduct {
 		}
 	}
 
-
 	@Override
 	public void removePlugins(IProductPlugin[] plugins) {
 		boolean modified = false;
@@ -678,6 +683,21 @@ public class Product extends ProductObject implements IProduct {
 		fUseFeatures = use;
 		if (isEditable()) {
 			firePropertyChanged(P_USEFEATURES, Boolean.toString(old), Boolean.toString(fUseFeatures));
+		}
+	}
+
+	@Override
+	public boolean includeRequirementsAutomatically() {
+		return fAutoIncludeRequirements;
+	}
+
+	@Override
+	public void setIncludeRequirementsAutomatically(boolean includeRequirements) {
+		boolean old = fAutoIncludeRequirements;
+		fAutoIncludeRequirements = includeRequirements;
+		if (isEditable()) {
+			firePropertyChanged(P_INCLUDE_REQUIREMENTS_AUTOMATICALLY, Boolean.toString(old),
+					Boolean.toString(fAutoIncludeRequirements));
 		}
 	}
 

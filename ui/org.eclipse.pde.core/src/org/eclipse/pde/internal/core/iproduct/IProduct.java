@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
  *     Rapicorp Corporation - ongoing enhancements
+ *     Hannes Wellmann - Bug 570760 - Option to automatically add requirements to product-launch
  *******************************************************************************/
 package org.eclipse.pde.internal.core.iproduct;
 
@@ -26,6 +27,7 @@ public interface IProduct extends IProductObject {
 	String P_INTRO_ID = "introId"; //$NON-NLS-1$
 	String P_VERSION = "version"; //$NON-NLS-1$
 	String P_INCLUDE_LAUNCHERS = "includeLaunchers"; //$NON-NLS-1$
+	String P_INCLUDE_REQUIREMENTS_AUTOMATICALLY = "autoIncludeRequirements"; //$NON-NLS-1$
 
 	String getId();
 
@@ -42,6 +44,8 @@ public interface IProduct extends IProductObject {
 	boolean useFeatures();
 
 	boolean includeLaunchers();
+
+	boolean includeRequirementsAutomatically();
 
 	IAboutInfo getAboutInfo();
 
@@ -149,6 +153,8 @@ public interface IProduct extends IProductObject {
 	void setUseFeatures(boolean use);
 
 	void setIncludeLaunchers(boolean exclude);
+
+	void setIncludeRequirementsAutomatically(boolean includeRequirements);
 
 	void reset();
 
