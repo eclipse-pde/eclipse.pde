@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,8 +13,11 @@
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487988
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 351356
+ *     Hannes Wellmann - Bug 570760 - Option to automatically add requirements to product-launch
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
+
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.*;
 import org.eclipse.jface.action.*;
@@ -112,6 +115,8 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
+		createAutoIncludeRequirementsButton(container);
+
 		TablePart tablePart = getTablePart();
 		fFeatureTable = tablePart.getTableViewer();
 		fFeatureTable.setContentProvider(new ContentProvider());
@@ -154,6 +159,18 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 
 		toolBarManager.update(true);
 		section.setTextClient(toolbar);
+	}
+
+	private void createAutoIncludeRequirementsButton(Composite container) {
+		Button autoInclude = new Button(container, SWT.CHECK);
+		autoInclude.setText(PDEUIMessages.Product_FeatureSection_autoIncludeRequirements);
+		autoInclude.setSelection(getProduct().includeRequirementsAutomatically());
+		if (isEditable()) {
+			autoInclude.addSelectionListener(widgetSelectedAdapter(
+					e -> getProduct().setIncludeRequirementsAutomatically(autoInclude.getSelection())));
+		} else {
+			autoInclude.setEnabled(false); // default is true
+		}
 	}
 
 	@Override

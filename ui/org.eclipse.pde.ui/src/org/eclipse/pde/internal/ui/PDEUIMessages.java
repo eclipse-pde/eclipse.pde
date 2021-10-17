@@ -2076,6 +2076,7 @@ public class PDEUIMessages extends NLS {
 	public static String ProductInfoSection_title;
 	public static String GeneralInfoSection_title;
 	public static String Product_PluginSection_add;
+	public static String Product_PluginSection_autoIncludeRequirements;
 	public static String Product_PluginSection_title;
 	public static String Product_FeatureSection_desc;
 	public static String ProductExportWizardPage_desc;
@@ -2108,6 +2109,7 @@ public class PDEUIMessages extends NLS {
 	public static String Product_OverviewPage_testing;
 	public static String Product_PluginSection_desc;
 	public static String Product_FeatureSection_add;
+	public static String Product_FeatureSection_autoIncludeRequirements;
 	public static String ProductFileWizadPage_title;
 	public static String ProductFileWizadPage_basic;
 	public static String Product_overview_exporting;

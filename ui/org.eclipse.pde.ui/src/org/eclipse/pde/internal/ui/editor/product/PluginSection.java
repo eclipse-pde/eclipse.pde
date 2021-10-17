@@ -15,6 +15,7 @@
  *     Simon Scholz <simon.scholz@vogella.com> - bug 440275, 444808
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487988
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 351356
+ *     Hannes Wellmann - Bug 570760 - Option to automatically add requirements to product-launch
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -126,6 +127,8 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
+		createAutoIncludeRequirementsButton(container);
+		new Label(container, SWT.NONE); // fills column 2
 		createOptionalDependenciesButton(container);
 
 		TablePart tablePart = getTablePart();
@@ -173,6 +176,18 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 
 		toolBarManager.update(true);
 		section.setTextClient(toolbar);
+	}
+
+	private void createAutoIncludeRequirementsButton(Composite container) {
+		Button autoInclude = new Button(container, SWT.CHECK);
+		autoInclude.setText(PDEUIMessages.Product_PluginSection_autoIncludeRequirements);
+		autoInclude.setSelection(getProduct().includeRequirementsAutomatically());
+		if (isEditable()) {
+			autoInclude.addSelectionListener(widgetSelectedAdapter(
+					e -> getProduct().setIncludeRequirementsAutomatically(autoInclude.getSelection())));
+		} else {
+			autoInclude.setEnabled(false); // default is true
+		}
 	}
 
 	private void createOptionalDependenciesButton(Composite container) {
