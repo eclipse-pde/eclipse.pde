@@ -630,13 +630,13 @@ public class Schema extends PlatformObject implements ISchema {
 		String aminOccurs = getAttribute(node, "minOccurs"); //$NON-NLS-1$
 		String amaxOccurs = getAttribute(node, "maxOccurs"); //$NON-NLS-1$
 		if (aminOccurs != null) {
-			minOccurs = Integer.valueOf(aminOccurs).intValue();
+			minOccurs = Integer.parseInt(aminOccurs);
 		}
 		if (amaxOccurs != null) {
 			if (amaxOccurs.equals("unbounded")) { //$NON-NLS-1$
 				maxOccurs = Integer.MAX_VALUE;
 			} else {
-				maxOccurs = Integer.valueOf(amaxOccurs).intValue();
+				maxOccurs = Integer.parseInt(amaxOccurs);
 			}
 		}
 		compositor.setMinOccurs(minOccurs);
@@ -743,7 +743,7 @@ public class Schema extends PlatformObject implements ISchema {
 	private int getMinOccurs(Node elementNode) {
 		String aminOccurs = getAttribute(elementNode, "minOccurs"); //$NON-NLS-1$
 		if (aminOccurs != null) {
-			return Integer.valueOf(aminOccurs).intValue();
+			return Integer.parseInt(aminOccurs);
 		}
 		return 1;
 
@@ -755,7 +755,7 @@ public class Schema extends PlatformObject implements ISchema {
 			if (amaxOccurs.equals("unbounded")) { //$NON-NLS-1$
 				return Integer.MAX_VALUE;
 			}
-			return Integer.valueOf(amaxOccurs).intValue();
+			return Integer.parseInt(amaxOccurs);
 		}
 		return 1;
 	}
