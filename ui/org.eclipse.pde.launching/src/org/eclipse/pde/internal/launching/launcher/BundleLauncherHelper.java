@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
  *     Hannes Wellmann - Bug 576885: Unify methods to parse bundle-sets from launch-configs
+ *     Hannes Wellmann - Bug 577118 - Handle multiple Plug-in versions in launching facility
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
@@ -19,8 +20,9 @@ import static java.util.Collections.emptySet;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.stream.Stream;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -29,6 +31,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.osgi.framework.Version;
@@ -48,11 +51,7 @@ public class BundleLauncherHelper {
 	public static final char VERSION_SEPARATOR = '*';
 
 	public static Map<IPluginModelBase, String> getWorkspaceBundleMap(ILaunchConfiguration configuration) throws CoreException {
-		return getWorkspaceBundleMap(configuration, null);
-	}
-
-	public static Map<IPluginModelBase, String> getTargetBundleMap(ILaunchConfiguration configuration) throws CoreException {
-		return getTargetBundleMap(configuration, null);
+		return getWorkspaceBundleMap(configuration, new HashMap<>());
 	}
 
 	public static Map<IPluginModelBase, String> getMergedBundleMap(ILaunchConfiguration configuration, boolean osgi) throws CoreException {
@@ -79,9 +78,13 @@ public class BundleLauncherHelper {
 			return getMergedBundleMapFeatureBased(wc, osgi);
 		}
 
-		Set<String> set = new HashSet<>();
-		Map<IPluginModelBase, String> map = getWorkspaceBundleMap(wc, set);
-		map.putAll(getTargetBundleMap(wc, set));
+		return getAllSelectedPluginBundles(wc);
+	}
+
+	public static Map<IPluginModelBase, String> getAllSelectedPluginBundles(ILaunchConfiguration config) throws CoreException {
+		Map<String, List<Version>> idVersions = new HashMap<>();
+		Map<IPluginModelBase, String> map = getWorkspaceBundleMap(config, idVersions);
+		map.putAll(getTargetBundleMap(config, idVersions));
 		return map;
 	}
 
@@ -310,37 +313,33 @@ public class BundleLauncherHelper {
 		return map.keySet().toArray(new IPluginModelBase[map.size()]);
 	}
 
-	public static Map<IPluginModelBase, String> getWorkspaceBundleMap(ILaunchConfiguration configuration, Set<String> pluginIds) throws CoreException {
+	private static final BiPredicate<List<Version>, Version> CONTAINS_SAME_VERSION = List::contains;
+	private static final BiPredicate<List<Version>, Version> CONTAINS_SAME_MMM_VERSION = (versions, toAdd) -> versions.stream().anyMatch(v -> VersionUtil.compareMacroMinorMicro(toAdd, v) == 0);
+
+	private static Map<IPluginModelBase, String> getWorkspaceBundleMap(ILaunchConfiguration configuration, Map<String, List<Version>> idVersions) throws CoreException {
 		Set<String> workspaceBundles = configuration.getAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, emptySet());
 
-		Map<IPluginModelBase, String> map = getBundleMap(workspaceBundles, ModelEntry::getWorkspaceModels, pluginIds, id -> true);
+		Map<IPluginModelBase, String> map = getBundleMap(workspaceBundles, ModelEntry::getWorkspaceModels, CONTAINS_SAME_VERSION, idVersions);
 
 		if (configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true)) {
 			Set<String> deselectedWorkspaceBundles = configuration.getAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES, emptySet());
-			Set<IPluginModelBase> deselectedPlugins = getBundleMap(deselectedWorkspaceBundles, ModelEntry::getWorkspaceModels, null, id -> true).keySet();
+			Set<IPluginModelBase> deselectedPlugins = getBundleMap(deselectedWorkspaceBundles, ModelEntry::getWorkspaceModels, null, null).keySet();
 			IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 			for (IPluginModelBase model : models) {
-				String id = model.getPluginBase().getId();
-				if (id != null && !deselectedPlugins.contains(model)) {
-					if (pluginIds != null) {
-						pluginIds.add(id);
-					}
-					if (!map.containsKey(model)) {
-						addBundleToMap(map, model, "default:default"); //$NON-NLS-1$
-					}
+				if (model.getPluginBase().getId() != null && !deselectedPlugins.contains(model) && !map.containsKey(model)) {
+					addPlugin(map, model, "default:default", idVersions, CONTAINS_SAME_VERSION); //$NON-NLS-1$
 				}
 			}
 		}
 		return map;
 	}
 
-	public static Map<IPluginModelBase, String> getTargetBundleMap(ILaunchConfiguration configuration, Set<String> pluginIds) throws CoreException {
+	private static Map<IPluginModelBase, String> getTargetBundleMap(ILaunchConfiguration configuration, Map<String, List<Version>> idVersions) throws CoreException {
 		Set<String> targetBundles = configuration.getAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, emptySet());
-		Predicate<String> idFilter = pluginIds != null ? id -> !pluginIds.contains(id) : id -> true;
-		return getBundleMap(targetBundles, ModelEntry::getExternalModels, null, idFilter);
+		return getBundleMap(targetBundles, ModelEntry::getExternalModels, CONTAINS_SAME_MMM_VERSION, idVersions); // don't add same major-minor-micro-version more than once
 	}
 
-	private static Map<IPluginModelBase, String> getBundleMap(Set<String> entries, Function<ModelEntry, IPluginModelBase[]> getModels, Set<String> pluginIds, Predicate<String> idFilter) {
+	private static Map<IPluginModelBase, String> getBundleMap(Set<String> entries, Function<ModelEntry, IPluginModelBase[]> getModels, BiPredicate<List<Version>, Version> versionFilter, Map<String, List<Version>> idVersions) {
 		Map<IPluginModelBase, String> map = new LinkedHashMap<>();
 		for (String bundleEntry : entries) {
 			int index = bundleEntry.indexOf('@');
@@ -353,36 +352,46 @@ public class BundleLauncherHelper {
 			String id = (versionIndex > 0) ? idVersion.substring(0, versionIndex) : idVersion;
 			String version = (versionIndex > 0) ? idVersion.substring(versionIndex + 1) : null;
 
-			if (idFilter.test(id)) {
-				if (pluginIds != null) {
-					pluginIds.add(id);
-				}
-				ModelEntry entry = PluginRegistry.findEntry(id);
-				if (entry != null) {
-					IPluginModelBase[] models = getModels.apply(entry);
-					String startData = bundleEntry.substring(index + 1);
-					addPluginModel(models, version, startData, map);
+			ModelEntry entry = PluginRegistry.findEntry(id);
+			if (entry != null) {
+				IPluginModelBase[] models = getModels.apply(entry);
+				String startData = bundleEntry.substring(index + 1);
+				for (IPluginModelBase model : getSelectedModels(models, version, versionFilter == null)) {
+					addPlugin(map, model, startData, idVersions, versionFilter);
 				}
 			}
 		}
 		return map;
 	}
 
-	private static void addPluginModel(IPluginModelBase[] models, String version, String startData, Map<IPluginModelBase, String> map) {
-		Set<String> versions = new HashSet<>();
-		for (IPluginModelBase model : models) {
-			if (model.isEnabled()) { // always true for workspace models, external might be disabled
-				IPluginBase base = model.getPluginBase();
-				String v = base.getVersion();
-				if (versions.add(v)) { // don't add exact same version more than once
-					// match only if...
-					// a) if we have the same version
-					// b) no version
-					// c) all else fails, if there's just one bundle available, use it
-					if (base.getVersion().equals(version) || version == null || models.length == 1) {
-						addBundleToMap(map, model, startData);
-					}
-				}
+	static final Comparator<IPluginModelBase> VERSION = Comparator.comparing(m -> m.getBundleDescription().getVersion());
+
+	private static Iterable<IPluginModelBase> getSelectedModels(IPluginModelBase[] models, String version, boolean greedy) {
+		// match only if...
+		// a) if we have the same version
+		// b) no version (if greedy take latest, else take all)
+		// c) all else fails, if there's just one bundle available, use it
+		Stream<IPluginModelBase> selectedModels = Arrays.stream(models).filter(IPluginModelBase::isEnabled); // workspace models are always enabled, external might be disabled
+		if (version == null) {
+			if (!greedy) {
+				IPluginModelBase latestModel = selectedModels.max(VERSION).orElseThrow();
+				selectedModels = Stream.of(latestModel); // take only  latest
+			} // Otherwise be greedy and take all if versionFilter is null
+		} else {
+			selectedModels = selectedModels.filter(m -> m.getPluginBase().getVersion().equals(version) || models.length == 1);
+		}
+		return selectedModels::iterator;
+	}
+
+	private static void addPlugin(Map<IPluginModelBase, String> map, IPluginModelBase model, String startData, Map<String, List<Version>> idVersions, BiPredicate<List<Version>, Version> containsVersion) {
+		if (containsVersion == null) { // be greedy and just take all (idVersions is null as well)
+			addBundleToMap(map, model, startData);
+		} else {
+			List<Version> pluginVersions = idVersions.computeIfAbsent(model.getPluginBase().getId(), n -> new ArrayList<>());
+			Version version = model.getBundleDescription().getVersion();
+			if (!containsVersion.test(pluginVersions, version)) { // apply version filter    
+				pluginVersions.add(version);
+				addBundleToMap(map, model, startData);
 			}
 		}
 	}
@@ -464,22 +473,28 @@ public class BundleLauncherHelper {
 		StringBuilder buffer = new StringBuilder(id);
 
 		ModelEntry entry = PluginRegistry.findEntry(id);
-		if (entry != null && entry.getActiveModels().length > 1) {
-			buffer.append(VERSION_SEPARATOR);
-			buffer.append(model.getPluginBase().getVersion());
+		if (entry != null) {
+			boolean isWorkspacePlugin = model.getUnderlyingResource() != null;
+			IPluginModelBase[] entryModels = isWorkspacePlugin ? entry.getWorkspaceModels() : entry.getExternalModels();
+			if (entryModels.length > 1) {
+				buffer.append(VERSION_SEPARATOR);
+				buffer.append(model.getPluginBase().getVersion());
+			}
 		}
 
-		boolean hasStartLevel = (startLevel != null && startLevel.length() > 0);
-		boolean hasAutoStart = (autoStart != null && autoStart.length() > 0);
+		boolean hasStartLevel = startLevel != null && !startLevel.isEmpty();
+		boolean hasAutoStart = autoStart != null && !autoStart.isEmpty();
 
-		if (hasStartLevel || hasAutoStart)
+		if (hasStartLevel || hasAutoStart) {
 			buffer.append('@');
-		if (hasStartLevel)
-			buffer.append(startLevel);
-		if (hasStartLevel || hasAutoStart)
+			if (hasStartLevel) {
+				buffer.append(startLevel);
+			}
 			buffer.append(':');
-		if (hasAutoStart)
-			buffer.append(autoStart);
+			if (hasAutoStart) {
+				buffer.append(autoStart);
+			}
+		}
 		return buffer.toString();
 	}
 

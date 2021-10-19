@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -234,13 +233,12 @@ public class TargetPlatformHelper {
 		return null;
 	}
 
-	public static void checkPluginPropertiesConsistency(Map<?, ?> map, File configDir) {
+	public static void checkPluginPropertiesConsistency(Map<String, List<IPluginModelBase>> map, File configDir) {
 		File runtimeDir = new File(configDir, IPDEBuildConstants.BUNDLE_CORE_RUNTIME);
 		if (runtimeDir.exists() && runtimeDir.isDirectory()) {
 			long timestamp = runtimeDir.lastModified();
-			Iterator<?> iter = map.values().iterator();
-			while (iter.hasNext()) {
-				if (hasChanged((IPluginModelBase) iter.next(), timestamp)) {
+			for (List<IPluginModelBase> models : map.values()) {
+				if (models.stream().anyMatch(m -> hasChanged(m, timestamp))) {
 					CoreUtility.deleteContent(runtimeDir);
 					break;
 				}

@@ -236,7 +236,6 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		};
 
 		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
-				workspaceBundle("plugin.a", "1.0.0"), //
 				workspaceBundle("plugin.a", "2.0.0"));
 
 		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
@@ -549,7 +548,6 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.b"));
 		};
 		Set<BundleLocationDescriptor> expectedBundles = Set.of(//
-				targetBundle("plugin.b", "1.0.0"), //
 				targetBundle("plugin.b", "2.0.0"));
 
 		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
@@ -586,12 +584,11 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
 			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES,
-					Set.of("plugin.a*1.0.0.2020", "plugin.a*1.0.0.2021"));
-		};
+					new LinkedHashSet<>(List.of("plugin.a*1.0.0.2020", "plugin.a*1.0.0.2021")));
+		}; // first entry is selected -> LinkedHashSet ensures its the same
 
 		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
-				targetBundle("plugin.a", "1.0.0.2020"), //
-				targetBundle("plugin.a", "1.0.0.2021"));
+				targetBundle("plugin.a", "1.0.0.2020"));
 
 		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
 	}
@@ -615,7 +612,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
 				workspaceBundle("plugin.a", "1.0.0"), //
-				workspaceBundle("plugin.b", "1.0.0"));
+				workspaceBundle("plugin.b", "1.0.0"), //
+				targetBundle("plugin.a", "1.0.1"), //
+				targetBundle("plugin.b", "2.0.0"));
 
 		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
 	}
@@ -637,7 +636,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
 				workspaceBundle("plugin.a", "1.0.0"), //
-				workspaceBundle("plugin.b", "2.0.0"));
+				workspaceBundle("plugin.b", "2.0.0"), //
+				targetBundle("plugin.a", "1.0.1"), //
+				targetBundle("plugin.b", "3.0.0"));
 
 		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
 	}
@@ -655,7 +656,8 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		};
 
 		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
-				workspaceBundle("plugin.a", "1.0.0"));
+				workspaceBundle("plugin.a", "1.0.0"), //
+				targetBundle("plugin.a", "1.0.2"));
 
 		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
 	}
@@ -702,7 +704,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
 				workspaceBundle("plugin.a", "1.0.0"), //
-				workspaceBundle("plugin.b", "1.0.0"));
+				workspaceBundle("plugin.b", "1.0.0"), //
+				targetBundle("plugin.a", "1.0.1"), //
+				targetBundle("plugin.b", "1.0.1"));
 
 		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
 	}
@@ -770,7 +774,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		IPluginModelBase plugin = targetBundle("plugin.a", "2.0.0").findModel();
 
 		String entry = BundleLauncherHelper.writeBundleEntry(plugin, null, null);
-		assertEquals("plugin.a*2.0.0", entry);
+		assertEquals("plugin.a", entry);
 	}
 
 	@Test
@@ -785,7 +789,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		IPluginModelBase plugin = targetBundle("plugin.a", "2.0.0").findModel();
 
 		String entry = BundleLauncherHelper.writeBundleEntry(plugin, null, null);
-		assertEquals("plugin.a", entry);
+		assertEquals("plugin.a*2.0.0", entry);
 	}
 
 	@Test

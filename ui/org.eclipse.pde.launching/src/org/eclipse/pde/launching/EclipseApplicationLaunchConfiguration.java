@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,8 @@ package org.eclipse.pde.launching;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -23,11 +25,10 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ClasspathHelper;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.launching.launcher.*;
-import org.osgi.framework.Version;
 
 /**
  * A launch delegate for launching Eclipse applications
@@ -43,8 +44,8 @@ import org.osgi.framework.Version;
 public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
 	// used to generate the dev classpath entries
-	// key is bundle ID, value is a model
-	private Map<String, IPluginModelBase> fAllBundles;
+	// key is bundle ID, value is a List of models
+	private Map<String, List<IPluginModelBase>> fAllBundles;
 
 	// key is a model, value is startLevel:autoStart
 	private Map<IPluginModelBase, String> fModels;
@@ -95,11 +96,6 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		// add the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
 		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles)); //$NON-NLS-1$
-		// necessary for PDE to know how to load plugins when target platform = host platform
-		// see PluginPathFinder.getPluginPaths() and PluginPathFinder.isDevLaunchMode()
-		IPluginModelBase base = fAllBundles.get(PDECore.PLUGIN_ID);
-		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(), new Version("3.3.1")) < 0) //$NON-NLS-1$
-			programArgs.add("-pdelaunch"); //$NON-NLS-1$
 
 		String[] args = super.getProgramArguments(configuration);
 		Collections.addAll(programArgs, args);
@@ -181,12 +177,8 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		fWorkspaceLocation = null;
 
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false);
-		fAllBundles = new HashMap<>(fModels.size());
-		Iterator<IPluginModelBase> iter = fModels.keySet().iterator();
-		while (iter.hasNext()) {
-			IPluginModelBase model = iter.next();
-			fAllBundles.put(model.getPluginBase().getId(), model);
-		}
+		fAllBundles = fModels.keySet().stream().collect(Collectors.groupingBy(m -> m.getPluginBase().getId()));
+
 		validateConfigIni(configuration);
 		super.preLaunchCheck(configuration, launch, monitor);
 	}
@@ -210,16 +202,9 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	@Override
 	public String[] getVMArguments(ILaunchConfiguration configuration) throws CoreException {
 		String[] vmArgs = super.getVMArguments(configuration);
-		IPluginModelBase base = fAllBundles.get(PDECore.PLUGIN_ID);
-		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(), new Version("3.3.1")) >= 0) { //$NON-NLS-1$
-			// necessary for PDE to know how to load plugins when target platform = host platform
-			// see PluginPathFinder.getPluginPaths() and PluginPathFinder.isDevLaunchMode()
-			String[] result = new String[vmArgs.length + 1];
-			System.arraycopy(vmArgs, 0, result, 0, vmArgs.length);
-			result[vmArgs.length] = "-Declipse.pde.launch=true"; //$NON-NLS-1$
-			return result;
-		}
-		return vmArgs;
+		// necessary for PDE to know how to load plugins when target platform = host platform
+		// see PluginPathFinder.getPluginPaths() and PluginPathFinder.isDevLaunchMode()
+		return Stream.concat(Arrays.stream(vmArgs), Stream.of("-Declipse.pde.launch=true")).toArray(String[]::new); //$NON-NLS-1$
 	}
 
 }

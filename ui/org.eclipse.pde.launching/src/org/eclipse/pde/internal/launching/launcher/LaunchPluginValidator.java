@@ -39,7 +39,7 @@ public class LaunchPluginValidator {
 			return models;
 
 		Collection<IPluginModelBase> result = null;
-		Map<IPluginModelBase, String> bundles = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null);
+		Map<IPluginModelBase, String> bundles = BundleLauncherHelper.getWorkspaceBundleMap(configuration);
 		result = bundles.keySet();
 		return result.toArray(new IPluginModelBase[result.size()]);
 	}

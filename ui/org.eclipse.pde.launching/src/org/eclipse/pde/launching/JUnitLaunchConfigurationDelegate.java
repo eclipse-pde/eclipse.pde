@@ -19,6 +19,8 @@ package org.eclipse.pde.launching;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
@@ -33,7 +35,6 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.launching.*;
 import org.eclipse.pde.internal.launching.launcher.*;
-import org.osgi.framework.Version;
 
 /**
  * A launch delegate for launching JUnit Plug-in tests.
@@ -58,7 +59,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 	// used to generate the dev classpath entries
 	// key is bundle ID, value is a model
-	private Map<String, IPluginModelBase> fAllBundles;
+	private Map<String, List<IPluginModelBase>> fAllBundles;
 
 	// key is a model, value is startLevel:autoStart
 	private Map<IPluginModelBase, String> fModels;
@@ -78,15 +79,29 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		return "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
 	}
 
-	private String getTestPluginId(ILaunchConfiguration configuration) throws CoreException {
+	private IPluginBase getTestPlugin(ILaunchConfiguration configuration) throws CoreException {
 		IJavaProject javaProject = getJavaProject(configuration);
 		IPluginModelBase model = PluginRegistry.findModel(javaProject.getProject());
-		if (model == null)
+		if (model == null) {
 			abort(NLS.bind(PDEMessages.JUnitLaunchConfiguration_error_notaplugin, javaProject.getProject().getName()), null, IStatus.OK);
-		if (model instanceof IFragmentModel)
-			return ((IFragmentModel) model).getFragment().getPluginId();
+		}
+		if (model instanceof IFragmentModel) {
+			IFragment fragment = ((IFragmentModel) model).getFragment();
+			IPluginBase hostModel = getFragmentHostModel(fragment.getPluginId(), fragment.getPluginVersion(), fragment.getRule());
+			if (hostModel == null) {
+				abort(NLS.bind(PDEMessages.JUnitLaunchConfiguration_error_missingPlugin, fragment.getPluginId()), null, IStatus.OK);
+			}
+			model = hostModel.getPluginModel();
+		}
+		return model.getPluginBase();
+	}
 
-		return model.getPluginBase().getId();
+	private IPluginBase getFragmentHostModel(String hostId, String hostVersion, int hostVersionMatchRule) {
+		// return host plug-in model with matching version from bundles selected for launch 
+		List<IPluginModelBase> hosts = fAllBundles.getOrDefault(hostId, Collections.emptyList());
+		Stream<IPluginBase> hostPlugins = hosts.stream().map(IPluginModelBase::getPluginBase);
+		return hostPlugins.filter(h -> VersionUtil.compare(h.getVersion(), hostVersion, hostVersionMatchRule)) //
+				.max(Comparator.comparing(IPluginBase::getVersion)).orElse(null);
 	}
 
 	@Override
@@ -143,7 +158,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 		// Create the platform configuration for the runtime workbench
 		String productID = LaunchConfigurationHelper.getProductID(configuration);
-		String testPluginId = getTestPluginId(configuration);
+		IPluginBase testPlugin = getTestPlugin(configuration);
 		LaunchConfigurationHelper.createConfigIniFile(configuration, productID, fAllBundles, fModels, getConfigurationDirectory(configuration));
 		TargetPlatformHelper.checkPluginPropertiesConsistency(fAllBundles, getConfigurationDirectory(configuration));
 
@@ -162,7 +177,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 					.filter(IClasspathEntry::isTest)//
 					.filter(entry -> entry.getOutputLocation() != null).forEach(entry -> {
 						IPath relativePath = entry.getOutputLocation().removeFirstSegments(1).makeRelative();
-						devProperties.merge(testPluginId, relativePath.toString(), (vOld, vNew) -> vOld + "," + vNew); //$NON-NLS-1$
+						ClasspathHelper.addDevClasspath(testPlugin, devProperties, relativePath.toString(), true);
 					});
 		}
 		programArgs.add(ClasspathHelper.writeDevEntries(getConfigurationDirectory(configuration).toString() + "/dev.properties", devProperties)); //$NON-NLS-1$
@@ -200,7 +215,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		}
 
 		programArgs.add("-testpluginname"); //$NON-NLS-1$
-		programArgs.add(testPluginId);
+		programArgs.add(testPlugin.getId());
 
 		IVMInstall launcher = VMHelper.createLauncher(configuration);
 		boolean isModular = JavaRuntime.isModularJava(launcher);
@@ -275,10 +290,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		String vmArgs = LaunchArgumentsHelper.getUserVMArguments(configuration);
 
 		// necessary for PDE to know how to load plugins when target platform = host platform
-		IPluginModelBase base = fAllBundles.get(PDECore.PLUGIN_ID);
-		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(), new Version("3.3.1")) >= 0) { //$NON-NLS-1$
-			vmArgs = concatArg(vmArgs, "-Declipse.pde.launch=true"); //$NON-NLS-1$
-		}
+		vmArgs = concatArg(vmArgs, "-Declipse.pde.launch=true"); //$NON-NLS-1$
 		// For p2 target, add "-Declipse.p2.data.area=@config.dir/p2" unless already specified by user
 		if (fAllBundles.containsKey("org.eclipse.equinox.p2.core")) { //$NON-NLS-1$
 			if (!vmArgs.contains("-Declipse.p2.data.area=")) { //$NON-NLS-1$
@@ -394,12 +406,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		fWorkspaceLocation = null;
 		fConfigDir = null;
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false);
-		fAllBundles = new LinkedHashMap<>(fModels.size());
-		Iterator<IPluginModelBase> iter = fModels.keySet().iterator();
-		while (iter.hasNext()) {
-			IPluginModelBase model = iter.next();
-			fAllBundles.put(model.getPluginBase().getId(), model);
-		}
+		fAllBundles = fModels.keySet().stream().collect(Collectors.groupingBy(m -> m.getPluginBase().getId(), LinkedHashMap::new, Collectors.toCollection(ArrayList::new)));
 
 		// implicitly add the plug-ins required for JUnit testing if necessary
 		String[] requiredPlugins = JUnitLaunchConfigurationDelegate.getRequiredPlugins(configuration);
@@ -407,7 +414,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 			String id = requiredPlugin;
 			if (!fAllBundles.containsKey(id)) {
 				IPluginModelBase model = findRequiredPluginInTargetOrHost(id);
-				fAllBundles.put(id, model);
+				fAllBundles.computeIfAbsent(model.getPluginBase().getId(), i -> new ArrayList<>()).add(model);
 				fModels.put(model, "default:default"); //$NON-NLS-1$
 			}
 		}

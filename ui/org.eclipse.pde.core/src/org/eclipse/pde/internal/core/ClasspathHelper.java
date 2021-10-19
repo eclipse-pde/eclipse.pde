@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Hannes Wellmann - Bug 577541 - Clean up ClasspathHelper and TargetWeaver
  *     Hannes Wellmann - Bug 577543 - Only weave dev.properties for secondary launches if plug-in is from Running-Platform
+ *     Hannes Wellmann - Bug 577118 - Handle multiple Plug-in versions in launching facility
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -20,9 +21,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -51,6 +52,7 @@ import org.eclipse.pde.core.IBundleClasspathResolver;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -64,19 +66,19 @@ public class ClasspathHelper {
 
 	private static final String DOT = "."; //$NON-NLS-1$
 	private static final String FRAGMENT_ANNOTATION = "@fragment@"; //$NON-NLS-1$
+	private static final String DEV_CLASSPATH_ENTRY_SEPARATOR = ","; //$NON-NLS-1$
+	private static final String DEV_CLASSPATH_VERSION_SEPARATOR = ";"; //$NON-NLS-1$
 
 	public static String getDevEntriesProperties(String fileName, boolean checkExcluded) throws CoreException {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-		Map<String, IPluginModelBase> bundleModels = new HashMap<>();
-		for (IPluginModelBase model : models) {
-			bundleModels.put(model.getPluginBase().getId(), model);
-		}
+		Map<String, List<IPluginModelBase>> bundleModels = Arrays.stream(models)
+				.collect(Collectors.groupingBy(m -> m.getPluginBase().getId()));
 
 		Properties properties = getDevEntriesProperties(bundleModels, checkExcluded);
 		return writeDevEntries(fileName, properties);
 	}
 
-	public static String getDevEntriesProperties(String fileName, Map<String, IPluginModelBase> map)
+	public static String getDevEntriesProperties(String fileName, Map<String, List<IPluginModelBase>> map)
 			throws CoreException {
 		Properties properties = getDevEntriesProperties(map, true);
 		return writeDevEntries(fileName, properties);
@@ -99,26 +101,70 @@ public class ClasspathHelper {
 		}
 	}
 
-	public static Properties getDevEntriesProperties(Map<String, IPluginModelBase> bundlesMap, boolean checkExcluded) {
-		Properties properties = new Properties();
+	public static Properties getDevEntriesProperties(Map<String, List<IPluginModelBase>> bundlesMap,
+			boolean checkExcluded) {
+
+		Set<IPluginModelBase> launchedPlugins = bundlesMap.values().stream().flatMap(Collection::stream)
+				.collect(Collectors.toCollection(LinkedHashSet::new));
+
+		Map<IPluginModelBase, String> modelEntries = new LinkedHashMap<>();
 		// account for cascading workspaces
-		TargetWeaver.weaveRunningPlatformDevProperties(properties, bundlesMap.values());
-		for (IPluginModelBase model : bundlesMap.values()) {
-			if (model.getUnderlyingResource() != null) {
-				String entry = formatEntry(getDevPaths(model, checkExcluded, bundlesMap.keySet()));
-				if (!entry.isEmpty()) {
-					// overwrite entry, if plug-in from primary Eclipse is also
-					// imported into workspace of secondary eclipse
-					properties.put(model.getPluginBase().getId(), entry);
+		TargetWeaver.weaveRunningPlatformDevProperties(modelEntries, launchedPlugins);
+
+		for (List<IPluginModelBase> models : bundlesMap.values()) {
+			for (IPluginModelBase model : models) {
+				if (model.getUnderlyingResource() != null) {
+					String entry = formatEntry(getDevPaths(model, checkExcluded, launchedPlugins));
+					if (!entry.isEmpty()) {
+						// overwrite entry, if plug-in from primary Eclipse is
+						// also imported into workspace of secondary eclipse
+						modelEntries.put(model, entry);
+					}
+				}
+			}
+			// Check if there is an entry of a workspace-model or
+			// a target model woven from a primary-workspace plugin with same id
+			if (models.stream().anyMatch(modelEntries::containsKey)) {
+				for (IPluginModelBase model : models) {
+					// in case of multiple models with same id add empty entries
+					// for target-bundles to ensure the non-version entry is not
+					// used to falsely extend their class-path
+					modelEntries.putIfAbsent(model, ""); //$NON-NLS-1$
 				}
 			}
 		}
+
+		Properties properties = new Properties();
+		modelEntries.forEach((m, cp) -> addDevClasspath(m.getPluginBase(), properties, cp, false));
 		properties.put("@ignoredot@", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		return properties;
 	}
 
 	private static String formatEntry(Collection<IPath> paths) {
-		return paths.stream().map(IPath::toString).collect(Collectors.joining(",")); //$NON-NLS-1$
+		return paths.stream().map(IPath::toString).collect(Collectors.joining(DEV_CLASSPATH_ENTRY_SEPARATOR));
+	}
+
+	public static void addDevClasspath(IPluginBase model, Properties devProperties, String devCP, boolean append) {
+		// add entries with & without version to be backward-compatible with
+		// 'old' Equinox, that doesn't consider versions, too.
+		String id = model.getId();
+		if (!devCP.isEmpty()) {
+			addDevCPEntry(id, devCP, devProperties, append);
+		}
+		addDevCPEntry(id + DEV_CLASSPATH_VERSION_SEPARATOR + model.getVersion(), devCP, devProperties, append);
+	}
+
+	private static void addDevCPEntry(String id, String devCP, Properties devProperties, boolean append) {
+		if (append) {
+			devProperties.merge(id, devCP, (vOld, vNew) -> vOld + DEV_CLASSPATH_ENTRY_SEPARATOR + vNew);
+		} else {
+			devProperties.put(id, devCP);
+		}
+	}
+
+	public static String getDevClasspath(Properties devProperties, String id, String version) {
+		Object cp = devProperties.get(id + ClasspathHelper.DEV_CLASSPATH_VERSION_SEPARATOR + version);
+		return (String) (cp != null ? cp : devProperties.get(id)); // prefer version-entry
 	}
 
 	// creates a map whose key is a Path to the source directory/jar and the value is a Path output directory or jar.
@@ -213,7 +259,7 @@ public class ClasspathHelper {
 		return paths;
 	}
 
-	private static Set<IPath> getDevPaths(IPluginModelBase model, boolean checkExcluded, Set<String> plugins) {
+	private static Set<IPath> getDevPaths(IPluginModelBase model, boolean checkExcluded, Set<IPluginModelBase> plugins) {
 		IProject project = model.getUnderlyingResource().getProject();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
@@ -263,10 +309,10 @@ public class ClasspathHelper {
 	}
 
 	// looks for fragments for a plug-in.  Then searches the fragments for a specific library.  Will return paths which are absolute (required by runtime)
-	private static List<IPath> findLibraryFromFragments(String libName, IPluginModelBase model, boolean checkExcluded, Set<String> plugins) {
+	private static List<IPath> findLibraryFromFragments(String libName, IPluginModelBase model, boolean checkExcluded, Set<IPluginModelBase> plugins) {
 		IFragmentModel[] frags = PDEManager.findFragmentsFor(model);
 		for (int i = 0; i < frags.length; i++) {
-			if (!plugins.contains(frags[i].getBundleDescription().getSymbolicName())) {
+			if (!plugins.contains(frags[i])) {
 				continue;
 			}
 			// look in project first

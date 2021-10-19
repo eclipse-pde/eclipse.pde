@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.*;
@@ -140,9 +141,8 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 				if (configuration == null)
 					continue;
 				try {
-					Map<?, ?> workspaceBundleMap = BundleLauncherHelper.getWorkspaceBundleMap(configuration);
-					for (Object key : workspaceBundleMap.keySet()) {
-						IPluginModelBase bm = (IPluginModelBase) key;
+					var workspaceBundles = BundleLauncherHelper.getWorkspaceBundleMap(configuration).keySet();
+					for (IPluginModelBase bm : workspaceBundles) {
 						BundleDescription description = bm.getBundleDescription();
 						if (description != null) {
 							if (imported.contains(description.getSymbolicName())) {

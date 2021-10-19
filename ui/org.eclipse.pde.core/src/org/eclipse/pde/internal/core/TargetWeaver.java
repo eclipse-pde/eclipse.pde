@@ -13,6 +13,7 @@
  *     EclipseSource Corporation - ongoing enhancements
  *     Hannes Wellmann - Bug 577541 - Clean up ClasspathHelper and TargetWeaver
  *     Hannes Wellmann - Bug 577543 - Only weave dev.properties for secondary launches if plug-in is from Running-Platform
+ *     Hannes Wellmann - Bug 577118 - Handle multiple Plug-in versions in launching facility
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -126,14 +127,14 @@ public class TargetWeaver {
 	 * @param launchDevProperties dev.properties
 	 * @param launchedPlugins the bundles that participate in secondary runtime
 	 */
-	static void weaveRunningPlatformDevProperties(Properties launchDevProperties,
+	static void weaveRunningPlatformDevProperties(Map<IPluginModelBase, String> launchDevProperties,
 			Iterable<IPluginModelBase> launchedPlugins) {
 		if (fgDevPropertiesURL != null) {
 			Properties platformDevProperties = getDevProperties();
 			for (IPluginModelBase launchedPlugin : launchedPlugins) {
 				String devCP = getDevProperty(launchedPlugin, platformDevProperties);
 				if (devCP != null) {
-					launchDevProperties.setProperty(launchedPlugin.getPluginBase().getId(), devCP);
+					launchDevProperties.put(launchedPlugin, devCP);
 				}
 			}
 		}
@@ -186,7 +187,7 @@ public class TargetWeaver {
 	}
 
 	private static String getDevProperty(Path bundleLocation, String id, String version, Properties devProperties) {
-		String devCP = (String) devProperties.get(id);
+		String devCP = ClasspathHelper.getDevClasspath(devProperties, id, version);
 		return devCP != null && isBundleOfRunningPlatform(bundleLocation, id, version) ? devCP : null;
 	}
 

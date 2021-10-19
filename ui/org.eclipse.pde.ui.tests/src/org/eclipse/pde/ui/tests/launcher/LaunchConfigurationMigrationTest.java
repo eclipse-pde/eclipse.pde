@@ -47,13 +47,12 @@ public class LaunchConfigurationMigrationTest extends AbstractLaunchTest {
 
 		assertOldPropertiesRemoved(wc);
 
-		Map<IPluginModelBase, String> workspaceBundles = BundleLauncherHelper.getWorkspaceBundleMap(wc);
-		assertEquals("default:true", workspaceBundles.get(findWorkspaceModel("org.eclipse.pde.plugin1", null)));
-		assertEquals("3:false", workspaceBundles.get(findWorkspaceModel("org.eclipse.pde.plugin2", null)));
+		Map<IPluginModelBase, String> bundles = BundleLauncherHelper.getAllSelectedPluginBundles(wc);
+		assertEquals("default:true", bundles.get(findWorkspaceModel("org.eclipse.pde.plugin1", null)));
+		assertEquals("3:false", bundles.get(findWorkspaceModel("org.eclipse.pde.plugin2", null)));
 
-		Map<IPluginModelBase, String> targetBundles = BundleLauncherHelper.getTargetBundleMap(wc);
-		assertEquals("default:true", targetBundles.get(findTargetModel("org.eclipse.core.runtime", null)));
-		assertEquals("2:false", targetBundles.get(findTargetModel("org.eclipse.ui", null)));
+		assertEquals("default:true", bundles.get(findTargetModel("org.eclipse.core.runtime", null)));
+		assertEquals("2:false", bundles.get(findTargetModel("org.eclipse.ui", null)));
 	}
 
 	@Test
@@ -66,12 +65,11 @@ public class LaunchConfigurationMigrationTest extends AbstractLaunchTest {
 
 		assertOldPropertiesRemoved(wc);
 
-		Map<IPluginModelBase, String> workspaceBundles = BundleLauncherHelper.getWorkspaceBundleMap(wc);
-		assertEquals("default:default", workspaceBundles.get(findWorkspaceModel("org.eclipse.pde.plugin1", null)));
+		Map<IPluginModelBase, String> bundles = BundleLauncherHelper.getAllSelectedPluginBundles(wc);
+		assertEquals("default:default", bundles.get(findWorkspaceModel("org.eclipse.pde.plugin1", null)));
 
-		Map<IPluginModelBase, String> targetBundles = BundleLauncherHelper.getTargetBundleMap(wc);
-		assertEquals("default:true", targetBundles.get(findTargetModel("org.eclipse.core.runtime", null)));
-		assertEquals("2:false", targetBundles.get(findTargetModel("org.eclipse.ui", null)));
+		assertEquals("default:true", bundles.get(findTargetModel("org.eclipse.core.runtime", null)));
+		assertEquals("2:false", bundles.get(findTargetModel("org.eclipse.ui", null)));
 	}
 
 	@Test
@@ -84,13 +82,12 @@ public class LaunchConfigurationMigrationTest extends AbstractLaunchTest {
 
 		assertOldOsgiPropertiesRemoved(wc);
 
-		Map<IPluginModelBase, String> workspaceBundles = BundleLauncherHelper.getWorkspaceBundleMap(wc);
-		assertEquals("default:true", workspaceBundles.get(findWorkspaceModel("org.eclipse.pde.plugin1", null)));
-		assertEquals("3:false", workspaceBundles.get(findWorkspaceModel("org.eclipse.pde.plugin2", null)));
+		Map<IPluginModelBase, String> bundles = BundleLauncherHelper.getAllSelectedPluginBundles(wc);
+		assertEquals("default:true", bundles.get(findWorkspaceModel("org.eclipse.pde.plugin1", null)));
+		assertEquals("3:false", bundles.get(findWorkspaceModel("org.eclipse.pde.plugin2", null)));
 
-		Map<IPluginModelBase, String> targetBundles = BundleLauncherHelper.getTargetBundleMap(wc);
-		assertEquals("default:true", targetBundles.get(findTargetModel("org.eclipse.core.runtime", null)));
-		assertEquals("2:false", targetBundles.get(findTargetModel("org.eclipse.ui", null)));
+		assertEquals("default:true", bundles.get(findTargetModel("org.eclipse.core.runtime", null)));
+		assertEquals("2:false", bundles.get(findTargetModel("org.eclipse.ui", null)));
 	}
 
 	@SuppressWarnings("deprecation")

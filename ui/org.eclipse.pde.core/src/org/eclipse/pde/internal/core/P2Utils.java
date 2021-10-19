@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -381,7 +382,7 @@ public class P2Utils {
 	 *
 	 * @throws CoreException if the profile cannot be generated
 	 */
-	public static void createProfile(String profileID, File p2DataArea, Collection<?> bundles) throws CoreException {
+	public static void createProfile(String profileID, File p2DataArea, Collection<List<IPluginModelBase>> bundles) throws CoreException {
 		// Acquire the required p2 services, creating an agent in the target p2 metadata area
 		IProvisioningAgentProvider provider = PDECore.getDefault().acquireService(IProvisioningAgentProvider.class);
 		if (provider == null) {
@@ -418,12 +419,9 @@ public class P2Utils {
 		profile = registry.addProfile(profileID, props);
 
 		// Create metadata for the bundles
-		Collection<IInstallableUnit> ius = new ArrayList<>(bundles.size());
-		for (final Object name : bundles) {
-			IPluginModelBase model = (IPluginModelBase) name;
-			BundleDescription bundle = model.getBundleDescription();
-			ius.add(createBundleIU(bundle));
-		}
+		Collection<IInstallableUnit> ius = bundles.stream().flatMap(Collection::stream)
+				.map(IPluginModelBase::getBundleDescription).map(P2Utils::createBundleIU) //
+				.collect(Collectors.toList());
 
 		// Add the metadata to the profile
 		ProvisioningContext context = new ProvisioningContext(agent);
