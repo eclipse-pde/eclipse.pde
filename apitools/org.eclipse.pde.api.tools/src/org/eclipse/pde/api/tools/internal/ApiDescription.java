@@ -69,7 +69,7 @@ public class ApiDescription implements IApiDescription {
 	/**
 	 * Whether this description needs saving
 	 */
-	private boolean fModified = false;
+	private volatile boolean fModified;
 
 	/**
 	 * A comparator for {@link ManifestNode}s. Used while visiting child nodes
@@ -634,7 +634,7 @@ public class ApiDescription implements IApiDescription {
 	/**
 	 * Marks the description as modified
 	 */
-	protected synchronized void modified() {
+	protected void modified() {
 		fModified = true;
 	}
 
@@ -643,7 +643,7 @@ public class ApiDescription implements IApiDescription {
 	 *
 	 * @return
 	 */
-	protected synchronized boolean isModified() {
+	protected boolean isModified() {
 		return fModified;
 	}
 
@@ -653,7 +653,7 @@ public class ApiDescription implements IApiDescription {
 	 * @param mod
 	 * @return
 	 */
-	protected synchronized void setModified(boolean mod) {
+	protected void setModified(boolean mod) {
 		fModified = mod;
 	}
 

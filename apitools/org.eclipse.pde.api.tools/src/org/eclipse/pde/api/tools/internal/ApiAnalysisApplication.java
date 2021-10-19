@@ -113,6 +113,7 @@ public class ApiAnalysisApplication implements IApplication {
 			desc.setAutoBuilding(false);
 			ResourcesPlugin.getWorkspace().setDescription(desc);
 			PDECore.getDefault().getPreferencesManager().setValue(ICoreConstants.DISABLE_API_ANALYSIS_BUILDER, false);
+			PDECore.getDefault().getPreferencesManager().setValue(ICoreConstants.RUN_API_ANALYSIS_AS_JOB, false);
 
 			Request args = Request
 					.readFromArgs((String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS));

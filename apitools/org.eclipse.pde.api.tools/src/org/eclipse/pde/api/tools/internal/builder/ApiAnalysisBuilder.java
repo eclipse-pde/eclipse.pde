@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IFile;
@@ -36,6 +37,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -44,6 +46,8 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -178,6 +182,8 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	private BuildState buildstate = null;
 
+	private ConcurrentLinkedQueue<Runnable> markersQueue = new ConcurrentLinkedQueue<>();
+
 	/**
 	 * Bug 549838:  In case auto-building on a API tools settings change  is not desired,
 	 * specify VM property: {@code -Dorg.eclipse.disableAutoBuildOnSettingsChange=true}
@@ -190,6 +196,20 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @param resource
 	 */
 	void cleanupMarkers(IResource resource) {
+		if (isRunningAsJob()) {
+			ApiAnalysisMarkersJob job = new ApiAnalysisMarkersJob(() -> cleanupMarkersInternally(resource));
+			job.schedule();
+		} else {
+			cleanupMarkersInternally(resource);
+		}
+	}
+
+	/**
+	 * Cleans up markers associated with API Tools on the given resource.
+	 *
+	 * @param resource
+	 */
+	void cleanupMarkersInternally(IResource resource) {
 		cleanUnusedFilterMarkers(resource);
 		cleanupUsageMarkers(resource);
 		cleanupCompatibilityMarkers(resource);
@@ -342,6 +362,13 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	}
 
 	@Override
+	public ISchedulingRule getRule(int kind, Map<String, String> args) {
+		// TODO probably we don't need even this and can return null if we are running as job
+		// if(isRunningAsJob()) return null;
+		return currentproject;
+	}
+
+	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
 		boolean disableAPIAnalysisBuilder = prefs.getBoolean(ICoreConstants.DISABLE_API_ANALYSIS_BUILDER);
@@ -357,7 +384,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		if (ApiPlugin.DEBUG_BUILDER) {
 			System.out.println("\nApiAnalysisBuilder: Starting build of " + this.currentproject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_builder, 8);
 		IApiBaseline wbaseline = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 		if (wbaseline == null) {
 			if (ApiPlugin.DEBUG_BUILDER) {
@@ -366,85 +392,93 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			return NO_PROJECTS;
 		}
 		final IProject[] projects = getRequiredProjects(true);
+		if (kind != FULL_BUILD && kind != AUTO_BUILD && kind != INCREMENTAL_BUILD) {
+			return projects;
+		}
+		boolean fullBuild = kind == FULL_BUILD;
+		boolean runAsJob = prefs.getBoolean(ICoreConstants.RUN_API_ANALYSIS_AS_JOB);
+		if (runAsJob) {
+			ApiAnalysisJob job = new ApiAnalysisJob(BuilderMessages.api_analysis_builder, currentproject, fullBuild,
+					wbaseline, projects);
+			job.cancelSimilarJobs(fullBuild);
+			job.schedule(100);
+		} else {
+			work(fullBuild, wbaseline, projects, monitor);
+		}
+		return projects;
+	}
+
+	protected void work(final boolean fullBuild, IApiBaseline wbaseline, IProject[] projects, IProgressMonitor monitor)
+			throws CoreException {
+		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_builder, 8);
+
 		IApiBaseline baseline = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
 		try {
 			SubMonitor switchMonitor = localMonitor.split(4);
-			switch (kind) {
-				case FULL_BUILD: {
-					if (ApiPlugin.DEBUG_BUILDER) {
-						System.out.println("ApiAnalysisBuilder: Performing full build as requested"); //$NON-NLS-1$
-					}
-					buildAll(baseline, wbaseline, switchMonitor);
-					break;
+			if (fullBuild) {
+				if (ApiPlugin.DEBUG_BUILDER) {
+					System.out.println("ApiAnalysisBuilder: Performing full build as requested"); //$NON-NLS-1$
 				}
-				case AUTO_BUILD:
-				case INCREMENTAL_BUILD: {
-					this.buildstate = BuildState.getLastBuiltState(currentproject);
-					if (this.buildstate == null) {
+				buildAll(baseline, wbaseline, switchMonitor);
+			} else {
+				this.buildstate = BuildState.getLastBuiltState(currentproject);
+				if (this.buildstate == null) {
+					buildAll(baseline, wbaseline, switchMonitor);
+				} else if (worthDoingFullBuild(projects)) {
+					buildAll(baseline, wbaseline, switchMonitor);
+				} else {
+					IResourceDelta[] deltas = getDeltas(projects);
+					if (deltas.length < 1) {
 						buildAll(baseline, wbaseline, switchMonitor);
-						break;
-					} else if (worthDoingFullBuild(projects)) {
-						buildAll(baseline, wbaseline, switchMonitor);
-						break;
 					} else {
-						IResourceDelta[] deltas = getDeltas(projects);
-						if (deltas.length < 1) {
-							buildAll(baseline, wbaseline, switchMonitor);
-						} else {
-							IResourceDelta filters = null;
-							boolean full = false;
-							for (IResourceDelta delta : deltas) {
-								full = shouldFullBuild(delta);
-								if (full) {
-									break;
-								}
-								filters = delta.findMember(FILTER_PATH);
-								if (filters != null) {
-									switch (filters.getKind()) {
-										case IResourceDelta.ADDED:
-										case IResourceDelta.REMOVED: {
-											full = true;
-											break;
-										}
-										case IResourceDelta.CHANGED: {
-											full = (filters.getFlags() & (IResourceDelta.REPLACED | IResourceDelta.CONTENT)) > 0;
-											break;
-										}
-										default: {
-											break;
-										}
+						IResourceDelta filters = null;
+						boolean full = false;
+						for (IResourceDelta delta : deltas) {
+							full = shouldFullBuild(delta);
+							if (full) {
+								break;
+							}
+							filters = delta.findMember(FILTER_PATH);
+							if (filters != null) {
+								switch (filters.getKind()) {
+									case IResourceDelta.ADDED:
+									case IResourceDelta.REMOVED: {
+										full = true;
+										break;
 									}
-									if (full) {
+									case IResourceDelta.CHANGED: {
+										full = (filters.getFlags() & (IResourceDelta.REPLACED | IResourceDelta.CONTENT)) > 0;
+										break;
+									}
+									default: {
 										break;
 									}
 								}
-							}
-							if (full) {
-								if (ApiPlugin.DEBUG_BUILDER) {
-									System.out.println("ApiAnalysisBuilder: Performing full build since MANIFEST.MF or .api_filters was modified"); //$NON-NLS-1$
-								}
-								buildAll(baseline, wbaseline, switchMonitor);
-							} else {
-								switchMonitor.setWorkRemaining(2);
-								State state = (State) JavaModelManager.getJavaModelManager().getLastBuiltState(this.currentproject, switchMonitor.split(1));
-								if (state == null) {
-									buildAll(baseline, wbaseline, switchMonitor.split(1));
+								if (full) {
 									break;
 								}
+							}
+						}
+						if (full) {
+							if (ApiPlugin.DEBUG_BUILDER) {
+								System.out.println("ApiAnalysisBuilder: Performing full build since MANIFEST.MF or .api_filters was modified"); //$NON-NLS-1$
+							}
+							buildAll(baseline, wbaseline, switchMonitor);
+						} else {
+							switchMonitor.setWorkRemaining(2);
+							State state = (State) JavaModelManager.getJavaModelManager().getLastBuiltState(this.currentproject, switchMonitor.split(1));
+							if (state == null) {
+								buildAll(baseline, wbaseline, switchMonitor.split(1));
+							} else {
 								BuildState.setLastBuiltState(this.currentproject, null);
 								IncrementalApiBuilder builder = new IncrementalApiBuilder(this);
 								builder.build(baseline, wbaseline, deltas, state, this.buildstate, switchMonitor.split(1));
 							}
 						}
 					}
-					break;
-				}
-				default: {
-					break;
 				}
 			}
 			localMonitor.split(1);
-
 		} catch (OperationCanceledException oce) {
 			// do nothing, but don't forward it
 			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
@@ -469,9 +503,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					// be built do not close
 					// the baselines yet, they might be re-read by another build
 					// cycle
-					if (baseline != null) {
-						baseline.close();
-					}
+					// TODO: this seem to be not needed anymore.
+					//	if (baseline != null) {
+					//		baseline.close();
+					//	}
 				}
 				localMonitor.split(1);
 				if (this.buildstate != null) {
@@ -517,7 +552,50 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		if (ApiPlugin.DEBUG_BUILDER) {
 			System.out.println("ApiAnalysisBuilder: Finished build of " + this.currentproject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		return projects;
+	}
+
+	class ApiAnalysisJob extends Job {
+
+		private boolean fullBuild;
+		private IApiBaseline wbaseline;
+		private IProject[] projects;
+		private IProject project;
+
+		public ApiAnalysisJob(String name, IProject project, boolean fullBuild, IApiBaseline wbaseline,
+				IProject[] projects) {
+			super(name);
+			this.project = project;
+			this.fullBuild = fullBuild;
+			this.wbaseline = wbaseline;
+			this.projects = projects;
+			// Intentionally no rule set to allow run in parallel with build locking entire workspace
+			// setRule(project);
+		}
+
+		@Override
+		public IStatus run(IProgressMonitor monitor) {
+			try {
+				work(fullBuild, wbaseline, projects, monitor);
+			} catch (CoreException e) {
+				return e.getStatus();
+			}
+			return Status.OK_STATUS;
+		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return super.belongsTo(family) || ApiAnalysisJob.class == family;
+		}
+
+		void cancelSimilarJobs(boolean fullBuild) {
+			Job[] jobs = Job.getJobManager().find(ApiAnalysisJob.class);
+			for (Job job : jobs) {
+				ApiAnalysisJob ajob = (ApiAnalysisJob) job;
+				if (fullBuild == ajob.fullBuild && project.equals(ajob.project)) {
+					job.cancel();
+				}
+			}
+		}
 	}
 
 	/**
@@ -721,14 +799,30 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			}
 		}
 
+		Runnable task;
 		if (hasFatalProblem) {
-			cleanupMarkers(project);
-			IApiProblem problem = ApiProblemFactory.newFatalProblem(Path.EMPTY.toString(), new String[] { project.getName() }, IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM);
-			createMarkerForProblem(IApiProblem.CATEGORY_FATAL_PROBLEM, IApiMarkerConstants.FATAL_PROBLEM_MARKER, problem);
-			return true;
+			task = () -> {
+				cleanupMarkers(project);
+				IApiProblem problem = ApiProblemFactory.newFatalProblem(Path.EMPTY.toString(), new String[] { project.getName() }, IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM);
+				createMarkerForProblem(IApiProblem.CATEGORY_FATAL_PROBLEM, IApiMarkerConstants.FATAL_PROBLEM_MARKER, problem);
+			};
+		} else {
+			task = () -> cleanupFatalMarkers(project);
 		}
-		cleanupFatalMarkers(project);
-		return false;
+
+		boolean runAsJob = isRunningAsJob();
+		if (runAsJob) {
+			new ApiAnalysisMarkersJob(task).schedule();
+		} else {
+			task.run();
+		}
+		return hasFatalProblem;
+	}
+
+	private static boolean isRunningAsJob() {
+		PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
+		boolean runAsJob = prefs.getBoolean(ICoreConstants.RUN_API_ANALYSIS_AS_JOB);
+		return runAsJob;
 	}
 
 	/**
@@ -810,11 +904,56 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	}
 
 	/**
+	 * Creates or removes markers, uses the current project rule.
+	 * The tasks to do are maintained by markersQueue and executed in the submission order
+	 */
+	class ApiAnalysisMarkersJob extends WorkspaceJob {
+
+		public ApiAnalysisMarkersJob(Runnable task) {
+			super("Creating markers on " + currentproject.getName()); //$NON-NLS-1$
+			markersQueue.add(task);
+			setRule(currentproject);
+			setSystem(true);
+		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return super.belongsTo(family) || ApiAnalysisMarkersJob.class == family;
+		}
+
+		@Override
+		public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+			while (!markersQueue.isEmpty()) {
+				Runnable task = markersQueue.poll();
+				task.run();
+			}
+			return Status.OK_STATUS;
+		}
+
+	}
+
+	/**
 	 * Creates new markers are for the listing of problems added to this
 	 * reporter. If no problems have been added to this reporter, or we are not
 	 * running in the framework, no work is done.
 	 */
 	protected void createMarkers() {
+		IApiProblem[] problems = getAnalyzer().getProblems();
+		if (isRunningAsJob()) {
+			new ApiAnalysisMarkersJob(() -> createMarkersInternally(problems)).schedule();
+		} else {
+			createMarkersInternally(problems);
+		}
+	}
+
+	/**
+	 * Creates new markers are for the listing of problems added to this reporter.
+	 * If no problems have been added to this reporter, or we are not running in the
+	 * framework, no work is done.
+	 *
+	 * @param problems
+	 */
+	protected void createMarkersInternally(IApiProblem[] problems) {
 		try {
 			IResource manifest = Util.getManifestFile(this.currentproject);
 			if (manifest != null) {
@@ -825,7 +964,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
-		IApiProblem[] problems = getAnalyzer().getProblems();
 		String type = null;
 		for (IApiProblem problem : problems) {
 			int category = problem.getCategory();

@@ -77,7 +77,7 @@ public class ProjectApiDescription extends ApiDescription {
 	/**
 	 * Whether a package refresh is in progress
 	 */
-	private boolean fRefreshingInProgress = false;
+	private volatile boolean fRefreshingInProgress;
 
 	/**
 	 * Associated manifest file
@@ -90,7 +90,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 * traversing the cached nodes, rather than traversing the java model
 	 * elements (effectively building the cache).
 	 */
-	private boolean fInSynch = false;
+	private volatile boolean fInSynch;
 
 	/**
 	 * A node for a package.
@@ -168,7 +168,7 @@ public class ProjectApiDescription extends ApiDescription {
 
 		long fTimeStamp = -1L;
 		long fBuildStamp = -1L;
-		private boolean fRefreshing = false;
+		private volatile boolean fRefreshing;
 
 		IType fType;
 
@@ -191,114 +191,124 @@ public class ProjectApiDescription extends ApiDescription {
 		}
 
 		@Override
-		protected synchronized ManifestNode refresh() {
+		protected ManifestNode refresh() {
 			if (fRefreshing) {
-				if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-					StringBuilder buffer = new StringBuilder();
-					buffer.append("Refreshing manifest node: "); //$NON-NLS-1$
-					buffer.append(this);
-					buffer.append(" aborted because a refresh is already in progress"); //$NON-NLS-1$
-					System.out.println(buffer.toString());
-				}
+				logRefreshing();
 				return this;
 			}
-			try {
-				fRefreshing = true;
-				int parentVis = resolveVisibility(parent);
-				if (VisibilityModifiers.isAPI(parentVis)) {
-					ICompilationUnit unit = fType.getCompilationUnit();
-					if (unit != null) {
-						IResource resource = null;
-						try {
-							resource = unit.getUnderlyingResource();
-						} catch (JavaModelException e) {
-							if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-								StringBuilder buffer = new StringBuilder();
-								buffer.append("Failed to get underlying resource for compilation unit: "); //$NON-NLS-1$
-								buffer.append(unit);
-								System.out.println(buffer.toString());
-							}
-							// exception if the resource does not exist
-							if (!e.getJavaModelStatus().isDoesNotExist()) {
-								ApiPlugin.log(e.getStatus());
-								return this;
-							}
-						}
-						if (resource != null && resource.exists()) {
-							long stamp = resource.getModificationStamp();
-							if (stamp != fTimeStamp) {
-								// compute current CRC
-								CRCVisitor visitor = new CRCVisitor();
-								visitType(this, visitor);
-								long crc = visitor.getValue();
+			synchronized (this) {
+				if (fRefreshing) {
+					logRefreshing();
+					return this;
+				}
+				try {
+					fRefreshing = true;
+					int parentVis = resolveVisibility(parent);
+					if (VisibilityModifiers.isAPI(parentVis)) {
+						ICompilationUnit unit = fType.getCompilationUnit();
+						if (unit != null) {
+							IResource resource = null;
+							try {
+								resource = unit.getUnderlyingResource();
+							} catch (JavaModelException e) {
 								if (ApiPlugin.DEBUG_API_DESCRIPTION) {
 									StringBuilder buffer = new StringBuilder();
-									buffer.append("Resource has changed for type manifest node: "); //$NON-NLS-1$
-									buffer.append(this);
-									buffer.append(" tag scanning the new type"); //$NON-NLS-1$
-									buffer.append(" (CRC "); //$NON-NLS-1$
-									buffer.append(crc);
-									buffer.append(')');
+									buffer.append("Failed to get underlying resource for compilation unit: "); //$NON-NLS-1$
+									buffer.append(unit);
 									System.out.println(buffer.toString());
 								}
-								modified();
-								children.clear();
-								restrictions = RestrictionModifiers.NO_RESTRICTIONS;
-								fTimeStamp = resource.getModificationStamp();
-								try {
-									TagScanner.newScanner().scan(unit, ProjectApiDescription.this, getApiTypeContainer((IPackageFragmentRoot) fType.getPackageFragment().getParent()), null);
-								} catch (CoreException e) {
+								// exception if the resource does not exist
+								if (!e.getJavaModelStatus().isDoesNotExist()) {
 									ApiPlugin.log(e.getStatus());
+									return this;
 								}
-								// see if the description changed
-								visitor = new CRCVisitor();
-								visitType(this, visitor);
-								long crc2 = visitor.getValue();
-								if (crc != crc2) {
-									// update relative build time stamp
-									fBuildStamp = BuildStamps.getBuildStamp(resource.getProject());
+							}
+							if (resource != null && resource.exists()) {
+								long stamp = resource.getModificationStamp();
+								if (stamp != fTimeStamp) {
+									// compute current CRC
+									CRCVisitor visitor = new CRCVisitor();
+									visitType(this, visitor);
+									long crc = visitor.getValue();
 									if (ApiPlugin.DEBUG_API_DESCRIPTION) {
 										StringBuilder buffer = new StringBuilder();
-										buffer.append("CRC changed for type manifest node: "); //$NON-NLS-1$
+										buffer.append("Resource has changed for type manifest node: "); //$NON-NLS-1$
 										buffer.append(this);
+										buffer.append(" tag scanning the new type"); //$NON-NLS-1$
 										buffer.append(" (CRC "); //$NON-NLS-1$
-										buffer.append(crc2);
+										buffer.append(crc);
 										buffer.append(')');
 										System.out.println(buffer.toString());
 									}
+									modified();
+									children.clear();
+									restrictions = RestrictionModifiers.NO_RESTRICTIONS;
+									fTimeStamp = resource.getModificationStamp();
+									try {
+										TagScanner.newScanner().scan(unit, ProjectApiDescription.this, getApiTypeContainer((IPackageFragmentRoot) fType.getPackageFragment().getParent()), null);
+									} catch (CoreException e) {
+										ApiPlugin.log(e.getStatus());
+									}
+									// see if the description changed
+									visitor = new CRCVisitor();
+									visitType(this, visitor);
+									long crc2 = visitor.getValue();
+									if (crc != crc2) {
+										// update relative build time stamp
+										fBuildStamp = BuildStamps.getBuildStamp(resource.getProject());
+										if (ApiPlugin.DEBUG_API_DESCRIPTION) {
+											StringBuilder buffer = new StringBuilder();
+											buffer.append("CRC changed for type manifest node: "); //$NON-NLS-1$
+											buffer.append(this);
+											buffer.append(" (CRC "); //$NON-NLS-1$
+											buffer.append(crc2);
+											buffer.append(')');
+											System.out.println(buffer.toString());
+										}
+									}
 								}
+							} else {
+								if (ApiPlugin.DEBUG_API_DESCRIPTION) {
+									StringBuilder buffer = new StringBuilder();
+									buffer.append("Underlying resource for the type manifest node: "); //$NON-NLS-1$
+									buffer.append(this);
+									buffer.append(" does not exist or is null"); //$NON-NLS-1$
+									System.out.println(buffer.toString());
+								}
+								// element has been removed
+								modified();
+								parent.children.remove(element);
+								return null;
 							}
 						} else {
 							if (ApiPlugin.DEBUG_API_DESCRIPTION) {
 								StringBuilder buffer = new StringBuilder();
-								buffer.append("Underlying resource for the type manifest node: "); //$NON-NLS-1$
+								buffer.append("Failed to look up compilation unit for "); //$NON-NLS-1$
+								buffer.append(fType);
+								buffer.append(" refreshing type manifest node: "); //$NON-NLS-1$
 								buffer.append(this);
-								buffer.append(" does not exist or is null"); //$NON-NLS-1$
 								System.out.println(buffer.toString());
 							}
-							// element has been removed
-							modified();
-							parent.children.remove(element);
-							return null;
+							// TODO: binary type
 						}
 					} else {
-						if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-							StringBuilder buffer = new StringBuilder();
-							buffer.append("Failed to look up compilation unit for "); //$NON-NLS-1$
-							buffer.append(fType);
-							buffer.append(" refreshing type manifest node: "); //$NON-NLS-1$
-							buffer.append(this);
-							System.out.println(buffer.toString());
-						}
-						// TODO: binary type
+						// don't scan internal types
 					}
-				} else {
-					// don't scan internal types
+				} finally {
+					fRefreshing = false;
 				}
-			} finally {
-				fRefreshing = false;
+				return this;
 			}
-			return this;
+		}
+
+		private void logRefreshing() {
+			if (ApiPlugin.DEBUG_API_DESCRIPTION) {
+				StringBuilder buffer = new StringBuilder();
+				buffer.append("Refreshing manifest node: "); //$NON-NLS-1$
+				buffer.append(this);
+				buffer.append(" aborted because a refresh is already in progress"); //$NON-NLS-1$
+				System.out.println(buffer.toString());
+			}
 		}
 
 		@Override
@@ -555,47 +565,57 @@ public class ProjectApiDescription extends ApiDescription {
 	/**
 	 * Refreshes package nodes if required.
 	 */
-	synchronized void refreshPackages() {
+	void refreshPackages() {
 		if (fRefreshingInProgress) {
-			if (ApiPlugin.DEBUG_API_DESCRIPTION) {
-				StringBuilder buffer = new StringBuilder();
-				buffer.append("Refreshing manifest node: "); //$NON-NLS-1$
-				buffer.append(this);
-				buffer.append(" aborted because a refresh is already in progress"); //$NON-NLS-1$
-				System.out.println(buffer.toString());
-			}
+			logPackafesRefresh();
 			return;
 		}
-		// check if in synch
-		if (fManifestFile == null || (fManifestFile.getModificationStamp() != fPackageTimeStamp)) {
-			try {
-				modified();
-				fRefreshingInProgress = true;
-				// set all existing packages to PRIVATE (could clear
-				// the map, but it would be less efficient)
-				Iterator<ManifestNode> iterator = fPackageMap.values().iterator();
-				while (iterator.hasNext()) {
-					PackageNode node = (PackageNode) iterator.next();
-					node.visibility = VisibilityModifiers.PRIVATE;
-				}
-				fManifestFile = getJavaProject().getProject().getFile(JarFile.MANIFEST_NAME);
-				if (fManifestFile.exists()) {
-					try {
-						IPackageFragment[] fragments = getLocalPackageFragments();
-						Set<String> names = new HashSet<>();
-						for (IPackageFragment fragment : fragments) {
-							names.add(fragment.getElementName());
-						}
-						ProjectComponent component = getApiComponent();
-						BundleComponent.initializeApiDescription(this, component.getBundleDescription(), names);
-						fPackageTimeStamp = fManifestFile.getModificationStamp();
-					} catch (CoreException e) {
-						ApiPlugin.log(e.getStatus());
-					}
-				}
-			} finally {
-				fRefreshingInProgress = false;
+		synchronized (this) {
+			if (fRefreshingInProgress) {
+				logPackafesRefresh();
+				return;
 			}
+			// check if in synch
+			if (fManifestFile == null || (fManifestFile.getModificationStamp() != fPackageTimeStamp)) {
+				try {
+					modified();
+					fRefreshingInProgress = true;
+					// set all existing packages to PRIVATE (could clear
+					// the map, but it would be less efficient)
+					Iterator<ManifestNode> iterator = fPackageMap.values().iterator();
+					while (iterator.hasNext()) {
+						PackageNode node = (PackageNode) iterator.next();
+						node.visibility = VisibilityModifiers.PRIVATE;
+					}
+					fManifestFile = getJavaProject().getProject().getFile(JarFile.MANIFEST_NAME);
+					if (fManifestFile.exists()) {
+						try {
+							IPackageFragment[] fragments = getLocalPackageFragments();
+							Set<String> names = new HashSet<>();
+							for (IPackageFragment fragment : fragments) {
+								names.add(fragment.getElementName());
+							}
+							ProjectComponent component = getApiComponent();
+							BundleComponent.initializeApiDescription(this, component.getBundleDescription(), names);
+							fPackageTimeStamp = fManifestFile.getModificationStamp();
+						} catch (CoreException e) {
+							ApiPlugin.log(e.getStatus());
+						}
+					}
+				} finally {
+					fRefreshingInProgress = false;
+				}
+			}
+		}
+	}
+
+	private void logPackafesRefresh() {
+		if (ApiPlugin.DEBUG_API_DESCRIPTION) {
+			StringBuilder buffer = new StringBuilder();
+			buffer.append("Refreshing manifest node: "); //$NON-NLS-1$
+			buffer.append(this);
+			buffer.append(" aborted because a refresh is already in progress"); //$NON-NLS-1$
+			System.out.println(buffer.toString());
 		}
 	}
 
@@ -704,7 +724,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 * Notes that the underlying project has changed in some way and that the
 	 * description cache is no longer in synch with the project.
 	 */
-	public synchronized void projectChanged() {
+	public void projectChanged() {
 		fInSynch = false;
 	}
 
