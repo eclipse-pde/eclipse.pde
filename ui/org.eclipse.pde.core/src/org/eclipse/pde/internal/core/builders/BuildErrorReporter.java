@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -91,6 +91,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	private static final String J2SE_1_5 = "J2SE-1.5"; //$NON-NLS-1$
 	private static final String JavaSE_1_6 = "JavaSE-1.6"; //$NON-NLS-1$
 	private static final String JavaSE_1_7 = "JavaSE-1.7"; //$NON-NLS-1$
+	private static final String JavaSE_1_8 = "JavaSE-1.8"; //$NON-NLS-1$
 
 	static class BuildProblem {
 		String fEntryToken;
@@ -569,34 +570,47 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 	private String findMatchingEE(String srcCompatibility, String clsCompatibility, boolean ee) {
 		String executionEnv = null;
-		String complaince = null;
+		String compliance = null;
 		if (JavaCore.VERSION_1_1.equals(srcCompatibility) && JavaCore.VERSION_1_1.equals(clsCompatibility)) {
 			executionEnv = JRE_1_1;
-			complaince = JavaCore.VERSION_1_1;
+			compliance = JavaCore.VERSION_1_1;
 		} else if (JavaCore.VERSION_1_2.equals(srcCompatibility) && JavaCore.VERSION_1_1.equals(clsCompatibility)) {
 			executionEnv = J2SE_1_2;
-			complaince = JavaCore.VERSION_1_2;
+			compliance = JavaCore.VERSION_1_2;
 		} else if (JavaCore.VERSION_1_3.equals(srcCompatibility) && JavaCore.VERSION_1_1.equals(clsCompatibility)) {
 			executionEnv = J2SE_1_3;
-			complaince = JavaCore.VERSION_1_3;
+			compliance = JavaCore.VERSION_1_3;
 		} else if (JavaCore.VERSION_1_3.equals(srcCompatibility) && JavaCore.VERSION_1_2.equals(clsCompatibility)) {
 			executionEnv = J2SE_1_4;
-			complaince = JavaCore.VERSION_1_4;
+			compliance = JavaCore.VERSION_1_4;
 		} else if (JavaCore.VERSION_1_5.equals(srcCompatibility) && JavaCore.VERSION_1_5.equals(clsCompatibility)) {
 			executionEnv = J2SE_1_5;
-			complaince = JavaCore.VERSION_1_5;
+			compliance = JavaCore.VERSION_1_5;
 		} else if (JavaCore.VERSION_1_6.equals(srcCompatibility) && JavaCore.VERSION_1_6.equals(clsCompatibility)) {
 			executionEnv = JavaSE_1_6;
-			complaince = JavaCore.VERSION_1_6;
+			compliance = JavaCore.VERSION_1_6;
 		} else if (JavaCore.VERSION_1_7.equals(srcCompatibility) && JavaCore.VERSION_1_7.equals(clsCompatibility)) {
 			executionEnv = JavaSE_1_7;
-			complaince = JavaCore.VERSION_1_7;
+			compliance = JavaCore.VERSION_1_7;
+		} else if (JavaCore.VERSION_1_8.equals(srcCompatibility) && JavaCore.VERSION_1_8.equals(clsCompatibility)) {
+			executionEnv = JavaSE_1_8;
+			compliance = JavaCore.VERSION_1_8;
 		}
-
+		if (executionEnv == null) {
+			String latestSupportedJavaVersion = JavaCore.latestSupportedJavaVersion();
+			int latest = Integer.parseInt(latestSupportedJavaVersion);
+			for (int i = 9; i <= latest; i++) {
+				if (String.valueOf(i).equals(srcCompatibility) && String.valueOf(i).equals(clsCompatibility)) {
+					executionEnv = "JavaSE-" + String.valueOf(i); //$NON-NLS-1$
+					compliance = String.valueOf(i);
+					break;
+				}
+			}
+		}
 		if (ee) {
 			return executionEnv;
 		}
-		return complaince;
+		return compliance;
 	}
 
 	private void validateBinIncludes(IBuildEntry binIncludes) {
