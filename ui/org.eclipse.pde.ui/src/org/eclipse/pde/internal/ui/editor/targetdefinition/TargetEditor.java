@@ -28,8 +28,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ControlContribution;
@@ -58,7 +56,6 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
-import org.osgi.framework.BundleContext;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 import org.xml.sax.SAXException;
@@ -103,9 +100,8 @@ public class TargetEditor extends FormEditor {
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		}
-		BundleContext bundleContext = PDECore.getDefault().getBundleContext();
-		IEclipseContext context = EclipseContextFactory.getServiceContext(bundleContext);
-		IEventBroker eventBroker = context.get(IEventBroker.class);
+
+		IEventBroker eventBroker = PlatformUI.getWorkbench().getService(IEventBroker.class);
 		eventBroker.subscribe(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, fEventHandler);
 	}
 
@@ -231,9 +227,7 @@ public class TargetEditor extends FormEditor {
 
 	@Override
 	public void dispose() {
-		BundleContext bundleContext = PDECore.getDefault().getBundleContext();
-		IEclipseContext context = EclipseContextFactory.getServiceContext(bundleContext);
-		IEventBroker eventBroker = context.get(IEventBroker.class);
+		IEventBroker eventBroker = PlatformUI.getWorkbench().getService(IEventBroker.class);
 		eventBroker.unsubscribe(fEventHandler);
 
 		// Cancel any resolution jobs that are runnning
