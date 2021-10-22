@@ -22,8 +22,8 @@ class MultiBundleClassLoader extends ClassLoader {
 	private List<Bundle> bundleList;
 
 	public MultiBundleClassLoader(List<Bundle> platformEngineBundles) {
+		super(null); // never delegate to system classloader, only load classes via given Bundles
 		this.bundleList = platformEngineBundles;
-
 	}
 
 	@Override
