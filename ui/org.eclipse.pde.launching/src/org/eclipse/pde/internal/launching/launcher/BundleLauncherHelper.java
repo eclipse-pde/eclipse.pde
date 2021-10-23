@@ -90,7 +90,7 @@ public class BundleLauncherHelper {
 		}
 
 		if (wc.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false)) {
-			return getMergedBundleMapFeatureBased(wc, osgi);
+			return getMergedBundleMapFeatureBased(wc);
 		}
 
 		return getAllSelectedPluginBundles(wc);
@@ -105,7 +105,7 @@ public class BundleLauncherHelper {
 
 	// --- feature based launches ---
 
-	private static Map<IPluginModelBase, String> getMergedBundleMapFeatureBased(ILaunchConfiguration configuration, boolean osgi) throws CoreException {
+	private static Map<IPluginModelBase, String> getMergedBundleMapFeatureBased(ILaunchConfiguration configuration) throws CoreException {
 
 		String defaultPluginResolution = configuration.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
 		ITargetDefinition target = PDECore.getDefault().acquireService(ITargetPlatformService.class).getWorkspaceTargetDefinition();
@@ -143,13 +143,11 @@ public class BundleLauncherHelper {
 		launchPlugins.addAll(additionalPlugins.keySet());
 
 		// Get any plug-ins required by the application/product set on the config
-		if (!osgi) {
-			String[] applicationIds = RequirementHelper.getApplicationRequirements(configuration);
-			for (String applicationId : applicationIds) {
-				IPluginModelBase plugin = getRequiredPlugin(applicationId, null, IMatchRules.NONE, defaultPluginResolution);
-				if (plugin != null) {
-					launchPlugins.add(plugin);
-				}
+		List<String> applicationIds = RequirementHelper.getApplicationLaunchRequirements(configuration);
+		for (String applicationId : applicationIds) {
+			IPluginModelBase plugin = getLatestPlugin(applicationId, defaultPluginResolution);
+			if (plugin != null) {
+				launchPlugins.add(plugin);
 			}
 		}
 		// Get all required plugins
@@ -268,6 +266,10 @@ public class BundleLauncherHelper {
 	private static IPluginModelBase getRequiredPlugin(String id, String version, int versionMatchRule, String pluginLocation) {
 		List<List<IPluginModelBase>> plugins = getPlugins(id, pluginLocation);
 		return getRequired(plugins, ENABLED_VALID_PLUGIN_FILTER, GET_PLUGIN_VERSION, COMPARE_PLUGIN_RESOLVED, version, versionMatchRule);
+	}
+
+	static IPluginModelBase getLatestPlugin(String id, String pluginLocation) {
+		return getRequiredPlugin(id, null, IMatchRules.NONE, pluginLocation);
 	}
 
 	private static List<List<IPluginModelBase>> getPlugins(String id, String pluginLocation) {
@@ -458,6 +460,10 @@ public class BundleLauncherHelper {
 			}
 		}
 		map.put(bundle, startData);
+	}
+
+	public static void addDefaultStartingBundle(Map<IPluginModelBase, String> map, IPluginModelBase bundle) {
+		addBundleToMap(map, bundle, DEFAULT_START_LEVELS);
 	}
 
 	private static final Map<String, String> AUTO_STARTED_BUNDLE_LEVELS = Map.ofEntries( //

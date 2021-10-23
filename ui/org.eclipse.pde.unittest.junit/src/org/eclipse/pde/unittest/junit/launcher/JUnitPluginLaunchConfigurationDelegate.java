@@ -52,6 +52,7 @@ import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.launching.launcher.LaunchConfigurationHelper;
 import org.eclipse.pde.internal.launching.launcher.LaunchPluginValidator;
 import org.eclipse.pde.internal.launching.launcher.LauncherUtils;
+import org.eclipse.pde.internal.launching.launcher.RequirementHelper;
 import org.eclipse.pde.internal.launching.launcher.VMHelper;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.launching.PDESourcePathProvider;
@@ -117,6 +118,11 @@ import org.eclipse.jdt.ui.unittest.junit.JUnitTestPlugin.JUnitVersion;
  * </p>
  */
 public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchConfigurationDelegate {
+
+	static {
+		RequirementHelper.registerSameRequirementsAsFor("org.eclipse.pde.unittest.junit.launchConfiguration", //$NON-NLS-1$
+				"org.eclipse.pde.ui.JunitLaunchConfig"); //$NON-NLS-1$
+	}
 
 	// This needs to be differnet from JunitLaunchConfigurationConstants.ATTR_PORT
 	// or the "legacy" view handles it first

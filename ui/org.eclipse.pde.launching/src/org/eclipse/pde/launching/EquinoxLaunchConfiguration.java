@@ -27,8 +27,7 @@ import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.launching.IPDEConstants;
-import org.eclipse.pde.internal.launching.PDEMessages;
+import org.eclipse.pde.internal.launching.*;
 import org.eclipse.pde.internal.launching.launcher.*;
 
 /**
@@ -43,6 +42,17 @@ import org.eclipse.pde.internal.launching.launcher.*;
  * @since 3.6
  */
 public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
+
+	static {
+		RequirementHelper.registerLaunchTypeRequirements(IPDELauncherConstants.OSGI_CONFIGURATION_TYPE, lc -> {
+			OSGiFrameworkManager framworkManager = PDELaunchingPlugin.getDefault().getOSGiFrameworkManager();
+			String id = lc.getAttribute(IPDELauncherConstants.OSGI_FRAMEWORK_ID, framworkManager.getDefaultFramework());
+			if ("org.eclipse.pde.ui.EquinoxFramework".equals(id)) { //$NON-NLS-1$
+				return List.of(IPDEBuildConstants.BUNDLE_OSGI);
+			}
+			return Collections.emptyList();
+		});
+	}
 
 	// used to generate the dev classpath entries
 	// key is bundle ID, value is a List of models
@@ -153,19 +163,12 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	@Override
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, true);
+
+		if (!RequirementHelper.addApplicationLaunchRequirements(fModels, configuration)) {
+			throw new CoreException(Status.error(PDEMessages.EquinoxLaunchConfiguration_oldTarget));
+		}
 		fAllBundles = fModels.keySet().stream().collect(Collectors.groupingBy(m -> m.getPluginBase().getId(), HashMap::new, Collectors.toCollection(ArrayList::new)));
 
-		if (!fAllBundles.containsKey(IPDEBuildConstants.BUNDLE_OSGI)) {
-			// implicitly add it
-			IPluginModelBase model = PluginRegistry.findModel(IPDEBuildConstants.BUNDLE_OSGI);
-			if (model != null) {
-				fModels.put(model, "default:default"); //$NON-NLS-1$
-				fAllBundles.computeIfAbsent(model.getPluginBase().getId(), i -> new ArrayList<>()).add(model);
-			} else {
-				String message = PDEMessages.EquinoxLaunchConfiguration_oldTarget;
-				throw new CoreException(Status.error(message));
-			}
-		}
 		super.preLaunchCheck(configuration, launch, monitor);
 	}
 

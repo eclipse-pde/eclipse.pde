@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.launching.PDEMessages;
 import org.eclipse.pde.internal.launching.launcher.*;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.osgi.framework.Version;
 
 /**
@@ -45,6 +46,11 @@ import org.osgi.framework.Version;
 @Deprecated
 public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
+	static {
+		RequirementHelper.registerSameRequirementsAsFor("org.eclipse.pde.ui.RuntimeWorkbench", //$NON-NLS-1$
+				IPDELauncherConstants.ECLIPSE_APPLICATION_LAUNCH_CONFIGURATION_TYPE);
+	}
+
 	// used to generate the dev classpath entries
 	// key is bundle ID, value is a model
 	private Map<String, IPluginModelBase> fAllBundles;
@@ -60,7 +66,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 
 	@Override
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
-		throw new CoreException(Status.error((String) PDEMessages.PDE_updateManagerNotSupported));
+		throw new CoreException(Status.error(PDEMessages.PDE_updateManagerNotSupported));
 	}
 
 	@Override

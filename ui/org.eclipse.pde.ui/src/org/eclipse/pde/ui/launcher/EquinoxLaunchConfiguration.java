@@ -30,6 +30,7 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.PDEMessages;
 import org.eclipse.pde.internal.launching.launcher.*;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 
 /**
  * A launch delegate for launching the Equinox framework
@@ -46,6 +47,11 @@ import org.eclipse.pde.internal.launching.launcher.*;
  */
 @Deprecated
 public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
+
+	static {
+		RequirementHelper.registerSameRequirementsAsFor("org.eclipse.pde.ui.EquinoxLauncher", //$NON-NLS-1$
+				IPDELauncherConstants.OSGI_CONFIGURATION_TYPE);
+	}
 
 	// used to generate the dev classpath entries
 	// key is bundle ID, value is a List of models
@@ -155,20 +161,13 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	@Override
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, true);
+
+		if (!RequirementHelper.addApplicationLaunchRequirements(fModels, configuration)) {
+			throw new CoreException(Status.error(PDEMessages.EquinoxLaunchConfiguration_oldTarget));
+		}
 		fAllBundles = fModels.keySet().stream().collect(Collectors.groupingBy(m -> m.getPluginBase().getId(),
 				HashMap::new, Collectors.toCollection(ArrayList::new)));
 
-		if (!fAllBundles.containsKey(IPDEBuildConstants.BUNDLE_OSGI)) {
-			// implicitly add it
-			IPluginModelBase model = PluginRegistry.findModel(IPDEBuildConstants.BUNDLE_OSGI);
-			if (model != null) {
-				fModels.put(model, "default:default"); //$NON-NLS-1$
-				fAllBundles.computeIfAbsent(IPDEBuildConstants.BUNDLE_OSGI, i -> new ArrayList<>()).add(model);
-			} else {
-				String message = PDEMessages.EquinoxLaunchConfiguration_oldTarget;
-				throw new CoreException(Status.error((String) message));
-			}
-		}
 		super.preLaunchCheck(configuration, launch, monitor);
 	}
 

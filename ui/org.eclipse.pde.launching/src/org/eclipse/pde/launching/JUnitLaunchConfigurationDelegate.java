@@ -46,6 +46,23 @@ import org.eclipse.pde.internal.launching.launcher.*;
  */
 public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationDelegate {
 
+	static {
+		RequirementHelper.registerLaunchTypeRequirements("org.eclipse.pde.ui.JunitLaunchConfig", lc -> { //$NON-NLS-1$
+			// Junit launch configs can have the core test application set in either the 'app to test' or the 'application' attribute
+			String application = lc.getAttribute(IPDELauncherConstants.APP_TO_TEST, (String) null);
+			if (application == null) {
+				application = lc.getAttribute(IPDELauncherConstants.APPLICATION, (String) null);
+			}
+			if (application == null) {
+				application = TargetPlatform.getDefaultApplication();
+			}
+			if (!IPDEConstants.CORE_TEST_APPLICATION.equals(application)) {
+				return RequirementHelper.getApplicationRequirements(application);
+			}
+			return Collections.emptyList();
+		});
+	}
+
 	/**
 	 * To avoid duplicating variable substitution (and duplicate prompts)
 	 * this variable will store the substituted workspace location.

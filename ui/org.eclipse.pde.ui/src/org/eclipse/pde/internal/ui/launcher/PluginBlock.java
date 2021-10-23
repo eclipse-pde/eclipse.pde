@@ -165,10 +165,11 @@ public class PluginBlock extends AbstractPluginBlock {
 	protected void addRequiredPlugins() {
 		// Check that the application or product we are launching has its requirements included
 		try {
-			String[] requiredIds = RequirementHelper.getApplicationRequirements(fLaunchConfig);
+			List<String> requiredIds = RequirementHelper.getApplicationLaunchRequirements(fLaunchConfig);
 			ITestKind testKind = JUnitLaunchConfigurationConstants.getTestRunnerKind(fLaunchConfig);
-			if (TestKindRegistry.JUNIT4_TEST_KIND_ID.equals(testKind.getId()) || TestKindRegistry.JUNIT5_TEST_KIND_ID.equals(testKind.getId())) {
-				requiredIds = addJunitPlugins(requiredIds, testKind);
+			if (TestKindRegistry.JUNIT4_TEST_KIND_ID.equals(testKind.getId())
+					|| TestKindRegistry.JUNIT5_TEST_KIND_ID.equals(testKind.getId())) {
+				requiredIds = Arrays.asList(addJunitPlugins(requiredIds.toArray(String[]::new), testKind));
 			}
 
 			for (String requiredId : requiredIds) {

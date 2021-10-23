@@ -15,12 +15,14 @@
 package org.eclipse.pde.internal.launching.launcher;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Stream;
 import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.debug.core.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEExtensionRegistry;
-import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 
 /**
@@ -30,6 +32,34 @@ import org.eclipse.pde.launching.IPDELauncherConstants;
  * @see EclipsePluginValidationOperation
  */
 public class RequirementHelper {
+
+	private RequirementHelper() {
+	} // static use only
+
+	@FunctionalInterface // like java.util.function.Function but can throw CoreException
+	public static interface ILaunchRequirementsFunction {
+		List<String> getRequiredBundleIds(ILaunchConfiguration lc) throws CoreException;
+	}
+
+	private static final ConcurrentMap<String, ILaunchRequirementsFunction> APPLICATION_REQUIREMENTS = new ConcurrentHashMap<>();
+
+	public static void registerLaunchTypeRequirements(String launchTypeId, ILaunchRequirementsFunction requirementsFunction) {
+		APPLICATION_REQUIREMENTS.put(launchTypeId, Objects.requireNonNull(requirementsFunction));
+	}
+
+	public static void registerSameRequirementsAsFor(String launchTypeId, String sourceLaunchTypeId) {
+		// enforce  initialization of source class to register required plug-ins
+		ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(sourceLaunchTypeId);
+		for (Set<String> modes : type.getSupportedModeCombinations()) {
+			try {
+				for (ILaunchDelegate delegate : type.getDelegates(modes)) {
+					delegate.getDelegate();
+				}
+			} catch (CoreException e) {
+			}
+		}
+		APPLICATION_REQUIREMENTS.put(launchTypeId, APPLICATION_REQUIREMENTS.get(sourceLaunchTypeId));
+	}
 
 	/**
 	 * Returns a list of string plug-in ids that are required to launch the product, application
@@ -41,67 +71,69 @@ public class RequirementHelper {
 	 * @return list of string plug-in IDs that are required by the config's application/product settings
 	 * @throws CoreException if there is a problem reading the launch config
 	 */
-	public static String[] getApplicationRequirements(ILaunchConfiguration config) throws CoreException {
-		Set<String> requiredIds = new HashSet<>();
-		if (config.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
-			String product = config.getAttribute(IPDELauncherConstants.PRODUCT, (String) null);
-			if (product != null) {
-				getProductRequirements(product, requiredIds);
-			}
-		} else {
-			String configType = config.getType().getIdentifier();
-			if (configType.equals(IPDELauncherConstants.ECLIPSE_APPLICATION_LAUNCH_CONFIGURATION_TYPE)) {
-				String application = config.getAttribute(IPDELauncherConstants.APPLICATION, TargetPlatform.getDefaultApplication());
-				if (!IPDEConstants.CORE_TEST_APPLICATION.equals(application)) {
-					getApplicationRequirements(application, requiredIds);
-				}
-			} else {
-				// Junit launch configs can have the core test application set in either the 'app to test' or the 'application' attribute
-				String application = config.getAttribute(IPDELauncherConstants.APP_TO_TEST, (String) null);
-				if (application == null) {
-					application = config.getAttribute(IPDELauncherConstants.APPLICATION, (String) null);
-				}
-				if (application == null) {
-					application = TargetPlatform.getDefaultApplication();
-				}
-				if (!IPDEConstants.CORE_TEST_APPLICATION.equals(application)) {
-					getApplicationRequirements(application, requiredIds);
-				}
-			}
-		}
-		return requiredIds.toArray(new String[requiredIds.size()]);
+	public static List<String> getApplicationLaunchRequirements(ILaunchConfiguration config) throws CoreException {
+		ILaunchRequirementsFunction requirementsFunction = APPLICATION_REQUIREMENTS.get(config.getType().getIdentifier());
+		return requirementsFunction != null ? Objects.requireNonNull(requirementsFunction.getRequiredBundleIds(config)) : Collections.emptyList();
 	}
 
-	private static void getProductRequirements(String product, Collection<String> requiredIds) {
+	public static boolean addApplicationLaunchRequirements(Map<IPluginModelBase, String> bundle2startLevel, ILaunchConfiguration configuration) throws CoreException {
+		boolean isFeatureBasedLaunch = configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false);
+		String pluginResolution = isFeatureBasedLaunch ? configuration.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE) : IPDELauncherConstants.LOCATION_WORKSPACE;
+
+		List<String> appRequirements = getApplicationLaunchRequirements(configuration);
+		boolean missingRequirements = false;
+		for (String requiredBundleId : appRequirements) {
+			ModelEntry entry = PluginRegistry.findEntry(requiredBundleId);
+			if (entry != null) {
+				// add required plug-in if not yet already included
+				var allPluginsWithId = Stream.of(entry.getWorkspaceModels(), entry.getExternalModels()).flatMap(Arrays::stream);
+				if (allPluginsWithId.noneMatch(bundle2startLevel::containsKey)) {
+					IPluginModelBase plugin = BundleLauncherHelper.getLatestPlugin(requiredBundleId, pluginResolution);
+					BundleLauncherHelper.addDefaultStartingBundle(bundle2startLevel, plugin);
+				}
+			} else {
+				missingRequirements = true;
+			}
+		}
+		return missingRequirements;
+	}
+
+	public static List<String> getProductRequirements(ILaunchConfiguration config) throws CoreException {
+		String product = config.getAttribute(IPDELauncherConstants.PRODUCT, (String) null);
+		if (product == null) {
+			return Collections.emptyList();
+		}
 		PDEExtensionRegistry registry = PDECore.getDefault().getExtensionsRegistry();
 		IExtension[] extensions = registry.findExtensions("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
 		for (IExtension extension : extensions) {
 
 			if (product.equals(extension.getUniqueIdentifier()) || product.equals(extension.getSimpleIdentifier())) {
+				Set<String> requiredIds = new LinkedHashSet<>();
 				requiredIds.add(extension.getContributor().getName());
 
 				IConfigurationElement[] elements = extension.getConfigurationElements();
 				for (IConfigurationElement element : elements) {
-					String application = element.getAttribute("application"); //$NON-NLS-1$
-					if (application != null && application.length() > 0) {
-						getApplicationRequirements(application, requiredIds);
+					String application = element.getAttribute(IPDELauncherConstants.APPLICATION);
+					if (application != null && !application.isEmpty()) {
+						requiredIds.addAll(getApplicationRequirements(application));
 					}
 				}
-				// Only one extension should match the product so break out of the looop
-				break;
+				// Only one extension should match the product so break out of the loop
+				return List.copyOf(requiredIds);
 			}
 		}
+		return Collections.emptyList();
 	}
 
-	private static void getApplicationRequirements(String application, Collection<String> requiredIds) {
+	public static List<String> getApplicationRequirements(String application) {
 		PDEExtensionRegistry registry = PDECore.getDefault().getExtensionsRegistry();
 		IExtension[] extensions = registry.findExtensions("org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
 		for (IExtension extension : extensions) {
 			if (application.equals(extension.getUniqueIdentifier()) || application.equals(extension.getSimpleIdentifier())) {
-				requiredIds.add(extension.getContributor().getName());
-				// Only one extension should match the application so break out of the looop
-				break;
+				return List.of(extension.getContributor().getName());
+				// Only one extension should match the application so break out of the loop
 			}
 		}
+		return Collections.emptyList();
 	}
 }

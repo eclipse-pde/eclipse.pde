@@ -28,6 +28,7 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.launcher.*;
 
 /**
@@ -42,6 +43,19 @@ import org.eclipse.pde.internal.launching.launcher.*;
  * @since 3.6
  */
 public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConfiguration {
+
+	static {
+		RequirementHelper.registerLaunchTypeRequirements(IPDELauncherConstants.ECLIPSE_APPLICATION_LAUNCH_CONFIGURATION_TYPE, lc -> {
+			if (lc.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
+				return RequirementHelper.getProductRequirements(lc);
+			}
+			String application = lc.getAttribute(IPDELauncherConstants.APPLICATION, TargetPlatform.getDefaultApplication());
+			if (!IPDEConstants.CORE_TEST_APPLICATION.equals(application)) {
+				return RequirementHelper.getApplicationRequirements(application);
+			}
+			return Collections.emptyList();
+		});
+	}
 
 	// used to generate the dev classpath entries
 	// key is bundle ID, value is a List of models

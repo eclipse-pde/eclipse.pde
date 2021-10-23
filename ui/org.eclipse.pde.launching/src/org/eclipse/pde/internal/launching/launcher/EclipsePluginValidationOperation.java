@@ -42,7 +42,7 @@ public class EclipsePluginValidationOperation extends LaunchValidationOperation 
 
 	private void validateExtensions() {
 		try {
-			String[] required = RequirementHelper.getApplicationRequirements(fLaunchConfiguration);
+			List<String> required = RequirementHelper.getApplicationLaunchRequirements(fLaunchConfiguration);
 			for (String element : required) {
 				BundleDescription bundle = getState().getBundle(element, null);
 				if (bundle == null) {
