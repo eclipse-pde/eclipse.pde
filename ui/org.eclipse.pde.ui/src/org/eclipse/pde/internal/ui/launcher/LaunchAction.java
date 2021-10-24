@@ -134,7 +134,9 @@ public class LaunchAction extends Action {
 	}
 
 	private void refreshFeatureLaunchAttributes(ILaunchConfigurationWorkingCopy wc, IPluginModelBase[] models) {
-		Set<String> selectedFeatures = Arrays.stream(getUniqueFeatures())
+		FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
+		Set<String> selectedFeatures = Arrays.stream(fProduct.getFeatures()) //
+				.map(f -> fmm.findFeatureModel(f.getId(), f.getVersion())).filter(Objects::nonNull)
 				.map(m -> formatFeatureEntry(m.getFeature().getId(), IPDELauncherConstants.LOCATION_DEFAULT))
 				.collect(Collectors.toCollection(LinkedHashSet::new));
 

@@ -15,6 +15,7 @@
  *     Hannes Wellmann - Bug 577118 - Handle multiple Plug-in versions in launching facility
  *     Hannes Wellmann - Bug 576886 - Clean up and improve BundleLaunchHelper and extract String literal constants
  *     Hannes Wellmann - Bug 576887 - Handle multiple versions of features and plug-ins for feature-launches
+ *     Hannes Wellmann - Bug 576888 - Consider included child-features for feature-launches
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
@@ -171,15 +172,25 @@ public class BundleLauncherHelper {
 		Set<String> selectedFeatures = configuration.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, emptySet());
 
 		Map<IFeature, String> feature2pluginResolution = new HashMap<>();
+		Queue<IFeature> pendingFeatures = new ArrayDeque<>();
 		for (String currentSelected : selectedFeatures) {
 			String[] attributes = currentSelected.split(FEATURE_PLUGIN_RESOLUTION_SEPARATOR);
 			if (attributes.length > 1) {
 				String id = attributes[0];
 				String pluginResolution = attributes[1];
 				IFeature feature = getFeature(id, featureMaps);
-				if (feature != null) {
-					feature2pluginResolution.put(feature, pluginResolution);
-				}
+				addFeatureIfAbsent(feature, pluginResolution, feature2pluginResolution, pendingFeatures); // feature should be absent
+			}
+		}
+
+		while (!pendingFeatures.isEmpty()) { // perform exhaustive breath-first-search for included features
+			IFeature feature = pendingFeatures.remove();
+			String pluginResolution = feature2pluginResolution.get(feature); // inherit resolution from including feature
+
+			IFeatureChild[] includedFeatures = feature.getIncludedFeatures();
+			for (IFeatureChild featureChild : includedFeatures) {
+				IFeature child = getIncludedFeature(featureChild.getId(), featureChild.getVersion(), featureMaps);
+				addFeatureIfAbsent(child, pluginResolution, feature2pluginResolution, pendingFeatures);
 			}
 		}
 		return feature2pluginResolution;
@@ -204,6 +215,13 @@ public class BundleLauncherHelper {
 		return getMaxElement(features, f -> true, comparing(f -> Version.parseVersion(f.getVersion())));
 	}
 
+	private static void addFeatureIfAbsent(IFeature feature, String resolution, Map<IFeature, String> featurePluginResolution, Queue<IFeature> pendingFeatures) {
+		if (feature != null && featurePluginResolution.putIfAbsent(feature, resolution) == null) {
+			// Don't add feature more than once to not override the resolution if already present (e.g. a child was specified explicitly)
+			pendingFeatures.add(feature); // ... and to not process it more than once 
+		}
+	}
+
 	private static boolean isWorkspace(String location) {
 		if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(location)) {
 			return true;
@@ -211,6 +229,13 @@ public class BundleLauncherHelper {
 			return false;
 		}
 		throw new IllegalArgumentException("Unsupported location: " + location); //$NON-NLS-1$
+	}
+
+	private static final Comparator<IFeature> NEUTRAL_COMPARATOR = comparing(f -> 0);
+
+	private static IFeature getIncludedFeature(String id, String version, Map<String, List<List<IFeature>>> prioritizedFeatures) {
+		List<List<IFeature>> features = prioritizedFeatures.get(id);
+		return getIncluded(features, f -> true, IFeature::getVersion, NEUTRAL_COMPARATOR, version);
 	}
 
 	private static final Predicate<IPluginModelBase> ENABLED_VALID_PLUGIN_FILTER = p -> p.getBundleDescription() != null && p.isEnabled();
