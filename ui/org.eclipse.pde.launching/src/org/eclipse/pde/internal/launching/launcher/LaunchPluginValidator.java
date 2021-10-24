@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,7 +20,8 @@ import org.eclipse.debug.core.*;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.launching.*;
 import org.eclipse.pde.launching.IPDELauncherConstants;
@@ -41,54 +42,6 @@ public class LaunchPluginValidator {
 		Map<IPluginModelBase, String> bundles = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null);
 		result = bundles.keySet();
 		return result.toArray(new IPluginModelBase[result.size()]);
-	}
-
-	/**
-	 *
-	 * @param configuration launchConfiguration to get the attribute value
-	 * @param attribute launch configuration attribute to containing plug-in information
-	 * @return a TreeSet containing IPluginModelBase objects which are represented by the value of the attribute
-	 * @throws CoreException
-	 */
-	public static Set<IPluginModelBase> parsePlugins(ILaunchConfiguration configuration, String attribute) throws CoreException {
-		HashSet<IPluginModelBase> set = new HashSet<>();
-		Map<String, IPluginModelBase> unmatchedEntries = new HashMap<>();
-		Set<String> entries = configuration.getAttribute(attribute, Collections.emptySet());
-
-		for (String token : entries) {
-			int index = token.indexOf('@');
-			if (index < 0) { // if no start levels, assume default
-				token = token.concat("@default:default"); //$NON-NLS-1$
-				index = token.indexOf('@');
-			}
-			String idVersion = token.substring(0, index);
-			int versionIndex = token.indexOf(BundleLauncherHelper.VERSION_SEPARATOR);
-			String id = (versionIndex > 0) ? idVersion.substring(0, versionIndex) : idVersion;
-			String version = (versionIndex > 0) ? idVersion.substring(versionIndex + 1) : null;
-			ModelEntry entry = PluginRegistry.findEntry(id);
-			if (entry != null) {
-				IPluginModelBase matchingModels[] = attribute.equals(IPDELauncherConstants.SELECTED_TARGET_BUNDLES) ? entry.getExternalModels() : entry.getWorkspaceModels();
-				for (IPluginModelBase matchingModel : matchingModels) {
-					if (matchingModel.isEnabled()) {
-						// TODO Very similar logic to BundleLauncherHelper
-						// the logic here is this (see bug 225644)
-						// a) if we come across a bundle that has the right version, immediately add it
-						// b) if there's no version, add it
-						// c) if there's only one instance of that bundle in the list of ids... add it
-						if (version == null || matchingModel.getPluginBase().getVersion().equals(version)) {
-							set.add(matchingModel);
-						} else if (matchingModels.length == 1) {
-							if (unmatchedEntries.remove(id) == null) {
-								unmatchedEntries.put(id, matchingModel);
-							}
-						}
-					}
-				}
-			}
-		}
-
-		set.addAll(unmatchedEntries.values());
-		return set;
 	}
 
 	/**

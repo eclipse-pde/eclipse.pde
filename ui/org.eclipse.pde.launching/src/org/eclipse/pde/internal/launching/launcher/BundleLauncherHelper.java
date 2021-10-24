@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
+ *     Hannes Wellmann - Bug 576885: Unify methods to parse bundle-sets from launch-configs
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
@@ -18,6 +19,8 @@ import static java.util.Collections.emptySet;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -307,57 +310,104 @@ public class BundleLauncherHelper {
 		return map.keySet().toArray(new IPluginModelBase[map.size()]);
 	}
 
-	public static Map<IPluginModelBase, String> getWorkspaceBundleMap(ILaunchConfiguration configuration, Set<String> set) throws CoreException {
-		Set<String> selected = configuration.getAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Collections.emptySet());
-		Map<IPluginModelBase, String> map = new LinkedHashMap<>();
-		for (String token : selected) {
-			int index = token.indexOf('@');
-			if (index < 0) { // if no start levels, assume default
-				token = token.concat("@default:default"); //$NON-NLS-1$
-				index = token.indexOf('@');
-			}
-			String idVersion = token.substring(0, index);
-			int versionIndex = idVersion.indexOf(VERSION_SEPARATOR);
-			String id = (versionIndex > 0) ? idVersion.substring(0, versionIndex) : idVersion;
-			String version = (versionIndex > 0) ? idVersion.substring(versionIndex + 1) : null;
-			if (set != null)
-				set.add(id);
-			ModelEntry entry = PluginRegistry.findEntry(id);
-			if (entry != null) {
-				IPluginModelBase[] models = entry.getWorkspaceModels();
-				Set<String> versions = new HashSet<>();
-				for (IPluginModelBase model : models) {
-					IPluginBase base = model.getPluginBase();
-					String v = base.getVersion();
-					if (versions.add(v)) { // don't add exact same version more than once
+	public static Map<IPluginModelBase, String> getWorkspaceBundleMap(ILaunchConfiguration configuration, Set<String> pluginIds) throws CoreException {
+		Set<String> workspaceBundles = configuration.getAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, emptySet());
 
-						// match only if...
-						// a) if we have the same version
-						// b) no version
-						// c) all else fails, if there's just one bundle available, use it
-						if (base.getVersion().equals(version) || version == null || models.length == 1)
-							addBundleToMap(map, model, token.substring(index + 1));
+		Map<IPluginModelBase, String> map = getBundleMap(workspaceBundles, ModelEntry::getWorkspaceModels, pluginIds, id -> true);
+
+		if (configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true)) {
+			Set<String> deselectedWorkspaceBundles = configuration.getAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES, emptySet());
+			Set<IPluginModelBase> deselectedPlugins = getBundleMap(deselectedWorkspaceBundles, ModelEntry::getWorkspaceModels, null, id -> true).keySet();
+			IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
+			for (IPluginModelBase model : models) {
+				String id = model.getPluginBase().getId();
+				if (id != null && !deselectedPlugins.contains(model)) {
+					if (pluginIds != null) {
+						pluginIds.add(id);
+					}
+					if (!map.containsKey(model)) {
+						addBundleToMap(map, model, "default:default"); //$NON-NLS-1$
 					}
 				}
 			}
 		}
+		return map;
+	}
 
-		if (configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true)) {
-			Set<IPluginModelBase> deselectedPlugins = LaunchPluginValidator.parsePlugins(configuration, IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES);
-			IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-			for (int i = 0; i < models.length; i++) {
-				String id = models[i].getPluginBase().getId();
-				if (id == null)
-					continue;
-				if (!deselectedPlugins.contains(models[i])) {
-					if (set != null)
-						set.add(id);
-					if (!map.containsKey(models[i]))
-						addBundleToMap(map, models[i], "default:default"); //$NON-NLS-1$
+	public static Map<IPluginModelBase, String> getTargetBundleMap(ILaunchConfiguration configuration, Set<String> pluginIds) throws CoreException {
+		Set<String> targetBundles = configuration.getAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, emptySet());
+		Predicate<String> idFilter = pluginIds != null ? id -> !pluginIds.contains(id) : id -> true;
+		return getBundleMap(targetBundles, ModelEntry::getExternalModels, null, idFilter);
+	}
+
+	private static Map<IPluginModelBase, String> getBundleMap(Set<String> entries, Function<ModelEntry, IPluginModelBase[]> getModels, Set<String> pluginIds, Predicate<String> idFilter) {
+		Map<IPluginModelBase, String> map = new LinkedHashMap<>();
+		for (String bundleEntry : entries) {
+			int index = bundleEntry.indexOf('@');
+			if (index < 0) { // if no start levels, assume default
+				index = bundleEntry.length();
+				bundleEntry += "@default:default"; //$NON-NLS-1$
+			}
+			String idVersion = bundleEntry.substring(0, index);
+			int versionIndex = idVersion.indexOf(VERSION_SEPARATOR);
+			String id = (versionIndex > 0) ? idVersion.substring(0, versionIndex) : idVersion;
+			String version = (versionIndex > 0) ? idVersion.substring(versionIndex + 1) : null;
+
+			if (idFilter.test(id)) {
+				if (pluginIds != null) {
+					pluginIds.add(id);
+				}
+				ModelEntry entry = PluginRegistry.findEntry(id);
+				if (entry != null) {
+					IPluginModelBase[] models = getModels.apply(entry);
+					String startData = bundleEntry.substring(index + 1);
+					addPluginModel(models, version, startData, map);
 				}
 			}
 		}
 		return map;
+	}
+
+	private static void addPluginModel(IPluginModelBase[] models, String version, String startData, Map<IPluginModelBase, String> map) {
+		Set<String> versions = new HashSet<>();
+		for (IPluginModelBase model : models) {
+			if (model.isEnabled()) { // always true for workspace models, external might be disabled
+				IPluginBase base = model.getPluginBase();
+				String v = base.getVersion();
+				if (versions.add(v)) { // don't add exact same version more than once
+					// match only if...
+					// a) if we have the same version
+					// b) no version
+					// c) all else fails, if there's just one bundle available, use it
+					if (base.getVersion().equals(version) || version == null || models.length == 1) {
+						addBundleToMap(map, model, startData);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Adds the given bundle and start information to the map.  This will override anything set
+	 * for system bundles, and set their start level to the appropriate level
+	 * @param map The map to add the bundles too
+	 * @param bundle The bundle to add
+	 * @param substring the start information in the form level:autostart
+	 */
+	private static void addBundleToMap(Map<IPluginModelBase, String> map, IPluginModelBase bundle, String sl) {
+		BundleDescription desc = bundle.getBundleDescription();
+		boolean defaultsl = (sl == null || sl.equals("default:default")); //$NON-NLS-1$
+		if (desc != null && defaultsl) {
+			String runLevelText = resolveSystemRunLevelText(bundle);
+			String autoText = resolveSystemAutoText(bundle);
+			if (runLevelText != null && autoText != null) {
+				map.put(bundle, runLevelText + ":" + autoText); //$NON-NLS-1$
+			} else {
+				map.put(bundle, sl);
+			}
+		} else {
+			map.put(bundle, sl);
+		}
 	}
 
 	public static String resolveSystemRunLevelText(IPluginModelBase model) {
@@ -406,64 +456,6 @@ public class BundleLauncherHelper {
 		} else {
 			return null;
 		}
-	}
-
-	/**
-	 * Adds the given bundle and start information to the map.  This will override anything set
-	 * for system bundles, and set their start level to the appropriate level
-	 * @param map The map to add the bundles too
-	 * @param bundle The bundle to add
-	 * @param substring the start information in the form level:autostart
-	 */
-	private static void addBundleToMap(Map<IPluginModelBase, String> map, IPluginModelBase bundle, String sl) {
-		BundleDescription desc = bundle.getBundleDescription();
-		boolean defaultsl = (sl == null || sl.equals("default:default")); //$NON-NLS-1$
-		if (desc != null && defaultsl) {
-			String runLevelText = resolveSystemRunLevelText(bundle);
-			String autoText = resolveSystemAutoText(bundle);
-			if (runLevelText != null && autoText != null) {
-				map.put(bundle, runLevelText + ":" + autoText); //$NON-NLS-1$
-			} else {
-				map.put(bundle, sl);
-			}
-		} else {
-			map.put(bundle, sl);
-		}
-
-	}
-
-	public static Map<IPluginModelBase, String> getTargetBundleMap(ILaunchConfiguration configuration, Set<String> set) throws CoreException {
-		Set<String> selected = configuration.getAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Collections.emptySet());
-		Map<IPluginModelBase, String> map = new LinkedHashMap<>();
-		for (String token : selected) {
-			int index = token.indexOf('@');
-			if (index < 0) { // if no start levels, assume default
-				token = token.concat("@default:default"); //$NON-NLS-1$
-				index = token.indexOf('@');
-			}
-			String idVersion = token.substring(0, index);
-			int versionIndex = idVersion.indexOf(VERSION_SEPARATOR);
-			String id = (versionIndex > 0) ? idVersion.substring(0, versionIndex) : idVersion;
-			String version = (versionIndex > 0) ? idVersion.substring(versionIndex + 1) : null;
-			if (set != null && set.contains(id))
-				continue;
-			ModelEntry entry = PluginRegistry.findEntry(id);
-			if (entry != null) {
-				IPluginModelBase[] models = entry.getExternalModels();
-				for (IPluginModelBase model : models) {
-					if (model.isEnabled()) {
-						IPluginBase base = model.getPluginBase();
-						// match only if...
-						// a) if we have the same version
-						// b) no version
-						// c) all else fails, if there's just one bundle available, use it
-						if (base.getVersion().equals(version) || version == null || models.length == 1)
-							addBundleToMap(map, model, token.substring(index + 1));
-					}
-				}
-			}
-		}
-		return map;
 	}
 
 	public static String writeBundleEntry(IPluginModelBase model, String startLevel, String autoStart) {
