@@ -15,7 +15,7 @@
  *     Hannes Wellmann - Bug 577118 - Handle multiple Plug-in versions in launching facility
  *     Hannes Wellmann - Bug 576886 - Clean up and improve BundleLaunchHelper and extract String literal constants
  *     Hannes Wellmann - Bug 576887 - Handle multiple versions of features and plug-ins for feature-launches
- *     Hannes Wellmann - Bug 576888 - Consider included child-features for feature-launches
+ *     Hannes Wellmann - Bug 576888, Bug 576889 - Consider included child-features and required dependency-features for feature-launches
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
@@ -178,12 +178,12 @@ public class BundleLauncherHelper {
 			if (attributes.length > 1) {
 				String id = attributes[0];
 				String pluginResolution = attributes[1];
-				IFeature feature = getFeature(id, featureMaps);
+				IFeature feature = getRequiredFeature(id, null, IMatchRules.GREATER_OR_EQUAL, featureMaps);
 				addFeatureIfAbsent(feature, pluginResolution, feature2pluginResolution, pendingFeatures); // feature should be absent
 			}
 		}
 
-		while (!pendingFeatures.isEmpty()) { // perform exhaustive breath-first-search for included features
+		while (!pendingFeatures.isEmpty()) { // perform exhaustive breath-first-search for included and required features
 			IFeature feature = pendingFeatures.remove();
 			String pluginResolution = feature2pluginResolution.get(feature); // inherit resolution from including feature
 
@@ -191,6 +191,14 @@ public class BundleLauncherHelper {
 			for (IFeatureChild featureChild : includedFeatures) {
 				IFeature child = getIncludedFeature(featureChild.getId(), featureChild.getVersion(), featureMaps);
 				addFeatureIfAbsent(child, pluginResolution, feature2pluginResolution, pendingFeatures);
+			}
+
+			IFeatureImport[] featureImports = feature.getImports();
+			for (IFeatureImport featureImport : featureImports) {
+				if (featureImport.getType() == IFeatureImport.FEATURE) {
+					IFeature dependency = getRequiredFeature(featureImport.getId(), featureImport.getVersion(), featureImport.getMatch(), featureMaps);
+					addFeatureIfAbsent(dependency, pluginResolution, feature2pluginResolution, pendingFeatures);
+				}
 			}
 		}
 		return feature2pluginResolution;
@@ -208,11 +216,6 @@ public class BundleLauncherHelper {
 			id2feature.forEach((id, features) -> featureMaps.computeIfAbsent(id, i -> new ArrayList<>()).add(features));
 		}
 		return featureMaps;
-	}
-
-	private static IFeature getFeature(String id, Map<String, List<List<IFeature>>> featureMaps) {
-		List<List<IFeature>> features = featureMaps.getOrDefault(id, Collections.emptyList());
-		return getMaxElement(features, f -> true, comparing(f -> Version.parseVersion(f.getVersion())));
 	}
 
 	private static void addFeatureIfAbsent(IFeature feature, String resolution, Map<IFeature, String> featurePluginResolution, Queue<IFeature> pendingFeatures) {
@@ -236,6 +239,11 @@ public class BundleLauncherHelper {
 	private static IFeature getIncludedFeature(String id, String version, Map<String, List<List<IFeature>>> prioritizedFeatures) {
 		List<List<IFeature>> features = prioritizedFeatures.get(id);
 		return getIncluded(features, f -> true, IFeature::getVersion, NEUTRAL_COMPARATOR, version);
+	}
+
+	private static IFeature getRequiredFeature(String id, String version, int versionMatchRule, Map<String, List<List<IFeature>>> prioritizedFeatures) {
+		List<List<IFeature>> features = prioritizedFeatures.get(id);
+		return getRequired(features, f -> true, IFeature::getVersion, NEUTRAL_COMPARATOR, version, versionMatchRule);
 	}
 
 	private static final Predicate<IPluginModelBase> ENABLED_VALID_PLUGIN_FILTER = p -> p.getBundleDescription() != null && p.isEnabled();

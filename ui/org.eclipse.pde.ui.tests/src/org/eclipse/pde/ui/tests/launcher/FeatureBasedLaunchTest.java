@@ -795,6 +795,279 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 		}
 	}
 
+	// --- required/imported feature dependencies ---
+
+	@Test
+	public void testGetMergedBundleMap_requiredFeatureWithNoVersion() throws Throwable {
+		// plug-in names contain version-like suffixes to have no chance to
+		// interfere with conveniences of plug-in resolution
+		List<NameVersionDescriptor> targetBundles = List.of( //
+				bundle("plugin.a.w.100", "1.0.0"), //
+				bundle("plugin.a.w.110", "1.0.0"), //
+				bundle("plugin.a.e.200", "1.0.0"), //
+				bundle("plugin.a.e.210", "1.0.0"), //
+				bundle("plugin.b.w.100", "1.0.0"), //
+				bundle("plugin.c.e.100", "1.0.0"), //
+				bundle("plugin.xyz", "1.0.0"));
+
+		createFeatureProject("feature.a", "1.0.0", f -> {
+			addIncludedPlugin(f, "plugin.a.w.100", "1.0.0");
+		});
+		createFeatureProject("feature.a", "1.1.0", f -> {
+			addIncludedPlugin(f, "plugin.a.w.110", "1.0.0");
+		});
+		createFeatureProject("feature.b", "1.0.0", f -> {
+			addIncludedPlugin(f, "plugin.b.w.100", "1.0.0");
+		});
+
+		List<NameVersionDescriptor> targetFeatures = List.of( //
+				targetFeature("feature.z", "1.0.0", f -> {
+					addRequiredFeature(f, "feature.a", null, IMatchRules.NONE);
+				}), //
+				targetFeature("feature.y", "1.0.0", f -> {
+					addRequiredFeature(f, "feature.b", null, IMatchRules.NONE);
+				}), //
+				targetFeature("feature.x", "1.0.0", f -> {
+					addRequiredFeature(f, "feature.c", null, IMatchRules.NONE);
+				}), //
+
+				targetFeature("feature.a", "2.0.0", f -> {
+					addIncludedPlugin(f, "plugin.a.e.200", "1.0.0");
+				}), //
+				targetFeature("feature.a", "2.1.0", f -> {
+					addIncludedPlugin(f, "plugin.a.e.210", "1.0.0");
+				}), //
+				targetFeature("feature.c", "1.0.0", f -> {
+					addIncludedPlugin(f, "plugin.c.e.100", "1.0.0");
+				}));
+
+		setTargetPlatform(targetBundles, targetFeatures);
+
+		{
+			ILaunchConfigurationWorkingCopy lc = createFeatureLaunchConfig();
+			lc.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_WORKSPACE);
+			lc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of("feature.z:default"));
+
+			assertGetMergedBundleMap("featureResolution explicit workspace", lc, Set.of( //
+					targetBundle("plugin.a.w.110", "1.0.0")));
+		}
+		{
+			ILaunchConfigurationWorkingCopy lc = createFeatureLaunchConfig();
+			lc.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_EXTERNAL);
+			lc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of("feature.z:default"));
+
+			assertGetMergedBundleMap("featureResolution explicit external", lc, Set.of( //
+					targetBundle("plugin.a.e.210", "1.0.0")));
+		}
+		// Features only in secondary location
+		{
+			ILaunchConfigurationWorkingCopy lc = createFeatureLaunchConfig();
+			lc.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_EXTERNAL);
+			lc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of("feature.y:default"));
+
+			assertGetMergedBundleMap("featureResolution external but match in workspace", lc, Set.of());
+			// if featureResolution is 'external', workspace features are not
+			// considered at all
+		}
+		{
+			ILaunchConfigurationWorkingCopy lc = createFeatureLaunchConfig();
+			lc.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_WORKSPACE);
+			lc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of("feature.x:default"));
+
+			assertGetMergedBundleMap("featureResolution workspace but match is external", lc, Set.of( //
+					targetBundle("plugin.c.e.100", "1.0.0")));
+		}
+	}
+
+	@Test
+	public void testGetMergedBundleMap_requiredFeatureWithSpecificVersion1() throws Throwable {
+		// plug-in names contain version-like suffixes to have no chance to
+		// interfere with conveniences of plug-in resolution
+		List<NameVersionDescriptor> targetBundles = List.of( //
+				bundle("plugin.a.w.100", "1.0.0"), //
+				bundle("plugin.a.w.110", "1.0.0"), //
+				bundle("plugin.a.w.200", "1.0.0"), //
+				bundle("plugin.a.e.100", "1.0.0"), //
+				bundle("plugin.a.e.123", "1.0.0"), //
+				bundle("plugin.a.e.300", "1.0.0"), //
+				bundle("plugin.xyz", "1.0.0"));
+
+		createFeatureProject("feature.a", "1.0.0", f -> {
+			addIncludedPlugin(f, "plugin.a.w.100", "1.0.0");
+		});
+		createFeatureProject("feature.a", "1.1.0", f -> {
+			addIncludedPlugin(f, "plugin.a.w.110", "1.0.0");
+		});
+		createFeatureProject("feature.a", "2.0.0", f -> {
+			addIncludedPlugin(f, "plugin.a.w.200", "1.0.0");
+		});
+
+		List<NameVersionDescriptor> targetFeatures = List.of( //
+				targetFeature("feature.z", "1.0.0", f -> {
+					addRequiredFeature(f, "feature.a", "1.0.0", IMatchRules.NONE);
+				}), //
+				targetFeature("feature.y", "1.0.0", f -> {
+					addRequiredFeature(f, "feature.a", "1.0.0", IMatchRules.COMPATIBLE);
+				}), //
+
+				targetFeature("feature.a", "1.0.0", f -> {
+					addIncludedPlugin(f, "plugin.a.e.100", "1.0.0");
+				}), //
+				targetFeature("feature.a", "1.2.3", f -> {
+					addIncludedPlugin(f, "plugin.a.e.123", "1.0.0");
+				}), //
+				targetFeature("feature.a", "3.0.0", f -> {
+					addIncludedPlugin(f, "plugin.a.e.300", "1.0.0");
+				}));
+
+		setTargetPlatform(targetBundles, targetFeatures);
+
+		// MatchRule NONE/COMPATIBLE (behave the same according to VersionUtil)
+		// and location resolution tests.
+		// explicit pluginResolution location
+		{
+			for (String feature : List.of("feature.z", "feature.y")) {
+				ILaunchConfigurationWorkingCopy lc = createFeatureLaunchConfig();
+				lc.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION,
+						IPDELauncherConstants.LOCATION_WORKSPACE);
+				lc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of(feature + ":default"));
+
+				assertGetMergedBundleMap("pluginResolution explicit workspace", lc, Set.of( //
+						targetBundle("plugin.a.w.110", "1.0.0")));
+			}
+		}
+		{
+			for (String feature : List.of("feature.z", "feature.y")) {
+				ILaunchConfigurationWorkingCopy lc = createFeatureLaunchConfig();
+				lc.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION,
+						IPDELauncherConstants.LOCATION_EXTERNAL);
+				lc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of(feature + ":default"));
+
+				assertGetMergedBundleMap("pluginResolution explicit external", lc, Set.of( //
+						targetBundle("plugin.a.e.123", "1.0.0")));
+			}
+		}
+	}
+
+	@Test
+	public void testGetMergedBundleMap_requiredFeatureWithSpecificVersion2() throws Throwable {
+		List<NameVersionDescriptor> targetBundles = List.of( //
+				bundle("plugin.a.w.100", "1.0.0"), //
+				bundle("plugin.a.w.101", "1.0.0"), //
+				bundle("plugin.a.w.110", "1.0.0"), //
+				bundle("plugin.a.w.112", "1.0.0"), //
+				bundle("plugin.a.w.200", "1.0.0"), //
+				bundle("plugin.a.e.100", "1.0.0"), //
+				bundle("plugin.a.e.102", "1.0.0"), //
+				bundle("plugin.a.e.120", "1.0.0"), //
+				bundle("plugin.a.e.123", "1.0.0"), //
+				bundle("plugin.a.e.300", "1.0.0"), //
+				bundle("plugin.xyz", "1.0.0"));
+
+		createFeatureProject("feature.a", "1.0.0", f -> {
+			addIncludedPlugin(f, "plugin.a.w.100", "1.0.0");
+		});
+		createFeatureProject("feature.a", "1.0.1", f -> {
+			addIncludedPlugin(f, "plugin.a.w.101", "1.0.0");
+		});
+		createFeatureProject("feature.a", "1.1.0", f -> {
+			addIncludedPlugin(f, "plugin.a.w.110", "1.0.0");
+		});
+		createFeatureProject("feature.a", "1.1.2", f -> {
+			addIncludedPlugin(f, "plugin.a.w.112", "1.0.0");
+		});
+		createFeatureProject("feature.a", "2.0.0", f -> {
+			addIncludedPlugin(f, "plugin.a.w.200", "1.0.0");
+		});
+
+		List<NameVersionDescriptor> targetFeatures = List.of( //
+				targetFeature("feature.z", "1.0.0", f -> {
+					addRequiredFeature(f, "feature.a", "1.0.0", IMatchRules.EQUIVALENT);
+				}), //
+				targetFeature("feature.y", "1.0.0", f -> {
+					addRequiredFeature(f, "feature.a", "1.1.0", IMatchRules.EQUIVALENT);
+				}), //
+				targetFeature("feature.x", "1.0.0", f -> {
+					addRequiredFeature(f, "feature.a", "1.2.0", IMatchRules.EQUIVALENT);
+				}), //
+				targetFeature("feature.w", "1.0.0", f -> {
+					addRequiredFeature(f, "feature.a", "8.0.0", IMatchRules.EQUIVALENT);
+				}), //
+
+				targetFeature("feature.a", "1.0.0", f -> {
+					addIncludedPlugin(f, "plugin.a.e.100", "1.0.0");
+				}), //
+				targetFeature("feature.a", "1.0.2", f -> {
+					addIncludedPlugin(f, "plugin.a.e.102", "1.0.0");
+				}), //
+				targetFeature("feature.a", "1.2.0", f -> {
+					addIncludedPlugin(f, "plugin.a.e.120", "1.0.0");
+				}), //
+				targetFeature("feature.a", "1.2.3", f -> {
+					addIncludedPlugin(f, "plugin.a.e.123", "1.0.0");
+				}), //
+				targetFeature("feature.a", "3.0.0", f -> {
+					addIncludedPlugin(f, "plugin.a.e.300", "1.0.0");
+				}));
+
+		setTargetPlatform(targetBundles, targetFeatures);
+
+		// No need to test all match-rules. Just have to check that version
+		// match rules are obeyed. For the following cases match-rule EQUIVALENT
+		// is used to check different per-location-availability scenarios.
+
+		// match in primary location (while secondary location has matches too)
+		{
+			ILaunchConfigurationWorkingCopy lc = createFeatureLaunchConfig();
+			lc.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_WORKSPACE);
+			lc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of("feature.z:default"));
+
+			assertGetMergedBundleMap("featureResolution workspace", lc, Set.of( //
+					targetBundle("plugin.a.w.101", "1.0.0")));
+		}
+		{
+			ILaunchConfigurationWorkingCopy lc = createFeatureLaunchConfig();
+			lc.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_EXTERNAL);
+			lc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of("feature.z:default"));
+
+			assertGetMergedBundleMap("featureResolution external", lc, Set.of( //
+					targetBundle("plugin.a.e.102", "1.0.0")));
+		}
+		// match only in secondary location
+		{
+			ILaunchConfigurationWorkingCopy lc = createFeatureLaunchConfig();
+			lc.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_EXTERNAL);
+			lc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of("feature.y:default"));
+
+			assertGetMergedBundleMap("featureResolution external but match in workspace", lc, Set.of());
+			// if featureResolution is 'external', workspace features are not
+			// considered at all
+		}
+		{
+			ILaunchConfigurationWorkingCopy lc = createFeatureLaunchConfig();
+			lc.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_WORKSPACE);
+			lc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of("feature.x:default"));
+
+			assertGetMergedBundleMap("featureResolution workspace but match is external", lc, Set.of( //
+					targetBundle("plugin.a.e.123", "1.0.0")));
+		}
+		// no match at all
+		{
+			ILaunchConfigurationWorkingCopy lc = createFeatureLaunchConfig();
+			lc.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_EXTERNAL);
+			lc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of("feature.w:default"));
+
+			assertGetMergedBundleMap("featureResolution external no match", lc, Set.of());
+		}
+		{
+			ILaunchConfigurationWorkingCopy lc = createFeatureLaunchConfig();
+			lc.setAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_WORKSPACE);
+			lc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of("feature.w:default"));
+
+			assertGetMergedBundleMap("featureResolution workspace no match", lc, Set.of());
+		}
+	}
+
 	// --- miscellaneous cases ---
 
 	@Test
@@ -914,10 +1187,14 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 		List<NameVersionDescriptor> targetFeatures = List.of( //
 				targetFeature("feature.a", "1.0.0", f -> {
 					addIncludedFeature(f, "feature.b", "1.0.0");
+					addRequiredFeature(f, "feature.c", "", IMatchRules.COMPATIBLE);
 					addIncludedFeature(f, "feature.d", "1.0.0");
 				}), //
 				targetFeature("feature.b", "1.0.0", f -> {
 					addIncludedPlugin(f, "plugin.b", "1.0.0");
+				}), //
+				targetFeature("feature.c", "1.0.0", f -> {
+					addIncludedPlugin(f, "plugin.c", "1.0.0");
 				}), //
 				targetFeature("feature.d", "1.0.0", f -> {
 					addIncludedPlugin(f, "plugin.d", "1.0.0");
@@ -932,6 +1209,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 
 		assertGetMergedBundleMap(wc, Set.of( //
 				targetBundle("plugin.b", "1.0.0"), //
+				targetBundle("plugin.c", "1.0.0"), //
 				workspaceBundle("plugin.d", "1.0.0")));
 	}
 
