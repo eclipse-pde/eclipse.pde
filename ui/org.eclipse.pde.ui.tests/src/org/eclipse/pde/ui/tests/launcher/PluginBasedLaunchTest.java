@@ -742,7 +742,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		IPluginModelBase plugin = workspaceBundle("plugin.a", "1.0.0").findModel();
 
-		String entry = BundleLauncherHelper.writeBundleEntry(plugin, null, null);
+		String entry = BundleLauncherHelper.formatBundleEntry(plugin, null, null);
 		assertEquals("plugin.a", entry);
 	}
 
@@ -757,7 +757,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		IPluginModelBase plugin = workspaceBundle("plugin.a", "1.0.0").findModel();
 
-		String entry = BundleLauncherHelper.writeBundleEntry(plugin, null, null);
+		String entry = BundleLauncherHelper.formatBundleEntry(plugin, null, null);
 		assertEquals("plugin.a*1.0.0", entry);
 	}
 
@@ -772,7 +772,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		IPluginModelBase plugin = targetBundle("plugin.a", "2.0.0").findModel();
 
-		String entry = BundleLauncherHelper.writeBundleEntry(plugin, null, null);
+		String entry = BundleLauncherHelper.formatBundleEntry(plugin, null, null);
 		assertEquals("plugin.a", entry);
 	}
 
@@ -787,7 +787,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		IPluginModelBase plugin = targetBundle("plugin.a", "2.0.0").findModel();
 
-		String entry = BundleLauncherHelper.writeBundleEntry(plugin, null, null);
+		String entry = BundleLauncherHelper.formatBundleEntry(plugin, null, null);
 		assertEquals("plugin.a*2.0.0", entry);
 	}
 
@@ -800,11 +800,11 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		IPluginModelBase plugin = workspaceBundle("plugin.a", "1.0.0").findModel();
 
-		assertEquals("plugin.a*1.0.0", BundleLauncherHelper.writeBundleEntry(plugin, null, null));
-		assertEquals("plugin.a*1.0.0", BundleLauncherHelper.writeBundleEntry(plugin, "", ""));
-		assertEquals("plugin.a*1.0.0@4:true", BundleLauncherHelper.writeBundleEntry(plugin, "4", "true"));
-		assertEquals("plugin.a*1.0.0@4:", BundleLauncherHelper.writeBundleEntry(plugin, "4", ""));
-		assertEquals("plugin.a*1.0.0@:false", BundleLauncherHelper.writeBundleEntry(plugin, null, "false"));
+		assertEquals("plugin.a*1.0.0", BundleLauncherHelper.formatBundleEntry(plugin, null, null));
+		assertEquals("plugin.a*1.0.0", BundleLauncherHelper.formatBundleEntry(plugin, "", ""));
+		assertEquals("plugin.a*1.0.0@4:true", BundleLauncherHelper.formatBundleEntry(plugin, "4", "true"));
+		assertEquals("plugin.a*1.0.0@4:", BundleLauncherHelper.formatBundleEntry(plugin, "4", ""));
+		assertEquals("plugin.a*1.0.0@:false", BundleLauncherHelper.formatBundleEntry(plugin, null, "false"));
 	}
 
 	// --- utilities ---

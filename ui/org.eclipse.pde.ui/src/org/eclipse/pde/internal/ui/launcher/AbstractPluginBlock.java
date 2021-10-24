@@ -123,7 +123,7 @@ public abstract class AbstractPluginBlock {
 				startLevel = levelColumnCache.get(model) != null ? levelColumnCache.get(model).toString() : null;
 				autoStart = autoColumnCache.get(model) != null ? autoColumnCache.get(model).toString() : null;
 			}
-			return BundleLauncherHelper.writeBundleEntry(model, startLevel, autoStart);
+			return BundleLauncherHelper.formatBundleEntry(model, startLevel, autoStart);
 		}
 
 		public Set<String> getNameSet() {

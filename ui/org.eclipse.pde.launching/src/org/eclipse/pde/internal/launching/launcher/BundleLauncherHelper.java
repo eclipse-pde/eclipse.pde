@@ -13,7 +13,7 @@
  *     EclipseSource Corporation - ongoing enhancements
  *     Hannes Wellmann - Bug 576885 - Unify methods to parse bundle-sets from launch-configs
  *     Hannes Wellmann - Bug 577118 - Handle multiple Plug-in versions in launching facility
- *     Hannes Wellmann - Bug 576886 - Clean up and improve BundleLaunchHelper
+ *     Hannes Wellmann - Bug 576886 - Clean up and improve BundleLaunchHelper and extract String literal constants
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
@@ -43,6 +43,14 @@ public class BundleLauncherHelper {
 	private BundleLauncherHelper() { // static use only
 	}
 
+	public static final char VERSION_SEPARATOR = '*';
+	private static final char START_LEVEL_SEPARATOR = '@';
+	private static final String AUTO_START_SEPARATOR = ":"; //$NON-NLS-1$  
+	private static final String DEFAULT = "default"; //$NON-NLS-1$
+	private static final String DEFAULT_START_LEVELS = DEFAULT + AUTO_START_SEPARATOR + DEFAULT;
+	private static final String FEATURE_PLUGIN_RESOLUTION_SEPARATOR = ":"; //$NON-NLS-1$  
+	private static final String FEATURES_ADDITIONAL_PLUGINS_DATA_SEPARATOR = ":"; //$NON-NLS-1$  
+
 	/**
 	 * When creating a mapping of bundles to their start levels, update configurator is set
 	 * to auto start at level three.  However, if at launch time we are launching with both
@@ -51,9 +59,7 @@ public class BundleLauncherHelper {
 	 */
 	public static final String DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL_TEXT = "3"; //$NON-NLS-1$
 	public static final String DEFAULT_UPDATE_CONFIGURATOR_AUTO_START_TEXT = "true"; //$NON-NLS-1$
-	public static final String DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL = DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL_TEXT + ":" + DEFAULT_UPDATE_CONFIGURATOR_AUTO_START_TEXT; //$NON-NLS-1$
-
-	public static final char VERSION_SEPARATOR = '*';
+	public static final String DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL = DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL_TEXT + AUTO_START_SEPARATOR + DEFAULT_UPDATE_CONFIGURATOR_AUTO_START_TEXT;
 
 	public static Map<IPluginModelBase, String> getWorkspaceBundleMap(ILaunchConfiguration configuration) throws CoreException {
 		return getWorkspaceBundleMap(configuration, new HashMap<>());
@@ -70,7 +76,7 @@ public class BundleLauncherHelper {
 				Map<IPluginModelBase, String> map = new LinkedHashMap<>();
 				IPluginModelBase[] models = PluginRegistry.getActiveModels();
 				for (IPluginModelBase model : models) {
-					addBundleToMap(map, model, "default:default"); //$NON-NLS-1$
+					addBundleToMap(map, model, DEFAULT_START_LEVELS);
 				}
 				return map;
 			}
@@ -150,7 +156,7 @@ public class BundleLauncherHelper {
 		Map<IPluginModelBase, String> map = new LinkedHashMap<>();
 		for (IPluginModelBase model : launchPlugins) {
 			AdditionalPluginData additionalPluginData = additionalPlugins.get(model);
-			String startLevels = additionalPluginData != null ? additionalPluginData.startLevels() : "default:default"; //$NON-NLS-1$
+			String startLevels = additionalPluginData != null ? additionalPluginData.startLevels() : DEFAULT_START_LEVELS;
 			addBundleToMap(map, model, startLevels); // might override data of plug-ins included by feature
 		}
 		return map;
@@ -166,7 +172,7 @@ public class BundleLauncherHelper {
 
 		Map<IFeature, String> feature2pluginResolution = new HashMap<>();
 		for (String currentSelected : selectedFeatures) {
-			String[] attributes = currentSelected.split(":"); //$NON-NLS-1$
+			String[] attributes = currentSelected.split(FEATURE_PLUGIN_RESOLUTION_SEPARATOR);
 			if (attributes.length > 1) {
 				String id = attributes[0];
 				String pluginResolution = attributes[1];
@@ -277,7 +283,7 @@ public class BundleLauncherHelper {
 			IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 			for (IPluginModelBase model : models) {
 				if (model.getPluginBase().getId() != null && !deselectedPlugins.contains(model) && !map.containsKey(model)) {
-					addPlugin(map, model, "default:default", idVersions, CONTAINS_SAME_VERSION); //$NON-NLS-1$
+					addPlugin(map, model, DEFAULT_START_LEVELS, idVersions, CONTAINS_SAME_VERSION);
 				}
 			}
 		}
@@ -292,10 +298,10 @@ public class BundleLauncherHelper {
 	private static Map<IPluginModelBase, String> getBundleMap(Set<String> entries, Function<ModelEntry, IPluginModelBase[]> getModels, BiPredicate<List<Version>, Version> versionFilter, Map<String, List<Version>> idVersions) {
 		Map<IPluginModelBase, String> map = new LinkedHashMap<>();
 		for (String bundleEntry : entries) {
-			int index = bundleEntry.indexOf('@');
+			int index = bundleEntry.indexOf(START_LEVEL_SEPARATOR);
 			if (index < 0) { // if no start levels, assume default
 				index = bundleEntry.length();
-				bundleEntry += "@default:default"; //$NON-NLS-1$
+				bundleEntry += START_LEVEL_SEPARATOR + DEFAULT_START_LEVELS;
 			}
 			String idVersion = bundleEntry.substring(0, index);
 			int versionIndex = idVersion.indexOf(VERSION_SEPARATOR);
@@ -367,12 +373,12 @@ public class BundleLauncherHelper {
 	 */
 	private static void addBundleToMap(Map<IPluginModelBase, String> map, IPluginModelBase bundle, String startData) {
 		BundleDescription desc = bundle.getBundleDescription();
-		boolean defaultsl = startData == null || startData.equals("default:default"); //$NON-NLS-1$
+		boolean defaultsl = startData == null || startData.equals(DEFAULT_START_LEVELS);
 		if (desc != null && defaultsl) {
 			String runLevelText = resolveSystemRunLevelText(bundle);
 			String autoText = resolveSystemAutoText(bundle);
 			if (runLevelText != null && autoText != null) {
-				startData = runLevelText + ":" + autoText; //$NON-NLS-1$
+				startData = runLevelText + AUTO_START_SEPARATOR + autoText;
 			}
 		}
 		map.put(bundle, startData);
@@ -383,7 +389,7 @@ public class BundleLauncherHelper {
 			Map.entry(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR, "1"), //$NON-NLS-1$
 			Map.entry(IPDEBuildConstants.BUNDLE_EQUINOX_COMMON, "2"), //$NON-NLS-1$
 			Map.entry(IPDEBuildConstants.BUNDLE_OSGI, "1"), //$NON-NLS-1$
-			Map.entry(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, "default"), //$NON-NLS-1$
+			Map.entry(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, DEFAULT), //
 			Map.entry(IPDEBuildConstants.BUNDLE_FELIX_SCR, "1")); //$NON-NLS-1$
 
 	public static String resolveSystemRunLevelText(IPluginModelBase model) {
@@ -396,7 +402,7 @@ public class BundleLauncherHelper {
 		return AUTO_STARTED_BUNDLE_LEVELS.containsKey(description.getSymbolicName()) ? "true" : null; //$NON-NLS-1$
 	}
 
-	public static String writeBundleEntry(IPluginModelBase model, String startLevel, String autoStart) {
+	public static String formatBundleEntry(IPluginModelBase model, String startLevel, String autoStart) {
 		IPluginBase base = model.getPluginBase();
 		String id = base.getId();
 		StringBuilder buffer = new StringBuilder(id);
@@ -415,16 +421,20 @@ public class BundleLauncherHelper {
 		boolean hasAutoStart = autoStart != null && !autoStart.isEmpty();
 
 		if (hasStartLevel || hasAutoStart) {
-			buffer.append('@');
+			buffer.append(START_LEVEL_SEPARATOR);
 			if (hasStartLevel) {
 				buffer.append(startLevel);
 			}
-			buffer.append(':');
+			buffer.append(AUTO_START_SEPARATOR);
 			if (hasAutoStart) {
 				buffer.append(autoStart);
 			}
 		}
 		return buffer.toString();
+	}
+
+	public static String formatFeatureEntry(String featureId, String pluginResolution) {
+		return featureId + FEATURE_PLUGIN_RESOLUTION_SEPARATOR + pluginResolution;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -554,7 +564,7 @@ public class BundleLauncherHelper {
 		String defaultPluginResolution = config.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
 
 		for (String addedPlugin : userAddedPlugins) {
-			String[] pluginData = addedPlugin.split(":"); //$NON-NLS-1$
+			String[] pluginData = addedPlugin.split(FEATURES_ADDITIONAL_PLUGINS_DATA_SEPARATOR);
 			boolean checked = Boolean.parseBoolean(pluginData[3]);
 			if (!onlyEnabled || checked) {
 				String id = pluginData[0];
@@ -579,6 +589,11 @@ public class BundleLauncherHelper {
 		return resolvedAdditionalPlugins;
 	}
 
+	public static String formatAdditionalPluginEntry(IPluginModelBase pluginModel, String pluginResolution, boolean isChecked, String fStartLevel, String fAutoStart) {
+		IPluginBase plugin = pluginModel.getPluginBase();
+		return String.join(FEATURES_ADDITIONAL_PLUGINS_DATA_SEPARATOR, plugin.getId(), plugin.getVersion(), pluginResolution, String.valueOf(isChecked), fStartLevel, fAutoStart);
+	}
+
 	public static class AdditionalPluginData {
 		public final String fResolution;
 		public final boolean fEnabled;
@@ -588,12 +603,12 @@ public class BundleLauncherHelper {
 		public AdditionalPluginData(String resolution, boolean enabled, String startLevel, String autoStart) {
 			fResolution = resolution;
 			fEnabled = enabled;
-			fStartLevel = (startLevel == null || startLevel.isEmpty()) ? "default" : startLevel; //$NON-NLS-1$
-			fAutoStart = (autoStart == null || autoStart.isEmpty()) ? "default" : autoStart; //$NON-NLS-1$
+			fStartLevel = (startLevel == null || startLevel.isEmpty()) ? DEFAULT : startLevel;
+			fAutoStart = (autoStart == null || autoStart.isEmpty()) ? DEFAULT : autoStart;
 		}
 
 		String startLevels() {
-			return fStartLevel + ':' + fAutoStart;
+			return fStartLevel + AUTO_START_SEPARATOR + fAutoStart;
 		}
 	}
 }
