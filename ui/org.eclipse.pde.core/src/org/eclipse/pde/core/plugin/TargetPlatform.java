@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2019 IBM Corporation and others.
+ *  Copyright (c) 2007, 2022 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -107,16 +109,7 @@ public class TargetPlatform {
 	 * @return the target operating system
 	 */
 	public static String getOS() {
-		try {
-			ITargetDefinition target = TargetPlatformService.getDefault().getWorkspaceTargetDefinition();
-			String result = target.getOS();
-			if (result != null) {
-				return result;
-			}
-		} catch (CoreException e) {
-			PDECore.log(e);
-		}
-		return Platform.getOS();
+		return getTargetProperty(ITargetDefinition::getOS, Platform::getOS);
 	}
 
 	/**
@@ -127,16 +120,7 @@ public class TargetPlatform {
 	 * @return the target windowing system
 	 */
 	public static String getWS() {
-		try {
-			ITargetDefinition target = TargetPlatformService.getDefault().getWorkspaceTargetDefinition();
-			String result = target.getWS();
-			if (result != null) {
-				return result;
-			}
-		} catch (CoreException e) {
-			PDECore.log(e);
-		}
-		return Platform.getWS();
+		return getTargetProperty(ITargetDefinition::getWS, Platform::getWS);
 	}
 
 	/**
@@ -146,16 +130,7 @@ public class TargetPlatform {
 	 * @return the target locale
 	 */
 	public static String getNL() {
-		try {
-			ITargetDefinition target = TargetPlatformService.getDefault().getWorkspaceTargetDefinition();
-			String result = target.getNL();
-			if (result != null) {
-				return result;
-			}
-		} catch (CoreException e) {
-			PDECore.log(e);
-		}
-		return Platform.getNL();
+		return getTargetProperty(ITargetDefinition::getNL, Platform::getNL);
 	}
 
 	/**
@@ -166,16 +141,20 @@ public class TargetPlatform {
 	 * @return the target system architecture
 	 */
 	public static String getOSArch() {
+		return getTargetProperty(ITargetDefinition::getArch, Platform::getOSArch);
+	}
+
+	private static String getTargetProperty(Function<ITargetDefinition, String> getter, Supplier<String> defaultValue) {
 		try {
 			ITargetDefinition target = TargetPlatformService.getDefault().getWorkspaceTargetDefinition();
-			String result = target.getArch();
+			String result = getter.apply(target);
 			if (result != null) {
 				return result;
 			}
 		} catch (CoreException e) {
 			PDECore.log(e);
 		}
-		return Platform.getOSArch();
+		return defaultValue.get();
 	}
 
 	/**

@@ -1071,6 +1071,94 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 	// --- miscellaneous cases ---
 
 	@Test
+	public void testGetMergedBundleMap_includedPluginAndFeatureEnvironmentNotMatchingTargetEnvironment()
+			throws Throwable {
+		String thisOS = Platform.getOS();
+		String otherOS = thisOS.equals(Platform.OS_LINUX) ? Platform.OS_WIN32 : Platform.OS_LINUX;
+
+		List<NameVersionDescriptor> targetBundles = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.b", "1.0.0"), //
+				bundle("plugin.c", "1.0.0"), //
+				bundle("plugin.d", "1.0.0"), //
+				bundle("plugin.z", "1.0.0"));
+
+		List<NameVersionDescriptor> targetFeatures = List.of( //
+				targetFeature("feature.c", "1.0.0", f -> {
+					addIncludedPlugin(f, "plugin.c", "1.0.0");
+				}), //
+				targetFeature("feature.d", "1.0.0", f -> {
+					addIncludedPlugin(f, "plugin.d", "1.0.0");
+				}), //
+
+				targetFeature("feature.a", "1.0.0", f -> {
+					addIncludedPlugin(f, "plugin.a", "1.0.0").setOS(thisOS);
+					addIncludedPlugin(f, "plugin.b", "1.0.0").setOS(otherOS);
+
+					addIncludedFeature(f, "feature.c", "1.0.0").setOS(thisOS);
+					addIncludedFeature(f, "feature.d", "1.0.0").setOS(otherOS);
+				}));
+
+		setTargetPlatform(targetBundles, targetFeatures);
+		// No need to test all aspects of environment matches, just test if
+		// environment is considered.
+
+		ILaunchConfigurationWorkingCopy lc = createFeatureLaunchConfig();
+		lc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of("feature.a:external"));
+
+		assertGetMergedBundleMap("pluginResolution explicit workspace", lc, Set.of( //
+				targetBundle("plugin.a", "1.0.0"), //
+				targetBundle("plugin.c", "1.0.0")));
+	}
+
+	@Test
+	public void testGetMergedBundleMap_featureEnvironmentNotMatchingTargetEnvironment() throws Throwable {
+		String thisOS = Platform.getOS();
+		String otherOS = thisOS.equals(Platform.OS_LINUX) ? Platform.OS_WIN32 : Platform.OS_LINUX;
+
+		List<NameVersionDescriptor> targetBundles = List.of( //
+				bundle("plugin.b", "1.0.0"), //
+				bundle("plugin.b", "1.1.0"), //
+				bundle("plugin.c", "1.0.0"), //
+				bundle("plugin.c", "1.1.0"), //
+				bundle("plugin.z", "1.0.0"));
+
+		List<NameVersionDescriptor> targetFeatures = List.of( //
+				targetFeature("feature.b", "1.0.0", f -> {
+					f.setOS(thisOS);
+					addIncludedPlugin(f, "plugin.b", "1.0.0");
+				}), //
+				targetFeature("feature.b", "1.1.0", f -> {
+					f.setOS(otherOS);
+					addIncludedPlugin(f, "plugin.b", "1.1.0");
+				}), //
+				targetFeature("feature.c", "1.0.0", f -> {
+					f.setOS(thisOS);
+					addIncludedPlugin(f, "plugin.c", "1.0.0");
+				}), //
+				targetFeature("feature.c", "1.1.0", f -> {
+					f.setOS(otherOS);
+					addIncludedPlugin(f, "plugin.c", "1.1.0");
+				}), //
+
+				targetFeature("feature.a", "1.0.0", f -> {
+					addIncludedFeature(f, "feature.b", DEFAULT_VERSION);
+					addRequiredFeature(f, "feature.c", "1.0.0", IMatchRules.COMPATIBLE);
+				}));
+
+		setTargetPlatform(targetBundles, targetFeatures);
+		// No need to test all aspects of environment matches, just test if
+		// environment is considered.
+
+		ILaunchConfigurationWorkingCopy lc = createFeatureLaunchConfig();
+		lc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, Set.of("feature.a:external"));
+
+		assertGetMergedBundleMap("pluginResolution explicit workspace", lc, Set.of( //
+				targetBundle("plugin.b", "1.0.0"), //
+				targetBundle("plugin.c", "1.0.0")));
+	}
+
+	@Test
 	public void testGetMergedBundleMap_multipleInclusionOfPluginAndFeature() throws Throwable {
 
 		List<NameVersionDescriptor> targetBundles = List.of( //

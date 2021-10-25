@@ -16,6 +16,7 @@
  *     Hannes Wellmann - Bug 576886 - Clean up and improve BundleLaunchHelper and extract String literal constants
  *     Hannes Wellmann - Bug 576887 - Handle multiple versions of features and plug-ins for feature-launches
  *     Hannes Wellmann - Bug 576888, Bug 576889 - Consider included child-features and required dependency-features for feature-launches
+ *     Hannes Wellmann - Bug 576890 - Ignore included features/plug-ins not matching target-environment
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
@@ -31,6 +32,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
@@ -105,8 +108,9 @@ public class BundleLauncherHelper {
 	private static Map<IPluginModelBase, String> getMergedBundleMapFeatureBased(ILaunchConfiguration configuration, boolean osgi) throws CoreException {
 
 		String defaultPluginResolution = configuration.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
+		ITargetDefinition target = PDECore.getDefault().acquireService(ITargetPlatformService.class).getWorkspaceTargetDefinition();
 
-		Map<IFeature, String> feature2resolution = getSelectedFeatures(configuration);
+		Map<IFeature, String> feature2resolution = getSelectedFeatures(configuration, target);
 
 		// Get the feature model for each selected feature id and resolve its plugins
 		Set<IPluginModelBase> launchPlugins = new HashSet<>();
@@ -117,9 +121,11 @@ public class BundleLauncherHelper {
 			}
 			IFeaturePlugin[] featurePlugins = feature.getPlugins();
 			for (IFeaturePlugin featurePlugin : featurePlugins) {
-				IPluginModelBase plugin = getIncludedPlugin(featurePlugin.getId(), featurePlugin.getVersion(), pluginResolution);
-				if (plugin != null) {
-					launchPlugins.add(plugin);
+				if (featurePlugin.matchesEnvironment(target)) {
+					IPluginModelBase plugin = getIncludedPlugin(featurePlugin.getId(), featurePlugin.getVersion(), pluginResolution);
+					if (plugin != null) {
+						launchPlugins.add(plugin);
+					}
 				}
 			}
 			IFeatureImport[] featureImports = feature.getImports();
@@ -163,8 +169,10 @@ public class BundleLauncherHelper {
 		return map;
 	}
 
-	private static Map<IFeature, String> getSelectedFeatures(ILaunchConfiguration configuration) throws CoreException {
+	private static Map<IFeature, String> getSelectedFeatures(ILaunchConfiguration configuration, ITargetDefinition target) throws CoreException {
 		String featureLocation = configuration.getAttribute(IPDELauncherConstants.FEATURE_DEFAULT_LOCATION, IPDELauncherConstants.LOCATION_WORKSPACE);
+
+		Predicate<IFeature> targetEnvironmentFilter = f -> f.matchesEnvironment(target);
 
 		// Get all available features
 		Map<String, List<List<IFeature>>> featureMaps = getPrioritizedAvailableFeatures(featureLocation);
@@ -178,7 +186,7 @@ public class BundleLauncherHelper {
 			if (attributes.length > 1) {
 				String id = attributes[0];
 				String pluginResolution = attributes[1];
-				IFeature feature = getRequiredFeature(id, null, IMatchRules.GREATER_OR_EQUAL, featureMaps);
+				IFeature feature = getRequiredFeature(id, null, IMatchRules.GREATER_OR_EQUAL, targetEnvironmentFilter, featureMaps);
 				addFeatureIfAbsent(feature, pluginResolution, feature2pluginResolution, pendingFeatures); // feature should be absent
 			}
 		}
@@ -189,14 +197,16 @@ public class BundleLauncherHelper {
 
 			IFeatureChild[] includedFeatures = feature.getIncludedFeatures();
 			for (IFeatureChild featureChild : includedFeatures) {
-				IFeature child = getIncludedFeature(featureChild.getId(), featureChild.getVersion(), featureMaps);
-				addFeatureIfAbsent(child, pluginResolution, feature2pluginResolution, pendingFeatures);
+				if (featureChild.matchesEnvironment(target)) {
+					IFeature child = getIncludedFeature(featureChild.getId(), featureChild.getVersion(), targetEnvironmentFilter, featureMaps);
+					addFeatureIfAbsent(child, pluginResolution, feature2pluginResolution, pendingFeatures);
+				}
 			}
 
 			IFeatureImport[] featureImports = feature.getImports();
 			for (IFeatureImport featureImport : featureImports) {
 				if (featureImport.getType() == IFeatureImport.FEATURE) {
-					IFeature dependency = getRequiredFeature(featureImport.getId(), featureImport.getVersion(), featureImport.getMatch(), featureMaps);
+					IFeature dependency = getRequiredFeature(featureImport.getId(), featureImport.getVersion(), featureImport.getMatch(), targetEnvironmentFilter, featureMaps);
 					addFeatureIfAbsent(dependency, pluginResolution, feature2pluginResolution, pendingFeatures);
 				}
 			}
@@ -236,14 +246,14 @@ public class BundleLauncherHelper {
 
 	private static final Comparator<IFeature> NEUTRAL_COMPARATOR = comparing(f -> 0);
 
-	private static IFeature getIncludedFeature(String id, String version, Map<String, List<List<IFeature>>> prioritizedFeatures) {
+	private static IFeature getIncludedFeature(String id, String version, Predicate<IFeature> environmentFilter, Map<String, List<List<IFeature>>> prioritizedFeatures) {
 		List<List<IFeature>> features = prioritizedFeatures.get(id);
-		return getIncluded(features, f -> true, IFeature::getVersion, NEUTRAL_COMPARATOR, version);
+		return getIncluded(features, environmentFilter, IFeature::getVersion, NEUTRAL_COMPARATOR, version);
 	}
 
-	private static IFeature getRequiredFeature(String id, String version, int versionMatchRule, Map<String, List<List<IFeature>>> prioritizedFeatures) {
+	private static IFeature getRequiredFeature(String id, String version, int versionMatchRule, Predicate<IFeature> environmentFilter, Map<String, List<List<IFeature>>> prioritizedFeatures) {
 		List<List<IFeature>> features = prioritizedFeatures.get(id);
-		return getRequired(features, f -> true, IFeature::getVersion, NEUTRAL_COMPARATOR, version, versionMatchRule);
+		return getRequired(features, environmentFilter, IFeature::getVersion, NEUTRAL_COMPARATOR, version, versionMatchRule);
 	}
 
 	private static final Predicate<IPluginModelBase> ENABLED_VALID_PLUGIN_FILTER = p -> p.getBundleDescription() != null && p.isEnabled();
