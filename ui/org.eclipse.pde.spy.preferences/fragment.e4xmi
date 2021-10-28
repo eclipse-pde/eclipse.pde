@@ -6,7 +6,7 @@
     </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_P3fYQGxbEeSQ7v0akw7aRA" featurename="descriptors" parentElementId="xpath:/">
-    <elements xsi:type="basic:PartDescriptor" xmi:id="_T4iy4GxbEeSQ7v0akw7aRA" elementId="org.eclipse.pde.spy.preferences.parts.PreferenceSpyPart" label="Preference Spy" iconURI="platform:/plugin/org.eclipse.pde.spy.preferences/icons/preference_spy.png" category="Eclipse runtime spies" closeable="true" contributionURI="bundleclass://org.eclipse.pde.spy.preferences/org.eclipse.pde.spy.preferences.parts.PreferenceSpyPart">
+    <elements xsi:type="basic:PartDescriptor" xmi:id="_T4iy4GxbEeSQ7v0akw7aRA" elementId="org.eclipse.pde.spy.preferences.parts.PreferenceSpyPart" label="%PreferenceSpyPart_label" iconURI="platform:/plugin/org.eclipse.pde.spy.preferences/icons/preference_spy.png" category="%PreferenceSpyPart_category" closeable="true" contributionURI="bundleclass://org.eclipse.pde.spy.preferences/org.eclipse.pde.spy.preferences.parts.PreferenceSpyPart" description="%PreferenceSpyPart_description">
       <persistedState key="perstistState" value="false"/>
       <tags>View</tags>
       <tags>Spy</tags>
@@ -41,20 +41,20 @@
     </elements>
   </fragments>
   <fragments xsi:type="fragment:StringModelFragment" xmi:id="_YcT00GxiEeSQ7v0akw7aRA" featurename="commands" parentElementId="xpath:/">
-    <elements xsi:type="commands:Command" xmi:id="_eBGTEGxiEeSQ7v0akw7aRA" elementId="org.eclipse.pde.spy.preferences.command.removeAll" commandName="Remove All">
+    <elements xsi:type="commands:Command" xmi:id="_eBGTEGxiEeSQ7v0akw7aRA" elementId="org.eclipse.pde.spy.preferences.command.removeAll" commandName="%command_removeAll">
       <persistedState key="persistState" value="false"/>
       <parameters xmi:id="_ujUuENlxEemSlqvMhebMxQ" elementId="org.eclipse.pde.spy.preferences.commandparameter.0" name="Command Parameter 0"/>
     </elements>
-    <elements xsi:type="commands:Command" xmi:id="_iGEkYGxiEeSQ7v0akw7aRA" elementId="org.eclipse.pde.spy.preferences.command.removeEntry" commandName="Remove Entry">
+    <elements xsi:type="commands:Command" xmi:id="_iGEkYGxiEeSQ7v0akw7aRA" elementId="org.eclipse.pde.spy.preferences.command.removeEntry" commandName="%command_removeEntry">
       <persistedState key="persistState" value="false"/>
     </elements>
-    <elements xsi:type="commands:Command" xmi:id="_ufxRsHY2EeSuTdKDH5hMwg" elementId="org.eclipse.pde.spy.preferences.command.showAllPreferences" commandName="Show All Preferences">
+    <elements xsi:type="commands:Command" xmi:id="_ufxRsHY2EeSuTdKDH5hMwg" elementId="org.eclipse.pde.spy.preferences.command.showAllPreferences" commandName="%command_showAllPreferences">
       <persistedState key="persistState" value="false"/>
     </elements>
-    <elements xsi:type="commands:Command" xmi:id="_4NM_IH_gEeSk-4v3KnNHPw" elementId="org.eclipse.pde.spy.preferences.command.expandAll" commandName="Expand All">
+    <elements xsi:type="commands:Command" xmi:id="_4NM_IH_gEeSk-4v3KnNHPw" elementId="org.eclipse.pde.spy.preferences.command.expandAll" commandName="%command_expandAll">
       <persistedState key="persistState" value="false"/>
     </elements>
-    <elements xsi:type="commands:Command" xmi:id="_68UQwH_gEeSk-4v3KnNHPw" elementId="org.eclipse.pde.spy.preferences.command.collapseAll" commandName="Collapse All">
+    <elements xsi:type="commands:Command" xmi:id="_68UQwH_gEeSk-4v3KnNHPw" elementId="org.eclipse.pde.spy.preferences.command.collapseAll" commandName="%command_collapseAll">
       <persistedState key="persistState" value="false"/>
     </elements>
   </fragments>

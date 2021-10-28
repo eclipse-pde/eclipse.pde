@@ -62,7 +62,7 @@ public class TogglePreferenceTraceControl {
 		ToolBar toolBar = new ToolBar(parent, SWT.NONE);
 		toolItem = new ToolItem(toolBar, SWT.CHECK);
 		toolItem.setSelection(tracePreferences);
-		toolItem.setToolTipText("Toggle Preference Trace");
+		toolItem.setToolTipText(Messages.TogglePreferenceTraceControl_Toggle_Preference_Trace);
 		toolItem.setImage(getResourceManager().createImage(getImageDescriptor()));
 		toolItem.addSelectionListener(new SelectionAdapter() {
 
@@ -97,7 +97,7 @@ public class TogglePreferenceTraceControl {
 
 	protected ImageDescriptor getImageDescriptor() {
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
-		URL url = FileLocator.find(bundle, new Path("icons/trace_preferences.png"), null);
+		URL url = FileLocator.find(bundle, new Path("$nl$/icons/trace_preferences.png"), null);
 		return ImageDescriptor.createFromURL(url);
 	}
 }

@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.pde.spy.core;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import javax.inject.Named;
@@ -116,7 +117,7 @@ public class SpyHandler {
 				toolItem.setCommand(spyCmd);
 				toolItem.setIconURI(mp.getIconURI());
 				toolItem.setLabel(mp.getLabel());
-				toolItem.setTooltip("Open the " + mp.getLabel());
+				toolItem.setTooltip(MessageFormat.format(Messages.SpyHandler_Open, mp.getLocalizedLabel()));
 				toolbar.getChildren().add(toolItem);
 
 				// Add the parameter for the view to open

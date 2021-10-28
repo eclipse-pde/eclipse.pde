@@ -57,7 +57,7 @@ public class ToggleLayoutControl {
 					hierarchicalLayoutPreference ? getResourceManager().createImage(getHierarchicalImageDescriptor())
 							: getResourceManager().createImage(getFlatImageDescriptor()));
 			toolItem.setToolTipText(
-					hierarchicalLayoutPreference ? "Toogle to flat layout" : "Toggle to hierarchical layout");
+					hierarchicalLayoutPreference ? Messages.ToggleLayoutControl_Toggle_to_flat_layout : Messages.ToggleLayoutControl_Toggle_to_hierarchical_layout);
 		}
 	}
 
@@ -67,7 +67,7 @@ public class ToggleLayoutControl {
 		ToolBar toolBar = new ToolBar(parent, SWT.NONE);
 		toolItem = new ToolItem(toolBar, SWT.CHECK);
 		toolItem.setToolTipText(
-				hierarchicalLayoutPreference ? "Toogle to flat layout" : "Toggle to hierarchical layout");
+				hierarchicalLayoutPreference ? Messages.ToggleLayoutControl_Toggle_to_flat_layout : Messages.ToggleLayoutControl_Toggle_to_hierarchical_layout);
 		toolItem.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -102,13 +102,13 @@ public class ToggleLayoutControl {
 
 	protected ImageDescriptor getFlatImageDescriptor() {
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
-		URL url = FileLocator.find(bundle, new Path("icons/flatLayout.png"), null);
+		URL url = FileLocator.find(bundle, new Path("$nl$/icons/flatLayout.png"), null);
 		return ImageDescriptor.createFromURL(url);
 	}
 
 	protected ImageDescriptor getHierarchicalImageDescriptor() {
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
-		URL url = FileLocator.find(bundle, new Path("icons/hierarchicalLayout.png"), null);
+		URL url = FileLocator.find(bundle, new Path("$nl$/icons/hierarchicalLayout.png"), null);
 		return ImageDescriptor.createFromURL(url);
 	}
 }

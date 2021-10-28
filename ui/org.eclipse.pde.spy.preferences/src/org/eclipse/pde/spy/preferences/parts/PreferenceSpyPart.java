@@ -92,10 +92,10 @@ public class PreferenceSpyPart {
 			}
 		});
 
-		createColumn(Fields.nodePath, "Nodepath", 300);
-		createColumn(Fields.key, "Key", 300);
-		createColumn(Fields.oldValue, "Old Value", 150);
-		createColumn(Fields.newValue, "New Value", 150);
+		createColumn(Fields.nodePath, Messages.PreferenceSpyPart_Nodepath, 300);
+		createColumn(Fields.key, Messages.PreferenceSpyPart_Key, 300);
+		createColumn(Fields.oldValue, Messages.PreferenceSpyPart_Old_Value, 150);
+		createColumn(Fields.newValue, Messages.PreferenceSpyPart_New_Value, 150);
 
 		filteredTree.getViewer().setComparator(new PreferenceEntryViewerComparator());
 

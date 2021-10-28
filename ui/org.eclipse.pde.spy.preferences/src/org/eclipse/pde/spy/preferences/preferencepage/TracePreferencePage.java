@@ -25,7 +25,7 @@ public class TracePreferencePage extends FieldEditorPreferencePage implements IW
 	public TracePreferencePage() {
 		super(GRID);
 		setPreferenceStore(PreferenceSpyConfiguration.getPreferenceStore());
-		setDescription("Settings for the preference spy");
+		setDescription(Messages.TracePreferencePage_Settings_for_preference_spy);
 	}
 
 	/**
@@ -33,9 +33,9 @@ public class TracePreferencePage extends FieldEditorPreferencePage implements IW
 	 */
 	@Override
 	public void createFieldEditors() {
-		addField(new BooleanFieldEditor(PreferenceConstants.TRACE_PREFERENCES, "&Trace preference values ",
+		addField(new BooleanFieldEditor(PreferenceConstants.TRACE_PREFERENCES, Messages.TracePreferencePage_Trace_preference_values,
 				getFieldEditorParent()));
-		addField(new BooleanFieldEditor(PreferenceConstants.HIERARCHICAL_LAYOUT, "&Use hierarchical layout in the tree",
+		addField(new BooleanFieldEditor(PreferenceConstants.HIERARCHICAL_LAYOUT, Messages.TracePreferencePage_Use_hierarchical_layout_in_the_tree,
 				getFieldEditorParent()));
 	}
 
