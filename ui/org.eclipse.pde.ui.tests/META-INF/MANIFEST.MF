@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PDE JUnit Tests
 Bundle-SymbolicName: org.eclipse.pde.ui.tests; singleton:=true
-Bundle-Version: 3.11.500.qualifier
+Bundle-Version: 3.11.600.qualifier
 Bundle-ClassPath: tests.jar
 Bundle-Activator: org.eclipse.pde.ui.tests.PDETestsPlugin
 Bundle-Vendor: Eclipse.org
@@ -46,3 +46,4 @@ Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Eclipse-BundleShape: dir
 Automatic-Module-Name: org.eclipse.pde.ui.tests
+Export-Package: org.eclipse.pde.ui.tests.util

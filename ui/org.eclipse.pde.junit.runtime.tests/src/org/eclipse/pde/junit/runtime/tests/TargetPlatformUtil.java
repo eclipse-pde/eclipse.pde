@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2019 Julian Honnen
+ *  Copyright (c) 2019, 2021 Julian Honnen and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,75 +10,30 @@
  *
  *  Contributors:
  *     Julian Honnen <julian.honnen@vector.com> - initial API and implementation
+ *     Hannes Wellmann - Bug 577116: Improve test utility method reusability
  *******************************************************************************/
 package org.eclipse.pde.junit.runtime.tests;
 
-import java.util.Arrays;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.osgi.internal.framework.EquinoxBundle;
-import org.eclipse.osgi.storage.BundleInfo.Generation;
-import org.eclipse.pde.core.target.*;
-import org.eclipse.pde.internal.core.PDECore;
+import java.util.function.Predicate;
+
 import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 public class TargetPlatformUtil {
 
 	private static final String TARGET_NAME = TargetPlatformUtil.class + "_target";
 
-	public static void setRunningPlatformAsTarget() throws CoreException, InterruptedException {
-		ITargetPlatformService tps = PDECore.getDefault().acquireService(ITargetPlatformService.class);
-		ITargetDefinition currentTarget = tps.getWorkspaceTargetDefinition();
-		if (TARGET_NAME.equals(currentTarget.getName())) {
-			return;
-		}
-
-		Job job = new LoadTargetDefinitionJob(createTarget(tps));
-		job.schedule();
-		job.join();
-
-		IStatus result = job.getResult();
-		if (!result.isOK()) {
-			throw new AssertionError(result.getMessage(), result.getException());
-		}
-	}
-
-	private static ITargetDefinition createTarget(ITargetPlatformService tps) throws CoreException {
-		ITargetDefinition targetDefinition = tps.newTarget();
-		targetDefinition.setName(TARGET_NAME);
-
-		Bundle[] installedBundles = FrameworkUtil.getBundle(TargetPlatformUtil.class).getBundleContext().getBundles();
-		ITargetLocation[] bundleContainers = Arrays.stream(installedBundles).map(bundle -> {
-			EquinoxBundle bundleImpl = (EquinoxBundle) bundle;
-			Generation generation = (Generation) bundleImpl.getModule().getCurrentRevision().getRevisionInfo();
-			return generation.getBundleFile();
-		}).map(f -> f.getBaseFile().getParentFile()).distinct()
-				.map(dir -> tps.newDirectoryLocation(dir.getAbsolutePath())).toArray(ITargetLocation[]::new);
-
-		NameVersionDescriptor[] included = Arrays.stream(installedBundles)
-				.filter(b -> !isJunitRuntime(b)) //
-				.map(b -> new NameVersionDescriptor(b.getSymbolicName(), b.getVersion().toString()))
-				.toArray(NameVersionDescriptor[]::new);
-		targetDefinition.setIncluded(included);
-
-		targetDefinition.setTargetLocations(bundleContainers);
-		targetDefinition.setArch(Platform.getOSArch());
-		targetDefinition.setOS(Platform.getOS());
-		targetDefinition.setWS(Platform.getWS());
-		targetDefinition.setNL(Platform.getNL());
-
-		tps.saveTargetDefinition(targetDefinition);
-		return targetDefinition;
+	public static void setRunningPlatformAsTarget() throws Exception {
+		Predicate<Bundle> filter = b -> !isJunitRuntime(b);
+		org.eclipse.pde.ui.tests.util.TargetPlatformUtil.setRunningPlatformSubSetAsTarget(TARGET_NAME, filter);
 	}
 
 	private static boolean isJunitRuntime(Bundle bundle) {
 		// filter out junit.runtime bundles from the target platform
 		// this tests the scenario where PDE supplies them from the host installation
-		
+
 		// XXX: this filter does not match the junit5.runtime bundle
-		// JUnitLaunchConfigurationDelegate::getRequiredPlugins currently does not handle junit5
-		// (which is a bug), so that's fine for now
+		// JUnitLaunchConfigurationDelegate::getRequiredPlugins currently does not
+		// handle junit5 (which is a bug), so that's fine for now
 		return bundle.getSymbolicName().contains("junit.runtime");
 	}
 

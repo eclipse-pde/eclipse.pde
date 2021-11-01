@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,6 +35,7 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
+import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.event.EventHandler;
@@ -237,10 +238,8 @@ public abstract class AbstractTargetTest {
 		eventBroker.subscribe(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, handler);
 
 		// Create the job to load the target, but then join with the job's thread
-		LoadTargetDefinitionJob job = new LoadTargetDefinitionJob(target);
-		job.schedule();
 		try {
-			job.join();
+			TargetPlatformUtil.loadAndSetTargetForWorkspace(target);
 		} catch (InterruptedException e) {
 			assertFalse("Target platform reset interrupted", true);
 		}

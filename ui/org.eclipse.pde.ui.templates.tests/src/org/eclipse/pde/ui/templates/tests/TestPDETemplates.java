@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2019 Red Hat Inc. and others
+ * Copyright (c) 2017, 2021 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Mickael Istria (Red Hat Inc.) - 507861
+ *     Hannes Wellmann - Bug 577116: Improve test utility method reusability
  *******************************************************************************/
 package org.eclipse.pde.ui.templates.tests;
 
@@ -17,18 +18,14 @@ import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.osgi.internal.framework.EquinoxBundle;
-import org.eclipse.osgi.storage.BundleInfo.Generation;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.ds.internal.annotations.Messages;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -37,20 +34,19 @@ import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
-import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.launching.launcher.ProductValidationOperation;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.internal.ui.wizards.WizardElement;
 import org.eclipse.pde.internal.ui.wizards.plugin.*;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.IPluginContentWizard;
+import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.eclipse.ui.PlatformUI;
 import org.junit.*;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.*;
-import org.osgi.framework.Bundle;
 
 @RunWith(Parameterized.class)
 public class TestPDETemplates {
@@ -69,38 +65,8 @@ public class TestPDETemplates {
 	}
 
 	@BeforeClass
-	public static void setTargetPlatform() throws CoreException, InterruptedException {
-		ITargetPlatformService tpService = TargetPlatformService.getDefault();
-		tpService.getWorkspaceTargetDefinition().resolve(new NullProgressMonitor());
-		// workaround https://bugs.eclipse.org/bugs/show_bug.cgi?id=343156
-		ITargetDefinition targetDef = tpService.newTarget();
-		targetDef.setName("Tycho platform");
-		Bundle[] bundles = Platform.getBundle("org.eclipse.core.runtime").getBundleContext().getBundles();
-		List<ITargetLocation> bundleContainers = new ArrayList<>();
-		Set<File> dirs = new HashSet<>();
-		for (Bundle bundle : bundles) {
-			EquinoxBundle bundleImpl = (EquinoxBundle) bundle;
-			Generation generation = (Generation) bundleImpl.getModule().getCurrentRevision().getRevisionInfo();
-			File file = generation.getBundleFile().getBaseFile();
-			File folder = file.getParentFile();
-			if (!dirs.contains(folder)) {
-				dirs.add(folder);
-				bundleContainers.add(tpService.newDirectoryLocation(folder.getAbsolutePath()));
-			}
-		}
-		targetDef.setTargetLocations(bundleContainers.toArray(new ITargetLocation[bundleContainers.size()]));
-		targetDef.setArch(Platform.getOSArch());
-		targetDef.setOS(Platform.getOS());
-		targetDef.setWS(Platform.getWS());
-		targetDef.setNL(Platform.getNL());
-		// targetDef.setJREContainer()
-		tpService.saveTargetDefinition(targetDef);
-
-		Job job = new LoadTargetDefinitionJob(targetDef);
-		job.schedule();
-		job.join();
-
-		// }
+	public static void setTargetPlatform() throws IOException, CoreException, InterruptedException {
+		TargetPlatformUtil.setRunningPlatformAsTarget();
 	}
 
 	@Parameter

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2018 IBM Corporation and others.
+ * Copyright (c) 2011, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,6 +29,7 @@ import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.pde.ui.tests.target.LocalTargetDefinitionTests;
+import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.eclipse.pde.ui.tests.util.TestBundleCreator;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
@@ -113,9 +114,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 			// Set the example target as active
 			ITargetDefinition target = tps.newTarget();
 			target.setTargetLocations(new ITargetLocation[] {tps.newDirectoryLocation(testBundles.toPortableString())});
-			target.resolve(null);
-			LoadTargetDefinitionJob job = new LoadTargetDefinitionJob(target);
-			job.runInWorkspace(new NullProgressMonitor());
+			TargetPlatformUtil.loadAndSetTargetForWorkspace(target);
 
 			// Warm-up Iterations
 			for (int i = 0; i < 2; i++) {

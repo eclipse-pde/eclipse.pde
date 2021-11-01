@@ -1,3 +1,17 @@
+/*******************************************************************************
+ *  Copyright (c) 2021, 2021 Hannes Wellmann and others.
+ *
+ *  This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License 2.0
+ *  which accompanies this distribution, and is available at
+ *  https://www.eclipse.org/legal/epl-2.0/
+ *
+ *  SPDX-License-Identifier: EPL-2.0
+ *
+ *  Contributors:
+ *     Hannes Wellmann - initial API and implementation
+ *     Hannes Wellmann - Bug 577116: Improve test utility method reusability
+ *******************************************************************************/
 package org.eclipse.pde.core.tests.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -6,24 +20,26 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
-import org.assertj.core.api.Assertions;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
-import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.ui.tests.target.IUBundleContainerTests;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
+import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.junit.*;
+import org.junit.rules.TestRule;
 import org.osgi.framework.Version;
 
 public class DependencyManagerTest {
+
+	@Rule
+	public final TestRule restoreTargetDefinition = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
 
 	@Before
 	public void ensurePluginModelManagerIsInitialized() {
@@ -56,11 +72,12 @@ public class DependencyManagerTest {
 		URI locationURI = IUBundleContainerTests.getURI("tests/sites/site.a.b");
 		Map<URI, List<Entry<String, Version>>> locationIUs = Map.of(locationURI,
 				List.of(Map.entry("feature.a.feature.group", Version.emptyVersion)));
-		PDEState pdeState = createTPState(locationIUs);
+		loadIUTarget(locationIUs);
 
-		BundleDescription bundle3 = pdeState.getState().getBundle("bundle.a3", null);
-		BundleDescription bundle2 = pdeState.getState().getBundle("bundle.a2", null);
-		BundleDescription bundle1 = pdeState.getState().getBundle("bundle.a1", null);
+		State state = TargetPlatformHelper.getState();
+		BundleDescription bundle3 = state.getBundle("bundle.a3", null);
+		BundleDescription bundle2 = state.getBundle("bundle.a2", null);
+		BundleDescription bundle1 = state.getBundle("bundle.a1", null);
 
 		Set<BundleDescription> bundles = Set.of(bundle3);
 		Set<BundleDescription> closure = DependencyManager.findRequirementsClosure(bundles, false);
@@ -137,8 +154,8 @@ public class DependencyManagerTest {
 		return PluginRegistry.findModel(project).getBundleDescription();
 	}
 
-	private PDEState createTPState(Map<URI, List<Entry<String, Version>>> locationIUs) {
-		ITargetPlatformService tps = TargetPlatformService.getDefault();
+	private void loadIUTarget(Map<URI, List<Entry<String, Version>>> locationIUs) throws Exception {
+		ITargetPlatformService tps = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		List<ITargetLocation> locations = new ArrayList<>();
 		locationIUs.forEach((locationURI, ius) -> {
 			String[] unitIds = ius.stream().map(Entry::getKey).toArray(String[]::new);
@@ -148,35 +165,8 @@ public class DependencyManagerTest {
 					IUBundleContainer.INCLUDE_REQUIRED | IUBundleContainer.INCLUDE_CONFIGURE_PHASE);
 			locations.add(location);
 		});
-
 		ITargetDefinition target = tps.newTarget();
-		target.setTargetLocations(locations.toArray(ITargetLocation[]::new));
-
-		IStatus resolveStatus = target.resolve(null);
-		if (!resolveStatus.isOK()) {
-			Assertions.fail("Target resolution failed: " + resolveStatus);
-		} else if (!target.getStatus().isOK()) {
-			Assertions.fail("Target resolution failed: " + target.getStatus());
-		}
-
-		TargetBundle[] allBundles = target.getAllBundles();
-
-		List<URI> allLocations = Arrays.stream(allBundles).map(b -> b.getBundleInfo().getLocation())
-				.filter(Objects::nonNull).collect(Collectors.toList());
-
-		// Create a PDE State containing all of the target bundles
-		PDEState pdeState = new PDEState(allLocations.toArray(URI[]::new), true, true, null);
-		pdeState.resolveState(true);
-		if (!pdeState.getState().isResolved()) {
-			Assertions.fail("PDE state resolution failed");
-		}
-		State state = pdeState.getState();
-		for (BundleDescription bundle : state.getBundles()) {
-			ResolverError[] resolverErrors = state.getResolverErrors(bundle);
-			if (resolverErrors != null && resolverErrors.length > 0) {
-				System.err.println(bundle + " has resolution errors: " + Arrays.toString(resolverErrors));
-			}
-		}
-		return pdeState;
+		TargetPlatformUtil.setTargetProperties(target, locations.toArray(ITargetLocation[]::new));
+		TargetPlatformUtil.loadAndSetTargetForWorkspace(target);
 	}
 }

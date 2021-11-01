@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Hannes Wellmann - Bug 577116: Improve test utility method reusability
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests;
 
@@ -19,10 +20,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -30,12 +29,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -48,14 +44,10 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.core.target.ITargetDefinition;
-import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
-import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
-import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.natures.PDE;
-import org.eclipse.pde.internal.core.target.DirectoryBundleContainer;
-import org.osgi.framework.Bundle;
+import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 
 /**
  * Environment used to test the {@link ApiAnalysisBuilder}. This environment
@@ -747,45 +739,14 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	public static void setTargetPlatform() throws CoreException, InterruptedException, IOException {
 		ITargetPlatformService tpService = PDECore.getDefault().acquireService(ITargetPlatformService.class);
-		if (tpService.getWorkspaceTargetDefinition() != null
-				&& tpService.getWorkspaceTargetDefinition().getBundles() == null) {
-			Job job = new LoadTargetDefinitionJob(tpService.getWorkspaceTargetDefinition());
-			job.schedule();
-			job.join();
+		ITargetDefinition workspaceTarget = tpService.getWorkspaceTargetDefinition();
+		if (workspaceTarget != null && workspaceTarget.getBundles() == null) {
+			TargetPlatformUtil.loadAndSetTargetForWorkspace(workspaceTarget);
 		}
-		boolean coreRuntimeFound = false;
-		for (TargetBundle bundle : tpService.getWorkspaceTargetDefinition().getBundles()) {
-			if ("org.eclipse.core.runtime".equals(bundle.getBundleInfo().getSymbolicName())) { //$NON-NLS-1$
-				coreRuntimeFound = true;
-			}
-		}
+		boolean coreRuntimeFound = Arrays.stream(workspaceTarget.getBundles())
+				.anyMatch(bundle -> "org.eclipse.core.runtime".equals(bundle.getBundleInfo().getSymbolicName())); //$NON-NLS-1$
 		if (!coreRuntimeFound) {
-			ITargetDefinition targetDef = tpService.newTarget();
-			targetDef.setName("Current bundles target platform"); //$NON-NLS-1$
-			Bundle[] bundles = Platform.getBundle("org.eclipse.core.runtime").getBundleContext().getBundles(); //$NON-NLS-1$
-			List<ITargetLocation> bundleContainers = new ArrayList<>();
-			Set<File> locations = new HashSet<>();
-			for (Bundle bundle : bundles) {
-				File loc = FileLocator.getBundleFile(bundle);
-				File parentFile = loc.getParentFile();
-				boolean hasMultiplePluginFolders = Arrays.stream(parentFile.listFiles()).filter(File::isDirectory)
-						.filter(file -> new File(file, "META-INF/MANIFEST.MF").isFile()).count() > 1; //$NON-NLS-1$
-				if (!hasMultiplePluginFolders && !locations.contains(parentFile)) {
-					bundleContainers.add(new DirectoryBundleContainer(loc.getParent()));
-					locations.add(parentFile);
-				}
-			}
-			targetDef.setTargetLocations(bundleContainers.toArray(new ITargetLocation[bundleContainers.size()]));
-			targetDef.setArch(Platform.getOSArch());
-			targetDef.setOS(Platform.getOS());
-			targetDef.setWS(Platform.getWS());
-			targetDef.setNL(Platform.getNL());
-			// targetDef.setJREContainer()
-			tpService.saveTargetDefinition(targetDef);
-
-			Job job = new LoadTargetDefinitionJob(targetDef);
-			job.schedule();
-			job.join();
+			TargetPlatformUtil.setRunningPlatformSubSetAsTarget("Current bundles target platform", null); //$NON-NLS-1$
 		}
 	}
 }

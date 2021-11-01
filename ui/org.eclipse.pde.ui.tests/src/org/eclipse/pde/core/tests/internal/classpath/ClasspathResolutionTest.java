@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 Red Hat Inc.
+ * Copyright (c) 2020, 2021 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -7,6 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
+ *
+ *  Contributors:
+ *     Mickael Istria - initial API and implementation
+ *     Hannes Wellmann - Bug 577116: Improve test utility method reusability
  *******************************************************************************/
 package org.eclipse.pde.core.tests.internal.classpath;
 
@@ -14,38 +18,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.function.Predicate;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.RequiredPluginsClasspathContainer;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
+import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.junit.*;
-import org.osgi.framework.ServiceReference;
+import org.junit.rules.TestRule;
+import org.osgi.framework.Bundle;
 
 public class ClasspathResolutionTest {
 
-	private ITargetPlatformService tpService;
-	private ITargetDefinition initialTarget;
-	private IProject project;
+	@ClassRule
+	public static final TestRule RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
 
-	@Before
-	public void setup() throws CoreException {
-		ServiceReference<ITargetPlatformService> ref = PDECore.getDefault().getBundleContext()
-				.getServiceReference(ITargetPlatformService.class);
-		tpService = PDECore.getDefault().getBundleContext().getService(ref);
-		initialTarget = tpService.getWorkspaceTargetDefinition();
-		new LoadTargetDefinitionJob(initialTarget).runInWorkspace(new NullProgressMonitor());
-	}
+	private IProject project;
 
 	@After
 	public void tearDown() throws CoreException {
-		new LoadTargetDefinitionJob(initialTarget).runInWorkspace(new NullProgressMonitor());
 		if (project != null) {
 			project.delete(false, false, null);
 			project = null;
@@ -142,17 +139,8 @@ public class ClasspathResolutionTest {
 	}
 
 	private void loadTargetPlatform(String bundleName) throws Exception {
-		ITargetDefinition javaxXmlTarget = tpService.newTarget();
-		javaxXmlTarget.setName("Target containing " + bundleName);
-		Collection<String> bundleNames = List.of(bundleName, "org.eclipse.osgi");
-		Set<File> directories = new HashSet<>(2);
-		for (String name : bundleNames) {
-			directories.add(FileLocator.getBundleFile(Platform.getBundle(name)).getParentFile());
-		}
-		javaxXmlTarget.setTargetLocations(directories.stream().map(File::getAbsolutePath)
-				.map(tpService::newDirectoryLocation).toArray(ITargetLocation[]::new));
-		javaxXmlTarget.setIncluded(bundleNames.stream().map(name -> new NameVersionDescriptor(name, null))
-				.toArray(NameVersionDescriptor[]::new));
-		new LoadTargetDefinitionJob(javaxXmlTarget).runInWorkspace(new NullProgressMonitor());
+		Set<String> bundleNames = Set.of(bundleName, "org.eclipse.osgi");
+		Predicate<Bundle> bundleFilter = b -> bundleNames.contains(b.getSymbolicName());
+		TargetPlatformUtil.setRunningPlatformSubSetAsTarget("Target containing " + bundleName, bundleFilter);
 	}
 }

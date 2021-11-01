@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2019 Julian Honnen
+ *  Copyright (c) 2019, 2021 Julian Honnen and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  *  Contributors:
  *     Julian Honnen <julian.honnen@vector.com> - initial API and implementation
  *     Andras Peteri <apeteri@b2international.com> - extracted common superclass
+ *     Hannes Wellmann - Bug 577116: Improve test utility method reusability
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.launcher;
 
@@ -58,11 +59,6 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 			}
 		};
 		operation.run(null);
-	}
-
-	@AfterClass
-	public static void cleanup() throws Exception {
-		featureProject.delete(true, null);
 	}
 
 	@Before
