@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.spy.preferences.model;
 
+import org.eclipse.e4.ui.dialogs.filteredtree.PatternFilter;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.dialogs.PatternFilter;
 
 public class PreferenceEntryPatternFilter extends PatternFilter {
 

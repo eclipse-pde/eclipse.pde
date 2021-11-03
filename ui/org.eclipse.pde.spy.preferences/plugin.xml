@@ -9,14 +9,6 @@
       </fragment>
    </extension>
    <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            class="org.eclipse.pde.spy.preferences.preferencepage.TracePreferencePage"
-            id="org.eclipse.pde.spy.preferences.tracepreferencespage"
-            name="%name">
-      </page>
-   </extension>
-   <extension
 		 point="org.eclipse.pde.spy.core.spyPart">
       <spyPart
             description="%description"

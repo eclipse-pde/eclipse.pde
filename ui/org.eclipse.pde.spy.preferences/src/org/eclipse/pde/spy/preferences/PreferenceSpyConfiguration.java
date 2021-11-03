@@ -13,24 +13,22 @@
  *******************************************************************************/
 package org.eclipse.pde.spy.preferences;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.preferences.ScopedPreferenceStore;
-import org.osgi.framework.FrameworkUtil;
 
 /**
  * Gives access to the scope preferences
  */
 public class PreferenceSpyConfiguration {
+	
+	private static String bundleId = "org.eclipse.pde.spy.preferences";
 
-	private static ScopedPreferenceStore preferenceStore;
+	private static IEclipsePreferences preferenceStore;
 
-	public static IPreferenceStore getPreferenceStore() {
+	public static IEclipsePreferences getPreferenceStore() {
 		// Create the preference store lazily.
 		if (preferenceStore == null) {
-			preferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE,
-					FrameworkUtil.getBundle(PreferenceSpyConfiguration.class).getSymbolicName());
-
+			preferenceStore = 	InstanceScope.INSTANCE.getNode(bundleId);;
 		}
 		return preferenceStore;
 	}

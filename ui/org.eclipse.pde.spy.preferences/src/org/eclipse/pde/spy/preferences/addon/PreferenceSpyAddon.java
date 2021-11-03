@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.spy.preferences.addon;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.core.internal.preferences.EclipsePreferences;
@@ -29,8 +28,6 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.pde.spy.preferences.PreferenceSpyConfiguration;
 import org.eclipse.pde.spy.preferences.constants.PreferenceConstants;
 import org.eclipse.pde.spy.preferences.constants.PreferenceSpyEventTopics;
 import org.osgi.service.prefs.BackingStoreException;
@@ -114,14 +111,7 @@ public class PreferenceSpyAddon {
 		}
 	}
 
-	@PostConstruct
-	public void initializeDefaultPreferences() {
-		IPreferenceStore store = PreferenceSpyConfiguration.getPreferenceStore();
-		store.setDefault(PreferenceConstants.TRACE_PREFERENCES, false);
-	}
-
 	private final class ChangedPreferenceListener implements IPreferenceChangeListener {
-
 		@Override
 		public void preferenceChange(PreferenceChangeEvent event) {
 			eventBroker.post(PreferenceSpyEventTopics.PREFERENCESPY_PREFERENCE_CHANGED, event);
