@@ -15,6 +15,7 @@
 package org.eclipse.pde.junit.runtime.tests;
 
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import org.osgi.framework.Bundle;
 
@@ -27,14 +28,13 @@ public class TargetPlatformUtil {
 		org.eclipse.pde.ui.tests.util.TargetPlatformUtil.setRunningPlatformSubSetAsTarget(TARGET_NAME, filter);
 	}
 
-	private static boolean isJunitRuntime(Bundle bundle) {
-		// filter out junit.runtime bundles from the target platform
-		// this tests the scenario where PDE supplies them from the host installation
+	private static final Pattern JUNIT_RUNTIME_IDS = Pattern
+			.compile("\\.junit\\d*\\.runtime|junit\\..+\\.engine$|org.junit.platform.launcher");
 
-		// XXX: this filter does not match the junit5.runtime bundle
-		// JUnitLaunchConfigurationDelegate::getRequiredPlugins currently does not
-		// handle junit5 (which is a bug), so that's fine for now
-		return bundle.getSymbolicName().contains("junit.runtime");
+	private static boolean isJunitRuntime(Bundle bundle) {
+		// filter out junit.runtime and test engine bundles from the target platform
+		// this tests the scenario where PDE supplies them from the host installation
+		return JUNIT_RUNTIME_IDS.matcher(bundle.getSymbolicName()).find();
 	}
 
 }

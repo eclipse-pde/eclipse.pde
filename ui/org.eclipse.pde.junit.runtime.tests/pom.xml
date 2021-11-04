@@ -24,7 +24,7 @@
 		<relativePath>../../tests-pom/</relativePath>
 	</parent>
 	<artifactId>org.eclipse.pde.junit.runtime.tests</artifactId>
-	<version>3.6.600-SNAPSHOT</version>
+	<version>3.6.700-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
 	
 	<build>

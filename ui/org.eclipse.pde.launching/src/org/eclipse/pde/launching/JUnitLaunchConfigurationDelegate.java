@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.internal.junit.launcher.*;
 import org.eclipse.jdt.launching.*;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -288,7 +289,8 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 	private IPluginModelBase findRequiredPluginInTargetOrHost(String id) throws CoreException {
 		IPluginModelBase model = PluginRegistry.findModel(id);
-		if (model == null) {
+		if (model == null || !model.getBundleDescription().isResolved()) {
+			// prefer bundle from host over unresolved bundle from target
 			model = PDECore.getDefault().findPluginInHost(id);
 		}
 		if (model == null) {
@@ -426,15 +428,8 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		fAllBundles = fModels.keySet().stream().collect(Collectors.groupingBy(m -> m.getPluginBase().getId(), LinkedHashMap::new, Collectors.toCollection(ArrayList::new)));
 
 		// implicitly add the plug-ins required for JUnit testing if necessary
-		String[] requiredPlugins = JUnitLaunchConfigurationDelegate.getRequiredPlugins(configuration);
-		for (String requiredPlugin : requiredPlugins) {
-			String id = requiredPlugin;
-			if (!fAllBundles.containsKey(id)) {
-				IPluginModelBase model = findRequiredPluginInTargetOrHost(id);
-				fAllBundles.computeIfAbsent(model.getPluginBase().getId(), i -> new ArrayList<>()).add(model);
-				fModels.put(model, "default:default"); //$NON-NLS-1$
-			}
-		}
+		addRequiredJunitRuntimePlugins(configuration);
+
 		String attribute = launch.getAttribute(PDE_JUNIT_SHOW_COMMAND);
 		boolean isShowCommand = false;
 		if (attribute != null) {
@@ -454,17 +449,57 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		synchronizeManifests(configuration, subMonitor.split(1));
 	}
 
+	private void addRequiredJunitRuntimePlugins(ILaunchConfiguration configuration) throws CoreException {
+		Set<String> requiredPlugins = new LinkedHashSet<>(getRequiredJunitRuntimePlugins(configuration));
+
+		if (fAllBundles.containsKey("org.junit.platform.runner")) { //$NON-NLS-1$
+			// add launcher and jupiter.engine to support @RunWith(JUnitPlatform.class)
+			requiredPlugins.add("org.junit.platform.launcher"); //$NON-NLS-1$
+			requiredPlugins.add("org.junit.jupiter.engine"); //$NON-NLS-1$
+		}
+
+		Set<BundleDescription> addedRequirements = new HashSet<>();
+		addAbsentRequirements(requiredPlugins, addedRequirements);
+
+		Set<BundleDescription> requirementsOfRequirements = DependencyManager.findRequirementsClosure(addedRequirements);
+		Set<String> rorIds = requirementsOfRequirements.stream().map(BundleDescription::getSymbolicName).collect(Collectors.toSet());
+		addAbsentRequirements(rorIds, null);
+	}
+
+	private void addAbsentRequirements(Collection<String> requirements, Set<BundleDescription> addedRequirements) throws CoreException {
+		for (String id : requirements) {
+			List<IPluginModelBase> models = fAllBundles.computeIfAbsent(id, k -> new ArrayList<>());
+			if (models.stream().noneMatch(m -> m.getBundleDescription().isResolved())) {
+				IPluginModelBase model = findRequiredPluginInTargetOrHost(id);
+				models.add(model);
+				BundleLauncherHelper.addDefaultStartingBundle(fModels, model);
+				if (addedRequirements != null) {
+					addedRequirements.add(model.getBundleDescription());
+				}
+			}
+		}
+	}
+
 	/**
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @param configuration non null config
 	 * @return required plugins
 	 */
-	public static String[] getRequiredPlugins(ILaunchConfiguration configuration) {
-		// if we are using JUnit4, we need to include the junit4 specific bundles
+	@SuppressWarnings("restriction")
+	public static Collection<String> getRequiredJunitRuntimePlugins(ILaunchConfiguration configuration) {
 		ITestKind testKind = JUnitLaunchConfigurationConstants.getTestRunnerKind(configuration);
-		if (TestKindRegistry.JUNIT4_TEST_KIND_ID.equals(testKind.getId()))
-			return new String[] {"org.junit", "org.eclipse.jdt.junit.runtime", "org.eclipse.pde.junit.runtime", "org.eclipse.jdt.junit4.runtime"}; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		return new String[] {"org.junit", "org.eclipse.jdt.junit.runtime", "org.eclipse.pde.junit.runtime"}; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		if (testKind.isNull()) {
+			return Collections.emptyList();
+		}
+		List<String> plugins = new ArrayList<>();
+		plugins.add("org.eclipse.pde.junit.runtime"); //$NON-NLS-1$
+
+		if (TestKindRegistry.JUNIT4_TEST_KIND_ID.equals(testKind.getId())) {
+			plugins.add("org.eclipse.jdt.junit4.runtime"); //$NON-NLS-1$
+		} else if (TestKindRegistry.JUNIT5_TEST_KIND_ID.equals(testKind.getId())) {
+			plugins.add("org.eclipse.jdt.junit5.runtime"); //$NON-NLS-1$
+		}
+		return plugins;
 	}
 
 	/**

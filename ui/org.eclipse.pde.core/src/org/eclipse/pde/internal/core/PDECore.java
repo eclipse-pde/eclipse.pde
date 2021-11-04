@@ -203,7 +203,8 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 					.filter(b -> !b.isSourceBundle()) //
 					.map(b -> b.getBundleInfo().getLocation()) //
 					.toArray(URI[]::new);
-			PDEState state = new PDEState(pluginPaths, false, false, new NullProgressMonitor());
+			PDEState state = new PDEState(pluginPaths, true, false, new NullProgressMonitor());
+			state.resolveState(false);
 
 			for (IPluginModelBase plugin : state.getTargetModels()) {
 				fHostPlugins.put(plugin.getPluginBase().getId(), plugin);
