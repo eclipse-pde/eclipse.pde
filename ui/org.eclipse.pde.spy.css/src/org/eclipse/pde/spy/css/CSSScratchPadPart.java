@@ -3,6 +3,7 @@ package org.eclipse.pde.spy.css;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,8 +70,8 @@ public class CSSScratchPadPart {
 	}
 
 	private void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, APPLY_ID, "Apply", true);
-		createButton(parent, IDialogConstants.OK_ID, "Close", false);
+		createButton(parent, APPLY_ID, Messages.CSSScratchPadPart_Apply, true);
+		createButton(parent, IDialogConstants.OK_ID, Messages.CSSScratchPadPart_Close, false);
 		// createButton(parent, IDialogConstants.CANCEL_ID,
 		// IDialogConstants.CANCEL_LABEL, false);
 	}
@@ -111,11 +112,11 @@ public class CSSScratchPadPart {
 
 	private void applyCSS() {
 		if (themeEngine == null) {
-			exceptions.setText("No theme engine available!");
+			exceptions.setText(Messages.CSSScratchPadPart_No_theme_engine_available);
 			return;
 		}
 		long start = System.nanoTime();
-		exceptions.setText("");
+		exceptions.setText(""); //$NON-NLS-1$
 
 		StringBuilder sb = new StringBuilder();
 
@@ -126,9 +127,9 @@ public class CSSScratchPadPart {
 		int count = 0;
 		for (CSSEngine engine : ((ThemeEngine) themeEngine).getCSSEngines()) {
 			if (count++ > 0) {
-				sb.append("\n\n");
+				sb.append("\n\n"); //$NON-NLS-1$
 			}
-			sb.append("Engine[").append(engine.getClass().getSimpleName()).append("]");
+			sb.append(MessageFormat.format(Messages.CSSScratchPadPart_Engine, engine.getClass().getSimpleName()));
 			ExtendedDocumentCSS doc = (ExtendedDocumentCSS) engine.getDocumentCSS();
 			List<StyleSheet> sheets = new ArrayList<>();
 			StyleSheetList list = doc.getStyleSheets();
@@ -146,12 +147,11 @@ public class CSSScratchPadPart {
 				engine.reapply();
 
 				long nanoDiff = System.nanoTime() - start;
-				sb.append("\nTime: ").append(nanoDiff / 1000000).append("ms");
+				sb.append(MessageFormat.format("\n{0}", MessageFormat.format(Messages.CSSScratchPadPart_Time_ms, nanoDiff / 1000000))); //$NON-NLS-1$
 			} catch (CSSParseException e) {
-				sb.append("\nError: line ").append(e.getLineNumber()).append(" col ").append(e.getColumnNumber())
-						.append(": ").append(e.getLocalizedMessage());
+				sb.append(MessageFormat.format("\n{0}", MessageFormat.format(Messages.CSSScratchPadPart_Error_line_col, e.getLineNumber(), e.getColumnNumber(), e.getLocalizedMessage()))); //$NON-NLS-1$
 			} catch (IOException e) {
-				sb.append("\nError: ").append(e.getLocalizedMessage());
+				sb.append(MessageFormat.format("\n{0}", MessageFormat.format(Messages.CSSScratchPadPart_Error, e.getLocalizedMessage()))); //$NON-NLS-1$
 			}
 		}
 		exceptions.setText(sb.toString());

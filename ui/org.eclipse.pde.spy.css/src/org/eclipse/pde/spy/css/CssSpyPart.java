@@ -15,6 +15,7 @@
 package org.eclipse.pde.spy.css;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -242,19 +243,19 @@ public class CssSpyPart {
 	protected void populate(Widget selected) {
 		if (selected == null) {
 			cssPropertiesViewer.setInput(null);
-			cssRules.setText("");
+			cssRules.setText(""); //$NON-NLS-1$
 			return;
 		}
 		if (selected.isDisposed()) {
 			cssPropertiesViewer.setInput(null);
-			cssRules.setText("*DISPOSED*");
+			cssRules.setText(Messages.CssSpyPart_DISPOSED);
 			return;
 		}
 
 		CSSStylableElement element = getCSSElement(selected);
 		if (element == null) {
 			cssPropertiesViewer.setInput(null);
-			cssRules.setText("Not a stylable element");
+			cssRules.setText(Messages.CssSpyPart_Not_a_stylable_element);
 			return;
 		}
 
@@ -265,12 +266,12 @@ public class CssSpyPart {
 		CSSStyleDeclaration decl = engine.getViewCSS().getComputedStyle(element, null);
 
 		if (element.getCSSStyle() != null) {
-			sb.append("\nCSS Inline Style(s):\n  ");
-			Util.join(sb, element.getCSSStyle().split(";"), ";\n  ");
+			sb.append(MessageFormat.format("\n{0}\n  ", Messages.CssSpyPart_CSS_Inline_Styles)); //$NON-NLS-1$
+			Util.join(sb, element.getCSSStyle().split(";"), ";\n  "); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		if (decl != null) {
-			sb.append("\n\nCSS Properties:\n");
+			sb.append(MessageFormat.format("\n\n{0}\n", Messages.CssSpyPart_CSS_Properties_)); //$NON-NLS-1$
 			try {
 				if (decl != null) {
 					sb.append(decl.getCssText());
@@ -280,53 +281,52 @@ public class CssSpyPart {
 			}
 		}
 		if (element.getStaticPseudoInstances().length > 0) {
-			sb.append("\n\nStatic Pseudoinstances:\n  ");
-			Util.join(sb, element.getStaticPseudoInstances(), "\n  ");
+			sb.append(MessageFormat.format("\n\n{0}\n  ", Messages.CssSpyPart_Static_Pseudoinstances)); //$NON-NLS-1$
+			Util.join(sb, element.getStaticPseudoInstances(), "\n  "); //$NON-NLS-1$
 		}
 
 		if (element.getCSSClass() != null) {
-			sb.append("\n\nCSS Classes:\n  ");
-			Util.join(sb, element.getCSSClass().split(" +"), "\n  ");
+			sb.append(MessageFormat.format("\n\n{0}\n  ", Messages.CssSpyPart_CSS_Classes)); //$NON-NLS-1$
+			Util.join(sb, element.getCSSClass().split(" +"), "\n  "); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		if (element.getCSSId() != null) {
-			sb.append("\n\nCSS ID:\n  ");
-			Util.join(sb, element.getCSSId().split(" +"), "\n  ");
+			sb.append(MessageFormat.format("\n\n{0}\n  ", Messages.CssSpyPart_CSS_ID_)); //$NON-NLS-1$
+			Util.join(sb, element.getCSSId().split(" +"), "\n  "); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		if (element.getAttribute("style") != null) {
-			sb.append("\n\nSWT Style Bits:\n  ");
-			Util.join(sb, element.getAttribute("style").split(" +"), "\n  ");
+		if (element.getAttribute("style") != null) { //$NON-NLS-1$
+			sb.append(MessageFormat.format("\n\n{0}\n  ", Messages.CssSpyPart_SWT_Style_Bits)); //$NON-NLS-1$
+			Util.join(sb, element.getAttribute("style").split(" +"), "\n  "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
-		sb.append("\n\nCSS Class Element:\n  ").append(element.getClass().getName());
+		sb.append(MessageFormat.format("\n\n{0}\n  ", Messages.CssSpyPart_CSS_Class_Element)).append(element.getClass().getName()); //$NON-NLS-1$
 
 		// this is useful for diagnosing issues
 		if (element.getNativeWidget() instanceof Shell && ((Shell) element.getNativeWidget()).getParent() != null) {
 			Shell nw = (Shell) element.getNativeWidget();
-			sb.append("\n\nShell parent: ").append(nw.getParent());
+			sb.append(MessageFormat.format("\n\n{0} ", Messages.CssSpyPart_Shell_parent)).append(nw.getParent()); //$NON-NLS-1$
 		}
 		if (element.getNativeWidget() instanceof Composite) {
 			Composite nw = (Composite) element.getNativeWidget();
-			sb.append("\n\nSWT Layout: ").append(nw.getLayout());
+			sb.append(MessageFormat.format("\n\n{0} ", Messages.CssSpyPart_SWT_Layout)).append(nw.getLayout()); //$NON-NLS-1$
 		}
 		Rectangle bounds = getBounds(selected);
 		if (bounds != null) {
-			sb.append("\nBounds: x=").append(bounds.x).append(" y=").append(bounds.y);
-			sb.append(" h=").append(bounds.height).append(" w=").append(bounds.width);
+			sb.append(MessageFormat.format("\n{0} ", Messages.CssSpyPart_Bounds)).append("x=").append(bounds.x).append(" y=").append(bounds.y); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			sb.append(" h=").append(bounds.height).append(" w=").append(bounds.width); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		if (element.getNativeWidget() instanceof Widget) {
 			Widget w = (Widget) element.getNativeWidget();
 			if (w.getData() != null) {
-				sb.append("\nWidget data: ").append(w.getData());
+				sb.append(MessageFormat.format("\n{0} ", Messages.CssSpyPart_Widget_data)).append(w.getData()); //$NON-NLS-1$
 			}
 			if (w.getData(SWT.SKIN_ID) != null) {
-				sb.append("\nWidget Skin ID (").append(SWT.SKIN_ID).append("): ").append(w.getData(SWT.SKIN_ID));
+				sb.append(MessageFormat.format("\n{0} ", MessageFormat.format(Messages.CssSpyPart_Widget_Skin_ID, SWT.SKIN_ID))).append(w.getData(SWT.SKIN_ID)); //$NON-NLS-1$
 			}
 			if (w.getData(SWT.SKIN_CLASS) != null) {
-				sb.append("\nWidget Skin Class (").append(SWT.SKIN_CLASS).append("): ")
-						.append(w.getData(SWT.SKIN_CLASS));
+				sb.append(MessageFormat.format("\n{0} ", MessageFormat.format(Messages.CssSpyPart_Widget_Skin_Class, SWT.SKIN_CLASS))).append(w.getData(SWT.SKIN_CLASS)); //$NON-NLS-1$
 			}
 		}
 
@@ -360,7 +360,7 @@ public class CssSpyPart {
 		Shell highlight = new Shell(selectedShell, SWT.NO_TRIM | SWT.MODELESS | SWT.NO_FOCUS | SWT.ON_TOP);
 		highlight.setBackground(display.getSystemColor(SWT.COLOR_RED));
 		// set CSS ID for the dark theme
-		highlight.setData("org.eclipse.e4.ui.css.id", "css-spy");
+		highlight.setData("org.eclipse.e4.ui.css.id", "css-spy"); //$NON-NLS-1$ //$NON-NLS-2$
 		Region highlightRegion = new Region();
 		highlightRegion.add(0, 0, 1, bounds.height + 2);
 		highlightRegion.add(0, 0, bounds.width + 2, 1);
@@ -422,17 +422,17 @@ public class CssSpyPart {
 		Composite top = new Composite(outer, SWT.NONE);
 		GridLayoutFactory.swtDefaults().numColumns(3).applyTo(top);
 		cssSearchBox = new Text(top, SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
-		cssSearchBox.setMessage("CSS Selector");
-		cssSearchBox.setToolTipText("Highlight matching widgets");
+		cssSearchBox.setMessage(Messages.CssSpyPart_CSS_Selector);
+		cssSearchBox.setToolTipText(Messages.CssSpyPart_Highlight_matching_widgets);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(cssSearchBox);
 
 		followSelection = new Button(top, SWT.CHECK);
 		followSelection.setSelection(true);
-		followSelection.setText("Follow UI Selection");
+		followSelection.setText(Messages.CssSpyPart_Follow_UI_Selection);
 		GridDataFactory.swtDefaults().applyTo(followSelection);
 
 		showAllShells = new Button(top, SWT.CHECK);
-		showAllShells.setText("All shells");
+		showAllShells.setText(Messages.CssSpyPart_All_shells);
 		GridDataFactory.swtDefaults().applyTo(showAllShells);
 
 		GridDataFactory.fillDefaults().applyTo(top);
@@ -453,17 +453,17 @@ public class CssSpyPart {
 
 		TreeViewerColumn widgetTypeColumn = new TreeViewerColumn(widgetTreeViewer, SWT.NONE);
 		widgetTypeColumn.getColumn().setWidth(100);
-		widgetTypeColumn.getColumn().setText("Widget");
+		widgetTypeColumn.getColumn().setText(Messages.CssSpyPart_Widget);
 		widgetTypeColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object item) {
 				CSSStylableElement element = CssSpyPart.getCSSElement(item);
-				return element.getLocalName() + " (" + element.getNamespaceURI() + ")";
+				return element.getLocalName() + " " + MessageFormat.format(Messages.CssSpyPart_NamespaceURI, element.getNamespaceURI()); //$NON-NLS-1$
 			}
 		});
 
 		TreeViewerColumn widgetClassColumn = new TreeViewerColumn(widgetTreeViewer, SWT.NONE);
-		widgetClassColumn.getColumn().setText("CSS Class");
+		widgetClassColumn.getColumn().setText(Messages.CssSpyPart_CSS_Class);
 		widgetClassColumn.getColumn().setWidth(100);
 		widgetClassColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
@@ -472,8 +472,8 @@ public class CssSpyPart {
 				if (element.getCSSClass() == null) {
 					return null;
 				}
-				String classes[] = element.getCSSClass().split(" +");
-				return classes.length <= 1 ? classes[0] : classes[0] + " (+" + (classes.length - 1) + " others)";
+				String classes[] = element.getCSSClass().split(" +"); //$NON-NLS-1$
+				return classes.length <= 1 ? classes[0] : classes[0] + " " + MessageFormat.format(Messages.CssSpyPart_plus_others, (classes.length - 1)); //$NON-NLS-1$
 			}
 
 			@Override
@@ -483,10 +483,10 @@ public class CssSpyPart {
 					return null;
 				}
 				StringBuilder sb = new StringBuilder();
-				sb.append(element.getLocalName()).append(" (").append(element.getNamespaceURI()).append(")");
+				sb.append(element.getLocalName()).append(" ").append(MessageFormat.format(Messages.CssSpyPart_NamespaceURI, element.getNamespaceURI())); //$NON-NLS-1$
 				if (element.getCSSClass() != null) {
-					sb.append("\nClasses:\n  ");
-					Util.join(sb, element.getCSSClass().split(" +"), "\n  ");
+					sb.append(MessageFormat.format("\n{0}\n  ", Messages.CssSpyPart_Classes)); //$NON-NLS-1$
+					Util.join(sb, element.getCSSClass().split(" +"), "\n  "); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				return sb.toString();
 			}
@@ -494,7 +494,7 @@ public class CssSpyPart {
 
 		TreeViewerColumn widgetIdColumn = new TreeViewerColumn(widgetTreeViewer, SWT.NONE);
 		widgetIdColumn.getColumn().setWidth(100);
-		widgetIdColumn.getColumn().setText("CSS Id");
+		widgetIdColumn.getColumn().setText(Messages.CssSpyPart_CSS_ID);
 		widgetIdColumn.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object item) {
@@ -515,11 +515,11 @@ public class CssSpyPart {
 
 		Label lblCssProperties = new Label(container, SWT.NONE);
 		lblCssProperties.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		lblCssProperties.setText("CSS Properties");
+		lblCssProperties.setText(Messages.CssSpyPart_CSS_Properties);
 
 		Label lblCssRules = new Label(container, SWT.NONE);
 		lblCssRules.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		lblCssRules.setText("CSS Rules");
+		lblCssRules.setText(Messages.CssSpyPart_CSS_Rules);
 
 		// // THE CSS PROPERTIES TABLE
 		Composite propsComposite = new Composite(container, SWT.BORDER);
@@ -544,7 +544,7 @@ public class CssSpyPart {
 
 		TableViewerColumn propName = new TableViewerColumn(cssPropertiesViewer, SWT.NONE);
 		propName.getColumn().setWidth(100);
-		propName.getColumn().setText("Property");
+		propName.getColumn().setText(Messages.CssSpyPart_Property);
 		propName.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
@@ -554,14 +554,14 @@ public class CssSpyPart {
 
 		TableViewerColumn propValue = new TableViewerColumn(cssPropertiesViewer, SWT.NONE);
 		propValue.getColumn().setWidth(100);
-		propValue.getColumn().setText("Value");
+		propValue.getColumn().setText(Messages.CssSpyPart_Value);
 		propValue.setLabelProvider(new ColumnLabelProvider() {
 			@Override
 			public String getText(Object element) {
 				try {
 					return ((CSSPropertyProvider) element).getValue();
 				} catch (Exception e) {
-					System.err.println("Error fetching property: " + element + ": " + e);
+					System.err.println(MessageFormat.format(Messages.CssSpyPart_Error_fetching_property, element, e));
 					return null;
 				}
 			}
@@ -584,9 +584,9 @@ public class CssSpyPart {
 			protected Object getValue(Object element) {
 				try {
 					String value = ((CSSPropertyProvider) element).getValue();
-					return value == null ? "" : value;
+					return value == null ? "" : value; //$NON-NLS-1$
 				} catch (Exception e) {
-					return "";
+					return ""; //$NON-NLS-1$
 				}
 			}
 
@@ -599,7 +599,7 @@ public class CssSpyPart {
 					CSSPropertyProvider provider = (CSSPropertyProvider) element;
 					provider.setValue((String) value);
 				} catch (Exception e) {
-					MessageDialog.openError(activeShell, "Error", "Unable to set property:\n\n" + e.getMessage());
+					MessageDialog.openError(activeShell, Messages.CssSpyPart_Error, MessageFormat.format("{0}\n\n", Messages.CssSpyPart_Unable_to_set_property) + e.getMessage()); //$NON-NLS-1$
 				}
 				cssPropertiesViewer.update(element, null);
 			}
@@ -616,10 +616,10 @@ public class CssSpyPart {
 
 		// / THE CSS PROPERTIES TABLE (again)
 		showUnsetProperties = new Button(container, SWT.CHECK);
-		showUnsetProperties.setText("Show unset properties");
+		showUnsetProperties.setText(Messages.CssSpyPart_Show_unset_properties);
 		showCssFragment = new Button(container, SWT.PUSH);
-		showCssFragment.setText("Show CSS fragment");
-		showCssFragment.setToolTipText("Generates CSS rule block for the selected widget");
+		showCssFragment.setText(Messages.CssSpyPart_Show_CSS_fragment);
+		showCssFragment.setToolTipText(Messages.CssSpyPart_Generates_CSS_rule_block_for_the_selected_widget);
 
 		// and for balance
 		new Label(container, SWT.NONE);
@@ -755,8 +755,8 @@ public class CssSpyPart {
 				addCssFragment((Widget) o, sb);
 			}
 		}
-		TextPopupDialog tpd = new TextPopupDialog(widgetTreeViewer.getControl().getShell(), "CSS", sb.toString(), true,
-				"Escape to dismiss");
+		TextPopupDialog tpd = new TextPopupDialog(widgetTreeViewer.getControl().getShell(), Messages.CssSpyPart_CSS, sb.toString(), true,
+				Messages.CssSpyPart_Escape_to_dismiss);
 		tpd.open();
 	}
 
@@ -768,9 +768,9 @@ public class CssSpyPart {
 
 		sb.append(element.getLocalName());
 		if (element.getCSSId() != null) {
-			sb.append("#").append(element.getCSSId());
+			sb.append("#").append(element.getCSSId()); //$NON-NLS-1$
 		}
-		sb.append(" {");
+		sb.append(" {"); //$NON-NLS-1$
 
 		CSSEngine engine = getCSSEngine(element);
 		// we first check the viewCSS and then the property values
@@ -784,7 +784,7 @@ public class CssSpyPart {
 		// First list the generated properties
 		for (Iterator<String> iter = propertyNames.iterator(); iter.hasNext();) {
 			String propertyName = iter.next();
-			String genValue = trim(engine.retrieveCSSProperty(element, propertyName, ""));
+			String genValue = trim(engine.retrieveCSSProperty(element, propertyName, "")); //$NON-NLS-1$
 			String declValue = null;
 
 			if (genValue == null) {
@@ -798,11 +798,11 @@ public class CssSpyPart {
 				}
 			}
 			if (count == 0) {
-				sb.append("\n  /* actual values */");
+				sb.append(MessageFormat.format("\n  /* {0} */", Messages.CssSpyPart_actual_values)); //$NON-NLS-1$
 			}
-			sb.append("\n  ").append(propertyName).append(": ").append(genValue).append(";");
+			sb.append("\n  ").append(propertyName).append(": ").append(genValue).append(";"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if (declValue != null) {
-				sb.append("\t/* declared in CSS: ").append(declValue).append(" */");
+				sb.append(MessageFormat.format("\t/* {0} */", MessageFormat.format(Messages.CssSpyPart_declared_in_CSS, declValue))); //$NON-NLS-1$
 			}
 			count++;
 			iter.remove(); // remove so we don't re-report below
@@ -822,14 +822,14 @@ public class CssSpyPart {
 					continue;
 				}
 				if (declCount == 0) {
-					sb.append("\n\n  /* declared in CSS rules */");
+					sb.append(MessageFormat.format("\n\n  /* {0} */", Messages.CssSpyPart_declared_in_CSS_rules)); //$NON-NLS-1$
 				}
-				sb.append("\n  ").append(propertyName).append(": ").append(declValue).append(";");
+				sb.append("\n  ").append(propertyName).append(": ").append(declValue).append(";"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				count++;
 				declCount++;
 			}
 		}
-		sb.append(count > 0 ? "\n}" : "}");
+		sb.append(count > 0 ? "\n}" : "}"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/** Trim the string; return null if empty */
@@ -856,7 +856,7 @@ public class CssSpyPart {
 		}
 		widgetTreeViewer.collapseAll();
 		Object[] roots = widgetTreeProvider.getElements(widgetTreeViewer.getInput());
-		SubMonitor subMonitor = SubMonitor.convert(monitor, "Searching for \"" + text + "\"", roots.length * 10);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, MessageFormat.format(Messages.CssSpyPart_Searching_for, text), roots.length * 10); //$NON-NLS-2$
 		for (Object root : roots) {
 			if (monitor.isCanceled()) {
 				return;
@@ -886,7 +886,7 @@ public class CssSpyPart {
 			return;
 		}
 		NodeList children = element.getChildNodes();
-		SubMonitor subMonitor = SubMonitor.convert(monitor, "Searching", 5 + 5 * children.getLength());
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.CssSpyPart_Searching, 5 + 5 * children.getLength());
 		boolean matched = false;
 		for (int i = 0; i < selectors.getLength(); i++) {
 			if (matched = engine.matches(selectors.item(i), element, pseudo)) {
