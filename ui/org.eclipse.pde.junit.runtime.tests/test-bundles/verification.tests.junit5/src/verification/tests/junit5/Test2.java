@@ -15,7 +15,7 @@ package verification.tests.junit5;
 
 import org.junit.jupiter.api.Test;
 
-class Test2 {
+public class Test2 {
 
 	@Test
 	void test() {

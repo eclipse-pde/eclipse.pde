@@ -24,6 +24,7 @@ import java.util.Collections;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
@@ -39,6 +40,8 @@ import org.eclipse.jdt.junit.model.ITestElement.FailureTrace;
 import org.eclipse.jdt.junit.model.ITestElement.Result;
 import org.eclipse.jdt.junit.model.ITestElementContainer;
 import org.eclipse.jdt.junit.model.ITestRunSession;
+import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -75,6 +78,8 @@ public class JUnitExecutionTest {
 				project.open(null);
 			}
 		}
+		
+		workspaceRoot.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, null);
 	}
 
 	@Parameters(name = "{0}")
@@ -120,13 +125,14 @@ public class JUnitExecutionTest {
 	@Test
 	public void executeMethod() throws Exception {
 		IMethod testMethod = input.findType("Test1").getMethod("test1", new String[0]);
+		Assume.assumeTrue(testMethod.exists());
 		ITestRunSession session = TestExecutionUtil.runTest(testMethod);
 
 		assertThat(session.getChildren()).hasSize(1);
 		assertSuccessful(session);
 	}
 
-	private void assertSuccessful(ITestRunSession session) {
+	static void assertSuccessful(ITestRunSession session) {
 		Result testResult = session.getTestResult(true);
 		if (ITestElement.Result.OK.equals(testResult))
 			return;
@@ -137,7 +143,7 @@ public class JUnitExecutionTest {
 		throw assertionFailedError;
 	}
 
-	private void addFailureTraces(ITestElement element, AssertionError assertionFailedError) {
+	private static void addFailureTraces(ITestElement element, AssertionError assertionFailedError) {
 		FailureTrace trace = element.getFailureTrace();
 		if (trace != null) {
 			assertionFailedError.addSuppressed(new AssertionError("FailureTrace of " + element + ":\n\n" + trace.getTrace()));
@@ -169,6 +175,7 @@ public class JUnitExecutionTest {
 		public IType findType(String name) throws JavaModelException {
 			IType type = project.findType(project.getElementName(), name);
 			assertNotNull(type);
+			Assert.assertTrue(type.exists());
 			return type;
 		}
 	}

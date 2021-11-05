@@ -11,14 +11,13 @@
  *  Contributors:
  *     Julian Honnen <julian.honnen@vector.com> - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.junit.runtime.tests;
+package verification.tests.junit5.suite;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
 
-@RunWith(Suite.class)
-@SuiteClasses({ JUnitExecutionTest.class, JUnit5SuiteExecutionTest.class })
-public class JUnitRuntimeTests {
+@Suite
+@SelectClasses({ verification.tests.junit5.Test1.class, verification.tests.junit5.Test2.class })
+class TestSuite {
 
 }

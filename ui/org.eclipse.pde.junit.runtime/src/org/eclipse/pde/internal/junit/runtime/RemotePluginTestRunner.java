@@ -17,11 +17,9 @@ package org.eclipse.pde.internal.junit.runtime;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.internal.junit.runner.RemoteTestRunner;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.*;
 import org.osgi.framework.wiring.BundleWiring;
 
 /**
@@ -55,44 +53,6 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		}
 	}
 
-	static class TestBundleClassLoader extends ClassLoader {
-		protected Bundle bundle;
-
-		public TestBundleClassLoader(Bundle target) {
-			this.bundle = target;
-		}
-
-		@Override
-		protected Class<?> findClass(String name) throws ClassNotFoundException {
-			return bundle.loadClass(name);
-		}
-
-		@Override
-		protected URL findResource(String name) {
-			return bundle.getResource(name);
-		}
-
-		@Override
-		protected Enumeration<URL> findResources(String name) throws IOException {
-			return bundle.getResources(name);
-		}
-
-		@Override
-		public Enumeration<URL> getResources(String res) throws IOException {
-			Enumeration<URL> bundleResources = bundle.getResources(res);
-			if (bundleResources == null)
-				return Collections.emptyEnumeration();
-
-			List<URL> compatibleResources = new ArrayList<>();
-			while (bundleResources.hasMoreElements()) {
-				URL nativeUrl = FileLocator.resolve(bundleResources.nextElement());
-				compatibleResources.add(nativeUrl);
-			}
-
-			return Collections.enumeration(compatibleResources);
-		}
-	}
-
 	/**
 	 * The main entry point. Supported arguments in addition
 	 * to the ones supported by RemoteTestRunner:
@@ -109,10 +69,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		if (isJUnit5(args)) {
 			//change the classloader so that the test classes in testplugin are discoverable
 			//by junit5 framework  see bug 520811
-			if (runAsJUnit5(args))
-				Thread.currentThread().setContextClassLoader(getPluginClassLoader2(testRunner.getfTestPluginName()));
-			else
-				Thread.currentThread().setContextClassLoader(getPluginClassLoader(testRunner.getfTestPluginName()));
+			Thread.currentThread().setContextClassLoader(createJUnit5PluginClassLoader(testRunner.getTestPluginName()));
 		}
 		testRunner.run();
 		if (isJUnit5(args)) {
@@ -120,42 +77,31 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		}
 	}
 
-	private static ClassLoader getPluginClassLoader2(String getfTestPluginName) {
-		Bundle bundle = Platform.getBundle(getfTestPluginName);
-		if (bundle == null) {
-			throw new IllegalArgumentException("Bundle \"" + getfTestPluginName + "\" not found. Possible causes include missing dependencies, too restrictive version ranges, or a non-matching required execution environment."); //$NON-NLS-1$ //$NON-NLS-2$
+	private static ClassLoader createJUnit5PluginClassLoader(String testPluginName) {
+		Bundle testBundle = Platform.getBundle(testPluginName);
+		if (testBundle == null) {
+			throw new IllegalArgumentException("Bundle \"" + testPluginName + "\" not found. Possible causes include missing dependencies, too restrictive version ranges, or a non-matching required execution environment."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		final String pluginId = getfTestPluginName;
-		List<String> engines = new ArrayList<>();
-		Bundle bund = FrameworkUtil.getBundle(RemotePluginTestRunner.class);
-		Bundle[] bundles = bund.getBundleContext().getBundles();
-		for (Bundle iBundle : bundles) {
+		List<Bundle> platformEngineBundles = findTestEngineBundles();
+		platformEngineBundles.add(testBundle);
+		return new MultiBundleClassLoader(platformEngineBundles);
+	}
+
+	private static List<Bundle> findTestEngineBundles() {
+		BundleContext bundleContext = FrameworkUtil.getBundle(RemotePluginTestRunner.class).getBundleContext();
+		List<Bundle> engineBundles = new ArrayList<>();
+		for (Bundle bundle : bundleContext.getBundles()) {
 			try {
-				BundleWiring bundleWiring = Platform.getBundle(iBundle.getSymbolicName()).adapt(BundleWiring.class);
+				BundleWiring bundleWiring = bundle.adapt(BundleWiring.class);
 				Collection<String> listResources = bundleWiring.listResources("META-INF/services", "org.junit.platform.engine.TestEngine", BundleWiring.LISTRESOURCES_LOCAL); //$NON-NLS-1$//$NON-NLS-2$
-				if (!listResources.isEmpty())
-					engines.add(iBundle.getSymbolicName());
+				if (!listResources.isEmpty()) {
+					engineBundles.add(bundle);
+				}
 			} catch (Exception e) {
 				// check the next bundle
 			}
 		}
-		engines.add(pluginId);
-		List<Bundle> platformEngineBundles = new ArrayList<>();
-		for (Iterator<String> iterator = engines.iterator(); iterator.hasNext();) {
-			String string = iterator.next();
-			Bundle bundle2 = Platform.getBundle(string);
-			platformEngineBundles.add(bundle2);
-		}
-
-		return new MultiBundleClassLoader(platformEngineBundles);
-	}
-
-	private static ClassLoader getPluginClassLoader(String getfTestPluginName) {
-		Bundle bundle = Platform.getBundle(getfTestPluginName);
-		if (bundle == null) {
-			throw new IllegalArgumentException("Bundle \"" + getfTestPluginName + "\" not found. Possible causes include missing dependencies, too restrictive version ranges, or a non-matching required execution environment."); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		return new TestBundleClassLoader(bundle);
+		return engineBundles;
 	}
 
 	/**
@@ -164,7 +110,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	 */
 	@Override
 	protected ClassLoader getTestClassLoader() {
-		final String pluginId = getfTestPluginName();
+		final String pluginId = getTestPluginName();
 		return getClassLoader(pluginId);
 	}
 
@@ -185,22 +131,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 			// during initialization - see bug 520811
 			ClassLoader currentTCCL = Thread.currentThread().getContextClassLoader();
 			try {
-				// Get all bundles with junit5 test engine
-				List<String> platformEngines = new ArrayList<>();
-				Bundle bundle = FrameworkUtil.getBundle(getClass());
-				Bundle[] bundles = bundle.getBundleContext().getBundles();
-				for (Bundle iBundle : bundles) {
-					try {
-						BundleWiring bundleWiring = Platform.getBundle(iBundle.getSymbolicName()).adapt(BundleWiring.class);
-						Collection<String> listResources = bundleWiring.listResources("META-INF/services", "org.junit.platform.engine.TestEngine", BundleWiring.LISTRESOURCES_LOCAL); //$NON-NLS-1$//$NON-NLS-2$
-						if (!listResources.isEmpty())
-							platformEngines.add(iBundle.getSymbolicName());
-					} catch (Exception e) {
-						// check the next bundle
-					}
-				}
-
-				Thread.currentThread().setContextClassLoader(getJUnit5Classloader(platformEngines));
+				Thread.currentThread().setContextClassLoader(new MultiBundleClassLoader(findTestEngineBundles()));
 				defaultInit(args);
 			} finally {
 				Thread.currentThread().setContextClassLoader(currentTCCL);
@@ -208,16 +139,6 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 			return;
 		}
 		defaultInit(args);
-	}
-
-	private ClassLoader getJUnit5Classloader(List<String> platformEngine) {
-		List<Bundle> platformEngineBundles = new ArrayList<>();
-		for (Iterator<String> iterator = platformEngine.iterator(); iterator.hasNext();) {
-			String string = iterator.next();
-			Bundle bundle = Platform.getBundle(string);
-			platformEngineBundles.add(bundle);
-		}
-		return new MultiBundleClassLoader(platformEngineBundles);
 	}
 
 	private static boolean runAsJUnit5(String[] args) {
@@ -243,13 +164,13 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	public void readPluginArgs(String[] args) {
 		for (int i = 0; i < args.length; i++) {
 			if (isFlag(args, i, "-testpluginname")) //$NON-NLS-1$
-				setfTestPluginName(args[i + 1]);
+				setTestPluginName(args[i + 1]);
 
 			if (isFlag(args, i, "-loaderpluginname")) //$NON-NLS-1$
 				fLoaderClassLoader = getClassLoader(args[i + 1]);
 		}
 
-		if (getfTestPluginName() == null)
+		if (getTestPluginName() == null)
 			throw new IllegalArgumentException("Parameter -testpluginnname not specified."); //$NON-NLS-1$
 
 		if (fLoaderClassLoader == null)
@@ -266,11 +187,11 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		return lowerCase.equals(wantedFlag) && i < args.length - 1;
 	}
 
-	public String getfTestPluginName() {
+	public String getTestPluginName() {
 		return fTestPluginName;
 	}
 
-	public void setfTestPluginName(String fTestPluginName) {
+	public void setTestPluginName(String fTestPluginName) {
 		this.fTestPluginName = fTestPluginName;
 	}
 }

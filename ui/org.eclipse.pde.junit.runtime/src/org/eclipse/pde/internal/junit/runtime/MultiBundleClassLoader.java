@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.junit.runtime;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import org.eclipse.core.runtime.FileLocator;
 import org.osgi.framework.Bundle;
 
 class MultiBundleClassLoader extends ClassLoader {
@@ -44,30 +45,26 @@ class MultiBundleClassLoader extends ClassLoader {
 		URL url = null;
 		for (Bundle temp : bundleList) {
 			url = temp.getResource(name);
-			if (url != null)
-				return url;
+			if (url != null) {
+				try {
+					return FileLocator.resolve(url);
+				} catch (IOException e) {
+					return null;
+				}
+			}
 		}
 		return url;
 	}
 
 	@Override
 	protected Enumeration<URL> findResources(String name) throws IOException {
-		Enumeration<URL> enumFinal = null;
-		for (int i = 0; i < bundleList.size(); i++) {
-			if (i == 0) {
-				enumFinal = bundleList.get(i).getResources(name);
-				continue;
+		List<URL> merged = new ArrayList<>();
+		for (Bundle bundle : bundleList) {
+			Enumeration<URL> resources = bundle.getResources(name);
+			while (resources != null && resources.hasMoreElements()) {
+				merged.add(FileLocator.resolve(resources.nextElement()));
 			}
-			Enumeration<URL> e2 = bundleList.get(i).getResources(name);
-			Vector<URL> temp = new Vector<>();
-			while (enumFinal != null && enumFinal.hasMoreElements()) {
-				temp.add(enumFinal.nextElement());
-			}
-			while (e2 != null && e2.hasMoreElements()) {
-				temp.add(e2.nextElement());
-			}
-			enumFinal = temp.elements();
 		}
-		return enumFinal;
+		return Collections.enumeration(merged);
 	}
 }
