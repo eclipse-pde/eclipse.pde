@@ -115,7 +115,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		// Note: This is not accurate, we are validating the plugin.xml file
 		// but not the manifest.mf file
 		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
-		if (status.getSeverity() != IStatus.OK) {
+		if (!status.isOK()) {
 			throw new CoreException(Status.error(CSWizardMessages.RegisterCSOperation_errorMessage, null));
 		}
 		// Perform the modification of the plugin manifest file
@@ -339,7 +339,7 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		// Note: This is not accurate, we are validating the plugin.xml file rather
 		// than the manifest file
 		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
-		if (status.getSeverity() != IStatus.OK) {
+		if (!status.isOK()) {
 			throw new CoreException(Status.error(CSWizardMessages.RegisterCSOperation_errorMessage2, null));
 		}
 		// Perform the modification of the manifest file

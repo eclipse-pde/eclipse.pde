@@ -115,7 +115,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		// Note: This is not accurate, we are validating the plugin.xml file
 		// but not the manifest.mf file
 		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
-		if (status.getSeverity() != IStatus.OK) {
+		if (!status.isOK()) {
 			throw new CoreException(Status.error(TocWizardMessages.RegisterTocOperation_errorMessage1));
 		}
 		// Perform the modification of the plugin manifest file
@@ -286,7 +286,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		// Note: This is not accurate, we are validating the plugin.xml file rather
 		// than the manifest file
 		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
-		if (status.getSeverity() != IStatus.OK) {
+		if (!status.isOK()) {
 			throw new CoreException(Status.error(TocWizardMessages.RegisterTocOperation_errorMessage2));
 		}
 		// Perform the modification of the manifest file

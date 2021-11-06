@@ -460,7 +460,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 
 	private void modifyExistingFile(IFile file, IProgressMonitor monitor) throws CoreException {
 		IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, getShell());
-		if (status.getSeverity() != IStatus.OK)
+		if (!status.isOK())
 			throw new CoreException(Status.error(NLS.bind(PDEUIMessages.ProductDefinitionOperation_readOnly, fPluginId)));
 
 		ModelModification mod = new ModelModification(file) {

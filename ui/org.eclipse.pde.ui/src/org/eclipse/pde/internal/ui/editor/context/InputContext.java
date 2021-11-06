@@ -177,9 +177,9 @@ public abstract class InputContext {
 					Shell shell = fEditor.getEditorSite().getShell();
 					IStatus validateStatus = PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, shell);
 					fValidated = true; // to prevent loops
-					if (validateStatus.getSeverity() != IStatus.OK)
+					if (!validateStatus.isOK())
 						ErrorDialog.openError(shell, fEditor.getTitle(), null, validateStatus);
-					return validateStatus.getSeverity() == IStatus.OK;
+					return validateStatus.isOK();
 				}
 			}
 		}

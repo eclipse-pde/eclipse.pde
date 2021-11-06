@@ -104,7 +104,7 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 			throws CoreException {
 		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(
 				new IFile[] { file }, fShell);
-		if (status.getSeverity() != IStatus.OK) {
+		if (!status.isOK()) {
 			throw new CoreException(Status.error(CtxWizardMessages.RegisterCtxHelpOperation_errorMessage1));
 		}
 		// Perform the modification of the plugin manifest file
@@ -214,7 +214,7 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 		// than the manifest file
 		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(
 				new IFile[] { file }, fShell);
-		if (status.getSeverity() != IStatus.OK) {
+		if (!status.isOK()) {
 			throw new CoreException(Status.error(CtxWizardMessages.RegisterCtxHelpOperation_errorMessage2));
 		}
 		// Perform the modification of the manifest file

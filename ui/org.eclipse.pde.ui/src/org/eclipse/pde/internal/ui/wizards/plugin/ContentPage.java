@@ -16,8 +16,6 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.text.MessageFormat;
-
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -143,7 +141,7 @@ public abstract class ContentPage extends WizardPage {
 	}
 
 	protected boolean isVersionValid(String version) {
-		return VersionUtil.validateVersion(version).getSeverity() == IStatus.OK;
+		return VersionUtil.validateVersion(version).isOK();
 	}
 
 	@Override

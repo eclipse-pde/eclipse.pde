@@ -40,7 +40,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -488,7 +487,7 @@ public class TargetPlatformHelper {
 		}
 
 		String version = model.getPluginBase().getVersion();
-		if (VersionUtil.validateVersion(version).getSeverity() == IStatus.OK) {
+		if (VersionUtil.validateVersion(version).isOK()) {
 			Version vid = new Version(version);
 			int major = vid.getMajor();
 			int minor = vid.getMinor();

@@ -214,7 +214,7 @@ public class PluginVersionPart {
 	private IStatus validateVersion(String text, Text textWidget, boolean shortErrorMessage) {
 		if (text.length() == 0)
 			return Status.OK_STATUS;
-		if (VersionUtil.validateVersion(text).getSeverity() != IStatus.OK) {
+		if (!VersionUtil.validateVersion(text).isOK()) {
 			String errorMessage = null;
 			if (shortErrorMessage) {
 				// For dialogs

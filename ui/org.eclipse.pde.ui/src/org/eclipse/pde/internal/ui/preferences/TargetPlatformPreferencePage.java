@@ -937,7 +937,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 								fDetails.refresh(true);
 					});
 
-					if (event.getResult().getSeverity() == IStatus.OK) {
+					if (event.getResult().isOK()) {
 						if (fActiveTarget != null) {
 							PDEPreferencesManager pref = new PDEPreferencesManager(PDEPlugin.getPluginId());
 							if (pref.getBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH)) {
