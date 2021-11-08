@@ -116,20 +116,23 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		if (ClasspathUtilCore.hasBundleStructure(fModel)) {
 			IBundle bundle = ((IBundlePluginModelBase) fModel).getBundleModel().getBundle();
 			IManifestHeader header = bundle.getManifestHeader(EquinoxModuleDataNamespace.REGISTERED_BUDDY_HEADER);
-			String values = header.getValue();
-			String[] registerBud = values.split("\\s*,\\s*"); //$NON-NLS-1$
-			List<Object> found = new ArrayList<>();
-			for (String string : registerBud) {
-				for (Object obj : fList) {
-					if(obj instanceof PluginImport) {
-						String id = ((PluginImport)obj).getId();
-						if (string.equals(id))
-							found.add(obj);
+			if (header != null) {
+				String values = header.getValue();
+				String[] registerBud = values.split("\\s*,\\s*"); //$NON-NLS-1$
+				List<Object> found = new ArrayList<>();
+				for (String string : registerBud) {
+					for (Object obj : fList) {
+						if (obj instanceof PluginImport) {
+							String id = ((PluginImport) obj).getId();
+							if (string.equals(id))
+								found.add(obj);
+						}
 					}
 				}
+				if (found.size() > 0)
+					fList.removeAll(found);
 			}
-			if (found.size() > 0)
-				fList.removeAll(found);
+
 		}
 	}
 
