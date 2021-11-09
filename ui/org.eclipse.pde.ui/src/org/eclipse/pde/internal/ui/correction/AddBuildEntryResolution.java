@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.ui.correction;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.text.build.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
@@ -40,11 +39,6 @@ public class AddBuildEntryResolution extends BuildEntryMarkerResolution {
 	@Override
 	protected void createChange(Build build) {
 		try {
-			fEntry = (String) marker.getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY);
-			fToken = (String) marker.getAttribute(PDEMarkerFactory.BK_BUILD_TOKEN);
-		} catch (CoreException e) {
-		}
-		try {
 			BuildModel buildModel = build.getModel();
 			if (buildModel.isStale()) {
 				buildModel.reconciled(buildModel.getDocument());
@@ -57,5 +51,10 @@ public class AddBuildEntryResolution extends BuildEntryMarkerResolution {
 				buildEntry.addToken(fToken);
 		} catch (CoreException e) {
 		}
+	}
+
+	@Override
+	public IMarker[] findOtherMarkers(IMarker[] markers) {
+		return new IMarker[0];
 	}
 }
