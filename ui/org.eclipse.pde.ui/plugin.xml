@@ -2201,6 +2201,29 @@
                type="org.eclipse.pde.ui.target.ITargetLocationHandler">
          </adapter>
       </factory>
+       <factory
+             adaptableType="org.eclipse.pde.internal.core.target.TargetReferenceBundleContainer"
+             class="org.eclipse.pde.internal.ui.shared.target.TargetReferenceBundleContainerAdapterFactory">
+          <adapter
+                type="org.eclipse.pde.ui.target.ITargetLocationHandler">
+          </adapter>
+          <adapter
+                type="org.eclipse.jface.viewers.ILabelProvider">
+          </adapter>
+          <adapter
+                type="org.eclipse.jface.viewers.ITreeContentProvider">
+          </adapter>
+       </factory>
+       <factory
+             adaptableType="org.eclipse.pde.internal.ui.shared.target.TargetReferenceBundleContainerAdapterFactory$TargetLocationWrapper"
+             class="org.eclipse.pde.internal.ui.shared.target.TargetReferenceBundleContainerAdapterFactory">
+          <adapter
+                type="org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider$IStyledLabelProvider">
+          </adapter>
+          <adapter
+                type="org.eclipse.jface.viewers.ITreeContentProvider">
+          </adapter>
+       </factory>
    </extension>
    <extension
          point="org.eclipse.pde.ui.targetLocationProvisioners">
@@ -2211,6 +2234,15 @@
             name="%targetLocationProvider.IU.name">
          <description>
             %targetLocationProvider.IU.description
+         </description>
+      </locationProvider>
+      <locationProvider
+            class="org.eclipse.pde.internal.ui.shared.target.TargetReferenceLocationWizard"
+            icon="icons/obj16/target_profile_xml_obj.png"
+            id="org.eclipse.pde.ui.TargetReferenceProvisioner"
+            name="Target File">
+            <description>
+            Add a reference to another target file
          </description>
       </locationProvider>
    </extension>

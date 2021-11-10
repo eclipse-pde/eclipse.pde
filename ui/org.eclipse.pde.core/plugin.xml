@@ -386,4 +386,12 @@
              type="InstallableUnit">
        </targetLocation>
     </extension>
+    <extension
+          point="org.eclipse.pde.core.targetLocations">
+       <targetLocation
+             canUpdate="true"
+             locationFactory="org.eclipse.pde.internal.core.target.TargetRefrenceLocationFactory"
+             type="Target">
+       </targetLocation>
+    </extension>
 </plugin>

@@ -236,11 +236,17 @@ public class P2TargetUtils {
 				String id = profile.getProfileId();
 				if (id.startsWith(PROFILE_ID_PREFIX)) {
 					String memento = id.substring(PROFILE_ID_PREFIX.length());
-					ITargetHandle handle = tps.getTarget(memento);
-					if (!handle.exists()) {
-						deleteProfile(handle);
-						list.add(id);
+					try {
+						ITargetHandle handle = tps.getTarget(memento);
+						if (handle.exists()) {
+							continue;
+						}
+					} catch (CoreException e) {
+						// don't break the chain here, but delete the profile as
+						// it seems to be invalid now
 					}
+					deleteProfileWithId(id);
+					list.add(id);
 				}
 			}
 		}
@@ -270,12 +276,16 @@ public class P2TargetUtils {
 	 * @throws CoreException if unable to delete the profile
 	 */
 	public static void deleteProfile(ITargetHandle handle) throws CoreException {
+		deleteProfileWithId(getProfileId(handle));
+	}
+
+	private static void deleteProfileWithId(String profileId) throws CoreException {
 		IProfileRegistry registry = getProfileRegistry();
 		if (registry != null) {
-			IProfile profile = registry.getProfile(getProfileId(handle));
+			IProfile profile = registry.getProfile(profileId);
 			if (profile != null) {
 				String location = profile.getProperty(IProfile.PROP_INSTALL_FOLDER);
-				registry.removeProfile(getProfileId(handle));
+				registry.removeProfile(profileId);
 				if (location != null && location.length() > 0) {
 					File folder = new File(location);
 					if (folder.exists()) {

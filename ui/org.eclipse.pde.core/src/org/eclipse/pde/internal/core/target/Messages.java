@@ -77,6 +77,14 @@ public class Messages extends NLS {
 	public static String TargetPlatformService_6;
 	public static String TargetPlatformService_7;
 	public static String WorkspaceFileTargetHandle_0;
+	public static String TargetRefrenceBundleContainer_Failure;
+	public static String TargetRefrenceLocationFactory_Unsupported_Type;
+	public static String TargetRefrenceLocationFactory_Parsing_Failed;
+	public static String RemoteTargetHandle_invalid_URI;
+	public static String RemoteTargetHandle_malformed_URL;
+	public static String RemoteTargetHandle_ioproblem;
+
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

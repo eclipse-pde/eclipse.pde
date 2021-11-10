@@ -25,6 +25,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.ui.launcher.PDELogFileProvider;
+import org.eclipse.pde.internal.ui.shared.target.TargetReferenceBundleContainerAdapterFactory;
 import org.eclipse.pde.internal.ui.shared.target.TargetStatus;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.widgets.Display;
@@ -226,6 +227,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		}
 		Utilities.shutdown();
 		super.stop(context);
+		TargetReferenceBundleContainerAdapterFactory.LABEL_PROVIDER.dispose();
 	}
 
 	public PDELabelProvider getLabelProvider() {

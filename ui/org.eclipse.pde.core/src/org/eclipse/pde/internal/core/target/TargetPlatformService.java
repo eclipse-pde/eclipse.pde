@@ -165,6 +165,8 @@ public class TargetPlatformService implements ITargetPlatformService {
 					return LocalTargetHandle.restoreHandle(uri);
 				case ExternalFileTargetHandle.SCHEME:
 					return ExternalFileTargetHandle.restoreHandle(uri);
+				case RemoteTargetHandle.SCHEME:
+					return RemoteTargetHandle.get(memento.substring(RemoteTargetHandle.SCHEME.length() + 1));
 				default:
 					break;
 				}

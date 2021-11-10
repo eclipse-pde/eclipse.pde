@@ -142,6 +142,11 @@ public class Messages extends NLS {
 	public static String UpdateTargetJob_TargetUpdateSuccessStatus;
 	public static String UpdateTargetJob_UpdateJobName;
 	public static String UpdateTargetJob_UpdatingTarget;
+	public static String EditTargetContainerPage_Add_Title;
+	public static String EditTargetContainerPage_Edit_Title;
+	public static String EditTargetContainerPage_Message;
+	public static String EditTargetContainerPage_Not_A_File;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
