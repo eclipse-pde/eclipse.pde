@@ -234,20 +234,28 @@ public class SpyProcessor {
 			String desc) {
 		for (MPartDescriptor mp : application.getDescriptors()) {
 			if (partId.equals(mp.getElementId())) {
-				// Already added, do nothing
+				// Already added, update category, description, label, ContributionURI, and IconURI
+				mp.setCategory(Messages.SpyProcessor_category);
+				mp.setDescription(desc);
+				mp.setLabel(partLabel);
+				String bundleId = FrameworkUtil.getBundle(spyPartClass).getSymbolicName();
+				mp.setContributionURI("bundleclass://" + bundleId + "/" + spyPartClass.getCanonicalName());
+				String contributorURI = "platform:/plugin/" + bundleId;
+				mp.setContributorURI(contributorURI);
+				mp.setIconURI(contributorURI + "/" + iconPath);
 				return;
 			}
 		}
 
 		// If descriptor not yet in descriptor list, add it now
 		MPartDescriptor descriptor = modelService.createModelElement(MPartDescriptor.class);
-		descriptor.setCategory("Eclipse runtime spies");
+		descriptor.setCategory(Messages.SpyProcessor_category);
 		descriptor.getPersistedState().put(IWorkbench.PERSIST_STATE, "false");
 		descriptor.setElementId(partId);
 		descriptor.setDescription(desc);
 		descriptor.getTags().add("View");
 		descriptor.getTags().add(SPY_TAG);
-		descriptor.getTags().add("categoryTag:Eclipse runtime spies");
+		descriptor.getTags().add("categoryTag:Eclipse Runtime Spies");
 		descriptor.setLabel(partLabel);
 		descriptor.setCloseable(true);
 		String bundleId = FrameworkUtil.getBundle(spyPartClass).getSymbolicName();
