@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+   <extension
+         point="org.eclipse.pde.spy.core.spyPart">
+      <spyPart
+            description="%description"
+            icon="$nl$/icons/annotation_obj.png"
+            name="%name"
+            part="org.eclipse.pde.spy.context.ContextSpyPart"
+            shortcut="M2+M3+F10">
+      </spyPart>
+   </extension>
+</plugin>
