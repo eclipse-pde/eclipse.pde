@@ -44,7 +44,7 @@ public class DynamicPluginProjectReferences implements IDynamicReferenceProvider
 			if (model != null) {
 				BundleDescription bundle = model.getBundleDescription();
 				if (bundle != null) {
-					return BuildDependencyCollector.collectBuildRelevantDependencies(Set.of(bundle)).stream()
+					return ClasspathComputer.collectBuildRelevantDependencies(Set.of(bundle)).stream()
 							.map(b -> (org.osgi.resource.Resource) b) //
 							.filter(dependency -> dependency != bundle).map(PluginRegistry::findModel)
 							.map(IPluginModelBase::getUnderlyingResource).filter(Objects::nonNull)

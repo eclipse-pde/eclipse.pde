@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2024 IBM Corporation and others.
+ * Copyright (c) 2007, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -72,7 +72,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.internal.core.BuildDependencyCollector;
+import org.eclipse.pde.internal.core.ClasspathComputer;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
@@ -876,7 +876,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 				bundles.add(bundleComponent.getBundleDescription());
 			}
 		}
-		Collection<BundleDescription> dependencies = BuildDependencyCollector.collectBuildRelevantDependencies(bundles);
+		Collection<BundleDescription> dependencies = ClasspathComputer.collectBuildRelevantDependencies(bundles);
 		return dependencies.stream().map(bundle -> {
 			String id = bundle.getSymbolicName();
 			Version version = bundle.getVersion();

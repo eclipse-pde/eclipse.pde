@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2022 IBM Corporation and others.
+ *  Copyright (c) 2005, 2026 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -41,6 +41,7 @@ import org.osgi.framework.wiring.BundleRequirement;
 import org.osgi.framework.wiring.BundleRevision;
 import org.osgi.framework.wiring.BundleWire;
 import org.osgi.framework.wiring.BundleWiring;
+import org.osgi.resource.Namespace;
 import org.osgi.resource.Resource;
 
 /**
@@ -175,6 +176,32 @@ public class DependencyManager {
 	 */
 	public static Set<BundleDescription> findRequirementsClosure(Collection<BundleDescription> bundles,
 			Options... options) {
+		return findRequirementsClosure(bundles, Set.of(), options);
+	}
+
+	/**
+	 * Returns a {@link Set} of bundle descriptions of the given
+	 * {@link IPluginModelBase}s and all of their required dependencies of the
+	 * given OSGi-Wiring {@link Namespace}s.
+	 * <p>
+	 * The set includes the descriptions of the given bundle descriptions as
+	 * well as all transitively computed explicit and optional (if requested)
+	 * dependencies. So it is the self-contained closure for all required
+	 * dependencies of the given set of plug-ins.
+	 * </p>
+	 *
+	 * @param bundles
+	 *            the collection of {@link BundleDescription}s to compute
+	 *            dependencies for.
+	 * @param namespaces
+	 *            the set of OSGi wiring name-spaces whose required wires are
+	 *            considered. If empty all name-spaces are considered.
+	 * @param options
+	 *            the specified {@link Options} for computing the closure
+	 * @return a set of bundle descriptions
+	 */
+	public static Set<BundleDescription> findRequirementsClosure(Collection<BundleDescription> bundles,
+			Set<String> namespaces, Options... options) {
 
 		Set<Options> optionSet = Set.of(options);
 		boolean includeOptional = optionSet.contains(Options.INCLUDE_OPTIONAL_DEPENDENCIES);
@@ -234,7 +261,8 @@ public class DependencyManager {
 				}
 			}
 
-			List<BundleWire> requiredWires = wiring.getRequiredWires(null);
+			Iterable<BundleWire> requiredWires = namespaces.isEmpty() ? wiring.getRequiredWires(null)
+					: namespaces.stream().map(wiring::getRequiredWires).flatMap(List::stream)::iterator;
 			for (BundleWire wire : requiredWires) {
 				BundleRevision declaringBundle = wire.getRequirement().getRevision();
 				if (declaringBundle != bundle && !closure.contains(declaringBundle)) {
