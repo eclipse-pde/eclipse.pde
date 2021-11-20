@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2022 IBM Corporation and others.
+ * Copyright (c) 2005, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -52,6 +54,9 @@ import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.team.core.RepositoryProvider;
+import org.osgi.framework.namespace.BundleNamespace;
+import org.osgi.framework.namespace.HostNamespace;
+import org.osgi.framework.namespace.PackageNamespace;
 
 public class ClasspathComputer {
 
@@ -159,6 +164,21 @@ public class ClasspathComputer {
 				addJARdPlugin(".", sourceLibraryMap, context); //$NON-NLS-1$
 			}
 		}
+	}
+
+	private static final Set<String> BUILD_RELEVANT_NAMESPACES = Set.of( //
+			BundleNamespace.BUNDLE_NAMESPACE, // Require-Bundle
+			PackageNamespace.PACKAGE_NAMESPACE, // Import-Package
+			HostNamespace.HOST_NAMESPACE // Fragment-Host
+	);
+
+	/**
+	 * Returns all transitive dependencies that are relevant for building
+	 * {@code roots}, including {@code roots} themselves.
+	 */
+	public static Collection<BundleDescription> collectBuildRelevantDependencies(Collection<BundleDescription> roots) {
+		return DependencyManager.findRequirementsClosure(roots, BUILD_RELEVANT_NAMESPACES,
+				DependencyManager.Options.INCLUDE_OPTIONAL_DEPENDENCIES);
 	}
 
 	public static boolean hasTestPluginName(IProject project) {
