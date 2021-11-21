@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2021 EclipseSource Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,8 +21,8 @@ import org.junit.runners.Suite.SuiteClasses;
  * @since 3.5
  */
 @RunWith(Suite.class)
-@SuiteClasses({ FeatureBasedLaunchTest.class, LaunchConfigurationHelperTestCase.class,
-		LaunchConfigurationMigrationTest.class })
+@SuiteClasses({ FeatureBasedLaunchTest.class, PluginBasedLaunchTest.class, LaunchConfigurationHelperTestCase.class,
+	LaunchConfigurationMigrationTest.class })
 public class AllLauncherTests {
 
 }

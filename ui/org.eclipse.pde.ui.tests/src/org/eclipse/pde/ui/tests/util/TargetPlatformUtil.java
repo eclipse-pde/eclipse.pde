@@ -11,13 +11,19 @@
  *  Contributors:
  *     Julian Honnen <julian.honnen@vector.com> - initial API and implementation
  *     Hannes Wellmann - Bug 577116: Improve test utility method reusability
+ *     Hannes Wellmann - Bug 577385: Add tests for Plug-in based Eclipse-App launches
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.jar.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.core.target.*;
@@ -25,8 +31,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.junit.rules.TestRule;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.*;
 
 public class TargetPlatformUtil {
 
@@ -121,6 +126,45 @@ public class TargetPlatformUtil {
 		targetDefinition.setOS(Platform.getOS());
 		targetDefinition.setWS(Platform.getWS());
 		targetDefinition.setNL(Platform.getNL());
+	}
+
+	public static void setDummyBundlesAsTarget(List<NameVersionDescriptor> targetPlugins, Path jarDirectory)
+			throws IOException, CoreException, InterruptedException {
+		for (NameVersionDescriptor bundleNameVersion : targetPlugins) {
+
+			Manifest manifest = createDummyBundleManifest(bundleNameVersion.getId(), bundleNameVersion.getVersion());
+
+			Attributes mainAttributes = manifest.getMainAttributes();
+			String bundleSymbolicName = Objects.requireNonNull(mainAttributes.getValue(Constants.BUNDLE_SYMBOLICNAME));
+			String bundleVersion = Objects.requireNonNull(mainAttributes.getValue(Constants.BUNDLE_VERSION));
+
+			Path jarPath = jarDirectory.resolve(bundleSymbolicName + "_" + bundleVersion + ".jar");
+			try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(jarPath));) {
+				out.putNextEntry(new ZipEntry(JarFile.MANIFEST_NAME));
+				manifest.write(out);
+
+			}
+		}
+		ITargetPlatformService tps = PDECore.getDefault().acquireService(ITargetPlatformService.class);
+		ITargetDefinition target = tps.newTarget();
+
+		ITargetLocation location1 = tps.newDirectoryLocation(jarDirectory.toString());
+
+		setTargetProperties(target, new ITargetLocation[] { location1 });
+		tps.saveTargetDefinition(target);
+		loadAndSetTargetForWorkspace(target);
+	}
+
+	public static Manifest createDummyBundleManifest(String bundleSymbolicName, String bundleVersion) {
+		Manifest manifest = new Manifest();
+		Attributes mainAttributes = manifest.getMainAttributes();
+		mainAttributes.put(Attributes.Name.MANIFEST_VERSION, "1.0");
+		mainAttributes.putValue(Constants.BUNDLE_MANIFESTVERSION, "2");
+		mainAttributes.putValue(Constants.BUNDLE_SYMBOLICNAME, bundleSymbolicName);
+		mainAttributes.putValue(Constants.BUNDLE_VERSION, bundleVersion);
+		mainAttributes.putValue(Constants.BUNDLE_NAME, bundleSymbolicName.replace('.', ' '));
+		mainAttributes.putValue("Automatic-Module-Name", bundleSymbolicName);
+		return manifest;
 	}
 
 }

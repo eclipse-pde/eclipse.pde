@@ -1,0 +1,877 @@
+/*******************************************************************************
+ *  Copyright (c) 2021, 2021 Hannes Wellmann and others.
+ *
+ *  This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License 2.0
+ *  which accompanies this distribution, and is available at
+ *  https://www.eclipse.org/legal/epl-2.0/
+ *
+ *  SPDX-License-Identifier: EPL-2.0
+ *
+ *  Contributors:
+ *     Hannes Wellmann - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.pde.ui.tests.launcher;
+
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.target.NameVersionDescriptor;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.eclipse.pde.launching.IPDELauncherConstants;
+import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
+import org.junit.*;
+import org.junit.rules.TemporaryFolder;
+
+public class PluginBasedLaunchTest extends AbstractLaunchTest {
+
+	@Rule
+	public TemporaryFolder folder = new TemporaryFolder();
+	private Path tpJarDirectory;
+
+	@Before
+	public void setupPluginProjects() throws Exception {
+		tpJarDirectory = folder.newFolder("TPJarDirectory").toPath();
+	}
+
+	// --- test cases for getMergedBundleMap() ----
+
+	@Test
+	public void testGetMergedBundleMap_startDataParsing() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.b", "1.0.0"), //
+				bundle("plugin.c", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.f", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of( //
+					"plugin.a*1.0.0@5:autoStart", //
+					"plugin.b*1.0.0@anyText", //
+					"plugin.c*1.0.0"));
+		};
+
+		Map<BundleLocationDescriptor, String> expectedBundleMap = Map.of( //
+				workspaceBundle("plugin.a", "1.0.0"), "5:autoStart", //
+				workspaceBundle("plugin.b", "1.0.0"), "anyText", //
+				workspaceBundle("plugin.c", "1.0.0"), "default:default");
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundleMap);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_mixedPluginsFromWorkspaceAndTarget_specificTargetVersion() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.a", "2.0.0"), //
+				bundle("plugin.b", "1.0.0"), //
+				bundle("plugin.c", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.x", "1.0.0"), //
+				bundle("plugin.x", "2.0.0"), //
+				bundle("plugin.x", "3.0.0"), //
+				bundle("plugin.y", "1.0.0"), //
+				bundle("plugin.z", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*1.0.0", "plugin.b"));
+			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES,
+					Set.of("plugin.x*2.0.0", "plugin.x*3.0.0", "plugin.y"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				workspaceBundle("plugin.a", "1.0.0"), //
+				workspaceBundle("plugin.b", "1.0.0"), //
+				targetBundle("plugin.x", "2.0.0"), //
+				targetBundle("plugin.x", "3.0.0"), //
+				targetBundle("plugin.y", "1.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_mixedPluginsFromWorkspaceWithAutomaticAddAndTarget_specificTargetVersion()
+			throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.a", "2.0.0"), //
+				bundle("plugin.b", "1.0.0"), //
+				bundle("plugin.c", "1.0.0"), //
+				bundle("plugin.d", "1.0.0"), //
+				bundle("plugin.d", "2.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.x", "1.0.0"), //
+				bundle("plugin.x", "2.0.0"), //
+				bundle("plugin.x", "3.0.0"), //
+				bundle("plugin.y", "1.0.0"), //
+				bundle("plugin.z", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*1.0.0", "plugin.b"));
+			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*2.0.0", "plugin.c"));
+			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES,
+					Set.of("plugin.x*2.0.0", "plugin.x*3.0.0", "plugin.y"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				workspaceBundle("plugin.a", "1.0.0"), //
+				workspaceBundle("plugin.b", "1.0.0"), //
+				workspaceBundle("plugin.d", "1.0.0"), //
+				workspaceBundle("plugin.d", "2.0.0"), //
+				targetBundle("plugin.x", "2.0.0"), //
+				targetBundle("plugin.x", "3.0.0"), //
+				targetBundle("plugin.y", "1.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	// workspace plug-ins selected explicitly
+
+	@Test
+	public void testGetMergedBundleMap_singleWorkspacePluginVersion_specificVersion() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*1.0.0"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of(workspaceBundle("plugin.a", "1.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_singleWorkspacePluginVersion_noVersion() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of(workspaceBundle("plugin.a", "1.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_singleWorkspacePluginVersion_notMatchingVersion() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.1"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*1.0.0"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of(workspaceBundle("plugin.a", "1.0.1"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_multipleWorkspacePluginVersions_specificVersion() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.a", "2.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*1.0.0"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of(workspaceBundle("plugin.a", "1.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_multipleWorkspacePluginVersions_multipleSpecificVersion() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.a", "1.0.1"), //
+				bundle("plugin.a", "2.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES,
+					Set.of("plugin.a*1.0.0", "plugin.a*2.0.0"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				workspaceBundle("plugin.a", "1.0.0"), //
+				workspaceBundle("plugin.a", "2.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_multipleWorkspacePluginVersions_noVersion() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.a", "2.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				workspaceBundle("plugin.a", "1.0.0"), //
+				workspaceBundle("plugin.a", "2.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_multipleWorkspacePluginVersions_sameVersion() throws Exception {
+		createPluginProject("another.project", "plugin.a", "1.0.0");
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of(workspaceBundle("plugin.a", "1.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_multipleWorkspacePluginVersions_sameMMMVersionButDifferentQualifier()
+			throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0.qualifier"), //
+				bundle("plugin.a", "1.0.0.202111250056"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES,
+					Set.of("plugin.a*1.0.0.qualifier", "plugin.a*1.0.0.202111250056"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				workspaceBundle("plugin.a", "1.0.0.qualifier"), //
+				workspaceBundle("plugin.a", "1.0.0.202111250056"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	// workspace plug-ins added automatically
+
+	@Test
+	public void testGetMergedBundleMap_automaticAddedWorkspacePlugins_noDisabledPlugins() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.a", "2.0.0"), //
+				bundle("plugin.c", "3.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*1.0.0"));
+			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				workspaceBundle("plugin.a", "1.0.0"), //
+				workspaceBundle("plugin.a", "2.0.0"), //
+				workspaceBundle("plugin.c", "3.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_automaticAddedWorkspacePlugins_singleVersionPluginDisabledWithoutVersion()
+			throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.c", "3.0.0"), //
+				bundle("plugin.d", "3.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*1.0.0"));
+			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES, Set.of("plugin.c"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				workspaceBundle("plugin.a", "1.0.0"), //
+				workspaceBundle("plugin.d", "3.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_automaticAddedWorkspacePlugins_singleVersionPluginV1_0_0DeselectedButHaveV1_0_1InWorkspace()
+			throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.c", "1.0.1"), //
+				bundle("plugin.d", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*1.0.0"));
+			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES, Set.of("plugin.c*1.0.0"));
+		};
+
+		// Version 1.0.0 is deselected but version 1.0.1 is actually excluded.
+		// That seems to be not intuitive at first moment, but it is desired.
+		// Think of the following scenario:
+		// a) you create plugin with version 1
+		// b) it's deselected in the launch config
+		// c) [some time later] plugin gets a version increment
+		// --> it should still be disabled
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				workspaceBundle("plugin.a", "1.0.0"), //
+				workspaceBundle("plugin.d", "1.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_automaticAddedWorkspacePlugins_multiVersionPluginDisabledWithSpecificVersion()
+			throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.a", "2.0.0"), //
+				bundle("plugin.a", "3.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*1.0.0"));
+			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES,
+					Set.of("plugin.a*2.0.0", "plugin.a*4.0.0"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				workspaceBundle("plugin.a", "1.0.0"), //
+				workspaceBundle("plugin.a", "3.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_automaticAddedWorkspacePlugins_multiVersionPluginDisabledWithMultipleSpecificVersions()
+			throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.a", "2.0.0"), //
+				bundle("plugin.a", "3.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of());
+			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES,
+					Set.of("plugin.a*1.0.0", "plugin.a*3.0.0"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of(workspaceBundle("plugin.a", "2.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_automaticAddedWorkspacePlugins_multiVersionPluginDisabledWithoutVersion()
+			throws Exception {
+
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.a", "2.0.0"), //
+				bundle("plugin.a", "3.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*2.0.0"));
+			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.setAttribute(IPDELauncherConstants.DESELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of(workspaceBundle("plugin.a", "2.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_automaticAddedWorkspacePlugins_sameMMMVersionButDifferentQualifier()
+			throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0.qualifier"), //
+				bundle("plugin.a", "1.0.0.202111250056"), //
+				bundle("plugin.b", "2.0.0.qualifier"), //
+				bundle("plugin.b", "2.0.0.202111250056"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*1.0.0.202111250056"));
+			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				workspaceBundle("plugin.a", "1.0.0.qualifier"), //
+				workspaceBundle("plugin.a", "1.0.0.202111250056"), //
+				workspaceBundle("plugin.b", "2.0.0.qualifier"), //
+				workspaceBundle("plugin.b", "2.0.0.202111250056"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	// only target plug-ins selected explicitly
+
+	@Test
+	public void testGetMergedBundleMap_singleTargetPluginVersion_specificVersion() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.b*1.0.0"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of(targetBundle("plugin.b", "1.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_singleTargetPluginVersion_noVersion() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.b"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of(targetBundle("plugin.b", "1.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_singleTargetPluginVersion_notMatchingVersion() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.1"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.b*1.0.0"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of(targetBundle("plugin.b", "1.0.1"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_multipleTargetPluginVersions_specificVersion() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"), //
+				bundle("plugin.b", "2.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.b*1.0.0"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of(targetBundle("plugin.b", "1.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_multipleTargetPluginVersions_multipleSpecificVersion() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"), //
+				bundle("plugin.b", "2.0.0"), //
+				bundle("plugin.b", "3.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.b*1.0.0", "plugin.b*3.0.0"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				targetBundle("plugin.b", "1.0.0"), //
+				targetBundle("plugin.b", "3.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_multipleTargetPluginVersions_noVersion() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.b", "1.0.0"), //
+				bundle("plugin.b", "2.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.b"));
+		};
+		Set<BundleLocationDescriptor> expectedBundles = Set.of(//
+				targetBundle("plugin.b", "1.0.0"), //
+				targetBundle("plugin.b", "2.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_singleTargetPluginVersion_notSelectedWorkspacePendant() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.b", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.a", "plugin.b*1.0.0"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				targetBundle("plugin.a", "1.0.0"), //
+				targetBundle("plugin.b", "1.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_multipleTargetPluginVersions_sameMMMVersionButDifferentQualifier()
+			throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.1.qualifier"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.a", "1.0.0.2020"), //
+				bundle("plugin.a", "1.0.0.2021"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES,
+					Set.of("plugin.a*1.0.0.2020", "plugin.a*1.0.0.2021"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				targetBundle("plugin.a", "1.0.0.2020"), //
+				targetBundle("plugin.a", "1.0.0.2021"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	// workspace and target plug-ins with same bundle-SymbolicName
+
+	@Test
+	public void testGetMergedBundleMap_pluginFromWorkspaceAndTarget_specificTargetVersion() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.b", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.a", "1.0.1"), //
+				bundle("plugin.b", "2.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES,
+					Set.of("plugin.a*1.0.0", "plugin.b*1.0.0"));
+			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.a*1.0.1", "plugin.b*2.0.0"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				workspaceBundle("plugin.a", "1.0.0"), //
+				workspaceBundle("plugin.b", "1.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_pluginFromWorkspaceAndTarget_noTargetVersion() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.b", "2.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.a", "1.0.1"), //
+				bundle("plugin.b", "3.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES,
+					Set.of("plugin.a*1.0.0", "plugin.b*1.0.0"));
+			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.a", "plugin.b"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				workspaceBundle("plugin.a", "1.0.0"), //
+				workspaceBundle("plugin.b", "2.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_pluginFromWorkspaceAndTarget_notMatchingTargetVersion() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.a", "1.0.2"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a*1.0.0"));
+			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.a*1.0.1"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				workspaceBundle("plugin.a", "1.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_pluginFromWorkspaceAndTarget_targetBundleReplacedByWorkspaceBundleWithSameVersion()
+			throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.b", "1.0.0.qualifier"));
+		List<NameVersionDescriptor> targetBundles = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.b", "1.0.0.202111102345"));
+
+		// Only a workspace plug-in with same major-minor-micro version
+		// (disregarding the qualifier) replaces a selected target-bundle
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfig = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.a", "plugin.b"));
+			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.a*1.0.0", "plugin.b"));
+		};
+
+		// Expect version from workspace
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				workspaceBundle("plugin.a", "1.0.0"), //
+				workspaceBundle("plugin.b", "1.0.0.qualifier"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetBundles, launchConfig, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_workspacePluginAddedAutomaticallyAndTargetPlugin_differentVersions()
+			throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.b", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.a", "1.0.1"), //
+				bundle("plugin.b", "1.0.1"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.a", "plugin.b*1.0.1"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				workspaceBundle("plugin.a", "1.0.0"), //
+				workspaceBundle("plugin.b", "1.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_workspacePluginAddedAutomaticallyAndTargetPlugin_sameVersionLikeInWorkspace()
+			throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.a", "1.0.0.202111102345"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
+			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.a*1.0.0.202111102345"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				workspaceBundle("plugin.a", "1.0.0"));
+
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	// --- test cases for writeBundleEntry() ----
+
+	@Test
+	public void testWriteBundleEntry_singleWorkspacePlugin_noVersionEntry() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.a", "2.0.0"), //
+				bundle("plugin.a", "2.0.1"));
+		setUpWorkspace(workspacePlugins, targetPlatformBundles);
+
+		IPluginModelBase plugin = workspaceBundle("plugin.a", "1.0.0").findModel();
+
+		String entry = BundleLauncherHelper.writeBundleEntry(plugin, null, null);
+		assertEquals("plugin.a", entry);
+	}
+
+	@Test
+	public void testWriteBundleEntry_oneOfTwoWorkspacePlugins_versionEntry() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.a", "1.0.1"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.a", "2.0.0"));
+		setUpWorkspace(workspacePlugins, targetPlatformBundles);
+
+		IPluginModelBase plugin = workspaceBundle("plugin.a", "1.0.0").findModel();
+
+		String entry = BundleLauncherHelper.writeBundleEntry(plugin, null, null);
+		assertEquals("plugin.a*1.0.0", entry);
+	}
+
+	@Test
+	public void testWriteBundleEntry_singleTargetPlugin_noVersionEntry() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.a", "1.0.1"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.a", "2.0.0"));
+		setUpWorkspace(workspacePlugins, targetPlatformBundles);
+
+		IPluginModelBase plugin = targetBundle("plugin.a", "2.0.0").findModel();
+
+		String entry = BundleLauncherHelper.writeBundleEntry(plugin, null, null);
+		assertEquals("plugin.a*2.0.0", entry);
+	}
+
+	@Test
+	public void testWriteBundleEntry_oneOfTwoTargetPlugins_versionEntry() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"));
+		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+				bundle("plugin.a", "2.0.0"), //
+				bundle("plugin.a", "2.0.1"));
+		setUpWorkspace(workspacePlugins, targetPlatformBundles);
+
+		IPluginModelBase plugin = targetBundle("plugin.a", "2.0.0").findModel();
+
+		String entry = BundleLauncherHelper.writeBundleEntry(plugin, null, null);
+		assertEquals("plugin.a", entry);
+	}
+
+	@Test
+	public void testWriteBundleEntry_startLevelAndAutoStart() throws Exception {
+		List<NameVersionDescriptor> workspacePlugins = List.of( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.a", "2.0.0"));
+		setUpWorkspace(workspacePlugins, List.of());
+
+		IPluginModelBase plugin = workspaceBundle("plugin.a", "1.0.0").findModel();
+
+		assertEquals("plugin.a*1.0.0", BundleLauncherHelper.writeBundleEntry(plugin, null, null));
+		assertEquals("plugin.a*1.0.0", BundleLauncherHelper.writeBundleEntry(plugin, "", ""));
+		assertEquals("plugin.a*1.0.0@4:true", BundleLauncherHelper.writeBundleEntry(plugin, "4", "true"));
+		assertEquals("plugin.a*1.0.0@4:", BundleLauncherHelper.writeBundleEntry(plugin, "4", ""));
+		assertEquals("plugin.a*1.0.0@:false", BundleLauncherHelper.writeBundleEntry(plugin, null, "false"));
+	}
+
+	// --- utilities ---
+
+	private static NameVersionDescriptor bundle(String id, String version) {
+		return new NameVersionDescriptor(id, version);
+	}
+
+	private void assertGetMergedBundleMap(List<NameVersionDescriptor> workspacePlugins,
+			List<NameVersionDescriptor> targetPlugins, Consumer<ILaunchConfigurationWorkingCopy> launchConfigPreparer,
+			Set<BundleLocationDescriptor> expectedBundles) throws Exception {
+
+		Map<BundleLocationDescriptor, String> expectedBundleMap = expectedBundles.stream()
+				.collect(Collectors.toMap(b -> b, b -> "default:default"));
+		assertGetMergedBundleMap(workspacePlugins, targetPlugins, launchConfigPreparer, expectedBundleMap);
+	}
+
+	private void assertGetMergedBundleMap(List<NameVersionDescriptor> workspacePlugins,
+			List<NameVersionDescriptor> targetPlugins, Consumer<ILaunchConfigurationWorkingCopy> launchConfigPreparer,
+			Map<BundleLocationDescriptor, String> expectedBundleMap) throws Exception {
+
+		setUpWorkspace(workspacePlugins, targetPlugins);
+
+		ILaunchConfigurationWorkingCopy wc = createPluginLaunchConfig("plugin-based-Eclipse-app");
+		launchConfigPreparer.accept(wc);
+
+		Map<IPluginModelBase, String> bundleMap = BundleLauncherHelper.getMergedBundleMap(wc, false);
+
+		Map<IPluginModelBase, String> expectedPluginMap = new HashMap<>();
+		expectedBundleMap.forEach((pd, start) -> {
+			expectedPluginMap.put(pd.findModel(), start);
+		});
+
+		assertEquals(expectedPluginMap, bundleMap);
+	}
+
+	private void setUpWorkspace(List<NameVersionDescriptor> workspacePlugins, List<NameVersionDescriptor> targetPlugins)
+			throws CoreException, IOException, InterruptedException {
+		for (NameVersionDescriptor pluginDescription : workspacePlugins) {
+			String bundleSymbolicName = pluginDescription.getId();
+			String bundleVersion = pluginDescription.getVersion();
+			String projectName = bundleSymbolicName + bundleVersion.replace('.', '_');
+			createPluginProject(projectName, bundleSymbolicName, bundleVersion);
+		}
+		TargetPlatformUtil.setDummyBundlesAsTarget(targetPlugins, tpJarDirectory);
+	}
+
+	private static ILaunchConfigurationWorkingCopy createPluginLaunchConfig(String name) throws CoreException {
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		ILaunchConfigurationType type = launchManager.getLaunchConfigurationType("org.eclipse.pde.ui.RuntimeWorkbench");
+		ILaunchConfigurationWorkingCopy wc = type.newInstance(null, name);
+		wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, false);
+		wc.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false);
+		wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, false);
+		return wc;
+	}
+
+	private static BundleLocationDescriptor workspaceBundle(String id, String version) {
+		Objects.requireNonNull(version);
+		return () -> findWorkspaceModel(id, version);
+	}
+
+	private static BundleLocationDescriptor targetBundle(String id, String version) {
+		Objects.requireNonNull(version);
+		// PluginRegistry.findModel does not consider external models when
+		// workspace models are present and returns the 'last' plug-in if
+		// multiple with the same version exist
+		return () -> findTargetModel(id, version);
+	}
+
+	private static interface BundleLocationDescriptor {
+		IPluginModelBase findModel();
+	}
+}
