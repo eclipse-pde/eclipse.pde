@@ -37,7 +37,7 @@ public class XMLTagScanner extends BasePDEScanner {
 		// Add rule for single and double quotes
 		rules[2] = new MultiLineRule("\"", "\"", fStringToken); //$NON-NLS-1$ //$NON-NLS-2$
 		rules[3] = new SingleLineRule("'", "'", fStringToken); //$NON-NLS-1$ //$NON-NLS-2$
-		rules[4] = new SingleLineRule("<!--", "-->", fCommentToken); //$NON-NLS-1$ //$NON-NLS-2$
+		rules[4] = new MultiLineRule("<!--", "-->", fCommentToken); //$NON-NLS-1$ //$NON-NLS-2$
 		// Add generic whitespace rule.
 		rules[5] = new WhitespaceRule(new XMLWhitespaceDetector());
 		setRules(rules);
