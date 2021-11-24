@@ -238,6 +238,7 @@ public class SpyProcessor {
 				mp.setCategory(Messages.SpyProcessor_category);
 				mp.setDescription(desc);
 				mp.setLabel(partLabel);
+				mp.getPersistedState().remove(IWorkbench.PERSIST_STATE); // see Bug 577275
 				String bundleId = FrameworkUtil.getBundle(spyPartClass).getSymbolicName();
 				mp.setContributionURI("bundleclass://" + bundleId + "/" + spyPartClass.getCanonicalName());
 				String contributorURI = "platform:/plugin/" + bundleId;
@@ -250,7 +251,6 @@ public class SpyProcessor {
 		// If descriptor not yet in descriptor list, add it now
 		MPartDescriptor descriptor = modelService.createModelElement(MPartDescriptor.class);
 		descriptor.setCategory(Messages.SpyProcessor_category);
-		descriptor.getPersistedState().put(IWorkbench.PERSIST_STATE, "false");
 		descriptor.setElementId(partId);
 		descriptor.setDescription(desc);
 		descriptor.getTags().add("View");
