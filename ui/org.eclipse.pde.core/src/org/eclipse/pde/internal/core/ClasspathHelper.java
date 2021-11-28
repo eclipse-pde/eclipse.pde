@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Hannes Wellmann - Bug 577541 - Clean up ClasspathHelper and TargetWeaver
+ *     Hannes Wellmann - Bug 577543 - Only weave dev.properties for secondary launches if plug-in is from Running-Platform
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -101,19 +102,14 @@ public class ClasspathHelper {
 	public static Properties getDevEntriesProperties(Map<String, IPluginModelBase> bundlesMap, boolean checkExcluded) {
 		Properties properties = new Properties();
 		// account for cascading workspaces
-		TargetWeaver.weaveDevProperties(properties);
+		TargetWeaver.weaveRunningPlatformDevProperties(properties, bundlesMap.values());
 		for (IPluginModelBase model : bundlesMap.values()) {
 			if (model.getUnderlyingResource() != null) {
 				String entry = formatEntry(getDevPaths(model, checkExcluded, bundlesMap.keySet()));
 				if (!entry.isEmpty()) {
-					String id = model.getPluginBase().getId();
-					String currentValue = properties.getProperty(id);
-					if (!entry.equals(currentValue)) {
-						if (currentValue != null) {
-							entry = currentValue + "," + entry; //$NON-NLS-1$
-						}
-						properties.put(id, entry);
-					}
+					// overwrite entry, if plug-in from primary Eclipse is also
+					// imported into workspace of secondary eclipse
+					properties.put(model.getPluginBase().getId(), entry);
 				}
 			}
 		}

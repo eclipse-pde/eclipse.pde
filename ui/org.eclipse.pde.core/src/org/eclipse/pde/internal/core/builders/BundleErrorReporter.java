@@ -136,8 +136,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			// There was a problem creating the OSGi bundle description, possibly a bad header
 			try {
 				StateObjectFactory stateObjectFactory = Platform.getPlatformAdmin().getFactory();
-				Map<String, String> manifest = ManifestUtils.loadManifest(new File(fModel.getInstallLocation()));
-				TargetWeaver.weaveManifest(manifest);
+				File bundleLocation = new File(fModel.getInstallLocation());
+				Map<String, String> manifest = ManifestUtils.loadManifest(bundleLocation);
+				TargetWeaver.weaveManifest(manifest, bundleLocation);
 				Hashtable<String, String> dictionaryManifest = new Hashtable<>(manifest);
 				stateObjectFactory.createBundleDescription(null, dictionaryManifest, null, 1);
 			} catch (BundleException e) {

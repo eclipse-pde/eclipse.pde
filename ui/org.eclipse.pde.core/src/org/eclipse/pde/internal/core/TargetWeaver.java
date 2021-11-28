@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
  *     Hannes Wellmann - Bug 577541 - Clean up ClasspathHelper and TargetWeaver
+ *     Hannes Wellmann - Bug 577543 - Only weave dev.properties for secondary launches if plug-in is from Running-Platform
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -20,11 +21,18 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
 
 /**
  * Supports target weaving (combining the target platform with workspace
@@ -90,17 +98,19 @@ public class TargetWeaver {
 	 * mode from the launching workspace.
 	 *
 	 * @param manifest manifest to update
+	 * @param bundleLocation the location of the Manifest's bundle
 	 */
-	public static void weaveManifest(Map<String, String> manifest) {
+	public static void weaveManifest(Map<String, String> manifest, File bundleLocation) {
 		if (manifest != null && fgDevPropertiesURL != null) {
 			Properties properties = getDevProperties();
 			String id = manifest.get(Constants.BUNDLE_SYMBOLICNAME);
-			if (id != null) {
+			String version = manifest.get(Constants.BUNDLE_VERSION);
+			if (id != null && version != null) {
 				int index = id.indexOf(';');
 				if (index != -1) {
 					id = id.substring(0, index);
 				}
-				String property = (String) properties.get(id);
+				String property = getDevProperty(bundleLocation.toPath(), id, version, properties);
 				if (property != null) {
 					manifest.put(Constants.BUNDLE_CLASSPATH, property);
 				}
@@ -109,15 +119,23 @@ public class TargetWeaver {
 	}
 
 	/**
-	 * When launching a secondary runtime workbench, all projects already in dev mode
-	 * must continue in dev mode such that their class files are found.
+	 * When launching a secondary runtime workbench, all projects already in dev
+	 * mode that participate in that runtime must continue in dev mode such that
+	 * their class files are found.
 	 *
-	 * @param properties dev.properties
+	 * @param launchDevProperties dev.properties
+	 * @param launchedPlugins the bundles that participate in secondary runtime
 	 */
-	public static void weaveDevProperties(Properties properties) {
+	static void weaveRunningPlatformDevProperties(Properties launchDevProperties,
+			Iterable<IPluginModelBase> launchedPlugins) {
 		if (fgDevPropertiesURL != null) {
-			Properties devProperties = getDevProperties();
-			properties.putAll(devProperties);
+			Properties platformDevProperties = getDevProperties();
+			for (IPluginModelBase launchedPlugin : launchedPlugins) {
+				String devCP = getDevProperty(launchedPlugin, platformDevProperties);
+				if (devCP != null) {
+					launchDevProperties.setProperty(launchedPlugin.getPluginBase().getId(), devCP);
+				}
+			}
 		}
 	}
 
@@ -143,28 +161,54 @@ public class TargetWeaver {
 			 * Workaround for bug 332112: Do not hack the source path for
 			 * bundles that are not coming from the host workspace.
 			 *
-			 * Since we don't actually know what the host workspace is and where
-			 * its projects are located, we have to guess:
-			 *
-			 * - If the bundle is not a folder, then it can't be a bundle from
-			 * the host workspace.
-			 *
-			 * - If the model has an underlying resource, then it's probably
-			 * from the local workspace.
-			 *
 			 * The architectural bug is that this weaving takes place at the
 			 * wrong level. It should already be done while the target platform
 			 * resolves bundles from the host workspace.
 			 */
-			if (id != null
-					&& !new File(model.getInstallLocation()).isFile()
-					&& model.getUnderlyingResource() == null) {
-				String property = (String) properties.get(id);
+			if (id != null) {
+				String property = getDevProperty(model, properties);
 				if (property != null) {
 					return ""; //$NON-NLS-1$
 				}
 			}
 		}
 		return libraryName;
+	}
+
+	private static String getDevProperty(IPluginModelBase plugin, Properties devProperties) {
+		// If it has an underlying resource, then it's from the local workspace.
+		if (plugin.getUnderlyingResource() == null) {
+			Path pluginLocation = Path.of(plugin.getInstallLocation());
+			IPluginBase pluginBase = plugin.getPluginBase();
+			return getDevProperty(pluginLocation, pluginBase.getId(), pluginBase.getVersion(), devProperties);
+		}
+		return null;
+	}
+
+	private static String getDevProperty(Path bundleLocation, String id, String version, Properties devProperties) {
+		String devCP = (String) devProperties.get(id);
+		return devCP != null && isBundleOfRunningPlatform(bundleLocation, id, version) ? devCP : null;
+	}
+
+	private static boolean isBundleOfRunningPlatform(Path pluginLocation, String id, String version) {
+		Bundle platformBundle = findRunningPlatformBundle(id, version);
+		if (platformBundle != null) {
+			try {
+				File bundleBaseFile = FileLocator.getBundleFile(platformBundle);
+				return Files.isSameFile(pluginLocation, bundleBaseFile.toPath());
+			} catch (IOException e) {
+				PDECore.logException(e);
+			}
+		}
+		return false;
+	}
+
+	private static Bundle findRunningPlatformBundle(String symbolicName, String versionStr) {
+		// Obtain all bundles of the running platform with given symbolicName
+		// and filter for version here. This is likely faster than specifying a
+		// range like: "[" + version + "," + version + "]"
+		Version version = Version.parseVersion(versionStr);
+		Bundle[] platformBundles = Platform.getBundles(symbolicName, null);
+		return Arrays.stream(platformBundles).filter(b -> b.getVersion().equals(version)).findAny().orElse(null);
 	}
 }

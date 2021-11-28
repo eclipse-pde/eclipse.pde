@@ -19,6 +19,7 @@ package org.eclipse.pde.ui.tests.classpathresolver;
 import static org.eclipse.pde.ui.tests.launcher.AbstractLaunchTest.findTargetModel;
 import static org.eclipse.pde.ui.tests.launcher.AbstractLaunchTest.findWorkspaceModel;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -144,7 +145,7 @@ public class ClasspathResolverTest {
 	@Test
 	public void testGetDevProperties_workspacePlugin_devEntryWithAndWithoutVersion() throws Exception {
 
-		Bundle hostBundle = getHostBundleAndMockDevProperties();
+		getHostBundleAndMockDevProperties();
 
 		mockTPWithBundles(List.of()); // empty TP
 
@@ -153,9 +154,8 @@ public class ClasspathResolverTest {
 		Properties devProperties = createDevEntryProperties(List.of(wsModel));
 
 		assertEquals("true", devProperties.getProperty("@ignoredot@"));
-		assertEquals("devPath1,bin", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertUnrelatedEntriesArePresent(hostBundle, devProperties);
-		assertEquals(5, devProperties.size()); // assert no more entries
+		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID));
+		assertEquals(2, devProperties.size()); // assert no more entries
 	}
 
 	@Test
@@ -172,9 +172,8 @@ public class ClasspathResolverTest {
 		Properties devProperties = createDevEntryProperties(List.of(wsModel));
 
 		assertEquals("true", devProperties.getProperty("@ignoredot@"));
-		assertEquals("devPath1,bin", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertUnrelatedEntriesArePresent(hostBundle, devProperties);
-		assertEquals(5, devProperties.size()); // assert no more entries
+		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID));
+		assertEquals(2, devProperties.size()); // assert no more entries
 	}
 
 	@Test
@@ -191,14 +190,13 @@ public class ClasspathResolverTest {
 
 		assertEquals("true", devProperties.getProperty("@ignoredot@"));
 		assertEquals("devPath1", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertUnrelatedEntriesArePresent(hostBundle, devProperties);
-		assertEquals(5, devProperties.size()); // assert no more entries
+		assertEquals(2, devProperties.size()); // assert no more entries
 	}
 
 	@Test
 	public void testGetDevProperties_jarTPBundle_noDevEntries() throws Exception {
 
-		Bundle hostBundle = getHostBundleAndMockDevProperties();
+		getHostBundleAndMockDevProperties();
 
 		// pretend there is only a jar-bundle in the TP that has the same
 		// name and version like a woven plug-in from the host
@@ -210,9 +208,8 @@ public class ClasspathResolverTest {
 		Properties devProperties = createDevEntryProperties(List.of(tpModel));
 
 		assertEquals("true", devProperties.getProperty("@ignoredot@"));
-		assertEquals("devPath1", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertUnrelatedEntriesArePresent(hostBundle, devProperties);
-		assertEquals(5, devProperties.size()); // assert no more entries
+		assertNull(devProperties.getProperty(HOST_BUNDLE_ID));
+		assertEquals(1, devProperties.size()); // assert no more entries
 	}
 
 	@Test
@@ -231,16 +228,15 @@ public class ClasspathResolverTest {
 		Properties devProperties = createDevEntryProperties(List.of(hostModel));
 
 		assertEquals("true", devProperties.getProperty("@ignoredot@"));
-		assertEquals("devPath1", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertUnrelatedEntriesArePresent(hostBundle, devProperties);
-		assertEquals(5, devProperties.size()); // assert no more entries
+		assertNull(devProperties.getProperty(HOST_BUNDLE_ID));
+		assertEquals(1, devProperties.size()); // assert no more entries
 	}
 
 	@Test
 	public void testGetDevProperties_workspaceAndJarTPBundle_oneEmptyDevEntryAndOneWithAndWithoutVersion()
 			throws Exception {
 
-		Bundle hostBundle = getHostBundleAndMockDevProperties();
+		getHostBundleAndMockDevProperties();
 
 		mockTPWithBundles(List.of( //
 				bundle(HOST_BUNDLE_ID, "1.0.0")));
@@ -251,9 +247,8 @@ public class ClasspathResolverTest {
 		Properties devProperties = createDevEntryProperties(List.of(hostModel, wsModel));
 
 		assertEquals("true", devProperties.getProperty("@ignoredot@"));
-		assertEquals("devPath1,bin", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertUnrelatedEntriesArePresent(hostBundle, devProperties);
-		assertEquals(5, devProperties.size()); // assert no more entries
+		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID));
+		assertEquals(2, devProperties.size()); // assert no more entries
 	}
 
 	@Test
@@ -272,8 +267,7 @@ public class ClasspathResolverTest {
 
 		assertEquals("true", devProperties.getProperty("@ignoredot@"));
 		assertEquals("devPath1", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertUnrelatedEntriesArePresent(hostBundle, devProperties);
-		assertEquals(5, devProperties.size()); // assert no more entries
+		assertEquals(2, devProperties.size()); // assert no more entries
 	}
 
 	@Test
@@ -290,9 +284,8 @@ public class ClasspathResolverTest {
 		Properties devProperties = createDevEntryProperties(List.of(hostModel, wsModel));
 
 		assertEquals("true", devProperties.getProperty("@ignoredot@"));
-		assertEquals("devPath1,bin", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertUnrelatedEntriesArePresent(hostBundle, devProperties);
-		assertEquals(5, devProperties.size()); // assert no more entries
+		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID));
+		assertEquals(2, devProperties.size()); // assert no more entries
 	}
 
 	@Test
@@ -311,9 +304,8 @@ public class ClasspathResolverTest {
 		Properties devProperties = createDevEntryProperties(List.of(hostModel, tpModel, wsModel));
 
 		assertEquals("true", devProperties.getProperty("@ignoredot@"));
-		assertEquals("devPath1,bin", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertUnrelatedEntriesArePresent(hostBundle, devProperties);
-		assertEquals(5, devProperties.size()); // assert no more entries
+		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID));
+		assertEquals(2, devProperties.size()); // assert no more entries
 	}
 
 	// --- utility methods ---
@@ -393,12 +385,5 @@ public class ClasspathResolverTest {
 			devProperties.load(stream);
 		}
 		return devProperties;
-	}
-
-	private static void assertUnrelatedEntriesArePresent(Bundle hostBundle, Properties devProperties) {
-		assertEquals("devPath2",
-				devProperties.getProperty(hostBundle.getSymbolicName() + ";" + hostBundle.getVersion()));
-		assertEquals("devPath3", devProperties.getProperty("some.other.plugin"));
-		assertEquals("devPath4", devProperties.getProperty("some.other.plugin;2.0.0"));
 	}
 }

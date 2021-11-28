@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -197,8 +197,9 @@ public class BundleComponent extends Component {
 	 */
 	protected synchronized Map<String, String> getManifest() throws CoreException {
 		if (fManifest == null) {
+			File bundleLocation = new File(fLocation);
 			try {
-				fManifest = ManifestUtils.loadManifest(new File(fLocation));
+				fManifest = ManifestUtils.loadManifest(bundleLocation);
 			} catch (CoreException e) {
 				if (e.getStatus().getCode() == ManifestUtils.STATUS_CODE_NOT_A_BUNDLE_MANIFEST) {
 					// If we load a component with a manifest file that isn't a
@@ -212,7 +213,7 @@ public class BundleComponent extends Component {
 				// must account for bundles in development mode - look for class
 				// files in output
 				// folders rather than jars
-				TargetWeaver.weaveManifest(fManifest);
+				TargetWeaver.weaveManifest(fManifest, bundleLocation);
 			}
 		}
 		return fManifest;
