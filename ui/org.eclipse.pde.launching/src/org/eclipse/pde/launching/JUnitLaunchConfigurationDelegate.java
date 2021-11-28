@@ -154,7 +154,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		programArgs.add("-dev"); //$NON-NLS-1$
 
 		IJavaProject javaProject = getJavaProject(configuration);
-		Properties devProperties = ClasspathHelper.getDevEntriesProperties(fAllBundles);
+		Properties devProperties = ClasspathHelper.getDevEntriesProperties(fAllBundles, true);
 		if (javaProject != null) {
 			// source-folders of type "test" are omitted in the previous search so the need to be added here as they are part of the test but not part of the build.properties
 			Arrays.stream(javaProject.getRawClasspath())//
@@ -162,12 +162,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 					.filter(IClasspathEntry::isTest)//
 					.filter(entry -> entry.getOutputLocation() != null).forEach(entry -> {
 						IPath relativePath = entry.getOutputLocation().removeFirstSegments(1).makeRelative();
-						String currentProperty = devProperties.getProperty(testPluginId);
-						if (currentProperty == null) {
-							devProperties.setProperty(testPluginId, relativePath.toString());
-						} else {
-							devProperties.setProperty(testPluginId, currentProperty + "," + relativePath.toString()); //$NON-NLS-1$
-						}
+						devProperties.merge(testPluginId, relativePath.toString(), (vOld, vNew) -> vOld + "," + vNew); //$NON-NLS-1$
 					});
 		}
 		programArgs.add(ClasspathHelper.writeDevEntries(getConfigurationDirectory(configuration).toString() + "/dev.properties", devProperties)); //$NON-NLS-1$

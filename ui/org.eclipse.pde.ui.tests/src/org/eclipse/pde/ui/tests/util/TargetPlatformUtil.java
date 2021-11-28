@@ -62,6 +62,20 @@ public class TargetPlatformUtil {
 		createAndSetTargetForWorkspace(name, bundleContainers, included);
 	}
 
+	public static void setRunningPlatformWithDummyBundlesAsTarget(List<NameVersionDescriptor> targetPlugins,
+			Path jarDirectory, Predicate<Bundle> bundleFilter) throws IOException, InterruptedException {
+		Set<ITargetLocation> locations = new LinkedHashSet<>();
+		Set<NameVersionDescriptor> included = new LinkedHashSet<>();
+
+		addRunningPlatformBundles(locations, included, bundleFilter);
+
+		ITargetLocation location = createDummyBundlesLocation(targetPlugins, jarDirectory);
+		locations.add(location);
+		included.addAll(targetPlugins);
+
+		createAndSetTargetForWorkspace(null, locations, included);
+	}
+
 	public static void loadAndSetTargetForWorkspace(ITargetDefinition target) throws InterruptedException {
 		Job job = new LoadTargetDefinitionJob(target);
 		job.schedule();

@@ -55,11 +55,11 @@ public abstract class AbstractLaunchTest {
 		return launchManager.getLaunchConfiguration(launchConfigsProject.getFile(name));
 	}
 
-	protected static IPluginModelBase findWorkspaceModel(String id, String version) {
+	public static IPluginModelBase findWorkspaceModel(String id, String version) {
 		return getModel(id, version, ModelEntry::getWorkspaceModels, "workspace");
 	}
 
-	protected static IPluginModelBase findTargetModel(String id, String version) {
+	public static IPluginModelBase findTargetModel(String id, String version) {
 		return getModel(id, version, ModelEntry::getExternalModels, "target");
 	}
 

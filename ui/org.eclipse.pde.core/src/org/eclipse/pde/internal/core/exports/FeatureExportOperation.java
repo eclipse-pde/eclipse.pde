@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2020 IBM Corporation and others.
+ * Copyright (c) 2006, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -819,7 +819,7 @@ public class FeatureExportOperation extends Job {
 		fStateCopy.setPlatformProperties(state.getPlatformProperties());
 	}
 
-	private String getDevProperties() {
+	private String getDevProperties() throws CoreException {
 		if (fDevProperties == null) {
 			fDevProperties = ClasspathHelper.getDevEntriesProperties(fBuildTempLocation + "/dev.properties", false); //$NON-NLS-1$
 		}
