@@ -56,7 +56,6 @@ public class $perspectiveClassName$ implements IPerspectiveFactory {
 					IPageLayout.BOTTOM,
 					0.5f,
 					"topLeft");
-		bottomLeft.addView("org.eclipse.team.ccvs.ui.RepositoriesView"); //$NON-NLS-1$
 		bottomLeft.addView("org.eclipse.team.sync.views.SynchronizeView"); //$NON-NLS-1$
 		
 		IFolderLayout bottom =
@@ -78,7 +77,6 @@ public class $perspectiveClassName$ implements IPerspectiveFactory {
 		factory.addActionSet("org.eclipse.jdt.debug.ui.JDTDebugActionSet"); //$NON-NLS-1$
 		factory.addActionSet("org.eclipse.jdt.junit.JUnitActionSet"); //$NON-NLS-1$
 		factory.addActionSet("org.eclipse.team.ui.actionSet"); //$NON-NLS-1$
-		factory.addActionSet("org.eclipse.team.cvs.ui.CVSActionSet"); //$NON-NLS-1$
 		factory.addActionSet("org.eclipse.ant.ui.actionSet.presentation"); //$NON-NLS-1$
 		factory.addActionSet(JavaUI.ID_ACTION_SET);
 		factory.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);
@@ -89,14 +87,12 @@ public class $perspectiveClassName$ implements IPerspectiveFactory {
 % if(perspectiveShortcuts)	
 	private void addPerspectiveShortcuts() {
 		factory.addPerspectiveShortcut("org.eclipse.team.ui.TeamSynchronizingPerspective"); //$NON-NLS-1$
-		factory.addPerspectiveShortcut("org.eclipse.team.cvs.ui.cvsPerspective"); //$NON-NLS-1$
 		factory.addPerspectiveShortcut("org.eclipse.ui.resourcePerspective"); //$NON-NLS-1$
 	}
 
 % endif
 % if(newWizardShortcuts)
 	private void addNewWizardShortcuts() {
-		factory.addNewWizardShortcut("org.eclipse.team.cvs.ui.newProjectCheckout");//$NON-NLS-1$
 		factory.addNewWizardShortcut("org.eclipse.ui.wizards.new.folder");//$NON-NLS-1$
 		factory.addNewWizardShortcut("org.eclipse.ui.wizards.new.file");//$NON-NLS-1$
 	}
@@ -105,7 +101,6 @@ public class $perspectiveClassName$ implements IPerspectiveFactory {
 % if(showViewShortcuts)	
 	private void addViewShortcuts() {
 		factory.addShowViewShortcut("org.eclipse.ant.ui.views.AntView"); //$NON-NLS-1$
-		factory.addShowViewShortcut("org.eclipse.team.ccvs.ui.AnnotateView"); //$NON-NLS-1$
 		factory.addShowViewShortcut("org.eclipse.pde.ui.DependenciesView"); //$NON-NLS-1$
 		factory.addShowViewShortcut("org.eclipse.jdt.junit.ResultView"); //$NON-NLS-1$
 		factory.addShowViewShortcut("org.eclipse.team.ui.GenericHistoryView"); //$NON-NLS-1$
