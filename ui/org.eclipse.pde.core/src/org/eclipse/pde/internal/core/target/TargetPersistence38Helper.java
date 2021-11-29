@@ -59,7 +59,6 @@ public class TargetPersistence38Helper {
 	<locations>
 	<location path="${eclipse_home}" type="Directory"/>
 	<location path="${eclipse_home}" type="Profile"/>
-	<location id="org.eclipse.cvs" path="${eclipse_home}" type="Feature"/>
 	<location id="org.eclipse.emf.ecore" path="${eclipse_home}" type="Feature"/>
 	<location id="org.eclipse.egit" path="${eclipse_home}" type="Feature"/>
 	<location includeAllPlatforms="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
