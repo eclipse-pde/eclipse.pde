@@ -290,8 +290,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	 * <p>
 	 * The detail page no longer needs this as its available list is filtered, but on the express page
 	 * we may end up with plug-ins from the workspace that require plug-ins without repo info.  In that
-	 * case the bundles will still be added to the right column but won't be available on the next page
-	 * (CVS page).
+	 * case the bundles will still be added to the right column but won't be available on the next page.
 	 * </p>
 	 */
 	protected void checkRepositoryAvailability() {
