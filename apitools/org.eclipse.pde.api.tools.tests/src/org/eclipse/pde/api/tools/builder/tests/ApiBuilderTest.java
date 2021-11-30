@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -327,7 +326,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		assertTrue("Test data directory does not exist: " + path.toOSString(), dir.exists()); //$NON-NLS-1$
 		File[] files = dir.listFiles();
 		for (File file : files) {
-			if (file.isDirectory() && !file.getName().equals("CVS")) { //$NON-NLS-1$
+			if (file.isDirectory()) {
 				createExistingProject(file, importfiles, usetestcompliance);
 			}
 		}
@@ -412,11 +411,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			// import operation to import project files
 			File importSource = new File(locationURI);
 			List<?> filesToImport = FileSystemStructureProvider.INSTANCE.getChildren(importSource);
-			for (Iterator<?> iterator = filesToImport.iterator(); iterator.hasNext();) {
-				if (((File) iterator.next()).getName().equals("CVS")) { //$NON-NLS-1$
-					iterator.remove();
-				}
-			}
+
 			ImportOperation operation = new ImportOperation(project.getFullPath(), importSource, FileSystemStructureProvider.INSTANCE, pathString -> IOverwriteQuery.ALL, filesToImport);
 			operation.setOverwriteResources(true);
 			operation.setCreateContainerStructure(false);

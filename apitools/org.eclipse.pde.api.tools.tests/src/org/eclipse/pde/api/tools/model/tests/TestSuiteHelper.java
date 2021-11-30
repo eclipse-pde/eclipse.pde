@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -339,14 +339,11 @@ public class TestSuiteHelper {
 			List<IApiComponent> components = new ArrayList<>();
 			Set<String> requiredComponents = new HashSet<>();
 			for (File bundle : files) {
-				if (!bundle.getName().equals("CVS")) { //$NON-NLS-1$
-					// ignore CVS folder
 					IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
 					if (component != null) {
 						components.add(component);
 						requiredComponents.add(component.getSymbolicName());
 					}
-				}
 			}
 			// collect required components
 			IApiComponent[] base = components.toArray(new IApiComponent[components.size()]);
@@ -644,17 +641,10 @@ public class TestSuiteHelper {
 	private static void copy0(File f, File dest) {
 		dest.mkdirs();
 		if (f.isDirectory()) {
-			String dirName = f.getName();
-			if ("CVS".equals(dirName)) { //$NON-NLS-1$
-				return;
-			}
 			File[] files = f.listFiles();
 			for (File file : files) {
 				if (file.isDirectory()) {
 					String name = file.getName();
-					if ("CVS".equals(name)) { //$NON-NLS-1$
-						continue;
-					}
 					copy0(new File(f, name), new File(dest, name));
 				} else {
 					copy0(file, dest);

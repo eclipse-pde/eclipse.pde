@@ -485,7 +485,6 @@ public class UtilTests {
 				"org.eclipse.ecf.provider.filetransfer", //$NON-NLS-1$
 				"org.eclipse.equinox.preferences", //$NON-NLS-1$
 				"org.eclipse.equinox.p2.reconciler.dropins", //$NON-NLS-1$
-				"org.eclipse.team.cvs.ui", //$NON-NLS-1$
 				"org.eclipse.equinox.p2.metadata.generator", //$NON-NLS-1$
 				"org.eclipse.equinox.registry", //$NON-NLS-1$
 				"org.eclipse.swt", //$NON-NLS-1$
@@ -530,7 +529,6 @@ public class UtilTests {
 				"org.eclipse.core.resources", //$NON-NLS-1$
 				"org.eclipse.pde.launching", //$NON-NLS-1$
 				"org.eclipse.ui.externaltools", //$NON-NLS-1$
-				"org.eclipse.cvs", //$NON-NLS-1$
 				"org.eclipse.equinox.p2.repository", //$NON-NLS-1$
 				"org.eclipse.core.resources.win32.x86", //$NON-NLS-1$
 				"org.eclipse.pde.ui", //$NON-NLS-1$
@@ -575,7 +573,6 @@ public class UtilTests {
 				"org.eclipse.core.filesystem", //$NON-NLS-1$
 				"org.eclipse.jdt.junit.core", //$NON-NLS-1$
 				"org.eclipse.jdt.junit.runtime", //$NON-NLS-1$
-				"org.eclipse.team.cvs.ssh2", //$NON-NLS-1$
 				"org.eclipse.core.variables", //$NON-NLS-1$
 				"org.eclipse.platform.doc.user", //$NON-NLS-1$
 				"org.eclipse.equinox.p2.operations", //$NON-NLS-1$
@@ -585,7 +582,6 @@ public class UtilTests {
 				"org.eclipse.equinox.p2.metadata.repository", //$NON-NLS-1$
 				"org.eclipse.pde.ds.core", //$NON-NLS-1$
 				"org.eclipse.jdt.apt.pluggable.core", //$NON-NLS-1$
-				"org.eclipse.team.cvs.core", //$NON-NLS-1$
 				"org.mortbay.jetty.server", //$NON-NLS-1$
 				"org.eclipse.text", //$NON-NLS-1$
 				"org.eclipse.jdt.compiler.apt", //$NON-NLS-1$
