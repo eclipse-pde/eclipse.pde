@@ -15,7 +15,6 @@
 package org.eclipse.pde.api.tools.internal.model;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +54,6 @@ import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
  */
 public class ApiModelFactory {
 
-	private static final String CVS_FOLDER_NAME = "CVS"; //$NON-NLS-1$
 	public static final IApiComponent[] NO_COMPONENTS = new IApiComponent[0];
 
 	/**
@@ -64,20 +62,6 @@ public class ApiModelFactory {
 	 * {@link Path#fromPortableString(String)}.
 	 */
 	private static final String TARGET_PREFIX = "target:"; //$NON-NLS-1$
-
-	/**
-	 * {@link FilenameFilter} for CVS files
-	 *
-	 * @since 1.0.1
-	 */
-	static class CVSNameFilter implements FilenameFilter {
-		@Override
-		public boolean accept(File dir, String name) {
-			return !name.equalsIgnoreCase(CVS_FOLDER_NAME);
-		}
-	}
-
-	private static CVSNameFilter fgCvsFilter = new CVSNameFilter();
 
 	/**
 	 * Next available bundle id
@@ -296,7 +280,7 @@ public class ApiModelFactory {
 				// running), add components by searching the plug-ins directory
 				File dir = new File(installLocation);
 				if (dir.exists()) {
-					File[] files = dir.listFiles(fgCvsFilter);
+					File[] files = dir.listFiles();
 					if (files == null) {
 						return NO_COMPONENTS;
 					}
