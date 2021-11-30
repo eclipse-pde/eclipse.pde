@@ -203,6 +203,21 @@ public class PDETemplateMessages extends NLS {
 	public static String HelpTemplate_reference;
 	public static String HelpTemplate_samples;
 
+	public static String BrowserView_newPlugin;
+
+
+	public static String BrowserViewTemplate_aGame;
+
+
+	public static String BrowserViewTemplate_browserView;
+
+
+	public static String BrowserViewTemplate_selectJsType;
+
+
+	public static String BrowserViewTemplate_wbIntegration;
+
+
 	public static String BuilderNewWizard_wtitle;
 	public static String BuilderTemplate_title;
 	public static String BuilderTemplate_desc;
