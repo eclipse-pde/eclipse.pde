@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which accompanies this distribution,
@@ -558,7 +558,7 @@ public class PublishingTests extends P2TestCase {
 	public void testPublish_Packaging_1() throws Exception {
 		IFolder buildFolder = newTest("packaging_1");
 		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
-		Utils.generateFeature(buildFolder, "F", new String[] { "org.eclipse.cvs" }, new String[] { "a" });
+		Utils.generateFeature(buildFolder, "F", new String[] { "org.eclipse.test" }, new String[] { "a" });
 		Utils.generateBundle(a, "a");
 		Utils.writeBuffer(a.getFile("src/A.java"), new StringBuffer("public class A { int i; }"));
 
@@ -580,32 +580,34 @@ public class PublishingTests extends P2TestCase {
 		IInstallableUnit iu = getIU(repository, "a");
 		assertEquals(iu.getVersion().toString(), "1.0.0");
 
-		iu = getIU(repository, "org.eclipse.team.cvs.core");
+		iu = getIU(repository, "org.eclipse.ant.optional.junit");
 		assertNotNull(iu);
-		entries.add("plugins/org.eclipse.team.cvs.core_" + iu.getVersion() + ".jar");
-		IFile file = buildFolder.getFile("buildRepo/plugins/org.eclipse.team.cvs.core_" + iu.getVersion() + ".jar");
+		entries.add("plugins/org.eclipse.ant.optional.junit_" + iu.getVersion() + ".jar");
+		IFile file = buildFolder
+				.getFile("buildRepo/plugins/org.eclipse.ant.optional.junit_" + iu.getVersion() + ".jar");
 		assertTrue(file.exists());
 		assertJarVerifies(file.getLocation().toFile());
 
-		iu = getIU(repository, "org.eclipse.cvs");
+		iu = getIU(repository, "org.eclipse.test");
 		assertNotNull(iu);
-		entries.add("plugins/org.eclipse.cvs_" + iu.getVersion() + ".jar");
-		assertResourceFile(buildFolder, "buildRepo/plugins/org.eclipse.cvs_" + iu.getVersion() + ".jar");
+		entries.add("plugins/org.eclipse.test_" + iu.getVersion() + ".jar");
+		assertResourceFile(buildFolder, "buildRepo/plugins/org.eclipse.test_" + iu.getVersion() + ".jar");
 
-		iu = getIU(repository, "org.eclipse.team.cvs.ui");
+		iu = getIU(repository, "org.eclipse.test.performance");
 		assertNotNull(iu);
-		entries.add("plugins/org.eclipse.team.cvs.ui_" + iu.getVersion() + ".jar");
-		assertResourceFile(buildFolder, "buildRepo/plugins/org.eclipse.team.cvs.ui_" + iu.getVersion() + ".jar");
+		entries.add("plugins/org.eclipse.test.performance_" + iu.getVersion() + ".jar");
+		assertResourceFile(buildFolder, "buildRepo/plugins/org.eclipse.test.performance_" + iu.getVersion() + ".jar");
 
-		iu = getIU(repository, "org.eclipse.team.cvs.ssh2");
+		iu = getIU(repository, "org.eclipse.test.performance.win32");
 		assertNotNull(iu);
-		entries.add("plugins/org.eclipse.team.cvs.ssh2_" + iu.getVersion() + ".jar");
-		assertResourceFile(buildFolder, "buildRepo/plugins/org.eclipse.team.cvs.ssh2_" + iu.getVersion() + ".jar");
+		entries.add("plugins/org.eclipse.test.performance.win32_" + iu.getVersion() + ".jar");
+		assertResourceFile(buildFolder,
+				"buildRepo/plugins/org.eclipse.test.performance.win32_" + iu.getVersion() + ".jar");
 
-		iu = getIU(repository, "org.eclipse.cvs.feature.jar");
-		file = buildFolder.getFile("buildRepo/features/org.eclipse.cvs_" + iu.getVersion() + ".jar");
+		iu = getIU(repository, "org.eclipse.test.feature.jar");
+		file = buildFolder.getFile("buildRepo/features/org.eclipse.test_" + iu.getVersion() + ".jar");
 		assertTrue(file.exists());
-		entries.add("features/org.eclipse.cvs_" + iu.getVersion() + ".jar");
+		entries.add("features/org.eclipse.test_" + iu.getVersion() + ".jar");
 		assertJarVerifies(file.getLocation().toFile());
 
 		entries.add("artifacts.xml");
