@@ -21,12 +21,12 @@ import java.net.URI;
 import java.util.*;
 import java.util.Map.Entry;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.core.target.ITargetLocation;
+import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.ui.tests.target.IUBundleContainerTests;
@@ -38,19 +38,17 @@ import org.osgi.framework.Version;
 
 public class DependencyManagerTest {
 
+	@ClassRule
+	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@Rule
+	public final TestRule deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
+
 	@Rule
 	public final TestRule restoreTargetDefinition = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
 
 	@Before
 	public void ensurePluginModelManagerIsInitialized() {
 		PluginModelManager.getInstance().getState();
-	}
-
-	@After
-	public void clearWorkspace() throws Exception {
-		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-			project.delete(false, true, null);
-		}
 	}
 
 	@Test
@@ -165,8 +163,6 @@ public class DependencyManagerTest {
 					IUBundleContainer.INCLUDE_REQUIRED | IUBundleContainer.INCLUDE_CONFIGURE_PHASE);
 			locations.add(location);
 		});
-		ITargetDefinition target = tps.newTarget();
-		TargetPlatformUtil.setTargetProperties(target, locations.toArray(ITargetLocation[]::new));
-		TargetPlatformUtil.loadAndSetTargetForWorkspace(target);
+		TargetPlatformUtil.createAndSetTargetForWorkspace(null, locations, null);
 	}
 }

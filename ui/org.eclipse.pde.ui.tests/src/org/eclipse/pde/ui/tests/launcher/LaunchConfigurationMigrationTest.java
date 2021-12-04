@@ -25,6 +25,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.launching.IPDELauncherConstants;
+import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -32,8 +33,8 @@ public class LaunchConfigurationMigrationTest extends AbstractLaunchTest {
 
 	@BeforeClass
 	public static void setupPluginProjects() throws Exception {
-		createPluginProject("org.eclipse.pde.plugin1", "org.eclipse.pde.plugin1", null);
-		createPluginProject("org.eclipse.pde.plugin2", "org.eclipse.pde.plugin2", null);
+		ProjectUtils.createPluginProject("org.eclipse.pde.plugin1", "org.eclipse.pde.plugin1", null);
+		ProjectUtils.createPluginProject("org.eclipse.pde.plugin2", "org.eclipse.pde.plugin2", null);
 	}
 
 	@Test

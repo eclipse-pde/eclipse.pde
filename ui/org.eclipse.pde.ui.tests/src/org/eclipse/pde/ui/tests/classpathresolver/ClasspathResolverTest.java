@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 Sonatype, Inc. and others.
+ * Copyright (c) 2011, 2021 Sonatype, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *      Sonatype, Inc. - initial API and implementation
  *      IBM Corporation - ongoing enhancements
+ *      Hannes Wellmann - Bug 577629 - Unify project creation/deletion in tests
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.classpathresolver;
 
@@ -19,8 +20,8 @@ import static org.junit.Assert.assertEquals;
 import java.io.*;
 import java.net.URL;
 import java.util.Properties;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
 import org.eclipse.jdt.core.JavaCore;
@@ -29,36 +30,35 @@ import org.eclipse.pde.core.IBundleClasspathResolver;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.launching.sourcelookup.PDESourceLookupDirector;
 import org.eclipse.pde.internal.launching.sourcelookup.PDESourceLookupQuery;
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
+import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.junit.*;
+import org.junit.rules.TemporaryFolder;
+import org.junit.rules.TestRule;
 
 /**
- * Tests {@link IBundleClasspathResolver} API to extend how the classpath and source lookup path
- * is created.
+ * Tests {@link IBundleClasspathResolver} API to extend how the classpath and
+ * source lookup path is created.
  *
  */
 public class ClasspathResolverTest {
 
-	private static final IProgressMonitor monitor = new NullProgressMonitor();
+	@ClassRule
+	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
 
-	private IWorkspace workspace = ResourcesPlugin.getWorkspace();
-
-	private IProject project;
+	private static IProject project;
 
 	/**
 	 * The project name and bundle symbolic name of the test project
 	 */
 	public static final String bundleName = "classpathresolver";
 
-	@Before
-	public void setUp() throws Exception {
-		project = importProject(workspace);
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+		project = ProjectUtils.importTestProject("tests/projects/" + bundleName);
 	}
 
-	@After
-	public void tearDown() throws Exception {
-		project.delete(true, true, monitor);
-	}
+	@Rule
+	public TemporaryFolder tempFolder = new TemporaryFolder();
 
 	private class _PDESourceLookupQuery extends PDESourceLookupQuery {
 
@@ -66,7 +66,7 @@ public class ClasspathResolverTest {
 			super(director, object);
 		}
 
-		@Override
+		@Override // Make super.getSourceContainers() visible
 		public ISourceContainer[] getSourceContainers(String location, String id) throws CoreException {
 			return super.getSourceContainers(location, id);
 		}
@@ -75,26 +75,20 @@ public class ClasspathResolverTest {
 	/**
 	 * Checks that a created dev properties file will recognise the modified
 	 * classpath
-	 *
-	 * @throws Exception
 	 */
 	@Test
-	public void testDevProperties() throws Exception {
-		File devProperties = File.createTempFile("dev", ".properties");
-		ClasspathHelper.getDevEntriesProperties(devProperties.getCanonicalPath(), false);
+	public void testGetDevProperties() throws Exception {
+		File devProperties = tempFolder.newFile("dev.properties").getCanonicalFile();
+		String devPropertiesURL = ClasspathHelper.getDevEntriesProperties(devProperties.getPath(), false);
 
-		Properties properties = new Properties();
-		try (InputStream is = new FileInputStream(devProperties)) {
-			properties.load(is);
-		}
+		Properties properties = loadProperties(devPropertiesURL);
 
-		assertEquals(project.getFolder("cpe").getLocation().toPortableString(), properties.get(bundleName));
+		String expectedDevCP = project.getFolder("cpe").getLocation().toPortableString();
+		assertEquals(expectedDevCP, properties.get(bundleName));
 	}
 
 	/**
 	 * Checks that the source lookup path of a project is updated from the API
-	 *
-	 * @throws Exception
 	 */
 	@Test
 	public void testSourceLookupPath() throws Exception {
@@ -105,54 +99,18 @@ public class ClasspathResolverTest {
 
 		assertEquals(2, containers.length);
 		assertEquals(JavaCore.create(project), ((JavaProjectSourceContainer) containers[0]).getJavaProject());
-		assertEquals(project.getFolder("cpe").getLocation().toFile(), ((DirectorySourceContainer) containers[1]).getDirectory());
+		assertEquals(project.getFolder("cpe").getLocation().toFile(),
+				((DirectorySourceContainer) containers[1]).getDirectory());
 	}
 
-	/**
-	 * Imports a project into the test workspace
-	 *
-	 * @param workspace workspace to import into
-	 * @return the created project
-	 * @throws IOException
-	 * @throws CoreException
-	 */
-	IProject importProject(IWorkspace workspace) throws IOException, CoreException {
-		File rootFile = workspace.getRoot().getLocation().toFile();
+	// --- utility methods ---
 
-		URL srcURL = PDETestsPlugin.getBundleContext().getBundle().getEntry("tests/projects/" + bundleName);
-		File srcBasedir = new File(FileLocator.toFileURL(srcURL).getFile());
-
-		File dstBasedir = new File(rootFile, bundleName);
-		copyFile(srcBasedir, dstBasedir, ".project");
-		copyFile(srcBasedir, dstBasedir, ".classpath");
-		copyFile(srcBasedir, dstBasedir, "build.properties");
-		copyFile(srcBasedir, dstBasedir, "META-INF/MANIFEST.MF");
-		copyFile(srcBasedir, dstBasedir, "cpe/some.properties");
-		IProject project = workspace.getRoot().getProject(bundleName);
-		IProjectDescription description = workspace.newProjectDescription(bundleName);
-		project.create(description, monitor);
-		project.open(monitor);
-		return project;
-	}
-
-	private void copyFile(File srcBasedir, File dstBasedir, String file) throws IOException {
-		copyFile(new File(srcBasedir, file), new File(dstBasedir, file));
-	}
-
-	// copy&paste from org.eclipse.m2e.tests.common.FileHelpers
-	private void copyFile(File src, File dst) throws IOException {
-		src.getParentFile().mkdirs();
-		dst.getParentFile().mkdirs();
-
-		try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(src));
-				BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(dst))) {
-
-			byte[] buf = new byte[10240];
-			int len;
-			while ((len = in.read(buf)) != -1) {
-				out.write(buf, 0, len);
-			}
+	private static Properties loadProperties(String devPropertiesURL) throws IOException {
+		File propertiesFile = new File(new URL(devPropertiesURL).getPath());
+		Properties devProperties = new Properties();
+		try (InputStream stream = new FileInputStream(propertiesFile)) {
+			devProperties.load(stream);
 		}
+		return devProperties;
 	}
-
 }

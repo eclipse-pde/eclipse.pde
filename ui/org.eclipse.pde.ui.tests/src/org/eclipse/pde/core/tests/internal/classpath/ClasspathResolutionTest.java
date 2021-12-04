@@ -22,7 +22,8 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.function.Predicate;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -39,20 +40,15 @@ public class ClasspathResolutionTest {
 	@ClassRule
 	public static final TestRule RESTORE_TARGET_DEFINITION = TargetPlatformUtil.RESTORE_CURRENT_TARGET_DEFINITION_AFTER;
 
-	private IProject project;
-
-	@After
-	public void tearDown() throws CoreException {
-		if (project != null) {
-			project.delete(false, false, null);
-			project = null;
-		}
-	}
+	@ClassRule
+	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@Rule
+	public final TestRule deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
 
 	@Test
 	public void testImportSystemPackageDoesntAddExtraBundleJava11() throws Exception {
 		loadTargetPlatform("org.w3c.dom.events");
-		project = ProjectUtils.importTestProject("tests/projects/demoMissedSystemModulePackage");
+		IProject project = ProjectUtils.importTestProject("tests/projects/demoMissedSystemModulePackage");
 		project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 		IJavaProject javaProject = (IJavaProject) project.getNature(JavaCore.NATURE_ID);
 		RequiredPluginsClasspathContainer container = new RequiredPluginsClasspathContainer(
@@ -80,7 +76,7 @@ public class ClasspathResolutionTest {
 	@Test
 	public void testImportExternalPreviouslySystemPackageAddsExtraBundle() throws Exception {
 		loadTargetPlatform("javax.annotation");
-		project = ProjectUtils.importTestProject("tests/projects/demoMissedExternalPackage");
+		IProject project = ProjectUtils.importTestProject("tests/projects/demoMissedExternalPackage");
 		project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 		// In Java 11, javax.annotation is not present, so the bundle *must* be
 		// part of classpath
@@ -94,7 +90,7 @@ public class ClasspathResolutionTest {
 	@Test
 	public void testImportExternalPreviouslySystemPackageAddsExtraBundle_missingBREE() throws Exception {
 		loadTargetPlatform("javax.annotation");
-		project = ProjectUtils.importTestProject("tests/projects/demoMissedExternalPackageNoBREE");
+		IProject project = ProjectUtils.importTestProject("tests/projects/demoMissedExternalPackageNoBREE");
 
 		IExecutionEnvironment java11 = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-11");
 		assertThat(JavaRuntime.getVMInstall(JavaCore.create(project))).isIn(Arrays.asList(java11.getCompatibleVMs()));
@@ -112,7 +108,7 @@ public class ClasspathResolutionTest {
 	@Test
 	public void testImportSystemPackageDoesntAddExtraBundleJava8() throws Exception {
 		loadTargetPlatform("javax.annotation");
-		project = ProjectUtils.importTestProject("tests/projects/demoMissedSystemPackageJava8");
+		IProject project = ProjectUtils.importTestProject("tests/projects/demoMissedSystemPackageJava8");
 		project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 		// In Java 8, javax.annotation is present, so the bundle must *NOT* be
 		// part of classpath
@@ -126,7 +122,7 @@ public class ClasspathResolutionTest {
 	@Test
 	public void testImportSystemPackageDoesntAddExtraBundleJava8_osgiEERequirement() throws Exception {
 		loadTargetPlatform("javax.annotation");
-		project = ProjectUtils.importTestProject("tests/projects/demoMissedSystemPackageJava8OsgiEERequirement");
+		IProject project = ProjectUtils.importTestProject("tests/projects/demoMissedSystemPackageJava8OsgiEERequirement");
 		project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 		// bundle is build with java 11, but declares java 8 requirement via
 		// Require-Capability
