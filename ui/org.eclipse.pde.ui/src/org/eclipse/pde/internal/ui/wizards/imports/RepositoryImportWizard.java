@@ -40,7 +40,7 @@ public class RepositoryImportWizard extends Wizard {
 	/**
 	 * Map of import delegates to import descriptions as provided by the {@link BundleProjectService}
 	 */
-	private Map<?, ?> fImportMap;
+	private Map<IBundleImporter, ScmUrlImportDescription[]> fImportMap;
 
 	/**
 	 * Map of importer identifier to associated wizard import page
@@ -54,7 +54,7 @@ public class RepositoryImportWizard extends Wizard {
 	 *
 	 * @param importMap
 	 */
-	public RepositoryImportWizard(Map<?, ?> importMap) {
+	public RepositoryImportWizard(Map<IBundleImporter, ScmUrlImportDescription[]> importMap) {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PLUGIN_IMPORT_WIZ);
@@ -64,12 +64,12 @@ public class RepositoryImportWizard extends Wizard {
 
 	@Override
 	public void addPages() {
-		Iterator<?> iterator = fImportMap.entrySet().iterator();
+		Iterator<Entry<IBundleImporter, ScmUrlImportDescription[]>> iterator = fImportMap.entrySet().iterator();
 		while (iterator.hasNext()) {
-			Entry<?, ?> entry = (Entry<?, ?>) iterator.next();
-			final IBundleImporter importer = (IBundleImporter) entry.getKey();
+			Entry<IBundleImporter, ScmUrlImportDescription[]> entry = iterator.next();
+			final IBundleImporter importer = entry.getKey();
 			final String importerId = importer.getId();
-			ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) entry.getValue();
+			ScmUrlImportDescription[] descriptions = entry.getValue();
 			IScmUrlImportWizardPage page = fIdToPages.get(importerId);
 			if (page == null) {
 				try {

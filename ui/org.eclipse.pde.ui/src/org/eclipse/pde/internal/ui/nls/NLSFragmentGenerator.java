@@ -75,8 +75,8 @@ public class NLSFragmentGenerator {
 
 	private final IWizardContainer container;
 	private final String template;
-	private final List<?> plugins;
-	private final List<?> locales;
+	private final List<IPluginModelBase> plugins;
+	private final List<Locale> locales;
 	private final boolean overwriteWithoutAsking;
 	private IProgressMonitor monitor;
 
@@ -127,7 +127,8 @@ public class NLSFragmentGenerator {
 		}
 	};
 
-	public NLSFragmentGenerator(String template, List<?> plugins, List<?> locales, IWizardContainer container, boolean overwriteWithoutAsking) {
+	public NLSFragmentGenerator(String template, List<IPluginModelBase> plugins, List<Locale> locales,
+			IWizardContainer container, boolean overwriteWithoutAsking) {
 		this.plugins = plugins;
 		this.locales = locales;
 		this.container = container;
@@ -170,16 +171,14 @@ public class NLSFragmentGenerator {
 	 * @throws InvocationTargetException
 	 * @throws InterruptedException
 	 */
-	private void internationalizePlugins(List<?> plugins, List<?> locales, Map<String, Object> overwrites) throws CoreException, IOException, InvocationTargetException, InterruptedException {
+	private void internationalizePlugins(List<IPluginModelBase> plugins, List<Locale> locales,
+			Map<String, Object> overwrites)
+			throws CoreException, IOException, InvocationTargetException, InterruptedException {
 
 		Set<IProject> created = new HashSet<>();
 
-		for (Object pluginObject : plugins) {
-			IPluginModelBase plugin = (IPluginModelBase) pluginObject;
-
-			for (Object localeObject : locales) {
-				Locale locale = (Locale) localeObject;
-
+		for (IPluginModelBase plugin : plugins) {
+			for (Locale locale : locales) {
 				IProject project = getNLProject(plugin, locale);
 				if (created.contains(project) || overwriteWithoutAsking || !project.exists() || OVERWRITE == overwrites.get(project.getName())) {
 					if (!created.contains(project) && project.exists()) {
@@ -201,16 +200,14 @@ public class NLSFragmentGenerator {
 
 	private Object OVERWRITE = new Object();
 
-	private Map<String, Object> promptForOverwrite(List<?> plugins, List<?> locales) {
+	private Map<String, Object> promptForOverwrite(List<IPluginModelBase> plugins, List<Locale> locales) {
 		Map<String, Object> overwrites = new HashMap<>();
 
 		if (overwriteWithoutAsking)
 			return overwrites;
 
-		for (Object name : plugins) {
-			IPluginModelBase plugin = (IPluginModelBase) name;
-			for (Object localeObject : locales) {
-				Locale locale = (Locale) localeObject;
+		for (IPluginModelBase plugin : plugins) {
+			for (Locale locale : locales) {
 				IProject project = getNLProject(plugin, locale);
 
 				if (project.exists() && !overwrites.containsKey(project.getName())) {
@@ -338,10 +335,10 @@ public class NLSFragmentGenerator {
 			//Case 1a: External plug-in is a jar file
 			if (new File(installLocation).isFile()) {
 				try (ZipFile zf = new ZipFile(installLocation)) {
-					for (Enumeration<?> e = zf.entries(); e.hasMoreElements();) {
+					for (Enumeration<? extends ZipEntry> e = zf.entries(); e.hasMoreElements();) {
 						worked();
 
-						ZipEntry zfe = (ZipEntry) e.nextElement();
+						ZipEntry zfe = e.nextElement();
 						String name = zfe.getName();
 
 						String[] segments = name.split(SLASH);

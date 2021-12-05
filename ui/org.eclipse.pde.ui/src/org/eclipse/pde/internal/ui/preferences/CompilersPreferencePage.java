@@ -54,7 +54,7 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 	/**
 	 * Since {@link #applyData(Object)} can be called before createContents, store the data
 	 */
-	private Map<?, ?> fPageData = null;
+	private Map<String, Object> fPageData = null;
 
 	/**
 	 *
@@ -156,11 +156,12 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	public void applyData(Object data) {
 		if (data instanceof Map) {
-			fPageData = (Map<?, ?>) data;
+			fPageData = (Map<String, Object>) data;
 			if (link != null && fPageData.containsKey(NO_LINK)) {
-				link.setVisible(!Boolean.TRUE.equals(((Map<?, ?>) data).get(NO_LINK)));
+				link.setVisible(!Boolean.TRUE.equals(((Map<String, Object>) data).get(NO_LINK)));
 			}
 			if (fBlock == null)
 				return;

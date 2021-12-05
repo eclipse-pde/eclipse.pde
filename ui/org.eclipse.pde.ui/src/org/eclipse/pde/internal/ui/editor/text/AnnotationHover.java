@@ -49,9 +49,9 @@ public class AnnotationHover implements IAnnotationHover {
 
 		ArrayList<String> messages = new ArrayList<>();
 
-		Iterator<?> iter = model.getAnnotationIterator();
+		Iterator<Annotation> iter = model.getAnnotationIterator();
 		while (iter.hasNext()) {
-			Object object = iter.next();
+			Annotation object = iter.next();
 			if (object instanceof MarkerAnnotation) {
 				MarkerAnnotation annotation = (MarkerAnnotation) object;
 				if (compareRulerLine(model.getPosition(annotation), document, line)) {

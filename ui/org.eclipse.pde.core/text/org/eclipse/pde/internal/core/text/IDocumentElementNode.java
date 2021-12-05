@@ -14,8 +14,8 @@
 package org.eclipse.pde.internal.core.text;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.TreeMap;
+import java.util.List;
+import java.util.Map;
 import org.eclipse.pde.core.IModel;
 
 public interface IDocumentElementNode extends Serializable, IDocumentRange, IDocumentXMLNode {
@@ -112,10 +112,10 @@ public interface IDocumentElementNode extends Serializable, IDocumentRange, IDoc
 	public int getNodeAttributesCount();
 
 	// Not used by text edit operations
-	public TreeMap<?, ?> getNodeAttributesMap();
+	public Map<String, IDocumentAttributeNode> getNodeAttributesMap();
 
 	// Not used by text edit operations
-	public ArrayList<?> getChildNodesList();
+	public List<IDocumentElementNode> getChildNodesList();
 
 	// Not used by text edit operations
 	public void reconnect(IDocumentElementNode parent, IModel model);

@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.ui.wizards.imports;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
@@ -132,8 +131,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		}
 		File featureDir = new File(model.getInstallLocation());
 
-		importContent(featureDir, project.getFullPath(), FileSystemStructureProvider.INSTANCE, null,
-				subMonitor.split(1));
+		importContent(featureDir, project.getFullPath(), FileSystemStructureProvider.INSTANCE, subMonitor.split(1));
 		IFolder folder = project.getFolder("META-INF"); //$NON-NLS-1$
 		if (folder.exists()) {
 			folder.delete(true, null);
@@ -150,7 +148,8 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	private void importContent(Object source, IPath destPath, IImportStructureProvider provider, List<?> filesToImport, IProgressMonitor monitor) throws CoreException {
+	private void importContent(Object source, IPath destPath, IImportStructureProvider provider,
+			IProgressMonitor monitor) throws CoreException {
 		IOverwriteQuery query = new IOverwriteQuery() {
 			@Override
 			public String queryOverwrite(String file) {
@@ -159,9 +158,6 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		};
 		ImportOperation op = new ImportOperation(destPath, source, provider, query);
 		op.setCreateContainerStructure(false);
-		if (filesToImport != null) {
-			op.setFilesToImport(filesToImport);
-		}
 
 		try {
 			op.run(monitor);

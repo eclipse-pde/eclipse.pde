@@ -16,6 +16,8 @@ package org.eclipse.pde.internal.core.util;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -102,11 +104,11 @@ public class PDETextHelper {
 		return result;
 	}
 
-	public static String translateWriteText(String text, HashMap<?, ?> substituteChars) {
+	public static String translateWriteText(String text, HashMap<Character, String> substituteChars) {
 		return translateWriteText(text, null, substituteChars);
 	}
 
-	public static String translateWriteText(String text, HashSet<?> tagExceptions, HashMap<?, ?> substituteChars) {
+	public static String translateWriteText(String text, HashSet<String> tagExceptions, HashMap<Character, String> substituteChars) {
 		// Ensure not null
 		if (text == null) {
 			return ""; //$NON-NLS-1$
@@ -154,11 +156,11 @@ public class PDETextHelper {
 		return buffer.toString();
 	}
 
-	private static boolean processSubstituteChars(char currentChar, HashMap<?, ?> substituteChars,
+	private static boolean processSubstituteChars(char currentChar, Map<Character, String> substituteChars,
 			StringBuilder buffer) {
 		Character character = Character.valueOf(currentChar);
 		if (substituteChars.containsKey(character)) {
-			String value = (String) substituteChars.get(character);
+			String value = substituteChars.get(character);
 			if (isDefined(value)) {
 				// Append the value if defined
 				buffer.append(value);
@@ -169,8 +171,8 @@ public class PDETextHelper {
 		return false;
 	}
 
-	private static boolean processTagExceptions(char currentChar, HashMap<?, ?> substituteChars,
-			HashSet<?> tagExceptions, StringBuilder buffer, int scanLimit, String text, IntegerPointer index) {
+	private static boolean processTagExceptions(char currentChar, Map<Character, String> substituteChars,
+			Set<String> tagExceptions, StringBuilder buffer, int scanLimit, String text, IntegerPointer index) {
 		// If the current character is an open angle bracket, then it may be
 		// part of a valid tag exception
 		if (currentChar == '<') {
@@ -207,7 +209,7 @@ public class PDETextHelper {
 		return false;
 	}
 
-	private static void processTagExceptionCharacters(HashMap<?, ?> substituteChars, StringBuilder buffer,
+	private static void processTagExceptionCharacters(Map<Character, String> substituteChars, StringBuilder buffer,
 			String text) {
 		// Get the tag name
 		String tagName = getTagName(text);
@@ -270,7 +272,7 @@ public class PDETextHelper {
 		buffer.append('>');
 	}
 
-	private static boolean isValidTagException(HashSet<?> tagExceptions, String buffer) {
+	private static boolean isValidTagException(Set<String> tagExceptions, String buffer) {
 		// Sample buffer format:
 		// NO '<'
 		// tagName att1="value" att2="value"
@@ -318,12 +320,12 @@ public class PDETextHelper {
 		return tagName.toString();
 	}
 
-	private static int determineMaxLength(HashSet<?> set) {
-		Iterator<?> iterator = set.iterator();
+	private static int determineMaxLength(Set<String> set) {
+		Iterator<String> iterator = set.iterator();
 		int maxLength = -1;
 		while (iterator.hasNext()) {
 			// Has to be a String
-			String object = (String) iterator.next();
+			String object = iterator.next();
 			if (object.length() > maxLength) {
 				maxLength = object.length();
 			}

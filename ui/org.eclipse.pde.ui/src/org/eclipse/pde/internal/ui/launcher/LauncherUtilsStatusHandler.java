@@ -60,9 +60,11 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 			case LauncherUtils.GENERATE_CONFIG_INI :
 				return generateConfigIni();
 
-			case LauncherUtils.ORGANIZE_MANIFESTS :
+			case LauncherUtils.ORGANIZE_MANIFESTS:
 				Object[] args2 = (Object[]) source;
-				organizeManifests((ArrayList<?>) args2[0], (IProgressMonitor) args2[1], (Properties) args2[2]);
+				@SuppressWarnings("unchecked")
+				List<IProject> projects = (List<IProject>) args2[0];
+				organizeManifests(projects, (IProgressMonitor) args2[1], (Properties) args2[2]);
 				break;
 
 			case LauncherUtils.SELECT_WORKSPACE_FIELD :
@@ -110,7 +112,7 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 		generateErrorDialog(PDEUIMessages.LauncherUtils_workspaceLocked, message, launchConfig, mode);
 	}
 
-	private void organizeManifests(final ArrayList<?> projects, final IProgressMonitor monitor, final Properties lastRun) {
+	private void organizeManifests(List<IProject> projects, IProgressMonitor monitor, Properties lastRun) {
 		Display.getDefault().syncExec(() -> {
 			OrganizeManifestsProcessor processor = new OrganizeManifestsProcessor(projects);
 			initializeProcessor(processor);
@@ -120,9 +122,10 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 				// update table for each project with current time stamp
 				Properties table = lastRun;
 				String ts = Long.toString(System.currentTimeMillis());
-				Iterator<?> it = projects.iterator();
+
+				Iterator<IProject> it = projects.iterator();
 				while (it.hasNext())
-					table.put(((IProject) it.next()).getName(), ts);
+					table.put(it.next().getName(), ts);
 			} catch (OperationCanceledException | CoreException e2) {
 			}
 		});

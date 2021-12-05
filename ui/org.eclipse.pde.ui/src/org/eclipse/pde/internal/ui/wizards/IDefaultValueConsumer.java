@@ -25,7 +25,7 @@ public interface IDefaultValueConsumer {
 	 * Initializes the consumer with the values.
 	 * @param values
 	 */
-	void init(Dictionary<?, ?> values);
+	void init(Dictionary<String, String> values);
 
 	/**
 	 * Returns the default value for the given key

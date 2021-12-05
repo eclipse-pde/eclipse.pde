@@ -483,10 +483,10 @@ public class FeatureExportOperation extends Job {
 		if (fAntBuildProperties == null) {
 			fAntBuildProperties = new HashMap<>(15);
 
-			List<?> defaultProperties = AntCorePlugin.getPlugin().getPreferences().getProperties();
-			ListIterator<?> li = defaultProperties.listIterator();
+			List<Property> defaultProperties = AntCorePlugin.getPlugin().getPreferences().getProperties();
+			ListIterator<Property> li = defaultProperties.listIterator();
 			while (li.hasNext()) {
-				Property prop = (Property) li.next();
+				Property prop = li.next();
 				fAntBuildProperties.put(prop.getName(), prop.getValue());
 			}
 
@@ -1228,7 +1228,7 @@ public class FeatureExportOperation extends Job {
 
 		if (fInfo.useWorkspaceCompiledClasses) {
 			getWorkspaceExportHelper().buildBeforeExport(fInfo.items, subMonitor.split(45));
-			Set<?> errors = getWorkspaceExportHelper().checkForErrors(fInfo.items);
+			Set<IProject> errors = getWorkspaceExportHelper().checkForErrors(fInfo.items);
 			subMonitor.split(5);
 			if (!errors.isEmpty()) {
 				return Status.error(NLS.bind(PDECoreMessages.FeatureExportOperation_workspaceBuildErrorsFoundDuringExport, errors));

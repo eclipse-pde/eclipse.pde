@@ -55,9 +55,9 @@ public class PDEXMLHelper {
 		if (fSAXParserQueue.isEmpty()) {
 			parser = fSAXFactory.newSAXParser();
 		} else {
-			SoftReference<?> reference = fSAXParserQueue.remove(0);
+			SoftReference<SAXParser> reference = fSAXParserQueue.remove(0);
 			if (reference.get() != null) {
-				parser = (SAXParser) reference.get();
+				parser = reference.get();
 			} else {
 				parser = fSAXFactory.newSAXParser();
 			}
@@ -71,9 +71,9 @@ public class PDEXMLHelper {
 		if (fDOMParserQueue.isEmpty()) {
 			parser = fDOMFactory.newDocumentBuilder();
 		} else {
-			SoftReference<?> reference = fDOMParserQueue.remove(0);
+			SoftReference<DocumentBuilder> reference = fDOMParserQueue.remove(0);
 			if (reference.get() != null) {
-				parser = (DocumentBuilder) reference.get();
+				parser = reference.get();
 			} else {
 				parser = fDOMFactory.newDocumentBuilder();
 			}

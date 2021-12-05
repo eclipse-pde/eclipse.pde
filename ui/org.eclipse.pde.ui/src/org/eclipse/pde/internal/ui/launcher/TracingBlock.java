@@ -445,7 +445,7 @@ public class TracingBlock {
 		TracingPropertySource source = fPropertySources.get(model);
 		if (source == null) {
 			String id = model.getPluginBase().getId();
-			Hashtable<?, ?> defaults = PDECore.getDefault().getTracingOptionsManager().getTemplateTable(id);
+			Hashtable<String, String> defaults = PDECore.getDefault().getTracingOptionsManager().getTemplateTable(id);
 			source = new TracingPropertySource(model, fMasterOptions, defaults, this);
 			fPropertySources.put(model, source);
 			source.setChanged(true);

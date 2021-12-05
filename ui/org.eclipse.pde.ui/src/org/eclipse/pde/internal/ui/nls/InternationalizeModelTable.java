@@ -26,9 +26,9 @@ import java.util.List;
  * @author Team Azure
  *
  */
-public class InternationalizeModelTable {
-	private List<Object> fModels;
-	private List<Object> fPreSelected; //Models preselected by the user
+public class InternationalizeModelTable<T> {
+	private List<T> fModels;
+	private List<T> fPreSelected; // Models preselected by the user
 
 	public InternationalizeModelTable() {
 		fModels = new ArrayList<>();
@@ -41,7 +41,7 @@ public class InternationalizeModelTable {
 	 * @param model
 	 * @param selected
 	 */
-	public void addToModelTable(Object model, boolean selected) {
+	public void addToModelTable(T model, boolean selected) {
 		if (selected)
 			fPreSelected.add(model);
 		else
@@ -52,7 +52,7 @@ public class InternationalizeModelTable {
 	 * Adds the model to the model table.
 	 * @param model
 	 */
-	public void addModel(Object model) {
+	public void addModel(T model) {
 		fModels.add(model);
 	}
 
@@ -60,7 +60,7 @@ public class InternationalizeModelTable {
 	 * Removes the specified model from the model table.
 	 * @param model
 	 */
-	public void removeModel(Object model) {
+	public void removeModel(T model) {
 		fModels.remove(model);
 	}
 

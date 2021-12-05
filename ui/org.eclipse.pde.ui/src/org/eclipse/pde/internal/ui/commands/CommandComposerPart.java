@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.commands;
 
 import java.util.HashMap;
+import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -165,7 +166,7 @@ public class CommandComposerPart implements ISelectionChangedListener {
 		return fCommandDetails.getSerializedString();
 	}
 
-	protected HashMap<?, ?> getSelectedCommandsParameters() {
+	protected HashMap<IParameter, String> getSelectedCommandsParameters() {
 		return fCommandDetails.getParameters();
 	}
 

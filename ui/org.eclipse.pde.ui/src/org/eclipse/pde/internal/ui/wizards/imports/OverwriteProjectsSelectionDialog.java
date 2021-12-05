@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -127,7 +127,7 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 		}
 	}
 
-	private ArrayList<?> fPluginProjectList;
+	private List<IPluginModelBase> fPluginProjectList;
 	private FilteredCheckboxTree fFilteredTree;
 	private CachedCheckboxTreeViewer fCheckboxTreeViewer;
 
@@ -136,7 +136,7 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 	 * @param parent shell to create this dialog on top of
 	 * @param plugins list of IPluginModelBase objects that have conflicts
 	 */
-	public OverwriteProjectsSelectionDialog(Shell parent, ArrayList<?> plugins) {
+	public OverwriteProjectsSelectionDialog(Shell parent, List<IPluginModelBase> plugins) {
 		super(parent);
 		setTitle(PDEUIMessages.PluginImportOperation_OverwritePluginProjects);
 		Assert.isNotNull(plugins);

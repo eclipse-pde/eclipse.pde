@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.IDSObject;
 
@@ -30,7 +31,7 @@ public class DSContentProvider implements IContentProvider,
 		if (parentElement instanceof IDSModel) {
 			return new Object[] { ((IDSModel) parentElement).getDSComponent() };
 		} else if (parentElement instanceof IDSObject) {
-			List<?> list = ((IDSObject) parentElement).getChildNodesList();
+			List<IDocumentElementNode> list = ((IDSObject) parentElement).getChildNodesList();
 			// List is never null
 			if (!list.isEmpty()) {
 				return list.toArray();

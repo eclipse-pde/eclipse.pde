@@ -18,7 +18,8 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-import java.util.zip.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
@@ -260,8 +261,8 @@ public class TemplateFileGenerator implements IVariableProvider {
 		// Immidiate children
 		Map<String, ZipEntry> childZipEntries = new HashMap<>(); // "dir/" or "dir/file.java"
 
-		for (Enumeration<?> zipEntries = zipFile.entries(); zipEntries.hasMoreElements();) {
-			ZipEntry zipEntry = (ZipEntry) zipEntries.nextElement();
+		for (Enumeration<? extends ZipEntry> zipEntries = zipFile.entries(); zipEntries.hasMoreElements();) {
+			ZipEntry zipEntry = zipEntries.nextElement();
 			IPath entryPath = new Path(zipEntry.getName());
 			if (entryPath.segmentCount() <= pathLength) {
 				// ancestor or current directory

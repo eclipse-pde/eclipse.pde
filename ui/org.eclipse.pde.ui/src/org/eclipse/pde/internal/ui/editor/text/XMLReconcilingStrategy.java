@@ -98,10 +98,10 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 		IAnnotationModel model = getAnnotationModel();
 		if (model == null)
 			return;
-		Iterator<?> iter = model.getAnnotationIterator();
+		Iterator<Annotation> iter = model.getAnnotationIterator();
 
 		while (iter.hasNext()) {
-			Annotation annotation = (Annotation) iter.next();
+			Annotation annotation = iter.next();
 			if (annotation instanceof SpellingAnnotation) {
 				SpellingAnnotation spellingAnnotation = (SpellingAnnotation) annotation;
 				Position position = model.getPosition(spellingAnnotation);

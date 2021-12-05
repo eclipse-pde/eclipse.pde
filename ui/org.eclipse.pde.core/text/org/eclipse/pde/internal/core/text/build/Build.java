@@ -70,7 +70,7 @@ public class Build implements IBuild {
 		fEntries.clear();
 		Properties properties = new Properties();
 		properties.load(source);
-		Enumeration<?> keys = properties.keys();
+		Enumeration<Object> keys = properties.keys();
 		while (keys.hasMoreElements()) {
 			String name = keys.nextElement().toString();
 			BuildEntry entry = (BuildEntry) fModel.getFactory().createEntry(name);

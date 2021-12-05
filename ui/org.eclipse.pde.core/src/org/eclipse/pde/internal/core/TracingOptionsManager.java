@@ -23,11 +23,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.IPath;
@@ -58,13 +58,13 @@ public class TracingOptionsManager {
 		}
 	}
 
-	public Hashtable<String, Object> getTemplateTable(String pluginId) {
+	public Hashtable<String, String> getTemplateTable(String pluginId) {
 		Properties tracingTemplate = getTracingTemplate();
-		Hashtable<String, Object> defaults = new Hashtable<>();
+		Hashtable<String, String> defaults = new Hashtable<>();
 		for (Enumeration<Object> keys = tracingTemplate.keys(); keys.hasMoreElements();) {
 			String key = keys.nextElement().toString();
 			if (belongsTo(key, pluginId)) {
-				defaults.put(key, tracingTemplate.get(key));
+				defaults.put(key, tracingTemplate.get(key).toString());
 			}
 		}
 		return defaults;
@@ -81,9 +81,9 @@ public class TracingOptionsManager {
 		Properties defaults = getTracingTemplateCopy();
 		if (storedOptions != null) {
 			// Load stored values, but only for existing keys
-			Iterator<?> iter = storedOptions.keySet().iterator();
+			Iterator<String> iter = storedOptions.keySet().iterator();
 			while (iter.hasNext()) {
-				String key = iter.next().toString();
+				String key = iter.next();
 				if (defaults.containsKey(key)) {
 					defaults.setProperty(key, storedOptions.get(key));
 				}
@@ -138,9 +138,9 @@ public class TracingOptionsManager {
 		}
 	}
 
-	public void save(String filename, Map<String, String> map, HashSet<?> selected) {
+	public void save(String filename, Map<String, String> map, Set<String> selected) {
 		Properties properties = getTracingOptions(map);
-		for (Enumeration<?> keys = properties.keys(); keys.hasMoreElements();) {
+		for (Enumeration<Object> keys = properties.keys(); keys.hasMoreElements();) {
 			String key = keys.nextElement().toString();
 			Path path = new Path(key);
 			if (path.segmentCount() < 1 || !selected.contains(path.segment(0))) {

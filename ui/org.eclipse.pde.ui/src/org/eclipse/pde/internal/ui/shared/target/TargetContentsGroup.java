@@ -610,7 +610,7 @@ public class TargetContentsGroup {
 	 * @return bundle manifest dictionary or <code>null</code> if none
 	 * @throws IOException if unable to parse
 	 */
-	protected Map<?, ?> loadManifest(File bundleLocation) throws IOException {
+	protected Map<String, String> loadManifest(File bundleLocation) throws IOException {
 		ZipFile jarFile = null;
 		InputStream manifestStream = null;
 		String extension = new Path(bundleLocation.getName()).getFileExtension();

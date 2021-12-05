@@ -109,7 +109,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	 *
 	 * @return the list of plug-ins selected for internationalization
 	 */
-	private List<?> getPluginModelsForInternationalization() {
+	private List<IPluginModelBase> getPluginModelsForInternationalization() {
 		return page1.getModelsToInternationalize();
 	}
 
@@ -117,7 +117,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	 *
 	 * @return the list of locales specified for internationalization
 	 */
-	private List<?> getLocalesForInternationalization() {
+	private List<Locale> getLocalesForInternationalization() {
 		return page2.getLocalesForInternationalization();
 	}
 
@@ -172,7 +172,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 		GetNonExternalizedStringsAction externalize = new GetNonExternalizedStringsAction();
 
 		List<IProject> projects = new ArrayList<>();
-		List<?> pluginModels = getPluginModelsForInternationalization();
+		List<IPluginModelBase> pluginModels = getPluginModelsForInternationalization();
 
 		for (Object pluginModelObject : pluginModels) {
 			IPluginModelBase pluginModel = (IPluginModelBase) pluginModelObject;

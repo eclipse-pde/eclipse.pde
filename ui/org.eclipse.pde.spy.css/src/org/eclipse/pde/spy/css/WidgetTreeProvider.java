@@ -34,7 +34,7 @@ public class WidgetTreeProvider implements ITreeContentProvider {
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof Object[]) {
 			return (Object[]) inputElement;
-		} else if (inputElement instanceof Collection<?>) {
+		} else if (inputElement instanceof Collection) {
 			return ((Collection<?>) inputElement).toArray();
 		}
 		return getChildren(inputElement);

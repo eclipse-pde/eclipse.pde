@@ -14,8 +14,7 @@
 package org.eclipse.pde.internal.ui.commands;
 
 import java.util.ArrayList;
-
-import java.util.*;
+import java.util.TreeMap;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -30,7 +29,6 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 
 	private ICommandService fComServ;
 	private TreeMap<Category, ArrayList<Command>> fCatMap; // mapping of commands to category
-	private TreeMap<?, ?> fConMap; // mapping of commands to context
 	private Viewer fViewer;
 	private int fCurContent = F_CAT_CONTENT;
 
@@ -47,7 +45,6 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 				return comA.compareTo(comB);
 			return +1; // undefined ids should go last
 		});
-		fConMap = new TreeMap<>();
 		Command[] commands = fComServ.getDefinedCommands();
 		for (Command command : commands) {
 			/*
@@ -86,13 +83,12 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 	@Override
 	public void dispose() {
 		fCatMap.clear();
-		fConMap.clear();
 	}
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof Category) {
-			ArrayList<?> list = fCatMap.get(parentElement);
+			ArrayList<Command> list = fCatMap.get(parentElement);
 			if (list != null)
 				return list.toArray(new Command[list.size()]);
 		}
@@ -102,7 +98,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof Category) {
-			ArrayList<?> list = fCatMap.get(element);
+			ArrayList<Command> list = fCatMap.get(element);
 			if (list != null)
 				return !list.isEmpty();
 		}

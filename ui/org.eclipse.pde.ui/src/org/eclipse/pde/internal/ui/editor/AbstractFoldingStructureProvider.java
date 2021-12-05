@@ -59,12 +59,12 @@ public abstract class AbstractFoldingStructureProvider implements IFoldingStruct
 		}
 	}
 
-	private Annotation[] computeDifferences(ProjectionAnnotationModel model, Set<?> additions) {
+	private Annotation[] computeDifferences(ProjectionAnnotationModel model, Set<Position> additions) {
 		List<Object> deletions = new ArrayList<>();
-		for (Iterator<?> iter = model.getAnnotationIterator(); iter.hasNext();) {
-			Object annotation = iter.next();
+		for (Iterator<Annotation> iter = model.getAnnotationIterator(); iter.hasNext();) {
+			Annotation annotation = iter.next();
 			if (annotation instanceof ProjectionAnnotation) {
-				Position position = model.getPosition((Annotation) annotation);
+				Position position = model.getPosition(annotation);
 				if (additions.contains(position)) {
 					additions.remove(position);
 				} else {

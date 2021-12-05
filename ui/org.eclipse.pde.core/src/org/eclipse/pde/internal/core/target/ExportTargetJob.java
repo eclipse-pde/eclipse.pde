@@ -254,10 +254,9 @@ public class ExportTargetJob extends Job {
 		exporter.addDestination(createRepoDescriptor(destination, P2TargetUtils.getProfileId(target), RepositoryDescriptor.KIND_ARTIFACT));
 		exporter.addSource(createRepoDescriptor(P2TargetUtils.getBundlePool().getLocation(), null, RepositoryDescriptor.KIND_ARTIFACT));
 
-		IQueryResult<?> ius = P2TargetUtils.getIUs(target, monitor);
+		IQueryResult<IInstallableUnit> ius = P2TargetUtils.getIUs(target, monitor);
 		ArrayList<IInstallableUnit> toExport = new ArrayList<>();
-		for (Object installableUnit : ius) {
-			IInstallableUnit iu = (IInstallableUnit) installableUnit;
+		for (IInstallableUnit iu : ius) {
 			if (shouldExport(iu)) {
 				toExport.add(iu);
 			}

@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ds.core.IDSComponent;
 import org.eclipse.pde.internal.ds.core.IDSDocumentFactory;
 import org.eclipse.pde.internal.ds.core.IDSImplementation;
@@ -66,7 +67,7 @@ public class DSObjectTestCase extends AbstractDSModelTestCase {
 		reference.setReferenceName("ReferenceName");
 		component.addReference(reference);
 
-		List<?> children = component.getChildNodesList();
+		List<IDocumentElementNode> children = component.getChildNodesList();
 		assertTrue(children.size() == 5);
 		assertEquals(component.getModel(), fModel);
 

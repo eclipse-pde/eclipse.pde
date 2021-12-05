@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.core.build;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
 import java.util.Properties;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
@@ -75,10 +74,7 @@ public abstract class BuildModel extends AbstractModel implements IBuildModel {
 		}
 		fBuild = new Build();
 		fBuild.setModel(this);
-		for (Enumeration<?> names = properties.propertyNames(); names.hasMoreElements();) {
-			String name = names.nextElement().toString();
-			fBuild.processEntry(name, (String) properties.get(name));
-		}
+		properties.forEach((name, value) -> fBuild.processEntry(name.toString(), (String) value));
 		setLoaded(true);
 	}
 

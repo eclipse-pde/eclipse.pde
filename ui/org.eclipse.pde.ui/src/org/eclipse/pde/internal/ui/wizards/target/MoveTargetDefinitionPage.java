@@ -31,7 +31,7 @@ import org.eclipse.ui.PlatformUI;
 public class MoveTargetDefinitionPage extends PDEWizardNewFileCreationPage {
 
 	private static String EXTENSION = "target"; //$NON-NLS-1$
-	private Collection<?> fFilterList;
+	private Collection<IPath> fFilterList;
 
 	public MoveTargetDefinitionPage(String pageName, IStructuredSelection selection) {
 		super(pageName, selection);
@@ -52,7 +52,7 @@ public class MoveTargetDefinitionPage extends PDEWizardNewFileCreationPage {
 	 * @param filterFileList
 	 *            <code>Collection</code> of filenames as <code>IPath</code>
 	 */
-	protected void setFilter(Collection<?> filterFileList) {
+	protected void setFilter(Collection<IPath> filterFileList) {
 		fFilterList = filterFileList;
 	}
 

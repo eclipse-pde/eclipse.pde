@@ -14,7 +14,12 @@
 
 package org.eclipse.pde.internal.ui.nls;
 
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -55,4 +60,12 @@ public abstract class InternationalizationWizardPage extends WizardPage {
 		return text;
 	}
 
+	protected static <T> List<T> getModels(TableViewer viewer, Class<T> clazz) {
+		TableItem[] items = viewer.getTable().getItems();
+		return Arrays.stream(items).map(TableItem::getData).map(clazz::cast).collect(Collectors.toList());
+	}
+
+	protected static <T> Iterator<T> getSelectedModels(TableViewer viewer, Class<T> clazz) {
+		return Arrays.stream(viewer.getStructuredSelection().toArray()).map(clazz::cast).iterator();
+	}
 }

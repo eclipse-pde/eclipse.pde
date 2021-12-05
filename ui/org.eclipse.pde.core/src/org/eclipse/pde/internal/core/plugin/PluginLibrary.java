@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.plugin;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -159,7 +160,8 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_CONTENT_FILTERS)) {
-			ArrayList<?> list = (ArrayList<?>) newValue;
+			@SuppressWarnings("unchecked")
+			List<String> list = (List<String>) newValue;
 			if (list != null) {
 				setContentFilters(list.toArray(new String[list.size()]));
 			} else {

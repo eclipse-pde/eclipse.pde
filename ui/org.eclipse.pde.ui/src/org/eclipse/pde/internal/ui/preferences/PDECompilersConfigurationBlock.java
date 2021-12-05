@@ -447,13 +447,11 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 * fControlMap
 	 */
 	private void updateControls() {
-		Control control = null;
-		for (HashSet<?> controls : fControlMap.values()) {
+		for (Set<Control> controls : fControlMap.values()) {
 			if (controls == null) {
 				continue;
 			}
-			for (Object controlObject : controls) {
-				control = (Control) controlObject;
+			for (Control control : controls) {
 				if (control instanceof Combo) {
 					Combo combo = (Combo) control;
 					ControlData data = (ControlData) combo.getData();

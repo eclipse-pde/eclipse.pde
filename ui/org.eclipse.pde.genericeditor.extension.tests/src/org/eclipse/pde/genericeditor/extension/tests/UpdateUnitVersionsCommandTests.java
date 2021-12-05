@@ -82,7 +82,8 @@ public class UpdateUnitVersionsCommandTests extends AbstractTargetEditorTest {
 
 		Command command = service.getCommand("org.eclipse.pde.updateUnitVersions");
 		Object response = command.executeWithChecks(new ExecutionEvent());
-		String updatedText = (String) ((CompletableFuture<?>) response).get();
+		@SuppressWarnings("unchecked")
+		String updatedText = ((CompletableFuture<String>) response).get();
 		assertNotNull(updatedText);
 
 		Map<String, String> actual = getVersionsForIdsFromTargetFile(updatedText);

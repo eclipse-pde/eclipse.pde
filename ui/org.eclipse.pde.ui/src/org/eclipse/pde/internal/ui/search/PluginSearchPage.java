@@ -180,8 +180,8 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		return PluginSearchInput.ELEMENT_EXTENSION_POINT;
 	}
 
-	private HashSet<Object> getSelectedResources() {
-		HashSet<Object> result = new HashSet<>();
+	private Set<IResource> getSelectedResources() {
+		Set<IResource> result = new HashSet<>();
 		int scope = container.getSelectedScope();
 		if (scope == ISearchPageContainer.WORKSPACE_SCOPE)
 			return null;

@@ -126,12 +126,12 @@ public class ActiveMenuSection implements ISpySection {
 
 		if (action instanceof PluginAction) {
 			PluginAction pluginAction = (PluginAction) action;
-			Class<?> clazz = pluginAction.getClass();
+			Class<? extends PluginAction> clazz = pluginAction.getClass();
 			createActionContributionItemText(object, buffer, toolkit, text, clazz, pluginAction);
 
 		} else {
 			// normal JFace Actions
-			Class<?> clazz = action.getClass();
+			Class<? extends IAction> clazz = action.getClass();
 			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.ActiveMenuSection_5, new Class[] {clazz}));
 			Bundle bundle = FrameworkUtil.getBundle(clazz);
 			toolkit.generatePluginDetailsText(bundle, null, "meow", buffer, text); //$NON-NLS-1$

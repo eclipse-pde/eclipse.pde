@@ -237,7 +237,8 @@ public class P2Utils {
 	 * @param osgiBundleList a list of bundles coming from a template config.ini
 	 * @return URL location of the bundles.info or <code>null</code>
 	 */
-	public static URL writeBundlesTxt(Map<?, ?> bundles, int defaultStartLevel, boolean defaultAutoStart, File directory, String osgiBundleList) {
+	public static URL writeBundlesTxt(Map<IPluginModelBase, String> bundles, int defaultStartLevel,
+			boolean defaultAutoStart, File directory, String osgiBundleList) {
 		if (bundles.isEmpty()) {
 			return null;
 		}
@@ -265,8 +266,7 @@ public class P2Utils {
 
 		List<BundleInfo> bundleInfo = new ArrayList<>(bundles.size());
 		List<BundleInfo> sourceInfo = new ArrayList<>(bundles.size());
-		for (final Object name : bundles.keySet()) {
-			final IPluginModelBase currentModel = (IPluginModelBase) name;
+		for (final IPluginModelBase currentModel : bundles.keySet()) {
 			IPluginBase base = currentModel.getPluginBase();
 
 			BundleInfo info = new BundleInfo();
@@ -282,7 +282,7 @@ public class P2Utils {
 				} else if (base != null) {
 					info.setSymbolicName(base.getId());
 					info.setVersion(base.getVersion());
-					String currentLevel = (String) bundles.get(currentModel);
+					String currentLevel = bundles.get(currentModel);
 					// override the start level setting if something comes from the config.ini
 					if (osgiStartLevels.containsKey(base.getId())) {
 						currentLevel = osgiStartLevels.get(base.getId());

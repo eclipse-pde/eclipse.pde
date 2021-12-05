@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.builders;
 
 import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -25,7 +26,7 @@ import org.eclipse.pde.internal.core.natures.PDE;
 
 public class PDEBuilderHelper {
 
-	public static String[] getUnlistedClasspaths(ArrayList<?> sourceEntries, IProject project, IClasspathEntry[] cpes) {
+	public static String[] getUnlistedClasspaths(List<IBuildEntry> sourceEntries, IProject project, IClasspathEntry[] cpes) {
 		String[] unlisted = new String[cpes.length];
 		int index = 0;
 		for (IClasspathEntry entry : cpes) {
@@ -35,7 +36,7 @@ public class PDEBuilderHelper {
 			IPath path = entry.getPath();
 			boolean found = false;
 			for (int j = 0; j < sourceEntries.size(); j++) {
-				IBuildEntry be = (IBuildEntry) sourceEntries.get(j);
+				IBuildEntry be = sourceEntries.get(j);
 				String[] tokens = be.getTokens();
 				for (String token : tokens) {
 					IResource res = project.findMember(token);

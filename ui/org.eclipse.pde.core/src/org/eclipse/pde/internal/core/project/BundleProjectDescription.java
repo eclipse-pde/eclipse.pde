@@ -92,7 +92,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	private String[] fLaunchShortcuts;
 	private String fExportWizard;
 	private final Map<String, String> fHeaders = new HashMap<>();
-	private Map<?, ?> fReadHeaders = null;
+	private Map<String, String> fReadHeaders = null;
 
 	/**
 	 * Constructs a bundle description for the specified project.
@@ -143,7 +143,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	 * @param key header name
 	 * @return header value or <code>null</code>
 	 */
-	private String getHeaderValue(Map<?, ?> headers, String key) throws CoreException {
+	private String getHeaderValue(Map<String, String> headers, String key) throws CoreException {
 		ManifestElement[] elements = parseHeader(headers, key);
 		if (elements != null) {
 			if (elements.length > 0) {
@@ -161,8 +161,8 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	 * @return elements or <code>null</code> if none
 	 * @throws CoreException
 	 */
-	private ManifestElement[] parseHeader(Map<?, ?> headers, String key) throws CoreException {
-		String value = (String) headers.get(key);
+	private ManifestElement[] parseHeader(Map<String, String> headers, String key) throws CoreException {
+		String value = headers.get(key);
 		if (value != null) {
 			if (value.trim().length() > 0) {
 				try {
@@ -202,7 +202,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 
 		IFile manifest = PDEProject.getManifest(project);
 		if (manifest.exists()) {
-			Map<?, ?> headers;
+			Map<String, String> headers;
 			try {
 				headers = ManifestElement.parseBundleManifest(manifest.getContents(), null);
 				fReadHeaders = headers;
@@ -764,7 +764,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 		}
 		if (fReadHeaders != null) {
 			if (fReadHeaders.containsKey(header)) {
-				String value = (String) fReadHeaders.get(header);
+				String value = fReadHeaders.get(header);
 				if (value == null) {
 					// Return the empty string for present empty headers (instead of null - which means missing)
 					return ""; //$NON-NLS-1$

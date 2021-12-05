@@ -169,7 +169,7 @@ public class ExportPackageSection extends TableSection {
 
 	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
-		HashMap<?, ?> currentPackageFragments = null;
+		Map<String, IPackageFragment> currentPackageFragments = null;
 		// Only export package objects that represent existing package
 		// fragments within the Java project that this plugin.xml is stored
 		// can be pasted
@@ -194,81 +194,29 @@ public class ExportPackageSection extends TableSection {
 	}
 
 	private boolean canAddExportedPackages() {
-		// Ensure model is editable
-		if (isEditable() == false) {
-			return false;
-		}
-		// Get the model
-		IPluginModelBase model = getModel();
-		// Ensure model is defined
-		if (model == null) {
-			return false;
-		}
-		// Get the underlying resource
-		IResource resource = model.getUnderlyingResource();
-		// Ensure resource is defined
-		if (resource == null) {
-			return false;
-		}
-		// Get the project
-		IProject project = resource.getProject();
-		// Ensure the project is defined
-		if (project == null) {
-			return false;
-		}
-		// Ensure the project is a Java project
-		try {
-			if (project.hasNature(JavaCore.NATURE_ID) == false) {
-				return false;
-			}
-		} catch (CoreException e) {
-			return false;
-		}
-		return true;
+		return isEditable() && getProjectWithJavaNature().isPresent();
 	}
 
-	private HashMap<?, ?> createCurrentExportPackageMap() {
-		// Dummy hash map created in order to return a defined but empty map
-		HashMap<?, ?> packageFragments = new HashMap<>(0);
-		// Get the model
-		IPluginModelBase model = getModel();
-		// Ensure model is defined
-		if (model == null) {
-			return packageFragments;
-		}
-		// Get the underlying resource
-		IResource resource = model.getUnderlyingResource();
-		// Ensure resource is defined
-		if (resource == null) {
-			return packageFragments;
-		}
-		// Get the project
-		IProject project = resource.getProject();
-		// Ensure the project is defined
-		if (project == null) {
-			return packageFragments;
-		}
-		// Ensure the project is a Java project
-		try {
-			if (project.hasNature(JavaCore.NATURE_ID) == false) {
-				return packageFragments;
+	private Optional<IProject> getProjectWithJavaNature() {
+		Optional<IPluginModelBase> model = Optional.ofNullable(getModel());
+		Optional<IProject> project = model.map(IPluginModelBase::getUnderlyingResource).map(IResource::getProject);
+		return project.filter(p -> {
+			try { // Ensure the project is a Java project
+				return p.hasNature(JavaCore.NATURE_ID);
+			} catch (CoreException e) {
+				return false;
 			}
-		} catch (CoreException e) {
-			return packageFragments;
+		});
+	}
+
+	private Map<String, IPackageFragment> createCurrentExportPackageMap() {
+		Optional<IProject> project = getProjectWithJavaNature();
+		if (project.isEmpty()) {
+			return Collections.emptyMap();
 		}
-		// Get the Java project
-		IJavaProject javaProject = JavaCore.create(project);
-		// Ensure the Java project is defined
-		if (javaProject == null) {
-			return packageFragments;
-		}
+		IJavaProject javaProject = JavaCore.create(project.get());
 		// Get the current packages associated with the export package header
-		Vector<?> currentExportPackages = null;
-		if (fHeader == null) {
-			currentExportPackages = new Vector<>();
-		} else {
-			currentExportPackages = fHeader.getPackageNames();
-		}
+		Collection<String> currentExportPackages = fHeader == null ? Collections.emptySet() : fHeader.getPackageNames();
 		// Get a hashtable of all the package fragments that are allowed to
 		// be added to the current export package header
 		// Generally, all package fragments contained in the same Java project
@@ -439,7 +387,7 @@ public class ExportPackageSection extends TableSection {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				ILabelProvider labelProvider = new JavaElementLabelProvider();
 				final ConditionalListSelectionDialog dialog = new ConditionalListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), labelProvider, PDEUIMessages.ExportPackageSection_dialogButtonLabel);
-				final Collection<?> pckgs = fHeader == null ? new Vector<>() : fHeader.getPackageNames();
+				final Collection<String> pckgs = fHeader == null ? Collections.emptySet() : fHeader.getPackageNames();
 				final boolean allowJava = "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)); //$NON-NLS-1$
 				Runnable runnable = () -> {
 					ArrayList<IPackageFragment> elements = new ArrayList<>();

@@ -20,6 +20,7 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.*;
+import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
@@ -669,12 +670,12 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 
 	private void handleEdit() {
 		final IStructuredSelection selection = fExtensionTree.getStructuredSelection();
-		ArrayList<?> editorWizards = getEditorWizards(selection);
+		List<IConfigurationElement> editorWizards = getEditorWizards(selection);
 		if (editorWizards == null)
 			return;
 		if (editorWizards.size() == 1) {
 			// open the wizard directly
-			handleEdit((IConfigurationElement) editorWizards.get(0), selection);
+			handleEdit(editorWizards.get(0), selection);
 		} else {
 			IProject project = getPage().getPDEEditor().getCommonProject();
 			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
@@ -694,7 +695,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		updateButtons(fFilteredTree.getViewer().getSelection());
 	}
 
-	private ArrayList<?> getEditorWizards(IStructuredSelection selection) {
+	private List<IConfigurationElement> getEditorWizards(IStructuredSelection selection) {
 		if (selection.size() != 1)
 			return null;
 		Object obj = selection.getFirstElement();
@@ -1156,7 +1157,8 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		// We have a schema complex type.  Either the target object has
 		// attributes or the element has children.
 		// Generate the list of element proposals
-		TreeSet<?> elementSet = XMLElementProposalComputer.computeElementProposal(schemaElement, (IDocumentElementNode) targetObject);
+		Set<ISchemaElement> elementSet = XMLElementProposalComputer.computeElementProposal(schemaElement,
+				(IDocumentElementNode) targetObject);
 		// Determine whether we can paste the source elements as children of
 		// the target object
 		if (sourceObjects.length > 1) {
@@ -1171,15 +1173,15 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	 * @param sourceElements
 	 * @param targetElementSet
 	 */
-	private boolean canPasteSourceElements(IPluginElement[] sourceElements, TreeSet<?> targetElementSet) {
+	private boolean canPasteSourceElements(IPluginElement[] sourceElements, Set<ISchemaElement> targetElementSet) {
 		// Performance optimisation
 		// HashSet of schema elements is not comparable for the source
 		// objects (schema elements are transient)
 		// Create a new HashSet with element names for comparison
 		HashSet<String> targetElementNameSet = new HashSet<>();
-		Iterator<?> iterator = targetElementSet.iterator();
+		Iterator<ISchemaElement> iterator = targetElementSet.iterator();
 		while (iterator.hasNext()) {
-			targetElementNameSet.add(((ISchemaElement) iterator.next()).getName());
+			targetElementNameSet.add(iterator.next().getName());
 		}
 		// Paste will be enabled only if all source objects can be pasted
 		// as children into the target element
@@ -1204,15 +1206,15 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	 * @param sourceElement
 	 * @param targetElementSet
 	 */
-	private boolean canPasteSourceElement(IPluginElement sourceElement, TreeSet<?> targetElementSet) {
+	private boolean canPasteSourceElement(IPluginElement sourceElement, Set<ISchemaElement> targetElementSet) {
 		boolean canPaste = false;
 		// Get the source element tag name
 		String sourceTagName = sourceElement.getName();
 		// Iterate over set of valid element proposals
-		Iterator<?> iterator = targetElementSet.iterator();
+		Iterator<ISchemaElement> iterator = targetElementSet.iterator();
 		while (iterator.hasNext()) {
 			// Get the proposal element tag name
-			String targetTagName = ((ISchemaElement) iterator.next()).getName();
+			String targetTagName = iterator.next().getName();
 			// Only a source element that is found within the set of element
 			// proposals can be pasted
 			if (sourceTagName.equals(targetTagName)) {
@@ -1732,12 +1734,12 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		// We have a schema complex type.  Either the target object has
 		// attributes or the element has children.
 		// Generate the list of element proposals
-		TreeSet<?> elementSet = XMLElementProposalComputer.computeElementProposal(schemaElement, targetPluginNode);
+		TreeSet<ISchemaElement> elementSet = XMLElementProposalComputer.computeElementProposal(schemaElement, targetPluginNode);
 		// Iterate over set of valid element proposals
-		Iterator<?> iterator = elementSet.iterator();
+		Iterator<ISchemaElement> iterator = elementSet.iterator();
 		while (iterator.hasNext()) {
 			// Get the proposal element tag name
-			String targetTagName = ((ISchemaElement) iterator.next()).getName();
+			String targetTagName = iterator.next().getName();
 			// Only a source element that is found within the set of element
 			// proposals can be pasted
 			String sourceNodeTagName = ((IDocumentElementNode) sourcePluginObject).getXMLTagName();

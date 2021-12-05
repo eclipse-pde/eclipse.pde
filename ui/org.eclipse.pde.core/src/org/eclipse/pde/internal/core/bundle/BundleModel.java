@@ -15,7 +15,8 @@ package org.eclipse.pde.internal.core.bundle;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.osgi.util.ManifestElement;
@@ -78,7 +79,7 @@ public abstract class BundleModel extends AbstractModel implements IBundleModel 
 
 	public void load(BundleDescription desc, PDEState state) {
 		long id = desc.getBundleId();
-		Properties properties = new Properties();
+		Map<String, String> properties = new HashMap<>();
 		properties.put(Constants.BUNDLE_SYMBOLICNAME, desc.getSymbolicName());
 		String value = state.getPluginName(id);
 		if (value != null) {

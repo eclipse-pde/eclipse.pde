@@ -14,6 +14,7 @@
 package org.eclipse.pde.ui.templates;
 
 import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardPage;
@@ -33,7 +34,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class OptionTemplateWizardPage extends WizardPage {
 	private BaseOptionTemplateSection section;
-	private ArrayList<?> options;
+	private List<TemplateOption> options;
 	private String helpContextId;
 
 	/**
@@ -46,7 +47,8 @@ public class OptionTemplateWizardPage extends WizardPage {
 	 * @param helpContextId
 	 * 			  the help context id
 	 */
-	public OptionTemplateWizardPage(BaseOptionTemplateSection section, ArrayList<?> options, String helpContextId) {
+	public OptionTemplateWizardPage(BaseOptionTemplateSection section, ArrayList<TemplateOption> options,
+			String helpContextId) {
 		super(""); //$NON-NLS-1$
 		this.section = section;
 		this.options = options;
@@ -69,7 +71,7 @@ public class OptionTemplateWizardPage extends WizardPage {
 		container.setLayout(layout);
 
 		for (int i = 0; i < options.size(); i++) {
-			TemplateOption option = (TemplateOption) options.get(i);
+			TemplateOption option = options.get(i);
 			option.createControl(container, 2);
 		}
 		if (helpContextId != null)

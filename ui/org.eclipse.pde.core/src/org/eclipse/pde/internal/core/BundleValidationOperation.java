@@ -36,14 +36,15 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 	private static StateObjectFactory FACTORY;
 
 	private final Set<IPluginModelBase> fModels;
-	private final Dictionary<?, ?>[] fProperties;
+	private final Dictionary<String, String>[] fProperties;
 	private State fState;
 
+	@SuppressWarnings("unchecked")
 	public BundleValidationOperation(Set<IPluginModelBase> models) {
-		this(models, new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()});
+		this(models, new Dictionary[] { TargetPlatformHelper.getTargetEnvironment() });
 	}
 
-	public BundleValidationOperation(Set<IPluginModelBase> models, Dictionary<?, ?>[] properties) {
+	public BundleValidationOperation(Set<IPluginModelBase> models, Dictionary<String, String>[] properties) {
 		fModels = models;
 		fProperties = properties;
 	}

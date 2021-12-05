@@ -296,7 +296,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 	 */
 	Map<String, List<EncodingEntry>> fCustomEncodings = new HashMap<>();
 
-	public void initialize(ArrayList<?> sourceEntries, ArrayList<?> outputEntries, IClasspathEntry[] cpes, IProject project) {
+	public void initialize(List<IBuildEntry> sourceEntries, List<IBuildEntry> outputEntries, IClasspathEntry[] cpes, IProject project) {
 
 		fProject = project;
 		IPath defaultOutputLocation = null;
@@ -369,8 +369,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			}
 		}
 
-		for (Object name : sourceEntries) {
-			IBuildEntry sourceEntry = (IBuildEntry) name;
+		for (IBuildEntry sourceEntry : sourceEntries) {
 			String libName = sourceEntry.getName().substring(PROPERTY_SOURCE_PREFIX.length());
 			if (!pluginLibraryNames.contains(libName)) {
 				prepareError(sourceEntry.getName(), null, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingLibrary, libName), PDEMarkerFactory.B_REMOVAL, fSrcLibSeverity,CompilerFlags.P_BUILD_SOURCE_LIBRARY, PDEMarkerFactory.CAT_OTHER);
@@ -388,8 +387,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			}
 		}
 
-		for (Object name : outputEntries) {
-			IBuildEntry outputEntry = (IBuildEntry) name;
+		for (IBuildEntry outputEntry : outputEntries) {
 			String libName = outputEntry.getName().substring(PROPERTY_OUTPUT_PREFIX.length());
 			if (!pluginLibraryNames.contains(libName)) {
 				prepareError(outputEntry.getName(), null, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingLibrary, libName), PDEMarkerFactory.B_REMOVAL, fOututLibSeverity,CompilerFlags.P_BUILD_OUTPUT_LIBRARY, PDEMarkerFactory.CAT_OTHER);

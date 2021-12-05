@@ -610,7 +610,7 @@ public final class Signatures {
 					ASTNode parent = type.getParent();
 					while (parent != null) {
 						try {
-							List<?> typeParameters = null;
+							List<TypeParameter> typeParameters = null;
 							if (parent.getNodeType() == ASTNode.METHOD_DECLARATION) {
 								MethodDeclaration md = (MethodDeclaration) parent;
 								typeParameters = md.typeParameters();
@@ -619,19 +619,16 @@ public final class Signatures {
 								typeParameters = td.typeParameters();
 							}
 							if (typeParameters != null) {
-								for (Object o : typeParameters) {
-									if (o instanceof TypeParameter) {
-										TypeParameter typeParameter = (TypeParameter) o;
-										if (fullyQualifiedName.equals(typeParameter.getName().getFullyQualifiedName())) {
-											if (typeParameter.typeBounds().isEmpty()) {
-												return Signature.createTypeSignature("Object", false); //$NON-NLS-1$
-											} else {
-												// the erasure of a type
-												// variable is the erasure of
-												// its leftmost bound
-												Type bound = (Type) typeParameter.typeBounds().get(0);
-												return getTypeSignature(bound, erased);
-											}
+								for (TypeParameter typeParameter : typeParameters) {
+									if (fullyQualifiedName.equals(typeParameter.getName().getFullyQualifiedName())) {
+										if (typeParameter.typeBounds().isEmpty()) {
+											return Signature.createTypeSignature("Object", false); //$NON-NLS-1$
+										} else {
+											// the erasure of a type
+											// variable is the erasure of
+											// its leftmost bound
+											Type bound = (Type) typeParameter.typeBounds().get(0);
+											return getTypeSignature(bound, erased);
 										}
 									}
 								}

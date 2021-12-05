@@ -228,16 +228,6 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 		return result;
 	}
 
-	void writeComments(PrintWriter writer, Vector<?> source) {
-		if (source == null) {
-			return;
-		}
-		for (int i = 0; i < source.size(); i++) {
-			String comment = (String) source.elementAt(i);
-			writer.println("<!--" + comment + "-->"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-
 	protected boolean stringEqualWithNull(String a, String b) {
 		return a == null && b == null || a != null && b != null && a.equals(b);
 	}

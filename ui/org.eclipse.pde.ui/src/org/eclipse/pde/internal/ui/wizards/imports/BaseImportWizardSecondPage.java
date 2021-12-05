@@ -298,7 +298,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		if (page.getImportType() == PluginImportOperation.IMPORT_FROM_REPOSITORY) {
 			if (getMessageType() != ERROR && getMessageType() != WARNING) {
 				IPluginModelBase[] selected = getModelsToImport();
-				Set<?> available = page.repositoryModels;
+				Set<Object> available = page.repositoryModels;
 				for (int i = 0; i < selected.length; i++) {
 					if (!available.contains(selected[i])) {
 						setMessage(PDEUIMessages.BaseImportWizardSecondPage_0, WARNING);

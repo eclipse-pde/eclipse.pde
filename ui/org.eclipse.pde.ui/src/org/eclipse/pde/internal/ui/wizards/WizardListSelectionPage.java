@@ -114,9 +114,9 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage im
 		setErrorMessage(null);
 		IStructuredSelection selection = event.getStructuredSelection();
 		WizardElement currentWizardSelection = null;
-		Iterator<?> iter = selection.iterator();
+		Iterator<WizardElement> iter = selection.iterator();
 		if (iter.hasNext())
-			currentWizardSelection = (WizardElement) iter.next();
+			currentWizardSelection = iter.next();
 		if (currentWizardSelection == null) {
 			setDescriptionText(""); //$NON-NLS-1$
 			setSelectedNode(null);

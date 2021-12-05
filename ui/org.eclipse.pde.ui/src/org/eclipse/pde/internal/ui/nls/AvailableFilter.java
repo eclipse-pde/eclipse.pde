@@ -14,7 +14,7 @@
 
 package org.eclipse.pde.internal.ui.nls;
 
-import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
@@ -22,10 +22,10 @@ import org.eclipse.pde.internal.core.util.PatternConstructor;
 public class AvailableFilter extends ViewerFilter {
 	public static final String WILDCARD = "*"; //$NON-NLS-1$
 	private Pattern fPattern;
-	private final Map<?, ?> selected;
+	private final Set<Object> selected;
 	private final ILabelProvider labelProvider;
 
-	public AvailableFilter(Map<?, ?> selected, ILabelProvider labelProvider) {
+	public AvailableFilter(Set<Object> selected, ILabelProvider labelProvider) {
 		setPattern(WILDCARD);
 		this.selected = selected;
 		this.labelProvider = labelProvider;
@@ -35,7 +35,7 @@ public class AvailableFilter extends ViewerFilter {
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		// filter out any items that are currently selected
 		// on a full refresh, these will have been added back to the list
-		if (selected.containsKey(element))
+		if (selected.contains(element))
 			return false;
 
 		String displayName = labelProvider.getText(element);

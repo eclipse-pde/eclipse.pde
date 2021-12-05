@@ -444,8 +444,8 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 		// Immidiate children
 		Map<String, ZipEntry> childZipEntries = new HashMap<>(); // "dir/" or "dir/file.java"
 
-		for (Enumeration<?> zipEntries = zipFile.entries(); zipEntries.hasMoreElements();) {
-			ZipEntry zipEntry = (ZipEntry) zipEntries.nextElement();
+		for (Enumeration<? extends ZipEntry> zipEntries = zipFile.entries(); zipEntries.hasMoreElements();) {
+			ZipEntry zipEntry = zipEntries.nextElement();
 			IPath entryPath = new Path(zipEntry.getName());
 			if (entryPath.segmentCount() <= pathLength) {
 				// ancestor or current directory

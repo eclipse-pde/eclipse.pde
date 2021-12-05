@@ -16,8 +16,8 @@
 package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ltk.core.refactoring.*;
@@ -63,10 +63,10 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 											// keys
 	protected boolean fAddDependencies = false;
 
-	ArrayList<?> fProjectList;
+	List<IProject> fProjectList;
 	private IProject fCurrentProject;
 
-	public OrganizeManifestsProcessor(ArrayList<?> projects) {
+	public OrganizeManifestsProcessor(List<IProject> projects) {
 		fProjectList = projects;
 	}
 
@@ -93,8 +93,8 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 		change.markAsSynthetic();
 
 		SubMonitor subMonitor = SubMonitor.convert(pm, PDEUIMessages.OrganizeManifestJob_taskName, fProjectList.size());
-		for (Iterator<?> i = fProjectList.iterator(); i.hasNext() && !pm.isCanceled();) {
-			CompositeChange projectChange = cleanProject((IProject) i.next(), subMonitor.split(1));
+		for (Iterator<IProject> i = fProjectList.iterator(); i.hasNext() && !pm.isCanceled();) {
+			CompositeChange projectChange = cleanProject(i.next(), subMonitor.split(1));
 			if (projectChange.getChildren().length > 0)
 				change.add(projectChange);
 		}

@@ -412,7 +412,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			value = "."; //$NON-NLS-1$
 		try {
 			ManifestElement[] elems = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, value);
-			HashMap<String, ArrayList<String>> map = new HashMap<>();
+			Map<String, List<String>> map = new HashMap<>();
 			for (ManifestElement elem : elems) {
 				ArrayList<String> filter = new ArrayList<>();
 				filter.add("*"); //$NON-NLS-1$
@@ -425,8 +425,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		}
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	public Set<String> getExports(IProject proj, Map libs) {
+	public Set<String> getExports(IProject proj, Map<String, List<String>> libs) {
 		IFile buildProperties = PDEProject.getBuildProperties(proj);
 		IBuild build = null;
 		if (buildProperties != null) {
@@ -437,15 +436,14 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		return findPackages(proj, libs, build);
 	}
 
-	private Set<String> findPackages(IProject proj, Map<?, List<?>> libs, IBuild build) {
+	private Set<String> findPackages(IProject proj, Map<String, List<String>> libs, IBuild build) {
 		TreeSet<String> result = new TreeSet<>();
 		IJavaProject jp = JavaCore.create(proj);
-		Iterator<?> it = libs.entrySet().iterator();
+		Iterator<Map.Entry<String, List<String>>> it = libs.entrySet().iterator();
 		while (it.hasNext()) {
-			@SuppressWarnings("rawtypes")
-			Map.Entry entry = (Map.Entry) it.next();
-			String libName = entry.getKey().toString();
-			List<?> filter = (List<?>) entry.getValue();
+			Map.Entry<String, List<String>> entry = it.next();
+			String libName = entry.getKey();
+			List<String> filter = entry.getValue();
 			IBuildEntry libEntry = build.getEntry(SOURCE_PREFIX + libName);
 			if (libEntry != null) {
 				String[] tokens = libEntry.getTokens();

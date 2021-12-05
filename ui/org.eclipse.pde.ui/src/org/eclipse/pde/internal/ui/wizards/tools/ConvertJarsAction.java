@@ -49,10 +49,10 @@ public class ConvertJarsAction implements IObjectActionDelegate {
 	public void run(IAction action) {
 		Map<Manifest, Object> filesMap = new HashMap<>();
 		Set<IProject> projectSelection = new HashSet<>();
-		Iterator<?> i = selection.toList().iterator();
+		Iterator<IPackageFragmentRoot> i = selection.toList().iterator();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		while (i.hasNext()) {
-			IPackageFragmentRoot pfr = (IPackageFragmentRoot) i.next();
+			IPackageFragmentRoot pfr = i.next();
 			try {
 				projectSelection.add(pfr.getJavaProject().getProject());
 				IClasspathEntry rawClasspathEntry = pfr.getRawClasspathEntry();

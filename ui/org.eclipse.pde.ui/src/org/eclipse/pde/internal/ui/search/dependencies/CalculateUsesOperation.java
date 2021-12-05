@@ -197,9 +197,9 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		Set<String> usesPkgs = pkgsAndUses.get(pkgName);
 		usesPkgs.remove(pkgName);
 		StringBuilder buffer = null;
-		Iterator<?> it = usesPkgs.iterator();
+		Iterator<String> it = usesPkgs.iterator();
 		while (it.hasNext()) {
-			String usedPkgName = (String) it.next();
+			String usedPkgName = it.next();
 			if (usedPkgName.startsWith("java.")) { //$NON-NLS-1$
 				// we should not include java.* packages (bug 167968)
 				it.remove();

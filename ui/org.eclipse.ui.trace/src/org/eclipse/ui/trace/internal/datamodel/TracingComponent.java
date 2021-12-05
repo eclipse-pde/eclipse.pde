@@ -113,7 +113,7 @@ public class TracingComponent extends AbstractTracingNode {
 		// Iterate over each bundle and populate the list of {@link TracingComponentDebugOption} objects.
 		if (bundles.size() > 0) {
 			// get all debug options (this ensures that the disabled debug options are used when populating)
-			final Map<?, ?> currentDebugOptions = DebugOptionsHandler.getDebugOptions().getOptions();
+			final Map<String, String> currentDebugOptions = DebugOptionsHandler.getDebugOptions().getOptions();
 			final Iterator<Bundle> bundleIterator = bundles.iterator();
 			while (bundleIterator.hasNext()) {
 				Bundle bundle = bundleIterator.next();
@@ -126,7 +126,7 @@ public class TracingComponent extends AbstractTracingNode {
 						// check to see if this debug option already exists in the cache
 						String key = (String) option.getKey();
 						String value = (String) option.getValue();
-						final String debugOptionValue = (String) currentDebugOptions.get(key);
+						final String debugOptionValue = currentDebugOptions.get(key);
 						String finalValue = null;
 						if (debugOptionValue != null) {
 							// This entry is already in the debug options - so use its value.

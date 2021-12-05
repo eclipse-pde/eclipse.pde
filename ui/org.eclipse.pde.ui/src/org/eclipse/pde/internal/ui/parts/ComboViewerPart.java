@@ -15,7 +15,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -81,16 +82,6 @@ public class ComboViewerPart {
 		fObjects.clear();
 		for (Object item : items)
 			fObjects.add((item == null) ? NULL_OBJECT : item);
-		refresh();
-	}
-
-	public void setItems(Collection<?> items) {
-		fObjects.clear();
-		Iterator<?> it = items.iterator();
-		while (it.hasNext()) {
-			Object o = it.next();
-			fObjects.add((o == null) ? NULL_OBJECT : o);
-		}
 		refresh();
 	}
 

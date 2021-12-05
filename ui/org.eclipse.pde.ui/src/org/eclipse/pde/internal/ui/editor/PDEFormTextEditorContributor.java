@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import java.util.*;
+import java.util.Map;
 import org.eclipse.jdt.ui.IContextMenuConstants;
 import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jface.action.*;
@@ -137,12 +137,10 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 		rootBars.updateActionBars();
 		if (active) {
 			fSourceActionBars.activate();
-			Map<?, ?> handlers = fSourceActionBars.getGlobalActionHandlers();
+			Map<String, IAction> handlers = fSourceActionBars.getGlobalActionHandlers();
 			if (handlers != null) {
-				Set<?> keys = handlers.keySet();
-				for (Object key : keys) {
-					String id = (String) key;
-					rootBars.setGlobalActionHandler(id, (IAction) handlers.get(id));
+				for (String id : handlers.keySet()) {
+					rootBars.setGlobalActionHandler(id, handlers.get(id));
 				}
 			}
 		} else {

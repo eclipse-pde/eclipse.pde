@@ -118,7 +118,7 @@ class FeatureTable {
 	}
 
 	private IFeatureModel[] getImpl(Idver idver) {
-		ArrayList<?> models = fIdver2models.get(idver);
+		ArrayList<IFeatureModel> models = fIdver2models.get(idver);
 		if (models == null) {
 			return NO_MODELS;
 		}
@@ -164,7 +164,7 @@ class FeatureTable {
 		if (idver == null) {
 			return null;
 		}
-		ArrayList<?> models = fIdver2models.get(idver);
+		ArrayList<IFeatureModel> models = fIdver2models.get(idver);
 		for (int i = 0; i < models.size(); i++) {
 			if (models.get(i) == model) {
 				models.remove(i);
@@ -174,7 +174,7 @@ class FeatureTable {
 		if (models.isEmpty()) {
 			fIdver2models.remove(idver);
 
-			ArrayList<?> idvers = fId2idvers.get(idver.getId());
+			ArrayList<Idver> idvers = fId2idvers.get(idver.getId());
 			for (int i = 0; i < idvers.size(); i++) {
 				if (idvers.get(i).equals(idver)) {
 					idvers.remove(i);

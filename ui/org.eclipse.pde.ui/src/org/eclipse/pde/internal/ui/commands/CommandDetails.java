@@ -227,11 +227,12 @@ public class CommandDetails {
 
 	private class ValuesParameterControl extends SelectionAdapter implements ModifyListener {
 		private final IParameter fParameter;
-		private final Map<?, ?> fValues;
+		private final Map<String, Object> fValues;
 		private final Combo fValuesCombo;
 		private final Button fClearButton;
 
-		public ValuesParameterControl(IParameter parameter, Map<?, ?> values, Combo valuesCombo, Button clearButton) {
+		public ValuesParameterControl(IParameter parameter, Map<String, Object> values, Combo valuesCombo,
+				Button clearButton) {
 			fParameter = parameter;
 			fValues = values;
 
@@ -240,9 +241,9 @@ public class CommandDetails {
 			if (fPreSel != null && fValues != null) {
 				Object obj = fPreSel.getParameterMap().get(parameter.getId());
 				if (obj != null) {
-					for (Entry<?, ?> entry : fValues.entrySet()) {
+					for (Entry<String, Object> entry : fValues.entrySet()) {
 						if (obj.equals(entry.getValue())) {
-							fValuesCombo.setText(entry.getKey().toString());
+							fValuesCombo.setText(entry.getKey());
 							break;
 						}
 					}
@@ -414,9 +415,9 @@ public class CommandDetails {
 					parameterValuesCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 					fToolkit.adapt(parameterValuesCombo, true, true);
 
-					Map<?, ?> values = parameterValues.getParameterValues();
-					for (Object key : values.keySet())
-						parameterValuesCombo.add((String) key);
+					Map<String, Object> values = parameterValues.getParameterValues();
+					for (String key : values.keySet())
+						parameterValuesCombo.add(key);
 
 					Button clearButton = fToolkit.createButton(paramLine, PDEUIMessages.CommandDetails_clear, SWT.PUSH);
 

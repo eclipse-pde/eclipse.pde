@@ -696,12 +696,12 @@ public class ProjectModifyOperation {
 			}
 			// apply any other headers that have been specified
 			BundleProjectDescription bpd = (BundleProjectDescription) description;
-			Map<?, ?> extraHeaders = bpd.getExtraHeaders();
-			Iterator<?> iterator = extraHeaders.entrySet().iterator();
+			Map<String, String> extraHeaders = bpd.getExtraHeaders();
+			Iterator<Entry<String, String>> iterator = extraHeaders.entrySet().iterator();
 			while (iterator.hasNext()) {
-				Entry<?, ?> entry = (Entry<?, ?>) iterator.next();
-				String name = (String) entry.getKey();
-				String value = (String) entry.getValue();
+				Entry<String, String> entry = iterator.next();
+				String name = entry.getKey();
+				String value = entry.getValue();
 				// translate empty header to a single space to ensure inclusion of empty headers
 				if (value != null && value.trim().length() == 0) {
 					value = " "; //$NON-NLS-1$

@@ -176,7 +176,7 @@ public class PreferenceSpyPart {
 	private PreferenceEntry findPreferenceEntry(PreferenceEntry preferenceEntry) {
 		PreferenceEntry parent = preferenceEntry.getParent();
 		if (parent instanceof PreferenceNodeEntry) {
-			IObservableSet<?> preferenceEntries = ((PreferenceNodeEntry) parent).getPreferenceEntries();
+			IObservableSet<Object> preferenceEntries = ((PreferenceNodeEntry) parent).getPreferenceEntries();
 			for (Object object : preferenceEntries) {
 				if (object instanceof PreferenceEntry) {
 					PreferenceEntry existingPreferenceEntry = (PreferenceEntry) object;

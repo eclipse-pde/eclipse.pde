@@ -51,15 +51,6 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		PDERuntimePlugin.getDefault().getBundleContext().removeServiceListener(this);
 	}
 
-	protected static boolean isRegisteredService(org.osgi.framework.Bundle bundle, ServiceReference<?> ref) {
-		return bundle.equals(ref.getBundle());
-	}
-
-	protected static boolean isServiceInUse(org.osgi.framework.Bundle bundle, ServiceReference<?> ref) {
-		org.osgi.framework.Bundle[] usingBundles = ref.getUsingBundles();
-		return (usingBundles != null && Arrays.asList(usingBundles).contains(bundle));
-	}
-
 	@Override
 	public void start(long id) throws BundleException {
 		PDERuntimePlugin.getDefault().getBundleContext().getBundle(id).start();

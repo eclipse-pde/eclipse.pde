@@ -138,7 +138,7 @@ public class XMLComponentRegistry {
 		}
 	}
 
-	public HashMap<?, ?> get(String key, int mapType) {
+	public Map<String, String> get(String key, int mapType) {
 		Map<String, HashMap<String, String>> targetMap = getTargetMap(mapType);
 		if (targetMap == null) {
 			return null;
@@ -148,9 +148,9 @@ public class XMLComponentRegistry {
 
 	private String getValue(String valueKey, String key, int mapType) {
 		if (key != null) {
-			HashMap<?, ?> map = get(key, mapType);
+			Map<String, String> map = get(key, mapType);
 			if (map != null) {
-				return (String) map.get(valueKey);
+				return map.get(valueKey);
 			}
 		}
 		return null;

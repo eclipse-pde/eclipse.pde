@@ -125,12 +125,13 @@ public class RuntimeInstallJob extends Job {
 
 				// Check if the right version exists in the new meta repo
 				Version newVersion = Version.parseVersion(version);
-				IQueryResult<?> queryMatches = metaRepo.query(QueryUtil.createIUQuery(id, newVersion), monitor);
+				IQueryResult<IInstallableUnit> queryMatches = metaRepo.query(QueryUtil.createIUQuery(id, newVersion),
+						monitor);
 				if (queryMatches.isEmpty()) {
 					return Status.error(NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotFindUnitInRepo, id, version));
 				}
 
-				IInstallableUnit iuToInstall = (IInstallableUnit) queryMatches.iterator().next();
+				IInstallableUnit iuToInstall = queryMatches.iterator().next();
 
 				// Find out if the profile already has that iu installed
 				queryMatches = profile.query(QueryUtil.createIUQuery(id), subMonitor.split(1));
@@ -139,7 +140,7 @@ public class RuntimeInstallJob extends Job {
 					toInstall.add(iuToInstall);
 				} else {
 					// There is an existing iu that we need to replace using an installable unit patch
-					IInstallableUnit existingIU = (IInstallableUnit) queryMatches.iterator().next();
+					IInstallableUnit existingIU = queryMatches.iterator().next();
 					toInstall.add(createInstallableUnitPatch(existingIU, newVersion, profile, subMonitor.split(1)));
 				}
 				subMonitor.split(2);
@@ -196,9 +197,10 @@ public class RuntimeInstallJob extends Job {
 
 		// Locate IU's that appoint the existing version of the IU that we are patching.
 		// Add lifecycle requirement on a changed bundle, if it gets updated, then we should uninstall the patch
-		IQueryResult<?> queryMatches = profile.query(QueryUtil.createMatchQuery("requirements.exists(rc | $0 ~= rc)", new Object[] {existingIU}), monitor); //$NON-NLS-1$
+		IQueryResult<IInstallableUnit> queryMatches = profile
+				.query(QueryUtil.createMatchQuery("requirements.exists(rc | $0 ~= rc)", existingIU), monitor); //$NON-NLS-1$
 		if (!queryMatches.isEmpty()) {
-			IInstallableUnit lifecycleUnit = (IInstallableUnit) queryMatches.iterator().next();
+			IInstallableUnit lifecycleUnit = queryMatches.iterator().next();
 			iuPatchDescription.setLifeCycle(MetadataFactory.createRequirement(IInstallableUnit.NAMESPACE_IU_ID, lifecycleUnit.getId(), new VersionRange(lifecycleUnit.getVersion(), true, lifecycleUnit.getVersion(), true), null, false, false, false));
 		}
 

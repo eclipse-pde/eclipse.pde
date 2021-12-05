@@ -28,7 +28,7 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 public class TracingPropertySource {
 	private IPluginModelBase fModel;
 	private Vector<PropertyEditor> fDescriptors;
-	private Hashtable<?, ?> fTemplate;
+	private Hashtable<String, String> fTemplate;
 	private Hashtable<String, Object> fValues;
 	private static final String[] fBooleanChoices = {"false", "true"}; //$NON-NLS-1$ //$NON-NLS-2$
 	private Properties fMasterOptions;
@@ -197,7 +197,8 @@ public class TracingPropertySource {
 		}
 	}
 
-	public TracingPropertySource(IPluginModelBase model, Properties masterOptions, Hashtable<?, ?> template, TracingBlock block) {
+	public TracingPropertySource(IPluginModelBase model, Properties masterOptions, Hashtable<String, String> template,
+			TracingBlock block) {
 		fModel = model;
 		fMasterOptions = masterOptions;
 		fTemplate = template;
@@ -212,8 +213,8 @@ public class TracingPropertySource {
 	private Object[] getSortedKeys(int size) {
 		Object[] keyArray = new Object[size];
 		int i = 0;
-		for (Enumeration<?> keys = fTemplate.keys(); keys.hasMoreElements();) {
-			String key = (String) keys.nextElement();
+		for (Enumeration<String> keys = fTemplate.keys(); keys.hasMoreElements();) {
+			String key = keys.nextElement();
 			keyArray[i++] = key;
 		}
 		Arrays.sort(keyArray, this::compareKeys);
@@ -241,7 +242,7 @@ public class TracingPropertySource {
 			IPath path = new Path(key);
 			path = path.removeFirstSegments(1);
 			String shortKey = path.toString();
-			String value = (String) fTemplate.get(key);
+			String value = fTemplate.get(key);
 			String lvalue = null;
 			String masterValue = fMasterOptions.getProperty(key);
 			String commentValue = fMasterOptions.getProperty("#" + key); //$NON-NLS-1$

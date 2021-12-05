@@ -43,6 +43,7 @@ public class TracingComponentContentProvider implements ITreeContentProvider {
 		return hasChildren;
 	}
 
+
 	@Override
 	public Object[] getElements(final Object inputElement) {
 
@@ -51,8 +52,9 @@ public class TracingComponentContentProvider implements ITreeContentProvider {
 			results = new TracingNode[] {(TracingNode) inputElement};
 		} else if (inputElement instanceof TracingNode[]) {
 			results = (TracingNode[]) inputElement;
-		} else if (inputElement instanceof Collection<?>) {
-			Collection<?> collectionElement = (Collection<?>) inputElement;
+		} else if (inputElement instanceof Collection) {
+			@SuppressWarnings("unchecked")
+			Collection<TracingNode> collectionElement = (Collection<TracingNode>) inputElement;
 			results = collectionElement.toArray(new TracingNode[collectionElement.size()]);
 		}
 		return results;

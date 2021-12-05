@@ -59,7 +59,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
 		ImportPackageObject[] packages = null;
-		Collection<?> exportedPackages = null;
+		Collection<String> exportedPackages = null;
 		if (ClasspathUtilCore.hasBundleStructure(fModel)) {
 			IBundle bundle = ((IBundlePluginModelBase) fModel).getBundleModel().getBundle();
 			IManifestHeader header = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
@@ -148,7 +148,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		return !provideJavaClasses(models, monitor);
 	}
 
-	private boolean isUnused(ImportPackageObject pkg, Collection<?> exportedPackages, IProgressMonitor monitor) {
+	private boolean isUnused(ImportPackageObject pkg, Collection<String> exportedPackages, IProgressMonitor monitor) {
 		if (exportedPackages != null && exportedPackages.contains(pkg.getValue())) {
 			return false;
 		}

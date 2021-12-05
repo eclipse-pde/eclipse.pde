@@ -218,7 +218,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 			IDocument doc = invocationContext.getSourceViewer().getDocument();
 
 			int offset = invocationContext.getOffset();
-			Iterator<?> it = amodel.getAnnotationIterator();
+			Iterator<Annotation> it = amodel.getAnnotationIterator();
 			TreeSet<ICompletionProposal> proposalSet = new TreeSet<>((o1, o2) -> {
 				if (o1 != null && o2 != null) {
 					return o1.getDisplayString().compareToIgnoreCase(o2.getDisplayString());
@@ -226,7 +226,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 				return 0;
 			});
 			while (it.hasNext()) {
-				Object key = it.next();
+				Annotation key = it.next();
 				if (!(key instanceof SimpleMarkerAnnotation)) {
 					if (key instanceof SpellingAnnotation) {
 						SpellingAnnotation annotation = (SpellingAnnotation) key;

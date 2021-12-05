@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.ui.editor.build;
 
 import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -24,13 +25,13 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class JARFileFilter extends ViewerFilter {
 	private final static String jarExt = "jar"; //$NON-NLS-1$
-	private HashSet<?> fPaths;
+	private Set<IPath> fPaths;
 
 	public JARFileFilter() {
 		fPaths = new HashSet<>();
 	}
 
-	public JARFileFilter(HashSet<?> names) {
+	public JARFileFilter(Set<IPath> names) {
 		fPaths = names;
 	}
 

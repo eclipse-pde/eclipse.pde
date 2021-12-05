@@ -161,10 +161,10 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		try {
 			TextFileChange uChange = getChangeForFile(uFile, parentChange);
 
-			Iterator<?> iter = changeFile.getChanges().iterator();
+			Iterator<ModelChangeElement> iter = changeFile.getChanges().iterator();
 
 			while (iter.hasNext()) {
-				ModelChangeElement changeElement = (ModelChangeElement) iter.next();
+				ModelChangeElement changeElement = iter.next();
 				if (changeElement.isExternalized()) {
 					ReplaceEdit uEdit = new ReplaceEdit(changeElement.getOffset(), changeElement.getLength(), changeElement.getExternKey());
 					uChange.getEdit().addChild(uEdit);

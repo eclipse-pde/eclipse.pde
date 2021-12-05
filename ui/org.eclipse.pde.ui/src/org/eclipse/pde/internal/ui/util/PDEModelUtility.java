@@ -109,7 +109,7 @@ public class PDEModelUtility {
 			return;
 		if (!fOpenPDEEditors.containsKey(project))
 			return;
-		ArrayList<?> list = fOpenPDEEditors.get(project);
+		List<PDEFormEditor> list = fOpenPDEEditors.get(project);
 		list.remove(editor);
 		if (list.isEmpty())
 			fOpenPDEEditors.remove(project);
@@ -143,11 +143,11 @@ public class PDEModelUtility {
 	}
 
 	private static PDEFormEditor getOpenEditor(IProject project, String editorId) {
-		ArrayList<?> list = fOpenPDEEditors.get(project);
+		List<PDEFormEditor> list = fOpenPDEEditors.get(project);
 		if (list == null)
 			return null;
 		for (int i = 0; i < list.size(); i++) {
-			PDEFormEditor editor = (PDEFormEditor) list.get(i);
+			PDEFormEditor editor = list.get(i);
 			if (editor.getEditorSite().getId().equals(editorId))
 				return editor;
 		}
@@ -167,7 +167,7 @@ public class PDEModelUtility {
 		// Get the file's project
 		IProject project = file.getProject();
 		// Check for open editors housed in the specified project
-		ArrayList<?> list = fOpenPDEEditors.get(project);
+		List<PDEFormEditor> list = fOpenPDEEditors.get(project);
 		// No open editors found
 		if (list == null) {
 			return null;
@@ -178,7 +178,7 @@ public class PDEModelUtility {
 		// Check all open editors
 		for (int i = 0; i < list.size(); i++) {
 			// Get the editor
-			PDEFormEditor editor = (PDEFormEditor) list.get(i);
+			PDEFormEditor editor = list.get(i);
 			// Check for the specified type
 			// Get the editor ID
 			String currentEditorID = editor.getEditorSite().getId();
@@ -227,9 +227,9 @@ public class PDEModelUtility {
 	public static IEditingModel getOpenModel(IDocument doc) {
 		Iterator<ArrayList<PDEFormEditor>> it = fOpenPDEEditors.values().iterator();
 		while (it.hasNext()) {
-			ArrayList<?> list = it.next();
+			List<PDEFormEditor> list = it.next();
 			for (int i = 0; i < list.size(); i++) {
-				PDEFormEditor e = (PDEFormEditor) list.get(i);
+				PDEFormEditor e = list.get(i);
 				IPluginModelBase model = (IPluginModelBase) e.getAggregateModel();
 				if (model instanceof IBundlePluginModelBase) {
 					IBundleModel bModel = ((IBundlePluginModelBase) model).getBundleModel();

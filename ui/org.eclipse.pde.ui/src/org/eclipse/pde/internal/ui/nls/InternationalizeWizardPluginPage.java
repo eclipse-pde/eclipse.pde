@@ -68,9 +68,9 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	private Text fTemplateText;
 	private AvailableFilter fFilter;
 
-	// Used to track the selection in a HashMap so as to filter
+	// Used to track the selection in a HashSet so as to filter
 	// selected items out of the available item list
-	private final Map<Object, ?> fSelected = new HashMap<>();
+	private final Set<Object> fSelected = new HashSet<>();
 
 	// Used to block the selection listeners from updating button enablement
 	// when programatically removing items
@@ -81,7 +81,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	private Button fRemoveAllButton;
 
 	// Used to store the plug-ins
-	private InternationalizeModelTable fInternationalizeModelTable;
+	private InternationalizeModelTable<IPluginModelBase> fInternationalizeModelTable;
 
 	private Button overwriteOption;
 	private Button individualFragments;
@@ -106,7 +106,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		}
 	}
 
-	public InternationalizeWizardPluginPage(InternationalizeModelTable modelTable, String pageName) {
+	public InternationalizeWizardPluginPage(InternationalizeModelTable<IPluginModelBase> modelTable, String pageName) {
 
 		super(pageName);
 		setTitle(PDEUIMessages.InternationalizeWizard_PluginPage_pageTitle);
@@ -331,13 +331,8 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		}
 	}
 
-	public List<Object> getModelsToInternationalize() {
-		TableItem[] items = fSelectedViewer.getTable().getItems();
-		List<Object> result = new ArrayList<>();
-		for (TableItem item : items) {
-			result.add(item.getData());
-		}
-		return result;
+	public List<IPluginModelBase> getModelsToInternationalize() {
+		return getModels(fSelectedViewer, IPluginModelBase.class);
 	}
 
 	public void storeSettings() {
@@ -489,16 +484,13 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	}
 
 	private void handleAdd() {
-		IStructuredSelection ssel = fAvailableViewer.getStructuredSelection();
-		if (!ssel.isEmpty()) {
+		Iterator<IPluginModelBase> selectedPlugins = getSelectedModels(fAvailableViewer, IPluginModelBase.class);
+		if (selectedPlugins.hasNext()) {
 			Table table = fAvailableViewer.getTable();
 			int index = table.getSelectionIndices()[0];
-			Object[] selection = ssel.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);
-			for (Object selectedObject : selection) {
-				doAdd(selectedObject);
-			}
+			selectedPlugins.forEachRemaining(this::doAdd);
 			setRedraw(true);
 			setBlockSelectionListeners(false);
 			table.setSelection(index < table.getItemCount() ? index : table.getItemCount() - 1);
@@ -507,17 +499,11 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	}
 
 	private void handleAddAll() {
-		TableItem[] items = fAvailableViewer.getTable().getItems();
-
-		ArrayList<Object> data = new ArrayList<>();
-		for (TableItem item : items) {
-			data.add(item.getData());
-		}
+		List<IPluginModelBase> data = getModels(fAvailableViewer, IPluginModelBase.class);
 		if (!data.isEmpty()) {
-			Object[] datas = data.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);
-			for (Object dataObject : datas) {
+			for (IPluginModelBase dataObject : data) {
 				doAdd(dataObject);
 			}
 			setRedraw(true);
@@ -527,16 +513,13 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	}
 
 	private void handleRemove() {
-		IStructuredSelection ssel = fSelectedViewer.getStructuredSelection();
-		if (!ssel.isEmpty()) {
+		Iterator<IPluginModelBase> selectedPlugins = getSelectedModels(fSelectedViewer, IPluginModelBase.class);
+		if (selectedPlugins.hasNext()) {
 			Table table = fSelectedViewer.getTable();
 			int index = table.getSelectionIndices()[0];
-			Object[] selection = ssel.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);
-			for (Object selectedObject : selection) {
-				doRemove(selectedObject);
-			}
+			selectedPlugins.forEachRemaining(this::doRemove);
 			setRedraw(true);
 			setBlockSelectionListeners(false);
 			table.setSelection(index < table.getItemCount() ? index : table.getItemCount() - 1);
@@ -544,14 +527,14 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		}
 	}
 
-	private void doAdd(Object o) {
+	private void doAdd(IPluginModelBase o) {
 		fInternationalizeModelTable.removeModel(o);
 		fSelectedViewer.add(o);
 		fAvailableViewer.remove(o);
-		fSelected.put(o, null);
+		fSelected.add(o);
 	}
 
-	private void doRemove(Object o) {
+	private void doRemove(IPluginModelBase o) {
 		fInternationalizeModelTable.addModel(o);
 		fSelected.remove(o);
 		fSelectedViewer.remove(o);
@@ -565,17 +548,11 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	}
 
 	private void handleRemoveAll() {
-		TableItem[] items = fSelectedViewer.getTable().getItems();
-
-		ArrayList<Object> data = new ArrayList<>();
-		for (TableItem item : items) {
-			data.add(item.getData());
-		}
+		List<IPluginModelBase> data = getModels(fSelectedViewer, IPluginModelBase.class);
 		if (!data.isEmpty()) {
-			Object[] datas = data.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);
-			for (Object dataObject : datas) {
+			for (IPluginModelBase dataObject : data) {
 				doRemove(dataObject);
 			}
 			setRedraw(true);

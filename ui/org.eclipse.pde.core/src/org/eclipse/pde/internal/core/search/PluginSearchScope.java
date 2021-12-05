@@ -15,8 +15,9 @@
 package org.eclipse.pde.internal.core.search;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
@@ -34,7 +35,7 @@ public class PluginSearchScope {
 
 	private final int workspaceScope;
 	private final int externalScope;
-	private final HashSet<?> selectedResources;
+	private final Set<IResource> selectedResources;
 
 	/**
 	 * Create a scope object with the provided arguments.
@@ -44,7 +45,7 @@ public class PluginSearchScope {
 	 * EXTERNAL_SCOPE_ALL
 	 * @param selectedResources  goes with SCOPE_WORKING_SETS, otherwise null
 	 */
-	public PluginSearchScope(int workspaceScope, int externalScope, HashSet<?> selectedResources) {
+	public PluginSearchScope(int workspaceScope, int externalScope, Set<IResource> selectedResources) {
 		this.workspaceScope = workspaceScope;
 		this.externalScope = externalScope;
 		this.selectedResources = selectedResources;

@@ -722,9 +722,9 @@ public class TargetDefinition implements ITargetDefinition {
 				TargetBundle rb = list.get(list.size() - 1);
 				return rb;
 			}
-			Iterator<?> iterator = list.iterator();
+			Iterator<TargetBundle> iterator = list.iterator();
 			while (iterator.hasNext()) {
-				TargetBundle bundle = (TargetBundle) iterator.next();
+				TargetBundle bundle = iterator.next();
 				if (bundle.getBundleInfo().getVersion().equals(version)) {
 					return bundle;
 				}
@@ -733,7 +733,7 @@ public class TargetDefinition implements ITargetDefinition {
 			// that bundle
 			iterator = list.iterator();
 			while (iterator.hasNext()) {
-				TargetBundle bundle = (TargetBundle) iterator.next();
+				TargetBundle bundle = iterator.next();
 				try{
 					org.osgi.framework.Version bundleVersion = new org.osgi.framework.Version(bundle.getBundleInfo().getVersion());
 					org.osgi.framework.Version infoVersion = new org.osgi.framework.Version(version);

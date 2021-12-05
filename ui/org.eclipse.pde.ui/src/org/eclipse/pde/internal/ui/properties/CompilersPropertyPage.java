@@ -17,6 +17,7 @@ package org.eclipse.pde.internal.ui.properties;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.ui.*;
@@ -37,7 +38,7 @@ public class CompilersPropertyPage extends PropertyPage {
 	/**
 	 * The data map passed when showing the page
 	 */
-	private HashMap<?, ?> fPageData = null;
+	private Map<String, Object> fPageData = null;
 
 	/**
 	 * The control block
@@ -141,9 +142,10 @@ public class CompilersPropertyPage extends PropertyPage {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void applyData(Object data) {
-		if (data instanceof HashMap) {
-			fPageData = (HashMap<?, ?>) data;
+		if (data instanceof Map) {
+			fPageData = (Map<String, Object>) data;
 			if (fWorkspaceLink != null) {
 				fWorkspaceLink.setVisible(!Boolean.TRUE.equals(fPageData.get(CompilersPreferencePage.NO_LINK)));
 			}

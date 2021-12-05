@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import java.util.Vector;
+import java.util.Collection;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
@@ -27,7 +27,7 @@ public class PackageSelectionDialog extends ElementListSelectionDialog {
 	 * @param parent
 	 * @param renderer
 	 */
-	public PackageSelectionDialog(Shell parent, ILabelProvider renderer, IJavaProject jProject, Vector<?> existingPackages, boolean allowJava) {
+	public PackageSelectionDialog(Shell parent, ILabelProvider renderer, IJavaProject jProject, Collection<String> existingPackages, boolean allowJava) {
 		super(parent, renderer);
 		setElements(PDEJavaHelper.getPackageFragments(jProject, existingPackages, allowJava));
 		setMultipleSelection(true);

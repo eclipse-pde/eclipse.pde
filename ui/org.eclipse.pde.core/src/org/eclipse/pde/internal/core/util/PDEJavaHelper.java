@@ -302,13 +302,13 @@ public class PDEJavaHelper {
 		return null;
 	}
 
-	public static IPackageFragment[] getPackageFragments(IJavaProject jProject, Collection<?> existingPackages, boolean allowJava) {
+	public static IPackageFragment[] getPackageFragments(IJavaProject jProject, Collection<String> existingPackages, boolean allowJava) {
 		// for unique package fragments, use getPackageFragmentsHash2
 		HashMap<String, IPackageFragment> map = getPackageFragmentsHash2(jProject, existingPackages, allowJava);
 		return map.values().toArray(new IPackageFragment[map.size()]);
 	}
 
-	public static HashMap<String, IPackageFragment> getPackageFragmentsHash(IJavaProject jProject, Collection<?> existingPackages, boolean allowJava) {
+	public static HashMap<String, IPackageFragment> getPackageFragmentsHash(IJavaProject jProject, Collection<String> existingPackages, boolean allowJava) {
 		HashMap<String, IPackageFragment> map = new LinkedHashMap<>();
 		try {
 			IPackageFragmentRoot[] roots = getRoots(jProject);
@@ -331,7 +331,7 @@ public class PDEJavaHelper {
 		}
 		return map;
 	}
-	public static HashMap<String, IPackageFragment> getPackageFragmentsHash2(IJavaProject jProject, Collection<?> existingPackages, boolean allowJava) {
+	public static HashMap<String, IPackageFragment> getPackageFragmentsHash2(IJavaProject jProject, Collection<String> existingPackages, boolean allowJava) {
 		HashMap<String, IPackageFragment> map = new LinkedHashMap<>();
 		try {
 			IPackageFragmentRoot[] roots = getRoots(jProject);

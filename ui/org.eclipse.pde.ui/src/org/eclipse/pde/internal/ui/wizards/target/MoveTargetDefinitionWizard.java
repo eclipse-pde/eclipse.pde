@@ -13,12 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import java.util.Collection;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 /**
@@ -29,9 +28,9 @@ public class MoveTargetDefinitionWizard extends BasicNewResourceWizard {
 
 	MoveTargetDefinitionPage fPage;
 	IPath fPath;
-	Collection<?> fFilter;
+	Collection<IPath> fFilter;
 
-	public MoveTargetDefinitionWizard(Collection<?> movedTargetDefinitions) {
+	public MoveTargetDefinitionWizard(Collection<IPath> movedTargetDefinitions) {
 		super();
 		fFilter = movedTargetDefinitions;
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_TARGET_WIZ);

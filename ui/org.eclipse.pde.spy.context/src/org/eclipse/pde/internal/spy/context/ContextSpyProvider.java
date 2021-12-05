@@ -61,7 +61,7 @@ public class ContextSpyProvider extends LabelProvider implements ITreeContentPro
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof MApplication) {
 			return new Object[] { ((MApplication) inputElement).getContext().getParent() };
-		} else if (inputElement instanceof Collection<?>) {
+		} else if (inputElement instanceof Collection) {
 			return ((Collection<?>) inputElement).toArray();
 		}
 

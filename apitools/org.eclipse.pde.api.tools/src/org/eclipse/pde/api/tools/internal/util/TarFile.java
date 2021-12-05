@@ -408,7 +408,7 @@ public class TarFile {
 	 *
 	 * @return enumeration of all files in the archive
 	 */
-	public Enumeration<?> entries() {
+	public Enumeration<TarEntry> entries() {
 		return new Enumeration<>() {
 			@Override
 			public boolean hasMoreElements() {
@@ -416,7 +416,7 @@ public class TarFile {
 			}
 
 			@Override
-			public Object nextElement() {
+			public TarEntry nextElement() {
 				TarEntry oldEntry = curEntry;
 				try {
 					curEntry = entryEnumerationStream.getNextEntry();

@@ -112,6 +112,7 @@ import org.eclipse.jdt.internal.core.BinaryType;
 import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jdt.internal.core.CompilationUnit;
 import org.eclipse.jdt.internal.core.DefaultWorkingCopyOwner;
+import org.eclipse.jdt.internal.core.JavaElement;
 import org.eclipse.jdt.internal.core.JavaProject;
 import org.eclipse.jdt.internal.core.NameLookup;
 import org.eclipse.jdt.internal.core.PackageFragment;
@@ -1212,8 +1213,8 @@ public final class Util {
 		IJavaElement packFrag = javaProject.findElement(pathExceptLastSegment, DefaultWorkingCopyOwner.PRIMARY);
 		if (packFrag instanceof PackageFragment) {
 			PackageFragment pf = (PackageFragment) packFrag;
-			ArrayList<?> children = pf.getChildrenOfType(IJavaElement.COMPILATION_UNIT);
-			for (Object object : children) {
+			List<JavaElement> children = pf.getChildrenOfType(IJavaElement.COMPILATION_UNIT);
+			for (JavaElement object : children) {
 				if (object instanceof CompilationUnit) {
 					CompilationUnit compilationUn = (CompilationUnit) object;
 					ITypeRoot typeRoot = compilationUn.getTypeRoot();
@@ -1226,8 +1227,8 @@ public final class Util {
 				}
 
 			}
-			ArrayList<?> children2 = pf.getChildrenOfType(IJavaElement.CLASS_FILE);
-			for (Object object : children2) {
+			List<JavaElement> children2 = pf.getChildrenOfType(IJavaElement.CLASS_FILE);
+			for (JavaElement object : children2) {
 				if (object instanceof ClassFile) {
 					ClassFile compilationUn = (ClassFile) object;
 					ITypeRoot typeRoot = compilationUn.getTypeRoot();
@@ -1965,11 +1966,11 @@ public final class Util {
 	 */
 	public static void guntar(String zipPath, String destDirPath) throws TarException, IOException {
 		TarFile tarFile = new TarFile(zipPath);
-		Enumeration<?> entries = tarFile.entries();
+		Enumeration<TarEntry> entries = tarFile.entries();
 		byte[] buf = new byte[8192];
 		for (; entries.hasMoreElements();) {
 			TarEntry zEntry;
-			while ((zEntry = (TarEntry) entries.nextElement()) != null) {
+			while ((zEntry = entries.nextElement()) != null) {
 				// if it is empty directory, create it
 				if (zEntry.getFileType() == TarEntry.DIRECTORY) {
 					new File(destDirPath, zEntry.getName()).mkdirs();

@@ -396,7 +396,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					return; //The project compliance settings matches the BREE
 				}
 
-				Map<?, ?> defaultComplianceOptions = new HashMap<>();
+				Map<String, String> defaultComplianceOptions = new HashMap<>();
 				JavaCore.setComplianceOptions(projectComplianceLevel, defaultComplianceOptions);
 
 				//project compliance does not match the BREE
@@ -478,12 +478,12 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		IJavaProject project = JavaCore.create(fProject);
 		if (project.exists()) {
 
-			Map<?, ?> defaultComplianceOptions = new HashMap<>();
+			Map<String, String> defaultComplianceOptions = new HashMap<>();
 			JavaCore.setComplianceOptions(complianceLevel, defaultComplianceOptions);
 
 			//look for assertIdentifier and enumIdentifier entries in javacWarnings. If any is present let it be, if not warn.
 			String assertIdentifier = project.getOption(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER, false);
-			String defaultAssert = (String) defaultComplianceOptions.get(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER);
+			String defaultAssert = defaultComplianceOptions.get(JavaCore.COMPILER_PB_ASSERT_IDENTIFIER);
 			if (assertIdentifier != null && !assertIdentifier.equalsIgnoreCase(defaultAssert)) {
 				if (JavaCore.ERROR.equalsIgnoreCase(assertIdentifier)) {
 					complianceErrorSettings.add(ASSERT_IDENTIFIER);
@@ -493,7 +493,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			}
 
 			String enumIdentifier = project.getOption(JavaCore.COMPILER_PB_ENUM_IDENTIFIER, false);
-			String defaultEnum = (String) defaultComplianceOptions.get(JavaCore.COMPILER_PB_ENUM_IDENTIFIER);
+			String defaultEnum = defaultComplianceOptions.get(JavaCore.COMPILER_PB_ENUM_IDENTIFIER);
 			if (enumIdentifier != null && !enumIdentifier.equalsIgnoreCase(defaultEnum)) {
 				if (JavaCore.ERROR.equalsIgnoreCase(enumIdentifier)) {
 					complianceErrorSettings.add(ENUM_IDENTIFIER);
@@ -1099,7 +1099,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		// Check if the project has compiler warnings set
 		IJavaProject project = JavaCore.create(fProject);
 		if (project.exists()) {
-			Map<?, ?> options = project.getOptions(false);
+			Map<String, String> options = project.getOptions(false);
 			// If project specific options are turned on, all options will be stored.  Only need to check if at least one compiler option is set. Currently using the second option on the property page.
 			if (options.containsKey(JavaCore.COMPILER_PB_INDIRECT_STATIC_ACCESS)) {
 				if (useJavaProjectSettings != null) {

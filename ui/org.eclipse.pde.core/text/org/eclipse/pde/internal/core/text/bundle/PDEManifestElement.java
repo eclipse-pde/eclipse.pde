@@ -17,6 +17,7 @@ package org.eclipse.pde.internal.core.text.bundle;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
@@ -107,9 +108,10 @@ public class PDEManifestElement extends BundleObject {
 			return (String) result;
 		}
 
-		ArrayList<?> valueList = (ArrayList<?>) result;
+		@SuppressWarnings({ "unchecked" })
+		List<String> valueList = (List<String>) result;
 		//return the last value
-		return (String) valueList.get(valueList.size() - 1);
+		return valueList.get(valueList.size() - 1);
 	}
 
 	private String[] getTableValues(TreeMap<String, Serializable> table, String key) {
@@ -123,7 +125,8 @@ public class PDEManifestElement extends BundleObject {
 		if (result instanceof String) {
 			return new String[] {(String) result};
 		}
-		ArrayList<?> valueList = (ArrayList<?>) result;
+		@SuppressWarnings("unchecked")
+		List<String> valueList = (List<String>) result;
 		return valueList.toArray(new String[valueList.size()]);
 	}
 
@@ -185,10 +188,10 @@ public class PDEManifestElement extends BundleObject {
 
 	private void init(ManifestElement manifestElement) {
 		setValueComponents(manifestElement.getValueComponents());
-		Enumeration<?> attKeys = manifestElement.getKeys();
+		Enumeration<String> attKeys = manifestElement.getKeys();
 		if (attKeys != null) {
 			while (attKeys.hasMoreElements()) {
-				String attKey = (String) attKeys.nextElement();
+				String attKey = attKeys.nextElement();
 				String[] values = ManifestElement.getArrayFromList(manifestElement.getAttribute(attKey));
 				//empty string in attribute, go with default behavior of attribute
 				if (values == null) {
@@ -199,10 +202,10 @@ public class PDEManifestElement extends BundleObject {
 				}
 			}
 		}
-		Enumeration<?> dirKeys = manifestElement.getDirectiveKeys();
+		Enumeration<String> dirKeys = manifestElement.getDirectiveKeys();
 		if (dirKeys != null) {
 			while (dirKeys.hasMoreElements()) {
-				String dirKey = (String) dirKeys.nextElement();
+				String dirKey = dirKeys.nextElement();
 				String[] values = ManifestElement.getArrayFromList(manifestElement.getDirective(dirKey));
 				for (String value : values) {
 					addDirective(dirKey, value);

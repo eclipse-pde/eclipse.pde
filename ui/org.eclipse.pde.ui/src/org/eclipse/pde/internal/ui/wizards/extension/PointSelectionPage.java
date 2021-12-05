@@ -73,7 +73,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	private IPluginModelBase fModel;
 	private Button fFilterCheck;
 	private IPluginExtensionPoint fCurrentPoint;
-	private HashSet<?> fAvailableImports;
+	private Set<String> fAvailableImports;
 	private IProject fProject;
 	private Label fTemplateLabel;
 	private ExtensionTreeSelectionPage fWizardsPage;

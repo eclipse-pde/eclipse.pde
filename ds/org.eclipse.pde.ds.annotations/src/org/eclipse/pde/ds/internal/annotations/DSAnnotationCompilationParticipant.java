@@ -212,7 +212,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 		ProjectState state = null;
 		try {
 			Object value = project.getProject().getSessionProperty(PROP_STATE);
-			if (value instanceof SoftReference<?>) {
+			if (value instanceof SoftReference) {
 				@SuppressWarnings("unchecked")
 				SoftReference<ProjectState> ref = (SoftReference<ProjectState>) value;
 				state = ref.get();

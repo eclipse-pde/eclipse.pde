@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.search;
 
-import java.util.HashSet;
+import java.util.Set;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEExtensionRegistry;
@@ -27,7 +28,7 @@ public class ExtensionPluginSearchScope extends PluginSearchScope {
 		fInput = input;
 	}
 
-	public ExtensionPluginSearchScope(int workspaceScope, int externalScope, HashSet<?> selectedResources, PluginSearchInput input) {
+	public ExtensionPluginSearchScope(int workspaceScope, int externalScope, Set<IResource> selectedResources, PluginSearchInput input) {
 		super(workspaceScope, externalScope, selectedResources);
 		fInput = input;
 	}

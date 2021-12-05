@@ -62,7 +62,7 @@ public class ClasspathComputer {
 		JavaCore.create(project).setRawClasspath(entries, null);
 	}
 
-	public static IClasspathEntry[] getClasspath(IProject project, IPluginModelBase model, Map<?, ?> sourceLibraryMap, boolean clear, boolean overrideCompliance) throws CoreException {
+	public static IClasspathEntry[] getClasspath(IProject project, IPluginModelBase model, Map<String, IPath> sourceLibraryMap, boolean clear, boolean overrideCompliance) throws CoreException {
 		IJavaProject javaProject = JavaCore.create(project);
 		ArrayList<IClasspathEntry> result = new ArrayList<>();
 		IBuild build = getBuild(project);
@@ -87,7 +87,8 @@ public class ClasspathComputer {
 		return result.toArray(new IClasspathEntry[result.size()]);
 	}
 
-	private static void addSourceAndLibraries(IProject project, IPluginModelBase model, IBuild build, boolean clear, Map<?, ?> sourceLibraryMap, ArrayList<IClasspathEntry> result) throws CoreException {
+	private static void addSourceAndLibraries(IProject project, IPluginModelBase model, IBuild build, boolean clear,
+			Map<String, IPath> sourceLibraryMap, ArrayList<IClasspathEntry> result) throws CoreException {
 		boolean isTestPlugin = hasTestPluginName(project);
 		HashSet<IPath> paths = new HashSet<>();
 
@@ -119,7 +120,7 @@ public class ClasspathComputer {
 			if (buildEntry != null) {
 				addSourceFolder(buildEntry, project, paths, result, isTestPlugin);
 			} else {
-				IPath sourceAttachment = sourceLibraryMap != null ? (IPath) sourceLibraryMap.get(library.getName()) : null;
+				IPath sourceAttachment = sourceLibraryMap != null ? sourceLibraryMap.get(library.getName()) : null;
 				if (library.getName().equals(".")) { //$NON-NLS-1$
 					addJARdPlugin(project, ClasspathUtilCore.getFilename(model), sourceAttachment, attrs, result);
 				} else {
@@ -312,7 +313,7 @@ public class ClasspathComputer {
 	public static void setComplianceOptions(IJavaProject project, String eeId, boolean overrideExisting) {
 		Map<String, String> projectMap = project.getOptions(false);
 		IExecutionEnvironment ee = null;
-		Map<?, ?> options = null;
+		Map<String, String> options = null;
 		if (eeId != null) {
 			ee = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(eeId);
 			if (ee != null) {
@@ -330,12 +331,12 @@ public class ClasspathComputer {
 				return;
 			}
 		} else {
-			String compliance = (String) options.get(JavaCore.COMPILER_COMPLIANCE);
-			Iterator<?> iterator = options.entrySet().iterator();
+			String compliance = options.get(JavaCore.COMPILER_COMPLIANCE);
+			Iterator<Entry<String, String>> iterator = options.entrySet().iterator();
 			while (iterator.hasNext()) {
-				Entry<?, ?> entry = (Entry<?, ?>) iterator.next();
-				String option = (String) entry.getKey();
-				String value = (String) entry.getValue();
+				Entry<String, String> entry = iterator.next();
+				String option = entry.getKey();
+				String value = entry.getValue();
 				if (JavaCore.VERSION_1_3.equals(compliance) || JavaCore.VERSION_1_4.equals(compliance)) {
 					if (JavaCore.COMPILER_PB_ASSERT_IDENTIFIER.equals(option) || JavaCore.COMPILER_PB_ENUM_IDENTIFIER.equals(option)) {
 						// for 1.3 & 1.4 projects, only override the existing setting if the default setting

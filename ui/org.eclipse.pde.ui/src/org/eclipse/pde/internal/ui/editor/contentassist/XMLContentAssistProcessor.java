@@ -425,11 +425,11 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 					// We have a schema complex type.  Either the element has attributes
 					// or the element has children.
 					// Generate the list of element proposals
-					TreeSet<?> elementSet = XMLElementProposalComputer.computeElementProposal(sElement, node);
+					Set<ISchemaElement> elementSet = XMLElementProposalComputer.computeElementProposal(sElement, node);
 					// Filter the list of element proposals
-					Iterator<?> iterator = elementSet.iterator();
+					Iterator<ISchemaElement> iterator = elementSet.iterator();
 					while (iterator.hasNext()) {
-						addToList(propList, filter, (ISchemaObject) iterator.next());
+						addToList(propList, filter, iterator.next());
 					}
 				} else {
 					return null;

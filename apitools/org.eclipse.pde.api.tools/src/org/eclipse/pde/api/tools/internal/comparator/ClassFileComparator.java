@@ -182,7 +182,7 @@ public class ClassFileComparator {
 	 */
 	private void checkSuperclass() {
 		// check superclass set
-		List<?> superclassList1 = getSuperclassList(this.type1);
+		List<IApiType> superclassList1 = getSuperclassList(this.type1);
 		if (!isStatusOk()) {
 			return;
 		}
@@ -237,7 +237,7 @@ public class ClassFileComparator {
 		// get superclass of descriptor2
 		if (superclassList1 != null && superclassList2 != null) {
 			IApiType superclassType2 = superclassList2.get(0);
-			IApiType superclassType = (IApiType) superclassList1.get(0);
+			IApiType superclassType = superclassList1.get(0);
 			if (!superclassType.getName().equals(superclassType2.getName())) {
 				if (!superclassNames2.contains(superclassType.getName())) {
 					this.addDelta(getElementType(this.type1), IDelta.REMOVED, IDelta.SUPERCLASS, this.currentDescriptorRestrictions, this.type1.getModifiers(), this.type2.getModifiers(), this.type1, this.type1.getName(), Util.getDescriptorName(type1));
@@ -1304,10 +1304,10 @@ public class ClassFileComparator {
 				boolean found = false;
 				if (this.component2 != null) {
 					if (this.type1.isInterface()) {
-						Set<?> interfacesSet = getInterfacesSet(this.type2);
+						Set<IApiType> interfacesSet = getInterfacesSet(this.type2);
 						if (interfacesSet != null) {
-							for (Iterator<?> iterator = interfacesSet.iterator(); iterator.hasNext();) {
-								IApiType superTypeDescriptor = (IApiType) iterator.next();
+							for (Iterator<IApiType> iterator = interfacesSet.iterator(); iterator.hasNext();) {
+								IApiType superTypeDescriptor = iterator.next();
 								IApiField field3 = superTypeDescriptor.getField(name);
 								if (field3 == null) {
 									continue;
@@ -1600,10 +1600,10 @@ public class ClassFileComparator {
 			boolean found = false;
 			if (this.component2 != null && !method.isConstructor()) {
 				if (this.type1.isInterface()) {
-					Set<?> interfacesSet = getInterfacesSet(this.type2);
+					Set<IApiType> interfacesSet = getInterfacesSet(this.type2);
 					if (interfacesSet != null && isStatusOk()) {
-						for (Iterator<?> iterator = interfacesSet.iterator(); iterator.hasNext();) {
-							IApiType superTypeDescriptor = (IApiType) iterator.next();
+						for (Iterator<IApiType> iterator = interfacesSet.iterator(); iterator.hasNext();) {
+							IApiType superTypeDescriptor = iterator.next();
 							IApiMethod method3 = superTypeDescriptor.getMethod(name, descriptor);
 							if (method3 == null) {
 								continue;
@@ -1620,10 +1620,10 @@ public class ClassFileComparator {
 						}
 					}
 				} else {
-					List<?> superclassList = getSuperclassList(this.type2, true);
+					List<IApiType> superclassList = getSuperclassList(this.type2, true);
 					if (superclassList != null && isStatusOk()) {
-						loop: for (Iterator<?> iterator = superclassList.iterator(); iterator.hasNext();) {
-							IApiType superTypeDescriptor = (IApiType) iterator.next();
+						loop: for (Iterator<IApiType> iterator = superclassList.iterator(); iterator.hasNext();) {
+							IApiType superTypeDescriptor = iterator.next();
 							IApiMethod method3 = superTypeDescriptor.getMethod(name, descriptor);
 							if (method3 == null) {
 								continue;
@@ -1741,10 +1741,10 @@ public class ClassFileComparator {
 						boolean found = false;
 						if (this.component2 != null) {
 							if (this.type1.isInterface()) {
-								Set<?> interfacesSet = getInterfacesSet(this.type2);
+								Set<IApiType> interfacesSet = getInterfacesSet(this.type2);
 								if (interfacesSet != null && isStatusOk()) {
-									for (Iterator<?> iterator = interfacesSet.iterator(); iterator.hasNext();) {
-										IApiType superTypeDescriptor = (IApiType) iterator.next();
+									for (Iterator<IApiType> iterator = interfacesSet.iterator(); iterator.hasNext();) {
+										IApiType superTypeDescriptor = iterator.next();
 										IApiMethod method3 = superTypeDescriptor.getMethod(name, descriptor);
 										if (method3 == null) {
 											continue;
@@ -2285,10 +2285,10 @@ public class ClassFileComparator {
 					String name = method.getName();
 					String descriptor = method.getSignature();
 					if (this.type1.isInterface()) {
-						Set<?> interfacesSet = getInterfacesSet(this.type2);
+						Set<IApiType> interfacesSet = getInterfacesSet(this.type2);
 						if (interfacesSet != null && isStatusOk()) {
-							for (Iterator<?> iterator = interfacesSet.iterator(); iterator.hasNext();) {
-								IApiType superTypeDescriptor = (IApiType) iterator.next();
+							for (Iterator<IApiType> iterator = interfacesSet.iterator(); iterator.hasNext();) {
+								IApiType superTypeDescriptor = iterator.next();
 								IApiMethod method3 = superTypeDescriptor.getMethod(name, descriptor);
 								if (method3 == null) {
 									continue;
@@ -2302,10 +2302,10 @@ public class ClassFileComparator {
 							}
 						}
 					} else {
-						List<?> superclassList = getSuperclassList(this.type2, true);
+						List<IApiType> superclassList = getSuperclassList(this.type2, true);
 						if (superclassList != null && isStatusOk()) {
-							loop: for (Iterator<?> iterator = superclassList.iterator(); iterator.hasNext();) {
-								IApiType superTypeDescriptor = (IApiType) iterator.next();
+							loop: for (Iterator<IApiType> iterator = superclassList.iterator(); iterator.hasNext();) {
+								IApiType superTypeDescriptor = iterator.next();
 								IApiMethod method3 = superTypeDescriptor.getMethod(name, descriptor);
 								if (method3 == null) {
 									continue;
@@ -2345,10 +2345,10 @@ public class ClassFileComparator {
 						String name = method.getName();
 						String descriptor = method.getSignature();
 						if (this.type1.isInterface()) {
-							Set<?> interfacesSet = getInterfacesSet(this.type1);
+							Set<IApiType> interfacesSet = getInterfacesSet(this.type1);
 							if (interfacesSet != null && isStatusOk()) {
-								for (Iterator<?> iterator = interfacesSet.iterator(); iterator.hasNext();) {
-									IApiType superTypeDescriptor = (IApiType) iterator.next();
+								for (Iterator<IApiType> iterator = interfacesSet.iterator(); iterator.hasNext();) {
+									IApiType superTypeDescriptor = iterator.next();
 									IApiMethod method3 = superTypeDescriptor.getMethod(name, descriptor);
 									if (method3 == null) {
 										continue;
@@ -2363,10 +2363,10 @@ public class ClassFileComparator {
 								}
 							}
 						} else {
-							List<?> superclassList = getSuperclassList(this.type1, true);
+							List<IApiType> superclassList = getSuperclassList(this.type1, true);
 							if (superclassList != null && isStatusOk()) {
-								loop: for (Iterator<?> iterator = superclassList.iterator(); iterator.hasNext();) {
-									IApiType superTypeDescriptor = (IApiType) iterator.next();
+								loop: for (Iterator<IApiType> iterator = superclassList.iterator(); iterator.hasNext();) {
+									IApiType superTypeDescriptor = iterator.next();
 									IApiMethod method3 = superTypeDescriptor.getMethod(name, descriptor);
 									if (method3 == null) {
 										continue;

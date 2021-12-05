@@ -100,7 +100,7 @@ public class ImportActionGroup extends ActionGroup {
 			display = Display.getDefault();
 		IPluginModelBase[] models = externalModels.toArray(new IPluginModelBase[externalModels.size()]);
 		if (importType == PluginImportOperation.IMPORT_FROM_REPOSITORY) {
-			Map<?, ?> importMap = getImportDescriptions(display.getActiveShell(), models);
+			Map<IBundleImporter, ScmUrlImportDescription[]> importMap = getImportDescriptions(display.getActiveShell(), models);
 			if (importMap != null) {
 				RepositoryImportWizard wizard = new RepositoryImportWizard(importMap);
 				WizardDialog dialog = new WizardDialog(display.getActiveShell(), wizard);

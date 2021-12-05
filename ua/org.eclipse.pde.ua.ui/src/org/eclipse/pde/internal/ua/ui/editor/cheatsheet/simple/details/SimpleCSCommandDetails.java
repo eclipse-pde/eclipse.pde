@@ -423,12 +423,12 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		return null;
 	}
 
-	private void updateCommandTable(Map<?, ?> parameters) {
+	private void updateCommandTable(Map<Object, Object> parameters) {
 		// Clear the table contents
 		fCommandTable.clearAll();
 		if (parameters != null && !parameters.isEmpty()) {
 			int rowCount = 0;
-			for (Entry<?, ?> entry : parameters.entrySet()) {
+			for (Entry<Object, Object> entry : parameters.entrySet()) {
 				// Track number of keys / rows processed
 				TableItem item = null;
 				// Determine if there is an existing row already at that index

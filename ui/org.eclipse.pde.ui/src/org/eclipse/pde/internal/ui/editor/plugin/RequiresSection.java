@@ -244,7 +244,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
-		HashSet<?> existingImportsSet = null;
+		Set<String> existingImportsSet = null;
 		// Only import objects that are not already existing imports can be
 		// pasted
 		for (Object sourceObject : sourceObjects) {
@@ -455,7 +455,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 	private IPluginModelBase[] getAvailablePlugins(IPluginModelBase model) {
 		IPluginModelBase[] plugins = PluginRegistry.getActiveModels(false);
-		HashSet<?> existingImports = PluginSelectionDialog.getExistingImports(model, false);
+		Set<String> existingImports = PluginSelectionDialog.getExistingImports(model, false);
 		ArrayList<IPluginModelBase> result = new ArrayList<>();
 		for (int i = 0; i < plugins.length; i++) {
 			if (!existingImports.contains(plugins[i].getPluginBase().getId())) {

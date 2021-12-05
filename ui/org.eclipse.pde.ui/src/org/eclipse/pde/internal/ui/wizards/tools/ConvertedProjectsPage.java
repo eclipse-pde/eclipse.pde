@@ -70,7 +70,7 @@ public class ConvertedProjectsPage extends WizardPage {
 		}
 	}
 
-	public ConvertedProjectsPage(IProject[] projects, Vector<?> initialSelection) {
+	public ConvertedProjectsPage(IProject[] projects, Vector<IProject> initialSelection) {
 		super("convertedProjects"); //$NON-NLS-1$
 		setTitle(PDEUIMessages.ConvertedProjectWizard_title);
 		setDescription(PDEUIMessages.ConvertedProjectWizard_desc);

@@ -14,7 +14,7 @@
 
 package org.eclipse.pde.internal.core.text;
 
-import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IWritable;
 
@@ -48,9 +48,9 @@ public interface IDocumentObject extends IDocumentElementNode, IWritable {
 
 	public int getChildNodeCount(Class<?> clazz);
 
-	public ArrayList<?> getChildNodesList(Class<?> clazz, boolean match);
+	public List<IDocumentElementNode> getChildNodesList(Class<?> clazz, boolean match);
 
-	public ArrayList<?> getChildNodesList(Class<?>[] classes, boolean match);
+	public List<IDocumentElementNode> getChildNodesList(Class<?>[] classes, boolean match);
 
 	public IDocumentElementNode getNextSibling(IDocumentElementNode node, Class<?> clazz);
 

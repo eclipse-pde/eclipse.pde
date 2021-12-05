@@ -113,12 +113,11 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		public Object[] getElements(Object parent) {
 			if (parent instanceof BundleModel) {
 				BundleModel model = (BundleModel) parent;
-				Map<?, ?> manifest = ((Bundle) model.getBundle()).getHeaders();
+				Map<String, IManifestHeader> manifest = ((Bundle) model.getBundle()).getHeaders();
 				ArrayList<IDocumentKey> keys = new ArrayList<>();
-				for (Object value : manifest.values()) {
-					IDocumentKey key = (IDocumentKey) value;
-					if (key.getOffset() > -1) {
-						keys.add(key);
+				for (IManifestHeader header : manifest.values()) {
+					if (header.getOffset() > -1) {
+						keys.add(header);
 					}
 				}
 				return keys.toArray();
@@ -278,12 +277,11 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	@Override
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		IBundleModel model = (IBundleModel) getInputContext().getModel();
-		Map<?, ?> manifest = ((Bundle) model.getBundle()).getHeaders();
+		Map<String, IManifestHeader> manifest = ((Bundle) model.getBundle()).getHeaders();
 		// Reset
 		resetTargetOutlineSelection();
 		// Search each manifest header
-		for (Object manifestVaue : manifest.values()) {
-			IDocumentRange node = (IDocumentRange) manifestVaue;
+		for (IManifestHeader node : manifest.values()) {
 			// Check to see if the parent is within range
 			if (isWithinCurrentRange(offset, node)) {
 				// Search the children of composite manifest headers first if

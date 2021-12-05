@@ -192,7 +192,7 @@ public class ExternalFeatureModelManager {
 		return (IFeatureModel) feature.getFeatureModel();
 	}
 
-	public static TargetFeature[] createFeatures(String platformHome, ArrayList<?> additionalLocations,
+	public static TargetFeature[] createFeatures(String platformHome, ArrayList<String> additionalLocations,
 			IProgressMonitor monitor) {
 		if (platformHome != null && platformHome.length() > 0) {
 			URL[] featureURLs = PluginPathFinder.getFeaturePaths(platformHome);
@@ -203,7 +203,7 @@ public class ExternalFeatureModelManager {
 
 			File[] dirs = new File[additionalLocations.size()];
 			for (int i = 0; i < dirs.length; i++) {
-				String directory = additionalLocations.get(i).toString();
+				String directory = additionalLocations.get(i);
 				File dir = new File(directory, "features"); //$NON-NLS-1$
 				if (!dir.exists()) {
 					dir = new File(directory);

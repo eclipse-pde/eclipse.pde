@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.util.Hashtable;
 import java.util.Vector;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.ISourceObject;
@@ -303,16 +302,6 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 	@Override
 	public int getStopLine() {
 		return range == null ? -1 : range[1];
-	}
-
-	void bindSourceLocation(Node node, Hashtable<?, ?> lineTable) {
-		if (lineTable == null) {
-			return;
-		}
-		Integer[] data = (Integer[]) lineTable.get(node);
-		if (data != null) {
-			range = new int[] {data[0].intValue(), data[1].intValue()};
-		}
 	}
 
 	@Override

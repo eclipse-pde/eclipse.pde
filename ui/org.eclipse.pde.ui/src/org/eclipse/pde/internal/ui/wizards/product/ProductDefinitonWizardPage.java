@@ -46,7 +46,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 	private Text fProductName;
 	private Text fPluginText;
 	private Text fProductText;
-	private Set<?> fProductSet;
+	private Set<String> fProductSet;
 	private Combo fApplicationCombo;
 	private IProduct fProduct;
 
@@ -239,7 +239,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		}
 	}
 
-	private Set<?> getProductNameSet() {
+	private Set<String> getProductNameSet() {
 		if (fProductSet == null)
 			fProductSet = TargetPlatformHelper.getProductNameSet();
 		return fProductSet;

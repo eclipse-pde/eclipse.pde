@@ -39,7 +39,7 @@ public class PDERegistryStrategy extends RegistryStrategy {
 	/**
 	 * Tracker for the XML parser service
 	 */
-	private ServiceTracker<?, SAXParserFactory> xmlTracker = null;
+	private ServiceTracker<SAXParserFactory, SAXParserFactory> xmlTracker = null;
 
 	private Object fKey = null;
 

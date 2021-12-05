@@ -88,7 +88,7 @@ public class BundleProjectConfigurator implements ProjectConfigurator {
 			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, monitor);
 			IJavaProject javaProject = JavaCore.create(project);
 			Set<IClasspathEntry> classpath = new HashSet<>();
-			for (Entry<?, ?> entry : buildProperties.entrySet()) {
+			for (Entry<Object, Object> entry : buildProperties.entrySet()) {
 				String entryKey = (String)entry.getKey();
 				if (entryKey.startsWith("src.") || entryKey.startsWith(IBuildEntry.JAR_PREFIX)) { //$NON-NLS-1$
 					for (String token : ((String) entry.getValue()).split(",")) { //$NON-NLS-1$
@@ -146,7 +146,7 @@ public class BundleProjectConfigurator implements ProjectConfigurator {
 		}
 		try (InputStream stream = buildPropertiesFile.getContents()) {
 			buildProperties.load(stream);
-			for (Entry<?, ?> entry : buildProperties.entrySet()) {
+			for (Entry<Object, Object> entry : buildProperties.entrySet()) {
 				String entryKey = (String) entry.getKey();
 				if (entryKey.startsWith("src.") || entryKey.startsWith(IBuildEntry.JAR_PREFIX) || //$NON-NLS-1$
 						entryKey.startsWith("bin.") || entryKey.startsWith(IBuildEntry.OUTPUT_PREFIX)) { //$NON-NLS-1$

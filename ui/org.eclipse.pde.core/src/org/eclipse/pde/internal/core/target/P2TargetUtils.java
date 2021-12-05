@@ -369,18 +369,20 @@ public class P2TargetUtils {
 	public static IProvisioningAgent getAgent() throws CoreException {
 		//Is there already an agent for this location?
 		String filter = "(locationURI=" + AGENT_LOCATION + ")"; //$NON-NLS-1$//$NON-NLS-2$
-		ServiceReference<?>[] serviceReferences = null;
+		ServiceReference<IProvisioningAgent> reference = null;
 		BundleContext context = PDECore.getDefault().getBundleContext();
 		try {
-			serviceReferences = context.getServiceReferences(IProvisioningAgent.SERVICE_NAME, filter);
-			if (serviceReferences != null) {
-				return (IProvisioningAgent) context.getService(serviceReferences[0]);
+			Collection<ServiceReference<IProvisioningAgent>> serviceReferences = context
+					.getServiceReferences(IProvisioningAgent.class, filter);
+			if (!serviceReferences.isEmpty()) {
+				reference = serviceReferences.iterator().next();
+				return context.getService(reference);
 			}
 		} catch (InvalidSyntaxException e) {
 			// ignore
 		} finally {
-			if (serviceReferences != null) {
-				context.ungetService(serviceReferences[0]);
+			if (reference != null) {
+				context.ungetService(reference);
 			}
 		}
 
@@ -580,11 +582,11 @@ public class P2TargetUtils {
 		// check top level IU's. If any have been removed from the containers that are
 		// still in the profile, we need to recreate (rather than uninstall)
 		IUProfilePropertyQuery propertyQuery = new IUProfilePropertyQuery(PROP_INSTALLED_IU, Boolean.toString(true));
-		IQueryResult<?> queryResult = fProfile.query(propertyQuery, null);
-		Iterator<?> iterator = queryResult.iterator();
+		IQueryResult<IInstallableUnit> queryResult = fProfile.query(propertyQuery, null);
+		Iterator<IInstallableUnit> iterator = queryResult.iterator();
 		Set<NameVersionDescriptor> installedIUs = new HashSet<>();
 		while (iterator.hasNext()) {
-			IInstallableUnit unit = (IInstallableUnit) iterator.next();
+			IInstallableUnit unit = iterator.next();
 			installedIUs.add(new NameVersionDescriptor(unit.getId(), unit.getVersion().toString()));
 		}
 		ITargetLocation[] containers = target.getTargetLocations();
@@ -784,7 +786,8 @@ public class P2TargetUtils {
 	 * @return the set of associated IUs
 	 * @throws CoreException if there is a problem discovering the IUs
 	 */
-	public static IQueryResult<?> getIUs(ITargetDefinition target, IProgressMonitor monitor) throws CoreException {
+	public static IQueryResult<IInstallableUnit> getIUs(ITargetDefinition target, IProgressMonitor monitor)
+			throws CoreException {
 		P2TargetUtils synchronizer = getSynchronizer(target);
 		if (synchronizer == null) {
 			return null;
@@ -1262,10 +1265,10 @@ public class P2TargetUtils {
 		}
 
 		// remove all units that are in the current profile but not in the new slice
-		Set<?> toRemove = fProfile.query(QueryUtil.ALL_UNITS, null).toSet();
+		Set<IInstallableUnit> toRemove = fProfile.query(QueryUtil.ALL_UNITS, null).toSet();
 		toRemove.removeAll(newSet);
-		for (Object name : toRemove) {
-			plan.removeInstallableUnit((IInstallableUnit) name);
+		for (IInstallableUnit name : toRemove) {
+			plan.removeInstallableUnit(name);
 		}
 
 		subMonitor.split(5);
@@ -1418,13 +1421,10 @@ public class P2TargetUtils {
 			URI dataArea = location.getDataArea("org.eclipse.equinox.p2.engine"); //$NON-NLS-1$
 			dataArea = URIUtil.append(dataArea, "profileRegistry/" + self.getProfileId() + ".profile"); //$NON-NLS-1$//$NON-NLS-2$
 			ProfileMetadataRepository profileRepo = new ProfileMetadataRepository(getGlobalAgent(), dataArea, null);
-			Collection<?> repos = profileRepo.getReferences();
-			for (Object element : repos) {
-				if (element instanceof IRepositoryReference) {
-					IRepositoryReference reference = (IRepositoryReference) element;
-					if (reference.getType() == IRepository.TYPE_ARTIFACT && reference.getLocation() != null) {
-						additionalRepos.add(reference.getLocation());
-					}
+			Collection<IRepositoryReference> repos = profileRepo.getReferences();
+			for (IRepositoryReference reference : repos) {
+				if (reference.getType() == IRepository.TYPE_ARTIFACT && reference.getLocation() != null) {
+					additionalRepos.add(reference.getLocation());
 				}
 			}
 		} catch (CoreException e) {
@@ -1507,7 +1507,7 @@ public class P2TargetUtils {
 
 			IArtifactRepositoryManager manager;
 			try {
-				Collection<?> toDownload = installableUnit.getArtifacts();
+				Collection<IArtifactKey> toDownload = installableUnit.getArtifacts();
 				if (toDownload == null) {
 					return Status.OK_STATUS;
 				}
@@ -1516,8 +1516,7 @@ public class P2TargetUtils {
 				List<IArtifactRequest> artifactRequests = (List<IArtifactRequest>) parameters.get(NATIVE_ARTIFACTS);
 				IArtifactRepository destinationArtifactRepository = getBundlePool();
 				manager = getArtifactRepositoryManager();
-				for (Object name : toDownload) {
-					IArtifactKey keyToDownload = (IArtifactKey) name;
+				for (IArtifactKey keyToDownload : toDownload) {
 					IArtifactRequest request = manager.createMirrorRequest(keyToDownload, destinationArtifactRepository, null, null);
 					artifactRequests.add(request);
 				}

@@ -1636,9 +1636,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		if (severity == CompilerFlags.IGNORE) {
 			return true;
 		}
-		Enumeration<?> keys = elements[0].getKeys();
+		Enumeration<String> keys = elements[0].getKeys();
 		if (keys != null && keys.hasMoreElements()) {
-			String key = (String) keys.nextElement();
+			String key = keys.nextElement();
 			if ("exceptions".equals(key)) { //$NON-NLS-1$
 				String[] values = elements[0].getAttributes(key);
 				for (String value : values) {

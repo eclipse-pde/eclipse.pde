@@ -62,13 +62,13 @@ public class Bundle extends BundleObject implements IBundle {
 	 *
 	 * @param headers map<String, String> of manifest key and values
 	 */
-	public void load(Map<?, ?> headers) {
+	public void load(Map<String, String> headers) {
 		fDocumentHeaders.clear();
-		Iterator<?> iter = headers.keySet().iterator();
+		Iterator<String> iter = headers.keySet().iterator();
 		while (iter.hasNext()) {
-			String key = iter.next().toString();
+			String key = iter.next();
 			if (headers.get(key) != null) {
-				String value = headers.get(key).toString();
+				String value = headers.get(key);
 				IManifestHeader header = getModel().getFactory().createHeader(key, value);
 				header.update(); // Format the headers, unknown if this step is necessary for new header objects
 				fDocumentHeaders.put(key, header);

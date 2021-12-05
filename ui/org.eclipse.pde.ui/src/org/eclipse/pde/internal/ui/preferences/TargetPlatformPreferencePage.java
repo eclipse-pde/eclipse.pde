@@ -322,7 +322,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	/**
 	 * Moved definitions (to be moved on apply)
 	 */
-	private Map<Object, Object> fMoved = new HashMap<>(1);
+	private Map<ITargetDefinition, IPath> fMoved = new HashMap<>(1);
 
 	/**
 	 * The chosen active target (will be loaded on apply)
@@ -657,7 +657,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				fTargets.remove(original);
 
 				if (fMoved.containsKey(original)) {
-					Object moveLocation = fMoved.remove(original);
+					IPath moveLocation = fMoved.remove(original);
 					fMoved.put(newTarget, moveLocation);
 				}
 
@@ -733,7 +733,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			IFile file = PDECore.getWorkspace().getRoot().getFile(newTargetLoc);
 			ti.setData(DATA_KEY_MOVED_LOCATION, file.getFullPath().toString());
 			IStructuredSelection selection = fTableViewer.getStructuredSelection();
-			fMoved.put(selection.getFirstElement(), wizard.getTargetFileLocation());
+			fMoved.put((ITargetDefinition) selection.getFirstElement(), wizard.getTargetFileLocation());
 			fTableViewer.refresh(true);
 		}
 	}
@@ -859,11 +859,11 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		}
 
 		// Move the marked definitions to workspace
-		for (Entry<Object, Object> entry : fMoved.entrySet()) {
+		for (Entry<ITargetDefinition, IPath> entry : fMoved.entrySet()) {
 			try {
-				ITargetDefinition target = (ITargetDefinition) entry.getKey();
+				ITargetDefinition target = entry.getKey();
 				// IPath path = Path.fromPortableString((String) fMoved.get(target));
-				IFile targetFile = PDECore.getWorkspace().getRoot().getFile((IPath) entry.getValue());
+				IFile targetFile = PDECore.getWorkspace().getRoot().getFile(entry.getValue());
 
 				WorkspaceFileTargetHandle wrkspcTargetHandle = new WorkspaceFileTargetHandle(targetFile);
 				ITargetDefinition newTarget = service.newTarget();

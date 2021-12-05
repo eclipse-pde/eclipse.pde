@@ -56,9 +56,9 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 	private Text fFilterText;
 	private AvailableFilter fFilter;
 
-	// fSelected is used to track the selection in a HashMap so we can efficiently
-	// filter selected items out of the available item list
-	private HashMap<Object, ?> fSelected;
+	// fSelected is used to track the selection in a HashSet so we can
+	// efficiently filter selected items out of the available item list
+	private Set<Object> fSelected;
 	// used to block the selection listeners from updating button enablement when programatically removing items
 	private boolean fBlockSelectionListeners;
 	private Button fAddButton;
@@ -66,18 +66,19 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 	private Button fRemoveButton;
 	private Button fRemoveAllButton;
 
-	private InternationalizeModelTable fInternationalizeModelTable;
+	private InternationalizeModelTable<Locale> fInternationalizeModelTable;
 
 	private ILabelProvider fLabelProvider = PDEPlugin.getDefault().getLabelProvider();
 
 	private static class ContentProvider implements IStructuredContentProvider {
 		@Override
+		@SuppressWarnings("unchecked")
 		public Object[] getElements(Object inputElement) {
-			return ((InternationalizeModelTable) inputElement).getModels();
+			return ((InternationalizeModelTable<Locale>) inputElement).getModels();
 		}
 	}
 
-	public InternationalizeWizardLocalePage(InternationalizeModelTable modelTable, String pageName) {
+	public InternationalizeWizardLocalePage(InternationalizeModelTable<Locale> modelTable, String pageName) {
 		super(pageName);
 		setTitle(PDEUIMessages.InternationalizeWizard_LocalePage_pageTitle);
 		setDescription(PDEUIMessages.InternationalizeWizard_LocalePage_pageDescription);
@@ -86,7 +87,7 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 		PDECore.getDefault().getModelManager().getExternalModelManager().addModelProviderListener(this);
 
 		fInternationalizeModelTable = modelTable;
-		fSelected = new HashMap<>();
+		fSelected = new HashSet<>();
 
 		IWizardContainer container = getContainer();
 		if (container != null)
@@ -184,13 +185,8 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 		}
 	}
 
-	public List<Object> getLocalesForInternationalization() {
-		TableItem[] items = fSelectedListViewer.getTable().getItems();
-		List<Object> result = new ArrayList<>();
-		for (TableItem item : items) {
-			result.add(item.getData());
-		}
-		return result;
+	public List<Locale> getLocalesForInternationalization() {
+		return getModels(fSelectedListViewer, Locale.class);
 	}
 
 	public void storeSettings() {
@@ -310,7 +306,7 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 
 	protected void refreshPage() {
 		fSelectedListViewer.getTable().removeAll();
-		fSelected = new HashMap<>();
+		fSelected = new HashSet<>();
 		fAvailableListViewer.refresh();
 		pageChanged();
 	}
@@ -361,16 +357,13 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 	}
 
 	private void handleAdd() {
-		IStructuredSelection ssel = fAvailableListViewer.getStructuredSelection();
-		if (!ssel.isEmpty()) {
+		Iterator<Locale> selectedLocals = getSelectedModels(fAvailableListViewer, Locale.class);
+		if (selectedLocals.hasNext()) {
 			Table table = fAvailableListViewer.getTable();
 			int index = table.getSelectionIndices()[0];
-			Object[] selection = ssel.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);
-			for (Object selectedObject : selection) {
-				doAdd(selectedObject);
-			}
+			selectedLocals.forEachRemaining(this::doAdd);
 			setRedraw(true);
 			setBlockSelectionListeners(false);
 			table.setSelection(index < table.getItemCount() ? index : table.getItemCount() - 1);
@@ -379,17 +372,11 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 	}
 
 	private void handleAddAll() {
-		TableItem[] items = fAvailableListViewer.getTable().getItems();
-
-		ArrayList<Object> data = new ArrayList<>();
-		for (TableItem item : items) {
-			data.add(item.getData());
-		}
+		List<Locale> data = getModels(fAvailableListViewer, Locale.class);
 		if (!data.isEmpty()) {
-			Object[] datas = data.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);
-			for (Object dataObject : datas) {
+			for (Locale dataObject : data) {
 				doAdd(dataObject);
 			}
 			setRedraw(true);
@@ -399,16 +386,13 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 	}
 
 	private void handleRemove() {
-		IStructuredSelection ssel = fSelectedListViewer.getStructuredSelection();
-		if (!ssel.isEmpty()) {
+		Iterator<Locale> selectedLocals = getSelectedModels(fSelectedListViewer, Locale.class);
+		if (selectedLocals.hasNext()) {
 			Table table = fSelectedListViewer.getTable();
 			int index = table.getSelectionIndices()[0];
-			Object[] selection = ssel.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);
-			for (Object selectedObject : selection) {
-				doRemove(selectedObject);
-			}
+			selectedLocals.forEachRemaining(this::doRemove);
 			setRedraw(true);
 			setBlockSelectionListeners(false);
 			table.setSelection(index < table.getItemCount() ? index : table.getItemCount() - 1);
@@ -416,14 +400,14 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 		}
 	}
 
-	private void doAdd(Object o) {
+	private void doAdd(Locale o) {
 		fInternationalizeModelTable.removeModel(o);
 		fSelectedListViewer.add(o);
 		fAvailableListViewer.remove(o);
-		fSelected.put(o, null);
+		fSelected.add(o);
 	}
 
-	private void doRemove(Object o) {
+	private void doRemove(Locale o) {
 		fInternationalizeModelTable.addModel(o);
 		fSelected.remove(o);
 		fSelectedListViewer.remove(o);
@@ -437,17 +421,11 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 	}
 
 	private void handleRemoveAll() {
-		TableItem[] items = fSelectedListViewer.getTable().getItems();
-
-		ArrayList<Object> data = new ArrayList<>();
-		for (TableItem item : items) {
-			data.add(item.getData());
-		}
+		List<Locale> data = getModels(fSelectedListViewer, Locale.class);
 		if (!data.isEmpty()) {
-			Object[] datas = data.toArray();
 			setBlockSelectionListeners(true);
 			setRedraw(false);
-			for (Object dataObject : datas) {
+			for (Locale dataObject : data) {
 				doRemove(dataObject);
 			}
 			setRedraw(true);

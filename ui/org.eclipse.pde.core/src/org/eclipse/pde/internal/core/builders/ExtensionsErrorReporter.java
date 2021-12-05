@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -304,11 +305,11 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		// Validate min element occurence violations
 		int minSeverity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ELEMENT);
 		if (minSeverity != CompilerFlags.IGNORE) {
-			HashSet<?> minElementSet = ElementOccurenceChecker.findMinOccurenceViolations(schemaElement, element);
-			Iterator<?> minIterator = minElementSet.iterator();
+			HashSet<ElementOccurrenceResult> minElementSet = ElementOccurenceChecker.findMinOccurenceViolations(schemaElement, element);
+			Iterator<ElementOccurrenceResult> minIterator = minElementSet.iterator();
 
 			while (minIterator.hasNext()) {
-				reportMinOccurenceViolation(element, (ElementOccurrenceResult) minIterator.next(), minSeverity);
+				reportMinOccurenceViolation(element, minIterator.next(), minSeverity);
 			}
 		}
 	}
@@ -321,10 +322,10 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		// Validate max element occurence violations
 		int maxSeverity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ELEMENT);
 		if (maxSeverity != CompilerFlags.IGNORE) {
-			HashSet<?> maxElementSet = ElementOccurenceChecker.findMaxOccurenceViolations(schemaElement, element);
-			Iterator<?> maxIterator = maxElementSet.iterator();
+			HashSet<ElementOccurrenceResult> maxElementSet = ElementOccurenceChecker.findMaxOccurenceViolations(schemaElement, element);
+			Iterator<ElementOccurrenceResult> maxIterator = maxElementSet.iterator();
 			while (maxIterator.hasNext()) {
-				reportMaxOccurenceViolation((ElementOccurrenceResult) maxIterator.next(), maxSeverity);
+				reportMaxOccurenceViolation(maxIterator.next(), maxSeverity);
 			}
 		}
 	}
@@ -680,7 +681,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			String basedOn = attInfo.getBasedOn();
 			// only validate if we have a valid value and basedOn value
 			if (value != null && basedOn != null && value.length() > 0 && basedOn.length() > 0) {
-				Map<?, ?> attributes = PDESchemaHelper.getValidAttributes(attInfo);
+				Map<String, IConfigurationElement> attributes = PDESchemaHelper.getValidAttributes(attInfo);
 				if (!attributes.containsKey(value)) { // report error if we are missing something
 					VirtualMarker marker = report(NLS.bind(PDECoreMessages.ExtensionsErrorReporter_unknownIdentifier, (new String[] {attr.getValue(), attr.getName()})), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
 					addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.P_UNKNOWN_IDENTIFIER);

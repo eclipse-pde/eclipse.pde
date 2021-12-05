@@ -373,8 +373,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 
 	private Rule[] getInclusions(Map<BundleDescription, ArrayList<Rule>> map, BundleDescription desc) {
-		ArrayList<?> list = map.get(desc);
-		return list != null ? (Rule[]) list.toArray(new Rule[list.size()]) : new Rule[0];
+		List<Rule> list = map.get(desc);
+		return list != null ? list.toArray(new Rule[list.size()]) : new Rule[0];
 	}
 
 	private void addHostPlugin(HostSpecification hostSpec, HashSet<BundleDescription> added, Map<BundleDescription, ArrayList<Rule>> map, ArrayList<IClasspathEntry> entries) throws CoreException {

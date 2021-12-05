@@ -77,7 +77,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 
 	// the visual selection widget group
 	private TableViewer fTableViewer;
-	Set<?> fProjectsWithSpecifics;
+	Set<IJavaProject> fProjectsWithSpecifics;
 
 	// sizing constants
 	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 250;
@@ -96,7 +96,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	 * @param parentShell
 	 * @param projectsWithSpecifics
 	 */
-	public ProjectSelectionDialog(Shell parentShell, Set<?> projectsWithSpecifics) {
+	public ProjectSelectionDialog(Shell parentShell, Set<IJavaProject> projectsWithSpecifics) {
 		super(parentShell);
 		setTitle(PreferenceMessages.ProjectSelectionDialog_title);
 		setMessage(PreferenceMessages.ProjectSelectionDialog_message);

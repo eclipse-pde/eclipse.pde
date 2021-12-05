@@ -41,13 +41,13 @@ public class Bundle implements IBundle {
 	 *
 	 * @param headers the headers to load in this model
 	 */
-	public void load(Map<?, ?> headers) {
+	public void load(Map<String, String> headers) {
 		fDocumentHeaders.clear();
-		Iterator<?> iter = headers.keySet().iterator();
+		Iterator<String> iter = headers.keySet().iterator();
 		while (iter.hasNext()) {
-			String key = iter.next().toString();
+			String key = iter.next();
 			if (key.equals(Constants.BUNDLE_MANIFESTVERSION)) {
-				String value = headers.get(key).toString();
+				String value = headers.get(key);
 				IManifestHeader header = fModel.getFactory().createHeader(key, value);
 				fDocumentHeaders.put(key, header);
 				break;

@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
-import java.util.Vector;
+import java.util.List;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 
@@ -30,7 +30,7 @@ public class ExportPackageHeader extends BasePackageHeader {
 		return new ExportPackageObject(this, element, getVersionAttribute());
 	}
 
-	public Vector<?> getPackageNames() {
+	public List<String> getPackageNames() {
 		return getElementNames();
 	}
 

@@ -316,10 +316,10 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	@Override
 	public IDocumentElementNode getChildNode(Class<?> clazz) {
 		// Linear search O(n)
-		ArrayList<?> children = getChildNodesList();
-		Iterator<?> iterator = children.iterator();
+		ArrayList<IDocumentElementNode> children = getChildNodesList();
+		Iterator<IDocumentElementNode> iterator = children.iterator();
 		while (iterator.hasNext()) {
-			IDocumentElementNode node = (IDocumentElementNode) iterator.next();
+			IDocumentElementNode node = iterator.next();
 			if (clazz.isInstance(node)) {
 				return node;
 			}
@@ -331,10 +331,10 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	public int getChildNodeCount(Class<?> clazz) {
 		// Linear search O(n)
 		int count = 0;
-		ArrayList<?> children = getChildNodesList();
-		Iterator<?> iterator = children.iterator();
+		ArrayList<IDocumentElementNode> children = getChildNodesList();
+		Iterator<IDocumentElementNode> iterator = children.iterator();
 		while (iterator.hasNext()) {
-			IDocumentElementNode node = (IDocumentElementNode) iterator.next();
+			IDocumentElementNode node = iterator.next();
 			if (clazz.isInstance(node)) {
 				count++;
 			}
@@ -350,10 +350,10 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	@Override
 	public ArrayList<IDocumentElementNode> getChildNodesList(Class<?>[] classes, boolean match) {
 		ArrayList<IDocumentElementNode> filteredChildren = new ArrayList<>();
-		ArrayList<?> children = getChildNodesList();
-		Iterator<?> iterator = children.iterator();
+		ArrayList<IDocumentElementNode> children = getChildNodesList();
+		Iterator<IDocumentElementNode> iterator = children.iterator();
 		while (iterator.hasNext()) {
-			IDocumentElementNode node = (IDocumentElementNode) iterator.next();
+			IDocumentElementNode node = iterator.next();
 			for (Class<?> clazz : classes) {
 				if (clazz.isInstance(node) == match) {
 					filteredChildren.add(node);
@@ -403,10 +403,10 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 
 	@Override
 	public boolean hasChildNodes(Class<?> clazz) {
-		ArrayList<?> children = getChildNodesList();
-		Iterator<?> iterator = children.iterator();
+		ArrayList<IDocumentElementNode> children = getChildNodesList();
+		Iterator<IDocumentElementNode> iterator = children.iterator();
 		while (iterator.hasNext()) {
-			IDocumentElementNode node = (IDocumentElementNode) iterator.next();
+			IDocumentElementNode node = iterator.next();
 			if (clazz.isInstance(node)) {
 				return true;
 			}
