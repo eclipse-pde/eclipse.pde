@@ -73,20 +73,20 @@ This extension point is used to register new OSGi frameworks. Each framework is 
          <attribute name="launcherDelegate" type="string" use="required">
             <annotation>
                <documentation>
-                  a launch configuration delegate to launch the OSGi framework. The value of this attribute is the fully qualified name of the Java class that extends &lt;code&gt;org.eclipse.pde.launcher.AbstractPDELaunchConfiguration&lt;/code&gt;.
+                  a launch configuration delegate to launch the OSGi framework. The value of this attribute is the fully qualified name of the Java class that extends &lt;code&gt;org.eclipse.pde.launching.AbstractPDELaunchConfiguration&lt;/code&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.pde.launcher.AbstractPDELaunchConfiguration"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.pde.launching.AbstractPDELaunchConfiguration"/>
                </appInfo>
             </annotation>
          </attribute>
          <attribute name="initializer" type="string">
             <annotation>
                <documentation>
-                  initializes new OSGi Framework launch configurations with suitable defaults.  The value of this attribute must be a fully-qualified name of a Java class that extends the default implementation &lt;code&gt;org.eclipse.pde.launcher.OSGiLaunchConfigurationInitializer&lt;/code&gt;.  If not specified, the default initializer &lt;code&gt;org.eclipse.pde.launcher.OSGiLaunchConfigurationInitializer&lt;/code&gt; is instantiated.
+                  initializes new OSGi Framework launch configurations with suitable defaults.  The value of this attribute must be a fully-qualified name of a Java class that extends the default implementation &lt;code&gt;org.eclipse.pde.launching.OSGiLaunchConfigurationInitializer&lt;/code&gt;.  If not specified, the default initializer &lt;code&gt;org.eclipse.pde.launching.OSGiLaunchConfigurationInitializer&lt;/code&gt; is instantiated.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.pde.launcher.OSGiLaunchConfigurationInitializer"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.pde.launching.OSGiLaunchConfigurationInitializer"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -116,7 +116,7 @@ The following is an example of the extension point:
    &lt;extension
          point=&quot;org.eclipse.pde.launching.osgiFrameworks&quot;&gt;
       &lt;framework
-            launcherDelegate=&quot;org.eclipse.pde.launcher.EquinoxLaunchConfiguration&quot;
+            launcherDelegate=&quot;org.eclipse.pde.launching.EquinoxLaunchConfiguration&quot;
             id=&quot;org.eclipse.pde.ui.EquinoxFramework&quot;
             name=&quot;%Equinox.shortcut.label&quot; 
             initializer=&quot;org.eclipse.pde.internal.launcher.EquinoxInitializer&quot;/&gt;
@@ -131,7 +131,7 @@ The following is an example of the extension point:
       </appInfo>
       <documentation>
          &lt;p&gt;
-The value of the attribute &lt;code&gt;launcherDelegate&lt;/code&gt; must be a fully qualified name of a Java class that extends &lt;code&gt;org.eclipse.pde.launcher.AbstractPDELaunchConfiguration&lt;/code&gt;.  If the launcher is to provide its own source lookup order, then the method &lt;code&gt;setDefaultSourceLocator&lt;/code&gt; should be overridden.
+The value of the attribute &lt;code&gt;launcherDelegate&lt;/code&gt; must be a fully qualified name of a Java class that extends &lt;code&gt;org.eclipse.pde.launching.AbstractPDELaunchConfiguration&lt;/code&gt;.  If the launcher is to provide its own source lookup order, then the method &lt;code&gt;setDefaultSourceLocator&lt;/code&gt; should be overridden.
 &lt;/p&gt;
 &lt;p&gt;
 The value of the attribute &lt;code&gt;initializer&lt;/code&gt; must be a fully qualified name of a Java class that extends &lt;code&gt;org.eclipse.launcher.OSGiLaunchConfigurationInitializer&lt;/code&gt;.
