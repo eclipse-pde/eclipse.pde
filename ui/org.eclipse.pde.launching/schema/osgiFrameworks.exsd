@@ -119,7 +119,7 @@ The following is an example of the extension point:
             launcherDelegate=&quot;org.eclipse.pde.launching.EquinoxLaunchConfiguration&quot;
             id=&quot;org.eclipse.pde.ui.EquinoxFramework&quot;
             name=&quot;%Equinox.shortcut.label&quot; 
-            initializer=&quot;org.eclipse.pde.internal.launcher.EquinoxInitializer&quot;/&gt;
+            initializer=&quot;org.eclipse.pde.internal.launching.launcher.EquinoxInitializer&quot;/&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
       </documentation>
@@ -134,7 +134,7 @@ The following is an example of the extension point:
 The value of the attribute &lt;code&gt;launcherDelegate&lt;/code&gt; must be a fully qualified name of a Java class that extends &lt;code&gt;org.eclipse.pde.launching.AbstractPDELaunchConfiguration&lt;/code&gt;.  If the launcher is to provide its own source lookup order, then the method &lt;code&gt;setDefaultSourceLocator&lt;/code&gt; should be overridden.
 &lt;/p&gt;
 &lt;p&gt;
-The value of the attribute &lt;code&gt;initializer&lt;/code&gt; must be a fully qualified name of a Java class that extends &lt;code&gt;org.eclipse.launcher.OSGiLaunchConfigurationInitializer&lt;/code&gt;.
+The value of the attribute &lt;code&gt;initializer&lt;/code&gt; must be a fully qualified name of a Java class that extends &lt;code&gt;org.eclipse.pde.launching.OSGiLaunchConfigurationInitializer&lt;/code&gt;.
 &lt;/p&gt;
       </documentation>
    </annotation>
