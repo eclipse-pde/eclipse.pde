@@ -160,6 +160,9 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 	 * @since 3.4
 	 */
 	public static File getMostRecentLogFile(ILaunchConfiguration configuration) throws CoreException {
+		if (configuration == null) {
+			return null;
+		}
 		File latest = null;
 		String workspace = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
 		if (workspace.length() > 0) {
