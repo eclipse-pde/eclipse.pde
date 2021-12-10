@@ -541,7 +541,7 @@ public class P2Tests extends P2TestCase {
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 		String repoLocation = "file:" + repo.getLocation().toOSString();
 
-		Utils.generateFeature(buildFolder, "F", new String[] { "org.eclipse.cvs" }, null);
+		Utils.generateFeature(buildFolder, "F", new String[] { "org.eclipse.tips.feature" }, null);
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("topLevelElementId", "F");
 		properties.put("generate.p2.metadata", "true");
@@ -553,12 +553,12 @@ public class P2Tests extends P2TestCase {
 		runBuild(buildFolder);
 
 		IMetadataRepository metadata = loadMetadataRepository(repoLocation);
-		IInstallableUnit iu = getIU(metadata, "org.eclipse.cvs");
+		IInstallableUnit iu = getIU(metadata, "org.eclipse.tips.core");
 		assertNotNull(iu);
 
 		// bug 289866
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("pack.excludes=plugins/org.eclipse.cvs_" + iu.getVersion() + ".jar\n");
+		buffer.append("pack.excludes=plugins/org.eclipse.tips.feature_" + iu.getVersion() + ".jar\n");
 		Utils.writeBuffer(repo.getFile("pack.properties"), buffer);
 
 		assertResourceFile(buildFolder, "repo/artifacts.xml");
@@ -596,7 +596,7 @@ public class P2Tests extends P2TestCase {
 		for (IArtifactKey key : keys) {
 			IArtifactDescriptor[] descriptors = repository.getArtifactDescriptors(key);
 
-			if (key.getClassifier().equals("osgi.bundle") && key.getId().equals("org.eclipse.cvs")) {
+			if (key.getClassifier().equals("osgi.bundle") && key.getId().equals("org.eclipse.tips.feature")) {
 				assertEquals(descriptors.length, 1);
 				continue;
 			}
