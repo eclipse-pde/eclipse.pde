@@ -26,6 +26,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.launching.IPDELauncherConstants;
+import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
@@ -243,7 +244,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_multipleWorkspacePluginVersions_sameVersion() throws Exception {
-		createPluginProject("another.project", "plugin.a", "1.0.0");
+		ProjectUtils.createPluginProject("another.project", "plugin.a", "1.0.0");
 		List<NameVersionDescriptor> workspacePlugins = List.of( //
 				bundle("plugin.a", "1.0.0"));
 		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
@@ -839,12 +840,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	private void setUpWorkspace(List<NameVersionDescriptor> workspacePlugins, List<NameVersionDescriptor> targetPlugins)
 			throws CoreException, IOException, InterruptedException {
-		for (NameVersionDescriptor pluginDescription : workspacePlugins) {
-			String bundleSymbolicName = pluginDescription.getId();
-			String bundleVersion = pluginDescription.getVersion();
-			String projectName = bundleSymbolicName + bundleVersion.replace('.', '_');
-			createPluginProject(projectName, bundleSymbolicName, bundleVersion);
-		}
+		ProjectUtils.createWorkspacePluginProjects(workspacePlugins);
 		TargetPlatformUtil.setDummyBundlesAsTarget(targetPlugins, tpJarDirectory);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2019 Julian Honnen
+ *  Copyright (c) 2019, 2021 Julian Honnen
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -25,15 +25,14 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.junit.*;
+import org.junit.rules.TestRule;
 
 public class DynamicPluginProjectReferencesTest {
 
-	@After
-	public void clearWorkspace() throws Exception {
-		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-			project.delete(false, true, null);
-		}
-	}
+	@ClassRule
+	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@Rule
+	public final TestRule deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
 
 	@Test
 	public void testFragmentHost_required() throws Exception {

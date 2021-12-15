@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,35 +12,29 @@
  *     IBM Corporation - initial API and implementation
  *     Stefan Xenos (Google) - Initial implementation
  *     Andrey Loskutov (loskutov@gmx.de) - many different extensions
+ *     Hannes Wellmann - Bug 577629 - Unify project creation/deletion in tests
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.runtime;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.util.*;
-import java.util.function.Function;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.junit.Assert;
+import org.junit.jupiter.api.function.ThrowingConsumer;
+import org.junit.jupiter.api.function.ThrowingSupplier;
+import org.junit.rules.TestRule;
+import org.junit.runners.model.MultipleFailureException;
+import org.junit.runners.model.Statement;
 
 /**
  * Utility methods for JUnit tests.
  */
 public class TestUtils {
-	public static IExtensionPoint getExtensionPoint(String extensionPointId) {
-		return Platform.getExtensionRegistry().getExtensionPoint(extensionPointId);
-	}
-
-	public static IExtension getExtension(String extensionId) {
-		return Platform.getExtensionRegistry().getExtension(extensionId);
-	}
-
-	public static String findPath(String path) {
-		return FileLocator.find(PDETestsPlugin.getBundleContext().getBundle(), new Path(path), Collections.emptyMap())
-				.toString();
-	}
 
 	/**
 	 * Call this in the tearDown method of every test to clean up state that can
@@ -106,47 +100,6 @@ public class TestUtils {
 			} else {
 				Thread.sleep(10);
 			}
-		}
-	}
-
-	/**
-	 * Waits while given condition is {@code true} for a given amount of
-	 * milliseconds. If the actual wait time exceeds given timeout and condition
-	 * will be still {@code true}, throws {@link AssertionError} with given
-	 * message.
-	 * <p>
-	 * Will process UI events while waiting in UI thread, if called from
-	 * background thread, just waits.
-	 *
-	 * @param <T>
-	 *            type of the context
-	 * @param context
-	 *            test context
-	 * @param condition
-	 *            function which will be evaluated while waiting
-	 * @param timeout
-	 *            max wait time in milliseconds to wait on given condition
-	 * @param errorMessage
-	 *            message which will be used to construct the failure exception
-	 *            in case the condition will still return {@code true} after
-	 *            given timeout
-	 */
-	public static <T> void waitWhile(Function<T, Boolean> condition, T context, long timeout,
-			Function<T, String> errorMessage) throws Exception {
-		long start = System.currentTimeMillis();
-		Display display = Display.getCurrent();
-		while (System.currentTimeMillis() - start < timeout && condition.apply(context)) {
-			if (display != null && !display.isDisposed()) {
-				if (!display.readAndDispatch()) {
-					Thread.sleep(0);
-				}
-			} else {
-				Thread.sleep(5);
-			}
-		}
-		Boolean stillTrue = condition.apply(context);
-		if (stillTrue) {
-			Assert.fail(errorMessage.apply(context));
 		}
 	}
 
@@ -289,5 +242,44 @@ public class TestUtils {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Returns a TestRule similar to {@link org.junit.rules.ExternalResource}
+	 * but allows throwing unchecked exception in its
+	 * {@link org.junit.rules.ExternalResource#after()} method. Furthermore
+	 * {@code before} and {@code after} are expressed by the specified actions
+	 * that may throw exceptions and can share a state.
+	 *
+	 * @param before
+	 *            the action performed before the evaluation
+	 * @param after
+	 *            the action performed after the evaluation (only called if the
+	 *            {@code before} action did not throw)
+	 * @return a rule performing the given before respectively after action
+	 *         before/after the evaluation of the base
+	 * @param <S>
+	 *            the type of state shared between before and after action
+	 */
+	public static <S> TestRule getThrowingTestRule(ThrowingSupplier<S> before, ThrowingConsumer<S> after) {
+		return (base, description) -> new Statement() {
+			@Override
+			public void evaluate() throws Throwable {
+				S state = before.get();
+				List<Throwable> errors = new ArrayList<>();
+				try {
+					base.evaluate();
+				} catch (Throwable t) {
+					errors.add(t);
+				} finally {
+					try {
+						after.accept(state);
+					} catch (Throwable t) {
+						errors.add(t);
+					}
+				}
+				MultipleFailureException.assertEmpty(errors);
+			}
+		};
 	}
 }

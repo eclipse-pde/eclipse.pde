@@ -22,59 +22,58 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.jar.*;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.junit.rules.TestRule;
-import org.junit.runners.model.MultipleFailureException;
-import org.junit.runners.model.Statement;
 import org.osgi.framework.*;
 
 public class TargetPlatformUtil {
 
-	public static final TestRule RESTORE_CURRENT_TARGET_DEFINITION_AFTER = (base, description) -> new Statement() {
-		@Override
-		public void evaluate() throws Throwable {
-			ITargetPlatformService tps = PDECore.getDefault().acquireService(ITargetPlatformService.class);
-			ITargetDefinition beforeTarget = null;
-			List<Throwable> errors = new ArrayList<>();
-			try {
-				beforeTarget = tps.getWorkspaceTargetDefinition();
-
-				base.evaluate();
-			} catch (Throwable t) {
-				errors.add(t);
-			} finally {
-				try {
-					if (beforeTarget != null && beforeTarget != tps.getWorkspaceTargetDefinition()) {
-						TargetPlatformUtil.loadAndSetTargetForWorkspace(beforeTarget);
-					}
-				} catch (Throwable t) {
-					errors.add(t);
+	public static final ITargetPlatformService TPS = PDECore.getDefault().acquireService(ITargetPlatformService.class);
+	public static final TestRule RESTORE_CURRENT_TARGET_DEFINITION_AFTER = TestUtils.getThrowingTestRule(
+			TPS::getWorkspaceTargetDefinition, //
+			beforeTarget -> {
+				if (beforeTarget != TPS.getWorkspaceTargetDefinition()) {
+					TargetPlatformUtil.loadAndSetTargetForWorkspace(beforeTarget);
 				}
-			}
-			MultipleFailureException.assertEmpty(errors);
-		}
-	};
+			});
 
-	private static final String TARGET_NAME = TargetPlatformUtil.class + "_target";
+	private static final String RUNNING_PLATFORM_TARGET_NAME = TargetPlatformUtil.class + "_RunningPlatformTarget";
 
 	public static void setRunningPlatformAsTarget() throws IOException, CoreException, InterruptedException {
-		setRunningPlatformSubSetAsTarget(TARGET_NAME, null);
+		setRunningPlatformSubSetAsTarget(RUNNING_PLATFORM_TARGET_NAME, null);
 	}
 
 	public static void setRunningPlatformSubSetAsTarget(String name, Predicate<Bundle> bundleFilter)
 			throws IOException, CoreException, InterruptedException {
-		ITargetPlatformService tps = PDECore.getDefault().acquireService(ITargetPlatformService.class);
-		ITargetDefinition currentTarget = tps.getWorkspaceTargetDefinition();
+		ITargetDefinition currentTarget = TPS.getWorkspaceTargetDefinition();
 		if (name.equals(currentTarget.getName())) {
 			return;
 		}
-		ITargetDefinition target = createRunningPlatformSubSetTarget(tps, name, bundleFilter);
-		loadAndSetTargetForWorkspace(target);
+		List<ITargetLocation> bundleContainers = new ArrayList<>();
+		List<NameVersionDescriptor> included = new ArrayList<>();
+		addRunningPlatformBundles(bundleContainers, included, bundleFilter);
+		createAndSetTargetForWorkspace(name, bundleContainers, included);
+	}
+
+	public static void setRunningPlatformWithDummyBundlesAsTarget(List<NameVersionDescriptor> targetPlugins,
+			Path jarDirectory, Predicate<Bundle> bundleFilter) throws IOException, InterruptedException {
+		Set<ITargetLocation> locations = new LinkedHashSet<>();
+		Set<NameVersionDescriptor> included = new LinkedHashSet<>();
+
+		addRunningPlatformBundles(locations, included, bundleFilter);
+
+		ITargetLocation location = createDummyBundlesLocation(targetPlugins, jarDirectory);
+		locations.add(location);
+		included.addAll(targetPlugins);
+
+		createAndSetTargetForWorkspace(null, locations, included);
 	}
 
 	public static void loadAndSetTargetForWorkspace(ITargetDefinition target) throws InterruptedException {
@@ -88,48 +87,54 @@ public class TargetPlatformUtil {
 		}
 	}
 
-	private static ITargetDefinition createRunningPlatformSubSetTarget(ITargetPlatformService tps, String name,
-			Predicate<Bundle> bundleFilter) throws IOException, CoreException {
-		ITargetDefinition targetDefinition = tps.newTarget();
-		targetDefinition.setName(TARGET_NAME);
-
+	private static void addRunningPlatformBundles(Collection<ITargetLocation> bundleContainers,
+			Collection<NameVersionDescriptor> included, Predicate<Bundle> bundleFilter) throws IOException {
 		Bundle[] installedBundles = FrameworkUtil.getBundle(TargetPlatformUtil.class).getBundleContext().getBundles();
-		Bundle[] targetBundles = bundleFilter != null
-				? Arrays.stream(installedBundles).filter(bundleFilter).toArray(Bundle[]::new)
-						: installedBundles;
+		List<Bundle> targetBundles = Arrays.asList(installedBundles);
+		if (bundleFilter != null) {
+			targetBundles = targetBundles.stream().filter(bundleFilter).collect(Collectors.toList());
+		}
 
 		Set<File> bundleContainerDirectories = new HashSet<>();
 		for (Bundle bundle : targetBundles) {
 			File bundleContainer = FileLocator.getBundleFile(bundle).getParentFile();
 			bundleContainerDirectories.add(bundleContainer);
 		}
-		ITargetLocation[] bundleContainers = bundleContainerDirectories.stream()
-				.map(dir -> tps.newDirectoryLocation(dir.getAbsolutePath())).toArray(ITargetLocation[]::new);
+		bundleContainerDirectories.stream().map(dir -> TPS.newDirectoryLocation(dir.getAbsolutePath()))
+		.forEach(bundleContainers::add);
 
-		// always only include targetBundles bundles to speed up resolution in
-		// cases where large bundle-pools with many other bundles are used,
-		// e.g. when one uses a Eclipse provisioned by Oomph
-		NameVersionDescriptor[] included = Arrays.stream(targetBundles)
-				.map(b -> new NameVersionDescriptor(b.getSymbolicName(), b.getVersion().toString()))
-				.toArray(NameVersionDescriptor[]::new);
-		targetDefinition.setIncluded(included);
-
-		setTargetProperties(targetDefinition, bundleContainers);
-
-		tps.saveTargetDefinition(targetDefinition);
-		return targetDefinition;
+		for (Bundle bundle : targetBundles) {
+			included.add(new NameVersionDescriptor(bundle.getSymbolicName(), bundle.getVersion().toString()));
+		}
 	}
 
-	public static void setTargetProperties(ITargetDefinition targetDefinition, ITargetLocation[] bundleContainers) {
-		targetDefinition.setTargetLocations(bundleContainers);
+	public static void createAndSetTargetForWorkspace(String name, Collection<ITargetLocation> locations,
+			Collection<NameVersionDescriptor> includedBundles) throws InterruptedException {
+		ITargetDefinition targetDefinition = TPS.newTarget();
+		targetDefinition.setName(name);
 		targetDefinition.setArch(Platform.getOSArch());
 		targetDefinition.setOS(Platform.getOS());
 		targetDefinition.setWS(Platform.getWS());
 		targetDefinition.setNL(Platform.getNL());
+		targetDefinition.setTargetLocations(locations.toArray(ITargetLocation[]::new));
+
+		// only include intended target bundles to speed up resolution in cases
+		// where direction-location points into large bundle-pools with many
+		// other bundles, e.g. when one uses a Eclipse provisioned by Oomph
+		if (includedBundles != null) {
+			targetDefinition.setIncluded(includedBundles.toArray(NameVersionDescriptor[]::new));
+		}
+		loadAndSetTargetForWorkspace(targetDefinition);
 	}
 
 	public static void setDummyBundlesAsTarget(List<NameVersionDescriptor> targetPlugins, Path jarDirectory)
-			throws IOException, CoreException, InterruptedException {
+			throws IOException, InterruptedException {
+		ITargetLocation location = createDummyBundlesLocation(targetPlugins, jarDirectory);
+		createAndSetTargetForWorkspace(null, List.of(location), targetPlugins);
+	}
+
+	private static ITargetLocation createDummyBundlesLocation(List<NameVersionDescriptor> targetPlugins,
+			Path jarDirectory) throws IOException {
 		for (NameVersionDescriptor bundleNameVersion : targetPlugins) {
 
 			Manifest manifest = createDummyBundleManifest(bundleNameVersion.getId(), bundleNameVersion.getVersion());
@@ -142,20 +147,12 @@ public class TargetPlatformUtil {
 			try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(jarPath));) {
 				out.putNextEntry(new ZipEntry(JarFile.MANIFEST_NAME));
 				manifest.write(out);
-
 			}
 		}
-		ITargetPlatformService tps = PDECore.getDefault().acquireService(ITargetPlatformService.class);
-		ITargetDefinition target = tps.newTarget();
-
-		ITargetLocation location1 = tps.newDirectoryLocation(jarDirectory.toString());
-
-		setTargetProperties(target, new ITargetLocation[] { location1 });
-		tps.saveTargetDefinition(target);
-		loadAndSetTargetForWorkspace(target);
+		return TPS.newDirectoryLocation(jarDirectory.toString());
 	}
 
-	public static Manifest createDummyBundleManifest(String bundleSymbolicName, String bundleVersion) {
+	private static Manifest createDummyBundleManifest(String bundleSymbolicName, String bundleVersion) {
 		Manifest manifest = new Manifest();
 		Attributes mainAttributes = manifest.getMainAttributes();
 		mainAttributes.put(Attributes.Name.MANIFEST_VERSION, "1.0");

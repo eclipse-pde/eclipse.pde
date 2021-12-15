@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - Bug 577637 - ManifestEditor must use Project-BundleRoot to open Manifest
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -21,6 +22,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -109,7 +111,8 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 				IResource resource = model.getUnderlyingResource();
 				if (resource == null)
 					return openExternalPlugin(new File(model.getInstallLocation()), filename);
-				return openWorkspacePlugin(resource.getProject().getFile(filename));
+				IProject project = resource.getProject();
+				return openWorkspacePlugin(PDEProject.getBundleRelativeFile(project, new Path(filename)));
 			}
 		}
 		if (object instanceof BaseDescription) {

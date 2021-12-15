@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2018 IBM Corporation and others.
+ * Copyright (c) 2013, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,23 +10,22 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Hannes Wellmann - Bug 577629 - Unify project creation/deletion in tests
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.classpathcontributor;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.*;
-import java.net.URL;
 import java.util.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.pde.ui.tests.classpathresolver.ClasspathResolverTest;
+import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.junit.*;
+import org.junit.rules.TestRule;
 
 /**
  * Tests {@link IClasspathContributor} API to add additional classpath
@@ -35,22 +34,14 @@ import org.junit.*;
  */
 public class ClasspathContributorTest {
 
-	private static final IProgressMonitor monitor = new NullProgressMonitor();
-	private IWorkspace workspace = ResourcesPlugin.getWorkspace();
-	private IProject project;
-
-	@Before
-	public void setUp() throws Exception {
-		project = importProject(workspace);
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		project.delete(true, true, monitor);
-	}
+	@ClassRule
+	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+	@Rule
+	public final TestRule deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
 
 	@Test
 	public void testAdditionalClasspathEntries() throws Exception {
+		IProject project = ProjectUtils.importTestProject("tests/projects/" + ClasspathResolverTest.bundleName);
 		List<IClasspathEntry> expected = new ArrayList<>(TestClasspathContributor.entries);
 		expected.addAll(TestClasspathContributor.entries2);
 		IJavaProject jProject = JavaCore.create(project);
@@ -59,59 +50,10 @@ public class ClasspathContributorTest {
 		IClasspathEntry[] classpath = container.getClasspathEntries();
 		for (IClasspathEntry element : classpath) {
 			// Ignore the PDE Core bundle dependency
-			if (element.getPath().toPortableString().indexOf("org.eclipse.pde.core") == -1){
+			if (element.getPath().toPortableString().indexOf("org.eclipse.pde.core") == -1) {
 				assertTrue("Unexpected classpath entry found: " + element, expected.remove(element));
 			}
 		}
 		assertTrue("Expected classpath entry not found: " + Arrays.toString(expected.toArray()), expected.isEmpty());
 	}
-
-	/**
-	 * Imports a project into the test workspace
-	 *
-	 * @param workspace workspace to import into
-	 * @return the created project
-	 * @throws IOException
-	 * @throws CoreException
-	 */
-	IProject importProject(IWorkspace workspace) throws IOException, CoreException {
-		File rootFile = workspace.getRoot().getLocation().toFile();
-
-		URL srcURL = PDETestsPlugin.getBundleContext().getBundle ().getEntry("tests/projects/" + ClasspathResolverTest.bundleName);
-		File srcBasedir = new File(FileLocator.toFileURL(srcURL).getFile());
-
-		File dstBasedir = new File(rootFile, ClasspathResolverTest.bundleName);
-		copyFile(srcBasedir, dstBasedir, ".project");
-		copyFile(srcBasedir, dstBasedir, ".classpath");
-		copyFile(srcBasedir, dstBasedir, "build.properties");
-		copyFile(srcBasedir, dstBasedir, "META-INF/MANIFEST.MF");
-		copyFile(srcBasedir, dstBasedir, "cpe/some.properties");
-		IProject project = workspace.getRoot().getProject(ClasspathResolverTest.bundleName);
-		IProjectDescription description = workspace.newProjectDescription(ClasspathResolverTest.bundleName);
-		project.create(description, monitor);
-		project.open(monitor);
-		return project;
-	}
-
-	private void copyFile(File srcBasedir, File dstBasedir, String file) throws IOException {
-		copyFile(new File(srcBasedir, file), new File(dstBasedir, file));
-	}
-
-	// copy&paste from org.eclipse.m2e.tests.common.FileHelpers
-	private void copyFile(File src, File dst) throws IOException {
-		src.getParentFile().mkdirs();
-		dst.getParentFile().mkdirs();
-
-		try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(src));
-				BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(dst))) {
-
-			byte[] buf = new byte[10240];
-			int len;
-			while ((len = in.read(buf)) != -1) {
-				out.write(buf, 0, len);
-			}
-
-		}
-	}
-
 }
