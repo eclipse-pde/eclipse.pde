@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - Bug 577861
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
@@ -391,6 +392,31 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 						}
 						return true;
 					}
+
+					@Override
+					public boolean canFinish() {
+						if (fWizard != null) {
+							return fWizard.canFinish();
+						}
+						return true;
+					}
+
+					@Override
+					public IWizardPage getNextPage(IWizardPage page) {
+						if (fWizard != null) {
+							return fWizard.getNextPage(page);
+						}
+						return super.getNextPage(page);
+					}
+
+					@Override
+					public IWizardPage getPreviousPage(IWizardPage page) {
+						if (fWizard != null) {
+							return fWizard.getPreviousPage(page);
+						}
+						return super.getPreviousPage(page);
+					}
+
 				};
 				wizard.setContainer(getContainer());
 				wizard.setWindowTitle(Messages.AddBundleContainerSelectionPage_1);
