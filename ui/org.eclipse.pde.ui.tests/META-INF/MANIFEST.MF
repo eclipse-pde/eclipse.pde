@@ -42,6 +42,7 @@ Require-Bundle: org.junit,
  org.eclipse.pde.genericeditor.extension,
  org.eclipse.equinox.simpleconfigurator.manipulator;bundle-version="2.1.300"
 Import-Package: org.assertj.core.api;version="3.14.0",
+ org.assertj.core.presentation;version="3.21.0",
  org.junit.jupiter.api.function;version="5.8.1"
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: JavaSE-11

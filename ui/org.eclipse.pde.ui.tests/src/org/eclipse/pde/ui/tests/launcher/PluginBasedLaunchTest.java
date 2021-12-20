@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2021, 2021 Hannes Wellmann and others.
+ *  Copyright (c) 2021, 2022 Hannes Wellmann and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@ package org.eclipse.pde.ui.tests.launcher;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
@@ -810,10 +809,6 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	// --- utilities ---
 
-	private static NameVersionDescriptor bundle(String id, String version) {
-		return new NameVersionDescriptor(id, version);
-	}
-
 	private void assertGetMergedBundleMap(List<NameVersionDescriptor> workspacePlugins,
 			List<NameVersionDescriptor> targetPlugins, Consumer<ILaunchConfigurationWorkingCopy> launchConfigPreparer,
 			Set<BundleLocationDescriptor> expectedBundles) throws Exception {
@@ -839,11 +834,11 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 			expectedPluginMap.put(pd.findModel(), start);
 		});
 
-		assertEquals(expectedPluginMap, bundleMap);
+		assertPluginMapsEquals(null, expectedPluginMap, bundleMap);
 	}
 
 	private void setUpWorkspace(List<NameVersionDescriptor> workspacePlugins, List<NameVersionDescriptor> targetPlugins)
-			throws CoreException, IOException, InterruptedException {
+			throws Exception {
 		ProjectUtils.createWorkspacePluginProjects(workspacePlugins);
 		TargetPlatformUtil.setDummyBundlesAsTarget(targetPlugins, tpJarDirectory);
 	}
@@ -856,22 +851,5 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		wc.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false);
 		wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, false);
 		return wc;
-	}
-
-	private static BundleLocationDescriptor workspaceBundle(String id, String version) {
-		Objects.requireNonNull(version);
-		return () -> findWorkspaceModel(id, version);
-	}
-
-	private static BundleLocationDescriptor targetBundle(String id, String version) {
-		Objects.requireNonNull(version);
-		// PluginRegistry.findModel does not consider external models when
-		// workspace models are present and returns the 'last' plug-in if
-		// multiple with the same version exist
-		return () -> findTargetModel(id, version);
-	}
-
-	private static interface BundleLocationDescriptor {
-		IPluginModelBase findModel();
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2019, 2021 Julian Honnen and others.
+ *  Copyright (c) 2019, 2022 Julian Honnen and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -135,6 +135,8 @@ public class TargetPlatformUtil {
 
 	private static ITargetLocation createDummyBundlesLocation(List<NameVersionDescriptor> targetPlugins,
 			Path jarDirectory) throws IOException {
+		Path pluginsDirectory = jarDirectory.resolve("plugins");
+		Files.createDirectories(pluginsDirectory);
 		for (NameVersionDescriptor bundleNameVersion : targetPlugins) {
 
 			Manifest manifest = createDummyBundleManifest(bundleNameVersion.getId(), bundleNameVersion.getVersion());
@@ -143,7 +145,7 @@ public class TargetPlatformUtil {
 			String bundleSymbolicName = Objects.requireNonNull(mainAttributes.getValue(Constants.BUNDLE_SYMBOLICNAME));
 			String bundleVersion = Objects.requireNonNull(mainAttributes.getValue(Constants.BUNDLE_VERSION));
 
-			Path jarPath = jarDirectory.resolve(bundleSymbolicName + "_" + bundleVersion + ".jar");
+			Path jarPath = pluginsDirectory.resolve(bundleSymbolicName + "_" + bundleVersion + ".jar");
 			try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(jarPath));) {
 				out.putNextEntry(new ZipEntry(JarFile.MANIFEST_NAME));
 				manifest.write(out);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2021 IBM Corporation and others.
+ * Copyright (c) 2008, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -158,13 +158,14 @@ public class ProjectUtils {
 	public static List<IProject> createWorkspacePluginProjects(List<NameVersionDescriptor> workspacePlugins)
 			throws CoreException {
 		List<IProject> projects = new ArrayList<>();
-		for (NameVersionDescriptor pluginDescription : workspacePlugins) {
-			String bundleSymbolicName = pluginDescription.getId();
-			String bundleVersion = pluginDescription.getVersion();
-			String projectName = bundleSymbolicName + bundleVersion.replace('.', '_');
-			projects.add(createPluginProject(projectName, bundleSymbolicName, bundleVersion));
+		for (NameVersionDescriptor plugin : workspacePlugins) {
+			projects.add(createPluginProject(plugin.getId(), plugin.getVersion()));
 		}
 		return projects;
+	}
+
+	public static IProject createPluginProject(String bundleSymbolicName, String bundleVersion) throws CoreException {
+		return createPluginProject(bundleSymbolicName + bundleVersion.replace('.', '_'), bundleSymbolicName, bundleVersion);
 	}
 
 	public static IProject createPluginProject(String projectName, String bundleSymbolicName, String version)
