@@ -210,6 +210,9 @@ public class TargetWeaver {
 		// range like: "[" + version + "," + version + "]"
 		Version version = Version.parseVersion(versionStr);
 		Bundle[] platformBundles = Platform.getBundles(symbolicName, null);
+		if (platformBundles == null) {
+			return null;
+		}
 		return Arrays.stream(platformBundles).filter(b -> b.getVersion().equals(version)).findAny().orElse(null);
 	}
 }
