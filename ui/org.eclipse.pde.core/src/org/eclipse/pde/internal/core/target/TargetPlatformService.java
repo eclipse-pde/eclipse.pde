@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
@@ -174,7 +176,12 @@ public class TargetPlatformService implements ITargetPlatformService {
 		} catch (URISyntaxException e) {
 			throw new CoreException(Status.error(Messages.TargetPlatformService_0, e));
 		}
-		throw new CoreException(Status.error(Messages.TargetPlatformService_1, null));
+		throw new CoreException(
+				Status.error(NLS.bind(Messages.TargetPlatformService_1, memento,
+						Stream.of(WorkspaceFileTargetHandle.SCHEME, LocalTargetHandle.SCHEME,
+								ExternalFileTargetHandle.SCHEME, RemoteTargetHandle.SCHEME)
+								.collect(Collectors.joining(", "))), //$NON-NLS-1$
+						null));
 	}
 
 	@Override
