@@ -61,6 +61,8 @@ public class Messages extends NLS {
 	public static String BundleContainerTable_Btn_Text_Remove;
 	public static String BundleContainerTable_Btn_Text_Update;
 	public static String BundleContainerTable_Btn_Text_Reload;
+	public static String BundleContainerTable_Btn_Text_ExpandAll;
+	public static String BundleContainerTable_Btn_Text_CollapseAll;
 	public static String BundleContainerTable_8;
 	public static String BundleContainerTable_9;
 	public static String BundleContainerTable_10;

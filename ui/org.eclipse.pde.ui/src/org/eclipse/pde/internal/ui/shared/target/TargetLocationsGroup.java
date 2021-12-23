@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2020 IBM Corporation and others.
+ * Copyright (c) 2009, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,8 +38,7 @@ import org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor;
 import org.eclipse.pde.internal.ui.wizards.target.TargetDefinitionContentPage;
 import org.eclipse.pde.ui.target.ITargetLocationHandler;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -90,6 +89,7 @@ public class TargetLocationsGroup {
 	private Button fRemoveButton;
 	private Button fUpdateButton;
 	private Button fReloadButton;
+	private Button fExpandCollapseButton;
 	private Button fShowContentButton;
 
 	private ITargetDefinition fTarget;
@@ -191,6 +191,7 @@ public class TargetLocationsGroup {
 		fUpdateButton.setToolTipText(Messages.TargetLocationsGroup_update);
 		fReloadButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_Btn_Text_Reload, SWT.PUSH);
 		fReloadButton.setToolTipText(Messages.TargetLocationsGroup_reload);
+		fExpandCollapseButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_Btn_Text_ExpandAll, SWT.PUSH);
 
 		fShowContentButton = toolkit.createButton(comp, Messages.TargetLocationsGroup_1, SWT.CHECK);
 
@@ -229,6 +230,7 @@ public class TargetLocationsGroup {
 		fRemoveButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_Btn_Text_Remove, null);
 		fUpdateButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_Btn_Text_Update, null);
 		fReloadButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_Btn_Text_Reload, null);
+		fExpandCollapseButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_Btn_Text_ExpandAll, null);
 
 		fShowContentButton = SWTFactory.createCheckButton(comp, Messages.TargetLocationsGroup_1, null, false, 2);
 
@@ -278,8 +280,45 @@ public class TargetLocationsGroup {
 		fTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 
 		createContextMenu(fTreeViewer.getTree());
+		fTreeViewer.getTree().addMouseListener(new MouseListener() {
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				setExpandCollapseState();
+			}
+			@Override
+			public void mouseDown(MouseEvent e) {
+			}
+			@Override
+			public void mouseUp(MouseEvent e) {
+				setExpandCollapseState();
+			}
+
+		});
+		fTreeViewer.getTree().addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				setExpandCollapseState();
+			}
+
+		});
 	}
 
+	private void setExpandCollapseState() {
+		if (fTreeViewer == null)
+			return;
+		if (fTreeViewer.getVisibleExpandedElements().length == 0) {
+			fExpandCollapseButton.setText(Messages.BundleContainerTable_Btn_Text_ExpandAll);
+		} else {
+			fExpandCollapseButton.setText(Messages.BundleContainerTable_Btn_Text_CollapseAll);
+		}
+
+	}
 	private void createContextMenu(Tree tree) {
 		fCopySelectionAction = new CopyTreeSelectionAction(tree);
 
@@ -319,11 +358,17 @@ public class TargetLocationsGroup {
 		fReloadButton.setEnabled(true);
 		SWTFactory.setButtonDimensionHint(fReloadButton);
 
+		fExpandCollapseButton.addSelectionListener(widgetSelectedAdapter(e -> toggleCollapse()));
+		fExpandCollapseButton.setLayoutData(new GridData());
+		fExpandCollapseButton.setEnabled(true);
+		SWTFactory.setButtonDimensionHint(fExpandCollapseButton);
+
 		fShowContentButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			((TargetLocationContentProvider) fTreeViewer.getContentProvider())
 					.setShowLocationContent(fShowContentButton.getSelection());
 			fTreeViewer.refresh();
 			fTreeViewer.expandAll();
+			fExpandCollapseButton.setText(Messages.BundleContainerTable_Btn_Text_CollapseAll);
 		}));
 		fShowContentButton.setLayoutData(new GridData());
 		SWTFactory.setButtonDimensionHint(fShowContentButton);
@@ -338,7 +383,10 @@ public class TargetLocationsGroup {
 	 */
 	public void setInput(ITargetDefinition target) {
 		fTarget = target;
+		boolean isCollapsed = fTreeViewer.getVisibleExpandedElements().length == 0;
 		fTreeViewer.setInput(fTarget);
+		if (isCollapsed)
+			fTreeViewer.collapseAll();
 		updateButtons();
 	}
 
@@ -461,6 +509,9 @@ public class TargetLocationsGroup {
 			fRemoveButton.setData(BUTTON_STATE, DeleteButtonState.NONE);
 			fUpdateButton.setEnabled(false);
 			fEditButton.setEnabled(false);
+			if(fTreeViewer !=null) {
+				setExpandCollapseState();
+			}
 			return;
 		}
 		boolean canRemove = false;
@@ -509,6 +560,19 @@ public class TargetLocationsGroup {
 			}
 		};
 		job.schedule();
+
+	}
+
+	private void toggleCollapse() {
+		if (fTreeViewer == null)
+			return;
+		if (fTreeViewer.getVisibleExpandedElements().length == 0) {
+			fTreeViewer.expandAll();
+			fExpandCollapseButton.setText(Messages.BundleContainerTable_Btn_Text_CollapseAll);
+		} else {
+			fTreeViewer.collapseAll();
+			fExpandCollapseButton.setText(Messages.BundleContainerTable_Btn_Text_ExpandAll);
+		}
 
 	}
 
