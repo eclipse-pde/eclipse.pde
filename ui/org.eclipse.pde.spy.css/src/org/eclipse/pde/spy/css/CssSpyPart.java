@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 Manumitting Technologies, Inc.
+ * Copyright (c) 2011, 2021 Manumitting Technologies, Inc.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -856,7 +856,7 @@ public class CssSpyPart {
 		}
 		widgetTreeViewer.collapseAll();
 		Object[] roots = widgetTreeProvider.getElements(widgetTreeViewer.getInput());
-		SubMonitor subMonitor = SubMonitor.convert(monitor, MessageFormat.format(Messages.CssSpyPart_Searching_for, text), roots.length * 10); //$NON-NLS-2$
+		SubMonitor subMonitor = SubMonitor.convert(monitor, MessageFormat.format(Messages.CssSpyPart_Searching_for, text), roots.length * 10);
 		for (Object root : roots) {
 			if (monitor.isCanceled()) {
 				return;
