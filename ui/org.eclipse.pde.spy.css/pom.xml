@@ -25,6 +25,6 @@
 
   <groupId>org.eclipse.e4</groupId>
   <artifactId>org.eclipse.pde.spy.css</artifactId>
-  <version>0.12.100-SNAPSHOT</version>
+  <version>0.12.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
