@@ -57,6 +57,7 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 			case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API:
 				return MarkerMessages.VersionNumberingResolution_minorNoNewAPI0;
 			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE:
+			case IApiProblem.REEXPORTED_REMOVAL_OF_REEXPORT_MAJOR_VERSION_CHANGE:
 				return MarkerMessages.VersionNumberingResolution_reexportedMajor0;
 			case IApiProblem.MINOR_VERSION_CHANGE_EXECUTION_ENV_CHANGED:
 				return MarkerMessages.VersionNumberingResolution_breeMinor;
@@ -87,6 +88,7 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 			case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API:
 				return NLS.bind(MarkerMessages.VersionNumberingResolution_minorNoNewAPI1, this.newVersionValue);
 			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE:
+			case IApiProblem.REEXPORTED_REMOVAL_OF_REEXPORT_MAJOR_VERSION_CHANGE:
 				return NLS.bind(MarkerMessages.VersionNumberingResolution_major1, this.newVersionValue);
 			case IApiProblem.MICRO_VERSION_CHANGE_UNNECESSARILY:
 				return NLS.bind(MarkerMessages.VersionNumberingResolution_unnecessaryMicroIncrease,
@@ -118,6 +120,7 @@ public class VersionNumberingResolution implements IMarkerResolution2 {
 				title = NLS.bind(MarkerMessages.VersionNumberingResolution_minorNoNewAPI2, this.newVersionValue);
 				break;
 			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE:
+			case IApiProblem.REEXPORTED_REMOVAL_OF_REEXPORT_MAJOR_VERSION_CHANGE:
 				title = NLS.bind(MarkerMessages.VersionNumberingResolution_major1, this.newVersionValue);
 				break;
 			case IApiProblem.MICRO_VERSION_CHANGE_UNNECESSARILY:

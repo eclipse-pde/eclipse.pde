@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2020 IBM Corporation and others.
+ * Copyright (c) 2008, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -411,6 +411,8 @@ public class ApiProblem implements IApiProblem {
 				return "MINOR_VERSION_CHANGE_NO_NEW_API"; //$NON-NLS-1$
 			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE:
 				return "REEXPORTED_MAJOR_VERSION_CHANGE"; //$NON-NLS-1$
+			case IApiProblem.REEXPORTED_REMOVAL_OF_REEXPORT_MAJOR_VERSION_CHANGE:
+				return "REEXPORTED_REMOVAL_OF_REEXPORT_MAJOR_VERSION_CHANGE"; //$NON-NLS-1$
 			case IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE:
 				return "REEXPORTED_MINOR_VERSION_CHANGE"; //$NON-NLS-1$
 			default:

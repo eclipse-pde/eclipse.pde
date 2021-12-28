@@ -618,6 +618,8 @@ public class ApiProblemFactory {
 						return 56;
 					case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE:
 						return 19;
+					case IApiProblem.REEXPORTED_REMOVAL_OF_REEXPORT_MAJOR_VERSION_CHANGE:
+						return 62;
 					case IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE:
 						return 20;
 					case IApiProblem.MINOR_VERSION_CHANGE_EXECUTION_ENV_CHANGED:
