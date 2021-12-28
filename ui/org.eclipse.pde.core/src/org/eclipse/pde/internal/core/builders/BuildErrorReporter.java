@@ -645,6 +645,10 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			validateApplicationContributions(binIncludes);
 
 		}
+		
+		// make sure "." library is included
+		validateBinIncludes(binIncludes, "."); //$NON-NLS-1$
+
 
 		// validate for bundle localization
 		IPluginModelBase model = PluginRegistry.findModel(fProject);
