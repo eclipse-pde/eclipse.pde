@@ -28,7 +28,6 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	private String fName;
 	private boolean fOptional;
 	private int fSearchLocation = ROOT;
-	private int fMatch = NONE;
 	private String fOs;
 	private String fWs;
 	private String fArch;
@@ -42,7 +41,6 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		fOptional = false;
 		fName = null;
 		fSearchLocation = ROOT;
-		fMatch = NONE;
 		fOs = null;
 		fWs = null;
 		fArch = null;
@@ -61,15 +59,6 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		fArch = getNodeAttribute(node, "arch"); //$NON-NLS-1$
 		fNl = getNodeAttribute(node, "nl"); //$NON-NLS-1$
 		fFilter = getNodeAttribute(node, "filter"); //$NON-NLS-1$
-		String matchName = getNodeAttribute(node, "match"); //$NON-NLS-1$
-		if (matchName != null) {
-			for (int i = 0; i < RULE_NAME_TABLE.length; i++) {
-				if (matchName.equals(RULE_NAME_TABLE[i])) {
-					fMatch = i;
-					break;
-				}
-			}
-		}
 		String searchLocationName = getNodeAttribute(node, "search_location"); //$NON-NLS-1$
 		if (searchLocationName == null) {
 			searchLocationName = getNodeAttribute(node, "search-location"); //$NON-NLS-1$
@@ -123,11 +112,6 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 	}
 
 	@Override
-	public int getMatch() {
-		return fMatch;
-	}
-
-	@Override
 	public String getOS() {
 		return fOs;
 	}
@@ -177,14 +161,6 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		Object oldValue = this.fName;
 		this.fName = name;
 		firePropertyChanged(P_NAME, oldValue, name);
-	}
-
-	@Override
-	public void setMatch(int match) throws CoreException {
-		ensureModelEditable();
-		Integer oldValue = Integer.valueOf(this.fMatch);
-		this.fMatch = match;
-		firePropertyChanged(P_MATCH, oldValue, Integer.valueOf(match));
 	}
 
 	@Override
@@ -255,9 +231,6 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		case P_NAME:
 			setName((String) newValue);
 			break;
-		case P_MATCH:
-			setMatch(newValue != null ? ((Integer) newValue).intValue() : NONE);
-			break;
 		case P_OS:
 			setOS((String) newValue);
 			break;
@@ -306,10 +279,6 @@ public class FeatureChild extends IdentifiableObject implements IFeatureChild {
 		if (isOptional()) {
 			writer.println();
 			writer.print(indent2 + "optional=\"true\""); //$NON-NLS-1$
-		}
-		if (fMatch != NONE) {
-			writer.println();
-			writer.print(indent2 + "match=\"" + RULE_NAME_TABLE[fMatch] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (getOS() != null) {
 			writer.println();
