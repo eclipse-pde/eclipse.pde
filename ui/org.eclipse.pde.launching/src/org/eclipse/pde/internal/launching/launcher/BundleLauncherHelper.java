@@ -364,7 +364,7 @@ public class BundleLauncherHelper {
 		return map;
 	}
 
-	static final Comparator<IPluginModelBase> VERSION = Comparator.comparing(m -> m.getBundleDescription().getVersion());
+	static final Comparator<IPluginModelBase> VERSION = Comparator.comparing(BundleLauncherHelper::getVersion);
 
 	private static Iterable<IPluginModelBase> getSelectedModels(IPluginModelBase[] models, String version, boolean greedy) {
 		// match only if...
@@ -388,12 +388,27 @@ public class BundleLauncherHelper {
 			addBundleToMap(map, model, startData);
 		} else {
 			List<Version> pluginVersions = idVersions.computeIfAbsent(model.getPluginBase().getId(), n -> new ArrayList<>());
-			Version version = model.getBundleDescription().getVersion();
+			Version version = getVersion(model);
 			if (!containsVersion.test(pluginVersions, version)) { // apply version filter    
 				pluginVersions.add(version);
 				addBundleToMap(map, model, startData);
 			}
 		}
+	}
+
+	private static Version getVersion(IPluginModelBase model) {
+		BundleDescription bundleDescription = model.getBundleDescription();
+		Version version;
+		if (bundleDescription == null) {
+			try {
+				version = Version.parseVersion(model.getPluginBase().getVersion());
+			} catch (IllegalArgumentException e) {
+				return Version.emptyVersion;
+			}
+		} else {
+			version = bundleDescription.getVersion();
+		}
+		return version;
 	}
 
 	/**
@@ -510,7 +525,7 @@ public class BundleLauncherHelper {
 				value = value.replace(':', ',');
 			}
 			value = (value.length() == 0 || value.equals(",")) //$NON-NLS-1$
-			? null
+					? null
 					: value.substring(0, value.length() - 1);
 
 			boolean automatic = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
