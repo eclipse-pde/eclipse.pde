@@ -66,6 +66,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.util.FileUtils;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
@@ -93,6 +94,11 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	public static final String SRC_ROOT = "src"; //$NON-NLS-1$
 	public static final String BIN_ROOT = "bin"; //$NON-NLS-1$
 	protected final int[] NO_PROBLEM_IDS = new int[0];
+
+	@BeforeClass
+	public static void beforeClass() {
+		PDECore.getDefault().getPreferencesManager().setValue(ICoreConstants.RUN_API_ANALYSIS_AS_JOB, false);
+	}
 
 	/**
 	 * Describes a line number mapped to the problem id with the given args we

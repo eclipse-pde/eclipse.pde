@@ -40,7 +40,10 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.api.tools.util.tests.ResourceEventWaiter;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.junit.BeforeClass;
 
 /**
  * Abstract class with commonly used methods for API Tools tests
@@ -208,5 +211,10 @@ public class AbstractApiTest {
 	 */
 	protected IApiBaseline getWorkspaceBaseline() {
 		return ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
+	}
+
+	@BeforeClass
+	public static void beforeClass() {
+		PDECore.getDefault().getPreferencesManager().setValue(ICoreConstants.RUN_API_ANALYSIS_AS_JOB, false);
 	}
 }
