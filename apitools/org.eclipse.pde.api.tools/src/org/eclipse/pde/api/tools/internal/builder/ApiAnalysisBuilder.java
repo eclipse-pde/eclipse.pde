@@ -34,6 +34,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -577,9 +578,38 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			try {
 				work(fullBuild, wbaseline, projects, monitor);
 			} catch (CoreException e) {
-				return e.getStatus();
+				IStatus status = e.getStatus();
+				if (monitor.isCanceled()) {
+					return Status.CANCEL_STATUS;
+				} else {
+					if (status.getCode() == IResourceStatus.RESOURCE_NOT_FOUND && project.isAccessible()) {
+						waitForLockAndReschedule(monitor, e);
+						return Status.OK_STATUS;
+					} else {
+						return status;
+					}
+				}
 			}
 			return Status.OK_STATUS;
+		}
+
+		/**
+		 * In case the analysis job was interrupted by the build, let wait for the build
+		 * and start analysis again
+		 */
+		private void waitForLockAndReschedule(IProgressMonitor monitor, CoreException e) {
+			try {
+				Job.getJobManager().beginRule(project, monitor);
+				IStatus s = new Status(IStatus.INFO, ApiAnalysisBuilder.class,
+						"Re-scheduling API analysis for " + project.getName(), e); //$NON-NLS-1$
+				ApiPlugin.log(s);
+				schedule();
+			} catch (OperationCanceledException e1) {
+				// nothing to do
+			} finally {
+				// release lock, we don't want to block workspace while analysis
+				Job.getJobManager().endRule(project);
+			}
 		}
 
 		@Override
