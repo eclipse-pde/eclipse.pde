@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2019 IBM Corporation and others.
+ * Copyright (c) 2007, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -397,7 +397,16 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 				}
 			} else {
 				TreeSet<IApiComponent> allComponents = new TreeSet<>(
-						(comp1, comp2) -> new Version(comp2.getVersion()).compareTo(new Version(comp1.getVersion())));
+						(comp1, comp2) -> {
+							if (comp2.getVersion().equals(comp1.getVersion())) {
+								if (comp2.getVersion().contains("JavaSE")) { //$NON-NLS-1$
+									ApiPlugin.logInfoMessage("Multiple locations for the same Java = " //$NON-NLS-1$
+											+ comp1.getLocation() + comp2.getLocation());
+								}
+								return 0;
+							}
+							return new Version(comp2.getVersion()).compareTo(new Version(comp1.getVersion()));
+						});
 				allComponents.add(comp);
 				allComponents.add(component);
 				fAllComponentsById.put(component.getSymbolicName(), allComponents);
