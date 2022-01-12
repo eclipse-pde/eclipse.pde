@@ -910,7 +910,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	class ApiAnalysisMarkersJob extends WorkspaceJob {
 
 		public ApiAnalysisMarkersJob(Runnable task) {
-			super("Creating markers on " + currentproject.getName()); //$NON-NLS-1$
+			super("Updating API analysis markers on " + currentproject.getName()); //$NON-NLS-1$
 			markersQueue.add(task);
 			setRule(currentproject);
 			setSystem(true);
