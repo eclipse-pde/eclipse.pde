@@ -139,7 +139,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * Map of <code>componentId -> {@link IApiComponent}</code>
 	 * </p>
 	 */
-	private HashMap<String, IApiComponent> fComponentsById = null;
+	private volatile Map<String, IApiComponent> fComponentsById;
 	/**
 	 * Maps component id's to all components sorted from higher to lower version.
 	 */
@@ -731,7 +731,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * Loads the information from the *.profile file the first time the baseline
 	 * is accessed
 	 */
-	private void loadBaselineInfos() {
+	private synchronized void loadBaselineInfos() {
 		if (fComponentsById != null) {
 			return;
 		}
