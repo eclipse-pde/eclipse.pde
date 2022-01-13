@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
-import java.util.Enumeration;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.internal.core.OverflowingLRUCache;
 import org.eclipse.jdt.internal.core.util.LRUCache;
+import org.eclipse.pde.api.tools.internal.SynhronizedOverflowingLRUCache;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -33,7 +33,7 @@ public final class ApiModelCache {
 	/**
 	 * Cache used for {@link IApiElement}s
 	 */
-	static class Cache<K, V> extends OverflowingLRUCache<K, V> {
+	static class Cache<K, V> extends SynhronizedOverflowingLRUCache<K, V> {
 
 		/**
 		 * Constructor
@@ -55,14 +55,6 @@ public final class ApiModelCache {
 			return new Cache<>(size, newOverflow);
 		}
 
-		/**
-		 * Returns if the cache has any elements in it or not
-		 *
-		 * @return true if the cache has no entries, false otherwise
-		 */
-		public boolean isEmpty() {
-			return !keys().hasMoreElements();
-		}
 	}
 
 	static final int DEFAULT_CACHE_SIZE = 1000;
@@ -261,9 +253,8 @@ public final class ApiModelCache {
 	}
 
 	private IApiElement getElementInfoFromAnyBaseline(String baselineid, String componentid, String updatedIdentifier) {
-			Enumeration<String> elements = fRootCache.keys();
-			while (elements.hasMoreElements()) {
-				String otherBaselines = elements.nextElement();
+		List<String> elements = fRootCache.keysSnapshot();
+		for (String otherBaselines : elements) {
 				if (otherBaselines.equals(baselineid)) {
 					continue;
 				}
