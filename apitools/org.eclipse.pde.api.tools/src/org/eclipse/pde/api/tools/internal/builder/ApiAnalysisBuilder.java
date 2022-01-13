@@ -403,6 +403,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					wbaseline, projects);
 			job.cancelSimilarJobs(fullBuild);
 			job.schedule(100);
+			job.setPriority(Job.DECORATE);
 		} else {
 			work(fullBuild, wbaseline, projects, monitor);
 		}
