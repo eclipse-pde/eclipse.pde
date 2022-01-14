@@ -318,7 +318,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		}
 
 		validateMissingSourceInBinIncludes(binIncludes, sourceEntryKeys, build);
-		validateBinIncludes(binIncludes);
+		validateBinIncludes(binIncludes, outputEntries);
 		validateExecutionEnvironment(javacSource, javacTarget, jreCompilationProfile, javacWarnings, javacErrors, getSourceLibraries(sourceEntries));
 		validateJavaCompilerSettings(javaProjectWarnings);
 	}
@@ -613,7 +613,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		return compliance;
 	}
 
-	private void validateBinIncludes(IBuildEntry binIncludes) {
+	private void validateBinIncludes(IBuildEntry binIncludes, List<IBuildEntry> outputEntries) {
 		// make sure we have a manifest entry
 		if (PDEProject.getManifest(fProject).exists()) {
 			validateBinIncludes(binIncludes, ICoreConstants.MANIFEST_FOLDER_NAME);
@@ -645,10 +645,12 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			validateApplicationContributions(binIncludes);
 
 		}
-		
-		// make sure "." library is included
-		validateBinIncludes(binIncludes, "."); //$NON-NLS-1$
 
+		// make sure "." library is included if present
+		String defaultLibraryName = PROPERTY_OUTPUT_PREFIX + "."; //$NON-NLS-1$
+		if (outputEntries.stream().anyMatch(e -> e.getName().equals(defaultLibraryName))) {
+			validateBinIncludes(binIncludes, "."); //$NON-NLS-1$
+		}
 
 		// validate for bundle localization
 		IPluginModelBase model = PluginRegistry.findModel(fProject);
