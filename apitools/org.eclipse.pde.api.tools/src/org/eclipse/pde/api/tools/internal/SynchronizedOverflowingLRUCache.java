@@ -23,13 +23,13 @@ import org.eclipse.jdt.internal.core.OverflowingLRUCache;
  * The partly synchronized variant of {@link OverflowingLRUCache}. Only
  * public/protected methods overridden in this class are synchronized.
  */
-public abstract class SynhronizedOverflowingLRUCache<K, V> extends OverflowingLRUCache<K, V> {
+public abstract class SynchronizedOverflowingLRUCache<K, V> extends OverflowingLRUCache<K, V> {
 
-	public SynhronizedOverflowingLRUCache(int size) {
+	public SynchronizedOverflowingLRUCache(int size) {
 		super(size);
 	}
 
-	public SynhronizedOverflowingLRUCache(int size, int overflow) {
+	public SynchronizedOverflowingLRUCache(int size, int overflow) {
 		super(size, overflow);
 	}
 

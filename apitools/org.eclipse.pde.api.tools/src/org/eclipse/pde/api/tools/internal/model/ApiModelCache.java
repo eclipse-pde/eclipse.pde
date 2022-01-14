@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.internal.core.util.LRUCache;
-import org.eclipse.pde.api.tools.internal.SynhronizedOverflowingLRUCache;
+import org.eclipse.pde.api.tools.internal.SynchronizedOverflowingLRUCache;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -33,7 +33,7 @@ public final class ApiModelCache {
 	/**
 	 * Cache used for {@link IApiElement}s
 	 */
-	static class Cache<K, V> extends SynhronizedOverflowingLRUCache<K, V> {
+	static class Cache<K, V> extends SynchronizedOverflowingLRUCache<K, V> {
 
 		/**
 		 * Constructor

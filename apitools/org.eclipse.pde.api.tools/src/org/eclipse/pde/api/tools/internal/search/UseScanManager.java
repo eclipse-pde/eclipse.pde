@@ -34,7 +34,7 @@ import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
-import org.eclipse.pde.api.tools.internal.SynhronizedOverflowingLRUCache;
+import org.eclipse.pde.api.tools.internal.SynchronizedOverflowingLRUCache;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.FileManager;
@@ -64,7 +64,7 @@ public class UseScanManager {
 	 * Cache to maintain the list of least recently used
 	 * <code>UseScanReferences</code>
 	 */
-	private static class UseScanCache extends SynhronizedOverflowingLRUCache<IApiComponent, IReferenceCollection> {
+	private static class UseScanCache extends SynchronizedOverflowingLRUCache<IApiComponent, IReferenceCollection> {
 
 		public UseScanCache(int size) {
 			super(size);
