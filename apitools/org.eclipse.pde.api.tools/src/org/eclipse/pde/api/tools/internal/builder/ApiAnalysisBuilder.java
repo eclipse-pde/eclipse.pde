@@ -898,7 +898,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			cleanupMarkers(this.currentproject);
 			IPluginModelBase currentModel = getCurrentModel();
 			if (currentModel != null) {
-				localMonitor.subTask(BuilderMessages.building_workspace_profile);
+				localMonitor.subTask(NLS.bind(BuilderMessages.building_workspace_profile, currentproject.getName()));
 				localMonitor.split(1);
 				String id = currentModel.getBundleDescription().getSymbolicName();
 				// Compatibility checks
