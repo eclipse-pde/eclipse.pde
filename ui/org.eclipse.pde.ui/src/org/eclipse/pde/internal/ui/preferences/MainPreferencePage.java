@@ -38,6 +38,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.BaseBlock;
 import org.eclipse.pde.internal.ui.shared.target.TargetStatus;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -204,6 +205,10 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fRunAPIAnalysisBuilderAsJob.setText(PDEUIMessages.MainPreferencePage_RunAPIAnalysisBuilderAsJob);
 		fRunAPIAnalysisBuilderAsJob.setSelection(
 				PDECore.getDefault().getPreferencesManager().getBoolean(ICoreConstants.RUN_API_ANALYSIS_AS_JOB));
+
+		fDisableAPIAnalysisBuilder.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			fRunAPIAnalysisBuilderAsJob.setEnabled(!fDisableAPIAnalysisBuilder.getSelection());
+		}));
 
 		fAddSwtNonDisposalReporting = new Button(optionComp, SWT.CHECK);
 		fAddSwtNonDisposalReporting.setText(PDEUIMessages.MainPreferencePage_AddSwtNonDisposedToVMArguments);
@@ -436,6 +441,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fAddToJavaSearch.setSelection(store.getDefaultBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH));
 		fShowTargetStatus.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TARGET_STATUS));
 		fAlwaysPreferWorkspace.setSelection(store.getDefaultBoolean(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET));
+		fRunAPIAnalysisBuilderAsJob.setEnabled(true);
 		fRunAPIAnalysisBuilderAsJob.setSelection(
 				PDECore.getDefault().getPreferencesManager().getDefaultBoolean(ICoreConstants.RUN_API_ANALYSIS_AS_JOB));
 		fDisableAPIAnalysisBuilder.setSelection(store.getDefaultBoolean(IPreferenceConstants.DISABLE_API_ANALYSIS_BUILDER));
