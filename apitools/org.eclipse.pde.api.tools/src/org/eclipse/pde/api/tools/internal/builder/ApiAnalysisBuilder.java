@@ -198,8 +198,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	void cleanupMarkers(IResource resource) {
 		if (isRunningAsJob()) {
-			ApiAnalysisMarkersJob job = new ApiAnalysisMarkersJob(() -> cleanupMarkersInternally(resource));
-			job.schedule();
+			new ApiAnalysisMarkersJob(() -> cleanupMarkersInternally(resource)).schedule();
 		} else {
 			cleanupMarkersInternally(resource);
 		}
@@ -950,6 +949,16 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		@Override
 		public boolean belongsTo(Object family) {
 			return super.belongsTo(family) || ApiAnalysisMarkersJob.class == family;
+		}
+
+		@Override
+		public boolean shouldRun() {
+			return !markersQueue.isEmpty();
+		}
+
+		@Override
+		public boolean shouldSchedule() {
+			return !markersQueue.isEmpty();
 		}
 
 		@Override
