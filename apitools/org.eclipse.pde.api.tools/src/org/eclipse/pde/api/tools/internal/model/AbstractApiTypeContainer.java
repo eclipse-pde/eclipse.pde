@@ -16,7 +16,6 @@ package org.eclipse.pde.api.tools.internal.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -39,7 +38,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	/**
 	 * Collection of {@link IApiTypeContainer}s
 	 */
-	private List<IApiTypeContainer> fApiTypeContainers = null;
+	private volatile List<IApiTypeContainer> fApiTypeContainers;
 
 	/**
 	 * Constructor
@@ -62,27 +61,34 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	}
 
 	@Override
-	public synchronized void close() throws CoreException {
+	public void close() throws CoreException {
 		if (fApiTypeContainers == null) {
 			return;
 		}
-		// clean component cache elements
-		ApiModelCache.getCache().removeElementInfo(this);
-
 		MultiStatus multi = null;
 		IStatus single = null;
-		IApiTypeContainer[] containers = getApiTypeContainers();
-		for (IApiTypeContainer container : containers) {
-			try {
-				container.close();
-			} catch (CoreException e) {
-				if (single == null) {
-					single = e.getStatus();
-				} else {
-					if (multi == null) {
-						multi = new MultiStatus(ApiPlugin.PLUGIN_ID, single.getCode(), single.getMessage(), single.getException());
+		synchronized (this) {
+			if (fApiTypeContainers == null) {
+				return;
+			}
+
+			// clean component cache elements
+			ApiModelCache.getCache().removeElementInfo(this);
+
+			IApiTypeContainer[] containers = getApiTypeContainers();
+			for (IApiTypeContainer container : containers) {
+				try {
+					container.close();
+				} catch (CoreException e) {
+					if (single == null) {
+						single = e.getStatus();
+					} else {
+						if (multi == null) {
+							multi = new MultiStatus(ApiPlugin.PLUGIN_ID, single.getCode(), single.getMessage(),
+									single.getException());
+						}
+						multi.add(e.getStatus());
 					}
-					multi.add(e.getStatus());
 				}
 			}
 		}
@@ -171,11 +177,17 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	 *
 	 * @return the {@link IApiTypeContainer}s
 	 */
-	protected synchronized IApiTypeContainer[] getApiTypeContainers() throws CoreException {
-		if (fApiTypeContainers == null) {
-			fApiTypeContainers = createApiTypeContainers();
+	protected IApiTypeContainer[] getApiTypeContainers() throws CoreException {
+		List<IApiTypeContainer> typeContainers = fApiTypeContainers;
+		if (typeContainers == null) {
+			synchronized (this) {
+				if (typeContainers == null) {
+					typeContainers = createApiTypeContainers();
+					fApiTypeContainers = typeContainers;
+				}
+			}
 		}
-		return fApiTypeContainers.toArray(new IApiTypeContainer[fApiTypeContainers.size()]);
+		return typeContainers.toArray(new IApiTypeContainer[typeContainers.size()]);
 	}
 
 	/**
@@ -185,16 +197,11 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	 * @param id the given id
 	 * @return the {@link IApiTypeContainer}s
 	 */
-	protected synchronized IApiTypeContainer[] getApiTypeContainers(String id) throws CoreException {
-		if (fApiTypeContainers == null) {
-			fApiTypeContainers = createApiTypeContainers();
-		}
+	protected IApiTypeContainer[] getApiTypeContainers(String id) throws CoreException {
+		IApiTypeContainer[] typeContainers = getApiTypeContainers();
 		List<IApiTypeContainer> containers = new ArrayList<>();
-		String origin = null;
-		IApiTypeContainer container = null;
-		for (Iterator<IApiTypeContainer> iterator = fApiTypeContainers.iterator(); iterator.hasNext();) {
-			container = iterator.next();
-			origin = ((IApiComponent) container.getAncestor(IApiElement.COMPONENT)).getSymbolicName();
+		for (IApiTypeContainer container : typeContainers) {
+			String origin = ((IApiComponent) container.getAncestor(IApiElement.COMPONENT)).getSymbolicName();
 			if (origin != null && origin.equals(id)) {
 				containers.add(container);
 			}

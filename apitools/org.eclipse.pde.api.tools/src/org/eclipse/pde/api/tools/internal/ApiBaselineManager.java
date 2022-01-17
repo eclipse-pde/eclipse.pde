@@ -24,13 +24,16 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -110,9 +113,9 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	/**
 	 * Cache of baseline names to the location with their infos in it
 	 */
-	private HashMap<String, String> handlecache = null;
+	private volatile Map<String, String> handlecache;
 
-	private HashSet<String> hasinfos = null;
+	private volatile Set<String> hasinfos;
 
 	/**
 	 * The current default {@link IApiBaseline}
@@ -147,6 +150,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			ApiPlugin.getDefault().addSaveParticipant(this);
 			savelocation = ApiPlugin.getDefault().getStateLocation().append(".api_profiles").addTrailingSeparator(); //$NON-NLS-1$
 		}
+		hasinfos = Collections.emptySet();
 	}
 
 	/**
@@ -224,7 +228,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 */
 	public void loadBaselineInfos(IApiBaseline baseline) throws CoreException {
 		initializeStateCache();
-		if (hasinfos.contains(baseline.getName())) {
+		if (isBaselineLoaded(baseline)) {
 			return;
 		}
 		String filename = handlecache.get(baseline.getName());
@@ -241,6 +245,10 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		}
 	}
 
+	public boolean isBaselineLoaded(IApiBaseline baseline) {
+		return hasinfos.contains(baseline.getName());
+	}
+
 	/**
 	 * Initializes the baseline cache lazily. Only performs work if the current
 	 * cache has not been created yet
@@ -252,7 +260,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		long time = System.currentTimeMillis();
 		if (baselinecache == null) {
 			handlecache = new HashMap<>(8);
-			hasinfos = new HashSet<>(8);
+			hasinfos = ConcurrentHashMap.newKeySet(8);
 			baselinecache = new LinkedHashMap<>(8);
 			if (!ApiPlugin.isRunningInFramework()) {
 				return;
@@ -302,14 +310,14 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		} else {
 			node.remove(DEFAULT_BASELINE);
 		}
-		if (baselinecache != null && hasinfos != null) {
+		if (baselinecache != null && !hasinfos.isEmpty()) {
 			File dir = new File(savelocation.toOSString());
 			Files.createDirectories(dir.toPath());
 			IApiBaseline baseline = null;
 			for (Entry<String, IApiBaseline> entry : baselinecache.entrySet()) {
 				String id = entry.getKey();
 				baseline = entry.getValue();
-				if (!hasinfos.contains(baseline.getName())) {
+				if (!isBaselineLoaded(baseline)) {
 					continue;
 				}
 				File file = savelocation.append(id + BASELINE_FILE_EXTENSION).toFile();
@@ -557,7 +565,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			if (handlecache != null) {
 				handlecache.clear();
 			}
-			if (hasinfos != null) {
+			if (!hasinfos.isEmpty()) {
 				hasinfos.clear();
 			}
 			StubApiComponent.disposeAllCaches();

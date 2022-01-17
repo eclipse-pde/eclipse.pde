@@ -37,17 +37,17 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 	/**
 	 * API description
 	 */
-	private IApiDescription fApiDescription = null;
+	private volatile IApiDescription fApiDescription;
 
 	/**
 	 * API Filter store
 	 */
-	private IApiFilterStore fFilterStore = null;
+	private volatile IApiFilterStore fFilterStore;
 
 	/**
 	 * References in API use scan reports
 	 */
-	private IReferenceCollection fReferences;
+	private volatile IReferenceCollection fReferences;
 
 	/**
 	 * Constructs an API component in the given {@link IApiBaseline}.
@@ -95,8 +95,11 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 	}
 
 	@Override
-	public synchronized IApiDescription getApiDescription() throws CoreException {
-		if (fApiDescription == null) {
+	public IApiDescription getApiDescription() throws CoreException {
+		if (fApiDescription != null) {
+			return fApiDescription;
+		}
+		synchronized (this) {
 			fApiDescription = createApiDescription();
 		}
 		return fApiDescription;
@@ -107,7 +110,7 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 	 *
 	 * @return whether this component has created an API description
 	 */
-	protected synchronized boolean isApiDescriptionInitialized() {
+	protected boolean isApiDescriptionInitialized() {
 		return fApiDescription != null;
 	}
 
@@ -116,17 +119,17 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 	 *
 	 * @return true if a store has been created, false other wise
 	 */
-	protected synchronized boolean hasApiFilterStore() {
+	protected boolean hasApiFilterStore() {
 		return fFilterStore != null;
 	}
 
 	@Override
-	public synchronized IApiTypeContainer[] getApiTypeContainers() throws CoreException {
+	public IApiTypeContainer[] getApiTypeContainers() throws CoreException {
 		return super.getApiTypeContainers();
 	}
 
 	@Override
-	public synchronized IApiTypeContainer[] getApiTypeContainers(String id) throws CoreException {
+	public IApiTypeContainer[] getApiTypeContainers(String id) throws CoreException {
 		if (this.hasFragments()) {
 			return super.getApiTypeContainers(id);
 		} else {
@@ -144,7 +147,11 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 	@Override
 	public IApiFilterStore getFilterStore() throws CoreException {
 		if (fFilterStore == null) {
-			fFilterStore = createApiFilterStore();
+			synchronized (this) {
+				if (fFilterStore == null) {
+					fFilterStore = createApiFilterStore();
+				}
+			}
 		}
 		return fFilterStore;
 	}
@@ -170,7 +177,11 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 	@Override
 	public IReferenceCollection getExternalDependencies() {
 		if (fReferences == null) {
-			fReferences = new UseScanReferences();
+			synchronized (this) {
+				if (fReferences == null) {
+					fReferences = new UseScanReferences();
+				}
+			}
 		}
 		return fReferences;
 	}

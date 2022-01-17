@@ -15,9 +15,9 @@ package org.eclipse.pde.api.tools.internal.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -39,7 +39,6 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.build.IBuild;
@@ -77,22 +76,22 @@ public class ProjectComponent extends BundleComponent {
 	/**
 	 * Associated Java project
 	 */
-	private IJavaProject fProject = null;
+	private IJavaProject fProject;
 
 	/**
 	 * Associated IPluginModelBase object
 	 */
-	private IPluginModelBase fModel = null;
+	private IPluginModelBase fModel;
 
 	/**
 	 * A cache of bundle class path entries to class file containers.
 	 */
-	private Map<String, IApiTypeContainer> fPathToOutputContainers = null;
+	private volatile Map<String, IApiTypeContainer> fPathToOutputContainers;
 
 	/**
 	 * A cache of output location paths to corresponding class file containers.
 	 */
-	private Map<IPath, IApiTypeContainer> fOutputLocationToContainer = null;
+	private volatile Map<IPath, IApiTypeContainer> fOutputLocationToContainer;
 
 	/**
 	 * Constructs an API component for the given Java project in the specified
@@ -160,6 +159,9 @@ public class ProjectComponent extends BundleComponent {
 
 	@Override
 	public void dispose() {
+		if (isDisposed()) {
+			return;
+		}
 		try {
 			if (hasApiFilterStore()) {
 				getFilterStore().dispose();
@@ -204,114 +206,131 @@ public class ProjectComponent extends BundleComponent {
 	}
 
 	@Override
-	protected synchronized List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
+	protected List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
+		if (isDisposed()) {
+			baselineDisposed(getBaseline());
+		}
 		// first populate build.properties cache so we can create class file
 		// containers
 		// from bundle classpath entries
-		fPathToOutputContainers = new HashMap<>(4);
-		fOutputLocationToContainer = new HashMap<>(4);
+		fPathToOutputContainers = new ConcurrentHashMap<>(4);
+		fOutputLocationToContainer = new ConcurrentHashMap<>(4);
 		if (fProject.exists() && fProject.getProject().isOpen()) {
 			IPluginModelBase model = PluginRegistry.findModel(fProject.getProject());
 			if (model != null) {
-				IBuildModel buildModel = PluginRegistry.createBuildModel(model);
-				if (buildModel != null) {
-					IBuild build = buildModel.getBuild();
-					IBuildEntry entry = build.getEntry(ENTRY_CUSTOM);
-					if (entry != null) {
-						String[] tokens = entry.getTokens();
-						if (tokens.length == 1 && tokens[0].equals("true")) { //$NON-NLS-1$
-							// hack : add the current output location for each
-							// classpath entries
-							IClasspathEntry[] classpathEntries = fProject.getRawClasspath();
-							List<IApiTypeContainer> containers = new ArrayList<>();
-							for (IClasspathEntry classpathEntrie : classpathEntries) {
-								IClasspathEntry classpathEntry = classpathEntrie;
-								switch (classpathEntry.getEntryKind()) {
-									case IClasspathEntry.CPE_SOURCE:
-										String containerPath = classpathEntry.getPath().removeFirstSegments(1).toString();
-										IApiTypeContainer container = getApiTypeContainer(containerPath, this);
-										if (container != null && !containers.contains(container)) {
-											containers.add(container);
-										}
-										break;
-									case IClasspathEntry.CPE_VARIABLE:
-										classpathEntry = JavaCore.getResolvedClasspathEntry(classpathEntry);
-										//$FALL-THROUGH$
-									case IClasspathEntry.CPE_LIBRARY:
-										IPath path = classpathEntry.getPath();
-										if (Util.isArchive(path.lastSegment())) {
-											IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-											if (resource != null) {
-												// jar inside the workspace
-												containers.add(new ArchiveApiTypeContainer(this, resource.getLocation().toOSString()));
-											} else {
-												// external jar
-												containers.add(new ArchiveApiTypeContainer(this, path.toOSString()));
-											}
-										}
-										break;
-									default:
-										break;
-								}
-							}
-							if (!containers.isEmpty()) {
-								IApiTypeContainer cfc = null;
-								if (containers.size() == 1) {
-									cfc = containers.get(0);
-								} else {
-									cfc = new CompositeApiTypeContainer(this, containers);
-								}
-								fPathToOutputContainers.put(".", cfc); //$NON-NLS-1$
-							}
-						}
-					} else {
-						IBuildEntry[] entries = build.getBuildEntries();
-						int length = entries.length;
-						for (int i = 0; i < length; i++) {
-							IBuildEntry buildEntry = entries[i];
-							String name = buildEntry.getName();
-							if (name.startsWith(IBuildEntry.JAR_PREFIX)) {
-								retrieveContainers(name, IBuildEntry.JAR_PREFIX, buildEntry);
-							} else if (name.startsWith(EXTRA_PREFIX)) {
-								retrieveContainers(name, EXTRA_PREFIX, buildEntry);
-							}
-						}
-					}
-				}
+				createContainersFromProjectModel(model, this, fPathToOutputContainers, fOutputLocationToContainer);
 			}
 			return super.createApiTypeContainers();
 		}
 		return Collections.emptyList();
 	}
 
-	private void retrieveContainers(String name, String prefix, IBuildEntry buildEntry) throws CoreException {
+	private static void createContainersFromProjectModel(IPluginModelBase model, ProjectComponent project,
+			Map<String, IApiTypeContainer> pathToOutputContainers,
+			Map<IPath, IApiTypeContainer> outputLocationToContainer) throws CoreException {
+		IBuildModel buildModel = PluginRegistry.createBuildModel(model);
+		if (buildModel == null) {
+			return;
+		}
+		IBuild build = buildModel.getBuild();
+		IBuildEntry entry = build.getEntry(ENTRY_CUSTOM);
+		if (entry != null) {
+			String[] tokens = entry.getTokens();
+			if (tokens.length == 1 && tokens[0].equals("true")) { //$NON-NLS-1$
+				// hack : add the current output location for each
+				// classpath entries
+				IClasspathEntry[] classpathEntries = project.fProject.getRawClasspath();
+				List<IApiTypeContainer> containers = new ArrayList<>();
+				for (IClasspathEntry classpathEntrie : classpathEntries) {
+					IClasspathEntry classpathEntry = classpathEntrie;
+					switch (classpathEntry.getEntryKind())
+						{
+						case IClasspathEntry.CPE_SOURCE:
+							String containerPath = classpathEntry.getPath().removeFirstSegments(1).toString();
+							IApiTypeContainer container = getApiTypeContainer(containerPath, project,
+									outputLocationToContainer);
+							if (container != null && !containers.contains(container)) {
+								containers.add(container);
+						}
+							break;
+						case IClasspathEntry.CPE_VARIABLE:
+							classpathEntry = JavaCore.getResolvedClasspathEntry(classpathEntry);
+							//$FALL-THROUGH$
+						case IClasspathEntry.CPE_LIBRARY:
+							IPath path = classpathEntry.getPath();
+							if (Util.isArchive(path.lastSegment())) {
+								IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+								if (resource != null) {
+									// jar inside the workspace
+									containers.add(
+											new ArchiveApiTypeContainer(project, resource.getLocation().toOSString()));
+								} else {
+									// external jar
+									containers.add(new ArchiveApiTypeContainer(project, path.toOSString()));
+								}
+						}
+							break;
+						default:
+							break;
+					}
+				}
+				if (!containers.isEmpty()) {
+					IApiTypeContainer cfc = null;
+					if (containers.size() == 1) {
+						cfc = containers.get(0);
+					} else {
+						cfc = new CompositeApiTypeContainer(project, containers);
+					}
+					pathToOutputContainers.put(".", cfc); //$NON-NLS-1$
+				}
+			}
+		} else {
+			IBuildEntry[] entries = build.getBuildEntries();
+			int length = entries.length;
+			for (int i = 0; i < length; i++) {
+				IBuildEntry buildEntry = entries[i];
+				String name = buildEntry.getName();
+				if (name.startsWith(IBuildEntry.JAR_PREFIX)) {
+					retrieveContainers(name, IBuildEntry.JAR_PREFIX, buildEntry, project, pathToOutputContainers,
+							outputLocationToContainer);
+				} else if (name.startsWith(EXTRA_PREFIX)) {
+					retrieveContainers(name, EXTRA_PREFIX, buildEntry, project, pathToOutputContainers,
+							outputLocationToContainer);
+				}
+			}
+		}
+	}
+
+	private static void retrieveContainers(String name, String prefix, IBuildEntry buildEntry, ProjectComponent project,
+			Map<String, IApiTypeContainer> pathToOutputContainers,
+			Map<IPath, IApiTypeContainer> outputLocationToContainer) throws CoreException {
 		String jar = name.substring(prefix.length());
 		String[] tokens = buildEntry.getTokens();
 		if (tokens.length == 1) {
-			IApiTypeContainer container = getApiTypeContainer(tokens[0], this);
+			IApiTypeContainer container = getApiTypeContainer(tokens[0], project, outputLocationToContainer);
 			if (container != null) {
-				IApiTypeContainer existingContainer = this.fPathToOutputContainers.get(jar);
+				IApiTypeContainer existingContainer = pathToOutputContainers.get(jar);
 				if (existingContainer != null) {
 					// concat both containers
 					List<IApiTypeContainer> allContainers = new ArrayList<>();
 					allContainers.add(existingContainer);
 					allContainers.add(container);
-					IApiTypeContainer apiTypeContainer = new CompositeApiTypeContainer(this, allContainers);
-					fPathToOutputContainers.put(jar, apiTypeContainer);
+					IApiTypeContainer apiTypeContainer = new CompositeApiTypeContainer(project, allContainers);
+					pathToOutputContainers.put(jar, apiTypeContainer);
 				} else {
-					fPathToOutputContainers.put(jar, container);
+					pathToOutputContainers.put(jar, container);
 				}
 			}
 		} else {
 			List<IApiTypeContainer> containers = new ArrayList<>();
 			for (String currentToken : tokens) {
-				IApiTypeContainer container = getApiTypeContainer(currentToken, this);
+				IApiTypeContainer container = getApiTypeContainer(currentToken, project, outputLocationToContainer);
 				if (container != null && !containers.contains(container)) {
 					containers.add(container);
 				}
 			}
 			if (!containers.isEmpty()) {
-				IApiTypeContainer existingContainer = this.fPathToOutputContainers.get(jar);
+				IApiTypeContainer existingContainer = pathToOutputContainers.get(jar);
 				if (existingContainer != null) {
 					// concat both containers
 					containers.add(existingContainer);
@@ -320,21 +339,21 @@ public class ProjectComponent extends BundleComponent {
 				if (containers.size() == 1) {
 					cfc = containers.get(0);
 				} else {
-					cfc = new CompositeApiTypeContainer(this, containers);
+					cfc = new CompositeApiTypeContainer(project, containers);
 				}
-				fPathToOutputContainers.put(jar, cfc);
+				pathToOutputContainers.put(jar, cfc);
 			}
 		}
 	}
 
 	@Override
 	protected IApiTypeContainer createApiTypeContainer(String path) throws CoreException {
-		if (this.fPathToOutputContainers == null) {
+		if (isDisposed() || this.fPathToOutputContainers == null) {
 			baselineDisposed(getBaseline());
 		}
 		IApiTypeContainer container = fPathToOutputContainers.get(path);
 		if (container == null) {
-			// could be a binary jar included in the plug-in, just look for it
+		// could be a binary jar included in the plug-in, just look for it
 			container = findApiTypeContainer(path);
 		}
 		return container;
@@ -368,22 +387,21 @@ public class ProjectComponent extends BundleComponent {
 	 * @param location project relative path to the source folder
 	 * @return {@link IApiTypeContainer} or <code>null</code>
 	 */
-	private IApiTypeContainer getApiTypeContainer(String location, IApiComponent component) throws CoreException {
-		if (this.fOutputLocationToContainer == null) {
-			baselineDisposed(getBaseline());
-		}
-		IResource res = fProject.getProject().findMember(new Path(location));
+	private static IApiTypeContainer getApiTypeContainer(String location, ProjectComponent component,
+			Map<IPath, IApiTypeContainer> outputLocationToContainer) throws CoreException {
+		IJavaProject project = component.fProject;
+		IResource res = project.getProject().findMember(new Path(location));
 		if (res != null) {
-			IPackageFragmentRoot root = fProject.getPackageFragmentRoot(res);
+			IPackageFragmentRoot root = project.getPackageFragmentRoot(res);
 			if (root.exists()) {
 				if (root.getKind() == IPackageFragmentRoot.K_BINARY) {
 					if (res.getType() == IResource.FOLDER) {
 						// class file folder
 						IPath location2 = res.getLocation();
-						IApiTypeContainer cfc = fOutputLocationToContainer.get(location2);
+						IApiTypeContainer cfc = outputLocationToContainer.get(location2);
 						if (cfc == null) {
 							cfc = new ProjectTypeContainer(component, (IContainer) res);
-							fOutputLocationToContainer.put(location2, cfc);
+							outputLocationToContainer.put(location2, cfc);
 						}
 						return cfc;
 					}
@@ -391,20 +409,20 @@ public class ProjectComponent extends BundleComponent {
 					IClasspathEntry entry = root.getRawClasspathEntry();
 					IPath outputLocation = entry.getOutputLocation();
 					if (outputLocation == null) {
-						outputLocation = fProject.getOutputLocation();
+						outputLocation = project.getOutputLocation();
 					}
-					IApiTypeContainer cfc = fOutputLocationToContainer.get(outputLocation);
+					IApiTypeContainer cfc = outputLocationToContainer.get(outputLocation);
 					if (cfc == null) {
-						IPath projectFullPath = fProject.getProject().getFullPath();
+						IPath projectFullPath = project.getProject().getFullPath();
 						IContainer container = null;
 						if (projectFullPath.equals(outputLocation)) {
 							// The project is its own output location
-							container = fProject.getProject();
+							container = project.getProject();
 						} else {
-							container = fProject.getProject().getWorkspace().getRoot().getFolder(outputLocation);
+							container = project.getProject().getWorkspace().getRoot().getFolder(outputLocation);
 						}
 						cfc = new ProjectTypeContainer(component, container);
-						fOutputLocationToContainer.put(outputLocation, cfc);
+						outputLocationToContainer.put(outputLocation, cfc);
 					}
 					return cfc;
 				}
@@ -435,11 +453,14 @@ public class ProjectComponent extends BundleComponent {
 	 */
 	public IApiTypeContainer getTypeContainer(IPackageFragmentRoot root) throws CoreException {
 		if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
+			if (isDisposed()) {
+				baselineDisposed(getBaseline());
+			}
 			getApiTypeContainers(); // ensure initialized
 			IResource resource = root.getResource();
 			if (resource != null) {
 				String location = resource.getProjectRelativePath().toString();
-				return getApiTypeContainer(location, this);
+				return getApiTypeContainer(location, this, fOutputLocationToContainer);
 			}
 		}
 		return null;

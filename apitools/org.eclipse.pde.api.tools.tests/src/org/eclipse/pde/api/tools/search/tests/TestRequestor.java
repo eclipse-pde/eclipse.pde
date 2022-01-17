@@ -133,7 +133,7 @@ public class TestRequestor implements IApiSearchRequestor {
 				}
 			}
 			catch(Exception e) {
-				this.test.reportFailure(e.getMessage());
+				throw new IllegalStateException(e);
 			}
 		}
 		return this.scope;
