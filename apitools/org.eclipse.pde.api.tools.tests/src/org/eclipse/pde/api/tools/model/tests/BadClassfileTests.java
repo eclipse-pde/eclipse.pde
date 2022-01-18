@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.osgi.service.resolver.ResolverError;
@@ -222,7 +223,7 @@ public class BadClassfileTests {
 			}
 
 			@Override
-			public boolean acceptReference(IReference reference) {
+			public boolean acceptReference(IReference reference, IProgressMonitor monitor) {
 				return true;
 			}
 

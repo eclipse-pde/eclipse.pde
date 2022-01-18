@@ -17,6 +17,7 @@ import java.text.MessageFormat;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IType;
@@ -69,7 +70,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 	}
 
 	@Override
-	protected boolean isProblem(IReference reference) {
+	protected boolean isProblem(IReference reference, IProgressMonitor monitor) {
 		IApiMethod method = (IApiMethod) reference.getMember();
 		IApiType type = (IApiType) reference.getResolvedReference();
 		try {
@@ -109,6 +110,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 			}
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
+			checkIfDisposed(method.getApiComponent(), monitor);
 		}
 		return false;
 	}

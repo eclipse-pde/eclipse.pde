@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -63,8 +64,8 @@ public class IllegalMethodReferenceDetector extends AbstractIllegalMethodReferen
 	}
 
 	@Override
-	protected boolean isProblem(IReference reference) {
-		if (super.isProblem(reference)) {
+	protected boolean isProblem(IReference reference, IProgressMonitor monitor) {
+		if (super.isProblem(reference, monitor)) {
 			return true;
 		}
 		// check the restricted types listing

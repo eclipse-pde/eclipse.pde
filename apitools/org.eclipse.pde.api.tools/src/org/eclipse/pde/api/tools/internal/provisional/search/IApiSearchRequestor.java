@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.search;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
@@ -94,7 +95,7 @@ public interface IApiSearchRequestor {
 	 * @param reference
 	 * @return true if the reference should be accepted, false otherwise
 	 */
-	public boolean acceptReference(IReference reference);
+	public boolean acceptReference(IReference reference, IProgressMonitor monitor);
 
 	/**
 	 * Returns the or'd listing of {@link IReference} kinds to look for.

@@ -152,8 +152,6 @@ public class BundleComponent extends Component {
 	 */
 	private long fBundleId;
 
-	private volatile boolean disposed;
-
 	/**
 	 * Constructs a new API component from the specified location in the file
 	 * system in the given baseline.
@@ -189,7 +187,6 @@ public class BundleComponent extends Component {
 			synchronized (this) {
 				fManifest = null;
 				fBundleDescription = null;
-				disposed = true;
 			}
 		}
 	}
@@ -1275,7 +1272,4 @@ public class BundleComponent extends Component {
 				NLS.bind(Messages.BundleApiComponent_baseline_disposed, getName(), baseline.getName()), null));
 	}
 
-	protected boolean isDisposed() {
-		return disposed;
-	}
 }

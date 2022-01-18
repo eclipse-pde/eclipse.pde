@@ -16,6 +16,7 @@ package org.eclipse.pde.api.tools.internal.builder;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.ISourceRange;
@@ -74,8 +75,8 @@ public class LeakFieldProblemDetector extends AbstractTypeLeakDetector {
 	}
 
 	@Override
-	protected boolean isProblem(IReference reference) {
-		if (super.isProblem(reference)) {
+	protected boolean isProblem(IReference reference, IProgressMonitor monitor) {
+		if (super.isProblem(reference, monitor)) {
 			IApiField field = (IApiField) reference.getMember();
 			if ((Flags.AccProtected & field.getModifiers()) > 0) {
 				// TODO: could do this check before resolution - it's a check on
@@ -89,6 +90,7 @@ public class LeakFieldProblemDetector extends AbstractTypeLeakDetector {
 					}
 				} catch (CoreException e) {
 					ApiPlugin.log(e);
+					checkIfDisposed(field.getApiComponent(), monitor);
 				}
 			}
 			return true;

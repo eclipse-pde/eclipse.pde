@@ -242,4 +242,9 @@ public interface IApiComponent extends IApiTypeContainer {
 	 * @return the collection of reference descriptors
 	 */
 	public IReferenceCollection getExternalDependencies();
+
+	/**
+	 * @return true if the current component is disposed
+	 */
+	public boolean isDisposed();
 }

@@ -47,11 +47,13 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder.ApiAnalysisJob;
 import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.model.ApiModelCache;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
@@ -550,6 +552,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 */
 	public void stop() {
 		try {
+			Job.getJobManager().cancel(ApiAnalysisJob.class);
 			if (baselinecache != null) {
 				// we should first dispose all existing baselines
 				for (IApiBaseline iApiBaseline : baselinecache.values()) {
@@ -627,6 +630,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			if (ApiPlugin.DEBUG_BASELINE_MANAGER) {
 				System.out.println("disposing workspace baseline"); //$NON-NLS-1$
 			}
+			Job.getJobManager().cancel(ApiAnalysisJob.class);
 			workspacebaseline.dispose();
 			StubApiComponent.disposeAllCaches();
 			workspacebaseline = null;

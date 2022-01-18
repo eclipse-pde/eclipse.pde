@@ -54,6 +54,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemDetector;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
@@ -506,16 +507,16 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		List<IApiProblem> problems = new LinkedList<>();
 		Iterator<IReference> iterator = references.iterator();
 		SubMonitor loopMonitor = SubMonitor.convert(monitor, references.size());
-		while (iterator.hasNext()) {
+		while (iterator.hasNext() && !monitor.isCanceled()) {
 			loopMonitor.split(1);
 			IReference reference = iterator.next();
 			if (reference.getResolvedReference() == null) {
 				// unresolved reference ignore it
 			} else {
-				if (isProblem(reference)) {
+				if (isProblem(reference, monitor)) {
+					IApiComponent component = reference.getMember().getApiComponent();
 					try {
 						IApiProblem problem = null;
-						IApiComponent component = reference.getMember().getApiComponent();
 						if (component instanceof ProjectComponent) {
 							ProjectComponent ppac = (ProjectComponent) component;
 							IJavaProject project = ppac.getJavaProject();
@@ -528,6 +529,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 						}
 					} catch (CoreException e) {
 						ApiPlugin.log(e.getStatus());
+						checkIfDisposed(component, monitor);
 					}
 				}
 			}
@@ -536,12 +538,37 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	}
 
 	/**
+	 * Checks if given component is disposed or belongs to already disposed baseline
+	 * - and if yes, cancels given monitor if the API analysis runs in a job
+	 *
+	 * @param component
+	 * @param monitor
+	 */
+	public static void checkIfDisposed(IApiComponent component, IProgressMonitor monitor) {
+		if (component != null && !monitor.isCanceled() && ApiAnalysisBuilder.isRunningAsJob()) {
+			try {
+				if (component.isDisposed()) {
+					monitor.setCanceled(true);
+					return;
+				}
+				IApiBaseline baseline = component.getBaseline();
+				if (baseline != null && baseline.isDisposed()) {
+					monitor.setCanceled(true);
+				}
+			} catch (CoreException e) {
+				monitor.setCanceled(true);
+			}
+		}
+	}
+
+	/**
 	 * Returns whether the resolved reference is a real problem.
 	 *
 	 * @param reference
+	 * @param monitor
 	 * @return whether a problem
 	 */
-	protected boolean isProblem(IReference reference) {
+	protected boolean isProblem(IReference reference, IProgressMonitor monitor) {
 		// by default fragment -> host references are not problems
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=255659
 		IApiMember member = reference.getResolvedReference();
@@ -553,6 +580,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 					return !lcomp.getHost().equals(member.getApiComponent());
 				}
 			} catch (CoreException ce) {
+				checkIfDisposed(reference.getMember().getApiComponent(), monitor);
 				ApiPlugin.log(ce);
 			}
 		}
@@ -1032,8 +1060,8 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @return the API problem if problem or null
 	 * @throws CoreException
 	 */
-	public IApiProblem checkAndCreateProblem(IReference reference) throws CoreException {
-		if (isProblem(reference) == false) {
+	public IApiProblem checkAndCreateProblem(IReference reference, IProgressMonitor monitor) throws CoreException {
+		if (isProblem(reference, monitor) == false) {
 			return null;
 		}
 		return createProblem(reference);

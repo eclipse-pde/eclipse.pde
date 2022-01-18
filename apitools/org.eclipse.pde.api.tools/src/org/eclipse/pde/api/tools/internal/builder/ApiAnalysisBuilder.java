@@ -396,8 +396,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			return projects;
 		}
 		boolean fullBuild = kind == FULL_BUILD;
-		boolean runAsJob = prefs.getBoolean(ICoreConstants.RUN_API_ANALYSIS_AS_JOB);
-		if (runAsJob) {
+		if (isRunningAsJob()) {
 			ApiAnalysisJob job = new ApiAnalysisJob(BuilderMessages.api_analysis_builder, currentproject, fullBuild,
 					wbaseline, projects);
 			job.cancelSimilarJobs(fullBuild);
@@ -555,7 +554,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	class ApiAnalysisJob extends Job {
+	public class ApiAnalysisJob extends Job {
 
 		private boolean fullBuild;
 		private IApiBaseline wbaseline;
@@ -849,7 +848,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		return hasFatalProblem;
 	}
 
-	private static boolean isRunningAsJob() {
+	public static boolean isRunningAsJob() {
 		PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
 		boolean runAsJob = prefs.getBoolean(ICoreConstants.RUN_API_ANALYSIS_AS_JOB);
 		return runAsJob;

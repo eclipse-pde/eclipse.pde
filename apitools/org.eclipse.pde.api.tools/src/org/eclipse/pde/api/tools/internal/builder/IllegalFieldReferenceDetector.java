@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -133,8 +134,8 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	}
 
 	@Override
-	protected boolean isProblem(IReference reference) {
-		if (!super.isProblem(reference)) {
+	protected boolean isProblem(IReference reference, IProgressMonitor monitor) {
+		if (!super.isProblem(reference, monitor)) {
 			return false;
 		}
 		String componentId = fFieldComponents.get(reference.getResolvedReference().getHandle());

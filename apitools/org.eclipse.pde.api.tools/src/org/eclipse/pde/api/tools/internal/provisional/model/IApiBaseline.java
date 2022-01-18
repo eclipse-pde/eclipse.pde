@@ -167,4 +167,9 @@ public interface IApiBaseline extends IApiElement {
 	 * @param location the new location of the baseline
 	 */
 	public void setLocation(String location);
+
+	/**
+	 * @return true if the current baseline is disposed
+	 */
+	public boolean isDisposed();
 }

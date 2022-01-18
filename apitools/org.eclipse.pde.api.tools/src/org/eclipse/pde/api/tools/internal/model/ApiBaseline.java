@@ -820,6 +820,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		fState = null;
 	}
 
+	@Override
+	public boolean isDisposed() {
+		return disposed;
+	}
+
 	/**
 	 * performs the actual dispose of mappings and cached elements
 	 */

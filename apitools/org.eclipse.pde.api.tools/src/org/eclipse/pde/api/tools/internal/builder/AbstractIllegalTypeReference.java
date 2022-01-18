@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
@@ -80,8 +81,8 @@ public abstract class AbstractIllegalTypeReference extends AbstractProblemDetect
 	}
 
 	@Override
-	protected boolean isProblem(IReference reference) {
-		if (!super.isProblem(reference)) {
+	protected boolean isProblem(IReference reference, IProgressMonitor monitor) {
+		if (!super.isProblem(reference, monitor)) {
 			return false;
 		}
 		IApiMember type = reference.getResolvedReference();

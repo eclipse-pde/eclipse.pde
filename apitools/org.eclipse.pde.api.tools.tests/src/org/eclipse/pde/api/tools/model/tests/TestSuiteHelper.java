@@ -298,6 +298,11 @@ public class TestSuiteHelper {
 				}
 				return fReferences;
 			}
+
+			@Override
+			public boolean isDisposed() {
+				return false;
+			}
 		};
 	}
 

@@ -49,6 +49,8 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 	 */
 	private volatile IReferenceCollection fReferences;
 
+	private volatile boolean disposed;
+
 	/**
 	 * Constructs an API component in the given {@link IApiBaseline}.
 	 *
@@ -85,6 +87,7 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 		} finally {
 			synchronized (this) {
 				fApiDescription = null;
+				disposed = true;
 			}
 		}
 	}
@@ -184,5 +187,10 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 			}
 		}
 		return fReferences;
+	}
+
+	@Override
+	public boolean isDisposed() {
+		return disposed;
 	}
 }
