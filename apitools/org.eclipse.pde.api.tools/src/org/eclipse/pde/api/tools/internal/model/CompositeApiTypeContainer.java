@@ -45,12 +45,6 @@ public class CompositeApiTypeContainer extends AbstractApiTypeContainer {
 	}
 
 	@Override
-	public void close() throws CoreException {
-		fContainers.clear();
-		super.close();
-	}
-
-	@Override
 	public String toString() {
 		StringBuilder buff = new StringBuilder();
 		buff.append("Composite Class File Container:\n"); //$NON-NLS-1$
