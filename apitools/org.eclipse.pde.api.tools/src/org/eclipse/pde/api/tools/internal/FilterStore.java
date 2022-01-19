@@ -173,7 +173,7 @@ public class FilterStore implements IApiFilterStore {
 			} catch (IOException e) {
 				ApiPlugin.log(e);
 			} finally {
-				fComponent.closingZipFileAndStream(filterstream, jarFile);
+				BundleComponent.closingZipFileAndStream(filterstream, jarFile);
 			}
 		}
 	}
