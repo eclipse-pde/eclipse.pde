@@ -48,11 +48,11 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 	}
 
 	@Override
-	public boolean considerReference(IReference reference) {
+	public boolean considerReference(IReference reference, IProgressMonitor monitor) {
 		// consider the reference if the location the reference is made from is
 		// visible:
 		// i.e. a public or protected class in an API package
-		if (super.considerReference(reference) && isNonAPIReference(reference)) {
+		if (super.considerReference(reference, monitor) && isNonAPIReference(reference)) {
 			IApiMember member = reference.getMember();
 			int modifiers = member.getModifiers();
 			if (((Flags.AccPublic | Flags.AccProtected) & modifiers) > 0) {
@@ -68,6 +68,7 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 					}
 				} catch (CoreException e) {
 					ApiPlugin.log(e.getStatus());
+					checkIfDisposed(reference.getMember().getApiComponent(), monitor);
 				}
 			}
 		}

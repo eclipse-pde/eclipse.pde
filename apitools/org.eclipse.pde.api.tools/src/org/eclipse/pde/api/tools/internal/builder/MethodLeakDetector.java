@@ -139,8 +139,8 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 	}
 
 	@Override
-	public boolean considerReference(IReference reference) {
-		if (super.considerReference(reference) && isNonAPIReference(reference)) {
+	public boolean considerReference(IReference reference, IProgressMonitor monitor) {
+		if (super.considerReference(reference, monitor) && isNonAPIReference(reference)) {
 			IApiMember member = reference.getMember();
 			if (member != null && matchesSourceModifiers(member) && matchesSourceApiRestrictions(member)) {
 				retainReference(reference);

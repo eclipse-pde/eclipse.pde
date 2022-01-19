@@ -160,7 +160,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	}
 
 	@Override
-	public boolean considerReference(IReference reference) {
+	public boolean considerReference(IReference reference, IProgressMonitor monitor) {
 		return reference != null && (reference.getReferenceKind() & getReferenceKinds()) > 0;
 	}
 

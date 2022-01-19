@@ -58,9 +58,9 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 	}
 
 	@Override
-	public boolean considerReference(IReference reference) {
+	public boolean considerReference(IReference reference, IProgressMonitor monitor) {
 		try {
-			if (super.considerReference(reference)) {
+			if (super.considerReference(reference, monitor)) {
 				return true;
 			}
 			IApiType type = (IApiType) reference.getMember();
@@ -80,6 +80,7 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 			if (ApiPlugin.DEBUG_PROBLEM_DETECTOR) {
 				ApiPlugin.log(ce);
 			}
+			checkIfDisposed(reference.getMember().getApiComponent(), monitor);
 		}
 		return false;
 	}

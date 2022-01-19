@@ -38,9 +38,10 @@ public interface IApiProblemDetector {
 	 * for further analysis once references have been resolved.
 	 *
 	 * @param reference potential problem
+	 * @param monitor the monitor to report progress.
 	 * @return whether the unresolved reference is a potential problem
 	 */
-	public boolean considerReference(IReference reference);
+	public boolean considerReference(IReference reference, IProgressMonitor monitor);
 
 	/**
 	 * Returns a list of any problems detected after analyzing potential

@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiScopeVisitor;
@@ -79,6 +80,7 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 					compareApiTypeRoot(typeroot);
 				} catch (CoreException e) {
 					ApiPlugin.log(e);
+					AbstractProblemDetector.checkIfDisposed(typeroot.getApiComponent(), localMonitor);
 				}
 			}
 		});

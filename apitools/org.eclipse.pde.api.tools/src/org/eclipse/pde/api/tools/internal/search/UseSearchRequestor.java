@@ -246,7 +246,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 			if (monitor.isCanceled()) {
 				break;
 			}
-			if (detector.considerReference(reference)) {
+			if (detector.considerReference(reference, monitor)) {
 				Reference ref = (Reference) reference;
 				ref.setFlags(IReference.F_ILLEGAL);
 				try {

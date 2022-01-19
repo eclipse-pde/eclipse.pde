@@ -14,6 +14,7 @@
 package org.eclipse.pde.api.tools.internal.builder;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IAnnotatable;
 import org.eclipse.jdt.core.IAnnotation;
 import org.eclipse.jdt.core.ISourceRange;
@@ -59,8 +60,8 @@ public class IllegalAnnotationReferenceDetector extends AbstractIllegalTypeRefer
 	}
 
 	@Override
-	public boolean considerReference(IReference reference) {
-		return super.considerReference(reference);
+	public boolean considerReference(IReference reference, IProgressMonitor monitor) {
+		return super.considerReference(reference, monitor);
 	}
 
 	@Override

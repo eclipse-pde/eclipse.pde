@@ -52,8 +52,8 @@ public class IllegalMethodReferenceDetector extends AbstractIllegalMethodReferen
 	}
 
 	@Override
-	public boolean considerReference(IReference reference) {
-		if (super.considerReference(reference)) {
+	public boolean considerReference(IReference reference, IProgressMonitor monitor) {
+		if (super.considerReference(reference, monitor)) {
 			return true;
 		}
 		if (isEnclosedBy(reference.getReferencedTypeName(), fIllegalTypes.keySet())) {

@@ -367,7 +367,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 	}
 
 	@Override
-	public boolean considerReference(IReference reference) {
+	public boolean considerReference(IReference reference, IProgressMonitor monitor) {
 		try {
 			IApiComponent apiComponent = reference.getMember().getApiComponent();
 			IApiBaseline baseline = apiComponent.getBaseline();
@@ -394,6 +394,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 			}
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
+			checkIfDisposed(reference.getMember().getApiComponent(), monitor);
 		}
 		return false;
 	}

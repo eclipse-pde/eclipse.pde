@@ -59,9 +59,9 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 	}
 
 	@Override
-	public boolean considerReference(IReference reference) {
+	public boolean considerReference(IReference reference, IProgressMonitor monitor) {
 		MethodKey key = new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName(), reference.getReferencedSignature(), true);
-		if (super.considerReference(reference) && fIllegalMethods.containsKey(key)) {
+		if (super.considerReference(reference, monitor) && fIllegalMethods.containsKey(key)) {
 			retainReference(reference);
 			return true;
 		}
@@ -77,7 +77,7 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 				if (member instanceof IApiMethod) {
 					IApiMethod method = (IApiMethod) member;
 					if (method.isDefaultMethod()) {
-						return considerReference(reference);
+						return considerReference(reference, monitor);
 					}
 				}
 			}

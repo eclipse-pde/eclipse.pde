@@ -97,13 +97,19 @@ public class ReferenceAnalyzer {
 					List<IReference> references = type.extractReferences(fAllReferenceKinds, null);
 					// keep potential matches
 					for (IReference ref : references) {
+						if (fMonitor.isCanceled()) {
+							break;
+						}
 						// compute index of interested problem detectors
 						int index = getLog2(ref.getReferenceKind());
 						IApiProblemDetector[] detectors = fIndexedDetectors[index];
 						boolean added = false;
 						if (detectors != null) {
 							for (IApiProblemDetector detector : detectors) {
-								if (detector.considerReference(ref)) {
+								if (fMonitor.isCanceled()) {
+									break;
+								}
+								if (detector.considerReference(ref, fMonitor)) {
 									if (!added) {
 										fReferences.add(ref);
 										added = true;
@@ -114,6 +120,7 @@ public class ReferenceAnalyzer {
 					}
 				} catch (CoreException e) {
 					fStatus.add(e.getStatus());
+					AbstractProblemDetector.checkIfDisposed(classFile.getApiComponent(), fMonitor);
 				}
 			}
 		}

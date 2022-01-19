@@ -78,9 +78,9 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	}
 
 	@Override
-	public boolean considerReference(IReference reference) {
+	public boolean considerReference(IReference reference, IProgressMonitor monitor) {
 		MethodKey key = new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName(), reference.getReferencedSignature(), true);
-		if ((super.considerReference(reference) && fIllegalFields.containsKey(key)) || isEnclosedBy(reference.getReferencedTypeName(), fIllegalTypes.keySet())) {
+		if ((super.considerReference(reference, monitor) && fIllegalFields.containsKey(key)) || isEnclosedBy(reference.getReferencedTypeName(), fIllegalTypes.keySet())) {
 			retainReference(reference);
 			return true;
 		}

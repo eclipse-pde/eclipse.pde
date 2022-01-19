@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Flags;
+import org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector;
 import org.eclipse.pde.api.tools.internal.comparator.ClassFileComparator;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -786,11 +787,13 @@ public class ApiComparator {
 								}
 							} catch (CoreException e) {
 								ApiPlugin.log(e);
+								AbstractProblemDetector.checkIfDisposed(container.getApiComponent(), iterationMonitor);
 							}
 						}
 					});
 				} catch (CoreException e) {
 					ApiPlugin.log(e);
+					AbstractProblemDetector.checkIfDisposed(container.getApiComponent(), loopMonitor);
 				}
 			}
 		}
@@ -908,11 +911,13 @@ public class ApiComparator {
 											}
 										} catch (CoreException e) {
 											ApiPlugin.log(e);
+											AbstractProblemDetector.checkIfDisposed(container.getApiComponent(), apiContainerIterationMonitor);
 										}
 									}
 								});
 							} catch (CoreException e) {
 								ApiPlugin.log(e);
+								AbstractProblemDetector.checkIfDisposed(container.getApiComponent(), apiContainerIterationMonitor);
 							}
 						}
 					}
@@ -952,11 +957,13 @@ public class ApiComparator {
 										Util.getComponentVersionsId(component2) }));
 							} catch (CoreException e) {
 								ApiPlugin.log(e);
+								AbstractProblemDetector.checkIfDisposed(container.getApiComponent(), iterationMonitor);
 							}
 						}
 					});
 				} catch (CoreException e) {
 					ApiPlugin.log(e);
+					AbstractProblemDetector.checkIfDisposed(container.getApiComponent(), iterationMonitor);
 				}
 			}
 		}
@@ -1008,11 +1015,13 @@ public class ApiComparator {
 													Util.getComponentVersionsId(component) }));
 										} catch (CoreException e) {
 											ApiPlugin.log(e);
+											AbstractProblemDetector.checkIfDisposed(container.getApiComponent(), typeContainerIterationMonitor);
 										}
 									}
 								});
 							} catch (CoreException e) {
 								ApiPlugin.log(e);
+								AbstractProblemDetector.checkIfDisposed(container.getApiComponent(), typeContainerIterationMonitor);
 							}
 						}
 					}
