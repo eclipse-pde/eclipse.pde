@@ -713,13 +713,23 @@ public abstract class AbstractPluginBlock {
 		IWorkingSetSelectionDialog dialog = workingSetManager.createWorkingSetSelectionDialog(getShell(), true);
 		if (dialog.open() == Window.OK) {
 			String[] ids = getPluginIDs(dialog.getSelection());
+			ArrayList<IPluginModelBase> newCheckedModels = new ArrayList<>();
+			ArrayList<Object> allCheckedModels = new ArrayList<>();
 			for (String id : ids) {
 				IPluginModelBase model = PluginRegistry.findModel(id);
 				if (model != null) {
 					if (!fPluginTreeViewer.getChecked(model)) {
-						setChecked(model, true);
+						newCheckedModels.add(model);
 					}
 				}
+			}
+			Object[] checkedElements = fPluginTreeViewer.getCheckedElements();
+			allCheckedModels.addAll(Arrays.asList(checkedElements));// previous
+			allCheckedModels.addAll(newCheckedModels);// newly selected
+			fPluginTreeViewer.setCheckedElements(allCheckedModels.toArray());
+			// reset text on newly selected models
+			for (IPluginModelBase iPluginModelBase : newCheckedModels) {
+				resetText(iPluginModelBase);
 			}
 			countSelectedModels();
 		}
@@ -897,10 +907,10 @@ public abstract class AbstractPluginBlock {
 
 	protected void handleRestoreDefaults() {
 		TreeSet<String> wtable = new TreeSet<>();
-
+		ArrayList<IPluginModelBase> checkedModels = new ArrayList<>();
 		for (int i = 0; i < getWorkspaceModels().length; i++) {
 			IPluginModelBase model = getWorkspaceModels()[i];
-			fPluginTreeViewer.setChecked(model, true);
+			checkedModels.add(model);
 			String id = model.getPluginBase().getId();
 			if (id != null) {
 				wtable.add(model.getPluginBase().getId());
@@ -911,9 +921,10 @@ public abstract class AbstractPluginBlock {
 		for (IPluginModelBase model : externalModels) {
 			boolean masked = wtable.contains(model.getPluginBase().getId());
 			if (!masked && model.isEnabled()) {
-				fPluginTreeViewer.setChecked(model, true);
+				checkedModels.add(model);
 			}
 		}
+		fPluginTreeViewer.setCheckedElements(checkedModels.toArray());
 		countSelectedModels();
 
 		Object[] selected = fPluginTreeViewer.getCheckedElements();
