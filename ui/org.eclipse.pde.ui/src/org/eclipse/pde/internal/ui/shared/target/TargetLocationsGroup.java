@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2021 IBM Corporation and others.
+ * Copyright (c) 2009, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -360,7 +360,7 @@ public class TargetLocationsGroup {
 
 		fExpandCollapseButton.addSelectionListener(widgetSelectedAdapter(e -> toggleCollapse()));
 		fExpandCollapseButton.setLayoutData(new GridData());
-		fExpandCollapseButton.setEnabled(true);
+		fExpandCollapseButton.setEnabled(false);
 		SWTFactory.setButtonDimensionHint(fExpandCollapseButton);
 
 		fShowContentButton.addSelectionListener(widgetSelectedAdapter(e -> {
@@ -602,6 +602,11 @@ public class TargetLocationsGroup {
 			PDEPlugin.log(status);
 		}
 		return status;
+	}
+
+	public void setExpandCollapseState(boolean b) {
+		if (fExpandCollapseButton != null)
+			fExpandCollapseButton.setEnabled(b);
 	}
 
 }
