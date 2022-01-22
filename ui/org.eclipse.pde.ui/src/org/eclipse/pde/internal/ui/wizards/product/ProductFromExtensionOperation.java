@@ -68,7 +68,7 @@ public class ProductFromExtensionOperation extends BaseProductCreationOperation 
 			}
 		}
 		Set<BundleDescription> bundles = DependencyManager.findRequirementsClosure(plugins,
-				DependencyManager.Options.INCLUDE_ALL_FRAGMENTS);
+				DependencyManager.Options.INCLUDE_NON_TEST_FRAGMENTS);
 		return bundles.stream().map(BundleDescription::getSymbolicName).toArray(String[]::new);
 	}
 

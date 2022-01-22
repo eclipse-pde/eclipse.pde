@@ -19,6 +19,7 @@ import static java.util.Map.entry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.pde.internal.core.DependencyManager.findRequirementsClosure;
 import static org.eclipse.pde.internal.core.DependencyManager.Options.INCLUDE_ALL_FRAGMENTS;
+import static org.eclipse.pde.internal.core.DependencyManager.Options.INCLUDE_NON_TEST_FRAGMENTS;
 import static org.eclipse.pde.internal.core.DependencyManager.Options.INCLUDE_OPTIONAL_DEPENDENCIES;
 import static org.osgi.framework.Constants.EXPORT_PACKAGE;
 import static org.osgi.framework.Constants.FRAGMENT_HOST;
@@ -29,11 +30,18 @@ import static org.osgi.framework.Constants.REQUIRE_CAPABILITY;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.VersionRange;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
+import org.eclipse.pde.internal.core.ClasspathComputer;
 import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.ui.tests.launcher.AbstractLaunchTest;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
@@ -189,6 +197,41 @@ public class DependencyManagerTest {
 	}
 
 	@Test
+	public void testFindRequirementsClosure_includeNonTestFragments() throws Exception {
+
+		setTargetPlatform( //
+				bundle("bundle.a", "1.0.0", //
+						entry(EXPORT_PACKAGE, "bundle.a.pack" + version("1.0.0"))),
+
+				bundle("bundle.fragment", "1.0.0", //
+						entry(FRAGMENT_HOST, "bundle.a")),
+
+				bundle("other.tests", "1.0.0", //
+						entry(FRAGMENT_HOST, "bundle.a")));
+
+		BundleDescription bundleA = bundleDescription("bundle.a", "1.0.0");
+		BundleDescription bundleFragment = bundleDescription("bundle.fragment", "1.0.0");
+		BundleDescription otherFragmentWithTestName = bundleDescription("other.tests", "1.0.0");
+
+		BundleDescription testFragmentWithTestAttr = createFragmentProject("bundle.a1.tests", "bundle.a", true);
+		BundleDescription testFragmentWithOtherName = createFragmentProject("bundle.a.checks", "bundle.a", true);
+		BundleDescription testFragmentWithoutTestAttr = createFragmentProject("bundle.a2.tests", "bundle.a", false);
+
+		Set<BundleDescription> bundles = Set.of(bundleA);
+
+		Set<BundleDescription> noFragmentsClosure = findRequirementsClosure(bundles);
+		assertThat(noFragmentsClosure).isEqualTo(Set.of(bundleA));
+
+		Set<BundleDescription> allFragmentsClosure = findRequirementsClosure(bundles, INCLUDE_ALL_FRAGMENTS);
+		assertThat(allFragmentsClosure).isEqualTo(Set.of(bundleA, bundleFragment, otherFragmentWithTestName,
+				testFragmentWithTestAttr, testFragmentWithOtherName, testFragmentWithoutTestAttr));
+
+		Set<BundleDescription> nonTestFragmentsClosure = findRequirementsClosure(bundles, INCLUDE_NON_TEST_FRAGMENTS);
+		assertThat(nonTestFragmentsClosure)
+				.isEqualTo(Set.of(bundleA, bundleFragment, otherFragmentWithTestName, testFragmentWithoutTestAttr));
+	}
+
+	@Test
 	public void testFindRequirementsClosure_includeOptional() throws Exception {
 
 		setTargetPlatform( //
@@ -248,7 +291,22 @@ public class DependencyManagerTest {
 
 	private static final String OPTIONAL = Constants.RESOLUTION_OPTIONAL;
 
-	private BundleDescription bundleDescription(String id, String version) {
+	private static BundleDescription bundleDescription(String id, String version) {
 		return AbstractLaunchTest.findTargetModel(id, version).getBundleDescription();
+	}
+
+	private static BundleDescription createFragmentProject(String projectName, String hostName,
+			boolean setTestAttribute) throws CoreException {
+
+		IProject project = ProjectUtils.createPluginProject(projectName, projectName, "1.0.0", (d, s) -> {
+			d.setHost(s.newHost(hostName, VersionRange.emptyRange));
+		});
+		IPluginModelBase model = PluginRegistry.findModel(project);
+		if (setTestAttribute) { // set test attribute in classpath
+			IClasspathEntry[] classpath = ClasspathComputer.getClasspath(project, model, null, false, true);
+			var cpEntries = Arrays.stream(classpath).map(e -> ClasspathComputer.updateTestAttribute(true, e));
+			JavaCore.create(project).setRawClasspath(cpEntries.toArray(IClasspathEntry[]::new), null);
+		}
+		return model.getBundleDescription();
 	}
 }

@@ -24,10 +24,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.osgi.framework.Constants;
@@ -53,8 +55,16 @@ public class DependencyManager {
 		/** Specifies to include all optional dependencies into the closure. */
 		INCLUDE_OPTIONAL_DEPENDENCIES,
 
-		/** Specifies to include all fragments into the closure. */
+		/**
+		 * Specifies to include all fragments into the closure (must not be
+		 * combined with {@link #INCLUDE_NON_TEST_FRAGMENTS}).
+		 */
 		INCLUDE_ALL_FRAGMENTS,
+		/**
+		 * Specifies to include all non-test fragments into the closure (must
+		 * not be combined with {@link #INCLUDE_ALL_FRAGMENTS}).
+		 */
+		INCLUDE_NON_TEST_FRAGMENTS;
 	}
 
 	/**
@@ -153,6 +163,10 @@ public class DependencyManager {
 		Set<Options> optionSet = Set.of(options);
 		boolean includeOptional = optionSet.contains(Options.INCLUDE_OPTIONAL_DEPENDENCIES);
 		boolean includeAllFragments = optionSet.contains(Options.INCLUDE_ALL_FRAGMENTS);
+		boolean includeNonTestFragments = optionSet.contains(Options.INCLUDE_NON_TEST_FRAGMENTS);
+		if (includeAllFragments && includeNonTestFragments) {
+			throw new AssertionError("Cannot combine INCLUDE_ALL_FRAGMENTS and INCLUDE_NON_TEST_FRAGMENTS"); //$NON-NLS-1$
+		}
 
 		Set<BundleDescription> closure = new HashSet<>(bundles.size() * 4 / 3 + 1);
 		Queue<BundleDescription> pending = new ArrayDeque<>();
@@ -180,10 +194,12 @@ public class DependencyManager {
 				}
 			}
 
-			if (includeAllFragments) {
+			if (includeAllFragments || includeNonTestFragments) {
 				// A fragment's host is already required by a wire
 				for (BundleDescription fragment : bundle.getFragments()) {
-					addNewRequiredBundle(fragment, closure, pending);
+					if (includeAllFragments || !isTestWorkspaceProject(fragment)) {
+						addNewRequiredBundle(fragment, closure, pending);
+					}
 				}
 			}
 		}
@@ -206,6 +222,18 @@ public class DependencyManager {
 
 	private static boolean isOptional(BundleRequirement requirement) {
 		return Constants.RESOLUTION_OPTIONAL.equals(requirement.getDirectives().get(Constants.RESOLUTION_DIRECTIVE));
+	}
+
+	private static boolean isTestWorkspaceProject(BundleDescription f) {
+		// Be defensive when declaring a fragment as 'test'-fragment
+		IPluginModelBase pluginModel = PluginRegistry.findModel(f);
+		if (pluginModel != null) {
+			IResource resource = pluginModel.getUnderlyingResource();
+			if (resource != null) {
+				return ClasspathComputer.hasTestOnlyClasspath(resource.getProject());
+			} // test-fragments are usually not part of the target-platform
+		}
+		return false;
 	}
 
 	/**

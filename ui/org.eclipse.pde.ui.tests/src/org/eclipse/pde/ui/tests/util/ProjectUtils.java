@@ -18,12 +18,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
+import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewProjectCreationOperation;
@@ -165,17 +167,26 @@ public class ProjectUtils {
 	}
 
 	public static IProject createPluginProject(String bundleSymbolicName, String bundleVersion) throws CoreException {
-		return createPluginProject(bundleSymbolicName + bundleVersion.replace('.', '_'), bundleSymbolicName, bundleVersion);
+		return createPluginProject(bundleSymbolicName + bundleVersion.replace('.', '_'), bundleSymbolicName,
+				bundleVersion);
 	}
 
 	public static IProject createPluginProject(String projectName, String bundleSymbolicName, String version)
 			throws CoreException {
+		return createPluginProject(projectName, bundleSymbolicName, version, (d, s) -> {
+		});
+	}
+
+	public static IProject createPluginProject(String projectName, String bundleSymbolicName, String version,
+			BiConsumer<IBundleProjectDescription, IBundleProjectService> setup) throws CoreException {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-		IBundleProjectDescription description = ProjectCreationTests.getBundleProjectService().getDescription(project);
+		IBundleProjectService bundleProjectService = ProjectCreationTests.getBundleProjectService();
+		IBundleProjectDescription description = bundleProjectService.getDescription(project);
 		description.setSymbolicName(bundleSymbolicName);
 		if (version != null) {
 			description.setBundleVersion(Version.parseVersion(version));
 		}
+		setup.accept(description, bundleProjectService);
 		description.apply(null);
 		return project;
 	}

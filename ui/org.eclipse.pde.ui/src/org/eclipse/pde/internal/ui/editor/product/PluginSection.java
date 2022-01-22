@@ -356,8 +356,8 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		}).filter(Objects::nonNull).map(IPluginModelBase::getBundleDescription).collect(Collectors.toList());
 
 		DependencyManager.Options[] options = includeOptional
-				? new Options[] { Options.INCLUDE_ALL_FRAGMENTS, Options.INCLUDE_OPTIONAL_DEPENDENCIES }
-				: new Options[] { Options.INCLUDE_ALL_FRAGMENTS };
+				? new Options[] { Options.INCLUDE_NON_TEST_FRAGMENTS, Options.INCLUDE_OPTIONAL_DEPENDENCIES }
+				: new Options[] { Options.INCLUDE_NON_TEST_FRAGMENTS };
 		Set<BundleDescription> dependencies = DependencyManager.findRequirementsClosure(list, options);
 
 		IProduct product = plugins[0].getProduct();

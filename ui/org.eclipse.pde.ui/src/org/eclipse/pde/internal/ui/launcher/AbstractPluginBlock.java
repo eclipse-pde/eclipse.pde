@@ -800,8 +800,8 @@ public abstract class AbstractPluginBlock {
 				.map(IPluginModelBase.class::cast).collect(Collectors.toList());
 
 		DependencyManager.Options[] options = fIncludeOptionalButton.getSelection()
-				? new Options[] { Options.INCLUDE_ALL_FRAGMENTS, Options.INCLUDE_OPTIONAL_DEPENDENCIES }
-				: new Options[] { Options.INCLUDE_ALL_FRAGMENTS };
+				? new Options[] { Options.INCLUDE_NON_TEST_FRAGMENTS, Options.INCLUDE_OPTIONAL_DEPENDENCIES }
+				: new Options[] { Options.INCLUDE_NON_TEST_FRAGMENTS };
 		Set<BundleDescription> additionalBundles = DependencyManager.getDependencies(toCheck, options);
 
 		additionalBundles.stream().map(PluginRegistry::findModel).filter(Objects::nonNull).forEach(toCheck::add);
