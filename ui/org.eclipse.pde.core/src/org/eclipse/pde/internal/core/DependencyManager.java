@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2021 IBM Corporation and others.
+ *  Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -49,9 +49,18 @@ public class DependencyManager {
 	private DependencyManager() { // static use only
 	}
 
+	public enum Options {
+		/** Specifies to include all optional dependencies into the closure. */
+		INCLUDE_OPTIONAL_DEPENDENCIES,
+
+		/** Specifies to include all fragments into the closure. */
+		INCLUDE_ALL_FRAGMENTS,
+	}
+
 	/**
 	 * Returns a {@link Set} of bundle descriptions of the given
-	 * {@link IPluginModelBase}s and all of their required dependencies.
+	 * {@link IPluginModelBase}s and all of their required dependencies
+	 * (including optional) and fragments.
 	 * <p>
 	 * The set includes the descriptions of the given model bases as well as all
 	 * transitively computed explicit, implicit (defined in the target-platform)
@@ -68,7 +77,7 @@ public class DependencyManager {
 	public static Set<BundleDescription> getSelfAndDependencies(Collection<IPluginModelBase> plugins) {
 		Collection<NameVersionDescriptor> implicit = getImplicitDependencies();
 		List<BundleDescription> bundles = mergeBundleDescriptions(plugins, implicit, TargetPlatformHelper.getState());
-		return findRequirementsClosure(bundles, true);
+		return findRequirementsClosure(bundles, Options.INCLUDE_OPTIONAL_DEPENDENCIES, Options.INCLUDE_ALL_FRAGMENTS);
 	}
 
 	/**
@@ -88,39 +97,37 @@ public class DependencyManager {
 	 *            {@link Set}
 	 * @param state
 	 *            the {@link State} to compute the dependencies in
-	 * @param includeOptional
-	 *            if optional bundle descriptions should be included
+	 * @param options
+	 *            the specified {@link Options} for computing the closure
 	 * @return a set of bundle descriptions
 	 */
 	public static Set<BundleDescription> getDependencies(Collection<IPluginModelBase> plugins,
-			Collection<NameVersionDescriptor> implicit, State state, boolean includeOptional) {
+			Collection<NameVersionDescriptor> implicit, State state, Options... options) {
 		List<BundleDescription> bundles = mergeBundleDescriptions(plugins, implicit, state);
-		Set<BundleDescription> closure = findRequirementsClosure(bundles, includeOptional);
+		Set<BundleDescription> closure = findRequirementsClosure(bundles, options);
 		plugins.forEach(p -> closure.remove(p.getBundleDescription()));
 		return closure;
 	}
 
 	/**
-	 *
 	 * Returns a {@link Set} of bundle descriptions for all required
 	 * dependencies of the given {@link IPluginModelBase}s.
 	 * <p>
 	 * The set includes the descriptions of the transitively computed explicit,
 	 * implicit (defined in the target-platform) and optional (if requested)
 	 * dependencies. The set does not include the descriptions of the given
-	 * objects but does include.
+	 * objects.
 	 * </p>
 	 *
 	 * @param plugins
 	 *            selected the group of {@link IPluginModelBase}s to compute
 	 *            dependencies for.
-	 * @param includeOptional
-	 *            if optional bundle descriptions should be included
+	 * @param options
+	 *            the specified {@link Options} for computing the closure
 	 * @return a set of bundle descriptions
 	 */
-	public static Set<BundleDescription> getDependencies(Collection<IPluginModelBase> plugins,
-			boolean includeOptional) {
-		return getDependencies(plugins, getImplicitDependencies(), TargetPlatformHelper.getState(), includeOptional);
+	public static Set<BundleDescription> getDependencies(Collection<IPluginModelBase> plugins, Options... options) {
+		return getDependencies(plugins, getImplicitDependencies(), TargetPlatformHelper.getState(), options);
 	}
 
 	/**
@@ -136,12 +143,16 @@ public class DependencyManager {
 	 * @param bundles
 	 *            the group of {@link BundleDescription}s to compute
 	 *            dependencies for.
-	 * @param includeOptional
-	 *            if optional bundle ids should be included
+	 * @param options
+	 *            the specified {@link Options} for computing the closure
 	 * @return a set of bundle descriptions
 	 */
 	public static Set<BundleDescription> findRequirementsClosure(Collection<BundleDescription> bundles,
-			boolean includeOptional) {
+			Options... options) {
+
+		Set<Options> optionSet = Set.of(options);
+		boolean includeOptional = optionSet.contains(Options.INCLUDE_OPTIONAL_DEPENDENCIES);
+		boolean includeAllFragments = optionSet.contains(Options.INCLUDE_ALL_FRAGMENTS);
 
 		Set<BundleDescription> closure = new HashSet<>(bundles.size() * 4 / 3 + 1);
 		Queue<BundleDescription> pending = new ArrayDeque<>();
@@ -169,9 +180,11 @@ public class DependencyManager {
 				}
 			}
 
-			// Add fragments. A fragment's host is already required by a wire
-			for (BundleDescription fragment : bundle.getFragments()) {
-				addNewRequiredBundle(fragment, closure, pending);
+			if (includeAllFragments) {
+				// A fragment's host is already required by a wire
+				for (BundleDescription fragment : bundle.getFragments()) {
+					addNewRequiredBundle(fragment, closure, pending);
+				}
 			}
 		}
 		return closure;

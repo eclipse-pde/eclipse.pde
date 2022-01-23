@@ -153,7 +153,7 @@ public class BundleLauncherHelper {
 			}
 		}
 		// Get all required plugins
-		Set<BundleDescription> additionalBundles = DependencyManager.getDependencies(launchPlugins, false);
+		Set<BundleDescription> additionalBundles = DependencyManager.getDependencies(launchPlugins, DependencyManager.Options.INCLUDE_ALL_FRAGMENTS);
 		for (BundleDescription bundle : additionalBundles) {
 			IPluginModelBase plugin = getRequiredPlugin(bundle.getSymbolicName(), bundle.getVersion().toString(), IMatchRules.PERFECT, defaultPluginResolution);
 			launchPlugins.add(Objects.requireNonNull(plugin));// should never be null

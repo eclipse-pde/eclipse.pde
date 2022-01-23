@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2021 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,6 +38,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.DependencyManager;
+import org.eclipse.pde.internal.core.DependencyManager.Options;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
@@ -798,8 +799,10 @@ public abstract class AbstractPluginBlock {
 		List<IPluginModelBase> toCheck = Arrays.stream(checked).filter(IPluginModelBase.class::isInstance)
 				.map(IPluginModelBase.class::cast).collect(Collectors.toList());
 
-		boolean includeOptional = fIncludeOptionalButton.getSelection();
-		Set<BundleDescription> additionalBundles = DependencyManager.getDependencies(toCheck, includeOptional);
+		DependencyManager.Options[] options = fIncludeOptionalButton.getSelection()
+				? new Options[] { Options.INCLUDE_ALL_FRAGMENTS, Options.INCLUDE_OPTIONAL_DEPENDENCIES }
+				: new Options[] { Options.INCLUDE_ALL_FRAGMENTS };
+		Set<BundleDescription> additionalBundles = DependencyManager.getDependencies(toCheck, options);
 
 		additionalBundles.stream().map(PluginRegistry::findModel).filter(Objects::nonNull).forEach(toCheck::add);
 
