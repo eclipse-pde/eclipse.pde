@@ -25,10 +25,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -107,10 +105,10 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 * The main cache for the manager. The form of the cache is:
 	 *
 	 * <pre>
-	 * HashMap<String(baselineid), {@link IApiBaseline}>
+	 * Map<String(baselineid), {@link IApiBaseline}>
 	 * </pre>
 	 */
-	private HashMap<String, IApiBaseline> baselinecache = null;
+	private volatile ConcurrentHashMap<String, IApiBaseline> baselinecache;
 
 	/**
 	 * Cache of baseline names to the location with their infos in it
@@ -127,7 +125,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	/**
 	 * The current workspace baseline
 	 */
-	private IApiBaseline workspacebaseline = null;
+	private volatile IApiBaseline workspacebaseline;
 
 	/**
 	 * The default save location for persisting the cache from this manager.
@@ -137,7 +135,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	/**
 	 * If the cache of baselines needs to be saved or not.
 	 */
-	private boolean fNeedsSaving = false;
+	private volatile boolean fNeedsSaving;
 
 	/**
 	 * The singleton instance
@@ -168,19 +166,22 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	}
 
 	@Override
-	public synchronized IApiBaseline getApiBaseline(String name) {
+	public IApiBaseline getApiBaseline(String name) {
+		if (name == null) {
+			return null;
+		}
 		initializeStateCache();
 		return baselinecache.get(name);
 	}
 
 	@Override
-	public synchronized IApiBaseline[] getApiBaselines() {
+	public IApiBaseline[] getApiBaselines() {
 		initializeStateCache();
-		return baselinecache.values().toArray(new IApiBaseline[baselinecache.size()]);
+		return baselinecache.values().toArray(new IApiBaseline[0]);
 	}
 
 	@Override
-	public synchronized void addApiBaseline(IApiBaseline newbaseline) {
+	public void addApiBaseline(IApiBaseline newbaseline) {
 		if (newbaseline != null) {
 			initializeStateCache();
 			baselinecache.put(newbaseline.getName(), newbaseline);
@@ -192,33 +193,36 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	}
 
 	@Override
-	public synchronized boolean removeApiBaseline(String name) {
-		if (name != null) {
-			initializeStateCache();
-			IApiBaseline baseline = baselinecache.remove(name);
-			if (baseline != null) {
-				baseline.dispose();
-				boolean success = true;
-				if (savelocation == null) {
-					return success;
-				}
-				// remove from filesystem
-				File file = savelocation.append(name + BASELINE_FILE_EXTENSION).toFile();
-				if (file.exists()) {
-					try {
-						success &= Files.deleteIfExists(file.toPath());
-					} catch (IOException e) {
-						ApiPlugin.log(e);
-					}
-				}
-				fNeedsSaving = true;
-
-				// flush the model cache
-				ApiModelCache.getCache().removeElementInfo(baseline);
+	public boolean removeApiBaseline(String name) {
+		if (name == null) {
+			return false;
+		}
+		initializeStateCache();
+		IApiBaseline baseline = baselinecache.remove(name);
+		if (baseline == null) {
+			return false;
+		}
+		synchronized (this) {
+			baseline.dispose();
+			boolean success = true;
+			if (savelocation == null) {
 				return success;
 			}
+			// remove from filesystem
+			File file = savelocation.append(name + BASELINE_FILE_EXTENSION).toFile();
+			if (file.exists()) {
+				try {
+					success &= Files.deleteIfExists(file.toPath());
+				} catch (IOException e) {
+					ApiPlugin.log(e);
+				}
+			}
+			fNeedsSaving = true;
+
+			// flush the model cache
+			ApiModelCache.getCache().removeElementInfo(baseline);
+			return success;
 		}
-		return false;
 	}
 
 	/**
@@ -228,7 +232,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 * @param baseline the given baseline
 	 * @throws CoreException if an exception occurs while loading baseline infos
 	 */
-	public void loadBaselineInfos(IApiBaseline baseline) throws CoreException {
+	public void loadBaselineInfos(ApiBaseline baseline) throws CoreException {
 		initializeStateCache();
 		if (isBaselineLoaded(baseline)) {
 			return;
@@ -238,7 +242,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			File file = new File(filename);
 			if (file.exists()) {
 				try (FileInputStream inputStream = new FileInputStream(file)) {
-					restoreBaseline(baseline, inputStream);
+					baseline.restoreFrom(inputStream);
 				} catch (IOException e) {
 					ApiPlugin.log(e);
 				}
@@ -258,31 +262,48 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 * @throws FactoryConfigurationError
 	 * @throws ParserConfigurationException
 	 */
-	private synchronized void initializeStateCache() {
-		long time = System.currentTimeMillis();
-		if (baselinecache == null) {
-			handlecache = new HashMap<>(8);
-			hasinfos = ConcurrentHashMap.newKeySet(8);
-			baselinecache = new LinkedHashMap<>(8);
-			if (!ApiPlugin.isRunningInFramework()) {
-				return;
-			}
-			File[] baselines = savelocation.toFile().listFiles((FileFilter) pathname -> pathname.getName().endsWith(BASELINE_FILE_EXTENSION));
-			if (baselines != null) {
-				IApiBaseline newbaseline = null;
-				for (File baseline : baselines) {
-					if (baseline.exists()) {
-						newbaseline = new ApiBaseline(new Path(baseline.getName()).removeFileExtension().toString());
-						handlecache.put(newbaseline.getName(), baseline.getAbsolutePath());
-						baselinecache.put(newbaseline.getName(), newbaseline);
-					}
+	private void initializeStateCache() {
+		if (baselinecache != null) {
+			return;
+		}
+		if (!ApiPlugin.isRunningInFramework()) {
+			synchronized (this) {
+				if (baselinecache == null) {
+					handlecache = new ConcurrentHashMap<>(8);
+					hasinfos = ConcurrentHashMap.newKeySet(8);
+					baselinecache = new ConcurrentHashMap<>(8);
 				}
 			}
-			String def = getDefaultProfilePref();
-			IApiBaseline baseline = baselinecache.get(def);
-			defaultbaseline = (baseline != null ? def : null);
-			if (ApiPlugin.DEBUG_BASELINE_MANAGER) {
-				System.out.println("Time to initialize state cache: " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+
+		long time = System.currentTimeMillis();
+		synchronized (this) {
+			if (baselinecache == null) {
+				handlecache = new ConcurrentHashMap<>(8);
+				hasinfos = ConcurrentHashMap.newKeySet(8);
+				ConcurrentHashMap<String, IApiBaseline> bcache = new ConcurrentHashMap<>(8);
+				File[] baselines = savelocation.toFile().listFiles((FileFilter) pathname -> pathname.getName().endsWith(BASELINE_FILE_EXTENSION));
+				if (baselines != null) {
+					IApiBaseline newbaseline = null;
+					for (File baseline : baselines) {
+						if (baseline.exists()) {
+							newbaseline = new ApiBaseline(new Path(baseline.getName()).removeFileExtension().toString());
+							handlecache.put(newbaseline.getName(), baseline.getAbsolutePath());
+							bcache.put(newbaseline.getName(), newbaseline);
+						}
+					}
+				}
+				String def = getDefaultProfilePref();
+				if (def != null && bcache.get(def) != null) {
+					defaultbaseline = def;
+				} else {
+					defaultbaseline = null;
+				}
+				baselinecache = bcache;
+				if (ApiPlugin.DEBUG_BASELINE_MANAGER) {
+					System.out.println("Time to initialize state cache: " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			}
 		}
 	}
@@ -420,12 +441,14 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 * Restore a baseline from the given input stream (persisted baseline).
 	 *
 	 * @param baseline the given baseline to restore
-	 * @param stream the given input stream
+	 * @param stream   the given input stream
 	 * @throws CoreException if unable to restore the baseline
+	 * @return restored baseline components or null if restore didn't work
 	 */
-	private void restoreBaseline(IApiBaseline baseline, InputStream stream) throws CoreException {
+	public IApiComponent[] readBaselineComponents(ApiBaseline baseline, InputStream stream) throws CoreException {
 		long start = System.currentTimeMillis();
 		DocumentBuilder parser = null;
+		IApiComponent[] restored = null;
 		try {
 			parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
@@ -482,23 +505,15 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 						}
 					}
 				}
-				baseline.addApiComponents(components.toArray(new IApiComponent[components.size()]));
+				restored = components.toArray(new IApiComponent[components.size()]);
 			}
 		} catch (IOException | SAXException e) {
 			abort("Error restoring API baseline", e); //$NON-NLS-1$
-		} finally {
-			try {
-				stream.close();
-			} catch (IOException io) {
-				ApiPlugin.log(io);
-			}
-		}
-		if (baseline == null) {
-			abort("Invalid baseline description", null); //$NON-NLS-1$
 		}
 		if (ApiPlugin.DEBUG_BASELINE_MANAGER) {
 			System.out.println("Time to restore a persisted baseline : " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		return restored;
 	}
 
 	@Override
@@ -541,7 +556,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 *         otherwise
 	 */
 	public boolean isExistingProfileName(String name) {
-		if (baselinecache == null) {
+		if (baselinecache == null || name == null) {
 			return false;
 		}
 		return baselinecache.containsKey(name);
@@ -595,9 +610,13 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	}
 
 	@Override
-	public synchronized IApiBaseline getDefaultApiBaseline() {
+	public IApiBaseline getDefaultApiBaseline() {
 		initializeStateCache();
-		return baselinecache.get(defaultbaseline);
+		String defbaseline = defaultbaseline;
+		if (defbaseline == null) {
+			return null;
+		}
+		return baselinecache.get(defbaseline);
 	}
 
 	@Override
@@ -607,33 +626,46 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	}
 
 	@Override
-	public synchronized IApiBaseline getWorkspaceBaseline() {
-		if (ApiPlugin.isRunningInFramework()) {
-			if (this.workspacebaseline == null) {
-				try {
-					this.workspacebaseline = createWorkspaceBaseline();
-				} catch (CoreException e) {
-					ApiPlugin.log(e);
-				}
-			}
-			return this.workspacebaseline;
+	public IApiBaseline getWorkspaceBaseline() {
+		if (!ApiPlugin.isRunningInFramework()) {
+			return null;
 		}
-		return null;
+		if (this.workspacebaseline == null) {
+			try {
+				synchronized (this) {
+					if (this.workspacebaseline == null) {
+						this.workspacebaseline = createWorkspaceBaseline();
+					}
+				}
+			} catch (CoreException e) {
+				ApiPlugin.log(e);
+			}
+		}
+		return this.workspacebaseline;
 	}
 
 	/**
 	 * Disposes the workspace baseline such that a new one will be created on
 	 * the next request.
 	 */
-	synchronized void disposeWorkspaceBaseline() {
-		if (workspacebaseline != null) {
-			if (ApiPlugin.DEBUG_BASELINE_MANAGER) {
-				System.out.println("disposing workspace baseline"); //$NON-NLS-1$
+	void disposeWorkspaceBaseline() {
+		if (workspacebaseline == null) {
+			return;
+		}
+		Job.getJobManager().cancel(ApiAnalysisJob.class);
+		IApiBaseline oldBaseline = null;
+		synchronized (this) {
+			if (workspacebaseline != null) {
+				if (ApiPlugin.DEBUG_BASELINE_MANAGER) {
+					System.out.println("disposing workspace baseline"); //$NON-NLS-1$
+				}
+				oldBaseline = workspacebaseline;
+				StubApiComponent.disposeAllCaches();
+				workspacebaseline = null;
 			}
-			Job.getJobManager().cancel(ApiAnalysisJob.class);
-			workspacebaseline.dispose();
-			StubApiComponent.disposeAllCaches();
-			workspacebaseline = null;
+		}
+		if (oldBaseline != null) {
+			oldBaseline.dispose();
 		}
 	}
 
@@ -692,7 +724,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	}
 
 	@Override
-	public synchronized IApiComponent getWorkspaceComponent(String symbolicName) {
+	public IApiComponent getWorkspaceComponent(String symbolicName) {
 		IApiBaseline baseline = getWorkspaceBaseline();
 		if (baseline != null) {
 			return baseline.getApiComponent(symbolicName);

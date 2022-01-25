@@ -168,6 +168,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	private volatile boolean disposed;
 
+	private volatile boolean restored;
+
 	/**
 	 * Constructs a new API baseline with the given name.
 	 *
@@ -183,10 +185,10 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	/**
 	 * Constructs a new API baseline with the given attributes.
 	 *
-	 * @param name baseline name
+	 * @param name          baseline name
 	 * @param eeDescription execution environment description file
 	 * @throws CoreException if unable to create a baseline with the given
-	 *             attributes
+	 *                       attributes
 	 */
 	public ApiBaseline(String name, File eeDescription) throws CoreException {
 		this(name, eeDescription, null);
@@ -195,11 +197,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	/**
 	 * Constructs a new API baseline with the given attributes.
 	 *
-	 * @param name baseline name
+	 * @param name          baseline name
 	 * @param eeDescription execution environment description file
-	 * @param location the given baseline location
+	 * @param location      the given baseline location
 	 * @throws CoreException if unable to create a baseline with the given
-	 *             attributes
+	 *                       attributes
 	 */
 	public ApiBaseline(String name, File eeDescription, String location) throws CoreException {
 		this(name);
@@ -302,7 +304,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	/**
 	 * Initializes this baseline from the given properties.
 	 *
-	 * @param profile OGSi profile properties
+	 * @param profile     OGSi profile properties
 	 * @param description execution environment description
 	 * @throws CoreException if unable to initialize
 	 */
@@ -379,7 +381,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * @param component
 	 */
 	protected void addComponent(IApiComponent component) {
-		if (component == null) {
+		if (isDisposed() || component == null) {
 			return;
 		}
 		if (fComponentsById == null) {
@@ -401,15 +403,15 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			} else {
 				TreeSet<IApiComponent> allComponents = new TreeSet<>(
 						(comp1, comp2) -> {
-							if (comp2.getVersion().equals(comp1.getVersion())) {
-								if (comp2.getVersion().contains("JavaSE")) { //$NON-NLS-1$
-									ApiPlugin.logInfoMessage("Multiple locations for the same Java = " //$NON-NLS-1$
-											+ comp1.getLocation() + comp2.getLocation());
-								}
-								return 0;
-							}
-							return new Version(comp2.getVersion()).compareTo(new Version(comp1.getVersion()));
-						});
+					if (comp2.getVersion().equals(comp1.getVersion())) {
+						if (comp2.getVersion().contains("JavaSE")) { //$NON-NLS-1$
+							ApiPlugin.logInfoMessage("Multiple locations for the same Java = " //$NON-NLS-1$
+									+ comp1.getLocation() + comp2.getLocation());
+						}
+						return 0;
+					}
+					return new Version(comp2.getVersion()).compareTo(new Version(comp1.getVersion()));
+				});
 				allComponents.add(comp);
 				allComponents.add(component);
 				fAllComponentsById.put(component.getSymbolicName(), allComponents);
@@ -428,6 +430,9 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	@Override
 	public void addApiComponents(IApiComponent[] components) throws CoreException {
+		if (isDisposed()) {
+			return;
+		}
 		HashSet<String> ees = new HashSet<>();
 		for (IApiComponent apiComponent : components) {
 			BundleComponent component = (BundleComponent) apiComponent;
@@ -548,6 +553,10 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	@Override
 	public IApiComponent[] getApiComponents() {
 		loadBaselineInfos();
+		return getAlreadyLoadedApiComponents();
+	}
+
+	protected IApiComponent[] getAlreadyLoadedApiComponents() {
 		Map<String, IApiComponent> componentsById = fComponentsById;
 		if (disposed || componentsById == null) {
 			return EMPTY_COMPONENTS;
@@ -749,21 +758,50 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * is accessed
 	 */
 	private void loadBaselineInfos() {
-		if (disposed) {
+		if (disposed || restored) {
 			return;
 		}
 		ApiBaselineManager manager = ApiBaselineManager.getManager();
 		if (fComponentsById != null && manager.isBaselineLoaded(this)) {
 			return;
 		}
-		synchronized (this) {
-			try {
-				manager.loadBaselineInfos(this);
-			} catch (CoreException ce) {
-				ApiPlugin.log(ce);
-			}
+		if (disposed || restored) {
+			return;
+		}
+		try {
+			manager.loadBaselineInfos(this);
+		} catch (CoreException ce) {
+			ApiPlugin.log(ce);
 		}
 	}
+
+	/**
+	 * Restore a baseline from the given input stream (persisted baseline).
+	 *
+	 * @param stream the given input stream, will be closed by caller
+	 * @throws CoreException if unable to restore the baseline
+	 */
+	public void restoreFrom(InputStream stream) throws CoreException {
+		if (disposed || restored) {
+			return;
+		}
+		IApiComponent[] components = ApiBaselineManager.getManager().readBaselineComponents(this, stream);
+		if (components == null) {
+			restored = true;
+			return;
+		}
+		synchronized (this) {
+			if (disposed || restored) {
+				for (IApiComponent component : components) {
+					component.dispose();
+				}
+				return;
+			}
+			this.addApiComponents(components);
+			restored = true;
+		}
+	}
+
 
 	/**
 	 * Returns all errors in the state.
@@ -832,11 +870,15 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		if (disposed) {
 			return;
 		}
+		IApiComponent[] components;
+		synchronized (this) {
+			components = getAlreadyLoadedApiComponents();
+			disposed = true;
+		}
+		clearCachedElements();
 		if (ApiPlugin.isRunningInFramework()) {
 			JavaRuntime.removeVMInstallChangedListener(this);
 		}
-		clearCachedElements();
-		IApiComponent[] components = getApiComponents();
 		for (IApiComponent component2 : components) {
 			component2.dispose();
 		}
@@ -862,7 +904,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			}
 			fSystemLibraryComponentList = new ArrayList<>();
 		}
-		disposed = true;
 	}
 
 	/**

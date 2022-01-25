@@ -83,6 +83,9 @@ public class WorkspaceBaseline extends ApiBaseline {
 
 	@Override
 	public void addApiComponents(IApiComponent[] components) throws CoreException {
+		if (isDisposed()) {
+			return;
+		}
 		HashSet<String> ees = new HashSet<>();
 		for (IApiComponent apiComponent : components) {
 			BundleComponent component = (BundleComponent) apiComponent;
