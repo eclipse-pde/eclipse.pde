@@ -42,7 +42,7 @@ public class ContextSpyHelper {
 		Collection<IEclipseContext> result = Collections.emptyList();
 		try {
 			// Must use introspection to get the weak hash map (no getter).
-			Field f = EclipseContextFactory.class.getDeclaredField("serviceContexts");
+			Field f = EclipseContextFactory.class.getDeclaredField("serviceContexts"); //$NON-NLS-1$
 			f.setAccessible(true);
 			@SuppressWarnings("unchecked")
 			Map<BundleContext, IEclipseContext> ctxs = (Map<BundleContext, IEclipseContext>) f.get(null);

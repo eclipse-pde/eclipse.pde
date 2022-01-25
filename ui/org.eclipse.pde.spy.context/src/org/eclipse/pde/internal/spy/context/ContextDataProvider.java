@@ -49,26 +49,26 @@ import org.osgi.framework.FrameworkUtil;
 @SuppressWarnings("restriction")
 public class ContextDataProvider extends ColumnLabelProvider implements ITreeContentProvider {
 
-	private static final String NO_VALUE_COULD_BE_COMPUTED = "No value could be yet computed";
+	private static final String NO_VALUE_COULD_BE_COMPUTED = Messages.ContextDataProvider_0;
 	private static final Color COLOR_IF_FOUND = Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);
 	private static final Color COLOR_IF_NOT_COMPUTED = Display.getCurrent().getSystemColor(SWT.COLOR_MAGENTA);
 	private static final Object[] EMPTY_RESULT = new Object[0];
-	static final String LOCAL_VALUE_NODE = "Local values managed  by this context";
-	static final String INHERITED_INJECTED_VALUE_NODE = "Inherited values injected or updated using this context";
+	static final String LOCAL_VALUE_NODE = Messages.ContextDataProvider_1;
+	static final String INHERITED_INJECTED_VALUE_NODE = Messages.ContextDataProvider_2;
 
-	private static final String NO_VALUES_FOUND = "No values found";
-	private static final String UPDATED_IN_CLASS = "Updated in class :";
-	private static final String INJECTED_IN_FIELD = "Injected in field :";
-	private static final String INJECTED_IN_METHOD = "Injected in method :";
+	private static final String NO_VALUES_FOUND = Messages.ContextDataProvider_3;
+	private static final String UPDATED_IN_CLASS = Messages.ContextDataProvider_4;
+	private static final String INJECTED_IN_FIELD = Messages.ContextDataProvider_5;
+	private static final String INJECTED_IN_METHOD = Messages.ContextDataProvider_6;
 
 	// Image keys constants
-	private static final String PUBLIC_METHOD_IMG_KEY = "icons/methpub_obj.png";
-	private static final String PUBLIC_FIELD_IMG_KEY = "icons/field_public_obj.png";
-	private static final String VALUE_IN_CONTEXT_IMG_KEY = "icons/valueincontext.png";
-	private static final String INHERITED_VARIABLE_IMG_KEY = "icons/inher_co.png";
-	private static final String LOCAL_VARIABLE_IMG_KEY = "icons/letter-l-icon.png";
-	private static final String CONTEXT_FUNCTION_IMG_KEY = "icons/contextfunction.png";
-	private static final String INJECT_IMG_KEY = "icons/annotation_obj.png";
+	private static final String PUBLIC_METHOD_IMG_KEY = "icons/methpub_obj.png"; //$NON-NLS-1$
+	private static final String PUBLIC_FIELD_IMG_KEY = "icons/field_public_obj.png"; //$NON-NLS-1$
+	private static final String VALUE_IN_CONTEXT_IMG_KEY = "icons/valueincontext.png"; //$NON-NLS-1$
+	private static final String INHERITED_VARIABLE_IMG_KEY = "icons/inher_co.png"; //$NON-NLS-1$
+	private static final String LOCAL_VARIABLE_IMG_KEY = "icons/letter-l-icon.png"; //$NON-NLS-1$
+	private static final String CONTEXT_FUNCTION_IMG_KEY = "icons/contextfunction.png"; //$NON-NLS-1$
+	private static final String INJECT_IMG_KEY = "icons/annotation_obj.png"; //$NON-NLS-1$
 
 	private ImageRegistry imgReg;
 
@@ -122,7 +122,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 				try {
 					cfValues.put(key, selectedContext.get(key));
 				} catch (Exception e) {
-					cfValues.put(key, NO_VALUE_COULD_BE_COMPUTED + " (Exception : " + e.getClass().getName() + ")");
+					cfValues.put(key, NO_VALUE_COULD_BE_COMPUTED + " (Exception : " + e.getClass().getName() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			result.addAll(cfValues.entrySet());
 			return result.toArray();
@@ -170,15 +170,15 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 		if (element instanceof Map.Entry) {
 			Map.Entry<String, Object> mapEntry = (Map.Entry<String, Object>) element;
 			Object o = displayKey ? mapEntry.getKey() : mapEntry.getValue();
-			return (o == null) ? "null" : o.toString();
+			return (o == null) ? Messages.ContextDataProvider_16 : o.toString();
 		} else if (element instanceof Computation) {
 			// For a computation : display field or method in key column and the
 			// value in value
 			String txt = super.getText(element);
 			if (displayKey) {
-				if (txt.contains("#"))
+				if (txt.contains("#")) //$NON-NLS-1$
 					return INJECTED_IN_METHOD;
-				else if (txt.contains("@"))
+				else if (txt.contains("@")) //$NON-NLS-1$
 					return UPDATED_IN_CLASS;
 				else
 					return INJECTED_IN_FIELD;
@@ -225,9 +225,9 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 			// value in value column
 			String txt = super.getText(element);
 
-			if (txt.contains("#"))
+			if (txt.contains("#")) //$NON-NLS-1$
 				return imgReg.get(PUBLIC_METHOD_IMG_KEY);
-			else if (txt.contains("@"))
+			else if (txt.contains("@")) //$NON-NLS-1$
 				return imgReg.get(CONTEXT_FUNCTION_IMG_KEY);
 			else
 				return imgReg.get(PUBLIC_FIELD_IMG_KEY);
@@ -250,23 +250,23 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 	@Override
 	public String getToolTipText(Object element) {
 		if (element == LOCAL_VALUE_NODE) {
-			return "This part contains  values set in this context and then injected here or in children\n\n"
-					+ "If the value is injected using this context, you can expand the node to see where\n\n"
-					+ "If the value is injected using a child context you can find it in the second part for this child ";
+			return Messages.ContextDataProvider_21
+					+ Messages.ContextDataProvider_22
+					+ Messages.ContextDataProvider_23;
 		} else if (element == INHERITED_INJECTED_VALUE_NODE) {
-			return "This part contains the values injected or updated using this context, but initialized in a parent context\n\n"
-					+ "Expand nodes to see where values are injected or updated";
+			return Messages.ContextDataProvider_24
+					+ Messages.ContextDataProvider_25;
 		} else if (isAContextKeyFunction(element)) {
 			String key = (String) ((Map.Entry<?, ?>) element).getKey();
 			String fname = selectedContext.localContextFunction().get(key).getClass().getCanonicalName();
 
-			return "This value is created by the Context Function : " + fname;
+			return Messages.ContextDataProvider_26 + fname;
 		} else {
 			if (hasChildren(element))
-				return "Expand this node to see where this value is injected or updated";
+				return Messages.ContextDataProvider_27;
 			else {
 				if (element instanceof Map.Entry)
-					return "This value is set here but not injected using this context (look in children context)";
+					return Messages.ContextDataProvider_28;
 			}
 
 		}

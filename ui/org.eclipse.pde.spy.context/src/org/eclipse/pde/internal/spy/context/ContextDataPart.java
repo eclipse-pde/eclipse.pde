@@ -75,17 +75,17 @@ public class ContextDataPart {
 		cTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		// tv.setInput(a);
-		contextDataViewer.setInput("Foo"); // getElements starts alone
+		contextDataViewer.setInput("Foo"); // getElements starts alone //$NON-NLS-1$
 
 		// Add columns in the tree
 		// Create the first column for the key
 		TreeViewerColumn keyCol = new TreeViewerColumn(contextDataViewer, SWT.NONE);
 		keyCol.getColumn().setWidth(400);
-		keyCol.getColumn().setText("Key");
+		keyCol.getColumn().setText(Messages.ContextDataPart_1);
 		ContextDataProvider keyLabelProvider = ContextInjectionFactory.make(ContextDataProvider.class, ctx);
 		keyLabelProvider.setDisplayKey(true);
 		keyCol.setLabelProvider(keyLabelProvider);
-		keyCol.getColumn().setToolTipText("Key in context");
+		keyCol.getColumn().setToolTipText(Messages.ContextDataPart_2);
 		keyCol.getColumn().addSelectionListener(
 				getHeaderSelectionAdapter(contextDataViewer, keyCol.getColumn(), 0, keyLabelProvider));
 
@@ -95,7 +95,7 @@ public class ContextDataPart {
 		// Create the second column for the value
 		TreeViewerColumn valueCol = new TreeViewerColumn(contextDataViewer, SWT.NONE);
 		valueCol.getColumn().setWidth(600);
-		valueCol.getColumn().setText("Value");
+		valueCol.getColumn().setText(Messages.ContextDataPart_3);
 		ContextDataProvider valueLabelProvider = ContextInjectionFactory.make(ContextDataProvider.class, ctx);
 		valueCol.setLabelProvider(dataProvider);
 		valueCol.getColumn().addSelectionListener(
@@ -169,8 +169,8 @@ public class ContextDataPart {
 			// Now can compare the text from label provider.
 			String lp1 = labelProvider.getText(e1);
 			String lp2 = labelProvider.getText(e2);
-			String s1 = lp1 == null ? "" : lp1.toLowerCase();
-			String s2 = lp2 == null ? "" : lp2.toLowerCase();
+			String s1 = lp1 == null ? "" : lp1.toLowerCase(); //$NON-NLS-1$
+			String s2 = lp2 == null ? "" : lp2.toLowerCase(); //$NON-NLS-1$
 			int rc = s1.compareTo(s2);
 			// If descending order, flip the direction
 			return (direction == SWT.DOWN) ? -rc : rc;

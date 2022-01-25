@@ -54,12 +54,12 @@ import org.osgi.framework.FrameworkUtil;
  */
 public class ContextSpyPart {
 
-	private static final String ICON_COLLAPSEALL = "icons/collapseall.png";
-	private static final String ICON_EXPANDALL = "icons/expandall.png";
-	private static final String ICON_REFRESH = "icons/refresh.png";
+	private static final String ICON_COLLAPSEALL = "icons/collapseall.png"; //$NON-NLS-1$
+	private static final String ICON_EXPANDALL = "icons/expandall.png"; //$NON-NLS-1$
+	private static final String ICON_REFRESH = "icons/refresh.png"; //$NON-NLS-1$
 
 	// The ID for this part descriptor
-	static final String CONTEXT_SPY_VIEW_DESC = "org.eclipse.e4.tools.context.spy.view";
+	static final String CONTEXT_SPY_VIEW_DESC = "org.eclipse.e4.tools.context.spy.view"; //$NON-NLS-1$
 
 	private TreeViewer contextTreeViewer;
 
@@ -102,7 +102,7 @@ public class ContextSpyPart {
 
 		Button refreshButton = new Button(comp, SWT.FLAT);
 		refreshButton.setImage(imgReg.get(ICON_REFRESH));
-		refreshButton.setToolTipText("Refresh the contexts");
+		refreshButton.setToolTipText(Messages.ContextSpyPart_4);
 		refreshButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -113,7 +113,7 @@ public class ContextSpyPart {
 
 		Button expandAll = new Button(comp, SWT.FLAT);
 		expandAll.setImage(imgReg.get(ICON_EXPANDALL));
-		expandAll.setToolTipText("Expand context nodes");
+		expandAll.setToolTipText(Messages.ContextSpyPart_5);
 		expandAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -122,7 +122,7 @@ public class ContextSpyPart {
 		});
 		Button collapseAll = new Button(comp, SWT.FLAT);
 		collapseAll.setImage(imgReg.get(ICON_COLLAPSEALL));
-		collapseAll.setToolTipText("Collapse context nodes");
+		collapseAll.setToolTipText(Messages.ContextSpyPart_6);
 		collapseAll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -133,9 +133,8 @@ public class ContextSpyPart {
 
 		filterText = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
 		GridDataFactory.fillDefaults().hint(200, SWT.DEFAULT).applyTo(filterText);
-		filterText.setMessage("Search data");
-		filterText.setToolTipText("Highlight the contexts where the contained objects contains this string pattern.\n"
-				+ "Case is ignored.");
+		filterText.setMessage(Messages.ContextSpyPart_7);
+		filterText.setToolTipText(Messages.ContextSpyPart_8);
 		if (lastFilterText != null)
 			filterText.setText(lastFilterText);
 		contextFilter.setPattern(lastFilterText);
@@ -158,8 +157,8 @@ public class ContextSpyPart {
 		});
 
 		showOnlyFilteredElements = new Button(comp, SWT.CHECK);
-		showOnlyFilteredElements.setText("Show Only Filtered");
-		showOnlyFilteredElements.setToolTipText("Show only the filtered items in the table view");
+		showOnlyFilteredElements.setText(Messages.ContextSpyPart_9);
+		showOnlyFilteredElements.setToolTipText(Messages.ContextSpyPart_10);
 		showOnlyFilteredElements.setEnabled((lastFilterText != null) && (lastFilterText.length() > 0));
 		showOnlyFilteredElements.setSelection(lastShowFiltered);
 		showOnlyFilteredElements.addSelectionListener(new SelectionAdapter() {
@@ -191,7 +190,7 @@ public class ContextSpyPart {
 			}
 		});
 
-		IEclipseContext subCtx = ctx.createChild("Context for ContextDataPart");
+		IEclipseContext subCtx = ctx.createChild(Messages.ContextSpyPart_11);
 		subCtx.set(Composite.class, sashForm);
 		contextDataPart = ContextInjectionFactory.make(ContextDataPart.class, subCtx);
 		setFilter();
