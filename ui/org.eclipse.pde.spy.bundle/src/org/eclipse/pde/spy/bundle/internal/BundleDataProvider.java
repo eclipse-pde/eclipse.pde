@@ -70,7 +70,7 @@ public class BundleDataProvider extends ColumnLabelProvider {
 		case COL_VERSION:
 			return b.getVersion().toString();
 		case COL_STATE:
-			return ""; // No text for state (see tooltip)
+			return ""; // No text for state (see tooltip) //$NON-NLS-1$
 
 		}
 		return null;
@@ -117,21 +117,21 @@ public class BundleDataProvider extends ColumnLabelProvider {
 
 		switch (b.getState()) {
 		case Bundle.ACTIVE:
-			return "This bundle is Active";
+			return Messages.BundleDataProvider_1;
 		case Bundle.INSTALLED:
-			return "This bundle is Installed";
+			return Messages.BundleDataProvider_2;
 		case Bundle.RESOLVED:
-			return "This bundle is Resolved";
+			return Messages.BundleDataProvider_3;
 		case Bundle.STARTING:
-			return "This bundle is Starting";
+			return Messages.BundleDataProvider_4;
 		case Bundle.STOPPING:
-			return "This bundle is Stopping";
+			return Messages.BundleDataProvider_5;
 		case Bundle.UNINSTALLED:
-			return "This bundle is Uninstalled";
+			return Messages.BundleDataProvider_6;
 
 		}
 
-		return "This bundle is in state : " + b.getState();
+		return Messages.BundleDataProvider_7 + b.getState();
 
 	}
 

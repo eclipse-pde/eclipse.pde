@@ -39,7 +39,7 @@ public class BundleDataFilter extends ViewerFilter {
 	public String getBundleStrings(Bundle b, int nbColumn) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < nbColumn; i++)
-			sb.append(BundleDataProvider.getText(b, i)).append("  ");
+			sb.append(BundleDataProvider.getText(b, i)).append("  "); //$NON-NLS-1$
 
 		return sb.toString();
 	}
