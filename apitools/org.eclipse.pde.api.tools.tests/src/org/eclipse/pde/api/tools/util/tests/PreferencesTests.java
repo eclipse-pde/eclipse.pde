@@ -34,8 +34,10 @@ import org.junit.Test;
  */
 public class PreferencesTests extends AbstractApiTest {
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
+		super.setUp();
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("The instance node must exist", inode); //$NON-NLS-1$
 		inode.put(IApiProblemTypes.ILLEGAL_INSTANTIATE, ApiPlugin.VALUE_ERROR);
@@ -52,9 +54,11 @@ public class PreferencesTests extends AbstractApiTest {
 		eprefs.flush();
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		deleteProject(TESTING_PROJECT_NAME);
+		super.tearDown();
 	}
 
 	/**

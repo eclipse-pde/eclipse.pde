@@ -30,6 +30,7 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
 import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
+import org.eclipse.pde.ui.tests.util.FreezeMonitor;
 import org.junit.After;
 import org.junit.Before;
 
@@ -169,6 +170,7 @@ public abstract class SearchTest {
 	public void setUp() throws Exception {
 		TEST_REQUESTOR = new TestRequestor(this);
 		TEST_REPORTER = new TestReporter(this);
+		FreezeMonitor.expectCompletionInAMinute();
 	}
 
 	@After
@@ -179,5 +181,6 @@ public abstract class SearchTest {
 		if (this.scope != null) {
 			this.scope.dispose();
 		}
+		FreezeMonitor.done();
 	}
 }

@@ -61,8 +61,10 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	private static final IPath XML_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-xml"); //$NON-NLS-1$
 	private static final IPath PLUGIN_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-plugins"); //$NON-NLS-1$
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
+		super.setUp();
 		createProject(TESTING_PLUGIN_PROJECT_NAME, null);
 		File projectSrc = SRC_LOC.toFile();
 		assertTrue("the filter source dir must exist", projectSrc.exists()); //$NON-NLS-1$
@@ -84,9 +86,11 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		assertNotNull("the .api_filters file must exist in the testing project", filters); //$NON-NLS-1$
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		deleteProject(TESTING_PLUGIN_PROJECT_NAME);
+		super.tearDown();
 	}
 
 	/**

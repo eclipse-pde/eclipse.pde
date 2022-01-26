@@ -182,8 +182,10 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	private static IPath ROOT_PATH = TestSuiteHelper.getPluginDirectoryPath().append("test-source").append("javadoc"); //$NON-NLS-1$ //$NON-NLS-2$
 	private static File componentxml = new File(ROOT_PATH.append("component.xml").toOSString()); //$NON-NLS-1$
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
+		super.setUp();
 		createProject(TESTING_PROJECT_NAME, null);
 		IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
 		assertNotNull("The java project must have been created", project); //$NON-NLS-1$
@@ -203,9 +205,11 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 		performRefactoring(refactoring);
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		deleteProject(TESTING_PROJECT_NAME);
+		super.tearDown();
 	}
 
 	/**

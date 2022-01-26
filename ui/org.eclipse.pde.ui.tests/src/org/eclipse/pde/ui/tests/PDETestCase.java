@@ -17,6 +17,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
+import org.eclipse.pde.ui.tests.util.FreezeMonitor;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.intro.IIntroManager;
@@ -38,12 +39,13 @@ public abstract class PDETestCase {
 
 	@Before
 	public void setUp() throws Exception {
+		FreezeMonitor.expectCompletionInAMinute();
 		TestUtils.log(IStatus.INFO, name.getMethodName(), "setUp");
 		assertWelcomeScreenClosed();
 	}
 
 	@After
-	public void tearDown() {
+	public void tearDown() throws Exception {
 		TestUtils.log(IStatus.INFO, name.getMethodName(), "tearDown");
 		// Close any editors we opened
 		IWorkbenchWindow[] workbenchPages = PlatformUI.getWorkbench().getWorkbenchWindows();
@@ -65,6 +67,7 @@ public abstract class PDETestCase {
 		} catch (CoreException e) {
 		}
 		TestUtils.waitForJobs(name.getMethodName(), 10, 10000);
+		FreezeMonitor.done();
 	}
 
 	/**

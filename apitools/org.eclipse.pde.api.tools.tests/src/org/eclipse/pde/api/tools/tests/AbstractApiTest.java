@@ -43,6 +43,9 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.ui.tests.util.FreezeMonitor;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 
 /**
@@ -63,6 +66,16 @@ public class AbstractApiTest {
 	 * plugin tests. Value is: <code>APIPluginTests</code>.
 	 */
 	protected static final String TESTING_PLUGIN_PROJECT_NAME = "APIPluginTests"; //$NON-NLS-1$
+
+	@Before
+	public void setUp() throws Exception {
+		FreezeMonitor.expectCompletionInAMinute();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		FreezeMonitor.done();
+	}
 
 	/**
 	 * Returns the {@link IJavaProject} with the given name. If this method is

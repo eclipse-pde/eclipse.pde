@@ -34,8 +34,10 @@ import org.junit.Test;
 public class TargetAsBaselineTests extends AbstractApiTest {
 	ITargetDefinition definition;
 
+	@Override
 	@Before
-	public void setUp() {
+	public void setUp() throws Exception {
+		super.setUp();
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append("test-plugins"); //$NON-NLS-1$
 		File file = path.toFile();

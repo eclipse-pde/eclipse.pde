@@ -68,6 +68,7 @@ import org.eclipse.pde.api.tools.tests.util.FileUtils;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.ui.tests.util.FreezeMonitor;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
@@ -1067,6 +1068,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	@Override
 	protected void setUp() throws Exception {
+		FreezeMonitor.expectCompletionInAMinute();
 		if (env == null) {
 			env = new ApiTestingEnvironment();
 			env.openEmptyWorkspace();
@@ -1083,6 +1085,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		fMessageArgs = null;
 		this.debugRequestor.clearResult();
 		super.tearDown();
+		FreezeMonitor.done();
 	}
 
 	/**
