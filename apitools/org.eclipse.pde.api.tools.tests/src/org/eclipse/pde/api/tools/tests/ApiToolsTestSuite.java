@@ -14,6 +14,7 @@
 package org.eclipse.pde.api.tools.tests;
 
 
+import org.eclipse.jdt.internal.core.search.processing.JobManager;
 import org.eclipse.pde.api.tools.builder.tests.OSGiLessAnalysisTests;
 import org.eclipse.pde.api.tools.comparator.tests.AllDeltaTests;
 import org.eclipse.pde.api.tools.model.tests.ApiBaselineTests;
@@ -39,6 +40,7 @@ import org.eclipse.pde.api.tools.util.tests.SignaturesTests;
 import org.eclipse.pde.api.tools.util.tests.TarEntryTests;
 import org.eclipse.pde.api.tools.util.tests.TarExceptionTests;
 import org.eclipse.pde.api.tools.util.tests.UtilTests;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -66,4 +68,10 @@ import org.junit.runners.Suite;
 	AllDeltaTests.class
 })
 public class ApiToolsTestSuite {
+
+	@BeforeClass
+	@SuppressWarnings("restriction")
+	public static void setupJVM() {
+		JobManager.VERBOSE = true;
+	}
 }

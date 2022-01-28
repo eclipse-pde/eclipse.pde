@@ -18,7 +18,7 @@
     <relativePath>../../tests-pom/</relativePath>
   </parent>
   <artifactId>org.eclipse.pde.api.tools.tests</artifactId>
-  <version>1.2.500-SNAPSHOT</version>
+  <version>1.2.600-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
 
 	<build>
