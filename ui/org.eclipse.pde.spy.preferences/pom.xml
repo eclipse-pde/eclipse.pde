@@ -13,7 +13,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>eclipse.pde.ui</artifactId>
-    <groupId>eclipse.pde.ui</groupId>
+    <groupId>org.eclipse.pde</groupId>
     <version>4.23.0-SNAPSHOT</version>
     <relativePath>../../</relativePath>
   </parent>
@@ -22,8 +22,6 @@
     <skipAPIAnalysis>true</skipAPIAnalysis>
   </properties>
 
-
-  <groupId>org.eclipse.e4</groupId>
   <artifactId>org.eclipse.pde.spy.preferences</artifactId>
   <version>0.12.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>

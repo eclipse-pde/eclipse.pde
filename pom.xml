@@ -21,7 +21,7 @@
     <relativePath>../eclipse-platform-parent</relativePath>
   </parent>
 
-  <groupId>eclipse.pde.ui</groupId>
+  <groupId>org.eclipse.pde</groupId>
   <artifactId>eclipse.pde.ui</artifactId>
   <packaging>pom</packaging>
 
