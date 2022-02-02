@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
@@ -233,7 +235,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		super.targetChanged(definition);
 		if (definition != null) {
 			// When  If the page isn't open yet, try running a UI job so the dialog has time to finish opening
-			new UIJob(PDEUIMessages.TargetDefinitionContentPage_0) {
+			UIJob resolveJob = new UIJob(PDEUIMessages.TargetDefinitionContentPage_0) {
 				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					ITargetDefinition definition = getTargetDefinition();
@@ -261,7 +263,24 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 					}
 					return Status.OK_STATUS;
 				}
-			}.schedule();
+			};
+			resolveJob.schedule();
+			resolveJob.addJobChangeListener(new JobChangeAdapter() {
+				@Override
+				public void done(IJobChangeEvent event) {
+					UIJob job = new UIJob("") { //$NON-NLS-1$
+						@Override
+						public IStatus runInUIThread(IProgressMonitor monitor) {
+							if (fLocationTree != null) {
+								fLocationTree.setExpandCollapseState(true);
+							}
+							return Status.OK_STATUS;
+						}
+					};
+					job.setSystem(true);
+					job.schedule();
+				}
+			});
 			String name = definition.getName();
 			if (name == null) {
 				name = EMPTY_STRING;
