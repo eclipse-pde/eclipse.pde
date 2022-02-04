@@ -1,4 +1,3 @@
 # To force a version qualifier update add the bug here
-Bug 566668 - Comparator errors in I20200904-0210
-Bug 577483 - Comparator errors in I20211126-0230
+
 Bug 578351 - Lambda generation order is unstable in ecj 
