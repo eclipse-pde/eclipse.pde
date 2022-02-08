@@ -95,6 +95,7 @@ import org.eclipse.pde.internal.ds.core.IDSProvide;
 import org.eclipse.pde.internal.ds.core.IDSReference;
 import org.eclipse.pde.internal.ds.core.IDSService;
 import org.eclipse.pde.internal.ds.core.text.DSModel;
+import org.eclipse.pde.internal.ui.util.TextUtil;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -1155,7 +1156,7 @@ public class AnnotationVisitor extends ASTVisitor {
 					}
 
 					if (propertyValue != null) {
-						property.setPropertyElemBody(content + "\n" + pair[1]); //$NON-NLS-1$
+						property.setPropertyElemBody(content + TextUtil.getDefaultLineDelimiter() + pair[1]);
 					}
 				}
 			}
@@ -1431,7 +1432,7 @@ public class AnnotationVisitor extends ASTVisitor {
 				}
 
 				if (buf.length() > 0) {
-					buf.append('\n');
+					buf.append(TextUtil.getDefaultLineDelimiter());
 				}
 
 				buf.append(trimmed);
@@ -1480,7 +1481,7 @@ public class AnnotationVisitor extends ASTVisitor {
 						}
 
 						if (body.length() > 0) {
-							body.append('\n');
+							body.append(TextUtil.getDefaultLineDelimiter());
 						}
 
 						body.append(itemValue);
