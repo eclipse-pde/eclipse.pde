@@ -148,6 +148,7 @@ public class LaunchAction extends Action {
 
 		wc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, selectedFeatures);
 		wc.setAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS, additionalPlugins);
+		wc.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, true);
 	}
 
 	private void appendBundle(Set<String> plugins, IPluginModelBase model) {
