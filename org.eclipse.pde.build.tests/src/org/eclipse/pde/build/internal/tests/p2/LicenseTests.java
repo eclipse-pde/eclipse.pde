@@ -491,7 +491,7 @@ public class LicenseTests extends P2TestCase {
 		buffer.append("	<description url=\"http://eclipse.org/ptp\">%description</description> 					\n");
 		buffer.append("	<copyright>%copyright</copyright>  														\n");
 		buffer.append("	<url> 																					\n");
-		buffer.append("		<update label=\"%updateSiteName\" url=\"http://download.eclipse.org/updates\"/> 	\n");
+		buffer.append("		<update label=\"%updateSiteName\" url=\"https://download.eclipse.org/updates\"/> 	\n");
 		buffer.append("	</url> 																					\n");
 		buffer.append("</feature> 																				\n");
 		Utils.writeBuffer(featureFolder.getFile("feature.xml"), buffer);

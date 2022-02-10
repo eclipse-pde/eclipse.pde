@@ -70,11 +70,11 @@ public class FetchTests extends PDETestCase {
 
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(
-				"plugin@javax.xml.rpc,1.1.0=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R20090825191606/bundles/javax.xml.rpc_1.1.0.v200905122109.zip,unpack=true\n");
+				"plugin@javax.xml.rpc,1.1.0=GET,https://download.eclipse.org/tools/orbit/downloads/drops/R20090825191606/bundles/javax.xml.rpc_1.1.0.v200905122109.zip,unpack=true\n");
 		buffer.append(
-				"plugin@com.ibm.icu.base,3.6.0=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R20090825191606/updateSite/plugins/com.ibm.icu.base_3.6.0.v20080530.jar,unpack=true,dest=${buildDirectory}/plugins/com.ibm.icu.base_3.6.0/.zip\n");
+				"plugin@com.ibm.icu.base,3.6.0=GET,https://download.eclipse.org/tools/orbit/downloads/drops/R20090825191606/updateSite/plugins/com.ibm.icu.base_3.6.0.v20080530.jar,unpack=true,dest=${buildDirectory}/plugins/com.ibm.icu.base_3.6.0/.zip\n");
 		buffer.append(
-				"plugin@com.ibm.icu.base,3.6.1=GET,http://download.eclipse.org/tools/orbit/downloads/drops/R20090825191606/updateSite/plugins/com.ibm.icu.base_3.6.1.v20080530.jar,unpack=true\n");
+				"plugin@com.ibm.icu.base,3.6.1=GET,https://download.eclipse.org/tools/orbit/downloads/drops/R20090825191606/updateSite/plugins/com.ibm.icu.base_3.6.1.v20080530.jar,unpack=true\n");
 		Utils.writeBuffer(buildFolder.getFile("directory.txt"), buffer);
 
 		Utils.generateFeature(buildFolder, "org.eclipse.pde.build.container.feature", null,
