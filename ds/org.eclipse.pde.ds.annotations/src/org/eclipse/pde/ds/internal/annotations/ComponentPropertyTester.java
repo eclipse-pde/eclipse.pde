@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 Ecliptical Software Inc. and others.
+ * Copyright (c) 2015, 2022 Ecliptical Software Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ds.internal.annotations;
 
-import java.awt.Component;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.ProjectScope;
