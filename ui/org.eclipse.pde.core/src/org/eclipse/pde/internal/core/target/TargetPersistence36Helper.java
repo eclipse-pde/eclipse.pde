@@ -46,7 +46,7 @@ public class TargetPersistence36Helper {
 	<location includeAllPlatforms="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 	<unit id="org.eclipse.egit.feature.group" version="0.11.3"/>
 	<unit id="org.eclipse.jgit.feature.group" version="0.11.3"/>
-	<repository location="http://download.eclipse.org/releases/indigo"/>
+	<repository location="https://download.eclipse.org/releases/indigo"/>
 	</location>
 	</locations>
 	</target>
