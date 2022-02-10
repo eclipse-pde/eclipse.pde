@@ -169,7 +169,7 @@ public class DependencyManager {
 		}
 
 		Set<BundleDescription> closure = new HashSet<>(bundles.size() * 4 / 3 + 1);
-		Queue<BundleDescription> pending = new ArrayDeque<>();
+		Queue<BundleDescription> pending = new ArrayDeque<>(bundles.size());
 
 		// initialize with given bundles
 		for (BundleDescription bundle : bundles) {
@@ -185,21 +185,27 @@ public class DependencyManager {
 				continue;
 			}
 
-			List<BundleWire> requiredWires = wiring.getRequiredWires(null);
-			for (BundleWire wire : requiredWires) {
-				BundleRevision provider = getProvider(wire);
-				if (provider instanceof BundleDescription && (includeOptional || !isOptional(wire.getRequirement()))) {
-					BundleDescription requiredBundle = (BundleDescription) provider;
-					addNewRequiredBundle(requiredBundle, closure, pending);
-				}
-			}
-
 			if (includeAllFragments || includeNonTestFragments) {
 				// A fragment's host is already required by a wire
 				for (BundleDescription fragment : bundle.getFragments()) {
 					if (includeAllFragments || !isTestWorkspaceProject(fragment)) {
 						addNewRequiredBundle(fragment, closure, pending);
 					}
+				}
+			}
+
+			List<BundleWire> requiredWires = wiring.getRequiredWires(null);
+			for (BundleWire wire : requiredWires) {
+				BundleRevision declaringBundle = wire.getRequirement().getRevision();
+				if (declaringBundle != bundle && !closure.contains(declaringBundle)) {
+					// Requirement is declared by an attached fragment, which is
+					// not included into the closure.
+					continue;
+				}
+				BundleRevision provider = getProvider(wire);
+				if (provider instanceof BundleDescription && (includeOptional || !isOptional(wire.getRequirement()))) {
+					BundleDescription requiredBundle = (BundleDescription) provider;
+					addNewRequiredBundle(requiredBundle, closure, pending);
 				}
 			}
 		}

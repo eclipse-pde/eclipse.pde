@@ -182,10 +182,26 @@ public class DependencyManagerTest {
 						entry(EXPORT_PACKAGE, "bundle.a.pack" + version("1.0.0"))),
 
 				bundle("bundle.fragment", "1.0.0", //
-						entry(FRAGMENT_HOST, "bundle.a")));
+						entry(FRAGMENT_HOST, "bundle.a")),
+
+				bundle("bundle.fragment.with.dependencies", "1.0.0", //
+						entry(FRAGMENT_HOST, "bundle.a"), //
+						entry(REQUIRE_BUNDLE, "bundle.b"), //
+						entry(IMPORT_PACKAGE, "bundle.c.pack")),
+
+				bundle("bundle.b", "1.0.0"), //
+
+				bundle("bundle.c", "1.0.0", //
+						entry(EXPORT_PACKAGE, "bundle.c.pack")),
+
+				bundle("bundle.d", "1.0.0", //
+						entry(EXPORT_PACKAGE, "bundle.d.pack")));
 
 		BundleDescription bundleA = bundleDescription("bundle.a", "1.0.0");
+		BundleDescription bundleB = bundleDescription("bundle.b", "1.0.0");
+		BundleDescription bundleC = bundleDescription("bundle.c", "1.0.0");
 		BundleDescription bundleFragment = bundleDescription("bundle.fragment", "1.0.0");
+		BundleDescription bundleFragmentWithDeps = bundleDescription("bundle.fragment.with.dependencies", "1.0.0");
 
 		Set<BundleDescription> bundles = Set.of(bundleA);
 
@@ -193,7 +209,8 @@ public class DependencyManagerTest {
 		assertThat(noFragmentsClosure).isEqualTo(Set.of(bundleA));
 
 		Set<BundleDescription> allFragmentsClosure = findRequirementsClosure(bundles, INCLUDE_ALL_FRAGMENTS);
-		assertThat(allFragmentsClosure).isEqualTo(Set.of(bundleA, bundleFragment));
+		assertThat(allFragmentsClosure)
+				.isEqualTo(Set.of(bundleA, bundleFragment, bundleFragmentWithDeps, bundleB, bundleC));
 	}
 
 	@Test
@@ -228,7 +245,7 @@ public class DependencyManagerTest {
 
 		Set<BundleDescription> nonTestFragmentsClosure = findRequirementsClosure(bundles, INCLUDE_NON_TEST_FRAGMENTS);
 		assertThat(nonTestFragmentsClosure)
-				.isEqualTo(Set.of(bundleA, bundleFragment, otherFragmentWithTestName, testFragmentWithoutTestAttr));
+		.isEqualTo(Set.of(bundleA, bundleFragment, otherFragmentWithTestName, testFragmentWithoutTestAttr));
 	}
 
 	@Test
