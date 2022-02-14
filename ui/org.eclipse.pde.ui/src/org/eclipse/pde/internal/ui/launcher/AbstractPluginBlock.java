@@ -93,8 +93,6 @@ public abstract class AbstractPluginBlock {
 
 	private Label fCounter;
 
-	private LaunchValidationOperation fOperation;
-
 	private Button fValidateButton;
 
 	private HashMap<Object, String> levelColumnCache = new HashMap<>();
@@ -951,10 +949,8 @@ public abstract class AbstractPluginBlock {
 	}
 
 	public void handleValidate() {
-		if (fOperation == null) {
-			fOperation = createValidationOperation();
-		}
 		try {
+			LaunchValidationOperation fOperation = createValidationOperation();
 			fOperation.run(new NullProgressMonitor());
 
 			if (fDialog == null) {
@@ -998,7 +994,7 @@ public abstract class AbstractPluginBlock {
 		}
 	}
 
-	protected abstract LaunchValidationOperation createValidationOperation();
+	protected abstract LaunchValidationOperation createValidationOperation() throws CoreException;
 
 	/**
 	 * called before the TreeView is refreshed. This allows any subclasses to cache

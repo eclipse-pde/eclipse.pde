@@ -334,17 +334,12 @@ public class FeatureBlock {
 		}
 
 		private void handleValidate() {
-			if (fOperation == null)
-				// Unlike PluginBlock, we don't want to validate the application/product requirements because we will grab them automatically at launch time
-				fOperation = new LaunchValidationOperation(fLaunchConfig) {
-					@Override
-					protected Set<IPluginModelBase> getModels() throws CoreException {
-						// The feature block is used in both the OSGi config and Eclipse configs, use the tab id to determine which we are using
-						boolean isOSGiTab = fTab.getId().equals(IPDELauncherConstants.TAB_BUNDLES_ID);
-						return BundleLauncherHelper.getMergedBundleMap(fLaunchConfiguration, isOSGiTab).keySet();
-					}
-				};
 			try {
+				// The feature block is used in both the OSGi config and Eclipse configs, use the tab id to determine which we are using
+				boolean isOSGi = fTab.getId().equals(IPDELauncherConstants.TAB_BUNDLES_ID);
+				Set<IPluginModelBase> models = BundleLauncherHelper.getMergedBundleMap(fLaunchConfig, isOSGi).keySet();
+				// Unlike PluginBlock, we don't want to validate the application/product requirements because we will grab them automatically at launch time
+				LaunchValidationOperation fOperation = new LaunchValidationOperation(fLaunchConfig, models);
 				fOperation.run(new NullProgressMonitor());
 				if (fDialog == null) {
 					if (fOperation.hasErrors()) {
@@ -819,7 +814,6 @@ public class FeatureBlock {
 	private ButtonSelectionListener fListener;
 	private AbstractLauncherTab fTab;
 	private CachedCheckboxTreeViewer fTree;
-	private LaunchValidationOperation fOperation;
 
 	private ViewerFilter fSelectedOnlyFilter;
 	private boolean fIsDisposed = false;

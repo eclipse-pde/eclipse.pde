@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2021 Red Hat Inc. and others.
+ * Copyright (c) 2021, 2022 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1248,7 +1248,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 	 */
 	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor)
 			throws CoreException {
-		EclipsePluginValidationOperation op = new EclipsePluginValidationOperation(configuration);
+		EclipsePluginValidationOperation op = new EclipsePluginValidationOperation(configuration, fModels.keySet());
 		LaunchPluginValidator.runValidationOperation(op, monitor);
 	}
 }

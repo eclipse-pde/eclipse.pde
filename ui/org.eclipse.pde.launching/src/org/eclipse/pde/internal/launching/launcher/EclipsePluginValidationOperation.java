@@ -25,16 +25,11 @@ import org.eclipse.pde.internal.launching.*;
 public class EclipsePluginValidationOperation extends LaunchValidationOperation {
 	public static final int CREATE_EXTENSION_ERROR_CODE = 1000;
 
-	private Map<Object, Object[]> fExtensionErrors = new HashMap<>(2);
-	private static Object[] EMPTY = new Object[0];
+	private static final Object[] EMPTY = new Object[0];
+	private final Map<Object, Object[]> fExtensionErrors = new HashMap<>(2);
 
-	public EclipsePluginValidationOperation(ILaunchConfiguration configuration) {
-		super(configuration);
-	}
-
-	@Override
-	protected Set<IPluginModelBase> getModels() throws CoreException {
-		return BundleLauncherHelper.getMergedBundleMap(fLaunchConfiguration, false).keySet();
+	public EclipsePluginValidationOperation(ILaunchConfiguration configuration, Set<IPluginModelBase> models) {
+		super(configuration, models);
 	}
 
 	@Override

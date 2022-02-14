@@ -36,22 +36,22 @@ import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
-public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
+public class LaunchValidationOperation implements IWorkspaceRunnable {
 
 	private BundleValidationOperation fOperation;
-	protected ILaunchConfiguration fLaunchConfiguration;
+	protected final ILaunchConfiguration fLaunchConfiguration;
+	protected final Set<IPluginModelBase> fModels;
 
-	public LaunchValidationOperation(ILaunchConfiguration configuration) {
+	public LaunchValidationOperation(ILaunchConfiguration configuration, Set<IPluginModelBase> models) {
 		fLaunchConfiguration = configuration;
+		fModels = models;
 	}
 
 	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
-		fOperation = new BundleValidationOperation(getModels(), getPlatformProperties());
+		fOperation = new BundleValidationOperation(fModels, getPlatformProperties());
 		fOperation.run(monitor);
 	}
-
-	protected abstract Set<IPluginModelBase> getModels() throws CoreException;
 
 	@SuppressWarnings("rawtypes")
 	protected Dictionary[] getPlatformProperties() throws CoreException {

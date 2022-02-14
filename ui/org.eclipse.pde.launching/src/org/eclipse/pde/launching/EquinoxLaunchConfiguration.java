@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2021 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -171,7 +171,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
 	@Override
 	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		OSGiValidationOperation op = new OSGiValidationOperation(configuration);
+		LaunchValidationOperation op = new LaunchValidationOperation(configuration, fModels.keySet());
 		LaunchPluginValidator.runValidationOperation(op, monitor);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2018, 2022 IBM Corporation and others.
+ *  Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -24,6 +24,7 @@ import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -509,7 +510,8 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * @since 3.3
 	 */
 	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		EclipsePluginValidationOperation op = new EclipsePluginValidationOperation(configuration);
+		Set<IPluginModelBase> models = BundleLauncherHelper.getMergedBundleMap(configuration, false).keySet();
+		EclipsePluginValidationOperation op = new EclipsePluginValidationOperation(configuration, models);
 		LaunchPluginValidator.runValidationOperation(op, monitor);
 	}
 

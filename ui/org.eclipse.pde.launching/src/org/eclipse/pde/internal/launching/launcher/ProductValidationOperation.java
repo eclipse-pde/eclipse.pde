@@ -24,16 +24,8 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class ProductValidationOperation extends LaunchValidationOperation {
 
-	private Set<IPluginModelBase> fModels;
-
 	public ProductValidationOperation(Set<IPluginModelBase> models) {
-		super(null);
-		fModels = models;
-	}
-
-	@Override
-	protected Set<IPluginModelBase> getModels() throws CoreException {
-		return fModels;
+		super(null, models);
 	}
 
 	@Override

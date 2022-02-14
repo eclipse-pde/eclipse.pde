@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2021 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,11 +15,13 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.Map;
+import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.launching.launcher.*;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.BundlesTab;
 
@@ -78,8 +80,9 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	}
 
 	@Override
-	protected LaunchValidationOperation createValidationOperation() {
-		return new OSGiValidationOperation(fLaunchConfiguration);
+	protected LaunchValidationOperation createValidationOperation() throws CoreException {
+		Set<IPluginModelBase> models = BundleLauncherHelper.getMergedBundleMap(fLaunchConfiguration, true).keySet();
+		return new LaunchValidationOperation(fLaunchConfiguration, models);
 	}
 
 }

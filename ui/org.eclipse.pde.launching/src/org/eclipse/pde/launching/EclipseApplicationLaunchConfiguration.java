@@ -200,6 +200,12 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	}
 
 	@Override
+	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+		EclipsePluginValidationOperation op = new EclipsePluginValidationOperation(configuration, fModels.keySet());
+		LaunchPluginValidator.runValidationOperation(op, monitor);
+	}
+
+	@Override
 	public String[] getVMArguments(ILaunchConfiguration configuration) throws CoreException {
 		String[] vmArgs = super.getVMArguments(configuration);
 		// necessary for PDE to know how to load plugins when target platform = host platform
