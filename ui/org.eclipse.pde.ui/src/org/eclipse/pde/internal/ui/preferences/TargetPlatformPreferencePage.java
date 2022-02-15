@@ -976,7 +976,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		} else {
 			// Manually update the active target and status line to update name, resolve status, and errors
 			if (fActiveTarget != null) {
-				((TargetPlatformService) service).setWorkspaceTargetDefinition(fActiveTarget);
+				((TargetPlatformService) service).setWorkspaceTargetDefinition(fActiveTarget, false);
 				TargetStatus.refreshTargetStatusContent();
 			}
 		}

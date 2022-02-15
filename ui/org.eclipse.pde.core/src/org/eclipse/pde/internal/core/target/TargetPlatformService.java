@@ -41,10 +41,12 @@ import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -329,7 +331,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 			target = handle.getTargetDefinition();
 		}
 
-		setWorkspaceTargetDefinition(target);
+		setWorkspaceTargetDefinition(target, true);
 		return target;
 	}
 
@@ -340,16 +342,30 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * as it should only be called from LoadTargetDefinitionJob which does additional
 	 * steps to reset the target.
 	 *
-	 * @param target the new workspace target definition
+	 * @param target
+	 *            the new workspace target definition
+	 * @param asyncEvents
+	 *            to notify listener asynchronously
 	 */
-	public void setWorkspaceTargetDefinition(ITargetDefinition target) {
+	public void setWorkspaceTargetDefinition(ITargetDefinition target, boolean asyncEvents) {
 		boolean changed = !Objects.equals(fWorkspaceTarget, target);
 		fWorkspaceTarget = target;
 		if (changed) {
-			IEclipseContext context = EclipseContextFactory.getServiceContext(PDECore.getDefault().getBundleContext());
-			IEventBroker broker = context.get(IEventBroker.class);
-			if (broker != null) {
-				broker.send(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, target);
+			ICoreRunnable notify = monitor -> {
+				IEclipseContext context = EclipseContextFactory.getServiceContext(PDECore.getDefault().getBundleContext());
+				IEventBroker broker = context.get(IEventBroker.class);
+				if (broker != null) {
+					broker.send(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, target);
+				}
+			};
+			if (asyncEvents) {
+				Job.create("Sending 'workspace target changed' event", notify).schedule(); //$NON-NLS-1$
+			} else {
+				try {
+					notify.run(new NullProgressMonitor());
+				} catch (CoreException e) {
+					PDECore.log(e);
+				}
 			}
 		}
 	}
