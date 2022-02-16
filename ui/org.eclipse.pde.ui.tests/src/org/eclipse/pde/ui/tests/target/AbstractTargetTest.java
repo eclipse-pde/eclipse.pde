@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.eclipse.core.filebuffers.*;
@@ -36,6 +37,7 @@ import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
+import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -230,11 +232,11 @@ public abstract class AbstractTargetTest extends PDETestCase {
 	 * @throws CoreException
 	 */
 	protected void setTargetPlatform(ITargetDefinition target) throws CoreException {
-		final Object[] payload = new Object[1];
+		final AtomicReference<Object> payload = new AtomicReference<>();
 		BundleContext bundleContext = PDECore.getDefault().getBundleContext();
 		IEclipseContext context = EclipseContextFactory.getServiceContext(bundleContext);
 		IEventBroker eventBroker = context.get(IEventBroker.class);
-		EventHandler handler = e -> payload[0] = e.getProperty(IEventBroker.DATA);
+		EventHandler handler = e -> payload.compareAndSet(null, e.getProperty(IEventBroker.DATA));
 		eventBroker.subscribe(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, handler);
 
 		// Create the job to load the target, but then join with the job's thread
@@ -243,12 +245,22 @@ public abstract class AbstractTargetTest extends PDETestCase {
 		} catch (InterruptedException e) {
 			assertFalse("Target platform reset interrupted", true);
 		}
+		TestUtils.waitForJobs(name.getMethodName(), 100, 30000);
+		Object firstDefinition = payload.getAndSet(null);
+
 		ITargetPlatformService service = getTargetService();
+		// this call will trigger more events if the target was null
 		ITargetDefinition definition = (target != null) ? target : service.getWorkspaceTargetDefinition();
+		TestUtils.waitForJobs(name.getMethodName(), 100, 30000);
 		eventBroker.unsubscribe(handler);
+		Object secondDefinition = payload.get();
 		ITargetHandle handle = (target != null) ? target.getHandle() : null;
 		assertEquals("Wrong target platform handle preference setting", handle, service.getWorkspaceTargetHandle());
-		assertEquals("Wrong workspaceTargetChanged event payload", definition, payload[0]);
+		if (target == null) {
+			assertEquals("Wrong workspaceTargetChanged event payload", definition, secondDefinition);
+		} else {
+			assertEquals("Wrong workspaceTargetChanged event payload", definition, firstDefinition);
+		}
 
 	}
 

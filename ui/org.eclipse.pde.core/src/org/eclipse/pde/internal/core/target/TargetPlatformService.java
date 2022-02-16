@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.core.resources.IFile;
@@ -39,14 +41,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -95,11 +96,14 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * The target definition currently being used as the target platform for
 	 * the workspace.
 	 */
-	private ITargetDefinition fWorkspaceTarget;
+	private final AtomicReference<ITargetDefinition> fWorkspaceTarget;
+
 	/**
 	 * vm arguments for default target
 	 */
-	private StringBuilder fVMArguments = null;
+	private StringBuilder fVMArguments;
+
+	private final EventDispatcher eventSendingJob;
 
 	/**
 	 * Collects target files in the workspace
@@ -128,6 +132,8 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	private TargetPlatformService() {
+		fWorkspaceTarget = new AtomicReference<>();
+		eventSendingJob = new EventDispatcher("Sending 'workspace target changed' event", TargetPlatformService.class); //$NON-NLS-1$
 	}
 
 	/**
@@ -314,8 +320,9 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	@Override
 	public synchronized ITargetDefinition getWorkspaceTargetDefinition() throws CoreException {
-		if (fWorkspaceTarget != null && fWorkspaceTarget.getHandle().equals(getWorkspaceTargetHandle())) {
-			return fWorkspaceTarget;
+		ITargetDefinition workspaceTarget = fWorkspaceTarget.get();
+		if (workspaceTarget != null && workspaceTarget.getHandle().equals(getWorkspaceTargetHandle())) {
+			return workspaceTarget;
 		}
 
 		// If no target definition has been chosen before, try using preferences
@@ -348,25 +355,72 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 *            to notify listener asynchronously
 	 */
 	public void setWorkspaceTargetDefinition(ITargetDefinition target, boolean asyncEvents) {
-		boolean changed = !Objects.equals(fWorkspaceTarget, target);
-		fWorkspaceTarget = target;
+		ITargetDefinition oldTarget = fWorkspaceTarget.getAndSet(target);
+		boolean changed = !Objects.equals(oldTarget, target);
 		if (changed) {
-			ICoreRunnable notify = monitor -> {
-				IEclipseContext context = EclipseContextFactory.getServiceContext(PDECore.getDefault().getBundleContext());
-				IEventBroker broker = context.get(IEventBroker.class);
-				if (broker != null) {
-					broker.send(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, target);
-				}
-			};
 			if (asyncEvents) {
-				Job.create("Sending 'workspace target changed' event", notify).schedule(); //$NON-NLS-1$
+				eventSendingJob.schedule(target);
 			} else {
-				try {
-					notify.run(new NullProgressMonitor());
-				} catch (CoreException e) {
-					PDECore.log(e);
-				}
+				notifyTargetChanged(target);
 			}
+		}
+	}
+
+	static void notifyTargetChanged(ITargetDefinition target) {
+		IEclipseContext context = EclipseContextFactory.getServiceContext(PDECore.getDefault().getBundleContext());
+		IEventBroker broker = context.get(IEventBroker.class);
+		if (broker != null) {
+			broker.send(TargetEvents.TOPIC_WORKSPACE_TARGET_CHANGED, target);
+		}
+	}
+
+	static class EventDispatcher extends Job {
+
+		private final ConcurrentLinkedQueue<ITargetDefinition> queue;
+		private final Object myFamily;
+
+		/**
+		 * @param jobName
+		 *            descriptive job name
+		 * @param family
+		 *            non null object to control this job execution
+		 **/
+		public EventDispatcher(String jobName, Object family) {
+			super(jobName);
+			Assert.isNotNull(family);
+			this.myFamily = family;
+			this.queue = new ConcurrentLinkedQueue<>();
+			setSystem(true);
+		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			return myFamily == family;
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			ITargetDefinition target;
+			while ((target = queue.poll()) != null && !monitor.isCanceled()) {
+				notifyTargetChanged(target);
+			}
+			if (!queue.isEmpty() && !monitor.isCanceled()) {
+				// in case actions got faster scheduled then processed
+				schedule();
+			}
+			if (monitor.isCanceled()) {
+				queue.clear();
+				return Status.CANCEL_STATUS;
+			}
+			return Status.OK_STATUS;
+		}
+
+		/**
+		 * Enqueue a task asynchronously.
+		 **/
+		public void schedule(ITargetDefinition target) {
+			queue.offer(target);
+			schedule(); // will reschedule if already running
 		}
 	}
 
