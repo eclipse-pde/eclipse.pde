@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.project;
 
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.project.IHostDescription;
+import org.osgi.framework.VersionRange;
 
 /**
  * Describes a host

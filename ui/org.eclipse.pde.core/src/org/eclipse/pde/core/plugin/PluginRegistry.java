@@ -15,19 +15,20 @@ package org.eclipse.pde.core.plugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 import org.osgi.resource.Resource;
 
 /**
@@ -45,15 +46,21 @@ import org.osgi.resource.Resource;
  */
 public class PluginRegistry {
 
+	private PluginRegistry() { // static use only
+	}
+
 	/**
 	 * Filter used when searching for plug-in models.
 	 * <p>
 	 * Clients may subclass this class to implement custom filters.
 	 * </p>
-	 * @see PluginRegistry#findModel(String, String, int, PluginFilter)
-	 * @see PluginRegistry#findModel(String, VersionRange, PluginFilter)
+	 *
+	 * @see PluginRegistry#findModel(String, String, int, Predicate)
+	 * @see PluginRegistry#findModel(String, VersionRange, Predicate)
 	 * @since 3.6
+	 * @deprecated Instead use {@link Predicate}
 	 */
+	@Deprecated(forRemoval = true, since = "3.19")
 	public static class PluginFilter {
 
 		/**
@@ -78,6 +85,10 @@ public class PluginRegistry {
 	public static ModelEntry findEntry(String id) {
 		return PDECore.getDefault().getModelManager().findEntry(id);
 	}
+
+	// TODO: use stream and optional and remove filters?!
+	// At least Stream instead of List to be consistent with the existing
+	// methods returning a single element
 
 	/**
 	 * Returns the plug-in model for the best match plug-in with the given ID.
@@ -274,10 +285,21 @@ public class PluginRegistry {
 	 *            a plug-in filter or <code>null</code>
 	 *
 	 * @return a matching model or <code>null</code>
-	 * @since 3.6
+	 * @since 3.19
 	 */
-	public static IPluginModelBase findModel(String id, String version, int match, PluginFilter filter) {
+	public static IPluginModelBase findModel(String id, String version, int match, Predicate<IPluginModelBase> filter) {
 		return getMax(findModels(id, version, match, filter));
+	}
+
+	/**
+	 * @see #findModel(String, String, int, Predicate)
+	 * @since 3.6
+	 * @deprecated Instead use
+	 *             {@link #findModel(String, String, int, Predicate)}
+	 */
+	@Deprecated(forRemoval = true, since = "3.19")
+	public static IPluginModelBase findModel(String id, String version, int match, PluginFilter filter) {
+		return findModel(id, version, match, filter::accept);
 	}
 
 	/**
@@ -298,9 +320,10 @@ public class PluginRegistry {
 	 * @param filter a plug-in filter or <code>null</code>
 	 *
 	 * @return a matching models, possibly an empty collection
-	 * @since 3.6
+	 * @since 3.19
 	 */
-	public static IPluginModelBase[] findModels(String id, String version, int match, PluginFilter filter) {
+	public static List<IPluginModelBase> findModels(String id, String version, int match,
+			Predicate<IPluginModelBase> filter) {
 		IPluginModelBase[] models = findModels(id);
 		List<IPluginModelBase> results = new ArrayList<>();
 		for (IPluginModelBase model : models) {
@@ -308,12 +331,25 @@ public class PluginRegistry {
 			if (base == null || base.getId() == null) {
 				continue; // guard against invalid plug-ins
 			}
-			if ((filter == null || filter.accept(model))
+			if ((filter == null || filter.test(model))
 					&& (version == null || VersionUtil.compare(base.getVersion(), version, match))) {
 				results.add(model);
 			}
 		}
-		return results.toArray(IPluginModelBase[]::new);
+		return List.copyOf(results);
+	}
+	// TODO: translate Version+Match kind into a VersionRange. Provide it as
+	// method for a IMatchRules enum?
+
+	/**
+	 * @see #findModels(String, String, int, Predicate)
+	 * @since 3.6
+	 * @deprecated Instead use
+	 *             {@link #findModels(String, String, int, Predicate)}
+	 */
+	@Deprecated(forRemoval = true, since = "3.19")
+	public static IPluginModelBase[] findModels(String id, String version, int match, PluginFilter filter) {
+		return findModels(id, version, match, filter::accept).toArray(IPluginModelBase[]::new);
 	}
 
 	/**
@@ -337,10 +373,22 @@ public class PluginRegistry {
 	 * @param filter a plug-in filter or <code>null</code>
 	 *
 	 * @return a matching model or <code>null</code>
-	 * @since 3.6
+	 * @since 3.19
 	 */
-	public static IPluginModelBase findModel(String id, VersionRange range, PluginFilter filter) {
+	public static IPluginModelBase findModel(String id, VersionRange range, Predicate<IPluginModelBase> filter) {
 		return getMax(findModels(id, range, filter));
+	}
+
+	/**
+	 * @see #findModel(String, VersionRange, Predicate)
+	 * @since 3.6
+	 * @deprecated Instead use
+	 *             {@link #findModel(String, VersionRange, Predicate)}
+	 */
+	@Deprecated(forRemoval = true, since = "3.19")
+	public static IPluginModelBase findModel(String id, org.eclipse.osgi.service.resolver.VersionRange range,
+			PluginFilter filter) {
+		return findModel(id, range, filter::accept);
 	}
 
 	/**
@@ -349,12 +397,12 @@ public class PluginRegistry {
 	 * @param models models
 	 * @return plug-in with the highest version or <code>null</code>
 	 */
-	private static IPluginModelBase getMax(IPluginModelBase[] models) {
-		if (models.length == 0) {
+	private static IPluginModelBase getMax(List<IPluginModelBase> models) {
+		if (models.isEmpty()) {
 			return null;
 		}
-		if (models.length == 1) {
-			return models[0];
+		if (models.size() == 1) {
+			return models.get(0);
 		}
 		IPluginModelBase max = null;
 		Version maxV = null;
@@ -389,21 +437,33 @@ public class PluginRegistry {
 	 * @param filter a plug-in filter or <code>null</code>
 	 *
 	 * @return a matching models, possibly empty
-	 * @since 3.6
+	 * @since 3.19
 	 */
-	public static IPluginModelBase[] findModels(String id, VersionRange range, PluginFilter filter) {
+	public static List<IPluginModelBase> findModels(String id, VersionRange range, Predicate<IPluginModelBase> filter) {
 		IPluginModelBase[] models = findModels(id);
 		List<IPluginModelBase> results = new ArrayList<>();
 		for (IPluginModelBase model : models) {
-			if (filter == null || filter.accept(model)) {
+			if (filter == null || filter.test(model)) {
 				String versionStr = model.getPluginBase().getVersion();
 				Version version = VersionUtil.validateVersion(versionStr).isOK() ? new Version(versionStr) : Version.emptyVersion;
-				if (range == null || range.isIncluded(version)) {
+				if (range == null || range.includes(version)) {
 					results.add(model);
 				}
 			}
 		}
-		return results.toArray(IPluginModelBase[]::new);
+		return List.copyOf(results);
+	}
+
+	/**
+	 * @see #findModels(String, VersionRange, Predicate)
+	 * @since 3.6
+	 * @deprecated Instead use
+	 *             {@link #findModels(String, VersionRange, Predicate)}
+	 */
+	@Deprecated(forRemoval = true, since = "3.19")
+	public static IPluginModelBase[] findModels(String id, org.eclipse.osgi.service.resolver.VersionRange range,
+			PluginFilter filter) {
+		return findModels(id, range, filter::accept).toArray(IPluginModelBase[]::new);
 	}
 
 	private static IPluginModelBase[] findModels(String id) {

@@ -17,6 +17,7 @@
 package org.eclipse.pde.internal.ui;
 
 import java.util.Locale;
+import java.util.function.Predicate;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -385,7 +386,8 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(ISiteBundle obj) {
-		IPluginModelBase modelBase = PluginRegistry.findModel(obj.getId(), obj.getVersion(), IMatchRules.COMPATIBLE, null);
+		IPluginModelBase modelBase = PluginRegistry.findModel(obj.getId(), obj.getVersion(), IMatchRules.COMPATIBLE,
+				(Predicate<IPluginModelBase>) null);
 		if (modelBase != null)
 			return getObjectText(modelBase.getPluginBase());
 		return preventNull(obj.getId());

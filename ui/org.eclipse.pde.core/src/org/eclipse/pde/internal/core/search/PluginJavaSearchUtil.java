@@ -17,6 +17,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -44,7 +45,7 @@ public class PluginJavaSearchUtil {
 	public static IPluginModelBase[] getPluginImports(IPluginImport dep) {
 		HashSet<IPluginModelBase> set = new HashSet<>();
 		VersionRange range = new VersionRange(dep.getVersion());
-		collectAllPrerequisites(PluginRegistry.findModel(dep.getId(), range, null), set);
+		collectAllPrerequisites(PluginRegistry.findModel(dep.getId(), range, (Predicate<IPluginModelBase>) null), set);
 		return set.toArray(new IPluginModelBase[set.size()]);
 	}
 

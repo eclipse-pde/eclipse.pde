@@ -23,6 +23,7 @@ package org.eclipse.pde.core.plugin;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IMatchRules {
+	// TODO: convert this to enums?
 	/**
 	 * No rule.
 	 */

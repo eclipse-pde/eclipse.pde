@@ -33,6 +33,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -364,7 +365,8 @@ public class LaunchAction extends Action {
 			if (id == null || version == null) {
 				continue;
 			}
-			IPluginModelBase model = PluginRegistry.findModel(id, version, IMatchRules.EQUIVALENT, null);
+			IPluginModelBase model = PluginRegistry.findModel(id, version, IMatchRules.EQUIVALENT,
+					(Predicate<IPluginModelBase>) null);
 			if (model == null) {
 				model = PluginRegistry.findModel(id);
 			}

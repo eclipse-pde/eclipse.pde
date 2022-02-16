@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.project;
 
-import org.eclipse.osgi.service.resolver.VersionRange;
+import java.util.Objects;
+
+import org.osgi.framework.VersionRange;
 
 /**
  * Common implementation for a requirement specification - host, required bundle,
@@ -40,7 +42,7 @@ public abstract class RequirementSpecification {
 		return fName;
 	}
 
-	public VersionRange getVersionRange() {
+	public VersionRange getVersion() {
 		return fRange;
 	}
 
@@ -50,10 +52,9 @@ public abstract class RequirementSpecification {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof RequirementSpecification spec) {
-			return getName().equals(spec.getName()) && isExported() == spec.isExported() && isOptional() == spec.isOptional() && equalOrNull(getVersionRange(), spec.getVersionRange());
-		}
-		return false;
+		return obj instanceof RequirementSpecification spec //
+				&& getName().equals(spec.getName()) && isExported() == spec.isExported()
+				&& isOptional() == spec.isOptional() && Objects.equals(getVersion(), spec.getVersion());
 	}
 
 	@Override
@@ -69,13 +70,6 @@ public abstract class RequirementSpecification {
 			code = code + 2;
 		}
 		return code;
-	}
-
-	private boolean equalOrNull(Object o1, Object o2) {
-		if (o1 == null) {
-			return o2 == null;
-		}
-		return o1.equals(o2);
 	}
 
 	public boolean isOptional() {
