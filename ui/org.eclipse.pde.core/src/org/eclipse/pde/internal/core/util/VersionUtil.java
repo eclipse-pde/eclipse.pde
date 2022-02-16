@@ -10,13 +10,16 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
- *     Hannes Wellmann - Introduce VersionMatchRule enum
+ *     Hannes Wellmann - Rework PluginRegistry API, replace Equinox resolver's VersionRange and introduce VersionMatchRule enum
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
+
+import java.util.Comparator;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.plugin.IMatchRules;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.VersionMatchRule;
 import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
@@ -44,6 +47,18 @@ public class VersionUtil {
 			return Status.error(UtilMessages.BundleErrorReporter_invalidVersionRangeFormat, e);
 		}
 		return Status.OK_STATUS;
+	}
+
+	public static final Comparator<IPluginModelBase> BY_DESCENDING_PLUGIN_VERSION = Comparator
+			.comparing(VersionUtil::getVersion).reversed();
+
+	public static Version getVersion(IPluginModelBase model) {
+		String version = model.getPluginBase().getVersion();
+		try {
+			return Version.parseVersion(version);
+		} catch (IllegalArgumentException e) {
+		}
+		return Version.emptyVersion;
 	}
 
 	public static VersionMatchRule matchRuleFromLiteral(int literal) {

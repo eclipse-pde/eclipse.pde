@@ -85,7 +85,7 @@ public class PluginRegistryTests {
 
 	@Test
 	public void testRangeNone() {
-		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", null, null);
+		IPluginModelBase model = PluginRegistry.findModel("org.eclipse.jdt.debug", null, (PluginFilter) null);
 		assertNotNull(model);
 		assertEquals("org.eclipse.jdt.debug", model.getPluginBase().getId());
 	}

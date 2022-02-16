@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,24 +10,26 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Hannes Wellmann - Rework PluginRegistry API to modernize it and replace Equinox resolver's VersionRange
  *******************************************************************************/
 package org.eclipse.pde.core.plugin;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 import org.osgi.resource.Resource;
 
 /**
@@ -45,15 +47,24 @@ import org.osgi.resource.Resource;
  */
 public class PluginRegistry {
 
+	private PluginRegistry() { // static use only
+	}
+
 	/**
 	 * Filter used when searching for plug-in models.
 	 * <p>
 	 * Clients may subclass this class to implement custom filters.
 	 * </p>
-	 * @see PluginRegistry#findModel(String, String, int, PluginFilter)
-	 * @see PluginRegistry#findModel(String, VersionRange, PluginFilter)
+	 *
+	 * @see PluginRegistry#findModels(String, String, VersionMatchRule)
+	 * @see PluginRegistry#findModels(String, VersionRange)
 	 * @since 3.6
+	 * @deprecated Instead use {@link Predicate} and filter the stream returned
+	 *             by
+	 *             {@link PluginRegistry#findModels(String, String, VersionMatchRule)}
+	 *             or {@link PluginRegistry#findModels(String, VersionRange)}
 	 */
+	@Deprecated(forRemoval = true, since = "3.19 (removal in 2026-09 or later)")
 	public static class PluginFilter {
 
 		/**
@@ -66,6 +77,10 @@ public class PluginRegistry {
 			return true;
 		}
 
+	}
+
+	private static Predicate<IPluginModelBase> asPredicate(PluginFilter filter) {
+		return filter != null ? filter::accept : p -> true;
 	}
 
 	/**
@@ -126,7 +141,7 @@ public class PluginRegistry {
 	 *         <code>null</code> if none exists
 	 * @deprecated Instead use {@link #findModel(Resource)}
 	 */
-	@Deprecated(forRemoval = true)
+	@Deprecated(forRemoval = true, since = "3.18 (removal in 2026-06 or later)")
 	public static IPluginModelBase findModel(BundleDescription desc) {
 		return findModel((Resource) desc);
 	}
@@ -242,8 +257,8 @@ public class PluginRegistry {
 	}
 
 	/**
-	 * Returns a model matching the given id, version, match rule, and optional
-	 * filter, or <code>null</code> if none.
+	 * Returns a model matching the given id, version, match rule, or
+	 * <code>null</code> if none.
 	 * <p>
 	 * A workspace plug-in is always preferably returned over a target plug-in.
 	 * A plug-in that is checked/enabled on the Target Platform preference page
@@ -264,61 +279,90 @@ public class PluginRegistry {
 	 * @param version
 	 *            minimum version, or <code>null</code> to only match on
 	 *            symbolic name
-	 * @param match
-	 *            one of {@link IMatchRules#COMPATIBLE},
-	 *            {@link IMatchRules#EQUIVALENT},
-	 *            {@link IMatchRules#GREATER_OR_EQUAL},
-	 *            {@link IMatchRules#PERFECT}, or {@link IMatchRules#NONE} when
-	 *            a version is unspecified
-	 * @param filter
-	 *            a plug-in filter or <code>null</code>
+	 * @param matchRule
+	 *            the {@link VersionMatchRule rule} a plug-in's version must
+	 *            match with respect to the specified reference version in order
+	 *            to be selected.
 	 *
 	 * @return a matching model or <code>null</code>
-	 * @since 3.6
+	 * @since 3.19
 	 */
+	public static IPluginModelBase findModel(String id, String version, VersionMatchRule matchRule) {
+		return findModels(id, version, matchRule).findFirst().orElse(null);
+	}
+
+	/**
+	 * @see #findModel(String, String, VersionMatchRule)
+	 * @see #findModels(String, String, VersionMatchRule)
+	 * @since 3.6
+	 * @deprecated If no filter is passed use
+	 *             {@link #findModel(String, String, VersionMatchRule)}, else
+	 *             filter the {@code Stream} returned by
+	 *             {@link #findModels(String, String, VersionMatchRule)}.
+	 */
+	@Deprecated(forRemoval = true, since = "3.19 (removal in 2026-09 or later)")
 	public static IPluginModelBase findModel(String id, String version, int match, PluginFilter filter) {
-		return getMax(findModels(id, version, match, filter));
+		VersionMatchRule rule = safeToRuleLiteral(match);
+		return findModels(id, version, rule).filter(asPredicate(filter)).findFirst().orElse(null);
 	}
 
 	/**
-	 * Returns all models matching the given id, version, match rule, and optional filter.
+	 * Returns all models matching the given id, version and match rule sorted
+	 * by descending version.
 	 * <p>
-	 * Target (external) plug-ins/fragments with the same ID as workspace counterparts are not
-	 * considered.
+	 * Target (external) plug-ins/fragments with the same ID as workspace
+	 * counterparts are not considered.
 	 * </p>
 	 * <p>
-	 * Returns plug-ins regardless of whether they are checked/enabled or unchecked/disabled
-	 * on the Target Platform preference page.
+	 * Returns plug-ins regardless of whether they are checked/enabled or
+	 * unchecked/disabled on the Target Platform preference page.
 	 * </p>
-	 * @param id symbolic name of a plug-ins to find
-	 * @param version minimum version, or <code>null</code> to only match on symbolic name
-	 * @param match one of {@link IMatchRules#COMPATIBLE}, {@link IMatchRules#EQUIVALENT},
-	 *  {@link IMatchRules#GREATER_OR_EQUAL}, {@link IMatchRules#PERFECT}, or {@link IMatchRules#NONE}
-	 *  when a version is unspecified
-	 * @param filter a plug-in filter or <code>null</code>
 	 *
-	 * @return a matching models, possibly an empty collection
-	 * @since 3.6
+	 * @param id
+	 *            symbolic name of a plug-ins to find
+	 * @param version
+	 *            minimum version, or <code>null</code> to only match on
+	 *            symbolic name
+	 * @param matchRule
+	 *            the {@link VersionMatchRule rule} a plug-in's version must
+	 *            match with respect to the specified reference version in order
+	 *            to be selected.
+	 *
+	 * @return a stream of all matching models sorted by descending version,
+	 *         possibly empty.
+	 * @since 3.19
 	 */
-	public static IPluginModelBase[] findModels(String id, String version, int match, PluginFilter filter) {
-		IPluginModelBase[] models = findModels(id);
-		List<IPluginModelBase> results = new ArrayList<>();
-		for (IPluginModelBase model : models) {
-			IPluginBase base = model.getPluginBase();
-			if (base == null || base.getId() == null) {
-				continue; // guard against invalid plug-ins
-			}
-			if ((filter == null || filter.accept(model))
-					&& (version == null || VersionUtil.compare(base.getVersion(), version, match))) {
-				results.add(model);
-			}
-		}
-		return results.toArray(IPluginModelBase[]::new);
+	public static Stream<IPluginModelBase> findModels(String id, String version, VersionMatchRule matchRule) {
+		Version reference = version != null ? Version.valueOf(version) : null;
+		return selectModels(id, version != null ? p -> matchRule.matches(VersionUtil.getVersion(p), reference) : null);
 	}
 
 	/**
-	 * Returns a model matching the given id, version range, and optional filter,
-	 * or <code>null</code> if none.
+	 * @see #findModels(String, String, VersionMatchRule)
+	 * @since 3.6
+	 * @deprecated Instead use
+	 *             {@link #findModels(String, String, VersionMatchRule)} and
+	 *             filter the returned {@code Stream} if a filter is passed.
+	 */
+	@Deprecated(forRemoval = true, since = "3.19 (removal in 2026-09 or later)")
+	public static IPluginModelBase[] findModels(String id, String version, int match, PluginFilter filter) {
+		VersionMatchRule rule = safeToRuleLiteral(match);
+		return findModels(id, version, rule).filter(asPredicate(filter)).toArray(IPluginModelBase[]::new);
+	}
+
+	private static VersionMatchRule safeToRuleLiteral(int match) {
+		VersionMatchRule rule;
+		try {
+			rule = VersionUtil.matchRuleFromLiteral(match);
+		} catch (IllegalArgumentException e) {
+			rule = VersionMatchRule.PERFECT; // Same as VersionUtil.compare
+		}
+		return rule;
+	}
+
+	/**
+	 * Returns a model matching the given id, version range, or
+	 * <code>null</code> if none.
 	 * <p>
 	 * A workspace plug-in is always preferably returned over a target plug-in.
 	 * A plug-in that is checked/enabled on the Target Platform preference page is always
@@ -334,84 +378,81 @@ public class PluginRegistry {
 	 * </p>
 	 * @param id symbolic name of plug-in to find
 	 * @param range acceptable version range to match, or <code>null</code> for any range
-	 * @param filter a plug-in filter or <code>null</code>
 	 *
 	 * @return a matching model or <code>null</code>
-	 * @since 3.6
+	 * @since 3.19
 	 */
-	public static IPluginModelBase findModel(String id, VersionRange range, PluginFilter filter) {
-		return getMax(findModels(id, range, filter));
+	public static IPluginModelBase findModel(String id, VersionRange range) {
+		return findModels(id, range).findFirst().orElse(null);
 	}
 
 	/**
-	 * Returns the plug-in with the highest version, or <code>null</code> if empty.
-	 *
-	 * @param models models
-	 * @return plug-in with the highest version or <code>null</code>
+	 * @see #findModel(String, VersionRange)
+	 * @since 3.6
+	 * @deprecated If no filter is passed use
+	 *             {@link #findModel(String, VersionRange)}, else filter the
+	 *             {@code Stream} returned by
+	 *             {@link #findModels(String, VersionRange)}.
 	 */
-	private static IPluginModelBase getMax(IPluginModelBase[] models) {
-		if (models.length == 0) {
-			return null;
-		}
-		if (models.length == 1) {
-			return models[0];
-		}
-		IPluginModelBase max = null;
-		Version maxV = null;
-		for (IPluginModelBase model : models) {
-			String versionStr = model.getPluginBase().getVersion();
-			Version version = VersionUtil.validateVersion(versionStr).isOK() ? new Version(versionStr) : Version.emptyVersion;
-			if (max == null) {
-				max = model;
-				maxV = version;
-			} else {
-				if (VersionMatchRule.GREATER_OR_EQUAL.matches(version, maxV)) {
-					max = model;
-					maxV = version;
-				}
-			}
-		}
-		return max;
+	@Deprecated(forRemoval = true, since = "3.19 (removal in 2026-09 or later)")
+	public static IPluginModelBase findModel(String id, org.eclipse.osgi.service.resolver.VersionRange range,
+			PluginFilter filter) {
+		return findModels(id, range).filter(asPredicate(filter)).findFirst().orElse(null);
 	}
 
 	/**
-	 * Returns all models matching the given id, version range, and optional filter.
+	 * Returns all models matching the given id and version range sorted by
+	 * descending version.
 	 * <p>
-	 * Target (external) plug-ins/fragments with the same ID as workspace counterparts are not
-	 * considered.
+	 * Target (external) plug-ins/fragments with the same ID as workspace
+	 * counterparts are not considered.
 	 * </p>
 	 * <p>
-	 * Returns plug-ins regardless of whether they are checked/enabled or unchecked/disabled
-	 * on the Target Platform preference page.
+	 * Returns plug-ins regardless of whether they are checked/enabled or
+	 * unchecked/disabled on the Target Platform preference page.
 	 * </p>
-	 * @param id symbolic name of plug-ins to find
-	 * @param range acceptable version range to match, or <code>null</code> for any range
-	 * @param filter a plug-in filter or <code>null</code>
 	 *
-	 * @return a matching models, possibly empty
-	 * @since 3.6
+	 * @param id
+	 *            symbolic name of plug-ins to find
+	 * @param range
+	 *            acceptable version range to match, or <code>null</code> for
+	 *            any range
+	 *
+	 * @return a stream of all matching models sorted by descending version,
+	 *         possibly empty.
+	 * @since 3.19
 	 */
-	public static IPluginModelBase[] findModels(String id, VersionRange range, PluginFilter filter) {
-		IPluginModelBase[] models = findModels(id);
-		List<IPluginModelBase> results = new ArrayList<>();
-		for (IPluginModelBase model : models) {
-			if (filter == null || filter.accept(model)) {
-				String versionStr = model.getPluginBase().getVersion();
-				Version version = VersionUtil.validateVersion(versionStr).isOK() ? new Version(versionStr) : Version.emptyVersion;
-				if (range == null || range.isIncluded(version)) {
-					results.add(model);
-				}
-			}
-		}
-		return results.toArray(IPluginModelBase[]::new);
+	public static Stream<IPluginModelBase> findModels(String id, VersionRange range) {
+		return selectModels(id, range != null ? p -> range.includes(VersionUtil.getVersion(p)) : null);
 	}
 
-	private static IPluginModelBase[] findModels(String id) {
+	/**
+	 * @see #findModels(String, VersionRange)
+	 * @since 3.6
+	 * @deprecated Instead use {@link #findModels(String, VersionRange)} and
+	 *             filter the returned {@code Stream} if a filter is passed.
+	 */
+	@Deprecated(forRemoval = true, since = "3.19 (removal in 2026-09 or later)")
+	public static IPluginModelBase[] findModels(String id, org.eclipse.osgi.service.resolver.VersionRange range,
+			PluginFilter filter) {
+		return findModels(id, range).filter(asPredicate(filter)).toArray(IPluginModelBase[]::new);
+	}
+
+	private static Stream<IPluginModelBase> selectModels(String id, Predicate<IPluginModelBase> versionFilter) {
 		ModelEntry entry = PluginRegistry.findEntry(id);
-		if (entry != null) {
-			return entry.hasWorkspaceModels() ? entry.getWorkspaceModels() : entry.getExternalModels();
+		if (entry == null) {
+			return Stream.empty();
 		}
-		return new IPluginModelBase[0];
+		List<IPluginModelBase> models = entry.hasWorkspaceModels() ? entry.fWorkspaceEntries : entry.fExternalEntries;
+		Stream<IPluginModelBase> plugins = models.stream().filter(m -> {
+			IPluginBase base = m.getPluginBase();
+			// guard against invalid plug-ins
+			return base != null && base.getId() != null;
+		});
+		if (versionFilter != null) {
+			plugins = plugins.filter(versionFilter);
+		}
+		return plugins.sorted(VersionUtil.BY_DESCENDING_PLUGIN_VERSION);
 	}
 
 	/**
