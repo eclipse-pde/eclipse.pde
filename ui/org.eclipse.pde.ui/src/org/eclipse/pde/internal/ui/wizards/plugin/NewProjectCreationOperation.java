@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,7 +20,6 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.regex.Pattern;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -485,10 +484,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 		IClasspathEntry[] entries = new IClasspathEntry[1];
 		IPath path = project.getProject().getFullPath().append(data.getSourceFolderName());
-		String testPluginPattern = PDECore.getDefault().getPreferencesManager()
-				.getString(ICoreConstants.TEST_PLUGIN_PATTERN);
-		boolean isTestPlugin = testPluginPattern != null && testPluginPattern.length() > 0
-				&& Pattern.compile(testPluginPattern).matcher(project.getProject().getName()).find();
+		boolean isTestPlugin = ClasspathComputer.hasTestPluginName(project.getProject());
 		if (isTestPlugin) {
 			IClasspathAttribute testAttribute = JavaCore.newClasspathAttribute(IClasspathAttribute.TEST, "true"); //$NON-NLS-1$
 			entries[0] = JavaCore.newSourceEntry(path, null, null, null, new IClasspathAttribute[] { testAttribute });

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -74,9 +74,7 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 			}
 
 			// fetch the plug-ins models
-			Set<String> set = new HashSet<>();
-			Map<IPluginModelBase, String> map = BundleLauncherHelper.getWorkspaceBundleMap(fLaunchConfiguration, set);
-			map.putAll(BundleLauncherHelper.getTargetBundleMap(fLaunchConfiguration, set));
+			Map<IPluginModelBase, String> map = BundleLauncherHelper.getAllSelectedPluginBundles(fLaunchConfiguration);
 
 			addPlugins(factory, product, map);
 

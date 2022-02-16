@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.api.tools.internal.model.MethodKey;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -58,9 +59,9 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 	}
 
 	@Override
-	public boolean considerReference(IReference reference) {
+	public boolean considerReference(IReference reference, IProgressMonitor monitor) {
 		MethodKey key = new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName(), reference.getReferencedSignature(), true);
-		if (super.considerReference(reference) && fIllegalMethods.containsKey(key)) {
+		if (super.considerReference(reference, monitor) && fIllegalMethods.containsKey(key)) {
 			retainReference(reference);
 			return true;
 		}
@@ -76,7 +77,7 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 				if (member instanceof IApiMethod) {
 					IApiMethod method = (IApiMethod) member;
 					if (method.isDefaultMethod()) {
-						return considerReference(reference);
+						return considerReference(reference, monitor);
 					}
 				}
 			}
@@ -85,8 +86,8 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 	}
 
 	@Override
-	protected boolean isProblem(IReference reference) {
-		if (!super.isProblem(reference)) {
+	protected boolean isProblem(IReference reference, IProgressMonitor monitor) {
+		if (!super.isProblem(reference, monitor)) {
 			return false;
 		}
 		IApiMember method = reference.getResolvedReference();

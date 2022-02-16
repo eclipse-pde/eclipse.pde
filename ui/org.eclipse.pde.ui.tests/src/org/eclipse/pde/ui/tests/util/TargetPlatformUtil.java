@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2019, 2021 Julian Honnen and others.
+ *  Copyright (c) 2019, 2022 Julian Honnen and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -69,7 +69,7 @@ public class TargetPlatformUtil {
 
 		addRunningPlatformBundles(locations, included, bundleFilter);
 
-		ITargetLocation location = createDummyBundlesLocation(targetPlugins, jarDirectory);
+		ITargetLocation location = createDummyBundlesLocation(targetPlugins, Map.of(), jarDirectory);
 		locations.add(location);
 		included.addAll(targetPlugins);
 
@@ -129,21 +129,34 @@ public class TargetPlatformUtil {
 
 	public static void setDummyBundlesAsTarget(List<NameVersionDescriptor> targetPlugins, Path jarDirectory)
 			throws IOException, InterruptedException {
-		ITargetLocation location = createDummyBundlesLocation(targetPlugins, jarDirectory);
+		ITargetLocation location = createDummyBundlesLocation(targetPlugins, Map.of(), jarDirectory);
 		createAndSetTargetForWorkspace(null, List.of(location), targetPlugins);
 	}
 
-	private static ITargetLocation createDummyBundlesLocation(List<NameVersionDescriptor> targetPlugins,
-			Path jarDirectory) throws IOException {
+	public static void setDummyBundlesAsTarget(Map<NameVersionDescriptor, Map<String, String>> pluginDescriptions,
+			Path jarDirectory) throws IOException, InterruptedException {
+		Set<NameVersionDescriptor> pluginIds = pluginDescriptions.keySet();
+		ITargetLocation location = createDummyBundlesLocation(pluginIds, pluginDescriptions, jarDirectory);
+		createAndSetTargetForWorkspace(null, List.of(location), pluginIds);
+	}
+
+	private static ITargetLocation createDummyBundlesLocation(Collection<NameVersionDescriptor> targetPlugins,
+			Map<NameVersionDescriptor, Map<String, String>> pluginAttributes, Path jarDirectory) throws IOException {
+		Path pluginsDirectory = jarDirectory.resolve("plugins");
+		Files.createDirectories(pluginsDirectory);
 		for (NameVersionDescriptor bundleNameVersion : targetPlugins) {
 
 			Manifest manifest = createDummyBundleManifest(bundleNameVersion.getId(), bundleNameVersion.getVersion());
+			Map<String, String> extraAttributes = pluginAttributes.get(bundleNameVersion);
+			if (extraAttributes != null) {
+				extraAttributes.forEach(manifest.getMainAttributes()::putValue);
+			}
 
 			Attributes mainAttributes = manifest.getMainAttributes();
 			String bundleSymbolicName = Objects.requireNonNull(mainAttributes.getValue(Constants.BUNDLE_SYMBOLICNAME));
 			String bundleVersion = Objects.requireNonNull(mainAttributes.getValue(Constants.BUNDLE_VERSION));
 
-			Path jarPath = jarDirectory.resolve(bundleSymbolicName + "_" + bundleVersion + ".jar");
+			Path jarPath = pluginsDirectory.resolve(bundleSymbolicName + "_" + bundleVersion + ".jar");
 			try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(jarPath));) {
 				out.putNextEntry(new ZipEntry(JarFile.MANIFEST_NAME));
 				manifest.write(out);

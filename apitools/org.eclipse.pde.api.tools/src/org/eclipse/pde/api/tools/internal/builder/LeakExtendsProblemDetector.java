@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.model.ApiType;
 import org.eclipse.pde.api.tools.internal.model.MethodKey;
@@ -68,8 +69,8 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 	}
 
 	@Override
-	public boolean isProblem(IReference reference) {
-		boolean isProb = super.isProblem(reference);
+	public boolean isProblem(IReference reference, IProgressMonitor monitor) {
+		boolean isProb = super.isProblem(reference, monitor);
 		problemFlags = IApiProblem.LEAK_EXTENDS;
 		//check if the no extend type is left to be extended
 		// or if noimplement interface is extended but not marked noimplement
@@ -108,6 +109,7 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 			}
 			catch (CoreException e) {
 				ApiPlugin.log(e);
+				checkIfDisposed(member.getApiComponent(), monitor);
 			}
 		}
 		if (isProb) {

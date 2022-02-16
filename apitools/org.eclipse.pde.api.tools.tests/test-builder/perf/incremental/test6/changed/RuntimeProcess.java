@@ -226,7 +226,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 				fMonitor.killThread();
 				fMonitor = null;
 			}
-			IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.RuntimeProcess_terminate_failed, null);		 
+			IStatus status = Status.error(DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.RuntimeProcess_terminate_failed, null);		 
 			throw new DebugException(status);
 		}
 	}
@@ -363,7 +363,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		if (isTerminated()) {
 			return fExitValue;
 		} 
-		throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.RuntimeProcess_Exit_value_not_available_until_process_terminates__1, null)); 
+		throw new DebugException(Status.error(DebugPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, DebugCoreMessages.RuntimeProcess_Exit_value_not_available_until_process_terminates__1, null)); 
 	}
 	
 	/**

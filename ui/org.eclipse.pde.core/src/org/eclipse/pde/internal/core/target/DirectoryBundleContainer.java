@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Objects;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
@@ -28,7 +27,6 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.core.target.TargetFeature;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
-import org.eclipse.pde.internal.core.PDECore;
 
 /**
  * A directory of bundles.
@@ -89,8 +87,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 					}).filter(Objects::nonNull) //
 					.toArray(TargetBundle[]::new);
 		}
-		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
-				NLS.bind(Messages.DirectoryBundleContainer_1, dir.toString())));
+		throw new CoreException(Status.error(NLS.bind(Messages.DirectoryBundleContainer_1, dir.toString())));
 	}
 
 	@Override
@@ -110,8 +107,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 				}
 			}).filter(Objects::nonNull).toArray(TargetFeature[]::new);
 		}
-		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
-				NLS.bind(Messages.DirectoryBundleContainer_1, dir.toString())));
+		throw new CoreException(Status.error(NLS.bind(Messages.DirectoryBundleContainer_1, dir.toString())));
 	}
 
 	/**

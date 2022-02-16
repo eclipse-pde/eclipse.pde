@@ -16,7 +16,8 @@ package org.eclipse.pde.internal.ui.preferences;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -151,10 +152,10 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	 */
 	private void doSelectionChanged(Object[] objects) {
 		if (objects.length != 1) {
-			updateStatus(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), "")); //$NON-NLS-1$
+			updateStatus(Status.error("")); //$NON-NLS-1$
 			setSelectionResult(null);
 		} else {
-			updateStatus(new Status(IStatus.OK, PDEPlugin.getPluginId(), "")); //$NON-NLS-1$
+			updateStatus(Status.OK_STATUS);
 			setSelectionResult(objects);
 		}
 	}

@@ -77,7 +77,7 @@ public abstract class ManifestErrorReporter extends XMLErrorReporter {
 
 	protected void validateVersionAttribute(Element element, Attr attr) {
 		IStatus status = VersionUtil.validateVersion(attr.getValue());
-		if (status.getSeverity() != IStatus.OK) {
+		if (!status.isOK()) {
 			report(status.getMessage(), getLine(element, attr.getName()), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 		}
 	}

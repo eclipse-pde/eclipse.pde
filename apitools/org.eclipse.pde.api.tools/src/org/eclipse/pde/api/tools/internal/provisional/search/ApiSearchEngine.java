@@ -157,7 +157,7 @@ public final class ApiSearchEngine {
 		IReference ref = null;
 		SubMonitor localmonitor = SubMonitor.convert(monitor, references.size());
 		IApiMember member = null;
-		for (Iterator<IReference> iter = references.iterator(); iter.hasNext();) {
+		for (Iterator<IReference> iter = references.iterator(); iter.hasNext() && !monitor.isCanceled();) {
 			if (localmonitor.isCanceled()) {
 				return Collections.emptyList();
 			}
@@ -167,7 +167,7 @@ public final class ApiSearchEngine {
 				continue;
 			}
 			localmonitor.setTaskName(MessageFormat.format(SearchMessages.ApiSearchEngine_searching_for_use_from, fRequestorContext, type.getName()));
-			if (requestor.acceptReference(ref)) {
+			if (requestor.acceptReference(ref, monitor)) {
 				refs.add(ref);
 			}
 			localmonitor.worked(1);
@@ -287,7 +287,7 @@ public final class ApiSearchEngine {
 					if (mstatus == null) {
 						mstatus = new MultiStatus(ApiPlugin.PLUGIN_ID, IStatus.ERROR, null, null);
 					}
-					mstatus.add(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ce.getMessage(), ce));
+					mstatus.add(Status.error(ce.getMessage(), ce));
 				}
 			}
 			if (ApiPlugin.DEBUG_SEARCH_ENGINE) {

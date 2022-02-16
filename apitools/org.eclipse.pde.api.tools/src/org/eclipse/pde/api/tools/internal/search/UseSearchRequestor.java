@@ -16,6 +16,7 @@ package org.eclipse.pde.api.tools.internal.search;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.api.tools.internal.AntFilterStore;
 import org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector;
 import org.eclipse.pde.api.tools.internal.builder.ProblemDetectorBuilder;
@@ -203,7 +204,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	}
 
 	@Override
-	public boolean acceptReference(IReference reference) {
+	public boolean acceptReference(IReference reference, IProgressMonitor monitor) {
 		try {
 			IApiMember member = reference.getResolvedReference();
 			if (member != null) {
@@ -211,7 +212,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 				if (!fComponentIds.contains(component.getSymbolicName()) || component.equals(reference.getMember().getApiComponent())) {
 					return false;
 				}
-				if (isIllegalUse(reference) || (includesAPI() && includesInternal())) {
+				if (isIllegalUse(reference, monitor) || (includesAPI() && includesInternal())) {
 					return true;
 				}
 				IApiAnnotations annots = component.getApiDescription().resolveAnnotations(member.getHandle());
@@ -226,6 +227,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 			}
 		} catch (CoreException ce) {
 			ApiPlugin.log(ce);
+			AbstractProblemDetector.checkIfDisposed(reference.getMember().getApiComponent(), monitor);
 		}
 		return false;
 	}
@@ -238,14 +240,17 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 * @return true if the reference is illegal use false otherwise
 	 * @since 1.1
 	 */
-	boolean isIllegalUse(IReference reference) {
+	boolean isIllegalUse(IReference reference, IProgressMonitor monitor) {
 		IApiProblemDetector[] detectors = fAnalyzer.getProblemDetectors(reference.getReferenceKind());
 		for (IApiProblemDetector detector : detectors) {
-			if (detector.considerReference(reference)) {
+			if (monitor.isCanceled()) {
+				break;
+			}
+			if (detector.considerReference(reference, monitor)) {
 				Reference ref = (Reference) reference;
 				ref.setFlags(IReference.F_ILLEGAL);
 				try {
-					IApiProblem pb = ((AbstractProblemDetector) detector).checkAndCreateProblem(reference);
+					IApiProblem pb = ((AbstractProblemDetector) detector).checkAndCreateProblem(reference, monitor);
 					if (pb != null && !isFiltered(pb)) {
 						ref.addProblems(pb);
 					} else {
@@ -253,6 +258,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 					}
 				} catch (CoreException e) {
 					ApiPlugin.log(e);
+					AbstractProblemDetector.checkIfDisposed(reference.getMember().getApiComponent(), monitor);
 				}
 				return true;
 			}

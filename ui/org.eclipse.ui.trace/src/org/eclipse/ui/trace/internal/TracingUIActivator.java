@@ -88,10 +88,8 @@ public class TracingUIActivator extends Plugin {
 	 *            The {@link Exception} to log
 	 */
 	public final void logException(final Exception ex) {
-
 		if (ex != null) {
-			final IStatus errorStatus = new Status(IStatus.ERROR, TracingConstants.BUNDLE_ID, ex.getMessage(), ex);
-			this.getLog().log(errorStatus);
+			this.getLog().log(Status.error(ex.getMessage(), ex));
 		}
 	}
 

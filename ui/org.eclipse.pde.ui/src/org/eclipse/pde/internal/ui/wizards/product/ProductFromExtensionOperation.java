@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2021 IBM Corporation and others.
+ *  Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -67,7 +67,8 @@ public class ProductFromExtensionOperation extends BaseProductCreationOperation 
 				}
 			}
 		}
-		Set<BundleDescription> bundles = DependencyManager.findRequirementsClosure(plugins, false);
+		Set<BundleDescription> bundles = DependencyManager.findRequirementsClosure(plugins,
+				DependencyManager.Options.INCLUDE_NON_TEST_FRAGMENTS);
 		return bundles.stream().map(BundleDescription::getSymbolicName).toArray(String[]::new);
 	}
 

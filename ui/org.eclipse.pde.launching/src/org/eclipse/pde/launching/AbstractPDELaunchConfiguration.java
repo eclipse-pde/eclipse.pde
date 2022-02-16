@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2018, 2020 IBM Corporation and others.
+ *  Copyright (c) 2005, 2018, 2022 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.jdt.core.IJavaModelMarker;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -82,7 +83,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			VMRunnerConfiguration runnerConfig = new VMRunnerConfiguration(getMainClass(), getClasspath(configuration));
 			IVMInstall launcher = VMHelper.createLauncher(configuration);
 			boolean isModular = JavaRuntime.isModularJava(launcher);
-			runnerConfig.setVMArguments(updateVMArgumentWithAddModuleSystem(getVMArguments(configuration), isModular));
+			runnerConfig.setVMArguments(updateVMArgumentWithAdditionalArguments(getVMArguments(configuration), isModular, configuration));
 			runnerConfig.setProgramArguments(getProgramArguments(configuration));
 			runnerConfig.setWorkingDirectory(getWorkingDirectory(configuration).getAbsolutePath());
 			runnerConfig.setEnvironment(getEnvironment(configuration));
@@ -122,7 +123,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			VMRunnerConfiguration runnerConfig = new VMRunnerConfiguration(getMainClass(), getClasspath(configuration));
 			IVMInstall launcher = VMHelper.createLauncher(configuration);
 			boolean isModular = JavaRuntime.isModularJava(launcher);
-			runnerConfig.setVMArguments(updateVMArgumentWithAddModuleSystem(getVMArguments(configuration), isModular));
+			runnerConfig.setVMArguments(updateVMArgumentWithAdditionalArguments(getVMArguments(configuration), isModular, configuration));
 			runnerConfig.setProgramArguments(getProgramArguments(configuration));
 			runnerConfig.setWorkingDirectory(getWorkingDirectory(configuration).getAbsolutePath());
 			runnerConfig.setEnvironment(getEnvironment(configuration));
@@ -143,11 +144,40 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		}
 	}
 
-	private String[] updateVMArgumentWithAddModuleSystem(String[] args, boolean isModular) {
+	private String[] updateVMArgumentWithAdditionalArguments(String[] args, boolean isModular, ILaunchConfiguration configuration) {
 		String modAllSystem= "--add-modules=ALL-SYSTEM"; //$NON-NLS-1$
-		if (isModular && !argumentContainsModuleSystem(args, modAllSystem)) {
-			args = Arrays.copyOf(args, args.length + 1);
-			args[args.length - 1] = modAllSystem;
+		String allowSecurityManager = "-Djava.security.manager=allow"; //$NON-NLS-1$
+		boolean addModuleSystem = false;
+		boolean addAllowSecurityManager = false;
+		int argLength = args.length;
+		if (isModular && !argumentContainsAttribute(args, modAllSystem)) {
+			addModuleSystem = true;
+			argLength++; // Need to add the argument
+		}
+		IVMInstall vmInstall;
+		try {
+			vmInstall = VMHelper.getVMInstall(configuration);
+			if (vmInstall instanceof AbstractVMInstall) {
+				AbstractVMInstall install = (AbstractVMInstall) vmInstall;
+				String vmver = install.getJavaVersion();
+				if (vmver != null && JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_17) >= 0) {
+					if (!argumentContainsAttribute(args, allowSecurityManager)) {
+						addAllowSecurityManager = true;
+						argLength++; // Need to add the argument
+					}
+				}
+			}
+		} catch (CoreException e) {
+			PDELaunchingPlugin.log(e);
+		}
+		if (addModuleSystem || addAllowSecurityManager) {
+			args = Arrays.copyOf(args, argLength);
+			if (addAllowSecurityManager) {
+				args[--argLength] = allowSecurityManager;
+			}
+			if (addModuleSystem) {
+				args[--argLength] = modAllSystem;
+			}
 		}
 		if (!isModular) {
 			ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(args));
@@ -158,7 +188,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		return args;
 	}
 
-	private boolean argumentContainsModuleSystem(String[] args, String modAllSystem) {
+	private boolean argumentContainsAttribute(String[] args, String modAllSystem) {
 		for (String string : args) {
 			if (string.equals(modAllSystem))
 				return true;
@@ -219,7 +249,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		String[] classpath = LaunchArgumentsHelper.constructClasspath(configuration);
 		if (classpath == null) {
 			String message = PDEMessages.WorkbenchLauncherConfigurationDelegate_noStartup;
-			throw new CoreException(LauncherUtils.createErrorStatus(message));
+			throw new CoreException(Status.error(message));
 		}
 		return classpath;
 	}

@@ -184,17 +184,13 @@ public class ExtensionPointDetails extends PDEDetails {
 					}
 				});
 				dialog.setValidator(selection -> {
-					IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor().getAggregateModel();
-					String pluginName = model.getPluginBase().getId();
-
 					if (selection == null || selection.length != 1 || !(selection[0] instanceof IFile))
-						return new Status(IStatus.ERROR, pluginName, IStatus.ERROR, PDEUIMessages.ManifestEditor_ExtensionPointDetails_validate_errorStatus, null);
+						return Status.error(PDEUIMessages.ManifestEditor_ExtensionPointDetails_validate_errorStatus);
 					IFile file = (IFile) selection[0];
 					String ext = file.getFullPath().getFileExtension();
 					if ("exsd".equals(ext) || "mxsd".equals(ext)) //$NON-NLS-1$ //$NON-NLS-2$
-						return new Status(IStatus.OK, pluginName, IStatus.OK, "", null); //$NON-NLS-1$
-					return new Status(IStatus.ERROR, pluginName, IStatus.ERROR,
-							PDEUIMessages.ManifestEditor_ExtensionPointDetails_validate_errorStatus, null);
+						return Status.OK_STATUS;
+					return Status.error(PDEUIMessages.ManifestEditor_ExtensionPointDetails_validate_errorStatus);
 				});
 				dialog.setDoubleClickSelects(true);
 				dialog.setStatusLineAboveButtons(true);

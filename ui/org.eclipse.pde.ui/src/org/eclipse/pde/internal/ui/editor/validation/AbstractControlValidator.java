@@ -128,7 +128,7 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 	public static int getMessageType(IStatus status) {
 		int severity = status.getSeverity();
 		// Translate severity to the equivalent message provider type
-		if (severity == IStatus.OK) {
+		if (status.isOK()) {
 			return IMessageProvider.NONE;
 		} else if (severity == IStatus.ERROR) {
 			return IMessageProvider.ERROR;

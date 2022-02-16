@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
@@ -67,8 +66,7 @@ public class ExternalFeatureModelManager {
 			model.load(stream, false);
 			return model;
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
-					NLS.bind(Messages.TargetFeature_FileDoesNotExist, manifest)));
+			throw new CoreException(Status.error(NLS.bind(Messages.TargetFeature_FileDoesNotExist, manifest)));
 		}
 	}
 

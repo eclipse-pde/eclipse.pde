@@ -31,7 +31,7 @@ class Utils {
 	public static boolean isWindows = System.getProperty("os.name").startsWith("Win"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	public static IStatus newStatus(String message, Throwable e) {
-		return new Status(IStatus.ERROR, "org.eclipse.update.configurator", IStatus.OK, message, e); //$NON-NLS-1$
+		return Status.error(message, e);
 	}
 
 	public static void log(String message) {

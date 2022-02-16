@@ -225,7 +225,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			try {
 				state = loadState(project.getProject());
 			} catch (IOException e) {
-				Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error loading project state.", e)); //$NON-NLS-1$
+				Activator.log(Status.error("Error loading project state.", e)); //$NON-NLS-1$
 			}
 
 			if (state == null) {

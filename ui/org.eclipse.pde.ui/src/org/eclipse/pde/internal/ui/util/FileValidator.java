@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.ui.util;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 
 public class FileValidator implements ISelectionStatusValidator {
@@ -24,11 +23,9 @@ public class FileValidator implements ISelectionStatusValidator {
 	@Override
 	public IStatus validate(Object[] selection) {
 		if (selection.length > 0 && selection[0] instanceof IFile) {
-			return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", //$NON-NLS-1$
-					null);
+			return Status.OK_STATUS;
 		}
-		return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, "", //$NON-NLS-1$
-				null);
+		return Status.error(""); //$NON-NLS-1$
 	}
 
 }

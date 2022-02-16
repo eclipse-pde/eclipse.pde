@@ -18,7 +18,6 @@ import java.util.Set;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -175,10 +174,10 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	 */
 	void doSelectionChanged(Object[] objects) {
 		if (objects.length != 1) {
-			updateStatus(new Status(IStatus.ERROR, ApiUIPlugin.getPluginIdentifier(), "")); //$NON-NLS-1$
+			updateStatus(Status.error("")); //$NON-NLS-1$
 			setSelectionResult(null);
 		} else {
-			updateStatus(new Status(IStatus.OK, ApiUIPlugin.getPluginIdentifier(), "")); //$NON-NLS-1$
+			updateStatus(Status.OK_STATUS);
 			setSelectionResult(objects);
 		}
 	}

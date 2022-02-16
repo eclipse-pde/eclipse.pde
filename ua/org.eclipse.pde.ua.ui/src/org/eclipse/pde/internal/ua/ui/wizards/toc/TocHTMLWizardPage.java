@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
 import org.eclipse.pde.internal.ua.ui.editor.toc.HelpEditorUtil;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
@@ -64,7 +63,7 @@ public class TocHTMLWizardPage extends WizardNewFileCreationPage {
 
 	@Override
 	protected IStatus validateLinkedResource() {
-		return new Status(IStatus.OK, PDEUserAssistanceUIPlugin.PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
+		return Status.OK_STATUS;
 	}
 
 	@Override

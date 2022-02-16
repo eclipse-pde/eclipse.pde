@@ -21,7 +21,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.FastPartitioner;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.text.ManifestPartitionScanner;
 import org.eclipse.swt.graphics.Image;
@@ -218,7 +217,7 @@ public class ManifestStructureCreator extends StructureCreator {
 		} catch (IOException ex) {
 			if (adapter != null)
 				adapter.disconnect(input);
-			throw new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), 0, PDEUIMessages.ManifestStructureCreator_errorMessage, ex));
+			throw new CoreException(Status.error(PDEUIMessages.ManifestStructureCreator_errorMessage, ex));
 		}
 
 		return rootNode;

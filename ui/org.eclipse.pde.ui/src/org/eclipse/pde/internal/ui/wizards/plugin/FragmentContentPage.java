@@ -331,7 +331,7 @@ public class FragmentContentPage extends ContentPage {
 				} else {
 					if (fNewVersion) {
 						IStatus status = fVersionPart.validateFullVersionRangeText(false);
-						if (status.getSeverity() != IStatus.OK) {
+						if (!status.isOK()) {
 							errorMessage = status.getMessage();
 						}
 					} else {

@@ -31,6 +31,7 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
+import org.eclipse.pde.ui.tests.util.FreezeMonitor;
 import org.junit.After;
 import org.junit.Before;
 
@@ -205,6 +206,7 @@ public abstract class DeltaTestSetup {
 
 	@Before
 	public void setUp() throws Exception {
+		FreezeMonitor.expectCompletionInAMinute();
 		// create workspace root
 		new File(WORKSPACE_ROOT.toOSString()).mkdirs();
 	}
@@ -220,5 +222,6 @@ public abstract class DeltaTestSetup {
 		}
 		// remove workspace root
 		assertTrue(TestSuiteHelper.delete(new File(WORKSPACE_ROOT.toOSString())));
+		FreezeMonitor.done();
 	}
 }

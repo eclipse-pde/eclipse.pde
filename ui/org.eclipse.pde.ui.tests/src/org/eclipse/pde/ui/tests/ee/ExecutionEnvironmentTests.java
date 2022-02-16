@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -195,7 +195,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	@Test
 	public void testNoEnvironment() throws Exception {
 		try {
-			IJavaProject project = ProjectUtils.createPluginProject("no.env", null);
+			IJavaProject project = ProjectUtils.createPluginProject("no.env", (IExecutionEnvironment) null);
 			assertTrue("Project was not created", project.exists());
 
 			Hashtable<String, String> options = JavaCore.getOptions();

@@ -22,11 +22,9 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetLocationFactory;
-import org.eclipse.pde.internal.core.PDECore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -50,7 +48,7 @@ public class IULocationFactory implements ITargetLocationFactory {
 					.parse(new ByteArrayInputStream(serializedXML.getBytes(StandardCharsets.UTF_8)));
 			location = document.getDocumentElement();
 		} catch (Exception e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage(), e));
+			throw new CoreException(Status.error(e.getMessage(), e));
 		}
 
 		if (IUBundleContainer.TYPE.equals(type) && location != null) {

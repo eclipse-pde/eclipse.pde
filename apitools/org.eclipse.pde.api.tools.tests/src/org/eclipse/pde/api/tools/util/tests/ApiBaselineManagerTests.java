@@ -871,15 +871,19 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		return JavaCore.create(ResourcesPlugin.getWorkspace().getRoot().getProject(TESTING_PLUGIN_PROJECT_NAME));
 	}
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
+		super.setUp();
 		createProject(TESTING_PLUGIN_PROJECT_NAME, new String[] { TESTING_PACKAGE });
 		setPackageToApi(getTestingProject(), TESTING_PACKAGE);
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		deleteProject(TESTING_PLUGIN_PROJECT_NAME);
 		getWorkspaceBaseline().dispose();
+		super.tearDown();
 	}
 }

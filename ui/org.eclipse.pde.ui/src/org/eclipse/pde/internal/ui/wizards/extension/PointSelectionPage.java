@@ -587,7 +587,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 			public IBasePluginWizard createWizard() throws CoreException {
 				IExtensionWizard wizard = createWizard(wizardElement);
 				if (wizard == null)
-					throw new CoreException(new Status(IStatus.ERROR, wizardElement.getConfigurationElement().getNamespaceIdentifier(), PDEUIMessages.PointSelectionPage_cannotFindTemplate));
+					throw new CoreException(Status.error(PDEUIMessages.PointSelectionPage_cannotFindTemplate));
 				wizard.init(fProject, fModel);
 				return wizard;
 			}

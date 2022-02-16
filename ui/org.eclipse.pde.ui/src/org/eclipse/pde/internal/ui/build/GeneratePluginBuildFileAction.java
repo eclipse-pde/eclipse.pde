@@ -43,8 +43,7 @@ public class GeneratePluginBuildFileAction extends BaseBuildAction {
 		BuildErrorReporter buildErrorReporter = new BuildErrorReporter(fManifestFile);
 		IResource buildXML = project.findMember("build.xml"); //$NON-NLS-1$
 		if (buildXML != null && buildXML.exists() == true && buildErrorReporter.isCustomBuild() == true) {
-			IStatus warnFail = new Status(IStatus.WARNING, model.getPluginBase().getId(), PDEUIMessages.BuildPluginAction_WarningCustomBuildExists);
-			throw new CoreException(warnFail);
+			throw new CoreException(Status.warning(PDEUIMessages.BuildPluginAction_WarningCustomBuildExists));
 		}
 		BuildScriptGenerator generator = new BuildScriptGenerator();
 		AbstractScriptGenerator.setEmbeddedSource(AbstractScriptGenerator.getDefaultEmbeddedSource());

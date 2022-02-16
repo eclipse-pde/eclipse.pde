@@ -1377,7 +1377,7 @@ public final class Util {
 			try {
 				methods = type.getMethods();
 			} catch (JavaModelException e) {
-				ApiPlugin.log(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, NLS.bind("Unable to retrieve methods for {0}", type.getFullyQualifiedName()), e)); //$NON-NLS-1$
+				ApiPlugin.log(Status.error(NLS.bind("Unable to retrieve methods for {0}", type.getFullyQualifiedName()), e)); //$NON-NLS-1$
 				return null;
 			}
 		}
@@ -1408,8 +1408,7 @@ public final class Util {
 		for (IMethod m : methods) {
 			sb.append('\n').append(m.getHandleIdentifier());
 		}
-		ApiPlugin.log(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, NLS.bind(UtilMessages.Util_6, new String[] {
-				selector, descriptor }) + sb.toString()));
+		ApiPlugin.log(Status.error(NLS.bind(UtilMessages.Util_6, selector, descriptor) + sb));
 		// do not default to the enclosing type - see bug 224713
 		return null;
 	}
@@ -1948,7 +1947,7 @@ public final class Util {
 				File outFile = new File(destDir, filePath);
 				String outFileCanonicalPath = outFile.getCanonicalPath();
 				if (!outFileCanonicalPath.startsWith(destDirCanonicalPath + File.separator)) {
-					throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format("Entry is outside of the target dir: : {0}", filePath), null)); //$NON-NLS-1$
+					throw new CoreException(Status.error(MessageFormat.format("Entry is outside of the target dir: : {0}", filePath), null)); //$NON-NLS-1$
 				}
 				try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outFile))) {
 					int n = 0;

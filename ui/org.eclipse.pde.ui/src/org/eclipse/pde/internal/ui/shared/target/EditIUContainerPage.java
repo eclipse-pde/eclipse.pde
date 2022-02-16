@@ -57,7 +57,7 @@ import org.eclipse.ui.internal.progress.ProgressMessages;
 public class EditIUContainerPage extends WizardPage implements IEditBundleContainerPage {
 
 	// Status for any errors on the page
-	private static final IStatus BAD_IU_SELECTION = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), Messages.EditIUContainerPage_0);
+	private static final IStatus BAD_IU_SELECTION = Status.error(Messages.EditIUContainerPage_0);
 	private IStatus fSelectedIUStatus = Status.OK_STATUS;
 
 	// Dialog settings
@@ -138,7 +138,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	public ITargetLocation getBundleContainer() {
 		ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		if (service == null) {
-			PDEPlugin.log(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), Messages.EditIUContainerPage_9));
+			PDEPlugin.log(Status.error(Messages.EditIUContainerPage_9));
 		}
 		int flags = fIncludeRequiredButton.getSelection() ? IUBundleContainer.INCLUDE_REQUIRED : 0;
 		flags |= fAllPlatformsButton.getSelection() ? IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS : 0;

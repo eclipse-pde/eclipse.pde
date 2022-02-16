@@ -179,7 +179,7 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 
 	@Override
 	protected IStatus validateItem(Object item) {
-		return new Status(IStatus.OK, IPDEUIConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+		return Status.OK_STATUS;
 	}
 
 	@Override

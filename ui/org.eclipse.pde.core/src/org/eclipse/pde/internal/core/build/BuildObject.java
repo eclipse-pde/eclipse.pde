@@ -14,10 +14,8 @@
 package org.eclipse.pde.internal.core.build;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.build.IBuildModel;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 
 public class BuildObject implements IBuildObject {
@@ -50,8 +48,7 @@ public class BuildObject implements IBuildObject {
 	}
 
 	protected void throwCoreException(String message) throws CoreException {
-		Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, null);
-		throw new CoreException(status);
+		throw new CoreException(Status.error(message));
 	}
 
 	/**

@@ -95,7 +95,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 			} else if (line.startsWith(STATUS_SUBENTRY) && tokenizer.hasMoreElements() && status != null) {
 				String next = tokenizer.nextToken();
 				if (next.startsWith(STATUS_MESSAGE)) {
-					status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, next.substring(8)));
+					status.add(Status.error(next.substring(8)));
 				}
 			}
 		}
@@ -135,7 +135,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 		} catch (IOException e) {
 			PDECore.log(e);
 		} catch (InvocationTargetException e) {
-			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
+			return Status.error(PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getTargetException());
 		} catch (CoreException e) {
 			if (errorMessage != null) {
 				return parseErrorMessage(e);
@@ -154,7 +154,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 		}
 
 		if (hasAntErrors()) {
-			return new Status(IStatus.WARNING, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.FeatureExportOperation_CompilationErrors, fInfo.destinationDirectory));
+			return Status.warning(NLS.bind(PDECoreMessages.FeatureExportOperation_CompilationErrors, fInfo.destinationDirectory));
 		}
 
 		errorMessage = null;

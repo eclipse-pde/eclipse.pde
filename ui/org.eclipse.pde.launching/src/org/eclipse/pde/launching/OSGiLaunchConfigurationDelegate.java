@@ -19,7 +19,8 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.launching.*;
+import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
+import org.eclipse.pde.internal.launching.PDEMessages;
 import org.eclipse.pde.internal.launching.launcher.LaunchPluginValidator;
 import org.eclipse.pde.internal.launching.launcher.OSGiFrameworkManager;
 
@@ -54,8 +55,7 @@ public class OSGiLaunchConfigurationDelegate extends LaunchConfigurationDelegate
 			if (name == null)
 				name = PDEMessages.OSGiLaunchConfiguration_selected;
 			String message = NLS.bind(PDEMessages.OSGiLaunchConfiguration_cannotFindLaunchConfiguration, name);
-			IStatus status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, IStatus.OK, message, null);
-			throw new CoreException(status);
+			throw new CoreException(Status.error(message, null));
 		}
 	}
 

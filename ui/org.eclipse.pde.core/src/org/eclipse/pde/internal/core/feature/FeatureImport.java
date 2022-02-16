@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,17 +29,13 @@ import org.w3c.dom.Node;
 public class FeatureImport extends VersionableObject implements IFeatureImport {
 	private static final long serialVersionUID = 1L;
 	private int fMatch = NONE;
-	private int fIdMatch = PERFECT;
 	private int fType = PLUGIN;
 	private boolean fPatch = false;
 	private String fFilter = null;
 
-	public FeatureImport() {
-	}
-
 	public IPlugin getPlugin() {
 		if (id != null && fType == PLUGIN) {
-			IPluginModelBase model = PluginRegistry.findModel(id);
+			IPluginModelBase model = PluginRegistry.findModel(id, version, fMatch, null);
 			return model instanceof IPluginModel ? ((IPluginModel) model).getPlugin() : null;
 		}
 		return null;
@@ -80,17 +76,11 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 	}
 
 	@Override
-	public int getIdMatch() {
-		return fIdMatch;
-	}
-
-	@Override
 	protected void reset() {
 		super.reset();
 		fPatch = false;
 		fType = PLUGIN;
 		fMatch = NONE;
-		fIdMatch = PERFECT;
 		fFilter = null;
 	}
 
@@ -116,12 +106,6 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 				}
 			}
 		}
-		mvalue = getNodeAttribute(node, "id-match"); //$NON-NLS-1$
-		if (mvalue != null && mvalue.length() > 0) {
-			if (mvalue.equalsIgnoreCase(RULE_PREFIX)) {
-				fIdMatch = PREFIX;
-			}
-		}
 		fPatch = getBooleanAttribute(node, "patch"); //$NON-NLS-1$
 		fFilter = getNodeAttribute(node, "filter"); //$NON-NLS-1$
 	}
@@ -144,14 +128,6 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		Integer oldValue = Integer.valueOf(this.fMatch);
 		this.fMatch = match;
 		firePropertyChanged(P_MATCH, oldValue, Integer.valueOf(match));
-	}
-
-	@Override
-	public void setIdMatch(int idMatch) throws CoreException {
-		ensureModelEditable();
-		Integer oldValue = Integer.valueOf(this.fIdMatch);
-		this.fIdMatch = idMatch;
-		firePropertyChanged(P_ID_MATCH, oldValue, Integer.valueOf(idMatch));
 	}
 
 	@Override
@@ -186,9 +162,6 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		case P_MATCH:
 			setMatch(newValue != null ? ((Integer) newValue).intValue() : 0);
 			break;
-		case P_ID_MATCH:
-			setIdMatch(newValue != null ? ((Integer) newValue).intValue() : 0);
-			break;
 		case P_TYPE:
 			setType(newValue != null ? ((Integer) newValue).intValue() : PLUGIN);
 			break;
@@ -211,9 +184,6 @@ public class FeatureImport extends VersionableObject implements IFeatureImport {
 		}
 		if (!fPatch && fMatch != NONE) {
 			writer.print(" match=\"" + RULE_NAME_TABLE[fMatch] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if (fIdMatch == PREFIX) {
-			writer.print(" id-match=\"prefix\""); //$NON-NLS-1$
 		}
 		if (fPatch) {
 			writer.print(" patch=\"true\""); //$NON-NLS-1$

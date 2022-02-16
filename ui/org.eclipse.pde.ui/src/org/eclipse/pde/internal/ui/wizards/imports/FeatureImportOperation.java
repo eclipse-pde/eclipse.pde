@@ -170,7 +170,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 			if (th instanceof CoreException) {
 				throw (CoreException) th;
 			}
-			IStatus status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, e.getMessage(), e);
+			IStatus status = Status.error(e.getMessage(), e);
 			throw new CoreException(status);
 		} catch (InterruptedException e) {
 			throw new OperationCanceledException(e.getMessage());

@@ -223,6 +223,17 @@ public interface IApiProblem {
 	public static final int MINOR_VERSION_CHANGE_UNNECESSARILY = 9;
 
 	/**
+	 * Constant representing the value of the major version change
+	 * {@link IApiProblem} kind as a consequence of a major version change in a
+	 * re-exported being removed. <br>
+	 * Value is: <code>10</code>
+	 *
+	 * @see #getKind()
+	 * @see #CATEGORY_VERSION
+	 */
+	public static final int REEXPORTED_REMOVAL_OF_REEXPORT_MAJOR_VERSION_CHANGE = 10;
+
+	/**
 	 * Constant representing the value of an illegal extend {@link IApiProblem}
 	 * kind. <br>
 	 * Value is: <code>1</code>
@@ -230,6 +241,7 @@ public interface IApiProblem {
 	 * @see #getKind()
 	 * @see #CATEGORY_USAGE
 	 */
+
 	public static final int ILLEGAL_EXTEND = 1;
 
 	/**

@@ -138,7 +138,7 @@ public class ContextDataFilter extends ViewerFilter {
 			}
 
 		} else {
-			log.warn("Warning : the received EclipseContext has not the expected type. It is a : "
+			log.warn(Messages.ContextDataFilter_0
 					+ ctx.getClass().toString());
 		}
 

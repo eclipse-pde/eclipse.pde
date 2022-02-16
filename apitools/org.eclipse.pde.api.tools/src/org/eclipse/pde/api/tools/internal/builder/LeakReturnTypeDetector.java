@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
@@ -53,8 +54,8 @@ public class LeakReturnTypeDetector extends MethodLeakDetector {
 	}
 
 	@Override
-	protected boolean isProblem(IReference reference) {
-		if (super.isProblem(reference) == true) {
+	protected boolean isProblem(IReference reference, IProgressMonitor monitor) {
+		if (super.isProblem(reference, monitor) == true) {
 			return true;
 		}
 		IApiType type = (IApiType) reference.getResolvedReference();
@@ -68,7 +69,8 @@ public class LeakReturnTypeDetector extends MethodLeakDetector {
 							return true;
 						}
 					}
-				}catch (CoreException e) {
+				} catch (CoreException e) {
+					checkIfDisposed(reference.getMember().getApiComponent(), monitor);
 					// do nothing, skip it
 				}
 			}

@@ -66,7 +66,9 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.util.FileUtils;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.ui.tests.util.FreezeMonitor;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
@@ -93,6 +95,11 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	public static final String SRC_ROOT = "src"; //$NON-NLS-1$
 	public static final String BIN_ROOT = "bin"; //$NON-NLS-1$
 	protected final int[] NO_PROBLEM_IDS = new int[0];
+
+	@BeforeClass
+	public static void beforeClass() {
+		PDECore.getDefault().getPreferencesManager().setValue(ICoreConstants.RUN_API_ANALYSIS_AS_JOB, false);
+	}
 
 	/**
 	 * Describes a line number mapped to the problem id with the given args we
@@ -1061,6 +1068,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	@Override
 	protected void setUp() throws Exception {
+		FreezeMonitor.expectCompletionInAMinute();
 		if (env == null) {
 			env = new ApiTestingEnvironment();
 			env.openEmptyWorkspace();
@@ -1077,6 +1085,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		fMessageArgs = null;
 		this.debugRequestor.clearResult();
 		super.tearDown();
+		FreezeMonitor.done();
 	}
 
 	/**
@@ -1198,7 +1207,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			IStatus infos = new Status(severity, PDECore.PLUGIN_ID, infosContent, new Exception());
 			log.log(infos);
 		} catch (Exception e) {
-			IStatus error = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "error occurred while logging extra info", e); //$NON-NLS-1$
+			IStatus error = Status.error("error occurred while logging extra info", e); //$NON-NLS-1$
 			log.log(error);
 		}
 	}

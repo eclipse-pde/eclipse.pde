@@ -307,9 +307,8 @@ public class ApiType extends ApiMember implements IApiType {
 		return structure;
 	}
 
-	private Status createUnresolvedSuperClassStatus(String qName) {
-		return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ApiPlugin.REPORT_RESOLUTION_ERRORS,
-				MessageFormat.format(Messages.ApiType_1, qName, getName()), null);
+	private IStatus createUnresolvedSuperClassStatus(String qName) {
+		return Status.error(MessageFormat.format(Messages.ApiType_1, qName, getName()), null);
 	}
 
 	private void reOrganizeComponents(IApiComponent[] components) throws CoreException {
@@ -365,7 +364,7 @@ public class ApiType extends ApiMember implements IApiType {
 	 * @throws CoreException
 	 */
 	private void requiresApiComponent() throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, Messages.ApiType_2));
+		throw new CoreException(Status.error(Messages.ApiType_2));
 	}
 
 	@Override
@@ -549,7 +548,8 @@ public class ApiType extends ApiMember implements IApiType {
 				qName.append(simpleName);
 				file = getApiComponent().findTypeRoot(qName.toString());
 				if (file == null) {
-					throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format(Messages.ApiType_3, simpleName, getName())));
+					throw new CoreException(
+							Status.error(MessageFormat.format(Messages.ApiType_3, simpleName, getName())));
 				}
 				fMemberTypes.put(simpleName, file);
 			}

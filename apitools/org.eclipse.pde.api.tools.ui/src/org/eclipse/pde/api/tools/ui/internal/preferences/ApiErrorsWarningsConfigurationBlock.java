@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2021 IBM Corporation and others.
+ * Copyright (c) 2007, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.preferences;
 
-import java.awt.Checkbox;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -709,7 +708,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	private HashMap<Combo, Label> fComboLabelMap = new HashMap<>();
 
 	/**
-	 * Listing of all of the {@link Checkbox}es added to the block
+	 * Listing of all of the {@link Button} with SWT.check added to the block
 	 */
 	private ArrayList<Button> fCheckBoxes = new ArrayList<>();
 

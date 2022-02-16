@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -139,10 +138,10 @@ public class PDEProject {
 				// update model manager
 				PDECore.getDefault().getModelManager().bundleRootChanged(project);
 			} catch (BackingStoreException e) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage(), e));
+				throw new CoreException(Status.error(e.getMessage(), e));
 			}
 		} else {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Failed to retrieve project scope preference settings")); //$NON-NLS-1$
+			throw new CoreException(Status.error("Failed to retrieve project scope preference settings")); //$NON-NLS-1$
 		}
 	}
 

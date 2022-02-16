@@ -66,16 +66,20 @@ public class ProjectCreationTests extends AbstractApiTest {
 		JAVADOC_READ_SRC_DIR = getSourceDirectory(new Path("a").append("b").append("c")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
+		super.setUp();
 		createProject(TESTING_PROJECT_NAME, null);
 		IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
 		assertNotNull("The java project must have been created", project); //$NON-NLS-1$
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		deleteProject(TESTING_PROJECT_NAME);
+		super.tearDown();
 	}
 
 	/**

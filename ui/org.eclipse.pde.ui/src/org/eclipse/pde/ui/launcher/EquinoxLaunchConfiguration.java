@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -47,8 +48,8 @@ import org.eclipse.pde.internal.launching.launcher.*;
 public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
 	// used to generate the dev classpath entries
-	// key is bundle ID, value is a model
-	protected Map<String, IPluginModelBase> fAllBundles;
+	// key is bundle ID, value is a List of models
+	protected Map<String, List<IPluginModelBase>> fAllBundles;
 
 	// key is a model, value is startLevel:autoStart
 	private Map<IPluginModelBase, String> fModels;
@@ -86,7 +87,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 				properties.setProperty("org.eclipse.equinox.simpleconfigurator.configUrl", bundlesTxt.toString()); //$NON-NLS-1$
 			}
 			StringBuilder buffer = new StringBuilder();
-			IPluginModelBase model = fAllBundles.get(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR);
+			IPluginModelBase model = LaunchConfigurationHelper.getLatestModel(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR, fAllBundles);
 			buffer.append(LaunchConfigurationHelper.getBundleURL(model, true));
 			appendStartData(buffer, fModels.get(model), autostart);
 			bundles = buffer.toString();
@@ -154,22 +155,18 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	@Override
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, true);
-		fAllBundles = new HashMap<>(fModels.size());
-		Iterator<IPluginModelBase> iter = fModels.keySet().iterator();
-		while (iter.hasNext()) {
-			IPluginModelBase model = iter.next();
-			fAllBundles.put(model.getPluginBase().getId(), model);
-		}
+		fAllBundles = fModels.keySet().stream().collect(Collectors.groupingBy(m -> m.getPluginBase().getId(),
+				HashMap::new, Collectors.toCollection(ArrayList::new)));
 
 		if (!fAllBundles.containsKey(IPDEBuildConstants.BUNDLE_OSGI)) {
 			// implicitly add it
 			IPluginModelBase model = PluginRegistry.findModel(IPDEBuildConstants.BUNDLE_OSGI);
 			if (model != null) {
 				fModels.put(model, "default:default"); //$NON-NLS-1$
-				fAllBundles.put(IPDEBuildConstants.BUNDLE_OSGI, model);
+				fAllBundles.computeIfAbsent(IPDEBuildConstants.BUNDLE_OSGI, i -> new ArrayList<>()).add(model);
 			} else {
 				String message = PDEMessages.EquinoxLaunchConfiguration_oldTarget;
-				throw new CoreException(LauncherUtils.createErrorStatus(message));
+				throw new CoreException(Status.error((String) message));
 			}
 		}
 		super.preLaunchCheck(configuration, launch, monitor);

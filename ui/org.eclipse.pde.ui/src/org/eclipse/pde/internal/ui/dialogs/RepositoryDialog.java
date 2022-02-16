@@ -23,7 +23,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
@@ -77,25 +76,24 @@ public class RepositoryDialog extends StatusDialog {
 		updateStatus(isValidURL(fLocationStr));
 	}
 
-	private Status isValidURL(String location) {
+	private IStatus isValidURL(String location) {
 		if (location.length() == 0) {
-			return new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, PDEUIMessages.UpdatesSection_ErrorInvalidURL);
+			return Status.error(PDEUIMessages.UpdatesSection_ErrorInvalidURL);
 		}
 		if (!(location.startsWith("http://") //$NON-NLS-1$
 				|| location.startsWith("https://") //$NON-NLS-1$
 				|| location.startsWith("file:/"))) { //$NON-NLS-1$
-			return new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, PDEUIMessages.UpdatesSection_ErrorInvalidURL);
+			return Status.error(PDEUIMessages.UpdatesSection_ErrorInvalidURL);
 		}
 		try {
 			URL url = new URL(location);
 			if (url.getHost().trim().isBlank() && url.getPath().isBlank()) {
-				return new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID,
-						PDEUIMessages.UpdatesSection_ErrorInvalidURL);
+				return Status.error(PDEUIMessages.UpdatesSection_ErrorInvalidURL);
 			}
 		} catch (MalformedURLException e) {
-			return new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, PDEUIMessages.UpdatesSection_ErrorInvalidURL);
+			return Status.error(PDEUIMessages.UpdatesSection_ErrorInvalidURL);
 		}
-		return new Status(IStatus.OK, IPDEUIConstants.PLUGIN_ID, ""); //$NON-NLS-1$
+		return Status.OK_STATUS;
 	}
 
 	@Override

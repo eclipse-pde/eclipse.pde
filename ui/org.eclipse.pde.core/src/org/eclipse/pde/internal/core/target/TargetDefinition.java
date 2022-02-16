@@ -1272,7 +1272,7 @@ public class TargetDefinition implements ITargetDefinition {
 							.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
 					Element root = document.getDocumentElement();
 					if (!root.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.LOCATION)) {
-						throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
+						throw new CoreException(Status.error(
 								NLS.bind(Messages.TargetDefinitionPersistenceHelper_WrongRootElementInXML, type, xml)));
 					}
 					root.setAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE, type);

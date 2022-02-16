@@ -26,7 +26,6 @@ import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.Messages;
 import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.eclipse.pde.internal.ui.*;
@@ -204,7 +203,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 		// TODO clean up this code a bit...
 		IMetadataRepositoryManager manager = P2TargetUtils.getRepoManager();
 		if (manager == null)
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_2));
+			throw new CoreException(Status.error(Messages.IUBundleContainer_2));
 
 		//URI[] knownRepositories = metadataManager.getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL);
 		IQuery<IInstallableUnit> pipedQuery;

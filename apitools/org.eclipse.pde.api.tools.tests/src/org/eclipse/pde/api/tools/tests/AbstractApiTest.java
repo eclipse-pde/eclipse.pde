@@ -40,7 +40,13 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.api.tools.util.tests.ResourceEventWaiter;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.ui.tests.util.FreezeMonitor;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
 
 /**
  * Abstract class with commonly used methods for API Tools tests
@@ -60,6 +66,16 @@ public class AbstractApiTest {
 	 * plugin tests. Value is: <code>APIPluginTests</code>.
 	 */
 	protected static final String TESTING_PLUGIN_PROJECT_NAME = "APIPluginTests"; //$NON-NLS-1$
+
+	@Before
+	public void setUp() throws Exception {
+		FreezeMonitor.expectCompletionInAMinute();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		FreezeMonitor.done();
+	}
 
 	/**
 	 * Returns the {@link IJavaProject} with the given name. If this method is
@@ -208,5 +224,10 @@ public class AbstractApiTest {
 	 */
 	protected IApiBaseline getWorkspaceBaseline() {
 		return ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
+	}
+
+	@BeforeClass
+	public static void beforeClass() {
+		PDECore.getDefault().getPreferencesManager().setValue(ICoreConstants.RUN_API_ANALYSIS_AS_JOB, false);
 	}
 }

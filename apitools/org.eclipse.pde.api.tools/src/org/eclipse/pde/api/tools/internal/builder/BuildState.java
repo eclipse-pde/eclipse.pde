@@ -36,8 +36,6 @@ import java.util.zip.CRC32;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -568,7 +566,7 @@ public class BuildState {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				throw new CoreException(new Status(IStatus.ERROR, JavaCore.PLUGIN_ID, Platform.PLUGIN_ERROR, "Error reading last build state for project " + project.getName(), e)); //$NON-NLS-1$
+				throw new CoreException(Status.error("Error reading last build state for project " + project.getName(), e)); //$NON-NLS-1$
 			}
 		} else if (ApiPlugin.DEBUG_BUILDER) {
 			if (file == null) {
@@ -650,7 +648,7 @@ public class BuildState {
 			} catch (SecurityException se) {
 				// could not delete file: cannot do much more
 			}
-			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, Platform.PLUGIN_ERROR, NLS.bind(BuilderMessages.build_cannotSaveState, project.getName()), e));
+			throw new CoreException(Status.error(NLS.bind(BuilderMessages.build_cannotSaveState, project.getName()), e));
 		}
 		if (ApiPlugin.DEBUG_BUILDER) {
 			t = System.currentTimeMillis() - t;

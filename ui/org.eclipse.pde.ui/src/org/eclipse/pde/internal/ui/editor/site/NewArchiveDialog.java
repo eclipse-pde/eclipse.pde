@@ -30,8 +30,6 @@ public class NewArchiveDialog extends StatusDialog {
 
 	private IStatus fErrorStatus;
 
-	private IStatus fOkStatus;
-
 	private Text fPathText;
 
 	private ISiteArchive fSiteArchive;
@@ -90,20 +88,16 @@ public class NewArchiveDialog extends StatusDialog {
 		}
 	}
 
-	private IStatus createErrorStatus(String message) {
-		return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK, message, null);
-	}
-
 	private void dialogChanged() {
 		IStatus status = null;
 		if (fUrlText.getText().length() == 0 || fPathText.getText().length() == 0)
 			status = getEmptyErrorStatus();
 		else {
 			if (hasPath(fPathText.getText()))
-				status = createErrorStatus(PDEUIMessages.NewArchiveDialog_alreadyExists);
+				status = Status.error(PDEUIMessages.NewArchiveDialog_alreadyExists);
 		}
 		if (status == null)
-			status = getOKStatus();
+			status = Status.OK_STATUS;
 		updateStatus(status);
 	}
 
@@ -124,15 +118,8 @@ public class NewArchiveDialog extends StatusDialog {
 
 	private IStatus getEmptyErrorStatus() {
 		if (fErrorStatus == null)
-			fErrorStatus = createErrorStatus(PDEUIMessages.SiteEditor_NewArchiveDialog_error);
+			fErrorStatus = Status.error(PDEUIMessages.SiteEditor_NewArchiveDialog_error);
 		return fErrorStatus;
-	}
-
-	private IStatus getOKStatus() {
-		if (fOkStatus == null)
-			fOkStatus = new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", //$NON-NLS-1$
-					null);
-		return fOkStatus;
 	}
 
 	private boolean hasPath(String path) {

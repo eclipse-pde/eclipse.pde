@@ -14,7 +14,6 @@
 
 package org.eclipse.pde.internal.ui.wizards.feature;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -141,7 +140,7 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 
 	protected String verifyVersion() {
 		String value = fFeatureVersionText.getText();
-		if (VersionUtil.validateVersion(value).getSeverity() != IStatus.OK)
+		if (!VersionUtil.validateVersion(value).isOK())
 			return PDEUIMessages.NewFeatureWizard_SpecPage_versionFormat;
 		return null;
 	}

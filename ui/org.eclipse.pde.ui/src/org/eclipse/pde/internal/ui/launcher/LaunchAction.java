@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,10 +14,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import static java.util.stream.Collectors.toSet;
+import static org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper.formatAdditionalPluginEntry;
+import static org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper.formatFeatureEntry;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
@@ -132,22 +134,25 @@ public class LaunchAction extends Action {
 	}
 
 	private void refreshFeatureLaunchAttributes(ILaunchConfigurationWorkingCopy wc, IPluginModelBase[] models) {
-		Set<String> selectedFeatures = Arrays.stream(getUniqueFeatures())
-				.map(f -> f.getFeature().getId() + ":" + IPDELauncherConstants.LOCATION_DEFAULT).collect(toSet()); //$NON-NLS-1$
+		FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
+		Set<String> selectedFeatures = Arrays.stream(fProduct.getFeatures()) //
+				.map(f -> fmm.findFeatureModel(f.getId(), f.getVersion())).filter(Objects::nonNull)
+				.map(m -> formatFeatureEntry(m.getFeature().getId(), IPDELauncherConstants.LOCATION_DEFAULT))
+				.collect(Collectors.toCollection(LinkedHashSet::new));
 
 		Set<String> additionalPlugins = Arrays.stream(models)
 				.map(model -> getPluginConfiguration(model)
-						.map(c -> new FeatureBlock.PluginLaunchModel(model, c, null).buildEntry(true)).orElse(null))
-				.filter(Objects::nonNull).collect(toSet());
+						.map(c -> formatAdditionalPluginEntry(model, c.fResolution, true, c.fStartLevel, c.fAutoStart))
+						.orElse(null))
+				.filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
 
 		wc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, selectedFeatures);
 		wc.setAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS, additionalPlugins);
 	}
 
 	private void appendBundle(Set<String> plugins, IPluginModelBase model) {
-		AdditionalPluginData configuration = getPluginConfiguration(model).orElse(FeatureBlock.DEFAULT_PLUGIN_DATA);
-		String entry = BundleLauncherHelper.writeBundleEntry(model, configuration.fStartLevel,
-				configuration.fAutoStart);
+		AdditionalPluginData config = getPluginConfiguration(model).orElse(FeatureBlock.DEFAULT_PLUGIN_DATA);
+		String entry = BundleLauncherHelper.formatBundleEntry(model, config.fStartLevel, config.fAutoStart);
 		plugins.add(entry);
 	}
 

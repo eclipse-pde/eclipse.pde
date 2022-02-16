@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.plugin.IMatchRules;
-import org.eclipse.pde.internal.core.PDECore;
 import org.osgi.framework.Version;
 
 public class VersionUtil {
@@ -31,7 +30,7 @@ public class VersionUtil {
 				new Version(versionString.trim());
 			}
 		} catch (IllegalArgumentException e) {
-			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, UtilMessages.BundleErrorReporter_InvalidFormatInBundleVersion, e);
+			return Status.error(UtilMessages.BundleErrorReporter_InvalidFormatInBundleVersion, e);
 		}
 		return Status.OK_STATUS;
 	}
@@ -40,7 +39,7 @@ public class VersionUtil {
 		try {
 			new VersionRange(versionRangeString);
 		} catch (IllegalArgumentException e) {
-			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, UtilMessages.BundleErrorReporter_invalidVersionRangeFormat, e);
+			return Status.error(UtilMessages.BundleErrorReporter_invalidVersionRangeFormat, e);
 		}
 		return Status.OK_STATUS;
 	}

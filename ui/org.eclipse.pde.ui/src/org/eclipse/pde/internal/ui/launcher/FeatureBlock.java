@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 IBM Corporation and others.
+ * Copyright (c) 2010, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -338,10 +338,10 @@ public class FeatureBlock {
 				// Unlike PluginBlock, we don't want to validate the application/product requirements because we will grab them automatically at launch time
 				fOperation = new LaunchValidationOperation(fLaunchConfig) {
 					@Override
-					protected IPluginModelBase[] getModels() throws CoreException {
+					protected Set<IPluginModelBase> getModels() throws CoreException {
 						// The feature block is used in both the OSGi config and Eclipse configs, use the tab id to determine which we are using
 						boolean isOSGiTab = fTab.getId().equals(IPDELauncherConstants.TAB_BUNDLES_ID);
-						return BundleLauncherHelper.getMergedBundles(fLaunchConfiguration, isOSGiTab);
+						return BundleLauncherHelper.getMergedBundleMap(fLaunchConfiguration, isOSGiTab).keySet();
 					}
 				};
 			try {
@@ -698,13 +698,6 @@ public class FeatureBlock {
 		public String getPluginModelVersion() {
 			return fPluginModelBase.getPluginBase().getVersion();
 		}
-
-		public String buildEntry(boolean isChecked) {
-			IPluginBase base = fPluginModelBase.getPluginBase();
-			return String.join(":", base.getId(), base.getVersion(), fPluginResolution, String.valueOf(isChecked), //$NON-NLS-1$
-					fStartLevel, fAutoStart);
-		}
-
 	}
 
 	static class FeatureLaunchModel {
@@ -1179,27 +1172,29 @@ public class FeatureBlock {
 
 		for (Object model : models) {
 			if (model instanceof FeatureLaunchModel) {
-				FeatureLaunchModel featureModel = (FeatureLaunchModel) model;
-				StringBuilder buffer = new StringBuilder();
-				buffer.append(featureModel.getId());
-				buffer.append(':');
-				buffer.append(featureModel.getResolutionValue());
-				featuresEntry.add(buffer.toString());
+				FeatureLaunchModel feature = (FeatureLaunchModel) model;
+				String entry = BundleLauncherHelper.formatFeatureEntry(feature.getId(), feature.getResolutionValue());
+				featuresEntry.add(entry);
 			} else if (model instanceof PluginLaunchModel) {
 				PluginLaunchModel pluginLaunchModel = (PluginLaunchModel) model;
-				pluginsEntry.add(pluginLaunchModel.buildEntry(true));
+				pluginsEntry.add(buildAdditionalPluginEntry(pluginLaunchModel, true));
 				checkPluginLaunchModels.add(pluginLaunchModel);
 			}
 		}
 
 		for (PluginLaunchModel uncheckedPluginLaunchModel : fAdditionalPlugins) {
-			if (checkPluginLaunchModels.contains(uncheckedPluginLaunchModel))
-				continue;
-			pluginsEntry.add(uncheckedPluginLaunchModel.buildEntry(false));
+			if (!checkPluginLaunchModels.contains(uncheckedPluginLaunchModel)) {
+				pluginsEntry.add(buildAdditionalPluginEntry(uncheckedPluginLaunchModel, false));
+			}
 		}
 		config.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, featuresEntry);
 		config.setAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS, pluginsEntry);
 
+	}
+
+	private static String buildAdditionalPluginEntry(PluginLaunchModel pl, boolean isChecked) {
+		return BundleLauncherHelper.formatAdditionalPluginEntry(pl.getPluginModelBase(), pl.getPluginResolution(),
+				isChecked, pl.getStartLevel(), pl.getAutoStart());
 	}
 
 	private void saveSortOrder() {

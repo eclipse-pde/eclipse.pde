@@ -17,7 +17,7 @@ import java.text.MessageFormat;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ISourceRange;
@@ -48,11 +48,11 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 	}
 
 	@Override
-	public boolean considerReference(IReference reference) {
+	public boolean considerReference(IReference reference, IProgressMonitor monitor) {
 		// consider the reference if the location the reference is made from is
 		// visible:
 		// i.e. a public or protected class in an API package
-		if (super.considerReference(reference) && isNonAPIReference(reference)) {
+		if (super.considerReference(reference, monitor) && isNonAPIReference(reference)) {
 			IApiMember member = reference.getMember();
 			int modifiers = member.getModifiers();
 			if (((Flags.AccPublic | Flags.AccProtected) & modifiers) > 0) {
@@ -68,6 +68,7 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 					}
 				} catch (CoreException e) {
 					ApiPlugin.log(e.getStatus());
+					checkIfDisposed(reference.getMember().getApiComponent(), monitor);
 				}
 			}
 		}
@@ -75,7 +76,7 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 	}
 
 	@Override
-	protected boolean isProblem(IReference reference) {
+	protected boolean isProblem(IReference reference, IProgressMonitor monitor) {
 		IApiMember member = reference.getResolvedReference();
 		try {
 			IApiAnnotations annotations = member.getApiComponent().getApiDescription().resolveAnnotations(member.getHandle());
@@ -89,7 +90,7 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 					String memberName = member.getName();
 					if (memberName != null) {
 						if (!memberName.startsWith("javax.")) { //$NON-NLS-1$
-							ApiPlugin.log(new Status(IStatus.INFO, ApiPlugin.PLUGIN_ID, MessageFormat.format(BuilderMessages.AbstractTypeLeakDetector_vis_type_has_no_api_description, memberName)));
+							ApiPlugin.log(Status.info(MessageFormat.format(BuilderMessages.AbstractTypeLeakDetector_vis_type_has_no_api_description, memberName)));
 						}
 					}
 				} else {
@@ -99,6 +100,7 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 			}
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
+			checkIfDisposed(member.getApiComponent(), monitor);
 		}
 		return false;
 	}

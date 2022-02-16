@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -55,7 +55,7 @@ public class VMHelper {
 
 		// Iterate through all launch models
 		boolean isOSGiLaunch = configuration instanceof EquinoxLaunchConfiguration; // TODO Test this
-		IPluginModelBase[] plugins = BundleLauncherHelper.getMergedBundles(configuration, isOSGiLaunch);
+		Set<IPluginModelBase> plugins = BundleLauncherHelper.getMergedBundleMap(configuration, isOSGiLaunch).keySet();
 		for (IPluginModelBase plugin : plugins) {
 			if (validEEs.isEmpty()) {
 				break; // No valid EEs left, short circuit
@@ -164,9 +164,9 @@ public class VMHelper {
 				String id = JavaRuntime.getExecutionEnvironmentId(jrePath);
 				if (id == null) {
 					String name = JavaRuntime.getVMInstallName(jrePath);
-					throw new CoreException(LauncherUtils.createErrorStatus(NLS.bind(PDEMessages.WorkbenchLauncherConfigurationDelegate_noJRE, name)));
+					throw new CoreException(Status.error(NLS.bind(PDEMessages.WorkbenchLauncherConfigurationDelegate_noJRE, name)));
 				}
-				throw new CoreException(LauncherUtils.createErrorStatus(NLS.bind(PDEMessages.VMHelper_cannotFindExecEnv, id)));
+				throw new CoreException(Status.error(NLS.bind(PDEMessages.VMHelper_cannotFindExecEnv, id)));
 			}
 			return vm;
 		}
@@ -192,7 +192,7 @@ public class VMHelper {
 		}
 
 		// No valid vm available, throw exception
-		throw new CoreException(LauncherUtils.createErrorStatus(NLS.bind(PDEMessages.WorkbenchLauncherConfigurationDelegate_noJRE, defaultVMName)));
+		throw new CoreException(Status.error(NLS.bind(PDEMessages.WorkbenchLauncherConfigurationDelegate_noJRE, defaultVMName)));
 
 	}
 
@@ -210,7 +210,7 @@ public class VMHelper {
 	public static IVMInstall createLauncher(ILaunchConfiguration configuration) throws CoreException {
 		IVMInstall launcher = getVMInstall(configuration);
 		if (!launcher.getInstallLocation().exists())
-			throw new CoreException(LauncherUtils.createErrorStatus(PDEMessages.WorkbenchLauncherConfigurationDelegate_jrePathNotFound));
+			throw new CoreException(Status.error(PDEMessages.WorkbenchLauncherConfigurationDelegate_jrePathNotFound));
 		return launcher;
 	}
 

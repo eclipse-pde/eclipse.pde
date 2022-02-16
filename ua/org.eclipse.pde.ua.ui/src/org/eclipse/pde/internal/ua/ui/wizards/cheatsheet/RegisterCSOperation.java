@@ -45,8 +45,6 @@ import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConstants;
 import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSConstants;
-import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.swt.widgets.Shell;
@@ -117,8 +115,8 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		// Note: This is not accurate, we are validating the plugin.xml file
 		// but not the manifest.mf file
 		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
-		if (status.getSeverity() != IStatus.OK) {
-			throw new CoreException(new Status(IStatus.ERROR, PDEUserAssistanceUIPlugin.PLUGIN_ID, IStatus.ERROR, CSWizardMessages.RegisterCSOperation_errorMessage, null));
+		if (!status.isOK()) {
+			throw new CoreException(Status.error(CSWizardMessages.RegisterCSOperation_errorMessage, null));
 		}
 		// Perform the modification of the plugin manifest file
 		ModelModification mod = new ModelModification(fRegisterCSData.getPluginProject()) {
@@ -341,8 +339,8 @@ public class RegisterCSOperation extends WorkspaceModifyOperation {
 		// Note: This is not accurate, we are validating the plugin.xml file rather
 		// than the manifest file
 		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
-		if (status.getSeverity() != IStatus.OK) {
-			throw new CoreException(new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.ERROR, CSWizardMessages.RegisterCSOperation_errorMessage2, null));
+		if (!status.isOK()) {
+			throw new CoreException(Status.error(CSWizardMessages.RegisterCSOperation_errorMessage2, null));
 		}
 		// Perform the modification of the manifest file
 		ModelModification mod = new ModelModification(fRegisterCSData.getPluginProject()) {

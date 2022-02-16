@@ -30,7 +30,6 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.text.build.BuildModel;
 import org.eclipse.pde.internal.core.text.build.PropertiesTextChangeListener;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
-import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.text.edits.*;
 
@@ -210,16 +209,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		updatePluginCustomizationFile((IFile) resource, monitor);
 	}
 
-	private CoreException createCoreException(String message, Throwable exception) {
-		IStatus status = Status.error(message, exception);
-		return new CoreException(status);
-	}
-
-	private CoreException createCoreException(String message) {
-		IStatus status = new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, message);
-		return new CoreException(status);
-	}
-
 	private ITextFileBufferManager getTextFileBufferManager() throws CoreException {
 		if (fTextFileBufferManager == null) {
 			// Get the text file buffer manager
@@ -227,7 +216,8 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		}
 		// Ensure manager is defined
 		if (fTextFileBufferManager == null) {
-			throw createCoreException(PDEUIMessages.UpdateSplashProgressAction_msgErrorTextFileBufferManager);
+			throw new CoreException(
+					Status.error(PDEUIMessages.UpdateSplashProgressAction_msgErrorTextFileBufferManager));
 		}
 		return fTextFileBufferManager;
 	}
@@ -239,7 +229,7 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		fTextFileBuffer = getTextFileBufferManager().getTextFileBuffer(path, kind);
 		// Ensure buffer is defined
 		if (fTextFileBuffer == null) {
-			throw createCoreException(PDEUIMessages.UpdateSplashProgressAction_msgErrorTextFileBuffer);
+			throw new CoreException(Status.error(PDEUIMessages.UpdateSplashProgressAction_msgErrorTextFileBuffer));
 		}
 		return fTextFileBuffer;
 	}
@@ -287,7 +277,8 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 			// Save plugin customization file changes
 			savePluginCustomFileChanges(pluginCustomModel, subMonitor.split(1));
 		} catch (MalformedTreeException | BadLocationException e) {
-			throw createCoreException(PDEUIMessages.UpdateSplashProgressAction_msgErrorCustomFileSaveFailed, e);
+			throw new CoreException(
+					Status.error(PDEUIMessages.UpdateSplashProgressAction_msgErrorCustomFileSaveFailed, e));
 		} finally {
 			// Disconnect from the text file buffer manager
 			getTextFileBufferManager().disconnect(path, kind, subMonitor.split(1));

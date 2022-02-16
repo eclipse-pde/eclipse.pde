@@ -16,6 +16,7 @@ package org.eclipse.pde.api.tools.search.tests;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
@@ -78,7 +79,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	}
 
 	@Override
-	public boolean acceptReference(IReference reference) {
+	public boolean acceptReference(IReference reference, IProgressMonitor monitor) {
 		try {
 			IApiMember member = reference.getResolvedReference();
 			if(member != null) {
@@ -133,7 +134,7 @@ public class TestRequestor implements IApiSearchRequestor {
 				}
 			}
 			catch(Exception e) {
-				this.test.reportFailure(e.getMessage());
+				throw new IllegalStateException(e);
 			}
 		}
 		return this.scope;

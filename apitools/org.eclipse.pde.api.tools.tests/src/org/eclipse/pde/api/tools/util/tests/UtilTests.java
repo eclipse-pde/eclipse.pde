@@ -452,6 +452,11 @@ public class UtilTests {
 			public IReferenceCollection getExternalDependencies() {
 				return null;
 			}
+
+			@Override
+			public boolean isDisposed() {
+				return false;
+			}
 		}
 		List<IApiComponent> allComponents = new ArrayList<>();
 		String[] componentNames = new String[] {

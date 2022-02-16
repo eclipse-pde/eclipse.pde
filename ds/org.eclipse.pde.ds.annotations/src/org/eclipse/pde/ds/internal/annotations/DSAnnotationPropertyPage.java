@@ -19,7 +19,6 @@ import java.util.Arrays;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -417,7 +416,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 				prefs.remove(key);
 			}
 		} catch (BackingStoreException e) {
-			Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Unable to restore default values.", e)); //$NON-NLS-1$
+			Activator.log(Status.error("Unable to restore default values.", e)); //$NON-NLS-1$
 		}
 
 		refreshWidgets();
@@ -436,7 +435,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 				try {
 					prefs.clear();
 				} catch (BackingStoreException e) {
-					Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Unable to reset project preferences.", e)); //$NON-NLS-1$
+					Activator.log(Status.error("Unable to reset project preferences.", e)); //$NON-NLS-1$
 				}
 
 				prefs = null;
@@ -473,7 +472,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		try {
 			wcManager.applyChanges();
 		} catch (BackingStoreException e) {
-			Activator.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Unable to save preferences.", e)); //$NON-NLS-1$
+			Activator.log(Status.error("Unable to save preferences.", e)); //$NON-NLS-1$
 			return false;
 		}
 

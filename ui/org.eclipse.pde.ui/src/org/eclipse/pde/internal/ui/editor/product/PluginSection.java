@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2021 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,6 +35,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.DependencyManager.Options;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.util.VersionUtil;
@@ -354,7 +355,10 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			return PluginRegistry.findModel(plugin.getId(), version, IMatchRules.PERFECT, null);
 		}).filter(Objects::nonNull).map(IPluginModelBase::getBundleDescription).collect(Collectors.toList());
 
-		Set<BundleDescription> dependencies = DependencyManager.findRequirementsClosure(list, includeOptional);
+		DependencyManager.Options[] options = includeOptional
+				? new Options[] { Options.INCLUDE_NON_TEST_FRAGMENTS, Options.INCLUDE_OPTIONAL_DEPENDENCIES }
+				: new Options[] { Options.INCLUDE_NON_TEST_FRAGMENTS };
+		Set<BundleDescription> dependencies = DependencyManager.findRequirementsClosure(list, options);
 
 		IProduct product = plugins[0].getProduct();
 		IProductModelFactory factory = product.getModel().getFactory();

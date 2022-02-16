@@ -34,6 +34,7 @@ import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.osgi.framework.BundleContext;
@@ -43,8 +44,7 @@ import org.osgi.service.event.EventHandler;
 /**
  * Common utility methods for target definition tests
  */
-public abstract class AbstractTargetTest {
-
+public abstract class AbstractTargetTest extends PDETestCase {
 
 	/**
 	 * Returns the target platform service or <code>null</code> if none

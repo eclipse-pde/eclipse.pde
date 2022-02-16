@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2019 IBM Corporation and others.
+ * Copyright (c) 2007, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,6 +35,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -88,7 +89,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	/**
 	 * OSGi bundle state
 	 */
-	private State fState;
+	private volatile State fState;
 
 	/**
 	 * Execution environment identifier
@@ -127,30 +128,33 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * <p>
 	 * Map of <code>PackageName -> Map(componentName -> IApiComponent[])</code>
 	 * </p>
-	 * For each package the cache contains a map of API components that provide
-	 * that package, by source component name (including the <code>null</code>
-	 * component name).
+	 * For each package the cache contains a map of API components that provide that
+	 * package, by source component name (including the <code>null</code> component
+	 * name). This map can be updated on the fly on changes in the workspave.
 	 */
-	private HashMap<String, HashMap<IApiComponent, IApiComponent[]>> fComponentsProvidingPackageCache = null;
+	private final Map<String, Map<IApiComponent, IApiComponent[]>> fComponentsProvidingPackageCache;
 
 	/**
 	 * Maps component id's to components.
 	 * <p>
 	 * Map of <code>componentId -> {@link IApiComponent}</code>
 	 * </p>
+	 * This map is not supposed to be modified except on creation / disposal.
 	 */
-	private HashMap<String, IApiComponent> fComponentsById = null;
+	private volatile Map<String, IApiComponent> fComponentsById;
 	/**
 	 * Maps component id's to all components sorted from higher to lower version.
+	 * This map is not supposed to be modified except on creation / disposal.
 	 */
-	private HashMap<String, Set<IApiComponent>> fAllComponentsById = null;
+	private volatile Map<String, Set<IApiComponent>> fAllComponentsById;
 	/**
 	 * Maps project name's to components.
 	 * <p>
 	 * Map of <code>project name -> {@link IApiComponent}</code>
 	 * </p>
+	 * This map is not supposed to be modified except on creation / disposal.
 	 */
-	private HashMap<String, IApiComponent> fComponentsByProjectNames = null;
+	private volatile Map<String, IApiComponent> fComponentsByProjectNames;
 	/**
 	 * Cache of system package names
 	 */
@@ -160,8 +164,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * The VM install this baseline is bound to for system libraries or
 	 * <code>null</code>. Only used in the IDE when OSGi is running.
 	 */
-	private IVMInstall fVMBinding = null;
+	private IVMInstall fVMBinding;
 
+	private volatile boolean disposed;
+
+	private volatile boolean restored;
 
 	/**
 	 * Constructs a new API baseline with the given name.
@@ -170,17 +177,18 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 */
 	public ApiBaseline(String name) {
 		super(null, IApiElement.BASELINE, name);
+		fComponentsProvidingPackageCache = new ConcurrentHashMap<>(8);
 		fAutoResolve = true;
-		fEEStatus = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_0);
+		fEEStatus = Status.error(CoreMessages.ApiBaseline_0);
 	}
 
 	/**
 	 * Constructs a new API baseline with the given attributes.
 	 *
-	 * @param name baseline name
+	 * @param name          baseline name
 	 * @param eeDescription execution environment description file
 	 * @throws CoreException if unable to create a baseline with the given
-	 *             attributes
+	 *                       attributes
 	 */
 	public ApiBaseline(String name, File eeDescription) throws CoreException {
 		this(name, eeDescription, null);
@@ -189,20 +197,19 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	/**
 	 * Constructs a new API baseline with the given attributes.
 	 *
-	 * @param name baseline name
+	 * @param name          baseline name
 	 * @param eeDescription execution environment description file
-	 * @param location the given baseline location
+	 * @param location      the given baseline location
 	 * @throws CoreException if unable to create a baseline with the given
-	 *             attributes
+	 *                       attributes
 	 */
 	public ApiBaseline(String name, File eeDescription, String location) throws CoreException {
 		this(name);
 		if (eeDescription != null) {
 			fAutoResolve = false;
 			ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(eeDescription);
-			String profile = ee.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL);
 			initialize(ee);
-			fEEStatus = new Status(IStatus.OK, ApiPlugin.PLUGIN_ID, MessageFormat.format(CoreMessages.ApiBaseline_1, profile));
+			fEEStatus = Status.OK_STATUS;
 		}
 		this.fLocation = location;
 	}
@@ -297,7 +304,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	/**
 	 * Initializes this baseline from the given properties.
 	 *
-	 * @param profile OGSi profile properties
+	 * @param profile     OGSi profile properties
 	 * @param description execution environment description
 	 * @throws CoreException if unable to initialize
 	 */
@@ -362,13 +369,10 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 
 	/**
-	 * Clears the package -> components cache and sets it to <code>null</code>
+	 * Clears the package -> components cache
 	 */
-	private synchronized void clearComponentsCache() {
-		if (fComponentsProvidingPackageCache != null) {
-			fComponentsProvidingPackageCache.clear();
-			fComponentsProvidingPackageCache = null;
-		}
+	private void clearComponentsCache() {
+		fComponentsProvidingPackageCache.clear();
 	}
 
 	/**
@@ -377,7 +381,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * @param component
 	 */
 	protected void addComponent(IApiComponent component) {
-		if (component == null) {
+		if (isDisposed() || component == null) {
 			return;
 		}
 		if (fComponentsById == null) {
@@ -398,7 +402,16 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 				}
 			} else {
 				TreeSet<IApiComponent> allComponents = new TreeSet<>(
-						(comp1, comp2) -> new Version(comp2.getVersion()).compareTo(new Version(comp1.getVersion())));
+						(comp1, comp2) -> {
+					if (comp2.getVersion().equals(comp1.getVersion())) {
+						if (comp2.getVersion().contains("JavaSE")) { //$NON-NLS-1$
+							ApiPlugin.logInfoMessage("Multiple locations for the same Java = " //$NON-NLS-1$
+									+ comp1.getLocation() + comp2.getLocation());
+						}
+						return 0;
+					}
+					return new Version(comp2.getVersion()).compareTo(new Version(comp1.getVersion()));
+				});
 				allComponents.add(comp);
 				allComponents.add(component);
 				fAllComponentsById.put(component.getSymbolicName(), allComponents);
@@ -417,6 +430,9 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	@Override
 	public void addApiComponents(IApiComponent[] components) throws CoreException {
+		if (isDisposed()) {
+			return;
+		}
 		HashSet<String> ees = new HashSet<>();
 		for (IApiComponent apiComponent : components) {
 			BundleComponent component = (BundleComponent) apiComponent;
@@ -491,13 +507,13 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 							ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
 							initialize(ee);
 						} catch (CoreException | IOException e) {
-							error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_2, e);
+							error = Status.error(CoreMessages.ApiBaseline_2, e);
 						}
 					}
 				}
 			} else {
 				// no VMs match any required EE
-				error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_6);
+				error = Status.error(CoreMessages.ApiBaseline_6);
 			}
 			if (error == null) {
 				// build status for unbound required EE's
@@ -508,11 +524,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 				}
 				missing.removeAll(covered);
 				if (missing.isEmpty()) {
-					fEEStatus = new Status(IStatus.OK, ApiPlugin.PLUGIN_ID, MessageFormat.format(CoreMessages.ApiBaseline_1, systemEE));
+					fEEStatus = Status.OK_STATUS;
 				} else {
 					MultiStatus multi = new MultiStatus(ApiPlugin.PLUGIN_ID, 0, CoreMessages.ApiBaseline_4, null);
 					for (String id : missing) {
-						multi.add(new Status(IStatus.WARNING, ApiPlugin.PLUGIN_ID, MessageFormat.format(CoreMessages.ApiBaseline_5, id)));
+						multi.add(Status.warning(MessageFormat.format(CoreMessages.ApiBaseline_5, id)));
 					}
 					fEEStatus = multi;
 				}
@@ -537,30 +553,30 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	@Override
 	public IApiComponent[] getApiComponents() {
 		loadBaselineInfos();
-		if (fComponentsById == null) {
+		return getAlreadyLoadedApiComponents();
+	}
+
+	protected IApiComponent[] getAlreadyLoadedApiComponents() {
+		Map<String, IApiComponent> componentsById = fComponentsById;
+		if (disposed || componentsById == null) {
 			return EMPTY_COMPONENTS;
 		}
-		Collection<IApiComponent> values = fComponentsById.values();
+		Collection<IApiComponent> values = componentsById.values();
 		return values.toArray(new IApiComponent[values.size()]);
 	}
 
 	@Override
-	public synchronized IApiComponent[] resolvePackage(IApiComponent sourceComponent, String packageName) throws CoreException {
-		HashMap<IApiComponent, IApiComponent[]> componentsForPackage = null;
-		if (fComponentsProvidingPackageCache != null) {
-			componentsForPackage = fComponentsProvidingPackageCache.get(packageName);
-		} else {
-			fComponentsProvidingPackageCache = new HashMap<>(8);
+	public IApiComponent[] resolvePackage(IApiComponent sourceComponent, String packageName) throws CoreException {
+		if (disposed) {
+			IStatus error = Status.error("Trying to use disposed baseline " + getName()); //$NON-NLS-1$
+			throw new CoreException(error);
 		}
+		Map<IApiComponent, IApiComponent[]> componentsForPackage = fComponentsProvidingPackageCache
+				.computeIfAbsent(packageName, x -> new ConcurrentHashMap<>(8));
 		IApiComponent[] cachedComponents = null;
-		if (componentsForPackage != null) {
-			cachedComponents = componentsForPackage.get(sourceComponent);
-			if (cachedComponents != null && cachedComponents.length > 0) {
-				return cachedComponents;
-			}
-		} else {
-			componentsForPackage = new HashMap<>(8);
-			fComponentsProvidingPackageCache.put(packageName, componentsForPackage);
+		cachedComponents = componentsForPackage.get(sourceComponent);
+		if (cachedComponents != null && cachedComponents.length > 0) {
+			return cachedComponents;
 		}
 
 		// check resolvePackage0 before the system packages to avoid wrong
@@ -605,7 +621,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * @param componentsList
 	 * @throws CoreException
 	 */
-	private void resolvePackage0(IApiComponent component, String packageName, List<IApiComponent> componentsList) throws CoreException {
+	private void resolvePackage0(IApiComponent component, String packageName, List<IApiComponent> componentsList)
+			throws CoreException {
 		if (component instanceof BundleComponent) {
 			BundleDescription bundle = ((BundleComponent) component).getBundleDescription();
 			if (bundle != null) {
@@ -696,8 +713,13 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public State getState() {
+		if (disposed) {
+			return fState;
+		}
 		if (fState == null) {
-			fState = StateObjectFactory.defaultFactory.createState(true);
+			synchronized (this) {
+				fState = StateObjectFactory.defaultFactory.createState(true);
+			}
 		}
 		return fState;
 	}
@@ -705,22 +727,25 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	@Override
 	public IApiComponent getApiComponent(String id) {
 		loadBaselineInfos();
-		if (fComponentsById == null) {
+		Map<String, IApiComponent> componentsById = fComponentsById;
+		if (disposed || componentsById == null) {
 			return null;
 		}
-		return fComponentsById.get(id);
+		return componentsById.get(id);
 	}
 
 	@Override
 	public Set<IApiComponent> getAllApiComponents(String id) {
 		loadBaselineInfos();
-		if (fAllComponentsById == null) {
+		Map<String, Set<IApiComponent>> componentsById = fAllComponentsById;
+		if (disposed || componentsById == null) {
 			return Collections.emptySet();
 		}
-		if (fAllComponentsById.get(id) == null) {
+		Set<IApiComponent> set = componentsById.get(id);
+		if (set == null) {
 			return Collections.emptySet();
 		}
-		return fAllComponentsById.get(id);
+		return set;
 	}
 
 	@Override
@@ -733,15 +758,50 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * is accessed
 	 */
 	private void loadBaselineInfos() {
-		if (fComponentsById != null) {
+		if (disposed || restored) {
+			return;
+		}
+		ApiBaselineManager manager = ApiBaselineManager.getManager();
+		if (fComponentsById != null && manager.isBaselineLoaded(this)) {
+			return;
+		}
+		if (disposed || restored) {
 			return;
 		}
 		try {
-			ApiBaselineManager.getManager().loadBaselineInfos(this);
+			manager.loadBaselineInfos(this);
 		} catch (CoreException ce) {
 			ApiPlugin.log(ce);
 		}
 	}
+
+	/**
+	 * Restore a baseline from the given input stream (persisted baseline).
+	 *
+	 * @param stream the given input stream, will be closed by caller
+	 * @throws CoreException if unable to restore the baseline
+	 */
+	public void restoreFrom(InputStream stream) throws CoreException {
+		if (disposed || restored) {
+			return;
+		}
+		IApiComponent[] components = ApiBaselineManager.getManager().readBaselineComponents(this, stream);
+		if (components == null) {
+			restored = true;
+			return;
+		}
+		synchronized (this) {
+			if (disposed || restored) {
+				for (IApiComponent component : components) {
+					component.dispose();
+				}
+				return;
+			}
+			this.addApiComponents(components);
+			restored = true;
+		}
+	}
+
 
 	/**
 	 * Returns all errors in the state.
@@ -798,15 +858,27 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		fState = null;
 	}
 
+	@Override
+	public boolean isDisposed() {
+		return disposed;
+	}
+
 	/**
 	 * performs the actual dispose of mappings and cached elements
 	 */
 	protected void doDispose() {
+		if (disposed) {
+			return;
+		}
+		IApiComponent[] components;
+		synchronized (this) {
+			components = getAlreadyLoadedApiComponents();
+			disposed = true;
+		}
+		clearCachedElements();
 		if (ApiPlugin.isRunningInFramework()) {
 			JavaRuntime.removeVMInstallChangedListener(this);
 		}
-		clearCachedElements();
-		IApiComponent[] components = getApiComponents();
 		for (IApiComponent component2 : components) {
 			component2.dispose();
 		}
@@ -904,10 +976,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * @nooverride This method is not intended to be re-implemented or extended
 	 *             by clients.
 	 */
-	public synchronized void clearPackage(String packageName) {
-		if (fComponentsProvidingPackageCache != null) {
-			fComponentsProvidingPackageCache.remove(packageName);
-		}
+	public void clearPackage(String packageName) {
+		fComponentsProvidingPackageCache.remove(packageName);
 	}
 
 	@Override
@@ -988,9 +1058,10 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	@Override
 	public IApiComponent getApiComponent(IProject project) {
 		loadBaselineInfos();
-		if (fComponentsByProjectNames == null) {
+		Map<String, IApiComponent> componentsByProjectNames = fComponentsByProjectNames;
+		if (disposed || componentsByProjectNames == null) {
 			return null;
 		}
-		return fComponentsByProjectNames.get(project.getName());
+		return componentsByProjectNames.get(project.getName());
 	}
 }

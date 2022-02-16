@@ -387,11 +387,11 @@ public class P2TargetUtils {
 		IProvisioningAgentProvider provider = PDECore.getDefault().acquireService(IProvisioningAgentProvider.class);
 		try {
 			if (provider == null) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_7));
+				throw new CoreException(Status.error(Messages.IUBundleContainer_7));
 			}
 			IProvisioningAgent agent = provider.createAgent(AGENT_LOCATION);
 			if (agent == null) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_7));
+				throw new CoreException(Status.error(Messages.IUBundleContainer_7));
 			}
 			// turn off the garbage collector for the PDE agent.  GC is managed on a coarser grain
 			GarbageCollector garbageCollector = (GarbageCollector) agent.getService(GarbageCollector.class.getName());
@@ -400,7 +400,7 @@ public class P2TargetUtils {
 			}
 			return agent;
 		} catch (ProvisionException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_7, e));
+			throw new CoreException(Status.error(Messages.IUBundleContainer_7, e));
 		}
 	}
 
@@ -414,7 +414,7 @@ public class P2TargetUtils {
 	public static IProvisioningAgent getGlobalAgent() throws CoreException {
 		IProvisioningAgent agent = PDECore.getDefault().acquireService(IProvisioningAgent.class);
 		if (agent == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_11));
+			throw new CoreException(Status.error(Messages.IUBundleContainer_11));
 		}
 		return agent;
 	}
@@ -428,7 +428,7 @@ public class P2TargetUtils {
 	public static IAgentLocation getAgentLocation() throws CoreException {
 		IAgentLocation result = (IAgentLocation) getAgent().getService(IAgentLocation.SERVICE_NAME);
 		if (result == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_10));
+			throw new CoreException(Status.error(Messages.IUBundleContainer_10));
 		}
 		return result;
 	}
@@ -442,7 +442,7 @@ public class P2TargetUtils {
 	public static IArtifactRepositoryManager getArtifactRepositoryManager() throws CoreException {
 		IArtifactRepositoryManager manager = (IArtifactRepositoryManager) getAgent().getService(IArtifactRepositoryManager.class.getName());
 		if (manager == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_3));
+			throw new CoreException(Status.error(Messages.IUBundleContainer_3));
 		}
 		return manager;
 	}
@@ -477,7 +477,7 @@ public class P2TargetUtils {
 	public static IEngine getEngine() throws CoreException {
 		IEngine engine = (IEngine) getAgent().getService(IEngine.class.getName());
 		if (engine == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_4));
+			throw new CoreException(Status.error(Messages.IUBundleContainer_4));
 		}
 		return engine;
 	}
@@ -491,7 +491,7 @@ public class P2TargetUtils {
 	public static GarbageCollector getGarbageCollector() throws CoreException {
 		GarbageCollector engine = (GarbageCollector) getAgent().getService(GarbageCollector.class.getName());
 		if (engine == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_9));
+			throw new CoreException(Status.error(Messages.IUBundleContainer_9));
 		}
 		return engine;
 	}
@@ -505,7 +505,7 @@ public class P2TargetUtils {
 	public static IPlanner getPlanner() throws CoreException {
 		IPlanner planner = (IPlanner) getAgent().getService(IPlanner.class.getName());
 		if (planner == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_5));
+			throw new CoreException(Status.error(Messages.IUBundleContainer_5));
 		}
 		return planner;
 	}
@@ -857,7 +857,7 @@ public class P2TargetUtils {
 		// create a new profile
 		IProfileRegistry registry = getProfileRegistry();
 		if (registry == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.AbstractTargetHandle_0));
+			throw new CoreException(Status.error(Messages.AbstractTargetHandle_0));
 		}
 		Map<String, String> properties = new HashMap<>();
 		properties.put(IProfile.PROP_INSTALL_FOLDER, INSTALL_FOLDERS.append(Long.toString(LocalTargetHandle.nextTimeStamp())).toOSString());
@@ -936,7 +936,7 @@ public class P2TargetUtils {
 	public static IProfileRegistry getProfileRegistry() throws CoreException {
 		IProfileRegistry result = (IProfileRegistry) getAgent().getService(IProfileRegistry.SERVICE_NAME);
 		if (result == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_8));
+			throw new CoreException(Status.error(Messages.IUBundleContainer_8));
 		}
 		return result;
 	}
@@ -960,7 +960,7 @@ public class P2TargetUtils {
 	public static IMetadataRepositoryManager getRepoManager() throws CoreException {
 		IMetadataRepositoryManager manager = (IMetadataRepositoryManager) getAgent().getService(IMetadataRepositoryManager.SERVICE_NAME);
 		if (manager == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_2));
+			throw new CoreException(Status.error(Messages.IUBundleContainer_2));
 		}
 		return manager;
 	}
@@ -1041,7 +1041,7 @@ public class P2TargetUtils {
 		if (installerPlan != null) {
 			// this plan requires an update to the installer first, log the fact and attempt
 			// to continue, we don't want to update the running SDK while provisioning a target
-			PDECore.log(new Status(IStatus.INFO, PDECore.PLUGIN_ID, Messages.IUBundleContainer_6));
+			PDECore.log(Status.info(Messages.IUBundleContainer_6));
 		}
 		subMonitor.split(10);
 

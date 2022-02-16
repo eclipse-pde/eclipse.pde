@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import org.eclipse.pde.internal.ui.editor.PDEFormEditorContributor;
+import org.eclipse.pde.internal.ui.editor.PDEFormTextEditorContributor;
 
-public class ProductEditorContributor extends PDEFormEditorContributor {
+public class ProductEditorContributor extends PDEFormTextEditorContributor {
 
 	public ProductEditorContributor() {
 		super("Target"); //$NON-NLS-1$

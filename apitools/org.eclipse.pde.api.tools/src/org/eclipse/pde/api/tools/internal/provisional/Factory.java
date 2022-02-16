@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.api.tools.internal.builder.TypeScope;
 import org.eclipse.pde.api.tools.internal.descriptors.ComponentDescriptorImpl;
@@ -214,7 +213,7 @@ public class Factory {
 					}
 				}
 			}
-			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format("Unable to resolve method signature: {0}", descriptor.toString()), null)); //$NON-NLS-1$
+			throw new CoreException(Status.error(MessageFormat.format("Unable to resolve method signature: {0}", descriptor ), null)); //$NON-NLS-1$
 		}
 		return descriptor;
 	}

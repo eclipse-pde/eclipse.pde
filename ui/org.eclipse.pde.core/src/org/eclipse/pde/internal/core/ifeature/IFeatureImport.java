@@ -21,8 +21,6 @@ public interface IFeatureImport extends IFeatureObject, IPluginReference {
 
 	String P_PATCH = "patch"; //$NON-NLS-1$
 
-	String P_ID_MATCH = "id-match"; //$NON-NLS-1$
-
 	int PLUGIN = 0;
 
 	int FEATURE = 1;
@@ -34,10 +32,6 @@ public interface IFeatureImport extends IFeatureObject, IPluginReference {
 	boolean isPatch();
 
 	void setPatch(boolean patch) throws CoreException;
-
-	int getIdMatch();
-
-	void setIdMatch(int idMatch) throws CoreException;
 
 	String getFilter();
 

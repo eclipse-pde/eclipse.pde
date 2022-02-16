@@ -86,13 +86,11 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 			if ((error.getType() & (ResolverError.MISSING_FRAGMENT_HOST | ResolverError.MISSING_GENERIC_CAPABILITY | ResolverError.MISSING_IMPORT_PACKAGE | ResolverError.MISSING_REQUIRE_BUNDLE)) != 0){
 				continue;
 			}
-			IStatus status = new Status(IStatus.WARNING, PDERuntimePlugin.ID, error.toString());
-			problems.add(status);
+			problems.add(Status.warning(error.toString()));
 		}
 
 		for (VersionConstraint constraint : unsatisfied) {
-			IStatus status = new Status(IStatus.WARNING, PDERuntimePlugin.ID, MessageHelper.getResolutionFailureMessage(constraint));
-			problems.add(status);
+			problems.add(Status.warning(MessageHelper.getResolutionFailureMessage(constraint)));
 		}
 
 		return problems;

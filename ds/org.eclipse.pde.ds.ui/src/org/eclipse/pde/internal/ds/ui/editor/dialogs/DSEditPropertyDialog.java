@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -350,11 +349,9 @@ public class DSEditPropertyDialog extends FormDialog {
 			if (selection != null
 					&& selection.length > 0
 					&& (selection[0] instanceof IFile || selection[0] instanceof IContainer))
-				return new Status(IStatus.OK, Activator.PLUGIN_ID,
-						IStatus.OK, "", null); //$NON-NLS-1$
+				return Status.OK_STATUS;
 
-			return new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-					IStatus.ERROR, "", null); //$NON-NLS-1$
+			return Status.error("", null); //$NON-NLS-1$
 		});
 		if (dialog.open() == Window.OK) {
 			IResource res = (IResource) dialog.getFirstResult();

@@ -496,11 +496,11 @@ public class FeatureImportWizardPage extends WizardPage {
 
 			model.load(stream, false);
 			if (!model.isValid()) {
-				status = new Status(IStatus.WARNING, IPDEUIConstants.PLUGIN_ID, IStatus.OK, NLS.bind(PDEUIMessages.FeatureImportWizardPage_importHasInvalid, dir), null);
+				status = Status.warning(NLS.bind(PDEUIMessages.FeatureImportWizardPage_importHasInvalid, dir));
 			}
 		} catch (Exception e) {
 			// Errors in the file
-			status = new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, IStatus.OK, e.getMessage(), e);
+			status = Status.error(e.getMessage(), e);
 		}
 		if (status == null)
 			result.add(model);

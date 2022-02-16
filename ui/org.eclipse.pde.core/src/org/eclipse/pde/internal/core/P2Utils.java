@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -302,7 +303,8 @@ public class P2Utils {
 						try {
 							level = Integer.parseInt(levelString);
 						} catch (NumberFormatException e) {
-							PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Error writing bundles, could not parse start level for bundle " + currentModel)); //$NON-NLS-1$
+							PDECore.log(Status.error(
+									"Error writing bundles, could not parse start level for bundle " + currentModel)); //$NON-NLS-1$
 						}
 					}
 					info.setMarkedAsStarted(isAuto);
@@ -310,7 +312,8 @@ public class P2Utils {
 					bundleInfo.add(info);
 				}
 			} else {
-				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "Error writing bundles, could not find the bundle location for bundle " + currentModel)); //$NON-NLS-1$
+				PDECore.log(Status
+						.error("Error writing bundles, could not find the bundle location for bundle " + currentModel)); //$NON-NLS-1$
 			}
 		}
 
@@ -352,17 +355,17 @@ public class P2Utils {
 	public static boolean profileExists(String profileID, File p2DataArea) throws CoreException {
 		IProvisioningAgentProvider provider = PDECore.getDefault().acquireService(IProvisioningAgentProvider.class);
 		if (provider == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
 		IProvisioningAgent agent = provider.createAgent(p2DataArea.toURI());
 		if (agent == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
 		IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
 		if (registry == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
 		return registry.containsProfile(profileID);
@@ -379,26 +382,26 @@ public class P2Utils {
 	 *
 	 * @throws CoreException if the profile cannot be generated
 	 */
-	public static void createProfile(String profileID, File p2DataArea, Collection<?> bundles) throws CoreException {
+	public static void createProfile(String profileID, File p2DataArea, Collection<List<IPluginModelBase>> bundles) throws CoreException {
 		// Acquire the required p2 services, creating an agent in the target p2 metadata area
 		IProvisioningAgentProvider provider = PDECore.getDefault().acquireService(IProvisioningAgentProvider.class);
 		if (provider == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
 		IProvisioningAgent agent = provider.createAgent(p2DataArea.toURI());
 		if (agent == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
 		IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
 		if (registry == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
 		IEngine engine = (IEngine) agent.getService(IEngine.SERVICE_NAME);
 		if (engine == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.P2Utils_UnableToAcquireP2Service));
+			throw new CoreException(Status.error(PDECoreMessages.P2Utils_UnableToAcquireP2Service));
 		}
 
 		// Delete any previous profiles with the same ID
@@ -416,12 +419,9 @@ public class P2Utils {
 		profile = registry.addProfile(profileID, props);
 
 		// Create metadata for the bundles
-		Collection<IInstallableUnit> ius = new ArrayList<>(bundles.size());
-		for (final Object name : bundles) {
-			IPluginModelBase model = (IPluginModelBase) name;
-			BundleDescription bundle = model.getBundleDescription();
-			ius.add(createBundleIU(bundle));
-		}
+		Collection<IInstallableUnit> ius = bundles.stream().flatMap(Collection::stream)
+				.map(IPluginModelBase::getBundleDescription).map(P2Utils::createBundleIU) //
+				.collect(Collectors.toList());
 
 		// Add the metadata to the profile
 		ProvisioningContext context = new ProvisioningContext(agent);

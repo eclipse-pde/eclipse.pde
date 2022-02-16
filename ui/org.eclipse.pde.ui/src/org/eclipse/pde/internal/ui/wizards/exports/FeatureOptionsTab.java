@@ -90,7 +90,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 					}
 				}
 			}
-			return new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, PDEUIMessages.FeatureOptionsTab_0);
+			return Status.error(PDEUIMessages.FeatureOptionsTab_0);
 		}
 	}
 

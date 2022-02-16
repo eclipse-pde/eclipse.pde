@@ -13,12 +13,11 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>eclipse.pde.ui</artifactId>
-    <groupId>eclipse.pde.ui</groupId>
+    <groupId>org.eclipse.pde</groupId>
     <version>4.23.0-SNAPSHOT</version>
     <relativePath>../../</relativePath>
   </parent>
-  <groupId>org.eclipse.pde.ui</groupId>
   <artifactId>org.eclipse.pde.genericeditor.extension</artifactId>
-  <version>1.1.100-SNAPSHOT</version>
+  <version>1.1.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

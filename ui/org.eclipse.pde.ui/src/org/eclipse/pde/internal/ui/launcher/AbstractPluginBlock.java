@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2021 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,6 +38,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.DependencyManager;
+import org.eclipse.pde.internal.core.DependencyManager.Options;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
@@ -123,7 +124,7 @@ public abstract class AbstractPluginBlock {
 				startLevel = levelColumnCache.get(model) != null ? levelColumnCache.get(model).toString() : null;
 				autoStart = autoColumnCache.get(model) != null ? autoColumnCache.get(model).toString() : null;
 			}
-			return BundleLauncherHelper.writeBundleEntry(model, startLevel, autoStart);
+			return BundleLauncherHelper.formatBundleEntry(model, startLevel, autoStart);
 		}
 
 		public Set<String> getNameSet() {
@@ -713,13 +714,23 @@ public abstract class AbstractPluginBlock {
 		IWorkingSetSelectionDialog dialog = workingSetManager.createWorkingSetSelectionDialog(getShell(), true);
 		if (dialog.open() == Window.OK) {
 			String[] ids = getPluginIDs(dialog.getSelection());
+			ArrayList<IPluginModelBase> newCheckedModels = new ArrayList<>();
+			ArrayList<Object> allCheckedModels = new ArrayList<>();
 			for (String id : ids) {
 				IPluginModelBase model = PluginRegistry.findModel(id);
 				if (model != null) {
 					if (!fPluginTreeViewer.getChecked(model)) {
-						setChecked(model, true);
+						newCheckedModels.add(model);
 					}
 				}
+			}
+			Object[] checkedElements = fPluginTreeViewer.getCheckedElements();
+			allCheckedModels.addAll(Arrays.asList(checkedElements));// previous
+			allCheckedModels.addAll(newCheckedModels);// newly selected
+			fPluginTreeViewer.setCheckedElements(allCheckedModels.toArray());
+			// reset text on newly selected models
+			for (IPluginModelBase iPluginModelBase : newCheckedModels) {
+				resetText(iPluginModelBase);
 			}
 			countSelectedModels();
 		}
@@ -788,8 +799,10 @@ public abstract class AbstractPluginBlock {
 		List<IPluginModelBase> toCheck = Arrays.stream(checked).filter(IPluginModelBase.class::isInstance)
 				.map(IPluginModelBase.class::cast).collect(Collectors.toList());
 
-		boolean includeOptional = fIncludeOptionalButton.getSelection();
-		Set<BundleDescription> additionalBundles = DependencyManager.getDependencies(toCheck, includeOptional);
+		DependencyManager.Options[] options = fIncludeOptionalButton.getSelection()
+				? new Options[] { Options.INCLUDE_NON_TEST_FRAGMENTS, Options.INCLUDE_OPTIONAL_DEPENDENCIES }
+				: new Options[] { Options.INCLUDE_NON_TEST_FRAGMENTS };
+		Set<BundleDescription> additionalBundles = DependencyManager.getDependencies(toCheck, options);
 
 		additionalBundles.stream().map(PluginRegistry::findModel).filter(Objects::nonNull).forEach(toCheck::add);
 
@@ -897,10 +910,10 @@ public abstract class AbstractPluginBlock {
 
 	protected void handleRestoreDefaults() {
 		TreeSet<String> wtable = new TreeSet<>();
-
+		ArrayList<IPluginModelBase> checkedModels = new ArrayList<>();
 		for (int i = 0; i < getWorkspaceModels().length; i++) {
 			IPluginModelBase model = getWorkspaceModels()[i];
-			fPluginTreeViewer.setChecked(model, true);
+			checkedModels.add(model);
 			String id = model.getPluginBase().getId();
 			if (id != null) {
 				wtable.add(model.getPluginBase().getId());
@@ -911,9 +924,10 @@ public abstract class AbstractPluginBlock {
 		for (IPluginModelBase model : externalModels) {
 			boolean masked = wtable.contains(model.getPluginBase().getId());
 			if (!masked && model.isEnabled()) {
-				fPluginTreeViewer.setChecked(model, true);
+				checkedModels.add(model);
 			}
 		}
+		fPluginTreeViewer.setCheckedElements(checkedModels.toArray());
 		countSelectedModels();
 
 		Object[] selected = fPluginTreeViewer.getCheckedElements();

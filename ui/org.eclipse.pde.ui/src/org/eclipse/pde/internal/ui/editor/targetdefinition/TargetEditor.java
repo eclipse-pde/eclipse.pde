@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2021 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -121,7 +121,7 @@ public class TargetEditor extends FormEditor {
 			showError(PDEUIMessages.TargetEditor_5, e);
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			setActivePage(fSourceTabIndex);
-			CoreException ce = new CoreException(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), e.getMessage(), e));
+			CoreException ce = new CoreException(Status.error(e.getMessage(), e));
 			showError(PDEUIMessages.TargetEditor_5, ce);
 		}
 	}
@@ -469,7 +469,7 @@ public class TargetEditor extends FormEditor {
 		private ITargetPlatformService getTargetPlatformService() throws CoreException {
 			ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 			if (service == null) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, "ITargetPlatformService not available")); //$NON-NLS-1$
+				throw new CoreException(Status.error("ITargetPlatformService not available")); //$NON-NLS-1$
 			}
 			return service;
 		}
@@ -587,6 +587,7 @@ public class TargetEditor extends FormEditor {
 				}
 				if (fLocationTree != null) {
 					fLocationTree.setInput(getTarget());
+					fLocationTree.setExpandCollapseState(false);
 				}
 				Job.getJobManager().cancel(getJobFamily());
 
@@ -632,6 +633,7 @@ public class TargetEditor extends FormEditor {
 								}
 								if (fLocationTree != null) {
 									fLocationTree.setInput(getTarget());
+									fLocationTree.setExpandCollapseState(true);
 								}
 								return Status.OK_STATUS;
 							}

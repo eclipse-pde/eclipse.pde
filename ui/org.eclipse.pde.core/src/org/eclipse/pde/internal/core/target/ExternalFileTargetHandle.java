@@ -21,13 +21,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
-import org.eclipse.pde.internal.core.PDECore;
 
 /**
  * A handle to a target stored in a remote file (outside workspace) and accessed using its URI.
@@ -88,8 +86,7 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 			((TargetDefinition) definition).write(stream);
 			stream.close();
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
-					NLS.bind(Messages.LocalTargetHandle_4, fFile.getName()), e));
+			throw new CoreException(Status.error(NLS.bind(Messages.LocalTargetHandle_4, fFile.getName()), e));
 		}
 	}
 

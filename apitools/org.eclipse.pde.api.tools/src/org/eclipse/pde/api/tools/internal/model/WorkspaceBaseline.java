@@ -13,9 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.State;
@@ -35,7 +38,12 @@ public class WorkspaceBaseline extends ApiBaseline {
 	// If workspace is changed, then WorkspaceBaseline is disposed and a
 	// new WorkspaceBaseline is created, hence mismatch problem can be stored
 	// with a workspace baseline
-	public HashMap<IApiBaseline, IApiProblem> mismatch = new HashMap<>();
+	public Map<IApiBaseline, IApiProblem> mismatch = new ConcurrentHashMap<>();
+
+	private static final IApiProblem NULL_PROBLEM = (IApiProblem) Proxy.newProxyInstance(
+			IApiProblem.class.getClassLoader(), new Class<?>[] { IApiProblem.class },
+			(InvocationHandler) (proxy, method, args) -> null);
+
 	/**
 	 * Constructor
 	 */
@@ -61,16 +69,23 @@ public class WorkspaceBaseline extends ApiBaseline {
 
 	// can be null showing no problem
 	public IApiProblem getProblem(IApiBaseline b) {
-		return mismatch.get(b);
+		IApiProblem problem = mismatch.get(b);
+		return problem == NULL_PROBLEM ? null : problem;
 	}
 
 	public void putMismatchInfo(IApiBaseline baseline, IApiProblem problem) {
-		mismatch.put(baseline, problem);
-
+		if (problem == null) {
+			mismatch.put(baseline, NULL_PROBLEM);
+		} else {
+			mismatch.put(baseline, problem);
+		}
 	}
 
 	@Override
 	public void addApiComponents(IApiComponent[] components) throws CoreException {
+		if (isDisposed()) {
+			return;
+		}
 		HashSet<String> ees = new HashSet<>();
 		for (IApiComponent apiComponent : components) {
 			BundleComponent component = (BundleComponent) apiComponent;

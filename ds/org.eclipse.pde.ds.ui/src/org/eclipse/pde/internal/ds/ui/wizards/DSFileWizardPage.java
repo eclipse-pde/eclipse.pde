@@ -287,7 +287,7 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 
 	@Override
 	protected IStatus validateLinkedResource() {
-		return new Status(IStatus.OK, Activator.PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
+		return Status.OK_STATUS;
 	}
 
 	@Override

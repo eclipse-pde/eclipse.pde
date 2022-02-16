@@ -119,8 +119,7 @@ public class Activator extends AbstractUIPlugin {
 				message = e.getMessage();
 			if (message == null)
 				message = e.toString();
-			status = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK,
-					message, e);
+			status = Status.error(message, e);
 		}
 		ResourcesPlugin.getPlugin().getLog().log(status);
 		Display display = Display.getCurrent() != null ? Display.getCurrent()

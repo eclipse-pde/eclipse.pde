@@ -18,6 +18,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -31,9 +32,9 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.jdt.internal.core.OverflowingLRUCache;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
+import org.eclipse.pde.api.tools.internal.SynchronizedOverflowingLRUCache;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.FileManager;
@@ -63,7 +64,7 @@ public class UseScanManager {
 	 * Cache to maintain the list of least recently used
 	 * <code>UseScanReferences</code>
 	 */
-	private static class UseScanCache extends OverflowingLRUCache<IApiComponent, IReferenceCollection> {
+	private static class UseScanCache extends SynchronizedOverflowingLRUCache<IApiComponent, IReferenceCollection> {
 
 		public UseScanCache(int size) {
 			super(size);
@@ -407,9 +408,8 @@ public class UseScanManager {
 	 * Purges all reference information
 	 */
 	public void clearCache() {
-		Enumeration<IReferenceCollection> elements = fApiComponentCache.elements();
-		while (elements.hasMoreElements()) {
-			IReferenceCollection reference = elements.nextElement();
+		List<IReferenceCollection> elements = fApiComponentCache.elementsSnapshot();
+		for (IReferenceCollection reference : elements) {
 			reference.clear();
 		}
 		fApiComponentCache.flush();

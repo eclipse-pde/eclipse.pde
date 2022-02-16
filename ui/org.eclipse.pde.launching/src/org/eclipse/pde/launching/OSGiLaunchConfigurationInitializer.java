@@ -102,7 +102,7 @@ public class OSGiLaunchConfigurationInitializer {
 
 	private void appendBundle(Set<String> bundleSet, IPluginModelBase model) {
 		String id = model.getPluginBase().getId();
-		String value = BundleLauncherHelper.writeBundleEntry(model, getStartLevel(id), getAutoStart(id));
+		String value = BundleLauncherHelper.formatBundleEntry(model, getStartLevel(id), getAutoStart(id));
 		bundleSet.add(value);
 	}
 

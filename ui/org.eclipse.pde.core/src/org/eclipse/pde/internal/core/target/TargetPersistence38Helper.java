@@ -26,7 +26,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
@@ -247,7 +246,7 @@ public class TargetPersistence38Helper {
 				// Convert the xml to a string to pass to the extension
 				ITargetLocationFactory locFactory = TargetLocationTypeManager.getInstance().getTargetLocationFactory(type);
 				if (locFactory == null) {
-					throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetPersistence38Helper_NoTargetLocationExtension, type)));
+					throw new CoreException(Status.error(NLS.bind(Messages.TargetPersistence38Helper_NoTargetLocationExtension, type)));
 				}
 				StreamResult result = new StreamResult(new StringWriter());
 				Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -255,7 +254,7 @@ public class TargetPersistence38Helper {
 				transformer.transform(new DOMSource(location), result);
 				container = locFactory.getTargetLocation(type, result.getWriter().toString());
 			} catch (TransformerException | TransformerFactoryConfigurationError e) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.TargetDefinitionPersistenceHelper_0, e));
+				throw new CoreException(Status.error(Messages.TargetDefinitionPersistenceHelper_0, e));
 			}
 			break;
 		}

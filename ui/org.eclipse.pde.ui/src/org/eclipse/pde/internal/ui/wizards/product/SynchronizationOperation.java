@@ -60,8 +60,7 @@ public class SynchronizationOperation extends ProductDefinitionOperation {
 	}
 
 	private CoreException createCoreException(String message) {
-		IStatus status = new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, message, null); //$NON-NLS-1$
-		return new CoreException(status);
+		return new CoreException(Status.error(message));
 	}
 
 }

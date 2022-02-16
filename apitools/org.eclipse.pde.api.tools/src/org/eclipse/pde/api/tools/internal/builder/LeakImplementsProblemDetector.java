@@ -16,6 +16,7 @@ package org.eclipse.pde.api.tools.internal.builder;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
@@ -54,8 +55,8 @@ public class LeakImplementsProblemDetector extends AbstractTypeLeakDetector {
 	}
 
 	@Override
-	public boolean isProblem(IReference reference) {
-		boolean isProb = super.isProblem(reference);
+	public boolean isProblem(IReference reference, IProgressMonitor monitor) {
+		boolean isProb = super.isProblem(reference, monitor);
 		// check if no implement interface is implemented and thereby leaking api
 		// types from noimplement interface
 		if (isProb == false) {
@@ -74,6 +75,7 @@ public class LeakImplementsProblemDetector extends AbstractTypeLeakDetector {
 			}
 			catch (CoreException e) {
 				ApiPlugin.log(e);
+				checkIfDisposed(member.getApiComponent(), monitor);
 			}
 		}
 		return isProb;

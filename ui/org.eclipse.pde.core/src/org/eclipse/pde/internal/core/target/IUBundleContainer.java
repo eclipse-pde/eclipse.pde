@@ -294,7 +294,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(fIds[i], fVersions[i]);
 			IQueryResult<IInstallableUnit> queryResult = profile.query(query, null);
 			if (queryResult.isEmpty()) {
-				status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, fIds[i] + " " + fVersions[i]))); //$NON-NLS-1$
+				status.add(Status.error(NLS.bind(Messages.IUBundleContainer_1, fIds[i] + " " + fVersions[i]))); //$NON-NLS-1$
 			} else {
 				result.add(queryResult.iterator().next());
 			}
@@ -400,7 +400,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			Iterator<IInstallableUnit> it = queryResult.iterator();
 			// bail if the feature is no longer available.
 			if (!it.hasNext()) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, fIds[i])));
+				throw new CoreException(Status.error(NLS.bind(Messages.IUBundleContainer_1, fIds[i])));
 			}
 			IInstallableUnit iu = it.next();
 			// if the version is different from the spec (up or down), record the change.
@@ -771,7 +771,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(fIds[j], fVersions[j]));
 			IQueryResult<IInstallableUnit> queryResult = repos.query(query, null);
 			if (queryResult.isEmpty()) {
-				status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, fIds[j] + " " + fVersions[j])));//$NON-NLS-1$
+				status.add(Status.error(NLS.bind(Messages.IUBundleContainer_1, fIds[j] + " " + fVersions[j])));//$NON-NLS-1$
 			} else {
 				result.add(queryResult.iterator().next());
 			}

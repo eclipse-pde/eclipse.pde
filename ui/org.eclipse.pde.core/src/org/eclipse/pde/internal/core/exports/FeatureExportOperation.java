@@ -176,9 +176,9 @@ public class FeatureExportOperation extends Job {
 			}
 			return status;
 		} catch (InvocationTargetException | CoreException e) {
-			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getCause() != null ? e.getCause() : e);
+			return Status.error(PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e.getCause() != null ? e.getCause() : e);
 		} catch (IOException e) {
-			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e);
+			return Status.error(PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, e);
 		}
 
 	}
@@ -1231,7 +1231,7 @@ public class FeatureExportOperation extends Job {
 			Set<?> errors = getWorkspaceExportHelper().checkForErrors(fInfo.items);
 			subMonitor.split(5);
 			if (!errors.isEmpty()) {
-				return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.FeatureExportOperation_workspaceBuildErrorsFoundDuringExport, errors.toString()));
+				return Status.error(NLS.bind(PDECoreMessages.FeatureExportOperation_workspaceBuildErrorsFoundDuringExport, errors));
 			}
 		}
 		return Status.OK_STATUS;

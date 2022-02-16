@@ -16,6 +16,7 @@ package org.eclipse.pde.api.tools.internal.builder;
 import java.util.HashMap;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
@@ -57,9 +58,9 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 	}
 
 	@Override
-	public boolean considerReference(IReference reference) {
+	public boolean considerReference(IReference reference, IProgressMonitor monitor) {
 		try {
-			if (super.considerReference(reference)) {
+			if (super.considerReference(reference, monitor)) {
 				return true;
 			}
 			IApiType type = (IApiType) reference.getMember();
@@ -79,15 +80,16 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 			if (ApiPlugin.DEBUG_PROBLEM_DETECTOR) {
 				ApiPlugin.log(ce);
 			}
+			checkIfDisposed(reference.getMember().getApiComponent(), monitor);
 		}
 		return false;
 	}
 
 	@Override
-	protected boolean isProblem(IReference reference) {
+	protected boolean isProblem(IReference reference, IProgressMonitor monitor) {
 		try {
 			if (isIllegalType(reference)) {
-				return super.isProblem(reference);
+				return super.isProblem(reference, monitor);
 			}
 			if (fRestrictedInterfaces.size() > 0) {
 				IApiMember member = reference.getMember();
@@ -101,8 +103,12 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 			if (ApiPlugin.DEBUG_PROBLEM_DETECTOR) {
 				ApiPlugin.log(ce);
 			}
+			IApiMember member = reference.getMember();
+			if (member != null) {
+				checkIfDisposed(member.getApiComponent(), monitor);
+			}
 		}
-		return super.isProblem(reference);
+		return super.isProblem(reference, monitor);
 	}
 
 	@Override

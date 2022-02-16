@@ -22,7 +22,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.progress.IProgressConstants;
 
@@ -56,7 +57,7 @@ public class CalculateUsesAction extends Action {
 				} finally {
 					monitor.done();
 				}
-				return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+				return Status.OK_STATUS;
 			}
 		};
 	}

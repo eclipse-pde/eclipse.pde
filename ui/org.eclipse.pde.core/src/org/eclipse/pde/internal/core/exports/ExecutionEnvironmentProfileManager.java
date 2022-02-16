@@ -22,7 +22,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.Properties;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -102,7 +101,7 @@ public class ExecutionEnvironmentProfileManager {
 							fgCustomCount++;
 							properties.store(stream, null);
 						} catch (IOException e) {
-							PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.ExecutionEnvironmentProfileManager_0, env.getId()), e));
+							PDECore.log(Status.error(NLS.bind(PDECoreMessages.ExecutionEnvironmentProfileManager_0, env.getId()), e));
 						}
 					}
 				}

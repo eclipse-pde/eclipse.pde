@@ -16,11 +16,9 @@ package org.eclipse.pde.api.tools.internal.provisional.comparator;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.model.Messages;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiScopeVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -72,7 +70,7 @@ public class ApiScope implements IApiScope {
 					break;
 				}
 				default:
-					throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, NLS.bind(Messages.ApiScope_0, Util.getApiElementType(type))));
+					throw new CoreException(Status.error(NLS.bind(Messages.ApiScope_0, Util.getApiElementType(type))));
 			}
 		}
 	}

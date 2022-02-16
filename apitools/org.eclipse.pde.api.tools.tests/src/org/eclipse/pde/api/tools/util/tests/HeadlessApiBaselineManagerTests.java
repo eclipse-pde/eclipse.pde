@@ -36,9 +36,11 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 
 	private ApiBaselineManager fManager = ApiBaselineManager.getManager();
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		fManager.stop();
+		super.tearDown();
 	}
 
 	/**
@@ -134,7 +136,7 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 	/**
 	 * Tests that calling the saving(..) method on the manager in headless mode
 	 * does not fail
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	@Test

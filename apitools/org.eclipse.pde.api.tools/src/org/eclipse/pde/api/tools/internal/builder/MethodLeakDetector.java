@@ -17,7 +17,7 @@ import java.text.MessageFormat;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.IType;
@@ -70,7 +70,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 	}
 
 	@Override
-	protected boolean isProblem(IReference reference) {
+	protected boolean isProblem(IReference reference, IProgressMonitor monitor) {
 		IApiMethod method = (IApiMethod) reference.getMember();
 		IApiType type = (IApiType) reference.getResolvedReference();
 		try {
@@ -100,7 +100,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 					String typeName = type.getName();
 					if (typeName != null) {
 						if (!typeName.startsWith("javax.")) { //$NON-NLS-1$
-							ApiPlugin.log(new Status(IStatus.INFO, ApiPlugin.PLUGIN_ID, MessageFormat.format(BuilderMessages.AbstractTypeLeakDetector_vis_type_has_no_api_description, typeName)));
+							ApiPlugin.log(Status.info(MessageFormat.format(BuilderMessages.AbstractTypeLeakDetector_vis_type_has_no_api_description, typeName)));
 						}
 					}
 				} else {
@@ -110,6 +110,7 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 			}
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
+			checkIfDisposed(method.getApiComponent(), monitor);
 		}
 		return false;
 	}
@@ -138,8 +139,8 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 	}
 
 	@Override
-	public boolean considerReference(IReference reference) {
-		if (super.considerReference(reference) && isNonAPIReference(reference)) {
+	public boolean considerReference(IReference reference, IProgressMonitor monitor) {
+		if (super.considerReference(reference, monitor) && isNonAPIReference(reference)) {
 			IApiMember member = reference.getMember();
 			if (member != null && matchesSourceModifiers(member) && matchesSourceApiRestrictions(member)) {
 				retainReference(reference);

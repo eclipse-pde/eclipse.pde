@@ -33,8 +33,10 @@ public class WorkspaceTargetDefinitionTests extends LocalTargetDefinitionTests {
 
 	private static final String PROJECT_NAME = "WorkspaceTargetDefinitionTests";
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
+		super.setUp();
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		if (!project.exists()){
 			project.create(null);
@@ -44,6 +46,7 @@ public class WorkspaceTargetDefinitionTests extends LocalTargetDefinitionTests {
 		assertTrue("Could not open test project", project.isOpen());
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
@@ -51,6 +54,7 @@ public class WorkspaceTargetDefinitionTests extends LocalTargetDefinitionTests {
 			project.delete(true, null);
 		}
 		assertFalse("Could not delete test project",project.exists());
+		super.tearDown();
 	}
 
 	@Override

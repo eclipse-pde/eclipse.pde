@@ -9,11 +9,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.e4.ui.model.workbench,
  org.eclipse.core.runtime;bundle-version="3.9.0",
  org.eclipse.e4.core.di,
- org.eclipse.e4.core.services,
  org.eclipse.e4.ui.workbench,
- org.eclipse.e4.ui.services,
- org.eclipse.e4.core.contexts,
  org.eclipse.e4.ui.di
-Import-Package: javax.annotation;version="1.2.0",
- javax.inject;version="1.0.0"
+Import-Package: javax.inject;version="1.0.0"
 Bundle-Vendor: %provider-name

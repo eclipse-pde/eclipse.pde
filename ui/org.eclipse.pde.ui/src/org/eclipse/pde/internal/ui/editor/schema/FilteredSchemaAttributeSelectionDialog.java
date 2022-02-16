@@ -251,7 +251,7 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 
 	@Override
 	protected IStatus validateItem(Object item) {
-		return new Status(IStatus.OK, "org.eclipse.pde.ui", 0, "", null); //$NON-NLS-1$ //$NON-NLS-2$
+		return Status.OK_STATUS;
 	}
 
 	@Override

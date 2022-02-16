@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2022 EclipseSource Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -59,8 +59,7 @@ public class ProductValidateAction extends Action {
 			}
 		}
 		try {
-			IPluginModelBase[] models = launchPlugins.toArray(new IPluginModelBase[launchPlugins.size()]);
-			LaunchValidationOperation operation = new ProductValidationOperation(models);
+			LaunchValidationOperation operation = new ProductValidationOperation(launchPlugins);
 			LaunchPluginValidator.runValidationOperation(operation, new NullProgressMonitor());
 			if (!operation.hasErrors()) {
 				MessageDialog.open(SWT.ICON_INFORMATION, PDEPlugin.getActiveWorkbenchShell(),

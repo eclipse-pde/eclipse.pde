@@ -26,15 +26,14 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
-import org.osgi.framework.Version;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IFragmentModel;
@@ -46,7 +45,6 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.launching.launcher.EclipsePluginValidationOperation;
@@ -253,8 +251,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 							System.arraycopy(classpath, 0, classpath = new String[length + 1], 0, length);
 							classpath[length] = entryString;
 						} catch (IOException | URISyntaxException e) {
-							throw new CoreException(
-									new Status(IStatus.ERROR, JUnitPluginTestPlugin.PLUGIN_ID, IStatus.ERROR, "", e)); //$NON-NLS-1$
+							throw new CoreException(Status.error("", e)); //$NON-NLS-1$
 						}
 					}
 				}
@@ -362,12 +359,8 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 		fWorkspaceLocation = null;
 		fConfigDir = null;
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false);
-		fAllBundles = new LinkedHashMap<>(fModels.size());
-		Iterator<IPluginModelBase> iter = fModels.keySet().iterator();
-		while (iter.hasNext()) {
-			IPluginModelBase model = iter.next();
-			fAllBundles.put(model.getPluginBase().getId(), model);
-		}
+		fAllBundles = fModels.keySet().stream().collect(Collectors.groupingBy(m -> m.getPluginBase().getId(),
+				LinkedHashMap::new, Collectors.toCollection(ArrayList::new)));
 
 		// implicitly add the plug-ins required for JUnit testing if necessary
 		String[] requiredPlugins = getRequiredPlugins(configuration);
@@ -375,7 +368,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 			String id = requiredPlugin;
 			if (!fAllBundles.containsKey(id)) {
 				IPluginModelBase model = findRequiredPluginInTargetOrHost(id);
-				fAllBundles.put(id, model);
+				fAllBundles.computeIfAbsent(id, i -> new ArrayList<>()).add(model);
 				fModels.put(model, "default:default"); //$NON-NLS-1$
 			}
 		}
@@ -809,7 +802,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 			}
 			return file.getAbsolutePath();
 		} catch (IOException | JavaModelException e) {
-			throw new CoreException(new Status(IStatus.ERROR, JUnitPluginTestPlugin.PLUGIN_ID, IStatus.ERROR, "", e)); //$NON-NLS-1$
+			throw new CoreException(Status.error("", e)); //$NON-NLS-1$
 		}
 	}
 
@@ -850,7 +843,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 			}
 			return file.getAbsolutePath();
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, JUnitPluginTestPlugin.PLUGIN_ID, IStatus.ERROR, "", e)); //$NON-NLS-1$
+			throw new CoreException(Status.error("", e)); //$NON-NLS-1$
 		}
 	}
 
@@ -989,7 +982,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 
 	// used to generate the dev classpath entries
 	// key is bundle ID, value is a model
-	private Map<String, IPluginModelBase> fAllBundles;
+	private Map<String, List<IPluginModelBase>> fAllBundles;
 
 	// key is a model, value is startLevel:autoStart
 	private Map<IPluginModelBase, String> fModels;
@@ -1080,11 +1073,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 
 		// necessary for PDE to know how to load plugins when target platform = host
 		// platform
-		IPluginModelBase base = fAllBundles.get(PDECore.PLUGIN_ID);
-		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(),
-				new Version("3.3.1")) >= 0) { //$NON-NLS-1$
-			vmArgs = concatArg(vmArgs, "-Declipse.pde.launch=true"); //$NON-NLS-1$
-		}
+		vmArgs = concatArg(vmArgs, "-Declipse.pde.launch=true"); //$NON-NLS-1$
 		// For p2 target, add "-Declipse.p2.data.area=@config.dir/p2" unless already
 		// specified by user
 		if (fAllBundles.containsKey("org.eclipse.equinox.p2.core")) { //$NON-NLS-1$

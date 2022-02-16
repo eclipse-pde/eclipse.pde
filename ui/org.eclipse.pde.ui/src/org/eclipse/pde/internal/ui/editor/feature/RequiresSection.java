@@ -346,8 +346,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	}
 
 	private void logNullFeatureImport(Object obj) {
-		PDEPlugin.log(new Status(IStatus.WARNING, PDEPlugin.getPluginId(),
-				NLS.bind(PDEUIMessages.RequiresSection_nullLog, obj)));
+		PDEPlugin.log(Status.warning(NLS.bind(PDEUIMessages.RequiresSection_nullLog, obj)));
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,7 +28,6 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.launching.IPDEConstants;
-import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 
 /**
@@ -108,7 +107,7 @@ public class LaunchConfigurationHelper {
 	 * @return a properties object containing the properties written out to config.ini
 	 * @throws CoreException
 	 */
-	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String productID, Map<String, IPluginModelBase> bundles, Map<IPluginModelBase, String> bundlesWithStartLevels, File configurationDirectory) throws CoreException {
+	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String productID, Map<String, List<IPluginModelBase>> bundles, Map<IPluginModelBase, String> bundlesWithStartLevels, File configurationDirectory) throws CoreException {
 		Properties properties = null;
 		// if we are to generate a config.ini, start with the values in the target platform's config.ini - bug 141918
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
@@ -194,7 +193,7 @@ public class LaunchConfigurationHelper {
 		return properties;
 	}
 
-	private static void addRequiredProperties(Properties properties, String productID, Map<String, IPluginModelBase> bundles, Map<IPluginModelBase, String> bundlesWithStartLevels) {
+	private static void addRequiredProperties(Properties properties, String productID, Map<String, List<IPluginModelBase>> bundles, Map<IPluginModelBase, String> bundlesWithStartLevels) {
 		if (!properties.containsKey("osgi.install.area")) //$NON-NLS-1$
 			properties.setProperty("osgi.install.area", "file:" + TargetPlatform.getLocation()); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!properties.containsKey("osgi.configuration.cascaded")) //$NON-NLS-1$
@@ -222,7 +221,7 @@ public class LaunchConfigurationHelper {
 	 * @param bundlesWithStartLevels map of bundles of start level
 	 * @return string list of osgi bundles
 	 */
-	private static String computeOSGiBundles(String bundleList, Map<String, IPluginModelBase> bundles, Map<IPluginModelBase, String> bundlesWithStartLevels) {
+	private static String computeOSGiBundles(String bundleList, Map<String, List<IPluginModelBase>> bundles, Map<IPluginModelBase, String> bundlesWithStartLevels) {
 
 		// if p2 and only simple configurator and
 		// if simple configurator isn't selected & isn't in bundle list... hack it
@@ -277,13 +276,13 @@ public class LaunchConfigurationHelper {
 			} catch (Exception e) {
 				String message = e.getMessage();
 				if (message != null)
-					throw new CoreException(new Status(IStatus.ERROR, PDELaunchingPlugin.getPluginId(), IStatus.ERROR, message, e));
+					throw new CoreException(Status.error(message, e));
 			}
 		}
 		return properties;
 	}
 
-	private static void addSplashLocation(Properties properties, String productID, Map<String, IPluginModelBase> map) {
+	private static void addSplashLocation(Properties properties, String productID, Map<String, List<IPluginModelBase>> map) {
 		Properties targetConfig = TargetPlatformHelper.getConfigIniProperties();
 		String targetProduct = targetConfig == null ? null : targetConfig.getProperty("eclipse.product"); //$NON-NLS-1$
 		String targetSplash = targetConfig == null ? null : targetConfig.getProperty("osgi.splashPath"); //$NON-NLS-1$
@@ -291,7 +290,7 @@ public class LaunchConfigurationHelper {
 			ArrayList<String> locations = new ArrayList<>();
 			String plugin = getContributingPlugin(productID);
 			locations.add(plugin);
-			IPluginModelBase model = map.get(plugin);
+			IPluginModelBase model = getLatestModel(plugin, map);
 			if (model != null) {
 				BundleDescription desc = model.getBundleDescription();
 				if (desc != null) {
@@ -305,7 +304,7 @@ public class LaunchConfigurationHelper {
 			resolveLocationPath(targetSplash, properties, map);
 	}
 
-	private static void resolveLocationPath(String splashPath, Properties properties, Map<String, IPluginModelBase> map) {
+	private static void resolveLocationPath(String splashPath, Properties properties, Map<String, List<IPluginModelBase>> map) {
 		ArrayList<String> locations = new ArrayList<>();
 		StringTokenizer tok = new StringTokenizer(splashPath, ","); //$NON-NLS-1$
 		while (tok.hasMoreTokens())
@@ -313,7 +312,7 @@ public class LaunchConfigurationHelper {
 		resolveLocationPath(locations, properties, map);
 	}
 
-	private static void resolveLocationPath(ArrayList<String> locations, Properties properties, Map<String, IPluginModelBase> map) {
+	private static void resolveLocationPath(ArrayList<String> locations, Properties properties, Map<String, List<IPluginModelBase>> map) {
 		StringBuilder buffer = new StringBuilder();
 		for (int i = 0; i < locations.size(); i++) {
 			String location = locations.get(i);
@@ -339,9 +338,15 @@ public class LaunchConfigurationHelper {
 	 * @param includeReference whether to prefix the url with 'reference:'
 	 * @return string url for the bundle location
 	 */
-	public static String getBundleURL(String id, Map<String, IPluginModelBase> pluginMap, boolean includeReference) {
-		IPluginModelBase model = pluginMap.get(id.trim());
+	public static String getBundleURL(String id, Map<String, List<IPluginModelBase>> pluginMap, boolean includeReference) {
+		IPluginModelBase model = getLatestModel(id, pluginMap);
 		return getBundleURL(model, includeReference);
+	}
+
+
+	public static IPluginModelBase getLatestModel(String id, Map<String, List<IPluginModelBase>> plugins) {
+		List<IPluginModelBase> models = plugins.getOrDefault(id.trim(), Collections.emptyList());
+		return models.stream().max(BundleLauncherHelper.VERSION).orElse(null);
 	}
 
 	/**
@@ -368,7 +373,7 @@ public class LaunchConfigurationHelper {
 	 * @param map map of bundles being launched (id mapped to model)
 	 * @param properties properties for config.ini
 	 */
-	private static void setBundleLocations(Map<String, IPluginModelBase> map, Properties properties, boolean defaultAuto) {
+	private static void setBundleLocations(Map<String, List<IPluginModelBase>> map, Properties properties, boolean defaultAuto) {
 		String framework = properties.getProperty(PROP_OSGI_FRAMEWORK);
 		if (framework != null) {
 			framework = TargetPlatformHelper.stripPathInformation(framework);

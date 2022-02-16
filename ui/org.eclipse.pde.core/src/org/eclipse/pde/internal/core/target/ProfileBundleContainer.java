@@ -30,7 +30,6 @@ import java.util.Properties;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
@@ -116,13 +115,13 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	protected TargetBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		String home = resolveHomeLocation().toOSString();
 		if (!new File(home).isDirectory()) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_0, home)));
+			throw new CoreException(Status.error(NLS.bind(Messages.ProfileBundleContainer_0, home)));
 		}
 
 		File configurationArea = getConfigurationArea();
 		if (configurationArea != null) {
 			if (!configurationArea.isDirectory()) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_2, home)));
+				throw new CoreException(Status.error(NLS.bind(Messages.ProfileBundleContainer_2, home)));
 			}
 		}
 
@@ -282,7 +281,8 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			return file;
 		} else if (fConfiguration != null) {
 			// If the user specified config area does not exist throw an error
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_2, configuration.toOSString())));
+			throw new CoreException(
+					Status.error(NLS.bind(Messages.ProfileBundleContainer_2, configuration.toOSString())));
 		}
 		return null;
 	}
@@ -320,14 +320,14 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		// Get the configuration location
 		String home = resolveHomeLocation().toOSString();
 		if (!new File(home).isDirectory()) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_0, home)));
+			throw new CoreException(Status.error(NLS.bind(Messages.ProfileBundleContainer_0, home)));
 		}
 		File configArea = getConfigurationArea();
 		if (configArea == null) {
 			configArea = new File(home);
 		}
 		if (!configArea.isDirectory()) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_2, configArea)));
+			throw new CoreException(Status.error(NLS.bind(Messages.ProfileBundleContainer_2, configArea)));
 		}
 
 		// Location of the profile

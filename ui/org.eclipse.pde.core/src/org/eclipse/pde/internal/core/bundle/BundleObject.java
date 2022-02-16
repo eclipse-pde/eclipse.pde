@@ -16,13 +16,11 @@ package org.eclipse.pde.internal.core.bundle;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.plugin.IWritableDelimiter;
 
@@ -43,8 +41,7 @@ public class BundleObject implements Serializable, IWritable, IWritableDelimiter
 	}
 
 	protected void throwCoreException(String message) throws CoreException {
-		Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, null);
-		throw new CoreException(status);
+		throw new CoreException(Status.error(message));
 	}
 
 	protected void fireStructureChanged(BundleObject[] children, int changeType) {

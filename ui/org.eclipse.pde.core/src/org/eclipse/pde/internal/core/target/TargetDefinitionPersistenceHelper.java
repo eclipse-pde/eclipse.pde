@@ -31,7 +31,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
@@ -157,7 +156,7 @@ public class TargetDefinitionPersistenceHelper {
 
 		Element root = doc.getDocumentElement();
 		if (!root.getNodeName().equalsIgnoreCase(ROOT)) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.TargetDefinitionPersistenceHelper_0));
+			throw new CoreException(Status.error(Messages.TargetDefinitionPersistenceHelper_0));
 		}
 
 		String version = null;
@@ -196,7 +195,7 @@ public class TargetDefinitionPersistenceHelper {
 		} else {
 			// Version doesn't match any known file structure, default to latest
 			String name = root.getAttribute(TargetDefinitionPersistenceHelper.ATTR_NAME);
-			PDECore.log(new Status(IStatus.WARNING, PDECore.PLUGIN_ID, MessageFormat.format(Messages.TargetDefinitionPersistenceHelper_2, version, name)));
+			PDECore.log(Status.warning(MessageFormat.format(Messages.TargetDefinitionPersistenceHelper_2, version, name)));
 			TargetPersistence38Helper.initFromDoc(definition, root);
 		}
 		definition.setDocument(doc);
@@ -206,7 +205,7 @@ public class TargetDefinitionPersistenceHelper {
 		if (fTargetService == null) {
 			fTargetService = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 			if (fTargetService == null) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.TargetDefinitionPersistenceHelper_1));
+				throw new CoreException(Status.error(Messages.TargetDefinitionPersistenceHelper_1));
 			}
 		}
 		return fTargetService;

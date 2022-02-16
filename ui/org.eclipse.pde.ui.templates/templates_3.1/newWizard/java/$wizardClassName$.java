@@ -93,7 +93,7 @@ public class $wizardClassName$ extends Wizard implements INewWizard {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResource resource = root.findMember(new Path(containerName));
 		if (!resource.exists() || !(resource instanceof IContainer)) {
-			throwCoreException("Container \"" + containerName + "\" does not exist.");
+			throw new CoreException(Status.error("Container \"" + containerName + "\" does not exist."));
 		}
 		IContainer container = (IContainer) resource;
 		final IFile file = container.getFile(new Path(fileName));
@@ -128,12 +128,6 @@ public class $wizardClassName$ extends Wizard implements INewWizard {
 		String contents =
 			"This is the initial file contents for *.$extension$ file that should be word-sorted in the Preview page of the multi-page editor";
 		return new ByteArrayInputStream(contents.getBytes());
-	}
-
-	private void throwCoreException(String message) throws CoreException {
-		IStatus status =
-			new Status(IStatus.ERROR, "$pluginId$", IStatus.OK, message, null);
-		throw new CoreException(status);
 	}
 
 	/**

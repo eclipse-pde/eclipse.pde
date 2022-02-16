@@ -17,7 +17,6 @@ package org.eclipse.pde.internal.ui.wizards;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 
@@ -55,7 +54,7 @@ public class PDEWizardNewFileCreationPage extends WizardNewFileCreationPage {
 
 	@Override
 	protected IStatus validateLinkedResource() {
-		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+		return Status.OK_STATUS;
 	}
 
 	@Override

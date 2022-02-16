@@ -47,12 +47,12 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 	public void load(InputStream source, boolean outOfSync) {
 		try {
 			fLoaded = true;
-			status = new Status(IStatus.OK, PDECore.PLUGIN_ID, null);
+			status = Status.OK_STATUS;
 			SAXParserWrapper parser = new SAXParserWrapper();
 			parser.parse(source, createDocumentHandler(this, true));
 		} catch (SAXException e) {
 			fLoaded = false;
-			status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage(), e);
+			status = Status.error(e.getMessage(), e);
 		} catch (IOException | ParserConfigurationException | FactoryConfigurationError e) {
 			fLoaded = false;
 		}

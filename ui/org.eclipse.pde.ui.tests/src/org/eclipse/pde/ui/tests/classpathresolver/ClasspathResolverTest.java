@@ -122,6 +122,7 @@ public class ClasspathResolverTest {
 
 		String expectedDevCP = project.getFolder("cpe").getLocation().toPortableString();
 		assertEquals(expectedDevCP, properties.get(bundleName));
+		assertEquals(expectedDevCP, properties.get(bundleName + ";1.0.0.qualifier"));
 	}
 
 	/**
@@ -155,7 +156,8 @@ public class ClasspathResolverTest {
 
 		assertEquals("true", devProperties.getProperty("@ignoredot@"));
 		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertEquals(2, devProperties.size()); // assert no more entries
+		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID + ";2.0.0"));
+		assertEquals(3, devProperties.size()); // assert no more entries
 	}
 
 	@Test
@@ -173,7 +175,8 @@ public class ClasspathResolverTest {
 
 		assertEquals("true", devProperties.getProperty("@ignoredot@"));
 		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertEquals(2, devProperties.size()); // assert no more entries
+		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID + ";" + hostBundleVersion));
+		assertEquals(3, devProperties.size()); // assert no more entries
 	}
 
 	@Test
@@ -189,8 +192,9 @@ public class ClasspathResolverTest {
 		Properties devProperties = createDevEntryProperties(List.of(hostModel));
 
 		assertEquals("true", devProperties.getProperty("@ignoredot@"));
-		assertEquals("devPath1", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertEquals(2, devProperties.size()); // assert no more entries
+		assertEquals("devPath2", devProperties.getProperty(HOST_BUNDLE_ID));
+		assertEquals("devPath2", devProperties.getProperty(HOST_BUNDLE_ID + ";" + hostBundleVersion));
+		assertEquals(3, devProperties.size()); // assert no more entries
 	}
 
 	@Test
@@ -247,8 +251,10 @@ public class ClasspathResolverTest {
 		Properties devProperties = createDevEntryProperties(List.of(hostModel, wsModel));
 
 		assertEquals("true", devProperties.getProperty("@ignoredot@"));
-		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertEquals(2, devProperties.size()); // assert no more entries
+		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID)); // last
+		assertEquals("", devProperties.getProperty(HOST_BUNDLE_ID + ";1.0.0"));
+		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID + ";2.0.0"));
+		assertEquals(4, devProperties.size()); // assert no more entries
 	}
 
 	@Test
@@ -266,8 +272,10 @@ public class ClasspathResolverTest {
 		Properties devProperties = createDevEntryProperties(List.of(tpModel, hostModel));
 
 		assertEquals("true", devProperties.getProperty("@ignoredot@"));
-		assertEquals("devPath1", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertEquals(2, devProperties.size()); // assert no more entries
+		assertEquals("devPath2", devProperties.getProperty(HOST_BUNDLE_ID)); // last
+		assertEquals("", devProperties.getProperty(HOST_BUNDLE_ID + ";1.0.0"));
+		assertEquals("devPath2", devProperties.getProperty(HOST_BUNDLE_ID + ";" + hostBundleVersion));
+		assertEquals(4, devProperties.size()); // assert no more entries
 	}
 
 	@Test
@@ -284,8 +292,10 @@ public class ClasspathResolverTest {
 		Properties devProperties = createDevEntryProperties(List.of(hostModel, wsModel));
 
 		assertEquals("true", devProperties.getProperty("@ignoredot@"));
-		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertEquals(2, devProperties.size()); // assert no more entries
+		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID)); // last
+		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID + ";2.0.0"));
+		assertEquals("devPath2", devProperties.getProperty(HOST_BUNDLE_ID + ";" + hostBundleVersion));
+		assertEquals(4, devProperties.size()); // assert no more entries
 	}
 
 	@Test
@@ -301,11 +311,15 @@ public class ClasspathResolverTest {
 		IPluginModelBase tpModel = findTargetModel(HOST_BUNDLE_ID, "1.0.0");
 		IPluginModelBase wsModel = findWorkspaceModel(HOST_BUNDLE_ID, "2.0.0");
 
-		Properties devProperties = createDevEntryProperties(List.of(hostModel, tpModel, wsModel));
+		Properties devProperties = createDevEntryProperties(List.of(hostModel, wsModel, tpModel));
 
 		assertEquals("true", devProperties.getProperty("@ignoredot@"));
+		// jar-bundle from tp should not be considered for non-version entry
 		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID));
-		assertEquals(2, devProperties.size()); // assert no more entries
+		assertEquals("", devProperties.getProperty(HOST_BUNDLE_ID + ";1.0.0"));
+		assertEquals("bin", devProperties.getProperty(HOST_BUNDLE_ID + ";2.0.0"));
+		assertEquals("devPath2", devProperties.getProperty(HOST_BUNDLE_ID + ";" + hostBundleVersion));
+		assertEquals(5, devProperties.size()); // assert no more entries
 	}
 
 	// --- utility methods ---
@@ -372,8 +386,7 @@ public class ClasspathResolverTest {
 	private Properties createDevEntryProperties(List<IPluginModelBase> launchedBundles)
 			throws IOException, CoreException {
 		File devPropertiesFile = tempFolder.newFile("dev.properties").getCanonicalFile();
-		Map<String, IPluginModelBase> bundlesMap = Map.of(HOST_BUNDLE_ID,
-				launchedBundles.get(launchedBundles.size() - 1));
+		Map<String, List<IPluginModelBase>> bundlesMap = Map.of(HOST_BUNDLE_ID, launchedBundles);
 		String devPropertiesURL = ClasspathHelper.getDevEntriesProperties(devPropertiesFile.getPath(), bundlesMap);
 		return loadProperties(devPropertiesURL);
 	}

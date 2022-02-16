@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 
 /**
@@ -41,11 +40,9 @@ public class JarSelectionValidator implements ISelectionStatusValidator {
 	@Override
 	public IStatus validate(Object[] elements) {
 		if (isValidSelection(elements)) {
-			return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", //$NON-NLS-1$
-					null);
+			return Status.OK_STATUS;
 		}
-		return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, "", //$NON-NLS-1$
-				null);
+		return Status.error("", null); //$NON-NLS-1$
 	}
 
 	private boolean isValidSelection(Object[] selection) {

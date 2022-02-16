@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 OPCoach.
+ * Copyright (c) 2013, 2021 OPCoach.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -42,19 +42,13 @@ public class ContextSpyHelper {
 		Collection<IEclipseContext> result = Collections.emptyList();
 		try {
 			// Must use introspection to get the weak hash map (no getter).
-			Field f = EclipseContextFactory.class.getDeclaredField("serviceContexts");
+			Field f = EclipseContextFactory.class.getDeclaredField("serviceContexts"); //$NON-NLS-1$
 			f.setAccessible(true);
 			@SuppressWarnings("unchecked")
 			Map<BundleContext, IEclipseContext> ctxs = (Map<BundleContext, IEclipseContext>) f.get(null);
 			result = ctxs.values();
 
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		} catch (SecurityException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
 

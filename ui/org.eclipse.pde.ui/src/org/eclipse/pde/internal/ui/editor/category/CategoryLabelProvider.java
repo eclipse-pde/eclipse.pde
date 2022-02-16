@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2016 EclipseSource and others.
+ * Copyright (c) 2013, 2021 EclipseSource and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -74,7 +74,7 @@ class CategoryLabelProvider extends LabelProvider {
 	@Override
 	public String getText(Object element) {
 		if (element instanceof ISiteCategoryDefinition)
-			return ((ISiteCategoryDefinition) element).getName();
+			return ((ISiteCategoryDefinition) element).getLabel();
 		if (element instanceof SiteCategoryDefinitionAdapter) {
 			return getText(((SiteCategoryDefinitionAdapter) element).category);
 		}

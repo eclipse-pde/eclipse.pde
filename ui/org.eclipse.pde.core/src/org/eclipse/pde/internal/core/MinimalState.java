@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -184,7 +183,7 @@ public class MinimalState {
 			// location causing the issue
 			MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0,
 					NLS.bind(UtilMessages.ErrorReadingManifest, bundleLocation.toString()), null);
-			status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage()));
+			status.add(Status.error(e.getMessage()));
 			throw new CoreException(status);
 		} catch (IllegalArgumentException e) {
 		}

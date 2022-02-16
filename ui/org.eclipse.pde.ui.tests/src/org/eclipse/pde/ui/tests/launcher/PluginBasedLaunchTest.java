@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2021, 2021 Hannes Wellmann and others.
+ *  Copyright (c) 2021, 2022 Hannes Wellmann and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@ package org.eclipse.pde.ui.tests.launcher;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
@@ -236,7 +235,6 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		};
 
 		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
-				workspaceBundle("plugin.a", "1.0.0"), //
 				workspaceBundle("plugin.a", "2.0.0"));
 
 		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
@@ -549,7 +547,6 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, Set.of("plugin.b"));
 		};
 		Set<BundleLocationDescriptor> expectedBundles = Set.of(//
-				targetBundle("plugin.b", "1.0.0"), //
 				targetBundle("plugin.b", "2.0.0"));
 
 		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
@@ -586,12 +583,11 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
 			wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES,
-					Set.of("plugin.a*1.0.0.2020", "plugin.a*1.0.0.2021"));
-		};
+					new LinkedHashSet<>(List.of("plugin.a*1.0.0.2020", "plugin.a*1.0.0.2021")));
+		}; // first entry is selected -> LinkedHashSet ensures its the same
 
 		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
-				targetBundle("plugin.a", "1.0.0.2020"), //
-				targetBundle("plugin.a", "1.0.0.2021"));
+				targetBundle("plugin.a", "1.0.0.2020"));
 
 		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
 	}
@@ -615,7 +611,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
 				workspaceBundle("plugin.a", "1.0.0"), //
-				workspaceBundle("plugin.b", "1.0.0"));
+				workspaceBundle("plugin.b", "1.0.0"), //
+				targetBundle("plugin.a", "1.0.1"), //
+				targetBundle("plugin.b", "2.0.0"));
 
 		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
 	}
@@ -637,7 +635,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
 				workspaceBundle("plugin.a", "1.0.0"), //
-				workspaceBundle("plugin.b", "2.0.0"));
+				workspaceBundle("plugin.b", "2.0.0"), //
+				targetBundle("plugin.a", "1.0.1"), //
+				targetBundle("plugin.b", "3.0.0"));
 
 		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
 	}
@@ -655,7 +655,8 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		};
 
 		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
-				workspaceBundle("plugin.a", "1.0.0"));
+				workspaceBundle("plugin.a", "1.0.0"), //
+				targetBundle("plugin.a", "1.0.2"));
 
 		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
 	}
@@ -702,7 +703,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
 				workspaceBundle("plugin.a", "1.0.0"), //
-				workspaceBundle("plugin.b", "1.0.0"));
+				workspaceBundle("plugin.b", "1.0.0"), //
+				targetBundle("plugin.a", "1.0.1"), //
+				targetBundle("plugin.b", "1.0.1"));
 
 		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
 	}
@@ -739,7 +742,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		IPluginModelBase plugin = workspaceBundle("plugin.a", "1.0.0").findModel();
 
-		String entry = BundleLauncherHelper.writeBundleEntry(plugin, null, null);
+		String entry = BundleLauncherHelper.formatBundleEntry(plugin, null, null);
 		assertEquals("plugin.a", entry);
 	}
 
@@ -754,7 +757,7 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		IPluginModelBase plugin = workspaceBundle("plugin.a", "1.0.0").findModel();
 
-		String entry = BundleLauncherHelper.writeBundleEntry(plugin, null, null);
+		String entry = BundleLauncherHelper.formatBundleEntry(plugin, null, null);
 		assertEquals("plugin.a*1.0.0", entry);
 	}
 
@@ -769,8 +772,8 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		IPluginModelBase plugin = targetBundle("plugin.a", "2.0.0").findModel();
 
-		String entry = BundleLauncherHelper.writeBundleEntry(plugin, null, null);
-		assertEquals("plugin.a*2.0.0", entry);
+		String entry = BundleLauncherHelper.formatBundleEntry(plugin, null, null);
+		assertEquals("plugin.a", entry);
 	}
 
 	@Test
@@ -784,8 +787,8 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		IPluginModelBase plugin = targetBundle("plugin.a", "2.0.0").findModel();
 
-		String entry = BundleLauncherHelper.writeBundleEntry(plugin, null, null);
-		assertEquals("plugin.a", entry);
+		String entry = BundleLauncherHelper.formatBundleEntry(plugin, null, null);
+		assertEquals("plugin.a*2.0.0", entry);
 	}
 
 	@Test
@@ -797,18 +800,14 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 		IPluginModelBase plugin = workspaceBundle("plugin.a", "1.0.0").findModel();
 
-		assertEquals("plugin.a*1.0.0", BundleLauncherHelper.writeBundleEntry(plugin, null, null));
-		assertEquals("plugin.a*1.0.0", BundleLauncherHelper.writeBundleEntry(plugin, "", ""));
-		assertEquals("plugin.a*1.0.0@4:true", BundleLauncherHelper.writeBundleEntry(plugin, "4", "true"));
-		assertEquals("plugin.a*1.0.0@4:", BundleLauncherHelper.writeBundleEntry(plugin, "4", ""));
-		assertEquals("plugin.a*1.0.0@:false", BundleLauncherHelper.writeBundleEntry(plugin, null, "false"));
+		assertEquals("plugin.a*1.0.0", BundleLauncherHelper.formatBundleEntry(plugin, null, null));
+		assertEquals("plugin.a*1.0.0", BundleLauncherHelper.formatBundleEntry(plugin, "", ""));
+		assertEquals("plugin.a*1.0.0@4:true", BundleLauncherHelper.formatBundleEntry(plugin, "4", "true"));
+		assertEquals("plugin.a*1.0.0@4:", BundleLauncherHelper.formatBundleEntry(plugin, "4", ""));
+		assertEquals("plugin.a*1.0.0@:false", BundleLauncherHelper.formatBundleEntry(plugin, null, "false"));
 	}
 
 	// --- utilities ---
-
-	private static NameVersionDescriptor bundle(String id, String version) {
-		return new NameVersionDescriptor(id, version);
-	}
 
 	private void assertGetMergedBundleMap(List<NameVersionDescriptor> workspacePlugins,
 			List<NameVersionDescriptor> targetPlugins, Consumer<ILaunchConfigurationWorkingCopy> launchConfigPreparer,
@@ -835,11 +834,11 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 			expectedPluginMap.put(pd.findModel(), start);
 		});
 
-		assertEquals(expectedPluginMap, bundleMap);
+		assertPluginMapsEquals(null, expectedPluginMap, bundleMap);
 	}
 
 	private void setUpWorkspace(List<NameVersionDescriptor> workspacePlugins, List<NameVersionDescriptor> targetPlugins)
-			throws CoreException, IOException, InterruptedException {
+			throws Exception {
 		ProjectUtils.createWorkspacePluginProjects(workspacePlugins);
 		TargetPlatformUtil.setDummyBundlesAsTarget(targetPlugins, tpJarDirectory);
 	}
@@ -852,22 +851,5 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		wc.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false);
 		wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, false);
 		return wc;
-	}
-
-	private static BundleLocationDescriptor workspaceBundle(String id, String version) {
-		Objects.requireNonNull(version);
-		return () -> findWorkspaceModel(id, version);
-	}
-
-	private static BundleLocationDescriptor targetBundle(String id, String version) {
-		Objects.requireNonNull(version);
-		// PluginRegistry.findModel does not consider external models when
-		// workspace models are present and returns the 'last' plug-in if
-		// multiple with the same version exist
-		return () -> findTargetModel(id, version);
-	}
-
-	private static interface BundleLocationDescriptor {
-		IPluginModelBase findModel();
 	}
 }

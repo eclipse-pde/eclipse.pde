@@ -314,7 +314,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 	}
 
 	@Override
-	protected boolean isProblem(IReference reference) {
+	protected boolean isProblem(IReference reference, IProgressMonitor monitor) {
 		// the reference must be in the system library
 		try {
 			IApiMember member = reference.getMember();
@@ -361,12 +361,13 @@ public class SystemApiDetector extends AbstractProblemDetector {
 			}
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
+			checkIfDisposed(reference.getMember().getApiComponent(), monitor);
 		}
 		return false;
 	}
 
 	@Override
-	public boolean considerReference(IReference reference) {
+	public boolean considerReference(IReference reference, IProgressMonitor monitor) {
 		try {
 			IApiComponent apiComponent = reference.getMember().getApiComponent();
 			IApiBaseline baseline = apiComponent.getBaseline();
@@ -393,6 +394,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 			}
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
+			checkIfDisposed(reference.getMember().getApiComponent(), monitor);
 		}
 		return false;
 	}
@@ -408,8 +410,11 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		List<IApiProblem> problems = new LinkedList<>();
 		SubMonitor loopMonitor = SubMonitor.convert(monitor, references.size());
 		for (IReference reference : references) {
+			if (monitor.isCanceled()) {
+				break;
+			}
 			loopMonitor.split(1);
-			if (isProblem(reference)) {
+			if (isProblem(reference, monitor)) {
 				try {
 					IApiProblem problem = null;
 					IApiComponent component = reference.getMember().getApiComponent();
@@ -425,6 +430,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 					}
 				} catch (CoreException e) {
 					ApiPlugin.log(e.getStatus());
+					AbstractProblemDetector.checkIfDisposed(reference.getMember().getApiComponent(), monitor);
 				}
 			}
 		}

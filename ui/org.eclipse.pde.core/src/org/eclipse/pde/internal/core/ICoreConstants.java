@@ -347,6 +347,11 @@ public interface ICoreConstants {
 	 */
 	String DISABLE_API_ANALYSIS_BUILDER = "Preferences.MainPage.disableAPIAnalysisBuilder";//$NON-NLS-1$
 	/**
+	 * Boolean preference whether API analysis should run asynchronous to the
+	 * build as background job
+	 */
+	String RUN_API_ANALYSIS_AS_JOB = "Preferences.MainPage.runAPIAnalysisAsJob";//$NON-NLS-1$
+	/**
 	 * Boolean preference whether add
 	 * '-Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true' to VM
 	 * arguments when creating a new launch configuration

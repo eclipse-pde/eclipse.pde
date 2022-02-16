@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2021 Red Hat Inc. and others.
+ * Copyright (c) 2017, 2022 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -185,8 +185,7 @@ public class TestPDETemplates {
 				launchPlugins.add(pluginModel);
 		}
 
-		ProductValidationOperation validationOperation = new ProductValidationOperation(
-				launchPlugins.toArray(new IPluginModelBase[0]));
+		ProductValidationOperation validationOperation = new ProductValidationOperation(launchPlugins);
 		validationOperation.run(new NullProgressMonitor());
 
 		if (validationOperation.hasErrors()) {

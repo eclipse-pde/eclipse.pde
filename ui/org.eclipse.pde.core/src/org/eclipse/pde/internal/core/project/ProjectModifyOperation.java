@@ -30,7 +30,6 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
@@ -214,7 +213,7 @@ public class ProjectModifyOperation {
 			try {
 				pref.flush();
 			} catch (BackingStoreException e) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.ProjectModifyOperation_2, e));
+				throw new CoreException(Status.error(Messages.ProjectModifyOperation_2, e));
 			}
 		}
 

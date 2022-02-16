@@ -18,7 +18,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -118,8 +119,7 @@ public class RenameDialog extends SelectionStatusDialog {
 		text.selectAll();
 		Button okButton = getButton(IDialogConstants.OK_ID);
 
-		status = new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", //$NON-NLS-1$
-				null);
+		status = Status.OK_STATUS;
 		updateStatus(status);
 		okButton.setEnabled(false);
 		return super.open();
@@ -130,7 +130,7 @@ public class RenameDialog extends SelectionStatusDialog {
 		if (fValidator != null) {
 			String message = fValidator.isValid(text);
 			if (message != null) {
-				status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, message, null);
+				status = Status.error(message);
 				updateStatus(status);
 				okButton.setEnabled(false);
 				return;
@@ -138,14 +138,13 @@ public class RenameDialog extends SelectionStatusDialog {
 		}
 		for (int i = 0; i < oldNames.size(); i++) {
 			if ((isCaseSensitive && text.equals(oldNames.get(i))) || (!isCaseSensitive && text.equalsIgnoreCase(oldNames.get(i).toString()))) {
-				status = new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.ERROR, PDEUIMessages.RenameDialog_validationError, null);
+				status = Status.error(PDEUIMessages.RenameDialog_validationError);
 				updateStatus(status);
 				okButton.setEnabled(false);
 				break;
 			}
 			okButton.setEnabled(true);
-			status = new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", //$NON-NLS-1$
-					null);
+			status = Status.OK_STATUS;
 			updateStatus(status);
 		}
 	}

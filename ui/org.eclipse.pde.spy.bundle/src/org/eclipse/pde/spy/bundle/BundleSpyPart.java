@@ -59,15 +59,15 @@ import org.osgi.framework.FrameworkUtil;
  */
 public class BundleSpyPart {
 
-	private static final String ICON_REFRESH = "icons/refresh.png";
-	public static final String ICON_STATE_ACTIVE = "icons/state_active.png";
-	public static final String ICON_STATE_STARTING = "icons/state_starting.png";
-	public static final String ICON_STATE_STOPPING = "icons/state_stopping.png";
-	public static final String ICON_STATE_RESOLVED = "icons/state_resolved.png";
-	public static final String ICON_STATE_INSTALLED = "icons/state_installed.png";
-	public static final String ICON_STATE_UNINSTALLED = "icons/state_uninstalled.png";
-	public static final String ICON_START = "icons/start.png";
-	public static final String ICON_STOP = "icons/stop.png";
+	private static final String ICON_REFRESH = "icons/refresh.png"; //$NON-NLS-1$
+	public static final String ICON_STATE_ACTIVE = "icons/state_active.png"; //$NON-NLS-1$
+	public static final String ICON_STATE_STARTING = "icons/state_starting.png"; //$NON-NLS-1$
+	public static final String ICON_STATE_STOPPING = "icons/state_stopping.png"; //$NON-NLS-1$
+	public static final String ICON_STATE_RESOLVED = "icons/state_resolved.png"; //$NON-NLS-1$
+	public static final String ICON_STATE_INSTALLED = "icons/state_installed.png"; //$NON-NLS-1$
+	public static final String ICON_STATE_UNINSTALLED = "icons/state_uninstalled.png"; //$NON-NLS-1$
+	public static final String ICON_START = "icons/start.png"; //$NON-NLS-1$
+	public static final String ICON_STOP = "icons/stop.png"; //$NON-NLS-1$
 
 	private TableViewer bundlesTableViewer;
 
@@ -102,7 +102,7 @@ public class BundleSpyPart {
 
 		Button refreshButton = new Button(comp, SWT.FLAT);
 		refreshButton.setImage(imgReg.get(ICON_REFRESH));
-		refreshButton.setToolTipText("Refresh the contexts");
+		refreshButton.setToolTipText(Messages.BundleSpyPart_9);
 		refreshButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -112,9 +112,9 @@ public class BundleSpyPart {
 
 		filterText = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
 		GridDataFactory.fillDefaults().hint(200, SWT.DEFAULT).applyTo(filterText);
-		filterText.setMessage("Search data");
+		filterText.setMessage(Messages.BundleSpyPart_10);
 		filterText.setToolTipText(
-				"Highlight the bundles where the contained objects contains this string.\n" + "Case is ignored.");
+				Messages.BundleSpyPart_11);
 		if (lastFilterText != null)
 			filterText.setText(lastFilterText);
 		bundleFilter.setPattern(lastFilterText);
@@ -136,8 +136,8 @@ public class BundleSpyPart {
 		});
 
 		showOnlyFilteredElements = new Button(comp, SWT.CHECK);
-		showOnlyFilteredElements.setText("Show Only Filtered");
-		showOnlyFilteredElements.setToolTipText("Show only the filtered items in the bundle table ");
+		showOnlyFilteredElements.setText(Messages.BundleSpyPart_12);
+		showOnlyFilteredElements.setToolTipText(Messages.BundleSpyPart_13);
 		showOnlyFilteredElements.setEnabled((lastFilterText != null) && (lastFilterText.length() > 0));
 		showOnlyFilteredElements.setSelection(lastShowFiltered);
 		showOnlyFilteredElements.addSelectionListener(new SelectionAdapter() {
@@ -150,7 +150,7 @@ public class BundleSpyPart {
 
 		startButton = new Button(comp, SWT.FLAT);
 		startButton.setImage(imgReg.get(ICON_START));
-		startButton.setToolTipText("Start the selected bundles not yet started");
+		startButton.setToolTipText(Messages.BundleSpyPart_14);
 		startButton.setEnabled(false);
 		startButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -172,13 +172,13 @@ public class BundleSpyPart {
 
 		stopButton = new Button(comp, SWT.FLAT);
 		stopButton.setImage(imgReg.get(ICON_STOP));
-		stopButton.setToolTipText("Stop the selected bundles not yet stopped");
+		stopButton.setToolTipText(Messages.BundleSpyPart_15);
 		stopButton.setEnabled(false);
 		stopButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (MessageDialog.openConfirm(((Control) e.getSource()).getShell(), "Confirm Bundle Stop",
-						"Stopping a bundle may cause problems in your current application.\nUse this button only for your bundles under testing\n\nDo you confirm you want to stop the selected started bundle(s) ? ")) {
+				if (MessageDialog.openConfirm(((Control) e.getSource()).getShell(), Messages.BundleSpyPart_16,
+						Messages.BundleSpyPart_17)) {
 					IStructuredSelection sel = (IStructuredSelection) bundlesTableViewer.getSelection();
 					Iterator<?> iter = sel.iterator();
 					while (iter.hasNext()) {
@@ -205,9 +205,9 @@ public class BundleSpyPart {
 		cTable.setLayoutData(gd_cTable);
 
 		// Create the first column for bundle name
-		addColumn(bundlesTableViewer, 35, "State", BundleDataProvider.COL_STATE);
-		addColumn(bundlesTableViewer, 200, "Bundle Name", BundleDataProvider.COL_NAME);
-		addColumn(bundlesTableViewer, 200, "Version", BundleDataProvider.COL_VERSION);
+		addColumn(bundlesTableViewer, 35, Messages.BundleSpyPart_18, BundleDataProvider.COL_STATE);
+		addColumn(bundlesTableViewer, 200, Messages.BundleSpyPart_19, BundleDataProvider.COL_NAME);
+		addColumn(bundlesTableViewer, 200, Messages.BundleSpyPart_20, BundleDataProvider.COL_VERSION);
 
 		// Set input data and content provider (default ArrayContentProvider)
 		bundlesTableViewer.setContentProvider(ArrayContentProvider.getInstance());

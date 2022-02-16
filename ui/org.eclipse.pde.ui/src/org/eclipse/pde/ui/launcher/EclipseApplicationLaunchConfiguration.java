@@ -60,7 +60,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 
 	@Override
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
-		throw new CoreException(LauncherUtils.createErrorStatus(PDEMessages.PDE_updateManagerNotSupported));
+		throw new CoreException(Status.error((String) PDEMessages.PDE_updateManagerNotSupported));
 	}
 
 	@Override

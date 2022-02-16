@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
-import org.eclipse.pde.internal.core.PDECore;
 
 /**
  * A handle to a target stored in the workspace as a <code>.target</code> file.
@@ -71,7 +70,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 			URI uri = new URI(SCHEME, fFile.getFullPath().toPortableString(), null);
 			return uri.toString();
 		} catch (URISyntaxException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.WorkspaceFileTargetHandle_0, e));
+			throw new CoreException(Status.error(Messages.WorkspaceFileTargetHandle_0, e));
 		}
 	}
 

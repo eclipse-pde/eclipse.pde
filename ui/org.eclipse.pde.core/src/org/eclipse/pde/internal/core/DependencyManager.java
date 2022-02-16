@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2021 IBM Corporation and others.
+ *  Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -24,10 +24,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.osgi.framework.Constants;
@@ -49,9 +51,26 @@ public class DependencyManager {
 	private DependencyManager() { // static use only
 	}
 
+	public enum Options {
+		/** Specifies to include all optional dependencies into the closure. */
+		INCLUDE_OPTIONAL_DEPENDENCIES,
+
+		/**
+		 * Specifies to include all fragments into the closure (must not be
+		 * combined with {@link #INCLUDE_NON_TEST_FRAGMENTS}).
+		 */
+		INCLUDE_ALL_FRAGMENTS,
+		/**
+		 * Specifies to include all non-test fragments into the closure (must
+		 * not be combined with {@link #INCLUDE_ALL_FRAGMENTS}).
+		 */
+		INCLUDE_NON_TEST_FRAGMENTS;
+	}
+
 	/**
 	 * Returns a {@link Set} of bundle descriptions of the given
-	 * {@link IPluginModelBase}s and all of their required dependencies.
+	 * {@link IPluginModelBase}s and all of their required dependencies
+	 * (including optional) and fragments.
 	 * <p>
 	 * The set includes the descriptions of the given model bases as well as all
 	 * transitively computed explicit, implicit (defined in the target-platform)
@@ -68,7 +87,7 @@ public class DependencyManager {
 	public static Set<BundleDescription> getSelfAndDependencies(Collection<IPluginModelBase> plugins) {
 		Collection<NameVersionDescriptor> implicit = getImplicitDependencies();
 		List<BundleDescription> bundles = mergeBundleDescriptions(plugins, implicit, TargetPlatformHelper.getState());
-		return findRequirementsClosure(bundles, true);
+		return findRequirementsClosure(bundles, Options.INCLUDE_OPTIONAL_DEPENDENCIES, Options.INCLUDE_ALL_FRAGMENTS);
 	}
 
 	/**
@@ -88,39 +107,37 @@ public class DependencyManager {
 	 *            {@link Set}
 	 * @param state
 	 *            the {@link State} to compute the dependencies in
-	 * @param includeOptional
-	 *            if optional bundle descriptions should be included
+	 * @param options
+	 *            the specified {@link Options} for computing the closure
 	 * @return a set of bundle descriptions
 	 */
 	public static Set<BundleDescription> getDependencies(Collection<IPluginModelBase> plugins,
-			Collection<NameVersionDescriptor> implicit, State state, boolean includeOptional) {
+			Collection<NameVersionDescriptor> implicit, State state, Options... options) {
 		List<BundleDescription> bundles = mergeBundleDescriptions(plugins, implicit, state);
-		Set<BundleDescription> closure = findRequirementsClosure(bundles, includeOptional);
+		Set<BundleDescription> closure = findRequirementsClosure(bundles, options);
 		plugins.forEach(p -> closure.remove(p.getBundleDescription()));
 		return closure;
 	}
 
 	/**
-	 *
 	 * Returns a {@link Set} of bundle descriptions for all required
 	 * dependencies of the given {@link IPluginModelBase}s.
 	 * <p>
 	 * The set includes the descriptions of the transitively computed explicit,
 	 * implicit (defined in the target-platform) and optional (if requested)
 	 * dependencies. The set does not include the descriptions of the given
-	 * objects but does include.
+	 * objects.
 	 * </p>
 	 *
 	 * @param plugins
 	 *            selected the group of {@link IPluginModelBase}s to compute
 	 *            dependencies for.
-	 * @param includeOptional
-	 *            if optional bundle descriptions should be included
+	 * @param options
+	 *            the specified {@link Options} for computing the closure
 	 * @return a set of bundle descriptions
 	 */
-	public static Set<BundleDescription> getDependencies(Collection<IPluginModelBase> plugins,
-			boolean includeOptional) {
-		return getDependencies(plugins, getImplicitDependencies(), TargetPlatformHelper.getState(), includeOptional);
+	public static Set<BundleDescription> getDependencies(Collection<IPluginModelBase> plugins, Options... options) {
+		return getDependencies(plugins, getImplicitDependencies(), TargetPlatformHelper.getState(), options);
 	}
 
 	/**
@@ -136,15 +153,23 @@ public class DependencyManager {
 	 * @param bundles
 	 *            the group of {@link BundleDescription}s to compute
 	 *            dependencies for.
-	 * @param includeOptional
-	 *            if optional bundle ids should be included
+	 * @param options
+	 *            the specified {@link Options} for computing the closure
 	 * @return a set of bundle descriptions
 	 */
 	public static Set<BundleDescription> findRequirementsClosure(Collection<BundleDescription> bundles,
-			boolean includeOptional) {
+			Options... options) {
+
+		Set<Options> optionSet = Set.of(options);
+		boolean includeOptional = optionSet.contains(Options.INCLUDE_OPTIONAL_DEPENDENCIES);
+		boolean includeAllFragments = optionSet.contains(Options.INCLUDE_ALL_FRAGMENTS);
+		boolean includeNonTestFragments = optionSet.contains(Options.INCLUDE_NON_TEST_FRAGMENTS);
+		if (includeAllFragments && includeNonTestFragments) {
+			throw new AssertionError("Cannot combine INCLUDE_ALL_FRAGMENTS and INCLUDE_NON_TEST_FRAGMENTS"); //$NON-NLS-1$
+		}
 
 		Set<BundleDescription> closure = new HashSet<>(bundles.size() * 4 / 3 + 1);
-		Queue<BundleDescription> pending = new ArrayDeque<>();
+		Queue<BundleDescription> pending = new ArrayDeque<>(bundles.size());
 
 		// initialize with given bundles
 		for (BundleDescription bundle : bundles) {
@@ -160,18 +185,28 @@ public class DependencyManager {
 				continue;
 			}
 
+			if (includeAllFragments || includeNonTestFragments) {
+				// A fragment's host is already required by a wire
+				for (BundleDescription fragment : bundle.getFragments()) {
+					if (includeAllFragments || !isTestWorkspaceProject(fragment)) {
+						addNewRequiredBundle(fragment, closure, pending);
+					}
+				}
+			}
+
 			List<BundleWire> requiredWires = wiring.getRequiredWires(null);
 			for (BundleWire wire : requiredWires) {
+				BundleRevision declaringBundle = wire.getRequirement().getRevision();
+				if (declaringBundle != bundle && !closure.contains(declaringBundle)) {
+					// Requirement is declared by an attached fragment, which is
+					// not included into the closure.
+					continue;
+				}
 				BundleRevision provider = getProvider(wire);
 				if (provider instanceof BundleDescription && (includeOptional || !isOptional(wire.getRequirement()))) {
 					BundleDescription requiredBundle = (BundleDescription) provider;
 					addNewRequiredBundle(requiredBundle, closure, pending);
 				}
-			}
-
-			// Add fragments. A fragment's host is already required by a wire
-			for (BundleDescription fragment : bundle.getFragments()) {
-				addNewRequiredBundle(fragment, closure, pending);
 			}
 		}
 		return closure;
@@ -193,6 +228,18 @@ public class DependencyManager {
 
 	private static boolean isOptional(BundleRequirement requirement) {
 		return Constants.RESOLUTION_OPTIONAL.equals(requirement.getDirectives().get(Constants.RESOLUTION_DIRECTIVE));
+	}
+
+	private static boolean isTestWorkspaceProject(BundleDescription f) {
+		// Be defensive when declaring a fragment as 'test'-fragment
+		IPluginModelBase pluginModel = PluginRegistry.findModel(f);
+		if (pluginModel != null) {
+			IResource resource = pluginModel.getUnderlyingResource();
+			if (resource != null) {
+				return ClasspathComputer.hasTestOnlyClasspath(resource.getProject());
+			} // test-fragments are usually not part of the target-platform
+		}
+		return false;
 	}
 
 	/**

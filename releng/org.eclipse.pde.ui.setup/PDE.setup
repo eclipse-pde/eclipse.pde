@@ -98,9 +98,9 @@
       <repositoryList
           name="CBI">
         <repository
-            url="http://download.eclipse.org/cbi/updates/license"/>
+            url="https://download.eclipse.org/cbi/updates/license"/>
         <repository
-            url="http://download.eclipse.org/reddeer/releases/3.5.0"/>
+            url="https://download.eclipse.org/reddeer/releases/3.5.0"/>
         <repository
             url="https://download.eclipse.org/reddeer/releases/latest"/>
       </repositoryList>

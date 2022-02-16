@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +39,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -235,13 +233,12 @@ public class TargetPlatformHelper {
 		return null;
 	}
 
-	public static void checkPluginPropertiesConsistency(Map<?, ?> map, File configDir) {
+	public static void checkPluginPropertiesConsistency(Map<String, List<IPluginModelBase>> map, File configDir) {
 		File runtimeDir = new File(configDir, IPDEBuildConstants.BUNDLE_CORE_RUNTIME);
 		if (runtimeDir.exists() && runtimeDir.isDirectory()) {
 			long timestamp = runtimeDir.lastModified();
-			Iterator<?> iter = map.values().iterator();
-			while (iter.hasNext()) {
-				if (hasChanged((IPluginModelBase) iter.next(), timestamp)) {
+			for (List<IPluginModelBase> models : map.values()) {
+				if (models.stream().anyMatch(m -> hasChanged(m, timestamp))) {
 					CoreUtility.deleteContent(runtimeDir);
 					break;
 				}
@@ -283,8 +280,7 @@ public class TargetPlatformHelper {
 	public static ITargetDefinition getUnresolvedRepositoryBasedWorkspaceTarget() throws CoreException {
 		ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		if (service == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
-					PDECoreMessages.TargetPlatformHelper_CouldNotAcquireTargetService));
+			throw new CoreException(Status.error(PDECoreMessages.TargetPlatformHelper_CouldNotAcquireTargetService));
 		}
 		final ITargetDefinition target = service.getWorkspaceTargetDefinition();
 		if (target != null && !target.isResolved()) {
@@ -489,7 +485,7 @@ public class TargetPlatformHelper {
 		}
 
 		String version = model.getPluginBase().getVersion();
-		if (VersionUtil.validateVersion(version).getSeverity() == IStatus.OK) {
+		if (VersionUtil.validateVersion(version).isOK()) {
 			Version vid = new Version(version);
 			int major = vid.getMajor();
 			int minor = vid.getMinor();
@@ -625,8 +621,7 @@ public class TargetPlatformHelper {
 	public static ITargetDefinition getWorkspaceTargetResolved(IProgressMonitor monitor) throws CoreException {
 		ITargetPlatformService service = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		if (service == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID,
-					PDECoreMessages.TargetPlatformHelper_CouldNotAcquireTargetService));
+			throw new CoreException(Status.error(PDECoreMessages.TargetPlatformHelper_CouldNotAcquireTargetService));
 		}
 		final ITargetDefinition target = service.getWorkspaceTargetDefinition();
 

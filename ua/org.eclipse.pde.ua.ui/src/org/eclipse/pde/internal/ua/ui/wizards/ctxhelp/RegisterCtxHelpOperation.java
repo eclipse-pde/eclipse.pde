@@ -43,7 +43,6 @@ import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
 import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ua.core.ctxhelp.ICtxHelpConstants;
-import org.eclipse.pde.internal.ua.ui.PDEUserAssistanceUIPlugin;
 import org.eclipse.pde.internal.ua.ui.editor.ctxhelp.CtxHelpEditor;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
@@ -105,11 +104,8 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 			throws CoreException {
 		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(
 				new IFile[] { file }, fShell);
-		if (status.getSeverity() != IStatus.OK) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					PDEUserAssistanceUIPlugin.PLUGIN_ID, IStatus.ERROR,
-					CtxWizardMessages.RegisterCtxHelpOperation_errorMessage1,
-					null));
+		if (!status.isOK()) {
+			throw new CoreException(Status.error(CtxWizardMessages.RegisterCtxHelpOperation_errorMessage1));
 		}
 		// Perform the modification of the plugin manifest file
 		ModelModification mod = new ModelModification(fProject) {
@@ -218,11 +214,8 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 		// than the manifest file
 		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(
 				new IFile[] { file }, fShell);
-		if (status.getSeverity() != IStatus.OK) {
-			throw new CoreException(new Status(IStatus.ERROR,
-					PDEUserAssistanceUIPlugin.PLUGIN_ID, IStatus.ERROR,
-					CtxWizardMessages.RegisterCtxHelpOperation_errorMessage2,
-					null));
+		if (!status.isOK()) {
+			throw new CoreException(Status.error(CtxWizardMessages.RegisterCtxHelpOperation_errorMessage2));
 		}
 		// Perform the modification of the manifest file
 		ModelModification mod = new ModelModification(fProject) {

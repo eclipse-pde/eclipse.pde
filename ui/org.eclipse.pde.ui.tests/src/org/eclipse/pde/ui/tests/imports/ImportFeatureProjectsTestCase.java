@@ -35,7 +35,7 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 
 	@Override
 	@After
-	public void tearDown() {
+	public void tearDown() throws Exception {
 		fProjectName = null;
 		super.tearDown();
 	}

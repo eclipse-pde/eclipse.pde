@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2021 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -74,10 +73,7 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	// TODO deal with the discrepency between save/init states of the two blocks
 
 	private void initializePluginsState(ILaunchConfiguration configuration) throws CoreException {
-		Map<IPluginModelBase, String> selected = new HashMap<>();
-		selected.putAll(BundleLauncherHelper.getWorkspaceBundleMap(configuration));
-		selected.putAll(BundleLauncherHelper.getTargetBundleMap(configuration, null));
-
+		Map<IPluginModelBase, String> selected = BundleLauncherHelper.getAllSelectedPluginBundles(configuration);
 		initializePluginsState(selected);
 	}
 

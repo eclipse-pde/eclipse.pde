@@ -127,7 +127,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 
 			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 
-			((TargetPlatformService) TargetPlatformService.getDefault()).setWorkspaceTargetDefinition(fTarget); // Must be set before preference so listeners can react
+			((TargetPlatformService) TargetPlatformService.getDefault()).setWorkspaceTargetDefinition(fTarget, false); // Must be set before preference so listeners can react
 			String memento = fTarget.getHandle().getMemento();
 			if (fNone) {
 				memento = ICoreConstants.NO_TARGET;

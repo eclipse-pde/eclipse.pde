@@ -115,7 +115,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 					return createProblemStatus();
 				}
 			}
-			return createOKStatus();
+			return Status.OK_STATUS;
 		}
 
 		@Override
@@ -123,7 +123,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 			if (isBinaryResource(file, false)) {
 				return createProblemStatus();
 			}
-			return createOKStatus();
+			return Status.OK_STATUS;
 		}
 	}
 
@@ -197,13 +197,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 	}
 
 	private IStatus createProblemStatus() {
-		String message = PDECoreMessages.BinaryRepositoryProvider_veto;
-		return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, message, null);
-	}
-
-	private IStatus createOKStatus() {
-		return new Status(IStatus.OK, PDECore.PLUGIN_ID, IStatus.OK, "", //$NON-NLS-1$
-				null);
+		return Status.error(PDECoreMessages.BinaryRepositoryProvider_veto);
 	}
 
 	// we need to remove this but our tests will fail if we do, see bug 252003

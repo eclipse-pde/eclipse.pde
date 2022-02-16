@@ -64,8 +64,8 @@ public abstract class BaseManifestOperation implements IRunnableWithProgress {
 		if (plugin instanceof IBundlePluginModel) {
 			IFile file = (IFile) plugin.getUnderlyingResource();
 			IStatus status = PDEPlugin.getWorkspace().validateEdit(new IFile[] {file}, fShell);
-			if (status.getSeverity() != IStatus.OK)
-				throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, NLS.bind(PDEUIMessages.ProductDefinitionOperation_readOnly, fPluginId), null)); //$NON-NLS-1$
+			if (!status.isOK())
+				throw new CoreException(Status.error(NLS.bind(PDEUIMessages.ProductDefinitionOperation_readOnly, fPluginId), null));
 
 			ModelModification mod = new ModelModification(file) {
 				@Override

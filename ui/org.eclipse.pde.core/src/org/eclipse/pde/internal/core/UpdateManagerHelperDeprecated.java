@@ -30,7 +30,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -139,7 +138,7 @@ public class UpdateManagerHelperDeprecated {
 			if (message == null || message.length() == 0) {
 				message = PDECoreMessages.TargetPlatform_exceptionThrown;
 			}
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, message, e));
+			throw new CoreException(Status.error(message, e));
 		}
 	}
 

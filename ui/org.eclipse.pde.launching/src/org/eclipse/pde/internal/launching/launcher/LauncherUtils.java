@@ -243,7 +243,7 @@ public class LauncherUtils {
 	}
 
 	private static void handleSelectedPlugins(ILaunchConfiguration config, String timeStamp, ArrayList<IProject> projects) throws CoreException {
-		Map<IPluginModelBase, String> selectedPlugins = BundleLauncherHelper.getWorkspaceBundleMap(config, null);
+		Map<IPluginModelBase, String> selectedPlugins = BundleLauncherHelper.getWorkspaceBundleMap(config);
 		Iterator<IPluginModelBase> it = selectedPlugins.keySet().iterator();
 		while (it.hasNext()) {
 			IPluginModelBase model = it.next();
@@ -258,7 +258,7 @@ public class LauncherUtils {
 	}
 
 	private static void handleDeselectedPlugins(ILaunchConfiguration config, String launcherTimeStamp, ArrayList<IProject> projects) throws CoreException {
-		Map<IPluginModelBase, String> deSelectedPlugins = BundleLauncherHelper.getWorkspaceBundleMap(config, null);
+		Map<IPluginModelBase, String> deSelectedPlugins = BundleLauncherHelper.getWorkspaceBundleMap(config);
 		IProject[] projs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projs.length; i++) {
 			if (!WorkspaceModelManager.isPluginProject(projs[i]))
@@ -339,10 +339,6 @@ public class LauncherUtils {
 			return logFile.delete();
 		}
 		return true;
-	}
-
-	public static IStatus createErrorStatus(String message) {
-		return new Status(IStatus.ERROR, PDELaunchingPlugin.getPluginId(), IStatus.OK, message, null);
 	}
 
 	/**

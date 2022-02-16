@@ -31,7 +31,6 @@ import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
@@ -232,9 +231,7 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 	}
 
 	public void throwParseErrorsException(Throwable e) throws CoreException {
-		Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.OK, "Error in the manifest file", //$NON-NLS-1$
-				e);
-		throw new CoreException(status);
+		throw new CoreException(Status.error("Error in the manifest file", e)); //$NON-NLS-1$
 	}
 
 	protected SAXParser getSaxParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError {

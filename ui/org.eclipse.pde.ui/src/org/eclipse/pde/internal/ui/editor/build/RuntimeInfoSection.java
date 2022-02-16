@@ -789,15 +789,14 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		dialog.setMessage(message);
 
 		dialog.setValidator(selection -> {
-			String id = PDEPlugin.getPluginId();
 			if (selection == null || selection.length != 1 || !(selection[0] instanceof IFolder))
-				return new Status(IStatus.ERROR, id, IStatus.ERROR, "", null); //$NON-NLS-1$
+				return Status.error(""); //$NON-NLS-1$
 
 			String folderPath = ((IFolder) selection[0]).getProjectRelativePath().addTrailingSeparator().toString();
-			if (entry != null && entry.contains(folderPath))
-				return new Status(IStatus.ERROR, id, IStatus.ERROR, PDEUIMessages.BuildEditor_RuntimeInfoSection_duplicateFolder, null);
-
-			return new Status(IStatus.OK, id, IStatus.OK, "", null); //$NON-NLS-1$
+			if (entry != null && entry.contains(folderPath)) {
+				return Status.error(PDEUIMessages.BuildEditor_RuntimeInfoSection_duplicateFolder);
+			}
+			return Status.OK_STATUS;
 		});
 
 		if (dialog.open() == Window.OK)

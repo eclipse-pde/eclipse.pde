@@ -19,7 +19,6 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.TreeSet;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -259,7 +258,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	}
 
 	protected boolean isVersionValid(String version) {
-		return VersionUtil.validateVersion(version).getSeverity() == IStatus.OK;
+		return VersionUtil.validateVersion(version).isOK();
 	}
 
 	public void updateData() {

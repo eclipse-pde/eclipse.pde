@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2019, 2021 Julian Honnen and others.
+ *  Copyright (c) 2019, 2022 Julian Honnen and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -16,16 +16,21 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.launcher;
 
+import static java.util.Comparator.comparing;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.Map.Entry;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.presentation.StandardRepresentation;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.debug.core.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.junit.*;
@@ -50,7 +55,7 @@ public abstract class AbstractLaunchTest {
 	@Rule
 	public final TestRule deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
 
-	protected ILaunchConfiguration getLaunchConfiguration(String name) {
+	protected static ILaunchConfiguration getLaunchConfiguration(String name) {
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		return launchManager.getLaunchConfiguration(launchConfigsProject.getFile(name));
 	}
@@ -78,6 +83,57 @@ public abstract class AbstractLaunchTest {
 		Stream<IPluginModelBase> candiates = Arrays.stream(models);
 		return candiates.filter(model -> version.equals(Version.parseVersion(model.getPluginBase().getVersion())))
 				.findFirst() // always take first like BundleLaunchHelper
-				.orElseThrow(() -> new NoSuchElementException("No " + type + " model " + id + "-" + version + "found"));
+				.orElseThrow(
+						() -> new NoSuchElementException("No " + type + " model " + id + "-" + version + " found"));
 	}
+
+	static NameVersionDescriptor bundle(String id, String version) {
+		return new NameVersionDescriptor(id, version);
+	}
+
+	static BundleLocationDescriptor workspaceBundle(String id, String version) {
+		Objects.requireNonNull(version);
+		return () -> findWorkspaceModel(id, version);
+	}
+
+	static BundleLocationDescriptor targetBundle(String id, String version) {
+		Objects.requireNonNull(version);
+		// PluginRegistry.findModel does not consider external models when
+		// workspace models are present and returns the 'last' plug-in if
+		// multiple with the same version exist
+		return () -> findTargetModel(id, version);
+	}
+
+	static interface BundleLocationDescriptor {
+		IPluginModelBase findModel();
+	}
+
+	static void assertPluginMapsEquals(String message, Map<IPluginModelBase, String> expected,
+			Map<IPluginModelBase, String> actual) {
+		// Like Assert.assertEquals() but with more expressive and easier to
+		// compare failure message
+		Assertions.assertThat(actual).withRepresentation(new StandardRepresentation() {
+			@Override
+			public String toStringOf(Object object) {
+				if (object instanceof IPluginModelBase) {
+					IPluginModelBase plugin = (IPluginModelBase) object;
+					String location = plugin.getUnderlyingResource() != null ? "w" : "e";
+					IPluginBase p = plugin.getPluginBase();
+					return p.getId() + "-" + p.getVersion() + "(" + location + ")";
+				}
+				if (object instanceof Map) {
+					@SuppressWarnings("unchecked")
+					var entries = ((Map<IPluginModelBase, String>) object).entrySet().stream();
+					return entries.sorted(PLUGIN_COMPARATOR).map(super::toStringOf)
+							.collect(Collectors.joining(",\n", "{\n", "\n}"));
+				}
+				return super.toStringOf(object);
+			}
+		}).as(message).isEqualTo(expected);
+	}
+
+	private static final Comparator<Entry<IPluginModelBase, String>> PLUGIN_COMPARATOR = comparing(Entry::getKey,
+			comparing((IPluginModelBase p) -> p.getPluginBase(),
+					comparing(IPluginBase::getId).thenComparing(IPluginBase::getVersion))
+			.thenComparing((IPluginModelBase p) -> p.getUnderlyingResource() == null));
 }

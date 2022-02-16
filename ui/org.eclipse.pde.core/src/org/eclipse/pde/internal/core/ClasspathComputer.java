@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2020 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -87,9 +88,7 @@ public class ClasspathComputer {
 	}
 
 	private static void addSourceAndLibraries(IProject project, IPluginModelBase model, IBuild build, boolean clear, Map<?, ?> sourceLibraryMap, ArrayList<IClasspathEntry> result) throws CoreException {
-		String testPluginPattern = PDECore.getDefault().getPreferencesManager().getString(ICoreConstants.TEST_PLUGIN_PATTERN);
-		boolean isTestPlugin = testPluginPattern != null && testPluginPattern.length() > 0
-				&& Pattern.compile(testPluginPattern).matcher(project.getName()).find();
+		boolean isTestPlugin = hasTestPluginName(project);
 		HashSet<IPath> paths = new HashSet<>();
 
 		// keep existing source folders
@@ -141,21 +140,52 @@ public class ClasspathComputer {
 		}
 	}
 
-	private static IClasspathEntry updateTestAttribute(boolean isTestPlugin, IClasspathEntry entry) {
+	public static boolean hasTestPluginName(IProject project) {
+		String pattern = PDECore.getDefault().getPreferencesManager().getString(ICoreConstants.TEST_PLUGIN_PATTERN);
+		return pattern != null && !pattern.isEmpty() && Pattern.compile(pattern).matcher(project.getName()).find();
+	}
+
+	/**
+	 * Returns true if the given project is a java project that has
+	 * {@code IClasspathEntry#CPE_SOURCE source classpath-entries} that are all
+	 * marked as {@code IClasspathAttribute#TEST test sources}.
+	 *
+	 * @param project
+	 * @return true if the given project is a test java project
+	 */
+	public static boolean hasTestOnlyClasspath(IProject project) {
+		IJavaProject javaProject = JavaCore.create(project);
+		if (javaProject == null) {
+			return false;
+		}
+		try {
+			boolean hasSources = false;
+			for (IClasspathEntry entry : javaProject.getRawClasspath()) {
+				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+					hasSources = true;
+					if (!entry.isTest()) {
+						return false;
+					}
+				}
+			}
+			return hasSources; // if it has sources, all are test-sources
+		} catch (JavaModelException e) { // assume no valid java-project
+		}
+		return false;
+	}
+
+	public static IClasspathEntry updateTestAttribute(boolean isTestPlugin, IClasspathEntry entry) {
 		if (isTestPlugin == entry.isTest() || entry.getEntryKind() != IClasspathEntry.CPE_SOURCE) {
 			return entry;
 		}
-		IClasspathAttribute[] classpathAttributes = Arrays.stream(entry.getExtraAttributes())
-				.filter(e -> !e.getName().equals(IClasspathAttribute.TEST)).toArray(IClasspathAttribute[]::new);
+		Stream<IClasspathAttribute> cpAttributes = Arrays.stream(entry.getExtraAttributes())
+				.filter(e -> !e.getName().equals(IClasspathAttribute.TEST));
 		if (isTestPlugin) {
-			int length = classpathAttributes.length;
-			System.arraycopy(classpathAttributes, 0, classpathAttributes = new IClasspathAttribute[length + 1], 0,
-					length);
-			classpathAttributes[length] = JavaCore.newClasspathAttribute(IClasspathAttribute.TEST, "true"); //$NON-NLS-1$
+			IClasspathAttribute testAttribute = JavaCore.newClasspathAttribute(IClasspathAttribute.TEST, "true"); //$NON-NLS-1$
+			cpAttributes = Stream.concat(cpAttributes, Stream.of(testAttribute));
 		}
-		return JavaCore.newSourceEntry(entry.getPath(), entry.getInclusionPatterns(),
-				entry.getExclusionPatterns(), entry.getOutputLocation(), classpathAttributes);
-
+		return JavaCore.newSourceEntry(entry.getPath(), entry.getInclusionPatterns(), entry.getExclusionPatterns(),
+				entry.getOutputLocation(), cpAttributes.toArray(IClasspathAttribute[]::new));
 	}
 
 	private static IClasspathAttribute[] getClasspathAttributes(IProject project, IPluginModelBase model) {
