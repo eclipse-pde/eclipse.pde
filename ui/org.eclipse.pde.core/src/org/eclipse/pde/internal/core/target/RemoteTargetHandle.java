@@ -38,6 +38,8 @@ public class RemoteTargetHandle implements ITargetHandle {
 		UNKNWON, EXISTS, NOT_FOUND, FAILED;
 	}
 
+	private static final String FILE_SCHEMA = "file:"; //$NON-NLS-1$
+
 	private static final Map<URI, RemoteTargetHandle> REMOTE_HANDLES = new ConcurrentHashMap<>();
 	/**
 	 * URI scheme for local targets
@@ -110,7 +112,7 @@ public class RemoteTargetHandle implements ITargetHandle {
 		Objects.requireNonNull(uri);
 		try {
 			IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
-			URI resolvedUri = new URI(manager.performStringSubstitution(uri));
+			URI resolvedUri = new URI(convertRawToUri(manager.performStringSubstitution(uri)));
 			RemoteTargetHandle handle = REMOTE_HANDLES.computeIfAbsent(resolvedUri, RemoteTargetHandle::new);
 			synchronized (handle) {
 				if (handle.state != RemoteState.EXISTS) {
@@ -123,6 +125,17 @@ public class RemoteTargetHandle implements ITargetHandle {
 		} catch (URISyntaxException e) {
 			throw new CoreException(Status.error(NLS.bind(Messages.RemoteTargetHandle_invalid_URI, e.getMessage()), e));
 		}
+	}
+
+	static String convertRawToUri(String resolvePath) {
+		// We need to convert windows path separators here...
+		resolvePath = resolvePath.replace('\\', '/');
+		String lc = resolvePath.toLowerCase();
+		if (lc.startsWith(FILE_SCHEMA) && lc.charAt(FILE_SCHEMA.length()) != '/') {
+			// according to rfc a file URI must always start with a slash
+			resolvePath = FILE_SCHEMA + '/' + resolvePath.substring(FILE_SCHEMA.length());
+		}
+		return resolvePath;
 	}
 
 }
