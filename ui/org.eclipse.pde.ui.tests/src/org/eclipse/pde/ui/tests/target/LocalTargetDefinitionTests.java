@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
@@ -283,12 +282,11 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	@Test
 	public void testFeatureBundleContainer() throws Exception {
 		// extract the feature
-		IPath location = extractModifiedFeatures();
+		Path location = extractModifiedFeatures();
 
 		// the new way
 		ITargetDefinition definition = getNewTarget();
-		ITargetLocation container = getTargetService().newFeatureLocation(location.toOSString(), "org.eclipse.jdt",
-				null);
+		ITargetLocation container = getTargetService().newFeatureLocation(location.toString(), "org.eclipse.jdt", null);
 		container.resolve(definition, null);
 		TargetBundle[] bundles = container.getBundles();
 
@@ -322,12 +320,11 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	@Test
 	public void testMacOSFeatureBundleContainer() throws Exception {
 		// extract the feature
-		IPath location = extractModifiedFeatures();
+		Path location = extractModifiedFeatures();
 
 		ITargetDefinition definition = getNewTarget();
 		definition.setOS(Platform.OS_MACOSX);
-		ITargetLocation container = getTargetService().newFeatureLocation(location.toOSString(), "org.eclipse.jdt",
-				null);
+		ITargetLocation container = getTargetService().newFeatureLocation(location.toString(), "org.eclipse.jdt", null);
 		container.resolve(definition, null);
 		TargetBundle[] bundles = container.getBundles();
 
@@ -371,11 +368,10 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	@Test
 	public void testRestrictedFeatureBundleContainer() throws Exception {
 		// extract the feature
-		IPath location = extractModifiedFeatures();
+		Path location = extractModifiedFeatures();
 
 		ITargetDefinition definition = getNewTarget();
-		ITargetLocation container = getTargetService().newFeatureLocation(location.toOSString(), "org.eclipse.jdt",
-				null);
+		ITargetLocation container = getTargetService().newFeatureLocation(location.toString(), "org.eclipse.jdt", null);
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[] {
 				new NameVersionDescriptor("org.eclipse.jdt", null),
 				new NameVersionDescriptor("org.junit", "3.8.2.v20090203-1005") };
@@ -398,11 +394,11 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	@Test
 	public void testSourceFeatureBundleContainer() throws Exception {
 		// extract the feature
-		IPath location = extractModifiedFeatures();
+		Path location = extractModifiedFeatures();
 
 		ITargetDefinition definition = getNewTarget();
-		ITargetLocation container = getTargetService().newFeatureLocation(location.toOSString(),
-				"org.eclipse.jdt.source", null);
+		ITargetLocation container = getTargetService().newFeatureLocation(location.toString(), "org.eclipse.jdt.source",
+				null);
 		container.resolve(definition, null);
 		TargetBundle[] bundles = container.getBundles();
 
@@ -435,11 +431,11 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testSetTargetPlatformToJdtFeature() throws Exception {
 		try {
 			// extract the feature
-			IPath location = extractModifiedFeatures();
+			Path location = extractModifiedFeatures();
 			// org.eclipse.jdt_3.6.0.v20100105-0800-7z8VFR9FMTb52_pOyKHhoek1
 
 			ITargetDefinition target = getNewTarget();
-			ITargetLocation container = getTargetService().newFeatureLocation(location.toOSString(), "org.eclipse.jdt",
+			ITargetLocation container = getTargetService().newFeatureLocation(location.toString(), "org.eclipse.jdt",
 					"3.6.0.v20100105-0800-7z8VFR9FMTb52_pOyKHhoek1");
 
 			target.setTargetLocations(new ITargetLocation[] { container });
@@ -656,9 +652,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	private void doIncludeVersions(NameVersionDescriptor[] descriptions) throws Exception {
 		String bsn = MULTI_VERSION_LOW_DESCRIPTION.getId();
 
-		IPath extras = extractMultiVersionPlugins();
+		Path extras = extractMultiVersionPlugins();
 		ITargetDefinition target = getNewTarget();
-		ITargetLocation container = getTargetService().newDirectoryLocation(extras.toOSString());
+		ITargetLocation container = getTargetService().newDirectoryLocation(extras.toString());
 		target.setTargetLocations(new ITargetLocation[] { container });
 		target.setIncluded(descriptions);
 		try {

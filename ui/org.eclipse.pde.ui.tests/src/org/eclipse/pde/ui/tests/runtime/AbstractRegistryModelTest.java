@@ -32,12 +32,12 @@ import org.eclipse.pde.internal.runtime.registry.model.ModelChangeListener;
 import org.eclipse.pde.internal.runtime.registry.model.RegistryModel;
 import org.eclipse.pde.internal.runtime.registry.model.ServiceName;
 import org.eclipse.pde.internal.runtime.registry.model.ServiceRegistration;
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
@@ -105,8 +105,8 @@ public abstract class AbstractRegistryModelTest implements ModelChangeListener {
 	abstract protected RegistryModel createModel() throws URISyntaxException;
 
 	public AbstractRegistryModelTest() {
-		testBundle = PDETestsPlugin.getBundleContext().getBundle();
-		org.osgi.framework.ServiceRegistration<?> registration = PDETestsPlugin.getBundleContext()
+		testBundle = FrameworkUtil.getBundle(AbstractRegistryModelTest.class);
+		org.osgi.framework.ServiceRegistration<?> registration = testBundle.getBundleContext()
 				.registerService(getClass().getName(), this, null);
 		testServiceReference = registration.getReference();
 
@@ -134,7 +134,7 @@ public abstract class AbstractRegistryModelTest implements ModelChangeListener {
 	 */
 	@Test
 	public void testInstalledBundles() {
-		org.osgi.framework.Bundle[] origBundles = PDETestsPlugin.getBundleContext().getBundles();
+		org.osgi.framework.Bundle[] origBundles = FrameworkUtil.getBundle(AbstractRegistryModelTest.class).getBundleContext().getBundles();
 		model.initialize(new NullProgressMonitor());
 		Bundle[] bundles = model.getBundles();
 

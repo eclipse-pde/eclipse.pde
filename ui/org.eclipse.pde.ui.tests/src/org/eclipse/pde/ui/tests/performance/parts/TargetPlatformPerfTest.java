@@ -13,25 +13,15 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.performance.parts;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Enumeration;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -44,7 +34,7 @@ import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
+import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.eclipse.pde.ui.tests.util.TestBundleCreator;
 import org.eclipse.test.performance.Dimension;
@@ -76,12 +66,12 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 	 */
 	public void testResolveTargetDefinition() throws Exception {
 		tagAsSummary("Resolve target definition", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
-		IPath testBundles = extractTargetPerfTestPlugins();
+		Path testBundles = extractTargetPerfTestPlugins();
 
 		ITargetPlatformService tps = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 
 		ITargetDefinition originalTarget = tps.newTarget();
-		originalTarget.setTargetLocations(new ITargetLocation[]{tps.newDirectoryLocation(testBundles.toPortableString())});
+		originalTarget.setTargetLocations(new ITargetLocation[] { tps.newDirectoryLocation(testBundles.toString()) });
 		tps.saveTargetDefinition(originalTarget);
 		ITargetHandle handle = originalTarget.getHandle();
 
@@ -109,7 +99,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 	 */
 	public void testSearchModelRegistry() throws Exception {
 		tagAsSummary("Resolve target definition", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
-		IPath testBundles = extractTargetPerfTestPlugins();
+		Path testBundles = extractTargetPerfTestPlugins();
 
 		IBundleProjectService service = PDECore.getDefault().acquireService(IBundleProjectService.class);
 		ITargetPlatformService tps = PDECore.getDefault().acquireService(ITargetPlatformService.class);
@@ -130,7 +120,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 
 			// Set the example target as active
 			ITargetDefinition target = tps.newTarget();
-			target.setTargetLocations(new ITargetLocation[] {tps.newDirectoryLocation(testBundles.toPortableString())});
+			target.setTargetLocations(new ITargetLocation[] { tps.newDirectoryLocation(testBundles.toString()) });
 			TargetPlatformUtil.loadAndSetTarget(target);
 
 			// Warm-up Iterations
@@ -242,43 +232,13 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 
 	}
 
-	static IPath extractTargetPerfTestPlugins() throws Exception {
-		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
-		IPath location = stateLocation.append("targetPerfTestPlugins");
-		if (!location.toFile().exists()) {
-			return doUnZip(location, TEST_PLUGIN_LOCATION);
+	static Path extractTargetPerfTestPlugins() throws Exception {
+		Path stateLocation = PDETestCase.getThisBundlesStateLocation();
+		Path location = stateLocation.resolve("targetPerfTestPlugins");
+		if (!Files.exists(location)) {
+			return PDETestCase.doUnZip(location.getParent(), TEST_PLUGIN_LOCATION);
 		}
 		return location;
 	}
 
-	/**
-	 * Unzips the given archive to the specified location.
-	 *
-	 * @param location path in the local file system
-	 * @param archivePath path to archive relative to the test plug-in
-	 */
-	private static IPath doUnZip(IPath location, String archivePath) throws IOException {
-		URL zipURL = PDETestsPlugin.getBundleContext().getBundle().getEntry(archivePath);
-		File zipPath = new File(FileLocator.toFileURL(zipURL).getFile());
-		try (ZipFile zipFile = new ZipFile(zipPath)) {
-			Enumeration<? extends ZipEntry> entries = zipFile.entries();
-			IPath parent = location.removeLastSegments(1);
-			while (entries.hasMoreElements()) {
-				ZipEntry entry = entries.nextElement();
-				if (!entry.isDirectory()) {
-					IPath entryPath = parent.append(entry.getName());
-					File dir = entryPath.removeLastSegments(1).toFile();
-					dir.mkdirs();
-					File file = entryPath.toFile();
-					file.createNewFile();
-					try (InputStream inputStream = new BufferedInputStream(zipFile.getInputStream(entry));
-							BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
-						byte[] bytes = inputStream.readAllBytes();
-						outputStream.write(bytes);
-					}
-				}
-			}
-			return parent;
-		}
-	}
 }
