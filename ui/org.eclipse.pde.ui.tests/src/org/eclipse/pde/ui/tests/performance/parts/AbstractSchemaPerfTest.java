@@ -19,9 +19,9 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.test.performance.PerformanceTestCase;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * AbstractSchemaPerfTest
@@ -52,10 +52,7 @@ public abstract class AbstractSchemaPerfTest extends PerformanceTestCase {
 	}
 
 	private void setUpSchemaFile() throws Exception, IOException {
-		PDETestsPlugin plugin = PDETestsPlugin.getDefault();
-		if (plugin == null)
-			throw new Exception("ERROR:  Macro plug-in uninitialized"); //$NON-NLS-1$
-		Bundle bundle = plugin.getBundle();
+		Bundle bundle = FrameworkUtil.getBundle(AbstractSchemaPerfTest.class);
 		if (bundle == null)
 			throw new Exception("ERROR:  Bundle uninitialized"); //$NON-NLS-1$
 		URL url = bundle.getEntry(F_FILENAME);

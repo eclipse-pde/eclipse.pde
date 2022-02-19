@@ -16,33 +16,17 @@ package org.eclipse.pde.ui.tests.target;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
-import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -57,11 +41,9 @@ import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.core.target.TargetEvents;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.ui.tests.PDETestCase;
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.event.EventHandler;
 
 /**
@@ -74,11 +56,8 @@ public abstract class AbstractTargetTest extends PDETestCase {
 	 *
 	 * @return target platform service
 	 */
-	protected ITargetPlatformService getTargetService() {
-		ServiceReference<ITargetPlatformService> reference = PDETestsPlugin.getBundleContext()
-				.getServiceReference(ITargetPlatformService.class);
-		assertNotNull("Missing target platform service", reference);
-		return PDETestsPlugin.getBundleContext().getService(reference);
+	protected static ITargetPlatformService getTargetService() {
+		return org.eclipse.pde.internal.core.target.TargetPlatformService.getDefault();
 	}
 
 	/**
@@ -87,33 +66,14 @@ public abstract class AbstractTargetTest extends PDETestCase {
 	 *
 	 * @return path to the plug-ins directory
 	 */
-	protected IPath extractAbcdePlugins() throws Exception {
-		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
-		IPath location = stateLocation.append("abcde-plugins");
-		if (location.toFile().exists()) {
+	protected Path extractAbcdePlugins() throws Exception {
+		Path stateLocation = getThisBundlesStateLocation();
+		Path location = stateLocation.resolve("abcde-plugins");
+		if (Files.exists(location)) {
 			// recursively delete
-			File dir = location.toFile();
-			delete(dir);
+			delete(location.toFile());
 		}
-		return doUnZip(location, "/tests/targets/abcde-plugins.zip");
-	}
-
-	/**
-	 * Extracts the same plugins as {@link #extractAbcdePlugins()}, but puts them
-	 * in a linked folder setup (linked/eclipse/plugins).  Returns the location
-	 * of the plugins directory.
-	 *
-	 * @return path to the plug-ins directory
-	 */
-	protected IPath extractLinkedPlugins() throws Exception {
-		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
-		IPath location = stateLocation.append("abcde/linked/eclipse/plugins");
-		if (location.toFile().exists()) {
-			// recursively delete
-			File dir = location.toFile();
-			delete(dir);
-		}
-		return doUnZip(location, "/tests/targets/abcde-plugins.zip");
+		return doUnZip(stateLocation, "/tests/targets/abcde-plugins.zip");
 	}
 
 	/**
@@ -122,19 +82,18 @@ public abstract class AbstractTargetTest extends PDETestCase {
 	 *
 	 * @return path to the root directory
 	 */
-	protected IPath extractModifiedFeatures() throws Exception {
-		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
-		IPath location = stateLocation.append("modified-jdt-features");
-		if (location.toFile().exists()) {
+	protected Path extractModifiedFeatures() throws Exception {
+		Path stateLocation = getThisBundlesStateLocation();
+		Path location = stateLocation.resolve("modified-jdt-features");
+		if (Files.exists(location)) {
 			return location;
 		}
-		doUnZip(location,"/tests/targets/modified-jdt-features.zip");
+		doUnZip(stateLocation, "/tests/targets/modified-jdt-features.zip");
 		// If we are not on the mac, delete the mac launching bundle (in a standard non Mac build, the plug-in wouldn't exist)
 		if (!Platform.getOS().equals(Platform.OS_MACOSX)) {
-			File macBundle = location.append("plugins").append("org.eclipse.jdt.launching.macosx_3.2.0.v20090527.jar").toFile();
-			if (macBundle.exists()){
-				assertTrue("Unable to delete test mac launching bundle",macBundle.delete());
-			}
+			Path macBundle = location.resolve("plugins")
+					.resolve("org.eclipse.jdt.launching.macosx_3.2.0.v20090527.jar");
+			Files.deleteIfExists(macBundle);
 		}
 		return location;
 	}
@@ -146,67 +105,19 @@ public abstract class AbstractTargetTest extends PDETestCase {
 	 *
 	 * @return path to the directory containing the bundles
 	 */
-	protected IPath extractMultiVersionPlugins() throws Exception {
-		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
-		IPath location = stateLocation.append("multi-versions");
-		if (location.toFile().exists()) {
+	protected Path extractMultiVersionPlugins() throws Exception {
+		Path stateLocation = getThisBundlesStateLocation();
+		Path location = stateLocation.resolve("multi-versions");
+		if (Files.exists(location)) {
 			return location;
 		}
-		doUnZip(location,"/tests/targets/multi-versions.zip");
+		doUnZip(stateLocation, "/tests/targets/multi-versions.zip");
 		return location;
 	}
 
 	/**
-	 * Unzips the given archive to the specified location.
-	 *
-	 * @param location path in the local file system
-	 * @param archivePath path to archive relative to the test plug-in
-	 */
-	private IPath doUnZip(IPath location, String archivePath) throws IOException {
-		URL zipURL = PDETestsPlugin.getBundleContext().getBundle().getEntry(archivePath);
-		File zipPath = new File(FileLocator.toFileURL(zipURL).getFile());
-		try (ZipFile zipFile = new ZipFile(zipPath)) {
-			Enumeration<? extends ZipEntry> entries = zipFile.entries();
-			IPath parent = location.removeLastSegments(1);
-			while (entries.hasMoreElements()) {
-				ZipEntry entry = entries.nextElement();
-				if (!entry.isDirectory()) {
-					IPath entryPath = parent.append(entry.getName());
-					File dir = entryPath.removeLastSegments(1).toFile();
-					dir.mkdirs();
-					File file = entryPath.toFile();
-					file.createNewFile();
-					try (InputStream inputStream = new BufferedInputStream(zipFile.getInputStream(entry));
-							BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
-						byte[] bytes = inputStream.readAllBytes();
-						outputStream.write(bytes);
-					}
-				}
-			}
-			return parent;
-		}
-	}
-
-	/**
-	 * Recursively deletes the directory and files within.
-	 *
-	 * @param dir directory to delete
-	 */
-	protected void delete(File dir) {
-		File[] files = dir.listFiles();
-		for (File file : files) {
-			if (file.isDirectory()) {
-				delete(file);
-			} else {
-				file.delete();
-			}
-		}
-		dir.delete();
-	}
-
-	/**
-	 * Used to reset the target platform to original settings after a test that changes
-	 * the target platform.
+	 * Used to reset the target platform to original settings after a test that
+	 * changes the target platform.
 	 */
 	protected void resetTargetPlatform() throws CoreException {
 		ITargetDefinition definition = getDefaultTargetPlatorm();
@@ -324,17 +235,5 @@ public abstract class AbstractTargetTest extends PDETestCase {
 			list.add(bundle.getBundleInfo());
 		}
 		return list;
-	}
-
-	public static ITextFileBuffer getTextFileBufferFromFile(File file) {
-		try {
-			IPath path = IPath.fromOSString(file.getAbsolutePath());
-			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
-			manager.connect(path, LocationKind.LOCATION, null);
-			return manager.getTextFileBuffer(path, LocationKind.LOCATION);
-		} catch (CoreException e) {
-			fail("Unable to retrive target definition file");
-		}
-		return null;
 	}
 }

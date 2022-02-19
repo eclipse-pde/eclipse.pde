@@ -27,7 +27,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
-import org.junit.Before;
 import org.junit.Test;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -38,17 +37,6 @@ import org.osgi.service.prefs.BackingStoreException;
  * @see AbstractBuildValidationTest
  */
 public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
-
-	private static boolean fOneTimeSetupComplete = false;
-
-	@Override
-	@Before
-	public void setUp() throws Exception {
-		if (fOneTimeSetupComplete)
-			return;
-		super.setUp();
-		fOneTimeSetupComplete = true;
-	}
 
 	@Test
 	public void testSourceFolder() throws CoreException, BackingStoreException, IOException {

@@ -14,8 +14,8 @@
 package org.eclipse.pde.ui.tests.performance.parts;
 
 import java.io.File;
+import java.nio.file.Path;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
@@ -23,6 +23,7 @@ import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
 
@@ -35,16 +36,16 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		deleteContent(new File(PDECore.getDefault().getStateLocation().toOSString()));
+		PDETestCase.delete(PDECore.getDefault().getStateLocation().toFile());
 		TargetPlatformHelper.getKnownExecutionEnvironments();
 	}
 
 	public void testModels() throws Exception {
 		tagAsGlobalSummary("Initialize PDE Models", Dimension.ELAPSED_PROCESS);
-		IPath testBundles = TargetPlatformPerfTest.extractTargetPerfTestPlugins();
+		Path testBundles = TargetPlatformPerfTest.extractTargetPerfTestPlugins();
 		ITargetPlatformService tps = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		ITargetDefinition originalTarget = tps.newTarget();
-		originalTarget.setTargetLocations(new ITargetLocation[]{tps.newDirectoryLocation(testBundles.toPortableString())});
+		originalTarget.setTargetLocations(new ITargetLocation[] { tps.newDirectoryLocation(testBundles.toString()) });
 		tps.saveTargetDefinition(originalTarget);
 
 		// Target resolution performance handled in TargetPlatformPerfTest
@@ -75,21 +76,6 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		deleteContent(new File(PDECore.getDefault().getStateLocation().toOSString()));
+		PDETestCase.delete(new File(PDECore.getDefault().getStateLocation().toOSString()));
 	}
-
-	private void deleteContent(File curr) {
-		if (curr.exists()) {
-			if (curr.isDirectory()) {
-				File[] children = curr.listFiles();
-				if (children != null) {
-					for (File element : children) {
-						deleteContent(element);
-					}
-				}
-			}
-			curr.delete();
-		}
-	}
-
 }

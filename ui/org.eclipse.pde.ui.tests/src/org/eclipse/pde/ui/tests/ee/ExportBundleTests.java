@@ -19,14 +19,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.ToolFactory;
@@ -37,7 +35,6 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
 import org.eclipse.pde.internal.core.exports.PluginExportOperation;
 import org.eclipse.pde.ui.tests.PDETestCase;
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.junit.Before;
@@ -54,7 +51,7 @@ public class ExportBundleTests extends PDETestCase {
 		PDETestCase.assumeRunningInStandaloneEclipseSDK();
 	}
 
-	private static final IPath EXPORT_PATH = PDETestsPlugin.getDefault().getStateLocation().append(".export");
+	private static final Path EXPORT_PATH = getThisBundlesStateLocation().resolve(".export");
 
 	@Override
 	@Before
@@ -74,30 +71,6 @@ public class ExportBundleTests extends PDETestCase {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 		if (project.exists()) {
 			project.delete(true, null);
-		}
-	}
-
-	/**
-	 * Deletes the specified folder.
-	 *
-	 * @param dir
-	 *            the file to delete
-	 */
-	protected void deleteFolder(File dir) throws IOException {
-		if (dir.isDirectory()) {
-			if (dir.list().length == 0)
-				Files.delete(dir.toPath());
-			else {
-				File[] files = dir.listFiles();
-				for (File file : files) {
-					deleteFolder(file);
-				}
-				if (dir.list().length == 0) {
-					Files.delete(dir.toPath());
-				}
-			}
-		} else {
-			Files.delete(dir.toPath());
 		}
 	}
 
@@ -130,7 +103,7 @@ public class ExportBundleTests extends PDETestCase {
 			info.exportSource = false;
 			info.allowBinaryCycles = false;
 			info.useWorkspaceCompiledClasses = false;
-			info.destinationDirectory = EXPORT_PATH.toOSString();
+			info.destinationDirectory = EXPORT_PATH.toString();
 			info.zipFileName = null;
 			info.items = new Object[]{PluginRegistry.findModel(project.getProject())};
 			info.signingInfo = null;
@@ -149,19 +122,19 @@ public class ExportBundleTests extends PDETestCase {
 			TestUtils.waitForJobs(name.getMethodName(), 100, 10000);
 
 			// verify exported bundle exists
-			IPath path = EXPORT_PATH.append("plugins/no.sound.export_1.0.0.jar");
+			Path path = EXPORT_PATH.resolve("plugins/no.sound.export_1.0.0.jar");
 
 			// The jar file may not have been copied to the file system yet, see Bug 424597
-			if (!path.toFile().exists()) {
+			if (!Files.exists(path)) {
 				TestUtils.waitForJobs(name.getMethodName(), 100, 30000);
 			}
 
-			assertTrue("Missing exported bundle", path.toFile().exists());
-			validateTargetLevel(path.toOSString(), "no/sound/export/Activator.class", 47);
+			assertTrue("Missing exported bundle", Files.exists(path));
+			validateTargetLevel(path.toString(), "no/sound/export/Activator.class", 47);
 		} finally {
 			TestUtils.waitForJobs(name.getMethodName(), 10, 5000);
 			deleteProject("no.sound.export");
-			deleteFolder(EXPORT_PATH.toFile());
+			delete(EXPORT_PATH.toFile());
 		}
 	}
 
@@ -182,7 +155,7 @@ public class ExportBundleTests extends PDETestCase {
 			info.exportSource = false;
 			info.allowBinaryCycles = false;
 			info.useWorkspaceCompiledClasses = false;
-			info.destinationDirectory = EXPORT_PATH.toOSString();
+			info.destinationDirectory = EXPORT_PATH.toString();
 			info.zipFileName = null;
 			info.items = new Object[]{PluginRegistry.findModel(project.getProject())};
 			info.signingInfo = null;
@@ -204,19 +177,19 @@ public class ExportBundleTests extends PDETestCase {
 			long l6 = System.currentTimeMillis();
 
 			// veriry exported bundle exists
-			IPath path = EXPORT_PATH.append("plugins/j2se14.export_1.0.0.jar");
+			Path path = EXPORT_PATH.resolve("plugins/j2se14.export_1.0.0.jar");
 			long l7 = System.currentTimeMillis();
 
 			TestUtils.processUIEvents(100);
 			TestUtils.waitForJobs(name.getMethodName(), 100, 10000);
 
-			boolean didPathExistBeforeSleep = path.toFile().exists();
+			boolean didPathExistBeforeSleep = Files.exists(path);
 			/*		give a 30 second delay when the path doesn't exist
 					( JUST IN CASE - unlikely to work but worth trying)*/
-			if (!path.toFile().exists()) {
+			if (!Files.exists(path)) {
 				TestUtils.waitForJobs(name.getMethodName(), 3000, 30000);
 			}
-			boolean didPathExistAfterSleep = path.toFile().exists();
+			boolean didPathExistAfterSleep = Files.exists(path);
 
 			long l8 = System.currentTimeMillis();
 
@@ -247,7 +220,7 @@ public class ExportBundleTests extends PDETestCase {
 				// Should only have plugin/feature folders
 				printContents(exportContents);
 			} else {
-				IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
+				Path stateLocation = getThisBundlesStateLocation();
 				if (stateLocation.toFile().exists()) {
 					System.out.println("Exported directory is missing, parent: ");
 					printContents(stateLocation.toFile());
@@ -257,12 +230,12 @@ public class ExportBundleTests extends PDETestCase {
 			}
 			System.out.println("================================\nEnd of BUG 424597");
 
-			assertTrue("Missing exported bundle", path.toFile().exists());
-			validateTargetLevel(path.toOSString(), "j2se14/export/Activator.class", 46);
+			assertTrue("Missing exported bundle", Files.exists(path));
+			validateTargetLevel(path.toString(), "j2se14/export/Activator.class", 46);
 		} finally {
 			TestUtils.waitForJobs(name.getMethodName(), 10, 5000);
 			deleteProject("j2se14.export");
-			deleteFolder(EXPORT_PATH.toFile());
+			delete(EXPORT_PATH.toFile());
 		}
 	}
 

@@ -4,7 +4,6 @@ Bundle-Name: PDE JUnit Tests
 Bundle-SymbolicName: org.eclipse.pde.ui.tests; singleton:=true
 Bundle-Version: 3.12.500.qualifier
 Bundle-ClassPath: tests.jar
-Bundle-Activator: org.eclipse.pde.ui.tests.PDETestsPlugin
 Bundle-Vendor: Eclipse.org
 Require-Bundle: org.eclipse.pde.ui,
  org.eclipse.ui,

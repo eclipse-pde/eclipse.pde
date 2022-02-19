@@ -23,7 +23,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.IPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
 import org.eclipse.ui.IEditorInput;
@@ -33,6 +32,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.ide.IDE;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 
@@ -72,11 +72,7 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 	}
 
 	private Bundle getBundle() throws Exception {
-		PDETestsPlugin plugin = PDETestsPlugin.getDefault();
-		if (plugin == null) {
-			throw new Exception("ERROR:  Macro plug-in uninitialized"); //$NON-NLS-1$
-		}
-		Bundle bundle = plugin.getBundle();
+		Bundle bundle = FrameworkUtil.getBundle(OpenManifestEditorPerfTest.class);
 		if (bundle == null) {
 			throw new Exception("ERROR:  Bundle uninitialized"); //$NON-NLS-1$
 		}

@@ -19,12 +19,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.core.plugin.TargetPlatform;
@@ -113,9 +113,9 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 	public void testExplicitIncludes() throws Exception {
 		// Use the modified JDT features as we know their versions
 		ITargetDefinition definition = getNewTarget();
-		IPath location = extractModifiedFeatures();
+		Path location = extractModifiedFeatures();
 
-		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
+		ITargetLocation container = getTargetService().newDirectoryLocation(location.toString());
 		definition.setTargetLocations(new ITargetLocation[] { container });
 		definition.resolve(null);
 
@@ -168,9 +168,9 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 	public void testSingleInclude() throws Exception {
 		// Use the modified JDT features as we know their versions
 		ITargetDefinition definition = getNewTarget();
-		IPath location = extractModifiedFeatures();
+		Path location = extractModifiedFeatures();
 
-		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
+		ITargetLocation container = getTargetService().newDirectoryLocation(location.toString());
 		definition.setTargetLocations(new ITargetLocation[] { container });
 		definition.resolve(null);
 
@@ -215,9 +215,9 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 	public void testMixedIncludes() throws Exception {
 		// Use the modified JDT features as we know their versions
 		ITargetDefinition definition = getNewTarget();
-		IPath location = extractModifiedFeatures();
+		Path location = extractModifiedFeatures();
 
-		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
+		ITargetLocation container = getTargetService().newDirectoryLocation(location.toString());
 		definition.setTargetLocations(new ITargetLocation[] { container });
 		definition.resolve(null);
 
@@ -263,9 +263,9 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 	public void testMissingFeatures() throws Exception {
 		// Use the modified JDT features as we know their versions
 		ITargetDefinition definition = getNewTarget();
-		IPath location = extractModifiedFeatures();
+		Path location = extractModifiedFeatures();
 
-		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
+		ITargetLocation container = getTargetService().newDirectoryLocation(location.toString());
 		definition.setTargetLocations(new ITargetLocation[] { container });
 		definition.resolve(null);
 
@@ -297,9 +297,9 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 	public void testMissingFeatureVersion() throws Exception {
 		// Use the modified JDT features as we know their versions
 		ITargetDefinition definition = getNewTarget();
-		IPath location = extractModifiedFeatures();
+		Path location = extractModifiedFeatures();
 
-		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
+		ITargetLocation container = getTargetService().newDirectoryLocation(location.toString());
 		definition.setTargetLocations(new ITargetLocation[] { container });
 		definition.resolve(null);
 
@@ -344,9 +344,9 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 	public void testMissingMixed() throws Exception {
 		// Use the modified JDT features as we know their versions
 		ITargetDefinition definition = getNewTarget();
-		IPath location = extractModifiedFeatures();
+		Path location = extractModifiedFeatures();
 
-		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
+		ITargetLocation container = getTargetService().newDirectoryLocation(location.toString());
 		definition.setTargetLocations(new ITargetLocation[] { container });
 		definition.resolve(null);
 
