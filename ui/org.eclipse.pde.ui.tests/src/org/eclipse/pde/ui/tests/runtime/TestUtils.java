@@ -24,10 +24,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.junit.Assert;
 import org.junit.jupiter.api.function.ThrowingConsumer;
@@ -55,23 +54,14 @@ public class TestUtils {
 		if (timedOut) {
 			// We don't expect any extra jobs run during the test: try to cancel
 			// them
-			log(IStatus.INFO, owner, "Trying to cancel running jobs: " + getRunningOrWaitingJobs(null));
+			ILog.get().log(Status
+					.info("[" + owner + "] Trying to cancel running jobs: " + getRunningOrWaitingJobs(null)));
 			getRunningOrWaitingJobs(null).forEach(job -> job.cancel());
 			waitForJobs(owner, 5, 1000);
 		}
 
 		// Ensure that the Thread.interrupted() flag didn't leak.
 		Assert.assertFalse("The main thread should not be interrupted at the end of a test", Thread.interrupted());
-	}
-
-	public static void log(int severity, String owner, String message, Throwable... optionalError) {
-		message = "[" + owner + "] " + message;
-		Throwable error = null;
-		if (optionalError != null && optionalError.length > 0) {
-			error = optionalError[0];
-		}
-		Status status = new Status(severity, PDETestsPlugin.getDefault().getBundle().getSymbolicName(), message, error);
-		PDETestsPlugin.getDefault().getLog().log(status);
 	}
 
 	/**
@@ -189,11 +179,12 @@ public class TestUtils {
 		return false;
 	}
 
-	static Set<Job> runningJobs = new LinkedHashSet<>();
+	private static Set<Job> runningJobs = new LinkedHashSet<>();
 
 	private static void dumpRunningOrWaitingJobs(String owner, List<Job> jobs) {
-		String message = "Some job is still running or waiting to run: " + dumpRunningOrWaitingJobs(jobs);
-		log(IStatus.ERROR, owner, message);
+		String message = "[" + owner + "] Some job is still running or waiting to run: "
+				+ dumpRunningOrWaitingJobs(jobs);
+		ILog.get().log(Status.error(message));
 	}
 
 	private static String dumpRunningOrWaitingJobs(List<Job> jobs) {

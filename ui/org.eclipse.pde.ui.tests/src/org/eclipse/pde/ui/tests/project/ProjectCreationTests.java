@@ -20,8 +20,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -39,7 +37,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.Job;
@@ -70,11 +67,11 @@ import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.text.bundle.BundleModelFactory;
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.osgi.framework.Constants;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.Version;
 
 /**
@@ -1014,9 +1011,8 @@ public class ProjectCreationTests {
 			}
 			parent = parent.getParent();
 		}
-		URL zipURL = PDETestsPlugin.getBundleContext().getBundle().getEntry("tests/A.jar");
-		File ioFile = new File(FileLocator.toFileURL(zipURL).getFile());
-		try (FileInputStream stream = new FileInputStream(ioFile)) {
+		URL zipURL = FrameworkUtil.getBundle(ProjectCreationTests.class).getEntry("tests/A.jar");
+		try (InputStream stream = zipURL.openStream()) {
 			file.create(stream, false, null);
 		}
 	}

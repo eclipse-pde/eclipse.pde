@@ -20,8 +20,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
@@ -174,10 +175,9 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	 */
 	@Test
 	public void testTargetInSynch() throws Exception {
-		IPath location = extractAbcdePlugins();
-		IPath dirPath = location.append("plugins");
+		Path dirPath = extractAbcdePlugins().resolve("plugins");
 		ITargetDefinition definition = getNewTarget();
-		ITargetLocation container = getTargetService().newDirectoryLocation(dirPath.toOSString());
+		ITargetLocation container = getTargetService().newDirectoryLocation(dirPath.toString());
 		definition.setTargetLocations(new ITargetLocation[] { container });
 		definition.resolve(null);
 		TargetBundle[] allBundles = definition.getAllBundles();
@@ -199,11 +199,10 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	 */
 	@Test
 	public void testTargetInSynchWithDuplicates() throws Exception {
-		IPath location = extractAbcdePlugins();
-		IPath dirPath = location.append("plugins");
+		Path dirPath = extractAbcdePlugins().resolve("plugins");
 		ITargetDefinition definition = getNewTarget();
-		ITargetLocation container = getTargetService().newDirectoryLocation(dirPath.toOSString());
-		ITargetLocation container2 = getTargetService().newDirectoryLocation(dirPath.toOSString());
+		ITargetLocation container = getTargetService().newDirectoryLocation(dirPath.toString());
+		ITargetLocation container2 = getTargetService().newDirectoryLocation(dirPath.toString());
 		definition.setTargetLocations(new ITargetLocation[] { container, container2 });
 		definition.resolve(null);
 		TargetBundle[] allBundles = definition.getAllBundles();
@@ -225,18 +224,17 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	 */
 	@Test
 	public void testTargetMissingBundle() throws Exception {
-		IPath location = extractAbcdePlugins();
-		IPath dirPath = location.append("plugins");
+		Path dirPath = extractAbcdePlugins().resolve("plugins");
 		ITargetDefinition definition = getNewTarget();
-		ITargetLocation container = getTargetService().newDirectoryLocation(dirPath.toOSString());
+		ITargetLocation container = getTargetService().newDirectoryLocation(dirPath.toString());
 		definition.setTargetLocations(new ITargetLocation[] { container });
 
 		try {
 			setTargetPlatform(definition);
 			// delete a bundle
-			IPath bundle = dirPath.append("bundle.a_1.0.0.jar");
-			assertTrue(bundle.toFile().exists());
-			bundle.toFile().delete();
+			Path bundle = dirPath.resolve("bundle.a_1.0.0.jar");
+			assertTrue(Files.exists(bundle));
+			Files.delete(bundle);
 			// force definition to re-resolve
 			ITargetDefinition copy = getTargetService().newTarget();
 			getTargetService().copyTargetDefinition(definition, copy);
@@ -259,16 +257,15 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	 */
 	@Test
 	public void testTargetPlatformMissingBundle() throws Exception {
-		IPath location = extractAbcdePlugins();
-		IPath dirPath = location.append("plugins");
+		Path dirPath = extractAbcdePlugins().resolve("plugins");
 		// delete a bundle
-		IPath bundle = dirPath.append("bundle.a_1.0.0.jar");
+		Path bundle = dirPath.resolve("bundle.a_1.0.0.jar");
 		File jar = bundle.toFile();
 		assertTrue(jar.exists());
 		jar.delete();
 
 		ITargetDefinition definition = getTargetService().newTarget();
-		ITargetLocation container = getTargetService().newDirectoryLocation(dirPath.toOSString());
+		ITargetLocation container = getTargetService().newDirectoryLocation(dirPath.toString());
 		definition.setTargetLocations(new ITargetLocation[] { container });
 		definition.resolve(null);
 		TargetBundle[] allBundles = definition.getAllBundles();

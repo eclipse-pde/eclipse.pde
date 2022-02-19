@@ -60,8 +60,8 @@ import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
 import org.eclipse.pde.internal.core.target.TargetPersistence38Helper;
 import org.eclipse.pde.internal.core.target.VirtualArtifactRepository;
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.junit.Test;
+import org.osgi.framework.FrameworkUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -92,7 +92,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @return URI
 	 */
 	public static URI getURI(String relativePath) throws Exception {
-		URL url = PDETestsPlugin.getBundleContext().getBundle().getEntry(relativePath);
+		URL url = FrameworkUtil.getBundle(IUBundleContainerTests.class).getEntry(relativePath);
 		IPath path = IPath.fromOSString(new File(FileLocator.toFileURL(url).getFile()).getAbsolutePath());
 		return URIUtil.toURI(path);
 	}

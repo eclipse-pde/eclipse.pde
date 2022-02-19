@@ -52,9 +52,8 @@ import org.eclipse.pde.internal.core.target.ProfileBundleContainer;
 import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
 import org.eclipse.pde.ui.tests.PDETestCase;
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.junit.Test;
-import org.osgi.framework.ServiceReference;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Tests the persistence of target definitions. Tests memento creation, reading
@@ -584,10 +583,9 @@ public class TargetDefinitionPersistenceTests {
 	 * @return target platform service
 	 */
 	private ITargetPlatformService getTargetService() {
-		ServiceReference<ITargetPlatformService> reference = PDETestsPlugin.getBundleContext()
-				.getServiceReference(ITargetPlatformService.class);
-		assertNotNull("Missing target platform service", reference);
-		return PDETestsPlugin.getBundleContext().getService(reference);
+		ITargetPlatformService service = AbstractTargetTest.getTargetService();
+		assertNotNull("Missing target platform service", service);
+		return service;
 	}
 
 	/**
@@ -595,7 +593,7 @@ public class TargetDefinitionPersistenceTests {
 	 * location with the given name. Note that ".target" will be appended.
 	 */
 	private ITargetDefinition readOldTarget(String name) throws Exception {
-		URL url = PDETestsPlugin.getBundleContext().getBundle()
+		URL url = FrameworkUtil.getBundle(TargetDefinitionPersistenceTests.class)
 				.getEntry("/tests/targets/target-files/" + name + ".trgt");
 		File file = new File(FileLocator.toFileURL(url).getFile());
 		ITargetDefinition target = getTargetService().newTarget();

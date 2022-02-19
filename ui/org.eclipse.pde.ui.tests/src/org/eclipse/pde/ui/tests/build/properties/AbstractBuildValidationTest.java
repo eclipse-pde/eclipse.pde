@@ -17,28 +17,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Enumeration;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.PropertyResourceBundle;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.Job;
@@ -50,9 +41,12 @@ import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.correction.ResolutionGenerator;
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
+import org.eclipse.pde.ui.tests.PDETestCase;
+import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.ui.IMarkerResolution;
-import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.rules.TestRule;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -65,35 +59,27 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public abstract class AbstractBuildValidationTest {
 
+	@ClassRule
+	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+
 	private static final String MARKER = "marker";
 	private static final String MULTIPLE_MARKERS = "multipleMarkers";
 
-	@Before
-	public void setUp() throws Exception {
-		URL location = PDETestsPlugin.getBundleContext().getBundle().getEntry("/tests/build.properties/build.properties.tests.zip");
-		File projectFile = new File(FileLocator.toFileURL(location).getFile());
-		assertTrue("Could not find test zip file at " + projectFile, projectFile.isFile());
-		doUnZip(PDETestsPlugin.getDefault().getStateLocation().removeLastSegments(2), "/tests/build.properties/build.properties.tests.zip");
+	@BeforeClass
+	public static void setUp() throws Exception {
+		Path workspaceLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation().toPath();
+		PDETestCase.doUnZip(workspaceLocation, "/tests/build.properties/build.properties.tests.zip");
 
-		projectFile = PDETestsPlugin.getDefault().getStateLocation().removeLastSegments(3).toFile();
-		File[] projects = projectFile.listFiles((FileFilter) pathname -> {
-			int index = pathname.getName().lastIndexOf('.');
-			if (index > 1 && pathname.isDirectory()) { // look out for "CVS"
-				// files in the
-				// workspace
-				return true;
-			}
-			return false;
-		});
-		for (File projectFileName : projects) {
-			IProject project = findProject(projectFileName.getName());
-			if (project.exists()) {
-				project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-				project.delete(true, new NullProgressMonitor());
-			}
-			project.create(new NullProgressMonitor());
-			project.open(new NullProgressMonitor());
+		try (Stream<Path> directories = Files.walk(workspaceLocation, 1)) {
+			var projectNames = directories.filter(Files::isDirectory)
+					.filter(d -> Files.exists(d.resolve(IProjectDescription.DESCRIPTION_FILE_NAME)))
+					.map(d -> d.getFileName().toString());
 
+			for (String projectName : (Iterable<String>) projectNames::iterator) {
+				IProject project = findProject(projectName);
+				project.create(new NullProgressMonitor());
+				project.open(new NullProgressMonitor());
+			}
 		}
 	}
 
@@ -221,37 +207,6 @@ public abstract class AbstractBuildValidationTest {
 	}
 
 	/**
-	 * Unzips the given archive to the specified location.
-	 *
-	 * @param location path in the local file system
-	 * @param archivePath path to archive relative to the test plug-in
-	 */
-	protected IPath doUnZip(IPath location, String archivePath) throws IOException {
-		URL zipURL = PDETestsPlugin.getBundleContext().getBundle().getEntry(archivePath);
-		File zipPath = new File(FileLocator.toFileURL(zipURL).getFile());
-		try (ZipFile zipFile = new ZipFile(zipPath)) {
-			Enumeration<? extends ZipEntry> entries = zipFile.entries();
-			IPath parent = location.removeLastSegments(1);
-			while (entries.hasMoreElements()) {
-				ZipEntry entry = entries.nextElement();
-				if (!entry.isDirectory()) {
-					IPath entryPath = parent.append(entry.getName());
-					File dir = entryPath.removeLastSegments(1).toFile();
-					dir.mkdirs();
-					File file = entryPath.toFile();
-					file.createNewFile();
-					try (InputStream inputStream = new BufferedInputStream(zipFile.getInputStream(entry));
-							BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
-						byte[] bytes = inputStream.readAllBytes();
-						outputStream.write(bytes);
-					}
-				}
-			}
-			return parent;
-		}
-	}
-
-	/**
 	 * Build the given project and wait till the build the complete
 	 * @param project	project to be build
 	 * @return			<code>true</code> if the project got build successfully. <code>false</code> otherwise.
@@ -294,26 +249,11 @@ public abstract class AbstractBuildValidationTest {
 	}
 
 	/**
-	 * Sets the given project specific preferences
-	 *
-	 * @param project	project for which the preference are to be set
-	 * @param pref		the preference
-	 * @param value		the value
-	 */
-	protected void setPreference(IProject project, String node, String pref, String value) throws BackingStoreException {
-		ProjectScope scope = new ProjectScope(project);
-		IEclipsePreferences projectPrefs = scope.getNode(node);
-		projectPrefs.put(pref, value);
-		projectPrefs.flush();
-		projectPrefs.sync();
-	}
-
-	/**
 	 * Find the project in workspace with the given id
 	 * @param id	project id
 	 * @return		project
 	 */
-	protected IProject findProject(String id) {
+	protected static IProject findProject(String id) {
 		IPluginModelBase model = PluginRegistry.findModel(id);
 		if (model != null) {
 			IResource resource = model.getUnderlyingResource();
