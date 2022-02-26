@@ -449,6 +449,8 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager<IPluginMo
 	 */
 	@Override
 	protected void addListeners() {
+		super.addListeners();
+		// Overwrite resource-change event-mask set in the super implementation:
 		PDECore.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE);
 		// PDE must process the POST_CHANGE events before the Java model
 		// for the PDE container classpath update to proceed smoothly

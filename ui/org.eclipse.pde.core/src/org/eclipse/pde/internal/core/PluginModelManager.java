@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1239,21 +1239,4 @@ public class PluginModelManager implements IModelProviderListener {
 	public void removeExtensionDeltaListener(IExtensionDeltaListener listener) {
 		fWorkspaceManager.removeExtensionDeltaListener(listener);
 	}
-
-	/**
-	 * Called when the bundle root for a project is changed.
-	 *
-	 * @param project
-	 */
-	public void bundleRootChanged(IProject project) {
-		fWorkspaceManager.initialize();
-		fWorkspaceManager.removeModel(project);
-		if (fWorkspaceManager.isInterestingProject(project)) {
-			fWorkspaceManager.createModel(project, false);
-			IPluginModelBase model = fWorkspaceManager.getModel(project);
-			fWorkspaceManager.addChange(model, IModelProviderEvent.MODELS_CHANGED);
-		}
-		fWorkspaceManager.processModelChanges();
-	}
-
 }

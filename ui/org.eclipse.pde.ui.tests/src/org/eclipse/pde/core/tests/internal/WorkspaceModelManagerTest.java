@@ -170,6 +170,67 @@ public class WorkspaceModelManagerTest {
 		assertNull(mm.getModel(project));
 	}
 
+	@Test
+	public void testBundleRootHandling_bundleRootChangedFromDefaultToOthersAndReverse() throws Exception {
+		TestWorkspaceModelManager mm = createWorkspaceModelManager();
+		IProject project = createModelProject("plugin.a", "1.0.0");
+		copyFile(manifest(project), manifestIn(project, "otherRoot"), replaceVersionTo("2.0.0"));
+		copyFile(manifest(project), manifestIn(project, "root2"), replaceVersionTo("3.0.0"));
+
+		setBundleRoot(project, "otherRoot");
+
+		IPluginModelBase model1 = mm.getModel(project);
+		assertExistingModel("plugin.a", "2.0.0", model1);
+		assertEquals(manifestIn(project, "otherRoot"), model1.getUnderlyingResource());
+
+		setBundleRoot(project, "root2");
+
+		IPluginModelBase model2 = mm.getModel(project);
+		assertExistingModel("plugin.a", "3.0.0", model2);
+		assertEquals(manifestIn(project, "root2"), model2.getUnderlyingResource());
+
+		setBundleRoot(project, null);
+
+		IPluginModelBase model0 = mm.getModel(project);
+		assertExistingModel("plugin.a", "1.0.0", model0);
+		assertEquals(manifest(project), model0.getUnderlyingResource());
+	}
+
+	@Test
+	public void testBundleRootHandling_bundleRootChangedFromNoneToOther() throws Exception {
+		TestWorkspaceModelManager mm = createWorkspaceModelManager();
+		IProject project = createModelProject("plugin.a", "1.0.0");
+
+		copyFile(manifest(project), manifestIn(project, "otherRoot"), replaceVersionTo("2.0.0"));
+
+		manifest(project).delete(true, null);
+		assertNull(mm.getModel(project));
+
+		setBundleRoot(project, "otherRoot");
+
+		IPluginModelBase model = mm.getModel(project);
+		assertExistingModel("plugin.a", "2.0.0", model);
+		assertEquals(manifestIn(project, "otherRoot"), model.getUnderlyingResource());
+	}
+
+	@Test
+	public void testBundleRootHandling_bundleRootChangedFromNoneToDefault() throws Exception {
+		TestWorkspaceModelManager mm = createWorkspaceModelManager();
+		IProject project = createModelProject("plugin.a", "1.0.0");
+
+		copyFile(manifest(project), manifestIn(project, "otherRoot"), replaceVersionTo("2.0.0"));
+		setBundleRoot(project, "otherRoot");
+
+		manifestIn(project, "otherRoot").delete(true, null);
+		assertNull(mm.getModel(project));
+
+		setBundleRoot(project, null);
+
+		IPluginModelBase model = mm.getModel(project);
+		assertExistingModel("plugin.a", "1.0.0", model);
+		assertEquals(manifest(project), model.getUnderlyingResource());
+	}
+
 	// --- utilities ---
 
 	// This class tests tests the abstract WorkspaceModelManager using the

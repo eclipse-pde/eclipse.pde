@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 IBM Corporation and others.
+ * Copyright (c) 2010, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -135,8 +135,7 @@ public class PDEProject {
 			}
 			try {
 				node.flush();
-				// update model manager
-				PDECore.getDefault().getModelManager().bundleRootChanged(project);
+				// WorkspacePluginModelManager reacts to setting changes
 			} catch (BackingStoreException e) {
 				throw new CoreException(Status.error(e.getMessage(), e));
 			}

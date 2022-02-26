@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
@@ -28,6 +29,11 @@ public class WorkspaceProductModelManager extends WorkspaceModelManager<Collecti
 	public final static String PRODUCT_FILENAME_SUFFIX = ".product"; //$NON-NLS-1$
 
 	@Override
+	protected IPreferenceChangeListener createBundleRootChangeListener() {
+		return null; // ignore bundle-root changes
+	}
+
+ 	@Override
 	protected boolean isInterestingProject(IProject project) {
 		return (project.isOpen() && !findProductFiles(project, false).isEmpty());
 	}

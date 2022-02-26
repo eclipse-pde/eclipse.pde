@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Hannes Wellmann - react to changes of Bundle-Root setting and in derived folders
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -17,11 +18,14 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -31,11 +35,18 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.team.core.RepositoryProvider;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 public abstract class WorkspaceModelManager<T> extends AbstractModelManager
 		implements IResourceChangeListener, IResourceDeltaVisitor {
@@ -96,6 +107,7 @@ public abstract class WorkspaceModelManager<T> extends AbstractModelManager
 
 	private Map<IProject, T> fModels = null;
 	private ArrayList<ModelChange> fChangedModels;
+	private final IPreferenceChangeListener bundleRootChangedListener = createBundleRootChangeListener();
 
 	protected Map<IProject, T> getModelsMap() {
 		ensureModelsMapCreated();
@@ -133,6 +145,9 @@ public abstract class WorkspaceModelManager<T> extends AbstractModelManager
 	protected void addListeners() {
 		IWorkspace workspace = PDECore.getWorkspace();
 		workspace.addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.POST_CHANGE);
+		if (bundleRootChangedListener != null) {
+			Arrays.stream(workspace.getRoot().getProjects()).forEach(this::addBundleRootChangedListener);
+		}
 	}
 
 	@Override
@@ -180,6 +195,9 @@ public abstract class WorkspaceModelManager<T> extends AbstractModelManager
 					IProject project = (IProject) resource;
 					boolean addedOrOpened = delta.getKind() == IResourceDelta.ADDED
 							|| (delta.getFlags() & IResourceDelta.OPEN) != 0;
+					if (addedOrOpened && bundleRootChangedListener != null) {
+						addBundleRootChangedListener(project);
+					}
 					if (isInterestingProject(project) && addedOrOpened) {
 						createModel(project, true);
 						return false;
@@ -200,6 +218,39 @@ public abstract class WorkspaceModelManager<T> extends AbstractModelManager
 				}
 		}
 		return false;
+	}
+
+	private void addBundleRootChangedListener(IProject project) {
+		IEclipsePreferences pdeNode = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
+		// Always add the same listener instance to not add multiple listeners
+		// in case of repetitive project opening/closing
+		pdeNode.addPreferenceChangeListener(bundleRootChangedListener);
+	}
+
+	protected IPreferenceChangeListener createBundleRootChangeListener() {
+		return e -> {
+			if (PDEProject.BUNDLE_ROOT_PATH.equals(e.getKey()) && !isInRemovedBranch(e.getNode())) {
+				String projectName = Path.forPosix(e.getNode().absolutePath()).segment(1);
+				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+
+				// bundle-root changed (null value means default): try to
+				// (re-)load model from new bundle-root path (may delete it)
+				if (getModel(project) != null) {
+					removeModel(project);
+				}
+				createModel(project, true);
+			}
+		};
+	}
+
+	private static boolean isInRemovedBranch(Preferences node) {
+		return !Stream.iterate(node, Objects::nonNull, Preferences::parent).allMatch(n -> {
+			try { // Returns true if existing node is about to be removed
+				return n.nodeExists(""); //$NON-NLS-1$
+			} catch (BackingStoreException e1) {
+				return false;
+			}
+		});
 	}
 
 	private boolean isContentChange(IResourceDelta delta) {
