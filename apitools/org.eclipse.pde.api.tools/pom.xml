@@ -14,7 +14,7 @@
   <parent>
     <artifactId>eclipse.pde.ui.apitools</artifactId>
     <groupId>org.eclipse.pde</groupId>
-    <version>4.23.0-SNAPSHOT</version>
+    <version>4.24.0-SNAPSHOT</version>
   </parent>
   <artifactId>org.eclipse.pde.api.tools</artifactId>
   <version>1.2.800-SNAPSHOT</version>
