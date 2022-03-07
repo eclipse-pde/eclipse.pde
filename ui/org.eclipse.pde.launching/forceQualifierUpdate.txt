@@ -1,3 +1,4 @@
 # To force a version qualifier update add the bug here
 
 Bug 578351 - Lambda generation order is unstable in ecj 
+Bug 579126 - 4.24 I-Build: I20220307-0340 - Comparator Errors Found
