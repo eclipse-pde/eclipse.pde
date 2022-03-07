@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.pde"
       label="%featureName"
-      version="3.14.1100.qualifier"
+      version="3.14.1200.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
@@ -222,12 +222,12 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
-     <plugin
+
+   <plugin
          id="org.eclipse.pde.spy.bundle"
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>     
+         unpack="false"/>
 
 </feature>
