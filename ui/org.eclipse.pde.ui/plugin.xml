@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-     Copyright (c) 2005, 2018 IBM Corporation and others.
+     Copyright (c) 2005, 2022 IBM Corporation and others.
 
      This program and the accompanying materials
      are made available under the terms of the Eclipse Public License 2.0
@@ -2240,9 +2240,9 @@
             class="org.eclipse.pde.internal.ui.shared.target.TargetReferenceLocationWizard"
             icon="icons/obj16/target_profile_xml_obj.png"
             id="org.eclipse.pde.ui.TargetReferenceProvisioner"
-            name="Target File">
+            name="%locationProvider.name">
             <description>
-            Add a reference to another target file
+            %locationProvider.description
          </description>
       </locationProvider>
    </extension>
