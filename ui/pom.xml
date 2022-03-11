@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2022 Hannes Wellmann.
+  All rights reserved. This program and the accompanying materials
+  are made available under the terms of the Eclipse Distribution License v1.0
+  which accompanies this distribution, and is available at
+  http://www.eclipse.org/org/documents/edl-v10.php
+
+  Contributors:
+     Hannes Wellmann <wellmann.hannes1@gmx.net>  - initial implementation
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>eclipse.pde.ui</artifactId>
+    <groupId>org.eclipse.pde</groupId>
+    <version>4.24.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>eclipse.pde.ui.ui</artifactId>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>org.eclipse.pde</module>
+    <module>org.eclipse.pde.core</module>
+    <module>org.eclipse.pde.junit.runtime</module>
+    <module>org.eclipse.pde.junit.runtime.tests</module>
+    <module>org.eclipse.pde.launching</module>
+    <module>org.eclipse.pde.runtime</module>
+    <module>org.eclipse.pde.ui</module>
+    <module>org.eclipse.pde.ui.templates</module>
+    <module>org.eclipse.pde.ui.tests</module>
+    <module>org.eclipse.pde.ui.tests.smartimport</module>
+    <module>org.eclipse.pde.spy.core</module>
+    <module>org.eclipse.pde.spy.bundle</module>
+    <module>org.eclipse.pde.spy.css</module>
+    <module>org.eclipse.pde.spy.model</module>
+    <module>org.eclipse.pde.spy.context</module>
+    <module>org.eclipse.pde.spy.preferences</module>
+    <module>org.eclipse.tools.layout.spy</module>
+    <module>org.eclipse.pde.ui.templates.tests</module>
+    <module>org.eclipse.ui.trace</module>
+    <module>org.eclipse.pde.genericeditor.extension</module>
+    <module>org.eclipse.pde.genericeditor.extension.tests</module>
+    <module>org.eclipse.pde.unittest.junit</module>
+  </modules>
+</project>
