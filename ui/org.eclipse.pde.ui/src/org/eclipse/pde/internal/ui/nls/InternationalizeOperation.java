@@ -40,7 +40,7 @@ public class InternationalizeOperation implements IRunnableWithProgress {
 
 	private ISelection fSelection;
 	private ArrayList<Object> fSelectedModels;
-	private InternationalizeModelTable fModelPluginTable;
+	private InternationalizeModelTable<IPluginModelBase> fModelPluginTable;
 	private boolean fCanceled;
 
 	/**
@@ -75,7 +75,7 @@ public class InternationalizeOperation implements IRunnableWithProgress {
 		monitor.beginTask(PDEUIMessages.GetNonExternalizedStringsOperation_taskMessage, pluginModels.length);
 
 		//Populate list to an InternationalizeModelTable
-		fModelPluginTable = new InternationalizeModelTable();
+		fModelPluginTable = new InternationalizeModelTable<>();
 		for (IPluginModelBase pluginModel : pluginModels) {
 			fModelPluginTable.addToModelTable(pluginModel, pluginModel.getUnderlyingResource() != null ? selected(pluginModel.getUnderlyingResource().getProject()) : false);
 		}
@@ -102,7 +102,7 @@ public class InternationalizeOperation implements IRunnableWithProgress {
 	 *
 	 * @return the InternationalizeModelTable containing the plug-ins
 	 */
-	public InternationalizeModelTable getPluginTable() {
+	public InternationalizeModelTable<IPluginModelBase> getPluginTable() {
 		return fModelPluginTable;
 	}
 }

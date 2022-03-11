@@ -46,12 +46,12 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	private InternationalizeWizardLocalePage page2;
 
 	//Contains the list of plug-ins to be internationalized
-	private InternationalizeModelTable fInternationalizePluginModelTable;
+	private InternationalizeModelTable<IPluginModelBase> fInternationalizePluginModelTable;
 
 	//Contains the list of locales
-	private InternationalizeModelTable fInternationalizeLocaleModelTable;
+	private InternationalizeModelTable<Locale> fInternationalizeLocaleModelTable;
 
-	public InternationalizeWizard(InternationalizeModelTable pluginTable) {
+	public InternationalizeWizard(InternationalizeModelTable<IPluginModelBase> pluginTable) {
 		fInternationalizePluginModelTable = pluginTable;
 		populateLocaleModelTable();
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
@@ -65,7 +65,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	 * available locales
 	 */
 	private void populateLocaleModelTable() {
-		fInternationalizeLocaleModelTable = new InternationalizeModelTable();
+		fInternationalizeLocaleModelTable = new InternationalizeModelTable<>();
 		Locale[] availableLocales = Locale.getAvailableLocales();
 		for (Locale locale : availableLocales) {
 			fInternationalizeLocaleModelTable.addModel(locale);

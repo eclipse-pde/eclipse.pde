@@ -53,8 +53,8 @@ public class LaunchValidationOperation implements IWorkspaceRunnable {
 		fOperation.run(monitor);
 	}
 
-	@SuppressWarnings("rawtypes")
-	protected Dictionary[] getPlatformProperties() throws CoreException {
+	@SuppressWarnings("unchecked")
+	protected Dictionary<String, String>[] getPlatformProperties() throws CoreException {
 		IExecutionEnvironment[] envs = getMatchingEnvironments();
 		if (envs.length == 0)
 			return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};

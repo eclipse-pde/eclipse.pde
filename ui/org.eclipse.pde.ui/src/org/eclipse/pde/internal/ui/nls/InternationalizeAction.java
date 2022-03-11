@@ -20,6 +20,7 @@ import org.eclipse.core.commands.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.PlatformUI;
@@ -50,7 +51,7 @@ public class InternationalizeAction extends AbstractHandler {
 			/*	Get the plugin model table containing the list of workspace and
 			 * 	external plug-ins
 			 */
-			InternationalizeModelTable pluginTable = runnable.getPluginTable();
+			InternationalizeModelTable<IPluginModelBase> pluginTable = runnable.getPluginTable();
 
 			if (!pluginTable.isEmpty()) {
 
