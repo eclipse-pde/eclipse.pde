@@ -63,8 +63,7 @@ public class SchemaUtil {
 		try {
 			connection = getURLConnection(url);
 			try (InputStream input = connection.getInputStream()) {
-				SAXParserWrapper parser = new SAXParserWrapper();
-				parser.parse(input, handler);
+				SAXParserWrapper.parse(input, handler);
 			}
 		} catch (MalformedURLException | SAXException e) {
 			// Ignore

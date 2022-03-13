@@ -45,7 +45,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1965,12 +1964,9 @@ public final class Util {
 	 * it doesn't exist)
 	 */
 	public static void guntar(String zipPath, String destDirPath) throws TarException, IOException {
-		TarFile tarFile = new TarFile(zipPath);
-		Enumeration<TarEntry> entries = tarFile.entries();
-		byte[] buf = new byte[8192];
-		for (; entries.hasMoreElements();) {
-			TarEntry zEntry;
-			while ((zEntry = entries.nextElement()) != null) {
+		try (TarFile tarFile = new TarFile(new File(zipPath))) {
+			byte[] buf = new byte[8192];
+			for (TarEntry zEntry : tarFile.entries()) {
 				// if it is empty directory, create it
 				if (zEntry.getFileType() == TarEntry.DIRECTORY) {
 					new File(destDirPath, zEntry.getName()).mkdirs();
