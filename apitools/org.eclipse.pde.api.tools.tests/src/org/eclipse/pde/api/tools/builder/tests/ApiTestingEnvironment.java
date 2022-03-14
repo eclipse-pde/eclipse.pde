@@ -16,7 +16,6 @@ package org.eclipse.pde.api.tools.builder.tests;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -737,7 +736,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		fRevert = revert;
 	}
 
-	public static void setTargetPlatform() throws CoreException, InterruptedException, IOException {
+	public static void setTargetPlatform() throws CoreException, InterruptedException {
 		ITargetPlatformService tpService = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		ITargetDefinition workspaceTarget = tpService.getWorkspaceTargetDefinition();
 		if (workspaceTarget != null && workspaceTarget.getBundles() == null) {

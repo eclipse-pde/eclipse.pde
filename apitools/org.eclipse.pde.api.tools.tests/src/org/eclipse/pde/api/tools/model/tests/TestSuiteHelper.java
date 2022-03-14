@@ -452,11 +452,7 @@ public class TestSuiteHelper {
 		} else {
 			Bundle bundle = Platform.getBundle(bundleName);
 			if (bundle != null) {
-				try {
-					return FileLocator.getBundleFile(bundle);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				return FileLocator.getBundleFileLocation(bundle).orElse(null);
 			}
 		}
 		return null;

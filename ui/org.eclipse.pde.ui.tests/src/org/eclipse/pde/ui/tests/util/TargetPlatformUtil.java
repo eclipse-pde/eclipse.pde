@@ -46,12 +46,12 @@ public class TargetPlatformUtil {
 
 	private static final String RUNNING_PLATFORM_TARGET_NAME = TargetPlatformUtil.class + "_RunningPlatformTarget";
 
-	public static void setRunningPlatformAsTarget() throws IOException, CoreException, InterruptedException {
+	public static void setRunningPlatformAsTarget() throws CoreException, InterruptedException {
 		setRunningPlatformSubSetAsTarget(RUNNING_PLATFORM_TARGET_NAME, null);
 	}
 
 	public static void setRunningPlatformSubSetAsTarget(String name, Predicate<Bundle> bundleFilter)
-			throws IOException, CoreException, InterruptedException {
+			throws CoreException, InterruptedException {
 		ITargetDefinition currentTarget = TPS.getWorkspaceTargetDefinition();
 		if (name.equals(currentTarget.getName())) {
 			return;
@@ -88,20 +88,16 @@ public class TargetPlatformUtil {
 	}
 
 	private static void addRunningPlatformBundles(Collection<ITargetLocation> bundleContainers,
-			Collection<NameVersionDescriptor> included, Predicate<Bundle> bundleFilter) throws IOException {
+			Collection<NameVersionDescriptor> included, Predicate<Bundle> bundleFilter) {
 		Bundle[] installedBundles = FrameworkUtil.getBundle(TargetPlatformUtil.class).getBundleContext().getBundles();
 		List<Bundle> targetBundles = Arrays.asList(installedBundles);
 		if (bundleFilter != null) {
 			targetBundles = targetBundles.stream().filter(bundleFilter).collect(Collectors.toList());
 		}
 
-		Set<File> bundleContainerDirectories = new HashSet<>();
-		for (Bundle bundle : targetBundles) {
-			File bundleContainer = FileLocator.getBundleFile(bundle).getParentFile();
-			bundleContainerDirectories.add(bundleContainer);
-		}
-		bundleContainerDirectories.stream().map(dir -> TPS.newDirectoryLocation(dir.getAbsolutePath()))
-		.forEach(bundleContainers::add);
+		var containerDirs = targetBundles.stream().map(FileLocator::getBundleFileLocation).map(Optional::orElseThrow)
+				.map(File::getParentFile).distinct();
+		containerDirs.map(dir -> TPS.newDirectoryLocation(dir.getAbsolutePath())).forEach(bundleContainers::add);
 
 		for (Bundle bundle : targetBundles) {
 			included.add(new NameVersionDescriptor(bundle.getSymbolicName(), bundle.getVersion().toString()));

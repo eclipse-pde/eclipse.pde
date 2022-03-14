@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
@@ -195,8 +196,8 @@ public class TargetWeaver {
 		Bundle platformBundle = findRunningPlatformBundle(id, version);
 		if (platformBundle != null) {
 			try {
-				File bundleBaseFile = FileLocator.getBundleFile(platformBundle);
-				return Files.isSameFile(pluginLocation, bundleBaseFile.toPath());
+				Optional<File> bundleFile = FileLocator.getBundleFileLocation(platformBundle);
+				return bundleFile.isPresent() && Files.isSameFile(pluginLocation, bundleFile.get().toPath());
 			} catch (IOException e) {
 				PDECore.logException(e);
 			}

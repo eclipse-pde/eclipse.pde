@@ -229,14 +229,14 @@ public class ApiAnalysisApplication implements IApplication {
 		});
 	}
 
-	private IApiBaseline setBaseline(File baselinePath) throws CoreException, IOException {
+	private IApiBaseline setBaseline(File baselinePath) throws CoreException {
 		if (baselinePath == null) {
 			ApiBaseline baseline = new ApiBaseline("current running application"); //$NON-NLS-1$
 			for (Bundle bundle : ApiPlugin.getDefault().getBundle().getBundleContext().getBundles()) {
 				if (bundle.getBundleId() != 0) {
+					String bundleFile = FileLocator.getBundleFileLocation(bundle).orElseThrow().getAbsolutePath();
 					baseline.addApiComponents(
-							new IApiComponent[] { new BundleComponent(baseline,
-									FileLocator.getBundleFile(bundle).getAbsolutePath(), bundle.getBundleId()) });
+							new IApiComponent[] { new BundleComponent(baseline, bundleFile, bundle.getBundleId()) });
 				}
 			}
 			ApiBaselineManager.getManager().addApiBaseline(baseline);
