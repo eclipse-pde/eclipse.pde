@@ -278,7 +278,7 @@ public class FetchTests extends PDETestCase {
 		properties.put("topLevelElementId", "org.eclipse.pde.build.container.feature");
 		properties.put("baseLocation", base.getLocation().toOSString());
 		properties.put("pluginPath",
-				FileLocator.getBundleFile(Platform.getBundle("org.eclipse.osgi")).getAbsolutePath());
+				FileLocator.getBundleFileLocation(Platform.getBundle("org.eclipse.osgi")).get().getAbsolutePath());
 		properties.remove("skipFetch");
 		Utils.storeBuildProperties(buildFolder, properties);
 		runBuild(buildFolder);

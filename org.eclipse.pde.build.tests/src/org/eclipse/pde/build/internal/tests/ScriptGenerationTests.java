@@ -1014,7 +1014,8 @@ public class ScriptGenerationTests extends PDETestCase {
 		// largest (1.6?) which does contain org.xml.sax
 		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "a");
 		buildProperties.put("baseLocation", " ");
-		buildProperties.put("pluginPath", FileLocator.getBundleFile(Platform.getBundle(OSGI)).getAbsolutePath());
+		buildProperties.put("pluginPath",
+				FileLocator.getBundleFileLocation(Platform.getBundle(OSGI)).get().getAbsolutePath());
 		generateScripts(buildFolder, buildProperties);
 
 		// 2: define CDC-1.1/Foundation-1.1, expect failure since that profile doesn't
@@ -1061,7 +1062,8 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "a");
 		buildProperties.put("baseLocation", " ");
-		buildProperties.put("pluginPath", FileLocator.getBundleFile(Platform.getBundle(OSGI)).getAbsolutePath());
+		buildProperties.put("pluginPath",
+				FileLocator.getBundleFileLocation(Platform.getBundle(OSGI)).get().getAbsolutePath());
 		buildProperties.put("customEESources", custom.getLocation().toOSString());
 		buildProperties.put("MyCustomProfile", "someLibrary.jar");
 		generateScripts(buildFolder, buildProperties);
@@ -1110,7 +1112,8 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		Properties buildProperties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "plugin", "a");
 		buildProperties.put("baseLocation", " ");
-		buildProperties.put("pluginPath", FileLocator.getBundleFile(Platform.getBundle(OSGI)).getAbsolutePath());
+		buildProperties.put("pluginPath",
+				FileLocator.getBundleFileLocation(Platform.getBundle(OSGI)).get().getAbsolutePath());
 		buildProperties.put("customEESources", custom.getLocation().toOSString() + ".jar");
 		buildProperties.put("MyCustomProfile", "someLibrary.jar");
 		generateScripts(buildFolder, buildProperties);

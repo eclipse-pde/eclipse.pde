@@ -37,6 +37,7 @@ import org.eclipse.pde.build.internal.tests.Utils;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
 import org.junit.Test;
+import org.osgi.framework.Bundle;
 
 public class P2Tests extends P2TestCase {
 
@@ -132,8 +133,7 @@ public class P2Tests extends P2TestCase {
 		properties.put("os", os);
 		properties.put("ws", ws);
 		properties.put("arch", arch);
-		properties.put("equinoxLauncherJar",
-				FileLocator.getBundleFile(Platform.getBundle("org.eclipse.equinox.launcher")).getAbsolutePath());
+		properties.put("equinoxLauncherJar", getEquinoxLauncherPath());
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
 				new Path("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
@@ -249,8 +249,7 @@ public class P2Tests extends P2TestCase {
 		properties.put("os", "win32");
 		properties.put("ws", "win32");
 		properties.put("arch", "x86_64");
-		properties.put("equinoxLauncherJar",
-				FileLocator.getBundleFile(Platform.getBundle("org.eclipse.equinox.launcher")).getAbsolutePath());
+		properties.put("equinoxLauncherJar", getEquinoxLauncherPath());
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
 				new Path("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
@@ -1034,13 +1033,17 @@ public class P2Tests extends P2TestCase {
 		properties.put("os", "win32");
 		properties.put("ws", "win32");
 		properties.put("arch", "x86");
-		properties.put("equinoxLauncherJar",
-				FileLocator.getBundleFile(Platform.getBundle("org.eclipse.equinox.launcher")).getAbsolutePath());
+		properties.put("equinoxLauncherJar", getEquinoxLauncherPath());
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
 				new Path("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] { "runDirector" }, buildFolder.getLocation().toOSString(), properties);
 
 		assertResourceFile(installFolder, "plugins/A_1.0.0.jar");
+	}
+
+	private static String getEquinoxLauncherPath() {
+		Bundle launcherBundle = Platform.getBundle("org.eclipse.equinox.launcher");
+		return FileLocator.getBundleFileLocation(launcherBundle).get().getAbsolutePath();
 	}
 }

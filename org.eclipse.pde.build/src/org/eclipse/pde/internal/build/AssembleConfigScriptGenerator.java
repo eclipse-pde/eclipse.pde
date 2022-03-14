@@ -18,7 +18,6 @@
 package org.eclipse.pde.internal.build;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.jar.JarFile;
@@ -548,11 +547,9 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 	protected void printLauncherJarProperty() {
 		Bundle launcherBundle = Platform.getBundle(BUNDLE_EQUINOX_LAUNCHER);
-		try {
-			File bundleFile = FileLocator.getBundleFile(launcherBundle);
-			script.printProperty(PROPERTY_LAUNCHER_JAR, bundleFile.getAbsolutePath());
-		} catch (IOException e) {
-			// what can we do with this?
+		Optional<File> bundleFile = FileLocator.getBundleFileLocation(launcherBundle);
+		if (bundleFile.isPresent()) {
+			script.printProperty(PROPERTY_LAUNCHER_JAR, bundleFile.get().getAbsolutePath());
 		}
 	}
 
