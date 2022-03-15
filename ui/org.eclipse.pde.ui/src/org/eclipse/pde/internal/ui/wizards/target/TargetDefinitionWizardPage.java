@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
@@ -58,7 +59,9 @@ public class TargetDefinitionWizardPage extends PDEWizardNewFileCreationPage {
 
 	@Override
 	protected void createAdvancedControls(Composite parent) {
-		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
+		ScrolledComposite scrolled = SWTFactory.createScrolledComposite(parent, 1, 1, 5, 5);
+		Composite comp = SWTFactory.createComposite(scrolled, 2, 1, GridData.FILL_BOTH);
+		scrolled.setContent(comp);
 		SWTFactory.createLabel(comp, PDEUIMessages.TargetCreationPage_0, 2);
 
 		fEmptyButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_1, 2);
