@@ -101,7 +101,6 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.junit.launcher.ITestKind;
 import org.eclipse.jdt.internal.junit.launcher.JUnitLaunchConfigurationConstants;
 import org.eclipse.jdt.internal.junit.launcher.JUnitRuntimeClasspathEntry;
-import org.eclipse.jdt.internal.junit.launcher.TestKindRegistry;
 
 import org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.ExecutionArguments;
@@ -1212,15 +1211,6 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 	 */
 	protected void manageLaunch(ILaunch launch) {
 //		PDELaunchingPlugin.getDefault().getLaunchListener().manage(launch);
-	}
-
-	private String[] getRequiredPlugins(ILaunchConfiguration configuration) {
-		// if we are using JUnit4, we need to include the junit4 specific bundles
-		ITestKind testKind = JUnitLaunchConfigurationConstants.getTestRunnerKind(configuration);
-		if (TestKindRegistry.JUNIT4_TEST_KIND_ID.equals(testKind.getId()))
-			return new String[] { "org.junit", "org.eclipse.jdt.junit.runtime", "org.eclipse.pde.junit.runtime", //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-					"org.eclipse.jdt.junit4.runtime" }; //$NON-NLS-1$
-		return new String[] { "org.junit", "org.eclipse.jdt.junit.runtime", "org.eclipse.pde.junit.runtime" }; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 
 	/**
