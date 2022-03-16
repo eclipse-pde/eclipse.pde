@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
@@ -95,10 +94,11 @@ public class ActiveMenuSection implements ISpySection {
 	}
 
 	// FIXME this is a bit hackish but works... need to redo
+	@SuppressWarnings("restriction")
 	private void scan(IContributionItem item, StringBuilder buffer, SpyFormToolkit toolkit, FormText text) {
 		// check for action set information
-		if (item instanceof IActionSetContributionItem) {
-			IActionSetContributionItem actionItem = (IActionSetContributionItem) item;
+		if (item instanceof org.eclipse.ui.internal.IActionSetContributionItem) {
+			org.eclipse.ui.internal.IActionSetContributionItem actionItem = (org.eclipse.ui.internal.IActionSetContributionItem) item;
 			buffer.append(toolkit.createIdentifierSection(text, PDERuntimeMessages.ActiveMenuSection_1, new String[] {actionItem.getActionSetId()}));
 		}
 		if (item instanceof ActionContributionItem) {
@@ -115,6 +115,7 @@ public class ActiveMenuSection implements ISpySection {
 		}
 	}
 
+	@SuppressWarnings("restriction")
 	private void createActionContributionItemText(Object object, StringBuilder buffer, SpyFormToolkit toolkit, FormText text) {
 		ActionContributionItem actionItem = (ActionContributionItem) object;
 		IAction action = actionItem.getAction();
@@ -124,9 +125,9 @@ public class ActiveMenuSection implements ISpySection {
 			buffer.append(toolkit.createIdentifierSection(text, PDERuntimeMessages.ActiveMenuSection_4, new String[] {action.getActionDefinitionId()}));
 		}
 
-		if (action instanceof PluginAction) {
-			PluginAction pluginAction = (PluginAction) action;
-			Class<? extends PluginAction> clazz = pluginAction.getClass();
+		if (action instanceof org.eclipse.ui.internal.PluginAction) {
+			org.eclipse.ui.internal.PluginAction pluginAction = (org.eclipse.ui.internal.PluginAction) action;
+			Class<?> clazz = pluginAction.getClass();
 			createActionContributionItemText(object, buffer, toolkit, text, clazz, pluginAction);
 
 		} else {
@@ -139,12 +140,13 @@ public class ActiveMenuSection implements ISpySection {
 
 	}
 
+	@SuppressWarnings("restriction")
 	private void createActionContributionItemText(Object object, StringBuilder buffer, SpyFormToolkit toolkit,
-			FormText text, Class<?> clazz, PluginAction pluginAction) {
+			FormText text, Class<?> clazz, org.eclipse.ui.internal.PluginAction pluginAction) {
 		try {
 			RetargetAction retargetAction = null;
 			IActionDelegate delegate = null;
-			if (pluginAction instanceof WWinPluginAction) {
+			if (pluginAction instanceof org.eclipse.ui.internal.WWinPluginAction) {
 				// such an action *may* have a retarget action
 				Field field = clazz.getDeclaredField("retargetAction"); //$NON-NLS-1$
 				field.setAccessible(true);

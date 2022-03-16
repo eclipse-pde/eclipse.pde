@@ -35,7 +35,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.p2.engine.EngineActivator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.TargetBundle;
@@ -371,9 +370,10 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			profileName = "SDKProfile"; //$NON-NLS-1$
 		}
 
-		IPath profilePath = new Path(p2DataArea.getAbsolutePath());
-		profilePath = profilePath.append(EngineActivator.ID).append("profileRegistry").append(profileName + ".profile"); //$NON-NLS-1$ //$NON-NLS-2$
-		File profile = profilePath.toFile();
+		@SuppressWarnings("restriction")
+		File profile = new Path(p2DataArea.getAbsolutePath())
+				.append(org.eclipse.equinox.internal.p2.engine.EngineActivator.ID).append("profileRegistry") //$NON-NLS-1$
+				.append(profileName + ".profile").toFile(); //$NON-NLS-1$
 
 		if (profile.exists()) {
 			return profile;

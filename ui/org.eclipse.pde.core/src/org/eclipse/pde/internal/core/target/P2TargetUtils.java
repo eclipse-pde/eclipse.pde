@@ -41,18 +41,6 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
-import org.eclipse.equinox.internal.p2.engine.DownloadManager;
-import org.eclipse.equinox.internal.p2.engine.InstallableUnitOperand;
-import org.eclipse.equinox.internal.p2.engine.InstallableUnitPhase;
-import org.eclipse.equinox.internal.p2.engine.Phase;
-import org.eclipse.equinox.internal.p2.engine.PhaseSet;
-import org.eclipse.equinox.internal.p2.engine.Profile;
-import org.eclipse.equinox.internal.p2.engine.ProfileMetadataRepository;
-import org.eclipse.equinox.internal.p2.engine.phases.Collect;
-import org.eclipse.equinox.internal.p2.engine.phases.Configure;
-import org.eclipse.equinox.internal.p2.engine.phases.Install;
-import org.eclipse.equinox.internal.p2.engine.phases.Property;
-import org.eclipse.equinox.internal.p2.engine.phases.Uninstall;
 import org.eclipse.equinox.internal.p2.garbagecollector.GarbageCollector;
 import org.eclipse.equinox.p2.core.IAgentLocation;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
@@ -299,8 +287,8 @@ public class P2TargetUtils {
 	@SuppressWarnings("restriction")
 	public static void forceCheckTarget(final ITargetDefinition target) {
 		final P2TargetUtils result = getSynchronizer(target);
-		if (result != null && result.fProfile != null && result.fProfile instanceof Profile) {
-			((Profile) result.fProfile).setProperty(PROP_SEQUENCE_NUMBER, "-1"); //$NON-NLS-1$
+		if (result.fProfile instanceof org.eclipse.equinox.internal.p2.engine.Profile) {
+			((org.eclipse.equinox.internal.p2.engine.Profile) result.fProfile).setProperty(PROP_SEQUENCE_NUMBER, "-1"); //$NON-NLS-1$
 		}
 	}
 
@@ -1083,18 +1071,20 @@ public class P2TargetUtils {
 	/**
 	 * @return the phase set to execute, includes the configuration phase if {@link #getIncludeConfigurePhase()} is <code>true<code>
 	 */
+	@SuppressWarnings("restriction")
 	private IPhaseSet createPhaseSet() {
-		ArrayList<Phase> phases = new ArrayList<>(4);
-		phases.add(new Collect(100));
-		phases.add(new Property(1));
-		phases.add(new Uninstall(50, true));
-		phases.add(new Install(50));
+		List<org.eclipse.equinox.internal.p2.engine.Phase> phases = new ArrayList<>(4);
+		phases.add(new org.eclipse.equinox.internal.p2.engine.phases.Collect(100));
+		phases.add(new org.eclipse.equinox.internal.p2.engine.phases.Property(1));
+		phases.add(new org.eclipse.equinox.internal.p2.engine.phases.Uninstall(50, true));
+		phases.add(new org.eclipse.equinox.internal.p2.engine.phases.Install(50));
 		phases.add(new CollectNativesPhase(100));
 		if (getIncludeConfigurePhase()) {
-			phases.add(new Configure(100));
+			phases.add(new org.eclipse.equinox.internal.p2.engine.phases.Configure(100));
 		}
 
-		return new PhaseSet(phases.toArray(new Phase[phases.size()]));
+		return new org.eclipse.equinox.internal.p2.engine.PhaseSet(
+				phases.toArray(org.eclipse.equinox.internal.p2.engine.Phase[]::new));
 	}
 
 	/**
@@ -1420,8 +1410,9 @@ public class P2TargetUtils {
 			IAgentLocation location = (IAgentLocation) getGlobalAgent().getService(IAgentLocation.SERVICE_NAME);
 			URI dataArea = location.getDataArea("org.eclipse.equinox.p2.engine"); //$NON-NLS-1$
 			dataArea = URIUtil.append(dataArea, "profileRegistry/" + self.getProfileId() + ".profile"); //$NON-NLS-1$//$NON-NLS-2$
-			ProfileMetadataRepository profileRepo = new ProfileMetadataRepository(getGlobalAgent(), dataArea, null);
-			Collection<IRepositoryReference> repos = profileRepo.getReferences();
+			@SuppressWarnings("restriction")
+			Collection<IRepositoryReference> repos = new org.eclipse.equinox.internal.p2.engine.ProfileMetadataRepository(
+					getGlobalAgent(), dataArea, null).getReferences();
 			for (IRepositoryReference reference : repos) {
 				if (reference.getType() == IRepository.TYPE_ARTIFACT && reference.getLocation() != null) {
 					additionalRepos.add(reference.getLocation());
@@ -1499,8 +1490,9 @@ public class P2TargetUtils {
 	protected static class CollectNativesAction extends ProvisioningAction {
 		@Override
 		public IStatus execute(Map<String, Object> parameters) {
-			InstallableUnitOperand operand = (InstallableUnitOperand) parameters.get(PARM_OPERAND);
-			IInstallableUnit installableUnit = operand.second();
+			@SuppressWarnings("restriction")
+			IInstallableUnit installableUnit = ((org.eclipse.equinox.internal.p2.engine.InstallableUnitOperand) parameters
+					.get(PARM_OPERAND)).second();
 			if (installableUnit == null) {
 				return Status.OK_STATUS;
 			}
@@ -1533,13 +1525,15 @@ public class P2TargetUtils {
 		}
 	}
 
-	protected static class CollectNativesPhase extends InstallableUnitPhase {
+	@SuppressWarnings("restriction")
+	protected static class CollectNativesPhase extends org.eclipse.equinox.internal.p2.engine.InstallableUnitPhase {
 		public CollectNativesPhase(int weight) {
 			super(NATIVE_ARTIFACTS, weight);
 		}
 
 		@Override
-		protected List<ProvisioningAction> getActions(InstallableUnitOperand operand) {
+		protected List<ProvisioningAction> getActions(
+				org.eclipse.equinox.internal.p2.engine.InstallableUnitOperand operand) {
 			IInstallableUnit unit = operand.second();
 			if (unit != null && unit.getTouchpointType().getId().equals(NATIVE_TYPE)) {
 				ArrayList<ProvisioningAction> list = new ArrayList<>(1);
@@ -1562,7 +1556,8 @@ public class P2TargetUtils {
 			List<IArtifactRequest> artifactRequests = (List<IArtifactRequest>) parameters.get(NATIVE_ARTIFACTS);
 			ProvisioningContext context = (ProvisioningContext) parameters.get(PARM_CONTEXT);
 			IProvisioningAgent agent = (IProvisioningAgent) parameters.get(PARM_AGENT);
-			DownloadManager dm = new DownloadManager(context, agent);
+			org.eclipse.equinox.internal.p2.engine.DownloadManager dm = new org.eclipse.equinox.internal.p2.engine.DownloadManager(
+					context, agent);
 			for (IArtifactRequest iArtifactRequest : artifactRequests) {
 				dm.add(iArtifactRequest);
 			}

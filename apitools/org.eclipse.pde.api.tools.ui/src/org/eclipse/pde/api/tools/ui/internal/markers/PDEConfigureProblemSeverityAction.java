@@ -31,7 +31,6 @@ import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ApiErrorsWarningsConfigurationBlock;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ApiErrorsWarningsConfigurationBlock.Key;
 import org.eclipse.pde.api.tools.ui.internal.preferences.ApiErrorsWarningsPreferencePage;
-import org.eclipse.pde.internal.ui.correction.OptionalMessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -72,14 +71,15 @@ public class PDEConfigureProblemSeverityAction extends Action {
 					IDialogConstants.CANCEL_LABEL };
 
 			// use PDE UI's OptionalMessageDialog
-			int result = OptionalMessageDialog.open(CONFIGURE_PROBLEM_SEVERITY_DIALOG_ID, shell,
+			int result = org.eclipse.pde.internal.ui.correction.OptionalMessageDialog.open(
+					CONFIGURE_PROBLEM_SEVERITY_DIALOG_ID, shell,
 					MarkerMessages.PDEConfigureProblemSeverityAction_3, null, message,
 					MessageDialog.QUESTION, buttons, 0,
 					MarkerMessages.PDEConfigureProblemSeverityAction_4);
 
 
 
-			if (result == OptionalMessageDialog.NOT_SHOWN) {
+			if (result == org.eclipse.pde.internal.ui.correction.OptionalMessageDialog.NOT_SHOWN) {
 				showPropertyPage = false;
 			} else if (result == 2 || result == SWT.DEFAULT) {
 				return;

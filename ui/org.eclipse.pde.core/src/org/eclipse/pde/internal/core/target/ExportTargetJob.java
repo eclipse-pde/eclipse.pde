@@ -29,8 +29,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.equinox.p2.internal.repository.tools.Repo2Runnable;
-import org.eclipse.equinox.p2.internal.repository.tools.RepositoryDescriptor;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.p2.query.IQueryResult;
@@ -236,8 +234,10 @@ public class ExportTargetJob extends Job {
 		return Status.OK_STATUS;
 	}
 
-	private RepositoryDescriptor createRepoDescriptor(URI location, String name, String kind) {
-		RepositoryDescriptor result = new RepositoryDescriptor();
+	@SuppressWarnings("restriction")
+	private org.eclipse.equinox.p2.internal.repository.tools.RepositoryDescriptor createRepoDescriptor(URI location,
+			String name, String kind) {
+		org.eclipse.equinox.p2.internal.repository.tools.RepositoryDescriptor result = new org.eclipse.equinox.p2.internal.repository.tools.RepositoryDescriptor();
 		result.setLocation(location);
 		result.setKind(kind);
 		result.setName(name);
@@ -248,11 +248,17 @@ public class ExportTargetJob extends Job {
 	}
 
 	@SuppressWarnings("restriction")
-	private void exportProfile(ITargetDefinition target, URI destination, IProgressMonitor monitor) throws CoreException {
-		Repo2Runnable exporter = new Repo2Runnable();
-		exporter.addDestination(createRepoDescriptor(destination, P2TargetUtils.getProfileId(target), RepositoryDescriptor.KIND_METADATA));
-		exporter.addDestination(createRepoDescriptor(destination, P2TargetUtils.getProfileId(target), RepositoryDescriptor.KIND_ARTIFACT));
-		exporter.addSource(createRepoDescriptor(P2TargetUtils.getBundlePool().getLocation(), null, RepositoryDescriptor.KIND_ARTIFACT));
+	private static final String KIND_METADATA = org.eclipse.equinox.p2.internal.repository.tools.RepositoryDescriptor.KIND_METADATA;
+	@SuppressWarnings("restriction")
+	private static final String KIND_ARTIFACT = org.eclipse.equinox.p2.internal.repository.tools.RepositoryDescriptor.KIND_ARTIFACT;
+
+	@SuppressWarnings("restriction")
+	private void exportProfile(ITargetDefinition target, URI destination, IProgressMonitor monitor)
+			throws CoreException {
+		var exporter = new org.eclipse.equinox.p2.internal.repository.tools.Repo2Runnable();
+		exporter.addDestination(createRepoDescriptor(destination, P2TargetUtils.getProfileId(target), KIND_METADATA));
+		exporter.addDestination(createRepoDescriptor(destination, P2TargetUtils.getProfileId(target), KIND_ARTIFACT));
+		exporter.addSource(createRepoDescriptor(P2TargetUtils.getBundlePool().getLocation(), null, KIND_ARTIFACT));
 
 		IQueryResult<IInstallableUnit> ius = P2TargetUtils.getIUs(target, monitor);
 		ArrayList<IInstallableUnit> toExport = new ArrayList<>();

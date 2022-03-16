@@ -20,7 +20,6 @@ package org.eclipse.pde.internal.runtime.spy;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.help.IContext;
-import org.eclipse.help.internal.context.Context;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.PopupDialog;
@@ -213,9 +212,10 @@ public class SpyFormToolkit extends FormToolkit {
 		return createHelpIdentifierSection(widget.getData(HELP_KEY));
 	}
 
+	@SuppressWarnings("restriction")
 	public String createHelpIdentifierSection(IContext context) {
-		if (context instanceof Context)
-			return createHelpIdentifierSection(((Context) context).getId());
+		if (context instanceof org.eclipse.help.internal.context.Context)
+			return createHelpIdentifierSection(((org.eclipse.help.internal.context.Context) context).getId());
 		return ""; //$NON-NLS-1$
 	}
 

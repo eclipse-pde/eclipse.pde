@@ -14,7 +14,6 @@
 package org.eclipse.pde.api.tools.ui.internal.wizards;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jdt.internal.ui.util.StringMatcher;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
@@ -24,7 +23,8 @@ import org.eclipse.jface.viewers.ViewerFilter;
 class StringFilter extends ViewerFilter {
 
 	private String pattern = null;
-	StringMatcher matcher = null;
+	@SuppressWarnings("restriction")
+	org.eclipse.jdt.internal.ui.util.StringMatcher matcher = null;
 
 	public void setPattern(String pattern) {
 		this.pattern = pattern;
@@ -35,6 +35,7 @@ class StringFilter extends ViewerFilter {
 	 *      java.lang.Object, java.lang.Object)
 	 */
 	@Override
+	@SuppressWarnings("restriction")
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (pattern == null) {
 			return true;
@@ -49,7 +50,7 @@ class StringFilter extends ViewerFilter {
 		if (name == null) {
 			return false;
 		}
-		matcher = new StringMatcher(pattern, true, false);
+		matcher = new org.eclipse.jdt.internal.ui.util.StringMatcher(pattern, true, false);
 		return matcher.match(name, 0, name.length());
 	}
 

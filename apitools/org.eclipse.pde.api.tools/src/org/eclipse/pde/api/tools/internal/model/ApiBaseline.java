@@ -45,7 +45,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.launching.environments.EnvironmentsManager;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -229,7 +228,9 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			properties = getJavaProfileProperties(environmentId);
 			if (properties == null) {
 				// Java10 onwards, we take profile via this method
-				IExecutionEnvironment ev = EnvironmentsManager.getDefault().getEnvironment(environmentId);
+				@SuppressWarnings("restriction")
+				IExecutionEnvironment ev = org.eclipse.jdt.internal.launching.environments.EnvironmentsManager
+						.getDefault().getEnvironment(environmentId);
 				properties = ev.getProfileProperties();
 
 			}
@@ -308,6 +309,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * @param description execution environment description
 	 * @throws CoreException if unable to initialize
 	 */
+	@SuppressWarnings("deprecation")
 	private void initialize(Properties profile, ExecutionEnvironmentDescription description) throws CoreException {
 		String value = profile.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
 		if (value == null) {

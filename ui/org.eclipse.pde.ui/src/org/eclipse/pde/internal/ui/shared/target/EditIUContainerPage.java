@@ -22,10 +22,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.ui.ProvUI;
 import org.eclipse.equinox.internal.p2.ui.ProvUIMessages;
-import org.eclipse.equinox.internal.p2.ui.actions.PropertyDialogAction;
 import org.eclipse.equinox.internal.p2.ui.dialogs.AvailableIUGroup;
 import org.eclipse.equinox.internal.p2.ui.dialogs.RepositorySelectionGroup;
-import org.eclipse.equinox.internal.p2.ui.query.IUViewQueryContext;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.operations.ProvisioningSession;
 import org.eclipse.equinox.p2.ui.Policy;
@@ -46,7 +44,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.progress.ProgressMessages;
 
 /**
  * Wizard page allowing users to select which IUs they would like to download
@@ -82,7 +79,8 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	/**
 	 * Used to provide special attributes/filtering to the available iu group
 	 */
-	private IUViewQueryContext fQueryContext;
+	@SuppressWarnings("restriction")
+	private org.eclipse.equinox.internal.p2.ui.query.IUViewQueryContext fQueryContext;
 
 	/**
 	 * The parent target definition
@@ -227,7 +225,8 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 					}
 					parent.getDisplay().syncExec(() -> {
 						final TreeItem[] children = fAvailableIUGroup.getCheckboxTreeViewer().getTree().getItems();
-						final String pendingLabel = ProgressMessages.PendingUpdateAdapter_PendingLabel;
+						@SuppressWarnings("restriction")
+						final String pendingLabel = org.eclipse.ui.internal.progress.ProgressMessages.PendingUpdateAdapter_PendingLabel;
 						if (children.length > 0 && !children[0].getText().equals(pendingLabel)) {
 							try {
 								fAvailableIUGroup.getCheckboxTreeViewer().expandAll();
@@ -271,7 +270,8 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 			} else {
 
 				final TreeItem[] children = fAvailableIUGroup.getCheckboxTreeViewer().getTree().getItems();
-				final String pendingLabel = ProgressMessages.PendingUpdateAdapter_PendingLabel;
+				@SuppressWarnings("restriction")
+				final String pendingLabel = org.eclipse.ui.internal.progress.ProgressMessages.PendingUpdateAdapter_PendingLabel;
 				if (children.length > 0 && !children[0].getText().equals(pendingLabel)) {
 					fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(0)));
 					fSelectedIUStatus = BAD_IU_SELECTION;
@@ -352,6 +352,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 * Details area underneath the group that displays more info on the selected IU
 	 * @param parent parent composite
 	 */
+	@SuppressWarnings("restriction")
 	private void createDetailsArea(Composite parent) {
 		Group detailsGroup = SWTFactory.createGroup(parent, Messages.EditIUContainerPage_12, 1, 1, GridData.FILL_HORIZONTAL);
 
@@ -365,7 +366,8 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		fPropertiesButton = SWTFactory.createPushButton(detailsGroup, Messages.EditIUContainerPage_13, null);
 		((GridData) fPropertiesButton.getLayoutData()).horizontalAlignment = SWT.RIGHT;
 		fPropertiesButton.addSelectionListener(widgetSelectedAdapter(event -> fPropertyAction.run()));
-		fPropertyAction = new PropertyDialogAction(new SameShellProvider(getShell()), fAvailableIUGroup.getStructuredViewer());
+		fPropertyAction = new org.eclipse.equinox.internal.p2.ui.actions.PropertyDialogAction(
+				new SameShellProvider(getShell()), fAvailableIUGroup.getStructuredViewer());
 		fPropertiesButton.setEnabled(false);
 	}
 
@@ -429,6 +431,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	/**
 	 * Creates a default query context to setup the available IU Group
 	 */
+	@SuppressWarnings("restriction")
 	private void createQueryContext() {
 		fQueryContext = ProvUI.getQueryContext(profileUI.getPolicy());
 		fQueryContext.setInstalledProfileId(P2TargetUtils.getProfileId(fTarget));
@@ -438,11 +441,12 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	/**
 	 * Update the available group and context using the current checkbox state
 	 */
+	@SuppressWarnings("restriction")
 	private void updateViewContext() {
 		if (fShowCategoriesButton.getSelection()) {
-			fQueryContext.setViewType(IUViewQueryContext.AVAILABLE_VIEW_BY_CATEGORY);
+			fQueryContext.setViewType(org.eclipse.equinox.internal.p2.ui.query.IUViewQueryContext.AVAILABLE_VIEW_BY_CATEGORY);
 		} else {
-			fQueryContext.setViewType(IUViewQueryContext.AVAILABLE_VIEW_FLAT);
+			fQueryContext.setViewType(org.eclipse.equinox.internal.p2.ui.query.IUViewQueryContext.AVAILABLE_VIEW_FLAT);
 		}
 		fQueryContext.setShowLatestVersionsOnly(fShowOldVersionsButton.getSelection());
 		fAvailableIUGroup.updateAvailableViewState();
@@ -511,6 +515,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	/**
 	 * Restores the state of the wizard from previous invocations
 	 */
+	@SuppressWarnings("restriction")
 	private void restoreWidgetState() {
 		IDialogSettings settings = getDialogSettings();
 		URI uri = null;
@@ -599,7 +604,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 			try {
 				// TODO This code does not do a good job, selecting, revealing, and collapsing all
 				// Only able to check items if we don't have categories
-				fQueryContext.setViewType(IUViewQueryContext.AVAILABLE_VIEW_FLAT);
+				fQueryContext.setViewType(org.eclipse.equinox.internal.p2.ui.query.IUViewQueryContext.AVAILABLE_VIEW_FLAT);
 				fAvailableIUGroup.updateAvailableViewState();
 				fAvailableIUGroup.setChecked(fEditContainer.getInstallableUnits());
 				// Make sure view is back in proper state

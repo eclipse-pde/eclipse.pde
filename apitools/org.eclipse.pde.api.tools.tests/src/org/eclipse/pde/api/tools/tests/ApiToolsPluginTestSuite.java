@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.tests;
 
-import org.eclipse.jdt.internal.core.search.processing.JobManager;
 import org.eclipse.pde.api.tools.anttasks.tests.ApiToolsAntTasksTestSuite;
 import org.eclipse.pde.api.tools.applications.BundleJarFilesTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
@@ -49,7 +48,7 @@ public class ApiToolsPluginTestSuite {
 	@BeforeClass
 	@SuppressWarnings("restriction")
 	public static void setUpBeforeClass() throws Exception {
-		JobManager.VERBOSE = true;
+		org.eclipse.jdt.internal.core.search.processing.JobManager.VERBOSE = true;
 		ApiTestingEnvironment.setTargetPlatform();
 	}
 

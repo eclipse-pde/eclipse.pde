@@ -388,6 +388,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * @param importfiles
 	 * @param usetestcompliance
 	 */
+	@SuppressWarnings("deprecation")
 	protected void createExistingProject(File projectDir, boolean importfiles, boolean usetestcompliance) throws Exception {
 		String projectName = projectDir.getName();
 		final IWorkspace workspace = getEnv().getWorkspace();
@@ -645,7 +646,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * Verifies that the given elements have the expected problems.
 	 */
 	@Override
-	protected void expectingProblemsFor(IPath[] roots, List expected) {
+	protected void expectingProblemsFor(IPath[] roots, @SuppressWarnings("rawtypes") List expected) {
 		ApiProblem[] problems = allSortedApiProblems(roots);
 		assumeEquals("Invalid problem(s)!!!", arrayToString(expected.toArray()), arrayToString(problems)); //$NON-NLS-1$
 	}

@@ -43,10 +43,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.compiler.env.IModule.IPackageExport;
-import org.eclipse.jdt.internal.compiler.util.JRTUtil;
-import org.eclipse.jdt.internal.core.builder.ClasspathJrt;
-import org.eclipse.jdt.internal.core.builder.ClasspathLocation;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -391,9 +387,11 @@ public class TargetPlatformHelper {
 					if (systemPackages != null) {
 						props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
 					}
-					String ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
+					@SuppressWarnings("deprecation")
+					String frameworkExecutionenvironment = Constants.FRAMEWORK_EXECUTIONENVIRONMENT;
+					String ee = profileProps.getProperty(frameworkExecutionenvironment);
 					if (ee != null) {
-						props.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
+						props.put(frameworkExecutionenvironment, ee);
 					}
 					result.add(props);
 				}
@@ -405,6 +403,7 @@ public class TargetPlatformHelper {
 		return new Dictionary[] { TargetPlatformHelper.getTargetEnvironment(state) };
 	}
 
+	@SuppressWarnings("restriction")
 	public static String querySystemPackages(IExecutionEnvironment environment) {
 		IVMInstall vm = bestVmInstallFor(environment);
 		if (vm == null || !JavaRuntime.isModularJava(vm)) {
@@ -419,10 +418,11 @@ public class TargetPlatformHelper {
 
 		try {
 			Collection<String> packages = new TreeSet<>();
-			File jrtPath = new File(vm.getInstallLocation(), "lib/" + JRTUtil.JRT_FS_JAR); //$NON-NLS-1$
-			ClasspathJrt jrt = ClasspathLocation.forJrtSystem(jrtPath.toString(), null, null, release);
+			String jrtPath = "lib/" + org.eclipse.jdt.internal.compiler.util.JRTUtil.JRT_FS_JAR; //$NON-NLS-1$
+			String path = new File(vm.getInstallLocation(), jrtPath).toString(); // $NON-NLS-1$
+			var jrt = org.eclipse.jdt.internal.core.builder.ClasspathLocation.forJrtSystem(path, null, null, release);
 			for (String moduleName : jrt.getModuleNames(null)) {
-				for (IPackageExport packageExport : jrt.getModule(moduleName).exports()) {
+				for (var packageExport : jrt.getModule(moduleName).exports()) {
 					if (!packageExport.isQualified()) {
 						packages.add(new String(packageExport.name()));
 					}

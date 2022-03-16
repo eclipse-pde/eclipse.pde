@@ -22,7 +22,6 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jdt.internal.launching.environments.EnvironmentsManager;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -65,7 +64,8 @@ public class LaunchValidationOperation implements IWorkspaceRunnable {
 			Properties profileProps = getJavaProfileProperties(env.getId());
 			if (profileProps == null) {
 				// Java10 onwards, we take profile via this method
-				IExecutionEnvironment ev = EnvironmentsManager.getDefault().getEnvironment(env.getId());
+				@SuppressWarnings("restriction")
+				IExecutionEnvironment ev = org.eclipse.jdt.internal.launching.environments.EnvironmentsManager.getDefault().getEnvironment(env.getId());
 				profileProps = ev.getProfileProperties();
 			}
 			if (profileProps != null) {
@@ -80,9 +80,11 @@ public class LaunchValidationOperation implements IWorkspaceRunnable {
 				}
 				if (systemPackages != null)
 					props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
-				String ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
+				@SuppressWarnings("deprecation")
+				String frameworkExecutionenvironment = Constants.FRAMEWORK_EXECUTIONENVIRONMENT;
+				String ee = profileProps.getProperty(frameworkExecutionenvironment);
 				if (ee != null)
-					props.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, ee);
+					props.put(frameworkExecutionenvironment, ee);
 				result.add(props);
 			}
 		}

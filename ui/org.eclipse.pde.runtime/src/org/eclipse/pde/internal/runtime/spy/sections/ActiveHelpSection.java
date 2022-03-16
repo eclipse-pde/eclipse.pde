@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -104,6 +103,7 @@ public class ActiveHelpSection implements ISpySection {
 		}
 	}
 
+	@SuppressWarnings("restriction")
 	private String processControlHelp(ExecutionEvent event, SpyFormToolkit toolkit) {
 		IWorkbenchPart part = HandlerUtil.getActivePart(event);
 		if (part == null)
@@ -125,8 +125,8 @@ public class ActiveHelpSection implements ISpySection {
 			for (int j = 0; j < window.getActivePage().getEditorReferences().length; j++) {
 				IEditorReference er = window.getActivePage().getEditorReferences()[j];
 				if (er.getId().equals(editorPart.getEditorSite().getId()))
-					if (er instanceof WorkbenchPartReference) {
-						WorkbenchPartReference wpr = (WorkbenchPartReference) er;
+					if (er instanceof org.eclipse.ui.internal.WorkbenchPartReference) {
+						org.eclipse.ui.internal.WorkbenchPartReference wpr = (org.eclipse.ui.internal.WorkbenchPartReference) er;
 						control = wpr.getPane().getControl();
 						shell = null;
 						break;
@@ -138,8 +138,8 @@ public class ActiveHelpSection implements ISpySection {
 			for (int j = 0; j < window.getActivePage().getViewReferences().length; j++) {
 				IViewReference vr = window.getActivePage().getViewReferences()[j];
 				if (vr.getId().equals(viewPart.getViewSite().getId()))
-					if (vr instanceof WorkbenchPartReference) {
-						WorkbenchPartReference wpr = (WorkbenchPartReference) vr;
+					if (vr instanceof org.eclipse.ui.internal.WorkbenchPartReference) {
+						org.eclipse.ui.internal.WorkbenchPartReference wpr = (org.eclipse.ui.internal.WorkbenchPartReference) vr;
 						control = wpr.getPane().getControl();
 						shell = null;
 						break;

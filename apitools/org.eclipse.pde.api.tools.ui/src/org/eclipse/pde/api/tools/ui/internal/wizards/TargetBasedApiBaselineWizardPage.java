@@ -48,11 +48,6 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.ExternalFileTargetHandle;
-import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
-import org.eclipse.pde.internal.ui.PDELabelProvider;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -104,13 +99,16 @@ public class TargetBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 	}
 
 	private static class TargetLabelProvider extends StyledCellLabelProvider {
-		private PDELabelProvider pdeLabelProvider = PDEPlugin.getDefault().getLabelProvider();
+		@SuppressWarnings("restriction")
+		private final org.eclipse.pde.internal.ui.PDELabelProvider pdeLabelProvider = org.eclipse.pde.internal.ui.PDEPlugin
+				.getDefault().getLabelProvider();
 
 		public TargetLabelProvider() {
 			pdeLabelProvider.connect(this);
 		}
 
 		@Override
+		@SuppressWarnings("restriction")
 		public void update(ViewerCell cell) {
 			final Object element = cell.getElement();
 
@@ -122,12 +120,13 @@ public class TargetBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 			}
 
 			StyledString styledString = new StyledString(name);
-			if (targetHandle instanceof WorkspaceFileTargetHandle) {
-				IFile file = ((WorkspaceFileTargetHandle) targetHandle).getTargetFile();
+			if (targetHandle instanceof org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle) {
+				IFile file = ((org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle) targetHandle)
+						.getTargetFile();
 				String location = " - " + file.getFullPath(); //$NON-NLS-1$
 				styledString.append(location, StyledString.DECORATIONS_STYLER);
-			} else if (targetHandle instanceof ExternalFileTargetHandle) {
-				URI uri = ((ExternalFileTargetHandle) targetHandle).getLocation();
+			} else if (targetHandle instanceof org.eclipse.pde.internal.core.target.ExternalFileTargetHandle) {
+				URI uri = ((org.eclipse.pde.internal.core.target.ExternalFileTargetHandle) targetHandle).getLocation();
 				String location = " - " + uri.toASCIIString(); //$NON-NLS-1$
 				styledString.append(location, StyledString.DECORATIONS_STYLER);
 			}
@@ -138,8 +137,9 @@ public class TargetBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 			super.update(cell);
 		}
 
+		@SuppressWarnings("restriction")
 		public Image getImage(Object e) {
-			return pdeLabelProvider.get(PDEPluginImages.DESC_TARGET_DEFINITION);
+			return pdeLabelProvider.get(org.eclipse.pde.internal.ui.PDEPluginImages.DESC_TARGET_DEFINITION);
 		}
 
 		@Override

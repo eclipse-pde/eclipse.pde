@@ -19,7 +19,6 @@ import java.text.MessageFormat;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.internal.p2.metadata.TranslationSupport;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
@@ -44,7 +43,9 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 
 	private boolean fShowVersion = true;
 	private boolean fAppendResolvedVariables = false;
-	private TranslationSupport fTranslations;
+	@SuppressWarnings("restriction")
+	private org.eclipse.equinox.internal.p2.metadata.TranslationSupport fTranslations = org.eclipse.equinox.internal.p2.metadata.TranslationSupport
+			.getInstance();
 
 	/**
 	 * Creates a label provider.
@@ -59,7 +60,6 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fShowVersion = showVersion;
 		fAppendResolvedVariables = appendResolvedVariables;
-		fTranslations = TranslationSupport.getInstance();
 	}
 
 	@Override

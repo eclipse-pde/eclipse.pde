@@ -243,7 +243,9 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 				vmArguments.add(modAllSystem);
 		}
 		//  if element is a test class annotated with @RunWith(JUnitPlatform.class, we add this in program arguments
-		if (configuration.getAttribute(JUnitLaunchConfigurationConstants.ATTR_RUN_WITH_JUNIT_PLATFORM_ANNOTATION, false)) {
+		@SuppressWarnings("restriction")
+		String attrRunWithJunitPlatformAnnotation = JUnitLaunchConfigurationConstants.ATTR_RUN_WITH_JUNIT_PLATFORM_ANNOTATION;
+		if (configuration.getAttribute(attrRunWithJunitPlatformAnnotation, false)) {
 			programArgs.add("-runasjunit5"); //$NON-NLS-1$
 		}
 	}

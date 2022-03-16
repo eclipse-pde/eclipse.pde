@@ -14,7 +14,6 @@
 package org.eclipse.pde.api.tools.tests;
 
 
-import org.eclipse.jdt.internal.core.search.processing.JobManager;
 import org.eclipse.pde.api.tools.builder.tests.OSGiLessAnalysisTests;
 import org.eclipse.pde.api.tools.comparator.tests.AllDeltaTests;
 import org.eclipse.pde.api.tools.model.tests.ApiBaselineTests;
@@ -72,6 +71,6 @@ public class ApiToolsTestSuite {
 	@BeforeClass
 	@SuppressWarnings("restriction")
 	public static void setupJVM() {
-		JobManager.VERBOSE = true;
+		org.eclipse.jdt.internal.core.search.processing.JobManager.VERBOSE = true;
 	}
 }

@@ -101,6 +101,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 				// means we are looking for a method
 				return false;
 			}
+			@SuppressWarnings("unchecked")
 			List<VariableDeclarationFragment> fields = node.fragments();
 			VariableDeclarationFragment fragment = null;
 			for (Iterator<VariableDeclarationFragment> iter = fields.iterator(); iter.hasNext();) {
@@ -108,7 +109,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 				if (fragment.getName().getFullyQualifiedName().equals(membername)) {
 					Javadoc docnode = node.getJavadoc();
 					assertNotNull("the field: " + membername + " must have a javadoc node", docnode); //$NON-NLS-1$ //$NON-NLS-2$
-					assertTrue("the field: " + membername + " should contain all of the tags: " + getStringValue(expectedtags), containsAllTags(docnode.tags())); //$NON-NLS-1$ //$NON-NLS-2$
+					assertTrue("the field: " + membername + " should contain all of the tags: " + getStringValue(expectedtags), containsAllTags(docnode)); //$NON-NLS-1$ //$NON-NLS-2$
 					processed = true;
 				}
 			}
@@ -122,7 +123,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 				if (signature.equals(sig)) {
 					Javadoc docnode = node.getJavadoc();
 					assertNotNull("the method: " + membername + " [" + signature + "] must have a javadoc node", docnode); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					assertTrue("the method: " + membername + " [" + signature + "] should contain all of the tags: " + getStringValue(expectedtags), containsAllTags(docnode.tags())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					assertTrue("the method: " + membername + " [" + signature + "] should contain all of the tags: " + getStringValue(expectedtags), containsAllTags(docnode)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					processed = true;
 				}
 			}
@@ -136,7 +137,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 				if ((innertypename == null && name.equals(type)) || name.equals(innertypename)) {
 					Javadoc docnode = node.getJavadoc();
 					assertNotNull("the type: " + name + " must have a javadoc node", docnode); //$NON-NLS-1$ //$NON-NLS-2$
-					assertTrue("the type: " + name + " should contain all of the tags: " + getStringValue(expectedtags), containsAllTags(docnode.tags())); //$NON-NLS-1$ //$NON-NLS-2$
+					assertTrue("the type: " + name + " should contain all of the tags: " + getStringValue(expectedtags), containsAllTags(docnode)); //$NON-NLS-1$ //$NON-NLS-2$
 					processed = true;
 				}
 			}
@@ -151,7 +152,9 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 		 * @return true if the tag list contains all of the expected tags, false
 		 *         otherwise
 		 */
-		private boolean containsAllTags(List<TagElement> tags) {
+		private boolean containsAllTags(Javadoc docnode) {
+			@SuppressWarnings("unchecked")
+			List<TagElement> tags = docnode.tags();
 			boolean allfound = true;
 			TagElement element = null;
 			for (String expectedtag : expectedtags) {
