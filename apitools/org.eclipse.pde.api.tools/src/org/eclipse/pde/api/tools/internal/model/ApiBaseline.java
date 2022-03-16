@@ -260,8 +260,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	private static Properties getPropertiesFromURL(URL profileURL) {
 		InputStream is = null;
 		try {
-			profileURL = FileLocator.resolve(profileURL);
-			URLConnection openConnection = profileURL.openConnection();
+			URL resolvedURL = FileLocator.resolve(profileURL);
+			URLConnection openConnection = resolvedURL.openConnection();
 			openConnection.setUseCaches(false);
 			is = openConnection.getInputStream();
 			if (is != null) {

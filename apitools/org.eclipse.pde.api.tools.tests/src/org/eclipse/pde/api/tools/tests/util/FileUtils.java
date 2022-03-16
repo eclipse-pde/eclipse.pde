@@ -348,7 +348,7 @@ public class FileUtils {
 					path = path.substring(rootPathLength);
 					ZipEntry entry = new ZipEntry(path.replace('\\', '/'));
 					zip.putNextEntry(entry);
-					zip.write(org.eclipse.jdt.internal.compiler.util.Util.getFileByteContent(file));
+					zip.write(Files.readAllBytes(file.toPath()));
 					zip.closeEntry();
 				} else {
 					zip(file, zip, rootPathLength);
@@ -394,13 +394,11 @@ public class FileUtils {
 	 * given destination (a directory that must exists).
 	 */
 	public static void copyFile(String sourcePath, String destPath) {
-		sourcePath = Util.toNativePath(sourcePath);
-		destPath = Util.toNativePath(destPath);
-		File source = new File(sourcePath);
+		File source = new File(Util.toNativePath(sourcePath));
 		if (!source.exists()) {
 			return;
 		}
-		File dest = new File(destPath);
+		File dest = new File(Util.toNativePath(destPath));
 		if (!dest.exists()) {
 			return;
 		}

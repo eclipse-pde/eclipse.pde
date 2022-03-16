@@ -198,7 +198,7 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 
 						ParameterizedCommand result = getParameterizedCommand(serialization);
 						if (result != null) {
-							updateCommandTable(result.getParameterMap());
+							updateCommandTable(getResultParameter(result));
 						}
 					}
 				} else {
@@ -389,12 +389,17 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 			// Select it
 			fCommandCombo.setText(nameToUse);
 			// Update the command table parameters
-			updateCommandTable(result.getParameterMap());
+			updateCommandTable(getResultParameter(result));
 		} else {
 			// No serialization, something bad happened
 			fCommandCombo.setText(F_NO_COMMAND);
 		}
 
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Map<String, String> getResultParameter(ParameterizedCommand result) {
+		return result.getParameterMap();
 	}
 
 	private ParameterizedCommand getParameterizedCommand(String serialization) {
@@ -423,12 +428,12 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 		return null;
 	}
 
-	private void updateCommandTable(Map<Object, Object> parameters) {
+	private void updateCommandTable(Map<String, String> parameters) {
 		// Clear the table contents
 		fCommandTable.clearAll();
 		if (parameters != null && !parameters.isEmpty()) {
 			int rowCount = 0;
-			for (Entry<Object, Object> entry : parameters.entrySet()) {
+			for (Entry<String, String> entry : parameters.entrySet()) {
 				// Track number of keys / rows processed
 				TableItem item = null;
 				// Determine if there is an existing row already at that index
@@ -439,24 +444,20 @@ public class SimpleCSCommandDetails extends CSAbstractSubDetails {
 					// There isn't, create a new one
 					item = new TableItem(fCommandTable, SWT.NONE);
 				}
-				if (entry.getKey() instanceof String) {
-					String keyString = (String) entry.getKey();
-					// If present, remove the fully qualified ID from the
-					// paramater key
-					// i.e. "org.eclipse.ui.perspective" becomes just
-					// "perspective"
-					int dotIndex = keyString.lastIndexOf('.');
-					if ((dotIndex != -1) && (dotIndex != (keyString.length() - 1))) {
-						keyString = keyString.substring(dotIndex + 1);
-					}
-					// Set parameter key in first column
-					item.setText(0, keyString);
+				String keyString = entry.getKey();
+				// If present, remove the fully qualified ID from the
+				// paramater key
+				// i.e. "org.eclipse.ui.perspective" becomes just
+				// "perspective"
+				int dotIndex = keyString.lastIndexOf('.');
+				if ((dotIndex != -1) && (dotIndex != (keyString.length() - 1))) {
+					keyString = keyString.substring(dotIndex + 1);
 				}
-				Object value = entry.getValue();
-				if (value instanceof String) {
-					// Set parameter value in second column
-					item.setText(1, (String) value);
-				}
+				// Set parameter key in first column
+				item.setText(0, keyString);
+
+				// Set parameter value in second column
+				item.setText(1, entry.getValue());
 				rowCount++;
 			}
 			// Pack the columns with the new data

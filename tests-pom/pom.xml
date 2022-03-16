@@ -19,7 +19,7 @@
   <artifactId>tests-pom</artifactId>
   <packaging>pom</packaging>
   <properties>
-    <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
+    <code.ignoredWarnings>-warn:-discouraged</code.ignoredWarnings>
     <defaultSigning-excludeInnerJars>true</defaultSigning-excludeInnerJars>
   </properties>
 </project>

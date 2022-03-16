@@ -133,12 +133,12 @@ public class TargetBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 
 			cell.setText(styledString.toString());
 			cell.setStyleRanges(styledString.getStyleRanges());
-			cell.setImage(getImage(targetDef));
+			cell.setImage(getImage());
 			super.update(cell);
 		}
 
 		@SuppressWarnings("restriction")
-		public Image getImage(Object e) {
+		public Image getImage() {
 			return pdeLabelProvider.get(org.eclipse.pde.internal.ui.PDEPluginImages.DESC_TARGET_DEFINITION);
 		}
 

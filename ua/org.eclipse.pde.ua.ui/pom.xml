@@ -22,8 +22,4 @@
   <artifactId>org.eclipse.pde.ua.ui</artifactId>
   <version>1.2.400-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
-
-  <properties>
-    <code.ignoredWarnings>-warn:-deprecation,raw,unchecked</code.ignoredWarnings>
-  </properties>
 </project>
