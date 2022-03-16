@@ -23,7 +23,6 @@ import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.runtime.*;
 import org.osgi.framework.*;
-import org.osgi.service.packageadmin.PackageAdmin;
 
 public class LocalRegistryBackend implements IRegistryEventListener, BundleListener, ServiceListener, RegistryBackend {
 
@@ -495,9 +494,5 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 			PlatformAdmin platformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
 			platformAdmin.addDisabledInfo(info);
 		}
-
-		org.osgi.framework.Bundle b = PDERuntimePlugin.getDefault().getBundleContext().getBundle(id);
-		PackageAdmin packageAdmin = PDERuntimePlugin.getDefault().getPackageAdmin();
-		packageAdmin.refreshPackages(new org.osgi.framework.Bundle[] {b});
 	}
 }

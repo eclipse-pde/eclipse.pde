@@ -24,7 +24,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class PDERuntimePlugin extends AbstractUIPlugin {
@@ -33,7 +32,6 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 
 	private static PDERuntimePlugin inst;
 	private BundleContext fContext;
-	private ServiceTracker<?, PackageAdmin> packageAdminTracker;
 	private ServiceTracker<?, PlatformAdmin> platformAdminTracker;
 
 	public PDERuntimePlugin() {
@@ -71,13 +69,6 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
 
-	public PackageAdmin getPackageAdmin() {
-		if (packageAdminTracker == null) {
-			return null;
-		}
-		return packageAdminTracker.getService();
-	}
-
 	public PlatformAdmin getPlatformAdmin() {
 		if (platformAdminTracker == null) {
 			return null;
@@ -97,9 +88,6 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		this.fContext = context;
-
-		packageAdminTracker = new ServiceTracker<>(context, PackageAdmin.class, null);
-		packageAdminTracker.open();
 
 		platformAdminTracker = new ServiceTracker<>(context, PlatformAdmin.class, null);
 		platformAdminTracker.open();
@@ -132,10 +120,6 @@ public class PDERuntimePlugin extends AbstractUIPlugin {
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
-		if (packageAdminTracker != null) {
-			packageAdminTracker.close();
-			packageAdminTracker = null;
-		}
 		if (platformAdminTracker != null) {
 			platformAdminTracker.close();
 			platformAdminTracker = null;
