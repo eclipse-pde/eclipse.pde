@@ -17,6 +17,7 @@ import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.Point;
 
 /**
@@ -46,10 +47,7 @@ public class CompositeApiImageDescriptor extends CompositeImageDescriptor {
 
 	@Override
 	protected void drawCompositeImage(int width, int height) {
-		ImageData bg = fOriginalImage.getImageData();
-		if (bg == null) {
-			bg = DEFAULT_IMAGE_DATA;
-		}
+		ImageDataProvider bg = createCachedImageDataProvider(fOriginalImage);
 		drawImage(bg, 0, 0);
 		drawOverlays();
 	}
@@ -81,28 +79,12 @@ public class CompositeApiImageDescriptor extends CompositeImageDescriptor {
 	 * @param pos
 	 */
 	private void addTopRightImage(ImageDescriptor desc, Point pos) {
-		ImageData data = getImageData(desc);
-		int x = pos.x - data.width;
+		CachedImageDataProvider data = createCachedImageDataProvider(desc);
+		int x = pos.x - data.getWidth();
 		if (x >= 0) {
 			drawImage(data, x, pos.y);
 			pos.x = x;
 		}
-	}
-
-	/**
-	 * Returns the {@link ImageData} from the given {@link ImageDescriptor} or
-	 * <code>null</code>
-	 *
-	 * @param descriptor
-	 * @return the {@link ImageData} from the given {@link ImageDescriptor} or
-	 *         <code>null</code>
-	 */
-	private ImageData getImageData(ImageDescriptor descriptor) {
-		ImageData data = descriptor.getImageData();
-		if (data == null) {
-			data = DEFAULT_IMAGE_DATA;
-		}
-		return data;
 	}
 
 	@Override

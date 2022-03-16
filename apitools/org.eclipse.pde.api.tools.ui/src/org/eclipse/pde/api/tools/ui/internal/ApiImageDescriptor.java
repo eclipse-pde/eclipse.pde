@@ -15,7 +15,7 @@ package org.eclipse.pde.api.tools.ui.internal;
 
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.Point;
 
 /**
@@ -51,8 +51,8 @@ public class ApiImageDescriptor extends CompositeImageDescriptor {
 	@Override
 	protected Point getSize() {
 		if (fSize == null) {
-			ImageData data = getBaseImage().getImageData();
-			setSize(new Point(data.width, data.height));
+			CachedImageDataProvider data = createCachedImageDataProvider(getBaseImage());
+			setSize(new Point(data.getWidth(), data.getHeight()));
 		}
 		return fSize;
 	}
@@ -83,16 +83,9 @@ public class ApiImageDescriptor extends CompositeImageDescriptor {
 	 */
 	@Override
 	protected void drawCompositeImage(int width, int height) {
-		ImageData bg = getBaseImage().getImageData();
-		if (bg == null) {
-			bg = DEFAULT_IMAGE_DATA;
-		}
+		ImageDataProvider bg = createCachedImageDataProvider(getBaseImage());
 		drawImage(bg, 0, 0);
 		drawOverlays();
-	}
-
-	private ImageData getImageData(String imageDescriptorKey) {
-		return ApiUIPlugin.getImageDescriptor(imageDescriptorKey).getImageData();
 	}
 
 	/**
@@ -100,22 +93,17 @@ public class ApiImageDescriptor extends CompositeImageDescriptor {
 	 */
 	protected void drawOverlays() {
 		int flags = getFlags();
-		int x = 0;
-		int y = 0;
-		ImageData data = null;
+		String imageDescriptorKey;
 		if ((flags & ERROR) != 0) {
-			x = 0;
-			y = getSize().y;
-			data = getImageData(IApiToolsConstants.IMG_OVR_ERROR);
-			y -= data.height;
-			drawImage(data, x, y);
+			imageDescriptorKey = IApiToolsConstants.IMG_OVR_ERROR;
 		} else if ((flags & SUCCESS) != 0) {
-			x = 0;
-			y = getSize().y;
-			data = getImageData(IApiToolsConstants.IMG_OVR_SUCCESS);
-			y -= data.height;
-			drawImage(data, x, y);
+			imageDescriptorKey = IApiToolsConstants.IMG_OVR_SUCCESS;
+		} else {
+			return;
 		}
+		ImageDescriptor imageDescriptor = ApiUIPlugin.getImageDescriptor(imageDescriptorKey);
+		CachedImageDataProvider data = createCachedImageDataProvider(imageDescriptor);
+		drawImage(data, 0, getSize().y - data.getHeight());
 	}
 
 	protected ImageDescriptor getBaseImage() {

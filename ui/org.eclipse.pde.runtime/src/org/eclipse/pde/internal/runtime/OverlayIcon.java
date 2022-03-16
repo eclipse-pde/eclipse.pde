@@ -15,7 +15,7 @@ package org.eclipse.pde.internal.runtime;
 
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.graphics.Point;
 
 public class OverlayIcon extends CompositeImageDescriptor {
@@ -26,7 +26,7 @@ public class OverlayIcon extends CompositeImageDescriptor {
 	private Point fSize = null;
 
 	private ImageDescriptor fBase;
-	private ImageDescriptor fOverlays[][];
+	private ImageDescriptor[][] fOverlays;
 
 	public OverlayIcon(ImageDescriptor base, ImageDescriptor[][] overlays) {
 		fBase = base;
@@ -51,9 +51,9 @@ public class OverlayIcon extends CompositeImageDescriptor {
 		int x = 0;
 		for (int i = 0; i < 3; i++) {
 			if (i < length && overlays[i] != null) {
-				ImageData id = overlays[i].getImageData();
-				drawImage(id, x, getSize().y - id.height);
-				x += id.width;
+				CachedImageDataProvider id = createCachedImageDataProvider(overlays[i]);
+				drawImage(id, x, getSize().y - id.getHeight());
+				x += id.getWidth();
 			}
 		}
 	}
@@ -65,16 +65,16 @@ public class OverlayIcon extends CompositeImageDescriptor {
 		int x = getSize().x;
 		for (int i = 2; i >= 0; i--) {
 			if (i < length && overlays[i] != null) {
-				ImageData id = overlays[i].getImageData();
-				x -= id.width;
-				drawImage(id, x, getSize().y - id.height);
+				CachedImageDataProvider id = createCachedImageDataProvider(overlays[i]);
+				x -= id.getWidth();
+				drawImage(id, x, getSize().y - id.getHeight());
 			}
 		}
 	}
 
 	@Override
 	protected void drawCompositeImage(int width, int height) {
-		ImageData bg = fBase.getImageData();
+		ImageDataProvider bg = createCachedImageDataProvider(fBase);
 		drawImage(bg, 0, 0);
 
 		if (fOverlays != null) {
@@ -99,9 +99,9 @@ public class OverlayIcon extends CompositeImageDescriptor {
 		int x = 0;
 		for (int i = 0; i < 3; i++) {
 			if (i < length && overlays[i] != null) {
-				ImageData id = overlays[i].getImageData();
+				CachedImageDataProvider id = createCachedImageDataProvider(overlays[i]);
 				drawImage(id, x, 0);
-				x += id.width;
+				x += id.getWidth();
 			}
 		}
 	}
@@ -113,8 +113,8 @@ public class OverlayIcon extends CompositeImageDescriptor {
 		int x = getSize().x;
 		for (int i = 2; i >= 0; i--) {
 			if (i < length && overlays[i] != null) {
-				ImageData id = overlays[i].getImageData();
-				x -= id.width;
+				CachedImageDataProvider id = createCachedImageDataProvider(overlays[i]);
+				x -= id.getWidth();
 				drawImage(id, x, 0);
 			}
 		}

@@ -387,7 +387,7 @@ public class ApiUseScanJob extends Job {
 						public IStatus runInUIThread(IProgressMonitor monitor) {
 							IEditorDescriptor edesc = null;
 							try {
-								edesc = IDE.getEditorDescriptor(index.getName());
+								edesc = IDE.getEditorDescriptor(index.getName(), true, true);
 								IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 								IDE.openEditor(window.getActivePage(), index.toURI(), edesc.getId(), true);
 							} catch (PartInitException e) {

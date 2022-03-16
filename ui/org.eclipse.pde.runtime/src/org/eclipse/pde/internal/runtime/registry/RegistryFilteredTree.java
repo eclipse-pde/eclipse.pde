@@ -23,7 +23,7 @@ public class RegistryFilteredTree extends FilteredTree {
 	private RegistryBrowser browser;
 
 	public RegistryFilteredTree(RegistryBrowser browser, Composite parent, int treeStyle, PatternFilter filter) {
-		super(parent, treeStyle, filter, true);
+		super(parent, treeStyle, filter, true, true);
 		this.browser = browser;
 	}
 
