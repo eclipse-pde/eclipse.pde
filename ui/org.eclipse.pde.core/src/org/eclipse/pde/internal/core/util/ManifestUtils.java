@@ -75,8 +75,8 @@ public class ManifestUtils {
 	 * be checked for an old style plug-in.
 	 * <p>
 	 * If this method is being called from a dev mode workspace, the returned map
-	 * should be passed to {@link TargetWeaver#weaveManifest(Map)} so that the
-	 * bundle classpath can be corrected.
+	 * should be passed to {@link TargetWeaver#weaveManifest(Map, File)} so that the
+	 * bundle classpath can be corrected. 
 	 * </p>
 	 * <p>
 	 * This method is called by

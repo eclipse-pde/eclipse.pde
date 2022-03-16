@@ -128,7 +128,7 @@ public class OSGiFrameworkManager implements IRegistryChangeListener {
 	/**
 	 * Returns the {@link IConfigurationElement} for the framework with the given ID
 	 * or <code>null</code> if no element exists with that ID.
-	 * @param frameworkId
+	 * @param frameworkId the id of the framework to return
 	 * @return the {@link IConfigurationElement} for the framework with the given ID or <code>null</code>
 	 *
 	 * @since 3.5

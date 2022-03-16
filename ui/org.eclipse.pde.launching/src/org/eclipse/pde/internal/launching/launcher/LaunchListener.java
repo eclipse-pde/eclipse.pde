@@ -156,7 +156,6 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 	 * in configuration location or null if none found.
 	 *
 	 * @returns log file or null
-	 * @throws CoreException
 	 * @since 3.4
 	 */
 	public static File getMostRecentLogFile(ILaunchConfiguration configuration) throws CoreException {

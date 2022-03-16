@@ -264,7 +264,6 @@ public class LaunchArgumentsHelper {
 	 *
 	 * @param packageName name of the launcher package, typically {@link IPDEBuildConstants#BUNDLE_EQUINOX_LAUNCHER}
 	 * @return the path to the equinox launcher jar or <code>null</code>
-	 * @throws CoreException
 	 */
 	private static String getEquinoxStartupPath(String packageName) throws CoreException {
 		// See if PDE has the launcher in the workspace or target

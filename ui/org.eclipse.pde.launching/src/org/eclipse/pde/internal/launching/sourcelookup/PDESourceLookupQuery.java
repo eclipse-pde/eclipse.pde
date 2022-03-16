@@ -154,7 +154,6 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	 * @param object Bundle class loader object
 	 * @param typeName fully qualified name of the source type being searched for
 	 * @return source element
-	 * @throws CoreException
 	 */
 	protected Object findSourceElement34(IJavaObject object, String typeName) throws CoreException {
 		IJavaObject manager = getObject(object, "manager", false); //$NON-NLS-1$
@@ -176,7 +175,6 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	 * @param object Bundle class loader object
 	 * @param typeName fully qualified name of the source type being searched for
 	 * @return source element
-	 * @throws CoreException
 	 */
 	protected Object findSourceElement(IJavaObject object, String typeName) throws CoreException {
 		IJavaObject manager = getObject(object, "manager", false); //$NON-NLS-1$
@@ -210,10 +208,9 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	 * Search a bundle's class path entries for source for the type of given name.
 	 * This is used for 3.5 and greater.
 	 *
-	 * @param entriesOwner
-	 * @param typeName
+	 * @param entriesOwner the java object providing the classpath entries
+	 * @param typeName qualified name of source
 	 * @return source object or <code>null</code>
-	 * @throws CoreException
 	 */
 	private Object searchClasspathEntries(IJavaObject entriesOwner, String typeName) throws CoreException {
 		IJavaObject cpeArray = getObject(entriesOwner, "entries", false); //$NON-NLS-1$
@@ -280,7 +277,6 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	 * @param typeName qualified name of source
 	 * @param checkFragments whether to guess at fragments
 	 * @return source element or <code>null</code>
-	 * @throws CoreException
 	 */
 	private Object getSourceElement(String location, String id, String typeName, boolean checkFragments) throws CoreException {
 		if (location != null && id != null) {

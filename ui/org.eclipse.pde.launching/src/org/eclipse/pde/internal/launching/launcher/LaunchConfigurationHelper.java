@@ -105,7 +105,6 @@ public class LaunchConfigurationHelper {
 	 * @param bundlesWithStartLevels map of plug-in model to a string containing start level information
 	 * @param configurationDirectory config directory where the created files will be placed
 	 * @return a properties object containing the properties written out to config.ini
-	 * @throws CoreException
 	 */
 	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String productID, Map<String, List<IPluginModelBase>> bundles, Map<IPluginModelBase, String> bundlesWithStartLevels, File configurationDirectory) throws CoreException {
 		Properties properties = null;
