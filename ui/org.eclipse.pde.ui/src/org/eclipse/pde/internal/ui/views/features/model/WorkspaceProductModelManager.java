@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Ed Scadding.
+ * Copyright (c) 2019, 2022 Ed Scadding.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.IModelProviderEvent;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
@@ -34,7 +34,8 @@ public class WorkspaceProductModelManager extends WorkspaceModelManager<Collecti
 
 	@Override
 	protected boolean isInterestingFolder(IFolder folder) {
-		return true;
+		// Only consider products in non-derived or src-folders
+		return !folder.isDerived() || JavaCore.create(folder.getProject()).isOnClasspath(folder);
 	}
 
 	@Override
@@ -109,18 +110,6 @@ public class WorkspaceProductModelManager extends WorkspaceModelManager<Collecti
 				addChange(model, IModelProviderEvent.MODELS_CHANGED);
 			}
 		}
-	}
-
-	@Override
-	protected void addListeners() {
-		int event = IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.POST_CHANGE;
-		PDECore.getWorkspace().addResourceChangeListener(this, event);
-	}
-
-	@Override
-	protected void removeListeners() {
-		PDECore.getWorkspace().removeResourceChangeListener(this);
-		super.removeListeners();
 	}
 
 	protected IProductModel[] getProductModels() {

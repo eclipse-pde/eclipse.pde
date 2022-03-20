@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2018 IBM Corporation and others.
+ *  Copyright (c) 2003, 2022 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -30,6 +30,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
@@ -129,7 +130,16 @@ public abstract class WorkspaceModelManager<T> extends AbstractModelManager
 
 	protected abstract T removeModel(IProject project);
 
-	protected abstract void addListeners();
+	protected void addListeners() {
+		IWorkspace workspace = PDECore.getWorkspace();
+		workspace.addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.POST_CHANGE);
+	}
+
+	@Override
+	protected void removeListeners() {
+		PDECore.getWorkspace().removeResourceChangeListener(this);
+		super.removeListeners();
+	}
 
 	protected T getModel(IProject project) {
 		initialize();
@@ -161,34 +171,33 @@ public abstract class WorkspaceModelManager<T> extends AbstractModelManager
 	@Override
 	public boolean visit(IResourceDelta delta) throws CoreException {
 		if (delta != null) {
-
 			final IResource resource = delta.getResource();
-			if (!resource.isDerived()) {
-				switch (resource.getType()) {
-
-					case IResource.ROOT :
-						return true;
-					case IResource.PROJECT : {
-						IProject project = (IProject) resource;
-						if (isInterestingProject(project) && (delta.getKind() == IResourceDelta.ADDED || (delta.getFlags() & IResourceDelta.OPEN) != 0)) {
-							createModel(project, true);
-							return false;
-						} else if (delta.getKind() == IResourceDelta.REMOVED) {
-							removeModel(project);
-							return false;
-						}
-						return true;
+			switch (resource.getType())
+				{
+				case IResource.ROOT:
+					return true;
+				case IResource.PROJECT: {
+					IProject project = (IProject) resource;
+					boolean addedOrOpened = delta.getKind() == IResourceDelta.ADDED
+							|| (delta.getFlags() & IResourceDelta.OPEN) != 0;
+					if (isInterestingProject(project) && addedOrOpened) {
+						createModel(project, true);
+						return false;
+					} else if (delta.getKind() == IResourceDelta.REMOVED) {
+						removeModel(project);
+						return false;
 					}
-					case IResource.FOLDER :
-						return isInterestingFolder((IFolder) resource);
-					case IResource.FILE :
-						// do not process
-						if (isContentChange(delta)) {
-							handleFileDelta(delta);
-							return false;
-						}
+					return true;
 				}
-			}
+				case IResource.FOLDER:
+					return isInterestingFolder((IFolder) resource);
+				case IResource.FILE:
+					// do not process
+					if (isContentChange(delta)) {
+						handleFileDelta(delta);
+						return false;
+					}
+				}
 		}
 		return false;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,7 +35,6 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
@@ -450,8 +449,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager<IPluginMo
 	 */
 	@Override
 	protected void addListeners() {
-		IWorkspace workspace = PDECore.getWorkspace();
-		workspace.addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE);
+		PDECore.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE);
 		// PDE must process the POST_CHANGE events before the Java model
 		// for the PDE container classpath update to proceed smoothly
 		JavaCore.addPreProcessingResourceChangedListener(this, IResourceChangeEvent.POST_CHANGE);
@@ -463,7 +461,6 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager<IPluginMo
 	 */
 	@Override
 	protected void removeListeners() {
-		PDECore.getWorkspace().removeResourceChangeListener(this);
 		JavaCore.removePreProcessingResourceChangedListener(this);
 		if (!fExtensionListeners.isEmpty()) {
 			fExtensionListeners.clear();

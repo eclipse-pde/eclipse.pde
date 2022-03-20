@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2017 IBM Corporation and others.
+ *  Copyright (c) 2006, 2022 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.core;
 import java.util.Map.Entry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
@@ -67,18 +66,6 @@ public class WorkspaceFeatureModelManager extends WorkspaceModelManager<IFeature
 				addChange(model, IModelProviderEvent.MODELS_CHANGED);
 			}
 		}
-	}
-
-	@Override
-	protected void addListeners() {
-		int event = IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.POST_CHANGE;
-		PDECore.getWorkspace().addResourceChangeListener(this, event);
-	}
-
-	@Override
-	protected void removeListeners() {
-		PDECore.getWorkspace().removeResourceChangeListener(this);
-		super.removeListeners();
 	}
 
 	protected IFeatureModel[] getFeatureModels() {
