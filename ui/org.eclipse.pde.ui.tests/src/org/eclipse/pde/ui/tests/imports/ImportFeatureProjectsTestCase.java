@@ -13,11 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.imports;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import org.eclipse.core.runtime.*;
+import java.util.*;
+import java.util.stream.Collectors;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.*;
@@ -59,14 +61,11 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 		fProjectName = name;
 	}
 
-	private void importFeature(IFeatureModel[] models, boolean binary) {
+	private void importFeature(IFeatureModel[] models, boolean binary) throws Exception {
 		FeatureImportOperation op = new FeatureImportOperation(models, binary, null, new ReplaceQuery(PDEPlugin.getActiveWorkbenchShell()));
-		try {
-			PDEPlugin.getWorkspace().run(op, new NullProgressMonitor());
-			if (models.length > 0)
-				lookingAtProject(models[0]);
-		} catch (OperationCanceledException | CoreException e) {
-			fail("Feature import failed...");
+		PDEPlugin.getWorkspace().run(op, new NullProgressMonitor());
+		if (models.length > 0) {
+			lookingAtProject(models[0]);
 		}
 	}
 
@@ -77,18 +76,16 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 			assertTrue("Verifying feature nature...", hasNature(PDE.FEATURE_NATURE));
 			IFeatureInstallHandler installHandler = element.getFeature().getInstallHandler();
 			boolean shouldHaveJavaNature = installHandler != null ? installHandler.getLibrary() != null : false;
-			assertTrue("Verifying java nature...", hasNature(JavaCore.NATURE_ID) == shouldHaveJavaNature);
+			assertEquals("Verifying java nature...", hasNature(JavaCore.NATURE_ID), shouldHaveJavaNature);
 		}
 	}
 
-	private void verifyFeature(boolean isBinary) {
+	private void verifyFeature(boolean isBinary) throws Exception {
 		IFeatureModel[] imported = PDECore.getDefault().getFeatureModelManager().getWorkspaceModels();
 		for (IFeatureModel element : imported) {
 			lookingAtProject(element);
-			try {
-				assertTrue("Verifing feature is binary...", isBinary == PDECore.BINARY_PROJECT_VALUE.equals(getProject().getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY)));
-			} catch (CoreException e) {
-			}
+			assertEquals("Verifing feature is binary...", isBinary, PDECore.BINARY_PROJECT_VALUE
+					.equals(getProject().getPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY)));
 		}
 	}
 
@@ -102,10 +99,11 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 	}
 
 	@Test
-	public void testImportFeature() {
+	public void testImportFeature() throws Exception {
 		IFeatureModel[] model = PDECore.getDefault().getFeatureModelManager().getModels();
-		if (model.length == 0)
+		if (model.length == 0) {
 			return;
+		}
 		boolean binary = false;
 		importFeature(new IFeatureModel[] {model[0]}, binary);
 		verifyProjectExistence();
@@ -114,10 +112,11 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 	}
 
 	@Test
-	public void testImportBinaryFeature() {
+	public void testImportBinaryFeature() throws Exception {
 		IFeatureModel[] model = PDECore.getDefault().getFeatureModelManager().getModels();
-		if (model.length == 0)
+		if (model.length == 0) {
 			return;
+		}
 		boolean binary = true;
 		importFeature(new IFeatureModel[] {model[0]}, binary);
 		verifyProjectExistence();
@@ -126,24 +125,36 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 	}
 
 	@Test
-	public void testImportMulitpleFeatures() {
+	public void testImportMulitpleFeatures() throws Exception {
 		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
-		if (models.length == 0)
+		if (models.length == 0) {
 			return;
+		}
 		boolean binary = false;
 		importFeature(models, binary);
 		verifyProjectExistence();
 		verifyNatures();
 		verifyFeature(binary);
 		IFeatureModel[] imported = PDECore.getDefault().getFeatureModelManager().getWorkspaceModels();
-		assertTrue("Verifing number models imported...", imported.length == models.length);
+		if (imported.length != models.length) {
+			Set<String> expected = toFeatureIds(models);
+			Set<String> actual = toFeatureIds(imported);
+			assertEquals("Imported models differ from expected", expected.toString(), actual.toString());
+		}
+		assertEquals("Verifing number models imported...", models.length, imported.length);
+	}
+
+	private static TreeSet<String> toFeatureIds(IFeatureModel[] models) {
+		return new TreeSet<>(Arrays.asList(models).stream().map(m -> m.getFeature())
+				.filter(x -> x != null).map(f -> f.getId()).collect(Collectors.toSet()));
 	}
 
 	@Test
-	public void testFeaturePlugins() {
+	public void testFeaturePlugins() throws Exception {
 		IFeatureModel[] model = PDECore.getDefault().getFeatureModelManager().getModels();
-		if (model.length == 0)
+		if (model.length == 0) {
 			return;
+		}
 		boolean binary = false;
 		importFeature(new IFeatureModel[] {model[0]}, binary);
 		verifyProjectExistence();
@@ -155,14 +166,16 @@ public class ImportFeatureProjectsTestCase extends NewProjectTestCase {
 		if (plugins != null) {
 			IFeaturePlugin[] importedFeaturePlugins = getFeaturePluginsFrom(model[0].getFeature().getId(), imported);
 			assertNotNull("Verifying feature plugins exist...", importedFeaturePlugins);
-			assertTrue("Verifying total equal feature plugins...", plugins.length == importedFeaturePlugins.length);
+			assertEquals("Verifying total equal feature plugins...", plugins.length, importedFeaturePlugins.length);
 		}
 	}
 
 	private IFeaturePlugin[] getFeaturePluginsFrom(String id, IFeatureModel[] imported) {
-		for (IFeatureModel element : imported)
-			if (element.getFeature().getId().equals(id))
+		for (IFeatureModel element : imported) {
+			if (element.getFeature().getId().equals(id)) {
 				return imported[0].getFeature().getPlugins();
+			}
+		}
 		return null;
 	}
 
