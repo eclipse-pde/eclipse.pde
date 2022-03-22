@@ -18,6 +18,6 @@
     <relativePath>../../</relativePath>
   </parent>
   <artifactId>org.eclipse.pde.ui</artifactId>
-  <version>3.13.400-SNAPSHOT</version>
+  <version>3.13.401-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
