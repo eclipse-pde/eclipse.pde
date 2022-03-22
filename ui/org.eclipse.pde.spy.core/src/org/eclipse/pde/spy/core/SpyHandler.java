@@ -35,6 +35,8 @@ import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 public class SpyHandler {
 	private static final String E4_SPIES_WINDOW = "org.eclipse.pde.spy.core.window";
@@ -93,7 +95,13 @@ public class SpyHandler {
 		// No spy window in main windows for the moment... extract the structure
 		// from the
 		// snippet.
-		MTrimmedWindow tw = (MTrimmedWindow) modelService.findSnippet(appli, E4_SPIES_WINDOW);
+		MTrimmedWindow tws = (MTrimmedWindow) modelService.findSnippet(appli, E4_SPIES_WINDOW);
+		
+		// Fix #579332 : must copy the snippet to keep it in the snippet list if it must be re-created later.
+		EObject eObj = (EObject) tws;
+		MTrimmedWindow tw  = (MTrimmedWindow) EcoreUtil.copy(eObj);
+
+
 		MTrimBar trimBar = tw.getTrimBars().stream().filter(t -> t.getSide() == SideValue.TOP).findFirst().get();
 		MToolBar toolbar = (MToolBar) trimBar.getChildren().get(0);
 
