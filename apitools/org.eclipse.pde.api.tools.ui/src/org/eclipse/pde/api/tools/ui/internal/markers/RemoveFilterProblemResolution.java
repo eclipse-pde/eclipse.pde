@@ -89,63 +89,59 @@ public class RemoveFilterProblemResolution extends WorkbenchMarkerResolution {
 	@Override
 	public void run(IMarker[] markers, IProgressMonitor monitor) {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, getLabel(), (markers.length * 2) + 1);
-		try {
-			IApiProblemFilter filter = fFilter;
-			IApiComponent component = null;
-			HashMap<IApiComponent, Set<IApiProblemFilter>> map = new HashMap<>();
-			Set<IApiProblemFilter> filters = null;
-			HashSet<IResource> resources = new HashSet<>(markers.length);
-			IResource resource = null;
-			// collate the filters by IApiComponent
-			for (IMarker marker : markers) {
-				localmonitor.split(1);
-				filter = ApiMarkerResolutionGenerator.resolveFilter(marker);
-				if (filter == null) {
-					continue;
-				}
-				resource = marker.getResource();
-				component = ApiBaselineManager.getManager().getWorkspaceBaseline().getApiComponent(resource.getProject());
-				if (component instanceof ProjectComponent) {
-					filters = map.get(component);
-					if (filters == null) {
-						filters = new HashSet<>();
-						map.put(component, filters);
-					}
-					filters.add(filter);
-					resources.add(resource);
-				}
+		IApiProblemFilter filter = fFilter;
+		IApiComponent component = null;
+		HashMap<IApiComponent, Set<IApiProblemFilter>> map = new HashMap<>();
+		Set<IApiProblemFilter> filters = null;
+		HashSet<IResource> resources = new HashSet<>(markers.length);
+		IResource resource = null;
+		// collate the filters by IApiComponent
+		for (IMarker marker : markers) {
+			localmonitor.split(1);
+			filter = ApiMarkerResolutionGenerator.resolveFilter(marker);
+			if (filter == null) {
+				continue;
 			}
-			// batch remove the filters
-			localmonitor.setWorkRemaining(map.size());
-			for (Entry<IApiComponent, Set<IApiProblemFilter>> entry : map.entrySet()) {
-				try {
-					component = entry.getKey();
-					filters = entry.getValue();
-					IApiFilterStore store = component.getFilterStore();
-					store.removeFilters(filters.toArray(new IApiProblemFilter[filters.size()]));
-				} catch (CoreException ce) {
-					ApiPlugin.log(ce);
+			resource = marker.getResource();
+			component = ApiBaselineManager.getManager().getWorkspaceBaseline().getApiComponent(resource.getProject());
+			if (component instanceof ProjectComponent) {
+				filters = map.get(component);
+				if (filters == null) {
+					filters = new HashSet<>();
+					map.put(component, filters);
 				}
-				localmonitor.split(1);
+				filters.add(filter);
+				resources.add(resource);
 			}
-			// touch resources to mark them as needing build
-			HashSet<IProject> pjs = new HashSet<>();
-			for (Iterator<IResource> iter = resources.iterator(); iter.hasNext();) {
-				try {
-					resource = iter.next();
-					pjs.add(resource.getProject());
-					(resource).touch(localmonitor.split(1));
-				} catch (CoreException ce) {
-				}
+		}
+		// batch remove the filters
+		localmonitor.setWorkRemaining(map.size());
+		for (Entry<IApiComponent, Set<IApiProblemFilter>> entry : map.entrySet()) {
+			try {
+				component = entry.getKey();
+				filters = entry.getValue();
+				IApiFilterStore store = component.getFilterStore();
+				store.removeFilters(filters.toArray(new IApiProblemFilter[filters.size()]));
+			} catch (CoreException ce) {
+				ApiPlugin.log(ce);
 			}
-			if (pjs.size() > 0) {
-				if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-					IProject[] projects = pjs.toArray(new IProject[map.size()]);
-					Util.getBuildJob(projects, IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
-				}
+			localmonitor.split(1);
+		}
+		// touch resources to mark them as needing build
+		HashSet<IProject> pjs = new HashSet<>();
+		for (Iterator<IResource> iter = resources.iterator(); iter.hasNext();) {
+			try {
+				resource = iter.next();
+				pjs.add(resource.getProject());
+				(resource).touch(localmonitor.split(1));
+			} catch (CoreException ce) {
 			}
-		} finally {
-			localmonitor.done();
+		}
+		if (pjs.size() > 0) {
+			if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
+				IProject[] projects = pjs.toArray(new IProject[map.size()]);
+				Util.getBuildJob(projects, IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
+			}
 		}
 	}
 

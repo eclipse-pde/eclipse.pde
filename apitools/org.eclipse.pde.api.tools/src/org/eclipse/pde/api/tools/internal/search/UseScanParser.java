@@ -305,7 +305,6 @@ public class UseScanParser {
 			}
 		} finally {
 			visitor.endVisitScan();
-			localmonitor.done();
 		}
 	}
 

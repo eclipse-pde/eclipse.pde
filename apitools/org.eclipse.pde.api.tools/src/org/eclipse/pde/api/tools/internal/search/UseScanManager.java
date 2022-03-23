@@ -135,32 +135,24 @@ public class UseScanManager {
 			references = apiComponent.getExternalDependencies();
 		}
 		SubMonitor localmonitor = SubMonitor.convert(monitor, SearchMessages.collecting_external_dependencies, 10);
-		try {
-			ArrayList<String> unavailableMembers = new ArrayList<>();
-			if (apiUseTypes != null && apiUseTypes.length > 0) {
-				for (int i = 0; i < apiUseTypes.length; i++) {
-					if (!references.hasReferencesTo(apiUseTypes[i])) {
-						unavailableMembers.add(apiUseTypes[i]);
-					}
+		ArrayList<String> unavailableMembers = new ArrayList<>();
+		if (apiUseTypes != null && apiUseTypes.length > 0) {
+			for (int i = 0; i < apiUseTypes.length; i++) {
+				if (!references.hasReferencesTo(apiUseTypes[i])) {
+					unavailableMembers.add(apiUseTypes[i]);
 				}
-				if (unavailableMembers.size() > 0) {
-					fetch(apiComponent, unavailableMembers.toArray(new String[unavailableMembers.size()]), references, monitor);
-				}
-				localmonitor.split(1);
-				return references.getExternalDependenciesTo(apiUseTypes);
-			} else {
-				fetch(apiComponent, null, references, localmonitor.split(8)); // full
-																					// build
-																					// has
-																					// been
-																					// triggered
-																					// so
-																					// re-fetch
-				localmonitor.split(1);
-				return references.getAllExternalDependencies();
 			}
-		} finally {
-			localmonitor.done();
+			if (unavailableMembers.size() > 0) {
+				fetch(apiComponent, unavailableMembers.toArray(new String[unavailableMembers.size()]), references,
+						monitor);
+			}
+			localmonitor.split(1);
+			return references.getExternalDependenciesTo(apiUseTypes);
+		} else {
+			// full build has been triggered so re-fetch
+			fetch(apiComponent, null, references, localmonitor.split(8));
+			localmonitor.split(1);
+			return references.getAllExternalDependencies();
 		}
 	}
 

@@ -306,8 +306,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (ApiPlugin.DEBUG_API_ANALYZER) {
 				System.out.println("Trapped OperationCanceledException"); //$NON-NLS-1$
 			}
-		} finally {
-			SubMonitor.done(monitor);
 		}
 	}
 
@@ -407,59 +405,69 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			return;
 		}
 		SubMonitor localmonitor = SubMonitor.convert(monitor, BuilderMessages.checking_external_dependencies, 10);
-		IReferenceDescriptor[] externalDependencies = UseScanManager.getInstance().getExternalDependenciesFor(apiComponent, apiUseTypes, localmonitor.split(10));
-		try {
-			if (externalDependencies != null) {
-				localmonitor.setWorkRemaining(externalDependencies.length);
-				HashMap<String, IApiProblem> problems = new HashMap<>();
-				for (IReferenceDescriptor externalDependency : externalDependencies) {
-					localmonitor.split(1);
-					Reference externalReference = null;
-					IApiTypeRoot type = null;
-					IMemberDescriptor referencedMember = externalDependency.getReferencedMember();
-					IReferenceTypeDescriptor referenceMemberType = referencedMember.getEnclosingType();
-					if (referenceMemberType != null) {
-						type = apiComponent.findTypeRoot(referenceMemberType.getQualifiedName());
-					}
-					switch (referencedMember.getElementType()) {
-						case IElementDescriptor.TYPE: {
-							referenceMemberType = (IReferenceTypeDescriptor) referencedMember;
-							type = apiComponent.findTypeRoot(referenceMemberType.getQualifiedName());
-							if (type != null) {
-								externalReference = Reference.typeReference(type.getStructure(), referenceMemberType.getQualifiedName(), externalDependency.getReferenceKind());
-							}
-							break;
-						}
-						case IElementDescriptor.METHOD: {
-							if (type != null) {
-								externalReference = Reference.methodReference(type.getStructure(), referenceMemberType.getQualifiedName(), referencedMember.getName(), ((IMethodDescriptor) referencedMember).getSignature(), externalDependency.getReferenceKind());
-							}
-							break;
-						}
-						case IElementDescriptor.FIELD: {
-							if (type != null) {
-								externalReference = Reference.fieldReference(type.getStructure(), referenceMemberType.getQualifiedName(), referencedMember.getName(), externalDependency.getReferenceKind());
-							}
-							break;
-						}
-						default:
-							break;
-					}
-					if (type == null) {
-						createExternalDependenciesProblem(problems, externalDependency, referenceMemberType.getQualifiedName(), referencedMember, externalDependency.getReferencedMember().getElementType(), IApiProblem.API_USE_SCAN_DELETED);
-					} else {
-						externalReference.resolve();
-						if (externalReference.getResolvedReference() == null) {
-							createExternalDependenciesProblem(problems, externalDependency, referenceMemberType.getQualifiedName(), referencedMember, externalDependency.getReferencedMember().getElementType(), IApiProblem.API_USE_SCAN_UNRESOLVED);
-						}
-					}
+		IReferenceDescriptor[] externalDependencies = UseScanManager.getInstance()
+				.getExternalDependenciesFor(apiComponent, apiUseTypes, localmonitor.split(10));
+		if (externalDependencies != null) {
+			localmonitor.setWorkRemaining(externalDependencies.length);
+			HashMap<String, IApiProblem> problems = new HashMap<>();
+			for (IReferenceDescriptor externalDependency : externalDependencies) {
+				localmonitor.split(1);
+				Reference externalReference = null;
+				IApiTypeRoot type = null;
+				IMemberDescriptor referencedMember = externalDependency.getReferencedMember();
+				IReferenceTypeDescriptor referenceMemberType = referencedMember.getEnclosingType();
+				if (referenceMemberType != null) {
+					type = apiComponent.findTypeRoot(referenceMemberType.getQualifiedName());
 				}
-				for (IApiProblem apiProblem : problems.values()) {
-					addProblem(apiProblem);
+				switch (referencedMember.getElementType())
+					{
+					case IElementDescriptor.TYPE: {
+						referenceMemberType = (IReferenceTypeDescriptor) referencedMember;
+						type = apiComponent.findTypeRoot(referenceMemberType.getQualifiedName());
+						if (type != null) {
+							externalReference = Reference.typeReference(type.getStructure(),
+									referenceMemberType.getQualifiedName(), externalDependency.getReferenceKind());
+						}
+						break;
+					}
+					case IElementDescriptor.METHOD: {
+						if (type != null) {
+							externalReference = Reference.methodReference(type.getStructure(),
+									referenceMemberType.getQualifiedName(), referencedMember.getName(),
+									((IMethodDescriptor) referencedMember).getSignature(),
+									externalDependency.getReferenceKind());
+						}
+						break;
+					}
+					case IElementDescriptor.FIELD: {
+						if (type != null) {
+							externalReference = Reference.fieldReference(type.getStructure(),
+									referenceMemberType.getQualifiedName(), referencedMember.getName(),
+									externalDependency.getReferenceKind());
+						}
+						break;
+					}
+					default:
+						break;
+					}
+				if (type == null) {
+					createExternalDependenciesProblem(problems, externalDependency,
+							referenceMemberType.getQualifiedName(), referencedMember,
+							externalDependency.getReferencedMember().getElementType(),
+							IApiProblem.API_USE_SCAN_DELETED);
+				} else {
+					externalReference.resolve();
+					if (externalReference.getResolvedReference() == null) {
+						createExternalDependenciesProblem(problems, externalDependency,
+								referenceMemberType.getQualifiedName(), referencedMember,
+								externalDependency.getReferencedMember().getElementType(),
+								IApiProblem.API_USE_SCAN_UNRESOLVED);
+					}
 				}
 			}
-		} finally {
-			localmonitor.done();
+			for (IApiProblem apiProblem : problems.values()) {
+				addProblem(apiProblem);
+			}
 		}
 	}
 

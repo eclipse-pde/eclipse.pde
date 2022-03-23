@@ -191,50 +191,50 @@ public final class ApiSearchEngine {
 	private void searchReferences(IApiSearchRequestor requestor, IApiElement element, IApiSearchReporter reporter, IProgressMonitor monitor) throws CoreException {
 		List<IReference> refs = null;
 		SubMonitor localmonitor = SubMonitor.convert(monitor, 3);
-		try {
-			switch (element.getType()) {
-				case IApiElement.TYPE: {
-					if (localmonitor.isCanceled()) {
-						reporter.reportResults(element, NO_REFERENCES);
-					}
-					IApiType type = (IApiType) element;
-					refs = acceptReferences(requestor, type, getResolvedReferences(requestor, type, localmonitor.split(1)), localmonitor.split(1));
-					reporter.reportResults(element, refs.toArray(new IReference[refs.size()]));
-					break;
+		switch (element.getType())
+			{
+			case IApiElement.TYPE: {
+				if (localmonitor.isCanceled()) {
+					reporter.reportResults(element, NO_REFERENCES);
 				}
-				case IApiElement.COMPONENT: {
-					if (localmonitor.isCanceled()) {
-						reporter.reportResults(element, NO_REFERENCES);
-					}
-					ReferenceExtractor visitor = new ReferenceExtractor(requestor, reporter, element, localmonitor.split(1));
-					IApiComponent comp = (IApiComponent) element;
-					comp.accept(visitor);
-					comp.close();
-					localmonitor.split(1);
-					break;
-				}
-				case IApiElement.FIELD:
-				case IApiElement.METHOD: {
-					if (localmonitor.isCanceled()) {
-						reporter.reportResults(element, NO_REFERENCES);
-					}
-					IApiMember member = (IApiMember) element;
-					IApiType type = member.getEnclosingType();
-					if (type != null) {
-						refs = acceptReferences(requestor, type, getResolvedReferences(requestor, type, localmonitor.split(1)), localmonitor.split(1));
-					}
-					if (refs != null) {
-						reporter.reportResults(element, refs.toArray(new IReference[refs.size()]));
-					}
-					break;
-				}
-				default:
-					break;
+				IApiType type = (IApiType) element;
+				refs = acceptReferences(requestor, type, getResolvedReferences(requestor, type, localmonitor.split(1)),
+						localmonitor.split(1));
+				reporter.reportResults(element, refs.toArray(new IReference[refs.size()]));
+				break;
 			}
-			localmonitor.split(1);
-		} finally {
-			localmonitor.done();
-		}
+			case IApiElement.COMPONENT: {
+				if (localmonitor.isCanceled()) {
+					reporter.reportResults(element, NO_REFERENCES);
+				}
+				ReferenceExtractor visitor = new ReferenceExtractor(requestor, reporter, element,
+						localmonitor.split(1));
+				IApiComponent comp = (IApiComponent) element;
+				comp.accept(visitor);
+				comp.close();
+				localmonitor.split(1);
+				break;
+			}
+			case IApiElement.FIELD:
+			case IApiElement.METHOD: {
+				if (localmonitor.isCanceled()) {
+					reporter.reportResults(element, NO_REFERENCES);
+				}
+				IApiMember member = (IApiMember) element;
+				IApiType type = member.getEnclosingType();
+				if (type != null) {
+					refs = acceptReferences(requestor, type,
+							getResolvedReferences(requestor, type, localmonitor.split(1)), localmonitor.split(1));
+				}
+				if (refs != null) {
+					reporter.reportResults(element, refs.toArray(new IReference[refs.size()]));
+				}
+				break;
+			}
+			default:
+				break;
+			}
+		localmonitor.split(1);
 	}
 
 	/**
@@ -260,44 +260,42 @@ public final class ApiSearchEngine {
 		fRequestorContext = computeContext(requestor);
 		IApiElement[] scopeelements = scope.getApiElements();
 		SubMonitor localmonitor = SubMonitor.convert(monitor, MessageFormat.format(SearchMessages.ApiSearchEngine_searching_projects, fRequestorContext), scopeelements.length * 2 + 1);
-		try {
-			long start = System.currentTimeMillis();
-			long loopstart = 0;
-			String taskname = null;
-			MultiStatus mstatus = null;
-			for (int i = 0; i < scopeelements.length; i++) {
-				try {
-					taskname = MessageFormat.format(SearchMessages.ApiSearchEngine_searching_project, scopeelements[i].getApiComponent().getSymbolicName(), fRequestorContext);
-					localmonitor.setTaskName(taskname);
-					if (ApiPlugin.DEBUG_SEARCH_ENGINE) {
-						loopstart = System.currentTimeMillis();
-						System.out.println("Searching " + scopeelements[i].getApiComponent().getSymbolicName() + "..."); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-					searchReferences(requestor, scopeelements[i], reporter, localmonitor.split(1));
-					localmonitor.setTaskName(taskname);
-					if (localmonitor.isCanceled()) {
-						reporter.reportResults(scopeelements[i], NO_REFERENCES);
-						return;
-					}
-					localmonitor.worked(1);
-					if (ApiPlugin.DEBUG_SEARCH_ENGINE) {
-						System.out.println(Math.round((((float) (i + 1)) / scopeelements.length) * 100) + "% done in " + (System.currentTimeMillis() - loopstart) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-				} catch (CoreException ce) {
-					if (mstatus == null) {
-						mstatus = new MultiStatus(ApiPlugin.PLUGIN_ID, IStatus.ERROR, null, null);
-					}
-					mstatus.add(Status.error(ce.getMessage(), ce));
+		long start = System.currentTimeMillis();
+		long loopstart = 0;
+		String taskname = null;
+		MultiStatus mstatus = null;
+		for (int i = 0; i < scopeelements.length; i++) {
+			try {
+				taskname = MessageFormat.format(SearchMessages.ApiSearchEngine_searching_project,
+						scopeelements[i].getApiComponent().getSymbolicName(), fRequestorContext);
+				localmonitor.setTaskName(taskname);
+				if (ApiPlugin.DEBUG_SEARCH_ENGINE) {
+					loopstart = System.currentTimeMillis();
+					System.out.println("Searching " + scopeelements[i].getApiComponent().getSymbolicName() + "..."); //$NON-NLS-1$ //$NON-NLS-2$
 				}
+				searchReferences(requestor, scopeelements[i], reporter, localmonitor.split(1));
+				localmonitor.setTaskName(taskname);
+				if (localmonitor.isCanceled()) {
+					reporter.reportResults(scopeelements[i], NO_REFERENCES);
+					return;
+				}
+				localmonitor.worked(1);
+				if (ApiPlugin.DEBUG_SEARCH_ENGINE) {
+					System.out.println(Math.round((((float) (i + 1)) / scopeelements.length) * 100) + "% done in " //$NON-NLS-1$
+							+ (System.currentTimeMillis() - loopstart) + " ms"); //$NON-NLS-1$
+				}
+			} catch (CoreException ce) {
+				if (mstatus == null) {
+					mstatus = new MultiStatus(ApiPlugin.PLUGIN_ID, IStatus.ERROR, null, null);
+				}
+				mstatus.add(Status.error(ce.getMessage(), ce));
 			}
-			if (ApiPlugin.DEBUG_SEARCH_ENGINE) {
-				System.out.println("Total Search Time: " + ((System.currentTimeMillis() - start) / 1000) + " seconds"); //$NON-NLS-1$//$NON-NLS-2$
-			}
-			if (mstatus != null) {
-				throw new CoreException(mstatus);
-			}
-		} finally {
-			localmonitor.done();
+		}
+		if (ApiPlugin.DEBUG_SEARCH_ENGINE) {
+			System.out.println("Total Search Time: " + ((System.currentTimeMillis() - start) / 1000) + " seconds"); //$NON-NLS-1$//$NON-NLS-2$
+		}
+		if (mstatus != null) {
+			throw new CoreException(mstatus);
 		}
 	}
 

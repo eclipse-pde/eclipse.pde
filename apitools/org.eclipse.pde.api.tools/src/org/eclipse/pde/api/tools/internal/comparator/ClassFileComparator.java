@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -1001,7 +1000,6 @@ public class ClassFileComparator {
 	 * @return the changes in the type descriptor or <code>null</code>
 	 */
 	public IDelta getDelta(IProgressMonitor monitor) {
-		SubMonitor localmonitor = SubMonitor.convert(monitor, 10);
 		try {
 			this.delta = createDelta();
 			// check visibility
@@ -1280,8 +1278,6 @@ public class ClassFileComparator {
 		} catch (CoreException e) {
 			reportStatus(e);
 			return null;
-		} finally {
-			localmonitor.done();
 		}
 	}
 

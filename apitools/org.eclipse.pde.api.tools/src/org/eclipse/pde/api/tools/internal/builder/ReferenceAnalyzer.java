@@ -215,7 +215,6 @@ public class ReferenceAnalyzer {
 		if (!fStatus.isOK()) {
 			throw new CoreException(fStatus);
 		}
-		localMonitor.done();
 		if (ApiPlugin.DEBUG_REFERENCE_ANALYZER) {
 			System.out.println("Reference Analyzer: extracted " + fReferences.size() + " references in " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}

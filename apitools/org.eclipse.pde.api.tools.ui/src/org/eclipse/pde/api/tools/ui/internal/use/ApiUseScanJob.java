@@ -184,9 +184,7 @@ public class ApiUseScanJob extends Job {
 
 		} catch (CoreException e) {
 			return e.getStatus();
-		} finally {
-			localmonitor.done();
-		}
+		} 
 		return Status.OK_STATUS;
 	}
 

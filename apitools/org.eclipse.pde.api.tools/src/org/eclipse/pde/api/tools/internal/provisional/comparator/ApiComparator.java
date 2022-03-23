@@ -105,65 +105,66 @@ public class ApiComparator {
 	 */
 	public static IDelta compare(final IApiBaseline referenceBaseline, final IApiBaseline baseline, final int visibilityModifiers, final boolean force, final IProgressMonitor monitor) {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, 2);
-		try {
-			if (referenceBaseline == null || baseline == null) {
-				throw new IllegalArgumentException("None of the baselines must be null"); //$NON-NLS-1$
-			}
-			IApiComponent[] apiComponents = referenceBaseline.getApiComponents();
-			IApiComponent[] apiComponents2 = baseline.getApiComponents();
-			Set<String> apiComponentsIds = new HashSet<>();
-			final Delta globalDelta = new Delta();
-			SubMonitor apiLoopMonitor = localmonitor.split(1).setWorkRemaining(apiComponents.length);
-			for (IApiComponent apiComponentMainLoop : apiComponents) {
-				apiLoopMonitor.split(1);
-				IApiComponent apiComponent = apiComponentMainLoop;
-				if (!apiComponent.isSystemComponent()) {
-					String id = apiComponent.getSymbolicName();
-					IApiComponent apiComponentBaseline = baseline.getApiComponent(id);
-					IDelta delta = null;
-					if (apiComponentBaseline == null) {
-						// report removal of an API component
-						delta = new Delta(null, IDelta.API_BASELINE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_COMPONENT, null, id, id);
-					} else {
-						apiComponentsIds.add(id);
-						String versionString = apiComponent.getVersion();
-						String versionString2 = apiComponentBaseline.getVersion();
-						IDelta bundleVersionChangesDelta = checkBundleVersionChanges(apiComponentBaseline, id, versionString, versionString2);
-						if (bundleVersionChangesDelta != null) {
-							globalDelta.add(bundleVersionChangesDelta);
-						}
-						if (!versionString.equals(versionString2) || force) {
-							long time = System.currentTimeMillis();
-							try {
-								delta = compare(apiComponent, apiComponentBaseline, referenceBaseline, baseline, visibilityModifiers, localmonitor.split(1));
-							} finally {
-								if (ApiPlugin.DEBUG_API_COMPARATOR) {
-									System.out.println("Time spent for " + id + " " + versionString + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-								}
+		if (referenceBaseline == null || baseline == null) {
+			throw new IllegalArgumentException("None of the baselines must be null"); //$NON-NLS-1$
+		}
+		IApiComponent[] apiComponents = referenceBaseline.getApiComponents();
+		IApiComponent[] apiComponents2 = baseline.getApiComponents();
+		Set<String> apiComponentsIds = new HashSet<>();
+		final Delta globalDelta = new Delta();
+		SubMonitor apiLoopMonitor = localmonitor.split(1).setWorkRemaining(apiComponents.length);
+		for (IApiComponent apiComponentMainLoop : apiComponents) {
+			apiLoopMonitor.split(1);
+			IApiComponent apiComponent = apiComponentMainLoop;
+			if (!apiComponent.isSystemComponent()) {
+				String id = apiComponent.getSymbolicName();
+				IApiComponent apiComponentBaseline = baseline.getApiComponent(id);
+				IDelta delta = null;
+				if (apiComponentBaseline == null) {
+					// report removal of an API component
+					delta = new Delta(null, IDelta.API_BASELINE_ELEMENT_TYPE, IDelta.REMOVED, IDelta.API_COMPONENT,
+							null, id, id);
+				} else {
+					apiComponentsIds.add(id);
+					String versionString = apiComponent.getVersion();
+					String versionString2 = apiComponentBaseline.getVersion();
+					IDelta bundleVersionChangesDelta = checkBundleVersionChanges(apiComponentBaseline, id,
+							versionString, versionString2);
+					if (bundleVersionChangesDelta != null) {
+						globalDelta.add(bundleVersionChangesDelta);
+					}
+					if (!versionString.equals(versionString2) || force) {
+						long time = System.currentTimeMillis();
+						try {
+							delta = compare(apiComponent, apiComponentBaseline, referenceBaseline, baseline,
+									visibilityModifiers, localmonitor.split(1));
+						} finally {
+							if (ApiPlugin.DEBUG_API_COMPARATOR) {
+								System.out.println("Time spent for " + id + " " + versionString + " : " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+										+ (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$
 							}
 						}
 					}
-					if (delta != null && delta != NO_DELTA) {
-						globalDelta.add(delta);
-					}
+				}
+				if (delta != null && delta != NO_DELTA) {
+					globalDelta.add(delta);
 				}
 			}
-			SubMonitor elementLoopMonitor = localmonitor.split(1).setWorkRemaining(apiComponents2.length);
-			for (IApiComponent element : apiComponents2) {
-				elementLoopMonitor.split(1);
-				IApiComponent apiComponent = element;
-				if (!apiComponent.isSystemComponent()) {
-					String id = apiComponent.getSymbolicName();
-					if (!apiComponentsIds.contains(id)) {
-						// addition of an API component
-						globalDelta.add(new Delta(null, IDelta.API_BASELINE_ELEMENT_TYPE, IDelta.ADDED, IDelta.API_COMPONENT, null, id, id));
-					}
-				}
-			}
-			return globalDelta.isEmpty() ? NO_DELTA : globalDelta;
-		} finally {
-			SubMonitor.done(monitor);
 		}
+		SubMonitor elementLoopMonitor = localmonitor.split(1).setWorkRemaining(apiComponents2.length);
+		for (IApiComponent element : apiComponents2) {
+			elementLoopMonitor.split(1);
+			IApiComponent apiComponent = element;
+			if (!apiComponent.isSystemComponent()) {
+				String id = apiComponent.getSymbolicName();
+				if (!apiComponentsIds.contains(id)) {
+					// addition of an API component
+					globalDelta.add(new Delta(null, IDelta.API_BASELINE_ELEMENT_TYPE, IDelta.ADDED,
+							IDelta.API_COMPONENT, null, id, id));
+				}
+			}
+		}
+		return globalDelta.isEmpty() ? NO_DELTA : globalDelta;
 	}
 
 	/**
@@ -190,41 +191,39 @@ public class ApiComparator {
 	 */
 	public static IDelta compare(final IApiComponent component, final IApiBaseline referenceBaseline, final int visibilityModifiers, final boolean force, final IProgressMonitor monitor) {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, 2);
-		try {
-			if (component == null) {
-				throw new IllegalArgumentException("The composent cannot be null"); //$NON-NLS-1$
-			}
-			if (referenceBaseline == null) {
-				throw new IllegalArgumentException("The reference baseline cannot be null"); //$NON-NLS-1$
-			}
-			localmonitor.split(1);
-			IDelta delta = null;
-			if (!component.isSystemComponent()) {
-				String id = component.getSymbolicName();
-				IApiComponent apiComponent2 = referenceBaseline.getApiComponent(id);
-				if (apiComponent2 == null) {
-					// report addition of an API component
-					delta = new Delta(null, IDelta.API_BASELINE_ELEMENT_TYPE, IDelta.ADDED, IDelta.API_COMPONENT, null, id, id);
-				} else {
-					if (!component.getVersion().equals(apiComponent2.getVersion()) || force) {
-						long time = System.currentTimeMillis();
-						try {
-							delta = compare(apiComponent2, component, visibilityModifiers, localmonitor.split(1));
-						} finally {
-							if (ApiPlugin.DEBUG_API_COMPARATOR) {
-								System.out.println("Time spent for " + id + " " + component.getVersion() + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-							}
+		if (component == null) {
+			throw new IllegalArgumentException("The composent cannot be null"); //$NON-NLS-1$
+		}
+		if (referenceBaseline == null) {
+			throw new IllegalArgumentException("The reference baseline cannot be null"); //$NON-NLS-1$
+		}
+		localmonitor.split(1);
+		IDelta delta = null;
+		if (!component.isSystemComponent()) {
+			String id = component.getSymbolicName();
+			IApiComponent apiComponent2 = referenceBaseline.getApiComponent(id);
+			if (apiComponent2 == null) {
+				// report addition of an API component
+				delta = new Delta(null, IDelta.API_BASELINE_ELEMENT_TYPE, IDelta.ADDED, IDelta.API_COMPONENT, null, id,
+						id);
+			} else {
+				if (!component.getVersion().equals(apiComponent2.getVersion()) || force) {
+					long time = System.currentTimeMillis();
+					try {
+						delta = compare(apiComponent2, component, visibilityModifiers, localmonitor.split(1));
+					} finally {
+						if (ApiPlugin.DEBUG_API_COMPARATOR) {
+							System.out.println("Time spent for " + id + " " + component.getVersion() + " : " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+									+ (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$
 						}
 					}
 				}
-				if (delta != null && delta != NO_DELTA) {
-					return delta;
-				}
 			}
-			return NO_DELTA;
-		} finally {
-			localmonitor.done();
+			if (delta != null && delta != NO_DELTA) {
+				return delta;
+			}
 		}
+		return NO_DELTA;
 	}
 
 	/**
@@ -438,8 +437,6 @@ public class ApiComparator {
 			return delta;
 		} catch (CoreException e) {
 			return null;
-		} finally {
-			localmonitor.done();
 		}
 	}
 
@@ -550,50 +547,48 @@ public class ApiComparator {
 			throw new IllegalArgumentException("None of the scope or the baseline must be null"); //$NON-NLS-1$
 		}
 		SubMonitor localmonitor = SubMonitor.convert(monitor, 2);
-		try {
-			final Set<IDelta> deltas = new HashSet<>();
-			final CompareApiScopeVisitor visitor = new CompareApiScopeVisitor(deltas, baseline, force, visibilityModifiers, continueOnResolverError, localmonitor.split(1));
-			scope.accept(visitor);
+		final Set<IDelta> deltas = new HashSet<>();
+		final CompareApiScopeVisitor visitor = new CompareApiScopeVisitor(deltas, baseline, force, visibilityModifiers,
+				continueOnResolverError, localmonitor.split(1));
+		scope.accept(visitor);
 
-			// If set to continue on error, return whatever deltas were
-			// collected
-			if (!continueOnResolverError && visitor.containsError()) {
-				return null;
-			}
-			if (deltas.isEmpty()) {
-				return NO_DELTA;
-			}
-			final Delta globalDelta = new Delta();
-			for (IDelta iDelta : deltas) {
-				iDelta.accept(new DeltaVisitor() {
-					@Override
-					public void endVisit(IDelta localDelta) {
-						if (localDelta.getChildren().length == 0) {
-							switch (localDelta.getElementType()) {
-								case IDelta.ANNOTATION_ELEMENT_TYPE:
-								case IDelta.ENUM_ELEMENT_TYPE:
-								case IDelta.CONSTRUCTOR_ELEMENT_TYPE:
-								case IDelta.METHOD_ELEMENT_TYPE:
-								case IDelta.INTERFACE_ELEMENT_TYPE:
-								case IDelta.CLASS_ELEMENT_TYPE:
-								case IDelta.FIELD_ELEMENT_TYPE:
-								case IDelta.API_COMPONENT_ELEMENT_TYPE:
-								case IDelta.API_BASELINE_ELEMENT_TYPE: {
-									globalDelta.add(localDelta);
-									break;
-								}
-								default:
-									break;
-							}
-						}
-					}
-				});
-			}
-			localmonitor.split(1);
-			return globalDelta.isEmpty() ? NO_DELTA : globalDelta;
-		} finally {
-			localmonitor.done();
+		// If set to continue on error, return whatever deltas were
+		// collected
+		if (!continueOnResolverError && visitor.containsError()) {
+			return null;
 		}
+		if (deltas.isEmpty()) {
+			return NO_DELTA;
+		}
+		final Delta globalDelta = new Delta();
+		for (IDelta iDelta : deltas) {
+			iDelta.accept(new DeltaVisitor() {
+				@Override
+				public void endVisit(IDelta localDelta) {
+					if (localDelta.getChildren().length == 0) {
+						switch (localDelta.getElementType())
+							{
+							case IDelta.ANNOTATION_ELEMENT_TYPE:
+							case IDelta.ENUM_ELEMENT_TYPE:
+							case IDelta.CONSTRUCTOR_ELEMENT_TYPE:
+							case IDelta.METHOD_ELEMENT_TYPE:
+							case IDelta.INTERFACE_ELEMENT_TYPE:
+							case IDelta.CLASS_ELEMENT_TYPE:
+							case IDelta.FIELD_ELEMENT_TYPE:
+							case IDelta.API_COMPONENT_ELEMENT_TYPE:
+							case IDelta.API_BASELINE_ELEMENT_TYPE: {
+								globalDelta.add(localDelta);
+								break;
+							}
+							default:
+								break;
+							}
+					}
+				}
+			});
+		}
+		localmonitor.split(1);
+		return globalDelta.isEmpty() ? NO_DELTA : globalDelta;
 	}
 
 	/**

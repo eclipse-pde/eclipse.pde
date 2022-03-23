@@ -691,71 +691,65 @@ public class UseReportConverter extends HTMLConvertor {
 			return;
 		}
 		SubMonitor localmonitor = SubMonitor.convert(monitor, SearchMessages.UseReportConverter_preparing_report_metadata, 11);
-		try {
-			localmonitor.setTaskName(SearchMessages.UseReportConverter_preparing_html_root);
-			localmonitor.split(1);
-			File htmlRoot = new File(getHtmlLocation());
-			if (!htmlRoot.exists()) {
-				if (!htmlRoot.mkdirs()) {
-					throw new Exception(NLS.bind(SearchMessages.could_not_create_file, getHtmlLocation()));
-				}
-			} else {
-				htmlRoot.mkdirs();
+		localmonitor.setTaskName(SearchMessages.UseReportConverter_preparing_html_root);
+		localmonitor.split(1);
+		File htmlRoot = new File(getHtmlLocation());
+		if (!htmlRoot.exists()) {
+			if (!htmlRoot.mkdirs()) {
+				throw new Exception(NLS.bind(SearchMessages.could_not_create_file, getHtmlLocation()));
 			}
-			localmonitor.setTaskName(SearchMessages.UseReportConverter_preparing_xml_root);
-			localmonitor.split(1);
-			if (getXmlLocation() == null) {
-				throw new Exception(SearchMessages.missing_xml_files_location);
-			}
-			File lreportsRoot = getReportsRoot();
-			if (!lreportsRoot.exists() || !lreportsRoot.isDirectory()) {
-				throw new Exception(NLS.bind(SearchMessages.invalid_directory_name, getXmlLocation()));
-			}
+		} else {
+			htmlRoot.mkdirs();
+		}
+		localmonitor.setTaskName(SearchMessages.UseReportConverter_preparing_xml_root);
+		localmonitor.split(1);
+		if (getXmlLocation() == null) {
+			throw new Exception(SearchMessages.missing_xml_files_location);
+		}
+		File lreportsRoot = getReportsRoot();
+		if (!lreportsRoot.exists() || !lreportsRoot.isDirectory()) {
+			throw new Exception(NLS.bind(SearchMessages.invalid_directory_name, getXmlLocation()));
+		}
 
-			localmonitor.setTaskName(SearchMessages.UseReportConverter_preparing_xslt_file);
-			localmonitor.split(1);
-			File xsltFile = null;
-			if (xslt != null) {
-				// we will use the default XSLT transform from the ant jar when
-				// this is null
-				xsltFile = new File(xslt);
-				if (!xsltFile.exists() || !xsltFile.isFile()) {
-					throw new Exception(SearchMessages.UseReportConverter_xslt_file_not_valid);
-				}
-			}
-			long start = 0;
-			if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
-				start = System.currentTimeMillis();
-			}
-			localmonitor.setTaskName(SearchMessages.UseReportConverter_writing_not_searched);
-			this.hasmissing = writeMissingBundlesPage(htmlRoot);
-			writeNotSearchedPage(htmlRoot);
-			localmonitor.split(1);
-			if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
-				System.out.println("done in: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-				System.out.println("Parsing use scan..."); //$NON-NLS-1$
-				start = System.currentTimeMillis();
-			}
-			localmonitor.setTaskName(SearchMessages.UseReportConverter_parsing_use_scan);
-			List<?> result = parse(localmonitor.split(5));
-			localmonitor.split(1);
-			if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
-				System.out.println("done in: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-				System.out.println("Sorting reports and writing index..."); //$NON-NLS-1$
-				start = System.currentTimeMillis();
-			}
-			localmonitor.setTaskName(SearchMessages.UseReportConverter_writing_root_index);
-			writeIndexPage(result);
-			localmonitor.split(1);
-			if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
-				System.out.println("done in: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			writeMetaPage(htmlRoot);
-		} finally {
-			if (localmonitor != null) {
-				localmonitor.done();
+		localmonitor.setTaskName(SearchMessages.UseReportConverter_preparing_xslt_file);
+		localmonitor.split(1);
+		File xsltFile = null;
+		if (xslt != null) {
+			// we will use the default XSLT transform from the ant jar when
+			// this is null
+			xsltFile = new File(xslt);
+			if (!xsltFile.exists() || !xsltFile.isFile()) {
+				throw new Exception(SearchMessages.UseReportConverter_xslt_file_not_valid);
 			}
 		}
+		long start = 0;
+		if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
+			start = System.currentTimeMillis();
+		}
+		localmonitor.setTaskName(SearchMessages.UseReportConverter_writing_not_searched);
+		this.hasmissing = writeMissingBundlesPage(htmlRoot);
+		writeNotSearchedPage(htmlRoot);
+		localmonitor.split(1);
+		if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
+			System.out.println("done in: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("Parsing use scan..."); //$NON-NLS-1$
+			start = System.currentTimeMillis();
+		}
+		localmonitor.setTaskName(SearchMessages.UseReportConverter_parsing_use_scan);
+		List<?> result = parse(localmonitor.split(5));
+		localmonitor.split(1);
+		if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
+			System.out.println("done in: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("Sorting reports and writing index..."); //$NON-NLS-1$
+			start = System.currentTimeMillis();
+		}
+		localmonitor.setTaskName(SearchMessages.UseReportConverter_writing_root_index);
+		writeIndexPage(result);
+		localmonitor.split(1);
+		if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
+			System.out.println("done in: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		writeMetaPage(htmlRoot);
 	}
 
 	protected List<?> parse(IProgressMonitor monitor) throws Exception {

@@ -540,7 +540,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					this.buildstate = null;
 					localMonitor.split(1);
 				}
-				SubMonitor.done(monitor);
 			} catch (OperationCanceledException oce) {
 				// do nothing, but don't forward it
 				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
@@ -1225,7 +1224,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			localmonitor.split(1);
 		} finally {
 			BuildState.setLastBuiltState(this.currentproject, null);
-			localmonitor.done();
 		}
 	}
 
