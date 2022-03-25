@@ -144,13 +144,13 @@ public class UseScanManager {
 			}
 			if (unavailableMembers.size() > 0) {
 				fetch(apiComponent, unavailableMembers.toArray(new String[unavailableMembers.size()]), references,
-						monitor);
+						localmonitor.split(9));
 			}
-			localmonitor.split(1);
+			localmonitor.setWorkRemaining(1).split(1);
 			return references.getExternalDependenciesTo(apiUseTypes);
 		} else {
 			// full build has been triggered so re-fetch
-			fetch(apiComponent, null, references, localmonitor.split(8));
+			fetch(apiComponent, null, references, localmonitor.split(9));
 			localmonitor.split(1);
 			return references.getAllExternalDependencies();
 		}
