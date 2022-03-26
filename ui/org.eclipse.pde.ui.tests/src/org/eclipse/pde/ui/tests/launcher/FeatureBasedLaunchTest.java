@@ -17,9 +17,11 @@
 package org.eclipse.pde.ui.tests.launcher;
 
 import static java.util.Collections.emptySet;
+import static java.util.Map.ofEntries;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.eclipse.pde.internal.core.ICoreConstants.DEFAULT_VERSION;
 import static org.eclipse.pde.ui.tests.util.ProjectUtils.createPluginProject;
+import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.bundle;
 
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -89,7 +91,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_featureSelectionForLocationWorkspace_latestWorkspaceFeature() throws Throwable {
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.b", "1.0.0"), //
 				bundle("plugin.c", "1.0.0"), //
@@ -123,7 +125,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 	@Test
 	public void testGetMergedBundleMap_featureSelectionForLocationWorkspaceButNoWorkspaceFeaturePresent_latestExternalFeature()
 			throws Throwable {
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.b", "1.0.0"), //
 				bundle("plugin.c", "1.0.0"));
@@ -151,7 +153,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_featureSelectionForLocationExternal_latestExternalFeature() throws Throwable {
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.b", "1.0.0"), //
 				bundle("plugin.c", "1.0.0"), //
@@ -185,7 +187,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 	@Test
 	public void testGetMergedBundleMap_featureSelectionForLocationExternalButNoExternalFeaturePresent_noFeature()
 			throws Throwable {
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.a", "1.0.0"));
 
 		createFeatureProject("feature.a", "2.0.0", f -> {
@@ -211,7 +213,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 		createPluginProject("plugin.a", "1.0.1");
 		createPluginProject("plugin.b", "1.0.0");
 
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.a", "2.0.0"), //
 				bundle("plugin.a", "2.0.1"), //
 				bundle("plugin.c", "1.0.0"));
@@ -280,7 +282,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 	public void testGetMergedBundleMap_includedPluginWithSpecificVersion() throws Throwable {
 		createPluginProject("plugin.a", "1.0.0");
 		createPluginProject("plugin.a", "1.2.0");
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.a", "1.1.0"), //
 				bundle("plugin.z", "1.0.0"));
@@ -398,7 +400,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 	public void testGetMergedBundleMap_includedFeatureWithDefaultVersion() throws Throwable {
 		// plug-in names contain version-like suffixes to have no chance to
 		// interfere with conveniences of plug-in resolution
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.a.e.100", "1.0.0"), //
 				bundle("plugin.a.w.101", "1.0.0"), //
 				bundle("plugin.z", "1.0.0"));
@@ -446,7 +448,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 	public void testGetMergedBundleMap_includedFeatureWithSpecificVersion() throws Throwable {
 		// plug-in names contain version-like suffixes to have no chance to
 		// interfere with conveniences of plug-in resolution
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.a.w.100", "1.0.0"), //
 				bundle("plugin.a.w.300", "1.0.0"), //
 				bundle("plugin.a.e.100", "1.0.0"), //
@@ -578,7 +580,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 		createPluginProject("plugin.a", "1.1.0");
 		createPluginProject("plugin.b", "1.0.0");
 
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.a", "2.0.0"), //
 				bundle("plugin.a", "2.1.0"), //
 				bundle("plugin.c", "1.0.0"));
@@ -651,7 +653,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 		createPluginProject("plugin.a", "1.1.2");
 		createPluginProject("plugin.a", "2.0.0");
 
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.a", "1.2.3"), //
 				bundle("plugin.a", "3.0.0"), //
@@ -721,7 +723,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 		createPluginProject("plugin.a", "1.1.2");
 		createPluginProject("plugin.a", "2.0.0");
 
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.a", "1.0.2"), //
 				bundle("plugin.a", "1.2.0"), //
@@ -800,7 +802,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 	public void testGetMergedBundleMap_requiredFeatureWithNoVersion() throws Throwable {
 		// plug-in names contain version-like suffixes to have no chance to
 		// interfere with conveniences of plug-in resolution
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.a.w.100", "1.0.0"), //
 				bundle("plugin.a.w.110", "1.0.0"), //
 				bundle("plugin.a.e.200", "1.0.0"), //
@@ -882,7 +884,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 	public void testGetMergedBundleMap_requiredFeatureWithSpecificVersion1() throws Throwable {
 		// plug-in names contain version-like suffixes to have no chance to
 		// interfere with conveniences of plug-in resolution
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.a.w.100", "1.0.0"), //
 				bundle("plugin.a.w.110", "1.0.0"), //
 				bundle("plugin.a.w.200", "1.0.0"), //
@@ -950,7 +952,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_requiredFeatureWithSpecificVersion2() throws Throwable {
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.a.w.100", "1.0.0"), //
 				bundle("plugin.a.w.101", "1.0.0"), //
 				bundle("plugin.a.w.110", "1.0.0"), //
@@ -1075,7 +1077,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 		String thisOS = Platform.getOS();
 		String otherOS = thisOS.equals(Platform.OS_LINUX) ? Platform.OS_WIN32 : Platform.OS_LINUX;
 
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.b", "1.0.0"), //
 				bundle("plugin.c", "1.0.0"), //
@@ -1115,7 +1117,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 		String thisOS = Platform.getOS();
 		String otherOS = thisOS.equals(Platform.OS_LINUX) ? Platform.OS_WIN32 : Platform.OS_LINUX;
 
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"), //
 				bundle("plugin.b", "1.1.0"), //
 				bundle("plugin.c", "1.0.0"), //
@@ -1160,7 +1162,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 	@Test
 	public void testGetMergedBundleMap_multipleInclusionOfPluginAndFeature() throws Throwable {
 
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.b", "1.0.0"), //
 				bundle("plugin.z", "1.0.0"));
@@ -1208,7 +1210,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 		createPluginProject("plugin.d", "1.0.0");
 		createPluginProject("plugin.e", "1.0.0");
 
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.b", "1.0.0"), //
 				bundle("plugin.c", "1.0.0"), //
@@ -1263,7 +1265,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 		createPluginProject("plugin.d", "1.0.0");
 		createPluginProject("plugin.e", "1.0.0");
 
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetBundles = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.b", "1.0.0"), //
 				bundle("plugin.c", "1.0.0"), //
@@ -1348,8 +1350,8 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 		// problem is that the Feature-model is reset/reload while processing
 		// the changes (which first sets all fields to null/zero and then
 		// re-reads them), but the reload is NOT guarded by corresponding locks.
-		// So if this happens asynchronously and the model is read inbetween the model
-		// state could be inconsistent, which occasionally leads to
+		// So if this happens asynchronously and the model is read inbetween the
+		// model state could be inconsistent, which occasionally leads to
 		// test-failure. Furthermore the feature-models are only added to the
 		// FeatureModelManager while processing the resource-changes.
 		// Consequently it has to be ensured that all pending resource change
@@ -1418,9 +1420,9 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 		return new NameVersionDescriptor(featureId, featureVersion, NameVersionDescriptor.TYPE_FEATURE);
 	}
 
-	private void setTargetPlatform(List<NameVersionDescriptor> targetPlugins,
+	private void setTargetPlatform(Map<NameVersionDescriptor, Map<String, String>> bundleDescriptions,
 			List<NameVersionDescriptor> targetFeatures) throws Exception {
-		TargetPlatformUtil.setDummyBundlesAsTarget(targetPlugins, tpJarDirectory);
+		TargetPlatformUtil.setDummyBundlesAsTarget(bundleDescriptions, targetFeatures, tpJarDirectory);
 	}
 
 	private static ILaunchConfigurationWorkingCopy createFeatureLaunchConfig() throws CoreException {

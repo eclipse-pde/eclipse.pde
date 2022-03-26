@@ -30,7 +30,6 @@ import org.assertj.core.presentation.StandardRepresentation;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.debug.core.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.junit.*;
@@ -85,10 +84,6 @@ public abstract class AbstractLaunchTest {
 				.findFirst() // always take first like BundleLaunchHelper
 				.orElseThrow(
 						() -> new NoSuchElementException("No " + type + " model " + id + "-" + version + " found"));
-	}
-
-	static NameVersionDescriptor bundle(String id, String version) {
-		return new NameVersionDescriptor(id, version);
 	}
 
 	static BundleLocationDescriptor workspaceBundle(String id, String version) {

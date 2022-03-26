@@ -12,14 +12,18 @@
  *     Julian Honnen <julian.honnen@vector.com> - initial API and implementation
  *     Hannes Wellmann - Bug 577116: Improve test utility method reusability
  *     Hannes Wellmann - Bug 577385: Add tests for Plug-in based Eclipse-App launches
+ *     Hannes Wellmann - Bug 544838 - Unify and generalize test bundle/feature creation
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.util;
+
+import static java.util.Map.entry;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.jar.*;
 import java.util.stream.Collectors;
@@ -57,23 +61,19 @@ public class TargetPlatformUtil {
 			return;
 		}
 		List<ITargetLocation> bundleContainers = new ArrayList<>();
-		List<NameVersionDescriptor> included = new ArrayList<>();
-		addRunningPlatformBundles(bundleContainers, included, bundleFilter);
+		List<NameVersionDescriptor> included = addRunningPlatformBundles(bundleContainers, bundleFilter);
 		createAndSetTargetForWorkspace(name, bundleContainers, included);
 	}
 
-	public static void setRunningPlatformWithDummyBundlesAsTarget(List<NameVersionDescriptor> targetPlugins,
-			Path jarDirectory, Predicate<Bundle> bundleFilter) throws IOException, InterruptedException {
+	public static void setRunningPlatformWithDummyBundlesAsTarget(Predicate<Bundle> rpBundleFilter,
+			Map<NameVersionDescriptor, Map<String, String>> bundles, Collection<NameVersionDescriptor> features,
+			Path jarDirectory) throws Exception {
+
 		Set<ITargetLocation> locations = new LinkedHashSet<>();
-		Set<NameVersionDescriptor> included = new LinkedHashSet<>();
+		List<NameVersionDescriptor> rpBundles = addRunningPlatformBundles(locations, rpBundleFilter);
+		locations.add(createDummyBundlesLocation(bundles, jarDirectory));
 
-		addRunningPlatformBundles(locations, included, bundleFilter);
-
-		ITargetLocation location = createDummyBundlesLocation(targetPlugins, Map.of(), jarDirectory);
-		locations.add(location);
-		included.addAll(targetPlugins);
-
-		createAndSetTargetForWorkspace(null, locations, included);
+		createAndSetTargetForWorkspace(null, locations, concat(rpBundles, bundles.keySet(), features));
 	}
 
 	public static void loadAndSetTargetForWorkspace(ITargetDefinition target) throws InterruptedException {
@@ -87,8 +87,8 @@ public class TargetPlatformUtil {
 		}
 	}
 
-	private static void addRunningPlatformBundles(Collection<ITargetLocation> bundleContainers,
-			Collection<NameVersionDescriptor> included, Predicate<Bundle> bundleFilter) {
+	private static List<NameVersionDescriptor> addRunningPlatformBundles(Collection<ITargetLocation> bundleContainers,
+			Predicate<Bundle> bundleFilter) {
 		Bundle[] installedBundles = FrameworkUtil.getBundle(TargetPlatformUtil.class).getBundleContext().getBundles();
 		List<Bundle> targetBundles = Arrays.asList(installedBundles);
 		if (bundleFilter != null) {
@@ -99,9 +99,9 @@ public class TargetPlatformUtil {
 				.map(File::getParentFile).distinct();
 		containerDirs.map(dir -> TPS.newDirectoryLocation(dir.getAbsolutePath())).forEach(bundleContainers::add);
 
-		for (Bundle bundle : targetBundles) {
-			included.add(new NameVersionDescriptor(bundle.getSymbolicName(), bundle.getVersion().toString()));
-		}
+		return targetBundles.stream()
+				.map(b -> new NameVersionDescriptor(b.getSymbolicName(), b.getVersion().toString()))
+				.collect(Collectors.toList());
 	}
 
 	public static void createAndSetTargetForWorkspace(String name, Collection<ITargetLocation> locations,
@@ -123,27 +123,21 @@ public class TargetPlatformUtil {
 		loadAndSetTargetForWorkspace(targetDefinition);
 	}
 
-	public static void setDummyBundlesAsTarget(List<NameVersionDescriptor> targetPlugins, Path jarDirectory)
-			throws IOException, InterruptedException {
-		ITargetLocation location = createDummyBundlesLocation(targetPlugins, Map.of(), jarDirectory);
-		createAndSetTargetForWorkspace(null, List.of(location), targetPlugins);
+	public static void setDummyBundlesAsTarget(Map<NameVersionDescriptor, Map<String, String>> bundles,
+			Collection<NameVersionDescriptor> features, Path jarDirectory) throws Exception {
+		ITargetLocation location = createDummyBundlesLocation(bundles, jarDirectory);
+		createAndSetTargetForWorkspace(null, List.of(location), concat(bundles.keySet(), features));
 	}
 
-	public static void setDummyBundlesAsTarget(Map<NameVersionDescriptor, Map<String, String>> pluginDescriptions,
-			Path jarDirectory) throws IOException, InterruptedException {
-		Set<NameVersionDescriptor> pluginIds = pluginDescriptions.keySet();
-		ITargetLocation location = createDummyBundlesLocation(pluginIds, pluginDescriptions, jarDirectory);
-		createAndSetTargetForWorkspace(null, List.of(location), pluginIds);
-	}
-
-	private static ITargetLocation createDummyBundlesLocation(Collection<NameVersionDescriptor> targetPlugins,
-			Map<NameVersionDescriptor, Map<String, String>> pluginAttributes, Path jarDirectory) throws IOException {
+	private static ITargetLocation createDummyBundlesLocation(Map<NameVersionDescriptor, Map<String, String>> plugins,
+			Path jarDirectory) throws IOException {
 		Path pluginsDirectory = jarDirectory.resolve("plugins");
 		Files.createDirectories(pluginsDirectory);
-		for (NameVersionDescriptor bundleNameVersion : targetPlugins) {
+		for (Entry<NameVersionDescriptor, Map<String, String>> entry : plugins.entrySet()) {
+			NameVersionDescriptor bundleNameVersion = entry.getKey();
+			Map<String, String> extraAttributes = entry.getValue();
 
 			Manifest manifest = createDummyBundleManifest(bundleNameVersion.getId(), bundleNameVersion.getVersion());
-			Map<String, String> extraAttributes = pluginAttributes.get(bundleNameVersion);
 			if (extraAttributes != null) {
 				extraAttributes.forEach(manifest.getMainAttributes()::putValue);
 			}
@@ -173,4 +167,26 @@ public class TargetPlatformUtil {
 		return manifest;
 	}
 
+	@SafeVarargs
+	public static Entry<NameVersionDescriptor, Map<String, String>> bundle(String id, String version,
+			Entry<String, String>... additionalManifestEntries) {
+		return entry(new NameVersionDescriptor(id, version), Map.ofEntries(additionalManifestEntries));
+	}
+
+	public static String version(String version) {
+		return ";" + Constants.VERSION_ATTRIBUTE + "=\"" + version + "\"";
+	}
+
+	public static String bundleVersion(String lowerBound, String upperBound) {
+		return ";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"[" + lowerBound + "," + upperBound + ")\"";
+	}
+
+	public static String resolution(String resolutionType) {
+		return ";" + Constants.RESOLUTION_DIRECTIVE + ":=\"" + resolutionType + "\"";
+	}
+
+	@SafeVarargs
+	private static <T> Set<T> concat(Collection<T>... colls) {
+		return Arrays.stream(colls).flatMap(Collection::stream).collect(Collectors.toCollection(LinkedHashSet::new));
+	}
 }

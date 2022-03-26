@@ -18,6 +18,7 @@ package org.eclipse.pde.ui.tests.classpathresolver;
 
 import static org.eclipse.pde.ui.tests.launcher.AbstractLaunchTest.findTargetModel;
 import static org.eclipse.pde.ui.tests.launcher.AbstractLaunchTest.findWorkspaceModel;
+import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.bundle;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -27,6 +28,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
@@ -72,9 +74,9 @@ public class ClasspathResolverTest {
 		project = ProjectUtils.importTestProject("tests/projects/" + bundleName);
 		// create workspace plug-ins with same id like a running-platform bundle
 		Bundle hostBundle = Platform.getBundle(HOST_BUNDLE_ID);
-		createWorkspacePluginProjects(List.of( //
+		createWorkspacePluginProjects( //
 				bundle(hostBundle.getSymbolicName(), "2.0.0"), //
-				bundle(hostBundle.getSymbolicName(), hostBundle.getVersion().toString())));
+				bundle(hostBundle.getSymbolicName(), hostBundle.getVersion().toString()));
 	}
 
 	@Rule
@@ -113,7 +115,7 @@ public class ClasspathResolverTest {
 	 */
 	@Test
 	public void testGetDevProperties() throws Exception {
-		mockTPWithRunningPlatformAndBundles(List.of()); // running-platform only
+		mockTPWithRunningPlatformAndBundles(); // running-platform only
 
 		File devProperties = tempFolder.newFile("dev.properties").getCanonicalFile();
 		String devPropertiesURL = ClasspathHelper.getDevEntriesProperties(devProperties.getPath(), false);
@@ -130,7 +132,7 @@ public class ClasspathResolverTest {
 	 */
 	@Test
 	public void testSourceLookupPath() throws Exception {
-		mockTPWithRunningPlatformAndBundles(List.of()); // running-platform only
+		mockTPWithRunningPlatformAndBundles(); // running-platform only
 
 		PDESourceLookupDirector d = new PDESourceLookupDirector();
 		_PDESourceLookupQuery q = new _PDESourceLookupQuery(d, project);
@@ -148,7 +150,7 @@ public class ClasspathResolverTest {
 
 		getHostBundleAndMockDevProperties();
 
-		mockTPWithBundles(List.of()); // empty TP
+		mockTPWithBundles(); // empty TP
 
 		IPluginModelBase wsModel = findWorkspaceModel(HOST_BUNDLE_ID, "2.0.0");
 
@@ -167,7 +169,7 @@ public class ClasspathResolverTest {
 		Bundle hostBundle = getHostBundleAndMockDevProperties();
 		String hostBundleVersion = hostBundle.getVersion().toString();
 
-		mockTPWithBundles(List.of()); // empty TP
+		mockTPWithBundles(); // empty TP
 
 		IPluginModelBase wsModel = findWorkspaceModel(HOST_BUNDLE_ID, hostBundleVersion);
 
@@ -185,7 +187,7 @@ public class ClasspathResolverTest {
 		Bundle hostBundle = getHostBundleAndMockDevProperties();
 		String hostBundleVersion = hostBundle.getVersion().toString();
 
-		mockTPWithRunningPlatformAndBundles(List.of()); // running-platform only
+		mockTPWithRunningPlatformAndBundles(); // running-platform only
 
 		IPluginModelBase hostModel = findTargetModel(HOST_BUNDLE_ID, hostBundleVersion);
 
@@ -204,8 +206,8 @@ public class ClasspathResolverTest {
 
 		// pretend there is only a jar-bundle in the TP that has the same
 		// name and version like a woven plug-in from the host
-		mockTPWithBundles(List.of( //
-				bundle(HOST_BUNDLE_ID, "1.0.0")));
+		mockTPWithBundles( //
+				bundle(HOST_BUNDLE_ID, "1.0.0"));
 
 		IPluginModelBase tpModel = findTargetModel(HOST_BUNDLE_ID, "1.0.0");
 
@@ -224,8 +226,8 @@ public class ClasspathResolverTest {
 
 		// pretend there is only a jar-bundle in the TP that has the same
 		// name and version like a woven plug-in from the host
-		mockTPWithBundles(List.of( //
-				bundle(HOST_BUNDLE_ID, hostBundleVersion)));
+		mockTPWithBundles(//
+				bundle(HOST_BUNDLE_ID, hostBundleVersion));
 
 		IPluginModelBase hostModel = findTargetModel(HOST_BUNDLE_ID, hostBundleVersion);
 
@@ -242,8 +244,8 @@ public class ClasspathResolverTest {
 
 		getHostBundleAndMockDevProperties();
 
-		mockTPWithBundles(List.of( //
-				bundle(HOST_BUNDLE_ID, "1.0.0")));
+		mockTPWithBundles( //
+				bundle(HOST_BUNDLE_ID, "1.0.0"));
 
 		IPluginModelBase hostModel = findTargetModel(HOST_BUNDLE_ID, "1.0.0");
 		IPluginModelBase wsModel = findWorkspaceModel(HOST_BUNDLE_ID, "2.0.0");
@@ -263,8 +265,8 @@ public class ClasspathResolverTest {
 		Bundle hostBundle = getHostBundleAndMockDevProperties();
 		String hostBundleVersion = hostBundle.getVersion().toString();
 
-		mockTPWithRunningPlatformAndBundles(List.of( //
-				bundle(HOST_BUNDLE_ID, "1.0.0")));
+		mockTPWithRunningPlatformAndBundles( //
+				bundle(HOST_BUNDLE_ID, "1.0.0"));
 
 		IPluginModelBase hostModel = findTargetModel(HOST_BUNDLE_ID, hostBundleVersion);
 		IPluginModelBase tpModel = findTargetModel(HOST_BUNDLE_ID, "1.0.0");
@@ -284,7 +286,7 @@ public class ClasspathResolverTest {
 		Bundle hostBundle = getHostBundleAndMockDevProperties();
 		String hostBundleVersion = hostBundle.getVersion().toString();
 
-		mockTPWithRunningPlatformAndBundles(List.of()); // running-platform only
+		mockTPWithRunningPlatformAndBundles(); // running-platform only
 
 		IPluginModelBase hostModel = findTargetModel(HOST_BUNDLE_ID, hostBundleVersion);
 		IPluginModelBase wsModel = findWorkspaceModel(HOST_BUNDLE_ID, "2.0.0");
@@ -304,8 +306,8 @@ public class ClasspathResolverTest {
 		Bundle hostBundle = getHostBundleAndMockDevProperties();
 		String hostBundleVersion = hostBundle.getVersion().toString();
 
-		mockTPWithRunningPlatformAndBundles(List.of( //
-				bundle(HOST_BUNDLE_ID, "1.0.0")));
+		mockTPWithRunningPlatformAndBundles( //
+				bundle(HOST_BUNDLE_ID, "1.0.0"));
 
 		IPluginModelBase hostModel = findTargetModel(HOST_BUNDLE_ID, hostBundleVersion);
 		IPluginModelBase tpModel = findTargetModel(HOST_BUNDLE_ID, "1.0.0");
@@ -339,9 +341,11 @@ public class ClasspathResolverTest {
 		return oldValue;
 	}
 
-	private static void createWorkspacePluginProjects(List<NameVersionDescriptor> workspacePlugins)
-			throws CoreException {
-		List<IProject> pluginProjects = ProjectUtils.createWorkspacePluginProjects(workspacePlugins);
+	@SafeVarargs
+	private static void createWorkspacePluginProjects(
+			Entry<NameVersionDescriptor, Map<String, String>>... workspacePlugins) throws CoreException {
+		Set<NameVersionDescriptor> descriptions = Map.ofEntries(workspacePlugins).keySet();
+		List<IProject> pluginProjects = ProjectUtils.createWorkspacePluginProjects(descriptions);
 		while (pluginProjects.stream().anyMatch(ClasspathResolverTest::isUpdatePending)) {
 			Thread.yield(); // await async classpath update of projects
 		}
@@ -367,20 +371,18 @@ public class ClasspathResolverTest {
 		return hostBundle;
 	}
 
-	private void mockTPWithBundles(List<NameVersionDescriptor> targetBundles) throws IOException, InterruptedException {
+	@SafeVarargs
+	private void mockTPWithBundles(Entry<NameVersionDescriptor, Map<String, String>>... bundles) throws Exception {
 		Path jarsDirectory = tempFolder.newFolder("TPJarsDirectory").toPath();
-		TargetPlatformUtil.setDummyBundlesAsTarget(targetBundles, jarsDirectory);
+		TargetPlatformUtil.setDummyBundlesAsTarget(Map.ofEntries(bundles), List.of(), jarsDirectory);
 	}
 
-	private void mockTPWithRunningPlatformAndBundles(List<NameVersionDescriptor> targetBundles)
-			throws IOException, InterruptedException {
+	@SafeVarargs
+	private void mockTPWithRunningPlatformAndBundles(
+			Entry<NameVersionDescriptor, Map<String, String>>... additionalBundles) throws Exception {
 		Path jarsDirectory = tempFolder.newFolder("TPJarsDirectory").toPath();
-		TargetPlatformUtil.setRunningPlatformWithDummyBundlesAsTarget(targetBundles, jarsDirectory,
-				b -> b.getSymbolicName().equals(HOST_BUNDLE_ID));
-	}
-
-	private static NameVersionDescriptor bundle(String id, String version) {
-		return new NameVersionDescriptor(id, version);
+		TargetPlatformUtil.setRunningPlatformWithDummyBundlesAsTarget(b -> b.getSymbolicName().equals(HOST_BUNDLE_ID),
+				Map.ofEntries(additionalBundles), Set.of(), jarsDirectory);
 	}
 
 	private Properties createDevEntryProperties(List<IPluginModelBase> launchedBundles)

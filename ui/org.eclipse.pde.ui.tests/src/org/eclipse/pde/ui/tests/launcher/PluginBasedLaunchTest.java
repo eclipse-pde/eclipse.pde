@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.launcher;
 
+import static java.util.Map.ofEntries;
+import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.bundle;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.file.Path;
@@ -45,11 +47,11 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_startDataParsing() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.b", "1.0.0"), //
 				bundle("plugin.c", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.f", "1.0.0"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -69,12 +71,12 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_mixedPluginsFromWorkspaceAndTarget_specificTargetVersion() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.a", "2.0.0"), //
 				bundle("plugin.b", "1.0.0"), //
 				bundle("plugin.c", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.x", "1.0.0"), //
 				bundle("plugin.x", "2.0.0"), //
 				bundle("plugin.x", "3.0.0"), //
@@ -100,14 +102,14 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 	@Test
 	public void testGetMergedBundleMap_mixedPluginsFromWorkspaceWithAutomaticAddAndTarget_specificTargetVersion()
 			throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.a", "2.0.0"), //
 				bundle("plugin.b", "1.0.0"), //
 				bundle("plugin.c", "1.0.0"), //
 				bundle("plugin.d", "1.0.0"), //
 				bundle("plugin.d", "2.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.x", "1.0.0"), //
 				bundle("plugin.x", "2.0.0"), //
 				bundle("plugin.x", "3.0.0"), //
@@ -138,9 +140,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_singleWorkspacePluginVersion_specificVersion() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -154,9 +156,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_singleWorkspacePluginVersion_noVersion() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -170,9 +172,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_singleWorkspacePluginVersion_notMatchingVersion() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.1"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -186,10 +188,10 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_multipleWorkspacePluginVersions_specificVersion() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.a", "2.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -203,11 +205,11 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_multipleWorkspacePluginVersions_multipleSpecificVersion() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.a", "1.0.1"), //
 				bundle("plugin.a", "2.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -224,10 +226,10 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_multipleWorkspacePluginVersions_noVersion() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.a", "2.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -243,9 +245,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 	@Test
 	public void testGetMergedBundleMap_multipleWorkspacePluginVersions_sameVersion() throws Exception {
 		ProjectUtils.createPluginProject("another.project", "plugin.a", "1.0.0");
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -260,10 +262,10 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 	@Test
 	public void testGetMergedBundleMap_multipleWorkspacePluginVersions_sameMMMVersionButDifferentQualifier()
 			throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0.qualifier"), //
 				bundle("plugin.a", "1.0.0.202111250056"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -282,11 +284,11 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_automaticAddedWorkspacePlugins_noDisabledPlugins() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.a", "2.0.0"), //
 				bundle("plugin.c", "3.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -305,11 +307,11 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 	@Test
 	public void testGetMergedBundleMap_automaticAddedWorkspacePlugins_singleVersionPluginDisabledWithoutVersion()
 			throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.c", "3.0.0"), //
 				bundle("plugin.d", "3.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -328,11 +330,11 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 	@Test
 	public void testGetMergedBundleMap_automaticAddedWorkspacePlugins_singleVersionPluginV1_0_0DeselectedButHaveV1_0_1InWorkspace()
 			throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.c", "1.0.1"), //
 				bundle("plugin.d", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -358,11 +360,11 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 	@Test
 	public void testGetMergedBundleMap_automaticAddedWorkspacePlugins_multiVersionPluginDisabledWithSpecificVersion()
 			throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.a", "2.0.0"), //
 				bundle("plugin.a", "3.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -382,11 +384,11 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 	@Test
 	public void testGetMergedBundleMap_automaticAddedWorkspacePlugins_multiVersionPluginDisabledWithMultipleSpecificVersions()
 			throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.a", "2.0.0"), //
 				bundle("plugin.a", "3.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -405,11 +407,11 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 	public void testGetMergedBundleMap_automaticAddedWorkspacePlugins_multiVersionPluginDisabledWithoutVersion()
 			throws Exception {
 
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.a", "2.0.0"), //
 				bundle("plugin.a", "3.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -426,12 +428,12 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 	@Test
 	public void testGetMergedBundleMap_automaticAddedWorkspacePlugins_sameMMMVersionButDifferentQualifier()
 			throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0.qualifier"), //
 				bundle("plugin.a", "1.0.0.202111250056"), //
 				bundle("plugin.b", "2.0.0.qualifier"), //
 				bundle("plugin.b", "2.0.0.202111250056"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -452,9 +454,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_singleTargetPluginVersion_specificVersion() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -468,9 +470,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_singleTargetPluginVersion_noVersion() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -484,9 +486,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_singleTargetPluginVersion_notMatchingVersion() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.1"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -500,9 +502,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_multipleTargetPluginVersions_specificVersion() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"), //
 				bundle("plugin.b", "2.0.0"));
 
@@ -517,9 +519,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_multipleTargetPluginVersions_multipleSpecificVersion() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"), //
 				bundle("plugin.b", "2.0.0"), //
 				bundle("plugin.b", "3.0.0"));
@@ -537,9 +539,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_multipleTargetPluginVersions_noVersion() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.b", "1.0.0"), //
 				bundle("plugin.b", "2.0.0"));
 
@@ -554,10 +556,10 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_singleTargetPluginVersion_notSelectedWorkspacePendant() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.b", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.b", "1.0.0"));
 
@@ -575,9 +577,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 	@Test
 	public void testGetMergedBundleMap_multipleTargetPluginVersions_sameMMMVersionButDifferentQualifier()
 			throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.1.qualifier"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.a", "1.0.0.2020"), //
 				bundle("plugin.a", "1.0.0.2021"));
 
@@ -596,10 +598,10 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_pluginFromWorkspaceAndTarget_specificTargetVersion() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.b", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.a", "1.0.1"), //
 				bundle("plugin.b", "2.0.0"));
 
@@ -620,10 +622,10 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_pluginFromWorkspaceAndTarget_noTargetVersion() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.b", "2.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.a", "1.0.1"), //
 				bundle("plugin.b", "3.0.0"));
 
@@ -644,9 +646,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testGetMergedBundleMap_pluginFromWorkspaceAndTarget_notMatchingTargetVersion() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.a", "1.0.2"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -664,10 +666,10 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 	@Test
 	public void testGetMergedBundleMap_pluginFromWorkspaceAndTarget_targetBundleReplacedByWorkspaceBundleWithSameVersion()
 			throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.b", "1.0.0.qualifier"));
-		List<NameVersionDescriptor> targetBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.b", "1.0.0.202111102345"));
 
@@ -683,16 +685,16 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 				workspaceBundle("plugin.a", "1.0.0"), //
 				workspaceBundle("plugin.b", "1.0.0.qualifier"));
 
-		assertGetMergedBundleMap(workspacePlugins, targetBundles, launchConfig, expectedBundles);
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfig, expectedBundles);
 	}
 
 	@Test
 	public void testGetMergedBundleMap_workspacePluginAddedAutomaticallyAndTargetPlugin_differentVersions()
 			throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.b", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.a", "1.0.1"), //
 				bundle("plugin.b", "1.0.1"));
 
@@ -713,9 +715,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 	@Test
 	public void testGetMergedBundleMap_workspacePluginAddedAutomaticallyAndTargetPlugin_sameVersionLikeInWorkspace()
 			throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.a", "1.0.0.202111102345"));
 
 		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
@@ -733,9 +735,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testWriteBundleEntry_singleWorkspacePlugin_noVersionEntry() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.a", "2.0.0"), //
 				bundle("plugin.a", "2.0.1"));
 		setUpWorkspace(workspacePlugins, targetPlatformBundles);
@@ -748,10 +750,10 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testWriteBundleEntry_oneOfTwoWorkspacePlugins_versionEntry() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.a", "1.0.1"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.a", "2.0.0"));
 		setUpWorkspace(workspacePlugins, targetPlatformBundles);
 
@@ -763,10 +765,10 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testWriteBundleEntry_singleTargetPlugin_noVersionEntry() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.a", "1.0.1"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.a", "2.0.0"));
 		setUpWorkspace(workspacePlugins, targetPlatformBundles);
 
@@ -778,9 +780,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testWriteBundleEntry_oneOfTwoTargetPlugins_versionEntry() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"));
-		List<NameVersionDescriptor> targetPlatformBundles = List.of( //
+		var targetPlatformBundles = ofEntries( //
 				bundle("plugin.a", "2.0.0"), //
 				bundle("plugin.a", "2.0.1"));
 		setUpWorkspace(workspacePlugins, targetPlatformBundles);
@@ -793,10 +795,10 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	@Test
 	public void testWriteBundleEntry_startLevelAndAutoStart() throws Exception {
-		List<NameVersionDescriptor> workspacePlugins = List.of( //
+		var workspacePlugins = ofEntries( //
 				bundle("plugin.a", "1.0.0"), //
 				bundle("plugin.a", "2.0.0"));
-		setUpWorkspace(workspacePlugins, List.of());
+		setUpWorkspace(workspacePlugins, Map.of());
 
 		IPluginModelBase plugin = workspaceBundle("plugin.a", "1.0.0").findModel();
 
@@ -809,8 +811,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
 	// --- utilities ---
 
-	private void assertGetMergedBundleMap(List<NameVersionDescriptor> workspacePlugins,
-			List<NameVersionDescriptor> targetPlugins, Consumer<ILaunchConfigurationWorkingCopy> launchConfigPreparer,
+	private void assertGetMergedBundleMap(Map<NameVersionDescriptor, Map<String, String>> workspacePlugins,
+			Map<NameVersionDescriptor, Map<String, String>> targetPlugins,
+			Consumer<ILaunchConfigurationWorkingCopy> launchConfigPreparer,
 			Set<BundleLocationDescriptor> expectedBundles) throws Exception {
 
 		Map<BundleLocationDescriptor, String> expectedBundleMap = expectedBundles.stream()
@@ -818,8 +821,9 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		assertGetMergedBundleMap(workspacePlugins, targetPlugins, launchConfigPreparer, expectedBundleMap);
 	}
 
-	private void assertGetMergedBundleMap(List<NameVersionDescriptor> workspacePlugins,
-			List<NameVersionDescriptor> targetPlugins, Consumer<ILaunchConfigurationWorkingCopy> launchConfigPreparer,
+	private void assertGetMergedBundleMap(Map<NameVersionDescriptor, Map<String, String>> workspacePlugins,
+			Map<NameVersionDescriptor, Map<String, String>> targetPlugins,
+			Consumer<ILaunchConfigurationWorkingCopy> launchConfigPreparer,
 			Map<BundleLocationDescriptor, String> expectedBundleMap) throws Exception {
 
 		setUpWorkspace(workspacePlugins, targetPlugins);
@@ -837,10 +841,10 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		assertPluginMapsEquals(null, expectedPluginMap, bundleMap);
 	}
 
-	private void setUpWorkspace(List<NameVersionDescriptor> workspacePlugins, List<NameVersionDescriptor> targetPlugins)
-			throws Exception {
-		ProjectUtils.createWorkspacePluginProjects(workspacePlugins);
-		TargetPlatformUtil.setDummyBundlesAsTarget(targetPlugins, tpJarDirectory);
+	private void setUpWorkspace(Map<NameVersionDescriptor, Map<String, String>> workspacePlugins,
+			Map<NameVersionDescriptor, Map<String, String>> targetPlugins) throws Exception {
+		ProjectUtils.createWorkspacePluginProjects(workspacePlugins.keySet());
+		TargetPlatformUtil.setDummyBundlesAsTarget(targetPlugins, List.of(), tpJarDirectory);
 	}
 
 	private static ILaunchConfigurationWorkingCopy createPluginLaunchConfig(String name) throws CoreException {

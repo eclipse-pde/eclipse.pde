@@ -21,6 +21,10 @@ import static org.eclipse.pde.internal.core.DependencyManager.findRequirementsCl
 import static org.eclipse.pde.internal.core.DependencyManager.Options.INCLUDE_ALL_FRAGMENTS;
 import static org.eclipse.pde.internal.core.DependencyManager.Options.INCLUDE_NON_TEST_FRAGMENTS;
 import static org.eclipse.pde.internal.core.DependencyManager.Options.INCLUDE_OPTIONAL_DEPENDENCIES;
+import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.bundle;
+import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.bundleVersion;
+import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.resolution;
+import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.version;
 import static org.osgi.framework.Constants.EXPORT_PACKAGE;
 import static org.osgi.framework.Constants.FRAGMENT_HOST;
 import static org.osgi.framework.Constants.IMPORT_PACKAGE;
@@ -31,7 +35,6 @@ import static org.osgi.framework.Constants.REQUIRE_CAPABILITY;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.Map.Entry;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -210,7 +213,7 @@ public class DependencyManagerTest {
 
 		Set<BundleDescription> allFragmentsClosure = findRequirementsClosure(bundles, INCLUDE_ALL_FRAGMENTS);
 		assertThat(allFragmentsClosure)
-				.isEqualTo(Set.of(bundleA, bundleFragment, bundleFragmentWithDeps, bundleB, bundleC));
+		.isEqualTo(Set.of(bundleA, bundleFragment, bundleFragmentWithDeps, bundleB, bundleC));
 	}
 
 	@Test
@@ -284,26 +287,8 @@ public class DependencyManagerTest {
 
 	@SafeVarargs
 	private void setTargetPlatform(Map.Entry<NameVersionDescriptor, Map<String, String>>... pluginDescriptions)
-			throws IOException, InterruptedException {
-		TargetPlatformUtil.setDummyBundlesAsTarget(Map.ofEntries(pluginDescriptions), tpJarDirectory);
-	}
-
-	@SafeVarargs
-	private static Entry<NameVersionDescriptor, Map<String, String>> bundle(String id, String version,
-			Entry<String, String>... additionalManifestEntries) {
-		return entry(new NameVersionDescriptor(id, version), Map.ofEntries(additionalManifestEntries));
-	}
-
-	private static String version(String version) {
-		return ";" + Constants.VERSION_ATTRIBUTE + "=\"" + version + "\"";
-	}
-
-	private static String bundleVersion(String lowerBound, String upperBound) {
-		return ";" + Constants.BUNDLE_VERSION_ATTRIBUTE + "=\"[" + lowerBound + "," + upperBound + ")\"";
-	}
-
-	private static String resolution(String resolutionType) {
-		return ";" + Constants.RESOLUTION_DIRECTIVE + ":=\"" + resolutionType + "\"";
+			throws Exception {
+		TargetPlatformUtil.setDummyBundlesAsTarget(Map.ofEntries(pluginDescriptions), List.of(), tpJarDirectory);
 	}
 
 	private static final String OPTIONAL = Constants.RESOLUTION_OPTIONAL;

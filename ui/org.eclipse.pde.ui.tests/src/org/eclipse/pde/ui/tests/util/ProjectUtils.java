@@ -157,7 +157,7 @@ public class ProjectUtils {
 		return project;
 	}
 
-	public static List<IProject> createWorkspacePluginProjects(List<NameVersionDescriptor> workspacePlugins)
+	public static List<IProject> createWorkspacePluginProjects(Iterable<NameVersionDescriptor> workspacePlugins)
 			throws CoreException {
 		List<IProject> projects = new ArrayList<>();
 		for (NameVersionDescriptor plugin : workspacePlugins) {
