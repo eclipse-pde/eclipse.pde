@@ -121,8 +121,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureBlock_ExternalResolutionLabel;
 
-	public static String FeatureBlock_FeatureGroupDescription;
-
 	public static String FeatureBlock_SelectFeatures;
 
 	public static String FeatureBlock_UseWorkspaceFeatures;

@@ -847,7 +847,6 @@ public class FeatureBlock {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalIndent = indent;
 		treeGroup.setLayoutData(gd);
-		SWTFactory.createLabel(treeGroup, PDEUIMessages.FeatureBlock_FeatureGroupDescription, 2);
 		createCheckBoxTree(treeGroup);
 		createButtonContainer(treeGroup, 10);
 
