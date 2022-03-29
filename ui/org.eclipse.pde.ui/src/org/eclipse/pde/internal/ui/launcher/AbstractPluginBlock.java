@@ -89,6 +89,11 @@ public abstract class AbstractPluginBlock {
 	private Button fDefaultsButton;
 	private Button fFilterButton;
 
+	/**
+	 * The configuration this block is currently displaying or <code>null</code>
+	 * if none set.
+	 */
+	protected ILaunchConfiguration fLaunchConfig;
 	private Listener fListener = new Listener();
 
 	private Label fCounter;
@@ -321,7 +326,6 @@ public abstract class AbstractPluginBlock {
 		}else{
 			fAddWorkspaceButton = createButton(parent, span, indent, NLS.bind(PDEUIMessages.AdvancedLauncherTab_addNew, fTab.getName().toLowerCase(Locale.ENGLISH)));
 		}
-
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = span;
@@ -772,12 +776,11 @@ public abstract class AbstractPluginBlock {
 	 * @throws CoreException
 	 */
 	public void initializeFrom(ILaunchConfiguration config, boolean enableTable) throws CoreException {
+		fLaunchConfig = config;
+		initializeButtonsFrom(config);
 		levelColumnCache = new HashMap<>();
 		autoColumnCache = new HashMap<>();
 		fPluginFilteredTree.getPatternFilter().setPattern(null);
-		fIncludeOptionalButton.setSelection(config.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true));
-		fAddWorkspaceButton.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true));
-		fAutoValidate.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, true));
 		if (!enableTable) {
 			fPluginTreeViewer.setInput(null);
 		} else if (fPluginTreeViewer.getInput() == null) {
@@ -785,6 +788,12 @@ public abstract class AbstractPluginBlock {
 			fPluginTreeViewer.setInput(PDEPlugin.getDefault());
 			fPluginTreeViewer.reveal(fWorkspacePlugins);
 		}
+	}
+
+	protected void initializeButtonsFrom(ILaunchConfiguration config) throws CoreException {
+		fIncludeOptionalButton.setSelection(config.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true));
+		fAddWorkspaceButton.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true));
+		fAutoValidate.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, true));
 		fFilterButton.setSelection(config.getAttribute(IPDELauncherConstants.SHOW_SELECTED_ONLY, false));
 	}
 

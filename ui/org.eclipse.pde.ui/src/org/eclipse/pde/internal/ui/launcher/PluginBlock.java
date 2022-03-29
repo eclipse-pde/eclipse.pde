@@ -31,10 +31,6 @@ import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 public class PluginBlock extends AbstractPluginBlock {
 
 	/**
-	 * The configuration this block is currently displaying or <code>null</code> if none set
-	 */
-	protected ILaunchConfiguration fLaunchConfig;
-	/**
 	 * Whether the controls have been initialized for fLaunchConfig
 	 */
 	protected boolean fIsEnabled = false;
@@ -51,13 +47,12 @@ public class PluginBlock extends AbstractPluginBlock {
 
 	@Override
 	public void initializeFrom(ILaunchConfiguration config, boolean enableTable) throws CoreException {
-
+		super.initializeButtonsFrom(config);
 		if (fLaunchConfig != null && fLaunchConfig.equals(config) && fIsEnabled == enableTable) {
 			// Do nothing
 			return;
 		}
 
-		fLaunchConfig = config;
 		fIsEnabled = enableTable;
 
 		super.initializeFrom(config, enableTable);

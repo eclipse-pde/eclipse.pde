@@ -27,8 +27,6 @@ import org.eclipse.pde.ui.launcher.BundlesTab;
 
 public class OSGiBundleBlock extends AbstractPluginBlock {
 
-	private ILaunchConfiguration fLaunchConfiguration;
-
 	public OSGiBundleBlock(BundlesTab tab) {
 		super(tab);
 	}
@@ -69,7 +67,6 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	public void initializeFrom(ILaunchConfiguration configuration) throws CoreException {
 		super.initializeFrom(configuration, true);
 		initializePluginsState(configuration);
-		fLaunchConfiguration = configuration;
 	}
 
 	// TODO deal with the discrepency between save/init states of the two blocks
@@ -81,8 +78,8 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 
 	@Override
 	protected LaunchValidationOperation createValidationOperation() throws CoreException {
-		Set<IPluginModelBase> models = BundleLauncherHelper.getMergedBundleMap(fLaunchConfiguration, true).keySet();
-		return new LaunchValidationOperation(fLaunchConfiguration, models);
+		Set<IPluginModelBase> models = BundleLauncherHelper.getMergedBundleMap(fLaunchConfig, true).keySet();
+		return new LaunchValidationOperation(fLaunchConfig, models);
 	}
 
 }
