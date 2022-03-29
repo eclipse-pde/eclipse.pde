@@ -191,7 +191,15 @@ public class PluginModelManager implements IModelProviderListener {
 	private final WorkspacePluginModelManager fWorkspaceManager; // keeps track of changes in the workspace
 	private PDEState fState; // keeps the combined view of the target and workspace
 
+	/**
+	 * only access synchronized with fEntriesSynchronizer
+	 **/
 	private Map<String, LocalModelEntry> fEntries; // a master table keyed by plugin ID and the value is a ModelEntry
+	/**
+	 * used to synchronize all public methods which (indirectly) use fEntries
+	 **/
+	private final Object fEntriesSynchronizer = new Object();
+
 	private ArrayList<IPluginModelListener> fListeners; // a list of listeners interested in changes to the plug-in models
 	private ArrayList<IStateDeltaListener> fStateListeners; // a list of listeners interested in changes to the PDE/resolver State
 	private boolean fCancelled = false;
@@ -232,6 +240,12 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	@Override
 	public void modelsChanged(IModelProviderEvent e) {
+		synchronized (fEntriesSynchronizer) {
+			modelsChangedSynchronized(e);
+		}
+	}
+
+	private void modelsChangedSynchronized(IModelProviderEvent e) {
 		PluginModelDelta delta = new PluginModelDelta();
 
 		// Removes from the master table and the state all workspace plug-ins that have been
@@ -487,7 +501,9 @@ public class PluginModelManager implements IModelProviderListener {
 	 * 		<code>false</code> otherwise.
 	 */
 	public boolean isEmpty() {
-		return getEntryTable().isEmpty();
+		synchronized (fEntriesSynchronizer) {
+			return getEntryTable().isEmpty();
+		}
 	}
 
 	/**
@@ -498,7 +514,9 @@ public class PluginModelManager implements IModelProviderListener {
 	 * 		<code>false</code> otherwise.
 	 */
 	public boolean isInitialized() {
-		return fEntries != null;
+		synchronized (fEntriesSynchronizer) {
+			return fEntries != null;
+		}
 	}
 
 	/**
@@ -518,8 +536,10 @@ public class PluginModelManager implements IModelProviderListener {
 	 * Clears all existing models and recreates them
 	 */
 	public void targetReloaded(IProgressMonitor monitor) {
-		fEntries = null;
-		initializeTable(monitor);
+		synchronized (fEntriesSynchronizer) {
+			fEntries = null;
+			initializeTable(monitor);
+		}
 	}
 
 	/**
@@ -534,14 +554,8 @@ public class PluginModelManager implements IModelProviderListener {
 		return fEntries;
 	}
 
-	/**
-	 *
-	 * This method must be synchronized so that only one thread
-	 * initializes the table, and the rest would block until
-	 * the table is initialized.
-	 *
-	 */
-	private synchronized void initializeTable(IProgressMonitor monitor) {
+	/** Has to be called synchronized with fEntriesSynchronizer **/
+	private void initializeTable(IProgressMonitor monitor) {
 		if (fEntries != null) {
 			return;
 		}
@@ -567,7 +581,7 @@ public class PluginModelManager implements IModelProviderListener {
 		long startTime = System.currentTimeMillis();
 
 		// Cannot assign to fEntries here - will create a race condition with isInitialized()
-		Map<String, LocalModelEntry> entries = Collections.synchronizedMap(new TreeMap<String, LocalModelEntry>());
+		Map<String, LocalModelEntry> entries = new TreeMap<>();
 		fCancelled = false;
 
 		ITargetDefinition unresolvedRepoBasedtarget = null;
@@ -732,11 +746,11 @@ public class PluginModelManager implements IModelProviderListener {
 	 *
 	 * @param model  the workspace model
 	 */
-	private synchronized void addWorkspaceBundleToState(IPluginModelBase model) {
+	private void addWorkspaceBundleToState(IPluginModelBase model) {
 		addWorkspaceBundleToState(fEntries, model);
 	}
 
-	private synchronized void addWorkspaceBundleToState(Map<String, LocalModelEntry> entries, IPluginModelBase model) {
+	private void addWorkspaceBundleToState(Map<String, LocalModelEntry> entries, IPluginModelBase model) {
 		String id = model.getPluginBase().getId();
 		if (id == null) {
 			return;
@@ -1009,10 +1023,12 @@ public class PluginModelManager implements IModelProviderListener {
 	 * @return a model entry containing all workspace and target plug-ins by the given ID
 	 */
 	public ModelEntry findEntry(String id) {
-		if ("system.bundle".equals(id)) { //$NON-NLS-1$
-			id = getSystemBundleId();
+		synchronized (fEntriesSynchronizer) {
+			if ("system.bundle".equals(id)) { //$NON-NLS-1$
+				id = getSystemBundleId();
+			}
+			return id == null ? null : (ModelEntry) getEntryTable().get(id);
 		}
-		return id == null ? null : (ModelEntry) getEntryTable().get(id);
 	}
 
 	/**
@@ -1050,8 +1066,10 @@ public class PluginModelManager implements IModelProviderListener {
 	 * 			is not a plug-in project
 	 */
 	public IPluginModelBase findModel(IProject project) {
-		initializeTable(null);
-		return fWorkspaceManager.getModel(project);
+		synchronized (fEntriesSynchronizer) {
+			initializeTable(null);
+			return fWorkspaceManager.getModel(project);
+		}
 	}
 
 	/**
@@ -1102,19 +1120,21 @@ public class PluginModelManager implements IModelProviderListener {
 	 * (possibly) fragments that are checked on the Target Platform preference page.
 	 */
 	public IPluginModelBase[] getActiveModels(boolean includeFragments) {
-		int size = getEntryTable().size();
-		ArrayList<IPluginModelBase> result = new ArrayList<>(size);
-		Iterator<LocalModelEntry> iter = getEntryTable().values().iterator();
-		while (iter.hasNext()) {
-			ModelEntry entry = iter.next();
-			IPluginModelBase[] models = entry.getActiveModels();
-			for (IPluginModelBase model : models) {
-				if (model instanceof IPluginModel || includeFragments) {
-					result.add(model);
+		synchronized (fEntriesSynchronizer) {
+			int size = getEntryTable().size();
+			ArrayList<IPluginModelBase> result = new ArrayList<>(size);
+			Iterator<LocalModelEntry> iter = getEntryTable().values().iterator();
+			while (iter.hasNext()) {
+				ModelEntry entry = iter.next();
+				IPluginModelBase[] models = entry.getActiveModels();
+				for (IPluginModelBase model : models) {
+					if (model instanceof IPluginModel || includeFragments) {
+						result.add(model);
+					}
 				}
 			}
+			return result.toArray(new IPluginModelBase[result.size()]);
 		}
-		return result.toArray(new IPluginModelBase[result.size()]);
 	}
 
 	/**
@@ -1154,19 +1174,22 @@ public class PluginModelManager implements IModelProviderListener {
 	 * checked on the Target Platform preference page.
 	 */
 	public IPluginModelBase[] getAllModels(boolean includeFragments) {
-		int size = getEntryTable().size();
-		ArrayList<IPluginModelBase> result = new ArrayList<>(size);
-		Iterator<LocalModelEntry> iter = getEntryTable().values().iterator();
-		while (iter.hasNext()) {
-			ModelEntry entry = iter.next();
-			IPluginModelBase[] models = entry.hasWorkspaceModels() ? entry.getWorkspaceModels() : entry.getExternalModels();
-			for (IPluginModelBase model : models) {
-				if (model instanceof IPluginModel || includeFragments) {
-					result.add(model);
+		synchronized (fEntriesSynchronizer) {
+			int size = getEntryTable().size();
+			ArrayList<IPluginModelBase> result = new ArrayList<>(size);
+			Iterator<LocalModelEntry> iter = getEntryTable().values().iterator();
+			while (iter.hasNext()) {
+				ModelEntry entry = iter.next();
+				IPluginModelBase[] models = entry.hasWorkspaceModels() ? entry.getWorkspaceModels()
+						: entry.getExternalModels();
+				for (IPluginModelBase model : models) {
+					if (model instanceof IPluginModel || includeFragments) {
+						result.add(model);
+					}
 				}
 			}
+			return result.toArray(new IPluginModelBase[result.size()]);
 		}
-		return result.toArray(new IPluginModelBase[result.size()]);
 	}
 
 	/**
@@ -1175,8 +1198,10 @@ public class PluginModelManager implements IModelProviderListener {
 	 * @return  all plug-ins in the target platform
 	 */
 	public IPluginModelBase[] getExternalModels() {
-		initializeTable(null);
-		return fExternalManager.getAllModels();
+		synchronized (fEntriesSynchronizer) {
+			initializeTable(null);
+			return fExternalManager.getAllModels();
+		}
 	}
 
 	/**
@@ -1185,8 +1210,10 @@ public class PluginModelManager implements IModelProviderListener {
 	 * @return all plug-in models in the workspace
 	 */
 	public IPluginModelBase[] getWorkspaceModels() {
-		initializeTable(null);
-		return fWorkspaceManager.getPluginModels();
+		synchronized (fEntriesSynchronizer) {
+			initializeTable(null);
+			return fWorkspaceManager.getPluginModels();
+		}
 	}
 
 	/**
@@ -1195,8 +1222,10 @@ public class PluginModelManager implements IModelProviderListener {
 	 * @return  the model manager that keeps track of plug-ins in the target platform
 	 */
 	public ExternalModelManager getExternalModelManager() {
-		initializeTable(null);
-		return fExternalManager;
+		synchronized (fEntriesSynchronizer) {
+			initializeTable(null);
+			return fExternalManager;
+		}
 	}
 
 	/**
@@ -1204,8 +1233,10 @@ public class PluginModelManager implements IModelProviderListener {
 	 * that form the current PDE state
 	 */
 	public PDEState getState() {
-		initializeTable(null);
-		return fState;
+		synchronized (fEntriesSynchronizer) {
+			initializeTable(null);
+			return fState;
+		}
 	}
 
 	/**
