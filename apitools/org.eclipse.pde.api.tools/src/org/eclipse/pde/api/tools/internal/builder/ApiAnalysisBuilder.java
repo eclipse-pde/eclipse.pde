@@ -567,8 +567,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			this.fullBuild = fullBuild;
 			this.wbaseline = wbaseline;
 			this.projects = projects;
-			// Intentionally no rule set to allow run in parallel with build locking entire workspace
-			// setRule(project);
+			// Intentionally not using project as rule to allow run in parallel with build
+			// locking entire workspace
+			setRule(new ApiAnalysisJobRule(project));
 		}
 
 		@Override
@@ -581,7 +582,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					return Status.CANCEL_STATUS;
 				} else {
 					if (status.getCode() == IResourceStatus.RESOURCE_NOT_FOUND && project.isAccessible()) {
-						waitForLockAndReschedule(monitor, e);
+						waitForBuildAndReschedule(monitor, e);
 						return Status.OK_STATUS;
 					} else {
 						return status;
@@ -592,22 +593,19 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		}
 
 		/**
-		 * In case the analysis job was interrupted by the build, let wait for the build
-		 * and start analysis again
+		 * In case the analysis job was interrupted by the resource changes, let wait
+		 * for the build and start analysis again
 		 */
-		private void waitForLockAndReschedule(IProgressMonitor monitor, CoreException e) {
+		private void waitForBuildAndReschedule(IProgressMonitor monitor, CoreException e) {
 			try {
-				Job.getJobManager().beginRule(project, monitor);
-				IStatus s = new Status(IStatus.INFO, ApiAnalysisBuilder.class,
-						"Re-scheduling API analysis for " + project.getName(), e); //$NON-NLS-1$
-				ApiPlugin.log(s);
-				schedule();
-			} catch (OperationCanceledException e1) {
+				Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, monitor);
+			} catch (OperationCanceledException | InterruptedException e1) {
 				// nothing to do
-			} finally {
-				// release lock, we don't want to block workspace while analysis
-				Job.getJobManager().endRule(project);
 			}
+			IStatus s = new Status(IStatus.INFO, ApiAnalysisBuilder.class,
+					"Re-scheduling API analysis for " + project.getName(), e); //$NON-NLS-1$
+			ApiPlugin.log(s);
+			schedule();
 		}
 
 		@Override
@@ -624,6 +622,30 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				}
 			}
 		}
+	}
+
+	private static class ApiAnalysisJobRule implements ISchedulingRule {
+
+		private final IProject project;
+
+		public ApiAnalysisJobRule(IProject project) {
+			this.project = project;
+		}
+
+		@Override
+		public boolean contains(ISchedulingRule rule) {
+			return isConflicting(rule);
+		}
+
+		@Override
+		public boolean isConflicting(ISchedulingRule rule) {
+			if (!(rule instanceof ApiAnalysisJobRule)) {
+				return false;
+			}
+			ApiAnalysisJobRule other = (ApiAnalysisJobRule) rule;
+			return project.equals(other.project);
+		}
+
 	}
 
 	/**
