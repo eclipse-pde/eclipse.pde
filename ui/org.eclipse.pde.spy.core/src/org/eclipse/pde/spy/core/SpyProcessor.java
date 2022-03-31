@@ -235,7 +235,6 @@ public class SpyProcessor {
 		for (MPartDescriptor mp : application.getDescriptors()) {
 			if (partId.equals(mp.getElementId())) {
 				// Already added, update category, description, label, ContributionURI, and IconURI
-				mp.setCategory(Messages.SpyProcessor_category);
 				mp.setDescription(desc);
 				mp.setLabel(partLabel);
 				mp.getPersistedState().remove(IWorkbench.PERSIST_STATE); // see Bug 577275
@@ -250,12 +249,9 @@ public class SpyProcessor {
 
 		// If descriptor not yet in descriptor list, add it now
 		MPartDescriptor descriptor = modelService.createModelElement(MPartDescriptor.class);
-		descriptor.setCategory(Messages.SpyProcessor_category);
 		descriptor.setElementId(partId);
 		descriptor.setDescription(desc);
-		descriptor.getTags().add("View");
 		descriptor.getTags().add(SPY_TAG);
-		descriptor.getTags().add("categoryTag:Eclipse Runtime Spies");
 		descriptor.setLabel(partLabel);
 		descriptor.setCloseable(true);
 		String bundleId = FrameworkUtil.getBundle(spyPartClass).getSymbolicName();
