@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<setup:Configuration
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
+    label="PDE">
+  <annotation
+      source="http://www.eclipse.org/oomph/setup/BrandingInfo">
+    <detail
+        key="imageURI">
+      <value>https://www.eclipse.org/downloads/images/committers.png</value>
+    </detail>
+    <detail
+        key="badgeLabel">
+      <value>PDE</value>
+    </detail>
+  </annotation>
+  <installation
+      name="pde.installation"
+      label="PDE Installation">
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="installation.id.default"
+        value="pde"/>
+    <productVersion
+        href="index:/org.eclipse.setup#//@productCatalogs[name='org.eclipse.applications']/@products[name='eclipse.platform.sdk']/@versions[name='latest']"/>
+    <description>The PDE installation provides the latest tools needed to work with the Eclipse Plug-in Development Environment's source code.</description>
+  </installation>
+  <workspace
+      name="pde.workspace"
+      label="PDE Workspace">
+    <stream
+        href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@projects[name='pde']/@projects[name='build']/@streams[name='master']"/>
+    <stream
+        href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@projects[name='pde']/@projects[name='ui']/@streams[name='master']"/>
+    <description>The PDE workspace provides the source code of the Eclipse Plug-in Development Environment.</description>
+  </workspace>
+  <description>
+    &lt;p>
+    The &lt;a href=&quot;https://www.eclipse.org/pde/&quot;/>Eclipse Plug-in Development Environment&lt;/a> configuration provisions a dedicated development environment 
+    for the complete set of source projects of the &lt;a href=&quot;https://projects.eclipse.org/projects/eclipse.pde&quot;>PDE project&lt;/a>.
+    &lt;/p>
+    &lt;p>
+    All the source projects from &lt;a href=&quot;https://github.com/eclipse-pde&quot;>PDE's Github Repositories&lt;/a>
+    are available, organized into working sets, and ready for contribution.
+    &lt;/p>
+    &lt;/p>
+    Please &lt;a href=&quot;https://wiki.eclipse.org/Eclipse_Platform_SDK_Provisioning&quot;>read the analogous tutorial instructions&lt;/a> for the Eclipse Platform SDK's configuration for more details.
+    &lt;/p>
+  </description>
+</setup:Configuration>
