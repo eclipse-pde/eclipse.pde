@@ -17,6 +17,7 @@ package org.eclipse.pde.internal.launching.launcher;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Stream;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
@@ -24,8 +25,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
@@ -35,6 +35,9 @@ import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.osgi.framework.*;
 
 public class LauncherUtils {
+	private LauncherUtils() {
+	}
+
 	public static final int WORKSPACE_LOCKED = 2000;
 	public static final int CLEAR_LOG = 2001;
 	public static final int DELETE_WORKSPACE = 2002;
@@ -318,13 +321,15 @@ public class LauncherUtils {
 	public static boolean requiresUI(ILaunchConfiguration configuration) {
 		try {
 			String projectID = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
-			if (projectID.length() > 0) {
+			if (!projectID.isEmpty()) {
 				IResource project = ResourcesPlugin.getWorkspace().getRoot().findMember(projectID);
 				if (project instanceof IProject) {
 					IPluginModelBase model = PluginRegistry.findModel((IProject) project);
 					if (model != null) {
 						Set<BundleDescription> plugins = DependencyManager.getSelfAndDependencies(Set.of(model));
-						return plugins.stream().anyMatch(d -> "org.eclipse.swt".equals(d.getSymbolicName())); //$NON-NLS-1$
+						ModelEntry swtEntries = PluginRegistry.findEntry("org.eclipse.swt"); //$NON-NLS-1$
+						var swtModels = Stream.of(swtEntries.getWorkspaceModels(), swtEntries.getExternalModels()).flatMap(Arrays::stream);
+						return swtModels.map(IPluginModelBase::getBundleDescription).anyMatch(plugins::contains);
 					}
 				}
 			}
