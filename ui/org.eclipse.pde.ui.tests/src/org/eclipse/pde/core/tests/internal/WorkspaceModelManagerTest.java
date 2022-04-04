@@ -282,6 +282,7 @@ public class WorkspaceModelManagerTest {
 
 	private void setBundleRoot(IProject project, String path) throws CoreException {
 		PDEProject.setBundleRoot(project, path != null ? project.getFolder(path) : null);
+		project.build(IncrementalProjectBuilder.FULL_BUILD, null);
 	}
 
 	private void copyFile(IFile source, IFile target, UnaryOperator<String> modifications)
