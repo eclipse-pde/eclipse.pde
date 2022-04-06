@@ -221,7 +221,7 @@ public class ClasspathUtilCore {
 				return new Path(file.getAbsolutePath());
 			}
 			file = new File(libraryName);
-			if (file.exists() && file.isAbsolute()) {
+			if (file.isAbsolute() && file.exists()) {
 				return new Path(libraryName);
 			}
 		}
