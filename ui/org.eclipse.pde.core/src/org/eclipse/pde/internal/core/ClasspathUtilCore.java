@@ -181,9 +181,13 @@ public class ClasspathUtilCore {
 	}
 
 	public static IPath getSourceAnnotation(IPluginModelBase model, String libraryName) {
+		return getSourceAnnotation(model, libraryName, false);
+	}
+
+	public static IPath getSourceAnnotation(IPluginModelBase model, String libraryName, boolean isJarShape) {
 		String newlibraryName = TargetWeaver.getWeavedSourceLibraryName(model, libraryName);
 		String zipName = getSourceZipName(newlibraryName);
-		IPath path = getPath(model, zipName);
+		IPath path = getPath(model, zipName, isJarShape);
 		if (path == null) {
 			SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
 			path = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
@@ -209,6 +213,10 @@ public class ClasspathUtilCore {
 	}
 
 	public static IPath getPath(IPluginModelBase model, String libraryName) {
+		return getPath(model, libraryName, false);
+	}
+
+	public static IPath getPath(IPluginModelBase model, String libraryName, boolean installLocationIsFile) {
 		IResource resource = model.getUnderlyingResource();
 		if (resource != null) {
 			IResource jarFile = resource.getProject().findMember(libraryName);
@@ -216,13 +224,21 @@ public class ClasspathUtilCore {
 				return jarFile.getFullPath();
 			}
 		} else {
-			File file = new File(model.getInstallLocation(), libraryName);
-			if (file.exists()) {
-				return new Path(file.getAbsolutePath());
+			File file = new File(libraryName);
+			if (file.isAbsolute()) {
+				if (file.exists()) {
+					return new Path(libraryName);
+				}
+				// absolute file can not be relative
+				return null;
 			}
-			file = new File(libraryName);
-			if (file.exists() && file.isAbsolute()) {
-				return new Path(libraryName);
+			if (!installLocationIsFile) {
+				// model.getInstallLocation() is not a file so it may be a
+				// directory containing a file
+				file = new File(model.getInstallLocation(), libraryName);
+				if (file.exists()) {
+					return new Path(file.getAbsolutePath());
+				}
 			}
 		}
 		return null;
