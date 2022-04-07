@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2021 IBM Corporation and others.
+ * Copyright (c) 2003, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -72,6 +72,7 @@ public class ClasspathHelper {
 	public static String getDevEntriesProperties(String fileName, boolean checkExcluded) throws CoreException {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 		Map<String, List<IPluginModelBase>> bundleModels = Arrays.stream(models)
+				.filter(o -> o.toString() != null) //toString() used as key
 				.collect(Collectors.groupingBy(m -> m.getPluginBase().getId()));
 
 		Properties properties = getDevEntriesProperties(bundleModels, checkExcluded);
