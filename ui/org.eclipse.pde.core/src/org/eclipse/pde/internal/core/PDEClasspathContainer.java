@@ -85,8 +85,9 @@ public class PDEClasspathContainer {
 	}
 
 	protected static void addExternalPlugin(IPluginModelBase model, Rule[] rules, ArrayList<IClasspathEntry> entries) {
-		if (new File(model.getInstallLocation()).isFile()) {
-			IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, "."); //$NON-NLS-1$
+		boolean isJarShape = new File(model.getInstallLocation()).isFile();
+		if (isJarShape) {
+			IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, ".", isJarShape); //$NON-NLS-1$
 			if (srcPath == null) {
 				srcPath = new Path(model.getInstallLocation());
 			}
@@ -102,7 +103,7 @@ public class PDEClasspathContainer {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
 			if (libraries.length == 0) {
 				// If there are no libraries, assume the root of the plug-in is the library '.'
-				IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, "."); //$NON-NLS-1$
+				IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, ".", isJarShape); //$NON-NLS-1$
 				if (srcPath == null) {
 					srcPath = new Path(model.getInstallLocation());
 				}
@@ -115,15 +116,16 @@ public class PDEClasspathContainer {
 					model = (IPluginModelBase) library.getModel();
 					String name = library.getName();
 					String expandedName = ClasspathUtilCore.expandLibraryName(name);
-					IPath path = ClasspathUtilCore.getPath(model, expandedName);
+					IPath path = ClasspathUtilCore.getPath(model, expandedName, isJarShape);
 					if (path == null && !model.isFragmentModel() && ClasspathUtilCore.containsVariables(name)) {
 						model = resolveLibraryInFragments(model, expandedName);
 						if (model != null && model.isEnabled()) {
-							path = ClasspathUtilCore.getPath(model, expandedName);
+							path = ClasspathUtilCore.getPath(model, expandedName, isJarShape);
 						}
 					}
 					if (path != null) {
-						addLibraryEntry(path, ClasspathUtilCore.getSourceAnnotation(model, expandedName), rules, getClasspathAttributes(model), entries);
+						addLibraryEntry(path, ClasspathUtilCore.getSourceAnnotation(model, expandedName, isJarShape),
+								rules, getClasspathAttributes(model), entries);
 					}
 				}
 			}
