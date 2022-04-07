@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.swt.graphics.Image;
@@ -32,7 +32,7 @@ public abstract class AbstractPDEMarkerResolution extends WorkbenchMarkerResolut
 	public static final int REMOVE_TYPE = 3;
 	public static final int CONFIGURE_TYPE = 4;
 
-	protected Image image = null;
+	private Image image;
 	protected int fType;
 	/**
 	 * This variable will only be available after run() is called.
@@ -67,18 +67,19 @@ public abstract class AbstractPDEMarkerResolution extends WorkbenchMarkerResolut
 	@Override
 	public Image getImage() {
 		if (image == null) {
+			PDELabelProvider labelProvider = PDEPlugin.getDefault().getLabelProvider();
 			switch (this.getType()) {
 			case AbstractPDEMarkerResolution.CREATE_TYPE:
-				image = PDEPluginImages.DESC_ADD_ATT.createImage();
+				image = labelProvider.get(PDEPluginImages.DESC_ADD_ATT);
 				break;
 			case AbstractPDEMarkerResolution.REMOVE_TYPE:
-				image = PDEPluginImages.DESC_DELETE.createImage();
+				image = labelProvider.get(PDEPluginImages.DESC_DELETE);
 				break;
 			case AbstractPDEMarkerResolution.RENAME_TYPE:
-				image = PDEPluginImages.DESC_REFRESH.createImage();
+				image = labelProvider.get(PDEPluginImages.DESC_REFRESH);
 				break;
 			case AbstractPDEMarkerResolution.CONFIGURE_TYPE:
-				image = PDEPluginImages.DESC_CON_SEV.createImage();
+				image = labelProvider.get(PDEPluginImages.DESC_CON_SEV);
 				break;
 			}
 		}
@@ -106,14 +107,6 @@ public abstract class AbstractPDEMarkerResolution extends WorkbenchMarkerResolut
 		};
 		PDEModelUtility.modifyModel(modification, null);
 
-	}
-
-
-	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
-		if (image != null)
-			image.dispose();
 	}
 
 	protected abstract void createChange(IBaseModel model);
