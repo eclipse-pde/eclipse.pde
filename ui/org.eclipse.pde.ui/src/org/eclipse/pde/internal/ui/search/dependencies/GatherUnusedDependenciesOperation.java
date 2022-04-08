@@ -171,7 +171,11 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 				SubMonitor iterationMonitor = subMonitor.split(2);
 				if (pkgFragment.hasChildren()) {
 					Requestor requestor = new Requestor();
-					engine.search(SearchPattern.createPattern(pkgFragment, IJavaSearchConstants.REFERENCES),
+					SearchPattern pattern = SearchPattern.createPattern(pkgFragment, IJavaSearchConstants.REFERENCES);
+					if (pattern == null) {
+						continue;
+					}
+					engine.search(pattern,
 							new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() }, searchScope,
 							requestor, iterationMonitor.split(1));
 					if (requestor.foundMatches()) {
@@ -204,7 +208,11 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 				SubMonitor iterationMonitor = subMonitor.split(1).setWorkRemaining(types.length);
 				for (IType type : types) {
 					requestor = new Requestor();
-					engine.search(SearchPattern.createPattern(type, IJavaSearchConstants.REFERENCES),
+					SearchPattern pattern = SearchPattern.createPattern(type, IJavaSearchConstants.REFERENCES);
+					if (pattern == null) {
+						continue;
+					}
+					engine.search(pattern,
 							new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() }, searchScope,
 							requestor, iterationMonitor.split(1));
 					if (requestor.foundMatches()) {
@@ -232,9 +240,13 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			Requestor requestor = new Requestor();
 			String packageName = pkg.getName();
 
+			SearchPattern pattern = SearchPattern.createPattern(packageName, IJavaSearchConstants.PACKAGE,
+					IJavaSearchConstants.REFERENCES, SearchPattern.R_EXACT_MATCH);
+			if (pattern == null) {
+				return false;
+			}
 			engine.search(
-					SearchPattern.createPattern(packageName, IJavaSearchConstants.PACKAGE,
-							IJavaSearchConstants.REFERENCES, SearchPattern.R_EXACT_MATCH),
+					pattern,
 					new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() }, searchScope, requestor,
 					subMonitor.split(1));
 

@@ -257,7 +257,14 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 						String pkgName = exported[i].getName();
 						if (!ignorePkgs.contains(pkgName)) {
 							ReferenceFinder requestor = new ReferenceFinder();
-							engine.search(SearchPattern.createPattern(pkgName, IJavaSearchConstants.PACKAGE, IJavaSearchConstants.REFERENCES, SearchPattern.R_EXACT_MATCH), new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()}, searchScope, requestor, null);
+							SearchPattern pattern = SearchPattern.createPattern(pkgName, IJavaSearchConstants.PACKAGE,
+									IJavaSearchConstants.REFERENCES, SearchPattern.R_EXACT_MATCH);
+							if (pattern == null) {
+								continue;
+							}
+							engine.search(pattern,
+									new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() }, searchScope,
+									requestor, null);
 							if (requestor.foundMatches()) {
 								fNewDependencies = true;
 								ignorePkgs.add(pkgName);
