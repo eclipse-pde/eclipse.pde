@@ -299,6 +299,9 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 			};
 
 			SearchPattern typePattern = SearchPattern.createPattern(aTypeName, IJavaSearchConstants.TYPE, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE);
+			if (typePattern == null) {
+				return Collections.emptyMap();
+			}
 			new SearchEngine().search(typePattern, new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()}, searchScope, requestor, subMonitor.split(1));
 
 			if (!packages.isEmpty()) {
