@@ -144,10 +144,20 @@ public class DependencyExtentOperation {
 			if (type.isAnonymous())
 				continue;
 			TypeReferenceSearchRequestor requestor = new TypeReferenceSearchRequestor();
-			engine.search(SearchPattern.createPattern(type, IJavaSearchConstants.REFERENCES), new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()}, scope, requestor, null);
+			SearchPattern pattern = SearchPattern.createPattern(type, IJavaSearchConstants.REFERENCES);
+			if (pattern == null) {
+				continue;
+			}
+			engine.search(pattern, new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() }, scope,
+					requestor, null);
 			if (requestor.containMatches()) {
 				TypeDeclarationSearchRequestor decRequestor = new TypeDeclarationSearchRequestor();
-				engine.search(SearchPattern.createPattern(type, IJavaSearchConstants.DECLARATIONS), new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()}, SearchEngine.createJavaSearchScope(new IJavaElement[] {parent}), decRequestor, null);
+				pattern = SearchPattern.createPattern(type, IJavaSearchConstants.DECLARATIONS);
+				if (pattern == null) {
+					continue;
+				}
+				engine.search(pattern, new SearchParticipant[] { SearchEngine.getDefaultSearchParticipant() },
+						SearchEngine.createJavaSearchScope(new IJavaElement[] { parent }), decRequestor, null);
 				Match match = decRequestor.getMatch();
 				if (match != null)
 					fSearchResult.addMatch(match);
