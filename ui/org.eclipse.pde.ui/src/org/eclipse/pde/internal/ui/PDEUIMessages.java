@@ -2103,6 +2103,12 @@ public class PDEUIMessages extends NLS {
 	public static String ProductDefinitonWizardPage_noPlugin;
 	public static String ProductDefinitonWizardPage_invalidId;
 	public static String Product_FeatureSection_title;
+	public static String Product_MixedSection_AddPlugins;
+	public static String Product_MixedSection_AddFeatures;
+	public static String Product_MixedSection_title;
+	public static String Product_MixedSection_desc;
+	public static String Product_MixedSection_Tooltip_Plugins;
+	public static String Product_MixedSection_Tooltip_Features;
 	public static String Product_FeatureSection_newFeature;
 	public static String ProductExportWizardPage_productGroup;
 	public static String ProductExportWizardPage_productNotExists;
@@ -3142,6 +3148,8 @@ public class PDEUIMessages extends NLS {
 	public static String ProductInfoSection_plugins;
 
 	public static String ProductInfoSection_features;
+
+	public static String ProductInfoSection_mixed;
 
 	public static String ProfileBlock_0;
 

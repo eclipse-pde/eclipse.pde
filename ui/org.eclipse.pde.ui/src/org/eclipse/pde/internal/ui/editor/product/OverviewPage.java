@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,7 @@ package org.eclipse.pde.internal.ui.editor.product;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -106,8 +107,8 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 			new ProductExportAction(getPDEEditor()).run();
 			break;
 		case "configuration": //$NON-NLS-1$
-			String pageId = ((ProductLauncherFormPageHelper) getLauncherHelper()).getProduct().useFeatures() ? DependenciesPage.FEATURE_ID : DependenciesPage.PLUGIN_ID;
-			getEditor().setActivePage(pageId);
+			IProduct product = ((ProductLauncherFormPageHelper) getLauncherHelper()).getProduct();
+			getEditor().setActivePage(DependenciesPage.TYPE_2_ID.get(product.getType()));
 			break;
 		case "multi-platform-wiki": //$NON-NLS-1$
 			openBrowser("https://wiki.eclipse.org/Building#Cross-platform_build"); //$NON-NLS-1$

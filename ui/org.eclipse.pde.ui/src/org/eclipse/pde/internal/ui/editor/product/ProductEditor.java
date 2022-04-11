@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.iproduct.IProduct.ProductType;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -121,7 +122,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 	protected void addEditorPages() {
 		try {
 			addPage(new OverviewPage(this));
-			addPage(new DependenciesPage(this, useFeatures()));
+			addPage(new DependenciesPage(this, getProductType()));
 			addPage(new ConfigurationPage(this, false));
 			addPage(new LaunchingPage(this));
 			addPage(new SplashPage(this));
@@ -138,14 +139,14 @@ public class ProductEditor extends PDELauncherFormEditor {
 	public void updateConfigurationPage() {
 		try {
 			removePage(1);
-			addPage(1, new DependenciesPage(this, useFeatures()));
+			addPage(1, new DependenciesPage(this, getProductType()));
 		} catch (PartInitException e) {
 		}
 	}
 
-	public boolean useFeatures() {
+	public ProductType getProductType() {
 		IBaseModel model = getAggregateModel();
-		return model != null && ((IProductModel) model).getProduct().useFeatures();
+		return model != null ? ((IProductModel) model).getProduct().getType() : null;
 	}
 
 	@Override

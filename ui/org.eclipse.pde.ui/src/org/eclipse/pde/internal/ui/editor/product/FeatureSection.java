@@ -48,7 +48,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
-import org.eclipse.pde.internal.ui.editor.feature.FeatureEditor;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.feature.NewFeatureProjectWizard;
@@ -120,22 +119,22 @@ public class FeatureSection extends AbstractProductContentSection<FeatureSection
 	@Override
 	List<Action> getToolbarActions() {
 		Action newFeatureAction = createPushAction(PDEUIMessages.Product_FeatureSection_newFeature,
-				PDEPluginImages.DESC_NEWFTRPRJ_TOOL, () -> handleNewFeature());
+				PDEPluginImages.DESC_NEWFTRPRJ_TOOL, () -> handleNewFeature(this));
 		fSortAction = new SortAction(getTableViewer(), PDEUIMessages.Product_FeatureSection_sortAlpha, null, null,
 				this);
 		return List.of(newFeatureAction, fSortAction);
 	}
 
-	private void handleRootToggle() {
-		List<IProductFeature> selection = getTableViewer().getStructuredSelection().toList();
+	static void handleRootToggle(AbstractProductContentSection<?> section) {
+		List<IProductFeature> selection = section.getTableViewer().getStructuredSelection().toList();
 		boolean nonRootSelected = selection.stream().anyMatch(o -> !o.isRootInstallMode());
 		selection.forEach(o -> o.setRootInstallMode(nonRootSelected));
 	}
 
-	private void handleProperties() {
-		IStructuredSelection ssel = getTableSelection();
+	static void handleProperties(AbstractProductContentSection<?> section) {
+		IStructuredSelection ssel = section.getTableSelection();
 		if (ssel.size() == 1 && ssel.getFirstElement() instanceof IProductFeature feature) {
-			FeatureProperties dialog = new FeatureProperties(PDEPlugin.getActiveWorkbenchShell(), isEditable(),
+			FeatureProperties dialog = new FeatureProperties(PDEPlugin.getActiveWorkbenchShell(), section.isEditable(),
 					feature.getVersion(), feature.isRootInstallMode());
 			dialog.create();
 			SWTUtil.setDialogSize(dialog, 400, 200);
@@ -146,25 +145,25 @@ public class FeatureSection extends AbstractProductContentSection<FeatureSection
 		}
 	}
 
-	private void handleNewFeature() {
+	static void handleNewFeature(AbstractProductContentSection<?> section) {
 		NewFeatureProjectWizard wizard = new NewFeatureProjectWizard();
 		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		dialog.create();
 		SWTUtil.setDialogSize(dialog, 400, 500);
 		if (dialog.open() == Window.OK) {
-			addFeature(wizard.getFeatureId());
+			addFeature(wizard.getFeatureId(), section);
 		}
 	}
 
-	private void addFeature(String id) {
-		IProduct product = getProduct();
+	private static void addFeature(String id, AbstractProductContentSection<?> section) {
+		IProduct product = section.getProduct();
 		IProductModelFactory factory = product.getModel().getFactory();
 		IProductFeature feature = factory.createFeature();
 		feature.setId(id);
 		feature.setVersion(""); //$NON-NLS-1$
 		feature.setRootInstallMode(true);
 		product.addFeatures(new IProductFeature[] { feature });
-		getTableViewer().setSelection(new StructuredSelection(feature));
+		section.getTableViewer().setSelection(new StructuredSelection(feature));
 	}
 
 	@Override
@@ -185,24 +184,15 @@ public class FeatureSection extends AbstractProductContentSection<FeatureSection
 		getProduct().removeFeatures(features);
 	}
 
-	@Override
-	protected void handleDoubleClick(IStructuredSelection selection) {
-		if (selection.getFirstElement() instanceof IProductFeature feature) {
-			FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
-			IFeatureModel model = manager.findFeatureModel(feature.getId(), feature.getVersion());
-			FeatureEditor.openFeatureEditor(model);
-		}
-	}
-
-	private void handleAdd() {
+	static void handleAdd(AbstractProductContentSection<?> section) {
 		FeatureSelectionDialog dialog = new FeatureSelectionDialog(PDEPlugin.getActiveWorkbenchShell(),
-				getAvailableChoices(getProduct()), true);
+				getAvailableChoices(section.getProduct()), true);
 		if (dialog.open() == Window.OK) {
 			Object[] models = dialog.getResult();
 			for (Object model : models) {
 				if (model instanceof IFeatureModel featureModel) {
 					IFeature feature = featureModel.getFeature();
-					addFeature(feature.getId());
+					addFeature(feature.getId(), section);
 				}
 			}
 		}
@@ -224,7 +214,7 @@ public class FeatureSection extends AbstractProductContentSection<FeatureSection
 		for (String id : requiredFeatures) {
 			// Do not add features that already exist
 			if (!product.containsFeature(id)) {
-				addFeature(id);
+				addFeature(id, this);
 			}
 		}
 	}
