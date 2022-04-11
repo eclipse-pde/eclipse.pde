@@ -535,6 +535,9 @@ public class P2Tests extends P2TestCase {
 	@SuppressWarnings("removal")
 	@Test
 	public void testBug265564() throws Exception {
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+			return; //disable this test on Mac
+		}
 		IFolder buildFolder = newTest("265564");
 
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
