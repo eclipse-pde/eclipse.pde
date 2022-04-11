@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2022 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,16 +13,39 @@
  *     EclipseSource Corporation - ongoing enhancements
  *     Rapicorp Corporation - ongoing enhancements
  *     Hannes Wellmann - Bug 570760 - Option to automatically add requirements to product-launch
+ *     Hannes Wellmann - Bug 325614 - Support mixed products (features and bundles)
  *******************************************************************************/
 package org.eclipse.pde.internal.core.iproduct;
 
+import java.util.Locale;
+
 public interface IProduct extends IProductObject {
+
+	// see org.eclipse.equinox.internal.p2.publisher.eclipse.ProductContentType
+	public enum ProductType {
+		BUNDLES, // only bundles are accepted in the product
+		FEATURES, // only features are accepted in the product
+		MIXED; // all kinds of installable units are accepted in the product
+
+		public static ProductType parse(String s) {
+			try {
+				return ProductType.valueOf(s.toUpperCase(Locale.ENGLISH));
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException("Illegal product type " + s, e); //$NON-NLS-1$
+			}
+		}
+
+		@Override
+		public String toString() {
+			return name().toLowerCase(Locale.ENGLISH);
+		}
+	}
 
 	String P_ID = "id"; //$NON-NLS-1$
 	String P_UID = "uid"; //$NON-NLS-1$
 	String P_NAME = "name"; //$NON-NLS-1$
 	String P_APPLICATION = "application"; //$NON-NLS-1$
-	String P_USEFEATURES = "useFeatures"; //$NON-NLS-1$
+	String P_TYPE = "type"; //$NON-NLS-1$
 	String P_INCLUDE_FRAGMENTS = "includeFragments"; //$NON-NLS-1$
 	String P_INTRO_ID = "introId"; //$NON-NLS-1$
 	String P_VERSION = "version"; //$NON-NLS-1$
@@ -41,7 +64,7 @@ public interface IProduct extends IProductObject {
 
 	String getDefiningPluginId();
 
-	boolean useFeatures();
+	ProductType getType();
 
 	boolean includeLaunchers();
 
@@ -150,7 +173,7 @@ public interface IProduct extends IProductObject {
 
 	void setCSSInfo(ICSSInfo info);
 
-	void setUseFeatures(boolean use);
+	void setType(ProductType type);
 
 	void setIncludeLaunchers(boolean exclude);
 

@@ -37,13 +37,20 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.FeatureModelManager;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.iproduct.IProductFeature;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
+import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.editor.feature.FeatureEditor;
+import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -227,6 +234,19 @@ public abstract class AbstractProductContentSection<S extends AbstractProductCon
 	protected void buttonSelected(int index) {
 		if (index < buttonHandlers.size()) {
 			buttonHandlers.get(index).accept((S) this);
+		}
+	}
+
+	@Override
+	protected void handleDoubleClick(IStructuredSelection selection) {
+		Object element = selection.getFirstElement();
+		if (element instanceof IProductFeature feature) {
+			FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
+			IFeatureModel model = fmm.findFeatureModel(feature.getId(), feature.getVersion());
+			FeatureEditor.openFeatureEditor(model);
+
+		} else if (element instanceof IProductPlugin plugin) {
+			ManifestEditor.openPluginEditor(plugin.getId());
 		}
 	}
 

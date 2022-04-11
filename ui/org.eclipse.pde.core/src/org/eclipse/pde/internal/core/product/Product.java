@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2022 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
  *     Rapicorp Corporation - ongoing enhancements
  *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 547323
  *     Hannes Wellmann - Bug 570760 - Option to automatically add requirements to product-launch
+ *     Hannes Wellmann - Bug 325614 - Support mixed products (features and bundles)
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -74,7 +75,7 @@ public class Product extends ProductObject implements IProduct {
 	private List<IProductFeature> fFeatures = new ArrayList<>();
 	private IConfigurationFileInfo fConfigIniInfo;
 	private IJREInfo fJVMInfo;
-	private boolean fUseFeatures;
+	private ProductType fType = ProductType.BUNDLES;
 	private boolean fIncludeLaunchers = true;
 	private boolean fAutoIncludeRequirements = true;
 	private IWindowImages fWindowImages;
@@ -204,7 +205,7 @@ public class Product extends ProductObject implements IProduct {
 		if (fVersion != null && fVersion.length() > 0) {
 			writer.print(" " + P_VERSION + "=\"" + fVersion + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
-		writer.print(" " + P_USEFEATURES + "=\"" + fUseFeatures + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		writer.print(" " + P_TYPE + "=\"" + fType + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.print(" " + P_INCLUDE_LAUNCHERS + "=\"" + fIncludeLaunchers + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.print(" " + P_INCLUDE_REQUIREMENTS_AUTOMATICALLY + "=\"" + fAutoIncludeRequirements + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		writer.println(">"); //$NON-NLS-1$
@@ -327,7 +328,7 @@ public class Product extends ProductObject implements IProduct {
 		fId = null;
 		fProductId = null;
 		fName = null;
-		fUseFeatures = false;
+		fType = ProductType.BUNDLES;
 		fIncludeLaunchers = true;
 		fAutoIncludeRequirements = true;
 		fAboutInfo = null;
@@ -354,7 +355,15 @@ public class Product extends ProductObject implements IProduct {
 			fId = element.getAttribute(P_UID);
 			fName = element.getAttribute(P_NAME);
 			fVersion = element.getAttribute(P_VERSION);
-			fUseFeatures = "true".equals(element.getAttribute(P_USEFEATURES)); //$NON-NLS-1$
+			// Parse product type and support legacy 'useFeatures' attribute
+			String useFeatures = element.getAttribute("useFeatures"); //$NON-NLS-1$
+			if (!useFeatures.isBlank()) {
+				fType = "true".equals(useFeatures) ? ProductType.FEATURES : ProductType.BUNDLES; //$NON-NLS-1$
+			}
+			String type = element.getAttribute(P_TYPE);
+			if (!type.isBlank()) {
+				fType = ProductType.parse(type);
+			}
 			String launchers = element.getAttribute(P_INCLUDE_LAUNCHERS);
 			fIncludeLaunchers = launchers.isBlank() || "true".equals(launchers); //$NON-NLS-1$
 			String autoAdd = element.getAttribute(P_INCLUDE_REQUIREMENTS_AUTOMATICALLY);
@@ -682,16 +691,16 @@ public class Product extends ProductObject implements IProduct {
 	}
 
 	@Override
-	public boolean useFeatures() {
-		return fUseFeatures;
+	public ProductType getType() {
+		return fType;
 	}
 
 	@Override
-	public void setUseFeatures(boolean use) {
-		boolean old = fUseFeatures;
-		fUseFeatures = use;
+	public void setType(ProductType type) {
+		ProductType old = fType;
+		fType = type;
 		if (isEditable()) {
-			firePropertyChanged(P_USEFEATURES, Boolean.toString(old), Boolean.toString(fUseFeatures));
+			firePropertyChanged(P_TYPE, old, fType);
 		}
 	}
 
