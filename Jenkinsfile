@@ -2,6 +2,7 @@ pipeline {
 	options {
 		timeout(time: 40, unit: 'MINUTES')
 		buildDiscarder(logRotator(numToKeepStr:'5'))
+		timestamps()
 	}
 	agent {
 		label "centos-latest"
@@ -25,7 +26,9 @@ pipeline {
 			post {
 				always {
 					archiveArtifacts artifacts: '*.log,*/target/work/data/.metadata/*.log,*/tests/target/work/data/.metadata/*.log,apiAnalyzer-workspace/.metadata/*.log', allowEmptyArchive: true
+					recordIssues aggregatingResults: true, enabledForFailure: true, qualityGates: [[threshold: 1, type: 'DELTA', unstable: false]], tools: [acuCobol()]
 					publishIssues issues:[scanForIssues(tool: java()), scanForIssues(tool: mavenConsole())]
+					junit '**/target/surefire-reports/*.xml'
 				}
 			}
 		}
