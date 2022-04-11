@@ -120,9 +120,7 @@ public class ParserWrapperTestCase {
 
 				try {
 					XMLDefaultHandler handler = new XMLDefaultHandler();
-					SAXParserWrapper parser = new SAXParserWrapper();
-					parser.parse(fParserXMLFile, handler);
-					parser.dispose();
+					SAXParserWrapper.parse(fParserXMLFile, handler);
 				} catch (ParserConfigurationException | SAXException | FactoryConfigurationError | IOException e) {
 					e.printStackTrace();
 					fError = true;

@@ -448,9 +448,8 @@ public class Schema extends PlatformObject implements ISchema {
 
 	public void load(InputStream stream) {
 		try {
-			SAXParserWrapper parser = new SAXParserWrapper();
 			XMLDefaultHandler handler = new XMLDefaultHandler(fAbbreviated);
-			parser.parse(stream, handler);
+			SAXParserWrapper.parse(stream, handler);
 			traverseDocumentTree(handler.getDocumentElement());
 		} catch (SAXException e) {
 			// ignore parse errors - 'loaded' will be false anyway

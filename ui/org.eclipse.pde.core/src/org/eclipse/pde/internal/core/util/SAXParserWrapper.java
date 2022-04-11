@@ -20,7 +20,6 @@ import java.io.InputStream;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -30,45 +29,33 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class SAXParserWrapper {
 
-	protected SAXParser fParser;
-	protected boolean isdisposed;
-
-	/**
-	 *
-	 */
-	public SAXParserWrapper() throws ParserConfigurationException, SAXException, FactoryConfigurationError {
-		fParser = PDEXMLHelper.Instance().getDefaultSAXParser();
-		isdisposed = false;
+	private SAXParserWrapper() { // static use only
 	}
 
-	// Explicit disposal
-	public void dispose() {
-		if (isdisposed == false) {
-			PDEXMLHelper.Instance().recycleSAXParser(fParser);
-			isdisposed = true;
-		}
+	public static void parse(File f, DefaultHandler dh)
+			throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
+		parse(p -> p.parse(f, dh));
 	}
 
-	public void parse(File f, DefaultHandler dh) throws SAXException, IOException {
-		fParser.parse(f, dh);
+	public static void parse(InputStream is, DefaultHandler dh)
+			throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
+		parse(p -> p.parse(is, dh));
 	}
 
-	public void parse(InputStream is, DefaultHandler dh) throws SAXException, IOException {
-		fParser.parse(is, dh);
-	}
-
-	public void parse(InputSource is, DefaultHandler dh) throws SAXException, IOException {
-		fParser.parse(is, dh);
-	}
-
-	// NOTE:  If other parser method calls are required, the corresponding
+	// NOTE: If other parser method calls are required, the corresponding
 	// wrapper method needs to be added here
 
-	// Implicit disposal
-	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
-		dispose();
+	private interface ParseProcess {
+		void parseWith(SAXParser parser) throws SAXException, IOException;
 	}
 
+	private static void parse(ParseProcess pp)
+			throws ParserConfigurationException, SAXException, FactoryConfigurationError, IOException {
+		SAXParser fParser = PDEXMLHelper.Instance().getDefaultSAXParser();
+		try {
+			pp.parseWith(fParser);
+		} finally {
+			PDEXMLHelper.Instance().recycleSAXParser(fParser);
+		}
+	}
 }
