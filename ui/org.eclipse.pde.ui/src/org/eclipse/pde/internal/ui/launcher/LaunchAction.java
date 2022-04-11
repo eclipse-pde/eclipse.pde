@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2022 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
  *     Hannes Wellmann - Bug 570760 - Option to automatically add requirements to product-launch
+ *     Hannes Wellmann - Bug 325614 - Support mixed products (features and bundles)
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
@@ -23,6 +24,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -32,6 +34,7 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -64,6 +67,7 @@ import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;
 import org.eclipse.pde.internal.core.iproduct.IJREInfo;
 import org.eclipse.pde.internal.core.iproduct.IPluginConfiguration;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.iproduct.IProduct.ProductType;
 import org.eclipse.pde.internal.core.iproduct.IProductFeature;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
@@ -88,8 +92,7 @@ public class LaunchAction extends Action {
 	 * for the given product. This for example also includes transitive
 	 * dependencies, if the product is configured to include them.
 	 */
-	public static Set<IPluginModelBase> getLaunchedBundlesForProduct(IProduct product)
-			throws CoreException {
+	public static Set<IPluginModelBase> getLaunchedBundlesForProduct(IProduct product) throws CoreException {
 		IResource resource = product.getModel().getUnderlyingResource();
 		IPath fullPath = resource != null ? resource.getFullPath() : IPath.fromOSString(product.getProductId());
 		LaunchAction launchAction = new LaunchAction(product, fullPath, null);
@@ -162,9 +165,12 @@ public class LaunchAction extends Action {
 		wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, wsplugins);
 		wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, explugins);
 
-		if (fProduct.useFeatures()) {
+		if (fProduct.getType() == ProductType.FEATURES || fProduct.getType() == ProductType.MIXED) {
 			wc.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, true);
-			refreshFeatureLaunchPlugins(wc, models);
+			Set<IPluginModelBase> mixedProductPlugins = fProduct.getType() == ProductType.MIXED
+					? getModelsFromListedPlugins(fProduct)
+					: Collections.emptySet();
+			refreshFeatureLaunchPlugins(wc, models, mixedProductPlugins);
 		} else {
 			wc.removeAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES);
 			wc.removeAttribute(IPDELauncherConstants.SELECTED_FEATURES);
@@ -181,7 +187,8 @@ public class LaunchAction extends Action {
 		return wc;
 	}
 
-	private void refreshFeatureLaunchPlugins(ILaunchConfigurationWorkingCopy wc, Set<IPluginModelBase> allModels) {
+	private void refreshFeatureLaunchPlugins(ILaunchConfigurationWorkingCopy wc, Set<IPluginModelBase> allModels,
+			Set<IPluginModelBase> mixedProductPlugins) {
 		FeatureModelManager featureManager = PDECore.getDefault().getFeatureModelManager();
 		Set<String> selectedFeatures = Arrays.stream(fProduct.getFeatures()) //
 				.map(f -> featureManager.findFeatureModel(f.getId(), f.getVersion())).filter(Objects::nonNull)
@@ -192,6 +199,11 @@ public class LaunchAction extends Action {
 				.map(model -> getPluginConfiguration(model)
 						.map(c -> formatAdditionalPluginEntry(model, c.fResolution, true, c.fStartLevel, c.fAutoStart)))
 				.flatMap(Optional::stream).collect(Collectors.toCollection(LinkedHashSet::new));
+
+		// Add all listed plug-ins of a mixed product as additional plug-ins
+		for (IPluginModelBase plugin : mixedProductPlugins) {
+			additionalPlugins.add(formatAdditionalPluginEntry(plugin, DEFAULT, true, DEFAULT, DEFAULT));
+		} // only add absent plugins
 
 		wc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, selectedFeatures);
 		wc.setAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS, additionalPlugins);
@@ -284,7 +296,13 @@ public class LaunchAction extends Action {
 	}
 
 	public static Set<IPluginModelBase> getModels(IProduct product) {
-		return product.useFeatures() ? getModelsFromListedFeatures(product) : getModelsFromListedPlugins(product);
+		return switch (product.getType())
+			{
+			case BUNDLES -> getModelsFromListedPlugins(product);
+			case FEATURES -> getModelsFromListedFeatures(product);
+			case MIXED -> Stream.of(getModelsFromListedFeatures(product), getModelsFromListedPlugins(product))
+					.flatMap(Collection::stream).collect(Collectors.toSet());
+			};
 	}
 
 	private static Set<IPluginModelBase> getModelsFromListedPlugins(IProduct product) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2022 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,6 +38,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.iproduct.IIntroInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.iproduct.IProduct.ProductType;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
@@ -216,7 +217,7 @@ public class IntroSection extends PDESection {
 
 	private void addDependenciesAndPlugins() {
 		IProduct product = getProduct();
-		if (!product.useFeatures()) {
+		if (product.getType() == ProductType.BUNDLES) {
 			IProductModelFactory factory = product.getModel().getFactory();
 			IProductPlugin plugin = factory.createPlugin();
 			plugin.setId(INTRO_PLUGIN_ID);

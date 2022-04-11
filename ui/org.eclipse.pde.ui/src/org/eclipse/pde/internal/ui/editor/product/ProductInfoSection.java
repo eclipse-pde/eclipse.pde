@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2022 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,9 +11,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
+ *     Hannes Wellmann - Bug 325614 - Support mixed products (features and bundles)
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import static org.eclipse.pde.internal.core.iproduct.IProduct.ProductType.BUNDLES;
+import static org.eclipse.pde.internal.core.iproduct.IProduct.ProductType.FEATURES;
+import static org.eclipse.pde.internal.core.iproduct.IProduct.ProductType.MIXED;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.List;
@@ -33,6 +37,7 @@ import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.IStateDeltaListener;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.iproduct.IProduct.ProductType;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -69,6 +74,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 	private ExtensionIdComboPart fProductCombo;
 	private Button fPluginButton;
 	private Button fFeatureButton;
+	private Button fMixedButton;
 
 	private static final int NUM_COLUMNS = 3;
 
@@ -255,7 +261,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 
 	private void createConfigurationOption(Composite client, FormToolkit toolkit) {
 		Composite comp = toolkit.createComposite(client);
-		GridLayout layout = new GridLayout(3, false);
+		GridLayout layout = new GridLayout(4, false);
 		layout.marginWidth = layout.marginHeight = 0;
 		comp.setLayout(layout);
 		GridData gd = new GridData();
@@ -277,16 +283,17 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				String pageId = fPluginButton.getSelection() ? DependenciesPage.PLUGIN_ID : DependenciesPage.FEATURE_ID;
+				String pageId = DependenciesPage.TYPE_2_ID.get(getProduct().getType());
 				getPage().getEditor().setActivePage(pageId);
 			}
 		});
 
-		fPluginButton = createTypeButton(toolkit, comp, false, PDEUIMessages.ProductInfoSection_plugins);
-		fFeatureButton = createTypeButton(toolkit, comp, true, PDEUIMessages.ProductInfoSection_features);
+		fPluginButton = createTypeButton(toolkit, comp, BUNDLES, PDEUIMessages.ProductInfoSection_plugins);
+		fFeatureButton = createTypeButton(toolkit, comp, FEATURES, PDEUIMessages.ProductInfoSection_features);
+		fMixedButton = createTypeButton(toolkit, comp, MIXED, PDEUIMessages.ProductInfoSection_mixed);
 	}
 
-	private Button createTypeButton(FormToolkit toolkit, Composite comp, boolean useFeatures, String label) {
+	private Button createTypeButton(FormToolkit toolkit, Composite comp, ProductType type, String label) {
 		Button btn = toolkit.createButton(comp, label, SWT.RADIO);
 		GridData gd = new GridData();
 		gd.horizontalIndent = 25;
@@ -294,8 +301,8 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		btn.setEnabled(isEditable());
 		btn.addSelectionListener(widgetSelectedAdapter(e -> {
 			IProduct product = getProduct();
-			if (btn.getSelection() && product.useFeatures() != useFeatures) {
-				product.setUseFeatures(useFeatures); // set to changed type
+			if (btn.getSelection() && product.getType() != type) {
+				product.setType(type); // set to changed type
 				((ProductEditor) getPage().getEditor()).updateConfigurationPage();
 			}
 		}));
@@ -319,8 +326,9 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		if (product.getApplication() != null) {
 			fAppCombo.setText(product.getApplication());
 		}
-		fPluginButton.setSelection(!product.useFeatures());
-		fFeatureButton.setSelection(product.useFeatures());
+		fPluginButton.setSelection(product.getType() == BUNDLES);
+		fFeatureButton.setSelection(product.getType() == FEATURES);
+		fMixedButton.setSelection(product.getType() == MIXED);
 		super.refresh();
 	}
 
@@ -368,7 +376,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 	}
 
 	private List<Boolean> getSelections() {
-		return List.of(fPluginButton.getSelection(), fFeatureButton.getSelection());
+		return List.of(fPluginButton.getSelection(), fFeatureButton.getSelection(), fMixedButton.getSelection());
 	}
 
 	private void refreshProductCombo(String productID) {

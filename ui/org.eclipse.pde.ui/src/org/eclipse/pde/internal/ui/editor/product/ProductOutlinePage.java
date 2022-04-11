@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
+
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductFeature;
@@ -28,12 +31,14 @@ public class ProductOutlinePage extends FormOutlinePage {
 
 	@Override
 	protected Object[] getChildren(Object parent) {
-		if (parent instanceof DependenciesPage) {
-			DependenciesPage page = (DependenciesPage) parent;
-			IProduct product = ((IProductModel) page.getModel()).getProduct();
-			if (product.useFeatures())
-				return product.getFeatures();
-			return product.getPlugins();
+		if (parent instanceof DependenciesPage page && page.getModel() instanceof IProductModel model) {
+			IProduct product = model.getProduct();
+			return switch (product.getType())
+				{
+				case BUNDLES -> product.getPlugins();
+				case FEATURES -> product.getFeatures();
+				case MIXED -> Stream.of(product.getFeatures(), product.getPlugins()).flatMap(Arrays::stream).toArray();
+				};
 		}
 		return new Object[0];
 	}

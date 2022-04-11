@@ -1,3 +1,17 @@
+/*******************************************************************************
+ *  Copyright (c) 2022, 2023 Hannes Wellmann and others.
+ *
+ *  This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License 2.0
+ *  which accompanies this distribution, and is available at
+ *  https://www.eclipse.org/legal/epl-2.0/
+ *
+ *  SPDX-License-Identifier: EPL-2.0
+ *
+ *  Contributors:
+ *     Hannes Wellmann - initial API and implementation
+ *     Hannes Wellmann - Bug 325614 - Support mixed products (features and bundles)
+ *******************************************************************************/
 package org.eclipse.pde.ui.tests.launcher.product;
 
 import static java.util.Map.ofEntries;
@@ -87,11 +101,35 @@ public class TestProductEditorLaunching {
 	}
 
 	@Test
+	public void testProductLaunch_typeBUNDLES() throws Exception {
+		Set<String> features = Set.of();
+		Set<String> additionalBundles = Set.of();
+		Set<String> bundles = Set.of("plugin.a");
+		assertProductLaunchConfig("bundles2", USE_BUNDLE_LAUNCH, features, additionalBundles, bundles);
+	}
+
+	@Test
 	public void testProductLaunch_useFeatureTRUE() throws Exception {
 		Set<String> features = Set.of("feature.a");
 		Set<String> additionalBundles = Set.of();
 		Set<String> bundles = Set.of("plugin.in.f.a");
 		assertProductLaunchConfig("features1", USE_FEATURES_LAUNCH, features, additionalBundles, bundles);
+	}
+
+	@Test
+	public void testProductLaunch_typeFEATURES() throws Exception {
+		Set<String> features = Set.of("feature.a");
+		Set<String> additionalBundles = Set.of();
+		Set<String> bundles = Set.of("plugin.in.f.a");
+		assertProductLaunchConfig("features2", USE_FEATURES_LAUNCH, features, additionalBundles, bundles);
+	}
+
+	@Test
+	public void testProductLaunch_typeMIXED() throws Exception {
+		Set<String> features = Set.of("feature.a");
+		Set<String> additionalBundles = Set.of("plugin.a");
+		Set<String> bundles = Set.of("plugin.a", "plugin.in.f.a");
+		assertProductLaunchConfig("mixed", USE_FEATURES_LAUNCH, features, additionalBundles, bundles);
 	}
 
 	@Test

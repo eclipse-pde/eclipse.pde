@@ -59,7 +59,6 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.util.PersistablePluginObject;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -170,51 +169,44 @@ public class PluginSection extends AbstractProductContentSection<PluginSection> 
 	@Override
 	List<Action> getToolbarActions() {
 		Action newPluginAction = createPushAction(PDEUIMessages.Product_PluginSection_newPlugin,
-				PDEPluginImages.DESC_NEWPPRJ_TOOL, () -> handleNewPlugin());
+				PDEPluginImages.DESC_NEWPPRJ_TOOL, () -> handleNewPlugin(this));
 		Action newFragmentAction = createPushAction(PDEUIMessages.Product_PluginSection_newFragment,
-				PDEPluginImages.DESC_NEWFRAGPRJ_TOOL, () -> handleNewFragment());
+				PDEPluginImages.DESC_NEWFRAGPRJ_TOOL, () -> handleNewFragment(this));
 		return List.of(newPluginAction, newFragmentAction);
 	}
 
-	private void handleNewFragment() {
+	static void handleNewFragment(AbstractProductContentSection<?> section) {
 		NewFragmentProjectWizard wizard = new NewFragmentProjectWizard();
 		wizard.init(PDEPlugin.getActiveWorkbenchWindow().getWorkbench(), null);
 		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		dialog.create();
 		SWTUtil.setDialogSize(dialog, 400, 500);
 		if (dialog.open() == Window.OK) {
-			addPlugin(wizard.getFragmentId(), wizard.getFragmentVersion());
+			addPlugin(wizard.getFragmentId(), wizard.getFragmentVersion(), section);
 		}
 	}
 
-	private void handleNewPlugin() {
+	static void handleNewPlugin(AbstractProductContentSection<?> section) {
 		NewPluginProjectWizard wizard = new NewPluginProjectWizard();
 		wizard.init(PDEPlugin.getActiveWorkbenchWindow().getWorkbench(), null);
 		WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 		dialog.create();
 		SWTUtil.setDialogSize(dialog, 400, 500);
 		if (dialog.open() == Window.OK) {
-			addPlugin(wizard.getPluginId(), wizard.getPluginVersion());
+			addPlugin(wizard.getPluginId(), wizard.getPluginVersion(), section);
 		}
 	}
 
-	private void handleProperties() {
-		IStructuredSelection ssel = getTableSelection();
+	static void handleProperties(AbstractProductContentSection<?> section) {
+		IStructuredSelection ssel = section.getTableSelection();
 		if (ssel.size() == 1 && ssel.getFirstElement() instanceof IProductPlugin plugin) {
-			VersionDialog dialog = new VersionDialog(PDEPlugin.getActiveWorkbenchShell(), isEditable(),
+			VersionDialog dialog = new VersionDialog(PDEPlugin.getActiveWorkbenchShell(), section.isEditable(),
 					plugin.getVersion());
 			dialog.create();
 			SWTUtil.setDialogSize(dialog, 400, 200);
 			if (dialog.open() == Window.OK) {
 				plugin.setVersion(dialog.getVersion());
 			}
-		}
-	}
-
-	@Override
-	protected void handleDoubleClick(IStructuredSelection selection) {
-		if (selection.getFirstElement() instanceof IProductPlugin plugin) {
-			ManifestEditor.openPluginEditor(plugin.getId());
 		}
 	}
 
@@ -276,14 +268,14 @@ public class PluginSection extends AbstractProductContentSection<PluginSection> 
 		getProduct().removePlugins(plugins);
 	}
 
-	private void handleAdd() {
+	static void handleAdd(AbstractProductContentSection<?> section) {
 		PluginSelectionDialog pluginSelectionDialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(),
-				getBundles(getProduct()), true);
+				getBundles(section.getProduct()), true);
 		if (pluginSelectionDialog.open() == Window.OK) {
 			Object[] result = pluginSelectionDialog.getResult();
 			for (Object object : result) {
 				IPluginModelBase pluginModelBase = (IPluginModelBase) object;
-				addPlugin(pluginModelBase.getPluginBase().getId(), ICoreConstants.DEFAULT_VERSION);
+				addPlugin(pluginModelBase.getPluginBase().getId(), ICoreConstants.DEFAULT_VERSION, section);
 			}
 		}
 	}
@@ -303,14 +295,14 @@ public class PluginSection extends AbstractProductContentSection<PluginSection> 
 		return pluginModelBaseList.toArray(new IPluginModelBase[pluginModelBaseList.size()]);
 	}
 
-	private void addPlugin(String id, String version) {
-		IProduct product = getProduct();
+	private static void addPlugin(String id, String version, AbstractProductContentSection<?> section) {
+		IProduct product = section.getProduct();
 		IProductModelFactory factory = product.getModel().getFactory();
 		IProductPlugin plugin = factory.createPlugin();
 		plugin.setId(id);
 		plugin.setVersion(version);
 		product.addPlugins(new IProductPlugin[] { plugin });
-		getTableViewer().setSelection(new StructuredSelection(plugin));
+		section.getTableViewer().setSelection(new StructuredSelection(plugin));
 	}
 
 	private IPluginModelBase findModel(IAdaptable object) {

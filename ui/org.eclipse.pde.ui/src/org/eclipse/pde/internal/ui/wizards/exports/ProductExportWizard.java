@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -85,10 +85,12 @@ public class ProductExportWizard extends BaseExportWizard {
 		info.zipFileName = fPage.getFileName();
 		if (fPage2 != null && fPage.doMultiPlatform())
 			info.targets = fPage2.getTargets();
-		if (fProductModel.getProduct().useFeatures())
-			info.items = getFeatureModels();
-		else
-			info.items = getPluginModels();
+		info.items = switch (fProductModel.getProduct().getType())
+			{
+			case FEATURES -> getFeatureModels();
+			case BUNDLES -> getPluginModels();
+			case MIXED -> throw new IllegalStateException("Exporting mixed products is not (yet) supported"); //$NON-NLS-1$
+			};
 
 		String rootDirectory = fPage.getRootDirectory();
 		if ("".equals(rootDirectory.trim())) //$NON-NLS-1$
