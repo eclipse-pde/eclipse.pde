@@ -95,12 +95,10 @@ public class ConvertSchemaToHTML extends Task {
 				continue;
 			}
 			Schema schema = null;
-			SAXParserWrapper parser = null;
 			try {
-				parser = new SAXParserWrapper();
 				File schemaFile = new File(model.getInstallLocation(), schemaLocation);
 				XMLDefaultHandler handler = new XMLDefaultHandler();
-				parser.parse(schemaFile, handler);
+				SAXParserWrapper.parse(schemaFile, handler);
 				URL url = schemaFile.toURL();
 				SchemaDescriptor desc = new SchemaDescriptor(extPoint.getFullId(), url, searchPaths);
 				schema = (Schema) desc.getSchema(false);

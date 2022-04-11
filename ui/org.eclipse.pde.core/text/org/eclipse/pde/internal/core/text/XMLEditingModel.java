@@ -48,8 +48,7 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 		try {
 			fLoaded = true;
 			status = Status.OK_STATUS;
-			SAXParserWrapper parser = new SAXParserWrapper();
-			parser.parse(source, createDocumentHandler(this, true));
+			SAXParserWrapper.parse(source, createDocumentHandler(this, true));
 		} catch (SAXException e) {
 			fLoaded = false;
 			status = Status.error(e.getMessage(), e);
@@ -68,8 +67,7 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 	@Override
 	public void adjustOffsets(IDocument document) {
 		try {
-			SAXParserWrapper parser = new SAXParserWrapper();
-			parser.parse(getInputStream(document), createDocumentHandler(this, false));
+			SAXParserWrapper.parse(getInputStream(document), createDocumentHandler(this, false));
 		} catch (SAXException | IOException | ParserConfigurationException | FactoryConfigurationError e) {
 		}
 	}

@@ -25,12 +25,8 @@ import org.xml.sax.SAXException;
 public class DefaultSAXParser {
 
 	public static void parse(IFile file, XMLErrorReporter reporter) {
-		SAXParserWrapper parser = null;
-		try {
-			parser = new SAXParserWrapper();
-			try (InputStream stream = new BufferedInputStream(file.getContents())) {
-			parser.parse(stream, reporter);
-			}
+		try (InputStream stream = new BufferedInputStream(file.getContents())) {
+			SAXParserWrapper.parse(stream, reporter);
 		} catch (CoreException | SAXException | IOException | ParserConfigurationException e) {
 		}
 	}

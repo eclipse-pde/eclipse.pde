@@ -14,20 +14,21 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.util;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.zip.GZIPInputStream;
 
 /**
  * Reads a .tar or .tar.gz archive file, providing an index enumeration and
  * allows for accessing an InputStream for arbitrary files in the archive.
  */
-public class TarFile {
+public class TarFile implements Closeable {
 	private static class TarInputStream extends FilterInputStream {
 		private int nextEntry = 0;
 		private int nextEOF = 0;
@@ -383,6 +384,7 @@ public class TarFile {
 	 *
 	 * @throws IOException if the file cannot be successfully closed
 	 */
+	@Override
 	public void close() throws IOException {
 		if (entryEnumerationStream != null) {
 			entryEnumerationStream.close();
@@ -393,30 +395,19 @@ public class TarFile {
 	}
 
 	/**
-	 * Create a new TarFile for the given path name.
-	 *
-	 * @param filename
-	 * @throws TarException
-	 * @throws IOException
-	 */
-	public TarFile(String filename) throws TarException, IOException {
-		this(new File(filename));
-	}
-
-	/**
 	 * Returns an enumeration cataloguing the tar archive.
 	 *
 	 * @return enumeration of all files in the archive
 	 */
-	public Enumeration<TarEntry> entries() {
-		return new Enumeration<>() {
+	public Iterable<TarEntry> entries() {
+		return () -> new Iterator<>() {
 			@Override
-			public boolean hasMoreElements() {
+			public boolean hasNext() {
 				return (curEntry != null);
 			}
 
 			@Override
-			public TarEntry nextElement() {
+			public TarEntry next() {
 				TarEntry oldEntry = curEntry;
 				try {
 					curEntry = entryEnumerationStream.getNextEntry();
@@ -468,10 +459,5 @@ public class TarFile {
 	 */
 	public String getName() {
 		return file.getPath();
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		close();
 	}
 }
