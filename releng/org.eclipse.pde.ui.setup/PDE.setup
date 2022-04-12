@@ -235,7 +235,7 @@
         </detail>
         <detail
             key="label">
-          <value>PDE Build Git or Gerrit Repository</value>
+          <value>PDE Build Github Repository</value>
         </detail>
         <detail
             key="target">
