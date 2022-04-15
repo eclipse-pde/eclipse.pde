@@ -88,7 +88,7 @@ public class RequirementHelper {
 		String pluginResolution = isFeatureBasedLaunch ? configuration.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE) : IPDELauncherConstants.LOCATION_WORKSPACE;
 
 		List<String> appRequirements = getApplicationLaunchRequirements(configuration);
-		boolean missingRequirements = false;
+		boolean allRequirementsSatisfied = true;
 		for (String requiredBundleId : appRequirements) {
 			ModelEntry entry = PluginRegistry.findEntry(requiredBundleId);
 			if (entry != null) {
@@ -99,10 +99,10 @@ public class RequirementHelper {
 					addPlugin.accept(plugin);
 				}
 			} else {
-				missingRequirements = true;
+				allRequirementsSatisfied = false;
 			}
 		}
-		return missingRequirements;
+		return allRequirementsSatisfied;
 	}
 
 	public static List<String> getProductRequirements(ILaunchConfiguration config) throws CoreException {
