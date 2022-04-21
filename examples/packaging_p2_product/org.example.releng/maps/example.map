@@ -1,3 +1,0 @@
-plugin@org.example.mail=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,,pde-build-home/examples/packaging_p2_product/org.example.mail
-feature@org.example.master=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,,pde-build-home/examples/packaging_p2_product/org.example.releng/features/master
-feature@org.example.masterRoot=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/eclipse,,pde-build-home/examples/packaging_p2_product/org.example.releng/features/masterRoot
