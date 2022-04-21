@@ -1,5 +1,0 @@
---launcher.XXMaxPermSize
-256m
--vmargs
--Xms40m
--Xmx256m

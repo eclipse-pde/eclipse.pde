@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: A
-Bundle-SymbolicName: org.example.a
-Bundle-Version: 1.0.100.qualifier
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
-Export-Package: org.example.a
-Automatic-Module-Name: org.example.a
