@@ -202,7 +202,9 @@ public class DependencyManager {
 					// not included into the closure.
 					continue;
 				}
-				BundleRevision provider = getProvider(wire);
+				BundleRevision provider = wire.getCapability().getRevision();
+				// Use revision of required capability to support the case if
+				// fragments contribute new packages to their host's API.
 				if (provider instanceof BundleDescription && (includeOptional || !isOptional(wire.getRequirement()))) {
 					BundleDescription requiredBundle = (BundleDescription) provider;
 					addNewRequiredBundle(requiredBundle, closure, pending);
@@ -217,13 +219,6 @@ public class DependencyManager {
 		if (bundle != null && bundle.isResolved() && !bundle.isRemovalPending() && requiredBundles.add(bundle)) {
 			pending.add(bundle);
 		}
-	}
-
-	private static BundleRevision getProvider(BundleWire wire) {
-		// org.eclipse.osgi.internal.resolver.BundleDescriptionImpl.BundleWireImpl.getProvider()
-		// does not check for null
-		BundleWiring providerWiring = wire.getProviderWiring();
-		return providerWiring != null ? providerWiring.getRevision() : null;
 	}
 
 	private static boolean isOptional(BundleRequirement requirement) {
