@@ -1348,14 +1348,9 @@ public class ScriptGenerationTests extends PDETestCase {
 
 		runAntScript(buildXML.getLocation().toOSString(), new String[] { "default" },
 				buildFolder.getLocation().toOSString(), null);
-		if (System.getProperty("java.specification.version").compareTo("14") >= 0) {
-			// Java 14+ doesn't have pack200 tools so jars are put instead
-			zipEntries.add("plugins/p1_1.0.0.jar");
-			zipEntries.add("plugins/p2_1.0.0.jar");
-		} else {
-			zipEntries.add("plugins/p1_1.0.0.jar.pack.gz");
-			zipEntries.add("plugins/p2_1.0.0.jar.pack.gz");
-		}
+		// Java 14+ doesn't have pack200 tools so jars are put
+		zipEntries.add("plugins/p1_1.0.0.jar");
+		zipEntries.add("plugins/p2_1.0.0.jar");
 		assertZipContents(buildFolder, "I.TestBuild/f-TestBuild.zip", zipEntries);
 
 		File tempJar = new File(zipFile.getParentFile(), "temp.jar");

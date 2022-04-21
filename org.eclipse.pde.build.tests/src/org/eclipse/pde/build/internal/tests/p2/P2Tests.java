@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
-import org.eclipse.equinox.internal.p2.repository.helpers.ChecksumProducer;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.query.IQueryResult;
@@ -532,11 +531,10 @@ public class P2Tests extends P2TestCase {
 		assertResourceFile(outRepo2, "content.jar");
 	}
 
-	@SuppressWarnings("removal")
 	@Test
 	public void testBug265564() throws Exception {
 		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
-			return; //disable this test on Mac
+			return; // disable this test on Mac
 		}
 		IFolder buildFolder = newTest("265564");
 
@@ -602,40 +600,11 @@ public class P2Tests extends P2TestCase {
 				assertEquals(descriptors.length, 1);
 				continue;
 			}
-			boolean isJava14 = System.getProperty("java.specification.version").compareTo("14") >= 0;
-			if (isJava14) {
-				// no pack200 tool -> no pack.gz file
-				assertEquals(1, descriptors.length);
-			} else {
-				assertEquals(2, descriptors.length);
-			}
-
-			if (!isJava14) { // no pack.gz on Java 14+
-				if (IArtifactDescriptor.FORMAT_PACKED.equals(descriptors[0].getProperty(IArtifactDescriptor.FORMAT))) {
-					assertMD5(repoFolder, descriptors[1]);
-				} else if (IArtifactDescriptor.FORMAT_PACKED
-						.equals(descriptors[1].getProperty(IArtifactDescriptor.FORMAT))) {
-					assertMD5(repoFolder, descriptors[0]);
-				} else {
-					fail("No pack.gz desriptor");
-				}
-			}
+			// no pack200 tool -> no pack.gz file
+			assertEquals(1, descriptors.length);
 
 			assertResourceFile(repoFolder, getArtifactLocation(descriptors[0]));
-			if (!isJava14) { // no pack.gz on Java 14+ thus only one descriptor in the array
-				assertResourceFile(repoFolder, getArtifactLocation(descriptors[1]));
-			}
 		}
-	}
-
-	private void assertMD5(IFolder repository, IArtifactDescriptor descriptor) throws Exception {
-		String md5 = descriptor.getProperty(IArtifactDescriptor.DOWNLOAD_MD5);
-		if (md5 == null)
-			return;
-
-		IFile artifact = repository.getFile(getArtifactLocation(descriptor));
-		String actualMD5 = ChecksumProducer.produce(artifact.getLocation().toFile(), "MD5", null);
-		assertEquals(md5, actualMD5);
 	}
 
 	@Test
