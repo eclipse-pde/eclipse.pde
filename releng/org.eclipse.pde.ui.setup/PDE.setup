@@ -131,12 +131,12 @@
           value="warning"/>
     </setupTask>
   </setupTask>
-  <project name="ui"
-      label="UI">
+  <project name="core"
+      label="Core">
     <setupTask
         xsi:type="git:GitCloneTask"
-        id="github.clone.pde.ui"
-        remoteURI="eclipse-pde/eclipse.pde.ui">
+        id="github.clone.pde.core"
+        remoteURI="eclipse-pde/eclipse.pde">
       <annotation
           source="http://www.eclipse.org/oomph/setup/InducedChoices">
         <detail
@@ -162,14 +162,14 @@
         <requirement
             name="*"/>
         <sourceLocator
-            rootFolder="${github.clone.pde.ui.location}"/>
+            rootFolder="${github.clone.pde.core.location}"/>
       </targlet>
     </setupTask>
     <setupTask
         xsi:type="setup.workingsets:WorkingSetTask"
-        id="pde.ui.workingsets">
+        id="pde.core.workingsets">
       <workingSet
-          name="PDE UI">
+          name="PDE">
         <predicate
             xsi:type="predicates:AndPredicate">
           <operand
@@ -177,7 +177,7 @@
               project="org.eclipse.pde"/>
           <operand
               xsi:type="workingsets:ExclusionPredicate"
-              excludedWorkingSet="//'pde.ui.workingsets'/@workingSets[name='PDE%20API%20Tools'] //'pde.ui.workingsets'/@workingSets[name='PDE%20Tests']"/>
+              excludedWorkingSet="//'pde.core.workingsets'/@workingSets[name='PDE%20API%20Tools'] //'pde.core.workingsets'/@workingSets[name='PDE%20Tests']"/>
         </predicate>
       </workingSet>
       <workingSet
@@ -192,7 +192,7 @@
               pattern=".*\.api\..*"/>
           <operand
               xsi:type="workingsets:ExclusionPredicate"
-              excludedWorkingSet="//'pde.ui.workingsets'/@workingSets[name='PDE%20Tests']"/>
+              excludedWorkingSet="//'pde.core.workingsets'/@workingSets[name='PDE%20Tests']"/>
         </predicate>
       </workingSet>
       <workingSet
@@ -214,12 +214,12 @@
       <setupTask
           xsi:type="setup:EclipseIniTask"
           option="-Doomph.redirection.pde"
-          value="=https://raw.githubusercontent.com/eclipse-pde/eclipse.pde.ui/master/releng/org.eclipse.pde.ui.setup/->${github.clone.pde.ui.location|uri}/releng/org.eclipse.pde.ui.setup/"
+          value="=https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/releng/org.eclipse.pde.ui.setup/->${github.clone.pde.core.location|uri}/releng/org.eclipse.pde.ui.setup/"
           vm="true">
         <description>Set an Oomph redirection system property to redirect the logical location of this setup to its physical location in the Git clone.</description>
       </setupTask>
     </stream>
-    <description>The PDE UI</description>
+    <description>The PDE Core</description>
   </project>
   <project name="build"
       label="Build">
