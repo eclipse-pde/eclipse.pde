@@ -208,7 +208,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		}
 
 		private Image getImage(String location) {
-			if (new File(location).isFile())
+			if (location != null && new File(location).isFile())
 				return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_JAR);
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 		}
