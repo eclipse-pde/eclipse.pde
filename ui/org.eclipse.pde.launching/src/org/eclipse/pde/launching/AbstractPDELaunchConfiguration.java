@@ -155,21 +155,25 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			addModuleSystem = true;
 			argLength++; // Need to add the argument
 		}
-		IVMInstall vmInstall;
-		try {
-			vmInstall = VMHelper.getVMInstall(configuration);
-			if (vmInstall instanceof AbstractVMInstall) {
-				AbstractVMInstall install = (AbstractVMInstall) vmInstall;
-				String vmver = install.getJavaVersion();
-				if (vmver != null && JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_17) >= 0) {
-					if (!argumentContainsAttribute(args, allowSecurityManager)) {
-						addAllowSecurityManager = true;
-						argLength++; // Need to add the argument
+		final String buildId = System.getProperty("eclipse.buildId", "Unknown Build"); //$NON-NLS-1$//$NON-NLS-2$
+
+		if (isEclipseBuild424OrMore(buildId)) { // Don't add allow flags fir eclipse before 4.24
+			IVMInstall vmInstall;
+			try {
+				vmInstall = VMHelper.getVMInstall(configuration);
+				if (vmInstall instanceof AbstractVMInstall) {
+					AbstractVMInstall install = (AbstractVMInstall) vmInstall;
+					String vmver = install.getJavaVersion();
+					if (vmver != null && JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_17) >= 0) {
+						if (!argumentContainsAttribute(args, allowSecurityManager)) {
+							addAllowSecurityManager = true;
+							argLength++; // Need to add the argument
+						}
 					}
 				}
+			} catch (CoreException e) {
+				PDELaunchingPlugin.log(e);
 			}
-		} catch (CoreException e) {
-			PDELaunchingPlugin.log(e);
 		}
 		if (addModuleSystem || addAllowSecurityManager) {
 			args = Arrays.copyOf(args, argLength);
@@ -187,6 +191,28 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			args = arrayList.toArray(new String[arrayList.size()]);
 		}
 		return args;
+	}
+
+	private static final String SEPARATOR = "."; //$NON-NLS-1$
+
+	private boolean isEclipseBuild424OrMore(String buildId) {
+		int major = 0, minor = 0;
+		try {
+			StringTokenizer st = new StringTokenizer(buildId, SEPARATOR, true);
+			major = Integer.parseInt(st.nextToken()); // minor
+
+			if (st.hasMoreTokens()) { // minor
+				st.nextToken(); // consume delimiter
+				minor = Integer.parseInt(st.nextToken());
+			}
+			if (major >= 4 && minor >= 24) {
+				return true;
+			}
+		} catch (Exception ex) {
+			// return false
+		}
+
+		return false;
 	}
 
 	private boolean argumentContainsAttribute(String[] args, String modAllSystem) {
