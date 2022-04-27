@@ -78,16 +78,15 @@ public class RequirementHelper {
 		return requirementsFunction != null ? Objects.requireNonNull(requirementsFunction.getRequiredBundleIds(config)) : Collections.emptyList();
 	}
 
-	public static boolean addApplicationLaunchRequirements(Map<IPluginModelBase, String> bundle2startLevel, ILaunchConfiguration configuration) throws CoreException {
+	public static boolean addApplicationLaunchRequirements(List<String> appRequirements, ILaunchConfiguration configuration, Map<IPluginModelBase, String> bundle2startLevel) throws CoreException {
 		Consumer<IPluginModelBase> addPlugin = b -> BundleLauncherHelper.addDefaultStartingBundle(bundle2startLevel, b);
-		return addApplicationLaunchRequirements(configuration, bundle2startLevel.keySet(), addPlugin);
+		return addApplicationLaunchRequirements(appRequirements, configuration, bundle2startLevel.keySet(), addPlugin);
 	}
 
-	public static boolean addApplicationLaunchRequirements(ILaunchConfiguration configuration, Set<IPluginModelBase> containedPlugins, Consumer<IPluginModelBase> addPlugin) throws CoreException {
+	public static boolean addApplicationLaunchRequirements(List<String> appRequirements, ILaunchConfiguration configuration, Set<IPluginModelBase> containedPlugins, Consumer<IPluginModelBase> addPlugin) throws CoreException {
 		boolean isFeatureBasedLaunch = configuration.getAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false);
 		String pluginResolution = isFeatureBasedLaunch ? configuration.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE) : IPDELauncherConstants.LOCATION_WORKSPACE;
 
-		List<String> appRequirements = getApplicationLaunchRequirements(configuration);
 		boolean allRequirementsSatisfied = true;
 		for (String requiredBundleId : appRequirements) {
 			ModelEntry entry = PluginRegistry.findEntry(requiredBundleId);

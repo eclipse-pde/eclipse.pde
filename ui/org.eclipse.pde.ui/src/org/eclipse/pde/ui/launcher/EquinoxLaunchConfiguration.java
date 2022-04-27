@@ -30,7 +30,6 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.PDEMessages;
 import org.eclipse.pde.internal.launching.launcher.*;
-import org.eclipse.pde.launching.IPDELauncherConstants;
 
 /**
  * A launch delegate for launching the Equinox framework
@@ -162,7 +161,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, true);
 
-		if (!RequirementHelper.addApplicationLaunchRequirements(fModels, configuration)) {
+		if (!RequirementHelper.addApplicationLaunchRequirements(List.of(IPDEBuildConstants.BUNDLE_OSGI), configuration, fModels)) {
 			throw new CoreException(Status.error(PDEMessages.EquinoxLaunchConfiguration_oldTarget));
 		}
 		fAllBundles = fModels.keySet().stream().collect(Collectors.groupingBy(m -> m.getPluginBase().getId(),
