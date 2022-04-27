@@ -164,7 +164,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, true);
 
-		if (!RequirementHelper.addApplicationLaunchRequirements(fModels, configuration)) {
+		if (!RequirementHelper.addApplicationLaunchRequirements(List.of(IPDEBuildConstants.BUNDLE_OSGI), configuration, fModels)) {
 			throw new CoreException(Status.error(PDEMessages.EquinoxLaunchConfiguration_oldTarget));
 		}
 		fAllBundles = fModels.keySet().stream().collect(Collectors.groupingBy(m -> m.getPluginBase().getId(), HashMap::new, Collectors.toCollection(ArrayList::new)));
