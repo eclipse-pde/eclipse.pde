@@ -111,7 +111,8 @@ public class BundleLauncherHelper {
 
 	private static void addRequiredBundles(Map<IPluginModelBase, String> bundle2startLevel, ILaunchConfiguration configuration) throws CoreException {
 
-		RequirementHelper.addApplicationLaunchRequirements(bundle2startLevel, configuration);
+		List<String> appRequirements = RequirementHelper.getApplicationLaunchRequirements(configuration);
+		RequirementHelper.addApplicationLaunchRequirements(appRequirements, configuration, bundle2startLevel);
 
 		boolean includeOptional = configuration.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true);
 		Set<BundleDescription> requiredDependencies = includeOptional //
@@ -167,7 +168,8 @@ public class BundleLauncherHelper {
 
 		if (addRequirements) {
 			// Add all missing  plug-ins required by the application/product set in the config
-			RequirementHelper.addApplicationLaunchRequirements(configuration, launchPlugins, launchPlugins::add);
+			List<String> appRequirements = RequirementHelper.getApplicationLaunchRequirements(configuration);
+			RequirementHelper.addApplicationLaunchRequirements(appRequirements, configuration, launchPlugins, launchPlugins::add);
 
 			// Get all required plugins
 			Set<BundleDescription> additionalBundles = DependencyManager.getDependencies(launchPlugins);

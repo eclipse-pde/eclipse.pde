@@ -31,6 +31,8 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.launching.*;
 import org.eclipse.pde.internal.launching.launcher.*;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.Version;
 
 /**
  * An abstract launch delegate for PDE-based launch configurations
@@ -157,7 +159,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		}
 		final String buildId = System.getProperty("eclipse.buildId", "Unknown Build"); //$NON-NLS-1$//$NON-NLS-2$
 
-		if (isEclipseBuild424OrMore(buildId)) { // Don't add allow flags fir eclipse before 4.24
+		if (isEclipseBundleGreaterThanVersion(4, 24)) { // Don't add allow flags fir eclipse before 4.24
 			IVMInstall vmInstall;
 			try {
 				vmInstall = VMHelper.getVMInstall(configuration);
@@ -193,26 +195,31 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		return args;
 	}
 
-	private static final String SEPARATOR = "."; //$NON-NLS-1$
 
-	private boolean isEclipseBuild424OrMore(String buildId) {
-		int major = 0, minor = 0;
-		try {
-			StringTokenizer st = new StringTokenizer(buildId, SEPARATOR, true);
-			major = Integer.parseInt(st.nextToken()); // minor
-
-			if (st.hasMoreTokens()) { // minor
-				st.nextToken(); // consume delimiter
-				minor = Integer.parseInt(st.nextToken());
+	private boolean isEclipseBundleGreaterThanVersion(int major, int minor) {
+		Version version;
+		String product = "org.eclipse.platform.ide"; //$NON-NLS-1$
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IExtensionPoint point = registry.getExtensionPoint("org.eclipse.core.runtime.products"); //$NON-NLS-1$
+		if (point != null) {
+			IExtension[] extensions = point.getExtensions();
+			for (IExtension ext : extensions) {
+				if (product.equals(ext.getUniqueIdentifier())) {
+					IContributor contributor = ext.getContributor();
+					if (contributor != null) {
+						Bundle bundle = Platform.getBundle(contributor.getName());
+						if (bundle != null) {
+							version = bundle.getVersion();
+							if (version.getMajor() >= 4 && version.getMinor() >= 24) {
+								return true;
+							}
+						}
+					}
+				}
 			}
-			if (major >= 4 && minor >= 24) {
-				return true;
-			}
-		} catch (Exception ex) {
-			// return false
 		}
-
 		return false;
+
 	}
 
 	private boolean argumentContainsAttribute(String[] args, String modAllSystem) {
