@@ -15,10 +15,8 @@
 package org.eclipse.pde.ui.templates.tests;
 
 import static java.util.stream.Collectors.toSet;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -65,7 +63,7 @@ public class TestPDETemplates {
 	}
 
 	@BeforeClass
-	public static void setTargetPlatform() throws IOException, CoreException, InterruptedException {
+	public static void setTargetPlatform() throws CoreException, InterruptedException {
 		TargetPlatformUtil.setRunningPlatformAsTarget();
 	}
 
@@ -166,7 +164,7 @@ public class TestPDETemplates {
 			markers = new IMarker[0];
 		}
 
-		assertThat("Template '" + template.getLabel() + "' generates errors.", markers, equalTo(new IMarker[0]));
+		assertEquals("Template '" + template.getLabel() + "' generates errors.", 0, markers.length);
 	}
 
 	@Test
