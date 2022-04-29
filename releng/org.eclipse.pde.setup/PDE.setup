@@ -214,7 +214,7 @@
       <setupTask
           xsi:type="setup:EclipseIniTask"
           option="-Doomph.redirection.pde"
-          value="=https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/releng/org.eclipse.pde.ui.setup/->${github.clone.pde.core.location|uri}/releng/org.eclipse.pde.ui.setup/"
+          value="=https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/releng/org.eclipse.pde.setup/->${github.clone.pde.core.location|uri}/releng/org.eclipse.pde.setup/"
           vm="true">
         <description>Set an Oomph redirection system property to redirect the logical location of this setup to its physical location in the Git clone.</description>
       </setupTask>
