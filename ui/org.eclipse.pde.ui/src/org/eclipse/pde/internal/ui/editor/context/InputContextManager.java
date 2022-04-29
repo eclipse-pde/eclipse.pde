@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.context;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,15 +25,13 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.IModelUndoManager;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.*;
+import org.eclipse.ui.progress.IProgressService;
 
 public abstract class InputContextManager implements IResourceChangeListener {
 	private PDEFormEditor editor;
 	private Hashtable<IEditorInput, Object> inputContexts;
-	private ArrayList<IFile> monitoredFiles;
+	private final Set<IFile> monitoredFiles = ConcurrentHashMap.newKeySet();
 	private ArrayList<IInputContextListener> listeners;
 	private IModelUndoManager undoManager;
 
@@ -68,6 +68,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 		}
 		inputContexts.clear();
 		undoManager = null;
+		monitoredFiles.clear();
 	}
 
 	/**
@@ -198,54 +199,71 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	}
 
 	public void monitorFile(IFile file) {
-		if (monitoredFiles == null)
-			monitoredFiles = new ArrayList<>();
 		monitoredFiles.add(file);
 	}
 
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
+		if (monitoredFiles.isEmpty()) {
+			return;
+		}
+
 		IResourceDelta delta = event.getDelta();
 
 		try {
+			List<IFile> added = new ArrayList<>();
+			List<IFile> removed = new ArrayList<>();
 			delta.accept(delta1 -> {
 				int kind = delta1.getKind();
+				if (kind != IResourceDelta.ADDED && kind != IResourceDelta.REMOVED) {
+					return true;
+				}
 				IResource resource = delta1.getResource();
-				if (resource instanceof IFile) {
-					if (kind == IResourceDelta.ADDED)
-						asyncStructureChanged((IFile) resource, true);
-					else if (kind == IResourceDelta.REMOVED)
-						asyncStructureChanged((IFile) resource, false);
+				if (monitoredFiles.contains(resource)) {
+					if (kind == IResourceDelta.ADDED) {
+						added.add((IFile) resource);
+					} else {
+						removed.add((IFile) resource);
+					}
 					return false;
 				}
 				return true;
 			});
+			if (!added.isEmpty() || !removed.isEmpty()) {
+				asyncStructureChanged(added, removed);
+			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 	}
 
-	private void asyncStructureChanged(final IFile file, final boolean added) {
-		if (editor == null || editor.getEditorSite() == null)
-			return;
-		Shell shell = editor.getEditorSite().getShell();
-		Display display = shell != null ? shell.getDisplay() : Display.getDefault();
-
-		display.asyncExec(() -> structureChanged(file, added));
+	private void asyncStructureChanged(List<IFile> added, List<IFile> removed) {
+		try {
+			IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
+			progressService.runInUI(progressService, monitor -> {
+				for (IFile file : added) {
+					if (!monitor.isCanceled()) {
+						structureChanged(file, true);
+					}
+				}
+				for (IFile file : removed) {
+					if (!monitor.isCanceled()) {
+						structureChanged(file, false);
+					}
+				}
+			}, null);
+		} catch (InvocationTargetException | InterruptedException e) {
+			PDEPlugin.logException(e);
+		}
 	}
 
 	protected void structureChanged(IFile file, boolean added) {
-		if (monitoredFiles == null)
-			return;
-		for (int i = 0; i < monitoredFiles.size(); i++) {
-			IFile ifile = monitoredFiles.get(i);
-			if (ifile.equals(file)) {
-				if (added) {
-					fireStructureChange(file, true);
-				} else {
-					fireStructureChange(file, false);
-					removeContext(file);
-				}
+		if (monitoredFiles.contains(file)) {
+			if (added) {
+				fireStructureChange(file, true);
+			} else {
+				fireStructureChange(file, false);
+				removeContext(file);
 			}
 		}
 	}
