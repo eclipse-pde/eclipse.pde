@@ -72,9 +72,8 @@ public class TestPDETemplates {
 
 	@Parameters(name = "{index}: {0}")
 	public static Collection<WizardElement> allTemplateWizards() {
-		return Arrays.asList(new NewPluginProjectWizard().getAvailableCodegenWizards().getChildren()).stream() //
-				.filter(o -> (o instanceof WizardElement)) //
-				.map(o -> (WizardElement) o) //
+		return Arrays.stream(new NewPluginProjectWizard().getAvailableCodegenWizards().getChildren()) //
+				.filter(WizardElement.class::isInstance).map(WizardElement.class::cast) //
 				.collect(Collectors.toList());
 	}
 
