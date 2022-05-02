@@ -1,0 +1,10 @@
+bin
+lib
+bin_ant
+temp*
+build.xml
+pdebuild.jar
+org.eclipse.pde.build_*.zip
+pdebuildsrc.zip
+javaCompiler.pdebuild.jar.args
+javaCompiler.lib_pdebuild-ant.jar.args
