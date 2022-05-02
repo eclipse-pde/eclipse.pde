@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="F1"
+      label="F1"
+      version="1.0.0"
+      license-feature="L1"
+      license-feature-version="2.0.0.qualifier">
+
+   <description>
+      [Enter Feature Description here.]
+   </description>
+
+   <copyright>
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="replace my url">
+      replace my text
+   </license>
+
+</feature>

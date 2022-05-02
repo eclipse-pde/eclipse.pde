@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+     Copyright (c) 2008, 2015 IBM Corporation and others.
+
+     This program and the accompanying materials
+     are made available under the terms of the Eclipse Public License 2.0
+     which accompanies this distribution, and is available at
+     https://www.eclipse.org/legal/epl-2.0/
+
+     SPDX-License-Identifier: EPL-2.0
+    
+     Contributors:
+         IBM Corporation - initial API and implementation
+ -->
+
+<project name="project" default="default">
+	<description>
+    	 Build the pdebuild-ant.jar.  Either from scratch (default target), or by
+    	 gathering up the results of a workspace build from bin_ant.
+    </description>
+
+	<!-- ================================= 
+          target: default              
+         ================================= -->
+	<target name="default" description="--> description">
+		<tstamp/>
+		<eclipse.buildScript elements="plugin@org.eclipse.pde.build" 
+			buildDirectory="${buildDirectory}" 
+			configInfo="*,*,*" 
+			baseLocation="${baseLocation}" 
+			outputUpdateJars="false"
+			pluginpath="${thisPlugin}"
+			forceContextQualifier="z${DSTAMP}${TSTAMP}"
+			/>
+		<delete file="lib/pdebuild-ant.jar" failonerror="false"/>
+		<ant antfile="build.xml" target="lib/pdebuild-ant.jar"/>
+	</target>
+	<target name="workspaceBinaries" description="Jar up the binaries that were compiled by the jdt builder" >
+		<mkdir dir="lib" />
+		<delete file="lib/pdebuild-ant.jar" failonerror="false"/>
+		<jar destfile="lib/pdebuild-ant.jar" basedir="bin_ant"/>
+	</target>
+</project>
