@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Plugin Plug-in
+Bundle-SymbolicName: a.plugin
+Bundle-Version: 1.0.0
+Bundle-Activator: a.plugin.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Eclipse-LazyStart: true

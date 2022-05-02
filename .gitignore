@@ -14,3 +14,11 @@ Snap.*
 .DS_Store
 .polyglot.META-INF
 .polyglot.feature.xml
+
+# build plugins configuration
+/*/bin/
+.DS_Store
+/.project
+
+# maven
+/*/target/
