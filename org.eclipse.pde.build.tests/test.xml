@@ -1,0 +1,210 @@
+<?xml version="1.0"?>
+<!--
+    Copyright (c) 2005, 2014 IBM Corporation and others.
+
+    This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License 2.0
+    which accompanies this distribution, and is available at
+    https://www.eclipse.org/legal/epl-2.0/
+
+    SPDX-License-Identifier: EPL-2.0
+   
+    Contributors:
+        IBM Corporation - initial API and implementation
+ -->
+
+<project name="testsuite" default="run" basedir=".">
+  <!-- sets the properties eclipse-home, and library-file -->
+  <!-- The property ${eclipse-home} should be passed into this script -->
+  <!-- Set a meaningful default value for when it is not. -->
+  <property name="eclipse-home" value="${basedir}\..\.."/>
+<property name="plugin-name" value="org.eclipse.pde.build.tests"/>
+  <property name="library-file"
+            value="${eclipse-home}/plugins/org.eclipse.test/library.xml"/>
+ 
+  <!-- This target holds all initialization code that needs to be done for -->
+  <!-- all tests that are to be run. Initialization for individual tests -->
+  <!-- should be done within the body of the suite target. -->
+  <target name="init">
+    <tstamp/>
+    <delete>
+      <fileset dir="${eclipse-home}" includes="org*.xml"/>
+    </delete>
+
+    <antcall target="createDeltaPack" />
+
+  </target>
+
+  <!-- This target defines the tests that need to be run. -->
+  <target name="suite">
+    <property name="pdebuild_folder" value="${eclipse-home}/pdebuild_folder"/>
+    <delete dir="${pdebuild_folder}" quiet="true"/>
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${pdebuild_folder}"/>
+      <property name="plugin-name" value="${plugin-name}"/>
+      <property name="classname" value="org.eclipse.pde.build.tests.PDEBuildTestSuite"/>
+      <property name="extraVMargs" value="-Dpde.build.includeP2=false" />
+    </ant>
+  	
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${pdebuild_folder}"/>
+      <property name="plugin-name" value="${plugin-name}"/>
+      <property name="classname" value="org.eclipse.pde.build.tests.P2TestSuite"/>
+    </ant>
+  </target>
+
+  <!-- This target holds code to cleanup the testing environment after -->
+  <!-- after all of the tests have been run. You can use this target to -->
+  <!-- delete temporary files that have been created. -->
+  <target name="cleanup">
+  </target>
+
+  <!-- This target runs the test suite. Any actions that need to happen -->
+  <!-- after all the tests have been run should go here. -->
+  <target name="run" depends="init,suite,cleanup">
+    <ant target="collect" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="includes" value="org*.xml"/>
+      <property name="output-file" value="${plugin-name}.xml"/>
+    </ant>
+  </target>
+
+  <!-- This target runs the performance test suites.
+  Disabled for bug 442529: We should not have empty performance targets
+  <target name="performance">
+  </target>
+  -->
+  <target name="initcreateDeltaPack">
+
+    <!--
+      In product tests, currentUpdateSite is provided by the testing infrastructure.
+      It should be similar to somethign like
+      https://download.eclipse.org/eclipse/updates/4.6-I-builds/I20160419-0800/
+    -->
+
+    <fail
+      unless="currentUpdateSite"
+      message="currentUpdateSite must be provided to this script." />
+
+    <!--
+      'executionDir' is ${testDir}/eclipse-testing"
+      'install' is ${executionDir}/test-eclipse
+      The eclipse to-be-tested is intalled under ${install}
+      So 'deltapack' will be a peer to it.
+      In productin tests, 'install' and 'executionDir' are provided by the testing
+      infrastructure.
+    -->
+    <property
+      name="installDeltapack"
+      value="${install}/deltapack" />
+
+    <property
+      name="featureTemp"
+      value="${executionDir}/featureTemp" />
+  </target>
+
+  <!--
+    This 'createDeltaPack' target is conceptually very similar to the one we refer to in our
+    documentation, in our Git repo, at
+    http://git.eclipse.org/c/platform/eclipse.platform.releng.aggregator.git/plain/scripts/createdeltapack.xml
+    Only in this one, there is no need to "zip up" the delta pack.
+  -->
+  <target
+    name="createDeltaPack"
+    depends="initcreateDeltaPack"
+    unless="deltaPackInstalled">
+
+
+    <echo message="DEBUG: echoproperties at beginning of deltapack (after init)" />
+    <echoproperties />
+    <delete
+      verbose="true"
+      dir="${featureTemp}" />
+    <mkdir dir="${featureTemp}" />
+    <delete
+      verbose="true"
+      dir="${installDeltapack}" />
+    <mkdir dir="${installDeltapack}" />
+
+    <p2.mirror
+      source="${currentUpdateSite}"
+      log="${executionDir}/deltapackmirrorlog.txt"
+      verbose="true"
+      ignoreerrors="true">
+      <destination
+        kind="metadata"
+        location="file://${featureTemp}"
+        name="RCP Delta Pack Repo"
+        format="${currentUpdateSite}" />
+      <destination
+        kind="artifact"
+        location="file://${featureTemp}"
+        name="RCP Delta Pack Repo"
+        format="${currentUpdateSite}" />
+      <iu
+        id="org.eclipse.platform.feature.group"
+        version="" />
+      <iu
+        id="org.eclipse.platform.source.feature.group"
+        version="" />
+      <iu
+        id="org.eclipse.rcp.feature.group"
+        version="" />
+      <iu
+        id="org.eclipse.rcp.source.feature.group"
+        version="" />
+      <iu
+        id="org.eclipse.jdt.feature.group"
+        version="" />
+      <iu
+        id="org.eclipse.jdt.source.feature.group"
+        version="" />
+      <iu
+        id="org.eclipse.rcp.configuration.feature.group"
+        version="" />
+
+      <iu
+        id="org.eclipse.equinox.executable"
+        version="" />
+      <iu
+        id="org.eclipse.e4.rcp.feature.group"
+        version="" />
+      <iu
+        id="org.eclipse.e4.rcp.source.feature.group"
+        version="" />
+      <slicingOptions
+        includeOptional="false"
+        includeNonGreedy="false"
+        followStrict="true"
+        followOnlyFilteredRequirements="true"
+        latestVersionOnly="true" />
+    </p2.mirror>
+    <p2.remove.iu>
+      <repository location="file://${featureTemp}" />
+      <iu id="org.eclipse.jdt.feature.jar" />
+      <iu id="org.eclipse.jdt.source.feature.jar" />
+      <iu id="org.eclipse.platform.feature.jar" />
+      <iu id="org.eclipse.platform.source.feature.jar" />
+      <iu id="org.eclipse.rcp.feature.jar" />
+      <iu id="org.eclipse.rcp.source.feature.jar" />
+      <iu id="org.eclipse.e4.rcp.feature.jar" />
+      <iu id="org.eclipse.e4.rcp.source.feature.jar" />
+    </p2.remove.iu>
+    <p2.repo2runnable
+      destination="file://${installDeltapack}/eclipse"
+      failonerror="false">
+      <source>
+        <repository location="file://${featureTemp}" />
+      </source>
+    </p2.repo2runnable>
+    <delete verbose="true">
+      <fileset
+        dir="${installDeltapack}/eclipse"
+        includes="*.jar" />
+      <fileset
+        dir="${installDeltapack}/eclipse"
+        includes="*.xml" />
+    </delete>
+
+  </target>
+
+</project>

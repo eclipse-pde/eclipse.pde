@@ -58,5 +58,7 @@
     <module>ua</module>
     <module>ui</module>
     <module>features</module>
+    <module>org.eclipse.pde.build</module>
+    <module>org.eclipse.pde.build.tests</module>
   </modules>
 </project>
