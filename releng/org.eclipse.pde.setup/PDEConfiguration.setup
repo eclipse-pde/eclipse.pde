@@ -31,7 +31,7 @@
       name="pde.workspace"
       label="PDE Workspace">
     <stream
-        href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@projects[name='pde']/@projects[name='core']/@streams[name='master']"/>
+        href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@projects[name='pde']/@streams[name='master']"/>
     <description>The PDE workspace provides the source code of the Eclipse Plug-in Development Environment.</description>
   </workspace>
   <description>
