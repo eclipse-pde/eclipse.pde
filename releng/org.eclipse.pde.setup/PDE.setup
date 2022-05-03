@@ -58,7 +58,7 @@
   <setupTask
       xsi:type="setup:EclipseIniTask"
       option="-Doomph.redirection.pde"
-      value="=https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/releng/org.eclipse.pde.setup/->${github.clone.pde.core.location|uri}/releng/org.eclipse.pde.setup/"
+      value="=https://raw.githubusercontent.com/eclipse-pde/eclipse.pde/master/releng/org.eclipse.pde.setup/->${github.clone.pde.location|uri}/releng/org.eclipse.pde.setup/"
       vm="true">
     <description>Set an Oomph redirection system property to redirect the logical location of this setup to its physical location in the Git clone.</description>
   </setupTask>
@@ -98,7 +98,7 @@
       location="${jre.location-11}"/>
   <setupTask
       xsi:type="git:GitCloneTask"
-      id="github.clone.pde.core"
+      id="github.clone.pde"
       remoteURI="eclipse-pde/eclipse.pde">
     <annotation
         source="http://www.eclipse.org/oomph/setup/InducedChoices">
@@ -151,7 +151,7 @@
       <requirement
           name="org.eclipse.equinox.executable.feature.group"/>
       <sourceLocator
-          rootFolder="${github.clone.pde.core.location}"/>
+          rootFolder="${github.clone.pde.location}"/>
       <repositoryList
           name="CBI+Orbit">
         <repository
@@ -165,7 +165,7 @@
   </setupTask>
   <setupTask
       xsi:type="setup.workingsets:WorkingSetTask"
-      id="pde.core.workingsets">
+      id="pde.workingsets">
     <workingSet
         name="PDE">
       <predicate
@@ -175,7 +175,7 @@
             project="org.eclipse.pde"/>
         <operand
             xsi:type="workingsets:ExclusionPredicate"
-            excludedWorkingSet="//'pde.core.workingsets'/@workingSets[name='PDE%20API%20Tools'] //'pde.core.workingsets'/@workingSets[name='PDE%20Tests'] //'pde.core.workingsets'/@workingSets[name='PDE%20Build']"/>
+            excludedWorkingSet="//'pde.workingsets'/@workingSets[name='PDE%20API%20Tools'] //'pde.workingsets'/@workingSets[name='PDE%20Tests'] //'pde.workingsets'/@workingSets[name='PDE%20Build']"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -190,7 +190,7 @@
             pattern=".*\.api\..*"/>
         <operand
             xsi:type="workingsets:ExclusionPredicate"
-            excludedWorkingSet="//'pde.core.workingsets'/@workingSets[name='PDE%20Tests']"/>
+            excludedWorkingSet="//'pde.workingsets'/@workingSets[name='PDE%20Tests']"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -217,7 +217,7 @@
             pattern=".*\.tests.*"/>
         <operand
             xsi:type="workingsets:ExclusionPredicate"
-            excludedWorkingSet="//'pde.core.workingsets'/@workingSets[name='PDE%20Build']"/>
+            excludedWorkingSet="//'pde.workingsets'/@workingSets[name='PDE%20Build']"/>
       </predicate>
     </workingSet>
   </setupTask>
