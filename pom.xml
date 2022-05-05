@@ -22,7 +22,7 @@
   </parent>
 
   <groupId>org.eclipse.pde</groupId>
-  <artifactId>eclipse.pde.ui</artifactId>
+  <artifactId>eclipse.pde</artifactId>
   <packaging>pom</packaging>
 
   <properties>
