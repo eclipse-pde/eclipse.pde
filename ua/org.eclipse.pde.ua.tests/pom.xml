@@ -12,10 +12,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>tests-pom</artifactId>
     <groupId>org.eclipse.pde</groupId>
+    <artifactId>eclipse.pde</artifactId>
     <version>4.24.0-SNAPSHOT</version>
-    <relativePath>../../tests-pom/</relativePath>
+    <relativePath>../../</relativePath>
   </parent>
   <groupId>org.eclipse.pde</groupId>
   <artifactId>org.eclipse.pde.ua.tests</artifactId>
@@ -23,6 +23,7 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>
+    <code.ignoredWarnings>-warn:-discouraged</code.ignoredWarnings>
   	<testSuite>${project.artifactId}</testSuite>
   	<testClass>org.eclipse.pde.internal.ua.tests.AllUATests</testClass>
   </properties>
