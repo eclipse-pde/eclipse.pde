@@ -99,6 +99,16 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 		getTree().setRedraw(true);
 	}
 
+	@Override
+	protected void preservingSelection(Runnable updateCode) {
+		super.preservingSelection(updateCode);
+		// The super class implementation will preserve a root element's check
+		// mark but that can cause newly unfiltered children to become check
+		// marked.
+		// See https://github.com/eclipse-pde/eclipse.pde/issues/62
+		restoreLeafCheckState();
+	}
+
 	/**
 	 * Returns the contents of the cached check state.  The contents will be all
 	 * checked leaf nodes ignoring any filters.

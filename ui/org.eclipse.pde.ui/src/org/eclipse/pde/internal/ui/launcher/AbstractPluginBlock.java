@@ -573,7 +573,13 @@ public abstract class AbstractPluginBlock {
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (fFilterButton.getSelection()) {
-				return fPluginTreeViewer.getChecked(element);
+				// The root elements of the view should never be filtered.
+				if (parentElement == PDEPlugin.getDefault()) {
+					return true;
+				}
+				// The cached state should be used for determining if the
+				// element is check marked.
+				return fPluginTreeViewer.isCheckedLeafElement(element);
 			}
 			return true;
 		}
