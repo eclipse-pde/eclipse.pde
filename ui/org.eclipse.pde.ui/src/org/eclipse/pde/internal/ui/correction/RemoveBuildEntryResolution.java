@@ -67,19 +67,11 @@ public class RemoveBuildEntryResolution extends BuildEntryMarkerResolution {
 
 	@Override
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
-		HashSet<IMarker> mset = new HashSet<>(markers.length);
-		for (IMarker iMarker : markers) {
-			if (iMarker.equals(this.marker))
-				continue;
-			String str = iMarker.getAttribute(PDEMarkerFactory.compilerKey, ""); //$NON-NLS-1$
-			// RemoveBuildEntryResolution can happen for these 4 compiler flags
-			if (str.equals(CompilerFlags.P_BUILD_SOURCE_LIBRARY) || str.equals(CompilerFlags.P_BUILD_SRC_INCLUDES)
-					|| str.equals(CompilerFlags.P_BUILD_BIN_INCLUDES)
-					|| str.equals(CompilerFlags.P_BUILD_OUTPUT_LIBRARY))
-				mset.add(iMarker);
-		}
-		int size = mset.size();
-		return mset.toArray(new IMarker[size]);
+return Arrays.stream(markers).filter(m -> !m.equals(this.marker)).filter(m -> {
+      String str = m.getAttribute(PDEMarkerFactory.compilerKey, ""); //$NON-NLS-1$
+      return str.equals(CompilerFlags.P_BUILD_SOURCE_LIBRARY) || str.equals(CompilerFlags.P_BUILD_SRC_INCLUDES)
+          || str.equals(CompilerFlags.P_BUILD_BIN_INCLUDES) || str.equals(CompilerFlags.P_BUILD_OUTPUT_LIBRARY);
+    }).toArray(IMarker[]::new);
 	}
 
 }
