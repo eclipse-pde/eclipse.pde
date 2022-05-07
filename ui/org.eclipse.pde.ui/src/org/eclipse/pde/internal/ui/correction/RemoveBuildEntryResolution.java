@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
