@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2022 IBM Corporation and others.
+ *  Copyright (c) 2022 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -22,10 +22,13 @@ import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.text.build.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
-public class AddBuildEntryResolution extends BuildEntryMarkerResolution {
+public class AddBuildEntrySrcExcludesResolution extends BuildEntryMarkerResolution {
 
-	public AddBuildEntryResolution(int type, IMarker marker) {
+
+	public AddBuildEntrySrcExcludesResolution(int type, IMarker marker, String entry, String value) {
 		super(type, marker);
+		fEntry = entry;
+		fToken = value;
 	}
 
 	@Override
@@ -36,7 +39,6 @@ public class AddBuildEntryResolution extends BuildEntryMarkerResolution {
 	@Override
 	protected void createChange(Build build) {
 		try {
-			fEntry = (String) this.marker.getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY);
 			fToken = (String) this.marker.getAttribute(PDEMarkerFactory.BK_BUILD_TOKEN);
 		} catch (CoreException e) {
 		}
