@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2021 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -169,7 +169,8 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				if (entry == null)
 					break;
 				String value = (String) marker.getAttribute(PDEMarkerFactory.BK_BUILD_TOKEN + '.' + i);
-				resolutions.add(new AddBuildEntryResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker, entry, value));
+				resolutions.add(
+						new AddBuildEntrySrcExcludesResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker, entry, value));
 
 			} catch (CoreException e) {
 				break;
