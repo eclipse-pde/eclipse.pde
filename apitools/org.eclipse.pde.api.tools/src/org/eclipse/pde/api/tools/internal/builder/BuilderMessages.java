@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2021 IBM Corporation and others.
+ * Copyright (c) 2008, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -51,6 +51,7 @@ public class BuilderMessages extends NLS {
 	public static String ReferenceExtractor_failed_to_lookup_method;
 	public static String ReferenceExtractor_failed_to_lookup_field;
 
+	public static String TagValidator_a_final_field;
 	public static String TagValidator_a_private_class;
 	public static String TagValidator_a_package_default_class;
 	public static String TagValidator_a_package_default_constructor;
