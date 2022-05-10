@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which accompanies this distribution,
@@ -241,7 +241,7 @@ public abstract class PDETestCase {
 			}
 		}
 		if (assertEmpty)
-			assertTrue("Missing entry in archive: " + entries, entries.size() == 0);
+			assertTrue("Missing entry in archive: " + entries, entries.isEmpty());
 	}
 
 	public static void assertZipContents(IFolder buildFolder, String archive, Set<String> entries, boolean assertEmpty)

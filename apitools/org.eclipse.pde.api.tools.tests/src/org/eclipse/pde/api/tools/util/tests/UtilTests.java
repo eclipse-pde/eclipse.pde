@@ -665,8 +665,8 @@ public class UtilTests {
 	@Test
 	public void testRegexExcludeList2() {
 		FilteredElements excludedElements = new FilteredElements();
-		assertEquals("Wrong size", 0, excludedElements.getPartialMatches().size()); //$NON-NLS-1$
-		assertEquals("Wrong size", 0, excludedElements.getExactMatches().size()); //$NON-NLS-1$
+		assertTrue("Wrong size", excludedElements.getPartialMatches().isEmpty()); //$NON-NLS-1$
+		assertTrue("Wrong size", excludedElements.getExactMatches().isEmpty()); //$NON-NLS-1$
 		assertFalse("Wrong result", excludedElements.containsPartialMatch("org.eclipse.jdt.core")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertFalse("Wrong result", excludedElements.containsExactMatch("org.eclipse.jdt.core")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
