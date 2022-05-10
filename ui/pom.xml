@@ -32,6 +32,7 @@
     <module>org.eclipse.pde.ui.tests.smartimport</module>
     <module>org.eclipse.pde.spy.core</module>
     <module>org.eclipse.pde.spy.bundle</module>
+    <module>org.eclipse.pde.spy.event</module>
     <module>org.eclipse.pde.spy.css</module>
     <module>org.eclipse.pde.spy.model</module>
     <module>org.eclipse.pde.spy.context</module>
