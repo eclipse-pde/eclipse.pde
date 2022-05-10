@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2021 IBM Corporation and others.
+ * Copyright (c) 2008, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which accompanies this distribution,
@@ -86,7 +86,7 @@ public class PublishingTests extends P2TestCase {
 			assertTrue(entry.getName().equalsIgnoreCase("META-INF/MANIFEST.MF"));
 			Map<String, String> headers = new HashMap<>();
 			ManifestElement.parseBundleManifest(zip.getInputStream(entry), headers);
-			assertEquals(headers.get(Constants.BUNDLE_VERSION), "1.0.0.v1234");
+			assertEquals("1.0.0.v1234", headers.get(Constants.BUNDLE_VERSION));
 		}
 
 		HashSet<String> contents = new HashSet<>();
@@ -104,8 +104,8 @@ public class PublishingTests extends P2TestCase {
 		assertNotNull(repository);
 
 		IInstallableUnit iu = getIU(repository, "bundle");
-		assertEquals(iu.getId(), "bundle");
-		assertEquals(iu.getVersion().toString(), "1.0.0.v1234");
+		assertEquals("bundle", iu.getId());
+		assertEquals("1.0.0.v1234", iu.getVersion().toString());
 		assertRequires(iu, "osgi.bundle", OSGI);
 		assertTouchpoint(iu, "install", "myRandomAction");
 	}
@@ -140,14 +140,14 @@ public class PublishingTests extends P2TestCase {
 		IFolder repo = Utils.createFolder(buildFolder, "buildRepo");
 		IMetadataRepository metadata = loadMetadataRepository(repo.getLocationURI());
 		IInstallableUnit iu = getIU(metadata, "foo.root.feature.feature.group");
-		assertEquals(iu.getVersion().toString(), "1.0.0.v1234");
+		assertEquals("1.0.0.v1234", iu.getVersion().toString());
 
 		getIU(metadata, EQUINOX_COMMON);
 		iu = getIU(metadata, "foo");
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "foo.root.feature.feature.group");
 		assertResourceFile(buildFolder.getFile("tmp/eclipse/file.txt"));
 		iu = getIU(metadata, "foo.root.feature.feature.group");
-		assertEquals(iu.getProperty("org.eclipse.equinox.p2.name"), "foo Root Files");
+		assertEquals("foo Root Files", iu.getProperty("org.eclipse.equinox.p2.name"));
 	}
 
 	@Test
@@ -286,8 +286,8 @@ public class PublishingTests extends P2TestCase {
 
 		BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
 		BuildTimeFeature model = factory.parseBuildFeature(featureXML.getLocationURI().toURL());
-		assertEquals(model.getVersion(), "1.0.0.12345");
-		assertEquals(model.getPluginEntries()[0].getVersion(), "1.0.0.12345");
+		assertEquals("1.0.0.12345", model.getVersion());
+		assertEquals("1.0.0.12345", model.getPluginEntries()[0].getVersion());
 	}
 
 	@Test
@@ -442,7 +442,7 @@ public class PublishingTests extends P2TestCase {
 		contents.add("p2.inf");
 		assertZipContents(buildFolder, "buildRepo/features/f_1.0.0.jar", contents, false);
 		// p2.inf was not expected in the jar
-		assertEquals(contents.size(), 1);
+		assertEquals(1, contents.size());
 		assertTrue(contents.contains("p2.inf"));
 
 		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
@@ -578,7 +578,7 @@ public class PublishingTests extends P2TestCase {
 		HashSet<String> entries = new HashSet<>();
 
 		IInstallableUnit iu = getIU(repository, "a");
-		assertEquals(iu.getVersion().toString(), "1.0.0");
+		assertEquals("1.0.0", iu.getVersion().toString());
 
 		iu = getIU(repository, "org.eclipse.ant.optional.junit");
 		assertNotNull(iu);
@@ -710,8 +710,8 @@ public class PublishingTests extends P2TestCase {
 		assertNotNull(repository);
 
 		IInstallableUnit iu = getIU(repository, "org.example.rcp");
-		assertEquals(iu.getId(), "org.example.rcp");
-		assertEquals(iu.getVersion().toString(), "0.0.0");
+		assertEquals("org.example.rcp", iu.getId());
+		assertEquals("0.0.0", iu.getVersion().toString());
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", OSGI);
 
 		// bug 218377
@@ -920,7 +920,7 @@ public class PublishingTests extends P2TestCase {
 				"file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString());
 		// getIU(finalRepo, "a.jre.javase");
 		IInstallableUnit productIu = getIU(finalRepo, "headless.product");
-		assertFalse(productIu.getVersion().toString().equals("1.0.0.qualifier")); // bug 246060, should be a timestamp
+		assertNotEquals("1.0.0.qualifier", productIu.getVersion().toString()); // bug 246060, should be a timestamp
 		// check up to the date on the timestamp, don't worry about hours/mins
 		assertTrue(PublisherHelper.toOSGiVersion(productIu.getVersion()).getQualifier()
 				.startsWith(QualifierReplacer.getDateQualifier().substring(0, 8)));
@@ -1202,15 +1202,15 @@ public class PublishingTests extends P2TestCase {
 		IFolder repo = Utils.createFolder(buildFolder, "buildRepo");
 		IMetadataRepository metadata = loadMetadataRepository("file:" + repo.getLocation().toOSString());
 		IInstallableUnit iu = getIU(metadata, "uid.product");
-		assertEquals(iu.getVersion().toString(), "1.0.0.I10232");
+		assertEquals("1.0.0.I10232", iu.getVersion().toString());
 
 		iu = getIU(metadata, "toolinguid.product.config.win32.win32.x86");
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application,propValue:my.app);");
 		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product,propValue:rcp.product);");
-		assertEquals(iu.getVersion().toString(), "1.0.0.I10232");
+		assertEquals("1.0.0.I10232", iu.getVersion().toString());
 
 		iu = getIU(metadata, "toolingorg.eclipse.equinox.simpleconfigurator");
-		assertEquals(iu.getVersion().toString(), "1.0.0.I10232");
+		assertEquals("1.0.0.I10232", iu.getVersion().toString());
 		assertTouchpoint(iu, "configure", "setStartLevel(startLevel:1);markStarted(started:true);");
 		assertFalse(buildFolder.getFile("tmp/eclipse/eclipse.exe").exists());
 	}
@@ -1250,7 +1250,7 @@ public class PublishingTests extends P2TestCase {
 		assertManagerDoesntContain(repoURI); // bug 268867
 		IMetadataRepository metadata = loadMetadataRepository(repoURI);
 		IInstallableUnit iu = getIU(metadata, "rcp.product");
-		assertEquals(iu.getVersion().toString(), "1.0.0.v1234");
+		assertEquals("1.0.0.v1234", iu.getVersion().toString());
 
 		assertNull(getIU(metadata, "toolingorg.eclipse.equinox.common", false));
 
@@ -1364,7 +1364,7 @@ public class PublishingTests extends P2TestCase {
 		IMetadataRepository metadata = loadMetadataRepository(repoURI);
 
 		IInstallableUnit iu = getIU(metadata, "new_category_1");
-		assertTrue(!iu.getVersion().toString().equals("0.0.0"));
+		assertNotEquals("0.0.0", iu.getVersion().toString());
 		assertNotNull(getIU(metadata, "new_category_2"));
 
 		assertFalse(buildFolder.getFile("tmp/eclipse/features/f_1.0.0.jar").exists());
@@ -1766,11 +1766,11 @@ public class PublishingTests extends P2TestCase {
 
 		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
 		IInstallableUnit iu = getIU(repo, "toolingcocoa.macosx.x86_64org.eclipse.equinox.common");
-		assertEquals(iu.getVersion().toString(), "1.0.0");
+		assertEquals("1.0.0", iu.getVersion().toString());
 
 		IInstallableUnit common = getIU(repo, EQUINOX_COMMON);
 		Collection<IRequirement> required = iu.getRequirements();
-		assertEquals(required.size(), 2);
+		assertEquals(2, required.size());
 		Iterator<IRequirement> it = required.iterator();
 		IRequiredCapability req0 = (IRequiredCapability) it.next();
 		IRequiredCapability req1 = (IRequiredCapability) it.next();
@@ -1894,8 +1894,8 @@ public class PublishingTests extends P2TestCase {
 		IFile eclipseProduct = buildFolder.getFile("tmp/eclipse/.eclipseproduct");
 		assertResourceFile(eclipseProduct);
 		Properties properties = Utils.loadProperties(eclipseProduct);
-		assertEquals(properties.getProperty("name"), "bundle.product");
-		assertEquals(properties.getProperty("id"), "bundle.product");
+		assertEquals("bundle.product", properties.getProperty("name"));
+		assertEquals("bundle.product", properties.getProperty("id"));
 		IFile config = buildFolder.getFile("tmp/eclipse/configuration/config.ini");
 		IInstallableUnit iu = getIU(metadata, EQUINOX_COMMON);
 		String line = "org.eclipse.equinox.common_" + iu.getVersion() + ".jar@2\\:start";
@@ -2188,8 +2188,8 @@ public class PublishingTests extends P2TestCase {
 		assertRequires(iu, P2InfUtils.NAMESPACE_IU, "bundle.source");
 		assertRequires(iu, P2InfUtils.NAMESPACE_IU, "org.eclipse.osgi.source");
 		assertRequires(iu, P2InfUtils.NAMESPACE_IU, "testid0");
-		assertEquals(iu.getProperty("org.eclipse.equinox.p2.name"), "FooSource");
-		assertEquals(iu.getProperty("org.eclipse.equinox.p2.description"), "generated source");
+		assertEquals("FooSource", iu.getProperty("org.eclipse.equinox.p2.name"));
+		assertEquals("generated source", iu.getProperty("org.eclipse.equinox.p2.description"));
 
 		getIU(repo, "org.eclipse.osgi.source");
 		getIU(repo, "bundle.source");
