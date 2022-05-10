@@ -350,7 +350,7 @@ public class ApiDescriptionTests {
 
 		component.getApiDescription().accept(visitor, null);
 
-		assertEquals("Visit incomplete", 0, visitOrder.size()); //$NON-NLS-1$
+		assertTrue("Visit incomplete", visitOrder.isEmpty()); //$NON-NLS-1$
 		baseline.dispose();
 	}
 
@@ -441,7 +441,7 @@ public class ApiDescriptionTests {
 
 		restored.accept(visitor, null);
 
-		assertEquals("Visit incomplete", 0, visitOrder.size());		 //$NON-NLS-1$
+		assertTrue("Visit incomplete", visitOrder.isEmpty()); //$NON-NLS-1$
 	}
 
 	/**
@@ -537,7 +537,7 @@ public class ApiDescriptionTests {
 
 		manifest.accept(visitor, null);
 
-		assertEquals("Visit incomplete", 0, visitOrder.size()); //$NON-NLS-1$
+		assertTrue("Visit incomplete", visitOrder.isEmpty()); //$NON-NLS-1$
 	}
 
 	/**
@@ -584,7 +584,7 @@ public class ApiDescriptionTests {
 		IApiDescription manifest = buildManifest();
 		manifest.accept(visitor, null);
 
-		assertEquals("Visit incomplete", 0, visitOrder.size()); //$NON-NLS-1$
+		assertTrue("Visit incomplete", visitOrder.isEmpty()); //$NON-NLS-1$
 	}
 
 	/**

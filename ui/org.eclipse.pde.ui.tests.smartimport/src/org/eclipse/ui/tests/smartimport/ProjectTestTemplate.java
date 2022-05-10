@@ -155,7 +155,7 @@ public abstract class ProjectTestTemplate {
 		ProblemsView problemsView = new ProblemsView();
 		problemsView.open();
 		List<Problem> problems = problemsView.getProblems(ProblemType.ERROR);
-		assertEquals("There should be no errors in imported project", 0, problems.size());
+		assertTrue("There should be no errors in imported project", problems.isEmpty());
 
 	}
 
