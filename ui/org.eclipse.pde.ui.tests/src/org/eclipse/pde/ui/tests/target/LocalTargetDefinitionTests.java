@@ -160,7 +160,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		for (NameVersionDescriptor info : restrictions) {
 			set.remove(info.getId());
 		}
-		assertEquals("Wrong bundles", 0, set.size());
+		assertTrue("Wrong bundles", set.isEmpty());
 
 	}
 
@@ -522,7 +522,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		for (NameVersionDescriptor info : restrictions) {
 			set.remove(info.getId());
 		}
-		assertEquals("Wrong bundles", 0, set.size());
+		assertTrue("Wrong bundles", set.isEmpty());
 
 	}
 

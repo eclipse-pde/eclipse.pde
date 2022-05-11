@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.context;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,16 +25,14 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.IModelUndoManager;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.*;
+import org.eclipse.ui.progress.IProgressService;
 
 public abstract class InputContextManager implements IResourceChangeListener {
-	private PDEFormEditor editor;
-	private Hashtable<IEditorInput, Object> inputContexts;
-	private ArrayList<IFile> monitoredFiles;
-	private ArrayList<IInputContextListener> listeners;
+	private final PDEFormEditor editor;
+	private final Map<IEditorInput, InputContext> inputContexts = new HashMap<>();
+	private final Set<IFile> monitoredFiles = ConcurrentHashMap.newKeySet();
+	private final ArrayList<IInputContextListener> listeners = new ArrayList<>();
 	private IModelUndoManager undoManager;
 
 	/**
@@ -40,8 +40,6 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	 */
 	public InputContextManager(PDEFormEditor editor) {
 		this.editor = editor;
-		inputContexts = new Hashtable<>();
-		listeners = new ArrayList<>();
 		PDEPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
 
@@ -61,13 +59,13 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	public void dispose() {
 		PDEPlugin.getWorkspace().removeResourceChangeListener(this);
 		// dispose input contexts
-		for (Enumeration<Object> contexts = inputContexts.elements(); contexts.hasMoreElements();) {
-			InputContext context = (InputContext) contexts.nextElement();
+		for (InputContext context : inputContexts.values()) {
 			unhookUndo(context);
 			context.dispose();
 		}
 		inputContexts.clear();
 		undoManager = null;
+		monitoredFiles.clear();
 	}
 
 	/**
@@ -75,16 +73,14 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	 * @param monitor
 	 */
 	public void save(IProgressMonitor monitor) {
-		for (Enumeration<Object> contexts = inputContexts.elements(); contexts.hasMoreElements();) {
-			InputContext context = (InputContext) contexts.nextElement();
+		for (InputContext context : inputContexts.values()) {
 			if (context.mustSave())
 				context.doSave(monitor);
 		}
 	}
 
 	public IProject getCommonProject() {
-		for (Enumeration<Object> contexts = inputContexts.elements(); contexts.hasMoreElements();) {
-			InputContext context = (InputContext) contexts.nextElement();
+		for (InputContext context : inputContexts.values()) {
 			IEditorInput input = context.getInput();
 			if (input instanceof IFileEditorInput)
 				return ((IFileEditorInput) input).getFile().getProject();
@@ -97,8 +93,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	}
 
 	public InputContext findContext(String id) {
-		for (Enumeration<Object> contexts = inputContexts.elements(); contexts.hasMoreElements();) {
-			InputContext context = (InputContext) contexts.nextElement();
+		for (InputContext context : inputContexts.values()) {
 			if (context.getId().equals(id))
 				return context;
 		}
@@ -106,8 +101,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	}
 
 	public InputContext findContext(IResource resource) {
-		for (Enumeration<Object> contexts = inputContexts.elements(); contexts.hasMoreElements();) {
-			InputContext context = (InputContext) contexts.nextElement();
+		for (InputContext context : inputContexts.values()) {
 			if (context.matches(resource))
 				return context;
 		}
@@ -117,7 +111,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	public abstract IBaseModel getAggregateModel();
 
 	public InputContext getContext(IEditorInput input) {
-		return (InputContext) inputContexts.get(input);
+		return inputContexts.get(input);
 	}
 
 	public void putContext(IEditorInput input, InputContext context) {
@@ -134,7 +128,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	 * @throws Exception
 	 */
 	private void updateInputContext(IEditorInput newInput, IEditorInput oldInput) throws Exception {
-		Object value = null;
+		InputContext value = null;
 		// Retrieve the input context referenced by the old editor input and
 		// remove it from the context manager
 		if (inputContexts.containsKey(oldInput)) {
@@ -170,8 +164,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	}
 
 	public InputContext getPrimaryContext() {
-		for (Enumeration<Object> contexts = inputContexts.elements(); contexts.hasMoreElements();) {
-			InputContext context = (InputContext) contexts.nextElement();
+		for (InputContext context : inputContexts.values()) {
 			if (context.isPrimary())
 				return context;
 		}
@@ -180,8 +173,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 
 	public InputContext[] getInvalidContexts() {
 		ArrayList<InputContext> result = new ArrayList<>();
-		for (Enumeration<Object> contexts = inputContexts.elements(); contexts.hasMoreElements();) {
-			InputContext context = (InputContext) contexts.nextElement();
+		for (InputContext context : inputContexts.values()) {
 			if (context.isModelCorrect() == false)
 				result.add(context);
 		}
@@ -189,8 +181,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	}
 
 	public boolean isDirty() {
-		for (Enumeration<Object> contexts = inputContexts.elements(); contexts.hasMoreElements();) {
-			InputContext context = (InputContext) contexts.nextElement();
+		for (InputContext context : inputContexts.values()) {
 			if (context.mustSave())
 				return true;
 		}
@@ -198,61 +189,77 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	}
 
 	public void monitorFile(IFile file) {
-		if (monitoredFiles == null)
-			monitoredFiles = new ArrayList<>();
 		monitoredFiles.add(file);
 	}
 
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
+		if (monitoredFiles.isEmpty()) {
+			return;
+		}
+
 		IResourceDelta delta = event.getDelta();
 
 		try {
+			List<IFile> added = new ArrayList<>();
+			List<IFile> removed = new ArrayList<>();
 			delta.accept(delta1 -> {
 				int kind = delta1.getKind();
+				if (kind != IResourceDelta.ADDED && kind != IResourceDelta.REMOVED) {
+					return true;
+				}
 				IResource resource = delta1.getResource();
-				if (resource instanceof IFile) {
-					if (kind == IResourceDelta.ADDED)
-						asyncStructureChanged((IFile) resource, true);
-					else if (kind == IResourceDelta.REMOVED)
-						asyncStructureChanged((IFile) resource, false);
+				if (monitoredFiles.contains(resource)) {
+					if (kind == IResourceDelta.ADDED) {
+						added.add((IFile) resource);
+					} else {
+						removed.add((IFile) resource);
+					}
 					return false;
 				}
 				return true;
 			});
+			if (!added.isEmpty() || !removed.isEmpty()) {
+				asyncStructureChanged(added, removed);
+			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
 	}
 
-	private void asyncStructureChanged(final IFile file, final boolean added) {
-		if (editor == null || editor.getEditorSite() == null)
-			return;
-		Shell shell = editor.getEditorSite().getShell();
-		Display display = shell != null ? shell.getDisplay() : Display.getDefault();
-
-		display.asyncExec(() -> structureChanged(file, added));
+	private void asyncStructureChanged(List<IFile> added, List<IFile> removed) {
+		try {
+			IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
+			progressService.runInUI(progressService, monitor -> {
+				for (IFile file : added) {
+					if (!monitor.isCanceled()) {
+						structureChanged(file, true);
+					}
+				}
+				for (IFile file : removed) {
+					if (!monitor.isCanceled()) {
+						structureChanged(file, false);
+					}
+				}
+			}, null);
+		} catch (InvocationTargetException | InterruptedException e) {
+			PDEPlugin.logException(e);
+		}
 	}
 
 	protected void structureChanged(IFile file, boolean added) {
-		if (monitoredFiles == null)
-			return;
-		for (int i = 0; i < monitoredFiles.size(); i++) {
-			IFile ifile = monitoredFiles.get(i);
-			if (ifile.equals(file)) {
-				if (added) {
-					fireStructureChange(file, true);
-				} else {
-					fireStructureChange(file, false);
-					removeContext(file);
-				}
+		if (monitoredFiles.contains(file)) {
+			if (added) {
+				fireStructureChange(file, true);
+			} else {
+				fireStructureChange(file, false);
+				removeContext(file);
 			}
 		}
 	}
 
 	private void removeContext(IFile file) {
-		for (Enumeration<Object> contexts = inputContexts.elements(); contexts.hasMoreElements();) {
-			InputContext context = (InputContext) contexts.nextElement();
+		for (InputContext context : inputContexts.values()) {
 			IEditorInput input = context.getInput();
 			if (input instanceof IFileEditorInput) {
 				IFileEditorInput fileInput = (IFileEditorInput) input;

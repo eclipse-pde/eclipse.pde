@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+   <extension
+         point="org.eclipse.pde.spy.core.spyPart">
+      <spyPart
+            description="%description"
+            icon="$nl$/icons/eventspy.png"
+            name="%name"
+            part="org.eclipse.pde.spy.event.internal.ui.EventSpyPart"
+            shortcut="M2+M3+F8">
+      </spyPart>
+   </extension>
+
+</plugin>

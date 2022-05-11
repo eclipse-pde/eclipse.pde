@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,9 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import java.util.Arrays;
+import java.util.Set;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.text.build.Build;
 import org.eclipse.pde.internal.core.text.build.BuildEntry;
@@ -37,8 +40,8 @@ public class RemoveBuildEntryResolution extends BuildEntryMarkerResolution {
 	@Override
 	protected void createChange(Build build) {
 		try {
-			fEntry = (String) marker.getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY);
-			fToken = (String) marker.getAttribute(PDEMarkerFactory.BK_BUILD_TOKEN);
+			fEntry = (String) this.marker.getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY);
+			fToken = (String) this.marker.getAttribute(PDEMarkerFactory.BK_BUILD_TOKEN);
 		} catch (CoreException e) {
 		}
 		try {
@@ -55,6 +58,23 @@ public class RemoveBuildEntryResolution extends BuildEntryMarkerResolution {
 			}
 		} catch (CoreException e) {
 		}
+	}
+
+	@Override
+	public void run(IMarker marker) {
+		super.run(marker);
+		this.marker = marker;
+	}
+
+	private static final Set<String> RELEVANT_COMPILER_FLAGS = Set.of(CompilerFlags.P_BUILD_SOURCE_LIBRARY,
+			CompilerFlags.P_BUILD_SRC_INCLUDES, CompilerFlags.P_BUILD_BIN_INCLUDES,
+			CompilerFlags.P_BUILD_OUTPUT_LIBRARY);
+
+	@Override
+	public IMarker[] findOtherMarkers(IMarker[] markers) {
+		return Arrays.stream(markers).filter(m -> !m.equals(this.marker))
+				.filter(m -> RELEVANT_COMPILER_FLAGS.contains(m.getAttribute(PDEMarkerFactory.compilerKey, ""))) //$NON-NLS-1$
+				.toArray(IMarker[]::new);
 	}
 
 }

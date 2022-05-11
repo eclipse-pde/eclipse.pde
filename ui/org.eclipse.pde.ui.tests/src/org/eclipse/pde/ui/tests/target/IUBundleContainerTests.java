@@ -424,7 +424,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		getTargetService().deleteTarget(target.getHandle());
 
 		List<String> profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
-		assertEquals(0, profiles.size());
+		assertTrue(profiles.isEmpty());
 	}
 
 	/**
@@ -459,7 +459,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		getTargetService().deleteTarget(target.getHandle());
 
 		List<String> profiles = P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
-		assertEquals(0, profiles.size());
+		assertTrue(profiles.isEmpty());
 	}
 
 	/**

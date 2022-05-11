@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2019 IBM Corporation and others.
+ *  Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -13,9 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import java.util.Arrays;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.builders.CompilerFlags;
+import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.text.build.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
@@ -25,12 +28,6 @@ public class AddBuildEntryResolution extends BuildEntryMarkerResolution {
 		super(type, marker);
 	}
 
-	public AddBuildEntryResolution(int type, IMarker marker, String entry, String value) {
-		super(type, marker);
-		fEntry = entry;
-		fToken = value;
-	}
-
 	@Override
 	public String getLabel() {
 		return NLS.bind(PDEUIMessages.AddBuildEntryResolution_add, fToken, fEntry);
@@ -38,6 +35,11 @@ public class AddBuildEntryResolution extends BuildEntryMarkerResolution {
 
 	@Override
 	protected void createChange(Build build) {
+		try {
+			fEntry = (String) this.marker.getAttribute(PDEMarkerFactory.BK_BUILD_ENTRY);
+			fToken = (String) this.marker.getAttribute(PDEMarkerFactory.BK_BUILD_TOKEN);
+		} catch (CoreException e) {
+		}
 		try {
 			BuildModel buildModel = build.getModel();
 			if (buildModel.isStale()) {
@@ -54,7 +56,15 @@ public class AddBuildEntryResolution extends BuildEntryMarkerResolution {
 	}
 
 	@Override
+	public void run(IMarker marker) {
+		super.run(marker);
+		this.marker = marker;
+	}
+
+	@Override
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
-		return new IMarker[0];
+		return Arrays.stream(markers).filter(m -> !m.equals(this.marker)).filter(
+				m -> CompilerFlags.P_BUILD_SOURCE_LIBRARY.equals(m.getAttribute(PDEMarkerFactory.compilerKey, ""))) //$NON-NLS-1$
+				.toArray(IMarker[]::new);
 	}
 }
