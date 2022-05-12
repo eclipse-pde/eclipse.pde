@@ -26,11 +26,11 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.launching.*;
 import org.eclipse.pde.internal.launching.launcher.*;
+import org.osgi.framework.Version;
 
 /**
  * An abstract launch delegate for PDE-based launch configurations
@@ -155,21 +155,24 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			addModuleSystem = true;
 			argLength++; // Need to add the argument
 		}
-		IVMInstall vmInstall;
-		try {
-			vmInstall = VMHelper.getVMInstall(configuration);
-			if (vmInstall instanceof AbstractVMInstall) {
-				AbstractVMInstall install = (AbstractVMInstall) vmInstall;
-				String vmver = install.getJavaVersion();
-				if (vmver != null && JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_17) >= 0) {
-					if (!argumentContainsAttribute(args, allowSecurityManager)) {
-						addAllowSecurityManager = true;
-						argLength++; // Need to add the argument
+
+		if (isEclipseBundleGreaterThanVersion(4, 24)) { // Don't add allow flags for eclipse before 4.24
+			IVMInstall vmInstall;
+			try {
+				vmInstall = VMHelper.getVMInstall(configuration);
+				if (vmInstall instanceof AbstractVMInstall) {
+					AbstractVMInstall install = (AbstractVMInstall) vmInstall;
+					String vmver = install.getJavaVersion();
+					if (vmver != null && JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_17) >= 0) {
+						if (!argumentContainsAttribute(args, allowSecurityManager)) {
+							addAllowSecurityManager = true;
+							argLength++; // Need to add the argument
+						}
 					}
 				}
+			} catch (CoreException e) {
+				PDELaunchingPlugin.log(e);
 			}
-		} catch (CoreException e) {
-			PDELaunchingPlugin.log(e);
 		}
 		if (addModuleSystem || addAllowSecurityManager) {
 			args = Arrays.copyOf(args, argLength);
@@ -187,6 +190,29 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			args = arrayList.toArray(new String[arrayList.size()]);
 		}
 		return args;
+	}
+
+
+	private boolean isEclipseBundleGreaterThanVersion(int major, int minor) {
+		PDEState pdeState = TargetPlatformHelper.getPDEState();
+		if (pdeState != null) {
+			try {
+				Optional<IPluginModelBase> platformBaseModel = Arrays.asList(pdeState.getTargetModels()).stream().filter(x -> Objects.nonNull(x.getBundleDescription())).filter(x -> ("org.eclipse.platform").equals(x.getBundleDescription().getSymbolicName()))//$NON-NLS-1$
+						.findFirst();
+				if (platformBaseModel.isPresent()) {
+					Version version = platformBaseModel.get().getBundleDescription().getVersion();
+					Version comparedVersion = new Version(4, 24, 0);
+					if (version != null && version.compareTo(comparedVersion) >= 0) {
+						return true;
+					}
+				}
+			}
+			catch (Exception ex) {
+				PDELaunchingPlugin.log(ex);
+			}
+		}
+		return false;
+
 	}
 
 	private boolean argumentContainsAttribute(String[] args, String modAllSystem) {
