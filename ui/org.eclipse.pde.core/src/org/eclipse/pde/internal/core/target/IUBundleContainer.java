@@ -371,6 +371,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			cacheBundles(target);
 			cacheFeatures(target);
 		} catch (CoreException e) {
+			PDECore.logException(e, e.getMessage());
 			fBundles = new TargetBundle[0];
 			fFeatures = new TargetFeature[0];
 			fResolutionStatus = e.getStatus();
