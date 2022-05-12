@@ -66,12 +66,12 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.GridData;
@@ -645,14 +645,11 @@ public class CssSpyPart {
 				});
 			}
 		});
-		cssSearchBox.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.ARROW_DOWN && (e.stateMask & SWT.MODIFIER_MASK) == 0) {
-					widgetTreeViewer.getControl().setFocus();
-				}
+		cssSearchBox.addKeyListener(KeyListener.keyPressedAdapter(e -> {
+			if (e.keyCode == SWT.ARROW_DOWN && (e.stateMask & SWT.MODIFIER_MASK) == 0) {
+				widgetTreeViewer.getControl().setFocus();
 			}
-		});
+		}));
 
 		widgetTreeViewer.addSelectionChangedListener(event -> {
 			updateForWidgetSelection(event.getSelection());
@@ -663,30 +660,21 @@ public class CssSpyPart {
 				if (followSelection.getSelection()) {
 					update();
 				}
-			}
-			);
+			});
 		}
 
-		showAllShells.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateWidgetTreeInput();
-			}
-		});
+		showAllShells.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> updateWidgetTreeInput()));
 
 		outer.addDisposeListener(e -> dispose());
 
 		showUnsetProperties.setSelection(true);
-		showUnsetProperties.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (showUnsetProperties.getSelection()) {
-					cssPropertiesViewer.removeFilter(unsetPropertyFilter);
-				} else {
-					cssPropertiesViewer.addFilter(unsetPropertyFilter);
-				}
+		showUnsetProperties.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			if (showUnsetProperties.getSelection()) {
+				cssPropertiesViewer.removeFilter(unsetPropertyFilter);
+			} else {
+				cssPropertiesViewer.addFilter(unsetPropertyFilter);
 			}
-		});
+		}));
 
 		showCssFragment.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -700,7 +688,7 @@ public class CssSpyPart {
 			}
 		});
 
-		sashForm.setWeights(new int[] { 50, 50 });
+		sashForm.setWeights(50, 50);
 		widgetTreeViewer.getControl().setFocus();
 
 		return outer;
@@ -851,7 +839,7 @@ public class CssSpyPart {
 
 	private void performCSSSearch(IProgressMonitor monitor, String text, Collection<Widget> results) {
 		
-		if (text.trim().length() == 0) {
+		if (text.trim().isEmpty()) {
 			return;
 		}
 		widgetTreeViewer.collapseAll();
