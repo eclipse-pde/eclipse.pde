@@ -288,6 +288,23 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
 	}
 
+	@Test
+	public void testGetMergedBundleMapForIssue88_specifiedWorkspacePluginOnlyInTargetPlatform_emtpySelection()
+			throws Exception {
+		// Test for https://github.com/eclipse-pde/eclipse.pde/issues/88
+		var workspacePlugins = ofEntries( //
+				bundle("plugin.a", "1.0.0"));
+		var targetPlatformBundles = ofEntries( //
+				bundle("plugin.b", "1.0.0"));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, Set.of("plugin.b"));
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of();
+		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
 	// workspace plug-ins added automatically
 
 	@Test
