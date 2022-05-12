@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 OPCoach.
+ * Copyright (c) 2013, 2022 OPCoach and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -74,7 +74,7 @@ public class ContextSpyProvider extends LabelProvider implements ITreeContentPro
 
 		if (parentElement instanceof EclipseContext) {
 			Iterable<EclipseContext> it = ((EclipseContext) parentElement).getChildren();
-			children = new ArrayList<EclipseContext>();
+			children = new ArrayList<>();
 			it.forEach(children::add);
 		}
 		return children.toArray();
