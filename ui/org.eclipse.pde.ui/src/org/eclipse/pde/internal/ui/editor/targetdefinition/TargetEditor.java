@@ -280,10 +280,9 @@ public class TargetEditor extends FormEditor {
 			@Override
 			protected Control createControl(Composite parent) {
 				PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-				String mementoPref = null;
 				String memento = null;
 				String hyperLinkText = PDEUIMessages.AbstractTargetPage_setTarget;
-				mementoPref = preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
+				String mementoPref = preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
 				try {
 					memento = getTarget().getHandle().getMemento();
 				} catch (CoreException e) {

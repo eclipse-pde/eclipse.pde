@@ -207,7 +207,6 @@ public class TargetCreationPage extends WizardSelectionPage {
 
 	@Override
 	public IWizardPage getNextPage() {
-		ITargetDefinition target = null;
 		int option = getInitializationOption();
 		if (fTargetDefs[option] == null) {
 			fTargetDefs[option] = createTarget(option);
@@ -218,7 +217,7 @@ public class TargetCreationPage extends WizardSelectionPage {
 				setErrorMessage(e.getMessage());
 			}
 		}
-		target = fTargetDefs[option];
+		ITargetDefinition target = fTargetDefs[option];
 		if (target != null) {
 			((NewTargetDefinitionWizard2) getWizard()).setTargetDefinition(target);
 			((EditTargetNode) getSelectedNode()).setTargetDefinition(target);

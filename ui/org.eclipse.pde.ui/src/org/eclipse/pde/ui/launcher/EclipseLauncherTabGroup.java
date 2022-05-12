@@ -33,8 +33,7 @@ public class EclipseLauncherTabGroup extends AbstractPDELaunchConfigurationTabGr
 
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		ILaunchConfigurationTab[] tabs = null;
-		tabs = new ILaunchConfigurationTab[] {new MainTab(), new JavaArgumentsTab(), new PluginsTab(), new ConfigurationTab(), new TracingTab(), new EnvironmentTab(), new CommonTab(), new PrototypeTab()};
+		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {new MainTab(), new JavaArgumentsTab(), new PluginsTab(), new ConfigurationTab(), new TracingTab(), new EnvironmentTab(), new CommonTab(), new PrototypeTab()};
 		setTabs(tabs);
 	}
 

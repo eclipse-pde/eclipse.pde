@@ -33,8 +33,7 @@ import org.osgi.framework.Constants;
 public class ManifestEditorOpener {
 
 	public static IEditorPart open(Match match, boolean activate) {
-		IEditorPart editorPart = null;
-		editorPart = ManifestEditor.open(match.getElement(), true);
+		IEditorPart editorPart = ManifestEditor.open(match.getElement(), true);
 		if (editorPart != null && editorPart instanceof ManifestEditor) {
 			ManifestEditor editor = (ManifestEditor) editorPart;
 			if (match.getBaseUnit() != AttributesMatch.UNIT_ATTRIBUTE_SEARCH_PATTERN) {

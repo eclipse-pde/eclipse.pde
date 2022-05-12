@@ -169,10 +169,9 @@ public class CommandDetails {
 		public void linkActivated(HyperlinkEvent e) {
 			ParameterizedCommand pCommand = buildParameterizedCommand();
 			try {
-				Object obj = null;
 				IHandlerService service = getGlobalHandlerService();
 				IEvaluationContext context = fCCP.getSnapshotContext();
-				obj = service.executeCommandInContext(pCommand, null, context);
+				Object obj = service.executeCommandInContext(pCommand, null, context);
 				String resultString = null;
 				if (obj instanceof String) {
 					resultString = (String) obj;

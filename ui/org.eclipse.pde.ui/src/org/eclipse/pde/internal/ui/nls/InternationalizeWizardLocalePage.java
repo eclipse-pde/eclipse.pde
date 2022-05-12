@@ -108,11 +108,10 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 	}
 
 	private void handleFilter() {
-		boolean changed = false;
 		String newFilter;
 		if (fFilterText == null || (newFilter = fFilterText.getText().trim()).length() == 0)
 			newFilter = AvailableFilter.WILDCARD;
-		changed = fFilter.setPattern(newFilter);
+		boolean changed = fFilter.setPattern(newFilter);
 		if (changed) {
 			fAvailableListViewer.getTable().setRedraw(false);
 			fAvailableListViewer.refresh();

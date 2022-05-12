@@ -99,12 +99,11 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		}
 
 		private IBuildEntry getBuildInfo() {
-			IBuildEntry entry = null;
 			IBuildModel model = getBuildModel(false);
 			if (model == null)
 				return null;
 			IBuild buildObject = model.getBuild();
-			entry = buildObject.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+			IBuildEntry entry = buildObject.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
 			return entry;
 		}
 
