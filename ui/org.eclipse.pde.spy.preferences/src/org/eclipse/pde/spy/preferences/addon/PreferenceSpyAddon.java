@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
-import org.eclipse.core.runtime.preferences.IPreferenceNodeVisitor;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
@@ -78,12 +77,9 @@ public class PreferenceSpyAddon {
 
 	private void addPreferenceListener(IEclipsePreferences rootPreference) {
 		try {
-			rootPreference.accept(new IPreferenceNodeVisitor() {
-				@Override
-				public boolean visit(IEclipsePreferences node) throws BackingStoreException {
-					node.addPreferenceChangeListener(preferenceChangedListener);
-					return true;
-				}
+			rootPreference.accept(node -> {
+				node.addPreferenceChangeListener(preferenceChangedListener);
+				return true;
 			});
 		} catch (BackingStoreException e) {
 			LOG.error(e);
@@ -99,12 +95,9 @@ public class PreferenceSpyAddon {
 
 	private void removePreferenceListener(IEclipsePreferences rootPreference) {
 		try {
-			rootPreference.accept(new IPreferenceNodeVisitor() {
-				@Override
-				public boolean visit(IEclipsePreferences node) throws BackingStoreException {
-					node.removePreferenceChangeListener(preferenceChangedListener);
-					return true;
-				}
+			rootPreference.accept(node -> {
+				node.removePreferenceChangeListener(preferenceChangedListener);
+				return true;
 			});
 		} catch (BackingStoreException e) {
 			LOG.error(e);
