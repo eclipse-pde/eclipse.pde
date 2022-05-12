@@ -16,6 +16,7 @@ package org.eclipse.pde.launching;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
@@ -26,12 +27,10 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.launching.*;
 import org.eclipse.pde.internal.launching.launcher.*;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 
 /**
@@ -157,9 +156,8 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			addModuleSystem = true;
 			argLength++; // Need to add the argument
 		}
-		final String buildId = System.getProperty("eclipse.buildId", "Unknown Build"); //$NON-NLS-1$//$NON-NLS-2$
 
-		if (isEclipseBundleGreaterThanVersion(4, 24)) { // Don't add allow flags fir eclipse before 4.24
+		if (isEclipseBundleGreaterThanVersion(4, 24)) { // Don't add allow flags for eclipse before 4.24
 			IVMInstall vmInstall;
 			try {
 				vmInstall = VMHelper.getVMInstall(configuration);
@@ -197,25 +195,21 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 
 
 	private boolean isEclipseBundleGreaterThanVersion(int major, int minor) {
-		Version version;
-		String product = "org.eclipse.platform.ide"; //$NON-NLS-1$
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		IExtensionPoint point = registry.getExtensionPoint("org.eclipse.core.runtime.products"); //$NON-NLS-1$
-		if (point != null) {
-			IExtension[] extensions = point.getExtensions();
-			for (IExtension ext : extensions) {
-				if (product.equals(ext.getUniqueIdentifier())) {
-					IContributor contributor = ext.getContributor();
-					if (contributor != null) {
-						Bundle bundle = Platform.getBundle(contributor.getName());
-						if (bundle != null) {
-							version = bundle.getVersion();
-							if (version.getMajor() >= 4 && version.getMinor() >= 24) {
-								return true;
-							}
-						}
+		PDEState pdeState = TargetPlatformHelper.getPDEState();
+		if (pdeState != null) {
+			try {
+				List<IPluginModelBase> platformBaseModel = Arrays.asList(pdeState.getTargetModels()).stream().filter(x -> Objects.nonNull(x.getBundleDescription())).filter(x -> Objects.nonNull(x.getBundleDescription().getSymbolicName())).filter(x -> x.getBundleDescription().getSymbolicName().equals("org.eclipse.platform"))//$NON-NLS-1$
+						.collect(Collectors.toList());
+				if (platformBaseModel != null && !platformBaseModel.isEmpty()) {
+					Version version = platformBaseModel.get(0).getBundleDescription().getVersion();
+					Version comparedVersion = new Version(4, 24, 0);
+					if (version != null && version.compareTo(comparedVersion) >= 0) {
+						return true;
 					}
 				}
+			}
+			catch (Exception ex) {
+				PDELaunchingPlugin.log(ex);
 			}
 		}
 		return false;
