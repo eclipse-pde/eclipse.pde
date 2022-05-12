@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2011, 2022 Manumitting Technologies, Inc.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
 package org.eclipse.pde.spy.css;
 
 import java.io.IOException;
@@ -21,8 +31,7 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -63,7 +72,7 @@ public class CSSScratchPadPart {
 		exceptions = new Text(sashForm, SWT.BORDER | SWT.MULTI | SWT.READ_ONLY);
 
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(sashForm);
-		sashForm.setWeights(new int[] { 80, 20 });
+		sashForm.setWeights(80, 20);
 
 		createButtonsForButtonBar(parent);
 		return outer;
@@ -83,12 +92,8 @@ public class CSSScratchPadPart {
 		button.setText(label);
 		button.setFont(JFaceResources.getDialogFont());
 		button.setData(Integer.valueOf(id));
-		button.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				buttonPressed(((Integer) event.widget.getData()).intValue());
-			}
-		});
+		button.addSelectionListener(SelectionListener
+				.widgetSelectedAdapter(event -> buttonPressed(((Integer) event.widget.getData()).intValue())));
 		if (defaultButton) {
 			Shell shell = parent.getShell();
 			if (shell != null) {
