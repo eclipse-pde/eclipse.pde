@@ -407,8 +407,6 @@ public class P2Utils {
 		// Delete any previous profiles with the same ID
 		registry.removeProfile(profileID);
 
-		// Create the profile
-		IProfile profile = null;
 		Map<String, String> props = new HashMap<>();
 //		props.setProperty(IProfile.PROP_INSTALL_FOLDER, registryArea.getAbsolutePath());
 		props.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
@@ -416,7 +414,8 @@ public class P2Utils {
 		props.put(IProfile.PROP_ENVIRONMENTS, generateEnvironmentProperties());
 		props.put(IProfile.PROP_NL, TargetPlatform.getNL());
 
-		profile = registry.addProfile(profileID, props);
+		// Create the profile
+		IProfile profile = registry.addProfile(profileID, props);
 
 		// Create metadata for the bundles
 		Collection<IInstallableUnit> ius = bundles.stream().flatMap(Collection::stream)
