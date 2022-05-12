@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 OPCoach and others.
+ * Copyright (c) 2015, 2022 OPCoach and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -37,10 +37,10 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.pde.spy.bundle.internal.BundleDataFilter;
 import org.eclipse.pde.spy.bundle.internal.BundleDataProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -103,12 +103,8 @@ public class BundleSpyPart {
 		Button refreshButton = new Button(comp, SWT.FLAT);
 		refreshButton.setImage(imgReg.get(ICON_REFRESH));
 		refreshButton.setToolTipText(Messages.BundleSpyPart_9);
-		refreshButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				bundlesTableViewer.refresh(true);
-			}
-		});
+		refreshButton
+				.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> bundlesTableViewer.refresh(true)));
 
 		filterText = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH | SWT.ICON_CANCEL);
 		GridDataFactory.fillDefaults().hint(200, SWT.DEFAULT).applyTo(filterText);
@@ -118,49 +114,61 @@ public class BundleSpyPart {
 		if (lastFilterText != null)
 			filterText.setText(lastFilterText);
 		bundleFilter.setPattern(lastFilterText);
-		filterText.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyReleased(KeyEvent e) {
-				String textToSearch = filterText.getText();
-				lastFilterText = textToSearch;
-				boolean enableButton = textToSearch.length() > 0;
-				// Enable/disable button for filtering
-				showOnlyFilteredElements.setEnabled(enableButton);
+		filterText.addKeyListener(KeyListener.keyReleasedAdapter(e -> {
+			String textToSearch = filterText.getText();
+			lastFilterText = textToSearch;
+			boolean enableButton = textToSearch.length() > 0;
+			// Enable/disable button for filtering
+			showOnlyFilteredElements.setEnabled(enableButton);
 
-				// Then update filters and viewers
-				bundleFilter.setPattern(textToSearch);
-				setFilter();
-				bundlesTableViewer.refresh(true);
-			}
-
-		});
+			// Then update filters and viewers
+			bundleFilter.setPattern(textToSearch);
+			setFilter();
+			bundlesTableViewer.refresh(true);
+		}));
 
 		showOnlyFilteredElements = new Button(comp, SWT.CHECK);
 		showOnlyFilteredElements.setText(Messages.BundleSpyPart_12);
 		showOnlyFilteredElements.setToolTipText(Messages.BundleSpyPart_13);
 		showOnlyFilteredElements.setEnabled((lastFilterText != null) && (lastFilterText.length() > 0));
 		showOnlyFilteredElements.setSelection(lastShowFiltered);
-		showOnlyFilteredElements.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				lastShowFiltered = showOnlyFilteredElements.getSelection();
-				setFilter();
-			}
-		});
+		showOnlyFilteredElements.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			lastShowFiltered = showOnlyFilteredElements.getSelection();
+			setFilter();
+		}));
 
 		startButton = new Button(comp, SWT.FLAT);
 		startButton.setImage(imgReg.get(ICON_START));
 		startButton.setToolTipText(Messages.BundleSpyPart_14);
 		startButton.setEnabled(false);
-		startButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
+		startButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			IStructuredSelection sel = (IStructuredSelection) bundlesTableViewer.getSelection();
+			Iterator<?> iter = sel.iterator();
+			while (iter.hasNext()) {
+				Bundle b = (Bundle) iter.next();
+				try {
+					b.start();
+				} catch (BundleException e1) {
+					e1.printStackTrace();
+				}
+			}
+			bundlesTableViewer.refresh();
+			updateButtonStatuses(sel);
+		}));
+
+		stopButton = new Button(comp, SWT.FLAT);
+		stopButton.setImage(imgReg.get(ICON_STOP));
+		stopButton.setToolTipText(Messages.BundleSpyPart_15);
+		stopButton.setEnabled(false);
+		stopButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			if (MessageDialog.openConfirm(((Control) e.getSource()).getShell(), Messages.BundleSpyPart_16,
+					Messages.BundleSpyPart_17)) {
 				IStructuredSelection sel = (IStructuredSelection) bundlesTableViewer.getSelection();
 				Iterator<?> iter = sel.iterator();
 				while (iter.hasNext()) {
 					Bundle b = (Bundle) iter.next();
 					try {
-						b.start();
+						b.stop();
 					} catch (BundleException e1) {
 						e1.printStackTrace();
 					}
@@ -168,32 +176,7 @@ public class BundleSpyPart {
 				bundlesTableViewer.refresh();
 				updateButtonStatuses(sel);
 			}
-		});
-
-		stopButton = new Button(comp, SWT.FLAT);
-		stopButton.setImage(imgReg.get(ICON_STOP));
-		stopButton.setToolTipText(Messages.BundleSpyPart_15);
-		stopButton.setEnabled(false);
-		stopButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (MessageDialog.openConfirm(((Control) e.getSource()).getShell(), Messages.BundleSpyPart_16,
-						Messages.BundleSpyPart_17)) {
-					IStructuredSelection sel = (IStructuredSelection) bundlesTableViewer.getSelection();
-					Iterator<?> iter = sel.iterator();
-					while (iter.hasNext()) {
-						Bundle b = (Bundle) iter.next();
-						try {
-							b.stop();
-						} catch (BundleException e1) {
-							e1.printStackTrace();
-						}
-					}
-					bundlesTableViewer.refresh();
-					updateButtonStatuses(sel);
-				}
-			}
-		});
+		}));
 
 		// Create the customer table with 2 columns: firstname and name
 		bundlesTableViewer = new TableViewer(parent);
