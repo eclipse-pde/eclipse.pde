@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,27 +27,20 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolTip;
 
@@ -101,15 +94,12 @@ public class CapturedEventFilters {
 		layout.marginLeft = 0;
 		layout.fill = true;
 		control.setLayout(layout);
-		rawFilters = new ArrayList<CapturedEventFilter>();
+		rawFilters = new ArrayList<>();
 
 		clipboard = new Clipboard(control.getDisplay());
-		control.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				if (clipboard != null && !clipboard.isDisposed()) {
-					clipboard.dispose();
-				}
+		control.addDisposeListener(e -> {
+			if (clipboard != null && !clipboard.isDisposed()) {
+				clipboard.dispose();
 			}
 		});
 
@@ -136,28 +126,19 @@ public class CapturedEventFilters {
 		baseTopicText = new Text(parent, SWT.BORDER);
 		baseTopicText.setLayoutData(new RowData(312, SWT.DEFAULT));
 		baseTopicText.setText(BASE_EVENT_TOPIC);
-		baseTopicText.addFocusListener(new FocusAdapter() {
-
-			@Override
-			public void focusLost(FocusEvent e) {
-				if (baseTopicText.getText().trim().length() == 0) {
-					baseTopicText.setText(BASE_EVENT_TOPIC);
-				}
-				baseTopicTextValue = baseTopicText.getText();
+		baseTopicText.addFocusListener(FocusListener.focusLostAdapter(e -> {
+			if (baseTopicText.getText().trim().length() == 0) {
+				baseTopicText.setText(BASE_EVENT_TOPIC);
 			}
-		});
+			baseTopicTextValue = baseTopicText.getText();
+		}));
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new RowLayout(SWT.HORIZONTAL));
 
 		Link link = new Link(composite, SWT.NONE);
 		link.setText(Messages.CapturedEventFilters_ResetToDefault);
-		link.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				baseTopicText.setText(BASE_EVENT_TOPIC);
-			}
-		});
+		link.addListener(SWT.Selection, event -> baseTopicText.setText(BASE_EVENT_TOPIC));
 	}
 
 	private void createAddFilterSection(Composite parent) {
@@ -200,12 +181,7 @@ public class CapturedEventFilters {
 
 		Link link = new Link(parent, SWT.NONE);
 		link.setText(Messages.CapturedEventFilters_AddFilter);
-		link.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				addFilter();
-			}
-		});
+		link.addListener(SWT.Selection, event -> addFilter());
 	}
 
 	private void createDefinedFiltersGroup(Composite parent) {
@@ -215,55 +191,33 @@ public class CapturedEventFilters {
 
 		filters = new List(definedFiltersGroup, SWT.BORDER | SWT.V_SCROLL);
 		filters.setLayoutData(new RowData(450, 84));
-		filters.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				selectFilterAt(((List) e.widget).getSelectionIndex());
+		filters.addSelectionListener(
+				SelectionListener.widgetSelectedAdapter(e -> selectFilterAt(((List) e.widget).getSelectionIndex())));
+		filters.addKeyListener(KeyListener.keyPressedAdapter(e -> {
+			int index = ((List) e.widget).getSelectionIndex();
+			boolean ctrlPressed = (e.stateMask & SWT.CTRL) == SWT.CTRL;
+			if (ctrlPressed && e.keyCode == 'c') {
+				copyFilterAt(index);
+				e.doit = false;
+			} else if (ctrlPressed && e.keyCode == 'v') {
+				pasteFilterAt(index);
 			}
-		});
-		filters.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				int index = ((List) e.widget).getSelectionIndex();
-				boolean ctrlPressed = (e.stateMask & SWT.CTRL) == SWT.CTRL;
-				if (ctrlPressed && e.keyCode == 'c') {
-					copyFilterAt(index);
-					e.doit = false;
-				} else if (ctrlPressed && e.keyCode == 'v') {
-					pasteFilterAt(index);
-				}
-			}
-		});
+		}));
 
 		Composite composite = new Composite(definedFiltersGroup, SWT.NONE);
 		composite.setLayout(new RowLayout(SWT.VERTICAL));
 
 		Link link = new Link(composite, SWT.NONE);
 		link.setText(Messages.CapturedEventFilters_UpdateSelected);
-		link.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				updateFilterAt(filters.getSelectionIndex());
-			}
-		});
+		link.addListener(SWT.Selection, event -> updateFilterAt(filters.getSelectionIndex()));
 
 		link = new Link(composite, SWT.NONE);
 		link.setText(Messages.CapturedEventFilters_RemoveSelected);
-		link.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				removeFilterAt(filters.getSelectionIndex());
-			}
-		});
+		link.addListener(SWT.Selection, event -> removeFilterAt(filters.getSelectionIndex()));
 
 		link = new Link(composite, SWT.NONE);
 		link.setText(Messages.CapturedEventFilters_RemoveAll);
-		link.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				removeAllFilters();
-			}
-		});
+		link.addListener(SWT.Selection, event -> removeAllFilters());
 	}
 
 	public Control getControl() {
@@ -280,7 +234,7 @@ public class CapturedEventFilters {
 	}
 
 	public Collection<CapturedEventFilter> getFilters() {
-		Map<Integer, CapturedEventFilter> result = new LinkedHashMap<Integer, CapturedEventFilter>();
+		Map<Integer, CapturedEventFilter> result = new LinkedHashMap<>();
 		for (CapturedEventFilter filter : rawFilters) {
 			result.put(filter.hashCode(), filter);
 		}
@@ -322,7 +276,7 @@ public class CapturedEventFilters {
 		}
 
 		String value = valueText.getText();
-		if (value.length() == 0 || value.equals(NOT_SELECTED_VALUE)) {
+		if (value.isEmpty() || value.equals(NOT_SELECTED_VALUE)) {
 			getTooltip().setText(String.format(Messages.CapturedEventFilters_IsEmpty, getFieldName(NOT_SELECTED_VALUE)));
 			getTooltip().setVisible(true);
 			return null;
