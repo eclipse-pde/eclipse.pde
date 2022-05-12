@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,9 +16,7 @@ package org.eclipse.pde.spy.event.internal.ui;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Listener;
 
 public class ToggleLink {
 	private Link link;
@@ -34,13 +32,10 @@ public class ToggleLink {
 	public ToggleLink(Composite parent) {
 		link = new Link(parent, SWT.NONE);
 		link.setSize(SWT.DEFAULT, SWT.DEFAULT);
-		link.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				updateText();
-				if (listener != null) {
-					listener.clicked(isToggled());
-				}
+		link.addListener(SWT.Selection, event -> {
+			updateText();
+			if (listener != null) {
+				listener.clicked(isToggled());
 			}
 		});
 	}

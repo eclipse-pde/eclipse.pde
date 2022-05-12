@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -52,14 +52,13 @@ public class CapturedEvent implements IEventItem {
 
 	public void addParameter(String name, Object value) {
 		if (parameters == null) {
-			parameters = new ArrayList<Parameter>();
+			parameters = new ArrayList<>();
 		}
 		parameters.add(new Parameter(name, value));
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<Parameter> getParameters() {
-		return parameters != null ? parameters : Collections.EMPTY_LIST;
+		return parameters != null ? parameters : Collections.emptyList();
 	}
 
 	public boolean hasParameters() {

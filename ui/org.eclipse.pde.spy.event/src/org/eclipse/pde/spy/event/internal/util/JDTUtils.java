@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,7 +25,7 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.osgi.framework.FrameworkUtil;
 
 public class JDTUtils {
-	private final static Pattern CLASS_NAME_PATTERN = Pattern.compile(Messages.JDTUtils_0);
+	private static final Pattern CLASS_NAME_PATTERN = Pattern.compile(Messages.JDTUtils_0);
 
 	public static boolean containsClassName(String name) {
 		return CLASS_NAME_PATTERN.matcher(name).find();

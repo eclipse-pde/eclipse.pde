@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,15 +35,11 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
@@ -54,8 +50,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
@@ -115,13 +109,10 @@ public class CapturedEventTree extends TreeViewer {
 		addTreeEventListeners();
 	}
 
-	private static class CapturedEventsTreeStructureAdvisor extends TreeStructureAdvisor {
+	private static class CapturedEventsTreeStructureAdvisor extends TreeStructureAdvisor<CapturedEvent> {
 		@Override
-		public Boolean hasChildren(Object element) {
-			if (element instanceof CapturedEvent) {
-				return !((CapturedEvent) element).getParameters().isEmpty();
-			}
-			return false;
+		public Boolean hasChildren(CapturedEvent element) {
+			return !element.getParameters().isEmpty();
 		}
 	}
 
@@ -194,76 +185,64 @@ public class CapturedEventTree extends TreeViewer {
 			}
 		});
 
-		getTree().addMouseMoveListener(new MouseMoveListener() {
-			@Override
-			public void mouseMove(MouseEvent e) {
-				selectedClassNameTreeItem.clear();
+		getTree().addMouseMoveListener(e -> {
+			selectedClassNameTreeItem.clear();
 
-				// we can select and finally open the class only when 'ctrl' is
-				// pressed
-				if ((e.stateMask & SWT.CTRL) != SWT.CTRL) {
-					return;
-				}
+			// we can select and finally open the class only when 'ctrl' is
+			// pressed
+			if ((e.stateMask & SWT.CTRL) != SWT.CTRL) {
+				return;
+			}
 
-				TreeItem item = getTree().getItem(new Point(e.x, e.y));
-				int index = getSelectedColumnIndex(item, e.x, e.y);
+			TreeItem item = getTree().getItem(new Point(e.x, e.y));
+			int index = getSelectedColumnIndex(item, e.x, e.y);
 
-				if (index > 0 /* we check the 2nd and 3rd column only */ && item
-						.getParentItem() == null /*
-													 * we don't check parameters at
-													 * this moment
-													 */) {
-					String text = item.getText(index);
-					if (JDTUtils.containsClassName(text)) {
-						selectedClassNameTreeItem.setText(text);
-						selectedClassNameTreeItem.setColumnIndex(index);
-						selectedClassNameTreeItem.setTreeItem(item);
-						getTree().setCursor(treeItemCursor.getPointerCursor());
-						redrawTreeItem(item, index);
-					}
+			if (index > 0 /* we check the 2nd and 3rd column only */ && item
+					.getParentItem() == null /*
+												 * we don't check parameters at
+												 * this moment
+												 */) {
+				String text = item.getText(index);
+				if (JDTUtils.containsClassName(text)) {
+					selectedClassNameTreeItem.setText(text);
+					selectedClassNameTreeItem.setColumnIndex(index);
+					selectedClassNameTreeItem.setTreeItem(item);
+					getTree().setCursor(treeItemCursor.getPointerCursor());
+					redrawTreeItem(item, index);
 				}
 			}
 		});
 
-		getTree().addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				TreeItem item = getTree().getItem(new Point(e.x, e.y));
-				updateSelectedTreeItem(item, getSelectedColumnIndex(item, e.x, e.y));
+		getTree().addMouseListener(MouseListener.mouseDownAdapter(e -> {
+			TreeItem item = getTree().getItem(new Point(e.x, e.y));
+			updateSelectedTreeItem(item, getSelectedColumnIndex(item, e.x, e.y));
 
-				if (listener != null && (e.stateMask & SWT.CTRL) == SWT.CTRL
-						&& selectedClassNameTreeItem.getText() != null) {
-					listener.treeItemWithClassNameClicked(selectedClassNameTreeItem.getText());
-				}
+			if (listener != null && (e.stateMask & SWT.CTRL) == SWT.CTRL
+					&& selectedClassNameTreeItem.getText() != null) {
+				listener.treeItemWithClassNameClicked(selectedClassNameTreeItem.getText());
+			}
+		}));
+
+		getTree().addListener(SWT.EraseItem, event -> {
+			if ((event.detail & SWT.FOREGROUND) == SWT.FOREGROUND) {
+				event.detail &= ~SWT.FOREGROUND;
+			}
+			if ((event.detail & SWT.SELECTED) == SWT.SELECTED) {
+				event.detail &= ~SWT.SELECTED;
 			}
 		});
 
-		getTree().addListener(SWT.EraseItem, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if ((event.detail & SWT.FOREGROUND) == SWT.FOREGROUND) {
-					event.detail &= ~SWT.FOREGROUND;
-				}
-				if ((event.detail & SWT.SELECTED) == SWT.SELECTED) {
-					event.detail &= ~SWT.SELECTED;
-				}
-			}
-		});
+		getTree().addListener(SWT.PaintItem, event -> {
+			TreeItem item = (TreeItem) event.item;
+			String text = item.getText(event.index);
+			int xOffset = item.getParentItem() != null ? 10 : 2;
+			Rectangle rec = item.getBounds(event.index);
 
-		getTree().addListener(SWT.PaintItem, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				TreeItem item = (TreeItem) event.item;
-				String text = item.getText(event.index);
-				int xOffset = item.getParentItem() != null ? 10 : 2;
-				Rectangle rec = item.getBounds(event.index);
-
-				event.gc.setFont(getFont(item, event.index));
-				event.gc.setForeground(getForeground(item, event.index));
-				event.gc.setBackground(getBackground(item, event.index));
-				event.gc.fillRectangle(rec.x, rec.y, rec.width, rec.height);
-				event.gc.drawText(text, event.x + xOffset, event.y, true);
-			}
+			event.gc.setFont(getFont(item, event.index));
+			event.gc.setForeground(getForeground(item, event.index));
+			event.gc.setBackground(getBackground(item, event.index));
+			event.gc.fillRectangle(rec.x, rec.y, rec.width, rec.height);
+			event.gc.drawText(text, event.x + xOffset, event.y, true);
 		});
 
 		getTree().addKeyListener(new KeyListener() {
@@ -290,22 +269,14 @@ public class CapturedEventTree extends TreeViewer {
 			}
 		});
 
-		getTree().addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if ((e.stateMask & SWT.BUTTON1) != SWT.BUTTON1) {
-					updateSelectedTreeItem((TreeItem) e.item,
-							selectedTreeItem.getText() != null ? selectedTreeItem.getColumnIndex() : 0);
-				}
+		getTree().addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			if ((e.stateMask & SWT.BUTTON1) != SWT.BUTTON1) {
+				updateSelectedTreeItem((TreeItem) e.item,
+						selectedTreeItem.getText() != null ? selectedTreeItem.getColumnIndex() : 0);
 			}
-		});
+		}));
 
-		getTree().addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusLost(FocusEvent e) {
-				selectedClassNameTreeItem.clear();
-			}
-		});
+		getTree().addFocusListener(FocusListener.focusLostAdapter(e -> selectedClassNameTreeItem.clear()));
 	}
 
 	private void updateSelectedTreeItem(TreeItem item, int columnIndex) {

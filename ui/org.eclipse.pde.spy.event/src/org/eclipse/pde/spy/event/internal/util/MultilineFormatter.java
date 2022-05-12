@@ -1,6 +1,5 @@
 /*******************************************************************************
-/*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,21 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.spy.event.internal.util;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public class MultilineFormatter {
-	@SuppressWarnings("serial")
-	private static Set<Character> LINE_DELIMITERS = new HashSet<Character>() {
-		{
-			add(',');
-			add('(');
-			add(')');
-			add(';');
-			add('-');
-			add('=');
-		}
-	};
+	private static Set<Character> LINE_DELIMITERS = Set.of(',','(',')',';','-','=');
 
 	public static String format(String value, int lineLength) {
 		StringBuilder result = new StringBuilder();
