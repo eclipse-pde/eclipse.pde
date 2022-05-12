@@ -142,11 +142,10 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	 * Handles changes to the list based on changes to the text field.
 	 */
 	private void handleFilter() {
-		boolean changed = false;
 		String newFilter;
 		if (fFilterText == null || (newFilter = fFilterText.getText().trim()).length() == 0)
 			newFilter = AvailableFilter.WILDCARD;
-		changed = fFilter.setPattern(newFilter);
+		boolean changed = fFilter.setPattern(newFilter);
 		if (changed) {
 			fAvailableViewer.getTable().setRedraw(false);
 			fAvailableViewer.refresh();

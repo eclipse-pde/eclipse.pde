@@ -215,8 +215,7 @@ public class XMLInsertionComputer {
 	 * @throws CoreException
 	 */
 	protected static IPluginElement createElement(IPluginParent pElement, ISchemaElement schemaElement) throws CoreException {
-		IPluginElement childElement = null;
-		childElement = pElement.getModel().getFactory().createElement(pElement);
+		IPluginElement childElement = pElement.getModel().getFactory().createElement(pElement);
 		childElement.setName(schemaElement.getName());
 		return childElement;
 	}

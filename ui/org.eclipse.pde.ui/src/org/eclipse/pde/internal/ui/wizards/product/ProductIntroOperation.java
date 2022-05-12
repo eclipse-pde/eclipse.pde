@@ -120,15 +120,13 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 	}
 
 	private IPluginElement createPresentationElement(IPluginElement parent) throws CoreException {
-		IPluginElement presentation = null;
-		IPluginElement implementation = null;
 		IExtensionsModelFactory factory = parent.getModel().getFactory();
 
-		presentation = factory.createElement(parent);
+		IPluginElement presentation = factory.createElement(parent);
 		presentation.setName("presentation"); //$NON-NLS-1$
 		presentation.setAttribute("home-page-id", "root"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		implementation = factory.createElement(presentation);
+		IPluginElement implementation = factory.createElement(presentation);
 		implementation.setName("implementation"); //$NON-NLS-1$
 		implementation.setAttribute("kind", "html"); //$NON-NLS-1$ //$NON-NLS-2$
 		implementation.setAttribute("style", "content/shared.css"); //$NON-NLS-1$ //$NON-NLS-2$

@@ -100,10 +100,8 @@ public abstract class ContentPage extends WizardPage {
 		}
 
 		setMessage(null);
-		String errorMessage = null;
+		String errorMessage = validateId();
 
-		// Validate ID
-		errorMessage = validateId();
 		if (errorMessage != null) {
 			return errorMessage;
 		}

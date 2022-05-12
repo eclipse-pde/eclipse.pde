@@ -151,11 +151,10 @@ public class SchemaIncludesSection extends TableSection {
 	}
 
 	protected void handleRemoveInclude() {
-		Object[] selected = new Object[0];
 		IStructuredSelection selection = fViewer.getStructuredSelection();
 		if (selection.isEmpty())
 			return;
-		selected = selection.toArray();
+		Object[] selected = selection.toArray();
 		Schema schema = (Schema) getSchema();
 		for (Object selectedObject : selected) {
 			schema.removeInclude((ISchemaInclude) selectedObject);

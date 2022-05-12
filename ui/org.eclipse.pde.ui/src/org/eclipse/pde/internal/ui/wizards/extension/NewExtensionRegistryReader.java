@@ -151,9 +151,8 @@ public class NewExtensionRegistryReader {
 
 	private void processCategory(IConfigurationElement config, ElementList list) {
 		WizardCollectionElement result = (WizardCollectionElement) list;
-		Category category = null;
+		Category category = new Category(config);
 
-		category = new Category(config);
 		if (category.getID() == null || category.getLabel() == null) {
 			System.out.println(PDEUIMessages.NewExtensionRegistryReader_missingProperty);
 			return;

@@ -53,10 +53,9 @@ public class BundleInputContext extends UTF8InputContext {
 
 	@Override
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
-		BundleModel model = null;
 		boolean isReconciling = input instanceof IFileEditorInput;
 		IDocument document = getDocumentProvider().getDocument(input);
-		model = new BundleModel(document, isReconciling);
+		BundleModel model = new BundleModel(document, isReconciling);
 		if (input instanceof IFileEditorInput) {
 			IFile file = ((IFileEditorInput) input).getFile();
 			model.setUnderlyingResource(file);

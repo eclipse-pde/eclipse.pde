@@ -329,7 +329,6 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	 */
 	private void findExtensionVirtualPointValue(IPluginBase base) {
 
-		IDocumentRange range = null;
 		PDESourcePage page = fProcessor.getSourcePage();
 		// Ensure page is defined
 		if (page == null) {
@@ -339,7 +338,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		// name and value, we selected the point value
 		// Find the corresponding range in order to add child elements to
 		// the proper extension.
-		range = page.getRangeElement(fOffset, true);
+		IDocumentRange range = page.getRangeElement(fOffset, true);
 		// Ensure the range is an attribute
 		if ((range == null) || (range instanceof IDocumentElementNode) == false) {
 			return;
