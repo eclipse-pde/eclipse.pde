@@ -432,8 +432,7 @@ public class BundleLauncherHelper {
 		Stream<IPluginModelBase> selectedModels = Arrays.stream(models).filter(IPluginModelBase::isEnabled); // workspace models are always enabled, external might be disabled
 		if (version == null) {
 			if (!greedy) {
-				IPluginModelBase latestModel = selectedModels.max(VERSION).orElseThrow();
-				selectedModels = Stream.of(latestModel); // take only  latest
+				selectedModels = selectedModels.max(VERSION).stream(); // take only latest
 			} // Otherwise be greedy and take all if versionFilter is null
 		} else {
 			selectedModels = selectedModels.filter(m -> m.getPluginBase().getVersion().equals(version) || models.length == 1);
