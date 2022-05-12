@@ -64,7 +64,7 @@ public class ContextDataFilter extends ViewerFilter {
 
 		Set<Computation> listeners = lpkey.getListeners(parentElement);
 		boolean mustKeepParent = (matchText(sparentkey) || matchText(sparentval)) && (listeners != null)
-				&& (listeners.size() > 0);
+				&& !listeners.isEmpty();
 		boolean mustKeepElement = matchText(skey) || matchText(sval);
 
 		return mustKeepElement || (!mustKeepElement && mustKeepParent);
@@ -111,7 +111,7 @@ public class ContextDataFilter extends ViewerFilter {
 	 * @return
 	 */
 	private Collection<String> computeValues(IEclipseContext ctx) {
-		Collection<String> result = new ArrayList<String>();
+		Collection<String> result = new ArrayList<>();
 		if (ctx instanceof EclipseContext) {
 			// Search for all strings in this context (values and context
 			// function)
@@ -154,7 +154,7 @@ public class ContextDataFilter extends ViewerFilter {
 	 */
 	private void extractStringsFromMap(Map<String, Object> map, Collection<String> result) {
 		for (Map.Entry<String, Object> entry : map.entrySet()) {
-			result.add(entry.getKey().toString());
+			result.add(entry.getKey());
 			Object value = entry.getValue();
 			if (value != null) {
 				result.add(value.toString());

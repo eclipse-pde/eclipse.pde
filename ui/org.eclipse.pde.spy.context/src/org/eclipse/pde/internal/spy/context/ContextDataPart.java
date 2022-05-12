@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 OPCoach.
+ * Copyright (c) 2013, 2022 OPCoach and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,8 +32,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -182,11 +181,9 @@ public class ContextDataPart {
 
 	}
 
-	private SelectionAdapter getHeaderSelectionAdapter(final TreeViewer viewer, final TreeColumn column,
+	private SelectionListener getHeaderSelectionAdapter(final TreeViewer viewer, final TreeColumn column,
 			final int columnIndex, final ILabelProvider textProvider) {
-		SelectionAdapter selectionAdapter = new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
+		return SelectionListener.widgetSelectedAdapter(e-> {
 				viewer.setComparator(comparator);
 				comparator.setColumn(columnIndex);
 				comparator.setLabelProvider(textProvider);
@@ -194,8 +191,7 @@ public class ContextDataPart {
 				viewer.getTree().setSortColumn(column);
 				viewer.refresh();
 			}
-		};
-		return selectionAdapter;
+		);
 	}
 
 	public void refresh(boolean refreshLabel) {
