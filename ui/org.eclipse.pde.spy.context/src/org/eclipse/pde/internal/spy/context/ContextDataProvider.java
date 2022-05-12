@@ -111,13 +111,13 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 			return EMPTY_RESULT;
 
 		if (inputElement == LOCAL_VALUE_NODE) {
-			Collection<Object> result = new ArrayList<Object>();
+			Collection<Object> result = new ArrayList<>();
 
 			result.addAll(selectedContext.localData().entrySet());
 
 			// For context function, we have to compute the value (if possible),
 			// and display it as a standard value
-			Map<String, Object> cfValues = new HashMap<String, Object>();
+			Map<String, Object> cfValues = new HashMap<>();
 			for (String key : selectedContext.localContextFunction().keySet())
 				try {
 					cfValues.put(key, selectedContext.get(key));
@@ -130,7 +130,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 		} else if (inputElement == INHERITED_INJECTED_VALUE_NODE) {
 			// Search for all values injected using this context but defined in
 			// parent
-			Collection<Object> result = new ArrayList<Object>();
+			Collection<Object> result = new ArrayList<>();
 
 			// Keep only the names that are not already displayed in local
 			// values
@@ -143,7 +143,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 						result.add(name);
 				}
 			}
-			return result.size() == 0 ? new String[] { NO_VALUES_FOUND } : result.toArray();
+			return result.isEmpty() ? new String[] { NO_VALUES_FOUND } : result.toArray();
 
 		} else if (inputElement instanceof Map.Entry) {
 			Set<Computation> listeners = getListeners(inputElement);
@@ -319,7 +319,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 		}
 
 		Set<Computation> listeners = getListeners(element);
-		return (listeners != null) && (listeners.size() > 0);
+		return (listeners != null) && !listeners.isEmpty();
 	}
 
 	@SuppressWarnings("unchecked")
