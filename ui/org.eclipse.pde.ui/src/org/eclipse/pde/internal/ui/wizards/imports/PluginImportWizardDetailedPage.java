@@ -459,11 +459,10 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 
 	private void handleFilter() {
-		boolean changed = false;
 		String newFilter;
 		if (fFilterText == null || (newFilter = fFilterText.getText().trim()).length() == 0)
 			newFilter = "*"; //$NON-NLS-1$
-		changed = fAvailableFilter.setPattern(newFilter);
+		boolean changed = fAvailableFilter.setPattern(newFilter);
 		if (changed) {
 			fAvailableListViewer.refresh();
 			updateButtonEnablement(false, false);

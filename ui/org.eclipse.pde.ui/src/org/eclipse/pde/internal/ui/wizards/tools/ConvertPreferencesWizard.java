@@ -190,8 +190,7 @@ public class ConvertPreferencesWizard extends Wizard {
 												if (comment != null)
 													out.append(comment);
 												// put comment from epf file
-												String comment2 = null;
-												comment2 = mapKeyCommentPreference.get(key);
+												String comment2 = mapKeyCommentPreference.get(key);
 												if (comment2 != null)
 													out.append(comment2);
 												// get the value from epf file
@@ -211,8 +210,7 @@ public class ConvertPreferencesWizard extends Wizard {
 							monitor.worked(20);
 							for (Entry<String, String> entry : properties.entrySet()) {
 								String key = entry.getKey();
-								String comment = null;
-								comment = mapKeyCommentPreference.get(key);
+								String comment = mapKeyCommentPreference.get(key);
 								if (comment != null)
 									out.append(comment);
 								String value = entry.getValue();

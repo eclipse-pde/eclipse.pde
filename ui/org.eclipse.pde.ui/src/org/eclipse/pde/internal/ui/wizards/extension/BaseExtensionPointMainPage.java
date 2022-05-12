@@ -220,8 +220,6 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 	}
 
 	private IFile generateSchemaFile(String pluginId, String id, String name, boolean shared, String schema, IProgressMonitor monitor) throws CoreException {
-		IFile schemaFile = null;
-
 		IWorkspace workspace = fContainer.getWorkspace();
 		IPath schemaPath = new Path(schema).removeLastSegments(1);
 		IPath newSchemaPath = fContainer.getProjectRelativePath().append(schemaPath);
@@ -231,7 +229,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			CoreUtility.createFolder(folder);
 		}
 		IPath filePath = fContainer.getFullPath().append(schema);
-		schemaFile = workspace.getRoot().getFile(filePath);
+		IFile schemaFile = workspace.getRoot().getFile(filePath);
 		InputStream source = createSchemaStream(pluginId, id, name, shared, schemaFile);
 		if (!schemaFile.exists()) {
 			// create for the first time
