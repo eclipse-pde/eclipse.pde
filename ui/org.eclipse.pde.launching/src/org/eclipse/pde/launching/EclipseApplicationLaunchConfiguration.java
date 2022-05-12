@@ -99,10 +99,9 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 			programArgs.add(fWorkspaceLocation);
 		}
 
-		boolean showSplash = true;
 		String productID = LaunchConfigurationHelper.getProductID(configuration);
 		Properties prop = LaunchConfigurationHelper.createConfigIniFile(configuration, productID, fAllBundles, fModels, getConfigDir(configuration));
-		showSplash = prop.containsKey("osgi.splashPath") || prop.containsKey("splashLocation"); //$NON-NLS-1$ //$NON-NLS-2$
+		boolean showSplash = prop.containsKey("osgi.splashPath") || prop.containsKey("splashLocation"); //$NON-NLS-1$ //$NON-NLS-2$
 		TargetPlatformHelper.checkPluginPropertiesConsistency(fAllBundles, getConfigDir(configuration));
 		programArgs.add("-configuration"); //$NON-NLS-1$
 		programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
