@@ -326,8 +326,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 	}
 
 	private void appendEclipsePath(StringBuilder buffer, File homeDir) {
-		File file = null;
-		file = new File(homeDir, "eclipse"); //$NON-NLS-1$
+		File file = new File(homeDir, "eclipse");
 		if (file.exists()) {
 			appendAbsolutePath(buffer, file);
 		}
