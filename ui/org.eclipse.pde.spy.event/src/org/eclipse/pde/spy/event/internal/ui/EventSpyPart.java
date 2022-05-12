@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Composite;
 
 public class EventSpyPart implements EventMonitor.NewEventListener {
 
-	private final static String[] SHOW_FILTER_LINK_TEXT = new String[] { Messages.EventSpyPart_ShowFilters, Messages.EventSpyPart_HideFilters };
+	private static final String[] SHOW_FILTER_LINK_TEXT = new String[] { Messages.EventSpyPart_ShowFilters, Messages.EventSpyPart_HideFilters };
 
 	private CapturedEventTree capturedEventTree;
 
@@ -90,7 +90,7 @@ public class EventSpyPart implements EventMonitor.NewEventListener {
 		outer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		createActionBar(outer);
-		createFilters(outer, memento);
+		createFilters(memento);
 		createCapturedEventTree(outer);
 	}
 
@@ -130,29 +130,21 @@ public class EventSpyPart implements EventMonitor.NewEventListener {
 
 		ToggleLink link = new ToggleLink(actionBar);
 		link.setText(new String[] { Messages.EventSpyPart_StartCapturingEvents, Messages.EventSpyPart_StopCapturingEvents });
-		link.setClickListener(new ToggleLink.ClickListener() {
-			@Override
-			public void clicked(boolean toggled) {
-				if (toggled) {
-					captureEvents();
-				} else {
-					stopCaptureEvents();
-				}
+		link.setClickListener(toggled -> {
+			if (toggled) {
+				captureEvents();
+			} else {
+				stopCaptureEvents();
 			}
 		});
 
 		showFiltersLink = new ToggleLink(actionBar);
 		showFiltersLink.setText(new String[] { SHOW_FILTER_LINK_TEXT[0], SHOW_FILTER_LINK_TEXT[1] });
 		showFiltersLink.getControl().setLayoutData(new RowData(130, SWT.DEFAULT));
-		showFiltersLink.setClickListener(new ToggleLink.ClickListener() {
-			@Override
-			public void clicked(boolean toggled) {
-				showFilters(toggled);
-			}
-		});
+		showFiltersLink.setClickListener(this::showFilters);
 	}
 
-	private void createFilters(Composite parent, SpyPartMemento memento) {
+	private void createFilters(SpyPartMemento memento) {
 		capturedEventFilters = new CapturedEventFilters(outer);
 		capturedEventFilters.getControl().setVisible(false);
 		GridData gridData = createDefaultGridData();
@@ -170,12 +162,7 @@ public class EventSpyPart implements EventMonitor.NewEventListener {
 	private void createCapturedEventTree(Composite parent) {
 		capturedEventTree = new CapturedEventTree(outer);
 		capturedEventTree.getControl().setLayoutData(createDefaultGridData());
-		capturedEventTree.setListener(new ICapturedEventTreeListener() {
-			@Override
-			public void treeItemWithClassNameClicked(String text) {
-				openResource(text);
-			}
-		});
+		capturedEventTree.setListener(this::openResource);
 	}
 
 	public void captureEvents() {

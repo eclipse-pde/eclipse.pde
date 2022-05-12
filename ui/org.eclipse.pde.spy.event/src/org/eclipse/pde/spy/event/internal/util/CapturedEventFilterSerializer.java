@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,7 +18,7 @@ import org.eclipse.pde.spy.event.internal.model.ItemToFilter;
 import org.eclipse.pde.spy.event.internal.model.Operator;
 
 public class CapturedEventFilterSerializer {
-	private final static String FILTER_PARAM_SEPARATOR = ","; //$NON-NLS-1$
+	private static final String FILTER_PARAM_SEPARATOR = ","; //$NON-NLS-1$
 
 	public static String serialize(CapturedEventFilter filter) {
 		return new StringBuilder(filter.getItemToFilter().toString()).append(FILTER_PARAM_SEPARATOR)

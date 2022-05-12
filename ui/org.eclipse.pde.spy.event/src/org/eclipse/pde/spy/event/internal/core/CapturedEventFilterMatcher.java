@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -50,21 +50,21 @@ public class CapturedEventFilterMatcher {
 			return event.getChangedElementClassName();
 		}
 		if (itemToFilter.equals(ItemToFilter.ParameterName)) {
-			List<String> names = new ArrayList<String>();
+			List<String> names = new ArrayList<>();
 			for (Parameter parameter : event.getParameters()) {
 				names.add(parameter.getName());
 			}
 			return names;
 		}
 		if (itemToFilter.equals(ItemToFilter.ParameterValue)) {
-			List<Object> values = new ArrayList<Object>();
+			List<Object> values = new ArrayList<>();
 			for (Parameter parameter : event.getParameters()) {
 				values.add(parameter.getValue());
 			}
 			return values;
 		}
 		if (itemToFilter.equals(ItemToFilter.ParameterNameAndValue)) {
-			List<String> nameAndValues = new ArrayList<String>();
+			List<String> nameAndValues = new ArrayList<>();
 			for (Parameter parameter : event.getParameters()) {
 				String nameAndValue = String.format(SpecialValue.NameAndValue.toString(), parameter.getName().trim(),
 						(parameter.getValue() == null ? SpecialValue.Null : parameter.getValue().toString().trim()));
@@ -106,7 +106,7 @@ public class CapturedEventFilterMatcher {
 	}
 
 	private boolean matchesToEmptyString(Object current) {
-		return current != null && current instanceof String && current.toString().length() == 0;
+		return current instanceof String && current.toString().isEmpty();
 	}
 
 	private boolean matchesToNull(Object current) {
