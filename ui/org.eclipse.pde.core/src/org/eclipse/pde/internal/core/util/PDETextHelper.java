@@ -71,7 +71,6 @@ public class PDETextHelper {
 		if (text == null) {
 			return ""; //$NON-NLS-1$
 		}
-		String result = ""; //$NON-NLS-1$
 		// Get rid of leading and trailing whitespace
 		String inputText = text.trim();
 		int length = inputText.length();
@@ -97,7 +96,7 @@ public class PDETextHelper {
 				previousChar = currentChar;
 			}
 		}
-		result = buffer.toString();
+		String result = buffer.toString(); //$NON-NLS-1$
 		if (PDEHTMLHelper.isAllWhitespace(result)) {
 			return ""; //$NON-NLS-1$
 		}

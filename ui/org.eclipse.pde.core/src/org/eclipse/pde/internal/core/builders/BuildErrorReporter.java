@@ -1110,8 +1110,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 							// True is valid if the bundle root is the default (the project)
 							entryCorrect = fProject.equals(PDEProject.getBundleRoot(fProject));
 						} else {
-							IPath prefFile = null;
-							prefFile = new Path(tokens[0]);
+							IPath prefFile = new Path(tokens[0]);
 							if (prefFile.isAbsolute()) {
 								entryCorrect = prefFile.toFile().exists();
 							} else {
