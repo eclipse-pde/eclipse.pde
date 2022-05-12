@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 vogella GmbH.
+ * Copyright (c) 2015, 2022 vogella GmbH. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,8 +30,7 @@ import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.pde.spy.preferences.constants.PreferenceConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -64,21 +63,17 @@ public class TogglePreferenceTraceControl {
 		toolItem.setSelection(tracePreferences);
 		toolItem.setToolTipText(Messages.TogglePreferenceTraceControl_Toggle_Preference_Trace);
 		toolItem.setImage(getResourceManager().createImage(getImageDescriptor()));
-		toolItem.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				Object source = event.getSource();
-				if (source instanceof ToolItem) {
-					preferences.putBoolean(PreferenceConstants.TRACE_PREFERENCES, ((ToolItem) source).getSelection());
-					try {
-						preferences.flush();
-					} catch (BackingStoreException e) {
-						LOG.error(e);
-					}
+		toolItem.addSelectionListener(SelectionListener.widgetSelectedAdapter(event -> {
+			Object source = event.getSource();
+			if (source instanceof ToolItem) {
+				preferences.putBoolean(PreferenceConstants.TRACE_PREFERENCES, ((ToolItem) source).getSelection());
+				try {
+					preferences.flush();
+				} catch (BackingStoreException e) {
+					LOG.error(e);
 				}
 			}
-		});
+		}));
 	}
 
 	@PreDestroy

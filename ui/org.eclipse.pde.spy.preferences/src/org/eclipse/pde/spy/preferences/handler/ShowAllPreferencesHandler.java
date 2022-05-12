@@ -35,7 +35,7 @@ import org.osgi.service.prefs.BackingStoreException;
 public class ShowAllPreferencesHandler {
 	@Execute
 	public void execute(Shell shell, IEventBroker eventBroker) {
-		Map<String, PreferenceNodeEntry> preferenceEntries = new HashMap<String, PreferenceNodeEntry>();
+		Map<String, PreferenceNodeEntry> preferenceEntries = new HashMap<>();
 		IEclipsePreferences bundleDefaultsScopePreferences = BundleDefaultsScope.INSTANCE.getNode("");
 		IEclipsePreferences configurationScopePreferences = ConfigurationScope.INSTANCE.getNode("");
 		IEclipsePreferences defaultScopePreferences = DefaultScope.INSTANCE.getNode("");

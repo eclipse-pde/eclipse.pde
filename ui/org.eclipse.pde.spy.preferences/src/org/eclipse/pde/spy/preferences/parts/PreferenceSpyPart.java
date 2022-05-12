@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 vogella GmbH.
+ * Copyright (c) 2015, 2022 vogella GmbH. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,9 +36,7 @@ import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.pde.spy.preferences.constants.PreferenceConstants;
@@ -78,16 +76,12 @@ public class PreferenceSpyPart {
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 
-		filteredTree.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				ISelection selection = event.getSelection();
-				if (selection instanceof IStructuredSelection) {
-					ArrayList<PreferenceEntry> preferenceEntries = new ArrayList<PreferenceEntry>(
-							((IStructuredSelection) selection).toList());
-					selectionService.setSelection(preferenceEntries);
-				}
+		filteredTree.getViewer().addSelectionChangedListener(event -> {
+			ISelection selection = event.getSelection();
+			if (selection instanceof IStructuredSelection) {
+				ArrayList<PreferenceEntry> preferenceEntries = new ArrayList<>(
+						((IStructuredSelection) selection).toList());
+				selectionService.setSelection(preferenceEntries);
 			}
 		});
 

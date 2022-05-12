@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class PreferenceEntryManager extends PreferenceNodeEntry {
 
-	private Map<String, PreferenceNodeEntry> recentPreferenceEntries = new HashMap<String, PreferenceNodeEntry>();
+	private Map<String, PreferenceNodeEntry> recentPreferenceEntries = new HashMap<>();
 
 	public PreferenceEntryManager() {
 	}

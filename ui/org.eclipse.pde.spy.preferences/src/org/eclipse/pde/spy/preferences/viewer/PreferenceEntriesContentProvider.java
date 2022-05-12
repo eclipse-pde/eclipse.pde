@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 vogella GmbH.
+ * Copyright (c) 2015, 2022 vogella GmbH. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,7 +40,7 @@ public class PreferenceEntriesContentProvider extends ObservableSetTreeContentPr
 			return children;
 		}
 
-		List<PreferenceEntry> childList = new ArrayList<PreferenceEntry>();
+		List<PreferenceEntry> childList = new ArrayList<>();
 
 		for (Object object : children) {
 			getChildren(object, childList);
