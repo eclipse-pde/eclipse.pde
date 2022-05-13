@@ -22,20 +22,20 @@ package org.eclipse.pde.internal.ui.editor.plugin.rows;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.ui.actions.ShowInNavigatorViewAction;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.part.ISetSelectionTarget;
 
 public class ResourceAttributeRow extends ButtonAttributeRow {
 	public ResourceAttributeRow(IContextPart part, ISchemaAttribute att) {
@@ -85,9 +85,8 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 	private boolean openContainer(IContainer container) {
 		if (container != null && container.exists())
 			try {
-				IViewPart part = PDEPlugin.getActivePage().showView(IPageLayout.ID_RES_NAV);
-				ShowInNavigatorViewAction action = new ShowInNavigatorViewAction(part.getSite());
-				action.run(container);
+				ISetSelectionTarget part = (ISetSelectionTarget)PDEPlugin.getActivePage().showView(IPageLayout.ID_PROJECT_EXPLORER);
+				part.selectReveal(new StructuredSelection(container));
 			} catch (PartInitException e) {
 				return false;
 			}
