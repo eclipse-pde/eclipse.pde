@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class CapturedEventTree extends TreeViewer {
 	private ICapturedEventTreeListener listener;
 
