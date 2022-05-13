@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2018 IBM Corporation and others.
+ * Copyright (c) 2009, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -45,29 +45,18 @@ import junit.framework.Test;
  */
 public class BundleMergeSplitTests extends ApiBuilderTest {
 
-	static {
-		// TESTS_NUMBERS = new int[] { 9 };
-	}
 	private static final String API_BASELINE = "API-baseline"; //$NON-NLS-1$
 	/**
 	 * Workspace relative path
 	 */
 	protected static String WORKSPACE_ROOT = "mergesplit"; //$NON-NLS-1$
 
-	/**
-	 *
-	 */
 	public static final String WORKSPACE_PROFILE = "post-split"; //$NON-NLS-1$
 
 	public static final String BASELINE = "pre-split"; //$NON-NLS-1$
 
 	IApiBaseline baseline;
 
-	/**
-	 * Constructor
-	 *
-	 * @param name
-	 */
 	public BundleMergeSplitTests(String name) {
 		super(name);
 	}
@@ -159,9 +148,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE),
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
-		String[][] args = new String[2][];
-		args[0] = new String[] { "a.b.c.ClassB", "a.b.c_1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
-		args[1] = new String[] { "1.0.0", "1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+		String[][] args = new String[][] { new String[] { "a.b.c.ClassB", "a.b.c_1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
+				new String[] { "1.0.0", "1.0.0" } }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
@@ -192,9 +180,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.REEXPORTED_API_TYPE),
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
-		String[][] args = new String[2][];
-		args[0] = new String[] { "a.b.c.ClassB", "a.b.c_1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
-		args[1] = new String[] { "1.0.0", "1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+		String[][] args = new String[][] { new String[] { "a.b.c.ClassB", "a.b.c_1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
+				new String[] { "1.0.0", "1.0.0" } }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
@@ -212,9 +199,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.REEXPORTED_TYPE),
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
-		String[][] args = new String[2][];
-		args[0] = new String[] { "a.b.c.ClassB", "a.b.c_1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
-		args[1] = new String[] { "1.0.0", "1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+		String[][] args = new String[][] { new String[] { "a.b.c.ClassB", "a.b.c_1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
+				new String[] { "1.0.0", "1.0.0" } }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
@@ -245,9 +231,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.REEXPORTED_API_TYPE),
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
-		String[][] args = new String[2][];
-		args[0] = new String[] { "a.b.c.ClassB", "a.b.c_1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
-		args[1] = new String[] { "1.0.0", "1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+		String[][] args = new String[][] { new String[] { "a.b.c.ClassB", "a.b.c_1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
+				new String[] { "1.0.0", "1.0.0" } }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
@@ -267,11 +252,10 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS),
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
-		String[][] args = new String[4][];
-		args[0] = new String[] { "d.e.f.ClassD", "a.b.c_1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
-		args[1] = new String[] { "d.e.f.ClassD", "a.b.c.core_1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
-		args[2] = new String[] { "1.0.0", "1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
-		args[3] = new String[] { "1.0.0", "1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+		String[][] args = new String[][] { new String[] { "d.e.f.ClassD", "a.b.c_1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
+				new String[] { "d.e.f.ClassD", "a.b.c.core_1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
+				new String[] { "1.0.0", "1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
+				new String[] { "1.0.0", "1.0.0" } }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
