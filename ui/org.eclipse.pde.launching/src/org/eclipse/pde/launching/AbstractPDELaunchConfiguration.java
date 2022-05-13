@@ -197,11 +197,11 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		PDEState pdeState = TargetPlatformHelper.getPDEState();
 		if (pdeState != null) {
 			try {
-				Optional<IPluginModelBase> platformBaseModel = Arrays.asList(pdeState.getTargetModels()).stream().filter(x -> Objects.nonNull(x.getBundleDescription())).filter(x -> ("org.eclipse.platform").equals(x.getBundleDescription().getSymbolicName()))//$NON-NLS-1$
+				Optional<IPluginModelBase> platformBaseModel = Arrays.stream(pdeState.getTargetModels()).filter(x -> Objects.nonNull(x.getBundleDescription())).filter(x -> ("org.eclipse.platform").equals(x.getBundleDescription().getSymbolicName()))//$NON-NLS-1$
 						.findFirst();
 				if (platformBaseModel.isPresent()) {
 					Version version = platformBaseModel.get().getBundleDescription().getVersion();
-					Version comparedVersion = new Version(4, 24, 0);
+					Version comparedVersion = new Version(major, minor, 0);
 					if (version != null && version.compareTo(comparedVersion) >= 0) {
 						return true;
 					}
