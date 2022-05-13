@@ -23,6 +23,7 @@ import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.contentassist.ManifestContentAssistProcessor;
 import org.osgi.framework.Constants;
@@ -254,6 +255,8 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		if (fSourcePage != null && fSourcePage.isEditable()) {
 			if (fContentAssistant == null) {
+				// Initialize in SWT thread before using in background thread:
+				PDEPluginImages.get(null);
 				fContentAssistant = new ContentAssistant(true);
 				fContentAssistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 				fContentAssistantProcessor = new ManifestContentAssistProcessor(fSourcePage);
