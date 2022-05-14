@@ -382,6 +382,7 @@ public class LaunchAction extends Action {
 		wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, false);
 		wc.setAttribute(IPDELauncherConstants.PRODUCT_FILE, fPath);
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, PDESourcePathProvider.ID);
+		wc.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, false);
 		return refreshConfiguration(wc);
 	}
 
