@@ -99,11 +99,11 @@ public class LaunchAction extends Action {
 		wc.setAttribute(IPDELauncherConstants.PRODUCT, fProduct.getProductId());
 		wc.setAttribute(IPDELauncherConstants.APPLICATION, fProduct.getApplication());
 
-		if (TargetPlatformHelper.usesNewApplicationModel())
+		if (TargetPlatformHelper.usesNewApplicationModel()) {
 			wc.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
-		else if (TargetPlatformHelper.getTargetVersion() >= 3.2)
+		} else if (TargetPlatformHelper.getTargetVersion() >= 3.2) {
 			wc.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.2a"); //$NON-NLS-1$
-
+		}
 		String os = Platform.getOS();
 		String arch = Platform.getOSArch();
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, getVMArguments(os, arch));
@@ -121,15 +121,19 @@ public class LaunchAction extends Action {
 		}
 		wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, wsplugins);
 		wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, explugins);
-		String configIni = getTemplateConfigIni(os);
-		wc.setAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, configIni == null);
-		if (configIni != null)
-			wc.setAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, configIni);
-
 		if (fProduct.useFeatures()) {
 			refreshFeatureLaunchAttributes(wc, models);
+		} else {
+			wc.removeAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES);
+			wc.removeAttribute(IPDELauncherConstants.SELECTED_FEATURES);
+			wc.removeAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS);
 		}
 
+		String configIni = getTemplateConfigIni(os);
+		wc.setAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, configIni == null);
+		if (configIni != null) {
+			wc.setAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, configIni);
+		}
 		return wc.doSave();
 	}
 
