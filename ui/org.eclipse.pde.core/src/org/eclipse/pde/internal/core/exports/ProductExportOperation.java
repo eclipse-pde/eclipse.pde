@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -326,7 +326,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 	}
 
 	private void appendEclipsePath(StringBuilder buffer, File homeDir) {
-		File file = new File(homeDir, "eclipse");
+		File file = new File(homeDir, "eclipse"); //$NON-NLS-1$
 		if (file.exists()) {
 			appendAbsolutePath(buffer, file);
 		}
