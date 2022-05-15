@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 IBM Corporation and others.
+ * Copyright (c) 2017,2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.*;
 public class OptionalMessageDialog extends MessageDialog {
 
 	// String constants for widgets
-	private static final String CHECKBOX_TEXT = "Do not show this &message again";
+	private static final String CHECKBOX_TEXT = Messages.OptionalMessageDialog_dont_show_msg;
 
 	// Dialog store id constants
 	private static final String STORE_ID = "OptionalMessageDialog.hide."; //$NON-NLS-1$
