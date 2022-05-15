@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -106,7 +106,8 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		fIdText.setLayoutData(gd);
-		fIdText.addModifyListener(e -> fSchemaText.setText(getSchemaLocation() + (getSchemaLocation().length() > 0 ? "/" : "") + fIdText.getText() + ".exsd"));
+		fIdText.addModifyListener(e -> fSchemaText.setText(
+				getSchemaLocation() + (getSchemaLocation().length() > 0 ? "/" : "") + fIdText.getText() + ".exsd")); //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
 		label = new Label(container, SWT.NONE);
 		label.setText(PDEUIMessages.BaseExtensionPoint_name);
 		fNameText = new Text(container, SWT.SINGLE | SWT.BORDER);

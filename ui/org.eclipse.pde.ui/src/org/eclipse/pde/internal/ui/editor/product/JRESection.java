@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -132,7 +132,7 @@ public class JRESection extends PDESection {
 		fExecutionEnvironmentsButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_browseEEs, SWT.PUSH);
 		GridDataFactory.fillDefaults().applyTo(fExecutionEnvironmentsButton);
 		fExecutionEnvironmentsButton.addListener(SWT.Selection, event -> PreferencesUtil.createPreferenceDialogOn(getSection().getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
-				new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, null).open());
+				new String[] { "org.eclipse.jdt.debug.ui.jreProfiles" }, null).open()); //$NON-NLS-1$
 		fExecutionEnvironmentsButton.setEnabled(isEditable());
 
 		fEEButton = toolkit.createButton(client, PDEUIMessages.ProdctJRESection_bundleJRE, SWT.CHECK);

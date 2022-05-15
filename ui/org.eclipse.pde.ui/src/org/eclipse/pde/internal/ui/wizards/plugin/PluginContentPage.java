@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -189,7 +189,7 @@ public class PluginContentPage extends ContentPage {
 		fExeEnvButton.setLayoutData(new GridData());
 		fExeEnvButton.setText(PDEUIMessages.NewProjectCreationPage_environmentsButton);
 		fExeEnvButton.addListener(SWT.Selection, event -> PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
-				new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, null).open());
+				new String[] { "org.eclipse.jdt.debug.ui.jreProfiles" }, null).open()); //$NON-NLS-1$
 	}
 
 	/**
