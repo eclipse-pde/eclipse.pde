@@ -252,6 +252,56 @@ public class DependencyManagerTest {
 	}
 
 	@Test
+	public void testFindRequirementsClosure_includeFragmentsProvidingPackages() throws Exception {
+
+		setTargetPlatform( //
+				bundle("bundle.a", "1.0.0", //
+						entry(EXPORT_PACKAGE, "pack.a" + version("1.0.0"))),
+				bundle("fragment.a", "1.0.0", //
+						entry(FRAGMENT_HOST, "bundle.a"), //
+						entry(EXPORT_PACKAGE, "pack.a,pack.a.frag")),
+
+				// host that imports package from a fragment
+				bundle("bundle.b", "1.0.0", //
+						entry(EXPORT_PACKAGE, "pack.b"), //
+						entry(IMPORT_PACKAGE, "pack.b.frag")),
+				bundle("fragment.b", "1.0.0", //
+						entry(FRAGMENT_HOST, "bundle.b"), //
+						entry(EXPORT_PACKAGE, "pack.b,pack.b.frag")),
+
+				bundle("bundle.z", "1.0.0", //
+						entry(IMPORT_PACKAGE, "pack.a")),
+				bundle("bundle.y", "1.0.0", //
+						entry(IMPORT_PACKAGE, "pack.a.frag")),
+				bundle("bundle.x", "1.0.0", //
+						entry(IMPORT_PACKAGE, "pack.b")),
+				bundle("bundle.w", "1.0.0", //
+						entry(IMPORT_PACKAGE, "pack.b.frag")));
+
+		BundleDescription bundleA = bundleDescription("bundle.a", "1.0.0");
+		BundleDescription fragmentA = bundleDescription("fragment.a", "1.0.0");
+		BundleDescription bundleB = bundleDescription("bundle.b", "1.0.0");
+		BundleDescription fragmentB = bundleDescription("fragment.b", "1.0.0");
+
+		BundleDescription bundleZ = bundleDescription("bundle.z", "1.0.0");
+		BundleDescription bundleY = bundleDescription("bundle.y", "1.0.0");
+		BundleDescription bundleX = bundleDescription("bundle.x", "1.0.0");
+		BundleDescription bundleW = bundleDescription("bundle.w", "1.0.0");
+
+		Set<BundleDescription> zClosure = findRequirementsClosure(Set.of(bundleZ));
+		assertThat(zClosure).isEqualTo(Set.of(bundleZ, bundleA));
+
+		Set<BundleDescription> yClosure = findRequirementsClosure(Set.of(bundleY));
+		assertThat(yClosure).isEqualTo(Set.of(bundleY, bundleA, fragmentA));
+
+		Set<BundleDescription> xClosure = findRequirementsClosure(Set.of(bundleX));
+		assertThat(xClosure).isEqualTo(Set.of(bundleX, bundleB, fragmentB));
+
+		Set<BundleDescription> wClosure = findRequirementsClosure(Set.of(bundleW));
+		assertThat(wClosure).isEqualTo(Set.of(bundleW, bundleB, fragmentB));
+	}
+
+	@Test
 	public void testFindRequirementsClosure_includeOptional() throws Exception {
 
 		setTargetPlatform( //
