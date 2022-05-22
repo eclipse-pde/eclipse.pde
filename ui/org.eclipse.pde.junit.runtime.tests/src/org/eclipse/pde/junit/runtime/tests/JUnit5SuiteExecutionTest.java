@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2021 Julian Honnen
+ *  Copyright (c) 2021, 2022 Julian Honnen
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -32,7 +32,8 @@ public class JUnit5SuiteExecutionTest {
 	@BeforeClass
 	public static void setupProjects() throws Exception {
 		Assert.assertNotNull("org.junit.platform.suite.engine bundle missing", Platform.getBundle("org.junit.platform.suite.engine"));
-		
+		Assert.assertNotNull("org.eclipse.jdt.junit5.runtime bundle missing", Platform.getBundle("org.eclipse.jdt.junit5.runtime"));
+			
 		JUnitExecutionTest.setupProjects();
 		input = new TestInput("JUnit5 Suite", "verification.tests.junit5.suite");
 	}
