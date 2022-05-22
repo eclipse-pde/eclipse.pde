@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2018 IBM Corporation and others.
+ *  Copyright (c) 2003, 2022 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -82,8 +82,13 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 		if (testBundle == null) {
 			throw new IllegalArgumentException("Bundle \"" + testPluginName + "\" not found. Possible causes include missing dependencies, too restrictive version ranges, or a non-matching required execution environment."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		Bundle junit5RuntimeBundle = Platform.getBundle("org.eclipse.jdt.junit5.runtime"); //$NON-NLS-1$
+		if (junit5RuntimeBundle == null) {
+			throw new IllegalArgumentException("Bundle \"" + junit5RuntimeBundle + "\" not found."); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		List<Bundle> platformEngineBundles = findTestEngineBundles();
 		platformEngineBundles.add(testBundle);
+		platformEngineBundles.add(junit5RuntimeBundle);
 		return new MultiBundleClassLoader(platformEngineBundles);
 	}
 
