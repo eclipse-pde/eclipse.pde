@@ -20,16 +20,17 @@ import java.io.File;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.*;
-import org.eclipse.pde.internal.core.target.TargetReferenceBundleContainer;
-import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.swt.SWT;
@@ -204,6 +205,19 @@ public class EditTargetContainerPage extends WizardPage implements IEditBundleCo
 			WorkspaceFileTargetHandle wsHandle = (WorkspaceFileTargetHandle) handle;
 			String name = wsHandle.getTargetFile().getProject().getName();
 			previousLocations.add(String.format("file:${project_loc:/%s}/", name)); //$NON-NLS-1$
+
+			for (ITargetHandle targetHandle : PDECore.getDefault().acquireService(ITargetPlatformService.class)
+					.getTargets(new NullProgressMonitor())) {
+				if (!handle.equals(targetHandle) && targetHandle instanceof WorkspaceFileTargetHandle) {
+					IFile targetFile = ((WorkspaceFileTargetHandle) targetHandle).getTargetFile();
+					String location = String.format("file:${project_loc:/%s}/%s", targetFile.getProject().getName(), //$NON-NLS-1$
+							targetFile.getProjectRelativePath());
+					if (!previousLocations.contains(location)) {
+						previousLocations.add(location);
+					}
+				}
+			}
+
 		}
 		return previousLocations.toArray(new String[previousLocations.size()]);
 	}
@@ -260,28 +274,28 @@ public class EditTargetContainerPage extends WizardPage implements IEditBundleCo
 		}
 
 		// Resolve any variables
-		String locationString;
+		URI location;
 		try {
-			locationString = VariablesPlugin.getDefault().getStringVariableManager()
-					.performStringSubstitution(furiLocation.getText().trim());
+			location = RemoteTargetHandle.getEffectiveUri(furiLocation.getText().trim());
 		} catch (CoreException e) {
 			setMessage(e.getMessage(), IMessageProvider.WARNING);
 			return true;
+		} catch (URISyntaxException e) {
+			setMessage(e.getMessage(), IMessageProvider.ERROR);
+			return false;
 		}
 		try {
-			// check that it could be parsed as an URI
-			URI uri = new URI(locationString);
 			// and be converted to an URL
-			URL url = uri.toURL();
+			URL url = location.toURL();
 			if ("file".equalsIgnoreCase(url.getProtocol())) { //$NON-NLS-1$
-				File file = new File(uri);
+				File file = new File(location);
 				if (!file.isFile()) {
 					setMessage(NLS.bind(Messages.EditTargetContainerPage_Not_A_File, file.getAbsolutePath()),
 							IMessageProvider.WARNING);
 					return true;
 				}
 			}
-		} catch (URISyntaxException | MalformedURLException | RuntimeException e) {
+		} catch (MalformedURLException | RuntimeException e) {
 			setMessage(e.getMessage(), IMessageProvider.ERROR);
 			return false;
 		}
