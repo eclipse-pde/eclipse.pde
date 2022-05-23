@@ -108,11 +108,17 @@ public class RemoteTargetHandle implements ITargetHandle {
 		return definition;
 	}
 
+	public static URI getEffectiveUri(String uri) throws CoreException, URISyntaxException {
+		Objects.requireNonNull(uri);
+		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+		URI resolvedUri = new URI(convertRawToUri(manager.performStringSubstitution(uri)));
+		return resolvedUri;
+	}
+
 	public static RemoteTargetHandle get(String uri) throws CoreException {
 		Objects.requireNonNull(uri);
 		try {
-			IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
-			URI resolvedUri = new URI(convertRawToUri(manager.performStringSubstitution(uri)));
+			URI resolvedUri = getEffectiveUri(uri);
 			RemoteTargetHandle handle = REMOTE_HANDLES.computeIfAbsent(resolvedUri, RemoteTargetHandle::new);
 			synchronized (handle) {
 				if (handle.state != RemoteState.EXISTS) {
