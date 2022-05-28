@@ -228,6 +228,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		};
 		fContentTree.addTargetChangedListener(listener);
 		fLocationTree.addTargetChangedListener(listener);
+		fLocationTree.addTargetReloadListener(listener);
 	}
 
 	@Override
