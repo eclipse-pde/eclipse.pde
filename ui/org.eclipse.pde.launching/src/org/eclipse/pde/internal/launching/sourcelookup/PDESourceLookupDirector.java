@@ -36,7 +36,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	/**
 	 * Cache of source containers by location and id (String & String)
 	 */
-	private Map<String, ISourceContainer[]> fSourceContainerMap = new LinkedHashMap<>();
+	private Map<String, List<ISourceContainer>> fSourceContainerMap = new LinkedHashMap<>();
 
 	private ISourceContainer[] fJreSourceContainers;
 
@@ -84,15 +84,18 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 		return sourceElements;
 	}
 
-	ISourceContainer[] getSourceContainers(String location, String id) throws CoreException {
+	List<ISourceContainer> getSourceContainers(String location, String id) throws CoreException {
 
-		ISourceContainer[] containers = fSourceContainerMap.get(location);
+		List<ISourceContainer> containers = fSourceContainerMap.get(location);
 		if (containers != null) {
 			return containers;
 		}
 
-		ArrayList<IRuntimeClasspathEntry> result = new ArrayList<>();
+		List<IRuntimeClasspathEntry> result = new ArrayList<>();
 		ModelEntry entry = PluginRegistry.findEntry(id);
+		if (entry == null) {
+			return Collections.emptyList();
+		}
 
 		boolean match = false;
 
@@ -118,7 +121,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 				// use source container that maps to the library in the linked project.
 				ISourceContainer container = getArchiveSourceContainer(location);
 				if (container != null) {
-					containers = new ISourceContainer[] {container};
+					containers = List.of(container);
 					fSourceContainerMap.put(location, containers);
 					return containers;
 				}
@@ -139,8 +142,8 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 			}
 		}
 
-		IRuntimeClasspathEntry[] entries = result.toArray(new IRuntimeClasspathEntry[result.size()]);
-		containers = JavaRuntime.getSourceContainers(entries);
+		IRuntimeClasspathEntry[] entries = result.toArray(IRuntimeClasspathEntry[]::new);
+		containers = List.of(JavaRuntime.getSourceContainers(entries));
 		fSourceContainerMap.put(location, containers);
 		return containers;
 	}
@@ -199,7 +202,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 		return null;
 	}
 
-	private void addProjectSourceContainers(IProject project, ArrayList<IRuntimeClasspathEntry> result) throws CoreException {
+	private void addProjectSourceContainers(IProject project, List<IRuntimeClasspathEntry> result) throws CoreException {
 		if (project == null || !project.hasNature(JavaCore.NATURE_ID))
 			return;
 
@@ -224,13 +227,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 
 	@Override
 	public synchronized void dispose() {
-		Iterator<ISourceContainer[]> iterator = fSourceContainerMap.values().iterator();
-		while (iterator.hasNext()) {
-			ISourceContainer[] containers = iterator.next();
-			for (ISourceContainer container : containers) {
-				container.dispose();
-			}
-		}
+		fSourceContainerMap.values().stream().flatMap(List::stream).forEach(ISourceContainer::dispose);
 		fSourceContainerMap.clear();
 		super.dispose();
 	}
