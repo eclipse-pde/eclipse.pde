@@ -104,7 +104,7 @@ public class ClasspathResolverTest {
 		}
 
 		@Override // Make super.getSourceContainers() visible
-		public ISourceContainer[] getSourceContainers(String location, String id) throws CoreException {
+		public List<ISourceContainer> getSourceContainers(String location, String id) throws CoreException {
 			return super.getSourceContainers(location, id);
 		}
 	}
@@ -137,12 +137,12 @@ public class ClasspathResolverTest {
 		PDESourceLookupDirector d = new PDESourceLookupDirector();
 		_PDESourceLookupQuery q = new _PDESourceLookupQuery(d, project);
 
-		ISourceContainer[] containers = q.getSourceContainers(project.getLocation().toOSString(), bundleName);
+		List<ISourceContainer> containers = q.getSourceContainers(project.getLocation().toOSString(), bundleName);
 
-		assertEquals(2, containers.length);
-		assertEquals(JavaCore.create(project), ((JavaProjectSourceContainer) containers[0]).getJavaProject());
+		assertEquals(2, containers.size());
+		assertEquals(JavaCore.create(project), ((JavaProjectSourceContainer) containers.get(0)).getJavaProject());
 		assertEquals(project.getFolder("cpe").getLocation().toFile(),
-				((DirectorySourceContainer) containers[1]).getDirectory());
+				((DirectorySourceContainer) containers.get(1)).getDirectory());
 	}
 
 	@Test
