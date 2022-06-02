@@ -79,9 +79,10 @@ public class BundleLauncherHelper {
 
 			if (wc.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
 				Map<IPluginModelBase, String> map = new LinkedHashMap<>();
-				IPluginModelBase[] models = PluginRegistry.getActiveModels();
-				for (IPluginModelBase model : models) {
-					addBundleToMap(map, model, DEFAULT_START_LEVELS);
+				for (IPluginModelBase model : PluginRegistry.getActiveModels()) {
+					if (!model.isFragmentModel() || model.getBundleDescription().isResolved()) {
+						addBundleToMap(map, model, DEFAULT_START_LEVELS);
+					}
 				}
 				return map;
 			}
