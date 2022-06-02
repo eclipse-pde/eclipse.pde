@@ -32,13 +32,13 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.DependencyManager;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.launching.EclipseApplicationLaunchConfiguration;
@@ -47,6 +47,7 @@ import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
+import org.osgi.framework.Constants;
 
 public class PluginBasedLaunchTest extends AbstractLaunchTest {
 
@@ -150,6 +151,31 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 				targetBundle("plugin.y", "1.0.0"));
 
 		assertGetMergedBundleMap(workspacePlugins, targetPlatformBundles, launchConfigSetup, expectedBundles);
+	}
+
+	@Test
+	public void testGetMergedBundleMap_defaultLaunchWithAllPlugins_fragmentsForOtherEnvironmentExcluded()
+			throws Exception {
+		String os = Platform.getOS();
+		String otherOS = !os.equals(Platform.OS_WIN32) ? Platform.OS_WIN32 : Platform.OS_LINUX;
+		var targetPlatformBundles = ofEntries( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("fragment.a", "1.0.0", entry(Constants.FRAGMENT_HOST, "plugin.a")), //
+				bundle("fragment.b", "1.0.0", entry(Constants.FRAGMENT_HOST, "plugin.a"),
+						entry(ICoreConstants.PLATFORM_FILTER, "(osgi.os=" + os + ")")), //
+				bundle("fragment.c", "1.0.0", entry(Constants.FRAGMENT_HOST, "plugin.a"),
+						entry(ICoreConstants.PLATFORM_FILTER, "(osgi.os=" + otherOS + ")")));
+
+		Consumer<ILaunchConfigurationWorkingCopy> launchConfigSetup = wc -> {
+			wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
+		};
+
+		Set<BundleLocationDescriptor> expectedBundles = Set.of( //
+				targetBundle("plugin.a", "1.0.0"), //
+				targetBundle("fragment.a", "1.0.0"), //
+				targetBundle("fragment.b", "1.0.0"));
+
+		assertGetMergedBundleMap(Map.of(), targetPlatformBundles, launchConfigSetup, expectedBundles);
 	}
 
 	// workspace plug-ins selected explicitly
@@ -880,9 +906,8 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		while (!"-configuration".equals(tokenizer.nextToken())) {
 			//
 		}
-		File bundlesInfo = new File(
-				URI.create(
-						tokenizer.nextToken() + '/' + IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR + "/bundles.info"));
+		File bundlesInfo = new File(URI
+				.create(tokenizer.nextToken() + '/' + IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR + "/bundles.info"));
 		String info = Files.readString(bundlesInfo.toPath());
 		assertTrue(info.contains(new File(plugin1.getInstallLocation()).getAbsolutePath()));
 		assertTrue(info.contains(new File(plugin2.getInstallLocation()).getAbsolutePath()));
