@@ -64,7 +64,7 @@ Contact the project developers via the project's "dev" list.
 License
 -------
 
-[Eclipse Public License (EPL) v1.0][2]
+[Eclipse Public License (EPL) v2.0][2]
 
 [1]: https://wiki.eclipse.org/PDE/Contributor_Guide
-[2]: http://wiki.eclipse.org/EPL
+[2]: [http://wiki.eclipse.org/EPL](https://www.eclipse.org/legal/epl-2.0/)
