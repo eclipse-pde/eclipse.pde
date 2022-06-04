@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -288,6 +288,18 @@ public class TagValidator extends Validator {
 				boolean isprivate = Flags.isPrivate(flags);
 				boolean ispackage = Flags.isPackageDefault(flags);
 				Set<String> supportedtags = getSupportedTagNames(pkind, IApiJavadocTag.MEMBER_FIELD);
+				// for non-public fields we have errors anyway
+				if (Flags.isFinal(flags) && Flags.isPublic(flags)
+						&& JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) {
+					if (pkind != IApiJavadocTag.TYPE_ANNOTATION) { // for annotation type, there is an error anyway -
+																	// final or not
+						createTagProblem(item.typename, tag, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_TAG_USE,
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID,
+								BuilderMessages.TagValidator_a_final_field);
+					}
+
+				}
+
 				switch (pkind) {
 					case IApiJavadocTag.TYPE_ANNOTATION: {
 						createTagProblem(item.typename, tag, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_annotation_field);

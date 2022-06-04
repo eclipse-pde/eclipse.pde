@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -271,6 +271,24 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs("@noreference", BuilderMessages.TagValidator_annotation_field, 1); //$NON-NLS-1$
 		String typename = "test11.java"; //$NON-NLS-1$
+		deployTagTest(typename, inc, true);
+	}
+
+	public void testNoRefernceOnFinalFieldTag12I() {
+		x12(true);
+	}
+
+	public void testNoRefernceOnFinalFieldTag12F() {
+		x12(false);
+	}
+
+	/**
+	 * Test unsupported @NoReference tag on a final field in an class
+	 */
+	private void x12(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(1));
+		setExpectedMessageArgs("@noreference", BuilderMessages.TagValidator_a_final_field, 1); //$NON-NLS-1$
+		String typename = "test12.java"; //$NON-NLS-1$
 		deployTagTest(typename, inc, true);
 	}
 }
