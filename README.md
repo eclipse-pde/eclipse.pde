@@ -15,7 +15,7 @@ How to contribute:
 --------------------
 Contributions to PDE are most welcome. There are many ways to contribute, 
 from entering high quality bug reports, to contributing code or documentation changes. 
-For a complete guide, see the [How to Contribute] [1] page on the team wiki.
+For a complete guide, see the [How to Contribute](https://wiki.eclipse.org/PDE/Contributor_Guide) page on the team wiki.
 
 Developer resources:
 --------------------
@@ -64,7 +64,5 @@ Contact the project developers via the project's "dev" list.
 License
 -------
 
-[Eclipse Public License (EPL) v2.0][2]
+[Eclipse Public License (EPL) v2.0](https://www.eclipse.org/legal/epl-2.0/)
 
-[1]: https://wiki.eclipse.org/PDE/Contributor_Guide
-[2]: [http://wiki.eclipse.org/EPL](https://www.eclipse.org/legal/epl-2.0/)
