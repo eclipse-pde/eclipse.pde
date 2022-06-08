@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Red Hat Inc. and others
+ * Copyright (c) 2018, 2022 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,7 +28,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.services.IServiceLocator;
 import org.junit.Test;
 
 public class UpdateUnitVersionsCommandTests extends AbstractTargetEditorTest {
@@ -36,8 +35,7 @@ public class UpdateUnitVersionsCommandTests extends AbstractTargetEditorTest {
 	@Test
 	public void testUpdateRequired() throws Exception {
 
-		Map<String, String> expected = new HashMap<>();
-		expected.put("org.eclipse.fake", "1.0.1");
+		Map<String, String> expected = Map.of("org.eclipse.fake", "1.0.1");
 		ITextViewer textViewer = getTextViewerForTarget("RequiresUnitVersionUpdateTarget");
 		insertFirstUninsertedLocation(textViewer.getDocument(), getLocationForSite("SingleUnitSingleVersion"));
 		confirmVersionUpdates(expected);
@@ -45,20 +43,19 @@ public class UpdateUnitVersionsCommandTests extends AbstractTargetEditorTest {
 
 	@Test
 	public void testVersionSort() throws Exception {
-		Map<String, String> expected = new HashMap<>();
-		expected.put("org.eclipse.fake.1", "2.0.0"); // 2 vs 1
-		expected.put("org.eclipse.fake.2", "1.2.0"); // 1.2 vs 1.1
-		expected.put("org.eclipse.fake.3", "1.1.2"); // 1.1.2 vs 1.1.1
-		expected.put("org.eclipse.fake.4", "1.1.1.v2018-01-02"); // 1.1.1.v2018-01-02 vs 1.1.1.v2018-01-01
-		expected.put("org.eclipse.fake.5", "1.1.1.banana"); // 1.1.1.banana vs 1.1.1.apple
-		expected.put("org.eclipse.fake.6", "1.10.0"); // 1.10 vs 1.9
-		expected.put("org.eclipse.fake.7", "1.0.0.v2"); // 1.0.0.v2 vs 1.0.0
+		Map<String, String> expected = Map.of("org.eclipse.fake.1", "2.0.0", // 2 vs 1
+				"org.eclipse.fake.2", "1.2.0", // 1.2 vs 1.1
+				"org.eclipse.fake.3", "1.1.2", // 1.1.2 vs 1.1.1
+				"org.eclipse.fake.4", "1.1.1.v2018-01-02", // 1.1.1.v2018-01-02 vs 1.1.1.v2018-01-01
+				"org.eclipse.fake.5", "1.1.1.banana", // 1.1.1.banana vs 1.1.1.apple
+				"org.eclipse.fake.6", "1.10.0", // 1.10 vs 1.9
+				"org.eclipse.fake.7", "1.0.0.v2"); // 1.0.0.v2 vs 1.0.0
 		ITextViewer textViewer = getTextViewerForTarget("TestReplaceWithNewestVersionTarget");
 		insertFirstUninsertedLocation(textViewer.getDocument(), getLocationForSite("MultipleUnitsConfirmSorting"));
 		confirmVersionUpdates(expected);
 	}
 
-	private ICommandService service = ((IServiceLocator) PlatformUI.getWorkbench()).getService(ICommandService.class);
+	private ICommandService service = PlatformUI.getWorkbench().getService(ICommandService.class);
 
 	private Map<String, String> getVersionsForIdsFromTargetFile(String targetFile) {
 		Map<String, String> units = new HashMap<>();
