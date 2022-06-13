@@ -873,9 +873,6 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureEditor_InfoPage_PackagingSection_title;
 	public static String FeatureEditor_InfoPage_PackagingSection_text;
 
-	public static String FeatureEditor_InfoPage_PublishingSection_title;
-	public static String FeatureEditor_InfoPage_PublishingSection_text;
-
 	public static String FeatureOptionsTab_0;
 
 	public static String FeatureOutlinePage_discoverUrls;
