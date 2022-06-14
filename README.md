@@ -40,26 +40,15 @@ You need Maven 3.3.1 installed. After this you can run the build via the followi
 mvn clean verify -Pbuild-individual-bundles
 
 
-Search for bugs:
+See https://github.com/eclipse-pde/eclipse.pde/blob/master/CONTRIBUTING if you want to report and issue, request or contribute a bug fix orfeature 
 ----------------
-
-This project uses Bugzilla to track ongoing development and issues.
-
-- <https://bugs.eclipse.org/bugs/buglist.cgi?bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&product=PDE&query_format=advanced>
-
-Create a new bug:
------------------
-
-Be sure to search for existing bugs before you create another one. Remember that contributions are always welcome!
-
-- <https://bugs.eclipse.org/bugs/enter_bug.cgi?product=PDE;component=UI>
 
 Contact:
 --------
 
-Contact the project developers via the project's "dev" list.
+Contact the project developers via Github discussions
 
-- <https://dev.eclipse.org/mailman/listinfo/pde-dev>
+- https://github.com/eclipse-pde/eclipse.pde/discussions
 
 License
 -------
