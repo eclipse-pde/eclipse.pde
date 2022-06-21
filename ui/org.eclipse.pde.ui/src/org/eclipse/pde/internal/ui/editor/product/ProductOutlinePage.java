@@ -24,10 +24,6 @@ public class ProductOutlinePage extends FormOutlinePage {
 	}
 
 	@Override
-	public void sort(boolean sorting) {
-	}
-
-	@Override
 	protected Object[] getChildren(Object parent) {
 		if (parent instanceof DependenciesPage) {
 			DependenciesPage page = (DependenciesPage) parent;
