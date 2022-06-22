@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2021 IBM Corporation and others.
+ * Copyright (c) 2009, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -213,13 +213,35 @@ public class EditTargetContainerPage extends WizardPage implements IEditBundleCo
 					String location = String.format("file:${project_loc:/%s}/%s", targetFile.getProject().getName(), //$NON-NLS-1$
 							targetFile.getProjectRelativePath());
 					if (!previousLocations.contains(location)) {
-						previousLocations.add(location);
+						if (!alreadyContains(location))
+							previousLocations.add(location);
 					}
 				}
 			}
 
 		}
 		return previousLocations.toArray(new String[previousLocations.size()]);
+	}
+
+	private boolean alreadyContains(String location) {
+		boolean alreadyContains = false;
+		if (targetDefinition.getTargetLocations() != null) {
+			ITargetLocation[] containers = targetDefinition.getTargetLocations();
+			for (ITargetLocation targetLoc : containers) {
+				String uri = null;
+				try {
+					uri = targetLoc.getLocation(false);
+				} catch (CoreException e) {
+				}
+				if (uri != null) {
+					if (uri.equals(location)) {
+						alreadyContains = true;
+						break;
+					}
+				}
+			}
+		}
+		return alreadyContains;
 	}
 
 	@Override
