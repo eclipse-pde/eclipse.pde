@@ -38,8 +38,7 @@ import org.eclipse.ui.PlatformUI;
  *
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class ConfigurationTab extends AbstractLauncherTab
-		implements IPDELauncherConstants, org.eclipse.pde.ui.launcher.IPDELauncherConstants {
+public class ConfigurationTab extends AbstractLauncherTab implements IPDELauncherConstants {
 
 	private ConfigurationAreaBlock fConfigurationArea;
 	private ConfigurationTemplateBlock fTemplateArea;
