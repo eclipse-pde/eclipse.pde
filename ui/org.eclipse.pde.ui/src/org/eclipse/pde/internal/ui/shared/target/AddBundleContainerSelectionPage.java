@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2021 IBM Corporation and others.
+ * Copyright (c) 2009, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -178,7 +178,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 							ITargetLocation[] oldContainers = fTarget.getTargetLocations();
 							if (oldContainers == null) {
 								fTarget.setTargetLocations(new ITargetLocation[] {container});
-							} else {
+							} else if (!Arrays.asList(oldContainers).contains(container)) {
 								ITargetLocation[] newContainers = new ITargetLocation[oldContainers.length + 1];
 								System.arraycopy(oldContainers, 0, newContainers, 0, oldContainers.length);
 								newContainers[newContainers.length - 1] = container;
@@ -221,11 +221,12 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 							ITargetLocation[] oldContainers = fTarget.getTargetLocations();
 							if (oldContainers == null) {
 								fTarget.setTargetLocations(new ITargetLocation[] {container});
-							} else {
+							} else if (!Arrays.asList(oldContainers).contains(container)) {
 								ITargetLocation[] newContainers = new ITargetLocation[oldContainers.length + 1];
 								System.arraycopy(oldContainers, 0, newContainers, 0, oldContainers.length);
 								newContainers[newContainers.length - 1] = container;
 								fTarget.setTargetLocations(newContainers);
+
 							}
 						}
 						return true;
@@ -259,10 +260,12 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 								ITargetLocation[] oldContainers = fTarget.getTargetLocations();
 								if (oldContainers == null) {
 									fTarget.setTargetLocations(containers);
-								} else {
-									ITargetLocation[] newContainers = new ITargetLocation[oldContainers.length + containers.length];
+								} else if (!Arrays.asList(oldContainers).containsAll(Arrays.asList(containers))) {
+									ITargetLocation[] newContainers = new ITargetLocation[oldContainers.length
+											+ containers.length];
 									System.arraycopy(oldContainers, 0, newContainers, 0, oldContainers.length);
-									System.arraycopy(containers, 0, newContainers, oldContainers.length, containers.length);
+									System.arraycopy(containers, 0, newContainers, oldContainers.length,
+											containers.length);
 									fTarget.setTargetLocations(newContainers);
 								}
 							}
@@ -382,10 +385,12 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 								ITargetLocation[] oldContainers = fTarget.getTargetLocations();
 								if (oldContainers == null) {
 									fTarget.setTargetLocations(locations);
-								} else {
-									ITargetLocation[] newContainers = new ITargetLocation[oldContainers.length + locations.length];
+								} else if (!Arrays.asList(oldContainers).containsAll(Arrays.asList(locations))) {
+									ITargetLocation[] newContainers = new ITargetLocation[oldContainers.length
+											+ locations.length];
 									System.arraycopy(oldContainers, 0, newContainers, 0, oldContainers.length);
-									System.arraycopy(locations, 0, newContainers, oldContainers.length, locations.length);
+									System.arraycopy(locations, 0, newContainers, oldContainers.length,
+											locations.length);
 									fTarget.setTargetLocations(newContainers);
 								}
 							}
