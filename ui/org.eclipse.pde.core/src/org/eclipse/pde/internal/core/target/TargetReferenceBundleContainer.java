@@ -135,4 +135,12 @@ public class TargetReferenceBundleContainer extends AbstractBundleContainer {
 		}
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof TargetReferenceBundleContainer)) {
+			return false;
+		}
+		return uri.equals(((TargetReferenceBundleContainer) obj).getUri());
+	}
+
 }
