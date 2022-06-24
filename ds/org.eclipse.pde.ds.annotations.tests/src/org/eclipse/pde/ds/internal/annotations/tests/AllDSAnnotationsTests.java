@@ -7,9 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
@@ -43,15 +41,10 @@ import org.osgi.framework.Bundle;
 })
 public class AllDSAnnotationsTests {
 
-	private static final Map<String, String> projects;
-
-	static {
-		HashMap<String, String> map = new HashMap<>();
-		map.put("ds.annotations.test0", "projects/test0/");
-		map.put("ds.annotations.test1", "projects/test1/");
-		map.put("ds.annotations.test2", "projects/test2/");
-		projects = Collections.unmodifiableMap(map);
-	}
+	private static final Map<String, String> projects = Map.of( //
+			"ds.annotations.test0", "projects/test0/", //
+			"ds.annotations.test1", "projects/test1/", //
+			"ds.annotations.test2", "projects/test2/");
 
 	static Job wsJob;
 
@@ -121,7 +114,7 @@ public class AllDSAnnotationsTests {
 				continue;
 			}
 
-			try (InputStream src = bundle.getEntry(entry).openStream()){
+			try (InputStream src = bundle.getEntry(entry).openStream()) {
 				Files.copy(src, target, StandardCopyOption.REPLACE_EXISTING);
 			}
 		}

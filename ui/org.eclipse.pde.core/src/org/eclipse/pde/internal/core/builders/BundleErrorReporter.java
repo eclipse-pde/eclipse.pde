@@ -710,7 +710,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 	}
 
-	static final List<String> EXECUTION_ENVIRONMENT_NAMES = Arrays.asList("OSGi/Minimum", //$NON-NLS-1$
+	private static final List<String> EXECUTION_ENVIRONMENT_NAMES = List.of("OSGi/Minimum", //$NON-NLS-1$
 			"CDC-1.0/Foundation", //$NON-NLS-1$
 			"CDC-1.1/Foundation", "JRE", "J2SE", "JavaSE"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 

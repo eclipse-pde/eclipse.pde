@@ -812,9 +812,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 		}
 
-		if (exportedRequiredComponentsInReference.size() > 0) {
+		if (!exportedRequiredComponentsInReference.isEmpty()) {
 			String[] compNames = component.getPackageNames();
-			List<String> compNamesList = new ArrayList<>(Arrays.asList(compNames));
+			Set<String> compNamesList = Set.of(compNames);
 			for (String comp : exportedRequiredComponentsInReference) {
 				IApiComponent baselineComponent = baseline.getApiComponent(comp);
 				if (baselineComponent == null) {
@@ -822,10 +822,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							IApiProblem.REEXPORTED_REMOVAL_OF_REEXPORT_MAJOR_VERSION_CHANGE);
 				}
 				String[] packNames = baselineComponent.getPackageNames();
-				List<String> packNamesList = new ArrayList<>(Arrays.asList(packNames));
 				// if the exported packages contains all exported package of
 				// dependency for which reexport was removed, we are good
-				if (!compNamesList.containsAll(packNamesList)) {
+				if (!compNamesList.containsAll(Arrays.asList(packNames))) {
 					return new ReexportedBundleVersionInfo(exportedRequiredComponentsInReference.iterator().next(), IApiProblem.REEXPORTED_REMOVAL_OF_REEXPORT_MAJOR_VERSION_CHANGE);
 				}
 			}
@@ -1602,9 +1601,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		// any change in BREE list would generate a minor version increase
 		if (refExecutionEnv != null && compExecutionEnv != null) {
-			List<String> refExecutionEnvList = new ArrayList<>(Arrays.asList(refExecutionEnv));
-			List<String> compExecutionEnvList = new ArrayList<>(Arrays.asList(compExecutionEnv));
-			if (!(refExecutionEnvList.containsAll(compExecutionEnvList) && compExecutionEnvList.containsAll(refExecutionEnvList))) {
+			if (!Set.of(refExecutionEnv).equals(Set.of(compExecutionEnv))) {
 				return true;
 			}
 		}

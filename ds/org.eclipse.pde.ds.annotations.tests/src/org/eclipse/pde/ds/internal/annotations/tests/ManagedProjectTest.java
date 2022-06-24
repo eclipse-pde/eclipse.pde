@@ -35,7 +35,7 @@ public class ManagedProjectTest extends CompilationParticipantTest {
 	@Test
 	public void dsBuilderConfigured() throws Exception {
 		ICommand[] commands = testProject.getDescription().getBuildSpec();
-		boolean hasDSBuilder = Arrays.asList(commands).stream().anyMatch(command -> "org.eclipse.pde.ds.core.builder".equals(command.getBuilderName()));
+		boolean hasDSBuilder = Arrays.stream(commands).anyMatch(command -> "org.eclipse.pde.ds.core.builder".equals(command.getBuilderName()));
 		assertTrue("DS builder not configured!", hasDSBuilder);
 	}
 
