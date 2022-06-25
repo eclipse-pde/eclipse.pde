@@ -28,10 +28,13 @@ import static java.util.stream.Collectors.groupingBy;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
@@ -39,7 +42,7 @@ import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.util.VersionUtil;
-import org.eclipse.pde.internal.launching.IPDEConstants;
+import org.eclipse.pde.internal.launching.*;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.osgi.framework.Version;
 
@@ -244,7 +247,16 @@ public class BundleLauncherHelper {
 
 		Map<String, List<List<IFeature>>> featureMaps = new HashMap<>();
 		for (IFeatureModel[] featureModels : featureModelsPerLocation) {
-			Map<String, List<IFeature>> id2feature = Arrays.stream(featureModels).map(IFeatureModel::getFeature).collect(groupingBy(IFeature::getId));
+			Map<String, List<IFeature>> id2feature = Arrays.stream(featureModels).map(IFeatureModel::getFeature).filter(f -> {
+				if (f.getId() == null) {
+					IResource resource = f.getModel().getUnderlyingResource();
+					PDELaunchingPlugin.log(Status.warning(resource != null //
+							? NLS.bind(PDEMessages.BundleLauncherHelper_workspaceFeatureWithIdNull, resource.getProject().getName(), resource.getProjectRelativePath())
+							: NLS.bind(PDEMessages.BundleLauncherHelper_targetFeatureWithIdNull, f.getModel().getInstallLocation())));
+					return false;
+				}
+				return true;
+			}).collect(groupingBy(IFeature::getId));
 			id2feature.forEach((id, features) -> featureMaps.computeIfAbsent(id, i -> new ArrayList<>()).add(features));
 		}
 		return featureMaps;
