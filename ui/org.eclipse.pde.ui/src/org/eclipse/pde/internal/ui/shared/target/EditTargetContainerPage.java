@@ -313,7 +313,7 @@ public class EditTargetContainerPage extends WizardPage implements IEditBundleCo
 				File file = new File(location);
 				if (!file.isFile()) {
 					setMessage(NLS.bind(Messages.EditTargetContainerPage_Not_A_File, file.getAbsolutePath()),
-							IMessageProvider.WARNING);
+							IMessageProvider.ERROR);
 					return true;
 				}
 			}
