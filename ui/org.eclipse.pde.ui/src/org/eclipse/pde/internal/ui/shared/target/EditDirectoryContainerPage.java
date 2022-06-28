@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -319,7 +319,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 
 		// Check if directory exists
 		if (!location.isDirectory()) {
-			setMessage(Messages.AddDirectoryContainerPage_6, IMessageProvider.WARNING);
+			setMessage(Messages.AddDirectoryContainerPage_6, IMessageProvider.ERROR);
 		} else {
 			setMessage(getDefaultMessage());
 		}
