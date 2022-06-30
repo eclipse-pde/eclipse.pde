@@ -575,8 +575,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		}
 		Map<IApiComponent, IApiComponent[]> componentsForPackage = fComponentsProvidingPackageCache
 				.computeIfAbsent(packageName, x -> new ConcurrentHashMap<>(8));
-		IApiComponent[] cachedComponents = null;
-		cachedComponents = componentsForPackage.get(sourceComponent);
+		IApiComponent[] cachedComponents = componentsForPackage.get(sourceComponent);
 		if (cachedComponents != null && cachedComponents.length > 0) {
 			return cachedComponents;
 		}
