@@ -58,8 +58,6 @@ public class UseScanReferenceVisitor extends UseScanVisitor {
 	// Visit only for the specific types, if supplied.
 	@Override
 	public boolean visitMember(IMemberDescriptor referencedMember) {
-		boolean found = false;
-
 		String referencedMemberRootType;
 		if (referencedMember instanceof IReferenceTypeDescriptor) {
 			referencedMemberRootType = ((IReferenceTypeDescriptor) referencedMember).getQualifiedName();
@@ -69,7 +67,7 @@ public class UseScanReferenceVisitor extends UseScanVisitor {
 		if (referencedMemberRootType.indexOf('$') > -1) {
 			referencedMemberRootType = referencedMemberRootType.substring(0, referencedMemberRootType.indexOf('$'));
 		}
-		found = fLookupMemberTypes == null || fLookupMemberTypes.contains(referencedMemberRootType);
+		boolean found = fLookupMemberTypes == null || fLookupMemberTypes.contains(referencedMemberRootType);
 		fCurrentReferencedMemberRootType = referencedMemberRootType;
 		fCurrentReferencedMember = referencedMember;
 

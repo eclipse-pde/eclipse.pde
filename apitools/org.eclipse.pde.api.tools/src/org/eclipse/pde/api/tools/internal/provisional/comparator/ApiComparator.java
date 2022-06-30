@@ -675,7 +675,6 @@ public class ApiComparator {
 								} else {
 									typeRoot2 = component2.findTypeRoot(typeName, id);
 								}
-								String deltaComponentID = null;
 								IApiComponent provider = null;
 								IApiDescription providerApiDesc = null;
 								boolean reexported = false;
@@ -715,7 +714,7 @@ public class ApiComparator {
 									providerApiDesc = apiDescription2;
 								}
 								visitMonitor.setWorkRemaining(1).split(1);
-								deltaComponentID = Util.getDeltaComponentVersionsId(component2);
+								String deltaComponentID = Util.getDeltaComponentVersionsId(component2);
 								if (typeRoot2 == null) {
 									if ((visibility & visibilityModifiers) == 0) {
 										// we skip the class file according to
