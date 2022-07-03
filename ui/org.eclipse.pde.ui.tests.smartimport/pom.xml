@@ -24,7 +24,6 @@
 		<tycho.test.jvmArgs>-Xmx512m</tycho.test.jvmArgs>
 		<surefire.timeout>1200</surefire.timeout>
 		<platformSystemProperties></platformSystemProperties>
-		<skipAPIAnalysis>true</skipAPIAnalysis>
 	</properties>
 
 	<build>
