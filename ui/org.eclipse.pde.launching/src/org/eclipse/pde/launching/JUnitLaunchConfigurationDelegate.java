@@ -454,10 +454,10 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	private void addRequiredJunitRuntimePlugins(ILaunchConfiguration configuration) throws CoreException {
 		Set<String> requiredPlugins = new LinkedHashSet<>(getRequiredJunitRuntimePlugins(configuration));
 
-		if (fAllBundles.containsKey("org.junit.platform.runner")) { //$NON-NLS-1$
+		if (fAllBundles.containsKey("junit-platform-runner") || fAllBundles.containsKey("org.junit.platform.runner")) { //$NON-NLS-1$ //$NON-NLS-2$
 			// add launcher and jupiter.engine to support @RunWith(JUnitPlatform.class)
-			requiredPlugins.add("org.junit.platform.launcher"); //$NON-NLS-1$
-			requiredPlugins.add("org.junit.jupiter.engine"); //$NON-NLS-1$
+			requiredPlugins.add("junit-platform-launcher"); //$NON-NLS-1$
+			requiredPlugins.add("junit-jupiter-engine"); //$NON-NLS-1$
 		}
 
 		Set<BundleDescription> addedRequirements = new HashSet<>();

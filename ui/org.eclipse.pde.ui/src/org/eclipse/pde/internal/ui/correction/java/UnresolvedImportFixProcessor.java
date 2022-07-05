@@ -83,7 +83,7 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 			return new ClasspathFixProposal[0];
 		ClasspathFixCollector collector = new ClasspathFixCollector();
 		// Add require bundles for junit5
-		if (name.startsWith("org.junit.jupiter") || name.startsWith("org.junit.platform")) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (name.startsWith("junit-jupiter") || name.startsWith("junit-platform") || name.startsWith("org.junit.jupiter") || name.startsWith("org.junit.platform")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			collector.addResolutionModification(project.getProject(), "JUnit 5 bundles", null, null);////$NON-NLS-1$
 			return collector.getProposals();
 		}

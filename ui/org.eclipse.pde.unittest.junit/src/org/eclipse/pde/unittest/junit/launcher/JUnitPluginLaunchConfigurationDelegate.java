@@ -254,7 +254,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 					if (!Arrays.stream(classpath).anyMatch(
 							s -> s.contains("junit-platform-launcher") || s.contains("org.junit.platform.launcher"))) { //$NON-NLS-1$ //$NON-NLS-2$
 						try {
-							JUnitRuntimeClasspathEntry x = new JUnitRuntimeClasspathEntry("org.junit.platform.launcher", //$NON-NLS-1$
+							JUnitRuntimeClasspathEntry x = new JUnitRuntimeClasspathEntry("junit-platform-launcher", //$NON-NLS-1$
 									null);
 							String entryString = new ClasspathLocalizer(Platform.inDevelopmentMode()).entryString(x);
 							int length = classpath.length;
@@ -398,10 +398,10 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 		Set<String> requiredPlugins = new LinkedHashSet<>(
 				JUnitLaunchConfigurationDelegate.getRequiredJunitRuntimePlugins(configuration));
 
-		if (fAllBundles.containsKey("org.junit.platform.runner")) { //$NON-NLS-1$
+		if (fAllBundles.containsKey("junit-platform-runner")) { //$NON-NLS-1$
 			// add launcher and jupiter.engine to support @RunWith(JUnitPlatform.class)
-			requiredPlugins.add("org.junit.platform.launcher"); //$NON-NLS-1$
-			requiredPlugins.add("org.junit.jupiter.engine"); //$NON-NLS-1$
+			requiredPlugins.add("junit-platform-launcher"); //$NON-NLS-1$
+			requiredPlugins.add("junit-jupiter-engine"); //$NON-NLS-1$
 		}
 
 		Set<BundleDescription> addedRequirements = new HashSet<>();
@@ -624,7 +624,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 		if (isModularProject) {
 			if (getJUnitVersion(configuration) == JUnitVersion.JUNIT5) {
 				if (isOnModulePath(getJavaProject(configuration), "org.junit.jupiter.api.Test")) { //$NON-NLS-1$
-					addOpensTargets = "org.junit.platform.commons,ALL-UNNAMED"; //$NON-NLS-1$
+					addOpensTargets = "junit-platform-commons,ALL-UNNAMED"; //$NON-NLS-1$
 				} else {
 					addOpensTargets = "ALL-UNNAMED"; //$NON-NLS-1$
 				}
