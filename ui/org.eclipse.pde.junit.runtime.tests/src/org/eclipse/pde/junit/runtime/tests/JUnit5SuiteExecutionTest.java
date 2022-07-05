@@ -31,7 +31,7 @@ public class JUnit5SuiteExecutionTest {
 
 	@BeforeClass
 	public static void setupProjects() throws Exception {
-		Assert.assertNotNull("org.junit.platform.suite.engine bundle missing", Platform.getBundle("org.junit.platform.suite.engine"));
+		Assert.assertNotNull("junit-platform-suite-engine bundle missing", Platform.getBundle("junit-platform-suite-engine"));
 		Assert.assertNotNull("org.eclipse.jdt.junit5.runtime bundle missing", Platform.getBundle("org.eclipse.jdt.junit5.runtime"));
 			
 		JUnitExecutionTest.setupProjects();
