@@ -985,9 +985,10 @@ public abstract class AbstractPluginBlock {
 		try {
 			LaunchValidationOperation fOperation = createValidationOperation();
 			fOperation.run(new NullProgressMonitor());
-
+			Map<Object, Object[]> input2 = fOperation.getInput();
+			PluginStatusDialog.filterOutMissingConstraintJavaPackages(input2);
 			if (fDialog == null) {
-				if (fOperation.hasErrors()) {
+				if (fOperation.hasErrors() && input2.size() > 0) {
 					fDialog = new PluginStatusDialog(getShell(), SWT.MODELESS | SWT.CLOSE | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
 					fDialog.setInput(fOperation.getInput());
 					fDialog.open();
@@ -1005,8 +1006,8 @@ public abstract class AbstractPluginBlock {
 					MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, PDEUIMessages.AbstractLauncherToolbar_noProblems);
 				}
 			} else {
-				if (fOperation.getInput().size() > 0) {
-					fDialog.refresh(fOperation.getInput());
+				if (input2.size() > 0) {
+					fDialog.refresh(input2);
 				} else {
 					Map<String, IStatus> input = new HashMap<>(1);
 					input.put(PDEUIMessages.AbstractLauncherToolbar_noProblems, Status.OK_STATUS);

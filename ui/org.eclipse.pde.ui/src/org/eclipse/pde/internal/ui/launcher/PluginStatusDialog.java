@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2016 IBM Corporation and others.
+ *  Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -14,12 +14,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.util.Map;
+import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -90,6 +91,7 @@ public class PluginStatusDialog extends TrayDialog {
 	}
 
 	public void setInput(Map<?, ?> input) {
+		filterOutMissingConstraintJavaPackages(input);
 		fInput = input;
 	}
 
@@ -136,12 +138,38 @@ public class PluginStatusDialog extends TrayDialog {
 		treeViewer.setContentProvider(new ContentProvider());
 		treeViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		treeViewer.setComparator(new ViewerComparator());
+		filterOutMissingConstraintJavaPackages(fInput);
+		if (fInput.size() == 0) {
+			this.close();
+			return container;
+		}
 		treeViewer.setInput(fInput);
 		treeViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		getShell().setText(PDEUIMessages.PluginStatusDialog_pluginValidation);
 		Dialog.applyDialogFont(container);
 		return container;
+	}
+	//workaround - filter out missing java package constraint validation error for M1
+	public static void filterOutMissingConstraintJavaPackages(Map<?, ?> fInput) {
+		Set<Object> keySet = new HashSet<>(); //
+		for (Entry<?, ?> entry : fInput.entrySet()) {
+			Object key = entry.getKey();
+			Object val = entry.getValue();
+			if (val instanceof ResolverError[]) {
+				ResolverError[] re = (ResolverError[]) val;
+				int count = 0;
+				for (ResolverError resolverError : re) {
+					VersionConstraint unsatisfiedConstraint = resolverError.getUnsatisfiedConstraint();
+					if (unsatisfiedConstraint instanceof ImportPackageSpecification &&
+							unsatisfiedConstraint.getName().startsWith("java."))//$NON-NLS-1$
+						count++;
+				}
+				if (re.length == count)
+					keySet.add(key);
+			}
+		}
+		fInput.keySet().removeAll(keySet);
 	}
 
 	@Override
