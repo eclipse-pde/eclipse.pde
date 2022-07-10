@@ -192,6 +192,15 @@ public class ClasspathUtilCore {
 			SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
 			path = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
 		}
+		// search a co-located source bundle, for example in a bundle pool...
+		if (path == null && isJarShape) {
+			File loc = new File(model.getInstallLocation());
+			File sourceFile = new File(loc.getParentFile(),
+					model.getPluginBase().getId() + ".source_" + model.getPluginBase().getVersion() + ".jar"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (sourceFile.isFile()) {
+				path = new Path(sourceFile.getAbsolutePath());
+			}
+		}
 		return path;
 	}
 
