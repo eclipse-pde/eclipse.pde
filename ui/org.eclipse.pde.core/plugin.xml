@@ -394,4 +394,8 @@
              type="Target">
        </targetLocation>
     </extension>
+    <extension
+          point="org.eclipse.pde.core.source">
+          <locator class="org.eclipse.pde.internal.core.ColocationPluginSourcePathLocator" />
+    </extension>
 </plugin>

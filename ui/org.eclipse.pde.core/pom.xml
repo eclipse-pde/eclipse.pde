@@ -19,7 +19,7 @@
     <relativePath>../../</relativePath>
   </parent>
   <artifactId>org.eclipse.pde.core</artifactId>
-  <version>3.15.300-SNAPSHOT</version>
+  <version>3.16.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
   <properties>
     <defaultSigning-excludeInnerJars>true</defaultSigning-excludeInnerJars>
