@@ -61,7 +61,7 @@ public class BundleModel extends AbstractEditingModel implements IBundleModel {
 	}
 
 	@Override
-	public void adjustOffsets(IDocument document) {
+	public synchronized void adjustOffsets(IDocument document) {
 		((Bundle) getBundle()).clearOffsets();
 		((Bundle) getBundle()).adjustOffsets(document);
 	}
