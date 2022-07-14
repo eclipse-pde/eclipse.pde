@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2017 IBM Corporation and others.
+ * Copyright (c) 2003, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,13 +11,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 507831
+ *     Christoph Läubrich - Issue #74
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
+import java.util.stream.Collectors;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -26,9 +27,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
 import org.eclipse.pde.internal.core.text.bundle.*;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
 import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
@@ -36,6 +40,7 @@ import org.eclipse.pde.internal.ui.editor.context.ManifestDocumentSetupParticipa
 import org.eclipse.pde.internal.ui.editor.context.UTF8InputContext;
 import org.eclipse.text.edits.*;
 import org.eclipse.ui.*;
+import org.osgi.framework.Constants;
 
 public class BundleInputContext extends UTF8InputContext {
 	public static final String CONTEXT_ID = "bundle-context"; //$NON-NLS-1$
@@ -112,11 +117,43 @@ public class BundleInputContext extends UTF8InputContext {
 		return new TextEdit[0];
 	}
 
-	private void insertKey(IDocumentKey key, ArrayList<TextEdit> ops) {
+	private void insertKey(ManifestHeader key, ArrayList<TextEdit> ops) {
 		IDocument doc = getDocumentProvider().getDocument(getInput());
-		InsertEdit op = new InsertEdit(PropertiesUtil.getInsertOffset(doc), key.write());
+		String write = key.write();
+		int offset = getInsertOffset(key, doc);
+		InsertEdit op = new InsertEdit(offset, write);
 		fOperationTable.put(key, op);
 		ops.add(op);
+	}
+
+	private int getInsertOffset(ManifestHeader key, IDocument doc) {
+		IBundle bundle = key.getBundle();
+		List<IManifestHeader> manifestHeaders = bundle.getManifestHeaders().values().stream()
+				.filter(header -> {
+					if (ManifestUtils.MANIFEST_VERSION.equalsIgnoreCase(header.getKey())
+							|| Constants.BUNDLE_MANIFESTVERSION.equalsIgnoreCase(header.getKey())) {
+						// leave special headers alone!
+						return false;
+					}
+					return true;
+				}).sorted(Comparator.comparing(IManifestHeader::getKey, String.CASE_INSENSITIVE_ORDER))
+				.collect(Collectors.toList());
+
+		int indexOf = manifestHeaders.indexOf(key);
+		if (indexOf > -1) {
+			if (indexOf == 0) {
+				// insert after the Bundle-ManifestVersion if given...
+				IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_MANIFESTVERSION);
+				if (header != null && header.getOffset() > -1) {
+					return header.getOffset() + header.getLength();
+				}
+			} else {
+				// insert after the the header before our position
+				IManifestHeader header = manifestHeaders.get(indexOf - 1);
+				return header.getOffset() + header.getLength();
+			}
+		}
+		return PropertiesUtil.getInsertOffset(doc);
 	}
 
 	private void deleteKey(IDocumentKey key, ArrayList<TextEdit> ops) {
@@ -127,7 +164,7 @@ public class BundleInputContext extends UTF8InputContext {
 		}
 	}
 
-	private void modifyKey(IDocumentKey key, ArrayList<TextEdit> ops) {
+	private void modifyKey(ManifestHeader key, ArrayList<TextEdit> ops) {
 		if (key.getOffset() == -1) {
 			insertKey(key, ops);
 		} else {
