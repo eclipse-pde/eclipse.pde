@@ -394,4 +394,10 @@
              type="Target">
        </targetLocation>
     </extension>
+    <extension
+          point="org.eclipse.pde.core.pluginClasspathContributors">
+       <contributor
+             class="org.eclipse.pde.internal.core.OSGiAnnotationsClasspathContributor">
+       </contributor>
+    </extension>
 </plugin>
