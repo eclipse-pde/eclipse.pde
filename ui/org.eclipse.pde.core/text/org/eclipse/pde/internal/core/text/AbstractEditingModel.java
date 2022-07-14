@@ -46,7 +46,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	private Charset fCharset;
 	private IResource fUnderlyingResource;
 	private String fInstallLocation;
-	private boolean fStale;
+	private volatile boolean fStale;
 
 	public AbstractEditingModel(IDocument document, boolean isReconciling) {
 		fDocument = document;

@@ -230,6 +230,10 @@ public abstract class InputContext {
 				if (fModel instanceof IEditingModel)
 					((IEditingModel) fModel).setStale(true);
 				edit.apply(doc);
+				if (fModel instanceof IEditingModel) {
+					IEditingModel editingModel = (IEditingModel) fModel;
+					editingModel.reconciled(doc);
+				}
 				fEditOperations.clear();
 			} catch (MalformedTreeException | BadLocationException e) {
 				PDEPlugin.logException(e);
