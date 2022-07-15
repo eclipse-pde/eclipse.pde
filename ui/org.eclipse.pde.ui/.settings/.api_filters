@@ -3,7 +3,13 @@
     <resource path="META-INF/MANIFEST.MF">
         <filter comment="Removed lasses deprecated for removal to complete removal process for Bug 564563" id="923795461">
             <message_arguments>
-                <message_argument value="3.13.600"/>
+                <message_argument value="3.14"/>
+                <message_argument value="3.14"/>
+            </message_arguments>
+        </filter>
+        <filter id="923795461">
+            <message_arguments>
+                <message_argument value="3.14.0"/>
                 <message_argument value="3.13.500"/>
             </message_arguments>
         </filter>
@@ -12,7 +18,7 @@
         <filter comment="Removed lasses deprecated for removal to complete removal process for Bug 564563" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration"/>
-                <message_argument value="org.eclipse.pde.ui_3.13.600"/>
+                <message_argument value="org.eclipse.pde.ui_3.14"/>
             </message_arguments>
         </filter>
     </resource>
@@ -20,7 +26,7 @@
         <filter comment="Removed lasses deprecated for removal to complete removal process for Bug 564563" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.pde.ui.launcher.EclipseApplicationLaunchConfiguration"/>
-                <message_argument value="org.eclipse.pde.ui_3.13.600"/>
+                <message_argument value="org.eclipse.pde.ui_3.14"/>
             </message_arguments>
         </filter>
     </resource>
@@ -28,7 +34,7 @@
         <filter comment="Removed lasses deprecated for removal to complete removal process for Bug 564563" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.pde.ui.launcher.EquinoxLaunchConfiguration"/>
-                <message_argument value="org.eclipse.pde.ui_3.13.600"/>
+                <message_argument value="org.eclipse.pde.ui_3.14"/>
             </message_arguments>
         </filter>
     </resource>
@@ -36,7 +42,7 @@
         <filter comment="Removed lasses deprecated for removal to complete removal process for Bug 564563" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.pde.ui.launcher.EquinoxPluginsTab"/>
-                <message_argument value="org.eclipse.pde.ui_3.13.600"/>
+                <message_argument value="org.eclipse.pde.ui_3.14"/>
             </message_arguments>
         </filter>
     </resource>
@@ -44,7 +50,7 @@
         <filter comment="Removed lasses deprecated for removal to complete removal process for Bug 564563" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.pde.ui.launcher.EquinoxSettingsTab"/>
-                <message_argument value="org.eclipse.pde.ui_3.13.600"/>
+                <message_argument value="org.eclipse.pde.ui_3.14"/>
             </message_arguments>
         </filter>
     </resource>
@@ -52,7 +58,7 @@
         <filter comment="Removed lasses deprecated for removal to complete removal process for Bug 564563" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.pde.ui.launcher.IPDELauncherConstants"/>
-                <message_argument value="org.eclipse.pde.ui_3.13.600"/>
+                <message_argument value="org.eclipse.pde.ui_3.14"/>
             </message_arguments>
         </filter>
     </resource>
@@ -60,7 +66,7 @@
         <filter comment="Removed lasses deprecated for removal to complete removal process for Bug 564563" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.pde.ui.launcher.JUnitLaunchConfigurationDelegate"/>
-                <message_argument value="org.eclipse.pde.ui_3.13.600"/>
+                <message_argument value="org.eclipse.pde.ui_3.14"/>
             </message_arguments>
         </filter>
     </resource>
@@ -68,7 +74,7 @@
         <filter comment="Removed lasses deprecated for removal to complete removal process for Bug 564563" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationDelegate"/>
-                <message_argument value="org.eclipse.pde.ui_3.13.600"/>
+                <message_argument value="org.eclipse.pde.ui_3.14"/>
             </message_arguments>
         </filter>
     </resource>
@@ -76,7 +82,7 @@
         <filter comment="Removed lasses deprecated for removal to complete removal process for Bug 564563" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.pde.ui.launcher.OSGiLaunchConfigurationInitializer"/>
-                <message_argument value="org.eclipse.pde.ui_3.13.600"/>
+                <message_argument value="org.eclipse.pde.ui_3.14"/>
             </message_arguments>
         </filter>
     </resource>
@@ -84,7 +90,7 @@
         <filter comment="Removed lasses deprecated for removal to complete removal process for Bug 564563" id="305324134">
             <message_arguments>
                 <message_argument value="org.eclipse.pde.ui.launcher.PDESourcePathProvider"/>
-                <message_argument value="org.eclipse.pde.ui_3.13.600"/>
+                <message_argument value="org.eclipse.pde.ui_3.14"/>
             </message_arguments>
         </filter>
     </resource>
