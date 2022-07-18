@@ -14,12 +14,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
-import java.util.*;
+import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class ProductValidationOperation extends LaunchValidationOperation {
@@ -30,21 +28,7 @@ public class ProductValidationOperation extends LaunchValidationOperation {
 
 	@Override
 	protected IExecutionEnvironment[] getMatchingEnvironments() throws CoreException {
-		IVMInstall install = JavaRuntime.getDefaultVMInstall();
-
-		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
-		List<IExecutionEnvironment> result = new ArrayList<>(envs.length);
-		for (IExecutionEnvironment env : envs) {
-			IVMInstall[] compatible = env.getCompatibleVMs();
-			for (IVMInstall element : compatible) {
-				if (element.equals(install)) {
-					result.add(env);
-					break;
-				}
-			}
-		}
-		return result.toArray(new IExecutionEnvironment[result.size()]);
+		return LaunchValidationOperation.getMatchingEEs(JavaRuntime.getDefaultVMInstall());
 	}
 
 }

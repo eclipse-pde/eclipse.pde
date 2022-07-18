@@ -13,11 +13,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
-import java.util.*;
+import static java.util.function.Predicate.not;
+
+import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -49,17 +52,9 @@ public class EditTargetDefinitionWizard extends Wizard {
 	public boolean performFinish() {
 		// update the cache to remove all other targets with same handle except
 		// this.
-		HashMap<ITargetHandle, List<TargetDefinition>> targetFlagMap = TargetPlatformHelper.getTargetDefinitionMap();
-		for (Map.Entry<ITargetHandle, List<TargetDefinition>> entry : targetFlagMap.entrySet()) {
-			if (entry.getKey().equals(fDefinition.getHandle())) {
-				 List<TargetDefinition> targets = targetFlagMap.get(fDefinition.getHandle());
-				for (Iterator<TargetDefinition> iterator = targets.iterator(); iterator.hasNext();) {
-					TargetDefinition target = iterator.next();
-					if (!target.equals(fDefinition)) {
-						iterator.remove();
-					}
-				}
-			}
+		List<TargetDefinition> targets = TargetPlatformHelper.getTargetDefinitionMap().get(fDefinition.getHandle());
+		if (targets != null) {
+			targets.removeIf(not(fDefinition::equals));
 		}
 		return true;
 
@@ -68,17 +63,9 @@ public class EditTargetDefinitionWizard extends Wizard {
 	@Override
 	public boolean performCancel() {
 		// update the cache to remove this target with this handle
-		HashMap<ITargetHandle, List<TargetDefinition>> targetFlagMap = TargetPlatformHelper.getTargetDefinitionMap();
-		for (Map.Entry<ITargetHandle, List<TargetDefinition>> entry : targetFlagMap.entrySet()) {
-			if (entry.getKey().equals(fDefinition.getHandle())) {
-				List<TargetDefinition> targets = targetFlagMap.get(fDefinition.getHandle());
-				for (Iterator<TargetDefinition> iterator = targets.iterator(); iterator.hasNext();) {
-					TargetDefinition target = iterator.next();
-					if (target.equals(fDefinition)) {
-						iterator.remove();
-					}
-				}
-			}
+		List<TargetDefinition> targets = TargetPlatformHelper.getTargetDefinitionMap().get(fDefinition.getHandle());
+		if (targets != null) {
+			targets.removeIf(fDefinition::equals);
 		}
 		return true;
 	}

@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.resources.IResource;
@@ -44,6 +43,7 @@ import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.pde.internal.core.util.UtilMessages;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.namespace.ExecutionEnvironmentNamespace;
 
 public class MinimalState {
@@ -64,12 +64,9 @@ public class MinimalState {
 
 	protected static StateObjectFactory stateObjectFactory;
 
-	protected static String DIR;
-
 	protected String fSystemBundle = IPDEBuildConstants.BUNDLE_OSGI;
 
 	static {
-		DIR = PDECore.getDefault().getStateLocation().toOSString();
 		stateObjectFactory = Platform.getPlatformAdmin().getFactory();
 	}
 
@@ -143,38 +140,25 @@ public class MinimalState {
 		if (manifest.containsKey(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT)) {
 			return true;
 		}
-
 		try {
-			ManifestElement[] requireCapabilityHeader = ManifestElement.parseHeader(Constants.REQUIRE_CAPABILITY,
-					manifest.get(Constants.REQUIRE_CAPABILITY));
-			if (requireCapabilityHeader == null) {
-				return false;
-			}
-
-			for (ManifestElement manifestElement : requireCapabilityHeader) {
-				if (ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE.equals(manifestElement.getValue())) {
-					return true;
-				}
-			}
-
+			String capability = manifest.get(Constants.REQUIRE_CAPABILITY);
+			ManifestElement[] header = ManifestElement.parseHeader(Constants.REQUIRE_CAPABILITY, capability);
+			return header != null && Arrays.stream(header).map(ManifestElement::getValue)
+					.anyMatch(ExecutionEnvironmentNamespace.EXECUTION_ENVIRONMENT_NAMESPACE::equals);
 		} catch (BundleException e) {
-			// ignore
+			return false; // ignore
 		}
-
-		return false;
 	}
 
 	public BundleDescription addBundle(Map<String, String> manifest, File bundleLocation, long bundleId)
 			throws CoreException {
 		try {
 			// OSGi requires a dictionary over any map
-			Hashtable<String, String> dictionaryManifest = new Hashtable<>(manifest);
+			Dictionary<String, String> dictionaryManifest = FrameworkUtil.asDictionary(manifest);
 			BundleDescription descriptor = stateObjectFactory.createBundleDescription(fState, dictionaryManifest,
 					bundleLocation.getAbsolutePath(), bundleId == -1 ? getNextId() : bundleId);
 			// new bundle
-			if (bundleId == -1) {
-				fState.addBundle(descriptor);
-			} else if (!fState.updateBundle(descriptor)) {
+			if (bundleId == -1 || !fState.updateBundle(descriptor)) {
 				fState.addBundle(descriptor);
 			}
 			return descriptor;
@@ -251,13 +235,10 @@ public class MinimalState {
 
 		if (fEEListChanged) {
 			fEEListChanged = false;
-			return fState.setPlatformProperties(getProfilePlatformProperties());
+			var properties = TargetPlatformHelper.getPlatformProperties(fExecutionEnvironments, this);
+			return fState.setPlatformProperties(properties);
 		}
 		return false;
-	}
-
-	private Dictionary<String, String>[] getProfilePlatformProperties() {
-		return TargetPlatformHelper.getPlatformProperties(fExecutionEnvironments, this);
 	}
 
 	public void removeBundleDescription(BundleDescription description) {
@@ -280,10 +261,8 @@ public class MinimalState {
 		String[] knownExecutionEnviroments = TargetPlatformHelper.getKnownExecutionEnvironments();
 		if (knownExecutionEnviroments.length == 0) {
 			String jreProfile = System.getProperty("pde.jreProfile"); //$NON-NLS-1$
-			if (jreProfile != null && jreProfile.length() > 0) {
-				if ("none".equals(jreProfile)) { //$NON-NLS-1$
-					fNoProfile = true;
-				}
+			if (jreProfile != null && !jreProfile.isEmpty() && "none".equals(jreProfile)) { //$NON-NLS-1$
+				fNoProfile = true;
 			}
 		}
 		if (!fNoProfile) {
