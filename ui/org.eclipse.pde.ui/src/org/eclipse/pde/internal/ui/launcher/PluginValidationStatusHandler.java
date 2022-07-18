@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2022 eXXcellent solutions gmbh, EclipseSource Corporation
+ * Copyright (c) 2009, 2015 eXXcellent solutions gmbh, EclipseSource Corporation
  * and others.
  *
  * This program and the accompanying materials
@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import java.util.Map;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -53,12 +52,6 @@ public class PluginValidationStatusHandler implements IStatusHandler {
 			IShellProvider shellProvider = PlatformUI.getWorkbench().getModalDialogShellProvider();
 			PluginStatusDialog dialog = new PluginStatusDialog(shellProvider.getShell());
 			dialog.showCancelButton(true);
-			Map<Object, Object[]> input = op.getInput();
-			PluginStatusDialog.filterOutMissingConstraintJavaPackages(input);
-			if (input.size() == 0) {
-				dialog.close();
-				return;
-			}
 			dialog.setInput(op.getInput());
 			result[0] = dialog.open();
 		});
