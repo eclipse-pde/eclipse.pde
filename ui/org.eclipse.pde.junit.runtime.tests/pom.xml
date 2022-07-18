@@ -55,7 +55,7 @@
 							</requirement>
 							<requirement>
 								<type>eclipse-plugin</type>
-								<id>org.junit.jupiter.api</id>
+								<id>junit-jupiter-api</id>
 								<versionRange>0.0.0</versionRange>
 							</requirement>
 							<requirement>
