@@ -60,9 +60,8 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 					}
 				}
 			} else {
-				HashMap<ITargetHandle, List<TargetDefinition>> targetFlagMap = TargetPlatformHelper
-						.getTargetDefinitionMap();
-				for (List<TargetDefinition> targetDefinitionValues : targetFlagMap.values()) {
+				Collection<List<TargetDefinition>> targetFlags = TargetPlatformHelper.getTargetDefinitionMap().values();
+				for (List<TargetDefinition> targetDefinitionValues : targetFlags) {
 					if (!targetDefinitionValues.isEmpty()) {
 						ITargetLocation[] locs = targetDefinitionValues.get(0).getTargetLocations();
 						if (locs != null) {

@@ -24,13 +24,11 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.BundleValidationOperation;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.osgi.framework.Constants;
 
 public class LaunchValidationOperation implements IWorkspaceRunnable {
 
@@ -52,11 +50,11 @@ public class LaunchValidationOperation implements IWorkspaceRunnable {
 	@SuppressWarnings("unchecked")
 	protected Dictionary<String, String>[] getPlatformProperties() throws CoreException {
 		IExecutionEnvironment[] envs = getMatchingEnvironments();
-		if (envs.length == 0)
+		if (envs.length == 0) {
 			return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
-
+		}
 		// add java profiles for those EE's that have a .profile file in the current system bundle
-		ArrayList<Dictionary<String, String>> result = new ArrayList<>(envs.length);
+		List<Dictionary<String, String>> result = new ArrayList<>(envs.length);
 		for (IExecutionEnvironment env : envs) {
 			Properties profileProps = getJavaProfileProperties(env.getId());
 			if (profileProps == null) {
@@ -65,94 +63,60 @@ public class LaunchValidationOperation implements IWorkspaceRunnable {
 			}
 			if (profileProps != null) {
 				Dictionary<String, String> props = TargetPlatformHelper.getTargetEnvironment();
-				String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
-				if (systemPackages == null) {
-					// java 10 and beyond
-					systemPackages = TargetPlatformHelper.querySystemPackages(env);
-				}
-				if (systemPackages != null)
-					props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
-				@SuppressWarnings("deprecation")
-				String frameworkExecutionenvironment = Constants.FRAMEWORK_EXECUTIONENVIRONMENT;
-				String ee = profileProps.getProperty(frameworkExecutionenvironment);
-				if (ee != null)
-					props.put(frameworkExecutionenvironment, ee);
+				TargetPlatformHelper.addEnvironmentProperties(props, env, profileProps);
 				result.add(props);
 			}
 		}
-		if (!result.isEmpty())
-			return result.toArray(new Dictionary[result.size()]);
+		if (!result.isEmpty()) {
+			return result.toArray(Dictionary[]::new);
+		}
 		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
-
 	}
 
 	protected IExecutionEnvironment[] getMatchingEnvironments() throws CoreException {
 		IVMInstall install = VMHelper.getVMInstall(fLaunchConfiguration);
-		if (install == null)
-			return new IExecutionEnvironment[0];
+		return install == null ? new IExecutionEnvironment[0] : getMatchingEEs(install);
+	}
 
-		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
-		List<IExecutionEnvironment> result = new ArrayList<>(envs.length);
-		for (IExecutionEnvironment env : envs) {
-			IVMInstall[] compatible = env.getCompatibleVMs();
-			for (IVMInstall element : compatible) {
-				if (element.equals(install)) {
-					result.add(env);
-					break;
-				}
-			}
-		}
-		return result.toArray(new IExecutionEnvironment[result.size()]);
+	static IExecutionEnvironment[] getMatchingEEs(IVMInstall install) {
+		return Arrays.stream(JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments()) //
+				.filter(env -> Arrays.stream(env.getCompatibleVMs()).anyMatch(install::equals)) //
+				.toArray(IExecutionEnvironment[]::new);
 	}
 
 	private Properties getJavaProfileProperties(String ee) {
 		IPluginModelBase model = PluginRegistry.findModel("system.bundle"); //$NON-NLS-1$
-		if (model == null)
+		if (model == null) {
 			return null;
-
+		}
 		File location = new File(model.getInstallLocation());
 		String filename = ee.replace('/', '_') + ".profile"; //$NON-NLS-1$
-		InputStream is = null;
-		ZipFile zipFile = null;
 		try {
 			// find the input stream to the profile properties file
 			if (location.isDirectory()) {
 				File file = new File(location, filename);
 				if (file.exists())
-					is = new FileInputStream(file);
+					try (InputStream is = new FileInputStream(file)) {
+						return loadProperties(is);
+					}
 			} else {
-				try {
-					zipFile = new ZipFile(location, ZipFile.OPEN_READ);
+				try (ZipFile zipFile = new ZipFile(location, ZipFile.OPEN_READ)) {
 					ZipEntry entry = zipFile.getEntry(filename);
-					if (entry != null)
-						is = zipFile.getInputStream(entry);
-				} catch (IOException e) {
-					// nothing to do
+					if (entry != null) {
+						return loadProperties(zipFile.getInputStream(entry));
+					}
 				}
-			}
-			if (is != null) {
-				Properties profile = new Properties();
-				profile.load(is);
-				return profile;
 			}
 		} catch (IOException e) {
 			// nothing to do
-		} finally {
-			if (is != null)
-				try {
-					is.close();
-				} catch (IOException e) {
-					// nothing to do
-				}
-			if (zipFile != null)
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-					// nothing to do
-				}
 		}
 		return null;
+	}
+
+	private static Properties loadProperties(InputStream is) throws IOException {
+		Properties profile = new Properties();
+		profile.load(is);
+		return profile;
 	}
 
 	public boolean hasErrors() {
