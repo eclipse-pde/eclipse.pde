@@ -15,13 +15,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -31,9 +31,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -69,6 +72,8 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.Version;
 
 public class TargetPlatformHelper {
+	private TargetPlatformHelper() { // static use only
+	}
 
 	public static final String REFERENCE_PREFIX = "reference:"; //$NON-NLS-1$
 	public static final String PLATFORM_PREFIX = "platform:"; //$NON-NLS-1$
@@ -87,7 +92,7 @@ public class TargetPlatformHelper {
 			Pattern.CASE_INSENSITIVE);
 
 	private static Map<String, String> fgCachedLocations;
-	private static HashMap<ITargetHandle, List<TargetDefinition>> fgCachedTargetDefinitionMap = new HashMap<>();
+	private static Map<ITargetHandle, List<TargetDefinition>> fgCachedTargetDefinitionMap = new HashMap<>();
 
 	public static Properties getConfigIniProperties() {
 		File iniFile = new File(TargetPlatform.getLocation(), "configuration/config.ini"); //$NON-NLS-1$
@@ -278,24 +283,17 @@ public class TargetPlatformHelper {
 		if (service == null) {
 			throw new CoreException(Status.error(PDECoreMessages.TargetPlatformHelper_CouldNotAcquireTargetService));
 		}
-		final ITargetDefinition target = service.getWorkspaceTargetDefinition();
-		if (target != null && !target.isResolved()) {
-			ITargetLocation[] locations = target.getTargetLocations();
-			if (locations != null) {
-				for (ITargetLocation location : locations) {
-					if (location instanceof IUBundleContainer) {
-						IUBundleContainer bc = (IUBundleContainer) location;
-						URI[] uri = bc.getRepositories();
-						if (uri != null) {
-							if (uri.length > 0) {
-								return target;
-							}
-						}
-					}
-				}
-			}
+		ITargetDefinition target = service.getWorkspaceTargetDefinition();
+		if (target != null && !target.isResolved() && containsNotEmptyIULocation(target.getTargetLocations())) {
+			return target;
 		}
 		return null;
+	}
+
+	private static boolean containsNotEmptyIULocation(ITargetLocation[] locations) {
+		return locations != null && Arrays.stream(locations) //
+				.filter(IUBundleContainer.class::isInstance).map(IUBundleContainer.class::cast)
+				.map(IUBundleContainer::getRepositories).anyMatch(uri -> uri != null && uri.length > 0);
 	}
 
 	public static Set<String> getApplicationNameSet() {
@@ -309,7 +307,7 @@ public class TargetPlatformHelper {
 				continue;
 			}
 			String visiblity = elements[0].getAttribute("visible"); //$NON-NLS-1$
-			boolean visible = visiblity == null ? true : Boolean.parseBoolean(visiblity);
+			boolean visible = visiblity == null || Boolean.parseBoolean(visiblity);
 			if (id != null && visible) {
 				result.add(id);
 			}
@@ -323,29 +321,19 @@ public class TargetPlatformHelper {
 		return result.toArray(new String[result.size()]);
 	}
 
-	public static TreeSet<String> getProductNameSet() {
-		TreeSet<String> result = new TreeSet<>();
-		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry()
-				.findExtensions("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
-		for (IExtension extension : extensions) {
-			IConfigurationElement[] elements = extension.getConfigurationElements();
-			if (elements.length != 1) {
-				continue;
-			}
-			if (!"product".equals(elements[0].getName())) { //$NON-NLS-1$
-				continue;
-			}
-			String id = extension.getUniqueIdentifier();
-			if (id != null && id.trim().length() > 0) {
-				result.add(id);
-			}
-		}
-		return result;
+	public static Set<String> getProductNameSet() {
+		PDEExtensionRegistry registry = PDECore.getDefault().getExtensionsRegistry();
+		return Arrays.stream(registry.findExtensions("org.eclipse.core.runtime.products", true)) //$NON-NLS-1$
+				.filter(extension -> {
+					IConfigurationElement[] elements = extension.getConfigurationElements();
+					return elements.length == 1 && "product".equals(elements[0].getName()); //$NON-NLS-1$
+				}) //
+				.map(IExtension::getUniqueIdentifier).filter(id -> id != null && !id.isBlank())
+				.collect(Collectors.toCollection(TreeSet::new));
 	}
 
 	public static String[] getProductNames() {
-		TreeSet<String> result = getProductNameSet();
-		return result.toArray(new String[result.size()]);
+		return getProductNameSet().toArray(String[]::new);
 	}
 
 	public static Dictionary<String, String> getTargetEnvironment() {
@@ -373,34 +361,39 @@ public class TargetPlatformHelper {
 
 		// add java profiles for those EE's that have a .profile file in the
 		// current system bundle
-		ArrayList<Dictionary<String, String>> result = new ArrayList<>(profiles.length);
+		List<Dictionary<String, String>> result = new ArrayList<>(profiles.length);
 		for (String profile : profiles) {
 			IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(profile);
 			if (environment != null) {
 				Properties profileProps = environment.getProfileProperties();
 				if (profileProps != null) {
-					Dictionary<String, String> props = TargetPlatformHelper.getTargetEnvironment(state);
-					String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
-					if (systemPackages == null) {
-						systemPackages = querySystemPackages(environment);
-					}
-					if (systemPackages != null) {
-						props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
-					}
-					@SuppressWarnings("deprecation")
-					String frameworkExecutionenvironment = Constants.FRAMEWORK_EXECUTIONENVIRONMENT;
-					String ee = profileProps.getProperty(frameworkExecutionenvironment);
-					if (ee != null) {
-						props.put(frameworkExecutionenvironment, ee);
-					}
+					Dictionary<String, String> props = getTargetEnvironment(state);
+					addEnvironmentProperties(props, environment, profileProps);
 					result.add(props);
 				}
 			}
 		}
 		if (!result.isEmpty()) {
-			return result.toArray(new Dictionary[result.size()]);
+			return result.toArray(Dictionary[]::new);
 		}
-		return new Dictionary[] { TargetPlatformHelper.getTargetEnvironment(state) };
+		return new Dictionary[] { getTargetEnvironment(state) };
+	}
+
+	public static void addEnvironmentProperties(Dictionary<String, String> properties,
+			IExecutionEnvironment environment, Properties profileProps) {
+		String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
+		if (systemPackages == null) { // java 10 and beyond
+			systemPackages = querySystemPackages(environment);
+		}
+		if (systemPackages != null) {
+			properties.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
+		}
+		@SuppressWarnings("deprecation")
+		String frameworkExecutionenvironment = Constants.FRAMEWORK_EXECUTIONENVIRONMENT;
+		String ee = profileProps.getProperty(frameworkExecutionenvironment);
+		if (ee != null) {
+			properties.put(frameworkExecutionenvironment, ee);
+		}
 	}
 
 	@SuppressWarnings("restriction")
@@ -632,15 +625,12 @@ public class TargetPlatformHelper {
 			}
 			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 			String memento = target.getHandle().getMemento();
-			if (memento != null) {
+			if (memento != null && memento.equals(preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE))) {
 				// Same target has been re-resolved upon loading, clear the
-				// preference and
-				// update the target so listeners can react to the change - see
-				// TargetStatus
-				if (memento.equals(preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE))) {
-					preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, ""); //$NON-NLS-1$
-					preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
-				}
+				// preference and update the target so listeners can react to
+				// the change - see TargetStatus
+				preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, ""); //$NON-NLS-1$
+				preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
 			}
 		}
 		return target;
@@ -731,21 +721,16 @@ public class TargetPlatformHelper {
 	public static String getIniVMArgs() {
 		File installDirectory = new File(Platform.getInstallLocation().getURL().getFile());
 		File eclipseIniFile = new File(installDirectory, "eclipse.ini"); //$NON-NLS-1$
-		StringBuilder result = new StringBuilder();
+		StringJoiner result = new StringJoiner(" "); //$NON-NLS-1$
 		if (eclipseIniFile.exists()) {
-			try (BufferedReader in = new BufferedReader(new FileReader(eclipseIniFile))) {
-
-				String str;
+			try (Stream<String> lines = Files.lines(eclipseIniFile.toPath(), StandardCharsets.UTF_8)) {
 				boolean vmargs = false;
-				while ((str = in.readLine()) != null) {
+				for (String str : (Iterable<String>) lines::iterator) {
 					if (vmargs) {
-						if (result.length() > 0) {
-							result.append(" "); //$NON-NLS-1$
-						}
-						result.append(str);
+						result.add(str);
 					}
 					// start concat'ng if we have vmargs
-					if (vmargs == false && str.equals("-vmargs")) { //$NON-NLS-1$
+					if (!vmargs && str.equals("-vmargs")) { //$NON-NLS-1$
 						vmargs = true;
 					}
 				}
@@ -756,7 +741,7 @@ public class TargetPlatformHelper {
 		return result.toString();
 	}
 
-	public static HashMap<ITargetHandle, List<TargetDefinition>> getTargetDefinitionMap() {
+	public static Map<ITargetHandle, List<TargetDefinition>> getTargetDefinitionMap() {
 		return fgCachedTargetDefinitionMap;
 	}
 
