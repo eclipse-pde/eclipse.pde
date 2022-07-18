@@ -14,13 +14,12 @@
 package org.eclipse.pde.internal.launching.launcher;
 
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -31,8 +30,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.BundleValidationOperation;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
 public class LaunchValidationOperation implements IWorkspaceRunnable {
@@ -64,19 +61,14 @@ public class LaunchValidationOperation implements IWorkspaceRunnable {
 			Properties profileProps = getJavaProfileProperties(env.getId());
 			if (profileProps == null) {
 				// Java10 onwards, we take profile via this method
-				@SuppressWarnings("restriction")
-				IExecutionEnvironment ev = org.eclipse.jdt.internal.launching.environments.EnvironmentsManager.getDefault().getEnvironment(env.getId());
-				profileProps = ev.getProfileProperties();
+				profileProps = env.getProfileProperties();
 			}
 			if (profileProps != null) {
 				Dictionary<String, String> props = TargetPlatformHelper.getTargetEnvironment();
 				String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
 				if (systemPackages == null) {
 					// java 10 and beyond
-					Properties javaProfilePropertiesForVMPackage = getJavaProfilePropertiesForVMPackage(env.getId());
-					if (javaProfilePropertiesForVMPackage != null) {
-						systemPackages = javaProfilePropertiesForVMPackage.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
-					}
+					systemPackages = TargetPlatformHelper.querySystemPackages(env);
 				}
 				if (systemPackages != null)
 					props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
@@ -92,35 +84,6 @@ public class LaunchValidationOperation implements IWorkspaceRunnable {
 			return result.toArray(new Dictionary[result.size()]);
 		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
 
-	}
-
-	private static Properties getJavaProfilePropertiesForVMPackage(String ee) {
-		Bundle apitoolsBundle = Platform.getBundle("org.eclipse.pde.api.tools"); //$NON-NLS-1$
-		if (apitoolsBundle == null) {
-			return null;
-		}
-		URL systemPackageProfile = apitoolsBundle.getEntry("system_packages" + '/' + ee.replace('/', '_') + "-systempackages.profile"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (systemPackageProfile != null) {
-			return getPropertiesFromURL(systemPackageProfile);
-
-		}
-		return null;
-	}
-
-	private static Properties getPropertiesFromURL(URL profileURL) {
-		try {
-			profileURL = FileLocator.resolve(profileURL);
-			URLConnection openConnection = profileURL.openConnection();
-			openConnection.setUseCaches(false);
-			try (InputStream is = openConnection.getInputStream()) {
-				Properties profile = new Properties();
-				profile.load(is);
-				return profile;
-			}
-		} catch (IOException e) {
-			PDELaunchingPlugin.log(e);
-		}
-		return null;
 	}
 
 	protected IExecutionEnvironment[] getMatchingEnvironments() throws CoreException {
