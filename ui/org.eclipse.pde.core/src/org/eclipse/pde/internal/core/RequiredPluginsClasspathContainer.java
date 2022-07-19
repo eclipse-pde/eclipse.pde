@@ -58,8 +58,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 	@SuppressWarnings("nls")
 	private static final Collection<String> JUNIT5_RUNTIME_PLUGINS = new HashSet<>(
-			Arrays.asList("org.junit", "org.junit.jupiter.api", "org.junit.jupiter.engine",
-					"org.junit.platform.commons", "org.junit.platform.engine", "org.hamcrest.core", "org.opentest4j"));
+			Arrays.asList("org.junit", "junit-jupiter-api", "junit-jupiter-engine",
+					"junit-platform-commons", "junit-platform-engine", "org.hamcrest.core", "org.opentest4j"));
 
 	private final IPluginModelBase fModel;
 	private IBuild fBuild;
@@ -500,7 +500,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	}
 
 	private static boolean containsJunit5Dependency(Collection<BundleDescription> dependencies) {
-		return dependencies.stream().anyMatch(desc -> "org.junit.jupiter.api".equals(desc.getName())); //$NON-NLS-1$
+		return dependencies.stream().anyMatch(desc -> "junit-jupiter-api".equals(desc.getName()) || "org.junit.jupiter.api".equals(desc.getName())); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private void addSecondaryDependencies(BundleDescription desc, HashSet<BundleDescription> added, ArrayList<IClasspathEntry> entries) {

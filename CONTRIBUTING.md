@@ -19,16 +19,16 @@ more.
 
 The project maintains the following source code repositories
 
-* http://git.eclipse.org/c/pde/eclipse.pde.ui.git
-* http://git.eclipse.org/c/pde/eclipse.pde.build.git
+* https://github.com/eclipse-pde/eclipse.pde/
 
-This project uses Bugzilla to track ongoing development and issues.
+This project uses Github issues and pull requests to track ongoing development and issues.
 
-* Search for issues: https://eclipse.org/bugs/buglist.cgi?product=PDE
-* Create a new report: https://eclipse.org/bugs/enter_bug.cgi?product=PDE
+* Issues: https://github.com/eclipse-pde/eclipse.pde/issues
+* Pull requests: https://github.com/eclipse-pde/eclipse.pde/pulls
 
-Be sure to search for existing bugs before you create another one. Remember that
-contributions are always welcome!
+Pull requests are always welcome!
+See also https://github.com/eclipse-platform/#community
+
 
 ## Eclipse Contributor Agreement
 
@@ -48,6 +48,6 @@ https://www.eclipse.org/projects/handbook/#resources-commit
 
 ## Contact
 
-Contact the project developers via the project's "dev" list.
+Contact the project developers via Github discussions
 
-* https://dev.eclipse.org/mailman/listinfo/pde-dev
+* https://github.com/eclipse-pde/eclipse.pde/discussions

@@ -47,8 +47,6 @@
         name="org.eclipse.jdt.feature.group"/>
     <requirement
         name="org.eclipse.pde.feature.group"/>
-    <requirement
-        name="org.eclipse.pde.api.tools.ee.feature.feature.group"/>
   </setupTask>
   <setupTask
       xsi:type="setup:EclipseIniTask"
@@ -160,6 +158,15 @@
             url="https://download.eclipse.org/reddeer/releases/latest"/>
         <repository
             url="https://download.eclipse.org/tools/orbit/downloads/latest-R"/>
+        <repository
+            url="https://download.eclipse.org/tools/orbit/downloads/drops/R20201118194144/repository">
+          <annotation>
+            <detail
+                key="justification">
+              <value>This is here because we need a repository that contains org.json for the reddeer dependency</value>
+            </detail>
+          </annotation>
+        </repository>
       </repositoryList>
     </targlet>
   </setupTask>

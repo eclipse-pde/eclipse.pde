@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2021 Christoph Läubrich and others.
+ * Copyright (c) 2021, 2022 Christoph Läubrich and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Christoph Läubrich - initial API and implementation
+ *     Patrick Ziegler - issue #90: Unable to load p2 dependencies from nested target files
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.core.target.TargetFeature;
+import org.eclipse.pde.internal.core.PDECore;
 
 public class TargetReferenceBundleContainer extends AbstractBundleContainer {
 
@@ -100,6 +102,13 @@ public class TargetReferenceBundleContainer extends AbstractBundleContainer {
 	}
 
 	public void reload() {
+		if (targetDefinition != null) {
+			try {
+				P2TargetUtils.deleteProfile(targetDefinition.getHandle());
+			} catch (CoreException e) {
+				PDECore.log(e);
+			}
+		}
 		targetDefinition = null;
 	}
 
@@ -124,6 +133,14 @@ public class TargetReferenceBundleContainer extends AbstractBundleContainer {
 			}
 			return definition;
 		}
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof TargetReferenceBundleContainer)) {
+			return false;
+		}
+		return uri.equals(((TargetReferenceBundleContainer) obj).getUri());
 	}
 
 }

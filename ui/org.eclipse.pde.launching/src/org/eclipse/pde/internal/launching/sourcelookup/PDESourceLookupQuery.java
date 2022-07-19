@@ -16,6 +16,8 @@ package org.eclipse.pde.internal.launching.sourcelookup;
 
 import com.sun.jdi.VMDisconnectedException;
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.debug.core.DebugException;
@@ -304,11 +306,11 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	}
 
 	private Object findJreSourceElement(String sourcePath) throws CoreException {
-		ISourceContainer[] jreSourceContainers = fDirector.getJreSourceContainers();
+		List<ISourceContainer> jreSourceContainers = Arrays.asList(fDirector.getJreSourceContainers());
 		return findSourceElement(jreSourceContainers, sourcePath);
 	}
 
-	private Object findSourceElement(ISourceContainer[] containers, String typeName) throws CoreException {
+	private Object findSourceElement(List<ISourceContainer> containers, String typeName) throws CoreException {
 		for (ISourceContainer container : containers) {
 			Object[] result = container.findSourceElements(typeName);
 			if (result.length > 0)
@@ -317,7 +319,7 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 		return null;
 	}
 
-	protected ISourceContainer[] getSourceContainers(String location, String id) throws CoreException {
+	protected List<ISourceContainer> getSourceContainers(String location, String id) throws CoreException {
 		return fDirector.getSourceContainers(location, id);
 	}
 

@@ -80,7 +80,6 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 
 		createContentSection(managedForm, right, toolkit);
 		createPackagingSection(managedForm, right, toolkit);
-		createPublishingSection(managedForm, right, toolkit);
 
 		managedForm.addPart(fSpecSection);
 		managedForm.addPart(fPortabilitySection);
@@ -124,23 +123,6 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		return section;
 	}
 
-	private Section createPublishingSection(IManagedForm managedForm, Composite parent, FormToolkit toolkit) {
-		Section section = createStaticSection(parent, toolkit);
-		section.setText(PDEUIMessages.FeatureEditor_InfoPage_PublishingSection_title);
-		// ImageHyperlink info = new ImageHyperlink(section, SWT.NULL);
-		// toolkit.adapt(info, true, true);
-		// Image image =
-		// PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_HELP);
-		// info.setImage(image);
-		// info.addHyperlinkListener(new HyperlinkAdapter() {
-		// public void linkActivated(HyperlinkEvent e) {
-		// }
-		// });
-		// info.setBackground(section.getTitleBarGradientBackground());
-		// section.setTextClient(info);
-		createClient(section, PDEUIMessages.FeatureEditor_InfoPage_PublishingSection_text, toolkit);
-		return section;
-	}
 
 	private FormText createClient(Section section, String content, FormToolkit toolkit) {
 		FormText text = toolkit.createFormText(section, true);

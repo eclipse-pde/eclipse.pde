@@ -22,8 +22,11 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -66,7 +69,7 @@ public class Product extends ProductObject implements IProduct {
 
 	private TreeMap<String, IProductObject> fPlugins = new TreeMap<>();
 	private TreeMap<String, IProductObject> fPluginConfigurations = new TreeMap<>();
-	private Set<IConfigurationProperty> fConfigurationProperties = new HashSet<>();
+	private Set<IConfigurationProperty> fConfigurationProperties = new LinkedHashSet<>();
 	private List<IProductFeature> fFeatures = new ArrayList<>();
 	private IConfigurationFileInfo fConfigIniInfo;
 	private IJREInfo fJVMInfo;
@@ -79,7 +82,7 @@ public class Product extends ProductObject implements IProduct {
 	private IArgumentsInfo fLauncherArgs;
 	private IIntroInfo fIntroInfo;
 	private ILicenseInfo fLicenseInfo;
-	private List<IProductObject> fRepositories = new ArrayList<>();
+	private Set<IProductObject> fRepositories = new LinkedHashSet<>();
 	private IPreferencesInfo fPreferencesInfo;
 	private ICSSInfo fCSSInfo;
 
@@ -472,16 +475,21 @@ public class Product extends ProductObject implements IProduct {
 	}
 
 	private void parseRepositories(NodeList children) {
+		Map<IRepositoryInfo, Boolean> repo2enabled = new LinkedHashMap<>();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				if (child.getNodeName().equals("repository")) { //$NON-NLS-1$
 					IRepositoryInfo repo = getModel().getFactory().createRepositoryInfo();
 					repo.parse(child);
-					fRepositories.add(repo);
+					// Workaround to merge possible multiple entries with an
+					// equal URL. Set enabled if any of them is enabled
+					repo2enabled.compute(repo, (r, e) -> e == null ? r.getEnabled() : (e || r.getEnabled()));
 				}
 			}
 		}
+		repo2enabled.forEach(IRepositoryInfo::setEnabled);
+		fRepositories.addAll(repo2enabled.keySet());
 	}
 
 	@Override

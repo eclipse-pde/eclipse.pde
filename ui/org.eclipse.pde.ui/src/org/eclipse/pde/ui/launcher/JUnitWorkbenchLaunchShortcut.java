@@ -26,12 +26,12 @@ import org.eclipse.pde.internal.launching.launcher.LauncherUtils;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.launching.PDESourcePathProvider;
 
-
 /**
  * A launch shortcut capable of launching a Plug-in JUnit test.
  * <p>
  * This class may be instantiated or subclassed by clients.
  * </p>
+ *
  * @since 3.3
  */
 public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
@@ -45,13 +45,16 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 	protected ILaunchConfigurationWorkingCopy createLaunchConfiguration(IJavaElement element) throws CoreException {
 		ILaunchConfigurationWorkingCopy configuration = super.createLaunchConfiguration(element);
 		String configName = configuration.getName();
+		configuration.setAttribute(IPDELauncherConstants.RUN_IN_UI_THREAD, true);
 
-		if (TargetPlatformHelper.usesNewApplicationModel())
+		if (TargetPlatformHelper.usesNewApplicationModel()) {
 			configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
-		else if (TargetPlatformHelper.getTargetVersion() >= 3.2)
+		} else if (TargetPlatformHelper.getTargetVersion() >= 3.2) {
 			configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.2a"); //$NON-NLS-1$
+		}
 		configuration.setAttribute(IPDELauncherConstants.LOCATION, LaunchArgumentsHelper.getDefaultWorkspaceLocation(configName, true));
 		configuration.setAttribute(IPDELauncherConstants.DOCLEAR, true);
+		configuration.setAttribute(IPDEConstants.DOCLEARLOG, false);
 		configuration.setAttribute(IPDELauncherConstants.ASKCLEAR, false);
 		configuration.setAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, true);
 
@@ -68,16 +71,23 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 
 		// Plug-ins to launch
 		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
+		configuration.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
+		configuration.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false); // ignored
+		configuration.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true); // ignored
+		configuration.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true); // ignored
 
 		// Program arguments
 		String programArgs = LaunchArgumentsHelper.getInitialProgramArguments();
-		if (programArgs.length() > 0)
+		if (programArgs.length() > 0) {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, programArgs);
+		}
 
 		// VM arguments
 		String vmArgs = LaunchArgumentsHelper.getInitialVMArguments();
-		if (vmArgs.length() > 0)
+		if (vmArgs.length() > 0) {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs);
+		}
+		configuration.setAttribute(IPDELauncherConstants.BOOTSTRAP_ENTRIES, ""); //$NON-NLS-1$
 
 		// configuration attributes
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true);
@@ -90,6 +100,7 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 
 		// tracing option
 		configuration.setAttribute(IPDELauncherConstants.TRACING_CHECKED, IPDELauncherConstants.TRACING_NONE);
+		configuration.setAttribute(IPDELauncherConstants.TRACING, false);
 
 		// source path provider
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, PDESourcePathProvider.ID);

@@ -468,9 +468,8 @@ public class XmlReferenceDescriptorWriter {
 	 * @param reference
 	 */
 	private void writeReference(Document document, Element parent, IReferenceDescriptor reference) throws CoreException {
-		Element kelement = null;
 		Integer kind = Integer.valueOf(reference.getReferenceKind());
-		kelement = findKindElement(parent, kind);
+		Element kelement = findKindElement(parent, kind);
 		if (kelement == null) {
 			kelement = document.createElement(IApiXmlConstants.REFERENCE_KIND);
 			kelement.setAttribute(IApiXmlConstants.ATTR_REFERENCE_KIND_NAME, Reference.getReferenceText(kind.intValue()));

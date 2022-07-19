@@ -672,8 +672,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @throws JavaModelException
 	 */
 	protected IField findFieldInType(IType type, IApiField field) throws JavaModelException {
-		IField match = null;
-		match = type.getField(field.getName());
+		IField match = type.getField(field.getName());
 		if (!match.exists()) {
 			IField[] fields = type.getFields();
 			// optimistically try to find the first match

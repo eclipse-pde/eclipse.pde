@@ -79,7 +79,16 @@
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.compatibility.state" fragment="true"/>
       <plugin id="org.eclipse.osgi.services"/>
+      <plugin id="org.osgi.service.cm" />
+      <plugin id="org.osgi.service.component" />
+      <plugin id="org.osgi.service.device" />
+      <plugin id="org.osgi.service.event" />
+      <plugin id="org.osgi.service.metatype" />
       <plugin id="org.osgi.service.prefs" />
+      <plugin id="org.osgi.service.provisioning" />
+      <plugin id="org.osgi.service.upnp" />
+      <plugin id="org.osgi.service.useradmin" />
+      <plugin id="org.osgi.service.wireadmin" />
       <plugin id="org.osgi.util.function"/>
       <plugin id="org.osgi.util.promise"/>
       <plugin id="org.eclipse.swt"/>
