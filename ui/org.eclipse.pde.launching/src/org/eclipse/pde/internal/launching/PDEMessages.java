@@ -45,4 +45,8 @@ public class PDEMessages extends NLS {
 	public static String VMHelper_cannotFindExecEnv;
 
 	public static String PDE_updateManagerNotSupported;
+
+	public static String BundleLauncherHelper_workspaceFeatureWithIdNull;
+	public static String BundleLauncherHelper_targetFeatureWithIdNull;
+
 }

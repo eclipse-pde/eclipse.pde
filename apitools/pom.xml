@@ -22,12 +22,6 @@
   <modules>
     <module>org.eclipse.pde.api.tools</module>
     <module>org.eclipse.pde.api.tools.annotations</module>
-    <module>org.eclipse.pde.api.tools.ee.cdcfoundation10</module>
-    <module>org.eclipse.pde.api.tools.ee.cdcfoundation11</module>
-    <module>org.eclipse.pde.api.tools.ee.feature</module>
-    <module>org.eclipse.pde.api.tools.ee.osgiminimum10</module>
-    <module>org.eclipse.pde.api.tools.ee.osgiminimum11</module>
-    <module>org.eclipse.pde.api.tools.ee.osgiminimum12</module>
     <module>org.eclipse.pde.api.tools.tests</module>
     <module>org.eclipse.pde.api.tools.ui</module>
   </modules>

@@ -42,8 +42,7 @@ import org.eclipse.ui.PlatformUI;
  *
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class MainTab extends AbstractLauncherTab
-		implements IPDELauncherConstants, org.eclipse.pde.ui.launcher.IPDELauncherConstants {
+public class MainTab extends AbstractLauncherTab implements IPDELauncherConstants {
 
 	protected WorkspaceDataBlock fDataBlock;
 	protected ProgramBlock fProgramBlock;

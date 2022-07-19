@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.core.plugin;
 
-import java.io.File;
 import java.net.URL;
 import java.util.Properties;
 import java.util.Set;
@@ -30,7 +29,6 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.UpdateManagerHelperDeprecated;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 
 /**
@@ -233,30 +231,6 @@ public class TargetPlatform {
 			}
 		}
 		return IDE_APPLICATION;
-	}
-
-	/**
-	 * Creates a platform configuration to be used when launching an Eclipse
-	 * application that uses Update Manager as a configurator
-	 *
-	 * @param location
-	 *            the location where the configuration should be persisted
-	 * @param plugins
-	 *            the list of plug-ins that make up the configuration
-	 * @param brandingPlugin
-	 *            if specified, a entry for the feature containing the branding
-	 *            plug-in will be created in the platform configuration
-	 *
-	 * @throws CoreException
-	 *             an exception is thrown if there was a problem writing the
-	 *             platform configuration file
-	 * @deprecated Old Update Manager is planned for removal and so it this API.
-	 * @noreference Old Update Manager is planned for removal and so it this API.
-	 *              See bug 527378 for details.
-	 */
-	@Deprecated
-	public static void createPlatformConfiguration(File location, IPluginModelBase[] plugins, IPluginModelBase brandingPlugin) throws CoreException {
-		UpdateManagerHelperDeprecated.createPlatformConfiguration(location, plugins, brandingPlugin);
 	}
 
 	/**

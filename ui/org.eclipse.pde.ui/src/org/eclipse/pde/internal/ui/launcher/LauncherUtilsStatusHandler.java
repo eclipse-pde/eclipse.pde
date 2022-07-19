@@ -23,8 +23,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.ui.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.PlainMessageDialog.Builder;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -171,9 +171,11 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 		final int[] result = new int[1];
 		getDisplay().syncExec(() -> {
 			String title = PDEUIMessages.LauncherUtils_title;
-			MessageDialog dialog = new MessageDialog(getActiveShell(), title, null, message, MessageDialog.QUESTION,
-					defaultButton, yesLabel, noLabel, IDialogConstants.CANCEL_LABEL);
-			result[0] = dialog.open();
+
+			Builder builder = PlainMessageDialog.getBuilder(getActiveShell(), title).message(message)
+					.buttonLabels(List.of(yesLabel, noLabel, IDialogConstants.CANCEL_LABEL))
+					.defaultButtonIndex(defaultButton);
+			result[0] = builder.build().open();
 		});
 		return Integer.valueOf(result[0]);
 	}

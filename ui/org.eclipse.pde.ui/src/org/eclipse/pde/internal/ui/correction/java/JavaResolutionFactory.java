@@ -219,7 +219,7 @@ public class JavaResolutionFactory {
 				}
 
 				private String[] getJUnit5Bundles() {
-					return new String[] { "org.junit", "org.junit.jupiter.api" }; //$NON-NLS-1$ //$NON-NLS-2$
+					return new String[] { "org.junit", "junit-jupiter-api" }; //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}, new NullProgressMonitor());
 
