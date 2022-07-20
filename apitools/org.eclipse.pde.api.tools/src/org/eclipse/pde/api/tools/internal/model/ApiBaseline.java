@@ -245,29 +245,20 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		}
 	}
 
-
 	private static Properties getPropertiesFromURL(URL profileURL) {
-		InputStream is = null;
 		try {
 			URL resolvedURL = FileLocator.resolve(profileURL);
 			URLConnection openConnection = resolvedURL.openConnection();
 			openConnection.setUseCaches(false);
-			is = openConnection.getInputStream();
-			if (is != null) {
-				Properties profile = new Properties();
-				profile.load(is);
-				return profile;
+			try (InputStream is = openConnection.getInputStream()) {
+				if (is != null) {
+					Properties profile = new Properties();
+					profile.load(is);
+					return profile;
+				}
 			}
 		} catch (IOException e) {
 			ApiPlugin.log(e);
-		} finally {
-			try {
-				if (is != null) {
-					is.close();
-				}
-			} catch (IOException e) {
-				ApiPlugin.log(e);
-			}
 		}
 		return null;
 	}
@@ -302,11 +293,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	private void initialize(Properties profile, ExecutionEnvironmentDescription description) throws CoreException {
 		String value = profile.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
 		if (value == null) {
-			// In Java-10 and beyond, we take systempackages list from
-			// org.eclipse.pde.api.tools\system_packages\JavaSE-x-systempackages.profile
-			// They are calculated by launching eclipse in Java x and then using
-			// org.eclipse.osgi.storage.Storage.calculateVMPackages
-			// Post Java 18 we use TargetPlatformHelper.querySystemPackages
+			// In Java-10 and beyond, we query system-packages list from the JRE
 			String environmentId = description.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL);
 			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 			IExecutionEnvironment environment = manager.getEnvironment(environmentId);
