@@ -21,6 +21,8 @@
 
    <requires>
       <import feature="org.eclipse.jdt" version="3.15.0" match="compatible"/>
+      <import plugin="org.osgi.annotation.versioning"/>
+      <import plugin="org.osgi.annotation.bundle"/>
    </requires>
 
    <plugin
