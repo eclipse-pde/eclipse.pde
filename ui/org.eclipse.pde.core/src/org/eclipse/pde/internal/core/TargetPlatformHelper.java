@@ -43,6 +43,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.compiler.env.IModule;
+import org.eclipse.jdt.internal.compiler.env.IModule.IPackageExport;
+import org.eclipse.jdt.internal.core.builder.ClasspathJrt;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -68,6 +71,7 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.Version;
 
+@SuppressWarnings("restriction")
 public class TargetPlatformHelper {
 
 	public static final String REFERENCE_PREFIX = "reference:"; //$NON-NLS-1$
@@ -403,7 +407,6 @@ public class TargetPlatformHelper {
 		return new Dictionary[] { TargetPlatformHelper.getTargetEnvironment(state) };
 	}
 
-	@SuppressWarnings("restriction")
 	public static String querySystemPackages(IExecutionEnvironment environment) {
 		IVMInstall vm = bestVmInstallFor(environment);
 		if (vm == null || !JavaRuntime.isModularJava(vm)) {
@@ -420,9 +423,16 @@ public class TargetPlatformHelper {
 			Collection<String> packages = new TreeSet<>();
 			String jrtPath = "lib/" + org.eclipse.jdt.internal.compiler.util.JRTUtil.JRT_FS_JAR; //$NON-NLS-1$
 			String path = new File(vm.getInstallLocation(), jrtPath).toString(); // $NON-NLS-1$
-			var jrt = org.eclipse.jdt.internal.core.builder.ClasspathLocation.forJrtSystem(path, null, null, release);
+			ClasspathJrt jrt = org.eclipse.jdt.internal.core.builder.ClasspathLocation.forJrtSystem(path, null, null, release);
 			for (String moduleName : jrt.getModuleNames(null)) {
-				for (var packageExport : jrt.getModule(moduleName).exports()) {
+				IModule module = jrt.getModule(moduleName);
+				if (module == null) {
+					System.err.println("OMG, this NPE is really needed for tests to succeed?!?"); //$NON-NLS-1$
+					NullPointerException npe = new NullPointerException("Module is null: " + moduleName); //$NON-NLS-1$
+					npe.printStackTrace();
+					throw npe;
+				}
+				for (IPackageExport packageExport : module.exports()) {
 					if (!packageExport.isQualified()) {
 						packages.add(new String(packageExport.name()));
 					}
