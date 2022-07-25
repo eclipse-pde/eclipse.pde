@@ -422,11 +422,7 @@ public class TargetPlatformHelper {
 			String path = new File(vm.getInstallLocation(), jrtPath).toString(); // $NON-NLS-1$
 			var jrt = org.eclipse.jdt.internal.core.builder.ClasspathLocation.forJrtSystem(path, null, null, release);
 			for (String moduleName : jrt.getModuleNames(null)) {
-				var module = jrt.getModule(moduleName);
-				if (module == null) {
-					continue;
-				}
-				for (var packageExport : module.exports()) {
+				for (var packageExport : jrt.getModule(moduleName).exports()) {
 					if (!packageExport.isQualified()) {
 						packages.add(new String(packageExport.name()));
 					}
