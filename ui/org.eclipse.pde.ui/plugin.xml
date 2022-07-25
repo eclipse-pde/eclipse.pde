@@ -2376,4 +2376,16 @@
       	</action>
       </objectContribution>
   </extension>
+      <extension
+         point="org.eclipse.jdt.core.compilationParticipant">
+      <compilationParticipant
+            class="org.eclipse.pde.internal.ui.annotations.OSGiAnnotationsCompilationParticipant"
+            createsProblems="true"
+            id="org.eclipse.pde.internal.ui.annotations.OSGiAnnotationsCompilationParticipant"
+            requiredSourceLevel="1.5">
+         <managedMarker
+               markerType="org.eclipse.pde.osgi.annotations.problem">
+         </managedMarker>
+      </compilationParticipant>
+   </extension>
 </plugin>
