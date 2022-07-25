@@ -397,7 +397,7 @@
     <extension
           point="org.eclipse.pde.core.pluginClasspathContributors">
        <contributor
-             class="org.eclipse.pde.internal.core.OSGiAnnotationsClasspathContributor">
+             class="org.eclipse.pde.internal.core.annotations.OSGiAnnotationsClasspathContributor">
        </contributor>
     </extension>
 </plugin>
