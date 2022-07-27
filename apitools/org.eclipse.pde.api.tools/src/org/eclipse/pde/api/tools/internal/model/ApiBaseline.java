@@ -80,6 +80,8 @@ import org.osgi.framework.Version;
  */
 public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallChangedListener {
 
+	public static boolean DEBUG = false;
+
 	/**
 	 * Empty array of component
 	 */
@@ -213,10 +215,9 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		this.fLocation = location;
 	}
 
-
 	/**
-	 * Initializes this baseline to resolve in the execution environment
-	 * associated with the given description.
+	 * Initializes this baseline to resolve in the execution environment associated
+	 * with the given description.
 	 *
 	 * @param ee execution environment description
 	 * @throws CoreException if unable to initialize based on the given id
@@ -249,7 +250,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		if (apitoolsBundle == null) {
 			return null;
 		}
-		URL systemPackageProfile = apitoolsBundle.getEntry("system_packages" + '/' + ee.replace('/', '_') + "-systempackages.profile"); //$NON-NLS-1$ //$NON-NLS-2$
+		URL systemPackageProfile = apitoolsBundle
+				.getEntry("system_packages" + '/' + ee.replace('/', '_') + "-systempackages.profile"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (systemPackageProfile != null) {
 			return getPropertiesFromURL(systemPackageProfile);
 
@@ -300,7 +302,6 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		}
 		return null;
 	}
-
 
 	/**
 	 * Initializes this baseline from the given properties.
@@ -363,12 +364,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		}
 		clearComponentsCache();
 		// set new system library
-		SystemLibraryApiComponent fSystemLibraryComponent = new SystemLibraryApiComponent(this, description, systemPackages);
+		SystemLibraryApiComponent fSystemLibraryComponent = new SystemLibraryApiComponent(this, description,
+				systemPackages);
 		addComponent(fSystemLibraryComponent);
 		fSystemLibraryComponentList.add(fSystemLibraryComponent);
 	}
-
-
 
 	/**
 	 * Clears the package -> components cache
@@ -403,8 +403,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 					allComponents.add(component);
 				}
 			} else {
-				TreeSet<IApiComponent> allComponents = new TreeSet<>(
-						(comp1, comp2) -> {
+				TreeSet<IApiComponent> allComponents = new TreeSet<>((comp1, comp2) -> {
 					if (comp2.getVersion().equals(comp1.getVersion())) {
 						if (comp2.getVersion().contains("JavaSE")) { //$NON-NLS-1$
 							ApiPlugin.logInfoMessage("Multiple locations for the same Java = " //$NON-NLS-1$
@@ -452,8 +451,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	/**
 	 * Resolves and initializes the system library to use based on API component
-	 * requirements. Only works when running in the framework. Has no effect if
-	 * not running in the framework.
+	 * requirements. Only works when running in the framework. Has no effect if not
+	 * running in the framework.
 	 */
 	protected void resolveSystemLibrary(HashSet<String> ees) {
 		if (ApiPlugin.isRunningInFramework() && fAutoResolve) {
@@ -542,8 +541,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	/**
 	 * Returns true if the {@link IApiBaseline} has its information loaded
-	 * (components) false otherwise. This is a handle only method that will not
-	 * load information from disk.
+	 * (components) false otherwise. This is a handle only method that will not load
+	 * information from disk.
 	 *
 	 * @return true if the {@link IApiBaseline} has its information loaded
 	 *         (components) false otherwise.
@@ -613,9 +612,9 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 
 	/**
-	 * Resolves the listing of {@link IApiComponent}s that export the given
-	 * package name. The collection of {@link IApiComponent}s is written into
-	 * the specified list <code>componentList</code>
+	 * Resolves the listing of {@link IApiComponent}s that export the given package
+	 * name. The collection of {@link IApiComponent}s is written into the specified
+	 * list <code>componentList</code>
 	 *
 	 * @param component
 	 * @param packageName
@@ -673,7 +672,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 */
 	public IApiComponent[] getVisibleDependentComponents(IApiComponent[] components) throws CoreException {
 		ArrayList<BundleDescription> bundles = getBundleDescriptions(components);
-		BundleDescription[] descs = getState().getStateHelper().getDependentBundles(bundles.toArray(new BundleDescription[bundles.size()]));
+		BundleDescription[] descs = getState().getStateHelper()
+				.getDependentBundles(bundles.toArray(new BundleDescription[bundles.size()]));
 		HashSet<BundleDescription> visible = new HashSet<>();
 		ExportPackageDescription[] packages = null;
 		for (BundleDescription desc : descs) {
@@ -709,8 +709,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	/**
 	 * @return the OSGi state for this {@link IApiBaseline}
-	 * @nooverride This method is not intended to be re-implemented or extended
-	 *             by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by
+	 *             clients.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public State getState() {
@@ -727,12 +727,27 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	@Override
 	public IApiComponent getApiComponent(String id) {
+		if (ApiBaseline.DEBUG) {
+			System.out.println("ApiBaseline.getApiComponent(" + id + ") (disposed=" + disposed + ", fComponentsById=" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					+ fComponentsById + ")"); //$NON-NLS-1$
+		}
 		loadBaselineInfos();
 		Map<String, IApiComponent> componentsById = fComponentsById;
 		if (disposed || componentsById == null) {
 			return null;
 		}
-		return componentsById.get(id);
+		IApiComponent component = componentsById.get(id);
+		if (ApiBaseline.DEBUG) {
+			if (component == null) {
+				System.out.println("Component not found there are the follwoing components:"); //$NON-NLS-1$
+				for (Entry<String, IApiComponent> entry : componentsById.entrySet()) {
+					System.out.println(entry.getKey() + "::" + entry.getValue()); //$NON-NLS-1$
+				}
+			} else {
+				System.out.println("Returning " + component); //$NON-NLS-1$
+			}
+		}
+		return component;
 	}
 
 	@Override
@@ -755,8 +770,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 
 	/**
-	 * Loads the information from the *.profile file the first time the baseline
-	 * is accessed
+	 * Loads the information from the *.profile file the first time the baseline is
+	 * accessed
 	 */
 	private void loadBaselineInfos() {
 		if (disposed || restored) {
@@ -803,13 +818,12 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		}
 	}
 
-
 	/**
 	 * Returns all errors in the state.
 	 *
 	 * @return state errors
-	 * @nooverride This method is not intended to be re-implemented or extended
-	 *             by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by
+	 *             clients.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public ResolverError[] getErrors() {
@@ -974,8 +988,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 *
 	 * @param packageName
 	 * @noreference This method is not intended to be referenced by clients.
-	 * @nooverride This method is not intended to be re-implemented or extended
-	 *             by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by
+	 *             clients.
 	 */
 	public void clearPackage(String packageName) {
 		fComponentsProvidingPackageCache.remove(packageName);
@@ -1012,7 +1026,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	public void vmChanged(PropertyChangeEvent event) {
 		if (!(event.getSource() instanceof VMStandin)) {
 			String property = event.getProperty();
-			if (IVMInstallChangedListener.PROPERTY_INSTALL_LOCATION.equals(property) || IVMInstallChangedListener.PROPERTY_LIBRARY_LOCATIONS.equals(property)) {
+			if (IVMInstallChangedListener.PROPERTY_INSTALL_LOCATION.equals(property)
+					|| IVMInstallChangedListener.PROPERTY_LIBRARY_LOCATIONS.equals(property)) {
 				try {
 					rebindVM();
 				} catch (CoreException e) {

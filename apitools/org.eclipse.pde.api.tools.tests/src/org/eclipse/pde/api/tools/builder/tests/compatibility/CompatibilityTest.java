@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
+import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
@@ -148,6 +149,8 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			// build after revert
 			incrementalBuild();
 		}
+		ApiBaseline.DEBUG = true;
+		assertTrue("ApiPlugin is not running in framework!", ApiPlugin.isRunningInFramework()); //$NON-NLS-1$
 		IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
 		IApiBaseline baseline = manager.getDefaultApiBaseline();
 		if (baseline == null) {
@@ -171,6 +174,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			manager.addApiBaseline(baseline);
 			manager.setDefaultApiBaseline(baseline.getName());
 		}
+		ApiBaseline.DEBUG = false;
 		getEnv().setRevertSourcePath(new Path(BASELINE));
 	}
 
