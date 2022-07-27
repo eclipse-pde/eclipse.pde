@@ -326,8 +326,11 @@ public class LauncherUtils {
 				if (project instanceof IProject) {
 					IPluginModelBase model = PluginRegistry.findModel((IProject) project);
 					if (model != null) {
-						Set<BundleDescription> plugins = DependencyManager.getSelfAndDependencies(Set.of(model));
 						ModelEntry swtEntries = PluginRegistry.findEntry("org.eclipse.swt"); //$NON-NLS-1$
+						if (swtEntries == null) {
+							return false;
+						}
+						Set<BundleDescription> plugins = DependencyManager.getSelfAndDependencies(Set.of(model));
 						var swtModels = Stream.of(swtEntries.getWorkspaceModels(), swtEntries.getExternalModels()).flatMap(Arrays::stream);
 						return swtModels.map(IPluginModelBase::getBundleDescription).anyMatch(plugins::contains);
 					}
