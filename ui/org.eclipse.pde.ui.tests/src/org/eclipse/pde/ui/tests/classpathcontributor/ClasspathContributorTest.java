@@ -49,11 +49,27 @@ public class ClasspathContributorTest {
 		assertNotNull("Could not find PDE classpath container", container);
 		IClasspathEntry[] classpath = container.getClasspathEntries();
 		for (IClasspathEntry element : classpath) {
-			// Ignore the PDE Core bundle dependency
-			if (element.getPath().toPortableString().indexOf("org.eclipse.pde.core") == -1) {
+			if (!isPdeDependency(element)) {
 				assertTrue("Unexpected classpath entry found: " + element, expected.remove(element));
 			}
 		}
 		assertTrue("Expected classpath entry not found: " + Arrays.toString(expected.toArray()), expected.isEmpty());
+	}
+
+	private boolean isPdeDependency(IClasspathEntry element) {
+		String portableString = element.getPath().toPortableString();
+		if (portableString.indexOf("org.eclipse.pde.core") > -1) {
+			// The PDE Core bundle dependency
+			return true;
+		}
+		if (portableString.contains("org.osgi.annotation.versioning")) {
+			// osgi versioning annotations
+			return true;
+		}
+		if (portableString.contains("org.osgi.annotation.bundle")) {
+			// osgi bundle annotations
+			return true;
+		}
+		return false;
 	}
 }
