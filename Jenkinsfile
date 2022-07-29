@@ -21,7 +21,8 @@ pipeline {
 						-Pbuild-individual-bundles -Pbree-libs -Papi-check \
 						-Dcompare-version-with-baselines.skip=false \
 						-Dproject.build.sourceEncoding=UTF-8 \
-						-DtrimStackTrace=false
+						-DtrimStackTrace=false\
+						-T1C
 					"""
 				}
 			}

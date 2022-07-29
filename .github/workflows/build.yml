@@ -43,6 +43,7 @@ jobs:
         -Dcompare-version-with-baselines.skip=false
         -Dproject.build.sourceEncoding=UTF-8
         -DtrimStackTrace=false
+        -T1C
         clean verify
     - name: Upload Test Results
       uses: actions/upload-artifact@v3
