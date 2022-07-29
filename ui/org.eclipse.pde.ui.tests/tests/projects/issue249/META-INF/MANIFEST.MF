@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Issue 249
+Bundle-SymbolicName: org.eclipse.pde.ui.tests.issue249
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: org.eclipse.pde.ui.tests.issue249
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: org.eclipse.pde.ui.tests

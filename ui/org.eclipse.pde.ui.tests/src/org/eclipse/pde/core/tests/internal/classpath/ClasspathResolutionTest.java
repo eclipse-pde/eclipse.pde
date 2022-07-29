@@ -14,9 +14,11 @@
  *******************************************************************************/
 package org.eclipse.pde.core.tests.internal.classpath;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeNotNull;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -27,6 +29,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.RequiredPluginsClasspathContainer;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
@@ -132,6 +136,26 @@ public class ClasspathResolutionTest {
 		assertTrue("javax.annotations shouldn't be present in required bundles",
 				Arrays.stream(container.getClasspathEntries()).map(IClasspathEntry::getPath).map(IPath::lastSegment)
 				.noneMatch(fileName -> fileName.contains("javax.annotation")));
+	}
+
+	@Test
+	public void testIssue249() throws Exception {
+		TargetPlatformUtil.setRunningPlatformAsTarget();
+
+		IPluginModelBase pluginModel = PluginRegistry.findModel("org.eclipse.pde.ui.tests");
+		assumeNotNull(pluginModel);
+
+		IProject project = ProjectUtils.importTestProject("tests/projects/issue249");
+		project.build(IncrementalProjectBuilder.FULL_BUILD, null);
+
+		IMarker[] problems = project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+
+		for (IMarker problem : problems) {
+			int severity = problem.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+			String message = problem.getAttribute(IMarker.MESSAGE, null);
+
+			assertNotEquals(message, IMarker.SEVERITY_ERROR, severity);
+		}
 	}
 
 	private void loadTargetPlatform(String bundleName) throws Exception {
