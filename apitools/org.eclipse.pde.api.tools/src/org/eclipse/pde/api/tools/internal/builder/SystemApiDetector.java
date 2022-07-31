@@ -325,8 +325,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 				// always have a EE set
 				return false;
 			}
-			loop: for (int i = 0, max = lowestEEs.length; i < max; i++) {
-				String lowestEE = lowestEEs[i];
+			loop: for (String lowestEE : lowestEEs) {
 				int eeValue = ProfileModifiers.getValue(lowestEE);
 				if (eeValue == ProfileModifiers.NO_PROFILE_VALUE) {
 					return false;
@@ -342,8 +341,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 						String referencedTypeName = reference.getReferencedTypeName();
 						int index = referencedTypeName.lastIndexOf('.');
 						String packageName = referencedTypeName.substring(0, index);
-						for (int j = 0, max2 = importPackages.length; j < max2; j++) {
-							ImportPackageSpecification importPackageSpecification = importPackages[j];
+						for (ImportPackageSpecification importPackageSpecification : importPackages) {
 							// get the IPackageDescriptor for the element
 							// descriptor
 							String importPackageName = importPackageSpecification.getName();

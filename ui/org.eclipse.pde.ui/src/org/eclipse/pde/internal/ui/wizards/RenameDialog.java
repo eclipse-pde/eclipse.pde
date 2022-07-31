@@ -136,8 +136,8 @@ public class RenameDialog extends SelectionStatusDialog {
 				return;
 			}
 		}
-		for (int i = 0; i < oldNames.size(); i++) {
-			if ((isCaseSensitive && text.equals(oldNames.get(i))) || (!isCaseSensitive && text.equalsIgnoreCase(oldNames.get(i).toString()))) {
+		for (String oldName2 : oldNames) {
+			if ((isCaseSensitive && text.equals(oldName2)) || (!isCaseSensitive && text.equalsIgnoreCase(oldName2.toString()))) {
 				status = Status.error(PDEUIMessages.RenameDialog_validationError);
 				updateStatus(status);
 				okButton.setEnabled(false);

@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.ua.core.cheatsheet.comp;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -271,10 +270,7 @@ public abstract class CompCSTaskObject extends CompCSObject implements
 		if (fFieldOnCompletion != null) {
 			fFieldOnCompletion.write(newIndent, writer);
 		}
-		// Print dependency elements
-		Iterator<ICompCSDependency> iterator = fFieldDependencies.iterator();
-		while (iterator.hasNext()) {
-			ICompCSDependency dependency = iterator.next();
+		for (ICompCSDependency dependency : fFieldDependencies) {
 			dependency.write(newIndent, writer);
 		}
 	}

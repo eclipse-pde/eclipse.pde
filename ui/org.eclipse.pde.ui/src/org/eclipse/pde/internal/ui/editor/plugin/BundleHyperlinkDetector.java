@@ -49,8 +49,8 @@ public class BundleHyperlinkDetector implements IHyperlinkDetector {
 			return null;
 
 		String[] translatable = ICoreConstants.TRANSLATABLE_HEADERS;
-		for (int i = 0; i < translatable.length; i++) {
-			if (!headerName.equals(translatable[i]))
+		for (String element2 : translatable) {
+			if (!headerName.equals(element2))
 				continue;
 			String value = header.getValue();
 			if (value == null || value.length() == 0 || value.charAt(0) != '%')

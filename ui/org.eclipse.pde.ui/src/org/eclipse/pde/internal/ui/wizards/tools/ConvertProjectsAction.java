@@ -89,9 +89,9 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 	private IProject[] getUnconvertedProjects() {
 		ArrayList<IProject> unconverted = new ArrayList<>();
 		IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			if (projects[i].isOpen() && !PDE.hasPluginNature(projects[i]) && !PDE.hasFeatureNature(projects[i]) && !PDE.hasUpdateSiteNature(projects[i]) && projects[i].getName().indexOf('%') == -1 && projects[i].getLocation().toString().indexOf('%') == -1)
-				unconverted.add(projects[i]);
+		for (IProject project : projects) {
+			if (project.isOpen() && !PDE.hasPluginNature(project) && !PDE.hasFeatureNature(project) && !PDE.hasUpdateSiteNature(project) && project.getName().indexOf('%') == -1 && project.getLocation().toString().indexOf('%') == -1)
+				unconverted.add(project);
 		}
 		return unconverted.toArray(new IProject[unconverted.size()]);
 	}

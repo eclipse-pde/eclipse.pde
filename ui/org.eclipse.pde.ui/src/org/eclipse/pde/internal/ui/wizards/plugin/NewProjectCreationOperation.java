@@ -431,9 +431,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 		if (fContentWizard != null) {
 			String[] files = fContentWizard.getNewFiles();
-			for (int j = 0; j < files.length; j++) {
-				if (!binEntry.contains(files[j]))
-					binEntry.addToken(files[j]);
+			for (String file : files) {
+				if (!binEntry.contains(file))
+					binEntry.addToken(file);
 			}
 		}
 	}
@@ -470,9 +470,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 		if (fContentWizard != null) {
 			IPluginReference[] refs = fContentWizard.getDependencies(fData.isLegacy() ? null : "3.0"); //$NON-NLS-1$
-			for (int j = 0; j < refs.length; j++) {
-				if (!result.contains(refs[j]))
-					result.add(refs[j]);
+			for (IPluginReference ref : refs) {
+				if (!result.contains(ref))
+					result.add(ref);
 			}
 		}
 		return result.toArray(new IPluginReference[result.size()]);
@@ -569,13 +569,11 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	 */
 	protected String getCommaValuesFromPackagesSet(Set<String> values, String version) {
 		StringBuilder buffer = new StringBuilder();
-		Iterator<String> iter = values.iterator();
-		while (iter.hasNext()) {
+		for (String value : values) {
 			if (buffer.length() > 0) {
 				// space required for multiline headers
 				buffer.append("," + TextUtil.getDefaultLineDelimiter() + " "); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			String value = iter.next().toString();
 			buffer.append(value);
 
 			if (!value.contains(";version=") && (version != null) && (values.size() == 1)) { //$NON-NLS-1$

@@ -421,9 +421,9 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		}
 
 		ArrayList<IPluginModelBase> result = new ArrayList<>();
-		for (int i = 0; i < plugins.length; i++) {
-			if (!currentPlugins.contains(plugins[i].getPluginBase().getId()))
-				result.add(plugins[i]);
+		for (IPluginModelBase plugin : plugins) {
+			if (!currentPlugins.contains(plugin.getPluginBase().getId()))
+				result.add(plugin);
 		}
 		return result.toArray(new IPluginModelBase[result.size()]);
 	}

@@ -79,10 +79,10 @@ public class PackageFinder {
 			String descriptor = new String(methodInfo.getDescriptor());
 			//add parameter types
 			String[] parameterTypes = Signature.getParameterTypes(descriptor);
-			for (int j = 0; j < parameterTypes.length; j++) {
+			for (String parameterType : parameterTypes) {
 				//have to parse to convert [Ljava/lang/String; to java.lang.String
-				if (!isPrimitiveTypeSignature(parameterTypes[j])) {
-					packages.add(getPackage(extractFullyQualifiedTopLevelType(parameterTypes[j])));
+				if (!isPrimitiveTypeSignature(parameterType)) {
+					packages.add(getPackage(extractFullyQualifiedTopLevelType(parameterType)));
 				}
 			}
 			//add return type
@@ -121,9 +121,9 @@ public class PackageFinder {
 							//add parameter types
 							String descriptor = new String(type);
 							String[] parameterTypes = Signature.getParameterTypes(descriptor);
-							for (int j = 0; j < parameterTypes.length; j++) {
-								if (!isPrimitiveTypeSignature(parameterTypes[j])) {
-									packages.add(getPackage(extractFullyQualifiedTopLevelType(parameterTypes[j])));
+							for (String parameterType : parameterTypes) {
+								if (!isPrimitiveTypeSignature(parameterType)) {
+									packages.add(getPackage(extractFullyQualifiedTopLevelType(parameterType)));
 								}
 							}
 							//add return type

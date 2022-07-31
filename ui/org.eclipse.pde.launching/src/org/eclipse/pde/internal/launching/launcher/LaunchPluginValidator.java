@@ -69,9 +69,9 @@ public class LaunchPluginValidator {
 		if (addFeatures) {
 			// add workspace feature project too (if any)
 			IProject[] allProjects = PDECore.getWorkspace().getRoot().getProjects();
-			for (int i = 0; i < allProjects.length; i++) {
-				if (WorkspaceModelManager.isFeatureProject(allProjects[i]) && !projects.contains(allProjects[i]))
-					projects.add(allProjects[i]);
+			for (IProject project : allProjects) {
+				if (WorkspaceModelManager.isFeatureProject(project) && !projects.contains(project))
+					projects.add(project);
 			}
 		}
 		// add fake "Java Search" project

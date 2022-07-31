@@ -345,9 +345,9 @@ public class ExecutionEnvironmentSection extends TableSection {
 		if (header == null)
 			return envs;
 		ArrayList<Object> list = new ArrayList<>();
-		for (int i = 0; i < envs.length; i++) {
-			if (!header.hasExecutionEnvironment(envs[i]))
-				list.add(envs[i]);
+		for (IExecutionEnvironment env : envs) {
+			if (!header.hasExecutionEnvironment(env))
+				list.add(env);
 		}
 		return list.toArray();
 	}

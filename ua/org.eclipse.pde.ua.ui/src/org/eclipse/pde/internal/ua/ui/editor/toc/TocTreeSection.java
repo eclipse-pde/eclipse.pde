@@ -1178,8 +1178,7 @@ public class TocTreeSection extends TreeSection {
 	private void handleMoveAction(int positionFlag) {
 		IStructuredSelection sel = fTocTree.getStructuredSelection();
 
-		for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
-			Object object = iter.next();
+		for (Object object : sel) {
 			if (object == null) {
 				return;
 			} else if (object instanceof TocObject) {

@@ -396,8 +396,8 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	 */
 	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
-		for (int i = 0; i < objects.length; i++) {
-			if (!(objects[i] instanceof FeaturePlugin))
+		for (Object object : objects) {
+			if (!(object instanceof FeaturePlugin))
 				return false;
 		}
 		return true;

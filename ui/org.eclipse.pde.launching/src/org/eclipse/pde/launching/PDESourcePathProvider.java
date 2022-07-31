@@ -104,13 +104,13 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 	 */
 	private void addBinaryPackageFragmentRoots(IJavaProject jProject, List<IRuntimeClasspathEntry> all) throws CoreException {
 		IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
-		for (int j = 0; j < roots.length; j++) {
-			if (roots[j].getKind() == IPackageFragmentRoot.K_BINARY && !PDEJavaHelper.isJRELibrary(roots[j])) {
-				IRuntimeClasspathEntry rte = JavaRuntime.newArchiveRuntimeClasspathEntry(roots[j].getPath());
-				IPath path = roots[j].getSourceAttachmentPath();
+		for (IPackageFragmentRoot root : roots) {
+			if (root.getKind() == IPackageFragmentRoot.K_BINARY && !PDEJavaHelper.isJRELibrary(root)) {
+				IRuntimeClasspathEntry rte = JavaRuntime.newArchiveRuntimeClasspathEntry(root.getPath());
+				IPath path = root.getSourceAttachmentPath();
 				if (path != null) {
 					rte.setSourceAttachmentPath(path);
-					rte.setSourceAttachmentRootPath(roots[j].getSourceAttachmentRootPath());
+					rte.setSourceAttachmentRootPath(root.getSourceAttachmentRootPath());
 				}
 				if (!all.contains(rte))
 					all.add(rte);

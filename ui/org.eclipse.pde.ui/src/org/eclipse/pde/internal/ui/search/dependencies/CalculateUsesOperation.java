@@ -62,10 +62,10 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 
 		ArrayList<String> list = new ArrayList<>();
 		ExportPackageObject[] pkgs = ((ExportPackageHeader) header).getPackages();
-		for (int i = 0; i < pkgs.length; i++) {
+		for (ExportPackageObject pkg : pkgs) {
 			// don't calculate uses directive on private packages
-			if (!pkgs[i].isInternal())
-				list.add(pkgs[i].getName());
+			if (!pkg.isInternal())
+				list.add(pkg.getName());
 		}
 		return list;
 	}
@@ -115,18 +115,18 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		IType[] subTypes = type.getTypes();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, methods.length * 3 + fields.length + 2 + subTypes.length);
 
-		for (int i = 0; i < methods.length; i++) {
-			if (!Flags.isPrivate(methods[i].getFlags())) {
-				String methodSignature = methods[i].getSignature();
+		for (IMethod method : methods) {
+			if (!Flags.isPrivate(method.getFlags())) {
+				String methodSignature = method.getSignature();
 				addPackages(Signature.getThrownExceptionTypes(methodSignature), pkgs, type, binary,
 						subMonitor.split(1));
 				addPackages(Signature.getParameterTypes(methodSignature), pkgs, type, binary, subMonitor.split(1));
 				addPackage(Signature.getReturnType(methodSignature), pkgs, type, binary, subMonitor.split(1));
 			}
 		}
-		for (int i = 0; i < fields.length; i++) {
-			if (!Flags.isPrivate(fields[i].getFlags()))
-				addPackage(fields[i].getTypeSignature(), pkgs, type, binary, subMonitor.split(1));
+		for (IField field : fields) {
+			if (!Flags.isPrivate(field.getFlags()))
+				addPackage(field.getTypeSignature(), pkgs, type, binary, subMonitor.split(1));
 		}
 		addPackage(type.getSuperclassTypeSignature(), pkgs, type, binary, subMonitor.split(1));
 		addPackages(type.getSuperInterfaceTypeSignatures(), pkgs, type, binary, subMonitor.split(1));
@@ -185,11 +185,11 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		IManifestHeader header = bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
 		// header will not equal null b/c we would not get this far (ie. no exported packages so we would have returned earlier
 		ExportPackageObject[] pkgs = ((ExportPackageHeader) header).getPackages();
-		for (int i = 0; i < pkgs.length; i++) {
-			if (!pkgsAndUses.containsKey(pkgs[i].getName()))
+		for (ExportPackageObject pkg : pkgs) {
+			if (!pkgsAndUses.containsKey(pkg.getName()))
 				continue;
-			String value = getDirectiveValue(pkgs[i].getName(), pkgsAndUses);
-			pkgs[i].setUsesDirective(value);
+			String value = getDirectiveValue(pkg.getName(), pkgsAndUses);
+			pkg.setUsesDirective(value);
 		}
 	}
 

@@ -15,7 +15,6 @@
 package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.comp;
 
 import java.util.HashSet;
-import java.util.Iterator;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
@@ -89,10 +88,9 @@ public class CompCSGroupValidator {
 			fForm.setMessage(null);
 			return true;
 		}
-		Iterator<ICompCSTaskGroup> iterator = fGroups.iterator();
+		
 		// Validate all registered groups
-		while (iterator.hasNext()) {
-			ICompCSTaskGroup group = iterator.next();
+		for (ICompCSTaskGroup group : fGroups) {
 			if (validate(group) == false) {
 				return false;
 			}

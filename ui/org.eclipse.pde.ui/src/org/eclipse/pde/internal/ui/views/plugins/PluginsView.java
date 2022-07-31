@@ -494,8 +494,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 		if (selection.isEmpty())
 			return false;
-		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
-			Object obj = iter.next();
+		for (Object obj : selection) {
 			if (!(obj instanceof IPluginModelBase))
 				return false;
 			if (((IPluginModelBase) obj).getUnderlyingResource() == null)
@@ -854,8 +853,8 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 	private boolean isVisible(IPluginModelBase entry) {
 		ViewerFilter[] filters = fTreeViewer.getFilters();
-		for (int i = 0; i < filters.length; i++) {
-			if (!filters[i].select(fTreeViewer, fRoot, entry))
+		for (ViewerFilter filter : filters) {
+			if (!filter.select(fTreeViewer, fRoot, entry))
 				return false;
 		}
 		return true;
@@ -887,8 +886,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 			if (selection.isEmpty()) {
 				resources = null;
 			} else {
-				for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
-					Object obj = iter.next();
+				for (Object obj : selection) {
 					if (obj instanceof IPluginModelBase) {
 						resourceList.add(((IPluginModelBase) obj).getUnderlyingResource());
 					}

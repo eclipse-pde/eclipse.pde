@@ -415,8 +415,8 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 						return;
 
 					entry = bmodel.getFactory().createEntry(PROPERTY_SOURCE_PREFIX + newPath);
-					for (int i = 0; i < tokens.size(); i++)
-						entry.addToken(tokens.get(i));
+					for (String token : tokens)
+						entry.addToken(token);
 					build.add(entry);
 				} else
 					entry.setName(PROPERTY_SOURCE_PREFIX + newPath);
@@ -553,8 +553,8 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 						index = i;
 					// do not add the old paths (handling deletion/renaming)
 					IPath path = entries[i].getPath().removeFirstSegments(1).removeTrailingSeparator();
-					for (int j = 0; j < oldPaths.length; j++)
-						if (oldPaths[j] != null && path.equals(new Path(oldPaths[j]).removeTrailingSeparator()))
+					for (String oldPath : oldPaths)
+						if (oldPath != null && path.equals(new Path(oldPath).removeTrailingSeparator()))
 							continue entryLoop;
 				} else if (entries[i].getEntryKind() == IClasspathEntry.CPE_CONTAINER)
 					if (index == -1)

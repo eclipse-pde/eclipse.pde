@@ -118,12 +118,12 @@ public class TagCompletionProcessor extends DelegateProcessor {
 
 		Arrays.sort(tags);
 
-		for (int i = 0; i < tags.length; i++) {
-			StyledString displayString = TargetDefinitionContentAssist.getFilteredStyledString(tags[i], searchTerm);
-			if (displayString == null || displayString.length() == 0 || siblingTags.contains(tags[i])) {
+		for (String tag : tags) {
+			StyledString displayString = TargetDefinitionContentAssist.getFilteredStyledString(tag, searchTerm);
+			if (displayString == null || displayString.length() == 0 || siblingTags.contains(tag)) {
 				continue;
 			}
-			proposals.add(new TagCompletionProposal(tags[i], offset - searchTerm.length(), searchTerm.length(),
+			proposals.add(new TagCompletionProposal(tag, offset - searchTerm.length(), searchTerm.length(),
 					displayString));
 		}
 		return proposals.toArray(new ICompletionProposal[proposals.size()]);

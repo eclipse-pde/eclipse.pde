@@ -195,11 +195,10 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 
 				// grab the contributed resolutions
 				IMarkerResolution[] contributedResolutions = IDE.getMarkerHelpRegistry().getResolutions(marker);
-				for (int i = 0; i < contributedResolutions.length; i++) {
-					IMarkerResolution resolution = contributedResolutions[i];
+				for (IMarkerResolution resolution : contributedResolutions) {
 					// only add contributed marker resolutions if they don't come from PDE
-					if (!(resolution instanceof AbstractPDEMarkerResolution) && !resolutions.contains(contributedResolutions[i]))
-						resolutions.add(contributedResolutions[i]);
+					if (!(resolution instanceof AbstractPDEMarkerResolution) && !resolutions.contains(resolution))
+						resolutions.add(resolution);
 				}
 				if (!resolutions.isEmpty()) {
 					fResMap.put(marker, resolutions.toArray(new IMarkerResolution[resolutions.size()]));

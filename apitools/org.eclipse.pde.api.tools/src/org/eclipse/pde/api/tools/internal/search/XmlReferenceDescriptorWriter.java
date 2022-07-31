@@ -149,44 +149,44 @@ public class XmlReferenceDescriptorWriter {
 		HashSet<IReferenceDescriptor> reflist = null;
 		IComponentDescriptor rcomponent = null;
 		IComponentDescriptor mcomponent = null;
-		for (int i = 0; i < references.length; i++) {
-			rcomponent = references[i].getReferencedComponent();
+		for (IReferenceDescriptor element : references) {
+			rcomponent = element.getReferencedComponent();
 			id = getId(rcomponent);
 			rmap = fReferenceMap.get(id);
 			if (rmap == null) {
 				rmap = new HashMap<>();
 				fReferenceMap.put(id, rmap);
 			}
-			mcomponent = references[i].getComponent();
+			mcomponent = element.getComponent();
 			id = getId(mcomponent);
 			mmap = rmap.get(id);
 			if (mmap == null) {
 				mmap = new HashMap<>();
 				rmap.put(id, mmap);
 			}
-			if ((references[i].getReferenceFlags() & IReference.F_ILLEGAL) > 0) {
+			if ((element.getReferenceFlags() & IReference.F_ILLEGAL) > 0) {
 				visibility = V_ILLEGAL;
 			} else {
-				visibility = Integer.valueOf(references[i].getVisibility());
+				visibility = Integer.valueOf(element.getVisibility());
 			}
 			vmap = mmap.get(visibility);
 			if (vmap == null) {
 				vmap = new HashMap<>();
 				mmap.put(visibility, vmap);
 			}
-			type = Integer.valueOf(references[i].getReferenceType());
+			type = Integer.valueOf(element.getReferenceType());
 			tmap = vmap.get(type);
 			if (tmap == null) {
 				tmap = new HashMap<>();
 				vmap.put(type, tmap);
 			}
-			tname = getText(references[i].getReferencedMember());
+			tname = getText(element.getReferencedMember());
 			reflist = tmap.get(tname);
 			if (reflist == null) {
 				reflist = new HashSet<>();
 				tmap.put(tname, reflist);
 			}
-			reflist.add(references[i]);
+			reflist.add(element);
 		}
 	}
 
@@ -265,8 +265,7 @@ public class XmlReferenceDescriptorWriter {
 		File root = null;
 		File location = null;
 		File base = null;
-		for (Iterator<Entry<String, HashMap<String, HashMap<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>>>>> iter = fReferenceMap.entrySet().iterator(); iter.hasNext();) {
-			Entry<String, HashMap<String, HashMap<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>>>> entry = iter.next();
+		for (Entry<String, HashMap<String, HashMap<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>>>> entry : fReferenceMap.entrySet()) {
 			id = entry.getKey();
 			referee = id;
 			base = new File(parent, id);
@@ -274,24 +273,21 @@ public class XmlReferenceDescriptorWriter {
 				base.mkdir();
 			}
 			rmap = entry.getValue();
-			for (Iterator<Entry<String, HashMap<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>>>> iter2 = rmap.entrySet().iterator(); iter2.hasNext();) {
-				Entry<String, HashMap<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>>> entry2 = iter2.next();
+			for (Entry<String, HashMap<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>>> entry2 : rmap.entrySet()) {
 				id = entry2.getKey();
 				root = new File(base, id);
 				if (!root.exists()) {
 					root.mkdir();
 				}
 				mmap = entry2.getValue();
-				for (Iterator<Entry<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>>> iter4 = mmap.entrySet().iterator(); iter4.hasNext();) {
-					Entry<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>> entry3 = iter4.next();
+				for (Entry<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>> entry3 : mmap.entrySet()) {
 					vis = entry3.getKey();
 					location = new File(root, VisibilityModifiers.getVisibilityName(vis.intValue()));
 					if (!location.exists()) {
 						location.mkdir();
 					}
 					vismap = entry3.getValue();
-					for (Iterator<Entry<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>> iter3 = vismap.entrySet().iterator(); iter3.hasNext();) {
-						Entry<Integer, HashMap<String, HashSet<IReferenceDescriptor>>> entry4 = iter3.next();
+					for (Entry<Integer, HashMap<String, HashSet<IReferenceDescriptor>>> entry4 : vismap.entrySet()) {
 						type = entry4.getKey();
 						typemap = entry4.getValue();
 						writeGroup(id, referee, location, getRefTypeName(type.intValue()), typemap, vis.intValue());
@@ -354,8 +350,7 @@ public class XmlReferenceDescriptorWriter {
 				String tname = null;
 				HashSet<IReferenceDescriptor> refs = null;
 				Element telement = null;
-				for (Iterator<Entry<String, HashSet<IReferenceDescriptor>>> iter = map.entrySet().iterator(); iter.hasNext();) {
-					Entry<String, HashSet<IReferenceDescriptor>> entry = iter.next();
+				for (Entry<String, HashSet<IReferenceDescriptor>> entry : map.entrySet()) {
 					tname = entry.getKey();
 					telement = findTypeElement(root, tname);
 					if (telement == null) {

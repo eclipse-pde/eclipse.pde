@@ -457,9 +457,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		IPluginModelBase[] plugins = PluginRegistry.getActiveModels(false);
 		Set<String> existingImports = PluginSelectionDialog.getExistingImports(model, false);
 		ArrayList<IPluginModelBase> result = new ArrayList<>();
-		for (int i = 0; i < plugins.length; i++) {
-			if (!existingImports.contains(plugins[i].getPluginBase().getId())) {
-				result.add(plugins[i]);
+		for (IPluginModelBase plugin : plugins) {
+			if (!existingImports.contains(plugin.getPluginBase().getId())) {
+				result.add(plugin);
 			}
 		}
 
@@ -637,8 +637,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	private ImportObject findImportObject(IPluginImport iimport) {
 		if (fImports == null)
 			return null;
-		for (int i = 0; i < fImports.size(); i++) {
-			ImportObject iobj = fImports.get(i);
+		for (ImportObject iobj : fImports) {
 			if (iobj.getImport().equals(iimport))
 				return iobj;
 		}

@@ -399,11 +399,11 @@ public class LaunchAction extends Action {
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(EclipseLaunchShortcut.CONFIGURATION_TYPE);
 		ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
-		for (int i = 0; i < configs.length; i++) {
-			if (!DebugUITools.isPrivate(configs[i])) {
-				String path = configs[i].getAttribute(IPDELauncherConstants.PRODUCT_FILE, ""); //$NON-NLS-1$
+		for (ILaunchConfiguration config : configs) {
+			if (!DebugUITools.isPrivate(config)) {
+				String path = config.getAttribute(IPDELauncherConstants.PRODUCT_FILE, ""); //$NON-NLS-1$
 				if (new Path(fPath).equals(new Path(path))) {
-					result.add(configs[i]);
+					result.add(config);
 				}
 			}
 		}

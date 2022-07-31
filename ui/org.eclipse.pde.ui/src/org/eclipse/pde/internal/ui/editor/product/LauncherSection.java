@@ -327,8 +327,7 @@ public class LauncherSection extends PDESection {
 
 		// Turn off auto message update until after values are set
 		fSingleWinIconValidator.setRefresh(false);
-		for (int i = 0; i < fIcons.size(); i++) {
-			IconEntry entry = fIcons.get(i);
+		for (IconEntry entry : fIcons) {
 			entry.setValue(info.getIconPath(entry.getIconId()), true);
 		}
 		// Turn back on auto message update
@@ -340,8 +339,7 @@ public class LauncherSection extends PDESection {
 	}
 
 	private void updateWinEntries(boolean useIco) {
-		for (int i = 0; i < fIcons.size(); i++) {
-			IconEntry entry = fIcons.get(i);
+		for (IconEntry entry : fIcons) {
 			String id = entry.getIconId();
 			if (id.equals(ILauncherInfo.P_ICO_PATH)) {
 				boolean enabled = isEditable() && useIco;
@@ -390,16 +388,16 @@ public class LauncherSection extends PDESection {
 	@Override
 	public void commit(boolean onSave) {
 		fNameEntry.commit();
-		for (int i = 0; i < fIcons.size(); i++)
-			((FormEntry) fIcons.get(i)).commit();
+		for (IconEntry fIcon : fIcons)
+			((FormEntry) fIcon).commit();
 		super.commit(onSave);
 	}
 
 	@Override
 	public void cancelEdit() {
 		fNameEntry.cancelEdit();
-		for (int i = 0; i < fIcons.size(); i++)
-			((FormEntry) fIcons.get(i)).commit();
+		for (IconEntry fIcon : fIcons)
+			((FormEntry) fIcon).commit();
 		super.cancelEdit();
 	}
 

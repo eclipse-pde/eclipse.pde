@@ -284,8 +284,7 @@ public class RegistryModel {
 		List<ServiceRegistration> result = new ArrayList<>();
 
 		synchronized (services) {
-			for (Iterator<ServiceRegistration> i = services.values().iterator(); i.hasNext();) {
-				ServiceRegistration sr = i.next();
+			for (ServiceRegistration sr : services.values()) {
 				if (Arrays.equals(classes, sr.getName().getClasses()))
 					result.add(sr);
 			}
@@ -309,8 +308,7 @@ public class RegistryModel {
 	 * @param objects
 	 */
 	protected void fireModelChangeEvent(ModelChangeDelta[] delta) {
-		for (Iterator<ModelChangeListener> i = listeners.iterator(); i.hasNext();) {
-			ModelChangeListener listener = i.next();
+		for (ModelChangeListener listener : listeners) {
 			listener.modelChanged(delta);
 		}
 	}
@@ -321,9 +319,7 @@ public class RegistryModel {
 
 	public Bundle getBundle(String symbolicName, String versionRange) {
 		synchronized (bundles) {
-			for (Iterator<Bundle> i = bundles.values().iterator(); i.hasNext();) {
-				Bundle bundle = i.next();
-
+			for (Bundle bundle : bundles.values()) {
 				if (bundle.getSymbolicName().equals(symbolicName)) {
 					if (versionMatches(bundle.getVersion(), versionRange))
 						return bundle;
@@ -345,8 +341,7 @@ public class RegistryModel {
 
 		List<Bundle> result = new ArrayList<>(set.size());
 		Version hostVersion = Version.parseVersion(bundle.getVersion());
-		for (Iterator<Bundle> i = set.iterator(); i.hasNext();) {
-			Bundle fragment = i.next();
+		for (Bundle fragment : set) {
 			String fragmentVersionOrRange = fragment.getFragmentHostVersion();
 
 			if (versionMatches(hostVersion, fragmentVersionOrRange))

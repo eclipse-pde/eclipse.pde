@@ -94,8 +94,7 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 
 	private boolean canCopy(IStructuredSelection selection) {
 		Object prev = null;
-		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
-			Object obj = iter.next();
+		for (Object obj : selection) {
 			if (!(obj instanceof ISchemaObject))
 				return false;
 			if (prev != null) {
@@ -113,8 +112,7 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 
 	private ISchemaObject[] createObjectRepresentation(IStructuredSelection selection) {
 		ArrayList<Object> objects = new ArrayList<>();
-		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
-			Object obj = iter.next();
+		for (Object obj : selection) {
 			if (obj instanceof ISchemaObject)
 				objects.add(obj);
 			else

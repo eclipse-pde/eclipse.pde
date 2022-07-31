@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.ua.core.cheatsheet.comp;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -109,10 +108,7 @@ public class CompCSTask extends CompCSTaskObject implements ICompCSTask {
 	protected void writeElements(String indent, PrintWriter writer) {
 		super.writeElements(indent, writer);
 		String newIndent = indent + XMLPrintHandler.XML_INDENT;
-		// Print param elements
-		Iterator<ICompCSParam> iterator = fFieldParams.iterator();
-		while (iterator.hasNext()) {
-			ICompCSParam param = iterator.next();
+		for (ICompCSParam param : fFieldParams) {
 			param.write(newIndent, writer);
 		}
 	}

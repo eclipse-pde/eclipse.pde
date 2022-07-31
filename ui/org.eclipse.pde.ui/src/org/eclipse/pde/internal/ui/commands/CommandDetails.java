@@ -378,12 +378,12 @@ public class CommandDetails {
 	}
 
 	protected void dispose() {
-		for (int i = 0; i < fObjectParamList.size(); i++)
-			fObjectParamList.get(i).dispose();
-		for (int i = 0; i < fValueParamList.size(); i++)
-			fValueParamList.get(i).dispose();
-		for (int i = 0; i < fTextParamList.size(); i++)
-			fTextParamList.get(i).dispose();
+		for (ObjectParameterControl element : fObjectParamList)
+			element.dispose();
+		for (ValuesParameterControl element : fValueParamList)
+			element.dispose();
+		for (TextParameterControl element : fTextParamList)
+			element.dispose();
 	}
 
 	private void populateParams(Command command, Object selectedObject) throws NotDefinedException {

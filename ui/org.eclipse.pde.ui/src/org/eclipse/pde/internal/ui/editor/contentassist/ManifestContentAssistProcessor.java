@@ -569,9 +569,9 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			for (ManifestElement elem : elems)
 				set.add(elem.getValue());
 		int length = currentValue.length();
-		for (int i = 0; i < validValues.length; i++)
-			if (validValues[i].regionMatches(true, 0, currentValue, 0, length) && !set.contains(validValues[i]))
-				completions.add(new TypeCompletionProposal(validValues[i], getImage(F_TYPE_VALUE), validValues[i], offset - length, length));
+		for (String validValue : validValues)
+			if (validValue.regionMatches(true, 0, currentValue, 0, length) && !set.contains(validValue))
+				completions.add(new TypeCompletionProposal(validValue, getImage(F_TYPE_VALUE), validValue, offset - length, length));
 		return completions.toArray(new ICompletionProposal[completions.size()]);
 	}
 
@@ -586,9 +586,9 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		if (set == null)
 			set = new HashSet<>(0);
 		int length = currentValue.length();
-		for (int i = 0; i < fExecEnvs.length; i++)
-			if (fExecEnvs[i].regionMatches(true, 0, currentValue, 0, length) && !set.contains(fExecEnvs[i]))
-				completions.add(new TypeCompletionProposal(fExecEnvs[i], getImage(F_TYPE_EXEC_ENV), fExecEnvs[i], offset - length, length));
+		for (String fExecEnv : fExecEnvs)
+			if (fExecEnv.regionMatches(true, 0, currentValue, 0, length) && !set.contains(fExecEnv))
+				completions.add(new TypeCompletionProposal(fExecEnv, getImage(F_TYPE_EXEC_ENV), fExecEnv, offset - length, length));
 		return completions.toArray(new ICompletionProposal[completions.size()]);
 	}
 
@@ -613,9 +613,9 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		ArrayList<TypeCompletionProposal> completions = new ArrayList<>();
 		int length = currentValue.length();
 		String[] values = ICoreConstants.SHAPE_VALUES;
-		for (int i = 0; i < values.length; i++)
-			if (values[i].regionMatches(true, 0, currentValue, 0, length) && !currentValue.equals(values[i]))
-				completions.add(new TypeCompletionProposal(values[i], getImage(F_TYPE_VALUE), values[i], offset - length, length));
+		for (String value : values)
+			if (value.regionMatches(true, 0, currentValue, 0, length) && !currentValue.equals(value))
+				completions.add(new TypeCompletionProposal(value, getImage(F_TYPE_VALUE), value, offset - length, length));
 		return completions.toArray(new ICompletionProposal[completions.size()]);
 	}
 
@@ -810,9 +810,9 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	}
 
 	public void dispose() {
-		for (int i = 0; i < fImages.length; i++)
-			if (fImages[i] != null && !fImages[i].isDisposed())
-				fImages[i].dispose();
+		for (Image fImage : fImages)
+			if (fImage != null && !fImage.isDisposed())
+				fImage.dispose();
 	}
 
 	private String getJavaDoc(String constant) {

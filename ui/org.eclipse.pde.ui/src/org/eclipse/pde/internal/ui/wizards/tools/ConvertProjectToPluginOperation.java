@@ -271,10 +271,10 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 		IExecutionEnvironment[] exeEnvs = VMUtil.getExecutionEnvironments();
 		IExecutionEnvironment ee = null;
 		IVMInstall defaultVM = JavaRuntime.getDefaultVMInstall();
-		for (int i = 0; i < exeEnvs.length; i++) {
-			if (!(exeEnvs[i].getId().equals(NO_EXECUTION_ENVIRONMENT))) {
-				if (VMUtil.getExecutionEnvironment(exeEnvs[i].getId()).isStrictlyCompatible(defaultVM)) {
-					ee = exeEnvs[i];
+		for (IExecutionEnvironment exeEnv : exeEnvs) {
+			if (!(exeEnv.getId().equals(NO_EXECUTION_ENVIRONMENT))) {
+				if (VMUtil.getExecutionEnvironment(exeEnv.getId()).isStrictlyCompatible(defaultVM)) {
+					ee = exeEnv;
 					break;
 				}
 			}

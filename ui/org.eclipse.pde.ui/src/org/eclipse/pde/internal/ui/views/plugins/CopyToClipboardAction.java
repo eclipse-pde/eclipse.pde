@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.ui.views.plugins;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.FileAdapter;
@@ -49,8 +48,7 @@ public class CopyToClipboardAction extends Action {
 	private boolean canCopy(IStructuredSelection selection) {
 		if (selection.isEmpty())
 			return false;
-		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
-			Object obj = iter.next();
+		for (Object obj : selection) {
 			if (!(obj instanceof FileAdapter))
 				return false;
 		}
@@ -62,8 +60,7 @@ public class CopyToClipboardAction extends Action {
 		if (selection.isEmpty())
 			return;
 		ArrayList<Object> files = new ArrayList<>();
-		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
-			Object obj = iter.next();
+		for (Object obj : selection) {
 			if (obj instanceof FileAdapter)
 				files.add(obj);
 		}

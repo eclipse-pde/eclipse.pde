@@ -1395,8 +1395,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	 * fCombos or fCheckBoxes
 	 */
 	private void updateControls() {
-		for (int i = 0; i < fCombos.size(); i++) {
-			Combo combo = fCombos.get(i);
+		for (Combo combo : fCombos) {
 			ControlData data = (ControlData) combo.getData();
 			combo.select(data.getSelection(getValue(data.getKey())));
 		}
@@ -1599,8 +1598,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 	public void selectOption(String key, String qualifier) {
 		Key[] allKeys = getAllKeys();
-		for (int i = 0; i < allKeys.length; i++) {
-			Key curr = allKeys[i];
+		for (Key curr : allKeys) {
 			if (curr.getName().equals(key) && curr.getQualifier().equals(qualifier)) {
 				selectOption(curr);
 			}
@@ -1624,8 +1622,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 			if (!fExpComps.isEmpty()) {
 				ExpandableComposite expandable = getParentExpandableComposite(control);
 				if (expandable != null) {
-					for (int i = 0; i < fExpComps.size(); i++) {
-						ExpandableComposite curr = fExpComps.get(i);
+					for (ExpandableComposite curr : fExpComps) {
 						curr.setExpanded(curr == expandable);
 					}
 				}

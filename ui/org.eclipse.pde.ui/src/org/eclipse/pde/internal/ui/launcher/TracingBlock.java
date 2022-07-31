@@ -219,9 +219,9 @@ public class TracingBlock {
 				fMasterOptions.clear();
 				fMasterOptions.putAll(PDECore.getDefault().getTracingOptionsManager().getTracingTemplateCopy());
 				Object elements[] = fPluginViewer.getCheckedElements();
-				for (int i = 0; i < elements.length; i++) {
-					if (elements[i] instanceof IPluginModelBase) {
-						IPluginModelBase model = (IPluginModelBase) (elements[i]);
+				for (Object element : elements) {
+					if (element instanceof IPluginModelBase) {
+						IPluginModelBase model = (IPluginModelBase) (element);
 						TracingPropertySource source = getPropertySource(model);
 						PageBookKey key = new PageBookKey(model, true);
 						Composite parent = fPageBook.createPage(key);

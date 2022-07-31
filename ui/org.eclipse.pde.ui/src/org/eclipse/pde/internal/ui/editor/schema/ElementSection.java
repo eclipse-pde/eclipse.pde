@@ -294,13 +294,13 @@ public class ElementSection extends TreeSection {
 					boolean seperatorAdded = false;
 					ISchemaElement[] elements = sourceElement.getSchema().getResolvedElements();
 					Arrays.sort(elements);
-					for (int i = 0; i < elements.length; i++) {
-						if (!(elements[i] instanceof SchemaRootElement)) {
+					for (ISchemaElement element : elements) {
+						if (!(element instanceof SchemaRootElement)) {
 							if (!seperatorAdded) {
 								submenu.add(new Separator());
 								seperatorAdded = true;
 							}
-							submenu.add(new NewReferenceAction(sourceElement, object, elements[i]));
+							submenu.add(new NewReferenceAction(sourceElement, object, element));
 						}
 					}
 				}
@@ -331,8 +331,7 @@ public class ElementSection extends TreeSection {
 	private void handleDelete(IStructuredSelection selection) {
 		IStructuredSelection nextSelection = null;
 		Object selectionSource = null;
-		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
-			Object thisObject = iter.next();
+		for (Object thisObject : selection) {
 			// Do the delete and generate a new selection in one of the following cases:
 			//   1. No selection has been generated
 			//   2. This object is higher up in the hierarchy than the previous
@@ -739,10 +738,10 @@ public class ElementSection extends TreeSection {
 	}
 
 	public void handleOp(Object currentTarget, Object[] objects, int currentOperation) {
-		for (int i = 0; i < objects.length; i++) {
-			if (!(objects[i] instanceof ISchemaObject))
+		for (Object object2 : objects) {
+			if (!(object2 instanceof ISchemaObject))
 				continue;
-			ISchemaObject object = (ISchemaObject) objects[i];
+			ISchemaObject object = (ISchemaObject) object2;
 			ISchemaObject realTarget = getRealTarget(currentTarget, object);
 			ISchemaObject sibling = getSibling(currentTarget, object);
 			if (realTarget == null)

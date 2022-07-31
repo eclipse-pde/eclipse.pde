@@ -89,9 +89,9 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 			ILaunchConfigurationType type = manager.getLaunchConfigurationType(getLaunchConfigurationTypeName());
 			ILaunchConfiguration[] configurations = manager.getLaunchConfigurations(type);
-			for (int i = 0; i < configurations.length; i++) {
-				if (!DebugUITools.isPrivate(configurations[i]) && isGoodMatch(configurations[i])) {
-					result.add(configurations[i]);
+			for (ILaunchConfiguration configuration : configurations) {
+				if (!DebugUITools.isPrivate(configuration) && isGoodMatch(configuration)) {
+					result.add(configuration);
 				}
 			}
 		} catch (CoreException e) {

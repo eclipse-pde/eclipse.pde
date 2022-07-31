@@ -126,9 +126,9 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 		ITemplateSection[] sections = getTemplateSections();
 		for (ITemplateSection section : sections) {
 			IPluginReference[] refs = section.getDependencies(schemaVersion);
-			for (int j = 0; j < refs.length; j++) {
-				if (!result.contains(refs[j]))
-					result.add(refs[j]);
+			for (IPluginReference ref : refs) {
+				if (!result.contains(ref))
+					result.add(ref);
 			}
 		}
 		return result.toArray(new IPluginReference[result.size()]);
@@ -140,9 +140,9 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 		ITemplateSection[] sections = getTemplateSections();
 		for (ITemplateSection section : sections) {
 			String[] newFiles = section.getNewFiles();
-			for (int j = 0; j < newFiles.length; j++) {
-				if (!result.contains(newFiles[j]))
-					result.add(newFiles[j]);
+			for (String newFile : newFiles) {
+				if (!result.contains(newFile))
+					result.add(newFile);
 			}
 		}
 		return result.toArray(new String[result.size()]);

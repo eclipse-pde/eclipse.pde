@@ -783,11 +783,11 @@ public class TargetContentsGroup {
 	private void getFeatureDependencies(TargetFeature feature, TargetFeature[] allFeatures, Set<TargetFeature> requiredFeatures) {
 		NameVersionDescriptor[] dependents = feature.getDependentFeatures();
 		for (NameVersionDescriptor dependent : dependents) {
-			for (int j = 0; j < allFeatures.length; j++) {
-				if (allFeatures[j].getId().equals(dependent.getId())) {
-					if (!requiredFeatures.contains(allFeatures[j])) {
-						requiredFeatures.add(allFeatures[j]);
-						getFeatureDependencies(allFeatures[j], allFeatures, requiredFeatures);
+			for (TargetFeature feature2 : allFeatures) {
+				if (feature2.getId().equals(dependent.getId())) {
+					if (!requiredFeatures.contains(feature2)) {
+						requiredFeatures.add(feature2);
+						getFeatureDependencies(feature2, allFeatures, requiredFeatures);
 					}
 					break;
 				}
@@ -1144,11 +1144,11 @@ public class TargetContentsGroup {
 				if (fMissing == null || fMissing.isEmpty()) {
 					fMissing = new HashSet<>(); // A set is used to remove copies of problem bundles
 					TargetBundle[] bundles = fTargetDefinition.getBundles();
-					for (int i = 0; i < bundles.length; i++) {
-						if (!bundles[i].getStatus().isOK()) {
+					for (TargetBundle bundle : bundles) {
+						if (!bundle.getStatus().isOK()) {
 							// We only display error bundles that have symbolic names
-							if (bundles[i].getBundleInfo().getSymbolicName() != null) {
-								fMissing.add(bundles[i]);
+							if (bundle.getBundleInfo().getSymbolicName() != null) {
+								fMissing.add(bundle);
 							}
 						}
 					}

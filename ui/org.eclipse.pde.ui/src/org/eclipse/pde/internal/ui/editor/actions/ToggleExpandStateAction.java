@@ -163,8 +163,7 @@ public class ToggleExpandStateAction extends Action {
 		boolean isExpandable = false;
 		if (selection != null) {
 			if (!selection.isEmpty()) {
-				for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
-					Object element = iterator.next();
+				for (Object element : selection) {
 					if (element instanceof PluginParentNode) {
 						PluginParentNode node = (PluginParentNode) element;
 						if (node.getChildCount() > 0) {

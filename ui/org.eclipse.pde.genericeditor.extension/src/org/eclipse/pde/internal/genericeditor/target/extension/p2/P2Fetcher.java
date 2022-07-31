@@ -17,7 +17,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
@@ -73,9 +72,7 @@ public class P2Fetcher {
 			IMetadataRepository repository = manager.loadRepository(uri, null);
 			result = repository.query(QueryUtil.createLatestIUQuery(), null);
 
-			Iterator<IInstallableUnit> iterator = result.iterator();
-			while (iterator.hasNext()) {
-				IInstallableUnit unit = iterator.next();
+			for (IInstallableUnit unit : result) {
 				UnitNode modelUnit = new UnitNode();
 				modelUnit.setId(unit.getId());
 				modelUnit.setVersion(unit.getVersion().getOriginal());

@@ -117,9 +117,9 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 
 		// Remove packages that don't exist
 		if (removeUnresolved)
-			for (int i = 0; i < currentPkgs.length; i++)
-				if (!packages.contains(currentPkgs[i].getName()))
-					header.removePackage(currentPkgs[i]);
+			for (ExportPackageObject currentPkg : currentPkgs)
+				if (!packages.contains(currentPkg.getName()))
+					header.removePackage(currentPkg);
 	}
 
 	public static void markPackagesInternal(IBundle bundle, String packageFilter) {
@@ -132,10 +132,10 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 
 		ExportPackageObject[] currentPkgs = header.getPackages();
 		Pattern pat = PatternConstructor.createPattern(packageFilter, false);
-		for (int i = 0; i < currentPkgs.length; i++) {
-			String values = currentPkgs[i].getValueComponents()[0];
-			if (!currentPkgs[i].isInternal() && currentPkgs[i].getFriends().length == 0 && pat.matcher(values).matches()) {
-				currentPkgs[i].setInternal(true);
+		for (ExportPackageObject currentPkg : currentPkgs) {
+			String values = currentPkg.getValueComponents()[0];
+			if (!currentPkg.isInternal() && currentPkg.getFriends().length == 0 && pat.matcher(values).matches()) {
+				currentPkg.setInternal(true);
 			}
 		}
 	}
@@ -213,9 +213,9 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 				IBuild build = ((IBuildModel) model).getBuild();
 				IBuildEntry[] entries = build.getBuildEntries();
 				ArrayList<String> allKeys = new ArrayList<>(entries.length);
-				for (int i = 0; i < entries.length; i++)
-					if (!allKeys.contains(entries[i].getName()))
-						allKeys.add(entries[i].getName());
+				for (IBuildEntry entry2 : entries)
+					if (!allKeys.contains(entry2.getName()))
+						allKeys.add(entry2.getName());
 
 				ArrayList<String> usedkeys = new ArrayList<>();
 				findTranslatedStrings(project, modelBase, bundle, usedkeys);
@@ -246,8 +246,8 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 					}
 				}
 
-				for (int i = 0; i < allKeys.size(); i++) {
-					IBuildEntry entry = build.getEntry(allKeys.get(i));
+				for (String key : allKeys) {
+					IBuildEntry entry = build.getEntry(key);
 					build.remove(entry);
 				}
 			}

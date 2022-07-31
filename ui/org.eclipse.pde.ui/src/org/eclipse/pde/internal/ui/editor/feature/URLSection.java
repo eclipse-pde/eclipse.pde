@@ -301,8 +301,8 @@ public class URLSection extends TableSection {
 	 */
 	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
-		for (int i = 0; i < objects.length; i++) {
-			if (!(objects[i] instanceof FeatureURLElement))
+		for (Object object : objects) {
+			if (!(object instanceof FeatureURLElement))
 				return false;
 		}
 		return true;

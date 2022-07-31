@@ -222,9 +222,9 @@ public class ImplicitDependenciesSection extends SectionPart {
 		if (allTargetBundles == null || allTargetBundles.length == 0) {
 			throw new CoreException(Status.warning(PDEUIMessages.ImplicitDependenciesSection_0));
 		}
-		for (int i = 0; i < allTargetBundles.length; i++) {
-			if (!currentBundles.contains(allTargetBundles[i].getBundleInfo().getSymbolicName())) {
-				targetBundles.add(allTargetBundles[i].getBundleInfo());
+		for (TargetBundle targetBundle : allTargetBundles) {
+			if (!currentBundles.contains(targetBundle.getBundleInfo().getSymbolicName())) {
+				targetBundles.add(targetBundle.getBundleInfo());
 			}
 		}
 

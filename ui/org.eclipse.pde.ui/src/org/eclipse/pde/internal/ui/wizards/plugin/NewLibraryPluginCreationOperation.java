@@ -20,6 +20,7 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipFile;
@@ -362,9 +363,9 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		try {
 			ManifestElement[] elems = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, value);
 			StringBuilder buff = new StringBuilder(value.length());
-			for (int i = 0; i < elems.length; i++) {
-				if (!elems[i].getValue().equals(".")) //$NON-NLS-1$
-					buff.append(elems[i].getValue());
+			for (ManifestElement elem : elems) {
+				if (!elem.getValue().equals(".")) //$NON-NLS-1$
+					buff.append(elem.getValue());
 			}
 			bundle.setHeader(Constants.BUNDLE_CLASSPATH, buff.toString());
 		} catch (BundleException e) {
@@ -439,9 +440,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 	private Set<String> findPackages(IProject proj, Map<String, List<String>> libs, IBuild build) {
 		TreeSet<String> result = new TreeSet<>();
 		IJavaProject jp = JavaCore.create(proj);
-		Iterator<Map.Entry<String, List<String>>> it = libs.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<String, List<String>> entry = it.next();
+		for (Entry<String, List<String>> entry : libs.entrySet()) {
 			String libName = entry.getKey();
 			List<String> filter = entry.getValue();
 			IBuildEntry libEntry = build.getEntry(SOURCE_PREFIX + libName);

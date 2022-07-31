@@ -15,7 +15,6 @@ package org.eclipse.pde.api.tools.internal.builder;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -287,8 +286,7 @@ public class IncrementalApiBuilder {
 				Set<IApiComponent> apiComponentMultiple = wbaseline.getAllApiComponents(id);
 				if (!apiComponentMultiple.isEmpty()) {
 					// add the exact match
-					for (Iterator<IApiComponent> iterator = apiComponentMultiple.iterator(); iterator.hasNext();) {
-						IApiComponent iApiComponent = iterator.next();
+					for (IApiComponent iApiComponent : apiComponentMultiple) {
 						Version workspaceBaselineVersion = new Version(iApiComponent.getVersion());// removes
 																									// qualifier
 						Version currentProjectVersion = currentModel.getBundleDescription().getVersion();

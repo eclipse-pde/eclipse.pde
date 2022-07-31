@@ -79,9 +79,7 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 		if (initialSelection == null || initialSelection.isEmpty())
 			return;
 		Set<IPluginModelBase> selected = new HashSet<>();
-		Iterator<?> iter = initialSelection.iterator();
-		while (iter.hasNext()) {
-			Object obj = iter.next();
+		for (Object obj : initialSelection) {
 			if (obj instanceof IProject) {
 				IPluginModelBase model = PluginRegistry.findModel((IProject) obj);
 				if (model != null) {

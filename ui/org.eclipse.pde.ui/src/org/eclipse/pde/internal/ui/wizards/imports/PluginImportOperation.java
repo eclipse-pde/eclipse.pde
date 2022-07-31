@@ -197,10 +197,7 @@ public class PluginImportOperation extends WorkspaceJob {
 
 		if (fImportType == IMPORT_FROM_REPOSITORY) {
 			final List<String> namesOfNotImportedProjects = new ArrayList<>();
-			Iterator<Entry<IBundleImporter, ScmUrlImportDescription[]>> iterator = fImportDescriptions.entrySet()
-					.iterator();
-			while (iterator.hasNext()) {
-				Entry<IBundleImporter, ScmUrlImportDescription[]> entry = iterator.next();
+			for (Entry<IBundleImporter, ScmUrlImportDescription[]> entry : fImportDescriptions.entrySet()) {
 				IBundleImporter importer = entry.getKey();
 				ScmUrlImportDescription[] descriptions = entry.getValue();
 				if (descriptions.length == 0)
@@ -363,8 +360,8 @@ public class PluginImportOperation extends WorkspaceJob {
 			}
 
 			// delete the selected projects
-			for (int i = 0; i < overwriteProjectList.size(); i++) {
-				IPluginModelBase plugin = (IPluginModelBase) overwriteProjectList.get(i);
+			for (Object element : overwriteProjectList) {
+				IPluginModelBase plugin = (IPluginModelBase) element;
 				monitor.setTaskName(
 						NLS.bind(PDEUIMessages.PluginImportOperation_Importing_plugin, plugin.getPluginBase().getId()));
 				IProject project = plugin.getUnderlyingResource().getProject();

@@ -15,7 +15,6 @@
 package org.eclipse.pde.internal.ua.ui.editor.toc;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -111,8 +110,7 @@ public class TocEditor extends MultiSourceEditor {
 
 		if (getSelection() instanceof IStructuredSelection) {
 			IStructuredSelection selection = (IStructuredSelection) getSelection();
-			for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
-				Object obj = iter.next();
+			for (Object obj : selection) {
 				if (!(obj instanceof TocObject))
 					return false;
 				if (((TocObject) obj).getPath() == null)
@@ -140,8 +138,7 @@ public class TocEditor extends MultiSourceEditor {
 			} else {
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
-				for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
-					Object obj = iter.next();
+				for (Object obj : selection) {
 					if (obj instanceof TocObject && ((TocObject) obj).getPath() != null) {
 						Path resourcePath = new Path(((TocObject) obj).getPath());
 
@@ -277,8 +274,7 @@ public class TocEditor extends MultiSourceEditor {
 	public boolean canCut(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection sel = (IStructuredSelection) selection;
-			for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
-				Object obj = iter.next();
+			for (Object obj : sel) {
 				if (obj instanceof TocObject
 						&& ((TocObject) obj).canBeRemoved()) {
 					return canCopy(selection);

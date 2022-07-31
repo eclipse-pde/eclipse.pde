@@ -202,8 +202,8 @@ public final class Util {
 				return true;
 			}
 			if (this.fProjects != null) {
-				for (int i = 0, max = this.fProjects.length; i < max; i++) {
-					if (!other.contains(this.fProjects[i])) {
+				for (IProject fProject : this.fProjects) {
+					if (!other.contains(fProject)) {
 						return false;
 					}
 				}

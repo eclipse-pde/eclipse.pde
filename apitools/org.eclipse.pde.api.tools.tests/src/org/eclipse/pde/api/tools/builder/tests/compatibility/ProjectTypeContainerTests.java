@@ -177,9 +177,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 		}
 		if (!set.isEmpty()) {
 			System.out.println("LEFTOVERS"); //$NON-NLS-1$
-			Iterator<String> iterator = set.iterator();
-			while (iterator.hasNext()) {
-				String string = iterator.next();
+			for (String string : set) {
 				System.out.println(string);
 			}
 		}
@@ -240,9 +238,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 		}
 		if (!set.isEmpty()) {
 			System.out.println("LEFTOVER TYPES"); //$NON-NLS-1$
-			Iterator<String> iterator2 = set.iterator();
-			while (iterator2.hasNext()) {
-				String string = iterator2.next();
+			for (String string : set) {
 				System.out.println(string);
 			}
 		}
@@ -257,9 +253,7 @@ public class ProjectTypeContainerTests extends CompatibilityTest {
 		}
 		if (!set.isEmpty()) {
 			System.out.println("LEFTOVER PACKAGES"); //$NON-NLS-1$
-			Iterator<String> iterator2 = set.iterator();
-			while (iterator2.hasNext()) {
-				String string = iterator2.next();
+			for (String string : set) {
 				System.out.println(string);
 			}
 		}

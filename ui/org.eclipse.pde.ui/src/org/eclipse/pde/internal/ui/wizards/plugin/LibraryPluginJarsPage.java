@@ -195,8 +195,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 	private void handleRemove() {
 		IStructuredSelection selection = fTableViewer.getStructuredSelection();
 		if (!selection.isEmpty()) {
-			for (Iterator<?> it = selection.iterator(); it.hasNext();) {
-				Object file = it.next();
+			for (Object file : selection) {
 				fJarPaths.remove(file);
 				fTableViewer.remove(file);
 			}

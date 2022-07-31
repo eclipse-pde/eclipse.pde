@@ -46,8 +46,8 @@ public class ReconcilingStrategy implements IReconcilingStrategy {
 	}
 
 	private synchronized void notifyParticipants() {
-		for (int i = 0; i < fParticipants.size(); i++) {
-			fParticipants.get(i).reconciled(fDocument);
+		for (IReconcilingParticipant fParticipant : fParticipants) {
+			fParticipant.reconciled(fDocument);
 		}
 	}
 

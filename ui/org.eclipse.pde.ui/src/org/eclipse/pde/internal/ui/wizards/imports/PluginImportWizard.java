@@ -135,9 +135,9 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 				imported.add(bd.getSymbolicName());
 			}
 		}
-		for (int i = 0; i < launches.length; ++i) {
-			if (!launches[i].isTerminated()) {
-				ILaunchConfiguration configuration = launches[i].getLaunchConfiguration();
+		for (ILaunch element : launches) {
+			if (!element.isTerminated()) {
+				ILaunchConfiguration configuration = element.getLaunchConfiguration();
 				if (configuration == null)
 					continue;
 				try {

@@ -273,8 +273,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	}
 
 	protected void fireStructureChange(IFile file, boolean added) {
-		for (int i = 0; i < listeners.size(); i++) {
-			IInputContextListener listener = listeners.get(i);
+		for (IInputContextListener listener : listeners) {
 			if (added)
 				listener.monitoredFileAdded(file);
 			else
@@ -283,8 +282,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	}
 
 	protected void fireContextChange(InputContext context, boolean added) {
-		for (int i = 0; i < listeners.size(); i++) {
-			IInputContextListener listener = listeners.get(i);
+		for (IInputContextListener listener : listeners) {
 			if (added)
 				listener.contextAdded(context);
 			else

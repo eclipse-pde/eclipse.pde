@@ -257,8 +257,7 @@ public class XMLErrorReporter extends DefaultHandler {
 			if (idx == -1)
 				break;
 			boolean valid = true;
-			for (int i = 0; i < commentPositions.size(); i++) {
-				Position pos = commentPositions.get(i);
+			for (Position pos : commentPositions) {
 				if (pos.includes(idx)) {
 					valid = false;
 					break;

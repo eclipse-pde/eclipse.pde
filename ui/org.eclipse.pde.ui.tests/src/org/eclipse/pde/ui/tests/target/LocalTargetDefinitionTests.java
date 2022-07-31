@@ -427,9 +427,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		for (TargetBundle bundle : bundles) {
 			expected.remove(bundle.getBundleInfo().getSymbolicName());
 		}
-		Iterator<String> iterator = expected.iterator();
-		while (iterator.hasNext()) {
-			String name = iterator.next();
+		for (String name : expected) {
 			System.err.println("Missing: " + name);
 		}
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
@@ -483,9 +481,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 				}
 			}
 		}
-		Iterator<String> iterator = expected.iterator();
-		while (iterator.hasNext()) {
-			String name = iterator.next();
+		for (String name : expected) {
 			System.err.println("Missing: " + name);
 		}
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
@@ -604,9 +600,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 				expected.remove(model.getPluginBase().getId());
 				assertTrue(model.isEnabled());
 			}
-			Iterator<String> iterator = expected.iterator();
-			while (iterator.hasNext()) {
-				String name = iterator.next();
+			for (String name : expected) {
 				System.err.println("Missing: " + name);
 			}
 			assertTrue("Wrong bundles in target platform", expected.isEmpty());

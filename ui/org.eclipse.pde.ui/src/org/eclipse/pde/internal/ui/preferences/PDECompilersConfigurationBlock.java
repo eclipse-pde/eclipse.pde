@@ -1001,8 +1001,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 	public void selectOption(String key, String qualifier) {
 		Key[] allKeys = fgAllKeys;
-		for (int i = 0; i < allKeys.length; i++) {
-			Key curr = allKeys[i];
+		for (Key curr : allKeys) {
 			if (curr.getName().equals(key) && curr.getQualifier().equals(qualifier)) {
 				selectOption(curr);
 			}

@@ -14,6 +14,7 @@
 package org.eclipse.ui.trace.internal.utils;
 
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.ui.trace.internal.TracingUIActivator;
@@ -85,10 +86,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 	public static void savePreferences(final Map<String, String> entries) {
 		final IEclipsePreferences preferences = PreferenceHandler.getPreferences();
 		if (entries != null) {
-			// persist each entry
-			final Iterator<Map.Entry<String, String>> entriesIterator = entries.entrySet().iterator();
-			while (entriesIterator.hasNext()) {
-				Map.Entry<String, String> entry = entriesIterator.next();
+			for (Entry<String, String> entry : entries.entrySet()) {
 				preferences.put(entry.getKey(), entry.getValue());
 			}
 		}

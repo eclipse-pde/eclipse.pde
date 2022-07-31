@@ -25,6 +25,7 @@ import static org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent.TRAVER
 
 import java.io.File;
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.layout.*;
@@ -474,8 +475,8 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		// ensure the characters in the string are numbers between 0 - 9
 		char[] chars = new char[input.length()];
 		input.getChars(0, chars.length, chars, 0);
-		for (int i = 0; i < chars.length; i++) {
-			if (!(('0' <= chars[i]) && (chars[i] <= '9'))) {
+		for (char element : chars) {
+			if (!(('0' <= element) && (element <= '9'))) {
 				setValid(false);
 				setErrorMessage(errorMessage);
 				return;
@@ -562,9 +563,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		Map<String, String> prefDebugOptions = PreferenceHandler.getPreferenceProperties();
 		// get all debug options (this ensures that the disabled debug options are used when populating)
 		Map<String, String> debugOptions = DebugOptionsHandler.getDebugOptions().getOptions();
-		Iterator<Map.Entry<String, String>> prefDebugOptionsIterator = prefDebugOptions.entrySet().iterator();
-		while (prefDebugOptionsIterator.hasNext()) {
-			Map.Entry<String, String> prefDebugOption = prefDebugOptionsIterator.next();
+		for (Entry<String, String> prefDebugOption : prefDebugOptions.entrySet()) {
 			String debugOptionsValue = debugOptions.get(prefDebugOption.getValue());
 			boolean updateDebugOption = true;
 			if (debugOptionsValue != null) {

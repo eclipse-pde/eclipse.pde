@@ -14,7 +14,6 @@
 package org.eclipse.pde.spy.event.internal.core;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -84,9 +83,8 @@ public class EventMonitor {
 
 	private boolean shouldBeCaptured(CapturedEvent event) {
 		if (filters != null) {
-			Iterator<CapturedEventFilter> iter = filters.iterator();
-			while (iter.hasNext()) {
-				if (!getEventFilterMatcher().matches(event, iter.next())) {
+			for (CapturedEventFilter filter : filters) {
+				if (!getEventFilterMatcher().matches(event, filter)) {
 					return false;
 				}
 			}
@@ -98,12 +96,12 @@ public class EventMonitor {
 		StackTraceElement[] items = Thread.currentThread().getStackTrace();
 		boolean foundEventBroker = false;
 
-		for (int i = 0; i < items.length; i++) {
-			String clsName = items[i].getClassName();
+		for (StackTraceElement item : items) {
+			String clsName = item.getClassName();
 			if (!foundEventBroker && clsName.equals(EventBroker.class.getName())) {
 				foundEventBroker = true;
 			} else if (foundEventBroker && !EVENT_HELPER_CLASSES.contains(clsName.hashCode())) {
-				return String.format("%s (%s:%d)", clsName, items[i].getMethodName(), items[i].getLineNumber()); //$NON-NLS-1$
+				return String.format("%s (%s:%d)", clsName, item.getMethodName(), item.getLineNumber()); //$NON-NLS-1$
 			}
 		}
 		return ""; //$NON-NLS-1$

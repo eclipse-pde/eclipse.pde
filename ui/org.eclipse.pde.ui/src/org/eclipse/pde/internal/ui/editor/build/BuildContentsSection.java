@@ -189,8 +189,8 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		try {
 			boolean uncheck = true;
 			IResource[] members = ((IFolder) parent).members();
-			for (int i = 0; i < members.length; i++) {
-				if (fTreeViewer.getChecked(members[i]) && !members[i].getName().equals(name))
+			for (IResource member : members) {
+				if (fTreeViewer.getChecked(member) && !member.getName().equals(name))
 					uncheck = false;
 			}
 			if (uncheck) {
@@ -285,10 +285,10 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 				return;
 			try {
 				IResource[] members = fBundleRoot.members();
-				for (int i = 0; i < members.length; i++) {
-					if (!(members[i] instanceof IFolder) && (fileExt.contains(members[i].getFileExtension()))) {
-						fTreeViewer.setChecked(members[i], includes.contains("*." //$NON-NLS-1$
-								+ members[i].getFileExtension()));
+				for (IResource member : members) {
+					if (!(member instanceof IFolder) && (fileExt.contains(member.getFileExtension()))) {
+						fTreeViewer.setChecked(member, includes.contains("*." //$NON-NLS-1$
+								+ member.getFileExtension()));
 					}
 				}
 			} catch (CoreException e) {
@@ -348,9 +348,9 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 					includes.removeToken(resourceName);
 				if (includes.contains("*." + resource.getFileExtension())) { //$NON-NLS-1$
 					IResource[] members = fBundleRoot.members();
-					for (int i = 0; i < members.length; i++) {
-						if (!(members[i] instanceof IFolder) && !members[i].getName().equals(resource.getName()) && (resource.getFileExtension().equals(members[i].getFileExtension()))) {
-							includes.addToken(members[i].getName());
+					for (IResource member : members) {
+						if (!(member instanceof IFolder) && !member.getName().equals(resource.getName()) && (resource.getFileExtension().equals(member.getFileExtension()))) {
+							includes.addToken(member.getName());
 						}
 						IBuildEntry[] libraries = BuildUtil.getBuildLibraries(fBuildModel.getBuild().getBuildEntries());
 						if (resource.getFileExtension().equals("jar") //$NON-NLS-1$
@@ -442,9 +442,9 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		try {
 			if (entry != null) {
 				String[] tokens = entry.getTokens();
-				for (int i = 0; i < tokens.length; i++) {
-					if (tokens[i].indexOf(IPath.SEPARATOR) != -1 && tokens[i].startsWith(parentFolder) && !tokens[i].equals(parentFolder)) {
-						entry.removeToken(tokens[i]);
+				for (String token : tokens) {
+					if (token.indexOf(IPath.SEPARATOR) != -1 && token.startsWith(parentFolder) && !token.equals(parentFolder)) {
+						entry.removeToken(token);
 					}
 				}
 			}

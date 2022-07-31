@@ -401,10 +401,10 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 	private void refreshPropertiesViewer(boolean updateLabels) {
 		fPropertiesViewer.refresh(updateLabels);
 		TableItem[] items = fTable.getItems();
-		for (int i = 0; i < items.length; i++) {
-			if (!(items[i].getData() instanceof ModelChangeElement))
+		for (TableItem item : items) {
+			if (!(item.getData() instanceof ModelChangeElement))
 				continue;
-			ModelChangeElement element = (ModelChangeElement) items[i].getData();
+			ModelChangeElement element = (ModelChangeElement) item.getData();
 			fPropertiesViewer.setChecked(element, element.isExternalized());
 		}
 	}

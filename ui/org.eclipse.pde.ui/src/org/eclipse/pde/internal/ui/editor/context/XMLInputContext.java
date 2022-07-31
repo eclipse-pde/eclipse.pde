@@ -479,9 +479,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	protected abstract void reorderInsertEdits(ArrayList<TextEdit> ops);
 
 	protected void removeUnnecessaryOperations() {
-		Iterator<TextEdit> iter = fOperationTable.values().iterator();
-		while (iter.hasNext()) {
-			Object object = iter.next();
+		for (Object object : fOperationTable.values()) {
 			if (object instanceof IDocumentElementNode) {
 				IDocumentElementNode node = (IDocumentElementNode) object;
 				if (node.getOffset() > -1) {

@@ -126,8 +126,8 @@ public class ExtensionsPatternFilter extends PatternFilter {
 	}
 
 	protected boolean matchWithAttributes(IPluginElement pluginElement, String searchPattern, String attributeName, List<String> attributeList, boolean quoted) {
-		for (int k = 0; k < attributeList.size(); k++) {
-			String attributeValue = attributeList.get(k);
+		for (String element : attributeList) {
+			String attributeValue = element;
 			if (attributeValue != null && attributeValue.length() > 0) {
 				if (!attributeValue.startsWith("%") || quoted) { //$NON-NLS-1$
 					int delimiterPosition = attributeValue.indexOf('?'); // strip right of '?'

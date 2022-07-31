@@ -119,8 +119,8 @@ public class PDEConfigureProblemSeverityAction extends Action {
 				.getAllKeys();
 		if (fProject.getProject() != null) {
 			IScopeContext projectContext = new ProjectScope(fProject.getProject());
-			for (int i = 0; i < keys.length; i++) {
-				if (keys[i].getStoredValue(projectContext, null) != null) {
+			for (Key key : keys) {
+				if (key.getStoredValue(projectContext, null) != null) {
 					return true;
 				}
 			}

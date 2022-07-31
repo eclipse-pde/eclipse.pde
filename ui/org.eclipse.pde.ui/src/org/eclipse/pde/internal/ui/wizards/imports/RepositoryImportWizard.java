@@ -64,9 +64,7 @@ public class RepositoryImportWizard extends Wizard {
 
 	@Override
 	public void addPages() {
-		Iterator<Entry<IBundleImporter, ScmUrlImportDescription[]>> iterator = fImportMap.entrySet().iterator();
-		while (iterator.hasNext()) {
-			Entry<IBundleImporter, ScmUrlImportDescription[]> entry = iterator.next();
+		for (Entry<IBundleImporter, ScmUrlImportDescription[]> entry : fImportMap.entrySet()) {
 			final IBundleImporter importer = entry.getKey();
 			final String importerId = importer.getId();
 			ScmUrlImportDescription[] descriptions = entry.getValue();

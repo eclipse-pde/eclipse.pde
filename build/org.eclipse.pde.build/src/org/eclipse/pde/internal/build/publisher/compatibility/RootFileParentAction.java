@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.build.publisher.compatibility;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
 import org.eclipse.equinox.p2.metadata.*;
@@ -47,9 +46,7 @@ public class RootFileParentAction extends AbstractPublisherAction {
 		final String flavorPrefix = flavor + baseId + ".rootfiles"; //$NON-NLS-1$
 
 		HashSet<IInstallableUnit> collector = new HashSet<>();
-		Iterator<IInstallableUnit> iter = results.getIUs(null, IPublisherResult.NON_ROOT).iterator();
-		while (iter.hasNext()) {
-			IInstallableUnit iu = iter.next();
+		for (IInstallableUnit iu : results.getIUs(null, IPublisherResult.NON_ROOT)) {
 			String id = iu.getId();
 			if (id.startsWith(idPrefix) || id.startsWith(flavorPrefix))
 				collector.add(iu);

@@ -326,16 +326,16 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		if (!list.isEmpty()) {
 			Object[] objects = list.toArray();
 			ExportPackageObject first = null;
-			for (int i = 0; i < objects.length; i++) {
-				if (!(objects[i] instanceof ExportPackageObject)) {
+			for (Object object : objects) {
+				if (!(object instanceof ExportPackageObject)) {
 					update(null);
 					return;
 				}
 				if (first == null) {
-					first = (ExportPackageObject) objects[i];
+					first = (ExportPackageObject) object;
 					continue;
 				}
-				if (!first.hasSameVisibility((ExportPackageObject) objects[i])) {
+				if (!first.hasSameVisibility((ExportPackageObject) object)) {
 					update(null);
 					return;
 				}

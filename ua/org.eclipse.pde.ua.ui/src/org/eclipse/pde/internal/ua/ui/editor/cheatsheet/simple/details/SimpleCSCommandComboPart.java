@@ -14,8 +14,6 @@
 
 package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.details;
 
-import java.util.Iterator;
-
 import org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.ISimpleCSCommandKeyListener;
 import org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.NewCommandKeyEvent;
 import org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.SimpleCSCommandManager;
@@ -141,10 +139,7 @@ public class SimpleCSCommandComboPart extends ComboPart implements ISimpleCSComm
 	}
 
 	public void populate() {
-		// Populate the combo with all the values found in the command manager
-		Iterator<String> iterator = SimpleCSCommandManager.Instance().getKeys().iterator();
-		while (iterator.hasNext()) {
-			String key = iterator.next();
+		for (String key : SimpleCSCommandManager.Instance().getKeys()) {
 			add(key);
 		}
 	}

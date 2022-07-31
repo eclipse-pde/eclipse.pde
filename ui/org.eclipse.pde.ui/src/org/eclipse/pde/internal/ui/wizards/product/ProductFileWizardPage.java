@@ -144,16 +144,16 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 			ILaunchConfigurationType type = manager.getLaunchConfigurationType(EclipseLaunchShortcut.CONFIGURATION_TYPE);
 			ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
-			for (int i = 0; i < configs.length; i++) {
-				if (!DebugUITools.isPrivate(configs[i]))
-					list.add(configs[i].getName());
+			for (ILaunchConfiguration config : configs) {
+				if (!DebugUITools.isPrivate(config))
+					list.add(config.getName());
 			}
 			// add osgi launch configs to the list
 			type = manager.getLaunchConfigurationType(IPDELauncherConstants.OSGI_CONFIGURATION_TYPE);
 			configs = manager.getLaunchConfigurations(type);
-			for (int i = 0; i < configs.length; i++) {
-				if (!DebugUITools.isPrivate(configs[i]))
-					list.add(configs[i].getName());
+			for (ILaunchConfiguration config : configs) {
+				if (!DebugUITools.isPrivate(config))
+					list.add(config.getName());
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -175,9 +175,9 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 			ILaunchConfiguration[] configurations = new ILaunchConfiguration[configs.length + configs2.length];
 			System.arraycopy(configs, 0, configurations, 0, configs.length);
 			System.arraycopy(configs2, 0, configurations, configs.length, configs2.length);
-			for (int i = 0; i < configurations.length; i++) {
-				if (configurations[i].getName().equals(configName) && !DebugUITools.isPrivate(configurations[i]))
-					return configurations[i];
+			for (ILaunchConfiguration configuration : configurations) {
+				if (configuration.getName().equals(configName) && !DebugUITools.isPrivate(configuration))
+					return configuration;
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);

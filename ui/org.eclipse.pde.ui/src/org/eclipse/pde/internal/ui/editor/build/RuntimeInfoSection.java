@@ -125,9 +125,9 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 					if (entry != null)
 						libList.add(entry);
 				}
-				for (int i = 0; i < libraries.length; i++)
-					if (!libList.contains(libraries[i]))
-						libList.add(libraries[i]);
+				for (IBuildEntry element : libraries)
+					if (!libList.contains(element))
+						libList.add(element);
 				return libList.toArray();
 			}
 			return new Object[0];
@@ -241,9 +241,9 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 	protected void addAllJarsToBinIncludes(IBuildEntry binIncl, IProject project, IBuildModel model) {
 		try {
 			IResource[] members = project.members();
-			for (int i = 0; i < members.length; i++)
-				if (!(members[i] instanceof IFolder) && members[i].getFileExtension().equals("jar")) //$NON-NLS-1$
-					binIncl.addToken(members[i].getName());
+			for (IResource member : members)
+				if (!(member instanceof IFolder) && member.getFileExtension().equals("jar")) //$NON-NLS-1$
+					binIncl.addToken(member.getName());
 
 			IBuildEntry[] libraries = BuildUtil.getBuildLibraries(model.getBuild().getBuildEntries());
 			if (libraries.length != 0) {
@@ -261,10 +261,8 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 	}
 
 	private void setOutputEntryTokens(Set<String> outputFolders, IBuildEntry outputEntry) {
-		Iterator<String> iter = outputFolders.iterator();
 		try {
-			while (iter.hasNext()) {
-				String outputFolder = iter.next().toString();
+			for (String outputFolder : outputFolders) {
 				if (!outputFolder.endsWith("" + IPath.SEPARATOR)) //$NON-NLS-1$
 					outputFolder = outputFolder.concat("" + IPath.SEPARATOR); //$NON-NLS-1$
 				if (!outputEntry.contains(outputFolder.toString()))

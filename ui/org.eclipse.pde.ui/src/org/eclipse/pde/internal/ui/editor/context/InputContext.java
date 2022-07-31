@@ -224,8 +224,8 @@ public abstract class InputContext {
 				MultiTextEdit edit = new MultiTextEdit();
 				if (isNewlineNeeded(doc))
 					insert(edit, new InsertEdit(doc.getLength(), TextUtilities.getDefaultLineDelimiter(doc)));
-				for (int i = 0; i < fEditOperations.size(); i++) {
-					insert(edit, fEditOperations.get(i));
+				for (TextEdit fEditOperation : fEditOperations) {
+					insert(edit, fEditOperation);
 				}
 				if (fModel instanceof IEditingModel)
 					((IEditingModel) fModel).setStale(true);

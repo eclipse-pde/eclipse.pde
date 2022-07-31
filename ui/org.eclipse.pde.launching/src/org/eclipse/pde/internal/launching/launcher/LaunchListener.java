@@ -172,10 +172,10 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 		File configDir = LaunchConfigurationHelper.getConfigurationLocation(configuration);
 		File[] children = configDir.listFiles();
 		if (children != null) {
-			for (int i = 0; i < children.length; i++) {
-				if (!children[i].isDirectory() && children[i].getName().endsWith(".log")) { //$NON-NLS-1$
-					if (latest == null || latest.lastModified() < children[i].lastModified())
-						latest = children[i];
+			for (File child : children) {
+				if (!child.isDirectory() && child.getName().endsWith(".log")) { //$NON-NLS-1$
+					if (latest == null || latest.lastModified() < child.lastModified())
+						latest = child;
 				}
 			}
 		}

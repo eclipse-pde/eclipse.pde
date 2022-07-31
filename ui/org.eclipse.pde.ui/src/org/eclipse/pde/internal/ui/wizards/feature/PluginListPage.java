@@ -176,9 +176,9 @@ public class PluginListPage extends BasePluginListPage {
 			for (int j = 0; j < 2; j++) {
 				ILaunchConfigurationType type = manager.getLaunchConfigurationType(types[j]);
 				ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
-				for (int i = 0; i < configs.length; i++) {
-					if (!DebugUITools.isPrivate(configs[i]))
-						launcherNames.add(configs[i].getName());
+				for (ILaunchConfiguration config : configs) {
+					if (!DebugUITools.isPrivate(config))
+						launcherNames.add(config.getName());
 				}
 			}
 		} catch (CoreException e) {
@@ -197,9 +197,9 @@ public class PluginListPage extends BasePluginListPage {
 			for (int j = 0; j < 2; j++) {
 				ILaunchConfigurationType type = manager.getLaunchConfigurationType(types[j]);
 				ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
-				for (int i = 0; i < configs.length; i++) {
-					if (configs[i].getName().equals(configName) && !DebugUITools.isPrivate(configs[i]))
-						return configs[i];
+				for (ILaunchConfiguration config : configs) {
+					if (config.getName().equals(configName) && !DebugUITools.isPrivate(config))
+						return config;
 				}
 			}
 		} catch (CoreException e) {

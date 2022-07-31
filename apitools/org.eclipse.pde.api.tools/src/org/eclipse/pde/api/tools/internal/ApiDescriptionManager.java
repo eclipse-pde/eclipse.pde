@@ -21,7 +21,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -236,9 +235,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 			return;
 		}
 
-		Iterator<Entry<IJavaProject, IApiDescription>> entries = fDescriptions.entrySet().iterator();
-		while (entries.hasNext()) {
-			Entry<IJavaProject, IApiDescription> entry = entries.next();
+		for (Entry<IJavaProject, IApiDescription> entry : fDescriptions.entrySet()) {
 			IJavaProject project = entry.getKey();
 			ProjectApiDescription desc = (ProjectApiDescription) entry.getValue();
 			if (desc.isModified()) {

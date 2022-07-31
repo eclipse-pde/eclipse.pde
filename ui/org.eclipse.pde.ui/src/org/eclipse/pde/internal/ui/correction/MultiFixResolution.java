@@ -49,9 +49,9 @@ public class MultiFixResolution extends WorkbenchMarkerResolution {
 		ArrayList<IMarker> relatedMarkers = new ArrayList<>();
 		try {
 			String markerCategory = (String) fMarker.getAttribute(PDEMarkerFactory.CAT_ID);
-			for (int i = 0; i < markers.length; i++) {
-				if (markerCategory.equals(markers[i].getAttribute(PDEMarkerFactory.CAT_ID)) && !markers[i].equals(fMarker) && markers[i].getResource().equals(fMarker.getResource())) {
-					relatedMarkers.add(markers[i]);
+			for (IMarker marker : markers) {
+				if (markerCategory.equals(marker.getAttribute(PDEMarkerFactory.CAT_ID)) && !marker.equals(fMarker) && marker.getResource().equals(fMarker.getResource())) {
+					relatedMarkers.add(marker);
 				}
 			}
 		} catch (CoreException e) {

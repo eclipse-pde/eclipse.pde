@@ -174,8 +174,7 @@ public class Bundle extends ModelObject {
 		List<Extension> result = new ArrayList<>();
 
 		for (ExtensionPoint extPoint : extPoints) {
-			for (Iterator<Extension> it = extPoint.getExtensions().iterator(); it.hasNext();) {
-				Extension a = it.next();
+			for (Extension a : extPoint.getExtensions()) {
 				if (a.getContributorId().longValue() == id){
 					result.add(a);
 				}

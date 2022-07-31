@@ -352,8 +352,7 @@ public class PluginConfigurationSection extends TableSection {
 			StringBuilder bundlesList = new StringBuilder();
 			bundlesList.append('\n');
 			bundlesList.append('\n');
-			for (int i = 0; i < plugins.size(); i++) {
-				String[] config = plugins.get(i);
+			for (String[] config : plugins) {
 				bundlesList.append('\t');
 				bundlesList.append(config[0]);
 				bundlesList.append(", "); //$NON-NLS-1$ // Not translated. This is bundle syntax, not a sentence

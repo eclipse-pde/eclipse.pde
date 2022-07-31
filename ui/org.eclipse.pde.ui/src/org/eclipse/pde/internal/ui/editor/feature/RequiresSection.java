@@ -558,8 +558,8 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	 */
 	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
-		for (int i = 0; i < objects.length; i++) {
-			if (!(objects[i] instanceof FeatureImport))
+		for (Object object : objects) {
+			if (!(object instanceof FeatureImport))
 				return false;
 		}
 		return true;

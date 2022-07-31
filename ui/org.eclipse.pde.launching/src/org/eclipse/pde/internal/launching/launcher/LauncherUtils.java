@@ -236,20 +236,18 @@ public class LauncherUtils {
 
 	private static void handleUseDefault(String launcherTimeStamp, ArrayList<IProject> projects) {
 		IProject[] projs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projs.length; i++) {
-			if (!WorkspaceModelManager.isPluginProject(projs[i]))
+		for (IProject proj : projs) {
+			if (!WorkspaceModelManager.isPluginProject(proj))
 				continue;
-			String timestamp = getTimeStamp(projs[i]);
-			if (timestamp.compareTo(launcherTimeStamp) > 0 && shouldAdd(projs[i], launcherTimeStamp, timestamp))
-				projects.add(projs[i]);
+			String timestamp = getTimeStamp(proj);
+			if (timestamp.compareTo(launcherTimeStamp) > 0 && shouldAdd(proj, launcherTimeStamp, timestamp))
+				projects.add(proj);
 		}
 	}
 
 	private static void handleSelectedPlugins(ILaunchConfiguration config, String timeStamp, ArrayList<IProject> projects) throws CoreException {
 		Map<IPluginModelBase, String> selectedPlugins = BundleLauncherHelper.getWorkspaceBundleMap(config);
-		Iterator<IPluginModelBase> it = selectedPlugins.keySet().iterator();
-		while (it.hasNext()) {
-			IPluginModelBase model = it.next();
+		for (IPluginModelBase model : selectedPlugins.keySet()) {
 			IResource res = model.getUnderlyingResource();
 			if (res != null) {
 				IProject project = res.getProject();
@@ -263,15 +261,15 @@ public class LauncherUtils {
 	private static void handleDeselectedPlugins(ILaunchConfiguration config, String launcherTimeStamp, ArrayList<IProject> projects) throws CoreException {
 		Map<IPluginModelBase, String> deSelectedPlugins = BundleLauncherHelper.getWorkspaceBundleMap(config);
 		IProject[] projs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projs.length; i++) {
-			if (!WorkspaceModelManager.isPluginProject(projs[i]))
+		for (IProject proj : projs) {
+			if (!WorkspaceModelManager.isPluginProject(proj))
 				continue;
-			IPluginModelBase base = PluginRegistry.findModel(projs[i]);
+			IPluginModelBase base = PluginRegistry.findModel(proj);
 			if (base == null || deSelectedPlugins.containsKey(base))
 				continue;
-			String timestamp = getTimeStamp(projs[i]);
-			if (timestamp.compareTo(launcherTimeStamp) > 0 && shouldAdd(projs[i], launcherTimeStamp, timestamp))
-				projects.add(projs[i]);
+			String timestamp = getTimeStamp(proj);
+			if (timestamp.compareTo(launcherTimeStamp) > 0 && shouldAdd(proj, launcherTimeStamp, timestamp))
+				projects.add(proj);
 		}
 	}
 

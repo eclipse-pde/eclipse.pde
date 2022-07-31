@@ -1059,9 +1059,9 @@ public abstract class AbstractPluginBlock {
 		Widget widget = fPluginTreeViewer.testFindItem(group);
 		if (widget instanceof TreeItem) {
 			TreeItem[] items = ((TreeItem) widget).getItems();
-			for (int i = 0; i < items.length; i++) {
-				if (!items[i].getChecked()) {
-					Object model = items[i].getData();
+			for (TreeItem item : items) {
+				if (!item.getChecked()) {
+					Object model = item.getData();
 					if (model instanceof IPluginModelBase) {
 						resetText((IPluginModelBase) model);
 					}

@@ -193,8 +193,8 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 		fCheckboxTreeViewer.setLabelProvider(new StyledPluginLabelProvider());
 		fCheckboxTreeViewer.setUseHashlookup(true);
 		fCheckboxTreeViewer.setInput(fPluginProjectList.toArray(new IPluginModelBase[fPluginProjectList.size()]));
-		for (int i = 0; i < fPluginProjectList.size(); i++) {
-			fCheckboxTreeViewer.setChecked(fPluginProjectList.get(i), true);
+		for (IPluginModelBase element : fPluginProjectList) {
+			fCheckboxTreeViewer.setChecked(element, true);
 		}
 	}
 

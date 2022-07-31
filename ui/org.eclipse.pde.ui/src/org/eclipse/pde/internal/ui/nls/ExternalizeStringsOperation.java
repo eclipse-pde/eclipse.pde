@@ -17,7 +17,6 @@ package org.eclipse.pde.internal.ui.nls;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.Iterator;
 import org.eclipse.core.filebuffers.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -161,10 +160,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		try {
 			TextFileChange uChange = getChangeForFile(uFile, parentChange);
 
-			Iterator<ModelChangeElement> iter = changeFile.getChanges().iterator();
-
-			while (iter.hasNext()) {
-				ModelChangeElement changeElement = iter.next();
+			for (ModelChangeElement changeElement : changeFile.getChanges()) {
 				if (changeElement.isExternalized()) {
 					ReplaceEdit uEdit = new ReplaceEdit(changeElement.getOffset(), changeElement.getLength(), changeElement.getExternKey());
 					uChange.getEdit().addChild(uEdit);

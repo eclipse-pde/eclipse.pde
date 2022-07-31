@@ -180,8 +180,8 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 			String markerCategory = (String) marker.getAttribute(PDEMarkerFactory.CAT_ID);
 			int problemID = getProblemId(marker);
 			IMarker[] relatedMarkers = marker.getResource().findMarkers(marker.getType(), true, IResource.DEPTH_INFINITE);
-			for (int i = 0; i < relatedMarkers.length; i++) {
-				if (markerCategory.equals(relatedMarkers[i].getAttribute(PDEMarkerFactory.CAT_ID)) && getProblemId(relatedMarkers[i]) == problemID && !marker.equals(relatedMarkers[i])) {
+			for (IMarker relatedMarker : relatedMarkers) {
+				if (markerCategory.equals(relatedMarker.getAttribute(PDEMarkerFactory.CAT_ID)) && getProblemId(relatedMarker) == problemID && !marker.equals(relatedMarker)) {
 					resolutions.add(new MultiFixResolution(marker, multiFixDescription));
 					break;
 				}

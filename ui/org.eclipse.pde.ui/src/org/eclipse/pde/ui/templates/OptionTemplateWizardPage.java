@@ -70,8 +70,7 @@ public class OptionTemplateWizardPage extends WizardPage {
 		layout.verticalSpacing = 9;
 		container.setLayout(layout);
 
-		for (int i = 0; i < options.size(); i++) {
-			TemplateOption option = options.get(i);
+		for (TemplateOption option : options) {
 			option.createControl(container, 2);
 		}
 		if (helpContextId != null)

@@ -469,8 +469,8 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	 */
 	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
-		for (int i = 0; i < objects.length; i++) {
-			if (!(objects[i] instanceof FeatureChild))
+		for (Object object : objects) {
+			if (!(object instanceof FeatureChild))
 				return false;
 		}
 		return true;

@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.ui.search.dialogs;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.Comparator;
-import java.util.Iterator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.IProvidedCapability;
@@ -212,12 +211,8 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 		else
 			pipedQuery = query;
 
-		Iterator<IInstallableUnit> iter = manager.query(pipedQuery, progressMonitor).iterator();
-		while (iter.hasNext()) {
-			IInstallableUnit iu = iter.next();
-			Iterator<IProvidedCapability> pcIter = iu.getProvidedCapabilities().iterator();
-			while (pcIter.hasNext()) {
-				IProvidedCapability pc = pcIter.next();
+		for (IInstallableUnit iu : manager.query(pipedQuery, progressMonitor)) {
+			for (IProvidedCapability pc : iu.getProvidedCapabilities()) {
 				if (pc.getNamespace().equals("java.package")) { //$NON-NLS-1$
 					IUPackage pkg = new IUPackage(pc.getName(), pc.getVersion(), iu);
 					contentProvider.add(pkg, itemsFilter);

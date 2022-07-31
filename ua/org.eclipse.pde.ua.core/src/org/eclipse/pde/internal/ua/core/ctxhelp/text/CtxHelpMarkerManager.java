@@ -15,7 +15,6 @@
 package org.eclipse.pde.internal.ua.core.ctxhelp.text;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
@@ -52,9 +51,7 @@ public class CtxHelpMarkerManager {
 			return;
 		}
 
-		Iterator<Exception> iter = errors.iterator();
-		while (iter.hasNext()) {
-			Throwable exception = iter.next();
+		for (Throwable exception : errors) {
 			if (exception instanceof SAXParseException) {
 				int line = ((SAXParseException) exception).getLineNumber();
 				try {

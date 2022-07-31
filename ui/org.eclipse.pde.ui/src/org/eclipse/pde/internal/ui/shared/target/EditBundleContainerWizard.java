@@ -69,9 +69,9 @@ public class EditBundleContainerWizard extends Wizard {
 			if (newContainer != null && fTarget.getTargetLocations() != null) {
 				ITargetLocation[] containers = fTarget.getTargetLocations();
 				List<ITargetLocation> newContainers = new ArrayList<>(containers.length);
-				for (int i = 0; i < containers.length; i++) {
-					if (!containers[i].equals(fContainer)) {
-						newContainers.add(containers[i]);
+				for (ITargetLocation container : containers) {
+					if (!container.equals(fContainer)) {
+						newContainers.add(container);
 					}
 				}
 				newContainers.add(newContainer);

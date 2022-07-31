@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.ua.core.cheatsheet.comp;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -179,10 +178,7 @@ public class CompCSTaskGroup extends CompCSTaskObject implements
 	protected void writeElements(String indent, PrintWriter writer) {
 		super.writeElements(indent, writer);
 		String newIndent = indent + XMLPrintHandler.XML_INDENT;
-		// Print dependency elements
-		Iterator<ICompCSTaskObject> iterator = fFieldTaskObjects.iterator();
-		while (iterator.hasNext()) {
-			ICompCSTaskObject taskObject = iterator.next();
+		for (ICompCSTaskObject taskObject : fFieldTaskObjects) {
 			taskObject.write(newIndent, writer);
 		}
 	}

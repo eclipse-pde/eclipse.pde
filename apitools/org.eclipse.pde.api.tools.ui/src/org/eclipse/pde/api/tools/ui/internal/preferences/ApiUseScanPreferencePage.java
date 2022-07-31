@@ -429,8 +429,8 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		if (newCheckedLocations.length != oldCheckedElements.size()) {
 			return true;
 		}
-		for (int i = 0; i < newCheckedLocations.length; i++) {
-			if (!oldCheckedElements.contains(newCheckedLocations[i])) {
+		for (Object newCheckedLocation : newCheckedLocations) {
+			if (!oldCheckedElements.contains(newCheckedLocation)) {
 				return true;
 			}
 		}

@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.ua.ui.editor.ctxhelp;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -113,8 +112,7 @@ public class CtxHelpEditor extends MultiSourceEditor {
 		}
 		if (getSelection() instanceof IStructuredSelection) {
 			IStructuredSelection selection = (IStructuredSelection) getSelection();
-			for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
-				Object obj = iter.next();
+			for (Object obj : selection) {
 				if (obj instanceof CtxHelpTopic && ((CtxHelpTopic) obj).getLocation() != null) {
 					return true;
 				}
@@ -136,8 +134,7 @@ public class CtxHelpEditor extends MultiSourceEditor {
 				resources = null;
 			} else {
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-				for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
-					Object obj = iter.next();
+				for (Object obj : selection) {
 					if (obj instanceof CtxHelpTopic) {
 						IPath path = ((CtxHelpTopic) obj).getLocation();
 						if (path != null && !path.isEmpty()) {
@@ -258,8 +255,7 @@ public class CtxHelpEditor extends MultiSourceEditor {
 	public boolean canCut(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection sel = (IStructuredSelection) selection;
-			for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
-				Object obj = iter.next();
+			for (Object obj : sel) {
 				if (obj instanceof CtxHelpObject && ((CtxHelpObject) obj).canBeRemoved()) {
 					return canCopy(selection);
 				}

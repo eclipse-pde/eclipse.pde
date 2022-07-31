@@ -14,6 +14,7 @@
 package org.eclipse.ui.trace.internal.datamodel;
 
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.trace.internal.Messages;
 import org.eclipse.ui.trace.internal.TracingUIActivator;
@@ -96,8 +97,8 @@ public class TracingComponent extends AbstractTracingNode {
 		boolean isEnabled = true;
 		final TracingComponentDebugOption[] componentChildren = this.getChildren();
 		if (componentChildren.length > 0) {
-			for (int i = 0; i < componentChildren.length; i++) {
-				if (!componentChildren[i].isEnabled()) {
+			for (TracingComponentDebugOption componentChild : componentChildren) {
+				if (!componentChild.isEnabled()) {
 					isEnabled = false;
 					break;
 				}
@@ -114,15 +115,10 @@ public class TracingComponent extends AbstractTracingNode {
 		if (bundles.size() > 0) {
 			// get all debug options (this ensures that the disabled debug options are used when populating)
 			final Map<String, String> currentDebugOptions = DebugOptionsHandler.getDebugOptions().getOptions();
-			final Iterator<Bundle> bundleIterator = bundles.iterator();
-			while (bundleIterator.hasNext()) {
-				Bundle bundle = bundleIterator.next();
+			for (Bundle bundle : bundles) {
 				Properties options = TracingCollections.getInstance().getDebugOptions(bundle);
 				if (options.size() > 0) {
-					// this bundle has debug options - loop over each one and build a TracingComponentDebugOption for it
-					Iterator<Map.Entry<Object, Object>> optionsIterator = options.entrySet().iterator();
-					while (optionsIterator.hasNext()) {
-						Map.Entry<Object, Object> option = optionsIterator.next();
+					for (Entry<Object, Object> option : options.entrySet()) {
 						// check to see if this debug option already exists in the cache
 						String key = (String) option.getKey();
 						String value = (String) option.getValue();
@@ -177,25 +173,25 @@ public class TracingComponent extends AbstractTracingNode {
 	 */
 	private void addBundle(final String name, final boolean consumed, final Bundle[] allBundles) {
 		if (name != null) {
-			for (int bundleIndex = 0; bundleIndex < allBundles.length; bundleIndex++) {
-				String symbolicName = allBundles[bundleIndex].getSymbolicName();
+			for (Bundle bundle : allBundles) {
+				String symbolicName = bundle.getSymbolicName();
 				if ((symbolicName != null) && symbolicName.matches(name)) {
-					if (!TracingCollections.getInstance().isBundleConsumed(allBundles[bundleIndex])) {
+					if (!TracingCollections.getInstance().isBundleConsumed(bundle)) {
 						// this bundle has not been consumed by any other component yet so include it here.
-						bundles.add(allBundles[bundleIndex]);
+						bundles.add(bundle);
 						// cache that this bundle is in this component
-						TracingCollections.getInstance().storeBundleInComponent(this, allBundles[bundleIndex]);
+						TracingCollections.getInstance().storeBundleInComponent(this, bundle);
 						// check to see if this bundle is being consumed (meaning that this bundle should not appear in
 						// any other tracing component
 						if (consumed) {
 							// tell the cache that this bundle is consumed
-							TracingCollections.getInstance().setBundleIsConsumed(allBundles[bundleIndex], consumed);
+							TracingCollections.getInstance().setBundleIsConsumed(bundle, consumed);
 							// remove this bundle from any other tracing component that is including it (except this
 							// component)
-							TracingComponent[] components = TracingCollections.getInstance().getComponentsContainingBundle(allBundles[bundleIndex]);
-							for (int componentIndex = 0; componentIndex < components.length; componentIndex++) {
-								if (!components[componentIndex].equals(this)) {
-									components[componentIndex].removeBundle(allBundles[bundleIndex]);
+							TracingComponent[] components = TracingCollections.getInstance().getComponentsContainingBundle(bundle);
+							for (TracingComponent component : components) {
+								if (!component.equals(this)) {
+									component.removeBundle(bundle);
 								}
 							}
 						}

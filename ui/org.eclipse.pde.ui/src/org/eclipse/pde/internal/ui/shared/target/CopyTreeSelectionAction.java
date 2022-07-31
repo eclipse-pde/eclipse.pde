@@ -61,8 +61,7 @@ class CopyTreeSelectionAction extends Action {
 	private Collection<TreeItem> filterDuplicates(TreeItem[] items) {
 		LinkedHashSet<TreeItem> deduplicated = new LinkedHashSet<>();
 
-		for (int i = 0; i < items.length; i++) {
-			TreeItem item = items[i];
+		for (TreeItem item : items) {
 			if (!containsAnyParent(item, deduplicated)) {
 				deduplicated.add(item);
 			}
@@ -96,8 +95,8 @@ class CopyTreeSelectionAction extends Action {
 		buffer.append(item.getText());
 		if (item.getExpanded()) {
 			TreeItem[] children = item.getItems();
-			for (int i = 0; i < children.length; i++) {
-				appendItem(buffer, children[i], indent + 1);
+			for (TreeItem child : children) {
+				appendItem(buffer, child, indent + 1);
 			}
 		}
 	}

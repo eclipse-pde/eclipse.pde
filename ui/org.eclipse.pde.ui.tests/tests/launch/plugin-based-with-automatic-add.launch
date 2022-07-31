@@ -1,32 +1,77 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.pde.ui.RuntimeWorkbench">
-	<booleanAttribute key="append.args" value="true" />
-	<booleanAttribute key="askclear" value="true" />
-	<booleanAttribute key="automaticAdd" value="true" />
-	<booleanAttribute key="automaticValidate" value="true" />
-	<stringAttribute key="bootstrap" value="" />
-	<stringAttribute key="checked" value="[NONE]" />
-	<booleanAttribute key="clearConfig" value="true" />
-	<booleanAttribute key="clearws" value="false" />
-	<booleanAttribute key="clearwslog" value="false" />
-	<stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/plugin-based-without-automatic-add" />
-	<booleanAttribute key="default" value="false" />
-	<setAttribute key="deselected_workspace_bundles" />
-	<booleanAttribute key="includeOptional" value="true" />
-	<stringAttribute key="location"	value="${workspace_loc}\_Workspaces\runtime-plugin-based-without-automatic-add" />
-	<booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true" />
-	<stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8" />
-	<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog" />
-	<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider" />
-	<stringAttribute key="pde.version" value="3.3" />
-	<stringAttribute key="product" value="org.eclipse.platform.ide" />
-	<stringAttribute key="selected_target_plugins" value="org.eclipse.core.runtime@default:true,org.eclipse.ui@2:false" />
-	<stringAttribute key="deselected_workspace_plugins" value="org.eclipse.pde.plugin2" />
-	<booleanAttribute key="show_selected_only" value="false" />
-	<stringAttribute key="templateConfig" value="${target_home}\configuration\config.ini" />
-	<booleanAttribute key="tracing" value="false" />
-	<booleanAttribute key="useCustomFeatures" value="false" />
-	<booleanAttribute key="useDefaultConfig" value="true" />
-	<booleanAttribute key="useDefaultConfigArea" value="true" />
-	<booleanAttribute key="useProduct" value="true" />
+    <booleanAttribute key="append.args" value="true"/>
+    <booleanAttribute key="askclear" value="true"/>
+    <booleanAttribute key="automaticAdd" value="true"/>
+    <booleanAttribute key="automaticValidate" value="true"/>
+    <stringAttribute key="bootstrap" value=""/>
+    <stringAttribute key="checked" value="[NONE]"/>
+    <booleanAttribute key="clearConfig" value="true"/>
+    <booleanAttribute key="clearws" value="false"/>
+    <booleanAttribute key="clearwslog" value="false"/>
+    <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/plugin-based-with-automatic-add"/>
+    <booleanAttribute key="default" value="false"/>
+    <setAttribute key="deselected_workspace_bundles"/>
+    <booleanAttribute key="includeOptional" value="true"/>
+    <stringAttribute key="location" value="${workspace_loc}\_Workspaces\runtime-plugin-based-without-automatic-add"/>
+    <booleanAttribute key="org.eclipse.debug.core.ATTR_FORCE_SYSTEM_CONSOLE_ENCODING" value="false"/>
+    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_ATTR_USE_ARGFILE" value="false"/>
+    <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
+    <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog"/>
+    <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
+    <stringAttribute key="pde.version" value="3.3"/>
+    <stringAttribute key="product" value="org.eclipse.platform.ide"/>
+    <setAttribute key="selected_target_bundles">
+        <setEntry value="org.eclipse.core.runtime@default:true"/>
+        <setEntry value="org.eclipse.ui@2:false"/>
+    </setAttribute>
+    <setAttribute key="selected_workspace_bundles">
+        <setEntry value="org.eclipse.pde.api.tools.annotations@default:default"/>
+        <setEntry value="org.eclipse.pde.api.tools.tests@default:default"/>
+        <setEntry value="org.eclipse.pde.api.tools.ui@default:default"/>
+        <setEntry value="org.eclipse.pde.api.tools@default:default"/>
+        <setEntry value="org.eclipse.pde.build.tests@default:default"/>
+        <setEntry value="org.eclipse.pde.build@default:default"/>
+        <setEntry value="org.eclipse.pde.core@default:default"/>
+        <setEntry value="org.eclipse.pde.ds.annotations.tests@default:default"/>
+        <setEntry value="org.eclipse.pde.ds.annotations@default:default"/>
+        <setEntry value="org.eclipse.pde.ds.core@default:default"/>
+        <setEntry value="org.eclipse.pde.ds.lib@default:default"/>
+        <setEntry value="org.eclipse.pde.ds.tests@default:default"/>
+        <setEntry value="org.eclipse.pde.ds.ui@default:default"/>
+        <setEntry value="org.eclipse.pde.ds1_2.lib@default:default"/>
+        <setEntry value="org.eclipse.pde.genericeditor.extension.tests@default:default"/>
+        <setEntry value="org.eclipse.pde.genericeditor.extension@default:default"/>
+        <setEntry value="org.eclipse.pde.junit.runtime.tests@default:default"/>
+        <setEntry value="org.eclipse.pde.junit.runtime@default:default"/>
+        <setEntry value="org.eclipse.pde.launching@default:default"/>
+        <setEntry value="org.eclipse.pde.runtime@default:default"/>
+        <setEntry value="org.eclipse.pde.spy.bundle@default:default"/>
+        <setEntry value="org.eclipse.pde.spy.context@default:default"/>
+        <setEntry value="org.eclipse.pde.spy.core@default:default"/>
+        <setEntry value="org.eclipse.pde.spy.css@default:default"/>
+        <setEntry value="org.eclipse.pde.spy.event@default:default"/>
+        <setEntry value="org.eclipse.pde.spy.model@default:default"/>
+        <setEntry value="org.eclipse.pde.spy.preferences@default:default"/>
+        <setEntry value="org.eclipse.pde.ua.core@default:default"/>
+        <setEntry value="org.eclipse.pde.ua.tests@default:default"/>
+        <setEntry value="org.eclipse.pde.ua.ui@default:default"/>
+        <setEntry value="org.eclipse.pde.ui.templates.tests@default:default"/>
+        <setEntry value="org.eclipse.pde.ui.templates@default:default"/>
+        <setEntry value="org.eclipse.pde.ui.tests.smartimport@default:default"/>
+        <setEntry value="org.eclipse.pde.ui.tests@default:default"/>
+        <setEntry value="org.eclipse.pde.ui@default:default"/>
+        <setEntry value="org.eclipse.pde.unittest.junit@default:default"/>
+        <setEntry value="org.eclipse.pde@default:default"/>
+        <setEntry value="org.eclipse.tools.layout.spy@default:default"/>
+        <setEntry value="org.eclipse.ui.trace@default:default"/>
+    </setAttribute>
+    <booleanAttribute key="show_selected_only" value="false"/>
+    <stringAttribute key="templateConfig" value="${target_home}\configuration\config.ini"/>
+    <booleanAttribute key="tracing" value="false"/>
+    <booleanAttribute key="useCustomFeatures" value="false"/>
+    <booleanAttribute key="useDefaultConfig" value="true"/>
+    <booleanAttribute key="useDefaultConfigArea" value="true"/>
+    <booleanAttribute key="useProduct" value="true"/>
 </launchConfiguration>

@@ -447,13 +447,13 @@ public class ImportPackageSection extends TableSection {
 
 	private String getValue(Object[] objects) {
 		StringBuilder buffer = new StringBuilder();
-		for (int i = 0; i < objects.length; i++) {
-			if (!(objects[i] instanceof ImportItemWrapper))
+		for (Object object : objects) {
+			if (!(object instanceof ImportItemWrapper))
 				continue;
-			Version version = ((ImportItemWrapper) objects[i]).getVersion();
+			Version version = ((ImportItemWrapper) object).getVersion();
 			if (buffer.length() > 0)
 				buffer.append("," + getLineDelimiter() + " "); //$NON-NLS-1$ //$NON-NLS-2$
-			buffer.append(((ImportItemWrapper) objects[i]).getName());
+			buffer.append(((ImportItemWrapper) object).getName());
 			if (version != null && !version.equals(Version.emptyVersion)) {
 				buffer.append(";"); //$NON-NLS-1$
 				buffer.append(getVersionAttribute());
@@ -527,9 +527,9 @@ public class ImportPackageSection extends TableSection {
 
 				IJavaProject jp = JavaCore.create(project);
 				IPackageFragmentRoot[] roots = jp.getPackageFragmentRoots();
-				for (int j = 0; j < roots.length; j++) {
-					if (roots[j].getKind() == IPackageFragmentRoot.K_SOURCE || (roots[j].getKind() == IPackageFragmentRoot.K_BINARY && !roots[j].isExternal())) {
-						IJavaElement[] children = roots[j].getChildren();
+				for (IPackageFragmentRoot root : roots) {
+					if (root.getKind() == IPackageFragmentRoot.K_SOURCE || (root.getKind() == IPackageFragmentRoot.K_BINARY && !root.isExternal())) {
+						IJavaElement[] children = root.getChildren();
 						for (IJavaElement child : children) {
 							IPackageFragment f = (IPackageFragment) child;
 							String name = f.getElementName();
@@ -730,9 +730,9 @@ public class ImportPackageSection extends TableSection {
 			return null;
 		}
 		IPackageFragmentRoot[] roots = JavaCore.create(project).getPackageFragmentRoots();
-		for (int i = 0; i < roots.length; i++) {
-			if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE || (roots[i].isArchive() && !roots[i].isExternal()))
-				result.add(roots[i]);
+		for (IPackageFragmentRoot root : roots) {
+			if (root.getKind() == IPackageFragmentRoot.K_SOURCE || (root.isArchive() && !root.isExternal()))
+				result.add(root);
 		}
 		return result.toArray(new IPackageFragmentRoot[result.size()]);
 	}

@@ -120,8 +120,8 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 			viewer.addSelectionChangedListener(this);
 		}
 		// Add all current listeners
-		for (int i = 0; i < fListenerList.size(); i++) {
-			super.addSelectionChangedListener(fListenerList.get(i));
+		for (ISelectionChangedListener element : fListenerList) {
+			super.addSelectionChangedListener(element);
 		}
 	}
 
@@ -144,8 +144,8 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 			viewer.removeSelectionChangedListener(this);
 		}
 		// Remove all current listeners
-		for (int i = 0; i < fListenerList.size(); i++) {
-			super.removeSelectionChangedListener(fListenerList.get(i));
+		for (ISelectionChangedListener element : fListenerList) {
+			super.removeSelectionChangedListener(element);
 		}
 	}
 

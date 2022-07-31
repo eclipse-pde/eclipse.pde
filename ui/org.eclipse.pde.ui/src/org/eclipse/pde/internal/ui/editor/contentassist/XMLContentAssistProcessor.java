@@ -332,12 +332,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		String patternString = "(?i)" + filter; //$NON-NLS-1$
 		// Compile the pattern
 		Pattern pattern = Pattern.compile(patternString);
-		// Iterate over the applicable extension points and add extension points
-		// matching the pattern to the filtered proposal list
-		Iterator<ISchemaObject> iterator = allExtensionPoints.iterator();
-		while (iterator.hasNext()) {
-			// Get the schema object
-			ISchemaObject schemaObject = iterator.next();
+		for (ISchemaObject schemaObject : allExtensionPoints) {
 			// Ensure the schema object is defined
 			if (schemaObject == null) {
 				continue;
@@ -356,8 +351,8 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		if (validValues == null)
 			return null;
 		ArrayList<ISchemaObject> list = new ArrayList<>();
-		for (int i = 0; i < validValues.size(); i++)
-			addToList(list, currValue, validValues.get(i));
+		for (VirtualSchemaObject validValue : validValues)
+			addToList(list, currValue, validValue);
 
 		return convertListToProposal(list, attr, offset);
 	}
@@ -808,9 +803,9 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	}
 
 	public void dispose() {
-		for (int i = 0; i < fImages.length; i++)
-			if (fImages[i] != null && !fImages[i].isDisposed())
-				fImages[i].dispose();
+		for (Image fImage : fImages)
+			if (fImage != null && !fImage.isDisposed())
+				fImage.dispose();
 	}
 
 	public PDESourcePage getSourcePage() {

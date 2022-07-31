@@ -398,11 +398,11 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		IFeature feature = model.getFeature();
 		IFeatureImport[] featureImports = feature.getImports();
-		for (int i = 0; i < featureImports.length; i++) {
-			if (featureImports[i].getType() == IFeatureImport.FEATURE) {
-				if (!requiredFeatures.contains(featureImports[i].getId())) {
-					requiredFeatures.add(featureImports[i].getId());
-					IFeatureModel currentModel = manager.findFeatureModel(featureImports[i].getId());
+		for (IFeatureImport featureImport : featureImports) {
+			if (featureImport.getType() == IFeatureImport.FEATURE) {
+				if (!requiredFeatures.contains(featureImport.getId())) {
+					requiredFeatures.add(featureImport.getId());
+					IFeatureModel currentModel = manager.findFeatureModel(featureImport.getId());
 					if (currentModel != null) {
 						getFeatureDependencies(currentModel, requiredFeatures);
 					}
@@ -411,10 +411,10 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		}
 
 		IFeatureChild[] featureIncludes = feature.getIncludedFeatures();
-		for (int i = 0; i < featureIncludes.length; i++) {
-			if (!requiredFeatures.contains(featureIncludes[i].getId())) {
-				requiredFeatures.add(featureIncludes[i].getId());
-				IFeatureModel currentModel = manager.findFeatureModel(featureIncludes[i].getId());
+		for (IFeatureChild featureInclude : featureIncludes) {
+			if (!requiredFeatures.contains(featureInclude.getId())) {
+				requiredFeatures.add(featureInclude.getId());
+				IFeatureModel currentModel = manager.findFeatureModel(featureInclude.getId());
 				if (currentModel != null) {
 					getFeatureDependencies(currentModel, requiredFeatures);
 				}

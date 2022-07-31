@@ -325,9 +325,9 @@ public class FeatureBlock {
 				additionalPlugins.add(model.getPluginModelBase());
 			}
 			List<IPluginModelBase> result = new ArrayList<>();
-			for (int i = 0; i < plugins.length; i++) {
-				if (!additionalPlugins.contains(plugins[i])) {
-					result.add(plugins[i]);
+			for (IPluginModelBase plugin : plugins) {
+				if (!additionalPlugins.contains(plugin)) {
+					result.add(plugin);
 				}
 			}
 			return result.toArray(new IPluginModelBase[result.size()]);
@@ -994,8 +994,7 @@ public class FeatureBlock {
 		fTree.addSelectionChangedListener(event -> {
 			IStructuredSelection selection = (IStructuredSelection) fTree.getSelection();
 			boolean allPlugins = true;
-			for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
-				Object element = iterator.next();
+			for (Object element : selection) {
 				if (!(element instanceof PluginLaunchModel)) {
 					allPlugins = false;
 				}
@@ -1012,8 +1011,7 @@ public class FeatureBlock {
 					IStructuredSelection selection = (IStructuredSelection) fTree.getSelection();
 					int index = fAdditionalPlugins.indexOf(selection.getFirstElement());
 					List<?> input = (List<?>) fTree.getInput();
-					for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
-						Object element = iterator.next();
+					for (Object element : selection) {
 						if (element instanceof PluginLaunchModel) {
 							fAdditionalPlugins.remove(element);
 							fTree.remove(element);

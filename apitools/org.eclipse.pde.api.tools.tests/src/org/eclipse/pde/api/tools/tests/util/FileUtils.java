@@ -24,7 +24,6 @@ import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -78,9 +77,7 @@ public class FileUtils {
 				subDirs.add(file);
 			}
 		}
-		Iterator<File> iter = subDirs.iterator();
-		while (iter.hasNext()) {
-			File subDir = iter.next();
+		for (File subDir : subDirs) {
 			addJavaFiles(subDir, collection);
 		}
 	}

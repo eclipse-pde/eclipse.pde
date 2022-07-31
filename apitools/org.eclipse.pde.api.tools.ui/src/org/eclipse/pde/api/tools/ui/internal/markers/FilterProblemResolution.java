@@ -173,10 +173,10 @@ public class FilterProblemResolution extends WorkbenchMarkerResolution {
 	@Override
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
 		HashSet<IMarker> mset = new HashSet<>(markers.length);
-		for (int i = 0; i < markers.length; i++) {
+		for (IMarker marker : markers) {
 			try {
-				if (Util.isApiProblemMarker(markers[i]) && !fBackingMarker.equals(markers[i]) && !markers[i].getType().equals(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER)) {
-					mset.add(markers[i]);
+				if (Util.isApiProblemMarker(marker) && !fBackingMarker.equals(marker) && !marker.getType().equals(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER)) {
+					mset.add(marker);
 				}
 			} catch (CoreException ce) {
 				// do nothing just don't add the filter

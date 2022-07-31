@@ -179,8 +179,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 				// do smart update (update only the row whose property changed
 				String property = e.getChangedProperty();
 				if (property != null) {
-					for (int i = 0; i < rows.size(); i++) {
-						ExtensionAttributeRow row = rows.get(i);
+					for (ExtensionAttributeRow row : rows) {
 						ISchemaAttribute attribute = row.getAttribute();
 						if (attribute == null) {
 							continue;
@@ -203,8 +202,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 		updateDescription();
 		if (schemaElement == null)
 			updateRows();
-		for (int i = 0; i < rows.size(); i++) {
-			ExtensionAttributeRow row = rows.get(i);
+		for (ExtensionAttributeRow row : rows) {
 			row.setInput(input);
 		}
 	}
@@ -215,9 +213,9 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 		IPluginAttribute[] atts = input.getAttributes();
 		FormToolkit toolkit = getManagedForm().getToolkit();
 		boolean rowsAdded = false;
-		for (int i = 0; i < atts.length; i++) {
-			if (!hasAttribute(atts[i].getName())) {
-				rows.add(createAttributeRow(atts[i], (Composite) section.getClient(), toolkit, 2));
+		for (IPluginAttribute att : atts) {
+			if (!hasAttribute(att.getName())) {
+				rows.add(createAttributeRow(att, (Composite) section.getClient(), toolkit, 2));
 				rowsAdded = true;
 			}
 		}
@@ -241,8 +239,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	}
 
 	private boolean hasAttribute(String attName) {
-		for (int i = 0; i < rows.size(); i++) {
-			ExtensionAttributeRow row = rows.get(i);
+		for (ExtensionAttributeRow row : rows) {
 			if (row.getName().equals(attName))
 				return true;
 		}
@@ -274,8 +271,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 
 	@Override
 	public void commit(boolean onSave) {
-		for (int i = 0; i < rows.size(); i++) {
-			ExtensionAttributeRow row = rows.get(i);
+		for (ExtensionAttributeRow row : rows) {
 			row.commit();
 		}
 		super.commit(onSave);
@@ -289,8 +285,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 
 	@Override
 	public void dispose() {
-		for (int i = 0; i < rows.size(); i++) {
-			ExtensionAttributeRow row = rows.get(i);
+		for (ExtensionAttributeRow row : rows) {
 			row.dispose();
 		}
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();

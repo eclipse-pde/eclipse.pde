@@ -16,7 +16,6 @@
 package org.eclipse.pde.internal.runtime.registry;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -474,8 +473,7 @@ public class RegistryBrowser extends ViewPart {
 			public void run() {
 				try {
 					List<Bundle> bundles = getSelectedBundles();
-					for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
-						Bundle bundle = it.next();
+					for (Bundle bundle : bundles) {
 						bundle.start();
 					}
 				} catch (BundleException e) {
@@ -489,8 +487,7 @@ public class RegistryBrowser extends ViewPart {
 			public void run() {
 				try {
 					List<Bundle> bundles = getSelectedBundles();
-					for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
-						Bundle bundle = it.next();
+					for (Bundle bundle : bundles) {
 						bundle.stop();
 					}
 				} catch (BundleException e) {
@@ -503,8 +500,7 @@ public class RegistryBrowser extends ViewPart {
 			@Override
 			public void run() {
 				List<Bundle> bundles = getSelectedBundles();
-				for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
-					Bundle bundle = it.next();
+				for (Bundle bundle : bundles) {
 					bundle.enable();
 				}
 			}
@@ -514,8 +510,7 @@ public class RegistryBrowser extends ViewPart {
 			@Override
 			public void run() {
 				List<Bundle> bundles = getSelectedBundles();
-				for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
-					Bundle bundle = it.next();
+				for (Bundle bundle : bundles) {
 					bundle.disable();
 				}
 			}
@@ -525,8 +520,7 @@ public class RegistryBrowser extends ViewPart {
 			@Override
 			public void run() {
 				List<Bundle> bundles = getSelectedBundles();
-				for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
-					Bundle bundle = it.next();
+				for (Bundle bundle : bundles) {
 					MultiStatus problems = bundle.diagnose();
 
 					Dialog dialog;
@@ -595,8 +589,8 @@ public class RegistryBrowser extends ViewPart {
 		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 		if (selection != null) {
 			Object[] elements = selection.toArray();
-			for (int i = 0; i < elements.length; i++) {
-				if (!(elements[i] instanceof Bundle)) {
+			for (Object element : elements) {
+				if (!(element instanceof Bundle)) {
 					return false;
 				}
 			}
@@ -624,8 +618,7 @@ public class RegistryBrowser extends ViewPart {
 	 */
 	private boolean selectedBundlesStarted() {
 		List<Bundle> bundles = getSelectedBundles();
-		for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
-			Bundle bundle = it.next();
+		for (Bundle bundle : bundles) {
 			if (bundle.getState() != Bundle.ACTIVE)
 				return false;
 		}
@@ -637,8 +630,7 @@ public class RegistryBrowser extends ViewPart {
 	 */
 	private boolean selectedBundlesStopped() {
 		List<Bundle> bundles = getSelectedBundles();
-		for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
-			Bundle bundle = it.next();
+		for (Bundle bundle : bundles) {
 			if (bundle.getState() == Bundle.ACTIVE)
 				return false;
 		}
@@ -650,8 +642,7 @@ public class RegistryBrowser extends ViewPart {
 	 */
 	private boolean selectedBundlesDisabled() {
 		List<Bundle> bundles = getSelectedBundles();
-		for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
-			Bundle bundle = it.next();
+		for (Bundle bundle : bundles) {
 			if (bundle.isEnabled())
 				return false;
 		}
@@ -663,8 +654,7 @@ public class RegistryBrowser extends ViewPart {
 	 */
 	private boolean selectedBundlesEnabled() {
 		List<Bundle> bundles = getSelectedBundles();
-		for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
-			Bundle bundle = it.next();
+		for (Bundle bundle : bundles) {
 			if (!bundle.isEnabled())
 				return false;
 		}

@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.ui.views.plugins;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.FileAdapter;
@@ -79,8 +78,7 @@ public class PluginsDragAdapter extends DragSourceAdapter {
 	private FileAdapter[] getSelectedFiles() {
 		IStructuredSelection selection = (IStructuredSelection) selectionProvider.getSelection();
 		ArrayList<Object> files = new ArrayList<>();
-		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
-			Object obj = iter.next();
+		for (Object obj : selection) {
 			if (obj instanceof FileAdapter)
 				files.add(obj);
 			else

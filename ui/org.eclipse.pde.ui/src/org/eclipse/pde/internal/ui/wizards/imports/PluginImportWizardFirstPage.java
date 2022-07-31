@@ -574,10 +574,8 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		if (type == PluginImportOperation.IMPORT_FROM_REPOSITORY) {
 			if (models != null) {
 				importerToInstructions = service.getImportDescriptions(models);
-				Iterator<Entry<IBundleImporter, ScmUrlImportDescription[]>> iterator = importerToInstructions.entrySet().iterator();
-				while (iterator.hasNext()) {
+				for (Entry<IBundleImporter, ScmUrlImportDescription[]> entry : importerToInstructions.entrySet()) {
 					if (!monitor.isCanceled()) {
-						Entry<IBundleImporter, ScmUrlImportDescription[]> entry = iterator.next();
 						ScmUrlImportDescription[] descriptions = entry.getValue();
 						for (ScmUrlImportDescription desc : descriptions) {
 							repositoryModels.add(desc.getProperty(BundleProjectService.PLUGIN));
@@ -586,10 +584,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				}
 			}
 			if (!monitor.isCanceled()) {
-				// contributed wizard pages
-				Iterator<Entry<IBundleImporter, ScmUrlImportDescription[]>> iterator = importerToInstructions.entrySet().iterator();
-				while (iterator.hasNext()) {
-					Entry<IBundleImporter, ScmUrlImportDescription[]> entry = iterator.next();
+				for (Entry<IBundleImporter, ScmUrlImportDescription[]> entry : importerToInstructions.entrySet()) {
 					final IBundleImporter importer = entry.getKey();
 					String importerId = importer.getId();
 					IScmUrlImportWizardPage page = importIdToWizardPage.get(importerId);
@@ -619,9 +614,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 * @return whether the contributed pages are complete
 	 */
 	boolean arePagesComplete() {
-		Iterator<IScmUrlImportWizardPage> iterator = nextPages.iterator();
-		while (iterator.hasNext()) {
-			IScmUrlImportWizardPage page = iterator.next();
+		for (IScmUrlImportWizardPage page : nextPages) {
 			if (!page.isPageComplete()) {
 				return false;
 			}
@@ -635,9 +628,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 * @return whether finish was successful
 	 */
 	boolean finishPages() {
-		Iterator<IScmUrlImportWizardPage> iterator = nextPages.iterator();
-		while (iterator.hasNext()) {
-			IScmUrlImportWizardPage page = iterator.next();
+		for (IScmUrlImportWizardPage page : nextPages) {
 			if (!page.finish()) {
 				return false;
 			}
@@ -686,9 +677,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		}
 
 		if (page instanceof PluginImportWizardDetailedPage || page instanceof PluginImportWizardExpressPage) {
-			Iterator<IScmUrlImportWizardPage> iter = nextPages.iterator();
-			while (iter.hasNext()) {
-				IWizardPage nextPage = iter.next();
+			for (IWizardPage nextPage : nextPages) {
 				if (!isPageEmpty(nextPage))
 					return nextPage;
 			}
@@ -809,9 +798,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		Set<IPluginModelBase> modelsSet = new HashSet<>();
 		Collections.addAll(modelsSet, models);
 		Map<IBundleImporter, List<ScmUrlImportDescription>> importerToImportees = new HashMap<>();
-		Iterator<Entry<IBundleImporter, ScmUrlImportDescription[]>> iterator = importerToInstructions.entrySet().iterator();
-		while (iterator.hasNext()) {
-			Entry<IBundleImporter, ScmUrlImportDescription[]> entry = iterator.next();
+		for (Entry<IBundleImporter, ScmUrlImportDescription[]> entry : importerToInstructions.entrySet()) {
 			IBundleImporter importer = entry.getKey();
 			ScmUrlImportDescription[] descriptions = entry.getValue();
 			for (ScmUrlImportDescription desc : descriptions) {
@@ -832,9 +819,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		while (iterator2.hasNext())
 			iterator2.next().setSelection(new ScmUrlImportDescription[0]);
 
-		Iterator<Entry<IBundleImporter, List<ScmUrlImportDescription>>> iterator3 = importerToImportees.entrySet().iterator();
-		while (iterator3.hasNext()) {
-			Entry<IBundleImporter, List<ScmUrlImportDescription>> entry = iterator3.next();
+		for (Entry<IBundleImporter, List<ScmUrlImportDescription>> entry : importerToImportees.entrySet()) {
 			IBundleImporter importer = entry.getKey();
 			List<ScmUrlImportDescription> list = entry.getValue();
 			ScmUrlImportDescription[] descriptions = list.toArray(new ScmUrlImportDescription[list.size()]);

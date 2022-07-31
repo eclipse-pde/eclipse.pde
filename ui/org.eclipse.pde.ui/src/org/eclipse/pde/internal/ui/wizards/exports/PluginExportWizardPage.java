@@ -47,9 +47,9 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 	public Object[] getListElements() {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		ArrayList<IModel> result = new ArrayList<>();
-		for (int i = 0; i < projects.length; i++) {
-			if (!WorkspaceModelManager.isBinaryProject(projects[i]) && WorkspaceModelManager.isPluginProject(projects[i])) {
-				IModel model = PluginRegistry.findModel(projects[i]);
+		for (IProject project : projects) {
+			if (!WorkspaceModelManager.isBinaryProject(project) && WorkspaceModelManager.isPluginProject(project)) {
+				IModel model = PluginRegistry.findModel(project);
 				if (model != null && isValidModel(model) && hasBuildProperties((IPluginModelBase) model)) {
 					result.add(model);
 				}

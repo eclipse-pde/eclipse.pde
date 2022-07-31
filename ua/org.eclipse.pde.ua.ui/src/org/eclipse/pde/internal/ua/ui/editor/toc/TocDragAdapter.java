@@ -17,7 +17,6 @@ package org.eclipse.pde.internal.ua.ui.editor.toc;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.ua.core.toc.text.TocObject;
@@ -67,8 +66,7 @@ public class TocDragAdapter implements DragSourceListener {
 				PrintWriter writer = new PrintWriter(sw);
 
 				//Write the XML representation of each selected object
-				for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
-					Object obj = iter.next();
+				for (Object obj : sel) {
 					if (obj instanceof TocObject) {
 						((TocObject) obj).write("", writer); //$NON-NLS-1$
 					}
@@ -98,8 +96,7 @@ public class TocDragAdapter implements DragSourceListener {
 	 */
 	private ArrayList<TocObject> getSelectedObjects(IStructuredSelection selection) {
 		ArrayList<TocObject> objects = new ArrayList<>();
-		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
-			Object obj = iter.next();
+		for (Object obj : selection) {
 			if (obj instanceof TocObject && ((TocObject) obj).canBeRemoved()) { //If the object is a removable TocObject, add it
 				objects.add((TocObject) obj);
 			} else { //If the object is not a removable TocObject,

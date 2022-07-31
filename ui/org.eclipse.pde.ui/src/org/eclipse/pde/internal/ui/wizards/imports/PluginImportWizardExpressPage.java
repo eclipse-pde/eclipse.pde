@@ -53,9 +53,9 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		public Object[] getElements(Object parent) {
 			IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
 			ArrayList<IPluginModelBase> result = new ArrayList<>();
-			for (int i = 0; i < projects.length; i++) {
-				if (WorkspaceModelManager.isPluginProject(projects[i]) && !WorkspaceModelManager.isBinaryProject(projects[i])) {
-					IPluginModelBase model = PluginRegistry.findModel(projects[i]);
+			for (IProject project : projects) {
+				if (WorkspaceModelManager.isPluginProject(project) && !WorkspaceModelManager.isBinaryProject(project)) {
+					IPluginModelBase model = PluginRegistry.findModel(project);
 					if (model != null && model.getBundleDescription() != null)
 						result.add(model);
 				}
@@ -254,9 +254,9 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			for (String token : tokens) {
 				Path path = new Path(token);
 				if (path.segmentCount() >= 2 && path.segment(0).equals("..")) { //$NON-NLS-1$
-					for (int j = 0; j < fModels.length; j++) {
-						if (fModels[j].getPluginBase().getId().equals(path.segment(1)) && !result.contains(fModels[j])) {
-							result.add(fModels[j]);
+					for (IPluginModelBase fModel : fModels) {
+						if (fModel.getPluginBase().getId().equals(path.segment(1)) && !result.contains(fModel)) {
+							result.add(fModel);
 						}
 					}
 				}

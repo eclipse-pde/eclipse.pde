@@ -83,8 +83,8 @@ public class CalleesContentProvider extends DependenciesViewPageContentProvider 
 				dependencies.put(requiredBundle, requiredBundle);
 		}
 		ImportPackageSpecification[] importedPkgs = desc.getImportPackages();
-		for (int i = 0; i < importedPkgs.length; i++) {
-			BaseDescription bd = importedPkgs[i].getSupplier();
+		for (ImportPackageSpecification importedPkg : importedPkgs) {
+			BaseDescription bd = importedPkg.getSupplier();
 			if (bd != null && bd instanceof ExportPackageDescription) {
 				BundleDescription exporter = ((ExportPackageDescription) bd).getExporter();
 				if (exporter == desc)
@@ -92,11 +92,11 @@ public class CalleesContentProvider extends DependenciesViewPageContentProvider 
 				if (exporter != null) {
 					Object obj = dependencies.get(exporter);
 					if (obj == null) {
-						dependencies.put(exporter, importedPkgs[i]);
-					} else if (!Constants.RESOLUTION_OPTIONAL.equals(importedPkgs[i].getDirective(Constants.RESOLUTION_DIRECTIVE)) && obj instanceof ImportPackageSpecification && Constants.RESOLUTION_OPTIONAL.equals(((ImportPackageSpecification) obj).getDirective(Constants.RESOLUTION_DIRECTIVE))) {
+						dependencies.put(exporter, importedPkg);
+					} else if (!Constants.RESOLUTION_OPTIONAL.equals(importedPkg.getDirective(Constants.RESOLUTION_DIRECTIVE)) && obj instanceof ImportPackageSpecification && Constants.RESOLUTION_OPTIONAL.equals(((ImportPackageSpecification) obj).getDirective(Constants.RESOLUTION_DIRECTIVE))) {
 						// if we have a non-optional Import-Package dependency on a bundle which we already depend on, check to make sure our
 						// current dependency is not optional.  If it is, replace the optional dependency with the non-optional one
-						dependencies.put(exporter, importedPkgs[i]);
+						dependencies.put(exporter, importedPkg);
 					}
 				}
 			}
@@ -104,9 +104,9 @@ public class CalleesContentProvider extends DependenciesViewPageContentProvider 
 		}
 		// include fragments which are "linked" to this bundle
 		BundleDescription frags[] = desc.getFragments();
-		for (int i = 0; i < frags.length; i++) {
-			if (!frags[i].equals(fFragmentDescription))
-				dependencies.put(frags[i], frags[i]);
+		for (BundleDescription frag : frags) {
+			if (!frag.equals(fFragmentDescription))
+				dependencies.put(frag, frag);
 		}
 		return dependencies.values().toArray();
 	}

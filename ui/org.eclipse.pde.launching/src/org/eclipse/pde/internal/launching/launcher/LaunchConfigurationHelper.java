@@ -313,8 +313,8 @@ public class LaunchConfigurationHelper {
 
 	private static void resolveLocationPath(ArrayList<String> locations, Properties properties, Map<String, List<IPluginModelBase>> map) {
 		StringBuilder buffer = new StringBuilder();
-		for (int i = 0; i < locations.size(); i++) {
-			String location = locations.get(i);
+		for (String location2 : locations) {
+			String location = location2;
 			if (location.startsWith("platform:/base/plugins/")) { //$NON-NLS-1$
 				location = location.replaceFirst("platform:/base/plugins/", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}

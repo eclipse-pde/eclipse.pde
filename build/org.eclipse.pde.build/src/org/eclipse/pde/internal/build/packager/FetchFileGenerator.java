@@ -172,10 +172,9 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 			return true;
 
 		for (String entryConfig : entryConfigs) {
-			Iterator<Config> iter = getConfigInfos().iterator();
 			Config aConfig = new Config(entryConfig);
-			while (iter.hasNext()) {
-				if (aConfig.equals(iter.next()) || aConfig.equals(Config.genericConfig())) {
+			for (Config element : getConfigInfos()) {
+				if (aConfig.equals(element) || aConfig.equals(Config.genericConfig())) {
 					return true;
 				}
 			}
@@ -186,9 +185,8 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 	boolean containsGenericConfig(List<Config> configs) {
 		if (configs == null)
 			return false;
-		Iterator<Config> iter = configs.iterator();
-		while (iter.hasNext()) {
-			if (Config.genericConfig().equals(iter.next()))
+		for (Config config : configs) {
+			if (Config.genericConfig().equals(config))
 				return true;
 		}
 		return false;

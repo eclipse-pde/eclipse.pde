@@ -1391,8 +1391,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	 */
 	boolean isRemoveEnabled(IStructuredSelection selection) {
 		if (selection != null) {
-			for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
-				Object element = iterator.next();
+			for (Object element : selection) {
 				if (element instanceof PluginExtensionNode) {
 					return ((PluginExtensionNode) element).getChildCount() == 0;
 				}

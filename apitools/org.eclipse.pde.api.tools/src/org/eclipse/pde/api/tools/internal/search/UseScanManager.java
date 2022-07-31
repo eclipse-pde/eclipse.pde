@@ -137,9 +137,9 @@ public class UseScanManager {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, SearchMessages.collecting_external_dependencies, 10);
 		ArrayList<String> unavailableMembers = new ArrayList<>();
 		if (apiUseTypes != null && apiUseTypes.length > 0) {
-			for (int i = 0; i < apiUseTypes.length; i++) {
-				if (!references.hasReferencesTo(apiUseTypes[i])) {
-					unavailableMembers.add(apiUseTypes[i]);
+			for (String apiUseType : apiUseTypes) {
+				if (!references.hasReferencesTo(apiUseType)) {
+					unavailableMembers.add(apiUseType);
 				}
 			}
 			if (unavailableMembers.size() > 0) {
@@ -195,9 +195,9 @@ public class UseScanManager {
 							File unzipDirLoc = new File(destDirPath);
 							if (unzipDirLoc.exists()) {
 								String[] childDirs = unzipDirLoc.list();
-								for (int j = 0; j < childDirs.length; j++) {
-									if (!childDirs[j].equals(String.valueOf(file.lastModified()))) {
-										FileManager.getManager().recordTempFileRoot(destDirPath + '/' + childDirs[j]);
+								for (String childDir : childDirs) {
+									if (!childDir.equals(String.valueOf(file.lastModified()))) {
+										FileManager.getManager().recordTempFileRoot(destDirPath + '/' + childDir);
 									}
 								}
 							} else {

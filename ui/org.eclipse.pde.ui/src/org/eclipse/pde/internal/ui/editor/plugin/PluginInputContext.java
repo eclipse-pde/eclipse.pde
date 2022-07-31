@@ -84,14 +84,12 @@ public class PluginInputContext extends XMLInputContext {
 	@Override
 	protected void reorderInsertEdits(ArrayList<TextEdit> ops) {
 		HashMap<Object, TextEdit> map = getOperationTable();
-		Iterator<Object> iter = map.keySet().iterator();
 		TextEdit runtimeInsert = null;
 		TextEdit requiresInsert = null;
 		ArrayList<TextEdit> extensionPointInserts = new ArrayList<>();
 		ArrayList<TextEdit> extensionInserts = new ArrayList<>();
 
-		while (iter.hasNext()) {
-			Object object = iter.next();
+		for (Object object : map.keySet()) {
 			if (object instanceof IDocumentElementNode) {
 				IDocumentElementNode node = (IDocumentElementNode) object;
 				if (node.getParentNode() instanceof PluginBaseNode) {

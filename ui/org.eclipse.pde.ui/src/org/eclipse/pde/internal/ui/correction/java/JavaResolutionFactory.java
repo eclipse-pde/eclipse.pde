@@ -191,8 +191,7 @@ public class JavaResolutionFactory {
 						pluginIdStrings[0] = ((ExportPackageDescription) getChangeObject()).getSupplier()
 								.getSymbolicName();
 					}
-					for (int i = 0; i < pluginIdStrings.length; i++) {
-						String pluginId = pluginIdStrings[i];
+					for (String pluginId : pluginIdStrings) {
 						if (!isUndo()) {
 							IPluginImport[] imports = base.getPluginBase().getImports();
 							boolean duplicate = false;

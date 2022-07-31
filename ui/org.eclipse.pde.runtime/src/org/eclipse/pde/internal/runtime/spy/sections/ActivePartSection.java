@@ -111,8 +111,7 @@ public class ActivePartSection implements ISpySection {
 			List<PopupMenuExtender> list = (List<PopupMenuExtender>) field.get(site);
 			if (list != null && !list.isEmpty()) {
 				Set<String> menuIds = new LinkedHashSet<>();
-				for (int i = 0; i < list.size(); i++) {
-					PopupMenuExtender extender = list.get(i);
+				for (PopupMenuExtender extender : list) {
 					menuIds.addAll(extender.getMenuIds());
 				}
 				buffer.append("<p>"); //$NON-NLS-1$

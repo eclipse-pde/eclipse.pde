@@ -145,9 +145,9 @@ public class PluginBlock extends AbstractPluginBlock {
 			PluginModelNameBuffer buffer = new PluginModelNameBuffer();
 			if (fAddWorkspaceButton.getSelection()) {
 				IPluginModelBase[] workspaceModels = getWorkspaceModels();
-				for (int i = 0; i < workspaceModels.length; i++) {
-					if (!fPluginTreeViewer.isCheckedLeafElement(workspaceModels[i])) {
-						buffer.add(workspaceModels[i]);
+				for (IPluginModelBase workspaceModel : workspaceModels) {
+					if (!fPluginTreeViewer.isCheckedLeafElement(workspaceModel)) {
+						buffer.add(workspaceModel);
 					}
 				}
 			}

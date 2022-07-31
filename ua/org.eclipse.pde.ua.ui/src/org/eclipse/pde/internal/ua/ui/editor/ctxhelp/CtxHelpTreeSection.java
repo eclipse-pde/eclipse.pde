@@ -16,7 +16,6 @@
 package org.eclipse.pde.internal.ua.ui.editor.ctxhelp;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -606,8 +605,7 @@ public class CtxHelpTreeSection extends TreeSection {
 	 */
 	private List<CtxHelpObject> getRemovableObjectFromSelection(IStructuredSelection selection) {
 		List<CtxHelpObject> objectsToRemove = new ArrayList<>();
-		for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
-			Object currentObject = iterator.next();
+		for (Object currentObject : selection) {
 			if (currentObject instanceof CtxHelpObject
 					&& ((CtxHelpObject) currentObject).canBeRemoved()) {
 				objectsToRemove.add((CtxHelpObject) currentObject);
@@ -815,10 +813,10 @@ public class CtxHelpTreeSection extends TreeSection {
 		if (targetObject == null
 				|| !(targetObject instanceof CtxHelpObject || ((CtxHelpObject) targetObject)
 						.getType() == ICtxHelpConstants.TYPE_ROOT)) {
-			for (int i = 0; i < sourceObjects.length; i++) {
-				if (!(sourceObjects[i] instanceof CtxHelpObject)
+			for (Object sourceObject : sourceObjects) {
+				if (!(sourceObject instanceof CtxHelpObject)
 						|| !fModel.getCtxHelpRoot().canAddChild(
-								((CtxHelpObject) sourceObjects[i]).getType())) {
+								((CtxHelpObject) sourceObject).getType())) {
 					return false;
 				}
 			}
@@ -832,10 +830,10 @@ public class CtxHelpTreeSection extends TreeSection {
 		// Add as a child of the target
 		if (targetLocation == ViewerDropAdapter.LOCATION_ON) {
 			boolean result = true;
-			for (int i = 0; i < sourceObjects.length; i++) {
-				if (!(sourceObjects[i] instanceof CtxHelpObject)
+			for (Object sourceObject : sourceObjects) {
+				if (!(sourceObject instanceof CtxHelpObject)
 						|| !dropTarget
-								.canAddChild(((CtxHelpObject) sourceObjects[i])
+								.canAddChild(((CtxHelpObject) sourceObject)
 										.getType())) {
 					result = false;
 					break;
@@ -850,10 +848,10 @@ public class CtxHelpTreeSection extends TreeSection {
 		}
 
 		// Add as a sibling of the target
-		for (int i = 0; i < sourceObjects.length; i++) {
-			if (!(sourceObjects[i] instanceof CtxHelpObject)
+		for (Object sourceObject : sourceObjects) {
+			if (!(sourceObject instanceof CtxHelpObject)
 					|| !dropTarget
-							.canAddSibling(((CtxHelpObject) sourceObjects[i])
+							.canAddSibling(((CtxHelpObject) sourceObject)
 									.getType())) {
 				return false;
 			}
@@ -878,9 +876,9 @@ public class CtxHelpTreeSection extends TreeSection {
 
 	@Override
 	public boolean canDragMove(Object[] sourceObjects) {
-		for (int i = 0; i < sourceObjects.length; i++) {
-			if (!(sourceObjects[i] instanceof CtxHelpObject)
-					|| !((CtxHelpObject) sourceObjects[i]).canBeRemoved()) {
+		for (Object sourceObject : sourceObjects) {
+			if (!(sourceObject instanceof CtxHelpObject)
+					|| !((CtxHelpObject) sourceObject).canBeRemoved()) {
 				return false;
 			}
 		}

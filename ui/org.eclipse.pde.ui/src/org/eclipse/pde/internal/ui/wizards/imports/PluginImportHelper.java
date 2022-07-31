@@ -192,8 +192,7 @@ public class PluginImportHelper {
 			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
 			List<?> children = provider.getChildren(provider.getRoot());
 			if (children != null && !children.isEmpty()) {
-				for (int i = 0; i < children.size(); i++) {
-					Object curr = children.get(i);
+				for (Object curr : children) {
 					if (provider.isFolder(curr)) {
 						if (!isClassFolder(provider, curr))
 							result.add(provider.getLabel(curr) + "/"); //$NON-NLS-1$
@@ -214,8 +213,7 @@ public class PluginImportHelper {
 	public static void collectRequiredBundleFiles(IImportStructureProvider provider, Object element, ArrayList<Object> collected) {
 		List<?> children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
-			for (int i = 0; i < children.size(); i++) {
-				Object curr = children.get(i);
+			for (Object curr : children) {
 				String name = provider.getLabel(curr);
 				if (provider.isFolder(curr)) {
 					boolean isNotSrcClassFolder = !name.equals("src") && !isClassFolder(provider, curr);//$NON-NLS-1$
@@ -299,8 +297,7 @@ public class PluginImportHelper {
 	public static void collectNonJavaNonBuildFiles(IImportStructureProvider provider, Object element, ArrayList<Object> collected) {
 		List<?> children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
-			for (int i = 0; i < children.size(); i++) {
-				Object curr = children.get(i);
+			for (Object curr : children) {
 				if (provider.isFolder(curr)) {
 					// ignore source folders
 					if (folderContainsFileExtension(provider, curr, ".java")) //$NON-NLS-1$
@@ -329,8 +326,7 @@ public class PluginImportHelper {
 	public static void collectResources(IImportStructureProvider provider, Object element, ArrayList<Object> collected) {
 		List<?> children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
-			for (int i = 0; i < children.size(); i++) {
-				Object curr = children.get(i);
+			for (Object curr : children) {
 				if (provider.isFolder(curr)) {
 					collectResources(provider, curr, collected);
 				} else if (!provider.getLabel(curr).endsWith(".class")) { //$NON-NLS-1$
@@ -352,8 +348,7 @@ public class PluginImportHelper {
 	private static void collectResourcesFromFolder(ZipFileStructureProvider provider, Object element, IPath folderPath, ArrayList<Object> collected) {
 		List<?> children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
-			for (int i = 0; i < children.size(); i++) {
-				Object curr = children.get(i);
+			for (Object curr : children) {
 				if (provider.isFolder(curr)) {
 					if (provider.getLabel(curr).equals(folderPath.segment(0))) {
 						if (folderPath.segmentCount() > 1) {
@@ -379,8 +374,7 @@ public class PluginImportHelper {
 	public static void collectResourcesFromFolder(IImportStructureProvider provider, Object element, IPath folderPath, ArrayList<Object> collected) {
 		List<?> children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
-			for (int i = 0; i < children.size(); i++) {
-				Object curr = children.get(i);
+			for (Object curr : children) {
 				if (provider.isFolder(curr) && provider.getLabel(curr).equals(folderPath.segment(0))) {
 					if (folderPath.segmentCount() > 1) {
 						collectResourcesFromFolder(provider, curr, folderPath.removeFirstSegments(1), collected);
@@ -477,8 +471,7 @@ public class PluginImportHelper {
 	private static boolean folderContainsFileExtension(IImportStructureProvider provider, Object element, String fileExtension) {
 		List<?> children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
-			for (int i = 0; i < children.size(); i++) {
-				Object curr = children.get(i);
+			for (Object curr : children) {
 				if (provider.isFolder(curr)) {
 					if (folderContainsFileExtension(provider, curr, fileExtension)) {
 						return true;
