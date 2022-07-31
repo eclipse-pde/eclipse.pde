@@ -24,7 +24,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -80,10 +79,7 @@ public class TracingOptionsManager {
 		// Start with the fresh template from plugins
 		Properties defaults = getTracingTemplateCopy();
 		if (storedOptions != null) {
-			// Load stored values, but only for existing keys
-			Iterator<String> iter = storedOptions.keySet().iterator();
-			while (iter.hasNext()) {
-				String key = iter.next();
+			for (String key : storedOptions.keySet()) {
 				if (defaults.containsKey(key)) {
 					defaults.setProperty(key, storedOptions.get(key));
 				}

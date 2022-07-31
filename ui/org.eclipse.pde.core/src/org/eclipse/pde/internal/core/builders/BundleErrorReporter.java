@@ -238,9 +238,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				try {
 					if (ManifestUtils.isImmediateRoot(root)) {
 						IJavaElement[] javaElements = root.getChildren();
-						for (int j = 0; j < javaElements.length; j++) {
-							if (javaElements[j] instanceof IPackageFragment) {
-								IPackageFragment fragment = (IPackageFragment) javaElements[j];
+						for (IJavaElement javaElement : javaElements) {
+							if (javaElement instanceof IPackageFragment) {
+								IPackageFragment fragment = (IPackageFragment) javaElement;
 								String name = fragment.getElementName();
 								if (name.length() == 0) {
 									continue;
@@ -1166,9 +1166,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		ImportPackageSpecification[] imports = desc.getImportPackages();
 		if (desc.hasDynamicImports()) {
 			List<ImportPackageSpecification> staticImportsList = new ArrayList<>();
-			for (int i = 0; i < imports.length; ++i) {
-				if (!imports[i].getDirective(Constants.RESOLUTION_DIRECTIVE).equals(ImportPackageSpecification.RESOLUTION_DYNAMIC)) {
-					staticImportsList.add(imports[i]);
+			for (ImportPackageSpecification import1 : imports) {
+				if (!import1.getDirective(Constants.RESOLUTION_DIRECTIVE).equals(ImportPackageSpecification.RESOLUTION_DYNAMIC)) {
+					staticImportsList.add(import1);
 				}
 			}
 			imports = staticImportsList.toArray(new ImportPackageSpecification[staticImportsList.size()]);
@@ -1396,9 +1396,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			if (proj.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject jp = JavaCore.create(proj);
 				IPackageFragmentRoot[] roots = jp.getPackageFragmentRoots();
-				for (int i = 0; i < roots.length; i++) {
-					if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE || (roots[i].getKind() == IPackageFragmentRoot.K_BINARY && !roots[i].isExternal())) {
-						IJavaElement[] children = roots[i].getChildren();
+				for (IPackageFragmentRoot root : roots) {
+					if (root.getKind() == IPackageFragmentRoot.K_SOURCE || (root.getKind() == IPackageFragmentRoot.K_BINARY && !root.isExternal())) {
+						IJavaElement[] children = root.getChildren();
 						for (IJavaElement element : children) {
 							IPackageFragment f = (IPackageFragment) element;
 							String name = f.getElementName();
@@ -1731,11 +1731,11 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		IContainer folder = (IContainer) res;
 		try {
 			IResource[] children = folder.members();
-			for (int i = 0; i < children.length; i++) {
-				if (!(children[i] instanceof IFile)) {
+			for (IResource child : children) {
+				if (!(child instanceof IFile)) {
 					continue;
 				}
-				String childName = children[i].getName();
+				String childName = child.getName();
 				if (childName.endsWith(".properties") && childName.startsWith(fileName)) { //$NON-NLS-1$
 					return;
 				}

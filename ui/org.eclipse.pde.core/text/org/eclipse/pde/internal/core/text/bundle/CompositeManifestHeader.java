@@ -186,8 +186,8 @@ public class CompositeManifestHeader extends ManifestHeader {
 		}
 
 		if (fManifestElements != null) {
-			for (int i = 0; i < fManifestElements.size(); i++) {
-				PDEManifestElement element = (PDEManifestElement) fManifestElements.get(i);
+			for (Object fManifestElement : fManifestElements) {
+				PDEManifestElement element = (PDEManifestElement) fManifestElement;
 				if (name.equals(element.getValue())) {
 					return true;
 				}

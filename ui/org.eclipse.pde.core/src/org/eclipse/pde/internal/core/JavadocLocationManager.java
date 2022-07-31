@@ -18,7 +18,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -61,9 +60,7 @@ public class JavadocLocationManager {
 			HostSpecification host = desc.getHost();
 			String id = host == null ? desc.getSymbolicName() : host.getName();
 			if (id != null) {
-				Iterator<String> iter = fLocations.keySet().iterator();
-				while (iter.hasNext()) {
-					String location = iter.next();
+				for (String location : fLocations.keySet()) {
 					Set<String> set = fLocations.get(location);
 					if (set.contains(id)) {
 						return location;

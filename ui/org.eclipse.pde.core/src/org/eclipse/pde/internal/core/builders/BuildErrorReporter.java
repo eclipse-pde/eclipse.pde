@@ -777,10 +777,10 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		String platform = "platform:/plugin/"; //$NON-NLS-1$
 		String[] tokens = javaExtra.getTokens();
 		IPath projectPath = javaExtra.getModel().getUnderlyingResource().getProject().getLocation();
-		for (int i = 0; i < tokens.length; i++) {
+		for (String token : tokens) {
 			boolean exists = true;
-			if (tokens[i].startsWith(platform)) {
-				String path = tokens[i].substring(platform.length());
+			if (token.startsWith(platform)) {
+				String path = token.substring(platform.length());
 				int sep = path.indexOf(IPath.SEPARATOR);
 				if (sep > -1) {
 					IPluginModelBase model = PluginRegistry.findModel(path.substring(0, sep));
@@ -801,11 +801,11 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					}
 				}
 			} else {
-				exists = projectPath.append(tokens[i]).toFile().exists();
+				exists = projectPath.append(token).toFile().exists();
 			}
 
-			if (!exists && !startsWithAntVariable(tokens[i])) {
-				prepareError(PROPERTY_JAR_EXTRA_CLASSPATH, tokens[i], NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindJar, tokens[i]), PDEMarkerFactory.M_ONLY_CONFIG_SEV, fBuildSeverity,CompilerFlags.P_BUILD ,PDEMarkerFactory.CAT_OTHER);
+			if (!exists && !startsWithAntVariable(token)) {
+				prepareError(PROPERTY_JAR_EXTRA_CLASSPATH, token, NLS.bind(PDECoreMessages.BuildErrorReporter_cannotFindJar, token), PDEMarkerFactory.M_ONLY_CONFIG_SEV, fBuildSeverity,CompilerFlags.P_BUILD ,PDEMarkerFactory.CAT_OTHER);
 			}
 		}
 	}
@@ -825,8 +825,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		if (!pluginLibraryNames.contains(".")) { //$NON-NLS-1$
 			pluginLibraryNames.add("."); //$NON-NLS-1$)
 		}
-		for (int i = 0; i < sourceEntryKeys.size(); i++) {
-			String key = sourceEntryKeys.get(i);
+		for (String sourceEntryKey : sourceEntryKeys) {
+			String key = sourceEntryKey;
 			if (!pluginLibraryNames.contains(key)) {
 				return; // do not report error for folders if the library itself does not exists on plug-in classpath
 			}
@@ -1203,9 +1203,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			return;
 		}
 
-		for (int i = 0; i < fProblemList.size(); i++) {
-			BuildProblem bp = fProblemList.get(i);
-
+		for (BuildProblem bp : fProblemList) {
 			int lineNum;
 			IBuildEntry buildEntry = bm.getBuild().getEntry(bp.fEntryName);
 			if (buildEntry == null || bp.fEntryName == null) {
@@ -1298,8 +1296,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 	protected BuildProblem prepareError(String name, String token, String message, int fixId, int severity, String compilerKey, String category) {
 		BuildProblem bp = new BuildProblem(name, token, message, fixId, severity,compilerKey, category);
-		for (int i = 0; i < fProblemList.size(); i++) {
-			BuildProblem listed = fProblemList.get(i);
+		for (BuildProblem listed : fProblemList) {
 			if (listed.equals(bp)) {
 				if (bp.attributes != null) {
 					listed.addAttributes(bp.attributes);

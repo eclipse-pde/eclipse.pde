@@ -265,9 +265,7 @@ public class Product extends ProductObject implements IProduct {
 		if (!fFeatures.isEmpty()) {
 			writer.println();
 			writer.println(indent + "   <features>"); //$NON-NLS-1$
-			Iterator<IProductFeature> fIter = fFeatures.iterator();
-			while (fIter.hasNext()) {
-				IProductFeature feature = fIter.next();
+			for (IProductFeature feature : fFeatures) {
 				feature.write(indent + "      ", writer); //$NON-NLS-1$
 			}
 			writer.println(indent + "   </features>"); //$NON-NLS-1$
@@ -282,9 +280,7 @@ public class Product extends ProductObject implements IProduct {
 				IPluginConfiguration configuration = (IPluginConfiguration) iter.next();
 				configuration.write(indent + "      ", writer); //$NON-NLS-1$
 			}
-			Iterator<IConfigurationProperty> propIter = fConfigurationProperties.iterator();
-			while (propIter.hasNext()) {
-				IConfigurationProperty property = propIter.next();
+			for (IConfigurationProperty property : fConfigurationProperties) {
 				property.write(indent + "      ", writer); //$NON-NLS-1$
 			}
 			writer.println(indent + "   </configurations>"); //$NON-NLS-1$

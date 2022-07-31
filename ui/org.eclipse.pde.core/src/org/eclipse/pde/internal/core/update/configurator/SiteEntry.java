@@ -358,10 +358,8 @@ public class SiteEntry implements IConfigurationConstants {
 
 	private void validateFeatureEntries() {
 		File root = new File(resolvedURL.getFile().replace('/', File.separatorChar));
-		Iterator<FeatureEntry> iterator = featureEntries.values().iterator();
 		Collection<String> deletedFeatures = new ArrayList<>();
-		while (iterator.hasNext()) {
-			FeatureEntry feature = iterator.next();
+		for (FeatureEntry feature : featureEntries.values()) {
 			// Note: in the future, we can check for absolute url as well.
 			// For now, feature url is features/org.eclipse.foo/feature.xml
 			File featureXML = new File(root, feature.getURL());

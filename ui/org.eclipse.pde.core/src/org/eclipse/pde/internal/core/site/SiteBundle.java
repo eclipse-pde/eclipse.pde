@@ -29,8 +29,7 @@ public class SiteBundle extends VersionableObject implements ISiteBundle {
 
 	@Override
 	public boolean isValid() {
-		for (int i = 0; i < fCategories.size(); i++) {
-			ISiteCategory category = fCategories.get(i);
+		for (ISiteCategory category : fCategories) {
 			if (!category.isValid()) {
 				return false;
 			}
@@ -106,8 +105,7 @@ public class SiteBundle extends VersionableObject implements ISiteBundle {
 		if (!fCategories.isEmpty()) {
 			writer.println(">"); //$NON-NLS-1$
 			String indent2 = indent + "   "; //$NON-NLS-1$
-			for (int i = 0; i < fCategories.size(); i++) {
-				ISiteCategory category = fCategories.get(i);
+			for (ISiteCategory category : fCategories) {
 				category.write(indent2, writer);
 			}
 			writer.println(indent + "</bundle>"); //$NON-NLS-1$

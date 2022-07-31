@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
@@ -332,9 +331,7 @@ public class ClasspathComputer {
 			}
 		} else {
 			String compliance = options.get(JavaCore.COMPILER_COMPLIANCE);
-			Iterator<Entry<String, String>> iterator = options.entrySet().iterator();
-			while (iterator.hasNext()) {
-				Entry<String, String> entry = iterator.next();
+			for (Entry<String, String> entry : options.entrySet()) {
 				String option = entry.getKey();
 				String value = entry.getValue();
 				if (JavaCore.VERSION_1_3.equals(compliance) || JavaCore.VERSION_1_4.equals(compliance)) {

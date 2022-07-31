@@ -59,8 +59,7 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 			return new String[0];
 		}
 		ArrayList<String> result = new ArrayList<>();
-		for (int i = 0; i < children.size(); i++) {
-			ISchemaEnumeration enumeration = children.get(i);
+		for (ISchemaEnumeration enumeration : children) {
 			result.add(enumeration.getName());
 		}
 		String[] choices = new String[result.size()];
@@ -83,8 +82,7 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 		}
 		String svalue = value.toString();
 
-		for (int i = 0; i < children.size(); i++) {
-			ISchemaEnumeration enumeration = children.get(i);
+		for (ISchemaEnumeration enumeration : children) {
 			if (enumeration.getName().equals(svalue)) {
 				return true;
 			}
@@ -128,8 +126,7 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.println(indent + "<restriction base=\"" + baseType.getName() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
-		for (int i = 0; i < children.size(); i++) {
-			Object child = children.get(i);
+		for (ISchemaEnumeration child : children) {
 			if (child instanceof ISchemaEnumeration) {
 				ISchemaEnumeration enumeration = (ISchemaEnumeration) child;
 				enumeration.write(indent + Schema.INDENT, writer);

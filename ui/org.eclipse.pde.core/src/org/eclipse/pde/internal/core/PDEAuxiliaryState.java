@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -204,9 +203,7 @@ public class PDEAuxiliaryState {
 			Document doc = factory.newDocumentBuilder().newDocument();
 			Element root = doc.createElement(ELEMENT_ROOT);
 
-			Iterator<String> iter = fPluginInfos.keySet().iterator();
-			while (iter.hasNext()) {
-				String key = iter.next();
+			for (String key : fPluginInfos.keySet()) {
 				Element element = doc.createElement(ELEMENT_BUNDLE);
 				element.setAttribute(ATTR_BUNDLE_ID, key);
 				PluginInfo info = fPluginInfos.get(key);
@@ -305,15 +302,15 @@ public class PDEAuxiliaryState {
 
 			Element root = doc.createElement(ELEMENT_ROOT);
 			doc.appendChild(root);
-			for (int i = 0; i < models.length; i++) {
-				IPluginBase plugin = models[i].getPluginBase();
-				BundleDescription desc = models[i].getBundleDescription();
+			for (IPluginModelBase model : models) {
+				IPluginBase plugin = model.getPluginBase();
+				BundleDescription desc = model.getBundleDescription();
 				if (desc == null) {
 					continue;
 				}
 				Element element = doc.createElement(ELEMENT_BUNDLE);
 				element.setAttribute(ATTR_BUNDLE_ID, Long.toString(desc.getBundleId()));
-				element.setAttribute(ATTR_PROJECT, models[i].getUnderlyingResource().getProject().getName());
+				element.setAttribute(ATTR_PROJECT, model.getUnderlyingResource().getProject().getName());
 				if (plugin instanceof IPlugin && ((IPlugin) plugin).getClassName() != null) {
 					element.setAttribute(ATTR_CLASS, ((IPlugin) plugin).getClassName());
 				}
@@ -323,22 +320,22 @@ public class PDEAuxiliaryState {
 				if (plugin.getName() != null) {
 					element.setAttribute(ATTR_NAME, plugin.getName());
 				}
-				if (ClasspathUtilCore.hasExtensibleAPI(models[i])) {
+				if (ClasspathUtilCore.hasExtensibleAPI(model)) {
 					element.setAttribute(ATTR_EXTENSIBLE_API, "true"); //$NON-NLS-1$
-				} else if (ClasspathUtilCore.isPatchFragment(models[i])) {
+				} else if (ClasspathUtilCore.isPatchFragment(model)) {
 					element.setAttribute(ATTR_PATCH, "true"); //$NON-NLS-1$
 				}
-				if (!(models[i] instanceof IBundlePluginModelBase)) {
+				if (!(model instanceof IBundlePluginModelBase)) {
 					element.setAttribute(ATTR_BUNDLE_STRUCTURE, "false"); //$NON-NLS-1$
 				}
-				if (models[i] instanceof IBundlePluginModelBase) {
-					String localization = ((IBundlePluginModelBase) models[i]).getBundleLocalization();
+				if (model instanceof IBundlePluginModelBase) {
+					String localization = ((IBundlePluginModelBase) model).getBundleLocalization();
 					if (localization != null) {
 						element.setAttribute(ATTR_LOCALIZATION, localization);
 					}
 				}
-				if (models[i] instanceof IBundlePluginModelBase) {
-					IBundleModel bundleModel = ((IBundlePluginModelBase) models[i]).getBundleModel();
+				if (model instanceof IBundlePluginModelBase) {
+					IBundleModel bundleModel = ((IBundlePluginModelBase) model).getBundleModel();
 					if (bundleModel != null) {
 						String bundleSourceEntry = bundleModel.getBundle().getHeader(ICoreConstants.ECLIPSE_SOURCE_BUNDLE);
 						if (bundleSourceEntry != null) {
@@ -347,10 +344,10 @@ public class PDEAuxiliaryState {
 					}
 				}
 				IPluginLibrary[] libraries = plugin.getLibraries();
-				for (int j = 0; j < libraries.length; j++) {
+				for (IPluginLibrary element2 : libraries) {
 					Element lib = doc.createElement(ELEMENT_LIB);
-					lib.setAttribute(ATTR_NAME, libraries[j].getName());
-					if (!libraries[j].isExported()) {
+					lib.setAttribute(ATTR_NAME, element2.getName());
+					if (!element2.isExported()) {
 						lib.setAttribute(ATTR_EXPORTED, "false"); //$NON-NLS-1$
 					}
 					element.appendChild(lib);

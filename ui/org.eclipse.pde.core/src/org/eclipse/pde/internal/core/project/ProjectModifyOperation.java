@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.core.project;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -697,9 +696,7 @@ public class ProjectModifyOperation {
 			// apply any other headers that have been specified
 			BundleProjectDescription bpd = (BundleProjectDescription) description;
 			Map<String, String> extraHeaders = bpd.getExtraHeaders();
-			Iterator<Entry<String, String>> iterator = extraHeaders.entrySet().iterator();
-			while (iterator.hasNext()) {
-				Entry<String, String> entry = iterator.next();
+			for (Entry<String, String> entry : extraHeaders.entrySet()) {
 				String name = entry.getKey();
 				String value = entry.getValue();
 				// translate empty header to a single space to ensure inclusion of empty headers
@@ -835,12 +832,12 @@ public class ProjectModifyOperation {
 			}
 			// add new libraries
 			if (names != null) {
-				for (int i = 0; i < names.length; i++) {
-					if (!binEntry.contains(names[i])) {
+				for (String name2 : names) {
+					if (!binEntry.contains(name2)) {
 						modified = true;
 						// folders need trailing slash - see bug 306991
-						String name = names[i];
-						IPath path = new Path(names[i]);
+						String name = name2;
+						IPath path = new Path(name2);
 						String extension = path.getFileExtension();
 						if (extension == null) {
 							if (!name.endsWith("/")) { //$NON-NLS-1$

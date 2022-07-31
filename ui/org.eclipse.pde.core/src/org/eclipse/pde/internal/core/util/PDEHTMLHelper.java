@@ -93,8 +93,8 @@ public class PDEHTMLHelper {
 			return false;
 		}
 		char[] characters = string.toCharArray();
-		for (int i = 0; i < characters.length; i++) {
-			if (!Character.isWhitespace(characters[i])) {
+		for (char character : characters) {
+			if (!Character.isWhitespace(character)) {
 				return false;
 			}
 		}

@@ -156,8 +156,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 				break;
 			}
 			boolean valid = true;
-			for (int i = 0; i < commentPositions.size(); i++) {
-				Position pos = commentPositions.get(i);
+			for (Position pos : commentPositions) {
 				if (pos.includes(idx)) {
 					valid = false;
 					break;

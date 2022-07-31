@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.core.bundle;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
@@ -64,9 +63,7 @@ public class Bundle extends BundleObject implements IBundle {
 	 */
 	public void load(Map<String, String> headers) {
 		fDocumentHeaders.clear();
-		Iterator<String> iter = headers.keySet().iterator();
-		while (iter.hasNext()) {
-			String key = iter.next();
+		for (String key : headers.keySet()) {
 			if (headers.get(key) != null) {
 				String value = headers.get(key);
 				IManifestHeader header = getModel().getFactory().createHeader(key, value);

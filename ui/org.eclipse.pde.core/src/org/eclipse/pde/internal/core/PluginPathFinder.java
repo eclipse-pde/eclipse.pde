@@ -195,11 +195,11 @@ public class PluginPathFinder {
 	 */
 	public static URL[] scanLocations(File[] sites) {
 		HashSet<URL> result = new HashSet<>();
-		for (int i = 0; i < sites.length; i++) {
-			if (!sites[i].exists()) {
+		for (File site : sites) {
+			if (!site.exists()) {
 				continue;
 			}
-			File[] children = sites[i].listFiles();
+			File[] children = site.listFiles();
 			if (children != null) {
 				for (File element : children) {
 					try {

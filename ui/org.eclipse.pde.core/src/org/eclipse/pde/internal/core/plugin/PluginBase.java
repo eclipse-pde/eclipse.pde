@@ -232,9 +232,9 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		}
 		ExportPackageDescription[] packages = root.getResolvedImports();
 		ArrayList<BundleDescription> resolvedImports = new ArrayList<>(packages.length);
-		for (int i = 0; i < packages.length; i++) {
-			if (!root.getLocation().equals(packages[i].getExporter().getLocation()) && !resolvedImports.contains(packages[i].getExporter())) {
-				resolvedImports.add(packages[i].getExporter());
+		for (ExportPackageDescription package1 : packages) {
+			if (!root.getLocation().equals(package1.getExporter().getLocation()) && !resolvedImports.contains(package1.getExporter())) {
+				resolvedImports.add(package1.getExporter());
 			}
 		}
 		return resolvedImports.toArray(new BundleDescription[resolvedImports.size()]);
@@ -385,15 +385,13 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		}
 
 		// validate libraries
-		for (int i = 0; i < fLibraries.size(); i++) {
-			IPluginLibrary library = fLibraries.get(i);
+		for (IPluginLibrary library : fLibraries) {
 			if (!library.isValid()) {
 				return false;
 			}
 		}
 		// validate imports
-		for (int i = 0; i < fImports.size(); i++) {
-			IPluginImport iimport = fImports.get(i);
+		for (IPluginImport iimport : fImports) {
 			if (!iimport.isValid()) {
 				return false;
 			}

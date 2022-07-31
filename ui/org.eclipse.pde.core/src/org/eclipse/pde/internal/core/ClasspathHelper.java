@@ -281,10 +281,10 @@ public class ClasspathHelper {
 						}
 						addPaths(paths, project, result);
 					} else {
-						for (int i = 0; i < libraries.length; i++) {
-							List<IPath> paths = findLibrary(libraries[i].getName(), project, classpathMap, build);
-							if (paths.isEmpty() && !libraries[i].getName().equals(DOT)) {
-								paths = findLibraryFromFragments(libraries[i].getName(), model, checkExcluded, plugins);
+						for (IPluginLibrary element : libraries) {
+							List<IPath> paths = findLibrary(element.getName(), project, classpathMap, build);
+							if (paths.isEmpty() && !element.getName().equals(DOT)) {
+								paths = findLibraryFromFragments(element.getName(), model, checkExcluded, plugins);
 							}
 							addPaths(paths, project, result);
 						}
@@ -312,14 +312,14 @@ public class ClasspathHelper {
 	// looks for fragments for a plug-in.  Then searches the fragments for a specific library.  Will return paths which are absolute (required by runtime)
 	private static List<IPath> findLibraryFromFragments(String libName, IPluginModelBase model, boolean checkExcluded, Set<IPluginModelBase> plugins) {
 		IFragmentModel[] frags = PDEManager.findFragmentsFor(model);
-		for (int i = 0; i < frags.length; i++) {
-			if (!plugins.contains(frags[i])) {
+		for (IFragmentModel frag : frags) {
+			if (!plugins.contains(frag)) {
 				continue;
 			}
 			// look in project first
-			if (frags[i].getUnderlyingResource() != null) {
+			if (frag.getUnderlyingResource() != null) {
 				try {
-					IProject project = frags[i].getUnderlyingResource().getProject();
+					IProject project = frag.getUnderlyingResource().getProject();
 					Map<IPath, List<IPath>> classpathMap = getClasspathMap(project, checkExcluded, true);
 					IBuild build = getBuild(project);
 					List<IPath> paths = findLibrary(libName, project, classpathMap, build);
@@ -331,7 +331,7 @@ public class ClasspathHelper {
 				}
 				// if external plugin, look in child directories for library
 			} else {
-				File file = new File(frags[i].getInstallLocation());
+				File file = new File(frag.getInstallLocation());
 				if (file.isDirectory()) {
 					file = new File(file, libName);
 					if (file.exists()) {

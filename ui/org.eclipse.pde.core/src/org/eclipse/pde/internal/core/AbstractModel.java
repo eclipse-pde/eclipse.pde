@@ -102,8 +102,7 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 	@Override
 	public void transferListenersTo(IModelChangeProviderExtension target, IModelChangedListenerFilter filter) {
 		ArrayList<IModelChangedListener> removed = new ArrayList<>();
-		for (int i = 0; i < fListeners.size(); i++) {
-			IModelChangedListener listener = fListeners.get(i);
+		for (IModelChangedListener listener : fListeners) {
 			if (filter == null || filter.accept(listener)) {
 				target.addModelChangedListener(listener);
 				removed.add(listener);

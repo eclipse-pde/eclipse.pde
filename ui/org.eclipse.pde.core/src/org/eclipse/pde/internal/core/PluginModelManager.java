@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
@@ -376,13 +375,10 @@ public class PluginModelManager implements IModelProviderListener {
 		}
 
 		if (!map.isEmpty()) {
-			// update class path for all affected workspace plug-ins in one operation
-			Iterator<Entry<IJavaProject, RequiredPluginsClasspathContainer>> iterator = map.entrySet().iterator();
 			IJavaProject[] projects = new IJavaProject[map.size()];
 			IClasspathContainer[] containers = new IClasspathContainer[projects.length];
 			int index = 0;
-			while (iterator.hasNext()) {
-				Entry<IJavaProject, RequiredPluginsClasspathContainer> entry = iterator.next();
+			for (Entry<IJavaProject, RequiredPluginsClasspathContainer> entry : map.entrySet()) {
 				projects[index] = entry.getKey();
 				containers[index] = entry.getValue();
 				index++;
@@ -409,8 +405,8 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	private void fireDelta(PluginModelDelta delta) {
 		if (fListeners != null) {
-			for (int i = 0; i < fListeners.size(); i++) {
-				fListeners.get(i).modelsChanged(delta);
+			for (IPluginModelListener fListener : fListeners) {
+				fListener.modelsChanged(delta);
 			}
 		}
 	}
@@ -855,9 +851,8 @@ public class PluginModelManager implements IModelProviderListener {
 			if (previousExternal.size() != newExternal.size()) {
 				return true;
 			}
-			Iterator<String> iter = previousExternal.iterator();
-			while (iter.hasNext()) {
-				if (!newExternal.remove(iter.next())) {
+			for (String element : previousExternal) {
+				if (!newExternal.remove(element)) {
 					return true;
 				}
 			}
@@ -1123,9 +1118,7 @@ public class PluginModelManager implements IModelProviderListener {
 		synchronized (fEntriesSynchronizer) {
 			int size = getEntryTable().size();
 			ArrayList<IPluginModelBase> result = new ArrayList<>(size);
-			Iterator<LocalModelEntry> iter = getEntryTable().values().iterator();
-			while (iter.hasNext()) {
-				ModelEntry entry = iter.next();
+			for (ModelEntry entry : getEntryTable().values()) {
 				IPluginModelBase[] models = entry.getActiveModels();
 				for (IPluginModelBase model : models) {
 					if (model instanceof IPluginModel || includeFragments) {
@@ -1177,9 +1170,7 @@ public class PluginModelManager implements IModelProviderListener {
 		synchronized (fEntriesSynchronizer) {
 			int size = getEntryTable().size();
 			ArrayList<IPluginModelBase> result = new ArrayList<>(size);
-			Iterator<LocalModelEntry> iter = getEntryTable().values().iterator();
-			while (iter.hasNext()) {
-				ModelEntry entry = iter.next();
+			for (ModelEntry entry : getEntryTable().values()) {
 				IPluginModelBase[] models = entry.hasWorkspaceModels() ? entry.getWorkspaceModels()
 						: entry.getExternalModels();
 				for (IPluginModelBase model : models) {

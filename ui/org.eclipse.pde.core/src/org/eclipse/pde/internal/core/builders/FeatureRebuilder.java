@@ -130,8 +130,8 @@ public class FeatureRebuilder implements IFeatureModelListener, IPluginModelList
 	 */
 	private ISchedulingRule getTouchRule(IFeatureModel[] workspaceFeatures) {
 		List<IResource> nestedRules = new ArrayList<>(workspaceFeatures.length);
-		for (int i = 0; i < workspaceFeatures.length; i++) {
-			nestedRules.add(workspaceFeatures[i].getUnderlyingResource());
+		for (IFeatureModel workspaceFeature : workspaceFeatures) {
+			nestedRules.add(workspaceFeature.getUnderlyingResource());
 		}
 		if (nestedRules.size() == 1) {
 			return nestedRules.get(0);

@@ -187,14 +187,12 @@ public class ModelEntry extends PlatformObject {
 			return null;
 		}
 
-		for (int i = 0; i < fWorkspaceEntries.size(); i++) {
-			IPluginModelBase model = fWorkspaceEntries.get(i);
+		for (IPluginModelBase model : fWorkspaceEntries) {
 			if (desc.equals(model.getBundleDescription())) {
 				return model;
 			}
 		}
-		for (int i = 0; i < fExternalEntries.size(); i++) {
-			IPluginModelBase model = fExternalEntries.get(i);
+		for (IPluginModelBase model : fExternalEntries) {
 			if (desc.equals(model.getBundleDescription())) {
 				return model;
 			}

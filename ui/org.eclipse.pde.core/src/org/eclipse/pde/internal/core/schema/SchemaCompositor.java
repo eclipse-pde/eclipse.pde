@@ -116,8 +116,7 @@ public class SchemaCompositor extends RepeatableSchemaObject implements ISchemaC
 	@Override
 	public void setParent(ISchemaObject parent) {
 		super.setParent(parent);
-		for (int i = 0; i < children.size(); i++) {
-			ISchemaObject child = children.get(i);
+		for (ISchemaObject child : children) {
 			child.setParent(this);
 		}
 	}

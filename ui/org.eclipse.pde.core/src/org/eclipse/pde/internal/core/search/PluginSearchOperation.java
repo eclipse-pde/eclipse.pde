@@ -60,15 +60,15 @@ public class PluginSearchOperation {
 
 	private void visit(IPluginModelBase model) {
 		ArrayList<IIdentifiable> matches = findMatch(model);
-		for (int i = 0; i < matches.size(); i++) {
-			fCollector.accept(matches.get(i));
+		for (IIdentifiable element : matches) {
+			fCollector.accept(element);
 		}
 	}
 
 	private void visit(final IFeatureModel model) {
 		final List<IIdentifiable> matches = findMatch(model);
-		for (int i = 0; i < matches.size(); i++) {
-			fCollector.accept(matches.get(i));
+		for (IIdentifiable element : matches) {
+			fCollector.accept(element);
 		}
 	}
 

@@ -35,8 +35,7 @@ public class PDEBuilderHelper {
 			}
 			IPath path = entry.getPath();
 			boolean found = false;
-			for (int j = 0; j < sourceEntries.size(); j++) {
-				IBuildEntry be = sourceEntries.get(j);
+			for (IBuildEntry be : sourceEntries) {
 				String[] tokens = be.getTokens();
 				for (String token : tokens) {
 					IResource res = project.findMember(token);

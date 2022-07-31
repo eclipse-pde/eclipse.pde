@@ -571,10 +571,8 @@ public class P2TargetUtils {
 		// still in the profile, we need to recreate (rather than uninstall)
 		IUProfilePropertyQuery propertyQuery = new IUProfilePropertyQuery(PROP_INSTALLED_IU, Boolean.toString(true));
 		IQueryResult<IInstallableUnit> queryResult = fProfile.query(propertyQuery, null);
-		Iterator<IInstallableUnit> iterator = queryResult.iterator();
 		Set<NameVersionDescriptor> installedIUs = new HashSet<>();
-		while (iterator.hasNext()) {
-			IInstallableUnit unit = iterator.next();
+		for (IInstallableUnit unit : queryResult) {
 			installedIUs.add(new NameVersionDescriptor(unit.getId(), unit.getVersion().toString()));
 		}
 		ITargetLocation[] containers = target.getTargetLocations();

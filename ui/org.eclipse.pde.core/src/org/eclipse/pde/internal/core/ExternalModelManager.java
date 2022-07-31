@@ -175,9 +175,9 @@ class ExternalLibraryCache {
 		}
 
 		File[] fDirs = fCacheDir.listFiles();
-		for (int i = 0; i < fDirs.length; i++) {
-			if (fDirs[i].isDirectory() && !bundleKeys.contains(fDirs[i].getName())) {
-				CoreUtility.deleteContent(fDirs[i]);
+		for (File fDir : fDirs) {
+			if (fDir.isDirectory() && !bundleKeys.contains(fDir.getName())) {
+				CoreUtility.deleteContent(fDir);
 			}
 		}
 

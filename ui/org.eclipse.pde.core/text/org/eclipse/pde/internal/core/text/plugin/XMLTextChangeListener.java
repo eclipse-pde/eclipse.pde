@@ -466,11 +466,11 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		if (objects == null) {
 			return;
 		}
-		for (int i = 0; i < objects.length; i++) {
-			if (!(objects[i] instanceof IDocumentElementNode)) {
+		for (Object object : objects) {
+			if (!(object instanceof IDocumentElementNode)) {
 				continue;
 			}
-			IDocumentElementNode node = (IDocumentElementNode) objects[i];
+			IDocumentElementNode node = (IDocumentElementNode) object;
 			Object op = fOperationTable.remove(node);
 			fOperationList.remove(op);
 			if (fReadableNames != null) {

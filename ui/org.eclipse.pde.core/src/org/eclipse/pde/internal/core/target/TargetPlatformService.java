@@ -623,10 +623,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 			}
 		}
 
-		// Anything left over is in the state and not the target (have been removed from the target)
-		Iterator<IPluginModelBase> iterator = stateLocations.values().iterator();
-		while (iterator.hasNext()) {
-			IPluginModelBase model = iterator.next();
+		for (IPluginModelBase model : stateLocations.values()) {
 			IStatus status = new Status(IStatus.WARNING, PDECore.PLUGIN_ID, ITargetPlatformService.STATUS_MISSING_FROM_TARGET_DEFINITION, model.getPluginBase().getId(), null);
 			multi.add(status);
 		}

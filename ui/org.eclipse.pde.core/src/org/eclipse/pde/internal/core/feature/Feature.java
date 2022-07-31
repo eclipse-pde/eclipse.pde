@@ -320,8 +320,7 @@ public class Feature extends VersionableObject implements IFeature {
 		// new imports
 		ArrayList<IFeatureImport> newImports = new ArrayList<>();
 		IPluginModelBase model = null;
-		for (int i = 0; i < fPlugins.size(); i++) {
-			IFeaturePlugin fp = fPlugins.get(i);
+		for (IFeaturePlugin fp : fPlugins) {
 			ModelEntry entry = PluginRegistry.findEntry(fp.getId());
 			if (entry == null) {
 				continue;
@@ -436,8 +435,7 @@ public class Feature extends VersionableObject implements IFeature {
 	 * @return IFeatureImport or null
 	 */
 	private IFeatureImport findImport(List<IFeatureImport> imports, String id, String version, int match) {
-		for (int i = 0; i < imports.size(); i++) {
-			IFeatureImport iimport = imports.get(i);
+		for (IFeatureImport iimport : imports) {
 			if (iimport.getId().equals(id)) {
 				if (version == null) {
 					return iimport;
@@ -452,8 +450,7 @@ public class Feature extends VersionableObject implements IFeature {
 
 	private IFeaturePlugin findFeaturePlugin(String id, String version, int match) {
 
-		for (int i = 0; i < fPlugins.size(); i++) {
-			IFeaturePlugin fp = fPlugins.get(i);
+		for (IFeaturePlugin fp : fPlugins) {
 			String pid = fp.getId();
 			String pversion = fp.getVersion();
 			if (VersionUtil.compare(pid, pversion, id, version, match)) {
@@ -868,8 +865,7 @@ public class Feature extends VersionableObject implements IFeature {
 		if (!fImports.isEmpty()) {
 			writer.println();
 			writer.println(indent2 + "<requires>"); //$NON-NLS-1$
-			for (int i = 0; i < fImports.size(); i++) {
-				IFeatureImport iimport = fImports.get(i);
+			for (IFeatureImport iimport : fImports) {
 				iimport.write(indenta, writer);
 			}
 			writer.println(indent2 + "</requires>"); //$NON-NLS-1$

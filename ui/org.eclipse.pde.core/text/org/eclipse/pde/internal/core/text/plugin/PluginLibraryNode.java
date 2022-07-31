@@ -133,14 +133,14 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	public void setExported(boolean exported) throws CoreException {
 		IDocumentElementNode[] children = getChildNodes();
 		boolean alreadyExported = false;
-		for (int i = 0; i < children.length; i++) {
-			if (children[i].getXMLTagName().equals(P_EXPORTED)) {
-				if (!"*".equals(children[i].getXMLAttributeValue(P_NAME))) { //$NON-NLS-1$
-					removeContentFilter((PluginElementNode) children[i]);
+		for (IDocumentElementNode child : children) {
+			if (child.getXMLTagName().equals(P_EXPORTED)) {
+				if (!"*".equals(child.getXMLAttributeValue(P_NAME))) { //$NON-NLS-1$
+					removeContentFilter((PluginElementNode) child);
 				} else {
 					alreadyExported = true;
 					if (!exported) {
-						removeContentFilter((PluginElementNode) children[i]);
+						removeContentFilter((PluginElementNode) child);
 					}
 				}
 			}

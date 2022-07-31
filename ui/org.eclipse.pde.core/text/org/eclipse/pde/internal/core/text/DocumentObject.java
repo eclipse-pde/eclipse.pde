@@ -22,7 +22,6 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Iterator;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.pde.core.IModel;
@@ -317,9 +316,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	public IDocumentElementNode getChildNode(Class<?> clazz) {
 		// Linear search O(n)
 		ArrayList<IDocumentElementNode> children = getChildNodesList();
-		Iterator<IDocumentElementNode> iterator = children.iterator();
-		while (iterator.hasNext()) {
-			IDocumentElementNode node = iterator.next();
+		for (IDocumentElementNode node : children) {
 			if (clazz.isInstance(node)) {
 				return node;
 			}
@@ -332,9 +329,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		// Linear search O(n)
 		int count = 0;
 		ArrayList<IDocumentElementNode> children = getChildNodesList();
-		Iterator<IDocumentElementNode> iterator = children.iterator();
-		while (iterator.hasNext()) {
-			IDocumentElementNode node = iterator.next();
+		for (IDocumentElementNode node : children) {
 			if (clazz.isInstance(node)) {
 				count++;
 			}
@@ -351,9 +346,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	public ArrayList<IDocumentElementNode> getChildNodesList(Class<?>[] classes, boolean match) {
 		ArrayList<IDocumentElementNode> filteredChildren = new ArrayList<>();
 		ArrayList<IDocumentElementNode> children = getChildNodesList();
-		Iterator<IDocumentElementNode> iterator = children.iterator();
-		while (iterator.hasNext()) {
-			IDocumentElementNode node = iterator.next();
+		for (IDocumentElementNode node : children) {
 			for (Class<?> clazz : classes) {
 				if (clazz.isInstance(node) == match) {
 					filteredChildren.add(node);
@@ -404,9 +397,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	@Override
 	public boolean hasChildNodes(Class<?> clazz) {
 		ArrayList<IDocumentElementNode> children = getChildNodesList();
-		Iterator<IDocumentElementNode> iterator = children.iterator();
-		while (iterator.hasNext()) {
-			IDocumentElementNode node = iterator.next();
+		for (IDocumentElementNode node : children) {
 			if (clazz.isInstance(node)) {
 				return true;
 			}

@@ -136,9 +136,8 @@ public class ExportPackageObject extends PackageObject {
 			return false;
 		}
 
-		Iterator<String> iter = fFriends.keySet().iterator();
-		while (iter.hasNext()) {
-			if (!object.fFriends.containsKey(iter.next())) {
+		for (String element : fFriends.keySet()) {
+			if (!object.fFriends.containsKey(element)) {
 				return false;
 			}
 		}

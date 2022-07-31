@@ -273,11 +273,11 @@ public class FeatureModelManager {
 		Set<Idver> affectedIdVers = null;
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_REMOVED) != 0) {
 			IModel[] removed = e.getRemovedModels();
-			for (int i = 0; i < removed.length; i++) {
-				if (!(removed[i] instanceof IFeatureModel)) {
+			for (IModel element : removed) {
+				if (!(element instanceof IFeatureModel)) {
 					continue;
 				}
-				IFeatureModel model = (IFeatureModel) removed[i];
+				IFeatureModel model = (IFeatureModel) element;
 				FeatureTable.Idver idver = fActiveModels.remove(model);
 				if (idver != null) {
 					// may need to activate another model
@@ -293,11 +293,11 @@ public class FeatureModelManager {
 		}
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_ADDED) != 0) {
 			IModel[] added = e.getAddedModels();
-			for (int i = 0; i < added.length; i++) {
-				if (!(added[i] instanceof IFeatureModel)) {
+			for (IModel element : added) {
+				if (!(element instanceof IFeatureModel)) {
 					continue;
 				}
-				IFeatureModel model = (IFeatureModel) added[i];
+				IFeatureModel model = (IFeatureModel) element;
 				if (model.getUnderlyingResource() != null) {
 					FeatureTable.Idver idver = fActiveModels.add(model);
 					delta.add(model, IFeatureModelDelta.ADDED);
@@ -337,11 +337,11 @@ public class FeatureModelManager {
 		/* 1. Reinsert with a new id and version, if necessary */
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_CHANGED) != 0) {
 			IModel[] changed = e.getChangedModels();
-			for (int i = 0; i < changed.length; i++) {
-				if (!(changed[i] instanceof IFeatureModel)) {
+			for (IModel element : changed) {
+				if (!(element instanceof IFeatureModel)) {
 					continue;
 				}
-				IFeatureModel model = (IFeatureModel) changed[i];
+				IFeatureModel model = (IFeatureModel) element;
 
 				String id = model.getFeature().getId();
 				String version = model.getFeature().getVersion();
@@ -371,11 +371,11 @@ public class FeatureModelManager {
 		 */
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_CHANGED) != 0) {
 			IModel[] changed = e.getChangedModels();
-			for (int i = 0; i < changed.length; i++) {
-				if (!(changed[i] instanceof IFeatureModel)) {
+			for (IModel element : changed) {
+				if (!(element instanceof IFeatureModel)) {
 					continue;
 				}
-				IFeatureModel model = (IFeatureModel) changed[i];
+				IFeatureModel model = (IFeatureModel) element;
 				if (!delta.contains(model, IFeatureModelDelta.ADDED | IFeatureModelDelta.REMOVED)) {
 					delta.add(model, IFeatureModelDelta.CHANGED);
 				}

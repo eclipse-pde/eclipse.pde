@@ -42,8 +42,7 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		if (fUrl == null) {
 			return false;
 		}
-		for (int i = 0; i < fCategories.size(); i++) {
-			ISiteCategory category = fCategories.get(i);
+		for (ISiteCategory category : fCategories) {
 			if (!category.isValid()) {
 				return false;
 			}
@@ -205,8 +204,7 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		if (!fCategories.isEmpty()) {
 			writer.println(">"); //$NON-NLS-1$
 			String indent2 = indent + "   "; //$NON-NLS-1$
-			for (int i = 0; i < fCategories.size(); i++) {
-				ISiteCategory category = fCategories.get(i);
+			for (ISiteCategory category : fCategories) {
 				category.write(indent2, writer);
 			}
 			writer.println(indent + "</feature>"); //$NON-NLS-1$

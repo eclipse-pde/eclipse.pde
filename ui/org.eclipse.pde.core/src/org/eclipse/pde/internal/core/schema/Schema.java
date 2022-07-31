@@ -175,8 +175,7 @@ public class Schema extends PlatformObject implements ISchema {
 	@Override
 	public void dispose() {
 		if (fIncludes != null) {
-			for (int i = 0; i < fIncludes.size(); i++) {
-				ISchemaInclude include = fIncludes.get(i);
+			for (ISchemaInclude include : fIncludes) {
 				include.dispose();
 			}
 		}
@@ -189,15 +188,13 @@ public class Schema extends PlatformObject implements ISchema {
 		if (!isLoaded()) {
 			load();
 		}
-		for (int i = 0; i < fElements.size(); i++) {
-			ISchemaElement element = fElements.get(i);
+		for (ISchemaElement element : fElements) {
 			if (element.getName().equals(name)) {
 				return element;
 			}
 		}
 		if (fIncludes != null) {
-			for (int i = 0; i < fIncludes.size(); i++) {
-				ISchemaInclude include = fIncludes.get(i);
+			for (ISchemaInclude include : fIncludes) {
 				ISchema ischema = include.getIncludedSchema();
 				if (ischema == null) {
 					continue;
@@ -281,8 +278,7 @@ public class Schema extends PlatformObject implements ISchema {
 			return localCount;
 		}
 		int totalCount = localCount;
-		for (int i = 0; i < fIncludes.size(); i++) {
-			ISchemaInclude include = fIncludes.get(i);
+		for (ISchemaInclude include : fIncludes) {
 			ISchema schema = include.getIncludedSchema();
 			if (schema == null) {
 				continue;
@@ -321,8 +317,7 @@ public class Schema extends PlatformObject implements ISchema {
 		}
 		@SuppressWarnings("rawtypes")
 		Vector result = (Vector) fElements.clone();
-		for (int i = 0; i < fIncludes.size(); i++) {
-			ISchemaInclude include = fIncludes.get(i);
+		for (ISchemaInclude include : fIncludes) {
 			ISchema schema = include.getIncludedSchema();
 			if (schema == null) {
 				continue;
@@ -1081,8 +1076,7 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 
 	public void updateReferencesFor(ISchemaElement element, int kind) {
-		for (int i = 0; i < fElements.size(); i++) {
-			ISchemaElement el = fElements.get(i);
+		for (ISchemaElement el : fElements) {
 			if (el.equals(element)) {
 				continue;
 			}
@@ -1117,21 +1111,18 @@ public class Schema extends PlatformObject implements ISchema {
 		writer.println();
 		// add includes, if defined
 		if (fIncludes != null) {
-			for (int i = 0; i < fIncludes.size(); i++) {
-				ISchemaInclude include = fIncludes.get(i);
+			for (ISchemaInclude include : fIncludes) {
 				include.write(INDENT, writer);
 				writer.println();
 			}
 		}
 		// add elements
-		for (int i = 0; i < fElements.size(); i++) {
-			ISchemaElement element = fElements.get(i);
+		for (ISchemaElement element : fElements) {
 			element.write(INDENT, writer);
 			writer.println();
 		}
 		// add document sections
-		for (int i = 0; i < fDocSections.size(); i++) {
-			IDocumentSection section = fDocSections.get(i);
+		for (DocumentSection section : fDocSections) {
 			section.write(INDENT, writer);
 			writer.println();
 		}

@@ -378,19 +378,19 @@ public class FeatureExportOperation extends Job {
 			File dir = new File(directory);
 			File[] children = dir.listFiles();
 			if (children != null) {
-				for (int i = 0; i < children.length; i++) {
-					if (!children[i].isDirectory()) {
-						String filename = children[i].getName();
+				for (File child : children) {
+					if (!child.isDirectory()) {
+						String filename = child.getName();
 						if (filename.equals("build.xml") //$NON-NLS-1$
 								|| (filename.startsWith("javaCompiler.") && filename.endsWith(".args")) //$NON-NLS-1$ //$NON-NLS-2$
 								|| (filename.startsWith("assemble.") && filename.endsWith(".xml")) //$NON-NLS-1$ //$NON-NLS-2$
 								|| (filename.startsWith("package.") && filename.endsWith(".xml")) //$NON-NLS-1$ //$NON-NLS-2$
 								|| (filename.startsWith("compile.") && filename.endsWith(".xml")) //$NON-NLS-1$ //$NON-NLS-2$
 								|| filename.equals(FEATURE_POST_PROCESSING) || filename.equals(PLUGIN_POST_PROCESSING)) {
-							children[i].delete();
+							child.delete();
 						}
-					} else if (children[i].getName().equals("temp.folder")) { //$NON-NLS-1$
-						CoreUtility.deleteContent(children[i]);
+					} else if (child.getName().equals("temp.folder")) { //$NON-NLS-1$
+						CoreUtility.deleteContent(child);
 					}
 				}
 			}
@@ -1037,9 +1037,9 @@ public class FeatureExportOperation extends Job {
 	private BundleDescription getMatchingLauncher(String[] configuration, BundleDescription[] fragments) {
 		//return the launcher fragment that matches the given configuration
 		Dictionary<String, String> environment = getEnvironment(configuration);
-		for (int i = 0; i < fragments.length; i++) {
-			if (!isNLFragment(fragments[i]) && shouldAddPlugin(fragments[i], environment)) {
-				return fragments[i];
+		for (BundleDescription fragment : fragments) {
+			if (!isNLFragment(fragment) && shouldAddPlugin(fragment, environment)) {
+				return fragment;
 			}
 		}
 		return null;

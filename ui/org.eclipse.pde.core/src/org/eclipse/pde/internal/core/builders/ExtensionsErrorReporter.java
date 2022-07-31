@@ -599,20 +599,20 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			paths.add(location);
 		}
 
-		for (int i = 0; i < paths.size(); i++) {
+		for (String path2 : paths) {
 			if (bundleJar == null) {
-				IPath currPath = new Path(paths.get(i));
+				IPath currPath = new Path(path2);
 				if (currPath.isAbsolute() && currPath.toFile().exists()) {
 					return true;
 				}
 				if (PDEProject.getBundleRoot(fFile.getProject()).findMember(currPath) != null) {
 					return true;
 				}
-				if (fBuildModel != null && fBuildModel.getEntry("source." + paths.get(i)) != null) { //$NON-NLS-1$
+				if (fBuildModel != null && fBuildModel.getEntry("source." + path2) != null) { //$NON-NLS-1$
 					return true;
 				}
 			} else {
-				if (CoreUtility.jarContainsResource(new File(bundleJar), paths.get(i), false)) {
+				if (CoreUtility.jarContainsResource(new File(bundleJar), path2, false)) {
 					return true;
 				}
 			}

@@ -39,8 +39,7 @@ public class Build extends BuildObject implements IBuild {
 
 	@Override
 	public IBuildEntry getEntry(String name) {
-		for (int i = 0; i < fEntries.size(); i++) {
-			IBuildEntry entry = fEntries.get(i);
+		for (IBuildEntry entry : fEntries) {
 			if (entry.getName().equals(name)) {
 				return entry;
 			}
@@ -67,8 +66,7 @@ public class Build extends BuildObject implements IBuild {
 
 	@Override
 	public void write(String indent, PrintWriter writer) {
-		for (int i = 0; i < fEntries.size(); i++) {
-			IBuildEntry entry = fEntries.get(i);
+		for (IBuildEntry entry : fEntries) {
 			entry.write("", writer); //$NON-NLS-1$
 		}
 	}

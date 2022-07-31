@@ -142,9 +142,9 @@ public class PDEJavaHelper {
 		ArrayList<IPackageFragmentRoot> result = new ArrayList<>();
 		try {
 			IPackageFragmentRoot[] roots = project.getAllPackageFragmentRoots();
-			for (int i = 0; i < roots.length; i++) {
-				if (!isJRELibrary(roots[i])) {
-					result.add(roots[i]);
+			for (IPackageFragmentRoot root : roots) {
+				if (!isJRELibrary(root)) {
+					result.add(root);
 				}
 			}
 		} catch (JavaModelException e) {
@@ -280,12 +280,12 @@ public class PDEJavaHelper {
 			libPaths.add(path.append(libName));
 		}
 		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
+		for (IProject project : projects) {
 			try {
-				if (!projects[i].hasNature(JavaCore.NATURE_ID) || !projects[i].isOpen()) {
+				if (!project.hasNature(JavaCore.NATURE_ID) || !project.isOpen()) {
 					continue;
 				}
-				IJavaProject jp = JavaCore.create(projects[i]);
+				IJavaProject jp = JavaCore.create(project);
 				ListIterator<IPath> li = libPaths.listIterator();
 				while (li.hasNext()) {
 					IPackageFragmentRoot root = jp.findPackageFragmentRoot(li.next());
@@ -359,9 +359,9 @@ public class PDEJavaHelper {
 		ArrayList<IPackageFragmentRoot> result = new ArrayList<>();
 		try {
 			IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
-			for (int i = 0; i < roots.length; i++) {
-				if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE || jProject.getProject().equals(roots[i].getCorrespondingResource()) || (roots[i].isArchive() && !roots[i].isExternal())) {
-					result.add(roots[i]);
+			for (IPackageFragmentRoot root : roots) {
+				if (root.getKind() == IPackageFragmentRoot.K_SOURCE || jProject.getProject().equals(root.getCorrespondingResource()) || (root.isArchive() && !root.isExternal())) {
+					result.add(root);
 				}
 			}
 		} catch (JavaModelException e) {

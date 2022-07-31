@@ -74,17 +74,17 @@ public class PDERegistryStrategy extends RegistryStrategy {
 			}
 			// can ignore removed models since the ModelEntries is empty
 			ModelEntry[] entries = delta.getChangedEntries();
-			for (int i = 0; i < entries.length; i++) {
+			for (ModelEntry entry : entries) {
 				// If we have workspace models, we need to make sure they are registered before external models so when we search for extension points,
 				// we find the workspace version
-				IPluginModelBase[] workspaceModels = entries[i].getWorkspaceModels();
+				IPluginModelBase[] workspaceModels = entry.getWorkspaceModels();
 				if (workspaceModels.length > 0) {
-					removeModels(entries[i].getExternalModels(), !entries[i].hasWorkspaceModels());
+					removeModels(entry.getExternalModels(), !entry.hasWorkspaceModels());
 					removeModels(workspaceModels, true);
-					addBundles(fRegistry, entries[i].getWorkspaceModels());
+					addBundles(fRegistry, entry.getWorkspaceModels());
 				}
 				// make sure the external models are registered at all times
-				addBundles(fRegistry, entries[i].getExternalModels());
+				addBundles(fRegistry, entry.getExternalModels());
 			}
 			entries = delta.getAddedEntries();
 			ModelEntry[] removedEntries = delta.getRemovedEntries();

@@ -186,8 +186,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	public void transferListenersTo(IModelChangeProviderExtension target, IModelChangedListenerFilter filter) {
 		@SuppressWarnings("unchecked")
 		List<IModelChangedListener> oldList = (List<IModelChangedListener>) fListeners.clone();
-		for (int i = 0; i < oldList.size(); i++) {
-			IModelChangedListener listener = oldList.get(i);
+		for (IModelChangedListener listener : oldList) {
 			if (filter == null || filter.accept(listener)) {
 				// add the listener to the target
 				target.addModelChangedListener(listener);
@@ -203,8 +202,8 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 			return;
 		}
 		setDirty(event.getChangeType() != IModelChangedEvent.WORLD_CHANGED);
-		for (int i = 0; i < fListeners.size(); i++) {
-			fListeners.get(i).modelChanged(event);
+		for (IModelChangedListener fListener : fListeners) {
+			fListener.modelChanged(event);
 		}
 	}
 

@@ -378,8 +378,8 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 
 	private void fireDelta(PluginModelDelta delta) {
 		if (fListeners != null) {
-			for (int i = 0; i < fListeners.size(); i++) {
-				fListeners.get(i).modelsChanged(delta);
+			for (IPluginModelListener fListener : fListeners) {
+				fListener.modelsChanged(delta);
 			}
 		}
 	}

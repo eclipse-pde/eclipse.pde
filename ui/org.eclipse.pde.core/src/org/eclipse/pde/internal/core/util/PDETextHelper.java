@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.core.util;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -320,11 +319,8 @@ public class PDETextHelper {
 	}
 
 	private static int determineMaxLength(Set<String> set) {
-		Iterator<String> iterator = set.iterator();
 		int maxLength = -1;
-		while (iterator.hasNext()) {
-			// Has to be a String
-			String object = iterator.next();
+		for (String object : set) {
 			if (object.length() > maxLength) {
 				maxLength = object.length();
 			}
