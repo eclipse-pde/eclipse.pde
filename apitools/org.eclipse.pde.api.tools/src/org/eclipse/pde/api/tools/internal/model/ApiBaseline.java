@@ -69,6 +69,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.internal.core.BuildDependencyCollector;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
@@ -244,18 +245,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		}
 	}
 
-	private static Properties getJavaProfilePropertiesForVMPackage(String ee) {
-		Bundle apitoolsBundle = Platform.getBundle("org.eclipse.pde.api.tools"); //$NON-NLS-1$
-		if (apitoolsBundle == null) {
-			return null;
-		}
-		URL systemPackageProfile = apitoolsBundle.getEntry("system_packages" + '/' + ee.replace('/', '_') + "-systempackages.profile"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (systemPackageProfile != null) {
-			return getPropertiesFromURL(systemPackageProfile);
 
-		}
-		return null;
-	}
 
 	private static Properties getPropertiesFromURL(URL profileURL) {
 		InputStream is = null;
@@ -317,11 +307,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			// org.eclipse.pde.api.tools\system_packages\JavaSE-x-systempackages.profile
 			// They are calculated by launching eclipse in Java x and then using
 			// org.eclipse.osgi.storage.Storage.calculateVMPackages
-			String id = description.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL);
-			Properties javaProfilePropertiesForVMPackage = getJavaProfilePropertiesForVMPackage(id);
-			if (javaProfilePropertiesForVMPackage != null) {
-				value = javaProfilePropertiesForVMPackage.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
-			}
+			// Post Java 19 we use TargetPlatformHelper.querySystemPackages
+			String environmentId = description.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL);
+			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
+			IExecutionEnvironment environment = manager.getEnvironment(environmentId);
+			value = TargetPlatformHelper.querySystemPackages(environment);
 		}
 		String[] systemPackages = null;
 		if (value != null) {
