@@ -2376,7 +2376,10 @@
       	</action>
       </objectContribution>
   </extension>
-      <extension
+  <!-- Compilation participant below disabled because of massive performance issues -->
+  <!-- See https://github.com/eclipse-pde/eclipse.pde/issues/69 --> 
+  <!-- 
+  <extension
          point="org.eclipse.jdt.core.compilationParticipant">
       <compilationParticipant
             class="org.eclipse.pde.internal.ui.annotations.OSGiAnnotationsCompilationParticipant"
@@ -2388,4 +2391,5 @@
          </managedMarker>
       </compilationParticipant>
    </extension>
+  -->
 </plugin>
