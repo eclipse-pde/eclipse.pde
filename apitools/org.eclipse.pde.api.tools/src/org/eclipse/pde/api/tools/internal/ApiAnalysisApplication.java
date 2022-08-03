@@ -36,6 +36,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.ICoreRunnable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -150,7 +151,7 @@ public class ApiAnalysisApplication implements IApplication {
 			if (allNonAPIErrors.length > 0) {
 				System.err.println("Some blocking (most likely link/compilation) errors are present:"); //$NON-NLS-1$
 				for (IMarker marker : allNonAPIErrors) {
-					System.err.println("* " + marker); //$NON-NLS-1$
+					printMarker(marker, "FATAL"); //$NON-NLS-1$
 				}
 				System.err.println("Some blocking (most likely link/compilation) errors are present ^^^"); //$NON-NLS-1$
 				return 10;
@@ -161,7 +162,7 @@ public class ApiAnalysisApplication implements IApplication {
 					.toArray(IMarker[]::new);
 			System.err.println(errorMarkers.length + " API ERRORS"); //$NON-NLS-1$
 			for (IMarker marker : errorMarkers) {
-				System.err.println("* " + marker); //$NON-NLS-1$
+				printMarker(marker, "API ERROR"); //$NON-NLS-1$
 			}
 			// warnings
 			IMarker[] warningMarkers = Arrays.stream(allAPIProbleMarkers)
@@ -169,7 +170,7 @@ public class ApiAnalysisApplication implements IApplication {
 					.toArray(IMarker[]::new);
 			System.out.println(warningMarkers.length + " API warnings"); //$NON-NLS-1$
 			for (IMarker marker : warningMarkers) {
-				System.out.println("* " + marker); //$NON-NLS-1$
+				printMarker(marker, "API WARNING"); //$NON-NLS-1$
 			}
 			// fail
 			if (args.failOnError && errorMarkers.length > 0) {
@@ -187,6 +188,31 @@ public class ApiAnalysisApplication implements IApplication {
 				restoreOriginalProjectState.run(new NullProgressMonitor());
 			}
 		}
+	}
+
+	private static void printMarker(IMarker marker, String type) {
+		String path = getFullPath(marker);
+		String file = marker.getResource().getName();
+		int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, -1);
+		String message = marker.getAttribute(IMarker.MESSAGE, "").trim(); //$NON-NLS-1$
+		String description = marker.getAttribute("description", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
+		if (!description.isEmpty()) {
+			message = String.format("%s %s", message, description); //$NON-NLS-1$
+		}
+		System.out.println(String.format("[%s] File %s at line %d: %s (location: %s)", type, file, lineNumber, //$NON-NLS-1$
+				message, path));
+	}
+
+	private static String getFullPath(IMarker marker) {
+		IResource resource = marker.getResource();
+		IPath location = resource.getLocation();
+		if (location != null) {
+			File file = location.toFile();
+			if (file != null) {
+				return file.getAbsolutePath();
+			}
+		}
+		return resource.getFullPath().toString();
 	}
 
 	private void setTargetPlatform(File dependencyList) throws IOException, CoreException, InterruptedException {
