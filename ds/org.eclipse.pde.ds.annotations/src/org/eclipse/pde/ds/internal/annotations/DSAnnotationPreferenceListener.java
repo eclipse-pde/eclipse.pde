@@ -42,7 +42,7 @@ public class DSAnnotationPreferenceListener implements IPreferenceChangeListener
 	public void preferenceChange(final PreferenceChangeEvent event) {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final boolean autoBuilding = ws.isAutoBuilding();
-		final boolean requiresClasspathUpdate = ProjectClasspathPreferenceChangeListener.requiresClasspathUpdate(event);
+		final boolean requiresClasspathUpdate = false;
 		if (!autoBuilding && !requiresClasspathUpdate) {
 			return;
 		}

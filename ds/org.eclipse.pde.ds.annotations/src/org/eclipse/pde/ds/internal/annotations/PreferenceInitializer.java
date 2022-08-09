@@ -25,7 +25,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		defaults.putBoolean(Activator.PREF_ENABLED, false);
 		defaults.put(Activator.PREF_PATH, Activator.DEFAULT_PATH);
 		defaults.put(Activator.PREF_SPEC_VERSION, DSAnnotationVersion.V1_3.name());
-		defaults.putBoolean(Activator.PREF_CLASSPATH, true);
 		defaults.put(Activator.PREF_VALIDATION_ERROR_LEVEL, ValidationErrorLevel.error.name());
 		defaults.put(Activator.PREF_MISSING_UNBIND_METHOD_ERROR_LEVEL, ValidationErrorLevel.error.name());
 	}
