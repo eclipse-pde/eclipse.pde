@@ -23,8 +23,6 @@
     <module>org.eclipse.pde.ds.core</module>
     <module>org.eclipse.pde.ds.tests</module>
     <module>org.eclipse.pde.ds.ui</module>
-    <module>org.eclipse.pde.ds.lib</module>
-    <module>org.eclipse.pde.ds1_2.lib</module>
     <module>org.eclipse.pde.ds.annotations</module>
   </modules>
 </project>

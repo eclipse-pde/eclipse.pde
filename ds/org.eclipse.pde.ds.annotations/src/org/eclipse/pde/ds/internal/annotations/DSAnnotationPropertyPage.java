@@ -74,8 +74,6 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 
 	private Text pathText;
 
-	private Button classpathCheckbox;
-
 	private Combo specVersionCombo;
 
 	private Combo errorLevelCombo;
@@ -229,11 +227,6 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		pathText = new Text(pathComposite, SWT.BORDER | SWT.SINGLE);
 		pathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
-		classpathCheckbox = new Button(optionBlockControl, SWT.CHECK);
-		classpathCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-		classpathCheckbox.setText(Messages.DSAnnotationPropertyPage_classpathCheckbox_text);
-		classpathCheckbox.setFont(JFaceResources.getDialogFont());
-
 		Label specVersionLabel = new Label(optionBlockControl, SWT.LEFT);
 		specVersionLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		specVersionLabel.setText(Messages.DSAnnotationPropertyPage_specVersionLabel_text);
@@ -286,7 +279,6 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 
 		boolean enableValue = prefs.getBoolean(Activator.PREF_ENABLED, false);
 		String pathValue = prefs.get(Activator.PREF_PATH, Activator.DEFAULT_PATH);
-		boolean classpathValue = prefs.getBoolean(Activator.PREF_CLASSPATH, true);
 		String specVersion = prefs.get(Activator.PREF_SPEC_VERSION, DSAnnotationVersion.V1_3.name());
 		String errorLevel = prefs.get(Activator.PREF_VALIDATION_ERROR_LEVEL, ValidationErrorLevel.error.name());
 		String missingUnbindMethodLevel = prefs.get(Activator.PREF_MISSING_UNBIND_METHOD_ERROR_LEVEL, errorLevel);
@@ -298,7 +290,6 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 
 			enableValue = prefs.getBoolean(Activator.PREF_ENABLED, enableValue);
 			pathValue = prefs.get(Activator.PREF_PATH, pathValue);
-			classpathValue = prefs.getBoolean(Activator.PREF_CLASSPATH, classpathValue);
 			specVersion = prefs.get(Activator.PREF_SPEC_VERSION, specVersion);
 			errorLevel = prefs.get(Activator.PREF_VALIDATION_ERROR_LEVEL, errorLevel);
 			missingUnbindMethodLevel = prefs.get(Activator.PREF_MISSING_UNBIND_METHOD_ERROR_LEVEL, missingUnbindMethodLevel);
@@ -308,8 +299,6 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 		enableCheckbox.setSelection(enableValue);
 		enableOptions(enableValue && configBlockEnableState == null);
 		pathText.setText(pathValue);
-		classpathCheckbox.setSelection(classpathValue);
-
 		DSAnnotationVersion specVersionEnum;
 		try {
 			specVersionEnum = DSAnnotationVersion.valueOf(specVersion);
@@ -453,7 +442,6 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 
 			prefs.putBoolean(Activator.PREF_ENABLED, enableCheckbox.getSelection());
 			prefs.put(Activator.PREF_PATH, new Path(path).toString());
-			prefs.putBoolean(Activator.PREF_CLASSPATH, classpathCheckbox.getSelection());
 
 			DSAnnotationVersion[] versions = DSAnnotationVersion.values();
 			int specVersionIndex = Math.max(Math.min(specVersionCombo.getSelectionIndex(), DSAnnotationVersion.V1_3.ordinal()), 0);

@@ -42,8 +42,6 @@ public class Activator extends AbstractUIPlugin {
 
 	public static final String CP_ATTRIBUTE = "org.eclipse.pde.ds.annotations.cp"; //$NON-NLS-1$
 
-	public static final String PREF_CLASSPATH = "classpath"; //$NON-NLS-1$
-
 	// The shared instance
 	private static Activator plugin;
 

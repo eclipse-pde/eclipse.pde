@@ -179,12 +179,6 @@
       </initializer>
    </extension>
    <extension
-         point="org.eclipse.pde.core.pluginClasspathContributors">
-      <contributor
-            class="org.eclipse.pde.ds.internal.annotations.DSAnnotationClasspathContributor">
-      </contributor>
-   </extension>
-   <extension
          id="buildpath_problem"
          name="%buildpathProblem.marker.name"
          point="org.eclipse.core.resources.markers">
