@@ -70,6 +70,10 @@ public class ClasspathContributorTest {
 			// osgi bundle annotations
 			return true;
 		}
+		if (portableString.contains("org.osgi.service.component.annotations")) {
+			// osgi ds annotations
+			return true;
+		}
 		return false;
 	}
 }
