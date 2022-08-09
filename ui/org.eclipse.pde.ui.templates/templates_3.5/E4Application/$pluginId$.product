@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="$pluginId$" id="$pluginId$.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="$pluginId$" id="$pluginId$.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true" autoIncludeRequirements="true">
 
    <configIni use="default">
    </configIni>
@@ -25,7 +25,7 @@
       <plugin id="org.apache.batik.css"/>
       <plugin id="org.apache.batik.i18n"/>
       <plugin id="org.apache.batik.util"/>
-      <plugin id="org.apache.commons.commons-io"/>
+      <plugin id="org.apache.commons.io"/>
       <plugin id="org.apache.commons.jxpath"/>
       <plugin id="org.apache.commons.logging"/>
       <plugin id="org.apache.felix.scr"/>
@@ -79,24 +79,24 @@
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.compatibility.state" fragment="true"/>
       <plugin id="org.eclipse.osgi.services"/>
-      <plugin id="org.osgi.service.cm" />
-      <plugin id="org.osgi.service.component" />
-      <plugin id="org.osgi.service.device" />
-      <plugin id="org.osgi.service.event" />
-      <plugin id="org.osgi.service.metatype" />
-      <plugin id="org.osgi.service.prefs" />
-      <plugin id="org.osgi.service.provisioning" />
-      <plugin id="org.osgi.service.upnp" />
-      <plugin id="org.osgi.service.useradmin" />
-      <plugin id="org.osgi.service.wireadmin" />
-      <plugin id="org.osgi.util.function"/>
-      <plugin id="org.osgi.util.promise"/>
       <plugin id="org.eclipse.swt"/>
       <plugin id="org.eclipse.swt.cocoa.macosx.x86_64" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.ppc64" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.swt.win32.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.urischeme"/>
+      <plugin id="org.osgi.service.cm"/>
+      <plugin id="org.osgi.service.component"/>
+      <plugin id="org.osgi.service.device"/>
+      <plugin id="org.osgi.service.event"/>
+      <plugin id="org.osgi.service.metatype"/>
+      <plugin id="org.osgi.service.prefs"/>
+      <plugin id="org.osgi.service.provisioning"/>
+      <plugin id="org.osgi.service.upnp"/>
+      <plugin id="org.osgi.service.useradmin"/>
+      <plugin id="org.osgi.service.wireadmin"/>
+      <plugin id="org.osgi.util.function"/>
+      <plugin id="org.osgi.util.promise"/>
       <plugin id="org.w3c.css.sac"/>
       <plugin id="org.w3c.dom.events"/>
       <plugin id="org.w3c.dom.smil"/>
