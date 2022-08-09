@@ -127,19 +127,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 		if (WorkspaceModelManager.isBinaryProject(project.getProject()))
 			return false;
-
-		boolean autoClasspath = prefs.getBoolean(Activator.PLUGIN_ID, Activator.PREF_CLASSPATH, true, new IScopeContext[] { new ProjectScope(project.getProject()), InstanceScope.INSTANCE, DefaultScope.INSTANCE });
-		if (autoClasspath)
-			return true;
-
-		try {
-			IType annotationType = project.findType(COMPONENT_ANNOTATION);
-			return annotationType != null && annotationType.isAnnotation();
-		} catch (JavaModelException e) {
-			Activator.log(e);
-		}
-
-		return false;
+		return true;
 	}
 
 	@Override
