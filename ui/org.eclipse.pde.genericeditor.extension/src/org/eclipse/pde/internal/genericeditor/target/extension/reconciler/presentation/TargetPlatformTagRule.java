@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 Red Hat Inc. and others
+ * Copyright (c) 2016, 2022 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,12 +14,32 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.reconciler.presentation;
 
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.ARCH_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.ARTIFACT_ID_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.DEPENDENCIES_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.DEPENDENCY_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.ENVIRONMENT_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.GROUP_ID_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.LAUNCHER_ARGS_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.LOCATIONS_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.LOCATION_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.NL_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.OS_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.PROGRAM_ARGS_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.REPOSITORY_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.TARGET_JRE_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.TARGET_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.TYPE_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.UNIT_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.VERSION_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.VM_ARGS_TAG;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.WS_TAG;
+
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordRule;
-import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -27,11 +47,10 @@ import org.eclipse.ui.PlatformUI;
  */
 public class TargetPlatformTagRule extends WordRule {
 
-	private String[] tags = new String[] { ITargetConstants.LOCATIONS_TAG, ITargetConstants.LOCATION_TAG,
-			ITargetConstants.TARGET_TAG, ITargetConstants.UNIT_TAG, ITargetConstants.REPOSITORY_TAG,
-			ITargetConstants.TARGET_JRE_TAG, ITargetConstants.LAUNCHER_ARGS_TAG, ITargetConstants.VM_ARGS_TAG,
-			ITargetConstants.PROGRAM_ARGS_TAG, ITargetConstants.ENVIRONMENT_TAG, ITargetConstants.OS_TAG,
-			ITargetConstants.WS_TAG, ITargetConstants.ARCH_TAG, ITargetConstants.NL_TAG };
+	private static final String[] TAGS = new String[] { LOCATIONS_TAG, LOCATION_TAG, TARGET_TAG, UNIT_TAG,
+			REPOSITORY_TAG, TARGET_JRE_TAG, LAUNCHER_ARGS_TAG, VM_ARGS_TAG, PROGRAM_ARGS_TAG, ENVIRONMENT_TAG, OS_TAG,
+			WS_TAG, ARCH_TAG, NL_TAG, DEPENDENCIES_TAG, DEPENDENCY_TAG, VERSION_TAG, TYPE_TAG, GROUP_ID_TAG,
+			ARTIFACT_ID_TAG };
 
 	private IToken tagToken = new Token(
 			new TextAttribute(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry()
@@ -39,7 +58,7 @@ public class TargetPlatformTagRule extends WordRule {
 
 	public TargetPlatformTagRule() {
 		super(new AlphanumericDetector());
-		for (String tag : tags) {
+		for (String tag : TAGS) {
 			this.addWord(tag, tagToken);
 		}
 	}

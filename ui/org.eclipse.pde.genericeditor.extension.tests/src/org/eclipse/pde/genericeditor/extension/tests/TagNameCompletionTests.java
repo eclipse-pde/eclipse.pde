@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 Red Hat Inc. and others
+ * Copyright (c) 2017, 2022 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,10 +32,10 @@ public class TagNameCompletionTests extends AbstractTargetEditorTest {
 		expectedProposalsByOffset.put(26, new String[] { "location (Directory)", "location (Feature)",
 				"location (Installable Unit)", "location (Profile)" });
 		// location, full
-		expectedProposalsByOffset.put(39, new String[] { "unit" });
-		expectedProposalsByOffset.put(63, new String[] { "unit" });
+		expectedProposalsByOffset.put(39, new String[] { "dependencies", "unit" });
+		expectedProposalsByOffset.put(63, new String[] { "dependencies", "unit" });
 		// location, empty
-		expectedProposalsByOffset.put(88, new String[] { "repository", "unit" });
+		expectedProposalsByOffset.put(88, new String[] { "dependencies", "repository", "unit" });
 		// environment
 		expectedProposalsByOffset.put(129, new String[] { "arch", "nl", "os", "ws" });
 		// launcherArgs
