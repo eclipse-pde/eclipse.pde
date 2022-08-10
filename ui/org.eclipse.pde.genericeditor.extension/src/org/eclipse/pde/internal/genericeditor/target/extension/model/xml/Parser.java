@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 Red Hat Inc. and others
+ * Copyright (c) 2016, 2022 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,6 +25,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.pde.internal.genericeditor.target.extension.model.DependencyNode;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.LocationNode;
 import org.eclipse.pde.internal.genericeditor.target.extension.model.Node;
@@ -71,6 +72,8 @@ public class Parser {
 					currentNode = unit;
 				} else if (ITargetConstants.LOCATION_TAG.equalsIgnoreCase(name)) {
 					currentNode = new LocationNode();
+				} else if (ITargetConstants.DEPENDENCY_TAG.equalsIgnoreCase(name)) {
+					currentNode = new DependencyNode();
 				} else if (ITargetConstants.REPOSITORY_TAG.equalsIgnoreCase(name)) {
 					currentNode = new Node();
 					if (currentParent instanceof LocationNode) {
@@ -107,7 +110,7 @@ public class Parser {
 	}
 
 	private Iterator<XMLElement> createXMLTagItterator(String document) {
-		return new Iterator<XMLElement>() {
+		return new Iterator<>() {
 			private String tagRegex = "(?<tag><[\\w|/][^<]+?>)";
 			private String commentRegex = "(<!--.*?-->)";
 			private String beforeTagRegex = ".*?(?=".concat(tagRegex).concat(")");

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Red Hat Inc. and others
+ * Copyright (c) 2018, 2022 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -116,10 +116,8 @@ public class UpdateUnitVersions extends AbstractHandler {
 				}
 			}
 			if (document.get().equals(documentText)) {
-				Display.getDefault().asyncExec(() -> {
-					MessageDialog.openInformation(null,
-						"No Version Updates", "There are no version updates required for this document.");
-				});
+				Display.getDefault().asyncExec(() -> MessageDialog.openInformation(null, "No Version Updates",
+						"There are no version updates required for this document."));
 			} else {
 				final String newText = documentText;
 				Display.getDefault().asyncExec(() -> {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others
+ * Copyright (c) 2016, 2022 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,11 +13,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.genericeditor.target.extension.reconciler.presentation;
 
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.INCLUDE_DEPENDENCY_DEPTH;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.INCLUDE_DEPENDENCY_SCOPES;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.LOCATION_INCLUDE_CONFIG_PHASE_ATTR;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.LOCATION_INCLUDE_MODE_ATTR;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.LOCATION_INCLUDE_PLATFORMS_ATTR;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.LOCATION_INCLUDE_SOURCE_ATTR;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.LOCATION_TYPE_ATTR;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.MISSING_MANIFEST;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.REPOSITORY_LOCATION_ATTR;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.TARGET_JRE_PATH_ATTR;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.TARGET_NAME_ATTR;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.TARGET_SEQ_NO_ATTR;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.UNIT_ID_ATTR;
+import static org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants.UNIT_VERSION_ATTR;
+
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordRule;
-import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetConstants;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -25,19 +39,17 @@ import org.eclipse.ui.PlatformUI;
  */
 public class TargetPlatformAttributeRule extends WordRule {
 
-	private static final String attributes[] = new String[] { ITargetConstants.TARGET_NAME_ATTR,
-			ITargetConstants.UNIT_VERSION_ATTR, ITargetConstants.UNIT_ID_ATTR,
-			ITargetConstants.LOCATION_INCLUDE_PLATFORMS_ATTR, ITargetConstants.LOCATION_INCLUDE_MODE_ATTR,
-			ITargetConstants.LOCATION_TYPE_ATTR, ITargetConstants.REPOSITORY_LOCATION_ATTR,
-			ITargetConstants.TARGET_JRE_PATH_ATTR, ITargetConstants.TARGET_SEQ_NO_ATTR,
-			ITargetConstants.LOCATION_INCLUDE_CONFIG_PHASE_ATTR, ITargetConstants.LOCATION_INCLUDE_SOURCE_ATTR };
+	private static final String[] ATTRIBUTES = new String[] { TARGET_NAME_ATTR, UNIT_VERSION_ATTR, UNIT_ID_ATTR,
+			LOCATION_INCLUDE_PLATFORMS_ATTR, LOCATION_INCLUDE_MODE_ATTR, LOCATION_TYPE_ATTR, REPOSITORY_LOCATION_ATTR,
+			TARGET_JRE_PATH_ATTR, TARGET_SEQ_NO_ATTR, LOCATION_INCLUDE_CONFIG_PHASE_ATTR, LOCATION_INCLUDE_SOURCE_ATTR,
+			INCLUDE_DEPENDENCY_DEPTH, INCLUDE_DEPENDENCY_SCOPES, MISSING_MANIFEST };
 	private IToken attributeToken = new Token(
 			new TextAttribute(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry()
 					.get(IGETEColorConstants.P_ATTRIBUTE)));
 
 	public TargetPlatformAttributeRule() {
 		super(new AlphanumericDetector());
-		for (String att : attributes) {
+		for (String att : ATTRIBUTES) {
 			this.addWord(att, attributeToken);
 		}
 	}
