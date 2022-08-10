@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 Red Hat Inc. and others
+ * Copyright (c) 2017, 2022 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,7 +29,7 @@ public class Bug527084CompletionWithCommentsTest extends AbstractTargetEditorTes
 
 	@Test
 	public void testTagNameCompletion() {
-		confirmCompletionAtOffset(89, "unit");
+		confirmCompletionAtOffset(89, "dependencies", "unit");
 	}
 
 	@Test
@@ -47,8 +47,8 @@ public class Bug527084CompletionWithCommentsTest extends AbstractTargetEditorTes
 		confirmCompletionAtOffset(83, "Add repository URL first.");
 	}
 
-	private void confirmCompletionAtOffset(int offset, String expectedCompletion) {
-		checkProposals(new String[] { expectedCompletion },
+	private void confirmCompletionAtOffset(int offset, String... expectedCompletion) {
+		checkProposals(expectedCompletion,
 				contentAssist.computeCompletionProposals(textViewer, offset + 1),
 				offset);
 	}

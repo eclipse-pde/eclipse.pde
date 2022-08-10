@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2019 Red Hat Inc. and others
+ * Copyright (c) 2017, 2022 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -90,7 +90,7 @@ public class FoldingReconcilerStrategy implements IReconcilingStrategy, IReconci
 		}
 	}
 
-	private static enum SearchingFor {
+	private enum SearchingFor {
 		START_OF_TAG, START_OF_WORD, END_OF_WORD, END_OF_COMMENT, END_OF_LINE
 	}
 
@@ -179,7 +179,7 @@ public class FoldingReconcilerStrategy implements IReconcilingStrategy, IReconci
 							if (document.getLineOfOffset(start) != document.getLineOfOffset(currentCharIndex)) {
 								positions.add(new Position(start, currentCharIndex + 1 - start));
 							}
-							if (listOfAnnotationIndexes.size() > 0) {
+							if (!listOfAnnotationIndexes.isEmpty()) {
 								listOfAnnotationIndexes.remove(0);
 							} else {
 								startOfAnnotation.remove(word);
