@@ -409,13 +409,7 @@ public class TargetPlatformHelper {
 		if (vm == null || !JavaRuntime.isModularJava(vm)) {
 			return null;
 		}
-
-		String release = null;
-		Map<String, String> complianceOptions = environment.getComplianceOptions();
-		if (complianceOptions != null) {
-			release = complianceOptions.get(JavaCore.COMPILER_COMPLIANCE);
-		}
-
+		String release = environment.getProfileProperties().getProperty(JavaCore.COMPILER_COMPLIANCE);
 		try {
 			Collection<String> packages = new TreeSet<>();
 			String jrtPath = "lib/" + org.eclipse.jdt.internal.compiler.util.JRTUtil.JRT_FS_JAR; //$NON-NLS-1$
@@ -440,12 +434,10 @@ public class TargetPlatformHelper {
 		if (defaultVM != null) {
 			return defaultVM;
 		}
-
 		IVMInstall[] compatible = environment.getCompatibleVMs();
 		if (compatible.length == 0) {
 			return null;
 		}
-
 		for (IVMInstall vm : compatible) {
 			if (environment.isStrictlyCompatible(vm)) {
 				return vm;

@@ -14,14 +14,15 @@
 package org.eclipse.pde.internal.build.site;
 
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.*;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
@@ -32,7 +33,7 @@ import org.osgi.framework.*;
 // This class provides a higher level API on the state
 public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private static final String[] MANIFEST_ENTRIES = {Constants.BUNDLE_LOCALIZATION, Constants.BUNDLE_NAME, Constants.BUNDLE_VENDOR, ECLIPSE_BUNDLE_SHAPE, ECLIPSE_SOURCE_BUNDLE, ECLIPSE_SOURCE_REF};
-	private static int LAST_SUPPORTED_JDK = Integer.valueOf(JavaCore.latestSupportedJavaVersion());
+	private static final int LAST_SUPPORTED_JDK = Integer.parseInt(JavaCore.latestSupportedJavaVersion());
 	private StateObjectFactory factory;
 	protected State state;
 	private long id;
@@ -438,10 +439,8 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		String previousEE = eeJava9;
 		for (String execEnvID : eeJava10AndBeyond) {
 			prop = new Hashtable<>();
-			Properties javaProfilePropertiesForVMPackage = getJavaProfilePropertiesForVMPackage(execEnvID);
-			if (javaProfilePropertiesForVMPackage != null) {
-				systemPackages = javaProfilePropertiesForVMPackage.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
-			}
+			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(execEnvID);
+			systemPackages = querySystemPackages(env);
 			String currentEE = previousEE + "," + execEnvID; //$NON-NLS-1$
 			if (systemPackages == null) {
 				previousEE = currentEE;
@@ -460,6 +459,53 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		if (unqualifiedBundles != null) {
 			forceQualifiers();
 		}
+	}
+
+	public static String querySystemPackages(IExecutionEnvironment environment) {
+		// Copy of org.eclipse.pde.internal.core.TargetPlatformHelper.querySystemPackages()
+		IVMInstall vm = bestVmInstallFor(environment);
+		if (vm == null || !JavaRuntime.isModularJava(vm)) {
+			return null;
+		}
+		String release = environment.getProfileProperties().getProperty(JavaCore.COMPILER_COMPLIANCE);
+		try {
+			Collection<String> packages = new TreeSet<>();
+			String jrtPath = "lib/" + org.eclipse.jdt.internal.compiler.util.JRTUtil.JRT_FS_JAR; //$NON-NLS-1$
+			String path = new File(vm.getInstallLocation(), jrtPath).toString(); // $NON-NLS-1$
+			var jrt = org.eclipse.jdt.internal.core.builder.ClasspathLocation.forJrtSystem(path, null, null, release);
+			for (String moduleName : jrt.getModuleNames(null)) {
+				var module = jrt.getModule(moduleName);
+				if (module == null) {
+					continue;
+				}
+				for (var packageExport : module.exports()) {
+					if (!packageExport.isQualified()) {
+						packages.add(new String(packageExport.name()));
+					}
+				}
+			}
+			return String.join(",", packages); //$NON-NLS-1$
+		} catch (CoreException e) {
+			Platform.getLog(PDEState.class).log(Status.error("failed to read system packages for " + environment, e)); //$NON-NLS-1$
+		}
+		return null;
+	}
+
+	private static IVMInstall bestVmInstallFor(IExecutionEnvironment environment) {
+		IVMInstall defaultVM = environment.getDefaultVM();
+		if (defaultVM != null) {
+			return defaultVM;
+		}
+		IVMInstall[] compatible = environment.getCompatibleVMs();
+		if (compatible.length == 0) {
+			return null;
+		}
+		for (IVMInstall vm : compatible) {
+			if (environment.isStrictlyCompatible(vm)) {
+				return vm;
+			}
+		}
+		return compatible[0];
 	}
 
 	public State getState() {
@@ -734,44 +780,5 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			}
 		}
 		return profileManager;
-	}
-
-	private static Properties getJavaProfilePropertiesForVMPackage(String ee) {
-		Bundle apitoolsBundle = Platform.getBundle("org.eclipse.pde.api.tools"); //$NON-NLS-1$
-		if (apitoolsBundle == null) {
-			return null;
-		}
-		URL systemPackageProfile = apitoolsBundle.getEntry("system_packages" + '/' + ee.replace('/', '_') + "-systempackages.profile"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (systemPackageProfile != null) {
-			return getPropertiesFromURL(systemPackageProfile);
-
-		}
-		return null;
-	}
-
-	private static Properties getPropertiesFromURL(URL profileURL) {
-		InputStream is = null;
-		try {
-			profileURL = FileLocator.resolve(profileURL);
-			URLConnection openConnection = profileURL.openConnection();
-			openConnection.setUseCaches(false);
-			is = openConnection.getInputStream();
-			if (is != null) {
-				Properties profile = new Properties();
-				profile.load(is);
-				return profile;
-			}
-		} catch (IOException e) {
-			// nothing to do
-		} finally {
-			try {
-				if (is != null) {
-					is.close();
-				}
-			} catch (IOException e) {
-				// nothing to do
-			}
-		}
-		return null;
 	}
 }
