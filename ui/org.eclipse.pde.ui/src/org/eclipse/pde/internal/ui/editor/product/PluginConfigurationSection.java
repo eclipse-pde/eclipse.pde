@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2020 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2022 Code 9 Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,6 +20,7 @@ package org.eclipse.pde.internal.ui.editor.product;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.*;
+import java.util.List;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.*;
@@ -233,10 +234,10 @@ public class PluginConfigurationSection extends TableSection {
 			pluginModelBases = getPluginModelBasesByPlugin();
 		}
 
-		PluginSelectionDialog pluginSelectionDialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), pluginModelBases.toArray(new IPluginModelBase[pluginModelBases.size()]), true);
+		PluginSelectionDialog pluginSelectionDialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(),
+				pluginModelBases.toArray(IPluginModelBase[]::new), true);
 		if (pluginSelectionDialog.open() == Window.OK) {
-			Object[] result = pluginSelectionDialog.getResult();
-			for (Object object : result) {
+			for (Object object : pluginSelectionDialog.getResult()) {
 				IPluginModelBase pluginModelBase = (IPluginModelBase) object;
 				addPlugin(pluginModelBase.getPluginBase().getId());
 			}
@@ -352,8 +353,7 @@ public class PluginConfigurationSection extends TableSection {
 			StringBuilder bundlesList = new StringBuilder();
 			bundlesList.append('\n');
 			bundlesList.append('\n');
-			for (int i = 0; i < plugins.size(); i++) {
-				String[] config = plugins.get(i);
+			for (String[] config : plugins) {
 				bundlesList.append('\t');
 				bundlesList.append(config[0]);
 				bundlesList.append(", "); //$NON-NLS-1$ // Not translated. This is bundle syntax, not a sentence
@@ -375,20 +375,20 @@ public class PluginConfigurationSection extends TableSection {
 			bundlesList.append('\n');
 			// Confirm with user
 			if (MessageDialog.openConfirm(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.Product_PluginSection_RecommendedBundles_title, NLS.bind(PDEUIMessages.Product_PluginSection_RecommendedBundles_message, bundlesList.toString()))) {
-				IPluginConfiguration[] pluginConfigs = new IPluginConfiguration[plugins.size()];
+				List<IPluginConfiguration> pluginConfigs = new ArrayList<>();
+				IProductModelFactory factory = product.getModel().getFactory();
 				// Build the model objects for the plugins and add to the product model.
-				for (int i = 0; i < plugins.size(); i++) {
-					IProductModelFactory factory = product.getModel().getFactory();
+				for (String[] pluginStartConfig : plugins) {
 					IPluginConfiguration configuration = factory.createPluginConfiguration();
-					configuration.setId(plugins.get(i)[0]);
-					String startString = plugins.get(i)[1];
+					configuration.setId(pluginStartConfig[0]);
+					String startString = pluginStartConfig[1];
 					if (startString.length() > 0) {
 						configuration.setStartLevel(Integer.parseInt(startString));
 					}
-					configuration.setAutoStart("start".equals(plugins.get(i)[2])); //$NON-NLS-1$
-					pluginConfigs[i] = configuration;
+					configuration.setAutoStart("start".equals(pluginStartConfig[2])); //$NON-NLS-1$
+					pluginConfigs.add(configuration);
 				}
-				product.addPluginConfigurations(pluginConfigs);
+				product.addPluginConfigurations(pluginConfigs.toArray(IPluginConfiguration[]::new));
 				showControls();
 			}
 		} else {
