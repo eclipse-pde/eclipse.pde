@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -124,10 +124,9 @@ public class IntroSection extends PDESection {
 	private void loadManifestAndIntroIds(boolean onlyLoadManifest) {
 		TreeSet<String> result = new TreeSet<>();
 		String introId;
-		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.ui.intro", true); //$NON-NLS-1$
+		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(INTRO_PLUGIN_ID, true);
 		for (IExtension extension : extensions) {
-			IConfigurationElement[] children = extension.getConfigurationElements();
-			for (IConfigurationElement element : children) {
+			for (IConfigurationElement element : extension.getConfigurationElements()) {
 				if ("introProductBinding".equals(element.getName())) {//$NON-NLS-1$
 					String attribute = element.getAttribute("productId"); //$NON-NLS-1$
 					if (attribute != null && attribute.equals(getProduct().getProductId())) {
