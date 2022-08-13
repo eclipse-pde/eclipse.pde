@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2021 IBM Corporation and others.
+ * Copyright (c) 2006, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,14 +16,19 @@ package org.eclipse.pde.internal.build.tasks;
 import org.eclipse.core.runtime.IStatus;
 
 public class TaskHelper {
-	public static StringBuffer statusToString(IStatus status, StringBuffer b) {
+	private TaskHelper() {
+	}
+
+	public static String statusToString(IStatus status) {
+		return addNested(status, new StringBuilder()).toString();
+	}
+
+	private static StringBuilder addNested(IStatus status, StringBuilder b) {
 		IStatus[] nestedStatus = status.getChildren();
-		if (b == null)
-			b = new StringBuffer();
 		b.append(status.getMessage());
 		for (IStatus element : nestedStatus) {
 			b.append('\n');
-			b.append(statusToString(element, b));
+			b.append(addNested(element, b));
 		}
 		return b;
 	}

@@ -39,7 +39,7 @@ public class FeatureGeneratorTask extends Task {
 			generator.setImmutableAntProperties(antProperties);
 			run();
 		} catch (CoreException e) {
-			throw new BuildException(TaskHelper.statusToString(e.getStatus(), null).toString());
+			throw new BuildException(TaskHelper.statusToString(e.getStatus()), e);
 		} finally {
 			BundleHelper.getDefault().setLog(null);
 		}
