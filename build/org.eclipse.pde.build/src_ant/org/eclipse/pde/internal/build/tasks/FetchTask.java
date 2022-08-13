@@ -112,7 +112,7 @@ public class FetchTask extends Task {
 			generator.generate();
 			BundleHelper.getDefault().setLog(null);
 		} catch (CoreException e) {
-			throw new BuildException(TaskHelper.statusToString(e.getStatus(), null).toString());
+			throw new BuildException(TaskHelper.statusToString(e.getStatus()), e);
 		}
 	}
 

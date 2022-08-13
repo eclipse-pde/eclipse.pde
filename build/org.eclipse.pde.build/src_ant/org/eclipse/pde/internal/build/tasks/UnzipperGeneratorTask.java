@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.build.packager.UnzipperGenerator;
  * @since 3.0
  */
 public class UnzipperGeneratorTask extends Task {
-	private UnzipperGenerator generator = new UnzipperGenerator();
+	private final UnzipperGenerator generator = new UnzipperGenerator();
 
 	public void execute() throws BuildException {
 		try {
@@ -34,7 +34,7 @@ public class UnzipperGeneratorTask extends Task {
 			generator.generate();
 			BundleHelper.getDefault().setLog(null);
 		} catch (CoreException e) {
-			throw new BuildException(TaskHelper.statusToString(e.getStatus(), null).toString());
+			throw new BuildException(TaskHelper.statusToString(e.getStatus()), e);
 		}
 	}
 
