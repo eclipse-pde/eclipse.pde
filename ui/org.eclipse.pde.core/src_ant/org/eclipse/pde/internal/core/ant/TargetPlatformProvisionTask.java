@@ -47,7 +47,7 @@ public class TargetPlatformProvisionTask extends Task {
 			BundleHelper.getDefault().setLog(this);
 			run();
 		} catch (CoreException e) {
-			throw new BuildException(TaskHelper.statusToString(e.getStatus(), null).toString());
+			throw new BuildException(TaskHelper.statusToString(e.getStatus()), e);
 		} finally {
 			BundleHelper.getDefault().setLog(null);
 		}
@@ -105,7 +105,7 @@ public class TargetPlatformProvisionTask extends Task {
 		if (status.matches(IStatus.ERROR | IStatus.CANCEL)) {
 			throw new CoreException(status);
 		} else if (!status.isOK()) {
-			log(TaskHelper.statusToString(status, null).toString(), Project.MSG_WARN);
+			log(TaskHelper.statusToString(status), Project.MSG_WARN);
 		}
 
 		log(PDECoreMessages.TargetPlatformProvisionTask_Exporting_target_status);

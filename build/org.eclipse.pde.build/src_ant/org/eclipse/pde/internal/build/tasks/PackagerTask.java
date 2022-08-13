@@ -93,7 +93,7 @@ public class PackagerTask extends Task {
 			BundleHelper.getDefault().setLog(this);
 			generator.generate();
 		} catch (CoreException e) {
-			throw new BuildException(TaskHelper.statusToString(e.getStatus(), null).toString());
+			throw new BuildException(TaskHelper.statusToString(e.getStatus()), e);
 		} finally {
 			BundleHelper.getDefault().setLog(null);
 		}

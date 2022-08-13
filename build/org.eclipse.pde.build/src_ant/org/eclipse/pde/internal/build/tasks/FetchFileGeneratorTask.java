@@ -28,7 +28,6 @@ import org.eclipse.pde.internal.build.packager.FetchFileGenerator;
 public class FetchFileGeneratorTask extends Task {
 	protected FetchFileGenerator fileFetcher = new FetchFileGenerator();
 
-
 	/**
 	 * Set the folder in which the scripts will be generated.
 	 * @param workingDirectory the location where the scripts will be generated.
@@ -36,7 +35,7 @@ public class FetchFileGeneratorTask extends Task {
 	public void setWorkingDirectory(String workingDirectory) {
 		fileFetcher.setWorkingDirectory(workingDirectory);
 	}
-	
+
 	/** 
 	 * Set the configuration for which the script should be generated. The default is set to be configuration independent. 
 	 * @param config an ampersand separated list of configuration (for example win32, win32, x86 & macoxs, carbon, ppc).
@@ -77,7 +76,7 @@ public class FetchFileGeneratorTask extends Task {
 			fileFetcher.generate();
 			BundleHelper.getDefault().setLog(null);
 		} catch (CoreException e) {
-			throw new BuildException(TaskHelper.statusToString(e.getStatus(), null).toString());
+			throw new BuildException(TaskHelper.statusToString(e.getStatus()), e);
 		}
 	}
 }
