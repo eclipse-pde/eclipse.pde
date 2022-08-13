@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.ui.editor.product;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.window.Window;
@@ -267,25 +268,24 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 			}
 		});
 
-		fPluginButton = toolkit.createButton(comp, PDEUIMessages.ProductInfoSection_plugins, SWT.RADIO);
-		gd = new GridData();
+		fPluginButton = createTypeButton(toolkit, comp, false, PDEUIMessages.ProductInfoSection_plugins);
+		fFeatureButton = createTypeButton(toolkit, comp, true, PDEUIMessages.ProductInfoSection_features);
+	}
+
+	private Button createTypeButton(FormToolkit toolkit, Composite comp, boolean useFeatures, String label) {
+		Button btn = toolkit.createButton(comp, label, SWT.RADIO);
+		GridData gd = new GridData();
 		gd.horizontalIndent = 25;
-		fPluginButton.setLayoutData(gd);
-		fPluginButton.setEnabled(isEditable());
-		fPluginButton.addSelectionListener(widgetSelectedAdapter(e -> {
-			boolean selected = fPluginButton.getSelection();
+		btn.setLayoutData(gd);
+		btn.setEnabled(isEditable());
+		btn.addSelectionListener(widgetSelectedAdapter(e -> {
 			IProduct product = getProduct();
-			if (selected == product.useFeatures()) {
-				product.setUseFeatures(!selected);
+			if (btn.getSelection() && product.useFeatures() != useFeatures) {
+				product.setUseFeatures(useFeatures); // set to changed type
 				((ProductEditor) getPage().getEditor()).updateConfigurationPage();
 			}
 		}));
-
-		fFeatureButton = toolkit.createButton(comp, PDEUIMessages.ProductInfoSection_features, SWT.RADIO);
-		gd = new GridData();
-		gd.horizontalIndent = 25;
-		fFeatureButton.setLayoutData(gd);
-		fFeatureButton.setEnabled(isEditable());
+		return btn;
 	}
 
 	private IProductModel getModel() {
@@ -330,17 +330,15 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 
 	private void handleModelEventWorldChanged() {
 		// Store selection before refresh
-		boolean previousFeatureSelected = fFeatureButton.getSelection();
-		// Perform the refresh
+		List<Boolean> previousSelection = getSelections();
 		refresh();
 		// Revert the configuration page if necessary
-		revertConfigurationPage(previousFeatureSelected);
+		revertConfigurationPage(previousSelection);
 	}
 
-	private void revertConfigurationPage(boolean previousFeatureSelected) {
+	private void revertConfigurationPage(List<Boolean> previousSelection) {
 		// Compare selection from before and after the refresh
-		boolean currentFeatureSelected = fFeatureButton.getSelection();
-		if (previousFeatureSelected == currentFeatureSelected) {
+		if (previousSelection.equals(getSelections())) {
 			// No update required
 			return;
 		}
@@ -353,6 +351,10 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 			getPage().getEditor().setActivePage(OverviewPage.PAGE_ID);
 		}
 		((ProductEditor) getPage().getEditor()).updateConfigurationPage();
+	}
+
+	private List<Boolean> getSelections() {
+		return List.of(fPluginButton.getSelection(), fFeatureButton.getSelection());
 	}
 
 	private void refreshProductCombo(String productID) {

@@ -28,15 +28,12 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.FeatureModelManager;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
+import org.eclipse.pde.internal.ui.launcher.LaunchAction;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -143,17 +140,14 @@ public class PluginConfigurationSection extends TableSection {
 	 * We use the same String format described in TargetPlatform so that in the future, we could
 	 * obtain this list from another source that uses the same format.
 	 */
-	private static String getBundlesWithStartLevels() {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("org.apache.felix.scr@2:start,"); //$NON-NLS-1$
-		buffer.append("org.eclipse.core.runtime@start,"); //$NON-NLS-1$
-		buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
-		buffer.append("org.eclipse.equinox.event@2:start,"); //$NON-NLS-1$
-		buffer.append("org.eclipse.equinox.simpleconfigurator@1:start,"); //$NON-NLS-1$
-		return buffer.toString();
+	private static List<String[]> getBundlesWithStartLevels() {
+		return List.of(//
+				new String[] { "org.apache.felix.scr", "2", "start" }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				new String[] { "org.eclipse.core.runtime", "", "start" }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				new String[] { "org.eclipse.equinox.common", "2", "start" }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				new String[] { "org.eclipse.equinox.event", "2", "start" }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				new String[] { "org.eclipse.equinox.simpleconfigurator", "1", "start" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
-
-	private static final char VERSION_SEPARATOR = '*';
 
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
@@ -226,13 +220,10 @@ public class PluginConfigurationSection extends TableSection {
 
 	private void handleAdd() {
 
-		Collection<IPluginModelBase> pluginModelBases = null;
-
-		if (getProduct().useFeatures()) {
-			pluginModelBases = getPluginModelBasesByFeature();
-		} else {
-			pluginModelBases = getPluginModelBasesByPlugin();
-		}
+		Collection<IPluginModelBase> pluginModelBases = LaunchAction.getModels(getProduct());
+		IPluginConfiguration[] configs = getProduct().getPluginConfigurations();
+		pluginModelBases
+				.removeIf(p -> p instanceof IFragmentModel || pluginConfigurationContainsProductPlugin(configs, p));
 
 		PluginSelectionDialog pluginSelectionDialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(),
 				pluginModelBases.toArray(IPluginModelBase[]::new), true);
@@ -244,63 +235,9 @@ public class PluginConfigurationSection extends TableSection {
 		}
 	}
 
-	private Collection<IPluginModelBase> getPluginModelBasesByFeature() {
-
-		Collection<IPluginModelBase> pluginModelBases = new ArrayList<>();
-
-		IProductFeature[] features = getProduct().getFeatures();
-		for (IProductFeature feature : features) {
-			FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
-			IFeatureModel fModel = manager.findFeatureModelRelaxed(feature.getId(), feature.getVersion());
-			if (fModel == null) {
-				fModel = manager.findFeatureModel(feature.getId());
-			}
-
-			if (fModel != null) {
-				IFeaturePlugin[] fPlugins = fModel.getFeature().getPlugins();
-				for (IFeaturePlugin fPlugin : fPlugins) {
-					if (!fPlugin.isFragment()) {
-						IPluginModelBase pluginModelBase = PluginRegistry.findModel(fPlugin.getId());
-						if (pluginModelBase != null) {
-							pluginModelBases.add(pluginModelBase);
-						}
-					}
-				}
-			}
-		}
-
-		return pluginModelBases;
-	}
-
-	private Collection<IPluginModelBase> getPluginModelBasesByPlugin() {
-		Collection<IPluginModelBase> pluginModelBases = new ArrayList<>();
-
-		IProductPlugin[] allPlugins = getProduct().getPlugins();
-		IPluginConfiguration[] configs = getProduct().getPluginConfigurations();
-		for (IProductPlugin productPlugin : allPlugins) {
-			if (!pluginConfigurationContainsProductPlugin(configs, productPlugin)) {
-				if (!(PluginRegistry.findModel(productPlugin.getId()) instanceof IFragmentModel)) {
-					IPluginModelBase pluginModelBase = PluginRegistry.findModel(productPlugin.getId());
-					// null check for workbench.renderers.swt.cocoa in linux etc
-					if (pluginModelBase != null) {
-						pluginModelBases.add(pluginModelBase);
-					}
-				}
-			}
-		}
-
-		return pluginModelBases;
-	}
-
-	private boolean pluginConfigurationContainsProductPlugin(IPluginConfiguration[] configs, IProductPlugin productPlugin) {
-
-		for (IPluginConfiguration pluginConfiguration : configs) {
-			if (productPlugin.getId().equals(pluginConfiguration.getId())) {
-				return true;
-			}
-		}
-
-		return false;
+	private boolean pluginConfigurationContainsProductPlugin(IPluginConfiguration[] configs, IPluginModelBase plugin) {
+		String bsn = plugin.getPluginBase().getId();
+		return Arrays.stream(configs).map(IPluginConfiguration::getId).anyMatch(bsn::equals);
 	}
 
 	private void handleRemove() {
@@ -321,33 +258,8 @@ public class PluginConfigurationSection extends TableSection {
 	}
 
 	private void handleAddDefaults() {
-		StringTokenizer tok = new StringTokenizer(getBundlesWithStartLevels(), ","); //$NON-NLS-1$
-		ArrayList<String[]> plugins = new ArrayList<>();
+		List<String[]> plugins = getBundlesWithStartLevels();
 		IProduct product = getProduct();
-		while (tok.hasMoreTokens()) {
-			String token = tok.nextToken();
-			int index = token.indexOf('@');
-			if (index >= 0) { // there is a start level and/or autostart information
-				String idVersion = token.substring(0, index);
-				int versionIndex = idVersion.indexOf(VERSION_SEPARATOR);
-				String id = (versionIndex > 0) ? idVersion.substring(0, versionIndex) : idVersion;
-				int endStartLevelIndex = token.indexOf(':', index);
-				String startLevel = ""; //$NON-NLS-1$
-				String autostart;
-				if (endStartLevelIndex > 0) { // there is a start level
-					startLevel = token.substring(index + 1, endStartLevelIndex);
-					autostart = token.substring(endStartLevelIndex + 1);
-				} else {
-					autostart = token.substring(index + 1);
-				}
-				// If the product list does not already have this plugin, build an array of the parsed strings
-				// so that we can show the user what we propose to add. We don't yet create plugin configuration
-				// objects because that will change the model and we want confirmation.
-				if (product.findPluginConfiguration(id) == null) {
-					plugins.add(new String[] {id, startLevel, autostart});
-				}
-			}
-		}
 		if (!plugins.isEmpty()) {
 			// Build a user-presentable description of the plugins and start levels.
 			StringBuilder bundlesList = new StringBuilder();

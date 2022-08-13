@@ -59,13 +59,8 @@ public class LaunchAction extends Action {
 		fProduct = product;
 		fMode = mode;
 		fPath = path;
-		// initialize configurations... we should do this lazily
-		// TODO
-		fPluginConfigurations = new HashMap<>();
-		IPluginConfiguration[] configurations = fProduct.getPluginConfigurations();
-		for (IPluginConfiguration config : configurations) {
-			fPluginConfigurations.put(config.getId(), config);
-		}
+		fPluginConfigurations = Arrays.stream(fProduct.getPluginConfigurations())
+				.collect(Collectors.toUnmodifiableMap(IPluginConfiguration::getId, c -> c));
 	}
 
 	@Override
@@ -76,6 +71,7 @@ public class LaunchAction extends Action {
 				DebugUITools.launch(config, fMode);
 			}
 		} catch (CoreException e) {
+			PDEPlugin.log(Status.error(PDEUIMessages.ProductEditor_launchFailed, e));
 		}
 	}
 
@@ -112,19 +108,16 @@ public class LaunchAction extends Action {
 
 		Set<String> wsplugins = new HashSet<>();
 		Set<String> explugins = new HashSet<>();
-		Set<IPluginModelBase> models = getModels();
+		Set<IPluginModelBase> models = getModels(fProduct);
 		for (IPluginModelBase model : models) {
-			if (model.getUnderlyingResource() == null) {
-				appendBundle(explugins, model);
-			} else {
-				appendBundle(wsplugins, model);
-			}
+			appendBundle(model.getUnderlyingResource() == null ? explugins : wsplugins, model);
 		}
 		wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, wsplugins);
 		wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, explugins);
 
 		if (fProduct.useFeatures()) {
-			refreshFeatureLaunchAttributes(wc, models);
+			wc.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, true);
+			refreshFeatureLaunchPlugins(wc, models);
 		} else {
 			wc.removeAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES);
 			wc.removeAttribute(IPDELauncherConstants.SELECTED_FEATURES);
@@ -141,7 +134,7 @@ public class LaunchAction extends Action {
 		return wc.doSave();
 	}
 
-	private void refreshFeatureLaunchAttributes(ILaunchConfigurationWorkingCopy wc, Set<IPluginModelBase> allModels) {
+	private void refreshFeatureLaunchPlugins(ILaunchConfigurationWorkingCopy wc, Set<IPluginModelBase> allModels) {
 		FeatureModelManager featureManager = PDECore.getDefault().getFeatureModelManager();
 		Set<String> selectedFeatures = Arrays.stream(fProduct.getFeatures()) //
 				.map(f -> featureManager.findFeatureModel(f.getId(), f.getVersion())).filter(Objects::nonNull)
@@ -155,7 +148,6 @@ public class LaunchAction extends Action {
 
 		wc.setAttribute(IPDELauncherConstants.SELECTED_FEATURES, selectedFeatures);
 		wc.setAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS, additionalPlugins);
-		wc.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, true);
 	}
 
 	private void appendBundle(Set<String> plugins, IPluginModelBase model) {
@@ -176,50 +168,45 @@ public class LaunchAction extends Action {
 	}
 
 	private String getProgramArguments(String os, String arch) {
-		StringBuilder buffer = new StringBuilder(LaunchArgumentsHelper.getInitialProgramArguments());
 		IArgumentsInfo info = fProduct.getLauncherArguments();
 		String userArgs = info != null ? CoreUtility.normalize(info.getCompleteProgramArguments(os, arch)) : ""; //$NON-NLS-1$
-		return concatArgs(buffer, userArgs);
+		return concatArgs(LaunchArgumentsHelper.getInitialProgramArguments(), userArgs);
 	}
 
 	private String getVMArguments(String os, String arch) {
-		StringBuilder buffer = new StringBuilder(LaunchArgumentsHelper.getInitialVMArguments());
 		IArgumentsInfo info = fProduct.getLauncherArguments();
 		String userArgs = info != null ? CoreUtility.normalize(info.getCompleteVMArguments(os, arch)) : ""; //$NON-NLS-1$
-		return concatArgs(buffer, userArgs);
+		return concatArgs(LaunchArgumentsHelper.getInitialVMArguments(), userArgs);
 	}
 
-	private String concatArgs(StringBuilder initialArgs, String userArgs) {
-		List<String> initialArgsList = Arrays.asList(DebugPlugin.splitArguments(initialArgs.toString()));
+	private static final Set<String> PROGRAM_ARGUMENTS = Set.of(//
+			'-' + IEnvironment.P_OS, '-' + IEnvironment.P_WS, '-' + IEnvironment.P_ARCH, '-' + IEnvironment.P_NL);
+
+	private String concatArgs(String initialArgs, String userArgs) {
+		List<String> arguments = Arrays.asList(DebugPlugin.splitArguments(initialArgs));
 		if (userArgs != null && userArgs.length() > 0) {
 			List<String> userArgsList = Arrays.asList(DebugPlugin.splitArguments(userArgs));
 			boolean previousHasSubArgument = false;
 			for (String userArg : userArgsList) {
-				boolean hasSubArgument = userArg.toString().equals('-' + IEnvironment.P_OS) || userArg.toString().equals('-' + IEnvironment.P_WS);
-				hasSubArgument = hasSubArgument || userArg.toString().equals('-' + IEnvironment.P_ARCH) || userArg.toString().equals('-' + IEnvironment.P_NL);
-				if (!initialArgsList.contains(userArg) || hasSubArgument || previousHasSubArgument) {
-					initialArgs.append(' ');
-					initialArgs.append(userArg);
+				boolean hasSubArgument = PROGRAM_ARGUMENTS.contains(userArgs);
+				if (!arguments.contains(userArg) || hasSubArgument || previousHasSubArgument) {
+					arguments.add(userArg);
 				}
 				previousHasSubArgument = hasSubArgument;
 			}
 		}
 		try {
-			return removeDuplicateArguments(initialArgs);
+			return removeDuplicateArguments(arguments);
 		} catch (Exception e) {
 			PDEPlugin.log(e);
-			return initialArgs.toString();
+			return String.join(" ", arguments); //$NON-NLS-1$
 		}
 	}
 
-	private String removeDuplicateArguments(StringBuilder initialArgs) {
-		String[] progArguments = { '-' + IEnvironment.P_OS, '-' + IEnvironment.P_WS, '-' + IEnvironment.P_ARCH,
-				'-' + IEnvironment.P_NL };
+	private String removeDuplicateArguments(List<String> userArgsList) {
 		String defaultStart = "${target."; //$NON-NLS-1$ // see
 											// LaunchArgumentHelper
-		ArrayList<String> userArgsList = new ArrayList<>(
-				Arrays.asList(DebugPlugin.splitArguments(initialArgs.toString())));
-		for (String progArgument : progArguments) {
+		for (String progArgument : PROGRAM_ARGUMENTS) {
 			int index1 = userArgsList.indexOf(progArgument);
 			int index2 = userArgsList.lastIndexOf(progArgument);
 			if (index1 != index2) {
@@ -235,14 +222,7 @@ public class LaunchAction extends Action {
 				}
 			}
 		}
-		StringBuilder arguments = new StringBuilder();
-		for (Iterator<String> iterator = userArgsList.iterator(); iterator.hasNext();) {
-			Object userArg = iterator.next();
-			arguments.append(userArg);
-			if(iterator.hasNext())
-				arguments.append(' ');
-		}
-		return arguments.toString();
+		return String.join(" ", userArgsList); //$NON-NLS-1$
 	}
 
 	private String getJREContainer(String os) {
@@ -256,49 +236,42 @@ public class LaunchAction extends Action {
 		return null;
 	}
 
-	private Set<IPluginModelBase> getModels() {
+	public static Set<IPluginModelBase> getModels(IProduct product) {
+		return product.useFeatures() ? getModelsFromListedFeatures(product) : getModelsFromListedPlugins(product);
+	}
+
+	private static Set<IPluginModelBase> getModelsFromListedPlugins(IProduct product) {
+		return Arrays.stream(product.getPlugins()) //
+				.map(IProductPlugin::getId).filter(Objects::nonNull)//
+				.map(PluginRegistry::findModel).filter(Objects::nonNull)
+				.filter(TargetPlatformHelper::matchesCurrentEnvironment)//
+				.collect(Collectors.toSet());
+	}
+
+	private static Set<IPluginModelBase> getModelsFromListedFeatures(IProduct product) {
 		Set<IPluginModelBase> launchPlugins = new HashSet<>();
-		if (fProduct.useFeatures()) {
-			for (IFeatureModel feature : getUniqueFeatures()) {
-				addFeaturePlugins(feature.getFeature(), launchPlugins);
-			}
-		} else {
-			IProductPlugin[] plugins = fProduct.getPlugins();
-			for (IProductPlugin plugin : plugins) {
-				String id = plugin.getId();
-				if (id == null)
-					continue;
-				IPluginModelBase model = PluginRegistry.findModel(id);
-				if (model != null && TargetPlatformHelper.matchesCurrentEnvironment(model))
-					launchPlugins.add(model);
-			}
+		for (IFeatureModel feature : getUniqueFeatures(product)) {
+			addFeaturePlugins(feature.getFeature(), launchPlugins);
 		}
 		return launchPlugins;
 	}
 
-	private Collection<IFeatureModel> getUniqueFeatures() {
-		ArrayList<IFeatureModel> list = new ArrayList<>();
-		IProductFeature[] features = fProduct.getFeatures();
-		for (IProductFeature feature : features) {
-			String id = feature.getId();
-			String version = feature.getVersion();
-			addFeatureAndChildren(id, version, list);
+	private static Collection<IFeatureModel> getUniqueFeatures(IProduct product) {
+		FeatureModelManager featureManager = PDECore.getDefault().getFeatureModelManager();
+		Queue<IFeatureModel> pending = new ArrayDeque<>();
+		for (IProductFeature feature : product.getFeatures()) {
+			pending.add(featureManager.findFeatureModel(feature.getId(), feature.getVersion()));
 		}
-		return list;
-	}
-
-	private void addFeatureAndChildren(String id, String version, List<IFeatureModel> list) {
-		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
-		IFeatureModel model = manager.findFeatureModel(id, version);
-		if (model == null || list.contains(model))
-			return;
-
-		list.add(model);
-
-		IFeatureChild[] children = model.getFeature().getIncludedFeatures();
-		for (IFeatureChild element : children) {
-			addFeatureAndChildren(element.getId(), element.getVersion(), list);
+		Set<IFeatureModel> features = new LinkedHashSet<>();
+		while (!pending.isEmpty()) { // breadth-first search for all features
+			IFeatureModel feature = pending.remove();
+			if (feature != null && features.add(feature)) {
+				for (IFeatureChild element : feature.getFeature().getIncludedFeatures()) {
+					pending.add(featureManager.findFeatureModel(element.getId(), element.getVersion()));
+				}
+			}
 		}
+		return features;
 	}
 
 	private static void addFeaturePlugins(IFeature feature, Set<IPluginModelBase> launchPlugins) {
