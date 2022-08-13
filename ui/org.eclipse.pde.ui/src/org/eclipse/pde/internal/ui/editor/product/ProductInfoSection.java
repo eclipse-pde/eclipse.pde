@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,11 +36,11 @@ import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.wizards.product.ProductDefinitionWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.editor.IFormPage;
@@ -55,7 +55,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 	private Button fPluginButton;
 	private Button fFeatureButton;
 
-	private static int NUM_COLUMNS = 3;
+	private static final int NUM_COLUMNS = 3;
 
 	class ExtensionIdComboPart extends ComboPart implements SelectionListener {
 		private String fRemovedId;
@@ -74,10 +74,6 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
-		}
-
-		public boolean isValidId(String id) {
-			return true;
 		}
 
 		private void addItem(String item, int index) {
@@ -108,7 +104,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 				if (extension == null)
 					return;
 				String id = extension.getUniqueIdentifier();
-				if (id == null || !isValidId(id))
+				if (id == null)
 					continue;
 				if (delta.getKind() == IExtensionDelta.ADDED) {
 					int index = computeIndex(id);
@@ -124,10 +120,12 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		}
 
 		private int computeIndex(String newId) {
-			// Easy linear search to compute the index to insert.  If this take too much time (ie. long list) suggest binary search
+			// Easy linear search to compute the index to insert. If this take
+			// too much time (ie. long list) suggest binary search
 			int i = 0;
 			String[] entries = getItems();
-			// go to entries.length -1 because last entry in both ComboParts is a ""
+			// go to entries.length -1 because last entry in both ComboParts is
+			// a ""
 			for (; i < entries.length - 1; i++) {
 				int compareValue = entries[i].compareTo(newId);
 				if (compareValue == 0)
@@ -138,7 +136,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 			return i;
 		}
 
-		public void reload(String newItems[]) {
+		public void reload(String[] newItems) {
 			if (fRemovedId == null)
 				fRemovedId = getSelection();
 			setItems(newItems);
@@ -168,11 +166,9 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		Composite client = toolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, NUM_COLUMNS));
 
-		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
-
 		// product section
-		createProductEntry(client, toolkit, actionBars);
-		createApplicationEntry(client, toolkit, actionBars);
+		createProductEntry(client, toolkit);
+		createApplicationEntry(client, toolkit);
 		createConfigurationOption(client, toolkit);
 
 		toolkit.paintBordersFor(client);
@@ -193,7 +189,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		super.dispose();
 	}
 
-	private void createProductEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
+	private void createProductEntry(Composite client, FormToolkit toolkit) {
 		Label label = toolkit.createLabel(client, PDEUIMessages.ProductInfoSection_product);
 		label.setToolTipText(PDEUIMessages.ProductInfoSection_productTooltip);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
@@ -203,7 +199,8 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		fProductCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fProductCombo.setItems(TargetPlatform.getProducts());
 		fProductCombo.add(""); //$NON-NLS-1$
-		fProductCombo.addSelectionListener(widgetSelectedAdapter(e -> getProduct().setProductId(fProductCombo.getSelection())));
+		fProductCombo.addSelectionListener(
+				widgetSelectedAdapter(e -> getProduct().setProductId(fProductCombo.getSelection())));
 
 		Button button = toolkit.createButton(client, PDEUIMessages.ProductInfoSection_new, SWT.PUSH);
 		button.setEnabled(isEditable());
@@ -223,7 +220,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		}
 	}
 
-	private void createApplicationEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
+	private void createApplicationEntry(Composite client, FormToolkit toolkit) {
 		Label label = toolkit.createLabel(client, PDEUIMessages.ProductInfoSection_app, SWT.WRAP);
 		label.setToolTipText(PDEUIMessages.ProductInfoSection_appTooltip);
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
@@ -235,7 +232,8 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		fAppCombo.getControl().setLayoutData(gd);
 		fAppCombo.setItems(TargetPlatform.getApplications());
 		fAppCombo.add(""); //$NON-NLS-1$
-		fAppCombo.addSelectionListener(widgetSelectedAdapter(e -> getProduct().setApplication(fAppCombo.getSelection())));
+		fAppCombo.addSelectionListener(
+				widgetSelectedAdapter(e -> getProduct().setApplication(fAppCombo.getSelection())));
 
 		fAppCombo.getControl().setEnabled(isEditable());
 	}
@@ -316,7 +314,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			handleModelEventWorldChanged(e);
+			handleModelEventWorldChanged();
 			return;
 		}
 
@@ -330,10 +328,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		}
 	}
 
-	/**
-	 * @param event
-	 */
-	private void handleModelEventWorldChanged(IModelChangedEvent event) {
+	private void handleModelEventWorldChanged() {
 		// Store selection before refresh
 		boolean previousFeatureSelected = fFeatureButton.getSelection();
 		// Perform the refresh
@@ -342,9 +337,6 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		revertConfigurationPage(previousFeatureSelected);
 	}
 
-	/**
-	 * @param previousFeatureSelected
-	 */
 	private void revertConfigurationPage(boolean previousFeatureSelected) {
 		// Compare selection from before and after the refresh
 		boolean currentFeatureSelected = fFeatureButton.getSelection();
@@ -381,18 +373,18 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();
-		if (c instanceof Text)
-			return true;
-		return false;
+		return c instanceof Text;
 	}
 
 	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
-		final IExtensionDelta[] applicationDeltas = event.getExtensionDeltas(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, "applications"); //$NON-NLS-1$
-		final IExtensionDelta[] productDeltas = event.getExtensionDeltas(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, "products"); //$NON-NLS-1$
-		if (applicationDeltas.length + productDeltas.length == 0)
+		final IExtensionDelta[] applicationDeltas = event.getExtensionDeltas(IPDEBuildConstants.BUNDLE_CORE_RUNTIME,
+				"applications"); //$NON-NLS-1$
+		final IExtensionDelta[] productDeltas = event.getExtensionDeltas(IPDEBuildConstants.BUNDLE_CORE_RUNTIME,
+				"products"); //$NON-NLS-1$
+		if (applicationDeltas.length + productDeltas.length == 0) {
 			return;
-
+		}
 		Display.getDefault().syncExec(() -> {
 			fAppCombo.handleExtensionDelta(applicationDeltas);
 			fProductCombo.handleExtensionDelta(productDeltas);
@@ -404,7 +396,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		String[] products = TargetPlatform.getProducts();
 		final String[] finalProducts = new String[products.length + 1];
 		System.arraycopy(products, 0, finalProducts, 0, products.length);
-		finalProducts[products.length] = ""; //$NON-NLS-1$od
+		finalProducts[products.length] = ""; //$NON-NLS-1$
 
 		String[] apps = TargetPlatform.getApplications();
 		final String[] finalApps = new String[apps.length + 1];

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2022 Code 9 Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,13 +21,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class DependenciesPage extends PDEFormPage {
 
-	public static final String PLUGIN_ID = "plugin-dependencies"; //$NON-NLS-1$
-	public static final String FEATURE_ID = "feature-dependencies"; //$NON-NLS-1$
+	static final String PLUGIN_ID = "plugin-dependencies"; //$NON-NLS-1$
+	static final String FEATURE_ID = "feature-dependencies"; //$NON-NLS-1$
 
 	private boolean fUseFeatures;
 	private PluginSection fPluginSection = null;
@@ -46,14 +45,13 @@ public class DependenciesPage extends PDEFormPage {
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
-		FormToolkit toolkit = managedForm.getToolkit();
 		form.setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REQ_PLUGINS_OBJ));
 		form.setText(PDEUIMessages.Product_DependenciesPage_title);
-		fillBody(managedForm, toolkit);
+		fillBody(managedForm);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.CONFIGURATION_PAGE);
 	}
 
-	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
+	private void fillBody(IManagedForm managedForm) {
 		Composite body = managedForm.getForm().getBody();
 		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
 
@@ -65,6 +63,6 @@ public class DependenciesPage extends PDEFormPage {
 	}
 
 	public boolean includeOptionalDependencies() {
-		return (fPluginSection != null) ? fPluginSection.includeOptionalDependencies() : false;
+		return fPluginSection != null && fPluginSection.includeOptionalDependencies();
 	}
 }
