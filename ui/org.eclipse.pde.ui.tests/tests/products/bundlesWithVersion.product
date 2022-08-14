@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product uid="bundlesWithVersion" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true" autoIncludeRequirements="true">
+
+   <configIni use="default">
+   </configIni>
+
+   <plugins>
+      <plugin id="plugin.a"/>
+      <plugin id="plugin.b" version="1.0.0"/>
+      <plugin id="plugin.c" version="2.0.0"/><!-- version does not exist -->
+   </plugins>
+
+   <features>
+      <feature id="feature.a"/>
+   </features>
+
+</product>

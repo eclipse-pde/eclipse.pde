@@ -52,10 +52,10 @@ public class LaunchAction extends Action {
 
 	private IProduct fProduct;
 	private String fMode;
-	private String fPath;
+	private IPath fPath;
 	private Map<String, IPluginConfiguration> fPluginConfigurations;
 
-	public LaunchAction(IProduct product, String path, String mode) {
+	public LaunchAction(IProduct product, IPath path, String mode) {
 		fProduct = product;
 		fMode = mode;
 		fPath = path;
@@ -75,7 +75,7 @@ public class LaunchAction extends Action {
 		}
 	}
 
-	private ILaunchConfiguration findLaunchConfiguration() throws CoreException {
+	public ILaunchConfiguration findLaunchConfiguration() throws CoreException {
 		List<ILaunchConfiguration> configs = getLaunchConfigurations();
 
 		if (configs.isEmpty()) {
@@ -257,21 +257,27 @@ public class LaunchAction extends Action {
 	}
 
 	private static Collection<IFeatureModel> getUniqueFeatures(IProduct product) {
-		FeatureModelManager featureManager = PDECore.getDefault().getFeatureModelManager();
 		Queue<IFeatureModel> pending = new ArrayDeque<>();
-		for (IProductFeature feature : product.getFeatures()) {
-			pending.add(featureManager.findFeatureModel(feature.getId(), feature.getVersion()));
-		}
 		Set<IFeatureModel> features = new LinkedHashSet<>();
+		for (IProductFeature feature : product.getFeatures()) {
+			addFeature(feature.getId(), feature.getVersion(), pending, features);
+		}
 		while (!pending.isEmpty()) { // breadth-first search for all features
 			IFeatureModel feature = pending.remove();
-			if (feature != null && features.add(feature)) {
-				for (IFeatureChild element : feature.getFeature().getIncludedFeatures()) {
-					pending.add(featureManager.findFeatureModel(element.getId(), element.getVersion()));
-				}
+			for (IFeatureChild child : feature.getFeature().getIncludedFeatures()) {
+				addFeature(child.getId(), child.getVersion(), pending, features);
 			}
 		}
 		return features;
+	}
+
+	private static void addFeature(String id, String version, Queue<IFeatureModel> pending,
+			Set<IFeatureModel> features) {
+		FeatureModelManager featureManager = PDECore.getDefault().getFeatureModelManager();
+		IFeatureModel feature = featureManager.findFeatureModel(id, version);
+		if (feature != null && features.add(feature)) {
+			pending.add(feature);
+		}
 	}
 
 	private static void addFeaturePlugins(IFeature feature, Set<IPluginModelBase> launchPlugins) {
@@ -342,7 +348,7 @@ public class LaunchAction extends Action {
 
 	private ILaunchConfiguration createConfiguration() throws CoreException {
 		ILaunchConfigurationType configType = getWorkbenchLaunchConfigType();
-		String computedName = getComputedName(new Path(fPath).lastSegment());
+		String computedName = getComputedName(fPath.lastSegment());
 		ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);
 		wc.setAttribute(IPDELauncherConstants.LOCATION,
 				LaunchArgumentsHelper.getDefaultWorkspaceLocation(computedName));
@@ -354,7 +360,7 @@ public class LaunchAction extends Action {
 		wc.setAttribute(IPDELauncherConstants.USE_PRODUCT, true);
 		wc.setAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, true);
 		wc.setAttribute(IPDELauncherConstants.AUTOMATIC_ADD, false);
-		wc.setAttribute(IPDELauncherConstants.PRODUCT_FILE, fPath);
+		wc.setAttribute(IPDELauncherConstants.PRODUCT_FILE, fPath.toOSString());
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, PDESourcePathProvider.ID);
 		wc.setAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, false);
 		return refreshConfiguration(wc);
@@ -372,7 +378,7 @@ public class LaunchAction extends Action {
 		for (ILaunchConfiguration config : manager.getLaunchConfigurations(type)) {
 			if (!DebugUITools.isPrivate(config)) {
 				String path = config.getAttribute(IPDELauncherConstants.PRODUCT_FILE, ""); //$NON-NLS-1$
-				if (new Path(fPath).equals(new Path(path))) {
+				if (fPath.equals(new Path(path))) {
 					result.add(config);
 				}
 			}
