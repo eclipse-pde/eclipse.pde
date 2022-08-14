@@ -81,7 +81,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 						WorkspaceProductModel productModel = new WorkspaceProductModel((IFile) object, false);
 						try {
 							productModel.load();
-							new LaunchAction(productModel.getProduct(), ((IFile) object).getFullPath().toOSString(), mode).run();
+							new LaunchAction(productModel.getProduct(), ((IFile) object).getFullPath(), mode).run();
 						} catch (CoreException e) {
 							PDEPlugin.log(e);
 						}
