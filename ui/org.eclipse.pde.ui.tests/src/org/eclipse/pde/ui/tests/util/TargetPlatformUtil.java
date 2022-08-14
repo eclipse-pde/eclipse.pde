@@ -18,8 +18,7 @@ package org.eclipse.pde.ui.tests.util;
 
 import static java.util.Map.entry;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -29,11 +28,16 @@ import java.util.jar.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
+import org.eclipse.pde.ui.tests.util.ProjectUtils.CoreConsumer;
 import org.junit.rules.TestRule;
 import org.osgi.framework.*;
 
@@ -44,7 +48,7 @@ public class TargetPlatformUtil {
 			TPS::getWorkspaceTargetDefinition, //
 			beforeTarget -> {
 				if (beforeTarget != TPS.getWorkspaceTargetDefinition()) {
-					TargetPlatformUtil.loadAndSetTargetForWorkspace(beforeTarget);
+					TargetPlatformUtil.loadAndSetTarget(beforeTarget);
 				}
 			});
 
@@ -62,7 +66,7 @@ public class TargetPlatformUtil {
 		}
 		List<ITargetLocation> bundleContainers = new ArrayList<>();
 		List<NameVersionDescriptor> included = addRunningPlatformBundles(bundleContainers, bundleFilter);
-		createAndSetTargetForWorkspace(name, bundleContainers, included);
+		createAndSetTarget(name, bundleContainers, included);
 	}
 
 	public static void setRunningPlatformWithDummyBundlesAsTarget(Predicate<Bundle> rpBundleFilter,
@@ -73,10 +77,10 @@ public class TargetPlatformUtil {
 		List<NameVersionDescriptor> rpBundles = addRunningPlatformBundles(locations, rpBundleFilter);
 		locations.add(createDummyBundlesLocation(bundles, jarDirectory));
 
-		createAndSetTargetForWorkspace(null, locations, concat(rpBundles, bundles.keySet(), features));
+		createAndSetTarget(null, locations, concat(rpBundles, bundles.keySet(), features));
 	}
 
-	public static void loadAndSetTargetForWorkspace(ITargetDefinition target) throws InterruptedException {
+	public static void loadAndSetTarget(ITargetDefinition target) throws InterruptedException {
 		Job job = new LoadTargetDefinitionJob(target);
 		job.schedule();
 		job.join();
@@ -104,7 +108,7 @@ public class TargetPlatformUtil {
 				.collect(Collectors.toList());
 	}
 
-	public static void createAndSetTargetForWorkspace(String name, Collection<ITargetLocation> locations,
+	public static void createAndSetTarget(String name, Collection<ITargetLocation> locations,
 			Collection<NameVersionDescriptor> includedBundles) throws InterruptedException {
 		ITargetDefinition targetDefinition = TPS.newTarget();
 		targetDefinition.setName(name);
@@ -120,13 +124,13 @@ public class TargetPlatformUtil {
 		if (includedBundles != null) {
 			targetDefinition.setIncluded(includedBundles.toArray(NameVersionDescriptor[]::new));
 		}
-		loadAndSetTargetForWorkspace(targetDefinition);
+		loadAndSetTarget(targetDefinition);
 	}
 
 	public static void setDummyBundlesAsTarget(Map<NameVersionDescriptor, Map<String, String>> bundles,
 			Collection<NameVersionDescriptor> features, Path jarDirectory) throws Exception {
 		ITargetLocation location = createDummyBundlesLocation(bundles, jarDirectory);
-		createAndSetTargetForWorkspace(null, List.of(location), concat(bundles.keySet(), features));
+		createAndSetTarget(null, List.of(location), concat(bundles.keySet(), features));
 	}
 
 	private static ITargetLocation createDummyBundlesLocation(Map<NameVersionDescriptor, Map<String, String>> plugins,
@@ -137,7 +141,14 @@ public class TargetPlatformUtil {
 			NameVersionDescriptor bundleNameVersion = entry.getKey();
 			Map<String, String> extraAttributes = entry.getValue();
 
-			Manifest manifest = createDummyBundleManifest(bundleNameVersion.getId(), bundleNameVersion.getVersion());
+			Manifest manifest = new Manifest();
+			Attributes mainAttributes1 = manifest.getMainAttributes();
+			mainAttributes1.put(Attributes.Name.MANIFEST_VERSION, "1.0");
+			mainAttributes1.putValue(Constants.BUNDLE_MANIFESTVERSION, "2");
+			mainAttributes1.putValue(Constants.BUNDLE_SYMBOLICNAME, bundleNameVersion.getId());
+			mainAttributes1.putValue(Constants.BUNDLE_VERSION, bundleNameVersion.getVersion());
+			mainAttributes1.putValue(Constants.BUNDLE_NAME, bundleNameVersion.getId().replace('.', ' '));
+			mainAttributes1.putValue("Automatic-Module-Name", bundleNameVersion.getId());
 			if (extraAttributes != null) {
 				extraAttributes.forEach(manifest.getMainAttributes()::putValue);
 			}
@@ -153,18 +164,6 @@ public class TargetPlatformUtil {
 			}
 		}
 		return TPS.newDirectoryLocation(jarDirectory.toString());
-	}
-
-	private static Manifest createDummyBundleManifest(String bundleSymbolicName, String bundleVersion) {
-		Manifest manifest = new Manifest();
-		Attributes mainAttributes = manifest.getMainAttributes();
-		mainAttributes.put(Attributes.Name.MANIFEST_VERSION, "1.0");
-		mainAttributes.putValue(Constants.BUNDLE_MANIFESTVERSION, "2");
-		mainAttributes.putValue(Constants.BUNDLE_SYMBOLICNAME, bundleSymbolicName);
-		mainAttributes.putValue(Constants.BUNDLE_VERSION, bundleVersion);
-		mainAttributes.putValue(Constants.BUNDLE_NAME, bundleSymbolicName.replace('.', ' '));
-		mainAttributes.putValue("Automatic-Module-Name", bundleSymbolicName);
-		return manifest;
 	}
 
 	@SafeVarargs
@@ -183,6 +182,26 @@ public class TargetPlatformUtil {
 
 	public static String resolution(String resolutionType) {
 		return ";" + Constants.RESOLUTION_DIRECTIVE + ":=\"" + resolutionType + "\"";
+	}
+
+	public static NameVersionDescriptor targetFeature(String featureId, String featureVersion,
+			CoreConsumer<IFeature> featureSetup, Path bundlePoolRoot) throws Exception, IOException, CoreException {
+		IFeature feature = ProjectUtils.createFeature(featureId, featureVersion, "tp-feature-temp-project",
+				featureSetup);
+
+		WorkspaceFeatureModel model = (WorkspaceFeatureModel) feature.getModel();
+		IResource resource = model.getUnderlyingResource();
+
+		Path featureDirectory = bundlePoolRoot.resolve(Path.of("features", featureId + "_" + featureVersion));
+		Files.createDirectories(featureDirectory);
+		Path featureFile = featureDirectory.resolve(resource.getProjectRelativePath().toString());
+		try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(featureFile));) {
+			model.save(writer);
+		}
+		IProject project = resource.getProject();
+		project.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, null);
+
+		return new NameVersionDescriptor(featureId, featureVersion, NameVersionDescriptor.TYPE_FEATURE);
 	}
 
 	@SafeVarargs

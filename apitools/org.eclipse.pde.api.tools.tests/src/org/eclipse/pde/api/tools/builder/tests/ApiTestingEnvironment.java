@@ -740,7 +740,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		ITargetPlatformService tpService = PDECore.getDefault().acquireService(ITargetPlatformService.class);
 		ITargetDefinition workspaceTarget = tpService.getWorkspaceTargetDefinition();
 		if (workspaceTarget != null && workspaceTarget.getBundles() == null) {
-			TargetPlatformUtil.loadAndSetTargetForWorkspace(workspaceTarget);
+			TargetPlatformUtil.loadAndSetTarget(workspaceTarget);
 		}
 		boolean coreRuntimeFound = Arrays.stream(workspaceTarget.getBundles())
 				.anyMatch(bundle -> "org.eclipse.core.runtime".equals(bundle.getBundleInfo().getSymbolicName())); //$NON-NLS-1$

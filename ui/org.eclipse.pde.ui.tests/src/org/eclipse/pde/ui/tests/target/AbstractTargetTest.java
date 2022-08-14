@@ -241,7 +241,7 @@ public abstract class AbstractTargetTest extends PDETestCase {
 
 		// Create the job to load the target, but then join with the job's thread
 		try {
-			TargetPlatformUtil.loadAndSetTargetForWorkspace(target);
+			TargetPlatformUtil.loadAndSetTarget(target);
 		} catch (InterruptedException e) {
 			assertFalse("Target platform reset interrupted", true);
 		}
