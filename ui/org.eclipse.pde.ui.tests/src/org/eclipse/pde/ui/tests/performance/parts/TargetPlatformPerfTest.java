@@ -114,7 +114,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 			// Set the example target as active
 			ITargetDefinition target = tps.newTarget();
 			target.setTargetLocations(new ITargetLocation[] {tps.newDirectoryLocation(testBundles.toPortableString())});
-			TargetPlatformUtil.loadAndSetTargetForWorkspace(target);
+			TargetPlatformUtil.loadAndSetTarget(target);
 
 			// Warm-up Iterations
 			for (int i = 0; i < 2; i++) {
