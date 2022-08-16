@@ -73,6 +73,8 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.rules.TestRule;
 import org.osgi.service.prefs.BackingStoreException;
 
 import junit.framework.Test;
@@ -84,6 +86,10 @@ import junit.framework.TestSuite;
  * @since 1.0
  */
 public abstract class ApiBuilderTest extends BuilderTests {
+
+	@ClassRule
+	public static final TestRule CLEAR_WORKSPACE = org.eclipse.pde.ui.tests.util.ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
+
 	/**
 	 * Debug flag
 	 */
