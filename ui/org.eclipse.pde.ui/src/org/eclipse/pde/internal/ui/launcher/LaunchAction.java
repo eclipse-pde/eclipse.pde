@@ -183,7 +183,7 @@ public class LaunchAction extends Action {
 			'-' + IEnvironment.P_OS, '-' + IEnvironment.P_WS, '-' + IEnvironment.P_ARCH, '-' + IEnvironment.P_NL);
 
 	private String concatArgs(String initialArgs, String userArgs) {
-		List<String> arguments = Arrays.asList(DebugPlugin.splitArguments(initialArgs));
+		List<String> arguments = new ArrayList<>(Arrays.asList(DebugPlugin.splitArguments(initialArgs)));
 		if (userArgs != null && userArgs.length() > 0) {
 			List<String> userArgsList = Arrays.asList(DebugPlugin.splitArguments(userArgs));
 			boolean previousHasSubArgument = false;
