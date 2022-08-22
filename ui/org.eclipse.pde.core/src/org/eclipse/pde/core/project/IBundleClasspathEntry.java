@@ -27,17 +27,19 @@ import org.eclipse.core.runtime.IPath;
 public interface IBundleClasspathEntry {
 
 	/**
-	 * Returns a project relative path for a folder containing source code targeted for
-	 * the library this entry describes, or <code>null</code> if there is no source for
-	 * the entry.
+	 * Returns a project relative path for a folder containing source code
+	 * targeted for the library this entry describes, or <code>null</code> if
+	 * there is no source for the entry.
 	 * <p>
-	 * When a {@link #getSourcePath()} is specified, the binary path specifies the output
-	 * folder for the source, and in this case <code>null</code> indicates the associated
-	 * Java project's default build path output folder.
-	 * <p>
-	 * @return project relative path of folder containing source code or <code>null</code>
+	 * When a {@link #getSourcePath()} is specified, the binary path specifies
+	 * the output folder for the source, and in this case <code>null</code>
+	 * indicates the associated Java project's default build path output folder.
+	 * </p>
+	 *
+	 * @return project relative path of folder containing source code or
+	 *         <code>null</code>
 	 */
-	public IPath getSourcePath();
+	IPath getSourcePath();
 
 	/**
 	 * Returns a project relative path for a folder or archive containing class files and
@@ -51,7 +53,7 @@ public interface IBundleClasspathEntry {
 	 * @return project relative class file folder, archive or <code>null</code> to indicate
 	 *  default build path output folder
 	 */
-	public IPath getBinaryPath();
+	IPath getBinaryPath();
 
 	/**
 	 * Returns the library on the Bundle-Classpath header the source and/binary files are targeted for
@@ -64,5 +66,5 @@ public interface IBundleClasspathEntry {
 	 * </p>
 	 * @return Bundle-Classpath library or <code>null</code>
 	 */
-	public IPath getLibrary();
+	IPath getLibrary();
 }

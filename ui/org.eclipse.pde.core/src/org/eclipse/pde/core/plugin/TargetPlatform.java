@@ -32,17 +32,16 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 
 /**
- * The central class for the plug-in development target platform. This class cannot
- * be instantiated or subclassed by clients; all functionality is provided
- * by static methods.  Features include:
+ * The central class for the plug-in development target platform. This class
+ * cannot be instantiated or subclassed by clients; all functionality is
+ * provided by static methods. Features include:
  * <ul>
  * <li>the target platform's OS/WS/ARCH</li>
  * <li>the default application and product</li>
  * <li>the available applications and products</li>
  * </ul>
- * <p>
+ *
  * @since 3.3
- * </p>
  *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
