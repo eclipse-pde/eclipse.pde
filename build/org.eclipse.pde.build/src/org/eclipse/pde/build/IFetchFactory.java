@@ -103,7 +103,7 @@ public interface IFetchFactory {
 
 	/**
 	 * Generates a segment of ant script whose execution will fetch the element (bundle, plug-in, fragment, feature) indicated in the entryInfos arguments.
-	 * <p>
+	 *
 	 * @param entryInfos the map that has been built in the {@link #parseMapFileEntry(String, Properties, Map)} method.
 	 * This map contains the name and the type of the element  (resp. {@link #KEY_ELEMENT_NAME} and {@link #KEY_ELEMENT_TYPE}) to put in the destination.
 	 * @param destination the destination where the element should be fetched to. For example, for a plug-in the <code>plugin.xml</code> file is expected
@@ -114,7 +114,7 @@ public interface IFetchFactory {
 
 	/**
 	 * Generates a segment of ant script whose execution will fetch the specified file from the given element.
-	 * <p> 
+	 *
 	 * @param entryInfos the map that has been built in the {@link #parseMapFileEntry(String, Properties, Map)} method.
 	 * This map contains the name and the type of the element  (resp. {@link #KEY_ELEMENT_NAME} and {@link #KEY_ELEMENT_TYPE}) to put in the destination.
 	 * @param destination the destination where the element should be fetched to. For example, for a plug-in the <code>plugin.xml</code> file is expected
