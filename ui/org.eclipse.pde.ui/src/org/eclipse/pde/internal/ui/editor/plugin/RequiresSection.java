@@ -641,9 +641,11 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	private void createImportObjects() {
 		fImports = new Vector<>();
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		IPluginImport[] iimports = model.getPluginBase().getImports();
-		for (IPluginImport iimport : iimports) {
-			fImports.add(new ImportObject(iimport));
+		if (model != null) {
+			IPluginImport[] iimports = model.getPluginBase().getImports();
+			for (IPluginImport iimport : iimports) {
+				fImports.add(new ImportObject(iimport));
+			}
 		}
 	}
 
