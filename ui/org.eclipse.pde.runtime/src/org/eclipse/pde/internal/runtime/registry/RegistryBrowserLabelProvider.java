@@ -118,6 +118,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 		fPluginsImage.dispose();
 		fFragmentImage.dispose();
 		fPackageImage.dispose();
+		fRemoteServiceProxyImage.dispose();
 	}
 
 	private boolean isProxyService(ServiceReference<?> ref) {
