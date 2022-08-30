@@ -188,7 +188,7 @@ public class LaunchAction extends Action {
 			List<String> userArgsList = Arrays.asList(DebugPlugin.splitArguments(userArgs));
 			boolean previousHasSubArgument = false;
 			for (String userArg : userArgsList) {
-				boolean hasSubArgument = PROGRAM_ARGUMENTS.contains(userArgs);
+				boolean hasSubArgument = PROGRAM_ARGUMENTS.contains(userArg);
 				if (!arguments.contains(userArg) || hasSubArgument || previousHasSubArgument) {
 					arguments.add(userArg);
 				}
