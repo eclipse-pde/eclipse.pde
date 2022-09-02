@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.plugin;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -59,6 +60,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 
 	@Override
 	public void add(IPluginLibrary library) throws CoreException {
+		Objects.requireNonNull(library);
 		ensureModelEditable();
 		fLibraries.add(library);
 		((PluginLibrary) library).setInTheModel(true);
@@ -445,6 +447,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		return fBundleSourceEntry;
 	}
 
+	@Override
 	public boolean exportsExternalAnnotations() {
 		return fExportsExternalAnnotations;
 	}

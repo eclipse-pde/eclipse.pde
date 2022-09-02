@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.bundle;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Objects;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
@@ -137,6 +138,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	@Override
 	public void add(IPluginLibrary library) throws CoreException {
+		Objects.requireNonNull(library);
 		ensureModelEditable();
 		if (libraries == null) {
 			// if libraries == null, initialize the libraries varible by calling getLibraries()
@@ -839,6 +841,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	}
 
 	public void add(IPluginLibrary library, int index) throws CoreException {
+		Objects.requireNonNull(library);
 		ensureModelEditable();
 		int libraryCount = 0;
 		if (libraries != null) {
