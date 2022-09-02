@@ -62,11 +62,12 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	private static final long serialVersionUID = 1L;
 	protected IBundlePluginModelBase model;
+	/** synchronized access only **/
 	private ArrayList<IPluginLibrary> libraries;
 	private ArrayList<IPluginImport> imports;
 	private String fTarget;
 
-	public void reset() {
+	public synchronized void reset() {
 		libraries = null;
 		imports = null;
 	}
@@ -137,7 +138,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	}
 
 	@Override
-	public void add(IPluginLibrary library) throws CoreException {
+	public synchronized void add(IPluginLibrary library) throws CoreException {
 		Objects.requireNonNull(library);
 		ensureModelEditable();
 		if (libraries == null) {
@@ -210,7 +211,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	}
 
 	@Override
-	public void remove(IPluginLibrary library) throws CoreException {
+	public synchronized void remove(IPluginLibrary library) throws CoreException {
 		ensureModelEditable();
 		if (libraries != null) {
 			libraries.remove(library);
@@ -319,7 +320,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	}
 
 	@Override
-	public IPluginLibrary[] getLibraries() {
+	public synchronized IPluginLibrary[] getLibraries() {
 		IBundle bundle = getBundle();
 		if (bundle == null) {
 			return new IPluginLibrary[0];
@@ -443,7 +444,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	}
 
 	@Override
-	public void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException {
+	public synchronized void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException {
 		ensureModelEditable();
 		if (libraries != null) {
 			int index1 = libraries.indexOf(l1);
@@ -840,7 +841,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		}
 	}
 
-	public void add(IPluginLibrary library, int index) throws CoreException {
+	public synchronized void add(IPluginLibrary library, int index) throws CoreException {
 		Objects.requireNonNull(library);
 		ensureModelEditable();
 		int libraryCount = 0;
@@ -875,14 +876,14 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		fireStructureChanged(library, true);
 	}
 
-	public int getIndexOf(IPluginLibrary targetLibrary) {
+	public synchronized int getIndexOf(IPluginLibrary targetLibrary) {
 		if (libraries == null) {
 			return -1;
 		}
 		return libraries.indexOf(targetLibrary);
 	}
 
-	public IPluginLibrary getNextLibrary(IPluginLibrary targetLibrary) {
+	public synchronized IPluginLibrary getNextLibrary(IPluginLibrary targetLibrary) {
 		// Ensure we have libraries
 		if (libraries == null) {
 			return null;
@@ -908,7 +909,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		return nextLibrary;
 	}
 
-	public IPluginLibrary getPreviousLibrary(IPluginLibrary targetLibrary) {
+	public synchronized IPluginLibrary getPreviousLibrary(IPluginLibrary targetLibrary) {
 		// Ensure we have libraries
 		if (libraries == null) {
 			return null;
