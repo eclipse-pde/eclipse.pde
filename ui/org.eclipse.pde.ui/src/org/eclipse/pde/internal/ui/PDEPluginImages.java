@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2022 IBM Corporation and others.
+ * Copyright (c) 2000, 2017 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -315,11 +315,13 @@ public class PDEPluginImages {
 	}
 
 	public static Image get(String key) {
+		if (PLUGIN_REGISTRY == null)
+			initialize();
 		return PLUGIN_REGISTRY.get(key);
 	}
 
 	/* package */
-	static final void initialize() {
+	private static final void initialize() {
 		PLUGIN_REGISTRY = new ImageRegistry();
 		manage(IMG_ATT_CLASS_OBJ, DESC_ATT_CLASS_OBJ);
 		manage(IMG_ATT_FILE_OBJ, DESC_ATT_FILE_OBJ);
