@@ -66,7 +66,6 @@ public class RegistryBrowser extends ViewPart {
 	public static final String SHOW_RUNNING_PLUGINS = "RegistryView.showRunning.label"; //$NON-NLS-1$
 	public static final String SHOW_ADVANCED_MODE = "RegistryView.showAdvancedMode.label"; //$NON-NLS-1$
 	public static final String GROUP_BY = "RegistryView.groupBy"; //$NON-NLS-1$
-	public static final String SHOW_DISABLED_MODE = "RegistryView.showDisabledMode.label"; //$NON-NLS-1$
 
 	public static final int BUNDLES = 0;
 	public static final int EXTENSION_REGISTRY = 1;
@@ -95,14 +94,11 @@ public class RegistryBrowser extends ViewPart {
 	private Action fGroupByBundlesAction;
 	private Action fGroupByExtensionPointsAction;
 	private Action fGroupByServicesAction;
-	private Action fShowDisabledAction;
 	private Action fCopyAction;
 
 	// advanced actions
 	private Action fStartAction;
 	private Action fStopAction;
-	private Action fEnableAction;
-	private Action fDisableAction;
 	private Action fDiagnoseAction;
 
 	private Clipboard fClipboard;
@@ -121,16 +117,6 @@ public class RegistryBrowser extends ViewPart {
 		}
 	};
 
-	private ViewerFilter fDisabledFilter = new ViewerFilter() {
-		@Override
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (element instanceof Bundle) {
-				return !((Bundle) element).isEnabled();
-			}
-			return false;
-		}
-	};
-
 	/*
 	 * customized DrillDownAdapter which modifies enabled state of showing active/inactive
 	 * plug-ins action - see Bug 58467
@@ -144,28 +130,24 @@ public class RegistryBrowser extends ViewPart {
 		public void goInto() {
 			super.goInto();
 			fShowPluginsAction.setEnabled(!canGoHome());
-			fShowDisabledAction.setEnabled(!canGoHome());
 		}
 
 		@Override
 		public void goBack() {
 			super.goBack();
 			fShowPluginsAction.setEnabled(!canGoHome());
-			fShowDisabledAction.setEnabled(!canGoHome());
 		}
 
 		@Override
 		public void goHome() {
 			super.goHome();
 			fShowPluginsAction.setEnabled(!canGoHome());
-			fShowDisabledAction.setEnabled(!canGoHome());
 		}
 
 		@Override
 		public void goInto(Object newInput) {
 			super.goInto(newInput);
 			fShowPluginsAction.setEnabled(!canGoHome());
-			fShowDisabledAction.setEnabled(!canGoHome());
 		}
 	}
 
@@ -202,8 +184,6 @@ public class RegistryBrowser extends ViewPart {
 			fMemento.putString(SHOW_RUNNING_PLUGINS, "false"); //$NON-NLS-1$
 		if (fMemento.getInteger(GROUP_BY) == null)
 			fMemento.putInteger(GROUP_BY, BUNDLES);
-		if (fMemento.getString(SHOW_DISABLED_MODE) == null)
-			fMemento.putString(SHOW_DISABLED_MODE, "false"); //$NON-NLS-1$
 
 		// default to not showing advanced options to users
 		if (fMemento.getString(SHOW_ADVANCED_MODE) == null)
@@ -282,9 +262,6 @@ public class RegistryBrowser extends ViewPart {
 		if (fShowPluginsAction.isChecked())
 			fTreeViewer.addFilter(fActiveFilter);
 
-		if (fShowDisabledAction.isChecked())
-			fTreeViewer.addFilter(fDisabledFilter);
-
 		initializeModel();
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fTreeViewer.getControl(), IHelpContextIds.REGISTRY_VIEW);
@@ -327,7 +304,6 @@ public class RegistryBrowser extends ViewPart {
 		mgr.add(manager);
 		mgr.add(new Separator());
 		mgr.add(fShowPluginsAction);
-		mgr.add(fShowDisabledAction);
 		mgr.add(new Separator());
 		mgr.add(fShowAdvancedOperationsAction);
 
@@ -350,17 +326,10 @@ public class RegistryBrowser extends ViewPart {
 
 			if (getSelectedBundles().size() == 1)
 				manager.add(fDiagnoseAction);
-
-			// security related actions
-			if (selectedBundlesDisabled())
-				manager.add(fEnableAction);
-			if (selectedBundlesEnabled())
-				manager.add(fDisableAction);
 		}
 
 		manager.add(new Separator());
 		manager.add(fShowPluginsAction);
-		manager.add(fShowDisabledAction);
 		manager.add(new Separator());
 		manager.add(fShowAdvancedOperationsAction);
 	}
@@ -370,7 +339,6 @@ public class RegistryBrowser extends ViewPart {
 		if (memento == null || fMemento == null || fTreeViewer == null)
 			return;
 		fMemento.putString(SHOW_RUNNING_PLUGINS, Boolean.toString(fShowPluginsAction.isChecked()));
-		fMemento.putString(SHOW_DISABLED_MODE, Boolean.toString(fShowDisabledAction.isChecked()));
 		fMemento.putBoolean(SHOW_ADVANCED_MODE, fShowAdvancedOperationsAction.isChecked());
 		memento.putMemento(fMemento);
 	}
@@ -410,19 +378,6 @@ public class RegistryBrowser extends ViewPart {
 			}
 		};
 		fShowPluginsAction.setChecked(fMemento.getString(SHOW_RUNNING_PLUGINS).equals("true")); //$NON-NLS-1$
-
-		fShowDisabledAction = new Action(PDERuntimeMessages.RegistryView_showDisabled_label) {
-			@Override
-			public void run() {
-				if (fShowDisabledAction.isChecked()) {
-					fTreeViewer.addFilter(fDisabledFilter);
-				} else {
-					fTreeViewer.removeFilter(fDisabledFilter);
-				}
-				updateTitle();
-			}
-		};
-		fShowDisabledAction.setChecked(fMemento.getString(SHOW_DISABLED_MODE).equals("true")); //$NON-NLS-1$
 
 		fCopyAction = new Action(PDERuntimeMessages.RegistryBrowser_copy_label) {
 			/**
@@ -495,28 +450,6 @@ public class RegistryBrowser extends ViewPart {
 					}
 				} catch (BundleException e) {
 					PDERuntimePlugin.log(e);
-				}
-			}
-		};
-
-		fEnableAction = new Action(PDERuntimeMessages.RegistryView_enableAction_label) {
-			@Override
-			public void run() {
-				List<Bundle> bundles = getSelectedBundles();
-				for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
-					Bundle bundle = it.next();
-					bundle.enable();
-				}
-			}
-		};
-
-		fDisableAction = new Action(PDERuntimeMessages.RegistryView_disableAction_label) {
-			@Override
-			public void run() {
-				List<Bundle> bundles = getSelectedBundles();
-				for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
-					Bundle bundle = it.next();
-					bundle.disable();
 				}
 			}
 		};
@@ -640,32 +573,6 @@ public class RegistryBrowser extends ViewPart {
 		for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
 			Bundle bundle = it.next();
 			if (bundle.getState() == Bundle.ACTIVE)
-				return false;
-		}
-		return true;
-	}
-
-	/**
-	 * @return true if none is enabled, false if at least one is enabled
-	 */
-	private boolean selectedBundlesDisabled() {
-		List<Bundle> bundles = getSelectedBundles();
-		for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
-			Bundle bundle = it.next();
-			if (bundle.isEnabled())
-				return false;
-		}
-		return true;
-	}
-
-	/**
-	 * @return true if none is disabled, false if at least one is disabled
-	 */
-	private boolean selectedBundlesEnabled() {
-		List<Bundle> bundles = getSelectedBundles();
-		for (Iterator<Bundle> it = bundles.iterator(); it.hasNext();) {
-			Bundle bundle = it.next();
-			if (!bundle.isEnabled())
 				return false;
 		}
 		return true;

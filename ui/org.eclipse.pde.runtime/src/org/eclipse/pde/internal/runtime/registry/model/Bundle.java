@@ -25,7 +25,6 @@ public class Bundle extends ModelObject {
 
 	private String symbolicName;
 	private String location;
-	private boolean isEnabled;
 	private BundlePrerequisite[] imports = new BundlePrerequisite[0];
 	private String version;
 	private int state;
@@ -80,10 +79,6 @@ public class Bundle extends ModelObject {
 		this.id = id;
 	}
 
-	public void setEnabled(boolean enabled) {
-		isEnabled = enabled;
-	}
-
 	public void setLibraries(BundleLibrary[] libraries) {
 		if (libraries == null)
 			throw new IllegalArgumentException();
@@ -93,10 +88,6 @@ public class Bundle extends ModelObject {
 
 	public String getSymbolicName() {
 		return symbolicName;
-	}
-
-	public boolean isEnabled() {
-		return isEnabled;
 	}
 
 	public BundlePrerequisite[] getImports() {
@@ -133,18 +124,6 @@ public class Bundle extends ModelObject {
 		if (model == null)
 			return;
 		model.backend.stop(id);
-	}
-
-	public void enable() {
-		if (model == null)
-			return;
-		model.backend.setEnabled(id, true);
-	}
-
-	public void disable() {
-		if (model == null)
-			return;
-		model.backend.setEnabled(id, false);
 	}
 
 	public MultiStatus diagnose() {

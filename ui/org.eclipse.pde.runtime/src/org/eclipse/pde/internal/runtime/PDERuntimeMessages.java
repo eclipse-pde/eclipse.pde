@@ -45,11 +45,9 @@ public class PDERuntimeMessages extends NLS {
 	public static String RegistryView_titleSummary;
 	public static String RegistryView_startAction_label;
 	public static String RegistryView_stopAction_label;
-	public static String RegistryView_enableAction_label;
 	public static String RegistryView_diag_dialog_title;
 
 	public static String RegistryView_diagnoseAction_label;
-	public static String RegistryView_disableAction_label;
 	public static String RegistryView_no_unresolved_constraints;
 
 	public static String MessageHelper_missing_optional_required_bundle;

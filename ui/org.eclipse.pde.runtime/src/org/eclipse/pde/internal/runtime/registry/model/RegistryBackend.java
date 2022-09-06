@@ -23,8 +23,6 @@ public interface RegistryBackend {
 
 	public void disconnect();
 
-	public void setEnabled(long id, boolean enabled);
-
 	public void start(long id) throws BundleException;
 
 	public void stop(long id) throws BundleException;
