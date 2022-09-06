@@ -152,7 +152,6 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		adapter.setVersion(bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION));
 		adapter.setState(bundle.getState());
 		adapter.setId(bundle.getBundleId());
-		adapter.setEnabled(getIsEnabled(bundle));
 		adapter.setLocation(createLocation(bundle));
 
 		String fragmentHost = bundle.getHeaders().get(Constants.FRAGMENT_HOST);
@@ -282,14 +281,6 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 			service.setProperties(properties);
 		}
 		return service;
-	}
-
-	private static boolean getIsEnabled(org.osgi.framework.Bundle bundle) {
-		PlatformAdmin plaformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
-		State state = plaformAdmin.getState(false);
-
-		BundleDescription description = state.getBundle(bundle.getBundleId());
-		return (state.getDisabledInfos(description)).length == 0;
 	}
 
 	private static String createLocation(org.osgi.framework.Bundle bundle) {
@@ -478,21 +469,4 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 		listener.removeExtensionPoints(createExtensionPointAdapters(extensionPoints));
 	}
 
-	@Override
-	public void setEnabled(long id, boolean enabled) {
-		State state = PDERuntimePlugin.getDefault().getState();
-		BundleDescription desc = state.getBundle(id);
-
-		if (enabled) {
-			DisabledInfo[] infos = state.getDisabledInfos(desc);
-			for (DisabledInfo info : infos) {
-				PlatformAdmin platformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
-				platformAdmin.removeDisabledInfo(info);
-			}
-		} else {
-			DisabledInfo info = new DisabledInfo("org.eclipse.pde.ui", "Disabled via PDE", desc); //$NON-NLS-1$ //$NON-NLS-2$
-			PlatformAdmin platformAdmin = PDERuntimePlugin.getDefault().getPlatformAdmin();
-			platformAdmin.addDisabledInfo(info);
-		}
-	}
 }

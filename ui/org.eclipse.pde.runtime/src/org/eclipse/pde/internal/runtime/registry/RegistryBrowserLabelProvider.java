@@ -41,7 +41,6 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 	private Image fReqPluginImage;
 	private Image fPluginsImage;
 	private Image fLocationImage;
-	private Image fDisabledImage;
 	private Image fExporterImage;
 	private Image fImporterImage;
 	private Image fServiceImage;
@@ -78,9 +77,6 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 		ImageDescriptor activePluginDesc = new OverlayIcon(PDERuntimePluginImages.DESC_PLUGIN_OBJ, new ImageDescriptor[][] {{PDERuntimePluginImages.DESC_RUN_CO}});
 		fActivePluginImage = activePluginDesc.createImage();
 
-		ImageDescriptor disabledPluginDesc = new OverlayIcon(PDERuntimePluginImages.DESC_PLUGIN_OBJ, new ImageDescriptor[][] {{PDERuntimePluginImages.DESC_ERROR_CO}});
-		fDisabledImage = disabledPluginDesc.createImage();
-
 		ImageDescriptor unresolvedPluginDesc = new OverlayIcon(PDERuntimePluginImages.DESC_PLUGIN_OBJ, new ImageDescriptor[][] {{PDERuntimePluginImages.DESC_ERROR_CO}});
 		fUnresolvedPluginImage = unresolvedPluginDesc.createImage();
 
@@ -109,7 +105,6 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 		fGenericAttrImage.dispose();
 		fRuntimeImage.dispose();
 		fLocationImage.dispose();
-		fDisabledImage.dispose();
 		fImporterImage.dispose();
 		fExporterImage.dispose();
 		fServiceImage.dispose();
@@ -143,17 +138,11 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 			if (bundle.getFragmentHost() != null)
 				return fFragmentImage;
 
-			if (!bundle.isEnabled())
-				return fDisabledImage;
-
 			switch (bundle.getState()) {
 				case Bundle.ACTIVE :
 					return fActivePluginImage;
 				case Bundle.UNINSTALLED :
 					return fUnresolvedPluginImage;
-				case Bundle.INSTALLED :
-					if (!bundle.isEnabled())
-						return fUnresolvedPluginImage;
 				default :
 					return fPluginImage;
 			}
