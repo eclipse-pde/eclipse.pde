@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Bundle of all images used by the PDE plugin.
@@ -317,27 +319,36 @@ public class PDEPluginImages {
 	}
 
 	public static Image get(String key) {
-		if (PLUGIN_REGISTRY == null)
-			initialize();
+		if (PLUGIN_REGISTRY == null) {
+			Display display = Display.getCurrent();
+			if (display == null && PlatformUI.isWorkbenchRunning()) {
+				display = PlatformUI.getWorkbench().getDisplay();
+			}
+			if (display == null) {
+				return null;
+			}
+
+			initialize(display);
+		}
 		return PLUGIN_REGISTRY.get(key);
 	}
 
 	/* package */
-	private static final void initialize() {
-		PLUGIN_REGISTRY = new ImageRegistry();
-		manage(IMG_ATT_CLASS_OBJ, DESC_ATT_CLASS_OBJ);
-		manage(IMG_ATT_FILE_OBJ, DESC_ATT_FILE_OBJ);
-		manage(IMG_ATT_IMPL_OBJ, DESC_ATT_IMPL_OBJ);
-		manage(IMG_ATT_REQ_OBJ, DESC_ATT_REQ_OBJ);
-		manage(IMG_ATT_ID_OBJ, DESC_ATT_ID_OBJ);
-		manage(IMG_ATT_STRING_OBJ, DESC_ATT_STRING_OBJ);
-		manage(IMG_ATT_BOOLEAN_OBJ, DESC_ATT_BOOLEAN_OBJ);
-		manage(IMG_ATTRIBUTE_OBJ, DESC_ATTRIBUTE_OBJ);
-		manage(IMG_GENERIC_XML_OBJ, DESC_GENERIC_XML_OBJ);
-		manage(OBJ_DESC_GENERATE_CLASS, DESC_GENERATE_CLASS);
-		manage(OBJ_DESC_GENERATE_INTERFACE, DESC_GENERATE_INTERFACE);
-		manage(OBJ_DESC_PACKAGE, DESC_PACKAGE_OBJ);
-		manage(OBJ_DESC_BUNDLE, DESC_BUNDLE_OBJ);
+	private static final void initialize(Display display) {
+		PLUGIN_REGISTRY = new ImageRegistry(display);
+		manage(display, IMG_ATT_CLASS_OBJ, DESC_ATT_CLASS_OBJ);
+		manage(display, IMG_ATT_FILE_OBJ, DESC_ATT_FILE_OBJ);
+		manage(display, IMG_ATT_IMPL_OBJ, DESC_ATT_IMPL_OBJ);
+		manage(display, IMG_ATT_REQ_OBJ, DESC_ATT_REQ_OBJ);
+		manage(display, IMG_ATT_ID_OBJ, DESC_ATT_ID_OBJ);
+		manage(display, IMG_ATT_STRING_OBJ, DESC_ATT_STRING_OBJ);
+		manage(display, IMG_ATT_BOOLEAN_OBJ, DESC_ATT_BOOLEAN_OBJ);
+		manage(display, IMG_ATTRIBUTE_OBJ, DESC_ATTRIBUTE_OBJ);
+		manage(display, IMG_GENERIC_XML_OBJ, DESC_GENERIC_XML_OBJ);
+		manage(display, OBJ_DESC_GENERATE_CLASS, DESC_GENERATE_CLASS);
+		manage(display, OBJ_DESC_GENERATE_INTERFACE, DESC_GENERATE_INTERFACE);
+		manage(display, OBJ_DESC_PACKAGE, DESC_PACKAGE_OBJ);
+		manage(display, OBJ_DESC_BUNDLE, DESC_BUNDLE_OBJ);
 	}
 
 	private static URL makeImageURL(String prefix, String name) {
@@ -345,8 +356,8 @@ public class PDEPluginImages {
 		return FileLocator.find(PDEPlugin.getDefault().getBundle(), new Path(path), null);
 	}
 
-	public static Image manage(String key, ImageDescriptor desc) {
-		Image image = desc.createImage();
+	public static Image manage(Display display, String key, ImageDescriptor desc) {
+		Image image = desc.createImage(display);
 		PLUGIN_REGISTRY.put(key, image);
 		return image;
 	}
