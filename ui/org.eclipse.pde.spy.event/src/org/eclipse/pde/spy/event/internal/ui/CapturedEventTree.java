@@ -15,12 +15,13 @@ package org.eclipse.pde.spy.event.internal.ui;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
@@ -96,7 +97,7 @@ public class CapturedEventTree extends TreeViewer {
 				new CapturedEventsObservableFactory(), new CapturedEventsTreeStructureAdvisor());
 		setContentProvider(contentProvider);
 
-		IObservableMap[] attributes = PojoObservables.observeMaps(contentProvider.getKnownElements(), IEventItem.class,
+		IObservableMap[] attributes = observeMaps(contentProvider.getKnownElements(), IEventItem.class,
 				new String[] { Messages.CapturedEventTree_Name, Messages.CapturedEventTree_Param1, Messages.CapturedEventTree_Param2 });
 		setLabelProvider(new ObservableMapLabelProvider(attributes));
 
@@ -117,6 +118,22 @@ public class CapturedEventTree extends TreeViewer {
 		}
 	}
 
+
+	private static IObservableMap[] observeMaps(IObservableSet domain,
+			Class pojoClass, String[] propertyNames) {
+		IObservableMap[] result = new IObservableMap[propertyNames.length];
+		for (int i = 0; i < propertyNames.length; i++) {
+			result[i] = observeMap(domain, pojoClass, propertyNames[i]);
+		}
+		return result;
+	}
+
+	private static IObservableMap observeMap(IObservableSet domain,
+			Class pojoClass, String propertyName) {
+		return PojoProperties.value(pojoClass, propertyName).observeDetail(
+				domain);
+	}
+
 	private static class CapturedEventsObservableFactory implements IObservableFactory {
 		@Override
 		public IObservable createObservable(Object target) {
@@ -124,7 +141,7 @@ public class CapturedEventTree extends TreeViewer {
 				return (IObservableList) target;
 			}
 			if (target instanceof CapturedEvent) {
-				return PojoObservables.observeList(target, "parameters"); //$NON-NLS-1$
+				PojoProperties.list("parameters").observe(target);
 			}
 			return null;
 		}
