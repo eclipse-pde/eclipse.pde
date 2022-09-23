@@ -434,6 +434,9 @@ public class TargetPlatformHelper {
 	}
 
 	private static IVMInstall bestVmInstallFor(IExecutionEnvironment environment) {
+		if (environment == null) {
+			return null;
+		}
 		IVMInstall defaultVM = environment.getDefaultVM();
 		if (defaultVM != null) {
 			return defaultVM;
