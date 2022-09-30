@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -896,19 +897,17 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @return whether the content of this definition is equal to the content of the specified definition
 	 */
 	public boolean isContentEqual(ITargetDefinition definition) {
-		if (isNullOrEqual(getName(), definition.getName()) && isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS()) && isNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isNullOrEqual(getVMArguments(), definition.getVMArguments()) && isNullOrEqual(getJREContainer(), definition.getJREContainer())) {
-			// Check includes/optional
-			if (isNullOrEqual(getIncluded(), definition.getIncluded())) {
-				// Check containers
-				ITargetLocation[] c1 = getTargetLocations();
-				ITargetLocation[] c2 = definition.getTargetLocations();
-				if (areContainersEqual(c1, c2)) {
-					// Check implicit dependencies
-					return isNullOrEqual(getImplicitDependencies(), definition.getImplicitDependencies());
-				}
-			}
-		}
-		return false;
+		return Objects.equals(getName(), definition.getName()) && //
+				Objects.equals(getArch(), definition.getArch()) && //
+				Objects.equals(getNL(), definition.getNL()) && //
+				Objects.equals(getOS(), definition.getOS()) && //
+				Objects.equals(getWS(), definition.getWS()) && //
+				Objects.equals(getProgramArguments(), definition.getProgramArguments()) && //
+				Objects.equals(getVMArguments(), definition.getVMArguments()) && //
+				Objects.equals(getJREContainer(), definition.getJREContainer()) && //
+				Objects.equals(getIncluded(), definition.getIncluded()) && //
+				Arrays.equals(getTargetLocations(), definition.getTargetLocations()) && //
+				Arrays.equals(getImplicitDependencies(), definition.getImplicitDependencies());
 	}
 
 	/**
@@ -920,94 +919,21 @@ public class TargetDefinition implements ITargetDefinition {
 	 * specified definition
 	 */
 	public boolean isContentEquivalent(ITargetDefinition definition) {
-		if (isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS())) {
-			if (isArgsNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isArgsNullOrEqual(getVMArguments(), definition.getVMArguments()) && isNullOrEqual(getJREContainer(), definition.getJREContainer())) {
-				// Check includes/optional
-				if (isNullOrEqual(getIncluded(), definition.getIncluded())) {
-					// Check containers
-					ITargetLocation[] c1 = getTargetLocations();
-					ITargetLocation[] c2 = definition.getTargetLocations();
-					if (areContainersEqual(c1, c2)) {
-						// Check implicit dependencies
-						return isNullOrEqual(getImplicitDependencies(), definition.getImplicitDependencies());
-					}
-				}
-			}
-		}
-		return false;
-	}
-
-	private boolean isNullOrEqual(Object o1, Object o2) {
-		if (o1 == null) {
-			return o2 == null;
-		}
-		if (o2 == null) {
-			return false;
-		}
-		return o1.equals(o2);
-	}
-
-	/**
-	 * Returns whether the arrays have equal contents or are both <code>null</code>.
-	 *
-	 * @param objects1
-	 * @param objects2
-	 * @return whether the arrays have equal contents or are both <code>null</code>
-	 */
-	private boolean isNullOrEqual(Object[] objects1, Object[] objects2) {
-		if (objects1 == null) {
-			return objects2 == null;
-		}
-		if (objects2 == null) {
-			return false;
-		}
-		if (objects1.length == objects2.length) {
-			for (int i = 0; i < objects1.length; i++) {
-				if (!objects1[i].equals(objects2[i])) {
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
+		return Objects.equals(getArch(), definition.getArch()) && //
+				Objects.equals(getNL(), definition.getNL()) && //
+				Objects.equals(getOS(), definition.getOS()) && //
+				Objects.equals(getWS(), definition.getWS()) && //
+				isArgsNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && //
+				isArgsNullOrEqual(getVMArguments(), definition.getVMArguments()) && //
+				Objects.equals(getJREContainer(), definition.getJREContainer()) && //
+				Objects.equals(getIncluded(), definition.getIncluded()) && //
+				Arrays.equals(getTargetLocations(), definition.getTargetLocations()) && //
+				Arrays.equals(getImplicitDependencies(), definition.getImplicitDependencies());
 	}
 
 	private boolean isArgsNullOrEqual(String args1, String args2) {
-		if (args1 == null) {
-			return args2 == null;
-		}
-		if (args2 == null) {
-			return false;
-		}
-		String[] a1 = DebugPlugin.parseArguments(args1);
-		String[] a2 = DebugPlugin.parseArguments(args2);
-		if (a1.length == a2.length) {
-			for (int i = 0; i < a1.length; i++) {
-				if (!a1[i].equals(a2[i])) {
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-
-	private boolean areContainersEqual(ITargetLocation[] c1, ITargetLocation[] c2) {
-		if (c1 == null) {
-			return c2 == null;
-		}
-		if (c2 == null) {
-			return false;
-		}
-		if (c1.length == c2.length) {
-			for (int i = 0; i < c2.length; i++) {
-				if (!c1[i].equals(c2[i])) {
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
+		return (args1 == null && args2 == null)
+				|| Arrays.equals(DebugPlugin.parseArguments(args1), DebugPlugin.parseArguments(args2));
 	}
 
 	@Override
