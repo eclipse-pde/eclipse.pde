@@ -113,7 +113,7 @@ public class E4ToolbarContributionTemplate extends PDETemplateSection {
 		extension.setId(getValue(KEY_PACKAGE_NAME) + ".fragment"); //$NON-NLS-1$
 
 		element.setName("fragment"); //$NON-NLS-1$
-		element.setAttribute("apply", "apply"); //$NON-NLS-1$ //$NON-NLS-2$
+		element.setAttribute("apply", "always"); //$NON-NLS-1$ //$NON-NLS-2$
 		element.setAttribute("uri", E4_FRAGMENT_FILE); //$NON-NLS-1$
 
 		extension.add(element);
