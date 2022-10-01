@@ -60,7 +60,6 @@ public class FilterStoreTests extends AbstractApiTest {
 	@Override
 	@Before
 	public void setUp() throws Exception {
-		super.setUp();
 		createProject(TESTING_PLUGIN_PROJECT_NAME, null);
 		File projectSrc = SRC_LOC.toFile();
 		assertTrue("the filter source dir must exist", projectSrc.exists()); //$NON-NLS-1$
@@ -86,7 +85,6 @@ public class FilterStoreTests extends AbstractApiTest {
 	@After
 	public void tearDown() throws Exception {
 		deleteProject(TESTING_PLUGIN_PROJECT_NAME);
-		super.tearDown();
 	}
 
 	private BundleComponent getComponent() throws CoreException {

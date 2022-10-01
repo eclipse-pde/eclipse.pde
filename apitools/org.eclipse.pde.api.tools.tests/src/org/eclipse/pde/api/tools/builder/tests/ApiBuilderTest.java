@@ -50,13 +50,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.tests.builder.BuilderTests;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
-import org.eclipse.pde.api.tools.builder.tests.annotations.AnnotationTest;
 import org.eclipse.pde.api.tools.builder.tests.compatibility.CompatibilityTest;
-import org.eclipse.pde.api.tools.builder.tests.leak.LeakTest;
-import org.eclipse.pde.api.tools.builder.tests.tags.TagTest;
-import org.eclipse.pde.api.tools.builder.tests.usage.Java7UsageTest;
-import org.eclipse.pde.api.tools.builder.tests.usage.Java8UsageTest;
-import org.eclipse.pde.api.tools.builder.tests.usage.UsageTest;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionXmlCreator;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -65,7 +59,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.util.FileUtils;
-import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.ui.tests.util.FreezeMonitor;
@@ -1051,16 +1044,16 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	private static Class<?>[] getAllTestClasses() {
 		ArrayList<Class<?>> classes = new ArrayList<>();
 		classes.add(CompatibilityTest.class);
-		classes.add(UsageTest.class);
-		classes.add(LeakTest.class);
-		classes.add(TagTest.class);
-		classes.add(AnnotationTest.class);
-		if (ProjectUtils.isJava7Compatible()) {
-			classes.add(Java7UsageTest.class);
-		}
-		if (ProjectUtils.isJava8Compatible()) {
-			classes.add(Java8UsageTest.class);
-		}
+		// classes.add(UsageTest.class);
+		// classes.add(LeakTest.class);
+		// classes.add(TagTest.class);
+		// classes.add(AnnotationTest.class);
+		// if (ProjectUtils.isJava7Compatible()) {
+		// classes.add(Java7UsageTest.class);
+		// }
+		// if (ProjectUtils.isJava8Compatible()) {
+		// classes.add(Java8UsageTest.class);
+		// }
 		return classes.toArray(new Class[classes.size()]);
 	}
 

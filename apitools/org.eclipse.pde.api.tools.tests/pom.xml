@@ -59,7 +59,7 @@
 				<configuration>
 					<includes>
 						<include>org/eclipse/pde/api/tools/tests/ApiToolsPluginTestSuite.java</include>
-						<include>org/eclipse/pde/api/tools/tests/ApiToolsTestSuite.java</include>
+						<!--include>org/eclipse/pde/api/tools/tests/ApiToolsTestSuite.java</include-->
 					</includes>
 				</configuration>
 			</plugin>

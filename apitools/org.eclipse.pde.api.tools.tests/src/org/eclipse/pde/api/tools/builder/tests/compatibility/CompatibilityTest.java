@@ -67,15 +67,15 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	 */
 	private static Class<?>[] getAllTestClasses() {
 		Class<?>[] classes = new Class[] {
-				ProjectTypeContainerTests.class,
-				BundleCompatibilityTests.class,
-				AnnotationCompatibilityTests.class,
-				InterfaceCompatibilityTests.class,
-				EnumCompatibilityTests.class, ClassCompatibilityTests.class,
-				FieldCompatibilityTests.class, MethodCompatibilityTests.class,
-				ConstructorCompatibilityTests.class, SinceTagTest.class,
-				VersionTest.class, BundleMergeSplitTests.class,
-				BundleVersionTests.class, };
+				ProjectTypeContainerTests.class, };
+		// BundleCompatibilityTests.class,
+		// AnnotationCompatibilityTests.class,
+		// InterfaceCompatibilityTests.class,
+		// EnumCompatibilityTests.class, ClassCompatibilityTests.class,
+		// FieldCompatibilityTests.class, MethodCompatibilityTests.class,
+		// ConstructorCompatibilityTests.class, SinceTagTest.class,
+		// VersionTest.class, BundleMergeSplitTests.class,
+		// BundleVersionTests.class, };
 		return classes;
 	}
 
