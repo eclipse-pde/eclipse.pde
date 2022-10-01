@@ -905,7 +905,7 @@ public class TargetDefinition implements ITargetDefinition {
 				Objects.equals(getProgramArguments(), definition.getProgramArguments()) && //
 				Objects.equals(getVMArguments(), definition.getVMArguments()) && //
 				Objects.equals(getJREContainer(), definition.getJREContainer()) && //
-				Objects.equals(getIncluded(), definition.getIncluded()) && //
+				Arrays.equals(getIncluded(), definition.getIncluded()) && //
 				Arrays.equals(getTargetLocations(), definition.getTargetLocations()) && //
 				Arrays.equals(getImplicitDependencies(), definition.getImplicitDependencies());
 	}
@@ -926,7 +926,7 @@ public class TargetDefinition implements ITargetDefinition {
 				isArgsNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && //
 				isArgsNullOrEqual(getVMArguments(), definition.getVMArguments()) && //
 				Objects.equals(getJREContainer(), definition.getJREContainer()) && //
-				Objects.equals(getIncluded(), definition.getIncluded()) && //
+				Arrays.equals(getIncluded(), definition.getIncluded()) && //
 				Arrays.equals(getTargetLocations(), definition.getTargetLocations()) && //
 				Arrays.equals(getImplicitDependencies(), definition.getImplicitDependencies());
 	}
