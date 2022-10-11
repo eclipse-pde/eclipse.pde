@@ -15,14 +15,11 @@ package org.eclipse.pde.api.tools.internal.model;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -51,7 +48,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	 *
 	 * @see #getLocation()
 	 */
-	private static final Map<String, FileSystem> JRTS = new ConcurrentHashMap<>();
+	private static final Map<Path, FileSystem> JRTS = new ConcurrentHashMap<>();
 
 	/**
 	 * {@link IApiTypeRoot} implementation within an archive
@@ -154,13 +151,13 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	 */
 	@SuppressWarnings("nls")
 	private Path getLocation() throws IOException {
+		Path path = Path.of(fLocation);
 		if (fLocation.endsWith("jrt-fs.jar")) {
 			AtomicReference<IOException> exception = new AtomicReference<>();
-			FileSystem jrtFileSystem = JRTS.computeIfAbsent(fLocation, it -> {
-				Path jrePath = Path.of(fLocation).getParent().getParent();
-				try (URLClassLoader loader = new URLClassLoader(new URL[] { jrePath.toUri().toURL() })) {
-					return FileSystems.newFileSystem(URI.create("jrt:/"),
-							Collections.singletonMap("java.home", jrePath.toString()), loader);
+			FileSystem jrtFileSystem = JRTS.computeIfAbsent(path, it -> {
+				Path jrePath = path.getParent().getParent();
+				try {
+					return FileSystems.newFileSystem(URI.create("jrt:/"), Map.of("java.home", jrePath.toString()));
 				} catch (IOException e) {
 					exception.set(e);
 					return null;
@@ -171,7 +168,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 			}
 			return jrtFileSystem.getPath("modules");
 		} else {
-			return JRTUtil.getJarFileSystem(Path.of(fLocation)).getPath("/");
+			return JRTUtil.getJarFileSystem(path).getPath("/");
 		}
 	}
 
