@@ -208,17 +208,17 @@ public final class ApiModelCache {
 	 *         element is cached
 	 */
 	public IApiElement getElementInfo(String baselineid, String componentid, String identifier, int type) {
-		String updatedIdentifier = (identifier != null && identifier.startsWith("classes.java.")) ? identifier.substring(8) : identifier; //$NON-NLS-1$
 		if (baselineid == null || componentid == null) {
 			return null;
 		}
 		switch (type) {
 			case IApiElement.TYPE: {
-				if (isMemberType(updatedIdentifier)) {
+				if (isMemberType(identifier)) {
 					if (this.fMemberTypeCache != null) {
-						Cache<String, ApiType> mcache = this.fMemberTypeCache.get(getCacheKey(baselineid, componentid, getRootName(updatedIdentifier)));
+						Cache<String, ApiType> mcache = this.fMemberTypeCache
+								.get(getCacheKey(baselineid, componentid, getRootName(identifier)));
 						if (mcache != null) {
-							return mcache.get(updatedIdentifier);
+							return mcache.get(identifier);
 						}
 					}
 				} else {
@@ -226,8 +226,8 @@ public final class ApiModelCache {
 						Cache<String, Cache<String, IApiElement>> compcache = fRootCache.get(baselineid);
 						if (compcache != null) {
 							Cache<String, IApiElement> typecache = compcache.get(componentid);
-							if (typecache != null && updatedIdentifier != null) {
-								IApiElement ele = typecache.get(updatedIdentifier);
+							if (typecache != null && identifier != null) {
+								IApiElement ele = typecache.get(identifier);
 								if (ele != null) {
 									return ele;
 								}
@@ -244,7 +244,7 @@ public final class ApiModelCache {
 		if (componentid.startsWith("JavaSE-") && this.fRootCache != null) { //$NON-NLS-1$
 			// for system component, retrieve element from any baseline instead
 			// of recreating the structure and caching the equivalent element info
-			IApiElement element = getElementInfoFromAnyBaseline(baselineid, componentid, updatedIdentifier);
+			IApiElement element = getElementInfoFromAnyBaseline(baselineid, componentid, identifier);
 			if (element != null) {
 				return element;
 			}
