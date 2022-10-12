@@ -99,10 +99,6 @@ public class SystemLibraryApiComponent extends Component {
 		// have to fill in java.* as well
 		String[] packageNames = getPackageNames();
 		for (String packageName : packageNames) {
-			// for java 9
-			if (packageName.startsWith("classes.java.")) { //$NON-NLS-1$
-				packageName = packageName.substring(8);
-			}
 			if (packageName.startsWith("java.")) { //$NON-NLS-1$
 				IPackageDescriptor pkg = Factory.packageDescriptor(packageName);
 				api.setVisibility(pkg, VisibilityModifiers.API);
@@ -126,7 +122,9 @@ public class SystemLibraryApiComponent extends Component {
 		if (fLibraries.length == 0) {
 			if (fLocation != null) {
 				IPath newPath = new Path(fLocation);
-				newPath = newPath.append("jmods").append("java.base.jmod"); //$NON-NLS-1$ //$NON-NLS-2$
+				// The ArchiveApiTypeContainer will recognize this and load the modules using
+				// the JRT file system.
+				newPath = newPath.append("lib").append("jrt-fs.jar"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (newPath.toFile().exists()) {
 					libs.add(new ArchiveApiTypeContainer(this, newPath.toOSString()));
 				}
