@@ -36,7 +36,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -155,10 +154,6 @@ public class ApiBaselineTests {
 		IApiTypeRoot classFile = components[0].findTypeRoot("java.lang.Object"); //$NON-NLS-1$
 		assertNotNull("Missing java.lang.Object", classFile); //$NON-NLS-1$
 		String objectTypeName = "java.lang.Object"; //$NON-NLS-1$
-		if (ProjectUtils.isJava9Compatible()) {
-			objectTypeName = "classes.java.lang.Object"; //$NON-NLS-1$
-
-		}
 		assertEquals("Wrong type name", objectTypeName, classFile.getTypeName()); //$NON-NLS-1$
 	}
 

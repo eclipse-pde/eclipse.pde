@@ -14,27 +14,26 @@
 package org.eclipse.pde.api.tools.internal.model;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.jdt.internal.compiler.util.JRTUtil;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -43,6 +42,13 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * @since 1.0.0
  */
 public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeContainer {
+
+	/**
+	 * Keep a map of the JRT file system.
+	 *
+	 * @see #getLocation()
+	 */
+	private static final Map<Path, FileSystem> JRTS = new ConcurrentHashMap<>();
 
 	/**
 	 * {@link IApiTypeRoot} implementation within an archive
@@ -58,15 +64,13 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 		 * @param container archive
 		 * @param entryName zip entry name
 		 */
-		public ArchiveApiTypeRoot(ArchiveApiTypeContainer container, String entryName) {
+		public ArchiveApiTypeRoot(ArchiveApiTypeContainer container, String typeName, String entryName) {
 			super(container, entryName);
+			this.fTypeName = typeName;
 		}
 
 		@Override
 		public String getTypeName() {
-			if (fTypeName == null) {
-				fTypeName = getName().replace('/', '.').substring(0, getName().length() - Util.DOT_CLASS_SUFFIX.length());
-			}
 			return fTypeName;
 		}
 
@@ -95,46 +99,14 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 				return fContents;
 			}
 			ArchiveApiTypeContainer archive = (ArchiveApiTypeContainer) getParent();
-			ZipFile zipFile;
 			try {
-				zipFile = new ZipFile(archive.fLocation);
+				Path location = archive.getLocation();
+				Path classLocation = location.resolve(getName());
+				fContents = Files.readAllBytes(classLocation);
 			} catch (IOException e) {
-				abort("Failed to open archive: " + archive.fLocation, e); //$NON-NLS-1$
-				return null;
+				abort("Failed to open class file: " + getTypeName() + " in archive: " + archive.fLocation, e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			try {
-				ZipEntry entry = zipFile.getEntry(getName());
-				InputStream stream = null;
-				if (entry != null) {
-					try {
-						stream = zipFile.getInputStream(entry);
-					} catch (IOException e) {
-						abort("Failed to open class file: " + getTypeName() + " in archive: " + archive.fLocation, e); //$NON-NLS-1$ //$NON-NLS-2$
-						return null;
-					}
-					try {
-						fContents = stream.readAllBytes();
-						return fContents;
-					} catch (IOException ioe) {
-						abort("Unable to read class file: " + getTypeName(), ioe); //$NON-NLS-1$
-						return null;
-					} finally {
-						try {
-							stream.close();
-						} catch (IOException e) {
-							ApiPlugin.log(e);
-						}
-					}
-				}
-			} finally {
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-					abort("Failed to close class file archive", e); //$NON-NLS-1$
-				}
-			}
-			abort("Class file not found: " + getTypeName() + " in archive: " + archive.fLocation, null); //$NON-NLS-1$ //$NON-NLS-2$
-			return null;
+			return fContents;
 		}
 
 		@Override
@@ -149,10 +121,10 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	String fLocation;
 
 	/**
-	 * Cache of package names to class file paths in that package, or
-	 * <code>null</code> if not yet initialized.
+	 * Cache of package names to a map of class names to class files paths in that
+	 * package, or <code>null</code> if not yet initialized.
 	 */
-	private Map<String, Set<String>> fPackages;
+	private Map<String, Map<String, String>> fPackages;
 
 	/**
 	 * Cache of package names in this archive.
@@ -160,20 +132,43 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	private String[] fPackageNames;
 
 	/**
-	 * Constructs an {@link IApiTypeContainer} container for the given jar or
-	 * zip file at the specified location.
+	 * Constructs an {@link IApiTypeContainer} container for the given jar or zip
+	 * file at the specified location.
 	 *
 	 * @param parent the parent {@link IApiElement} or <code>null</code> if none
-	 * @param path location of the file in the local file system
+	 * @param path   location of the file in the local file system
 	 */
 	public ArchiveApiTypeContainer(IApiElement parent, String path) {
 		super(parent, IApiElement.API_TYPE_CONTAINER, path);
 		this.fLocation = path;
-		if (path.endsWith("jrt-fs.jar")) { //$NON-NLS-1$
-			IPath newPath = new Path(path);
-			newPath = newPath.removeLastSegments(2).addTrailingSeparator();
-			newPath = newPath.append("jmods").append("java.base.jmod"); //$NON-NLS-1$ //$NON-NLS-2$
-			this.fLocation = newPath.toOSString();
+	}
+
+	/**
+	 * Converts the location to a path in the applicable file system.
+	 *
+	 * @return the path corresponding to the location.
+	 * @throws IOException
+	 */
+	@SuppressWarnings("nls")
+	private Path getLocation() throws IOException {
+		Path path = Path.of(fLocation);
+		if (fLocation.endsWith("jrt-fs.jar")) {
+			AtomicReference<IOException> exception = new AtomicReference<>();
+			FileSystem jrtFileSystem = JRTS.computeIfAbsent(path.toRealPath(), it -> {
+				Path jrePath = it.getParent().getParent();
+				try {
+					return FileSystems.newFileSystem(URI.create("jrt:/"), Map.of("java.home", jrePath.toString()));
+				} catch (IOException e) {
+					exception.set(e);
+					return null;
+				}
+			});
+			if (exception.get() != null) {
+				throw exception.get();
+			}
+			return jrtFileSystem.getPath("modules");
+		} else {
+			return JRTUtil.getJarFileSystem(path).getPath("/");
 		}
 	}
 
@@ -184,22 +179,20 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
 		if (visitor.visit(this)) {
 			init();
-			List<String> packages = new ArrayList<>(fPackages.keySet());
-			Collections.sort(packages);
-			for (String pkg : packages) {
+			for (Map.Entry<String, Map<String, String>> entry : fPackages.entrySet()) {
+				String pkg = entry.getKey();
 				if (visitor.visitPackage(pkg)) {
-					List<String> types = new ArrayList<>(fPackages.get(pkg));
-					List<ArchiveApiTypeRoot> classFiles = new ArrayList<>(types.size());
-					for (String entryName : types) {
-						classFiles.add(new ArchiveApiTypeRoot(this, entryName));
+					Map<String, String> classes = entry.getValue();
+					List<ArchiveApiTypeRoot> classFiles = new ArrayList<>(classes.size());
+					for (Map.Entry<String, String> classEntry : classes.entrySet()) {
+						classFiles.add(new ArchiveApiTypeRoot(this, classEntry.getKey(), classEntry.getValue()));
 					}
-					Collections.sort(classFiles);
 					for (ArchiveApiTypeRoot classfile : classFiles) {
 						visitor.visit(pkg, classfile);
 						visitor.end(pkg, classfile);
 					}
+					visitor.endVisitPackage(pkg);
 				}
-				visitor.endVisitPackage(pkg);
 			}
 		}
 		visitor.end(this);
@@ -226,28 +219,12 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	@Override
 	public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException {
 		init();
-		int index = qualifiedName.lastIndexOf('.');
-		String packageName = Util.DEFAULT_PACKAGE_NAME;
-		if (index >= 0) {
-			packageName = qualifiedName.substring(0, index);
-		}
-		Set<String> classFileNames = fPackages.get(packageName);
+		String packageName = Signatures.getPackageName(qualifiedName);
+		Map<String, String> classFileNames = fPackages.get(packageName);
 		if (classFileNames != null) {
-			String fileName = qualifiedName.replace('.', '/') + Util.DOT_CLASS_SUFFIX;
-			if (classFileNames.contains(fileName)) {
-				return new ArchiveApiTypeRoot(this, fileName);
-			}
-		}
-		if (classFileNames == null && qualifiedName.startsWith("java.")) { //$NON-NLS-1$
-			// For java 9 and above
-			String newQualifiedName = "classes." + qualifiedName; //$NON-NLS-1$
-			String newPackageName = "classes." + packageName; //$NON-NLS-1$
-			classFileNames = fPackages.get(newPackageName);
-			if (classFileNames != null) {
-				String fileName = newQualifiedName.replace('.', '/') + Util.DOT_CLASS_SUFFIX;
-				if (classFileNames.contains(fileName)) {
-					return new ArchiveApiTypeRoot(this, fileName);
-				}
+			String fileName = classFileNames.get(qualifiedName);
+			if (fileName != null) {
+				return new ArchiveApiTypeRoot(this, qualifiedName, fileName);
 			}
 		}
 		return null;
@@ -261,11 +238,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 		init();
 		synchronized (this) {
 			if (fPackageNames == null) {
-				Set<String> names = fPackages.keySet();
-				String[] result = new String[names.size()];
-				names.toArray(result);
-				Arrays.sort(result);
-				fPackageNames = result;
+				fPackageNames = fPackages.keySet().toArray(String[]::new);
 			}
 			return fPackageNames;
 		}
@@ -278,39 +251,26 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	 */
 	private synchronized void init() throws CoreException {
 		if (fPackages == null) {
-			fPackages = new HashMap<>();
-			ZipFile zipFile;
+			fPackages = new TreeMap<>();
 			try {
-				zipFile = new ZipFile(fLocation);
+				Path location = getLocation();
+				boolean isJrt = "jrt".equals(location.toUri().getScheme()); //$NON-NLS-1$
+				try (Stream<Path> walk = Files.walk(location)) {
+					walk.forEach(it -> {
+						String name = location.relativize(it).toString();
+						if (name.endsWith(Util.DOT_CLASS_SUFFIX)) {
+							// In the JRT file system, the first segment will be the module name,
+							// which we must strip.
+							String className = name.substring(isJrt ? name.indexOf('/') + 1 : 0,
+									name.length() - Util.DOT_CLASS_SUFFIX.length()).replace('/', '.');
+							String pkg = Signatures.getPackageName(className);
+							Map<String, String> fileNames = fPackages.computeIfAbsent(pkg, p -> new TreeMap<>());
+							fileNames.put(className, name);
+						}
+					});
+				}
 			} catch (IOException e) {
-				abort("Failed to open archive: " + fLocation, e); //$NON-NLS-1$
-				return;
-			}
-			try {
-				Enumeration<? extends ZipEntry> entries = zipFile.entries();
-				while (entries.hasMoreElements()) {
-					ZipEntry entry = entries.nextElement();
-					String name = entry.getName();
-					if (name.endsWith(Util.DOT_CLASS_SUFFIX)) {
-						String pkg = Util.DEFAULT_PACKAGE_NAME;
-						int index = name.lastIndexOf('/');
-						if (index >= 0) {
-							pkg = name.substring(0, index).replace('/', '.');
-						}
-						Set<String> fileNames = fPackages.get(pkg);
-						if (fileNames == null) {
-							fileNames = new HashSet<>();
-							fPackages.put(pkg, fileNames);
-						}
-						fileNames.add(name);
-					}
-				}
-			} finally {
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-					abort("Failed to close class file archive", e); //$NON-NLS-1$
-				}
+				abort("Failed to process archive: " + fLocation, e); //$NON-NLS-1$
 			}
 		}
 	}
