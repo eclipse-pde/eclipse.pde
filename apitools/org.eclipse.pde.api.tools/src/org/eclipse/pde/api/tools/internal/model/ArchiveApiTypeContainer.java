@@ -154,8 +154,8 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 		Path path = Path.of(fLocation);
 		if (fLocation.endsWith("jrt-fs.jar")) {
 			AtomicReference<IOException> exception = new AtomicReference<>();
-			FileSystem jrtFileSystem = JRTS.computeIfAbsent(path, it -> {
-				Path jrePath = path.getParent().getParent();
+			FileSystem jrtFileSystem = JRTS.computeIfAbsent(path.toRealPath(), it -> {
+				Path jrePath = it.getParent().getParent();
 				try {
 					return FileSystems.newFileSystem(URI.create("jrt:/"), Map.of("java.home", jrePath.toString()));
 				} catch (IOException e) {
