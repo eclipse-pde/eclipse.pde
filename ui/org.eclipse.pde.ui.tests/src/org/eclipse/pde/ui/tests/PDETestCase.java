@@ -13,9 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests;
 
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.FreezeMonitor;
 import org.eclipse.swt.widgets.Display;
@@ -39,6 +43,8 @@ public abstract class PDETestCase {
 
 	@Before
 	public void setUp() throws Exception {
+		MessageDialog.AUTOMATED_MODE = true;
+		ErrorDialog.AUTOMATED_MODE = true;
 		FreezeMonitor.expectCompletionInAMinute();
 		TestUtils.log(IStatus.INFO, name.getMethodName(), "setUp");
 		assertWelcomeScreenClosed();
@@ -60,14 +66,23 @@ public abstract class PDETestCase {
 		// Delete any projects that were created
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IProject[] projects = workspaceRoot.getProjects();
-		try {
-			for (IProject project : projects) {
+		String firstFailureMessage = null;
+		for (IProject project : projects) {
+			try {
 				project.delete(true, new NullProgressMonitor());
+			} catch (CoreException e) {
+				String message = "Failed to delete " + project;
+				if (firstFailureMessage == null) {
+					firstFailureMessage = message;
+				}
+				PDETestsPlugin.getDefault().getLog().error(message, e);
 			}
-		} catch (CoreException e) {
 		}
 		TestUtils.waitForJobs(name.getMethodName(), 10, 10000);
 		FreezeMonitor.done();
+		if (firstFailureMessage != null) {
+			fail(firstFailureMessage);
+		}
 	}
 
 	/**
