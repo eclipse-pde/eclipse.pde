@@ -147,7 +147,11 @@ public class BuildEditor extends MultiSourceEditor {
 	protected boolean hasKnownTypes() {
 		try {
 			TransferData[] types = getClipboard().getAvailableTypes();
-			Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
+			Transfer[] transfers = new Transfer[] {
+					TextTransfer.getInstance(),
+					HTMLTransfer.getInstance(),
+					RTFTransfer.getInstance()
+			};
 			for (TransferData type : types) {
 				for (Transfer transfer : transfers) {
 					if (transfer.isSupportedType(type))
