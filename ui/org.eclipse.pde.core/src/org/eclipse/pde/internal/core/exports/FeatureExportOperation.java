@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2021 IBM Corporation and others.
+ * Copyright (c) 2006, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 477527
  *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 477658
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 525701
+ *     Patrick Ziegler - Issue 366 NPE when exporting plug-ins via the export wizard
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
@@ -856,7 +857,9 @@ public class FeatureExportOperation extends Job {
 		FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
 		IFeatureModel[] models = fmm.getExternalModels();
 		for (IFeatureModel model : models) {
-			map.put(model.getFeature().getId(), model.getInstallLocation());
+			if (model.getInstallLocation() != null) {
+				map.put(model.getFeature().getId(), model.getInstallLocation());
+			}
 		}
 		// remove anything that we have in the workspace models
 		models = fmm.getWorkspaceModels();
