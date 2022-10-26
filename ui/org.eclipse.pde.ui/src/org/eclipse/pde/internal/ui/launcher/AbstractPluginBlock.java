@@ -125,8 +125,8 @@ public abstract class AbstractPluginBlock {
 			String startLevel = null;
 			String autoStart = null;
 			if (fPluginTreeViewer.isCheckedLeafElement(model)) {
-				startLevel = levelColumnCache.get(model) != null ? levelColumnCache.get(model).toString() : null;
-				autoStart = autoColumnCache.get(model) != null ? autoColumnCache.get(model).toString() : null;
+				startLevel = levelColumnCache.get(model) != null ? levelColumnCache.get(model) : null;
+				autoStart = autoColumnCache.get(model) != null ? autoColumnCache.get(model) : null;
 			}
 			return BundleLauncherHelper.formatBundleEntry(model, startLevel, autoStart);
 		}
@@ -201,10 +201,60 @@ public abstract class AbstractPluginBlock {
 			}
 
 			if (resetFilterButton) {
-				resetFilterButton = false;
 				fFilterButton.setSelection(true);
 				handleFilterButton();
 			}
+		}
+
+		private void handleWorkingSets() {
+			IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
+			IWorkingSetSelectionDialog dialog = workingSetManager.createWorkingSetSelectionDialog(getShell(), true);
+			if (dialog.open() == Window.OK) {
+				String[] ids = getPluginIDs(dialog.getSelection());
+				ArrayList<IPluginModelBase> newCheckedModels = new ArrayList<>();
+				ArrayList<Object> allCheckedModels = new ArrayList<>();
+				for (String id : ids) {
+					IPluginModelBase model = PluginRegistry.findModel(id);
+					if (model != null) {
+						if (!fPluginTreeViewer.getChecked(model)) {
+							newCheckedModels.add(model);
+						}
+					}
+				}
+				Object[] checkedElements = fPluginTreeViewer.getCheckedElements();
+				allCheckedModels.addAll(Arrays.asList(checkedElements));// previous
+				allCheckedModels.addAll(newCheckedModels);// newly selected
+				fPluginTreeViewer.setCheckedElements(allCheckedModels.toArray());
+				// reset text on newly selected models
+				for (IPluginModelBase iPluginModelBase : newCheckedModels) {
+					resetText(iPluginModelBase);
+				}
+				countSelectedModels();
+			}
+		}
+
+		private String[] getPluginIDs(IWorkingSet[] workingSets) {
+			HashSet<String> set = new HashSet<>();
+			for (IWorkingSet workingSet : workingSets) {
+				IAdaptable[] elements = workingSet.getElements();
+				for (IAdaptable element2 : elements) {
+					Object element = element2;
+					if (element instanceof PersistablePluginObject) {
+						set.add(((PersistablePluginObject) element).getPluginID());
+					} else {
+						if (element instanceof IJavaProject) {
+							element = ((IJavaProject) element).getProject();
+						}
+						if (element instanceof IProject) {
+							IPluginModelBase model = PluginRegistry.findModel((IProject) element);
+							if (model != null) {
+								set.add(model.getPluginBase().getId());
+							}
+						}
+					}
+				}
+			}
+			return set.toArray(new String[set.size()]);
 		}
 
 		@Override
@@ -727,60 +777,10 @@ public abstract class AbstractPluginBlock {
 		fPluginTreeViewer.expandAll();
 	}
 
-	private void handleWorkingSets() {
-		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
-		IWorkingSetSelectionDialog dialog = workingSetManager.createWorkingSetSelectionDialog(getShell(), true);
-		if (dialog.open() == Window.OK) {
-			String[] ids = getPluginIDs(dialog.getSelection());
-			ArrayList<IPluginModelBase> newCheckedModels = new ArrayList<>();
-			ArrayList<Object> allCheckedModels = new ArrayList<>();
-			for (String id : ids) {
-				IPluginModelBase model = PluginRegistry.findModel(id);
-				if (model != null) {
-					if (!fPluginTreeViewer.getChecked(model)) {
-						newCheckedModels.add(model);
-					}
-				}
-			}
-			Object[] checkedElements = fPluginTreeViewer.getCheckedElements();
-			allCheckedModels.addAll(Arrays.asList(checkedElements));// previous
-			allCheckedModels.addAll(newCheckedModels);// newly selected
-			fPluginTreeViewer.setCheckedElements(allCheckedModels.toArray());
-			// reset text on newly selected models
-			for (IPluginModelBase iPluginModelBase : newCheckedModels) {
-				resetText(iPluginModelBase);
-			}
-			countSelectedModels();
-		}
-	}
 
 	protected void setChecked(IPluginModelBase model, boolean checked) {
 		fPluginTreeViewer.setChecked(model, checked);
 		resetText(model);
-	}
-
-	private String[] getPluginIDs(IWorkingSet[] workingSets) {
-		HashSet<String> set = new HashSet<>();
-		for (IWorkingSet workingSet : workingSets) {
-			IAdaptable[] elements = workingSet.getElements();
-			for (IAdaptable element2 : elements) {
-				Object element = element2;
-				if (element instanceof PersistablePluginObject) {
-					set.add(((PersistablePluginObject) element).getPluginID());
-				} else {
-					if (element instanceof IJavaProject) {
-						element = ((IJavaProject) element).getProject();
-					}
-					if (element instanceof IProject) {
-						IPluginModelBase model = PluginRegistry.findModel((IProject) element);
-						if (model != null) {
-							set.add(model.getPluginBase().getId());
-						}
-					}
-				}
-			}
-		}
-		return set.toArray(new String[set.size()]);
 	}
 
 	/**
