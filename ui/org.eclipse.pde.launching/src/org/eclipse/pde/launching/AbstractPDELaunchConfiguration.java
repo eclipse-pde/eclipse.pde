@@ -68,81 +68,73 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	public String showCommandLine(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		String commandLine = ""; //$NON-NLS-1$
 		launch.setAttribute(PDE_LAUNCH_SHOW_COMMAND, "true"); //$NON-NLS-1$
+		fConfigDir = null;
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 4);
 		try {
-			fConfigDir = null;
-			SubMonitor subMonitor = SubMonitor.convert(monitor, 4);
-			try {
-				preLaunchCheck(configuration, launch, subMonitor.split(2));
-			} catch (CoreException e) {
-				if (e.getStatus().getSeverity() == IStatus.CANCEL) {
-					subMonitor.setCanceled(true);
-					return commandLine;
-				}
-				throw e;
-			}
-
-			VMRunnerConfiguration runnerConfig = new VMRunnerConfiguration(getMainClass(), getClasspath(configuration));
-			IVMInstall launcher = VMHelper.createLauncher(configuration);
-			boolean isModular = JavaRuntime.isModularJava(launcher);
-			runnerConfig.setVMArguments(updateVMArgumentWithAdditionalArguments(getVMArguments(configuration), isModular, configuration));
-			runnerConfig.setProgramArguments(getProgramArguments(configuration));
-			runnerConfig.setWorkingDirectory(getWorkingDirectory(configuration).getAbsolutePath());
-			runnerConfig.setEnvironment(getEnvironment(configuration));
-			runnerConfig.setVMSpecificAttributesMap(getVMSpecificAttributesMap(configuration));
-
-			subMonitor.worked(1);
-
-			setDefaultSourceLocator(configuration);
-			manageLaunch(launch);
-			IVMRunner runner = getVMRunner(configuration, mode);
-			if (runner != null)
-				commandLine = runner.showCommandLine(runnerConfig, launch, subMonitor);
-			else
+			preLaunchCheck(configuration, launch, subMonitor.split(2));
+		} catch (CoreException e) {
+			if (e.getStatus().getSeverity() == IStatus.CANCEL) {
 				subMonitor.setCanceled(true);
-
-		} catch (final CoreException e) {
+				return commandLine;
+			}
 			throw e;
 		}
+
+		VMRunnerConfiguration runnerConfig = new VMRunnerConfiguration(getMainClass(), getClasspath(configuration));
+		IVMInstall launcher = VMHelper.createLauncher(configuration);
+		boolean isModular = JavaRuntime.isModularJava(launcher);
+		runnerConfig.setVMArguments(updateVMArgumentWithAdditionalArguments(getVMArguments(configuration), isModular, configuration));
+		runnerConfig.setProgramArguments(getProgramArguments(configuration));
+		runnerConfig.setWorkingDirectory(getWorkingDirectory(configuration).getAbsolutePath());
+		runnerConfig.setEnvironment(getEnvironment(configuration));
+		runnerConfig.setVMSpecificAttributesMap(getVMSpecificAttributesMap(configuration));
+
+		subMonitor.worked(1);
+
+		setDefaultSourceLocator(configuration);
+		manageLaunch(launch);
+		IVMRunner runner = getVMRunner(configuration, mode);
+		if (runner != null)
+			commandLine = runner.showCommandLine(runnerConfig, launch, subMonitor);
+		else
+			subMonitor.setCanceled(true);
+
 		return commandLine;
 	}
 
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		fConfigDir = null;
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
 		try {
-			fConfigDir = null;
-			SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
-			try {
-				preLaunchCheck(configuration, launch, subMonitor.split(50));
-			} catch (CoreException e) {
-				if (e.getStatus().getSeverity() == IStatus.CANCEL) {
-					subMonitor.setCanceled(true);
-					return;
-				}
-				throw e;
-			}
-
-			VMRunnerConfiguration runnerConfig = new VMRunnerConfiguration(getMainClass(), getClasspath(configuration));
-			IVMInstall launcher = VMHelper.createLauncher(configuration);
-			boolean isModular = JavaRuntime.isModularJava(launcher);
-			runnerConfig.setVMArguments(updateVMArgumentWithAdditionalArguments(getVMArguments(configuration), isModular, configuration));
-			runnerConfig.setProgramArguments(getProgramArguments(configuration));
-			runnerConfig.setWorkingDirectory(getWorkingDirectory(configuration).getAbsolutePath());
-			runnerConfig.setEnvironment(getEnvironment(configuration));
-			runnerConfig.setVMSpecificAttributesMap(getVMSpecificAttributesMap(configuration));
-
-			subMonitor.worked(25);
-
-			setDefaultSourceLocator(configuration);
-			manageLaunch(launch);
-			IVMRunner runner = getVMRunner(configuration, mode);
-			if (runner != null)
-				runner.run(runnerConfig, launch, subMonitor.split(25));
-			else
+			preLaunchCheck(configuration, launch, subMonitor.split(50));
+		} catch (CoreException e) {
+			if (e.getStatus().getSeverity() == IStatus.CANCEL) {
 				subMonitor.setCanceled(true);
-
-		} catch (final CoreException e) {
+				return;
+			}
 			throw e;
 		}
+
+		VMRunnerConfiguration runnerConfig = new VMRunnerConfiguration(getMainClass(), getClasspath(configuration));
+		IVMInstall launcher = VMHelper.createLauncher(configuration);
+		boolean isModular = JavaRuntime.isModularJava(launcher);
+		runnerConfig.setVMArguments(updateVMArgumentWithAdditionalArguments(getVMArguments(configuration), isModular, configuration));
+		runnerConfig.setProgramArguments(getProgramArguments(configuration));
+		runnerConfig.setWorkingDirectory(getWorkingDirectory(configuration).getAbsolutePath());
+		runnerConfig.setEnvironment(getEnvironment(configuration));
+		runnerConfig.setVMSpecificAttributesMap(getVMSpecificAttributesMap(configuration));
+
+		subMonitor.worked(25);
+
+		setDefaultSourceLocator(configuration);
+		manageLaunch(launch);
+		IVMRunner runner = getVMRunner(configuration, mode);
+		if (runner != null)
+			runner.run(runnerConfig, launch, subMonitor.split(25));
+		else
+			subMonitor.setCanceled(true);
+
 	}
 
 	private String[] updateVMArgumentWithAdditionalArguments(String[] args, boolean isModular, ILaunchConfiguration configuration) {
@@ -157,9 +149,8 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		}
 
 		if (isEclipseBundleGreaterThanVersion(4, 24)) { // Don't add allow flags for eclipse before 4.24
-			IVMInstall vmInstall;
 			try {
-				vmInstall = VMHelper.getVMInstall(configuration);
+				IVMInstall vmInstall = VMHelper.getVMInstall(configuration);
 				if (vmInstall instanceof AbstractVMInstall) {
 					AbstractVMInstall install = (AbstractVMInstall) vmInstall;
 					String vmver = install.getJavaVersion();
@@ -335,8 +326,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 *                if unable to retrieve the attribute
 	 */
 	public String[] getVMArguments(ILaunchConfiguration configuration) throws CoreException {
-		String[] vmArgs = new ExecutionArguments(LaunchArgumentsHelper.getUserVMArguments(configuration), "").getVMArgumentsArray(); //$NON-NLS-1$
-		return vmArgs;
+		return new ExecutionArguments(LaunchArgumentsHelper.getUserVMArguments(configuration), "").getVMArgumentsArray(); //$NON-NLS-1$
 	}
 
 	/**
@@ -416,7 +406,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		}
 		boolean autoValidate = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_VALIDATE, false);
 		SubMonitor subMonitor = SubMonitor.convert(monitor, autoValidate ? 30 : 40);
-		if (isShowCommand == false) {
+		if (!isShowCommand) {
 			if (autoValidate) {
 				validatePluginDependencies(configuration, subMonitor.split(10));
 			}
