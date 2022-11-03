@@ -400,4 +400,9 @@
              class="org.eclipse.pde.internal.core.annotations.OSGiAnnotationsClasspathContributor">
        </contributor>
     </extension>
+    <extension
+          point="org.eclipse.pde.core.source">
+          <locator class="org.eclipse.pde.internal.core.ColocationPluginSourcePathLocator" />
+          <locator class="org.eclipse.pde.internal.core.LocalMavenPluginSourcePathLocator" />
+    </extension> 
 </plugin>
