@@ -219,8 +219,8 @@ public class SourceLocationManager implements ICoreConstants {
 	/**
 	 * @return array of source locations that have been added via extension point
 	 */
-	public Collection<SourceLocation> getExtensionLocations() {
-		return getExtensions().locations;
+	public List<SourceLocation> getExtensionLocations() {
+		return List.copyOf(getExtensions().locations);
 	}
 
 	private SourceExtensions getExtensions() {
