@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.pde.ui" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter id="923795461">
+            <message_arguments>
+                <message_argument value="3.14.0"/>
+                <message_argument value="3.13.600"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/pde/internal/ui/editor/category/SiteBundleAdapter.java" type="org.eclipse.pde.internal.ui.editor.category.SiteBundleAdapter">
         <filter comment="PDE UI may use restricted code from PDE Core" id="574619656">
             <message_arguments>
