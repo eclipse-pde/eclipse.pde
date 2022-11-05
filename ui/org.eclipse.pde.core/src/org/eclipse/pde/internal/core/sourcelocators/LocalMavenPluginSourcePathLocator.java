@@ -11,7 +11,7 @@
  * Contributors:
  *     Christoph Läubrich - extracted from ClasspathUtilCore
  *******************************************************************************/
-package org.eclipse.pde.internal.core;
+package org.eclipse.pde.internal.core.sourcelocators;
 
 import java.io.File;
 import org.eclipse.core.runtime.IPath;

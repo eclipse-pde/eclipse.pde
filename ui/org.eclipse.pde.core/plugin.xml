@@ -402,7 +402,7 @@
     </extension>
     <extension
           point="org.eclipse.pde.core.source">
-          <locator class="org.eclipse.pde.internal.core.ColocationPluginSourcePathLocator" />
-          <locator class="org.eclipse.pde.internal.core.LocalMavenPluginSourcePathLocator" />
+          <locator class="org.eclipse.pde.internal.core.sourcelocators.ColocationPluginSourcePathLocator" />
+          <locator class="org.eclipse.pde.internal.core.sourcelocators.LocalMavenPluginSourcePathLocator" />
     </extension> 
 </plugin>
