@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2022 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,30 +14,25 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 487988
  *     Martin Karpisek <martin.karpisek@gmail.com> - Bug 351356
  *     Hannes Wellmann - Bug 570760 - Option to automatically add requirements to product-launch
+ *     Hannes Wellmann - Unify and clean-up Product Editor's PluginSection and FeatureSection
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
-
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
@@ -46,200 +41,100 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.iproduct.IProductFeature;
-import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
-import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
 import org.eclipse.pde.internal.ui.editor.feature.FeatureEditor;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.feature.NewFeatureProjectWizard;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 /**
- * Section of the product editor on the depedencies page that lists all required
- * features of this feature-based product.
+ * Section of the product editor on the {@code Contents} page that lists all
+ * required Features of this feature-based product.
  */
-public class FeatureSection extends TableSection implements IPropertyChangeListener {
+public class FeatureSection extends AbstractProductContentSection<FeatureSection> implements IPropertyChangeListener {
 
-	private static final int BTN_DWN = 7;
-	private static final int BTN_UP = 6;
-	private static final int BTN_ROOT = 5;
-	private static final int BTN_PROPS = 4;
-	private static final int BTN_REMOVE_ALL = 3;
-	private static final int BTN_REMOVE = 2;
-	private static final int BTN_ADD_REQ = 1;
-	private static final int BTN_ADD = 0;
+	private static final List<String> BUTTON_LABELS;
+	private static final List<Consumer<FeatureSection>> BUTTON_HANDLERS;
+
+	private static final int BTN_ADD;
+	private static final int BTN_ADD_REQ;
+	private static final int BTN_REMOVE;
+	private static final int BTN_REMOVE_ALL;
+	private static final int BTN_PROPS;
+	private static final int BTN_ROOT;
+	private static final int BTN_UP;
+	private static final int BTN_DWN;
+
+	static {
+		List<String> labels = new ArrayList<>();
+		List<Consumer<FeatureSection>> handlers = new ArrayList<>();
+
+		BTN_ADD = addButton(PDEUIMessages.Product_FeatureSection_add, FeatureSection::handleAdd, labels, handlers);
+		BTN_ADD_REQ = addButton(PDEUIMessages.FeatureSection_addRequired, FeatureSection::handleAddRequired, labels,
+				handlers);
+		BTN_REMOVE = addButton(PDEUIMessages.PluginSection_remove, FeatureSection::handleRemove, labels, handlers);
+		BTN_REMOVE_ALL = addButton(PDEUIMessages.Product_PluginSection_removeAll, FeatureSection::handleRemoveAll,
+				labels, handlers);
+		BTN_PROPS = addButton(PDEUIMessages.Product_FeatureSection_properties, FeatureSection::handleProperties, labels,
+				handlers);
+		BTN_ROOT = addButton(PDEUIMessages.FeatureSection_toggleRoot, FeatureSection::handleRootToggle, labels,
+				handlers);
+		BTN_UP = addButton(PDEUIMessages.Product_FeatureSection_up, FeatureSection::handleUp, labels, handlers);
+		BTN_DWN = addButton(PDEUIMessages.Product_FeatureSection_down, FeatureSection::handleDown, labels, handlers);
+
+		BUTTON_LABELS = List.copyOf(labels);
+		BUTTON_HANDLERS = List.copyOf(handlers);
+	}
+
 	private SortAction fSortAction;
-	private Action fNewFeatureAction;
-
-	class ContentProvider implements IStructuredContentProvider {
-		@Override
-		public Object[] getElements(Object parent) {
-			return getProduct().getFeatures();
-		}
-	}
-
-	class NewFeatureAction extends Action {
-
-		public NewFeatureAction() {
-			super(PDEUIMessages.Product_FeatureSection_newFeature, IAction.AS_PUSH_BUTTON);
-			setImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_TOOL);
-		}
-
-		@Override
-		public void run() {
-			handleNewFeature();
-		}
-	}
-
-	private TableViewer fFeatureTable;
 
 	public FeatureSection(PDEFormPage formPage, Composite parent) {
-		super(formPage, parent, Section.DESCRIPTION, getButtonLabels());
-	}
-
-	private static String[] getButtonLabels() {
-		String[] labels = new String[8];
-		labels[BTN_ADD] = PDEUIMessages.Product_FeatureSection_add;
-		labels[BTN_ADD_REQ] = PDEUIMessages.FeatureSection_addRequired;
-		labels[BTN_REMOVE] = PDEUIMessages.Product_FeatureSection_remove;
-		labels[BTN_REMOVE_ALL] = PDEUIMessages.Product_PluginSection_removeAll;
-		labels[BTN_ROOT] = PDEUIMessages.FeatureSection_toggleRoot;
-		labels[BTN_PROPS] = PDEUIMessages.Product_FeatureSection_properties;
-		labels[BTN_UP] = PDEUIMessages.Product_FeatureSection_up;
-		labels[BTN_DWN] = PDEUIMessages.Product_FeatureSection_down;
-		return labels;
+		super(formPage, parent, BUTTON_LABELS, BUTTON_HANDLERS, IProductFeature.class::isInstance);
 	}
 
 	@Override
-	protected void createClient(Section section, FormToolkit toolkit) {
+	void populateSection(Section section, Composite container, FormToolkit toolkit) {
 
-		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		GridData sectionData = new GridData(GridData.FILL_BOTH);
-		sectionData.verticalSpan = 2;
-		section.setLayoutData(sectionData);
+		createAutoIncludeRequirementsButton(container, PDEUIMessages.Product_FeatureSection_autoIncludeRequirements);
 
-		Composite container = createClientContainer(section, 2, toolkit);
-		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		configureTable(IProduct::getFeatures, null);
 
-		createAutoIncludeRequirementsButton(container);
-
-		TablePart tablePart = getTablePart();
-		fFeatureTable = tablePart.getTableViewer();
-		fFeatureTable.setContentProvider(new ContentProvider());
-		fFeatureTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
-		fFeatureTable.setComparator(null);
-		GridData data = (GridData) tablePart.getControl().getLayoutData();
-		data.minimumWidth = 200;
-		fFeatureTable.setInput(PDECore.getDefault().getFeatureModelManager());
-
-		tablePart.setButtonEnabled(0, isEditable());
-		tablePart.setButtonEnabled(1, isEditable());
+		enableTableButtons(BTN_ADD, BTN_ADD_REQ, BTN_PROPS, BTN_ROOT, BTN_UP, BTN_DWN);
 		// remove buttons updated on refresh
-		tablePart.setButtonEnabled(4, isEditable());
-		tablePart.setButtonEnabled(5, isEditable());
-		tablePart.setButtonEnabled(6, isEditable());
-
-		toolkit.paintBordersFor(container);
-		section.setClient(container);
 
 		section.setText(PDEUIMessages.Product_FeatureSection_title);
-		section.setDescription(PDEUIMessages.Product_FeatureSection_desc); //
-
-		getModel().addModelChangedListener(this);
-		createSectionToolbar(section, toolkit);
-	}
-
-	/**
-	 * @param section
-	 * @param toolkit
-	 */
-	private void createSectionToolbar(Section section, FormToolkit toolkit) {
-		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
-		ToolBar toolbar = toolBarManager.createControl(section);
-		final Cursor handCursor = Display.getCurrent().getSystemCursor(SWT.CURSOR_HAND);
-		toolbar.setCursor(handCursor);
-		fNewFeatureAction = new NewFeatureAction();
-		toolBarManager.add(fNewFeatureAction);
-		fSortAction = new SortAction(fFeatureTable, PDEUIMessages.Product_FeatureSection_sortAlpha, null, null, this);
-		toolBarManager.add(fSortAction);
-
-		toolBarManager.update(true);
-		section.setTextClient(toolbar);
-	}
-
-	private void createAutoIncludeRequirementsButton(Composite container) {
-		Button autoInclude = new Button(container, SWT.CHECK);
-		autoInclude.setText(PDEUIMessages.Product_FeatureSection_autoIncludeRequirements);
-		autoInclude.setSelection(getProduct().includeRequirementsAutomatically());
-		if (isEditable()) {
-			autoInclude.addSelectionListener(widgetSelectedAdapter(
-					e -> getProduct().setIncludeRequirementsAutomatically(autoInclude.getSelection())));
-		} else {
-			autoInclude.setEnabled(false); // default is true
-		}
+		section.setDescription(PDEUIMessages.Product_FeatureSection_desc);
 	}
 
 	@Override
-	protected void buttonSelected(int index) {
-		switch (index)
-			{
-			case BTN_ADD:
-				handleAdd();
-				break;
-			case BTN_ADD_REQ:
-				handleAddRequired();
-				break;
-			case BTN_REMOVE:
-				handleDelete();
-				break;
-			case BTN_REMOVE_ALL:
-				handleRemoveAll();
-				break;
-			case BTN_PROPS:
-				handleProperties();
-				break;
-			case BTN_ROOT:
-				handleRootToggle();
-				break;
-			case BTN_UP:
-				handleUp();
-				break;
-			case BTN_DWN:
-				handleDown();
-				break;
-			}
+	List<Action> getToolbarActions() {
+		Action newFeatureAction = createPushAction(PDEUIMessages.Product_FeatureSection_newFeature,
+				PDEPluginImages.DESC_NEWFTRPRJ_TOOL, () -> handleNewFeature());
+		fSortAction = new SortAction(getTableViewer(), PDEUIMessages.Product_FeatureSection_sortAlpha, null, null,
+				this);
+		return List.of(newFeatureAction, fSortAction);
 	}
 
 	private void handleRootToggle() {
-		boolean nonRootSelected = getViewerSelection().toList().stream()
-				.anyMatch(o -> !((IProductFeature) o).isRootInstallMode());
-		getViewerSelection().toList().forEach(o -> ((IProductFeature) o).setRootInstallMode(nonRootSelected));
+		List<IProductFeature> selection = getTableViewer().getStructuredSelection().toList();
+		boolean nonRootSelected = selection.stream().anyMatch(o -> !o.isRootInstallMode());
+		selection.forEach(o -> o.setRootInstallMode(nonRootSelected));
 	}
 
 	private void handleProperties() {
-		IStructuredSelection ssel = fFeatureTable.getStructuredSelection();
-		if (ssel.size() == 1) {
-			IProductFeature feature = (IProductFeature) ssel.toArray()[0];
+		IStructuredSelection ssel = getTableSelection();
+		if (ssel.size() == 1 && ssel.getFirstElement() instanceof IProductFeature feature) {
 			FeatureProperties dialog = new FeatureProperties(PDEPlugin.getActiveWorkbenchShell(), isEditable(),
 					feature.getVersion(), feature.isRootInstallMode());
 			dialog.create();
@@ -269,119 +164,30 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		feature.setVersion(""); //$NON-NLS-1$
 		feature.setRootInstallMode(true);
 		product.addFeatures(new IProductFeature[] { feature });
+		getTableViewer().setSelection(new StructuredSelection(feature));
 	}
 
-	private void handleRemoveAll() {
+	@Override
+	void handleRemoveAll() {
 		IProduct product = getProduct();
 		product.removeFeatures(product.getFeatures());
 	}
 
 	@Override
-	protected void handleDoubleClick(IStructuredSelection selection) {
-		handleOpen(selection);
-	}
-
-	@Override
-	public void dispose() {
-		IProductModel model = getModel();
-		if (model != null)
-			model.removeModelChangedListener(this);
-		super.dispose();
-	}
-
-	@Override
-	public boolean doGlobalAction(String actionId) {
-		if (actionId.equals(ActionFactory.DELETE.getId())) {
-			handleDelete();
-			return true;
-		}
-		if (actionId.equals(ActionFactory.CUT.getId())) {
-			handleDelete();
-			return false;
-		}
-		if (actionId.equals(ActionFactory.PASTE.getId())) {
-			doPaste();
-			return true;
-		}
-		return super.doGlobalAction(actionId);
-	}
-
-	@Override
-	protected boolean canPaste(Object target, Object[] objects) {
-		for (Object object : objects) {
-			if (object instanceof IProductFeature)
-				return true;
-		}
-		return false;
-	}
-
-	@Override
 	protected void doPaste(Object target, Object[] objects) {
-		IProductFeature[] features;
-		if (objects instanceof IProductFeature[])
-			features = (IProductFeature[]) objects;
-		else {
-			features = new IProductFeature[objects.length];
-			for (int i = 0; i < objects.length; i++)
-				if (objects[i] instanceof IProductFeature)
-					features[i] = (IProductFeature) objects[i];
-		}
+		IProductFeature[] features = filterToArray(Stream.of(objects), IProductFeature.class);
 		getProduct().addFeatures(features);
 	}
 
-	private void handleDelete() {
-		IStructuredSelection ssel = fFeatureTable.getStructuredSelection();
-		if (!ssel.isEmpty()) {
-			Object[] objects = ssel.toArray();
-			IProductFeature[] features = new IProductFeature[objects.length];
-			System.arraycopy(objects, 0, features, 0, objects.length);
-			getProduct().removeFeatures(features);
-		}
+	@Override
+	void removeElements(IProduct product, List<Object> elements) {
+		IProductFeature[] features = filterToArray(elements.stream(), IProductFeature.class);
+		getProduct().removeFeatures(features);
 	}
 
 	@Override
-	protected void fillContextMenu(IMenuManager manager) {
-		IStructuredSelection ssel = fFeatureTable.getStructuredSelection();
-		if (ssel == null)
-			return;
-
-		Action openAction = new Action(PDEUIMessages.Product_FeatureSection_open) {
-			@Override
-			public void run() {
-				handleDoubleClick(fFeatureTable.getStructuredSelection());
-			}
-		};
-		openAction.setEnabled(isEditable() && ssel.size() == 1);
-		manager.add(openAction);
-
-		manager.add(new Separator());
-
-		Action removeAction = new Action(PDEUIMessages.Product_FeatureSection_remove) {
-			@Override
-			public void run() {
-				handleDelete();
-			}
-		};
-		removeAction.setEnabled(isEditable() && !ssel.isEmpty());
-		manager.add(removeAction);
-
-		Action removeAll = new Action(PDEUIMessages.FeatureSection_removeAll) {
-			@Override
-			public void run() {
-				handleRemoveAll();
-			}
-		};
-		removeAll.setEnabled(isEditable());
-		manager.add(removeAll);
-
-		manager.add(new Separator());
-
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
-	}
-
-	private void handleOpen(IStructuredSelection selection) {
-		if (!selection.isEmpty()) {
-			IProductFeature feature = (IProductFeature) selection.getFirstElement();
+	protected void handleDoubleClick(IStructuredSelection selection) {
+		if (selection.getFirstElement() instanceof IProductFeature feature) {
 			FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 			IFeatureModel model = manager.findFeatureModel(feature.getId(), feature.getVersion());
 			FeatureEditor.openFeatureEditor(model);
@@ -390,19 +196,22 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 
 	private void handleAdd() {
 		FeatureSelectionDialog dialog = new FeatureSelectionDialog(PDEPlugin.getActiveWorkbenchShell(),
-				getAvailableChoices(), true);
+				getAvailableChoices(getProduct()), true);
 		if (dialog.open() == Window.OK) {
 			Object[] models = dialog.getResult();
 			for (Object model : models) {
-				IFeature feature = ((IFeatureModel) model).getFeature();
-				addFeature(feature.getId());
+				if (model instanceof IFeatureModel featureModel) {
+					IFeature feature = featureModel.getFeature();
+					addFeature(feature.getId());
+				}
 			}
 		}
 	}
 
 	private void handleAddRequired() {
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
-		IProductFeature[] currentFeatures = getProduct().getFeatures();
+		IProduct product = getProduct();
+		IProductFeature[] currentFeatures = product.getFeatures();
 		Set<String> requiredFeatures = new HashSet<>();
 		for (IProductFeature feature : currentFeatures) {
 			IFeatureModel model = manager.findFeatureModel(feature.getId(), feature.getVersion());
@@ -414,7 +223,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 
 		for (String id : requiredFeatures) {
 			// Do not add features that already exist
-			if (!getProduct().containsFeature(id)) {
+			if (!product.containsFeature(id)) {
 				addFeature(id);
 			}
 		}
@@ -423,24 +232,20 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	private void getFeatureDependencies(IFeatureModel model, Set<String> requiredFeatures) {
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		IFeature feature = model.getFeature();
-		IFeatureImport[] featureImports = feature.getImports();
-		for (int i = 0; i < featureImports.length; i++) {
-			if (featureImports[i].getType() == IFeatureImport.FEATURE) {
-				if (!requiredFeatures.contains(featureImports[i].getId())) {
-					requiredFeatures.add(featureImports[i].getId());
-					IFeatureModel currentModel = manager.findFeatureModel(featureImports[i].getId());
-					if (currentModel != null) {
-						getFeatureDependencies(currentModel, requiredFeatures);
-					}
+		for (IFeatureImport featureImport : feature.getImports()) {
+			if (featureImport.getType() == IFeatureImport.FEATURE
+					&& !requiredFeatures.contains(featureImport.getId())) {
+				requiredFeatures.add(featureImport.getId());
+				IFeatureModel currentModel = manager.findFeatureModel(featureImport.getId());
+				if (currentModel != null) {
+					getFeatureDependencies(currentModel, requiredFeatures);
 				}
 			}
 		}
-
-		IFeatureChild[] featureIncludes = feature.getIncludedFeatures();
-		for (int i = 0; i < featureIncludes.length; i++) {
-			if (!requiredFeatures.contains(featureIncludes[i].getId())) {
-				requiredFeatures.add(featureIncludes[i].getId());
-				IFeatureModel currentModel = manager.findFeatureModel(featureIncludes[i].getId());
+		for (IFeatureChild featureInclude : feature.getIncludedFeatures()) {
+			if (!requiredFeatures.contains(featureInclude.getId())) {
+				requiredFeatures.add(featureInclude.getId());
+				IFeatureModel currentModel = manager.findFeatureModel(featureInclude.getId());
 				if (currentModel != null) {
 					getFeatureDependencies(currentModel, requiredFeatures);
 				}
@@ -448,9 +253,8 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		}
 	}
 
-	private IFeatureModel[] getAvailableChoices() {
+	private static IFeatureModel[] getAvailableChoices(IProduct product) {
 		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
-		IProduct product = getProduct();
 		ArrayList<IFeatureModel> list = new ArrayList<>();
 		for (IFeatureModel model : models) {
 			String id = model.getFeature().getId();
@@ -461,140 +265,43 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		return list.toArray(new IFeatureModel[list.size()]);
 	}
 
-	private IProduct getProduct() {
-		return getModel().getProduct();
-	}
-
-	private IProductModel getModel() {
-		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
-	}
-
 	@Override
-	public void modelChanged(IModelChangedEvent e) {
-		Object[] objects = e.getChangedObjects();
-		// No need to call super, handling world changed event here
-		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
-			handleModelEventWorldChanged(e);
-			return;
-		} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
-			for (Object object : objects) {
-				if (object instanceof IProductFeature)
-					fFeatureTable.add(object);
-			}
-		} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
+	void updateButtons(boolean updateRemove, boolean updateRemoveAll) {
 
-			Table table = fFeatureTable.getTable();
-			int index = table.getSelectionIndex();
+		updateRemoveButtons(updateRemove ? BTN_REMOVE : -1, updateRemoveAll ? BTN_REMOVE_ALL : -1);
 
-			for (Object object : objects) {
-				if (object instanceof IProductFeature)
-					fFeatureTable.remove(object);
-			}
-
-			// Update Selection
-
-			int count = table.getItemCount();
-
-			if (count == 0) {
-				// Nothing to select
-			} else if (index < count) {
-				table.setSelection(index);
-			} else {
-				table.setSelection(count - 1);
-			}
-
-		} else if (e.getChangeType() == IModelChangedEvent.CHANGE) {
-			fFeatureTable.refresh();
-		}
-		updateButtons(false, true);
-	}
-
-	/**
-	 * @param event
-	 */
-	private void handleModelEventWorldChanged(IModelChangedEvent event) {
-		// This section can get disposed if the configuration is changed from
-		// plugins to features or vice versa. Subsequently, the configuration
-		// page is removed and readded. In this circumstance, abort the
-		// refresh
-		if (fFeatureTable.getTable().isDisposed()) {
-			return;
-		}
-		// Reload the input
-		fFeatureTable.setInput(PDECore.getDefault().getFeatureModelManager());
-		// Perform the refresh
-		refresh();
-	}
-
-	@Override
-	public void refresh() {
-		fFeatureTable.refresh();
-		updateButtons(true, true);
-		super.refresh();
-	}
-
-	@Override
-	protected void selectionChanged(IStructuredSelection selection) {
-		getPage().getPDEEditor().setSelection(selection);
-		updateButtons(true, false);
-	}
-
-	@Override
-	public boolean setFormInput(Object input) {
-		if (input instanceof IProductFeature) {
-			fFeatureTable.setSelection(new StructuredSelection(input), true);
-			return true;
-		}
-		return super.setFormInput(input);
-	}
-
-	private void updateButtons(boolean updateRemove, boolean updateRemoveAll) {
 		TablePart tablePart = getTablePart();
 		Table table = tablePart.getTableViewer().getTable();
 		TableItem[] tableSelection = table.getSelection();
-		boolean hasSelection = tableSelection.length > 0;
-		if (updateRemove) {
-			ISelection selection = getViewerSelection();
-			tablePart.setButtonEnabled(BTN_REMOVE_ALL, isEditable() && !selection.isEmpty() && selection instanceof IStructuredSelection && ((IStructuredSelection) selection).getFirstElement() instanceof IProductFeature);
-		}
-		if (updateRemoveAll)
-			tablePart.setButtonEnabled(BTN_REMOVE_ALL, isEditable() && fFeatureTable.getTable().getItemCount() > 0);
 
-		tablePart.setButtonEnabled(BTN_PROPS, isEditable() && tableSelection.length == 1);
+		boolean isSingleSelection = isEditable() && tableSelection.length == 1;
+		boolean canMove = isSingleSelection && table.getItemCount() > 1 && !fSortAction.isChecked();
 
-		tablePart.setButtonEnabled(BTN_ROOT, isEditable() && hasSelection);
-
-		boolean canMove = table.getItemCount() > 1 && tableSelection.length == 1 && !fSortAction.isChecked();
-		tablePart.setButtonEnabled(BTN_UP, canMove && isEditable() && hasSelection && table.getSelectionIndex() > 0);
-		tablePart.setButtonEnabled(BTN_DWN, canMove && hasSelection && isEditable() && table.getSelectionIndex() < table.getItemCount() - 1);
-	}
-
-	@Override
-	protected boolean createCount() {
-		return true;
+		tablePart.setButtonEnabled(BTN_PROPS, isSingleSelection);
+		tablePart.setButtonEnabled(BTN_ROOT, isEditable() && tableSelection.length > 0);
+		tablePart.setButtonEnabled(BTN_UP, canMove && table.getSelectionIndex() > 0);
+		tablePart.setButtonEnabled(BTN_DWN, canMove && table.getSelectionIndex() < table.getItemCount() - 1);
 	}
 
 	private void handleUp() {
-		int index = getTablePart().getTableViewer().getTable().getSelectionIndex();
-		if (index < 1)
-			return;
-		swap(index, index - 1);
+		Table table = getTable();
+		int index = table.getSelectionIndex();
+		if (index > 0) {
+			swap(index, index - 1, table, getProduct());
+		}
 	}
 
 	private void handleDown() {
-		Table table = getTablePart().getTableViewer().getTable();
+		Table table = getTable();
 		int index = table.getSelectionIndex();
-		if (index == table.getItemCount() - 1)
-			return;
-		swap(index, index + 1);
+		if (index < table.getItemCount() - 1) {
+			swap(index, index + 1, table, getProduct());
+		}
 	}
 
-	public void swap(int index1, int index2) {
-		Table table = getTablePart().getTableViewer().getTable();
+	static void swap(int index1, int index2, Table table, IProduct product) {
 		IProductFeature feature1 = ((IProductFeature) table.getItem(index1).getData());
 		IProductFeature feature2 = ((IProductFeature) table.getItem(index2).getData());
-
-		IProduct product = getProduct();
 		product.swap(feature1, feature2);
 	}
 

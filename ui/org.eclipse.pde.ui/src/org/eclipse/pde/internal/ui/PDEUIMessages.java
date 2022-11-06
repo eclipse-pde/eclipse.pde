@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2022 IBM Corporation and others.
+ * Copyright (c) 2014, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -2171,14 +2171,11 @@ public class PDEUIMessages extends NLS {
 	public static String ProductJRESection_browseEEs;
 	public static String ProdctJRESection_bundleJRE;
 
-	public static String Product_FeatureSection_remove;
-	public static String Product_FeatureSection_open;
 	public static String Product_FeatureSection_up;
 	public static String Product_FeatureSection_down;
 	public static String Product_FeatureSection_sortAlpha;
 	public static String FeatureSection_addRequired;
 	public static String FeatureSection_toggleRoot;
-	public static String FeatureSection_removeAll;
 
 	public static String ImportPackageSection_desc;
 	public static String ImportPackageSection_descFragment;
