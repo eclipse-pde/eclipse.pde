@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.IPluginSourcePathLocator;
 import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.ISharedPluginModel;
 
 /**
  * A plugin source path locator that uses for a co-located source bundle in the
@@ -29,16 +28,13 @@ public class EclipsePluginSourcePathLocator implements IPluginSourcePathLocator 
 
 	@Override
 	public IPath locateSource(IPluginBase plugin) {
-		ISharedPluginModel model = plugin.getModel();
-		String installLocation = model.getInstallLocation();
+		String installLocation = plugin.getModel().getInstallLocation();
 		if (installLocation != null) {
-			File path = new File(installLocation);
-			if (path.isFile()) {
-				File sourceFile = new File(path.getParentFile(),
-						plugin.getId() + ".source_" + plugin.getVersion() + ".jar"); //$NON-NLS-1$ //$NON-NLS-2$
-				if (sourceFile.isFile()) {
-					return new Path(sourceFile.getAbsolutePath());
-				}
+			// For example in a bundle pool foo_123.jar => foo.source_123.jar...
+			File container = new File(installLocation).getParentFile();
+			File sourceFile = new File(container, plugin.getId() + ".source_" + plugin.getVersion() + ".jar"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (sourceFile.isFile()) {
+				return new Path(sourceFile.getAbsolutePath());
 			}
 		}
 		return null;

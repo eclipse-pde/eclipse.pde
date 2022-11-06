@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.IPluginSourcePathLocator;
 import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.ISharedPluginModel;
 
 /**
  * Check if there is already a local maven source bundle available
@@ -28,19 +27,15 @@ public class LocalMavenPluginSourcePathLocator implements IPluginSourcePathLocat
 
 	@Override
 	public IPath locateSource(IPluginBase plugin) {
-		ISharedPluginModel model = plugin.getModel();
-		String installLocation = model.getInstallLocation();
+		String installLocation = plugin.getModel().getInstallLocation();
 		if (installLocation != null) {
 			File path = new File(installLocation);
-			if (path.isFile()) {
-				// The usual Maven covention blah-123.jar =>
-				// blah-123-sources.jar
-				String bundleFileName = path.getName();
-				String sourceFileName = bundleFileName.substring(0, bundleFileName.indexOf(".jar")) + "-sources.jar"; //$NON-NLS-1$ //$NON-NLS-2$
-				File sourceFile = new File(path.getParentFile(), sourceFileName);
-				if (sourceFile.isFile()) {
-					return new Path(sourceFile.getAbsolutePath());
-				}
+			// The usual Maven covention foo-123.jar => foo-123-sources.jar
+			String bundleFileName = path.getName();
+			String sourceFileName = bundleFileName.substring(0, bundleFileName.indexOf(".jar")) + "-sources.jar"; //$NON-NLS-1$ //$NON-NLS-2$
+			File sourceFile = new File(path.getParentFile(), sourceFileName);
+			if (sourceFile.isFile()) {
+				return new Path(sourceFile.getAbsolutePath());
 			}
 		}
 		return null;

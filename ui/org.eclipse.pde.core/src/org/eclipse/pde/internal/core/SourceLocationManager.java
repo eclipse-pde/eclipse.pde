@@ -318,8 +318,7 @@ public class SourceLocationManager implements ICoreConstants {
 			}
 		}
 		return getExtensions().locators.stream().map(locator -> locator.locateSource(plugin)).filter(Objects::nonNull)
-				.findFirst()
-				.orElse(null);
+				.findFirst().orElse(null);
 	}
 
 	/**
@@ -446,7 +445,7 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 
 	private static final class SourceExtensions {
-		Collection<SourceLocation> locations = new LinkedHashSet<>();
-		List<IPluginSourcePathLocator> locators = new ArrayList<>();
+		final Collection<SourceLocation> locations = new LinkedHashSet<>();
+		final List<IPluginSourcePathLocator> locators = new ArrayList<>();
 	}
 }
