@@ -16,6 +16,7 @@
 <plugin>
 
      <extension-point id="source" name="%expoint.source.name" schema="schema/source.exsd"/>
+     <extension-point id="dynamicSource" name="%expoint.source.name" schema="schema/dynamicSource.exsd"/>
      <extension-point id="javadoc" name="%expoint.javadoc.name" schema="schema/javadoc.exsd"/>
      <extension-point id="targets" name="%expoint.target.name" schema="schema/targets.exsd"/>
      <extension-point id="targetLocations" name="%expoint.targetlocation.name" schema="schema/targetLocations.exsd"/>
@@ -400,4 +401,9 @@
              class="org.eclipse.pde.internal.core.annotations.OSGiAnnotationsClasspathContributor">
        </contributor>
     </extension>
+        <extension
+          point="org.eclipse.pde.core.dynamicSource">
+          <locator class="org.eclipse.pde.internal.core.EclipsePluginSourcePathLocator" />
+          <locator class="org.eclipse.pde.internal.core.LocalMavenPluginSourcePathLocator" />
+    </extension> 
 </plugin>
