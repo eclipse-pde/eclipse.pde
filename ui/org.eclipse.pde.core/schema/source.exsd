@@ -21,10 +21,9 @@ In addition, it should contain any file or directory specified in the build.prop
          </appInfo>
       </annotation>
       <complexType>
-         <choice minOccurs="1" maxOccurs="unbounded">
-            <element ref="location"/>
-            <element ref="locator"/>
-         </choice>
+         <sequence>
+            <element ref="location" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
@@ -67,20 +66,14 @@ In addition, it should contain any file or directory specified in the build.prop
       </complexType>
    </element>
 
-   <element name="locator">
-      <complexType>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Provides the locator used to find the source-path for the given plugin model
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.pde.core.IPluginSourcePathLocator"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         No Java code is required for this extension point.
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>
@@ -104,15 +97,6 @@ In addition, it should contain any file or directory specified in the build.prop
 &lt;/pre&gt;
 
 In the example above, the source location &lt;code&gt;src&lt;/code&gt; in the contributing plug-in has been registered.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         No Java code is required for this extension point.
       </documentation>
    </annotation>
 
