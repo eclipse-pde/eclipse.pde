@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.pde.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.pde.core" id="dynamicSource" name="Dynamic Source Locations"/>
+      </appInfo>
+      <documentation>
+         This extension point allows PDE to find source archives for libraries at runtime.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="locator"/>
+         </choice>
+         <attribute name="point" type="string" use="required"/>
+      </complexType>
+   </element>
+
+   <element name="locator">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Provides the locator used to find the source-path for the given plugin model
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.pde.core.IPluginSourcePathLocator"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         2.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of the &lt;code&gt;dynamicSource&lt;/code&gt; extension:
+&lt;pre&gt;
+ &lt;extension point = &quot;org.eclipse.pde.core.dynamicSource&quot;&gt;
+     &lt;locator class=&quot;foo.bar.CustomSourcePathLocator&quot; /&gt;
+  &lt;/extension&gt;
+&lt;/pre&gt;
+
+In the example above, the new &lt;code&gt;foo.bar.CustomSourcePathLocator&lt;/code&gt; in the contributing plug-in has been registered.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Each contributor must provide a class that implements &lt;code&gt;org.eclipse.pde.core.IPluginSourcePathLocator&lt;/code&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         Eclipse SDK comes with source plug-ins that contain source information for all the plug-ins and fragments in Eclipse SDK.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2022 Christoph Läubrich and others.
+&lt;br&gt;
+
+This program and the accompanying materials are made 
+available under the terms of the Eclipse Public License 2.0 which 
+accompanies this distribution, and is available at 
+&lt;a href=&quot;https://www.eclipse.org/legal/epl-2.0&quot;&gt;https://www.eclipse.org/legal/epl-v20.html&lt;/a&gt;/
+
+SPDX-License-Identifier: EPL-2.0.
+      </documentation>
+   </annotation>
+
+</schema>
