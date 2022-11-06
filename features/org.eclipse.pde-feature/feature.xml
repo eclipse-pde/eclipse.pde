@@ -24,6 +24,7 @@
       <import plugin="org.osgi.annotation.versioning"/>
       <import plugin="org.osgi.annotation.bundle"/>
       <import plugin="org.osgi.service.component.annotations"/>
+      <import plugin="org.osgi.service.metatype.annotations" />
    </requires>
 
    <plugin

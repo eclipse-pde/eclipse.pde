@@ -39,8 +39,9 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
  */
 public class OSGiAnnotationsClasspathContributor implements IClasspathContributor {
 
-	private Collection<String> OSGI_ANNOTATIONS = List.of("org.osgi.annotation.versioning", //$NON-NLS-1$
-			"org.osgi.annotation.bundle", "org.osgi.service.component.annotations"); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final Collection<String> OSGI_ANNOTATIONS = List.of("org.osgi.annotation.versioning", //$NON-NLS-1$
+			"org.osgi.annotation.bundle", "org.osgi.service.component.annotations", //$NON-NLS-1$ //$NON-NLS-2$
+			"org.osgi.service.metatype.annotations"); //$NON-NLS-1$
 
 	@Override
 	public List<IClasspathEntry> getInitialEntries(BundleDescription project) {
