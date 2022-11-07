@@ -22,4 +22,12 @@ public  class testMRL23 {
 	public List<classDefault> m1() {
 		return null;	
 	}
+
+	public List<List<classDefault>> m2() {
+		return null;	
+	}
+
+	// This is not a return type leak.
+	public void m3(List<classDefault> x) {
+	}
 }
