@@ -567,13 +567,14 @@ public class MethodReturnTypeLeak extends LeakTest {
 		x23(true);
 	}
 
+	@SuppressWarnings("nls")
 	private void x23(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemIdSet(1));
+		setExpectedProblemIds(getDefaultProblemIdSet(2));
 
 		expectingNoProblems();
-		String typename = "testMRL23"; //$NON-NLS-1$
-		setExpectedMessageArgs(new String[][] { { "List<E>", typename, "m1()" } }); //$NON-NLS-1$ //$NON-NLS-2$
-		deployLeakTest(typename + ".java", inc); //$NON-NLS-1$
+		String typename = "testMRL23";
+		setExpectedMessageArgs(new String[][] { { "List<E>", typename, "m1()" }, { "List<E>", typename, "m2()" } });
+		deployLeakTest(typename + ".java", inc);
 	}
 
  }
