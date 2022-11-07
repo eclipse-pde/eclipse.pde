@@ -28,11 +28,11 @@ public class LocalMavenPluginSourcePathLocator implements IPluginSourcePathLocat
 	@Override
 	public IPath locateSource(IPluginBase plugin) {
 		String installLocation = plugin.getModel().getInstallLocation();
-		if (installLocation != null) {
+		if (installLocation != null && installLocation.endsWith(".jar")) { //$NON-NLS-1$
 			File path = new File(installLocation);
-			// The usual Maven covention foo-123.jar => foo-123-sources.jar
+			// The usual Maven convention foo-123.jar => foo-123-sources.jar
 			String bundleFileName = path.getName();
-			String sourceFileName = bundleFileName.substring(0, bundleFileName.indexOf(".jar")) + "-sources.jar"; //$NON-NLS-1$ //$NON-NLS-2$
+			String sourceFileName = bundleFileName.substring(0, bundleFileName.lastIndexOf(".jar")) + "-sources.jar"; //$NON-NLS-1$ //$NON-NLS-2$
 			File sourceFile = new File(path.getParentFile(), sourceFileName);
 			if (sourceFile.isFile()) {
 				return new Path(sourceFile.getAbsolutePath());
