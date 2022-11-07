@@ -15,6 +15,8 @@ package org.eclipse.pde.api.tools.internal.builder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Flags;
@@ -45,6 +47,14 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * @since 1.0.0
  */
 public class Reference implements IReference {
+
+	/**
+	 * The pattern for class names nested within a signature's generic type
+	 * information.
+	 *
+	 * @see #getParameterList()
+	 */
+	private static final Pattern CLASS_NAME_PATTERN = Pattern.compile("L([^;<]+)"); //$NON-NLS-1$
 
 	/**
 	 * Line number where the reference occurred.
@@ -317,23 +327,40 @@ public class Reference implements IReference {
 	public List<IApiType> getParameterList() throws CoreException {
 		ArrayList<IApiType> paramList = new ArrayList<>();
 		IApiComponent sourceComponent = getMember().getApiComponent();
-		if (sourceComponent != null) {
-			//  add the parameter types
-			if (fSignature != null && fSignature.indexOf('<') >= 0) {
-				String substring = fSignature.substring(fSignature.indexOf('<') + 1, fSignature.indexOf('>'));
-				String[] split = substring.split(";"); //$NON-NLS-1$
-				for (String string : split) {
-					if (string.lastIndexOf('/') == -1) {
-						continue;
-					}
-					String pack = string.substring(1, string.lastIndexOf('/')).replace('/', '.');
-					IApiTypeRoot param = Util.getClassFile(
-							sourceComponent.getBaseline().resolvePackage(sourceComponent, pack),
-							pack + '.' + string.substring(string.lastIndexOf('/') + 1, string.length()));
-					if (param != null) {
-						IApiType structure = param.getStructure();
-						if (structure != null) {
-							paramList.add(structure);
+		if (sourceComponent != null && fSignature != null) {
+			int start = fSignature.indexOf('<', fSignature.indexOf('('));
+			if (start != -1) {
+				int finish = fSignature.lastIndexOf('>');
+				if (finish != -1) {
+					int depth = 1;
+					int begin = start + 1;
+					for (int i = begin; i <= finish; ++i) {
+						char c = fSignature.charAt(i);
+						if (c == '<') {
+							if (depth++ == 0) {
+								begin = i + 1;
+							}
+						} else if (c == '>') {
+							if (--depth == 0) {
+								String section = fSignature.substring(begin, i);
+								for (Matcher matcher = CLASS_NAME_PATTERN.matcher(section); matcher.find();) {
+									String string = matcher.group(1);
+									if (string.lastIndexOf('/') == -1) {
+										continue;
+									}
+									String className = string.replace('/', '.');
+									String pack = Signatures.getPackageName(className);
+									IApiTypeRoot param = Util.getClassFile(
+											sourceComponent.getBaseline().resolvePackage(sourceComponent, pack),
+											className);
+									if (param != null) {
+										IApiType structure = param.getStructure();
+										if (structure != null) {
+											paramList.add(structure);
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -341,7 +368,6 @@ public class Reference implements IReference {
 		}
 
 		return paramList;
-
 	}
 
 	public void resolve() throws CoreException {
