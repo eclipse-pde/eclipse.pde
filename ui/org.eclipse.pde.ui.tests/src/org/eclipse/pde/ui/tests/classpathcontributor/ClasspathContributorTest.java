@@ -74,6 +74,10 @@ public class ClasspathContributorTest {
 			// osgi ds annotations
 			return true;
 		}
+		if (portableString.contains("org.osgi.service.metatype.annotations")) {
+			// osgi configuration as code annotations
+			return true;
+		}
 		return false;
 	}
 }
