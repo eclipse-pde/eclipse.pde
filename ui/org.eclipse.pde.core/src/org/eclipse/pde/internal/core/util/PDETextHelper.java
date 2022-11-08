@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2017 IBM Corporation and others.
+ *  Copyright (c) 2006, 2022 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.core.util;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -114,11 +113,8 @@ public class PDETextHelper {
 		}
 		// Process tag exceptions if provided
 		boolean processTagExceptions = false;
-		int scanLimit = 0;
 		if ((tagExceptions != null) && (!tagExceptions.isEmpty())) {
 			processTagExceptions = true;
-			// Use the biggest entry in the set as the limit
-			scanLimit = determineMaxLength(tagExceptions);
 		}
 		// Process substitute characters if provided
 		boolean processSubstituteChars = false;
@@ -317,19 +313,6 @@ public class PDETextHelper {
 			tagName.append(character);
 		}
 		return tagName.toString();
-	}
-
-	private static int determineMaxLength(Set<String> set) {
-		Iterator<String> iterator = set.iterator();
-		int maxLength = -1;
-		while (iterator.hasNext()) {
-			// Has to be a String
-			String object = iterator.next();
-			if (object.length() > maxLength) {
-				maxLength = object.length();
-			}
-		}
-		return maxLength;
 	}
 
 	private static class IntegerPointer {
