@@ -23,12 +23,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -62,30 +60,29 @@ import org.osgi.framework.Constants;
 public class WorkspacePluginModelManager extends WorkspaceModelManager<IPluginModelBase> {
 
 	@SuppressWarnings("deprecation")
-	private static final Collection<String> RELEVANT_HEADERS = Collections
-			.unmodifiableCollection(new HashSet<>(Arrays.asList( //
-					Constants.BUNDLE_MANIFESTVERSION, //
-					Constants.BUNDLE_SYMBOLICNAME, //
-					ICoreConstants.AUTOMATIC_MODULE_NAME, //
-					Constants.BUNDLE_VERSION, //
-					Constants.FRAGMENT_HOST, //
-					IPDEBuildConstants.EXTENSIBLE_API, //
-					IPDEBuildConstants.PATCH_FRAGMENT, //
-					Constants.REQUIRE_BUNDLE, //
-					Constants.IMPORT_PACKAGE, //
-					Constants.EXPORT_PACKAGE, //
-					ICoreConstants.PROVIDE_PACKAGE, //
-					ICoreConstants.ECLIPSE_JREBUNDLE, //
-					Constants.BUNDLE_CLASSPATH, //
-					Constants.PROVIDE_CAPABILITY, //
-					Constants.REQUIRE_CAPABILITY, //
-					ICoreConstants.ECLIPSE_GENERIC_CAPABILITY, //
-					ICoreConstants.ECLIPSE_GENERIC_REQUIRED, //
-					Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, //
-					IPDEBuildConstants.ECLIPSE_PLATFORM_FILTER, //
-					ICoreConstants.ECLIPSE_SYSTEM_BUNDLE, //
-					ICoreConstants.ECLIPSE_SOURCE_BUNDLE, //
-					ICoreConstants.ECLIPSE_EXPORT_EXTERNAL_ANNOTATIONS)));
+	private static final Collection<String> RELEVANT_HEADERS = Set.of( //
+			Constants.BUNDLE_MANIFESTVERSION, //
+			Constants.BUNDLE_SYMBOLICNAME, //
+			ICoreConstants.AUTOMATIC_MODULE_NAME, //
+			Constants.BUNDLE_VERSION, //
+			Constants.FRAGMENT_HOST, //
+			IPDEBuildConstants.EXTENSIBLE_API, //
+			IPDEBuildConstants.PATCH_FRAGMENT, //
+			Constants.REQUIRE_BUNDLE, //
+			Constants.IMPORT_PACKAGE, //
+			Constants.EXPORT_PACKAGE, //
+			ICoreConstants.PROVIDE_PACKAGE, //
+			ICoreConstants.ECLIPSE_JREBUNDLE, //
+			Constants.BUNDLE_CLASSPATH, //
+			Constants.PROVIDE_CAPABILITY, //
+			Constants.REQUIRE_CAPABILITY, //
+			ICoreConstants.ECLIPSE_GENERIC_CAPABILITY, //
+			ICoreConstants.ECLIPSE_GENERIC_REQUIRED, //
+			Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, //
+			IPDEBuildConstants.ECLIPSE_PLATFORM_FILTER, //
+			ICoreConstants.ECLIPSE_SYSTEM_BUNDLE, //
+			ICoreConstants.ECLIPSE_SOURCE_BUNDLE, //
+			ICoreConstants.ECLIPSE_EXPORT_EXTERNAL_ANNOTATIONS);
 
 	private final ArrayList<IExtensionDeltaListener> fExtensionListeners = new ArrayList<>();
 	private ArrayList<ModelChange> fChangedExtensions = null;
@@ -219,16 +216,16 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager<IPluginMo
 		// org.eclipse.pde.internal.ui.search.ShowDescriptionAction.linkPreviewFileToSchemaFile()
 		if (property == null) {
 			return;
-		} else if ((property instanceof File) == false) {
+		} else if (!(property instanceof File)) {
 			return;
 		}
 		File schemaPreviewFile = (File) property;
 		// Ensure the file exists and is writable
-		if (schemaPreviewFile.exists() == false) {
+		if (!schemaPreviewFile.exists()) {
 			return;
-		} else if (schemaPreviewFile.isFile() == false) {
+		} else if (!schemaPreviewFile.isFile()) {
 			return;
-		} else if (schemaPreviewFile.canWrite() == false) {
+		} else if (!schemaPreviewFile.canWrite()) {
 			return;
 		}
 		// Get the schema model object
