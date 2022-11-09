@@ -680,40 +680,6 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	}
 
 	/**
-	 * Verifies that the given element has a specific problem.
-	 */
-	protected void expectingSpecificProblemFor(IPath root, int problemid) {
-		expectingSpecificProblemsFor(root, new int[] { problemid });
-	}
-
-	/**
-	 * Verifies that the given element has specific problems.
-	 */
-	protected void expectingSpecificProblemsFor(IPath root, int[] problemids) {
-		if (DEBUG) {
-			printProblemsFor(root);
-		}
-		IMarker[] markers = getEnv().getMarkersFor(root);
-		IMarker marker = null;
-		next: for (int problemid : problemids) {
-			for (int j = 0; j < markers.length; j++) {
-				marker = markers[j];
-				if (marker != null) {
-					if (problemid == getProblemId(marker)) {
-						markers[j] = null;
-						continue next;
-					}
-				}
-			}
-			System.out.println("--------------------------------------------------------------------------------"); //$NON-NLS-1$
-			System.out.println("Missing problem while running test " + getName() + ":"); //$NON-NLS-1$ //$NON-NLS-2$
-			System.out.println("	- expected : " + problemid); //$NON-NLS-1$
-			System.out.println("	- current: " + arrayToString(markers)); //$NON-NLS-1$
-			assumeTrue("missing expected problem: " + problemid, false); //$NON-NLS-1$
-		}
-	}
-
-	/**
 	 * Prints all of the problems in the current test workspace
 	 */
 	@Override
@@ -722,22 +688,12 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	}
 
 	/**
-	 * Prints all of the problems from the current root to infinite children
-	 *
-	 * @param root
-	 */
-	@Override
-	protected void printProblemsFor(IPath root) {
-		printProblemsFor(new IPath[] { root });
-	}
-
-	/**
 	 * Prints all of the problems from each of the roots to infinite children
 	 *
 	 * @param roots
 	 */
 	@Override
-	protected void printProblemsFor(IPath[] roots) {
+	protected void printProblemsFor(IPath... roots) {
 		for (IPath root : roots) {
 			/* get the leaf problems for this type */
 			System.out.println(arrayToString(getEnv().getProblemsFor(root)));
