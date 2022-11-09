@@ -144,12 +144,14 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	public void test003() throws Exception {
 		// setup the environment
 		setupTest("test3"); //$NON-NLS-1$
-		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE),
-				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
+		int[] ids = {
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE,
+						IDelta.REMOVED, IDelta.TYPE),
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE,
+						IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
-		String[][] args = new String[][] { new String[] { "a.b.c.ClassB", "a.b.c_1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
-				new String[] { "1.0.0", "1.0.0" } }; //$NON-NLS-1$ //$NON-NLS-2$
+		String[][] args = { { "a.b.c.ClassB", "a.b.c_1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
+				{ "1.0.0", "1.0.0" } }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
@@ -176,12 +178,14 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	public void test005() throws Exception {
 		// setup the environment
 		setupTest("test5"); //$NON-NLS-1$
-		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.REEXPORTED_API_TYPE),
-				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
+		int[] ids = {
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE,
+						IDelta.REMOVED, IDelta.REEXPORTED_API_TYPE),
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE,
+						IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
-		String[][] args = new String[][] { new String[] { "a.b.c.ClassB", "a.b.c_1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
-				new String[] { "1.0.0", "1.0.0" } }; //$NON-NLS-1$ //$NON-NLS-2$
+		String[][] args = { { "a.b.c.ClassB", "a.b.c_1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
+				{ "1.0.0", "1.0.0" } }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
@@ -195,12 +199,14 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	public void test006() throws Exception {
 		// setup the environment
 		setupTest("test6"); //$NON-NLS-1$
-		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.REEXPORTED_TYPE),
-				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
+		int[] ids = {
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE,
+						IDelta.REMOVED, IDelta.REEXPORTED_TYPE),
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE,
+						IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
-		String[][] args = new String[][] { new String[] { "a.b.c.ClassB", "a.b.c_1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
-				new String[] { "1.0.0", "1.0.0" } }; //$NON-NLS-1$ //$NON-NLS-2$
+		String[][] args = { { "a.b.c.ClassB", "a.b.c_1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
+				{ "1.0.0", "1.0.0" } }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
@@ -227,12 +233,14 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	public void test008() throws Exception {
 		// setup the environment
 		setupTest("test8"); //$NON-NLS-1$
-		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.REEXPORTED_API_TYPE),
-				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
+		int[] ids = {
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE,
+						IDelta.REMOVED, IDelta.REEXPORTED_API_TYPE),
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE,
+						IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
-		String[][] args = new String[][] { new String[] { "a.b.c.ClassB", "a.b.c_1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
-				new String[] { "1.0.0", "1.0.0" } }; //$NON-NLS-1$ //$NON-NLS-2$
+		String[][] args = { { "a.b.c.ClassB", "a.b.c_1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
+				{ "1.0.0", "1.0.0" } }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
@@ -246,16 +254,20 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	public void test009() throws Exception {
 		// setup the environment
 		setupTest("test9"); //$NON-NLS-1$
-		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.REEXPORTED_API_TYPE),
-				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.TYPE, IDelta.REMOVED, IDelta.API_TYPE),
-				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS),
-				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
+		int[] ids = {
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE,
+						IDelta.REMOVED, IDelta.REEXPORTED_API_TYPE),
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.TYPE,
+						IDelta.REMOVED, IDelta.API_TYPE),
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE,
+						IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS),
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE,
+						IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
-		String[][] args = new String[][] { new String[] { "d.e.f.ClassD", "a.b.c_1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
-				new String[] { "d.e.f.ClassD", "a.b.c.core_1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
-				new String[] { "1.0.0", "1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
-				new String[] { "1.0.0", "1.0.0" } }; //$NON-NLS-1$ //$NON-NLS-2$
+		String[][] args = { { "d.e.f.ClassD", "a.b.c_1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
+				{ "d.e.f.ClassD", "a.b.c.core_1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
+				{ "1.0.0", "1.0.0" }, //$NON-NLS-1$ //$NON-NLS-2$
+				{ "1.0.0", "1.0.0" } }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
@@ -293,13 +305,10 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		do {
 			errors = false;
 			IMarker[] jdtMarkers = getEnv().getAllJDTMarkers(getEnv().getWorkspaceRootPath());
-			int length = jdtMarkers.length;
-			if (length != 0) {
-				for (int i = 0; i < length; i++) {
-					if (jdtMarkers[i].getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING) == IMarker.SEVERITY_ERROR) {
-						errors = true;
-						break;
-					}
+			for (IMarker jdtMarker : jdtMarkers) {
+				if (jdtMarker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING) == IMarker.SEVERITY_ERROR) {
+					errors = true;
+					break;
 				}
 			}
 			if (errors) {
@@ -334,15 +343,14 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		fullBuild();
 		// create the API baseline
 		IProject[] projects = getEnv().getWorkspace().getRoot().getProjects();
-		int length = projects.length;
 		IPath baselineLocation = ApiTestsPlugin.getDefault().getStateLocation().append(referenceBaselineLocation);
-		for (int i = 0; i < length; i++) {
-			IProject currentProject = projects[i];
+		for (IProject currentProject : projects) {
 			IApiComponent component = manager.getWorkspaceComponent(currentProject.getName());
 			assertNotNull("The project was not found in the workspace baseline: " + currentProject.getName(), component); //$NON-NLS-1$
 			exportApiComponent(currentProject, component, baselineLocation);
 		}
 		this.baseline = ApiModelFactory.newApiBaseline(API_BASELINE);
+		int length = projects.length;
 		IApiComponent[] components = new IApiComponent[length];
 		for (int i = 0; i < length; i++) {
 			IProject project = projects[i];
