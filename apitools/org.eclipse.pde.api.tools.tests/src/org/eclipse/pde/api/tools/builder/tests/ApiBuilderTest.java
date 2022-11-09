@@ -162,6 +162,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	public ApiBuilderTest(String name) {
 		super(name);
+		beforeClass();
 	}
 
 	/**
