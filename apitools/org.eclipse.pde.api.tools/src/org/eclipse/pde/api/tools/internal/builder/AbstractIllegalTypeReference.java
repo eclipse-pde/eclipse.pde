@@ -41,7 +41,7 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
  * Base implementation of a problem detector for type references
  *
  * @since 1.1
- * @noextend This class is not intended to be sub-classed by clients.
+ * @noextend This class is not intended to be sub-classed by clients. test
  */
 public abstract class AbstractIllegalTypeReference extends AbstractProblemDetector {
 
