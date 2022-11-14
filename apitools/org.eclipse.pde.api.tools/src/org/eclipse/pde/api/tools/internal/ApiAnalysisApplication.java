@@ -18,8 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -31,7 +29,6 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
@@ -41,7 +38,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
@@ -50,7 +46,6 @@ import org.eclipse.pde.api.tools.internal.model.BundleComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
-import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
@@ -129,7 +124,6 @@ public class ApiAnalysisApplication implements IApplication {
 				return IStatus.ERROR;
 			}
 			setTargetPlatform(args.tpFile);
-			configureSeverity(project);
 
 			project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 			IMarker[] allProblemMarkers = project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
@@ -240,19 +234,6 @@ public class ApiAnalysisApplication implements IApplication {
 			job.schedule();
 			job.join();
 		}
-	}
-
-	protected void configureSeverity(IProject project) {
-		Map<String, String> enforcedSeverities = new HashMap<>();
-		enforcedSeverities.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MAJOR_WITHOUT_BREAKING_CHANGE,
-				ApiPlugin.VALUE_ERROR);
-		enforcedSeverities.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_REPORT_MINOR_WITHOUT_API_CHANGE,
-				ApiPlugin.VALUE_ERROR);
-		IEclipsePreferences projectNode = new ProjectScope(project).getNode(ApiPlugin.PLUGIN_ID);
-		enforcedSeverities.forEach((key, value) -> {
-			PDECore.getDefault().getPreferencesManager().setValue(key, value);
-			projectNode.put(key, value);
-		});
 	}
 
 	private IApiBaseline setBaseline(File baselinePath) throws CoreException {
