@@ -14,7 +14,7 @@
 package org.eclipse.pde.api.tools.util.tests;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -492,8 +492,10 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		assertNotNull("the testing project api description must exist", desc); //$NON-NLS-1$
 		IApiAnnotations annot = desc.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass2")); //$NON-NLS-1$
 		assertNotNull("the annotations for a.b.c.TestClass2 cannot be null", annot); //$NON-NLS-1$
-		assertTrue("there must be a noinstantiate setting for TestClass2", (annot.getRestrictions() & RestrictionModifiers.NO_INSTANTIATE) != 0); //$NON-NLS-1$
-		assertTrue("there must be a noextend setting for TestClass2", (annot.getRestrictions() & RestrictionModifiers.NO_EXTEND) != 0); //$NON-NLS-1$
+		assertNotEquals("there must be a noinstantiate setting for TestClass2", 0, //$NON-NLS-1$
+				(annot.getRestrictions() & RestrictionModifiers.NO_INSTANTIATE));
+		assertNotEquals("there must be a noextend setting for TestClass2", 0, //$NON-NLS-1$
+				(annot.getRestrictions() & RestrictionModifiers.NO_EXTEND));
 	}
 
 	/**
@@ -516,8 +518,10 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		assertNotNull("the testing project api description must exist", desc); //$NON-NLS-1$
 		IApiAnnotations annot = desc.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass3$InnerTestClass3")); //$NON-NLS-1$
 		assertNotNull("the annotations for a.b.c.TestClass3$InnerTestClass3 cannot be null", annot); //$NON-NLS-1$
-		assertFalse("there must not be a noinstantiate setting for TestClass3$InnerTestClass3", (annot.getRestrictions() & RestrictionModifiers.NO_INSTANTIATE) != 0); //$NON-NLS-1$
-		assertFalse("there must not be a noextend setting for TestClass3$InnerTestClass3", (annot.getRestrictions() & RestrictionModifiers.NO_EXTEND) != 0); //$NON-NLS-1$
+		assertEquals("there must not be a noinstantiate setting for TestClass3$InnerTestClass3", 0, //$NON-NLS-1$
+				(annot.getRestrictions() & RestrictionModifiers.NO_INSTANTIATE));
+		assertEquals("there must not be a noextend setting for TestClass3$InnerTestClass3", 0, //$NON-NLS-1$
+				(annot.getRestrictions() & RestrictionModifiers.NO_EXTEND));
 	}
 
 	/**
@@ -540,7 +544,8 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		assertNotNull("the testing project api description must exist", desc); //$NON-NLS-1$
 		IApiAnnotations annot = desc.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestClass1", "foo", "()V")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertNotNull("the annotations for foo() cannot be null", annot); //$NON-NLS-1$
-		assertTrue("there must be a nooverride setting for foo()", (annot.getRestrictions() & RestrictionModifiers.NO_OVERRIDE) != 0); //$NON-NLS-1$
+		assertNotEquals("there must be a nooverride setting for foo()", 0, //$NON-NLS-1$
+				(annot.getRestrictions() & RestrictionModifiers.NO_OVERRIDE));
 	}
 
 	/**
@@ -563,7 +568,8 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		assertNotNull("the testing project api description must exist", desc); //$NON-NLS-1$
 		IApiAnnotations annot = desc.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField9", "field")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNotNull("the annotations for 'field' cannot be null", annot); //$NON-NLS-1$
-		assertTrue("there must be a noreference setting for 'field'", (annot.getRestrictions() & RestrictionModifiers.NO_REFERENCE) != 0); //$NON-NLS-1$
+		assertNotEquals("there must be a noreference setting for 'field'", 0, //$NON-NLS-1$
+				(annot.getRestrictions() & RestrictionModifiers.NO_REFERENCE));
 	}
 
 	/**
@@ -585,7 +591,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		assertNotNull("the testing project api description must exist", desc); //$NON-NLS-1$
 		IApiAnnotations annot = desc.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestClass1", "foo", "()V")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertNotNull("the annotations for foo() cannot be null", annot); //$NON-NLS-1$
-		assertTrue("there must be no restrictions for foo()", annot.getRestrictions() == 0); //$NON-NLS-1$
+		assertEquals("there must be no restrictions for foo()", 0, annot.getRestrictions()); //$NON-NLS-1$
 	}
 
 	/**
@@ -607,7 +613,8 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		assertNotNull("the testing project api description must exist", desc); //$NON-NLS-1$
 		IApiAnnotations annot = desc.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass3$InnerTestClass3")); //$NON-NLS-1$
 		assertNotNull("the annotations for 'InnerTestClass3' cannot be null", annot); //$NON-NLS-1$
-		assertTrue("there must be a no restrictions for 'InnerTestClass3'", (annot.getRestrictions() & RestrictionModifiers.NO_INSTANTIATE) == 0); //$NON-NLS-1$
+		assertEquals("there must be a no restrictions for 'InnerTestClass3'", 0, //$NON-NLS-1$
+				(annot.getRestrictions() & RestrictionModifiers.NO_INSTANTIATE));
 	}
 
 	/**
@@ -629,7 +636,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		assertNotNull("the testing project api description must exist", desc); //$NON-NLS-1$
 		IApiAnnotations annot = desc.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField9", "field")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNotNull("the annotations for 'field' cannot be null", annot); //$NON-NLS-1$
-		assertTrue("there must be a no restrictions for 'field'", annot.getRestrictions() == 0); //$NON-NLS-1$
+		assertEquals("there must be a no restrictions for 'field'", 0, annot.getRestrictions()); //$NON-NLS-1$
 	}
 
 	/**
@@ -718,7 +725,8 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		int before = component.getApiTypeContainers().length;
 		project.setOutputLocation(container.getFullPath(), new NullProgressMonitor());
 		waitForAutoBuild();
-		assertTrue("there must be the same number of containers after the change", before == component.getApiTypeContainers().length); //$NON-NLS-1$
+		assertEquals("there must be the same number of containers after the change", before, //$NON-NLS-1$
+				component.getApiTypeContainers().length);
 		assertTrue("the new output location should be 'bin2'", "bin2".equalsIgnoreCase(project.getOutputLocation().toFile().getName())); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
@@ -745,7 +753,8 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		component = getWorkspaceBaseline().getApiComponent(project.getElementName());
 		assertTrue("there must be one more container after the change", before < component.getApiTypeContainers().length); //$NON-NLS-1$
 		IPackageFragmentRoot root = project.getPackageFragmentRoot(container);
-		assertTrue("the class file container for src2 must be 'bin3'", "bin3".equals(root.getRawClasspathEntry().getOutputLocation().toFile().getName())); //$NON-NLS-1$ //$NON-NLS-2$
+		assertEquals("the class file container for src2 must be 'bin3'", "bin3", //$NON-NLS-1$ //$NON-NLS-2$
+				root.getRawClasspathEntry().getOutputLocation().toFile().getName());
 	}
 
 	/**
@@ -805,7 +814,8 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		setPackageToApi(project, "export1"); //$NON-NLS-1$
 		IApiAnnotations annot = getTestProjectApiDescription().resolveAnnotations(Factory.packageDescriptor("export1")); //$NON-NLS-1$
 		assertNotNull("there must be an annotation for the new exported package", annot); //$NON-NLS-1$
-		assertTrue("the newly exported package must be API visibility", annot.getVisibility() == VisibilityModifiers.API); //$NON-NLS-1$
+		assertEquals("the newly exported package must be API visibility", VisibilityModifiers.API, //$NON-NLS-1$
+				annot.getVisibility());
 	}
 
 	/**
@@ -826,7 +836,8 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		// check the description
 		IApiAnnotations annot = getTestProjectApiDescription().resolveAnnotations(Factory.packageDescriptor("export1")); //$NON-NLS-1$
 		assertNotNull("there must be an annotation for the new exported package", annot); //$NON-NLS-1$
-		assertTrue("the changed exported package must be PRIVATE visibility", annot.getVisibility() == VisibilityModifiers.PRIVATE); //$NON-NLS-1$
+		assertEquals("the changed exported package must be PRIVATE visibility", VisibilityModifiers.PRIVATE, //$NON-NLS-1$
+				annot.getVisibility());
 	}
 
 	/**
@@ -844,7 +855,8 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		setPackageToApi(project, "export1"); //$NON-NLS-1$
 		IApiAnnotations annot = getTestProjectApiDescription().resolveAnnotations(Factory.packageDescriptor("export1")); //$NON-NLS-1$
 		assertNotNull("there must be an annotation for the new exported package", annot); //$NON-NLS-1$
-		assertTrue("the newly exported package must be API visibility", annot.getVisibility() == VisibilityModifiers.API); //$NON-NLS-1$
+		assertEquals("the newly exported package must be API visibility", VisibilityModifiers.API, //$NON-NLS-1$
+				annot.getVisibility());
 
 		// remove exported packages
 		IBundleProjectService service = ProjectUtils.getBundleProjectService();
