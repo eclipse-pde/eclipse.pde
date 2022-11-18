@@ -20,7 +20,13 @@
          <choice minOccurs="1" maxOccurs="unbounded">
             <element ref="locator"/>
          </choice>
-         <attribute name="point" type="string" use="required"/>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -35,6 +41,27 @@
                   <meta.attribute kind="java" basedOn=":org.eclipse.pde.core.IPluginSourcePathLocator"/>
                </appInfo>
             </annotation>
+         </attribute>
+         <attribute name="complexity" use="required">
+            <annotation>
+               <documentation>
+                  Gives a hint to the framework about how complex it is to compute if sources can be found.
+
+low: computation includes just trivial steps, e.g. check if a file exits in the local file system.
+medium: computation includes some more steps e.g iterate over some kind of objects store in linear time or look into the content of local files.
+high: computation includes steps that can potentially reach out to remote systems to find a suitable source item
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="low">
+                  </enumeration>
+                  <enumeration value="medium">
+                  </enumeration>
+                  <enumeration value="high">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
       </complexType>
    </element>
