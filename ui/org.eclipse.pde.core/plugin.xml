@@ -403,7 +403,11 @@
     </extension>
         <extension
           point="org.eclipse.pde.core.dynamicSource">
-          <locator class="org.eclipse.pde.internal.core.EclipsePluginSourcePathLocator" />
-          <locator class="org.eclipse.pde.internal.core.LocalMavenPluginSourcePathLocator" />
+          <locator
+                class="org.eclipse.pde.internal.core.EclipsePluginSourcePathLocator"
+                complexity="low"/>
+          <locator
+                class="org.eclipse.pde.internal.core.LocalMavenPluginSourcePathLocator"
+                complexity="low"/>
     </extension> 
 </plugin>
