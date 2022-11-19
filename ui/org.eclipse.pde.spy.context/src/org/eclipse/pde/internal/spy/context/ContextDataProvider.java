@@ -121,7 +121,7 @@ public class ContextDataProvider extends ColumnLabelProvider implements ITreeCon
 			for (String key : selectedContext.localContextFunction().keySet())
 				try {
 					cfValues.put(key, selectedContext.get(key));
-				} catch (Exception e) {
+				} catch (Throwable e) {
 					cfValues.put(key, NO_VALUE_COULD_BE_COMPUTED + " (Exception : " + e.getClass().getName() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			result.addAll(cfValues.entrySet());
