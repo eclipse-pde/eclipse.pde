@@ -17,10 +17,17 @@ import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 
+/**
+ * Prefer using the tycho-apitools-plugin to generate the api description file
+ *
+ */
+@Deprecated
 public class ApiFileGenerationApplication implements IApplication {
 
+	private static String DEPRECATION_WARNING = "DEPRECATED, PLEASE MOVE TO THE tycho-apitools-plugin TO GENERATE THE API DESCRIPTION FILE"; //$NON-NLS-1$
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
+		ApiPlugin.logErrorMessage(DEPRECATION_WARNING);
 		APIFileGenerator generator = new APIFileGenerator();
 		String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 		generator.projectName = find("projectName", args); //$NON-NLS-1$
