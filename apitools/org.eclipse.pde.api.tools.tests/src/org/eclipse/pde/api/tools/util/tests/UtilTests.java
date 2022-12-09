@@ -474,7 +474,7 @@ public class UtilTests {
 				"org.eclipse.equinox.p2.core", //$NON-NLS-1$
 				"org.eclipse.debug.ui", //$NON-NLS-1$
 				"org.eclipse.ui.navigator", //$NON-NLS-1$
-				"javax.servlet.jsp", //$NON-NLS-1$
+				"javax.servlet.jsp-api", //$NON-NLS-1$
 				"org.eclipse.ui.workbench", //$NON-NLS-1$
 				"org.eclipse.equinox.event", //$NON-NLS-1$
 				"org.eclipse.jdt.core", //$NON-NLS-1$
