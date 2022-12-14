@@ -38,6 +38,7 @@ import org.eclipse.pde.internal.core.plugin.ExternalFragmentModel;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.osgi.framework.Version;
 
 public class PDEState extends MinimalState {
@@ -165,7 +166,9 @@ public class PDEState extends MinimalState {
 				subMonitor.subTask(file.getName());
 				addBundle(file, -1);
 			} catch (CoreException e) {
-				PDECore.log(e);
+				if (e.getStatus().getCode() != ManifestUtils.STATUS_CODE_NOT_A_BUNDLE_MANIFEST) {
+					PDECore.log(e);
+				}
 			}
 			subMonitor.split(1);
 		}

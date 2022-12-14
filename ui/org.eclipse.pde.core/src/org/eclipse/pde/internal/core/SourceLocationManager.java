@@ -43,6 +43,9 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.TargetBundle;
+import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.osgi.framework.Version;
 
 /**
@@ -317,8 +320,13 @@ public class SourceLocationManager implements ICoreConstants {
 				return fullPath;
 			}
 		}
-		return getExtensions().locators.stream().map(locator -> locator.locateSource(plugin)).filter(Objects::nonNull)
-				.findFirst().orElse(null);
+		return getExtensions().locators.stream().map(locator -> {
+			try {
+				return locator.locator.locateSource(plugin);
+			} catch (RuntimeException e) {
+				return null;
+			}
+		}).filter(Objects::nonNull).findFirst().orElse(null);
 	}
 
 	/**
@@ -423,14 +431,26 @@ public class SourceLocationManager implements ICoreConstants {
 			for (IConfigurationElement element : extension.getConfigurationElements()) {
 				if (element.getName().equals("locator")) { //$NON-NLS-1$
 					try {
-						result.locators.add((IPluginSourcePathLocator) element.createExecutableExtension("class")); //$NON-NLS-1$
+						IPluginSourcePathLocator locator = (IPluginSourcePathLocator) element
+								.createExecutableExtension("class"); //$NON-NLS-1$
+						LocatorComplexity complexity = getComplexity(element);
+						result.locators.add(new OrderedPluginSourcePathLocator(locator, complexity));
 					} catch (CoreException e) {
 						PDECore.log(e.getStatus());
 					}
 				}
 			}
 		}
+		Collections.sort(result.locators);
 		return result;
+	}
+
+	private static LocatorComplexity getComplexity(IConfigurationElement element) {
+		try {
+			return LocatorComplexity.valueOf(element.getAttribute("complexity")); //$NON-NLS-1$
+		} catch (RuntimeException e) {
+			return LocatorComplexity.unkown;
+		}
 	}
 
 	/**
@@ -441,11 +461,43 @@ public class SourceLocationManager implements ICoreConstants {
 	protected BundleManifestSourceLocationManager initializeBundleManifestLocations() {
 		BundleManifestSourceLocationManager manager = new BundleManifestSourceLocationManager();
 		manager.setPlugins(PDECore.getDefault().getModelManager().getExternalModels());
+		try {
+			ITargetDefinition definition = TargetPlatformService.getDefault().getWorkspaceTargetDefinition();
+			if (definition != null && definition.isResolved()) {
+				TargetBundle[] bundles = definition.getAllBundles();
+				if (bundles != null) {
+					manager.setTargetBundles(bundles);
+				}
+			}
+		} catch (CoreException e) {
+			// can't use this then...
+		}
 		return manager;
 	}
 
 	private static final class SourceExtensions {
 		final Collection<SourceLocation> locations = new LinkedHashSet<>();
-		final List<IPluginSourcePathLocator> locators = new ArrayList<>();
+		final List<OrderedPluginSourcePathLocator> locators = new ArrayList<>();
+	}
+
+	private static final class OrderedPluginSourcePathLocator implements Comparable<OrderedPluginSourcePathLocator> {
+
+		private IPluginSourcePathLocator locator;
+		private LocatorComplexity complexity;
+
+		OrderedPluginSourcePathLocator(IPluginSourcePathLocator locator, LocatorComplexity complexity) {
+			this.locator = locator;
+			this.complexity = complexity;
+		}
+
+		@Override
+		public int compareTo(OrderedPluginSourcePathLocator o) {
+			return complexity.compareTo(o.complexity);
+		}
+
+	}
+
+	private enum LocatorComplexity {
+		low, medium, high, unkown;
 	}
 }
