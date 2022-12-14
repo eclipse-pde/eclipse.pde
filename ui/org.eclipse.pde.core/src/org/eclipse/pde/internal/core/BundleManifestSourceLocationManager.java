@@ -13,20 +13,26 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
@@ -45,7 +51,9 @@ public class BundleManifestSourceLocationManager {
 	/**
 	 * Maps SourceLocationKeys (plugin name and version) to IPluginModelBase objects representing source bundles
 	 */
-	private Map<SourceLocationKey, IPluginModelBase> fPluginToSourceBundle = new LinkedHashMap<>(0);
+	private Map<SourceLocationKey, IPluginModelBase> fPluginToSourceBundle = Map.of();
+
+	private Map<SourceLocationKey, TargetBundle> fPluginToTargetBundle = Map.of();
 
 	/**
 	 * Returns a source location that provides source for a specific plugin (specified by name and version)
@@ -54,13 +62,45 @@ public class BundleManifestSourceLocationManager {
 	 * @return a source location or <code>null</code> if no location exists for this plugin
 	 */
 	public SourceLocation getSourceLocation(String pluginName, Version pluginVersion) {
-		IPluginModelBase plugin = fPluginToSourceBundle.get(new SourceLocationKey(pluginName, pluginVersion));
-		if (plugin != null) {
-			SourceLocation location = new SourceLocation(new Path(plugin.getInstallLocation()));
-			location.setUserDefined(false);
-			return location;
+		return locationOf(new SourceLocationKey(pluginName, pluginVersion)).orElse(null);
+	}
+
+	private Optional<SourceLocation> locationOf(SourceLocationKey key) {
+		return pluginModel(key).or(() -> targetBundle(key));
+	}
+
+	private Optional<SourceLocation> targetBundle(SourceLocationKey key) {
+		TargetBundle targetBundle = fPluginToTargetBundle.get(key);
+		if (targetBundle != null) {
+			BundleInfo bundleInfo = targetBundle.getBundleInfo();
+			if (bundleInfo != null) {
+				URI location = bundleInfo.getLocation();
+				if (location != null) {
+					try {
+						File file = new File(location);
+						SourceLocation sourceLocation = new SourceLocation(new Path(file.getAbsolutePath()));
+						sourceLocation.setUserDefined(false);
+						return Optional.of(sourceLocation);
+					} catch (RuntimeException e) {
+						// cannot be used then...
+					}
+				}
+			}
 		}
-		return null;
+		return Optional.empty();
+	}
+
+	private Optional<SourceLocation> pluginModel(SourceLocationKey key) {
+		IPluginModelBase plugin = fPluginToSourceBundle.get(key);
+		if (plugin != null) {
+			String path = plugin.getInstallLocation();
+			if (path != null) {
+				SourceLocation location = new SourceLocation(new Path(path));
+				location.setUserDefined(false);
+				return Optional.of(location);
+			}
+		}
+		return Optional.empty();
 	}
 
 	/**
@@ -68,13 +108,8 @@ public class BundleManifestSourceLocationManager {
 	 * @return set of source locations, possibly empty
 	 */
 	public Collection<SourceLocation> getSourceLocations() {
-		Collection<SourceLocation> result = new ArrayList<>(fPluginToSourceBundle.size());
-		for (IPluginModelBase bundle : fPluginToSourceBundle.values()) {
-			SourceLocation location = new SourceLocation(new Path(bundle.getInstallLocation()));
-			location.setUserDefined(false);
-			result.add(location);
-		}
-		return result;
+		return Stream.concat(fPluginToSourceBundle.keySet().stream(), fPluginToTargetBundle.keySet().stream())
+				.distinct().flatMap(key -> locationOf(key).stream()).collect(Collectors.toList());
 	}
 
 	/**
@@ -86,7 +121,7 @@ public class BundleManifestSourceLocationManager {
 	 * @return whether this manager has a source location for the the given plugin
 	 */
 	public boolean hasValidSourceLocation(String pluginName, Version pluginVersion) {
-		return fPluginToSourceBundle.containsKey(new SourceLocationKey(pluginName, pluginVersion));
+		return getSourceLocation(pluginName, pluginVersion) != null;
 	}
 
 	/**
@@ -228,6 +263,26 @@ public class BundleManifestSourceLocationManager {
 								}
 							}
 						}
+					}
+				}
+			}
+		}
+	}
+
+	public void setTargetBundles(TargetBundle[] bundles) {
+		fPluginToTargetBundle = new LinkedHashMap<>();
+		for (TargetBundle bundle : bundles) {
+
+			if (bundle.isSourceBundle()) {
+				// collect it in the map ...
+				BundleInfo sourceTarget = bundle.getSourceTarget();
+				if (sourceTarget != null) {
+					try {
+						Version version = Version.parseVersion(sourceTarget.getVersion());
+						fPluginToTargetBundle.put(new SourceLocationKey(sourceTarget.getSymbolicName(), version),
+								bundle);
+					} catch (IllegalArgumentException e) {
+						// can't parse the version...
 					}
 				}
 			}
