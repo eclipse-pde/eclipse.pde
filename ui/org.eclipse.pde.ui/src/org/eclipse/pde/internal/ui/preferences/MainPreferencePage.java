@@ -16,6 +16,8 @@ package org.eclipse.pde.internal.ui.preferences;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
+import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.eclipse.core.resources.IProject;
@@ -24,13 +26,16 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
+import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
@@ -38,6 +43,7 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.BaseBlock;
 import org.eclipse.pde.internal.ui.shared.target.TargetStatus;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -48,7 +54,8 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * This is the top level preference page for PDE.  It contains a random assortment of preferences that don't belong to other pages.
+ * This is the top level preference page for PDE. It contains a random
+ * assortment of preferences that don't belong to other pages.
  *
  */
 public class MainPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
@@ -60,7 +67,8 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		}
 
 		public void createControl(Composite parent) {
-			Group group = SWTFactory.createGroup(parent, PDEUIMessages.MainPreferencePage_runtimeWorkspaceGroup, 2, 1, GridData.FILL_HORIZONTAL);
+			Group group = SWTFactory.createGroup(parent, PDEUIMessages.MainPreferencePage_runtimeWorkspaceGroup, 2, 1,
+					GridData.FILL_HORIZONTAL);
 			Composite radios = SWTFactory.createComposite(group, 2, 2, GridData.FILL_HORIZONTAL, 0, 0);
 
 			fRuntimeWorkspaceLocationRadio = new Button(radios, SWT.RADIO);
@@ -76,8 +84,12 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 			((GridData) fLocationText.getLayoutData()).widthHint = 200;
 			fRuntimeWorkspaceLocation = fLocationText;
 
-			Composite buttons = SWTFactory.createComposite(group, 3, 2, GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL, 0, 0);
-			createButtons(buttons, new String[] {PDEUIMessages.MainPreferencePage_runtimeWorkspace_workspace, PDEUIMessages.MainPreferencePage_runtimeWorkspace_fileSystem, PDEUIMessages.MainPreferencePage_runtimeWorkspace_variables});
+			Composite buttons = SWTFactory.createComposite(group, 3, 2,
+					GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL, 0, 0);
+			createButtons(buttons,
+					new String[] { PDEUIMessages.MainPreferencePage_runtimeWorkspace_workspace,
+							PDEUIMessages.MainPreferencePage_runtimeWorkspace_fileSystem,
+							PDEUIMessages.MainPreferencePage_runtimeWorkspace_variables });
 		}
 
 		@Override
@@ -98,7 +110,8 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		}
 
 		public void createControl(Composite parent) {
-			Group group = SWTFactory.createGroup(parent, PDEUIMessages.MainPreferencePage_junitWorkspaceGroup, 2, 1, GridData.FILL_HORIZONTAL);
+			Group group = SWTFactory.createGroup(parent, PDEUIMessages.MainPreferencePage_junitWorkspaceGroup, 2, 1,
+					GridData.FILL_HORIZONTAL);
 			Composite radios = SWTFactory.createComposite(group, 2, 2, GridData.FILL_HORIZONTAL, 0, 0);
 
 			fJUnitWorkspaceLocationRadio = new Button(radios, SWT.RADIO);
@@ -114,8 +127,12 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 			((GridData) fLocationText.getLayoutData()).widthHint = 200;
 			fJUnitWorkspaceLocation = fLocationText;
 
-			Composite buttons = SWTFactory.createComposite(group, 3, 2, GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL, 0, 0);
-			createButtons(buttons, new String[] {PDEUIMessages.MainPreferencePage_junitWorkspace_workspace, PDEUIMessages.MainPreferencePage_junitWorkspace_fileSystem, PDEUIMessages.MainPreferencePage_junitWorkspace_variables});
+			Composite buttons = SWTFactory.createComposite(group, 3, 2,
+					GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL, 0, 0);
+			createButtons(buttons,
+					new String[] { PDEUIMessages.MainPreferencePage_junitWorkspace_workspace,
+							PDEUIMessages.MainPreferencePage_junitWorkspace_fileSystem,
+							PDEUIMessages.MainPreferencePage_junitWorkspace_variables });
 		}
 
 		@Override
@@ -172,7 +189,8 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 
 		fOverwriteBuildFiles = new Button(optionComp, SWT.CHECK);
 		fOverwriteBuildFiles.setText(PDEUIMessages.MainPreferencePage_promptBeforeOverwrite);
-		fOverwriteBuildFiles.setSelection(!MessageDialogWithToggle.ALWAYS.equals(store.getString(IPreferenceConstants.OVERWRITE_BUILD_FILES_ON_EXPORT)));
+		fOverwriteBuildFiles.setSelection(!MessageDialogWithToggle.ALWAYS
+				.equals(store.getString(IPreferenceConstants.OVERWRITE_BUILD_FILES_ON_EXPORT)));
 
 		fAutoManage = new Button(optionComp, SWT.CHECK);
 		fAutoManage.setText(PDEUIMessages.MainPreferencePage_updateStale);
@@ -180,8 +198,12 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 
 		fPromptOnRemove = new Button(optionComp, SWT.CHECK);
 		fPromptOnRemove.setText(PDEUIMessages.MainPreferencePage_promtBeforeRemove);
-		fPromptOnRemove.setSelection(!MessageDialogWithToggle.ALWAYS.equals(store.getString(IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET)));
-		fPromptOnRemove.addSelectionListener(widgetSelectedAdapter(e -> PDEPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET, fPromptOnRemove.getSelection() ? MessageDialogWithToggle.PROMPT : MessageDialogWithToggle.ALWAYS)));
+		fPromptOnRemove.setSelection(!MessageDialogWithToggle.ALWAYS
+				.equals(store.getString(IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET)));
+		fPromptOnRemove.addSelectionListener(widgetSelectedAdapter(e -> PDEPlugin.getDefault().getPreferenceStore()
+				.setValue(IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET,
+						fPromptOnRemove.getSelection() ? MessageDialogWithToggle.PROMPT
+								: MessageDialogWithToggle.ALWAYS)));
 
 		fAddToJavaSearch = new Button(optionComp, SWT.CHECK);
 		fAddToJavaSearch.setText(PDEUIMessages.MainPreferencePage_addToJavaSearch);
@@ -195,7 +217,6 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fAlwaysPreferWorkspace.setText(PDEUIMessages.MainPreferencePage_WorkspacePluginsOverrideTarget);
 		fAlwaysPreferWorkspace.setSelection(store.getBoolean(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET));
 		fAlwaysPreferWorkspace.setToolTipText(PDEUIMessages.MainPreferencePage_WorkspacePluginsOverrideTargetTooltip);
-
 
 		fDisableAPIAnalysisBuilder = new Button(optionComp, SWT.CHECK);
 		fDisableAPIAnalysisBuilder.setText(PDEUIMessages.MainPreferencePage_DisableAPIAnalysisBuilder);
@@ -226,8 +247,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		pathComposite.setFont(optionComp.getFont());
 
 		Group testGroup = SWTFactory.createGroup(composite, PDEUIMessages.MainPreferencePage_test_plugin_pattern_group,
-				2, 1,
-				GridData.FILL_HORIZONTAL);
+				2, 1, GridData.FILL_HORIZONTAL);
 		Label testPluginPatternDescription = new Label(testGroup, SWT.LEFT);
 		testPluginPatternDescription.setText(PDEUIMessages.MainPreferencePage_test_plugin_pattern_description);
 		testPluginPatternDescription.setFont(JFaceResources.getDialogFont());
@@ -255,22 +275,24 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		FindReplaceDocumentAdapterContentProposalProvider findProposer = new FindReplaceDocumentAdapterContentProposalProvider(
 				true);
 		ContentAssistCommandAdapter contentAssist = new ContentAssistCommandAdapter(fTestPluginPatternText,
-				contentAdapter,
-				findProposer, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, new char[0], true);
+				contentAdapter, findProposer, ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, new char[0],
+				true);
 		contentAssist.setEnabled(true);
 		Label testPluginPatternNote = new Label(testGroup, SWT.LEFT);
 		testPluginPatternNote.setText(PDEUIMessages.MainPreferencePage_test_plugin_pattern_note);
 		testPluginPatternNote.setFont(JFaceResources.getDialogFont());
 		testPluginPatternNote.setLayoutData(gd2);
 
-		Group group = SWTFactory.createGroup(composite, PDEUIMessages.Preferences_MainPage_showObjects, 2, 1, GridData.FILL_HORIZONTAL);
+		Group group = SWTFactory.createGroup(composite, PDEUIMessages.Preferences_MainPage_showObjects, 2, 1,
+				GridData.FILL_HORIZONTAL);
 		fUseID = new Button(group, SWT.RADIO);
 		fUseID.setText(PDEUIMessages.Preferences_MainPage_useIds);
 
 		fUseName = new Button(group, SWT.RADIO);
 		fUseName.setText(PDEUIMessages.Preferences_MainPage_useFullNames);
 
-		fShowSourceBundles = SWTFactory.createCheckButton(group, PDEUIMessages.MainPreferencePage_showSourceBundles, null, store.getBoolean(IPreferenceConstants.PROP_SHOW_SOURCE_BUNDLES), 2);
+		fShowSourceBundles = SWTFactory.createCheckButton(group, PDEUIMessages.MainPreferencePage_showSourceBundles,
+				null, store.getBoolean(IPreferenceConstants.PROP_SHOW_SOURCE_BUNDLES), 2);
 
 		if (store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS).equals(IPreferenceConstants.VALUE_USE_IDS)) {
 			fUseID.setSelection(true);
@@ -279,18 +301,50 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		}
 
 		new DefaultRuntimeWorkspaceBlock().createControl(composite);
-		fRuntimeWorkspaceLocation.setText(launchingStore.getString(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION));
-		boolean runtimeLocationIsContainer = launchingStore.getBoolean(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION_IS_CONTAINER);
+		fRuntimeWorkspaceLocation
+				.setText(launchingStore.getString(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION));
+		boolean runtimeLocationIsContainer = launchingStore
+				.getBoolean(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION_IS_CONTAINER);
 		fRuntimeWorkspaceLocationRadio.setSelection(!runtimeLocationIsContainer);
 		fRuntimeWorkspacesContainerRadio.setSelection(runtimeLocationIsContainer);
 
 		new DefaultJUnitWorkspaceBlock().createControl(composite);
-		fJUnitWorkspaceLocation.setText(launchingStore.getString(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION));
-		boolean jUnitLocationIsContainer = launchingStore.getBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION_IS_CONTAINER);
+		fJUnitWorkspaceLocation
+				.setText(launchingStore.getString(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION));
+		boolean jUnitLocationIsContainer = launchingStore
+				.getBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION_IS_CONTAINER);
 		fJUnitWorkspaceLocationRadio.setSelection(!jUnitLocationIsContainer);
 		fJUnitWorkspacesContainerRadio.setSelection(jUnitLocationIsContainer);
 
+		Group bundlePoolGp = SWTFactory.createGroup(composite, PDEUIMessages.MainPreferencePage_BundlePoolPrefsGroup, 2,
+				1, GridData.FILL_HORIZONTAL);
+		WidgetFactory.label(SWT.WRAP)
+				.layoutData(GridDataFactory.swtDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).create())
+				.text(PDEUIMessages.MainPreferencePage_BundlePoolPrefsCleanDesc).create(bundlePoolGp);
+		WidgetFactory.button(SWT.PUSH).text(PDEUIMessages.MainPreferencePage_BundlePoolPrefsCleanBtn)
+				.layoutData(GridDataFactory.swtDefaults().align(SWT.FILL, SWT.BEGINNING).create()).create(bundlePoolGp)
+				.addSelectionListener(SelectionListener.widgetSelectedAdapter(this::handleClean));
+
 		return composite;
+	}
+
+	private void handleClean(SelectionEvent event) {
+		// User pushed the "Clean" button to clean the bundle pool
+		// Disable the button first until we are done
+		((Button) event.widget).setEnabled(false);
+
+		try {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(monitor -> P2TargetUtils.garbageCollect());
+		} catch (InterruptedException e) {
+			// Nothing, let them cancel
+		} catch (InvocationTargetException e) {
+			PDEPlugin.log(e);
+			MessageDialog.openError(getShell(), PDEUIMessages.MainPreferencePage_BundlePoolPrefsError, MessageFormat
+					.format(PDEUIMessages.MainPreferencePage_BundlePoolPrefsErrorCleaning, e.getMessage()));
+		} finally {
+			// Reenable the button so they can do it again
+			((Button) event.widget).setEnabled(true);
+		}
 	}
 
 	private boolean validateRegex() {
@@ -329,7 +383,8 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		} else {
 			store.setValue(IPreferenceConstants.PROP_SHOW_OBJECTS, IPreferenceConstants.VALUE_USE_NAMES);
 		}
-		store.setValue(IPreferenceConstants.OVERWRITE_BUILD_FILES_ON_EXPORT, fOverwriteBuildFiles.getSelection() ? MessageDialogWithToggle.PROMPT : MessageDialogWithToggle.ALWAYS);
+		store.setValue(IPreferenceConstants.OVERWRITE_BUILD_FILES_ON_EXPORT,
+				fOverwriteBuildFiles.getSelection() ? MessageDialogWithToggle.PROMPT : MessageDialogWithToggle.ALWAYS);
 		store.setValue(IPreferenceConstants.PROP_SHOW_SOURCE_BUNDLES, fShowSourceBundles.getSelection());
 
 		boolean synchJavaSearch = fAddToJavaSearch.getSelection();
@@ -349,7 +404,8 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 
 		boolean useWorkspace = fAlwaysPreferWorkspace.getSelection();
 		if (store.getBoolean(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET) != useWorkspace) {
-			store.setValue(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET, fAlwaysPreferWorkspace.getSelection());
+			store.setValue(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET,
+					fAlwaysPreferWorkspace.getSelection());
 			PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
 			prefs.setValue(ICoreConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET, fAlwaysPreferWorkspace.getSelection());
 			try {
@@ -372,10 +428,10 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 			TargetStatus.refreshTargetStatus();
 		}
 
-
 		boolean disableAPIAnalysisBuilder = fDisableAPIAnalysisBuilder.getSelection();
 		if (store.getBoolean(IPreferenceConstants.DISABLE_API_ANALYSIS_BUILDER) != disableAPIAnalysisBuilder) {
-			store.setValue(IPreferenceConstants.DISABLE_API_ANALYSIS_BUILDER, fDisableAPIAnalysisBuilder.getSelection());
+			store.setValue(IPreferenceConstants.DISABLE_API_ANALYSIS_BUILDER,
+					fDisableAPIAnalysisBuilder.getSelection());
 			PDEPreferencesManager prefs = PDECore.getDefault().getPreferencesManager();
 			prefs.setValue(ICoreConstants.DISABLE_API_ANALYSIS_BUILDER, fDisableAPIAnalysisBuilder.getSelection());
 			IProject[] projects = BuildJob.getApiProjects();
@@ -410,10 +466,14 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 
 		PDEPreferencesManager launchingStore = PDELaunchingPlugin.getDefault().getPreferenceManager();
 		launchingStore.setValueOrRemove(ILaunchingPreferenceConstants.PROP_AUTO_MANAGE, fAutoManage.getSelection());
-		launchingStore.setValueOrRemove(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION, fRuntimeWorkspaceLocation.getText());
-		launchingStore.setValueOrRemove(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION_IS_CONTAINER, fRuntimeWorkspacesContainerRadio.getSelection());
-		launchingStore.setValueOrRemove(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION, fJUnitWorkspaceLocation.getText());
-		launchingStore.setValueOrRemove(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION_IS_CONTAINER, fJUnitWorkspacesContainerRadio.getSelection());
+		launchingStore.setValueOrRemove(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION,
+				fRuntimeWorkspaceLocation.getText());
+		launchingStore.setValueOrRemove(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION_IS_CONTAINER,
+				fRuntimeWorkspacesContainerRadio.getSelection());
+		launchingStore.setValueOrRemove(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION,
+				fJUnitWorkspaceLocation.getText());
+		launchingStore.setValueOrRemove(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION_IS_CONTAINER,
+				fJUnitWorkspacesContainerRadio.getSelection());
 		try {
 			launchingStore.flush();
 		} catch (BackingStoreException e) {
@@ -440,29 +500,36 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 
 		fAddToJavaSearch.setSelection(store.getDefaultBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH));
 		fShowTargetStatus.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TARGET_STATUS));
-		fAlwaysPreferWorkspace.setSelection(store.getDefaultBoolean(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET));
+		fAlwaysPreferWorkspace
+				.setSelection(store.getDefaultBoolean(IPreferenceConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET));
 		fRunAPIAnalysisBuilderAsJob.setEnabled(true);
 		fRunAPIAnalysisBuilderAsJob.setSelection(
 				PDECore.getDefault().getPreferencesManager().getDefaultBoolean(ICoreConstants.RUN_API_ANALYSIS_AS_JOB));
-		fDisableAPIAnalysisBuilder.setSelection(store.getDefaultBoolean(IPreferenceConstants.DISABLE_API_ANALYSIS_BUILDER));
+		fDisableAPIAnalysisBuilder
+				.setSelection(store.getDefaultBoolean(IPreferenceConstants.DISABLE_API_ANALYSIS_BUILDER));
 		fAddSwtNonDisposalReporting
 				.setSelection(store.getDefaultBoolean(IPreferenceConstants.ADD_SWT_NON_DISPOSAL_REPORTING));
 		fTestPluginPatternText.setText(store.getDefaultString(IPreferenceConstants.TEST_PLUGIN_PATTERN));
 		PDEPreferencesManager launchingStore = PDELaunchingPlugin.getDefault().getPreferenceManager();
-		boolean runtimeLocationIsContainer = launchingStore.getDefaultBoolean(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION_IS_CONTAINER);
+		boolean runtimeLocationIsContainer = launchingStore
+				.getDefaultBoolean(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION_IS_CONTAINER);
 		fRuntimeWorkspaceLocationRadio.setSelection(!runtimeLocationIsContainer);
 		fRuntimeWorkspacesContainerRadio.setSelection(runtimeLocationIsContainer);
-		fRuntimeWorkspaceLocation.setText(launchingStore.getDefaultString(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION));
+		fRuntimeWorkspaceLocation.setText(
+				launchingStore.getDefaultString(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION));
 
-		boolean jUnitLocationIsContainer = launchingStore.getDefaultBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION_IS_CONTAINER);
+		boolean jUnitLocationIsContainer = launchingStore
+				.getDefaultBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION_IS_CONTAINER);
 		fJUnitWorkspaceLocationRadio.setSelection(!jUnitLocationIsContainer);
 		fJUnitWorkspacesContainerRadio.setSelection(jUnitLocationIsContainer);
-		fJUnitWorkspaceLocation.setText(launchingStore.getDefaultString(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION));
+		fJUnitWorkspaceLocation
+				.setText(launchingStore.getDefaultString(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION));
 	}
 
 	@Override
 	public void setVisible(boolean visible) {
-		fPromptOnRemove.setSelection(!MessageDialogWithToggle.ALWAYS.equals(PDEPlugin.getDefault().getPreferenceManager().getString(IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET)));
+		fPromptOnRemove.setSelection(!MessageDialogWithToggle.ALWAYS.equals(PDEPlugin.getDefault()
+				.getPreferenceManager().getString(IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET)));
 		super.setVisible(visible);
 	}
 
