@@ -88,7 +88,7 @@ public class TargetLocationsGroup {
 	private Button fEditButton;
 	private Button fRemoveButton;
 	private Button fUpdateButton;
-	private Button fReloadButton;
+	private Button fRefreshButton;
 	private Button fExpandCollapseButton;
 	private Button fShowContentButton;
 
@@ -189,9 +189,10 @@ public class TargetLocationsGroup {
 		fRemoveButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_Btn_Text_Remove, SWT.PUSH);
 		fUpdateButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_Btn_Text_Update, SWT.PUSH);
 		fUpdateButton.setToolTipText(Messages.TargetLocationsGroup_update);
-		fReloadButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_Btn_Text_Reload, SWT.PUSH);
-		fReloadButton.setToolTipText(Messages.TargetLocationsGroup_reload);
-		fExpandCollapseButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_Btn_Text_ExpandAll, SWT.PUSH);
+		fRefreshButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_Btn_Text_Refresh, SWT.PUSH);
+		fRefreshButton.setToolTipText(Messages.TargetLocationsGroup_refresh);
+		fExpandCollapseButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_Btn_Text_ExpandAll,
+				SWT.PUSH);
 
 		fShowContentButton = toolkit.createButton(comp, Messages.TargetLocationsGroup_1, SWT.CHECK);
 
@@ -229,8 +230,9 @@ public class TargetLocationsGroup {
 		fEditButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_Btn_Text_Edit, null);
 		fRemoveButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_Btn_Text_Remove, null);
 		fUpdateButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_Btn_Text_Update, null);
-		fReloadButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_Btn_Text_Reload, null);
-		fExpandCollapseButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_Btn_Text_ExpandAll, null);
+		fRefreshButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_Btn_Text_Refresh, null);
+		fExpandCollapseButton = SWTFactory.createPushButton(buttonComp,
+				Messages.BundleContainerTable_Btn_Text_ExpandAll, null);
 
 		fShowContentButton = SWTFactory.createCheckButton(comp, Messages.TargetLocationsGroup_1, null, false, 2);
 
@@ -285,9 +287,11 @@ public class TargetLocationsGroup {
 			public void mouseDoubleClick(MouseEvent e) {
 				setExpandCollapseState();
 			}
+
 			@Override
 			public void mouseDown(MouseEvent e) {
 			}
+
 			@Override
 			public void mouseUp(MouseEvent e) {
 				setExpandCollapseState();
@@ -319,6 +323,7 @@ public class TargetLocationsGroup {
 		}
 
 	}
+
 	private void createContextMenu(Tree tree) {
 		fCopySelectionAction = new CopyTreeSelectionAction(tree);
 
@@ -353,10 +358,10 @@ public class TargetLocationsGroup {
 		fUpdateButton.setEnabled(false);
 		SWTFactory.setButtonDimensionHint(fUpdateButton);
 
-		fReloadButton.addSelectionListener(widgetSelectedAdapter(e -> handleReload()));
-		fReloadButton.setLayoutData(new GridData());
-		fReloadButton.setEnabled(true);
-		SWTFactory.setButtonDimensionHint(fReloadButton);
+		fRefreshButton.addSelectionListener(widgetSelectedAdapter(e -> handleReload()));
+		fRefreshButton.setLayoutData(new GridData());
+		fRefreshButton.setEnabled(true);
+		SWTFactory.setButtonDimensionHint(fRefreshButton);
 
 		fExpandCollapseButton.addSelectionListener(widgetSelectedAdapter(e -> toggleCollapse()));
 		fExpandCollapseButton.setLayoutData(new GridData());
@@ -509,7 +514,7 @@ public class TargetLocationsGroup {
 			fRemoveButton.setData(BUTTON_STATE, DeleteButtonState.NONE);
 			fUpdateButton.setEnabled(false);
 			fEditButton.setEnabled(false);
-			if(fTreeViewer !=null) {
+			if (fTreeViewer != null) {
 				setExpandCollapseState();
 			}
 			return;
@@ -552,7 +557,7 @@ public class TargetLocationsGroup {
 
 	private void handleReload() {
 		log(ADAPTER.reload(fTarget, fTarget.getTargetLocations(), new NullProgressMonitor()));
-		Job job = new UIJob("Reloading...") { //$NON-NLS-1$
+		Job job = new UIJob("Refreshing...") { //$NON-NLS-1$
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				contentsReload();

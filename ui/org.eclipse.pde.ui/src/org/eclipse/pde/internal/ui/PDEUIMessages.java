@@ -529,6 +529,16 @@ public class PDEUIMessages extends NLS {
 	public static String MainPreferencePage_AddSwtNonDisposedToVMArgumentsToolTop;
 
 	public static String MainPreferencePage_addToJavaSearch;
+	public static String MainPreferencePage_BundlePoolPrefsCleanBtn;
+
+	public static String MainPreferencePage_BundlePoolPrefsCleanDesc;
+
+	public static String MainPreferencePage_BundlePoolPrefsError;
+
+	public static String MainPreferencePage_BundlePoolPrefsErrorCleaning;
+
+	public static String MainPreferencePage_BundlePoolPrefsGroup;
+
 	public static String MainPreferencePage_junitWorkspace_asContainer;
 
 	public static String MainPreferencePage_junitWorkspace_asLocation;
