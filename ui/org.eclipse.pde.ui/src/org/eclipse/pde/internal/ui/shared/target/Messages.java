@@ -60,7 +60,7 @@ public class Messages extends NLS {
 	public static String BundleContainerTable_Btn_Text_Edit;
 	public static String BundleContainerTable_Btn_Text_Remove;
 	public static String BundleContainerTable_Btn_Text_Update;
-	public static String BundleContainerTable_Btn_Text_Reload;
+	public static String BundleContainerTable_Btn_Text_Refresh;
 	public static String BundleContainerTable_Btn_Text_ExpandAll;
 	public static String BundleContainerTable_Btn_Text_CollapseAll;
 	public static String BundleContainerTable_8;
@@ -132,9 +132,11 @@ public class Messages extends NLS {
 	public static String TargetContentsGroup_OtherPluginsParent;
 	public static String TargetContentsGroup_PluginMode;
 	public static String TargetContentsGroup_resolveCancelled;
+
 	public static String TargetLocationsGroup_update;
-	public static String TargetLocationsGroup_reload;
+	public static String TargetLocationsGroup_refresh;
 	public static String TargetLocationsGroup_1;
+
 	public static String TargetLocationsGroup_TargetUpdateErrorDialog;
 	public static String TargetStatus_NoActiveTargetPlatformStatus;
 	public static String TargetStatus_TargetStatusDefaultString;
