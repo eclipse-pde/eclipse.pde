@@ -277,6 +277,8 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_PROFILE_EXC = create(PATH_OBJ, "profile_exc.png"); //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_CON_SEV = create(PATH_LCL, "configure_problem_severity.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ORGANIZE_MANIFESTS_ACTION = create(PATH_LCL,
+			"cleanmanifest.png"); //$NON-NLS-1$
 	/**
 	 * WIZ
 	 */

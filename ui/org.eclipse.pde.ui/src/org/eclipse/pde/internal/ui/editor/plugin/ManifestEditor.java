@@ -24,9 +24,11 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.service.resolver.BaseDescription;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
@@ -45,6 +47,7 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.build.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
+import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsAction;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.FileStoreEditorInput;
@@ -696,7 +699,21 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	@Override
 	public void contributeToToolbar(IToolBarManager manager) {
 		contributeLaunchersToToolbar(manager);
+		manager.add(getOrganizeManifestsAction());
 		manager.add(getExportAction());
+	}
+
+	private Action getOrganizeManifestsAction() {
+		Action action = new Action() {
+			@Override
+			public void run() {
+				OrganizeManifestsAction organizeAction = new OrganizeManifestsAction();
+				organizeAction.runOrganizeManfestsAction(new StructuredSelection(getCommonProject()));
+			}
+		};
+		action.setToolTipText(PDEUIMessages.OrganizeManifestJob_taskName);
+		action.setImageDescriptor(PDEPluginImages.DESC_ORGANIZE_MANIFESTS_ACTION);
+		return action;
 	}
 
 	private PluginExportAction getExportAction() {
