@@ -23,16 +23,14 @@ import java.util.stream.Collectors;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.ds.internal.annotations.Messages;
 import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
-import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
 import org.eclipse.pde.internal.launching.launcher.ProductValidationOperation;
+import org.eclipse.pde.internal.ui.launcher.LaunchAction;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.internal.ui.wizards.WizardElement;
 import org.eclipse.pde.internal.ui.wizards.plugin.*;
@@ -175,12 +173,7 @@ public class TestPDETemplates {
 		model.load();
 		IProduct product = model.getProduct();
 
-		Set<IPluginModelBase> launchPlugins = new HashSet<>();
-		for (IProductPlugin plugin : product.getPlugins()) {
-			IPluginModelBase pluginModel = PluginRegistry.findModel(plugin.getId());
-			if (pluginModel != null && TargetPlatformHelper.matchesCurrentEnvironment(pluginModel))
-				launchPlugins.add(pluginModel);
-		}
+		Set<IPluginModelBase> launchPlugins = LaunchAction.getLaunchedBundlesForProduct(product);
 
 		ProductValidationOperation validationOperation = new ProductValidationOperation(launchPlugins);
 		validationOperation.run(new NullProgressMonitor());

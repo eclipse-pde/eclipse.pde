@@ -28,7 +28,7 @@ import org.eclipse.swt.SWT;
 
 public class ProductValidateAction extends Action {
 
-	IProduct fProduct;
+	private final IProduct fProduct;
 
 	public ProductValidateAction(IProduct product) {
 		super(PDEUIMessages.ProductValidateAction_validate, IAction.AS_PUSH_BUTTON);
@@ -38,8 +38,8 @@ public class ProductValidateAction extends Action {
 
 	@Override
 	public void run() {
-		Set<IPluginModelBase> launchPlugins = LaunchAction.getModels(fProduct);
 		try {
+			Set<IPluginModelBase> launchPlugins = LaunchAction.getLaunchedBundlesForProduct(fProduct);
 			LaunchValidationOperation operation = new ProductValidationOperation(launchPlugins);
 			LaunchPluginValidator.runValidationOperation(operation, new NullProgressMonitor());
 			if (!operation.hasErrors()) {
