@@ -34,6 +34,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
+import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
@@ -49,6 +50,20 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 public class LaunchAction extends Action {
 
 	private static final String DEFAULT = "default"; //$NON-NLS-1$
+
+	/**
+	 * Returns the complete Set of all {@link PluginModelBase plugins} launched
+	 * for the given product. This for example also includes transitive
+	 * dependencies, if the product is configured to include them.
+	 */
+	public static Set<IPluginModelBase> getLaunchedBundlesForProduct(IProduct product)
+			throws CoreException {
+		IResource resource = product.getModel().getUnderlyingResource();
+		IPath fullPath = resource != null ? resource.getFullPath() : Path.fromOSString(product.getProductId());
+		LaunchAction launchAction = new LaunchAction(product, fullPath, null);
+		ILaunchConfigurationWorkingCopy config = launchAction.createConfiguration();
+		return BundleLauncherHelper.getMergedBundleMap(config, false).keySet();
+	}
 
 	private IProduct fProduct;
 	private String fMode;
@@ -79,19 +94,19 @@ public class LaunchAction extends Action {
 		List<ILaunchConfiguration> configs = getLaunchConfigurations();
 
 		if (configs.isEmpty()) {
-			return createConfiguration();
+			return createConfiguration().doSave();
 		}
 		ILaunchConfiguration config = configs.size() == 1 //
 				? configs.get(0)
 				: chooseConfiguration(configs); // Prompt the user to choose one
 
 		if (config != null) {
-			config = refreshConfiguration(config.getWorkingCopy());
+			config = refreshConfiguration(config.getWorkingCopy()).doSave();
 		}
 		return config;
 	}
 
-	private ILaunchConfiguration refreshConfiguration(ILaunchConfigurationWorkingCopy wc) throws CoreException {
+	private ILaunchConfigurationWorkingCopy refreshConfiguration(ILaunchConfigurationWorkingCopy wc) {
 		wc.setAttribute(IPDELauncherConstants.PRODUCT, fProduct.getProductId());
 		wc.setAttribute(IPDELauncherConstants.APPLICATION, fProduct.getApplication());
 
@@ -131,7 +146,7 @@ public class LaunchAction extends Action {
 		if (configIni != null) {
 			wc.setAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, configIni);
 		}
-		return wc.doSave();
+		return wc;
 	}
 
 	private void refreshFeatureLaunchPlugins(ILaunchConfigurationWorkingCopy wc, Set<IPluginModelBase> allModels) {
@@ -346,7 +361,7 @@ public class LaunchAction extends Action {
 		return result == Window.OK ? (ILaunchConfiguration) dialog.getFirstResult() : null;
 	}
 
-	private ILaunchConfiguration createConfiguration() throws CoreException {
+	private ILaunchConfigurationWorkingCopy createConfiguration() throws CoreException {
 		ILaunchConfigurationType configType = getWorkbenchLaunchConfigType();
 		String computedName = getComputedName(fPath.lastSegment());
 		ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, computedName);
