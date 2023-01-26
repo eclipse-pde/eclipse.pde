@@ -1,8 +1,8 @@
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.pde.api.tools.annotations;singleton:=true
-Bundle-Version: 1.1.500.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Vendor: %Bundle-Vendor
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.eclipse.pde.api.tools.annotations
 Automatic-Module-Name: org.eclipse.pde.api.tools.annotations
