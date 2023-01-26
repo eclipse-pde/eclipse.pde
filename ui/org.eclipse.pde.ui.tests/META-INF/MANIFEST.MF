@@ -45,7 +45,8 @@ Require-Bundle: org.junit,
  org.eclipse.ui.ide.application
 Import-Package: org.assertj.core.api;version="3.14.0",
  org.assertj.core.presentation;version="3.21.0",
- org.junit.jupiter.api.function;version="5.8.1"
+ org.junit.jupiter.api.function;version="5.8.1",
+ org.eclipse.pde.internal.build
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Eclipse-BundleShape: dir
