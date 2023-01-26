@@ -20,20 +20,28 @@ import static org.eclipse.pde.ui.tests.launcher.FeatureBasedLaunchTest.toDefault
 import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.bundle;
 import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.resolution;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.osgi.framework.Constants.REQUIRE_BUNDLE;
 import static org.osgi.framework.Constants.RESOLUTION_OPTIONAL;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.eclipse.pde.launching.EclipseApplicationLaunchConfiguration;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
@@ -816,6 +824,68 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		}, concat(requiredRPBundlesWithoutOptional, toDefaultStartData(Set.of( //
 				targetBundle("plugin.a", "1.0.0"), //
 				targetBundle("plugin.b", "1.0.0")))));
+	}
+
+	@Test
+	public void testTwoVersionsOfSameBundleConfigIni() throws Exception {
+		var workspacePlugins = ofEntries( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.a", "2.0.0"));
+		setUpWorkspace(workspacePlugins, Map.of());
+
+		ILaunchConfigurationWorkingCopy launchConfig = createPluginLaunchConfig("testTwoVersionsOfSameBundleConfigIni");
+		launchConfig.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES,
+				Set.of("plugin.a*1.0.0", "plugin.a*2.0.0"));
+		IPluginModelBase plugin1 = workspaceBundle("plugin.a", "1.0.0").findModel();
+		IPluginModelBase plugin2 = workspaceBundle("plugin.a", "2.0.0").findModel();
+
+		EclipseApplicationLaunchConfiguration launch = new EclipseApplicationLaunchConfiguration();
+		ILaunch alaunch = new Launch(launchConfig, "run", null);
+		String commandLine = launch.showCommandLine(launchConfig, "run", alaunch, new NullProgressMonitor());
+		StringTokenizer tokenizer = new StringTokenizer(commandLine);
+		while (!"-configuration".equals(tokenizer.nextToken())) {
+			//
+		}
+		File configIniFile = new File(URI.create(tokenizer.nextToken() + "/config.ini"));
+		Properties configIni = new Properties();
+		try (FileInputStream input = new FileInputStream(configIniFile)) {
+			configIni.load(input);
+		}
+
+		String osgiBundles = configIni.getProperty("osgi.bundles");
+		assertTrue(osgiBundles, osgiBundles.contains(new File(plugin1.getInstallLocation()).getAbsolutePath()));
+		assertTrue(osgiBundles, osgiBundles.contains(new File(plugin2.getInstallLocation()).getAbsolutePath()));
+	}
+
+	@Test
+	public void testTwoVersionsOfSameBundleBundlesInfo() throws Exception {
+		var workspacePlugins = ofEntries( //
+				bundle("plugin.a", "1.0.0"), //
+				bundle("plugin.a", "2.0.0"), //
+				// will trigger usage of bundes.info
+				bundle(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR, "1.0.0"));
+		setUpWorkspace(workspacePlugins, Map.of());
+
+		ILaunchConfigurationWorkingCopy launchConfig = createPluginLaunchConfig(
+				"testTwoVersionsOfSameBundleBundlesInfo");
+		launchConfig.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES,
+				Set.of("plugin.a*1.0.0", "plugin.a*2.0.0", IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR + "*1.0.0"));
+		IPluginModelBase plugin1 = workspaceBundle("plugin.a", "1.0.0").findModel();
+		IPluginModelBase plugin2 = workspaceBundle("plugin.a", "2.0.0").findModel();
+
+		EclipseApplicationLaunchConfiguration launch = new EclipseApplicationLaunchConfiguration();
+		ILaunch alaunch = new Launch(launchConfig, "run", null);
+		String commandLine = launch.showCommandLine(launchConfig, "run", alaunch, new NullProgressMonitor());
+		StringTokenizer tokenizer = new StringTokenizer(commandLine);
+		while (!"-configuration".equals(tokenizer.nextToken())) {
+			//
+		}
+		File bundlesInfo = new File(
+				URI.create(
+						tokenizer.nextToken() + '/' + IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR + "/bundles.info"));
+		String info = Files.readString(bundlesInfo.toPath());
+		assertTrue(info.contains(new File(plugin1.getInstallLocation()).getAbsolutePath()));
+		assertTrue(info.contains(new File(plugin2.getInstallLocation()).getAbsolutePath()));
 	}
 
 	// --- test cases for writeBundleEntry() ----
