@@ -188,7 +188,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			// checked earlier status of earlier resolved targets
 			Map<ITargetHandle, List<TargetDefinition>> targetFlagMap = TargetPlatformHelper.getTargetDefinitionMap();
 			List<TargetDefinition> targets = targetFlagMap.get(target.getHandle());
-			return !targets.isEmpty() && targets.get(0).isContentEquivalent(target);
+			return targets != null && !targets.isEmpty() && targets.get(0).isContentEquivalent(target);
 		}
 
 		private Image getImage(ITargetDefinition target) {
@@ -204,10 +204,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			} else {
 				// checked earlier status of earlier resolved targets
 				boolean isResolved = false;
-				List<TargetDefinition> targetList = TargetPlatformHelper.getTargetDefinitionMap()
-						.get(target.getHandle());
-				if (!targetList.isEmpty()) {
-					TargetDefinition targetDef = targetList.get(0);
+				List<TargetDefinition> targets = TargetPlatformHelper.getTargetDefinitionMap().get(target.getHandle());
+				if (targets != null && !targets.isEmpty()) {
+					TargetDefinition targetDef = targets.get(0);
 					if (targetDef.isContentEquivalent(target) && targetDef.getStatus() != null) {
 						int value = targetDef.getStatus().getSeverity();
 						if (value == IStatus.WARNING) {
