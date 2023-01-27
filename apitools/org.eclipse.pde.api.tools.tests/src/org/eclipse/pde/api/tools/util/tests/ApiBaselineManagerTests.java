@@ -895,7 +895,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	@After
 	public void tearDown() throws Exception {
 		deleteProject(TESTING_PLUGIN_PROJECT_NAME);
-		getWorkspaceBaseline().dispose();
+		// getWorkspaceBaseline().dispose();
 		super.tearDown();
 	}
 }

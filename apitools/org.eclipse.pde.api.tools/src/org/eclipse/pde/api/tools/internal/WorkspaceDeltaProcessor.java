@@ -18,6 +18,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ElementChangedEvent;
@@ -32,6 +34,7 @@ import org.eclipse.pde.api.tools.internal.builder.BuildState;
 import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.internal.core.PDECore;
 
 /**
  * Standard delta processor for us to track element state changes in the workspace
@@ -226,6 +229,23 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 						System.out.println("processed PRE_BUILD delta for project: [" + resource.getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
+
+				if (event.getBuildKind() == IncrementalProjectBuilder.AUTO_BUILD) {
+					IWorkspace workspace = null;
+					if (resource != null) {
+						workspace = resource.getWorkspace();
+					} else {
+						Object source = event.getSource();
+						if (source instanceof IWorkspace) {
+							workspace = (IWorkspace) source;
+						}
+					}
+					if (workspace != null && !workspace.getDescription().isAutoBuilding()) {
+						return;
+					}
+				}
+
+				PDECore.isMainThread();
 				IResourceDelta delta = event.getDelta();
 				if (delta != null) {
 					IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.CHANGED);

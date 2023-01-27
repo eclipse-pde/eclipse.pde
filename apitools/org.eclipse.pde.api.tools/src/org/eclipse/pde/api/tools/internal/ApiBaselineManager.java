@@ -66,6 +66,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.DependencyManager;
+import org.eclipse.pde.internal.core.PDECore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -630,6 +631,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		if (!ApiPlugin.isRunningInFramework()) {
 			return null;
 		}
+		PDECore.isMainThread();
 		if (this.workspacebaseline == null) {
 			try {
 				synchronized (this) {
@@ -639,6 +641,11 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 				}
 			} catch (CoreException e) {
 				ApiPlugin.log(e);
+			}
+		} else {
+			if (this.workspacebaseline.isDisposed()) {
+				System.err.println("Working with disposed workspace baseline"); //$NON-NLS-1$
+				Thread.dumpStack();
 			}
 		}
 		return this.workspacebaseline;
@@ -652,6 +659,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		if (workspacebaseline == null) {
 			return;
 		}
+		PDECore.isMainThread();
 		Job.getJobManager().cancel(ApiAnalysisJob.class);
 		IApiBaseline oldBaseline = null;
 		synchronized (this) {

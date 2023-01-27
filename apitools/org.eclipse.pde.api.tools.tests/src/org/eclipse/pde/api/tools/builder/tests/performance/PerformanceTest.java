@@ -142,6 +142,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		// populate the workspace with initial plug-ins/projects
 		createInitialWorkspace();
 		createBaseline();
+		getEnv().waitForAutoBuild();
 	}
 
 	/**

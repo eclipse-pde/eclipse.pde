@@ -44,6 +44,7 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 
 	private IPath fRootPath = super.getTestSourcePath().append("filters"); //$NON-NLS-1$
 	private IPath fFiltersPath = new Path("/usagetests/.settings/.api_filters"); //$NON-NLS-1$
+	private IApiBaseline oldApiBaseline;
 
 	public UnusedApiProblemFilterTests(String name) {
 		super(name);
@@ -57,7 +58,7 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	 */
 	protected void assertStubBaseline(String name) {
 		IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
-		IApiBaseline baseline = manager.getDefaultApiBaseline();
+		IApiBaseline baseline = oldApiBaseline = manager.getDefaultApiBaseline();
 		if (baseline == null) {
 			baseline = ApiModelFactory.newApiBaseline(name);
 			manager.addApiBaseline(baseline);
@@ -89,6 +90,7 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 			assertEquals("The given name should be the default baseline name", baseline.getName(), name); //$NON-NLS-1$
 			assertTrue("The baseline [" + name + "] should have been removed", manager.removeApiBaseline(name)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		manager.setDefaultApiBaseline(oldApiBaseline == null ? null : oldApiBaseline.getName());
 	}
 
 	@Override
@@ -149,6 +151,8 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		createWorkspaceFile(fFiltersPath, filterpath);
 		Object event = waiter.waitForEvent();
 		assertNotNull("the resource changed event for the filter file was not recieved", event); //$NON-NLS-1$
+
+		getEnv().waitForAutoBuild();
 
 		expectingNoJDTProblems();
 		// update the source

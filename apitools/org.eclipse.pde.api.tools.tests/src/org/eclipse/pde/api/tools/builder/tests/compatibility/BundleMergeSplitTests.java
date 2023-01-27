@@ -103,7 +103,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		this.baseline = null;
 		IApiBaseline wsbaseline = manager.getWorkspaceBaseline();
 		if (wsbaseline != null) {
-			wsbaseline.dispose();
+			// wsbaseline.dispose();
 		}
 		for (IProject project : getEnv().getWorkspace().getRoot().getProjects()) {
 			getEnv().removeProject(project.getFullPath());

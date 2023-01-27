@@ -192,8 +192,9 @@ public class ProjectUtils {
 		description.setBundleVersion(new Version("1.0.0")); //$NON-NLS-1$
 		description.setExecutionEnvironments(new String[] { "J2SE-1.5" }); //$NON-NLS-1$
 		description.apply(null);
+		IJavaProject javaProject = JavaCore.create(project);
 		AbstractApiTest.waitForAutoBuild();
-		return JavaCore.create(project);
+		return javaProject;
 	}
 
 	/**

@@ -418,4 +418,24 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		DEBUG_TARGET_PROFILE = DEBUG && options.getBooleanOption(TARGET_PROFILE_DEBUG, false);
 		DEBUG_VALIDATION = DEBUG && options.getBooleanOption(VALIDATION_DEBUG, false);
 	}
+
+	private static Thread mainThread;
+
+	public static boolean isMainThread() {
+		if (mainThread == null) {
+			for (Thread thread : Thread.getAllStackTraces().keySet()) {
+				if (thread.getName().equals("main")) {
+					mainThread = thread;
+					break;
+				}
+			}
+		}
+
+		if (Thread.currentThread() != mainThread) {
+			Thread.dumpStack();
+			return false;
+		}
+
+		return true;
+	}
 }

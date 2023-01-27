@@ -39,6 +39,12 @@ public class FragmentUsageTests extends UsageTest {
 		return JavaCore.VERSION_1_5;
 	}
 
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		cleanBuild();
+	}
+
 	/**
 	 * @return the test suite for this class
 	 */

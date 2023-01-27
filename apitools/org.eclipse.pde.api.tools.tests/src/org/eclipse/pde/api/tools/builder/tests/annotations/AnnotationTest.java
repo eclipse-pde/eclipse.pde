@@ -259,6 +259,8 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 			// populate the workspace with initial plug-ins/projects
 			createExistingProjects("tagprojects", true, true, false); //$NON-NLS-1$
 		}
+
+		getEnv().waitForAutoBuild();
 	}
 
 	@Override

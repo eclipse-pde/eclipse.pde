@@ -74,6 +74,7 @@ public abstract class Java7UsageTest extends ApiBuilderTest {
 			// populate the workspace with initial plug-ins/projects
 			createExistingProjects("usageprojectsjava7", true, true, false); //$NON-NLS-1$
 		}
+		getEnv().waitForAutoBuild();
 	}
 
 	@Override

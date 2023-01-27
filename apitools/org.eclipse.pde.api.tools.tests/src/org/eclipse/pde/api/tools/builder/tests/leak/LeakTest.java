@@ -175,6 +175,8 @@ public abstract class LeakTest extends ApiBuilderTest {
 			// populate the workspace with initial plug-ins/projects
 			createExistingProjects("leakprojects", true, true, true); //$NON-NLS-1$
 		}
+		cleanBuild();
+		getEnv().waitForAutoBuild();
 	}
 
 	@Override

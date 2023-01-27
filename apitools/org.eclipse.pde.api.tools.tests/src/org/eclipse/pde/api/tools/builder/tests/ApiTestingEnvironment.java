@@ -27,10 +27,13 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -45,6 +48,7 @@ import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 
@@ -748,4 +752,53 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 			TargetPlatformUtil.setRunningPlatformSubSetAsTarget("Current bundles target platform", null); //$NON-NLS-1$
 		}
 	}
+
+	@Override
+	public void cleanBuild() {
+		super.cleanBuild();
+		waitForAutoBuild();
+	}
+
+	@Override
+	public void cleanBuild(String projectName) {
+		super.cleanBuild(projectName);
+		waitForAutoBuild();
+	}
+
+	@Override
+	public void fullBuild() {
+		super.fullBuild();
+		waitForAutoBuild();
+	}
+
+	@Override
+	public void fullBuild(String projectName) {
+		super.fullBuild(projectName);
+		waitForAutoBuild();
+	}
+
+	@Override
+	public void incrementalBuild() {
+		super.incrementalBuild();
+		waitForAutoBuild();
+	}
+
+	@Override
+	public void incrementalBuild(IPath projectPath) {
+		super.incrementalBuild(projectPath);
+		waitForAutoBuild();
+	}
+
+	@Override
+	public void waitForAutoBuild() {
+		super.waitForAutoBuild();
+		try {
+			Job.getJobManager().join(PluginModelManager.class, new NullProgressMonitor());
+			Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_BUILD, new NullProgressMonitor());
+		} catch (OperationCanceledException | InterruptedException e) {
+			e.printStackTrace();
+		}
+		super.waitForAutoBuild();
+	}
+
 }

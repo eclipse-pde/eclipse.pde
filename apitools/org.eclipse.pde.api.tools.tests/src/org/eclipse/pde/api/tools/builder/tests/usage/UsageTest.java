@@ -155,6 +155,8 @@ public abstract class UsageTest extends ApiBuilderTest {
 			createExistingProjects("usageprojects", true, true, false); //$NON-NLS-1$
 		}
 		ensureCompliance(new String[] { getTestingProjectName() });
+
+		getEnv().waitForAutoBuild();
 	}
 
 	@Override

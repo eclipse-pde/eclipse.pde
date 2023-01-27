@@ -195,7 +195,7 @@ public class AbstractApiTest {
 		if (name == null) {
 			return;
 		}
-		getWorkspaceBaseline().dispose();
+		// getWorkspaceBaseline().dispose();
 		IProject pro = getProject(name);
 		if (pro.exists()) {
 			ResourceEventWaiter waiter = new ResourceEventWaiter(new Path(name), IResourceChangeEvent.POST_CHANGE,

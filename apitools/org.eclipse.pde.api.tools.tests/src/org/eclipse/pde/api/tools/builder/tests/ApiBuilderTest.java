@@ -1020,7 +1020,8 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			env = new ApiTestingEnvironment();
 			env.openEmptyWorkspace();
 			env.setAutoBuilding(false);
-			ApiTestingEnvironment.setTargetPlatform();
+		} else {
+			env.waitForAutoBuild();
 		}
 		setBuilderOptions();
 		super.setUp();
@@ -1034,6 +1035,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		this.debugRequestor.clearResult();
 		super.tearDown();
 		FreezeMonitor.done();
+		env.waitForAutoBuild();
 	}
 
 	/**

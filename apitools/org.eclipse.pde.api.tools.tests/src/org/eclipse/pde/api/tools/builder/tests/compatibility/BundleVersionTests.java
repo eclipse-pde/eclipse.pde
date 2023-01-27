@@ -116,7 +116,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 		manager.setDefaultApiBaseline(null);
 		manager.removeApiBaseline(API_BASELINE);
 		this.baseline.dispose();
-		manager.getWorkspaceBaseline().dispose();
+		// manager.getWorkspaceBaseline().dispose();
 		this.baseline = null;
 		for (IProject project : getEnv().getWorkspace().getRoot().getProjects()) {
 			getEnv().removeProject(project.getFullPath());

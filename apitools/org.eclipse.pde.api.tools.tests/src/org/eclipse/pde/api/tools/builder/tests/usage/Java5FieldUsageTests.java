@@ -43,6 +43,12 @@ public class Java5FieldUsageTests extends FieldUsageTests {
 	}
 
 	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		cleanBuild();
+	}
+
+	@Override
 	public void testFieldUsage1F() {
 		x1(false);
 	}

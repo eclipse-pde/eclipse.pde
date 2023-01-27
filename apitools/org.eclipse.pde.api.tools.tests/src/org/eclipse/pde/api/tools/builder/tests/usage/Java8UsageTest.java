@@ -80,6 +80,8 @@ public class Java8UsageTest extends ApiBuilderTest {
 			createExistingProjects("usageprojectsjava8", true, true, false); //$NON-NLS-1$
 		}
 
+		getEnv().waitForAutoBuild();
+
 	}
 
 	@Override

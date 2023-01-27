@@ -69,6 +69,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.internal.core.BuildDependencyCollector;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
@@ -177,6 +178,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 */
 	public ApiBaseline(String name) {
 		super(null, IApiElement.BASELINE, name);
+		PDECore.isMainThread();
 		fComponentsProvidingPackageCache = new ConcurrentHashMap<>(8);
 		fAutoResolve = true;
 		fEEStatus = Status.error(CoreMessages.ApiBaseline_0);
@@ -396,13 +398,19 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			}
 		}
 
+		PDECore.isMainThread();
 		fComponentsById.put(component.getSymbolicName(), component);
 		if (component instanceof ProjectComponent) {
 			ProjectComponent projectApiComponent = (ProjectComponent) component;
 			if (this.fComponentsByProjectNames == null) {
 				this.fComponentsByProjectNames = new HashMap<>();
 			}
-			this.fComponentsByProjectNames.put(projectApiComponent.getJavaProject().getProject().getName(), component);
+			IApiComponent oldValue = this.fComponentsByProjectNames
+					.put(projectApiComponent.getJavaProject().getProject().getName(), component);
+			if (oldValue != null) {
+				System.err.println("project=" + projectApiComponent.getJavaProject().getProject().getName()); //$NON-NLS-1$
+				System.err.println("oldvalue=" + oldValue); //$NON-NLS-1$
+			}
 		}
 	}
 
@@ -847,6 +855,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		if (disposed) {
 			return;
 		}
+		PDECore.isMainThread();
 		IApiComponent[] components;
 		synchronized (this) {
 			components = getAlreadyLoadedApiComponents();
@@ -1035,10 +1044,20 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	@Override
 	public IApiComponent getApiComponent(IProject project) {
 		loadBaselineInfos();
+		PDECore.isMainThread();
 		Map<String, IApiComponent> componentsByProjectNames = fComponentsByProjectNames;
+		String name = project.getName();
 		if (disposed || componentsByProjectNames == null) {
+			System.out.println("projectName=" + name); //$NON-NLS-1$
+			System.out.println("dispose=" + disposed); //$NON-NLS-1$
+			System.out.println("fComponentsByProjectNames=" + fComponentsByProjectNames); //$NON-NLS-1$
 			return null;
 		}
-		return componentsByProjectNames.get(project.getName());
+		IApiComponent result = componentsByProjectNames.get(name);
+		if (result == null) {
+			System.out.println("projectName=" + name); //$NON-NLS-1$
+			System.out.println("fComponentsByProjectNames=" + componentsByProjectNames); //$NON-NLS-1$
+		}
+		return result;
 	}
 }

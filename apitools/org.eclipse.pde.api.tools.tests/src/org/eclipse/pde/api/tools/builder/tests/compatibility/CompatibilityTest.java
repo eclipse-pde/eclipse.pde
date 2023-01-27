@@ -146,7 +146,8 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			createExistingProjects(BASELINE, true, true, false);
 		} else {
 			// build after revert
-			incrementalBuild();
+			// incrementalBuild();
+			fullBuild();
 		}
 		IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
 		IApiBaseline baseline = manager.getDefaultApiBaseline();
@@ -172,6 +173,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			manager.setDefaultApiBaseline(baseline.getName());
 		}
 		getEnv().setRevertSourcePath(new Path(BASELINE));
+		getEnv().waitForAutoBuild();
 	}
 
 	@Override
