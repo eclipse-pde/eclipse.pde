@@ -72,7 +72,6 @@ import org.eclipse.pde.ui.tests.util.FreezeMonitor;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
-import org.junit.BeforeClass;
 import org.osgi.service.prefs.BackingStoreException;
 
 import junit.framework.Test;
@@ -95,11 +94,6 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	public static final String SRC_ROOT = "src"; //$NON-NLS-1$
 	public static final String BIN_ROOT = "bin"; //$NON-NLS-1$
 	protected final int[] NO_PROBLEM_IDS = new int[0];
-
-	@BeforeClass
-	public static void beforeClass() {
-		PDECore.getDefault().getPreferencesManager().setValue(ICoreConstants.RUN_API_ANALYSIS_AS_JOB, false);
-	}
 
 	/**
 	 * Describes a line number mapped to the problem id with the given args we
@@ -169,11 +163,6 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 */
 	protected ApiTestingEnvironment getEnv() {
 		return (ApiTestingEnvironment) env;
-	}
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		ApiTestingEnvironment.setTargetPlatform();
 	}
 
 	/**
@@ -1026,10 +1015,12 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	@Override
 	protected void setUp() throws Exception {
 		FreezeMonitor.expectCompletionInAMinute();
+		PDECore.getDefault().getPreferencesManager().setValue(ICoreConstants.RUN_API_ANALYSIS_AS_JOB, false);
 		if (env == null) {
 			env = new ApiTestingEnvironment();
 			env.openEmptyWorkspace();
 			env.setAutoBuilding(false);
+			ApiTestingEnvironment.setTargetPlatform();
 		}
 		setBuilderOptions();
 		super.setUp();
