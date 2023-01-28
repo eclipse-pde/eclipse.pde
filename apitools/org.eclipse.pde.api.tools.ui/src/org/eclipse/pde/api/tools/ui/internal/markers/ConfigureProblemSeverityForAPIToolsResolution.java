@@ -14,15 +14,12 @@
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
 import java.text.MessageFormat;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
@@ -130,52 +127,36 @@ public class ConfigureProblemSeverityForAPIToolsResolution extends WorkbenchMark
 	}
 
 	@Override
-	public void run(IMarker[] markers, IProgressMonitor monitor) {
-
-		UIJob job = new UIJob("") { //$NON-NLS-1$
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				// Configure problem severity for missing baseline
-				// This doesn't have project specific option
-				if (fBackingMarker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID,
-						-1) == IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID) {
-					Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-					int id = ApiProblemFactory.getProblemId(fBackingMarker);
-					String type =ApiBaselinePreferencePage.MISSING_BASELINE_OPTION;
-					if (id > -1) {
-						if  (id == ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_API_BASELINE,
-								IElementDescriptor.RESOURCE, IApiProblem.API_PLUGIN_NOT_PRESENT_IN_BASELINE,
-								IApiProblem.NO_FLAGS)) {
-							type =ApiBaselinePreferencePage.MISSING_PLUGIN_IN_BASELINE_OPTION;
-						}
-
-					}
-					Map<String, Object> data = new HashMap<>();
-
-					data.put(ApiBaselinePreferencePage.DATA_SELECT_OPTION_KEY,
-							type);
-					PreferencesUtil
-							.createPreferenceDialogOn(shell, IApiToolsConstants.ID_BASELINES_PREF_PAGE, null, data)
-							.open();
-
-					return Status.OK_STATUS;
+	public void run(IMarker[] markers, IProgressMonitor m) {
+		UIJob job = UIJob.create("", monitor -> { //$NON-NLS-1$
+			// Configure problem severity for missing baseline
+			// This doesn't have project specific option
+			if (fBackingMarker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID,
+					-1) == IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID) {
+				Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+				int id = ApiProblemFactory.getProblemId(fBackingMarker);
+				String type = ApiBaselinePreferencePage.MISSING_BASELINE_OPTION;
+				if (id > -1 && id == ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_API_BASELINE,
+						IElementDescriptor.RESOURCE, IApiProblem.API_PLUGIN_NOT_PRESENT_IN_BASELINE,
+						IApiProblem.NO_FLAGS)) {
+					type = ApiBaselinePreferencePage.MISSING_PLUGIN_IN_BASELINE_OPTION;
 				}
-				// Configure problem severity for API Error/Warning( Usage Error, API compatibility error, API
-				// version error, since tag error, analysis option etc )
+				Map<String, Object> data = Map.of(ApiBaselinePreferencePage.DATA_SELECT_OPTION_KEY, type);
+				PreferencesUtil.createPreferenceDialogOn(shell, IApiToolsConstants.ID_BASELINES_PREF_PAGE, null, data)
+						.open();
+			} else {
+				// Configure problem severity for API Error/Warning( Usage
+				// Error, API compatibility error, API version error, since tag
+				// error, analysis option etc )
 				IJavaProject project = JavaCore.create(fBackingMarker.getResource().getProject());
 				int id = ApiProblemFactory.getProblemId(fBackingMarker);
 				int tab = -1;
 				String key = null;
 				key = Util.getAPIToolPreferenceKey(id);
 				tab = Util.getAPIToolPreferenceTab(id);
-				PDEConfigureProblemSeverityAction problemSeverityAction = new PDEConfigureProblemSeverityAction(
-						project, key ,
-						tab);
-				problemSeverityAction.run();
-				return Status.OK_STATUS;
+				new PDEConfigureProblemSeverityAction(project, key, tab).run();
 			}
-
-		};
+		});
 		job.setSystem(true);
 		job.schedule();
 	}

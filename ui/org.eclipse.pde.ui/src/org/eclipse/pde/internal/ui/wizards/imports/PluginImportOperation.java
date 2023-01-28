@@ -50,6 +50,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.*;
 import org.eclipse.team.core.importing.provisional.IBundleImporter;
 import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.wizards.datatransfer.*;
 import org.osgi.framework.BundleException;
@@ -221,20 +222,14 @@ public class PluginImportOperation extends WorkspaceJob {
 				}
 			}
 			if (!namesOfNotImportedProjects.isEmpty()) {
-				UIJob job = new UIJob(PDEUIMessages.PluginImportOperation_WarningDialogJob) {
-
-					@Override
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						String dialogMessage = namesOfNotImportedProjects.size() == 1
-								? PDEUIMessages.PluginImportOperation_WarningDialogMessageSingular
-								: PDEUIMessages.PluginImportOperation_WarningDialogMessagePlural;
-						NotImportedProjectsWarningDialog dialog = new NotImportedProjectsWarningDialog(dialogMessage,
-								namesOfNotImportedProjects);
-						dialog.open();
-						return Status.OK_STATUS;
-					}
-				};
-
+				UIJob job = UIJob.create(PDEUIMessages.PluginImportOperation_WarningDialogJob, m -> {
+					String dialogMessage = namesOfNotImportedProjects.size() == 1
+							? PDEUIMessages.PluginImportOperation_WarningDialogMessageSingular
+							: PDEUIMessages.PluginImportOperation_WarningDialogMessagePlural;
+					NotImportedProjectsWarningDialog dialog = new NotImportedProjectsWarningDialog(dialogMessage,
+							namesOfNotImportedProjects);
+					dialog.open();
+				});
 				try {
 					job.schedule();
 					job.join();
@@ -315,20 +310,16 @@ public class PluginImportOperation extends WorkspaceJob {
 		final ArrayList<Object> overwriteProjectList = new ArrayList<>();
 		if (!conflictingPlugins.isEmpty()) {
 
-			UIJob job = new UIJob(PDEUIMessages.PluginImportOperation_OverwritePluginProjects) {
-
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					OverwriteProjectsSelectionDialog dialog = new OverwriteProjectsSelectionDialog(
-							getDisplay().getActiveShell(), conflictingPlugins);
-					dialog.setBlockOnOpen(true);
-					if (dialog.open() == Window.OK) {
-						overwriteProjectList.addAll(Arrays.asList(dialog.getResult()));
-						return Status.OK_STATUS;
-					}
-					return Status.CANCEL_STATUS;
+			UIJob job = UIJob.create(PDEUIMessages.PluginImportOperation_OverwritePluginProjects, m -> {
+				Shell shell = Display.getCurrent().getActiveShell();
+				SelectionDialog dialog = new OverwriteProjectsSelectionDialog(shell, conflictingPlugins);
+				dialog.setBlockOnOpen(true);
+				if (dialog.open() == Window.OK) {
+					overwriteProjectList.addAll(Arrays.asList(dialog.getResult()));
+					return Status.OK_STATUS;
 				}
-			};
+				return Status.CANCEL_STATUS;
+			});
 
 			try {
 				job.schedule();

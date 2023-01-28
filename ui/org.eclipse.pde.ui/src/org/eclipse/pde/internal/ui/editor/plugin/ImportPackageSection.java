@@ -18,7 +18,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
@@ -590,48 +590,44 @@ public class ImportPackageSection extends TableSection {
 		}
 
 		// Model change may have come from a non UI thread such as the auto add dependencies operation. See bug 333533
-		UIJob job = new UIJob("Update package imports") { //$NON-NLS-1$
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				if (Constants.IMPORT_PACKAGE.equals(event.getChangedProperty())) {
-					refresh();
-					// Bug 171896
-					// Since the model sends a CHANGE event instead of
-					// an INSERT event on the very first addition to the empty table
-					// Selection should fire here to take this first insertion into account
-					Object lastElement = fPackageViewer.getElementAt(fPackageViewer.getTable().getItemCount() - 1);
-					if (lastElement != null) {
-						fPackageViewer.setSelection(new StructuredSelection(lastElement));
-					}
-					return Status.OK_STATUS;
+		UIJob job = UIJob.create("Update package imports", monitor -> { //$NON-NLS-1$
+			if (Constants.IMPORT_PACKAGE.equals(event.getChangedProperty())) {
+				refresh();
+				// Bug 171896
+				// Since the model sends a CHANGE event instead of an INSERT
+				// event on the very first addition to the empty table Selection
+				// should fire here to take this first insertion into account
+				Object lastElement = fPackageViewer.getElementAt(fPackageViewer.getTable().getItemCount() - 1);
+				if (lastElement != null) {
+					fPackageViewer.setSelection(new StructuredSelection(lastElement));
 				}
-
+			} else {
 				Object[] objects = event.getChangedObjects();
 				for (Object changedObject : objects) {
 					if (changedObject instanceof ImportPackageObject) {
 						ImportPackageObject object = (ImportPackageObject) changedObject;
-						switch (event.getChangeType()) {
-							case IModelChangedEvent.INSERT :
+						switch (event.getChangeType())
+							{
+							case IModelChangedEvent.INSERT:
 								fPackageViewer.remove(object); // If another thread has modified the header, avoid creating a duplicate
 								fPackageViewer.add(object);
 								fPackageViewer.setSelection(new StructuredSelection(object));
 								fPackageViewer.getTable().setFocus();
 								break;
-							case IModelChangedEvent.REMOVE :
+							case IModelChangedEvent.REMOVE:
 								Table table = fPackageViewer.getTable();
 								int index = table.getSelectionIndex();
 								fPackageViewer.remove(object);
 								table.setSelection(index < table.getItemCount() ? index : table.getItemCount() - 1);
 								updateButtons();
 								break;
-							default :
+							default:
 								fPackageViewer.refresh(object);
-						}
+							}
 					}
 				}
-				return Status.OK_STATUS;
 			}
-		};
+		});
 		job.setSystem(true);
 		job.schedule();
 	}

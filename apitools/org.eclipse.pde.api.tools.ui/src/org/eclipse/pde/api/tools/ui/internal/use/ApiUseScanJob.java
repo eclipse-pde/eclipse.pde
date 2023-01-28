@@ -60,7 +60,6 @@ import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.UIJob;
@@ -184,7 +183,7 @@ public class ApiUseScanJob extends Job {
 
 		} catch (CoreException e) {
 			return e.getStatus();
-		} 
+		}
 		return Status.OK_STATUS;
 	}
 
@@ -380,20 +379,11 @@ public class ApiUseScanJob extends Job {
 			if (openhtml) {
 				final File index = converter.getReportIndex();
 				if (index != null) {
-					UIJob ujob = new UIJob(Util.EMPTY_STRING) {
-						@Override
-						public IStatus runInUIThread(IProgressMonitor monitor) {
-							IEditorDescriptor edesc = null;
-							try {
-								edesc = IDE.getEditorDescriptor(index.getName(), true, true);
-								IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-								IDE.openEditor(window.getActivePage(), index.toURI(), edesc.getId(), true);
-							} catch (PartInitException e) {
-								e.printStackTrace();
-							}
-							return Status.OK_STATUS;
-						}
-					};
+					UIJob ujob = UIJob.create(Util.EMPTY_STRING, m -> {
+						IEditorDescriptor edesc = IDE.getEditorDescriptor(index.getName(), true, true);
+						IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+						IDE.openEditor(window.getActivePage(), index.toURI(), edesc.getId(), true);
+					});
 					ujob.setPriority(Job.INTERACTIVE);
 					ujob.setSystem(true);
 					ujob.schedule();
