@@ -16,7 +16,6 @@ package org.eclipse.pde.api.tools.internal.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -223,11 +222,7 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 		init();
 		synchronized (this) {
 			if (fPackageNames == null) {
-				Set<String> names = fPackages.keySet();
-				String[] result = new String[names.size()];
-				names.toArray(result);
-				Arrays.sort(result);
-				fPackageNames = result;
+				fPackageNames = fPackages.keySet().stream().sorted().toArray(String[]::new);
 			}
 			return fPackageNames;
 		}

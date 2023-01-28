@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -60,22 +59,13 @@ public class TypeScope extends ApiElement implements IApiTypeContainer {
 		fPackageToTypes = new HashMap<>();
 		for (IReferenceTypeDescriptor type : types) {
 			String name = type.getPackage().getName();
-			Set<IReferenceTypeDescriptor> set = fPackageToTypes.get(name);
-			if (set == null) {
-				set = new HashSet<>();
-				fPackageToTypes.put(name, set);
-			}
-			set.add(type);
+			fPackageToTypes.computeIfAbsent(name, n -> new HashSet<>()).add(type);
 		}
 	}
 
 	@Override
 	public String[] getPackageNames() throws CoreException {
-		Set<String> pkgs = fPackageToTypes.keySet();
-		String[] result = new String[pkgs.size()];
-		pkgs.toArray(result);
-		Arrays.sort(result);
-		return result;
+		return fPackageToTypes.keySet().stream().sorted().toArray(String[]::new);
 	}
 
 	@Override

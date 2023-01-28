@@ -14,9 +14,10 @@
 package org.eclipse.pde.api.tools.internal.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -159,16 +160,13 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 
 	@Override
 	public String[] getPackageNames() throws CoreException {
-		List<String> names = new ArrayList<>();
+		SortedSet<String> names = new TreeSet<>();
 		IApiTypeContainer[] containers = getApiTypeContainers();
 		for (IApiTypeContainer container : containers) {
 			String[] packageNames = container.getPackageNames();
 			Collections.addAll(names, packageNames);
 		}
-		String[] result = new String[names.size()];
-		names.toArray(result);
-		Arrays.sort(result);
-		return result;
+		return names.toArray(String[]::new);
 	}
 
 	/**
