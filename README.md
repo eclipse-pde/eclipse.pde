@@ -41,7 +41,7 @@ How to build on the command line
 
 You need Maven 3.3.1 or later installed. Then you can run the build via the following command:
 
-`mvn clean verify -Pbuild-individual-bundles`
+`mvn clean verify`
 
 Contact:
 --------
