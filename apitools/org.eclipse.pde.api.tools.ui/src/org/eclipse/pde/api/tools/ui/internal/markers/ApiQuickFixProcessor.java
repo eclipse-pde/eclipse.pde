@@ -27,9 +27,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.Signature;
@@ -83,19 +80,10 @@ public class ApiQuickFixProcessor implements IQuickFixProcessor {
 
 		@Override
 		public void apply(IDocument document) {
-			UIJob job = new UIJob("Update project to use API Tools annotations") { //$NON-NLS-1$
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					try {
-						Change changes = createChange(fUnit, fName);
-						changes.perform(monitor);
-
-					} catch (CoreException e) {
-						ApiUIPlugin.log(e);
-					}
-					return Status.OK_STATUS;
-				}
-			};
+			Job job = UIJob.create("Update project to use API Tools annotations", monitor -> { //$NON-NLS-1$
+				Change changes = createChange(fUnit, fName);
+				changes.perform(monitor);
+			});
 			job.setPriority(Job.INTERACTIVE);
 			job.schedule();
 		}

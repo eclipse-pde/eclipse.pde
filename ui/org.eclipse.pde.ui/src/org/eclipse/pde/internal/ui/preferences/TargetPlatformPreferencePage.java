@@ -375,19 +375,15 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		job.addJobChangeListener(new JobChangeAdapter() {
 			@Override
 			public void done(final IJobChangeEvent event) {
-				UIJob job = new UIJob(Messages.UpdateTargetJob_UpdateJobName) {
-					@Override
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						TargetDefinition target = ((LoadDefaultTargetJob) event.getJob()).defaultTarget;
-						if (target != null && fLabelProvider != null) {
-							fLabelProvider.setDefaultTarget(target);
-							if (fTableViewer != null && !fTableViewer.getTable().isDisposed()) {
-								fTableViewer.refresh(true);
-							}
+				UIJob job = UIJob.create(Messages.UpdateTargetJob_UpdateJobName, monitor -> {
+					TargetDefinition target = ((LoadDefaultTargetJob) event.getJob()).defaultTarget;
+					if (target != null && fLabelProvider != null) {
+						fLabelProvider.setDefaultTarget(target);
+						if (fTableViewer != null && !fTableViewer.getTable().isDisposed()) {
+							fTableViewer.refresh(true);
 						}
-						return Status.OK_STATUS;
 					}
-				};
+				});
 				job.schedule();
 			}
 		});

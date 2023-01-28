@@ -18,7 +18,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.io.*;
 import java.util.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -545,16 +545,11 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		}
 
 		// Model change may have come from a non UI thread such as the auto add dependencies operation. See bug 333533
-		UIJob job = new UIJob("Update required bundles") { //$NON-NLS-1$
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-
-				if (event.getChangedProperty() == IPluginBase.P_IMPORT_ORDER) {
-					refresh();
-					updateButtons();
-					return Status.OK_STATUS;
-				}
-
+		UIJob job = UIJob.create("Update required bundles", monitor -> { //$NON-NLS-1$
+			if (event.getChangedProperty() == IPluginBase.P_IMPORT_ORDER) {
+				refresh();
+				updateButtons();
+			} else {
 				Object[] changedObjects = event.getChangedObjects();
 				if (changedObjects[0] instanceof IPluginImport) {
 					int index = 0;
@@ -614,10 +609,8 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 				} else {
 					fImportViewer.update(fImportViewer.getStructuredSelection().toArray(), null);
 				}
-
-				return Status.OK_STATUS;
 			}
-		};
+		});
 		job.setSystem(true);
 		job.schedule();
 	}

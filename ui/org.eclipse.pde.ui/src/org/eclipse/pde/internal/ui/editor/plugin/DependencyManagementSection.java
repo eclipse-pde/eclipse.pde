@@ -23,7 +23,8 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 import java.io.ByteArrayInputStream;
 import java.util.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -469,17 +470,14 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 			markStale();
 			return;
 		}
-		UIJob job = new UIJob("Update required bundles") { //$NON-NLS-1$
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				Object changedObject = event.getChangedObjects()[0];
-				if ((changedObject instanceof IBuildEntry && ((IBuildEntry) changedObject).getName().equals(IBuildEntry.SECONDARY_DEPENDENCIES))) {
-					refresh();
-					updateButtons();
-				}
-				return Status.OK_STATUS;
+		UIJob job = UIJob.create("Update required bundles", monitor -> { //$NON-NLS-1$
+			Object changedObject = event.getChangedObjects()[0];
+			if ((changedObject instanceof IBuildEntry
+					&& ((IBuildEntry) changedObject).getName().equals(IBuildEntry.SECONDARY_DEPENDENCIES))) {
+				refresh();
+				updateButtons();
 			}
-		};
+		});
 		job.setSystem(true);
 		job.schedule();
 	}
