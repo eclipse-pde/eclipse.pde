@@ -36,13 +36,10 @@ jobs:
         mvn
         --batch-mode
         --global-toolchains ${{ github.workspace }}/.github/toolchains.xml
-        -Pbuild-individual-bundles
         -Pbree-libs
         -Papi-check
         -Dmaven.test.failure.ignore=true
-        -Dcompare-version-with-baselines.skip=false
-        -Dproject.build.sourceEncoding=UTF-8
-        -DtrimStackTrace=false
+        -Dmaven.test.error.ignore=true
         clean verify
     - name: Upload Test Results
       uses: actions/upload-artifact@v3

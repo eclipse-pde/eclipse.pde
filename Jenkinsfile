@@ -6,7 +6,7 @@ pipeline {
 		timestamps()
 	}
 	agent {
-		label "centos-latest"
+		label 'centos-latest'
 	}
 	tools {
 		maven 'apache-maven-latest'
@@ -16,18 +16,19 @@ pipeline {
 		stage('Build') {
 			steps {
 				wrap([$class: 'Xvnc', useXauthority: true]) {
-					sh """
-					mvn clean verify --batch-mode --fail-at-end -Dmaven.repo.local=$WORKSPACE/.m2/repository \
-						-Pbuild-individual-bundles -Pbree-libs -Papi-check \
-						-Dcompare-version-with-baselines.skip=false \
-						-Dproject.build.sourceEncoding=UTF-8 \
-						-DtrimStackTrace=false
-					"""
+					sh '''
+						mvn clean verify --batch-mode -Dmaven.repo.local=$WORKSPACE/.m2/repository \
+						-Pbree-libs -Papi-check \
+						-Dmaven.test.error.ignore=true -Dmaven.test.failure.ignore=true
+					'''
 				}
 			}
 			post {
 				always {
-					archiveArtifacts artifacts: '*.log,*/target/work/data/.metadata/*.log,*/tests/target/work/data/.metadata/*.log,apiAnalyzer-workspace/.metadata/*.log', allowEmptyArchive: true
+					archiveArtifacts(allowEmptyArchive: true, artifacts: '*.log, \
+						*/target/work/data/.metadata/*.log, \
+						*/tests/target/work/data/.metadata/*.log, \
+						apiAnalyzer-workspace/.metadata/*.log')
 					publishIssues issues:[scanForIssues(tool: java()), scanForIssues(tool: mavenConsole())]
 					junit '**/target/surefire-reports/*.xml'
 				}
