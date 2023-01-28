@@ -19,7 +19,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -193,11 +192,7 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 	public String[] getPackageNames() throws CoreException {
 		init();
 		if (fPackageNames == null) {
-			List<String> names = new ArrayList<>(fPackages.keySet());
-			String[] result = new String[names.size()];
-			names.toArray(result);
-			Arrays.sort(result);
-			fPackageNames = result;
+			fPackageNames = fPackages.keySet().stream().sorted().toArray(String[]::new);
 		}
 		return fPackageNames;
 	}

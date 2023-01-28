@@ -14,15 +14,15 @@
 package org.eclipse.pde.api.tools.internal.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxy;
-import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -39,38 +39,6 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * @since 1.0.0
  */
 public class ProjectTypeContainer extends ApiElement implements IApiTypeContainer {
-
-
-	/**
-	 * Proxy visitor for collecting package names, etc for our type containers
-	 *
-	 * @since 1.1
-	 */
-	static class ContainerVisitor implements IResourceProxyVisitor {
-
-		List<String> collector = null;
-		int segmentcount = 0;
-
-		/**
-		 * Constructor
-		 *
-		 * @param collector
-		 * @param root
-		 */
-		public ContainerVisitor(List<String> collector, IContainer root) {
-			this.collector = collector;
-			this.segmentcount = root.getFullPath().segmentCount();
-		}
-
-		@Override
-		public boolean visit(IResourceProxy proxy) throws CoreException {
-			if (proxy.getType() == IResource.FOLDER) {
-				String path = proxy.requestFullPath().removeFirstSegments(this.segmentcount).toString();
-				return this.collector.add(path.replace(IPath.SEPARATOR, '.'));
-			}
-			return false;
-		}
-	}
 
 	/**
 	 * Root directory of the {@link IApiTypeContainer}
@@ -182,23 +150,29 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 	@Override
 	public String[] getPackageNames() throws CoreException {
 		if (fPackageNames == null) {
-			List<String> names = new ArrayList<>();
-			collectPackageNames(names, Util.DEFAULT_PACKAGE_NAME, fRoot);
-			fPackageNames = names.toArray(new String[names.size()]);
-			Arrays.sort(fPackageNames);
+			SortedSet<String> names = new TreeSet<>();
+			collectPackageNames(names, fRoot);
+			fPackageNames = names.toArray(String[]::new);
 		}
 		return fPackageNames;
 	}
 
 	/**
-	 * Traverses a directory to determine if it has {@link IApiTypeRoot}s and
-	 * then visits sub-directories.
+	 * Traverses a directory to determine if it has {@link IApiTypeRoot}s and then
+	 * visits sub-directories.
 	 *
-	 * @param packageName package name of directory being visited
 	 * @param dir directory being visited
 	 */
-	private void collectPackageNames(List<String> names, String packageName, IContainer dir) throws CoreException {
-		dir.accept(new ContainerVisitor(names, dir), IResource.NONE);
+	private static void collectPackageNames(Set<String> collector, IContainer dir) throws CoreException {
+		int segmentCount = dir.getFullPath().segmentCount();
+		dir.accept(proxy -> {
+			if (proxy.getType() == IResource.FOLDER) {
+				IPath relativePath = proxy.requestFullPath().removeFirstSegments(segmentCount);
+				String packageName = relativePath.toString().replace(IPath.SEPARATOR, '.');
+				return collector.add(packageName);
+			}
+			return false;
+		}, IResource.NONE);
 	}
 
 	@Override
