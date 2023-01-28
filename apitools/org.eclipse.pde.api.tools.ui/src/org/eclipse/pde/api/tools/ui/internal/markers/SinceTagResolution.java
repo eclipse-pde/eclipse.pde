@@ -16,9 +16,6 @@ package org.eclipse.pde.api.tools.ui.internal.markers;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.osgi.util.NLS;
@@ -85,20 +82,14 @@ public class SinceTagResolution extends WorkbenchMarkerResolution {
 		} else {
 			title = NLS.bind(MarkerMessages.SinceTagResolution_add_since_tag, this.newVersionValue);
 		}
-		UIJob job = new UIJob(title) {
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				SinceTagResolution.this.kind = ApiProblemFactory
-						.getProblemKind(marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
-				SinceTagResolution.this.newVersionValue = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_VERSION,
-						null);
-				UpdateSinceTagOperation updateSinceTagOperation = new UpdateSinceTagOperation(marker, otherMarkers,
-						SinceTagResolution.this.kind,
-						marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_VERSION, null));
-				updateSinceTagOperation.run(monitor);
-				return Status.OK_STATUS;
-			}
-		};
+		UIJob job = UIJob.create(title, monitor -> {
+			this.kind = ApiProblemFactory
+					.getProblemKind(marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
+			this.newVersionValue = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_VERSION, null);
+			UpdateSinceTagOperation updateSinceTagOperation = new UpdateSinceTagOperation(marker, otherMarkers,
+					this.kind, marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_VERSION, null));
+			updateSinceTagOperation.run(monitor);
+		});
 		job.setSystem(true);
 		job.schedule();
 	}

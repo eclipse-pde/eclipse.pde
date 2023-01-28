@@ -18,7 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -82,16 +82,15 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		// Add warning about missing manifest (Bug 407755)
 		if (!isBundle() && isEditable()) {
 			// We have to use a job so that the form header has been created
-			UIJob messageJob = new UIJob(PDEUIMessages.OverviewPage_ManifestWarning) {
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					IManagedForm form = getManagedForm();
-					if (form != null) {
-						form.getMessageManager().addMessage(PDEUIMessages.OverviewPage_ManifestWarning, isFragment() ? PDEUIMessages.OverviewPage_WarnAboutMissingManifestFragment : PDEUIMessages.OverviewPage_WarnAboutMissingManifest, null, IMessageProvider.WARNING);
-					}
-					return Status.OK_STATUS;
+			UIJob messageJob = UIJob.create(PDEUIMessages.OverviewPage_ManifestWarning, monitor -> {
+				IManagedForm form1 = getManagedForm();
+				if (form1 != null) {
+					form1.getMessageManager().addMessage(PDEUIMessages.OverviewPage_ManifestWarning, isFragment() //
+							? PDEUIMessages.OverviewPage_WarnAboutMissingManifestFragment
+							: PDEUIMessages.OverviewPage_WarnAboutMissingManifest//
+							, null, IMessageProvider.WARNING);
 				}
-			};
+			});
 			messageJob.setSystem(true);
 			messageJob.schedule();
 		}

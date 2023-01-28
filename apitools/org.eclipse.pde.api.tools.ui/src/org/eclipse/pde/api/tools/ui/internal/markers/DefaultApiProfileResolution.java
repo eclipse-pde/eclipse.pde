@@ -14,13 +14,11 @@
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.progress.UIJob;
 
@@ -49,13 +47,10 @@ public class DefaultApiProfileResolution implements IMarkerResolution2 {
 
 	@Override
 	public void run(IMarker marker) {
-		UIJob job = new UIJob(MarkerMessages.DefaultApiProfileResolution_2) {
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				SWTFactory.showPreferencePage(ApiUIPlugin.getShell(), IApiToolsConstants.ID_BASELINES_PREF_PAGE, null);
-				return Status.OK_STATUS;
-			}
-		};
+		UIJob job = UIJob.create(MarkerMessages.DefaultApiProfileResolution_2, monitor -> {
+			Shell shell = ApiUIPlugin.getShell();
+			SWTFactory.showPreferencePage(shell, IApiToolsConstants.ID_BASELINES_PREF_PAGE, null);
+		});
 		job.setSystem(true);
 		job.schedule();
 	}

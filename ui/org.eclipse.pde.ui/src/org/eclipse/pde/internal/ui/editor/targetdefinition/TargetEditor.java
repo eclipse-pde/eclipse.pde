@@ -620,23 +620,19 @@ public class TargetEditor extends FormEditor {
 					@Override
 					public void done(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
 						final IStatus status = event.getResult();
-						UIJob job = new UIJob(PDEUIMessages.TargetEditor_2) {
-							@Override
-							public IStatus runInUIThread(IProgressMonitor monitor) {
-								if (fContentTree != null) {
-									if (status.getSeverity() == IStatus.CANCEL) {
-										fContentTree.setCancelled();
-									} else {
-										fContentTree.setInput(getTarget());
-									}
+						UIJob job = UIJob.create(PDEUIMessages.TargetEditor_2, monitor -> {
+							if (fContentTree != null) {
+								if (status.getSeverity() == IStatus.CANCEL) {
+									fContentTree.setCancelled();
+								} else {
+									fContentTree.setInput(getTarget());
 								}
-								if (fLocationTree != null) {
-									fLocationTree.setInput(getTarget());
-									fLocationTree.setExpandCollapseState(true);
-								}
-								return Status.OK_STATUS;
 							}
-						};
+							if (fLocationTree != null) {
+								fLocationTree.setInput(getTarget());
+								fLocationTree.setExpandCollapseState(true);
+							}
+						});
 						job.setSystem(true);
 						job.schedule();
 					}

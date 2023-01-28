@@ -103,14 +103,8 @@ public abstract class PDETestCase {
 				return;
 			}
 
-			UIJob job = new UIJob("close welcome screen for debug test suite") {
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					closeIntro(wb);
-					return Status.OK_STATUS;
-				}
-
-			};
+			UIJob job = UIJob.create("close welcome screen for debug test suite",
+					(ICoreRunnable) monitor -> closeIntro(wb));
 			job.setPriority(Job.INTERACTIVE);
 			job.setSystem(true);
 			job.schedule();

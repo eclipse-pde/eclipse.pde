@@ -16,15 +16,13 @@ package org.eclipse.pde.api.tools.ui.internal.markers;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.progress.UIJob;
 
@@ -81,13 +79,10 @@ public class OpenPropertyPageResolution implements IMarkerResolution2 {
 
 	@Override
 	public void run(IMarker marker) {
-		UIJob job = new UIJob(MarkerMessages.OpenPropertyPageResolution_opening_property_page_job_name) {
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				SWTFactory.showPropertiesDialog(ApiUIPlugin.getShell(), fPageId, fElement, null);
-				return Status.OK_STATUS;
-			}
-		};
+		UIJob job = UIJob.create(MarkerMessages.OpenPropertyPageResolution_opening_property_page_job_name, monitor -> {
+			Shell shell = ApiUIPlugin.getShell();
+			SWTFactory.showPropertiesDialog(shell, fPageId, fElement, null);
+		});
 		job.setSystem(true);
 		job.setPriority(Job.INTERACTIVE);
 		job.schedule();

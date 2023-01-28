@@ -462,43 +462,38 @@ public class TargetLocationsGroup {
 		JobChangeAdapter listener = new JobChangeAdapter() {
 			@Override
 			public void done(final IJobChangeEvent event) {
-				UIJob job = new UIJob(Messages.UpdateTargetJob_UpdateJobName) {
-					@Override
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						IStatus result = event.getJob().getResult();
-						if (!result.isOK()) {
-							if (!fTreeViewer.getControl().isDisposed()) {
-								ErrorDialog.openError(fTreeViewer.getTree().getShell(),
-										Messages.TargetLocationsGroup_TargetUpdateErrorDialog, result.getMessage(),
-										result);
-							}
-						} else if (result.getCode() != ITargetLocationHandler.STATUS_CODE_NO_CHANGE) {
-							// Update was successful and changed the target, if
-							// dialog/editor still open, update it
-							if (!fTreeViewer.getControl().isDisposed()) {
-								contentsChanged(true);
-								fTreeViewer.refresh(true);
-								updateButtons();
-							}
-
-							// If the target is the current platform, run a load
-							// job for the user
-							try {
-								ITargetPlatformService service = PDECore.getDefault()
-										.acquireService(ITargetPlatformService.class);
-								if (service != null) {
-									ITargetHandle currentTarget = service.getWorkspaceTargetHandle();
-									if (fTarget.getHandle().equals(currentTarget))
-										LoadTargetDefinitionJob.load(fTarget);
-								}
-							} catch (CoreException e) {
-								// do nothing if we could not set the current
-								// target.
-							}
+				UIJob job = UIJob.create(Messages.UpdateTargetJob_UpdateJobName, monitor -> {
+					IStatus result = event.getJob().getResult();
+					if (!result.isOK()) {
+						if (!fTreeViewer.getControl().isDisposed()) {
+							ErrorDialog.openError(fTreeViewer.getTree().getShell(),
+									Messages.TargetLocationsGroup_TargetUpdateErrorDialog, result.getMessage(), result);
 						}
-						return Status.OK_STATUS;
+					} else if (result.getCode() != ITargetLocationHandler.STATUS_CODE_NO_CHANGE) {
+						// Update was successful and changed the target, if
+						// dialog/editor still open, update it
+						if (!fTreeViewer.getControl().isDisposed()) {
+							contentsChanged(true);
+							fTreeViewer.refresh(true);
+							updateButtons();
+						}
+
+						// If the target is the current platform, run a load
+						// job for the user
+						try {
+							ITargetPlatformService service = PDECore.getDefault()
+									.acquireService(ITargetPlatformService.class);
+							if (service != null) {
+								ITargetHandle currentTarget = service.getWorkspaceTargetHandle();
+								if (fTarget.getHandle().equals(currentTarget))
+									LoadTargetDefinitionJob.load(fTarget);
+							}
+						} catch (CoreException e) {
+							// do nothing if we could not set the current
+							// target.
+						}
 					}
-				};
+				});
 				job.schedule();
 			}
 		};
@@ -557,13 +552,7 @@ public class TargetLocationsGroup {
 
 	private void handleReload() {
 		log(ADAPTER.reload(fTarget, fTarget.getTargetLocations(), new NullProgressMonitor()));
-		Job job = new UIJob("Refreshing...") { //$NON-NLS-1$
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				contentsReload();
-				return Status.OK_STATUS;
-			}
-		};
+		Job job = UIJob.create("Refreshing...", (ICoreRunnable) monitor -> contentsReload()); //$NON-NLS-1$
 		job.schedule();
 
 	}

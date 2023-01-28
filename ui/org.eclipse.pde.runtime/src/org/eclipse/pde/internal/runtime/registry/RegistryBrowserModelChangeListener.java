@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.internal.runtime.registry.model.*;
 import org.eclipse.ui.progress.UIJob;
 
@@ -27,13 +27,10 @@ public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 
 	@Override
 	public void modelChanged(final ModelChangeDelta[] delta) {
-		new UIJob("Updating Registry") { //$NON-NLS-1$
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				update(delta);
-				return Status.OK_STATUS;
-			}
-		}.schedule();
+		UIJob.create("Updating Registry", monitor -> { //$NON-NLS-1$
+			update(delta);
+			return Status.OK_STATUS;
+		}).schedule();
 	}
 
 	private boolean topLevelElement(Object object) {

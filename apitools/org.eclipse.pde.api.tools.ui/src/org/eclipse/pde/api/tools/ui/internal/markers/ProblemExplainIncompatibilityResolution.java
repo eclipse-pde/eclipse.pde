@@ -19,8 +19,6 @@ import java.util.HashSet;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -28,6 +26,7 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 
@@ -77,20 +76,15 @@ public class ProblemExplainIncompatibilityResolution extends WorkbenchMarkerReso
 	}
 
 	@Override
-	public void run(IMarker[] markers, IProgressMonitor monitor) {
+	public void run(IMarker[] markers, IProgressMonitor m) {
 		// Since only 1 page is made as of now , so for all explain
 		// incompatibilities we can show the same page. However in future if the
 		// pages are split, from marker we can get the type of incompatibility
 		// and show different page URL.
-		UIJob job = new UIJob("") { //$NON-NLS-1$
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				PlatformUI.getWorkbench().getHelpSystem()
-						.displayHelpResource("/org.eclipse.pde.doc.user/reference/api-tooling/api_evolution.htm"); //$NON-NLS-1$
-
-				return Status.OK_STATUS;
-			}
-		};
+		UIJob job = UIJob.create("", monitor -> { //$NON-NLS-1$
+			IWorkbenchHelpSystem helpSystem = PlatformUI.getWorkbench().getHelpSystem();
+			helpSystem.displayHelpResource("/org.eclipse.pde.doc.user/reference/api-tooling/api_evolution.htm"); //$NON-NLS-1$
+		});
 		job.setSystem(true);
 		job.schedule();
 	}

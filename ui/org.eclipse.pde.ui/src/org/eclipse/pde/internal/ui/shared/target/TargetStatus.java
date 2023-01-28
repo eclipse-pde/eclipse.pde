@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
@@ -120,15 +121,11 @@ public class TargetStatus {
 
 				final String newValue = result;
 				final String newTooltip = statusMessage == null ? newValue : newValue + statusMessage;
-				UIJob job = new UIJob("") { //$NON-NLS-1$
-					@Override
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						targetStatus.setText(newValue);
-						setImage(newImage);
-						setToolTipText(newTooltip);
-						return Status.OK_STATUS;
-					}
-				};
+				UIJob job = UIJob.create("", monitor -> { //$NON-NLS-1$
+					targetStatus.setText(newValue);
+					setImage(newImage);
+					setToolTipText(newTooltip);
+				});
 				job.setSystem(true);
 				job.schedule();
 
@@ -189,21 +186,17 @@ public class TargetStatus {
 		boolean showStatus = prefs.getBoolean(IPreferenceConstants.SHOW_TARGET_STATUS);
 
 		if (showStatus) {
-			UIJob updateStatus = new UIJob("Refresh PDE Target Status") { //$NON-NLS-1$
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-					for (IWorkbenchWindow window : windows) {
-						IStatusLineManager slManager = getStatusLineManager(window);
-						if (slManager != null) {
-							slManager.appendToGroup(StatusLineManager.BEGIN_GROUP, getContributionItem());
-							slManager.update(false);
-							break;
-						}
+			UIJob updateStatus = UIJob.create("Refresh PDE Target Status", monitor -> { //$NON-NLS-1$
+				IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+				for (IWorkbenchWindow window : windows) {
+					IStatusLineManager slManager = getStatusLineManager(window);
+					if (slManager != null) {
+						slManager.appendToGroup(StatusLineManager.BEGIN_GROUP, getContributionItem());
+						slManager.update(false);
+						break;
 					}
-					return Status.OK_STATUS;
 				}
-			};
+			});
 			updateStatus.setSystem(true);
 			updateStatus.setPriority(Job.DECORATE);
 			updateStatus.schedule();

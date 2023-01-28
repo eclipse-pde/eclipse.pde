@@ -236,48 +236,41 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		super.targetChanged(definition);
 		if (definition != null) {
 			// When  If the page isn't open yet, try running a UI job so the dialog has time to finish opening
-			UIJob resolveJob = new UIJob(PDEUIMessages.TargetDefinitionContentPage_0) {
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					ITargetDefinition definition = getTargetDefinition();
-					if (!definition.isResolved()) {
-						try {
-							getContainer().run(true, true, monitor1 -> {
-								getTargetDefinition().resolve(new ResolutionProgressMonitor(monitor1));
-								if (monitor1.isCanceled()) {
-									throw new InterruptedException();
-								}
-							});
-						} catch (InvocationTargetException e) {
-							PDECore.log(e);
-						} catch (InterruptedException e) {
-							fContentTree.setCancelled();
-							return Status.CANCEL_STATUS;
-						}
+			UIJob resolveJob = UIJob.create(PDEUIMessages.TargetDefinitionContentPage_0, monitor -> {
+				if (!definition.isResolved()) {
+					try {
+						getContainer().run(true, true, monitor1 -> {
+							getTargetDefinition().resolve(new ResolutionProgressMonitor(monitor1));
+							if (monitor1.isCanceled()) {
+								throw new InterruptedException();
+							}
+						});
+					} catch (InvocationTargetException e) {
+						PDECore.log(e);
+					} catch (InterruptedException e) {
+						fContentTree.setCancelled();
+						return Status.CANCEL_STATUS;
 					}
-					fContentTree.setInput(definition);
-					fLocationTree.setInput(definition);
-					if (definition.isResolved() && definition.getStatus().getSeverity() == IStatus.ERROR) {
-						fLocationTab.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
-					} else {
-						fLocationTab.setImage(null);
-					}
-					return Status.OK_STATUS;
 				}
-			};
+				fContentTree.setInput(definition);
+				fLocationTree.setInput(definition);
+				if (definition.isResolved() && definition.getStatus().getSeverity() == IStatus.ERROR) {
+					fLocationTab.setImage(
+							PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
+				} else {
+					fLocationTab.setImage(null);
+				}
+				return Status.OK_STATUS;
+			});
 			resolveJob.schedule();
 			resolveJob.addJobChangeListener(new JobChangeAdapter() {
 				@Override
 				public void done(IJobChangeEvent event) {
-					UIJob job = new UIJob("") { //$NON-NLS-1$
-						@Override
-						public IStatus runInUIThread(IProgressMonitor monitor) {
-							if (fLocationTree != null) {
-								fLocationTree.setExpandCollapseState(true);
-							}
-							return Status.OK_STATUS;
+					UIJob job = UIJob.create("", monitor -> { //$NON-NLS-1$
+						if (fLocationTree != null) {
+							fLocationTree.setExpandCollapseState(true);
 						}
-					};
+					});
 					job.setSystem(true);
 					job.schedule();
 				}
