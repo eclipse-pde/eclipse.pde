@@ -65,11 +65,4 @@ public class TargetEditorContributor extends EditorActionBarContributor {
 		}
 		return fRevertAction;
 	}
-
-//	public void setActivePage(IEditorPart activeEditor) {
-//		// TODO Revert action is not working correctly, activeEditor is always null
-//		fEditor = (TargetEditor) activeEditor;
-//		getActionBars().setGlobalActionHandler(ActionFactory.REVERT.getId(), new RevertAction());
-//		getActionBars().updateActionBars();
-//	}
 }
