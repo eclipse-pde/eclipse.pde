@@ -22,6 +22,7 @@ import java.util.HashSet;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -175,12 +176,8 @@ public abstract class SearchTest {
 
 	@After
 	public void tearDown() throws Exception {
-		if (this.baseline != null) {
-			this.baseline.dispose();
-		}
-		if (this.scope != null) {
-			this.scope.dispose();
-		}
+		ApiTestingEnvironment.dispose(this.baseline);
+		ApiTestingEnvironment.dispose(this.scope);
 		FreezeMonitor.done();
 	}
 }

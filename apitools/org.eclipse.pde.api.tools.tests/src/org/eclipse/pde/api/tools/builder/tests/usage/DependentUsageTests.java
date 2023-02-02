@@ -87,6 +87,7 @@ public class DependentUsageTests extends UsageTest {
 	 * @throws Exception if something bad happens
 	 */
 	protected void deployTest(String test, IPath usepath, IPath refpath, String refname, boolean addtag) throws Exception {
+		boolean autoBuilding = getEnv().getWorkspace().isAutoBuilding();
 		try {
 			getEnv().setAutoBuilding(false);
 			//copy source files and build
@@ -117,7 +118,9 @@ public class DependentUsageTests extends UsageTest {
 			}
 		}
 		finally {
-			getEnv().setAutoBuilding(true);
+			if (autoBuilding) {
+				getEnv().setAutoBuilding(true);
+			}
 		}
 	}
 

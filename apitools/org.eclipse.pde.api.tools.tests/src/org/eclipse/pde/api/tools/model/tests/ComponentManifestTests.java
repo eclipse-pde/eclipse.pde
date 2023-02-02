@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.internal.BundleVersionRange;
 import org.eclipse.pde.api.tools.internal.RequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
@@ -72,7 +73,7 @@ public class ComponentManifestTests {
 				assertEquals("Wrong required component", reqs.get(i), requiredComponents[i]); //$NON-NLS-1$
 			}
 		} finally {
-			baseline.dispose();
+			ApiTestingEnvironment.dispose(baseline);
 		}
 	}
 
@@ -100,7 +101,7 @@ public class ComponentManifestTests {
 			assertTrue("org.eclipse.debug.core should be re-exported", debugCoreExport); //$NON-NLS-1$
 			assertFalse("Other components should not be re-exported", others); //$NON-NLS-1$
 		} finally {
-			baseline.dispose();
+			ApiTestingEnvironment.dispose(baseline);
 		}
 	}
 }

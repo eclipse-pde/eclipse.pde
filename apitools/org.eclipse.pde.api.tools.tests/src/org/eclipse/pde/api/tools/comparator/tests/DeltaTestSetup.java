@@ -26,6 +26,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
@@ -214,12 +215,8 @@ public abstract class DeltaTestSetup {
 	@After
 	public void tearDown() throws Exception {
 		//clean up
-		if(this.after != null) {
-			this.after.dispose();
-		}
-		if(this.before != null) {
-			this.before.dispose();
-		}
+		ApiTestingEnvironment.dispose(this.after);
+		ApiTestingEnvironment.dispose(this.before);
 		// remove workspace root
 		assertTrue(TestSuiteHelper.delete(new File(WORKSPACE_ROOT.toOSString())));
 		FreezeMonitor.done();
