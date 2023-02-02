@@ -115,8 +115,8 @@ public class BundleVersionTests extends ApiBuilderTest {
 		IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
 		manager.setDefaultApiBaseline(null);
 		manager.removeApiBaseline(API_BASELINE);
-		this.baseline.dispose();
-		manager.getWorkspaceBaseline().dispose();
+		ApiTestingEnvironment.dispose(this.baseline);
+		ApiTestingEnvironment.dispose(manager.getWorkspaceBaseline());
 		this.baseline = null;
 		for (IProject project : getEnv().getWorkspace().getRoot().getProjects()) {
 			getEnv().removeProject(project.getFullPath());

@@ -29,6 +29,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionXmlCreator;
@@ -351,7 +352,7 @@ public class ApiDescriptionTests {
 		component.getApiDescription().accept(visitor, null);
 
 		assertTrue("Visit incomplete", visitOrder.isEmpty()); //$NON-NLS-1$
-		baseline.dispose();
+		ApiTestingEnvironment.dispose(baseline);
 	}
 
 	/**

@@ -57,6 +57,7 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -895,7 +896,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	@After
 	public void tearDown() throws Exception {
 		deleteProject(TESTING_PLUGIN_PROJECT_NAME);
-		getWorkspaceBaseline().dispose();
+		ApiTestingEnvironment.dispose(getWorkspaceBaseline());
 		super.tearDown();
 	}
 }

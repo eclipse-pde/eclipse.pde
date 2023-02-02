@@ -18,6 +18,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ElementChangedEvent;
@@ -226,6 +228,12 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 						System.out.println("processed PRE_BUILD delta for project: [" + resource.getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
+
+				if (event.getBuildKind() == IncrementalProjectBuilder.AUTO_BUILD
+						&& !ResourcesPlugin.getWorkspace().isAutoBuilding()) {
+					return;
+				}
+
 				IResourceDelta delta = event.getDelta();
 				if (delta != null) {
 					IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.CHANGED);

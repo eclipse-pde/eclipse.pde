@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -34,6 +35,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -195,7 +197,7 @@ public class AbstractApiTest {
 		if (name == null) {
 			return;
 		}
-		getWorkspaceBaseline().dispose();
+		ApiTestingEnvironment.dispose(getWorkspaceBaseline());
 		IProject pro = getProject(name);
 		if (pro.exists()) {
 			ResourceEventWaiter waiter = new ResourceEventWaiter(new Path(name), IResourceChangeEvent.POST_CHANGE,
@@ -227,7 +229,13 @@ public class AbstractApiTest {
 	}
 
 	@BeforeClass
-	public static void beforeClass() {
+	public static void beforeClass() throws CoreException {
 		PDECore.getDefault().getPreferencesManager().setValue(ICoreConstants.RUN_API_ANALYSIS_AS_JOB, false);
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		if (workspace.isAutoBuilding()) {
+			IWorkspaceDescription description = workspace.getDescription();
+			description.setAutoBuilding(false);
+			workspace.setDescription(description);
+		}
 	}
 }

@@ -36,8 +36,11 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.tests.builder.TestingEnvironment;
 import org.eclipse.jdt.core.tests.util.AbstractCompilerTest;
+import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
+import org.eclipse.pde.api.tools.internal.model.WorkspaceBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
@@ -505,6 +508,15 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 */
 	protected IApiBaseline getWorkspaceProfile() {
 		return ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
+	}
+
+	public static void dispose(IApiBaseline apiBaseline) {
+		if (apiBaseline instanceof WorkspaceBaseline) {
+			IApiBaselineManager apiBaselineManager = ApiPlugin.getDefault().getApiBaselineManager();
+			((ApiBaselineManager) apiBaselineManager).disposeWorkspaceBaseline();
+		} else if (apiBaseline != null) {
+			apiBaseline.dispose();
+		}
 	}
 
 	@Override
