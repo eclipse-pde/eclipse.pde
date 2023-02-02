@@ -72,7 +72,7 @@ public class OSGiLessAnalysisTests {
 		assertEquals(
 				"Mismatch in problems reported by analyzer.getProblems, returned values:" + Arrays.toString(problems), //$NON-NLS-1$
 				expectedIds, Arrays.stream(problems).map(IApiProblem::getId).collect(Collectors.toSet()));
-		baseline.dispose();
-		current.dispose();
+		ApiTestingEnvironment.dispose(baseline);
+		ApiTestingEnvironment.dispose(current);
 	}
 }

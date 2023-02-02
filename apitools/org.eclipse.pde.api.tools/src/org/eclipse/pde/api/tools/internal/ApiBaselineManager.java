@@ -648,7 +648,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 * Disposes the workspace baseline such that a new one will be created on
 	 * the next request.
 	 */
-	void disposeWorkspaceBaseline() {
+	public void disposeWorkspaceBaseline() {
 		if (workspacebaseline == null) {
 			return;
 		}

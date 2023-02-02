@@ -20,6 +20,7 @@ import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -216,8 +217,10 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		IEclipsePreferences antuiprefs = InstanceScope.INSTANCE.getNode("org.eclipse.ant.ui"); //$NON-NLS-1$
 		antuiprefs.put("errorDialog", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		workspace.getDescription().setSnapshotInterval(Long.MAX_VALUE);
-		workspace.getDescription().setAutoBuilding(false);
+		IWorkspaceDescription description = workspace.getDescription();
+		description.setSnapshotInterval(Long.MAX_VALUE);
+		description.setAutoBuilding(false);
+		workspace.setDescription(description);
 
 		// Get projects directories
 		long start = System.currentTimeMillis();

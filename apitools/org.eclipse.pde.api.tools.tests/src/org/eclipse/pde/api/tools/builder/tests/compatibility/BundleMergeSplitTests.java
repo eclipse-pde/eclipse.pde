@@ -99,11 +99,11 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
 		manager.setDefaultApiBaseline(null);
 		manager.removeApiBaseline(API_BASELINE);
-		this.baseline.dispose();
+		ApiTestingEnvironment.dispose(this.baseline);
 		this.baseline = null;
 		IApiBaseline wsbaseline = manager.getWorkspaceBaseline();
 		if (wsbaseline != null) {
-			wsbaseline.dispose();
+			ApiTestingEnvironment.dispose(wsbaseline);
 		}
 		for (IProject project : getEnv().getWorkspace().getRoot().getProjects()) {
 			getEnv().removeProject(project.getFullPath());
