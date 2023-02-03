@@ -24,6 +24,7 @@ public class FormBrowser {
 	FormToolkit toolkit;
 	Composite container;
 	ScrolledFormText formText;
+	FormText ftext;
 	String text;
 	int style;
 
@@ -44,7 +45,7 @@ public class FormBrowser {
 			formText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
 			toolkit.paintBordersFor(container);
 		}
-		FormText ftext = toolkit.createFormText(formText, false);
+		ftext = toolkit.createFormText(formText, false);
 		formText.setFormText(ftext);
 		formText.setExpandHorizontal(true);
 		formText.setExpandVertical(true);
@@ -71,5 +72,12 @@ public class FormBrowser {
 		this.text = text;
 		if (formText != null)
 			formText.setText(text);
+	}
+
+	public void setEnabled(boolean enabled) {
+		if (formText != null)
+			formText.setEnabled(enabled);
+		if (ftext != null)
+			ftext.setEnabled(enabled);
 	}
 }
