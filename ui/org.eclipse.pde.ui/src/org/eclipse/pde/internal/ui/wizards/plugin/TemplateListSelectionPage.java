@@ -121,6 +121,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 		wizardSelectionViewer.addFilter(new WizardFilter());
 		if (getInitialTemplateId() != null)
 			selectInitialTemplate();
+		setDescriptionEnabled(false);
 	}
 
 	private void selectInitialTemplate() {
