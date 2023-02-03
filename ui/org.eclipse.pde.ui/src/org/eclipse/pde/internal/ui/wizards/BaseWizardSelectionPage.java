@@ -58,5 +58,6 @@ public abstract class BaseWizardSelectionPage extends WizardSelectionPage implem
 		Control dcontrol = descriptionBrowser.getControl();
 		if (dcontrol != null)
 			dcontrol.setEnabled(enabled);
+		descriptionBrowser.setEnabled(enabled);
 	}
 }
