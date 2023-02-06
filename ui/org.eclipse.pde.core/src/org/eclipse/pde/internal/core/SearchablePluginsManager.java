@@ -31,13 +31,17 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -400,36 +404,51 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	}
 
 	private void saveStates() {
-		// persist state
-		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
-		IProject project = root.getProject(PROXY_PROJECT_NAME);
-		if (project.exists() && project.isOpen()) {
-			// modify the .searchable file only if there is any change
-			Set<String> loadedStates = loadStates();
-			String propertyToSave;
-			synchronized (fPluginIdSet) {
-				if (loadedStates.equals(fPluginIdSet)) {
-					return;
-				}
-				propertyToSave = fPluginIdSet.stream().collect(Collectors.joining(",")); //$NON-NLS-1$
-			}
-			IFile file = project.getFile(PROXY_FILE_NAME);
-			Properties properties = new Properties();
-			properties.setProperty(KEY, propertyToSave);
-			try (ByteArrayOutputStream outStream = new ByteArrayOutputStream()) {
-				properties.store(outStream, ""); //$NON-NLS-1$
-				outStream.flush();
-				outStream.close();
-				try (ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray())) {
-					if (file.exists()) {
-						file.setContents(inStream, true, false, new NullProgressMonitor());
-					} else {
-						file.create(inStream, true, new NullProgressMonitor());
+		IWorkspace workspace = PDECore.getWorkspace();
+		ICoreRunnable runnable = monitor -> {
+			// persist state
+			IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
+			IProject project = root.getProject(PROXY_PROJECT_NAME);
+			if (project.exists() && project.isOpen()) {
+				// modify the .searchable file only if there is any change
+				Set<String> loadedStates = loadStates();
+				String propertyToSave;
+				synchronized (fPluginIdSet) {
+					if (loadedStates.equals(fPluginIdSet)) {
+						return;
 					}
+					propertyToSave = fPluginIdSet.stream().collect(Collectors.joining(",")); //$NON-NLS-1$
 				}
-			} catch (IOException | CoreException e) {
-				PDECore.log(e);
+				IFile file = project.getFile(PROXY_FILE_NAME);
+				Properties properties = new Properties();
+				properties.setProperty(KEY, propertyToSave);
+				try (ByteArrayOutputStream outStream = new ByteArrayOutputStream()) {
+					properties.store(outStream, ""); //$NON-NLS-1$
+					outStream.flush();
+					outStream.close();
+					try (ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray())) {
+						if (file.exists()) {
+							file.setContents(inStream, true, false, new NullProgressMonitor());
+						} else {
+							file.create(inStream, true, new NullProgressMonitor());
+						}
+					}
+				} catch (IOException e) {
+					PDECore.log(e);
+				}
 			}
+		};
+		try {
+			if (workspace.isTreeLocked()) {
+				runnable.run(null);
+			} else {
+				IResourceRuleFactory factory = workspace.getRuleFactory();
+				IWorkspaceRoot root = workspace.getRoot();
+				ISchedulingRule rule = factory.modifyRule(root);
+				workspace.run(runnable, rule, IWorkspace.AVOID_UPDATE, null);
+			}
+		} catch (CoreException e) {
+			PDECore.log(e);
 		}
 	}
 
