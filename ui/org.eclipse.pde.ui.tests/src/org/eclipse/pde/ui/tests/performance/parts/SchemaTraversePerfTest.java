@@ -17,6 +17,7 @@ package org.eclipse.pde.ui.tests.performance.parts;
 import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URLConnection;
+
 import org.eclipse.pde.internal.core.XMLDefaultHandler;
 import org.eclipse.pde.internal.core.schema.EditableSchema;
 import org.eclipse.pde.internal.core.util.SAXParserWrapper;
@@ -47,8 +48,8 @@ public class SchemaTraversePerfTest extends AbstractSchemaPerfTest {
 			EditableSchema schema = new EditableSchema("pluginID", "pointID", "name", true);
 			schema.traverseDocumentTree(handler.getDocumentElement());
 		} finally {
-			if (connection instanceof JarURLConnection){
-				((JarURLConnection)connection).getJarFile().close();
+			if (connection instanceof JarURLConnection jarConnection) {
+				jarConnection.getJarFile().close();
 			}
 		}
 	}
