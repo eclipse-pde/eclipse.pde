@@ -20,19 +20,31 @@ import static java.util.Comparator.comparing;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.assertj.core.api.Assertions;
 import org.assertj.core.presentation.StandardRepresentation;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.debug.core.*;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
-import org.junit.*;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.rules.TestRule;
 import org.osgi.framework.Version;
 
@@ -110,8 +122,7 @@ public abstract class AbstractLaunchTest {
 		Assertions.assertThat(actual).withRepresentation(new StandardRepresentation() {
 			@Override
 			public String toStringOf(Object object) {
-				if (object instanceof IPluginModelBase) {
-					IPluginModelBase plugin = (IPluginModelBase) object;
+				if (object instanceof IPluginModelBase plugin) {
 					String location = plugin.getUnderlyingResource() != null ? "w" : "e";
 					IPluginBase p = plugin.getPluginBase();
 					return p.getId() + "-" + p.getVersion() + "(" + location + ")";

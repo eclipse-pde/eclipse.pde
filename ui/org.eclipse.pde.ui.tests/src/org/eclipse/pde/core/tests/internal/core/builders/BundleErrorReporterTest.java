@@ -13,12 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.core.tests.internal.core.builders;
 
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
-import org.eclipse.core.resources.*;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -30,7 +34,9 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.osgi.framework.Constants;
 
 public class BundleErrorReporterTest {
@@ -78,7 +84,7 @@ public class BundleErrorReporterTest {
 		manifest.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
 		return Arrays.stream(manifest.findMarkers(PDEMarkerFactory.MARKER_ID, false, 0)).filter(
 				m -> m.getAttribute(PDEMarkerFactory.compilerKey, "").equals(CompilerFlags.P_UNRESOLVED_IMPORTS))
-				.collect(toList());
+				.toList();
 	}
 
 	@After
