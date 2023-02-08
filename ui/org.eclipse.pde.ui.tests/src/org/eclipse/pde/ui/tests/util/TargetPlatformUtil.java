@@ -18,28 +18,50 @@ package org.eclipse.pde.ui.tests.util;
 
 import static java.util.Map.entry;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
-import java.util.jar.*;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetLocation;
+import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
+import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils.CoreConsumer;
 import org.junit.rules.TestRule;
-import org.osgi.framework.*;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.Constants;
+import org.osgi.framework.FrameworkUtil;
 
 public class TargetPlatformUtil {
 
@@ -96,7 +118,7 @@ public class TargetPlatformUtil {
 		Bundle[] installedBundles = FrameworkUtil.getBundle(TargetPlatformUtil.class).getBundleContext().getBundles();
 		List<Bundle> targetBundles = Arrays.asList(installedBundles);
 		if (bundleFilter != null) {
-			targetBundles = targetBundles.stream().filter(bundleFilter).collect(Collectors.toList());
+			targetBundles = targetBundles.stream().filter(bundleFilter).toList();
 		}
 
 		var containerDirs = targetBundles.stream().map(FileLocator::getBundleFileLocation).map(Optional::orElseThrow)
@@ -104,8 +126,7 @@ public class TargetPlatformUtil {
 		containerDirs.map(dir -> TPS.newDirectoryLocation(dir.getAbsolutePath())).forEach(bundleContainers::add);
 
 		return targetBundles.stream()
-				.map(b -> new NameVersionDescriptor(b.getSymbolicName(), b.getVersion().toString()))
-				.collect(Collectors.toList());
+				.map(b -> new NameVersionDescriptor(b.getSymbolicName(), b.getVersion().toString())).toList();
 	}
 
 	public static void createAndSetTarget(String name, Collection<ITargetLocation> locations,
