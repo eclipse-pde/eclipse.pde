@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.pde.spy.preferences;singleton:=true
-Bundle-Version: 0.12.300.qualifier
+Bundle-Version: 0.12.400.qualifier
 Automatic-Module-Name: org.eclipse.pde.spy.preferences
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Vendor: %provider-name
