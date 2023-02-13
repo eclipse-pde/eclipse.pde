@@ -2028,14 +2028,24 @@ public final class Util {
 	/**
 	 * Creates a new file in the users' <code>temp</code> directory
 	 *
-	 * @param prefix
-	 * @param suffix
 	 * @return a new temp file
 	 * @throws IOException
-	 * @since 1.1
 	 */
 	public static File createTempFile(String prefix, String suffix) throws IOException {
-		File file = File.createTempFile(prefix, suffix);
+		return recordTempFile(Files.createTempFile(prefix, suffix).toFile());
+	}
+
+	/**
+	 * Creates a new directory in the users' <code>temp</code> directory
+	 *
+	 * @return a new temp directory
+	 * @throws IOException
+	 */
+	public static File createTempDirectory(String prefix) throws IOException {
+		return recordTempFile(Files.createTempDirectory(prefix).toFile());
+	}
+
+	private static File recordTempFile(File file) throws IOException {
 		file.deleteOnExit();
 		FileManager.getManager().recordTempFileRoot(file.getCanonicalPath());
 		return file;
