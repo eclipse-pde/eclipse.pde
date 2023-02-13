@@ -21,7 +21,10 @@ import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.BundleVersionRange;
@@ -213,6 +216,36 @@ public class ApiBaselineTests {
 		}
 		assertNotNull("Missing class file", file); //$NON-NLS-1$
 		assertEquals("Wrong type name", "component.a.A", file.getTypeName()); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/**
+	 * Ensures nested jar file names with identical file names are handled
+	 * correctly
+	 * <p>
+	 * https://github.com/eclipse-pde/eclipse.pde/issues/473
+	 */
+	@Test
+	public void testIdenticalNestedJarFileNamesAreHandledCorrectly() throws CoreException {
+		IApiBaseline baseline1 = TestSuiteHelper.createTestingBaseline("test-nested-jars"); //$NON-NLS-1$
+		IApiBaseline baseline2 = TestSuiteHelper.createTestingBaseline("test-nested-jars-2"); //$NON-NLS-1$
+		IApiComponent componentA1 = baseline1.getApiComponent(COMPONENT_A);
+		IApiComponent componentA2 = baseline2.getApiComponent(COMPONENT_A);
+		assertNotNull("missing component.a", componentA1); //$NON-NLS-1$
+		assertNotNull("missing component.a", componentA2); //$NON-NLS-1$
+		Set<String> packages1 = Arrays.stream(componentA1.getApiTypeContainers()).map(ApiBaselineTests::getPackageNames)
+				.flatMap(Arrays::stream).collect(Collectors.toSet());
+		Set<String> packages2 = Arrays.stream(componentA2.getApiTypeContainers()).map(ApiBaselineTests::getPackageNames)
+				.flatMap(Arrays::stream).collect(Collectors.toSet());
+		assertEquals(Set.of("component.a"), packages1); //$NON-NLS-1$
+		assertEquals(Set.of("component.a", "component.a2"), packages2); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	private static String[] getPackageNames(IApiTypeContainer c) {
+		try {
+			return c.getPackageNames();
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
