@@ -75,7 +75,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
-import org.eclipse.pde.api.tools.internal.util.FileManager;
 import org.eclipse.pde.api.tools.internal.util.SourceDefaultHandler;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.internal.core.TargetWeaver;
@@ -94,7 +93,6 @@ import org.xml.sax.SAXException;
 public class BundleComponent extends Component {
 
 	static final String TMP_API_FILE_PREFIX = "api"; //$NON-NLS-1$
-	static final String TMP_API_FILE_POSTFIX = "tmp"; //$NON-NLS-1$
 
 	/**
 	 * Dictionary parsed from MANIFEST.MF
@@ -701,18 +699,9 @@ public class BundleComponent extends Component {
 							File tmpfolder = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
 							if (entry.isDirectory()) {
 								// extract the dir and all children
-								File dir = Util.createTempFile(TMP_API_FILE_PREFIX, TMP_API_FILE_POSTFIX);
-								// hack to create a temp directory
-								// see
-								// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4735419
-								if (dir.delete()) {
-									dir.mkdir();
-									FileManager.getManager().recordTempFileRoot(dir.getCanonicalPath());
-								}
+								File dir = Util.createTempDirectory(TMP_API_FILE_PREFIX);
 								extractDirectory(zip, entry.getName(), dir);
-								if (dir.isDirectory() && dir.exists()) {
-									return new DirectoryApiTypeContainer(this, dir.getCanonicalPath());
-								}
+								return new DirectoryApiTypeContainer(this, dir.getCanonicalPath());
 							} else {
 								File file = extractEntry(zip, entry, tmpfolder);
 								if (Util.isArchive(file.getName())) {
