@@ -18,7 +18,7 @@
 		<relativePath>../../</relativePath>
 	</parent>
 	<artifactId>org.eclipse.pde.api.tools.tests</artifactId>
-	<version>1.2.900-SNAPSHOT</version>
+	<version>1.3.0-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
 	<properties>
 		<code.ignoredWarnings>-warn:-discouraged</code.ignoredWarnings>
