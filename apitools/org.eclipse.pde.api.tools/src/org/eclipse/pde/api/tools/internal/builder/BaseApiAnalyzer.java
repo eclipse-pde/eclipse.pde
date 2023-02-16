@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2021 IBM Corporation and others.
+ * Copyright (c) 2008, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1938,6 +1938,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param component
 	 */
 	private void processDelta(final IDelta delta, final IApiComponent reference, final IApiComponent component) {
+		if (delta.getComponentVersionId() != null
+				&& !delta.getComponentVersionId().equals(component.getSymbolicName())) {
+			return;
+		}
 		int flags = delta.getFlags();
 		int kind = delta.getKind();
 		int modifiers = delta.getNewModifiers();
