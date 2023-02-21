@@ -24,7 +24,7 @@
 		<relativePath>../../</relativePath>
 	</parent>
 	<artifactId>org.eclipse.pde.junit.runtime.tests</artifactId>
-	<version>3.6.800-SNAPSHOT</version>
+	<version>3.7.0-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
 	<properties>
 		<code.ignoredWarnings>-warn:-discouraged</code.ignoredWarnings>
