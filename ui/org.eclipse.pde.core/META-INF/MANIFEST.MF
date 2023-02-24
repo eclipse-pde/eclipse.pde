@@ -24,6 +24,7 @@ Export-Package:
    org.eclipse.pde.api.tools.tests,
    org.eclipse.pde.unittest.junit",
  org.eclipse.pde.internal.core.annotations;x-friends:="org.eclipse.pde.ui",
+ org.eclipse.pde.internal.core.bnd;x-friends:="org.eclipse.pde.ui",
  org.eclipse.pde.internal.core.build;x-friends:="org.eclipse.pde.ui,org.eclipse.pde.ds.ui,org.eclipse.pde.ua.ui",
  org.eclipse.pde.internal.core.builders;x-friends:="org.eclipse.pde.ui,org.eclipse.pde.launching,org.eclipse.pde.ds.core",
  org.eclipse.pde.internal.core.bundle;x-friends:="org.eclipse.pde.ui,org.eclipse.pde.ds.ui",
@@ -78,6 +79,7 @@ Export-Package:
    org.eclipse.pde.api.tools,
    org.eclipse.pde.unittest.junit",
  org.eclipse.pde.internal.core.variables;x-internal:=true
+Import-Package: aQute.bnd.osgi;version="5.5.0"
 Require-Bundle: 
  org.eclipse.core.runtime;bundle-version="[3.25.0,4.0.0)",
  org.eclipse.e4.core.contexts;bundle-version="[1.8.0,2.0.0)",
