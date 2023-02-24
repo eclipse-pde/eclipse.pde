@@ -48,6 +48,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	private Button fModifyDependencies;
 	private Button fUnusedDependencies;
 	private Button fAdditonalDependencies;
+	private Button fComputeImportPackages;
 	private Button fFixIconNLSPaths;
 	private Button fRemovedUnusedKeys;
 	private Button fRemoveLazy;
@@ -180,6 +181,9 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 
 		fAdditonalDependencies = new Button(group, SWT.CHECK);
 		fAdditonalDependencies.setText(PDEUIMessages.OrganizeManifestsWizardPage_addDependencies);
+
+		fComputeImportPackages = new Button(group, SWT.CHECK);
+		fComputeImportPackages.setText(PDEUIMessages.OrganizeManifestsWizardPage_computeImports);
 	}
 
 	private void createGeneralGroup(Composite container) {
@@ -245,6 +249,10 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		fAdditonalDependencies.setSelection(selection);
 		fProcessor.setAddDependencies(selection);
 
+		selection = settings.getBoolean(PROP_COMPUTE_IMPORTS);
+		fComputeImportPackages.setSelection(selection);
+		fProcessor.setComputeImports(selection);
+
 		selection = !settings.getBoolean(PROP_REMOVE_LAZY);
 		fRemoveLazy.setSelection(selection);
 		fProcessor.setRemoveLazy(selection);
@@ -278,6 +286,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		settings.put(PROP_RESOLVE_IMP_MARK_OPT, fOptionalImport.getSelection());
 		settings.put(PROP_UNUSED_DEPENDENCIES, fUnusedDependencies.getSelection());
 		settings.put(PROP_ADD_DEPENDENCIES, fAdditonalDependencies.getSelection());
+		settings.put(PROP_COMPUTE_IMPORTS, fComputeImportPackages.getSelection());
 
 		settings.put(PROP_REMOVE_LAZY, !fRemoveLazy.getSelection());
 		settings.put(PROP_REMOVE_USELESSFILES, !fRemoveUselessFiles.getSelection());
@@ -298,7 +307,9 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	}
 
 	private void setButtonArrays() {
-		fTopLevelButtons = new Button[] {fRemoveUnresolved, fAddMissing, fModifyDependencies, fMarkInternal, fUnusedDependencies, fAdditonalDependencies, fFixIconNLSPaths, fRemovedUnusedKeys, fRemoveLazy, fRemoveUselessFiles, fCalculateUses};
+		fTopLevelButtons = new Button[] { fRemoveUnresolved, fAddMissing, fModifyDependencies, fMarkInternal,
+				fUnusedDependencies, fAdditonalDependencies, fComputeImportPackages, fFixIconNLSPaths,
+				fRemovedUnusedKeys, fRemoveLazy, fRemoveUselessFiles, fCalculateUses };
 	}
 
 	private void setPageComplete() {
@@ -349,6 +360,8 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 			fProcessor.setUnusedDependencies(fUnusedDependencies.getSelection());
 		else if (fAdditonalDependencies.equals(source))
 			fProcessor.setAddDependencies(fAdditonalDependencies.getSelection());
+		else if (fComputeImportPackages.equals(source))
+			fProcessor.setAddDependencies(fComputeImportPackages.getSelection());
 		else if (fRemoveLazy.equals(source))
 			fProcessor.setRemoveLazy(fRemoveLazy.getSelection());
 		else if (fRemoveUselessFiles.equals(source))
