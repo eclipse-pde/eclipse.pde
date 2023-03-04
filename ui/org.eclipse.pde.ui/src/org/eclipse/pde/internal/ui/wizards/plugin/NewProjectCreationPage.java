@@ -91,6 +91,12 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 			fSourceText.setEnabled(enabled);
 			fOutputlabel.setEnabled(enabled);
 			fOutputText.setEnabled(enabled);
+			if (fEclipseButton != null)
+				fEclipseButton.setEnabled(enabled);
+			if (fOSGIButton != null)
+				fOSGIButton.setEnabled(enabled);
+			if (fOSGiCombo != null)
+				fOSGiCombo.setEnabled(enabled);
 			setPageComplete(validatePage());
 		}));
 
