@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Classpathupdater
+Bundle-SymbolicName: classpathupdater
+Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: library.jar,
+ A.jar,
+ .
+Require-Bundle: org.eclipse.pde.core
