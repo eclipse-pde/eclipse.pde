@@ -16,18 +16,19 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.service.resolver.BaseDescription;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -78,14 +79,10 @@ public class PDEState extends MinimalState {
 		fState = stateObjectFactory.createState(resolve);
 		if (resolve) {
 			final String systemBSN = getSystemBundle();
-			fState.getResolver().setSelectionPolicy(new Comparator<BaseDescription>() {
-
-				@Override
-				public int compare(BaseDescription o1, BaseDescription o2) {
-					return compareDescription(o1, o2, systemBSN);
-				}
-
-			});
+			Comparator<BaseDescription> policy = systemBundlesFirst(systemBSN)
+					.thenComparing(BaseDescription::getVersion, HIGHER_VERSION_FIRST)
+					.thenComparing(BaseDescription::getSupplier, HIGHER_LOCAL_VERSION_FIRST);
+			fState.getResolver().setSelectionPolicy(policy);
 		}
 		SubMonitor subMonitor = SubMonitor.convert(monitor, PDECoreMessages.PDEState_CreatingTargetModelState,
 				uris.length);
@@ -106,85 +103,56 @@ public class PDEState extends MinimalState {
 		}
 	}
 
-	private int compareDescription(BaseDescription bd1, BaseDescription bd2, String systemBSN) {
-		BundleDescription sup1 = bd1.getSupplier();
-		BundleDescription sup2 = bd2.getSupplier();
-		if (systemBSN.equals(sup1.getSymbolicName()) && !systemBSN.equals(sup2.getSymbolicName())) {
-			return -1;
-		} else if (!systemBSN.equals(sup1.getSymbolicName()) && systemBSN.equals(sup2.getSymbolicName())) {
-			return 1;
-		}
-		Version v1 = bd1.getVersion();
-		Version v2 = bd2.getVersion();
-		int versionCompare = versionCompare(v1, v2);
-		if (versionCompare != 0) {
-			return versionCompare;
-		}
-		BundleDescription s1 = bd1.getSupplier();
-		BundleDescription s2 = bd2.getSupplier();
-		// To have a stable ordering, the version MUST be compared
-		// first, even if this comes from different suppliers
-		int supplierVersionCompare = versionCompare(s1.getVersion(), s2.getVersion());
-		if (supplierVersionCompare != 0) {
-			return supplierVersionCompare;
-		}
-		String n1 = s1.getName();
-		String n2 = s2.getName();
-		if (n1 != null && n1.equals(n2)) {
-			boolean isQualifier = "qualifier".equals(v1.getQualifier()); //$NON-NLS-1$
-			if (!isQualifier) {
-				String loc1 = s1.getLocation();
-				String loc2 = s2.getLocation();
-				if (loc1 != null && loc2 != null && !loc1.equals(loc2)) {
-					IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-					if (root != null) {
-						IPath p1 = new Path(loc1);
-						boolean p1InWorkspace = root.findContainersForLocationURI(URIUtil.toURI(p1)).length != 0;
-						IPath p2 = new Path(loc2);
-						boolean p2InWorkspace = root.findContainersForLocationURI(URIUtil.toURI(p2)).length != 0;
-						if (p1InWorkspace && !p2InWorkspace) {
-							return -1;
-						}
-						if (!p1InWorkspace && p2InWorkspace) {
-							return 1;
-						}
-					}
-				}
-			}
-		}
-		// as a last resort, compare the bundle id...
-		long id1 = s1.getBundleId();
-		long id2 = s2.getBundleId();
-		return (id1 < id2) ? -1 : ((id1 == id2) ? 0 : 1);
+	private Comparator<BaseDescription> systemBundlesFirst(String systemBSN) {
+		Function<BaseDescription, Boolean> isSystemBundle = b -> systemBSN.equals(b.getSupplier().getSymbolicName());
+		return Comparator.comparing(isSystemBundle).reversed(); // false<true
 	}
 
 	/**
 	 * Compares the given versions and prefers ".qualifier" versions over
 	 * versions with any concrete qualifier.
-	 *
-	 * @param v1
-	 *            first version
-	 * @param v2
-	 *            second version
-	 * @return a negative number, zero, or a positive number depending on if the
-	 *         first version is more desired, equal amount of desire, or less
-	 *         desired than the second version respectively
 	 */
-	private int versionCompare(Version v1, Version v2) {
-		if (v1.getMajor() == v2.getMajor() && v1.getMinor() == v2.getMinor() && v1.getMicro() == v2.getMicro()) {
-			if (v1.getQualifier().equals(v2.getQualifier())) {
-				return 0;
-			}
-			boolean q1 = "qualifier".equals(v1.getQualifier()); //$NON-NLS-1$
-			boolean q2 = "qualifier".equals(v2.getQualifier()); //$NON-NLS-1$
-			if (q1 && !q2) {
-				return -1;
-			} else if (q2 && !q1) {
-				return 1;
+	private static final Comparator<Version> HIGHER_VERSION_FIRST = Comparator //
+			.comparingInt(Version::getMajor) //
+			.thenComparingInt(Version::getMinor) //
+			.thenComparingInt(Version::getMicro) //
+			.thenComparing(PDEState::hasGenericQualifier) // false<true
+			.thenComparing(Version::getQualifier) //
+			.reversed(); //
+
+	private static final Comparator<BundleDescription> IN_WORKSPACE_FIRST = (s1, s2) -> {
+		String n1 = s1.getName();
+		String n2 = s2.getName();
+		// From previous comparison we know that both versions are fully equal
+		if (n1 != null && n1.equals(n2) && !hasGenericQualifier(s1.getVersion())) {
+			String loc1 = s1.getLocation();
+			String loc2 = s2.getLocation();
+			if (loc1 != null && loc2 != null && !loc1.equals(loc2)) {
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				if (root != null) {
+					boolean s1InWorkspace = isInWorkspace(loc1, root);
+					boolean s2InWorkspace = isInWorkspace(loc2, root);
+					return -Boolean.compare(s1InWorkspace, s2InWorkspace); // false<true
+				}
 			}
 		}
-		int versionCompare = -(v1.compareTo(v2));
-		return versionCompare;
+		return 0;
+	};
+
+	private static final Comparator<BundleDescription> HIGHER_LOCAL_VERSION_FIRST = Comparator
+			// To have a stable ordering, the version MUST be compared first,
+			// even if from different suppliers
+			.comparing(BundleDescription::getVersion, HIGHER_VERSION_FIRST) //
+			.thenComparing(IN_WORKSPACE_FIRST)
+			// as a last resort, compare the bundle id...
+			.thenComparing(BundleDescription::getBundleId);
+
+	private static boolean hasGenericQualifier(Version version) {
+		return "qualifier".equals(version.getQualifier()); //$NON-NLS-1$
+	}
+
+	private static boolean isInWorkspace(String location, IWorkspaceRoot root) {
+		return root.findContainersForLocationURI(Path.of(location).toUri()).length > 0;
 	}
 
 	/**
