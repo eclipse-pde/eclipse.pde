@@ -17,6 +17,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -37,6 +39,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -251,7 +254,25 @@ public class ApiAnalysisApplication implements IApplication {
 			return baseline;
 		}
 		String baselineFileName = baselinePath.getName();
-		if (baselinePath.isFile() && baselineFileName.endsWith(".target")) { //$NON-NLS-1$
+		if (baselinePath.isFile() && baselineFileName.endsWith(".txt")) { //$NON-NLS-1$
+			try {
+				String baselineName = baselineFileName.substring(0, baselineFileName.lastIndexOf('.'));
+				ApiBaseline baseline = new ApiBaseline(baselineName);
+				long bundleId = 1;
+				for (String bundleFile : Files.readAllLines(baselinePath.toPath())) {
+					BundleInfo bundleInfo = new BundleInfo(URI.create(bundleFile));
+					if (bundleInfo.getBundleId() != 0) {
+						baseline.addApiComponents(new IApiComponent[] { new BundleComponent(baseline,
+								bundleFile, bundleId++) });
+					}
+				}
+				ApiBaselineManager.getManager().addApiBaseline(baseline);
+				ApiBaselineManager.getManager().setDefaultApiBaseline(baseline.getName());
+				return baseline;
+			} catch (IOException e) {
+				throw new CoreException(Status.error("Reading file failed!", e)); //$NON-NLS-1$
+			}
+		} else if (baselinePath.isFile() && baselineFileName.endsWith(".target")) { //$NON-NLS-1$
 			ITargetPlatformService service = TargetPlatformService.getDefault();
 			ITargetDefinition definition = service.getTarget(baselinePath.toURI()).getTargetDefinition();
 			IStatus resolutionStatus = definition.resolve(new NullProgressMonitor());
