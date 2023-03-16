@@ -17,12 +17,16 @@ package org.eclipse.pde.internal.ui.editor.build;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
+import org.eclipse.pde.internal.ui.editor.contentassist.BuildPropertiesContentAssistProcessor;
 import org.eclipse.pde.internal.ui.editor.text.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -37,6 +41,9 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 	private BasePDEScanner fPropertyKeyScanner;
 	private BasePDEScanner fCommentScanner;
 	private BasePDEScanner fPropertyValueScanner;
+
+	private ContentAssistant fContentAssistant;
+	private BuildPropertiesContentAssistProcessor fContentAssistantProcessor;
 
 	private abstract class AbstractJavaScanner extends BasePDEScanner {
 
@@ -231,4 +238,28 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 		String property = event.getProperty();
 		return property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_VALUE) || property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT) || property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT) || property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_KEY) || property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_COMMENT);
 	}
+
+	@Override
+	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
+		if (fSourcePage != null && fSourcePage.isEditable()) {
+			if (fContentAssistant == null) {
+				// Initialize in SWT thread before using in background thread:
+				PDEPluginImages.get(null);
+				fContentAssistant = new ContentAssistant(true);
+				fContentAssistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
+				fContentAssistantProcessor = new BuildPropertiesContentAssistProcessor(fSourcePage);
+				fContentAssistant.setContentAssistProcessor(fContentAssistantProcessor, IDocument.DEFAULT_CONTENT_TYPE);
+				fContentAssistant.setContentAssistProcessor(fContentAssistantProcessor, PROPERTY_VALUE);
+				fContentAssistant.addCompletionListener(fContentAssistantProcessor);
+				fContentAssistant.enableAutoInsert(true);
+				fContentAssistant.setInformationControlCreator(parent -> new DefaultInformationControl(parent, false));
+				fContentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
+				fContentAssistant.enableAutoActivation(true);
+			}
+			return fContentAssistant;
+		}
+		return null;
+	}
+
 }
+
