@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.Objects;
 import org.osgi.framework.Version;
 
 /**
@@ -22,36 +21,5 @@ import org.osgi.framework.Version;
  * be null.
  * @since 3.4
  */
-public class SourceLocationKey {
-	private final String fBundleName;
-	private final Version fVersion;
-
-	public SourceLocationKey(String bundleName, Version version) {
-		fBundleName = bundleName;
-		fVersion = version;
-	}
-
-	public SourceLocationKey(String bundleName) {
-		this(bundleName, null);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		SourceLocationKey other = (SourceLocationKey) obj;
-		return Objects.equals(fBundleName, other.fBundleName) && Objects.equals(fVersion, other.fVersion);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(fBundleName, fVersion);
-	}
+public record SourceLocationKey(String fBundleName, Version fVersion) {
 }
