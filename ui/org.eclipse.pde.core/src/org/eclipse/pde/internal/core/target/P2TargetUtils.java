@@ -890,17 +890,54 @@ public class P2TargetUtils {
 	 * @throws CoreException in unable to generate identifier
 	 */
 	private static String getProfileId(ITargetHandle handle) throws CoreException {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append(PROFILE_ID_PREFIX);
-		// Memento strings can be very long and exceed max filename lengths, trim down to 200 + prefix + hashcode
 		String memento = handle.getMemento();
-		if (memento.length() > 200) {
-			buffer.append(memento.substring(memento.length() - 200));
-			buffer.append(memento.hashCode());
-		} else {
-			buffer.append(memento);
+		return PROFILE_ID_PREFIX + getProfileSuffix(memento);
+	}
+
+	/**
+	 * Returns the potentially shortened profile identifier based on the given
+	 * memento.
+	 *
+	 * @param memento
+	 *            the ITargetHandle memento as the basis of the ID.
+	 * @return an ID string short enough that it does not exceed the max file
+	 *         length.
+	 */
+	private static String getProfileSuffix(String memento) {
+		// Memento strings can be very long and exceed max filename lengths,
+		// trim down to 200 + prefix + hashcode, considering also how the ID
+		// will
+		// be encoded.
+		// org.eclipse.equinox.internal.p2.engine.SimpleProfileRegistry.escape(String)
+		int escapedLength = 0;
+		int length = memento.length();
+		// length * 4 > 200
+		if (length > 50) {
+			for (int i = length - 1; i >= 0; --i) {
+				switch (memento.charAt(i))
+					{
+					case '\\':
+					case '/':
+					case ':':
+					case '*':
+					case '?':
+					case '"':
+					case '<':
+					case '>':
+					case '|':
+					case '%': {
+						escapedLength += 4;
+					}
+					default: {
+						escapedLength += 1;
+					}
+					}
+				if (escapedLength > 200) {
+					return memento.substring(i + 1) + memento.hashCode();
+				}
+			}
 		}
-		return buffer.toString();
+		return memento;
 	}
 
 	/**
