@@ -70,9 +70,9 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 	public IStatus runInUIThread(IProgressMonitor monitor) {
 		SubMonitor localMonitor = SubMonitor.convert(monitor, MarkerMessages.RemoveUnsupportedTagOperation_removeing_unsupported_tag, this.markers.length + 6);
 		HashMap<ICompilationUnit, Boolean> seen = new HashMap<>();
-		for (int i = 0; i < this.markers.length; i++) {
+		for (IMarker marker : this.markers) {
 			// retrieve the AST node compilation unit
-			IResource resource = this.markers[i].getResource();
+			IResource resource = marker.getResource();
 			IJavaElement javaElement = JavaCore.create(resource);
 			try {
 				if (javaElement != null && javaElement.getElementType() == IJavaElement.COMPILATION_UNIT) {
@@ -93,7 +93,7 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 					ASTParser parser = ASTParser.newParser(AST.getJLSLatest());
 					parser.setSource(compilationUnit);
 					Integer charStartAttribute = null;
-					charStartAttribute = (Integer) this.markers[i].getAttribute(IMarker.CHAR_START);
+					charStartAttribute = (Integer) marker.getAttribute(IMarker.CHAR_START);
 					int intValue = charStartAttribute.intValue();
 					parser.setFocalPosition(intValue);
 					Map<String, String> options = compilationUnit.getJavaProject().getOptions(true);
@@ -113,7 +113,7 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 							return Status.CANCEL_STATUS;
 						} else {
 							List<TagElement> tags = docnode.tags();
-							String arg = (String) this.markers[i].getAttribute(IApiMarkerConstants.MARKER_ATTR_MESSAGE_ARGUMENTS);
+							String arg = (String) marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_MESSAGE_ARGUMENTS);
 							String[] args = arg.split("#"); //$NON-NLS-1$
 							TagElement tag = null;
 							for (Iterator<TagElement> iterator = tags.iterator(); iterator.hasNext();) {

@@ -393,16 +393,16 @@ public class BundleComponent extends Component {
 		ArrayList<IApiDescription> descriptions = new ArrayList<>(fragments.length);
 		descriptions.add(createLocalApiDescription());
 		IApiComponent component = null;
-		for (int i = 0; i < fragments.length; i++) {
-			if (!fragments[i].isResolved()) {
+		for (BundleDescription fragment : fragments) {
+			if (!fragment.isResolved()) {
 				continue;
 			}
-			component = getBaseline().getApiComponent(fragments[i].getSymbolicName());
+			component = getBaseline().getApiComponent(fragment.getSymbolicName());
 			if (component != null) {
 				descriptions.add(component.getApiDescription());
 			} else {
 				ApiPlugin.log(Status.warning(
-						NLS.bind(Messages.BundleComponent_failed_to_lookup_fragment, fragments[i].getSymbolicName())));
+						NLS.bind(Messages.BundleComponent_failed_to_lookup_fragment, fragment.getSymbolicName())));
 			}
 		}
 		return new CompositeApiDescription(descriptions.toArray(new IApiDescription[descriptions.size()]));
@@ -483,11 +483,11 @@ public class BundleComponent extends Component {
 			}
 		}
 		BundleDescription[] fragments = bundle.getFragments();
-		for (int i = 0; i < fragments.length; i++) {
-			if (!fragments[i].isResolved()) {
+		for (BundleDescription fragment : fragments) {
+			if (!fragment.isResolved()) {
 				continue;
 			}
-			addSuppliedPackages(packages, supplied, fragments[i].getExportPackages());
+			addSuppliedPackages(packages, supplied, fragment.getExportPackages());
 		}
 
 		annotateExportedPackages(apiDesc, supplied.toArray(new ExportPackageDescription[supplied.size()]));
@@ -571,11 +571,11 @@ public class BundleComponent extends Component {
 		if (considerFragments) {
 			BundleDescription[] fragments = getBundleDescription().getFragments();
 			IApiComponent component = null;
-			for (int i = 0; i < fragments.length; i++) {
-				if (!fragments[i].isResolved()) {
+			for (BundleDescription fragment : fragments) {
+				if (!fragment.isResolved()) {
 					continue;
 				}
-				component = getBaseline().getApiComponent(fragments[i].getSymbolicName());
+				component = getBaseline().getApiComponent(fragment.getSymbolicName());
 				if (component != null) {
 					// force initialization of the fragment so we can
 					// retrieve its class file containers

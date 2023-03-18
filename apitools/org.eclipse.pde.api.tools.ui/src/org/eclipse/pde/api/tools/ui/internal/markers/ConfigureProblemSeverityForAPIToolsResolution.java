@@ -170,12 +170,12 @@ public class ConfigureProblemSeverityForAPIToolsResolution extends WorkbenchMark
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
 		HashSet<IMarker> mset = new HashSet<>(markers.length);
 		int id = ApiProblemFactory.getProblemId(fBackingMarker);
-		for (int i = 0; i < markers.length; i++) {
+		for (IMarker marker : markers) {
 			try {
-				if (Util.isApiProblemMarker(markers[i]) && !fBackingMarker.equals(markers[i])
-						&& !markers[i].getType().equals(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER)) {
-					if (ApiProblemFactory.getProblemId(markers[i]) == id) {
-						mset.add(markers[i]);
+				if (Util.isApiProblemMarker(marker) && !fBackingMarker.equals(marker)
+						&& !marker.getType().equals(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER)) {
+					if (ApiProblemFactory.getProblemId(marker) == id) {
+						mset.add(marker);
 					}
 				}
 			} catch (CoreException ce) {

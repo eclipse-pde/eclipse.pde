@@ -15,7 +15,6 @@ package org.eclipse.pde.api.tools.internal.model;
 
 import java.text.MessageFormat;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -564,10 +563,8 @@ public class ApiType extends ApiMember implements IApiType {
 			return EMPTY_TYPES;
 		}
 		IApiType[] members = new IApiType[fMemberTypes.size()];
-		Iterator<String> iterator = fMemberTypes.keySet().iterator();
 		int index = 0;
-		while (iterator.hasNext()) {
-			String name = iterator.next();
+		for (String name : fMemberTypes.keySet()) {
 			members[index] = getMemberType(name);
 			index++;
 		}

@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -409,8 +408,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			} else {
 				allComponentSet.addAll(multipleComponents);
 			}
-			for (Iterator<IApiComponent> iterator = allComponentSet.iterator(); iterator.hasNext();) {
-				IApiComponent iApiComponent = iterator.next();
+			for (IApiComponent iApiComponent : allComponentSet) {
 				if (!iApiComponent.isSystemComponent()) {
 					celement = document.createElement(IApiXmlConstants.ELEMENT_APICOMPONENT);
 					celement.setAttribute(IApiXmlConstants.ATTR_ID, iApiComponent.getSymbolicName());

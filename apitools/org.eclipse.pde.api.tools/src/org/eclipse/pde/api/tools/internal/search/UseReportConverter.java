@@ -1187,8 +1187,8 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(CLOSE_TR);
 			Collections.sort(referees, compare);
 			IComponentDescriptor comp = null;
-			for (int i = 0; i < referees.size(); i++) {
-				type = referees.get(i);
+			for (Type referee : referees) {
+				type = referee;
 				comp = (IComponentDescriptor) type.desc;
 				buffer.append("<tr bgcolor=\"").append(getRowColour(counts)).append("\">\n"); //$NON-NLS-1$//$NON-NLS-2$
 				buffer.append("\t").append(OPEN_TD).append(OPEN_B).append(comp.getId()).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
