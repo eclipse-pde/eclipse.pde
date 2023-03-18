@@ -87,9 +87,9 @@ public class UnsupportedTagResolution extends WorkbenchMarkerResolution {
 	@Override
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
 		HashSet<IMarker> mset = new HashSet<>(markers.length);
-		for (int i = 0; i < markers.length; i++) {
-			if (Util.isApiProblemMarker(markers[i]) && !fBackingMarker.equals(markers[i]) && markers[i].getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1) == IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID) {
-				mset.add(markers[i]);
+		for (IMarker marker : markers) {
+			if (Util.isApiProblemMarker(marker) && !fBackingMarker.equals(marker) && marker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1) == IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID) {
+				mset.add(marker);
 			}
 		}
 		int size = mset.size();

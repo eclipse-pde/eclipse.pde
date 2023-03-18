@@ -455,8 +455,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 	@Override
 	public boolean performCancel() {
 		// revert changes
-		for (int i = 0; i < fEditSet.size(); i++) {
-			CommentChange change = fEditSet.get(i);
+		for (CommentChange change : fEditSet) {
 			((ApiProblemFilter) change.filter).setComment(change.comment);
 		}
 		fEditSet.clear();

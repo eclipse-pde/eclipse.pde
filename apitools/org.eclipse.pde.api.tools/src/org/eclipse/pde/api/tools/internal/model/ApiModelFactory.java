@@ -263,10 +263,10 @@ public class ApiModelFactory {
 				List<IApiComponent> components = new ArrayList<>();
 				if (bundles.length > 0) {
 					subMonitor.setWorkRemaining(bundles.length);
-					for (int i = 0; i < bundles.length; i++) {
+					for (TargetBundle bundle : bundles) {
 						subMonitor.split(1);
-						if (!bundles[i].isSourceBundle()) {
-							IApiComponent component = ApiModelFactory.newApiComponent(baseline, URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
+						if (!bundle.isSourceBundle()) {
+							IApiComponent component = ApiModelFactory.newApiComponent(baseline, URIUtil.toFile(bundle.getBundleInfo().getLocation()).getAbsolutePath());
 							if (component != null) {
 								subMonitor.subTask(NLS.bind(Messages.adding_component__0, component.getSymbolicName()));
 								components.add(component);
@@ -318,10 +318,10 @@ public class ApiModelFactory {
 			List<IApiComponent> components = new ArrayList<>();
 			if (bundles.length > 0) {
 				subMonitor.setWorkRemaining(bundles.length);
-				for (int i = 0; i < bundles.length; i++) {
+				for (TargetBundle bundle : bundles) {
 					subMonitor.split(1);
-					if (!bundles[i].isSourceBundle()) {
-						IApiComponent component = ApiModelFactory.newApiComponent(baseline, URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
+					if (!bundle.isSourceBundle()) {
+						IApiComponent component = ApiModelFactory.newApiComponent(baseline, URIUtil.toFile(bundle.getBundleInfo().getLocation()).getAbsolutePath());
 						if (component != null) {
 							subMonitor.subTask(NLS.bind(Messages.adding_component__0, component.getSymbolicName()));
 							components.add(component);

@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -297,11 +296,9 @@ public class ApiDescription implements IApiDescription {
 	protected void visitChildren(ApiDescriptionVisitor visitor, Map<IElementDescriptor, ManifestNode> childrenMap, IProgressMonitor monitor) {
 		List<IElementDescriptor> elements = new ArrayList<>(childrenMap.keySet());
 		Collections.sort(elements, fgComparator);
-		Iterator<IElementDescriptor> iterator = elements.iterator();
 		SubMonitor loopMonitor = SubMonitor.convert(monitor, elements.size());
-		while (iterator.hasNext()) {
+		for (IElementDescriptor element : elements) {
 			loopMonitor.split(1);
-			IElementDescriptor element = iterator.next();
 			ManifestNode node = childrenMap.get(element);
 			visitNode(visitor, node);
 		}

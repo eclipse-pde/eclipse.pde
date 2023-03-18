@@ -252,9 +252,9 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 						locations.add(location.removeTrailingSeparator().toOSString());
 					}
 				} else {
-					for (int i = 0; i < components.length; i++) {
-						if (!components[i].isSystemComponent()) {
-							location = new Path(components[i].getLocation()).removeLastSegments(1);
+					for (IApiComponent component : components) {
+						if (!component.isSystemComponent()) {
+							location = new Path(component.getLocation()).removeLastSegments(1);
 							if (location.toFile().isDirectory()) {
 								locations.add(location.removeTrailingSeparator().toOSString());
 							}

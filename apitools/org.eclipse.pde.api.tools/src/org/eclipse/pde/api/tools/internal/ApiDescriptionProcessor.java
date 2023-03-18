@@ -401,8 +401,8 @@ public class ApiDescriptionProcessor {
 		 */
 		private boolean containsRestrictionTag(List<TagElement> tags, String tag) {
 			TagElement tagelement = null;
-			for (int i = 0; i < tags.size(); i++) {
-				tagelement = tags.get(i);
+			for (TagElement tag2 : tags) {
+				tagelement = tag2;
 				if (tag.equals(tagelement.getTagName())) {
 					return true;
 				}
@@ -420,8 +420,8 @@ public class ApiDescriptionProcessor {
 		 */
 		private IElementDescriptor findDescriptorByName(String name, String signature) {
 			IElementDescriptor desc = null;
-			for (int i = 0; i < apis.size(); i++) {
-				desc = apis.get(i);
+			for (IElementDescriptor element : apis) {
+				desc = element;
 				switch (desc.getElementType()) {
 					case IElementDescriptor.TYPE: {
 						if (((IReferenceTypeDescriptor) desc).getName().equals(name)) {

@@ -14,7 +14,6 @@
 package org.eclipse.pde.api.tools.ui.internal.use;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.regex.PatternSyntaxException;
@@ -227,8 +226,8 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 	 */
 	void doRemove() {
 		IStructuredSelection selection = ApiUsePatternTab.this.viewer.getStructuredSelection();
-		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
-			removePattern((Pattern) iter.next());
+		for (Object name : selection) {
+			removePattern((Pattern) name);
 		}
 		this.viewer.refresh();
 		updateLaunchConfigurationDialog();

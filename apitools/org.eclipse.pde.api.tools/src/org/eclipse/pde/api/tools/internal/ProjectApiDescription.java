@@ -115,8 +115,8 @@ public class ProjectApiDescription extends ApiDescription {
 		@Override
 		protected ManifestNode refresh() {
 			refreshPackages();
-			for (int i = 0; i < fFragments.length; i++) {
-				if (!fFragments[i].exists()) {
+			for (IPackageFragment fFragment : fFragments) {
+				if (!fFragment.exists()) {
 					modified();
 					return null;
 				}
@@ -703,9 +703,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 * @param elementMap elements to persist
 	 */
 	void persistChildren(Document document, Element xmlElement, Map<IElementDescriptor, ManifestNode> elementMap) {
-		Iterator<ManifestNode> iterator = elementMap.values().iterator();
-		while (iterator.hasNext()) {
-			ManifestNode node = iterator.next();
+		for (ManifestNode node : elementMap.values()) {
 			node.persistXML(document, xmlElement);
 		}
 	}

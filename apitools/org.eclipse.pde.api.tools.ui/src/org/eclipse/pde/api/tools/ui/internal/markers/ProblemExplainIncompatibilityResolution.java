@@ -97,12 +97,12 @@ public class ProblemExplainIncompatibilityResolution extends WorkbenchMarkerReso
 	@Override
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
 		HashSet<IMarker> mset = new HashSet<>(markers.length);
-		for (int i = 0; i < markers.length; i++) {
+		for (IMarker marker : markers) {
 			try {
-				if (Util.isApiProblemMarker(markers[i]) && !fBackingMarker.equals(markers[i])
-						&& !markers[i].getType().equals(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER)) {
-					if (ApiMarkerResolutionGenerator.hasExplainProblemResolution(markers[i])) {
-						mset.add(markers[i]);
+				if (Util.isApiProblemMarker(marker) && !fBackingMarker.equals(marker)
+						&& !marker.getType().equals(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER)) {
+					if (ApiMarkerResolutionGenerator.hasExplainProblemResolution(marker)) {
+						mset.add(marker);
 					}
 				}
 			} catch (CoreException ce) {
