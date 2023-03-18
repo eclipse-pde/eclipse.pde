@@ -916,8 +916,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			Set<IApiComponent> apiComponentMultiple = wbaseline.getAllApiComponents(id);
 			if (!apiComponentMultiple.isEmpty()) {
 				// add the exact match
-				for (Iterator<IApiComponent> iterator = apiComponentMultiple.iterator(); iterator.hasNext();) {
-					IApiComponent iApiComponent = iterator.next();
+				for (IApiComponent iApiComponent : apiComponentMultiple) {
 					Version workspaceBaselineVersion = new Version(iApiComponent.getVersion());// removes
 																								// qualifier
 					Version currentProjectVersion = currentModel.getBundleDescription().getVersion();

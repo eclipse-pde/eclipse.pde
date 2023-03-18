@@ -21,7 +21,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -229,9 +228,7 @@ public class DirectoryApiTypeContainer extends ApiElement implements IApiTypeCon
 					}
 				}
 			}
-			Iterator<File> iterator = dirs.iterator();
-			while (iterator.hasNext()) {
-				File child = iterator.next();
+			for (File child : dirs) {
 				String nextName = null;
 				if (packageName.length() == 0) {
 					nextName = child.getName();

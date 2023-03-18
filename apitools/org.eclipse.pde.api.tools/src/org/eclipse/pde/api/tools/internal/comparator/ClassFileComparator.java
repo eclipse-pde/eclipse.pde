@@ -567,14 +567,13 @@ public class ClassFileComparator {
 		IApiType[] typeMembers = this.type1.getMemberTypes();
 		IApiType[] typeMembers2 = this.type2.getMemberTypes();
 		List<String> added = new ArrayList<>(typeMembers2.length);
-		for (int i = 0; i < typeMembers2.length; i++) {
-			added.add(typeMembers2[i].getName());
+		for (IApiType element : typeMembers2) {
+			added.add(element.getName());
 		}
 		if (typeMembers.length > 0) {
 			if (typeMembers2.length == 0) {
-				loop: for (int i = 0; i < typeMembers.length; i++) {
+				loop: for (IApiType typeMember : typeMembers) {
 					try {
-						IApiType typeMember = typeMembers[i];
 						// check visibility
 						IApiDescription apiDescription = this.component.getApiDescription();
 						IApiAnnotations memberTypeElementDescription = apiDescription.resolveAnnotations(typeMember.getHandle());
@@ -605,8 +604,7 @@ public class ClassFileComparator {
 			}
 			// check removed or added type members
 			List<IApiType> removedTypeMembers = new ArrayList<>();
-			loop: for (int i = 0; i < typeMembers.length; i++) {
-				IApiType typeMember = typeMembers[i];
+			loop: for (IApiType typeMember : typeMembers) {
 				IApiType typeMember2 = this.type2.getMemberType(typeMember.getSimpleName());
 				if (typeMember2 == null) {
 					removedTypeMembers.add(typeMember);
@@ -914,8 +912,7 @@ public class ClassFileComparator {
 		try {
 			IApiType[] interfaces = type.getSuperInterfaces();
 			if (interfaces != null) {
-				for (int i = 0; i < interfaces.length; i++) {
-					IApiType anInterface = interfaces[i];
+				for (IApiType anInterface : interfaces) {
 					int visibility = VisibilityModifiers.PRIVATE;
 					IApiComponent ifaceComponent = anInterface.getApiComponent();
 					IApiDescription apiDescription = ifaceComponent.getApiDescription();
@@ -1208,12 +1205,12 @@ public class ClassFileComparator {
 			IApiField[] fields1 = this.type1.getFields();
 			IApiField[] fields2 = this.type2.getFields();
 			Set<String> addedFields = new HashSet<>(fields2.length);
-			for (int i = 0; i < fields2.length; i++) {
-				addedFields.add(fields2[i].getName());
+			for (IApiField element : fields2) {
+				addedFields.add(element.getName());
 			}
-			for (int i = 0; i < fields1.length; i++) {
-				addedFields.remove(fields1[i].getName());
-				getDeltaForField(fields1[i]);
+			for (IApiField element : fields1) {
+				addedFields.remove(element.getName());
+				getDeltaForField(element);
 			}
 			// checks remaining fields (added fields)
 			for (String addedField : addedFields) {
@@ -1225,14 +1222,14 @@ public class ClassFileComparator {
 			IApiMethod[] methods1 = this.type1.getMethods();
 			IApiMethod[] methods2 = this.type2.getMethods();
 			Set<IMemberDescriptor> addedMethods = new HashSet<>(methods2.length);
-			for (int i = 0; i < methods2.length; i++) {
-				if (!methods2[i].isSynthetic()) {
-					addedMethods.add(methods2[i].getHandle());
+			for (IApiMethod element : methods2) {
+				if (!element.isSynthetic()) {
+					addedMethods.add(element.getHandle());
 				}
 			}
-			for (int i = 0; i < methods1.length; i++) {
-				addedMethods.remove(methods1[i].getHandle());
-				getDeltaForMethod(methods1[i]);
+			for (IApiMethod element : methods1) {
+				addedMethods.remove(element.getHandle());
+				getDeltaForMethod(element);
 			}
 			// checks remaining methods (added methods)
 			for (IMemberDescriptor addedMethod : addedMethods) {
@@ -1824,8 +1821,8 @@ public class ClassFileComparator {
 			if (names2 == null) {
 				// check all exception in method descriptor to see if they are
 				// checked or unchecked exceptions
-				loop: for (Iterator<String> iterator = list1.iterator(); iterator.hasNext();) {
-					String exceptionName = iterator.next().replace('/', '.');
+				loop: for (String string : list1) {
+					String exceptionName = string.replace('/', '.');
 					if (isCheckedException(this.apiBaseline1, this.component, exceptionName)) {
 						// report delta - removal of checked exception
 						// TODO should we continue the loop for all remaining
@@ -1854,8 +1851,8 @@ public class ClassFileComparator {
 					}
 				}
 				if (removedExceptions.size() != 0) {
-					loop: for (Iterator<String> iterator = removedExceptions.iterator(); iterator.hasNext();) {
-						String exceptionName = iterator.next().replace('/', '.');
+					loop: for (String removedException : removedExceptions) {
+						String exceptionName = removedException.replace('/', '.');
 						if (isCheckedException(this.apiBaseline1, this.component, exceptionName)) {
 							// report delta - removal of checked exception
 							// TODO should we continue the loop for all
@@ -1872,8 +1869,8 @@ public class ClassFileComparator {
 						}
 					}
 				}
-				loop: for (Iterator<String> iterator = list2.iterator(); iterator.hasNext();) {
-					String exceptionName = iterator.next().replace('/', '.');
+				loop: for (String string : list2) {
+					String exceptionName = string.replace('/', '.');
 					if (isCheckedException(this.apiBaseline2, this.component2, exceptionName)) {
 						// report delta - addition of checked exception
 						// TODO should we continue the loop for all remaining
@@ -1893,8 +1890,8 @@ public class ClassFileComparator {
 		} else if (names2 != null) {
 			// check all exception in method descriptor to see if they are
 			// checked or unchecked exceptions
-			loop: for (Iterator<String> iterator = list2.iterator(); iterator.hasNext();) {
-				String exceptionName = iterator.next().replace('/', '.');
+			loop: for (String string : list2) {
+				String exceptionName = string.replace('/', '.');
 				if (isCheckedException(this.apiBaseline2, this.component2, exceptionName)) {
 					// report delta - addition of checked exception
 					this.addDelta(getElementType(method), IDelta.ADDED, IDelta.CHECKED_EXCEPTION, restrictions, access, access2, this.type1, key, new String[] {
