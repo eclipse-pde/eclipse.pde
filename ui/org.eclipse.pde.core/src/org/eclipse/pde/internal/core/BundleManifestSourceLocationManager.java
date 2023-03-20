@@ -22,7 +22,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -61,15 +60,15 @@ public class BundleManifestSourceLocationManager {
 	 * @param pluginVersion version of the plugin
 	 * @return a source location or <code>null</code> if no location exists for this plugin
 	 */
-	public SourceLocation getSourceLocation(String pluginName, Version pluginVersion) {
+	public IPath getSourceLocation(String pluginName, Version pluginVersion) {
 		return locationOf(new SourceLocationKey(pluginName, pluginVersion)).orElse(null);
 	}
 
-	private Optional<SourceLocation> locationOf(SourceLocationKey key) {
+	private Optional<IPath> locationOf(SourceLocationKey key) {
 		return pluginModel(key).or(() -> targetBundle(key));
 	}
 
-	private Optional<SourceLocation> targetBundle(SourceLocationKey key) {
+	private Optional<IPath> targetBundle(SourceLocationKey key) {
 		TargetBundle targetBundle = fPluginToTargetBundle.get(key);
 		if (targetBundle != null) {
 			BundleInfo bundleInfo = targetBundle.getBundleInfo();
@@ -78,8 +77,7 @@ public class BundleManifestSourceLocationManager {
 				if (location != null) {
 					try {
 						File file = new File(location);
-						SourceLocation sourceLocation = new SourceLocation(new Path(file.getAbsolutePath()));
-						sourceLocation.setUserDefined(false);
+						IPath sourceLocation = Path.fromOSString(file.getAbsolutePath());
 						return Optional.of(sourceLocation);
 					} catch (RuntimeException e) {
 						// cannot be used then...
@@ -90,13 +88,12 @@ public class BundleManifestSourceLocationManager {
 		return Optional.empty();
 	}
 
-	private Optional<SourceLocation> pluginModel(SourceLocationKey key) {
+	private Optional<IPath> pluginModel(SourceLocationKey key) {
 		IPluginModelBase plugin = fPluginToSourceBundle.get(key);
 		if (plugin != null) {
 			String path = plugin.getInstallLocation();
 			if (path != null) {
-				SourceLocation location = new SourceLocation(new Path(path));
-				location.setUserDefined(false);
+				IPath location = Path.fromOSString(path);
 				return Optional.of(location);
 			}
 		}
@@ -107,9 +104,9 @@ public class BundleManifestSourceLocationManager {
 	 * Returns the collection of source locations found when searching
 	 * @return set of source locations, possibly empty
 	 */
-	public Collection<SourceLocation> getSourceLocations() {
+	public Collection<IPath> getSourceLocations() {
 		return Stream.concat(fPluginToSourceBundle.keySet().stream(), fPluginToTargetBundle.keySet().stream())
-				.distinct().flatMap(key -> locationOf(key).stream()).collect(Collectors.toList());
+				.distinct().flatMap(key -> locationOf(key).stream()).toList();
 	}
 
 	/**
@@ -243,7 +240,7 @@ public class BundleManifestSourceLocationManager {
 						PDECore.log(Status.error(NLS.bind(PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, currentPlugin.getId(), currentPlugin.getVersion()), e));
 					}
 					if (manifestElements != null) {
-						IPath path = new Path(model.getInstallLocation());
+						IPath path = Path.fromOSString(model.getInstallLocation());
 						if (path.toFile().exists()) {
 							for (ManifestElement element : manifestElements) {
 								String binaryPluginName = element.getValue();
