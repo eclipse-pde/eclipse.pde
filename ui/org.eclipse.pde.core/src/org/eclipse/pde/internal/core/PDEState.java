@@ -79,80 +79,12 @@ public class PDEState extends MinimalState {
 		if (resolve) {
 			final String systemBSN = getSystemBundle();
 			fState.getResolver().setSelectionPolicy(new Comparator<BaseDescription>() {
+
 				@Override
-				public int compare(BaseDescription bd1, BaseDescription bd2) {
-					if (systemBSN.equals(bd1.getSupplier().getSymbolicName())
-							&& !systemBSN.equals(bd2.getSupplier().getSymbolicName())) {
-						return -1;
-					} else if (!systemBSN.equals(bd1.getSupplier().getSymbolicName())
-							&& systemBSN.equals(bd2.getSupplier().getSymbolicName())) {
-						return 1;
-					}
-					Version v1 = bd1.getVersion();
-					Version v2 = bd2.getVersion();
-					int versionCompare = versionCompare(v1, v2);
-					if (versionCompare != 0) {
-						return versionCompare;
-					}
-					BundleDescription s1 = bd1.getSupplier();
-					BundleDescription s2 = bd2.getSupplier();
-					String n1 = s1.getName();
-					String n2 = s2.getName();
-					if (n1 != null && n1.equals(n2)) {
-						int retValue = versionCompare(s1.getVersion(), s2.getVersion());
-						if(retValue == 0){
-							boolean isQualifier = "qualifier".equals(v1.getQualifier()); //$NON-NLS-1$
-							if (!isQualifier) {
-								String loc1 = s1.getLocation();
-								String loc2 = s2.getLocation();
-								if (loc1 != null && loc2 != null  && !loc1.equals(loc2)) {
-									IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-									if (root != null) {
-										IPath p1 = new Path(loc1);
-										if (root.findContainersForLocationURI(URIUtil.toURI(p1)).length != 0) {
-											return -1;
-										}
-										IPath p2 = new Path(loc2);
-										if (root.findContainersForLocationURI(URIUtil.toURI(p2)).length != 0) {
-											return 1;
-										}
-									}
-								}
-							}
-						}
-						return retValue;
-					}
-					long id1 = s1.getBundleId();
-					long id2 = s2.getBundleId();
-					return (id1 < id2) ? -1 : ((id1 == id2) ? 0 : 1);
+				public int compare(BaseDescription o1, BaseDescription o2) {
+					return compareDescription(o1, o2, systemBSN);
 				}
 
-				/**
-				 * Compares the given versions and prefers ".qualifier" versions over versions
-				 * with any concrete qualifier.
-				 *
-				 * @param v1 first version
-				 * @param v2 second version
-				 * @return a negative number, zero, or a positive number depending on
-				 * if the first version is more desired, equal amount of desire, or less desired
-				 * than the second version respectively
-				 */
-				private int versionCompare(Version v1, Version v2) {
-					if (v1.getMajor() == v2.getMajor() && v1.getMinor() == v2.getMinor() && v1.getMicro() == v2.getMicro()) {
-						if (v1.getQualifier().equals(v2.getQualifier())) {
-							return 0;
-						}
-						boolean q1 = "qualifier".equals(v1.getQualifier()); //$NON-NLS-1$
-						boolean q2 = "qualifier".equals(v2.getQualifier()); //$NON-NLS-1$
-						if (q1 && !q2) {
-							return -1;
-						} else if (q2 && !q1) {
-							return 1;
-						}
-					}
-					int versionCompare = -(v1.compareTo(v2));
-					return versionCompare;
-				}
 			});
 		}
 		SubMonitor subMonitor = SubMonitor.convert(monitor, PDECoreMessages.PDEState_CreatingTargetModelState,
@@ -172,6 +104,87 @@ public class PDEState extends MinimalState {
 			}
 			subMonitor.split(1);
 		}
+	}
+
+	private int compareDescription(BaseDescription bd1, BaseDescription bd2, String systemBSN) {
+		BundleDescription sup1 = bd1.getSupplier();
+		BundleDescription sup2 = bd2.getSupplier();
+		if (systemBSN.equals(sup1.getSymbolicName()) && !systemBSN.equals(sup2.getSymbolicName())) {
+			return -1;
+		} else if (!systemBSN.equals(sup1.getSymbolicName()) && systemBSN.equals(sup2.getSymbolicName())) {
+			return 1;
+		}
+		Version v1 = bd1.getVersion();
+		Version v2 = bd2.getVersion();
+		int versionCompare = versionCompare(v1, v2);
+		if (versionCompare != 0) {
+			return versionCompare;
+		}
+		BundleDescription s1 = bd1.getSupplier();
+		BundleDescription s2 = bd2.getSupplier();
+		// To have a stable ordering, the version MUST be compared
+		// first, even if this comes from different suppliers
+		int supplierVersionCompare = versionCompare(s1.getVersion(), s2.getVersion());
+		if (supplierVersionCompare != 0) {
+			return supplierVersionCompare;
+		}
+		String n1 = s1.getName();
+		String n2 = s2.getName();
+		if (n1 != null && n1.equals(n2)) {
+			boolean isQualifier = "qualifier".equals(v1.getQualifier()); //$NON-NLS-1$
+			if (!isQualifier) {
+				String loc1 = s1.getLocation();
+				String loc2 = s2.getLocation();
+				if (loc1 != null && loc2 != null && !loc1.equals(loc2)) {
+					IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+					if (root != null) {
+						IPath p1 = new Path(loc1);
+						boolean p1InWorkspace = root.findContainersForLocationURI(URIUtil.toURI(p1)).length != 0;
+						IPath p2 = new Path(loc2);
+						boolean p2InWorkspace = root.findContainersForLocationURI(URIUtil.toURI(p2)).length != 0;
+						if (p1InWorkspace && !p2InWorkspace) {
+							return -1;
+						}
+						if (!p1InWorkspace && p2InWorkspace) {
+							return 1;
+						}
+					}
+				}
+			}
+		}
+		// as a last resort, compare the bundle id...
+		long id1 = s1.getBundleId();
+		long id2 = s2.getBundleId();
+		return (id1 < id2) ? -1 : ((id1 == id2) ? 0 : 1);
+	}
+
+	/**
+	 * Compares the given versions and prefers ".qualifier" versions over
+	 * versions with any concrete qualifier.
+	 *
+	 * @param v1
+	 *            first version
+	 * @param v2
+	 *            second version
+	 * @return a negative number, zero, or a positive number depending on if the
+	 *         first version is more desired, equal amount of desire, or less
+	 *         desired than the second version respectively
+	 */
+	private int versionCompare(Version v1, Version v2) {
+		if (v1.getMajor() == v2.getMajor() && v1.getMinor() == v2.getMinor() && v1.getMicro() == v2.getMicro()) {
+			if (v1.getQualifier().equals(v2.getQualifier())) {
+				return 0;
+			}
+			boolean q1 = "qualifier".equals(v1.getQualifier()); //$NON-NLS-1$
+			boolean q2 = "qualifier".equals(v2.getQualifier()); //$NON-NLS-1$
+			if (q1 && !q2) {
+				return -1;
+			} else if (q2 && !q1) {
+				return 1;
+			}
+		}
+		int versionCompare = -(v1.compareTo(v2));
+		return versionCompare;
 	}
 
 	/**

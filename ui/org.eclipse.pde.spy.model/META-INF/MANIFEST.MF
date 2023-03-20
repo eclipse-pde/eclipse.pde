@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.pde.spy.model;singleton:=true
-Bundle-Version: 0.12.500.qualifier
+Bundle-Version: 0.12.600.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.e4.ui.services;bundle-version="0.9.1",
  org.eclipse.e4.tools.emf.ui;bundle-version="4.7.0",

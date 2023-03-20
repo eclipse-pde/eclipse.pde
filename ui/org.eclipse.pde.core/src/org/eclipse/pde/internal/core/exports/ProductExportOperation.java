@@ -21,9 +21,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -39,7 +37,6 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.build.BuildScriptGenerator;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
@@ -244,7 +241,6 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 		if (fInfo.exportSource && fInfo.exportSourceBundle) {
 			properties.put(IBuildPropertiesConstants.PROPERTY_INDIVIDUAL_SOURCE, "true"); //$NON-NLS-1$
-			List<IPluginModelBase> workspacePlugins = Arrays.asList(PluginRegistry.getWorkspaceModels());
 			for (Object item : fInfo.items) {
 				if (item instanceof IFeatureModel) {
 					IFeature feature = ((IFeatureModel) item).getFeature();
@@ -254,17 +250,15 @@ public class ProductExportOperation extends FeatureExportOperation {
 					if (item instanceof IPluginModelBase) {
 						bundle = ((IPluginModelBase) item).getBundleDescription();
 					}
-					if (bundle == null) {
-						if (item instanceof BundleDescription) {
-							bundle = (BundleDescription) item;
-						}
+					if (bundle == null && item instanceof BundleDescription) {
+						bundle = (BundleDescription) item;
 					}
 					if (bundle == null) {
 						continue;
 					}
 
 					//it doesn't matter if we generate extra properties for platforms we aren't exporting for
-					if (workspacePlugins.contains(PluginRegistry.findModel(bundle))) {
+					if (FeatureExportOperation.isWorkspacePlugin(bundle)) {
 						properties.put("generate.plugin@" + bundle.getSymbolicName().trim() + ".source", bundle.getSymbolicName()); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}

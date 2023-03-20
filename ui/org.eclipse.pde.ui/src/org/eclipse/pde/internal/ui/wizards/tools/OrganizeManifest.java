@@ -15,12 +15,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
-import java.io.File;
+import aQute.bnd.header.*;
+import aQute.bnd.osgi.Analyzer;
+import aQute.bnd.osgi.Jar;
+import java.io.*;
 import java.util.*;
+import java.util.Map.Entry;
+import java.util.jar.Manifest;
 import java.util.regex.Pattern;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -31,6 +36,7 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.bnd.FileResource;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.project.PDEProject;
@@ -45,6 +51,7 @@ import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.osgi.framework.Constants;
+import org.osgi.service.prefs.BackingStoreException;
 
 public class OrganizeManifest implements IOrganizeManifestsSettings {
 
@@ -157,6 +164,122 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 				else {
 					importedPackage.setOptional(true);
 				}
+			}
+		}
+	}
+
+	public static void computeImportPackages(IBundlePluginModelBase pluginModel, IProject project,
+			IProgressMonitor monitor) throws CoreException {
+		IBundle bundle = pluginModel.getBundleModel().getBundle();
+		// Step 1) Enable using import for automatic managed dependencies
+		IEclipsePreferences pref = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
+		pref.putBoolean(ICoreConstants.RESOLVE_WITH_REQUIRE_BUNDLE, false);
+		try {
+			pref.flush();
+		} catch (BackingStoreException e) {
+		}
+		// Step 2) convert all required bundles
+		IBuildModel buildModel = PluginRegistry.createBuildModel(pluginModel);
+		if (buildModel != null) {
+			RequireBundleHeader header = (RequireBundleHeader) (bundle.getManifestHeader(Constants.REQUIRE_BUNDLE));
+			if (header != null) {
+				RequireBundleObject[] bundles = header.getRequiredBundles();
+				if (bundles.length > 0) {
+					IBuild build = buildModel.getBuild();
+					IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+					if (entry == null) {
+						entry = buildModel.getFactory().createEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
+						build.add(entry);
+					}
+					for (RequireBundleObject requiredBundle : bundles) {
+						String pluginId = requiredBundle.getId();
+						header.removeBundle(requiredBundle);
+						if (!entry.contains(pluginId)) {
+							entry.addToken(pluginId);
+						}
+					}
+					IFile buildProperties = PDEProject.getBuildProperties(project);
+					ByteArrayOutputStream stream = new ByteArrayOutputStream();
+					try (PrintWriter writer = new PrintWriter(stream)) {
+						build.write("", writer); //$NON-NLS-1$
+					}
+					if (buildProperties.exists()) {
+						buildProperties.setContents(new ByteArrayInputStream(stream.toByteArray()),
+								IResource.FORCE | IResource.KEEP_HISTORY, monitor);
+					} else {
+						buildProperties.create(new ByteArrayInputStream(stream.toByteArray()), true, monitor);
+					}
+				}
+			}
+		}
+		// Step 3) compute the current required import packages
+		IJavaProject javaProject = JavaCore.create(project);
+		IClasspathEntry[] classpath = javaProject.getResolvedClasspath(true);
+		IPath outputLocation = javaProject.getOutputLocation();
+		IWorkspaceRoot workspaceRoot = project.getWorkspace().getRoot();
+		try (Jar jar = new Jar(project.getProject().getName()); Analyzer analyzer = new Analyzer(jar)) {
+			analyzer.setImportPackage("*"); //$NON-NLS-1$
+			IFolder folder = workspaceRoot.getFolder(outputLocation);
+			addResources(jar, folder, folder.getProjectRelativePath().toString());
+			for (IClasspathEntry cp : classpath) {
+				if (cp.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
+					File file = cp.getPath().toFile();
+					if (file != null && file.exists()) {
+						analyzer.addClasspath(file);
+					}
+				}
+				if (cp.getEntryKind() == IClasspathEntry.CPE_SOURCE && !cp.isTest()) {
+					IPath location = cp.getOutputLocation();
+					if (location != null) {
+						IFolder folder2 = workspaceRoot.getFolder(location);
+						addResources(jar, folder2, folder2.getProjectRelativePath().toString());
+					}
+
+				}
+			}
+			Manifest manifest = analyzer.calcManifest();
+			String calculatedImportPackage = manifest.getMainAttributes().getValue(Constants.IMPORT_PACKAGE);
+			if (calculatedImportPackage == null || calculatedImportPackage.isBlank()) {
+				bundle.setHeader(Constants.IMPORT_PACKAGE, null);
+			} else {
+				Parameters header = OSGiHeader.parseHeader(calculatedImportPackage);
+				StringBuilder buffer = new StringBuilder();
+				for (Entry<String, Attrs> entry : header.entrySet()) {
+					if (buffer.length() > 0) {
+						buffer.append(ManifestUtils.MANIFEST_LIST_SEPARATOR);
+					}
+					buffer.append(entry.getKey());
+					Attrs value = entry.getValue();
+					String attrs = value.toString();
+					if (!attrs.isEmpty()) {
+						buffer.append(";"); //$NON-NLS-1$
+						buffer.append(attrs);
+					}
+				}
+				bundle.setHeader(Constants.IMPORT_PACKAGE, buffer.toString());
+			}
+
+		} catch (Exception e) {
+			throw new CoreException(Status.error("Error generating manifest!", e)); //$NON-NLS-1$
+		}
+	}
+
+	private static void addResources(Jar jar, IContainer container, String prefix) throws CoreException {
+		if (container == null || !container.exists()) {
+			return;
+		}
+		for (IResource resource : container.members()) {
+			if (resource instanceof IFile) {
+				IPath projectRelativePath = resource.getProjectRelativePath();
+				String relativePath = projectRelativePath.toString();
+				String base = relativePath.substring(prefix.length());
+				if (base.startsWith("/")) { //$NON-NLS-1$
+					base = base.substring(1);
+				}
+				jar.putResource(base, new FileResource((IFile) resource));
+			}
+			if (resource instanceof IContainer) {
+				addResources(jar, (IContainer) resource, prefix);
 			}
 		}
 	}

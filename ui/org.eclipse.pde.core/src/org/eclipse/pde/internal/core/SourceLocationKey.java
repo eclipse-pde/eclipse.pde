@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.util.Objects;
 import org.osgi.framework.Version;
 
 /**
@@ -36,25 +37,21 @@ public class SourceLocationKey {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof SourceLocationKey) {
-			SourceLocationKey key = (SourceLocationKey) obj;
-			if (fVersion != null && key.fVersion != null) {
-				return fBundleName.equals(((SourceLocationKey) obj).fBundleName) && fVersion.equals(((SourceLocationKey) obj).fVersion);
-			} else if (fVersion == null && key.fVersion == null) {
-				return fBundleName.equals(((SourceLocationKey) obj).fBundleName);
-			}
+		if (this == obj) {
+			return true;
 		}
-		return false;
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		SourceLocationKey other = (SourceLocationKey) obj;
+		return Objects.equals(fBundleName, other.fBundleName) && Objects.equals(fVersion, other.fVersion);
 	}
 
 	@Override
 	public int hashCode() {
-		if (fVersion == null) {
-			return fBundleName.hashCode();
-		}
-		int result = 1;
-		result = 31 * result + fBundleName.hashCode();
-		result = 31 * result + fVersion.hashCode();
-		return result;
+		return Objects.hash(fBundleName, fVersion);
 	}
 }

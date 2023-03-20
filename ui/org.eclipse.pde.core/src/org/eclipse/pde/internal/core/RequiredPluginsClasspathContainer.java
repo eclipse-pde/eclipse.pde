@@ -18,13 +18,13 @@ import static java.util.Collections.singletonMap;
 import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -57,9 +57,9 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 public class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
 
 	@SuppressWarnings("nls")
-	private static final Collection<String> JUNIT5_RUNTIME_PLUGINS = new HashSet<>(
-			Arrays.asList("org.junit", "junit-jupiter-api", "junit-jupiter-engine",
-					"junit-platform-commons", "junit-platform-engine", "org.hamcrest.core", "org.opentest4j"));
+	private static final Collection<String> JUNIT5_RUNTIME_PLUGINS = Set.of("org.junit", "junit-jupiter-api",
+			"junit-jupiter-engine", "junit-platform-commons", "junit-platform-engine", "org.hamcrest.core",
+			"org.opentest4j");
 
 	private final IPluginModelBase fModel;
 	private IBuild fBuild;
@@ -477,7 +477,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			return;
 		}
 
-		if (JUNIT5_RUNTIME_PLUGINS.contains(fModel.getPluginBase().getId())) {
+		String id = fModel.getPluginBase().getId();
+		if (id != null && JUNIT5_RUNTIME_PLUGINS.contains(id)) {
 			return; // never extend the classpath of a junit bundle
 		}
 

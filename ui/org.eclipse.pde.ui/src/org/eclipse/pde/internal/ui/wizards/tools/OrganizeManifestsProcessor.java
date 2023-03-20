@@ -65,6 +65,7 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 
 	List<IProject> fProjectList;
 	private IProject fCurrentProject;
+	private boolean fComputeImports;
 
 	public OrganizeManifestsProcessor(List<IProject> projects) {
 		fProjectList = projects;
@@ -134,7 +135,7 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 	}
 
 	private void runCleanup(IProgressMonitor monitor, IBundlePluginModelBase modelBase, Change[] result)
-			throws InvocationTargetException, InterruptedException {
+			throws InvocationTargetException, InterruptedException, CoreException {
 
 		IBundle currentBundle = modelBase.getBundleModel().getBundle();
 		ISharedExtensionsModel sharedExtensionsModel = modelBase.getExtensionsModel();
@@ -235,6 +236,9 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 			}
 			subMonitor.worked(1);
 		}
+		if (fComputeImports) {
+			OrganizeManifest.computeImportPackages(modelBase, fCurrentProject, subMonitor.split(1));
+		}
 		subMonitor.setWorkRemaining(0);
 	}
 
@@ -314,5 +318,9 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 
 	public void setAddDependencies(boolean addDependencies) {
 		fAddDependencies = addDependencies;
+	}
+
+	public void setComputeImports(boolean computeImports) {
+		this.fComputeImports = computeImports;
 	}
 }
