@@ -409,8 +409,8 @@ public class TestSuiteHelper {
 				writer.println(System.getProperty("java.home")); //$NON-NLS-1$
 				writer.print("-Dee.bootclasspath="); //$NON-NLS-1$
 				writer.println(org.eclipse.pde.api.tools.internal.util.Util.getJavaClassLibsAsString());
-				writer.println("-Dee.language.level=11"); //$NON-NLS-1$
-				writer.println("-Dee.class.library.level=JavaSE-11"); //$NON-NLS-1$
+				writer.println("-Dee.language.level=17"); //$NON-NLS-1$
+				writer.println("-Dee.class.library.level=JavaSE-17"); //$NON-NLS-1$
 				writer.flush();
 				}
 			} catch (IOException e) {
