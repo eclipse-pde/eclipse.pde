@@ -210,8 +210,8 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @return array of source locations that have been specified by the user
 	 */
 	@SuppressWarnings("deprecation")
-	public List<SourceLocation> getUserLocations() {
-		List<SourceLocation> userLocations = new ArrayList<>();
+	public List<IPath> getUserLocations() {
+		List<IPath> userLocations = new ArrayList<>();
 		String pref = PDECore.getDefault().getPreferencesManager().getString(P_SOURCE_LOCATIONS);
 		if (pref.length() > 0) {
 			parseSavedSourceLocations(pref, userLocations);
@@ -222,7 +222,7 @@ public class SourceLocationManager implements ICoreConstants {
 	/**
 	 * @return array of source locations that have been added via extension point
 	 */
-	public Collection<SourceLocation> getExtensionLocations() {
+	public Collection<IPath> getExtensionLocations() {
 		return getExtensions().locations;
 	}
 
@@ -236,14 +236,14 @@ public class SourceLocationManager implements ICoreConstants {
 	/**
 	 * @return array of source locations defined by a bundle manifest entry
 	 */
-	public Collection<SourceLocation> getBundleManifestLocations() {
+	public Collection<IPath> getBundleManifestLocations() {
 		return getBundleManifestLocator().getSourceLocations();
 	}
 
 	/**
 	 * @return source location that was specified by a bundle manifest entry to provide source for the given plugin.
 	 */
-	private SourceLocation getBundleManifestLocation(String pluginID, Version version) {
+	private IPath getBundleManifestLocation(String pluginID, Version version) {
 		return getBundleManifestLocator().getSourceLocation(pluginID, version);
 	}
 
@@ -277,7 +277,7 @@ public class SourceLocationManager implements ICoreConstants {
 				Version vid = new Version(version);
 				pluginDir += "_" + vid; //$NON-NLS-1$
 			}
-			IPath path = new Path(pluginDir);
+			IPath path = Path.fromOSString(pluginDir);
 			return sourceFilePath == null ? path : path.append(sourceFilePath);
 		} catch (IllegalArgumentException e) {
 			return null;
@@ -291,9 +291,9 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @return path to the source file or <code>null</code> if one could not be found or if the file does not exist
 	 */
 	private IPath searchUserSpecifiedLocations(IPath relativePath) {
-		List<SourceLocation> userLocations = getUserLocations();
-		for (SourceLocation location : userLocations) {
-			IPath fullPath = location.getPath().append(relativePath);
+		List<IPath> userLocations = getUserLocations();
+		for (IPath location : userLocations) {
+			IPath fullPath = location.append(relativePath);
 			File file = fullPath.toFile();
 			if (file.exists()) {
 				return fullPath;
@@ -313,8 +313,8 @@ public class SourceLocationManager implements ICoreConstants {
 	 *         found or if the file does not exist
 	 */
 	private IPath searchExtensionLocations(IPath relativePath, IPluginBase plugin) {
-		for (SourceLocation location : getExtensionLocations()) {
-			IPath fullPath = location.getPath().append(relativePath);
+		for (IPath location : getExtensionLocations()) {
+			IPath fullPath = location.append(relativePath);
 			File file = fullPath.toFile();
 			if (file.exists()) {
 				return fullPath;
@@ -337,9 +337,9 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @return path to the source file or <code>null</code> if one could not be found or if the file does not exist
 	 */
 	private IPath searchBundleManifestLocations(IPluginBase pluginBase) {
-		SourceLocation location = getBundleManifestLocation(pluginBase.getId(), new Version(pluginBase.getVersion()));
-		if (location != null && location.getPath().toFile().exists()) {
-			return location.getPath();
+		IPath location = getBundleManifestLocation(pluginBase.getId(), new Version(pluginBase.getVersion()));
+		if (location != null && location.toFile().exists()) {
+			return location;
 		}
 		return null;
 	}
@@ -349,12 +349,12 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @param text text to parse
 	 * @param entries list to add source locations to
 	 */
-	private void parseSavedSourceLocations(String text, List<SourceLocation> entries) {
+	private void parseSavedSourceLocations(String text, List<IPath> entries) {
 		text = text.replace(File.pathSeparatorChar, ';');
 		StringTokenizer stok = new StringTokenizer(text, ";"); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken();
-			SourceLocation location = parseSourceLocation(token);
+			IPath location = parseSourceLocation(token);
 			if (location != null) {
 				entries.add(location);
 			}
@@ -366,21 +366,20 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @param text text to parse
 	 * @return a source location or <code>null</code>
 	 */
-	private SourceLocation parseSourceLocation(String text) {
+	private IPath parseSourceLocation(String text) {
 		String path;
 		try {
 			text = text.trim();
 			int commaIndex = text.lastIndexOf(',');
 			if (commaIndex == -1) {
-				return new SourceLocation(new Path(text));
+				return Path.fromOSString(text);
 			}
-
 			int atLoc = text.indexOf('@');
 			path = (atLoc == -1) ? text.substring(0, commaIndex) : text.substring(atLoc + 1, commaIndex);
 		} catch (RuntimeException e) {
 			return null;
 		}
-		return new SourceLocation(new Path(path));
+		return Path.fromOSString(path);
 	}
 
 	/**
@@ -415,11 +414,9 @@ public class SourceLocationManager implements ICoreConstants {
 			for (IConfigurationElement element : children) {
 				if (element.getName().equals("location")) { //$NON-NLS-1$
 					String pathValue = element.getAttribute("path"); //$NON-NLS-1$
-					IPath path = new Path(base.getInstallLocation()).append(pathValue);
+					IPath path = Path.fromOSString(base.getInstallLocation()).append(pathValue);
 					if (path.toFile().exists()) {
-						SourceLocation location = new SourceLocation(path);
-						location.setUserDefined(false);
-						result.locations.add(location);
+						result.locations.add(path);
 					}
 				}
 			}
@@ -476,7 +473,7 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 
 	private static final class SourceExtensions {
-		final Collection<SourceLocation> locations = new LinkedHashSet<>();
+		final Collection<IPath> locations = new LinkedHashSet<>();
 		final List<OrderedPluginSourcePathLocator> locators = new ArrayList<>();
 	}
 
