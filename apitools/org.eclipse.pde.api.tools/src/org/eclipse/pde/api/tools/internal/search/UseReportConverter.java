@@ -1155,22 +1155,17 @@ public class UseReportConverter extends HTMLConvertor {
 				buffer.append(additional);
 			}
 			buffer.append(getReferencesTableHeader(SearchMessages.UseReportConverter_references, SearchMessages.UseReportConverter_referenced_type, false));
-			CountGroup counts = null;
-			String link = null;
-			File typefile = null;
-			TreeMap<IMemberDescriptor, Member> map = null;
-			Type type = null;
 			for (Entry<Type, TreeMap<IMemberDescriptor, Member>> entry : report.children.entrySet()) {
-				map = entry.getValue();
-				type = entry.getKey();
-				counts = type.counts;
+				Map<IMemberDescriptor, Member> map = entry.getValue();
+				Type type = entry.getKey();
+				CountGroup counts = type.counts;
 
 				String fqname = Signatures.getQualifiedTypeSignature((IReferenceTypeDescriptor) type.desc);
-				typefile = new File(htmlroot, fqname + HTML_EXTENSION);
+				File typefile = new File(htmlroot, fqname + HTML_EXTENSION);
 				if (!typefile.exists()) {
 					typefile.createNewFile();
 				}
-				link = extractLinkFrom(htmlroot, typefile.getAbsolutePath());
+				String link = extractLinkFrom(htmlroot, typefile.getAbsolutePath());
 				buffer.append(getReferenceTableEntry(counts, link, fqname, false));
 				writeTypePage(map, type, typefile, fqname);
 			}
@@ -1186,11 +1181,9 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" width=\"10%\" align=\"center\">").append(OPEN_B).append(SearchMessages.UseReportConverter_reference_count).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$ //$NON-NLS-2$
 			buffer.append(CLOSE_TR);
 			Collections.sort(referees, compare);
-			IComponentDescriptor comp = null;
-			for (Type referee : referees) {
-				type = referee;
-				comp = (IComponentDescriptor) type.desc;
-				buffer.append("<tr bgcolor=\"").append(getRowColour(counts)).append("\">\n"); //$NON-NLS-1$//$NON-NLS-2$
+			for (Type type : referees) {
+				IComponentDescriptor comp = (IComponentDescriptor) type.desc;
+				buffer.append("<tr bgcolor=\"").append(getRowColour(type.counts)).append("\">\n"); //$NON-NLS-1$//$NON-NLS-2$
 				buffer.append("\t").append(OPEN_TD).append(OPEN_B).append(comp.getId()).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
 				buffer.append("\t").append(OPEN_TD).append(comp.getVersion()).append(CLOSE_TD); //$NON-NLS-1$
 				buffer.append("\t<td align=\"center\">").append(type.counts.getTotalRefCount()).append(CLOSE_TD); //$NON-NLS-1$

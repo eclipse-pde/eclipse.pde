@@ -567,8 +567,8 @@ public class ClassFileComparator {
 		IApiType[] typeMembers = this.type1.getMemberTypes();
 		IApiType[] typeMembers2 = this.type2.getMemberTypes();
 		List<String> added = new ArrayList<>(typeMembers2.length);
-		for (IApiType element : typeMembers2) {
-			added.add(element.getName());
+		for (IApiType type : typeMembers2) {
+			added.add(type.getName());
 		}
 		if (typeMembers.length > 0) {
 			if (typeMembers2.length == 0) {
@@ -1205,12 +1205,12 @@ public class ClassFileComparator {
 			IApiField[] fields1 = this.type1.getFields();
 			IApiField[] fields2 = this.type2.getFields();
 			Set<String> addedFields = new HashSet<>(fields2.length);
-			for (IApiField element : fields2) {
-				addedFields.add(element.getName());
+			for (IApiField field : fields2) {
+				addedFields.add(field.getName());
 			}
-			for (IApiField element : fields1) {
-				addedFields.remove(element.getName());
-				getDeltaForField(element);
+			for (IApiField field : fields1) {
+				addedFields.remove(field.getName());
+				getDeltaForField(field);
 			}
 			// checks remaining fields (added fields)
 			for (String addedField : addedFields) {
@@ -1222,14 +1222,14 @@ public class ClassFileComparator {
 			IApiMethod[] methods1 = this.type1.getMethods();
 			IApiMethod[] methods2 = this.type2.getMethods();
 			Set<IMemberDescriptor> addedMethods = new HashSet<>(methods2.length);
-			for (IApiMethod element : methods2) {
-				if (!element.isSynthetic()) {
-					addedMethods.add(element.getHandle());
+			for (IApiMethod method : methods2) {
+				if (!method.isSynthetic()) {
+					addedMethods.add(method.getHandle());
 				}
 			}
-			for (IApiMethod element : methods1) {
-				addedMethods.remove(element.getHandle());
-				getDeltaForMethod(element);
+			for (IApiMethod method : methods1) {
+				addedMethods.remove(method.getHandle());
+				getDeltaForMethod(method);
 			}
 			// checks remaining methods (added methods)
 			for (IMemberDescriptor addedMethod : addedMethods) {
