@@ -16,7 +16,6 @@ package org.eclipse.pde.api.tools.internal.search;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -24,7 +23,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -67,7 +68,7 @@ public class XmlReferenceDescriptorWriter {
 	public static final String FIELD_REFERENCES = "field_references"; //$NON-NLS-1$
 	private static final Integer V_ILLEGAL = Integer.valueOf(VisibilityModifiers.ILLEGAL_API);
 	private String fLocation = null;
-	private HashMap<String, HashMap<String, HashMap<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>>>> fReferenceMap = null;
+	private Map<String, Map<String, Map<Integer, Map<Integer, Map<String, Set<IReferenceDescriptor>>>>>> fReferenceMap = null;
 	private DocumentBuilder parser = null;
 
 	/**
@@ -138,55 +139,22 @@ public class XmlReferenceDescriptorWriter {
 		if (fReferenceMap == null) {
 			fReferenceMap = new HashMap<>();
 		}
-		Integer type = null;
-		Integer visibility = null;
-		String id = null;
-		String tname = null;
-		HashMap<String, HashMap<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>>> rmap = null;
-		HashMap<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>> mmap = null;
-		HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>> vmap = null;
-		HashMap<String, HashSet<IReferenceDescriptor>> tmap = null;
-		HashSet<IReferenceDescriptor> reflist = null;
-		IComponentDescriptor rcomponent = null;
-		IComponentDescriptor mcomponent = null;
-		for (IReferenceDescriptor element : references) {
-			rcomponent = element.getReferencedComponent();
-			id = getId(rcomponent);
-			rmap = fReferenceMap.get(id);
-			if (rmap == null) {
-				rmap = new HashMap<>();
-				fReferenceMap.put(id, rmap);
-			}
-			mcomponent = element.getComponent();
+		for (IReferenceDescriptor reference : references) {
+			IComponentDescriptor rcomponent = reference.getReferencedComponent();
+			String id = getId(rcomponent);
+			var rmap = fReferenceMap.computeIfAbsent(id, i -> new HashMap<>());
+			IComponentDescriptor mcomponent = reference.getComponent();
 			id = getId(mcomponent);
-			mmap = rmap.get(id);
-			if (mmap == null) {
-				mmap = new HashMap<>();
-				rmap.put(id, mmap);
-			}
-			if ((element.getReferenceFlags() & IReference.F_ILLEGAL) > 0) {
-				visibility = V_ILLEGAL;
-			} else {
-				visibility = Integer.valueOf(element.getVisibility());
-			}
-			vmap = mmap.get(visibility);
-			if (vmap == null) {
-				vmap = new HashMap<>();
-				mmap.put(visibility, vmap);
-			}
-			type = Integer.valueOf(element.getReferenceType());
-			tmap = vmap.get(type);
-			if (tmap == null) {
-				tmap = new HashMap<>();
-				vmap.put(type, tmap);
-			}
-			tname = getText(element.getReferencedMember());
-			reflist = tmap.get(tname);
-			if (reflist == null) {
-				reflist = new HashSet<>();
-				tmap.put(tname, reflist);
-			}
-			reflist.add(element);
+			var mmap = rmap.computeIfAbsent(id, i -> new HashMap<>());
+			Integer visibility = (reference.getReferenceFlags() & IReference.F_ILLEGAL) > 0 //
+					? V_ILLEGAL
+					: Integer.valueOf(reference.getVisibility());
+			var vmap = mmap.computeIfAbsent(visibility, i -> new HashMap<>());
+			int type = reference.getReferenceType();
+			Map<String, Set<IReferenceDescriptor>> tmap = vmap.computeIfAbsent(type, t -> new HashMap<>());
+			String tname = getText(reference.getReferencedMember());
+			Set<IReferenceDescriptor> reflist = tmap.computeIfAbsent(tname, n -> new HashSet<>());
+			reflist.add(reference);
 		}
 	}
 
@@ -198,10 +166,8 @@ public class XmlReferenceDescriptorWriter {
 	 *         version information as well
 	 * @throws CoreException
 	 */
-	String getId(IComponentDescriptor component) throws CoreException {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append(component.getId()).append(" ").append('(').append(component.getVersion()).append(')'); //$NON-NLS-1$
-		return buffer.toString();
+	private String getId(IComponentDescriptor component) {
+		return component.getId() + " (" + component.getVersion() + ')'; //$NON-NLS-1$
 	}
 
 	/**
@@ -248,48 +214,29 @@ public class XmlReferenceDescriptorWriter {
 	 * Writes out the XML for the given api element using the collated
 	 * {@link IReference}s
 	 *
-	 * @param parent
-	 * @throws CoreException
-	 * @throws FileNotFoundException
-	 * @throws IOException
 	 */
-	private void writeXML(File parent) throws CoreException, FileNotFoundException, IOException {
-		HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>> vismap = null;
-		HashMap<String, HashSet<IReferenceDescriptor>> typemap = null;
-		HashMap<String, HashMap<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>>> rmap = null;
-		HashMap<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>> mmap = null;
-		Integer type = null;
-		Integer vis = null;
-		String id = null;
-		String referee = null;
-		File root = null;
-		File location = null;
-		File base = null;
-		for (Entry<String, HashMap<String, HashMap<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>>>> entry : fReferenceMap.entrySet()) {
-			id = entry.getKey();
-			referee = id;
-			base = new File(parent, id);
+	private void writeXML(File parent) throws CoreException, IOException {
+		for (var entry : fReferenceMap.entrySet()) {
+			String referee = entry.getKey();
+			File base = new File(parent, referee);
 			if (!base.exists()) {
 				base.mkdir();
 			}
-			rmap = entry.getValue();
-			for (Entry<String, HashMap<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>>> entry2 : rmap.entrySet()) {
-				id = entry2.getKey();
-				root = new File(base, id);
+			for (var entry2 : entry.getValue().entrySet()) {
+				String id = entry2.getKey();
+				File root = new File(base, id);
 				if (!root.exists()) {
 					root.mkdir();
 				}
-				mmap = entry2.getValue();
-				for (Entry<Integer, HashMap<Integer, HashMap<String, HashSet<IReferenceDescriptor>>>> entry3 : mmap.entrySet()) {
-					vis = entry3.getKey();
-					location = new File(root, VisibilityModifiers.getVisibilityName(vis.intValue()));
+				for (var entry3 : entry2.getValue().entrySet()) {
+					Integer vis = entry3.getKey();
+					File location = new File(root, VisibilityModifiers.getVisibilityName(vis.intValue()));
 					if (!location.exists()) {
 						location.mkdir();
 					}
-					vismap = entry3.getValue();
-					for (Entry<Integer, HashMap<String, HashSet<IReferenceDescriptor>>> entry4 : vismap.entrySet()) {
-						type = entry4.getKey();
-						typemap = entry4.getValue();
+					for (var entry4 : entry3.getValue().entrySet()) {
+						Integer type = entry4.getKey();
+						var typemap = entry4.getValue();
 						writeGroup(id, referee, location, getRefTypeName(type.intValue()), typemap, vis.intValue());
 					}
 				}
@@ -308,7 +255,9 @@ public class XmlReferenceDescriptorWriter {
 	 * @param map
 	 * @param visibility
 	 */
-	private void writeGroup(String origin, String referee, File parent, String name, HashMap<String, HashSet<IReferenceDescriptor>> map, int visibility) throws CoreException, FileNotFoundException, IOException {
+	private void writeGroup(String origin, String referee, File parent, String name,
+			Map<String, Set<IReferenceDescriptor>> map, int visibility)
+			throws CoreException, IOException {
 		if (parent.exists()) {
 			BufferedWriter writer = null;
 			try {
@@ -347,18 +296,15 @@ public class XmlReferenceDescriptorWriter {
 				if (doc == null || root == null) {
 					return;
 				}
-				String tname = null;
-				HashSet<IReferenceDescriptor> refs = null;
-				Element telement = null;
-				for (Entry<String, HashSet<IReferenceDescriptor>> entry : map.entrySet()) {
-					tname = entry.getKey();
-					telement = findTypeElement(root, tname);
+				for (Entry<String, Set<IReferenceDescriptor>> entry : map.entrySet()) {
+					String tname = entry.getKey();
+					Element telement = findTypeElement(root, tname);
 					if (telement == null) {
 						telement = doc.createElement(IApiXmlConstants.ELEMENT_TARGET);
 						telement.setAttribute(IApiXmlConstants.ATTR_NAME, tname);
 						root.appendChild(telement);
 					}
-					refs = entry.getValue();
+					Set<IReferenceDescriptor> refs = entry.getValue();
 					if (refs != null) {
 						for (Iterator<IReferenceDescriptor> iter2 = refs.iterator(); iter2.hasNext();) {
 							count++;

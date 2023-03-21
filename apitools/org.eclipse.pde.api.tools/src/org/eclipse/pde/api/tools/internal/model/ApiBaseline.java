@@ -31,7 +31,6 @@ import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
@@ -435,27 +434,19 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		if (ApiPlugin.isRunningInFramework() && fAutoResolve) {
 			IStatus error = null;
 			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-			Map<IVMInstall, Set<String>> VMsToEEs = new HashMap<>();
+			Map<IVMInstall, Set<String>> vmToEEs = new HashMap<>();
 			for (String ee : ees) {
 				IExecutionEnvironment environment = manager.getEnvironment(ee);
 				if (environment != null) {
 					IVMInstall[] compatibleVMs = environment.getCompatibleVMs();
 					for (IVMInstall vm : compatibleVMs) {
-						Set<String> EEs = VMsToEEs.get(vm);
-						if (EEs == null) {
-							EEs = new HashSet<>();
-							VMsToEEs.put(vm, EEs);
-						}
-						EEs.add(ee);
+						vmToEEs.computeIfAbsent(vm, m -> new HashSet<>()).add(ee);
 					}
 				}
 			}
 			// select VM that is compatible with most required environments
 			// keep list of all VMs
-			ArrayList<IVMInstall> allVMInstalls = new ArrayList<>();
-			for (Entry<IVMInstall, Set<String>> entry : VMsToEEs.entrySet()) {
-				allVMInstalls.add(entry.getKey());
-			}
+			List<IVMInstall> allVMInstalls = new ArrayList<>(vmToEEs.keySet());
 			String systemEE = null;
 			if (!allVMInstalls.isEmpty()) {
 				for (IVMInstall iVMInstall : allVMInstalls) {
@@ -499,7 +490,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 				Set<String> missing = new HashSet<>(ees);
 				Set<String> covered = new HashSet<>();
 				for (IVMInstall fit : allVMInstalls) {
-					covered.addAll(VMsToEEs.get(fit));
+					covered.addAll(vmToEEs.get(fit));
 				}
 				missing.removeAll(covered);
 				if (missing.isEmpty()) {
