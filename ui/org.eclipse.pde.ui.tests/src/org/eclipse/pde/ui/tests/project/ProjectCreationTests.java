@@ -1466,7 +1466,7 @@ public class ProjectCreationTests {
 		Charset charset = StandardCharsets.UTF_8;
 		CharsetDecoder charsetDecoder = charset.newDecoder();
 		charsetDecoder.onMalformedInput(CodingErrorAction.REPLACE).onUnmappableCharacter(CodingErrorAction.REPLACE);
-		byte[] contents = getInputStreamAsByteArray(stream, -1);
+		byte[] contents = getInputStreamAsByteArray(stream);
 		ByteBuffer byteBuffer = ByteBuffer.allocate(contents.length);
 		byteBuffer.put(contents);
 		byteBuffer.flip();
@@ -1478,51 +1478,13 @@ public class ProjectCreationTests {
 	 *
 	 * @param stream
 	 *            the stream to get as a byte array
-	 * @param length
-	 *            the length to read from the stream or -1 for unknown
 	 * @return the given input stream as a byte array
 	 * @throws IOException
 	 */
-	public static byte[] getInputStreamAsByteArray(InputStream stream, int length) throws IOException {
-		byte[] contents;
-		if (length == -1) {
-			contents = new byte[0];
-			int contentsLength = 0;
-			int amountRead = -1;
-			do {
-				// read at least 8K
-				int amountRequested = Math.max(stream.available(), 8192);
-				// resize contents if needed
-				if (contentsLength + amountRequested > contents.length) {
-					System.arraycopy(contents, 0, contents = new byte[contentsLength + amountRequested],
-							0,
-							contentsLength);
-				}
-				// read as many bytes as possible
-				amountRead = stream.read(contents, contentsLength, amountRequested);
-				if (amountRead > 0) {
-					// remember length of contents
-					contentsLength += amountRead;
-				}
-			} while (amountRead != -1);
-			// resize contents if necessary
-			if (contentsLength < contents.length) {
-				System.arraycopy(contents, 0, contents = new byte[contentsLength], 0, contentsLength);
-			}
-		} else {
-			contents = new byte[length];
-			int len = 0;
-			int readSize = 0;
-			while ((readSize != -1) && (len != length)) {
-				// See PR 1FMS89U
-				// We record first the read size. In this case length is the
-				// actual
-				// read size.
-				len += readSize;
-				readSize = stream.read(contents, len, length - len);
-			}
+	public static byte[] getInputStreamAsByteArray(InputStream stream) throws IOException {
+		try (stream) {
+			return stream.readAllBytes();
 		}
-		return contents;
 	}
 
 	/**
