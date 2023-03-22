@@ -15,23 +15,13 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IMatchRules;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
 import org.eclipse.pde.internal.core.ifeature.IFeatureData;
@@ -40,8 +30,6 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureInfo;
 import org.eclipse.pde.internal.core.ifeature.IFeatureInstallHandler;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
-import org.eclipse.pde.internal.core.plugin.PluginBase;
-import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -312,156 +300,6 @@ public class Feature extends VersionableObject implements IFeature {
 				}
 			}
 		}
-	}
-
-	@Override
-	public void computeImports() throws CoreException {
-		// some existing imports may valid and can be preserved
-		Vector<IFeatureImport> preservedImports = new Vector<>(fImports.size());
-		// new imports
-		ArrayList<IFeatureImport> newImports = new ArrayList<>();
-		IPluginModelBase model = null;
-		for (int i = 0; i < fPlugins.size(); i++) {
-			IFeaturePlugin fp = fPlugins.get(i);
-			ModelEntry entry = PluginRegistry.findEntry(fp.getId());
-			if (entry == null) {
-				continue;
-			}
-			IPluginModelBase[] models = entry.getActiveModels();
-			for (IPluginModelBase m : models) {
-				if (fp.getVersion().equals(m.getPluginBase().getVersion()) || fp.getVersion().equals(ICoreConstants.DEFAULT_VERSION)) {
-					model = m;
-				}
-			}
-			if (model != null) {
-				addPluginImports(preservedImports, newImports, model.getPluginBase());
-				if (model.isFragmentModel()) {
-					BundleDescription desc = model.getBundleDescription();
-					if (desc == null) {
-						continue;
-					}
-					HostSpecification hostSpec = desc.getHost();
-					String id = hostSpec.getName();
-					String version = null;
-					int match = IMatchRules.NONE;
-					VersionRange versionRange = hostSpec.getVersionRange();
-					if (!(versionRange == null || VersionRange.emptyRange.equals(versionRange))) {
-						version = versionRange.getMinimum() != null ? versionRange.getMinimum().toString() : null;
-						match = PluginBase.getMatchRule(versionRange);
-					}
-					addNewDependency(id, version, match, preservedImports, newImports);
-				}
-			}
-		}
-		// preserve imports of features
-		for (int i = 0; i < fImports.size(); i++) {
-			IFeatureImport iimport = fImports.get(i);
-			if (iimport.getType() == IFeatureImport.FEATURE) {
-				preservedImports.add(iimport);
-			}
-		}
-		// removed = old - preserved
-		@SuppressWarnings("unchecked")
-		Vector<IFeatureImport> removedImports = ((Vector<IFeatureImport>) fImports.clone());
-		removedImports.removeAll(preservedImports);
-		// perform remove
-		fImports = preservedImports;
-		if (!removedImports.isEmpty()) {
-			fireStructureChanged(removedImports.toArray(new IFeatureImport[removedImports.size()]), IModelChangedEvent.REMOVE);
-		}
-		// perform add
-		if (!newImports.isEmpty()) {
-			fImports.addAll(newImports);
-			fireStructureChanged(newImports.toArray(new IFeatureImport[newImports.size()]), IModelChangedEvent.INSERT);
-		}
-	}
-
-	/**
-	 * Creates IFeatureImports based on IPluginImports. Ensures no duplicates in
-	 * preservedImports + newImports
-	 *
-	 * @param preservedImports
-	 *            out for valid existing imports
-	 * @param newImports
-	 *            out for new imports
-	 * @param plugin
-	 * @throws CoreException
-	 */
-	private void addPluginImports(List<IFeatureImport> preservedImports, List<IFeatureImport> newImports, IPluginBase plugin) throws CoreException {
-		IPluginImport[] pluginImports = plugin.getImports();
-		for (IPluginImport pluginImport : pluginImports) {
-			if (pluginImport.isOptional()) {
-				continue;
-			}
-			String id = pluginImport.getId();
-			String version = pluginImport.getVersion();
-			int match = pluginImport.getMatch();
-			addNewDependency(id, version, match, preservedImports, newImports);
-		}
-	}
-
-	private void addNewDependency(String id, String version, int match, List<IFeatureImport> preservedImports, List<IFeatureImport> newImports) throws CoreException {
-		if (findFeaturePlugin(id, version, match) != null) {
-			// don't add imports to local plug-ins
-			return;
-		}
-		if (findImport(preservedImports, id, version, match) != null) {
-			// already seen
-			return;
-		}
-		if (findImport(newImports, id, version, match) != null) {
-			// already seen
-			return;
-		}
-		IFeatureImport iimport = findImport(fImports, id, version, match);
-		if (iimport != null) {
-			// import still valid
-			preservedImports.add(iimport);
-			return;
-		}
-		// a new one is needed
-		iimport = getModel().getFactory().createImport();
-		iimport.setId(id);
-		iimport.setVersion(version);
-		iimport.setMatch(match);
-		((FeatureImport) iimport).setInTheModel(true);
-		newImports.add(iimport);
-	}
-
-	/**
-	 * Finds a given import in the list
-	 * @param imports list of imports
-	 * @param id
-	 * @param version
-	 * @param match
-	 * @return IFeatureImport or null
-	 */
-	private IFeatureImport findImport(List<IFeatureImport> imports, String id, String version, int match) {
-		for (int i = 0; i < imports.size(); i++) {
-			IFeatureImport iimport = imports.get(i);
-			if (iimport.getId().equals(id)) {
-				if (version == null) {
-					return iimport;
-				}
-				if (version.equals(iimport.getVersion()) && match == iimport.getMatch()) {
-					return iimport;
-				}
-			}
-		}
-		return null;
-	}
-
-	private IFeaturePlugin findFeaturePlugin(String id, String version, int match) {
-
-		for (int i = 0; i < fPlugins.size(); i++) {
-			IFeaturePlugin fp = fPlugins.get(i);
-			String pid = fp.getId();
-			String pversion = fp.getVersion();
-			if (VersionUtil.compare(pid, pversion, id, version, match)) {
-				return fp;
-			}
-		}
-		return null;
 	}
 
 	@Override
