@@ -231,8 +231,6 @@ public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 	 */
 	public void setURL(IFeatureURL url) throws CoreException;
 
-	public void computeImports() throws CoreException;
-
 	boolean isPrimary();
 
 	public String getLicenseFeatureID();
