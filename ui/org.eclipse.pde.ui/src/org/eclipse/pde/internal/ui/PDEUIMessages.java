@@ -862,8 +862,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureEditor_RequiresSection_title;
 	public static String FeatureEditor_RequiresSection_desc;
-	public static String FeatureEditor_RequiresSection_sync;
-	public static String FeatureEditor_RequiresSection_compute;
 	public static String FeatureEditor_RequiresSection_plugin;
 	public static String FeatureEditor_RequiresSection_feature;
 	public static String FeatureEditor_RequiresSection_sortAlpha;
