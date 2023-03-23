@@ -484,6 +484,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 							fVMBinding = iVMInstall;
 							ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
 							initialize(ee);
+							file.delete();
 						} catch (CoreException | IOException e) {
 							error = Status.error(CoreMessages.ApiBaseline_2, e);
 						}
