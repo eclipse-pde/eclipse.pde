@@ -43,7 +43,6 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 	private BasePDEScanner fPropertyValueScanner;
 
 	private ContentAssistant fContentAssistant;
-	private BuildPropertiesContentAssistProcessor fContentAssistantProcessor;
 
 	private abstract class AbstractJavaScanner extends BasePDEScanner {
 
@@ -241,6 +240,7 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 
 	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
+		BuildPropertiesContentAssistProcessor fContentAssistantProcessor;
 		if (fSourcePage != null && fSourcePage.isEditable()) {
 			if (fContentAssistant == null) {
 				// Initialize in SWT thread before using in background thread:
@@ -250,7 +250,6 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 				fContentAssistantProcessor = new BuildPropertiesContentAssistProcessor(fSourcePage);
 				fContentAssistant.setContentAssistProcessor(fContentAssistantProcessor, IDocument.DEFAULT_CONTENT_TYPE);
 				fContentAssistant.setContentAssistProcessor(fContentAssistantProcessor, PROPERTY_VALUE);
-				fContentAssistant.addCompletionListener(fContentAssistantProcessor);
 				fContentAssistant.enableAutoInsert(true);
 				fContentAssistant.setInformationControlCreator(parent -> new DefaultInformationControl(parent, false));
 				fContentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
