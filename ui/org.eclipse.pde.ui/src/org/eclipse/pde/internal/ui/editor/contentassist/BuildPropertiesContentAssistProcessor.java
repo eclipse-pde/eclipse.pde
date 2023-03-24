@@ -14,14 +14,18 @@ package org.eclipse.pde.internal.ui.editor.contentassist;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
+import org.eclipse.swt.graphics.Image;
 
 public class BuildPropertiesContentAssistProcessor extends TypePackageCompletionProcessor {
 
 	protected PDESourcePage fSourcePage;
+
 	public BuildPropertiesContentAssistProcessor(PDESourcePage sourcePage) {
 		fSourcePage = sourcePage;
 	}
@@ -44,7 +48,8 @@ public class BuildPropertiesContentAssistProcessor extends TypePackageCompletion
 					continue;
 				}
 				if (element.regionMatches(true, 0, value, 0, value.length())) {
-					TypeCompletionProposal proposal = new TypeCompletionProposal(element, null, element, lineStart,
+					Image img = getImage(element);
+					TypeCompletionProposal proposal = new TypeCompletionProposal(element, img, element, lineStart,
 							value.length());
 					completions.add(proposal);
 				}
@@ -53,5 +58,25 @@ public class BuildPropertiesContentAssistProcessor extends TypePackageCompletion
 		} catch (BadLocationException e) {
 		}
 		return null;
+	}
+
+	@SuppressWarnings("nls")
+	public Image getImage(String element) {
+		ImageDescriptor desc = switch (element)
+			{
+			case "src.includes", "src.excludes", "src.additionalRoots", "permissions", "root.", // linebreak
+					"root", ".permissions.", ".link", "folder.", ".folder.", "link", // linebreak
+					"source.", "sourceFileExtensions", "bin.includes", "bin.excludes", "javacCustomEncodings.", // linebreak
+					"javacDefaultEncoding." -> PDEPluginImages.DESC_CATEGORY_OBJ;
+			case ".jar", "jars.compile.order", "jars.extra.classpath" -> PDEPluginImages.DESC_JAR_LIB_OBJ;
+			case "javacProjectSettings" -> PDEPluginImages.DESC_SETTINGS_OBJ;
+			case "javacErrors." -> PDEPluginImages.DESC_ERROR_ST_OBJ;
+			case "significantVersionDigits", "generatedVersionLength" -> PDEPluginImages.DESC_INFO_ST_OBJ;
+			case "javacWarnings." -> PDEPluginImages.DESC_ALERT_OBJ;
+			case "jre.compilation.profile" -> PDEPluginImages.DESC_TARGET_ENVIRONMENT;
+			case "manifest." -> PDEPluginImages.DESC_FOLDER_OBJ;
+			default -> PDEPluginImages.DESC_DEFAULT_OBJ;
+			};
+		return desc != null ? desc.createImage() : null;
 	}
 }
