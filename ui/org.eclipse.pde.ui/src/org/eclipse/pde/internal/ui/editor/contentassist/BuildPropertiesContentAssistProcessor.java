@@ -15,34 +15,15 @@ package org.eclipse.pde.internal.ui.editor.contentassist;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.contentassist.*;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 
-public class BuildPropertiesContentAssistProcessor extends TypePackageCompletionProcessor
-		implements ICompletionListener {
+public class BuildPropertiesContentAssistProcessor extends TypePackageCompletionProcessor {
 
 	protected PDESourcePage fSourcePage;
 	public BuildPropertiesContentAssistProcessor(PDESourcePage sourcePage) {
 		fSourcePage = sourcePage;
-	}
-
-	@Override
-	public void assistSessionStarted(ContentAssistEvent event) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void assistSessionEnded(ContentAssistEvent event) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void selectionChanged(ICompletionProposal proposal, boolean smartToggle) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -56,7 +37,7 @@ public class BuildPropertiesContentAssistProcessor extends TypePackageCompletion
 			Field[] properties = IBuildPropertiesConstants.class.getFields();
 			for (Field f : properties) {
 				String key = f.getName();
-				String element = "";
+				String element;
 				try {
 					element = (String) f.get(key);
 				} catch (IllegalAccessException e) {
@@ -68,7 +49,7 @@ public class BuildPropertiesContentAssistProcessor extends TypePackageCompletion
 					completions.add(proposal);
 				}
 			}
-			return completions.toArray(new ICompletionProposal[completions.size()]);
+			return completions.toArray(ICompletionProposal[]::new);
 		} catch (BadLocationException e) {
 		}
 		return null;

@@ -43,7 +43,6 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 	private BasePDEScanner fPropertyValueScanner;
 
 	private ContentAssistant fContentAssistant;
-	private BuildPropertiesContentAssistProcessor fContentAssistantProcessor;
 
 	private abstract class AbstractJavaScanner extends BasePDEScanner {
 
@@ -247,10 +246,9 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 				PDEPluginImages.get(null);
 				fContentAssistant = new ContentAssistant(true);
 				fContentAssistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-				fContentAssistantProcessor = new BuildPropertiesContentAssistProcessor(fSourcePage);
+				var fContentAssistantProcessor = new BuildPropertiesContentAssistProcessor(fSourcePage);
 				fContentAssistant.setContentAssistProcessor(fContentAssistantProcessor, IDocument.DEFAULT_CONTENT_TYPE);
 				fContentAssistant.setContentAssistProcessor(fContentAssistantProcessor, PROPERTY_VALUE);
-				fContentAssistant.addCompletionListener(fContentAssistantProcessor);
 				fContentAssistant.enableAutoInsert(true);
 				fContentAssistant.setInformationControlCreator(parent -> new DefaultInformationControl(parent, false));
 				fContentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
