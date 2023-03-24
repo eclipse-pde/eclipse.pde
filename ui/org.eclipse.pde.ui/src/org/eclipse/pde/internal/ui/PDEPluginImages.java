@@ -110,6 +110,8 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_PROCESSING_INST_OBJ = create(PATH_OBJ, "processinginst.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_XML_ELEMENT_OBJ = create(PATH_OBJ, "element.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_XML_ELEMENT_REF_OBJ = create(PATH_OBJ, "elref_sc_obj.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_FOLDER_OBJ = create(PATH_OBJ, "fldr_obj.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_DEFAULT_OBJ = create(PATH_OBJ, "build_var_obj.png"); //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_SIMPLECS_OBJ = create(PATH_OBJ, "cheatsheet_simple_obj.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_COMPCS_OBJ = create(PATH_OBJ, "cheatsheet_composite_obj.png"); //$NON-NLS-1$
