@@ -240,14 +240,13 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 
 	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
-		BuildPropertiesContentAssistProcessor fContentAssistantProcessor;
 		if (fSourcePage != null && fSourcePage.isEditable()) {
 			if (fContentAssistant == null) {
 				// Initialize in SWT thread before using in background thread:
 				PDEPluginImages.get(null);
 				fContentAssistant = new ContentAssistant(true);
 				fContentAssistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-				fContentAssistantProcessor = new BuildPropertiesContentAssistProcessor(fSourcePage);
+				var fContentAssistantProcessor = new BuildPropertiesContentAssistProcessor(fSourcePage);
 				fContentAssistant.setContentAssistProcessor(fContentAssistantProcessor, IDocument.DEFAULT_CONTENT_TYPE);
 				fContentAssistant.setContentAssistProcessor(fContentAssistantProcessor, PROPERTY_VALUE);
 				fContentAssistant.enableAutoInsert(true);
