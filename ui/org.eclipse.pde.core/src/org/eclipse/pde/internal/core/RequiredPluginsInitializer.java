@@ -48,7 +48,8 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 		}
 		if (project.exists() && project.isOpen()) {
 			IPluginModelBase model = manager.findModel(project);
-			JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, new IJavaProject[] {javaProject}, new IClasspathContainer[] {new RequiredPluginsClasspathContainer(model)}, null);
+			JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, new IJavaProject[] { javaProject },
+					new IClasspathContainer[] { new RequiredPluginsClasspathContainer(model, project) }, null);
 		}
 	}
 

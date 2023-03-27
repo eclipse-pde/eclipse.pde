@@ -17,17 +17,22 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEManager;
+import org.eclipse.pde.internal.core.natures.BndProject;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -59,6 +64,18 @@ public class PDEProject {
 			if (string != null) {
 				IPath path = Path.fromPortableString(string);
 				return project.getFolder(path);
+			}
+		}
+		if (BndProject.isBndProject(project)) {
+			IJavaProject javaProject = JavaCore.create(project);
+			IPath outputLocation;
+			try {
+				outputLocation = javaProject.getOutputLocation();
+				IWorkspaceRoot workspaceRoot = project.getWorkspace().getRoot();
+				IFolder outputFolder = workspaceRoot.getFolder(outputLocation);
+				return outputFolder;
+			} catch (JavaModelException e) {
+				// can't get output folder... fall through as last resort.
 			}
 		}
 		return project;

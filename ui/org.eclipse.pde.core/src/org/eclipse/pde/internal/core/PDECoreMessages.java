@@ -316,6 +316,8 @@ public class PDECoreMessages extends NLS {
 
 	public static String PluginModelManager_1;
 
+	public static String BundleBuilder_building;
+
 	public static String PluginModelManager_CurrentTargetPlatformContainsErrors;
 
 	public static String PluginModelManager_InitializingPluginModels;

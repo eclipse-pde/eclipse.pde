@@ -329,7 +329,7 @@ public class PluginModelManager implements IModelProviderListener {
 				IProject project = model.getUnderlyingResource().getProject();
 				try {
 					if (project.hasNature(JavaCore.NATURE_ID)) {
-						map.put(JavaCore.create(project), new RequiredPluginsClasspathContainer(model));
+						map.put(JavaCore.create(project), new RequiredPluginsClasspathContainer(model, project));
 					}
 				} catch (CoreException e) {
 				}
@@ -347,7 +347,7 @@ public class PluginModelManager implements IModelProviderListener {
 						if (project.hasNature(JavaCore.NATURE_ID)) {
 							IJavaProject jProject = JavaCore.create(project);
 							if (!map.containsKey(jProject)) {
-								map.put(jProject, new RequiredPluginsClasspathContainer(model));
+								map.put(jProject, new RequiredPluginsClasspathContainer(model, project));
 							}
 						}
 					}
@@ -368,7 +368,7 @@ public class PluginModelManager implements IModelProviderListener {
 					}
 					IBuild build = ClasspathUtilCore.getBuild(model);
 					if (build != null && build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES) != null) {
-						map.put(jProject, new RequiredPluginsClasspathContainer(model, build));
+						map.put(jProject, new RequiredPluginsClasspathContainer(model, build, project));
 					}
 				} catch (CoreException e) {
 				}

@@ -220,7 +220,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		try (Jar jar = new Jar(project.getProject().getName()); Analyzer analyzer = new Analyzer(jar)) {
 			analyzer.setImportPackage("*"); //$NON-NLS-1$
 			IFolder folder = workspaceRoot.getFolder(outputLocation);
-			addResources(jar, folder, folder.getProjectRelativePath().toString());
+			FileResource.addResources(jar, folder, null);
 			for (IClasspathEntry cp : classpath) {
 				if (cp.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
 					File file = cp.getPath().toFile();
@@ -232,7 +232,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 					IPath location = cp.getOutputLocation();
 					if (location != null) {
 						IFolder folder2 = workspaceRoot.getFolder(location);
-						addResources(jar, folder2, folder2.getProjectRelativePath().toString());
+						FileResource.addResources(jar, folder2, null);
 					}
 
 				}
@@ -261,26 +261,6 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 
 		} catch (Exception e) {
 			throw new CoreException(Status.error("Error generating manifest!", e)); //$NON-NLS-1$
-		}
-	}
-
-	private static void addResources(Jar jar, IContainer container, String prefix) throws CoreException {
-		if (container == null || !container.exists()) {
-			return;
-		}
-		for (IResource resource : container.members()) {
-			if (resource instanceof IFile) {
-				IPath projectRelativePath = resource.getProjectRelativePath();
-				String relativePath = projectRelativePath.toString();
-				String base = relativePath.substring(prefix.length());
-				if (base.startsWith("/")) { //$NON-NLS-1$
-					base = base.substring(1);
-				}
-				jar.putResource(base, new FileResource((IFile) resource));
-			}
-			if (resource instanceof IContainer) {
-				addResources(jar, (IContainer) resource, prefix);
-			}
 		}
 	}
 
