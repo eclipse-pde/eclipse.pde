@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core;
 
 import static java.util.Collections.singletonMap;
 
+import aQute.bnd.build.Project;
 import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import org.eclipse.core.resources.IFile;
@@ -52,6 +54,7 @@ import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.core.bnd.BndProjectManager;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 
 public class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
@@ -73,16 +76,19 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	 */
 	private static List<IClasspathContributor> fClasspathContributors = null;
 
+	private IProject project;
+
 	/**
 	 * Constructor for RequiredPluginsClasspathContainer.
 	 */
-	public RequiredPluginsClasspathContainer(IPluginModelBase model) {
-		this(model, null);
+	public RequiredPluginsClasspathContainer(IPluginModelBase model, IProject project) {
+		this(model, null, project);
 	}
 
-	public RequiredPluginsClasspathContainer(IPluginModelBase model, IBuild build) {
+	public RequiredPluginsClasspathContainer(IPluginModelBase model, IBuild build, IProject project) {
 		fModel = model;
 		fBuild = build;
+		this.project = project;
 	}
 
 	@Override
@@ -102,25 +108,49 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 	@Override
 	public IClasspathEntry[] getClasspathEntries() {
-		if (fModel == null) {
-			if (PDECore.DEBUG_CLASSPATH) {
-				System.out.println("********Returned an empty container"); //$NON-NLS-1$
-			}
-			return new IClasspathEntry[0];
-		}
 		if (fEntries == null) {
-			fEntries = computePluginEntries();
-		}
-		if (PDECore.DEBUG_CLASSPATH) {
-			System.out.println("Dependencies for plugin '" + fModel.getPluginBase().getId() + "':"); //$NON-NLS-1$ //$NON-NLS-2$
-			for (IClasspathEntry entry : fEntries) {
-				System.out.println("\t" + entry); //$NON-NLS-1$
+			if (fModel == null) {
+				fEntries = computePluginEntriesByProject();
+			} else {
+				fEntries = computePluginEntriesByModel();
+			}
+			if (PDECore.DEBUG_CLASSPATH) {
+				System.out.println("Dependencies for plugin '" + fModel.getPluginBase().getId() + "':"); //$NON-NLS-1$ //$NON-NLS-2$
+				for (IClasspathEntry entry : fEntries) {
+					System.out.println("\t" + entry); //$NON-NLS-1$
+				}
 			}
 		}
 		return fEntries;
 	}
 
-	private IClasspathEntry[] computePluginEntries() {
+	private IClasspathEntry[] computePluginEntriesByProject() {
+		try {
+			Optional<Project> bndProject = BndProjectManager.getBndProject(project);
+			if (bndProject.isPresent()) {
+				try (Project bnd = bndProject.get()) {
+					IClasspathEntry[] entries = BndProjectManager
+							.getClasspathEntries(bnd, project.getWorkspace().getRoot())
+							.toArray(IClasspathEntry[]::new);
+					for (String err : bnd.getErrors()) {
+						System.out.println("ERR: " + err); //$NON-NLS-1$
+					}
+					for (String warn : bnd.getWarnings()) {
+						System.out.println("WARN: " + warn); //$NON-NLS-1$
+					}
+					return entries;
+				}
+			}
+		} catch (Exception e) {
+			PDECore.getDefault().getLog().error("Can't compute classpath!", e); //$NON-NLS-1$
+		}
+		if (PDECore.DEBUG_CLASSPATH) {
+			System.out.println("********Returned an empty container"); //$NON-NLS-1$
+		}
+		return new IClasspathEntry[0];
+	}
+
+	private IClasspathEntry[] computePluginEntriesByModel() {
 		ArrayList<IClasspathEntry> entries = new ArrayList<>();
 		try {
 			BundleDescription desc = fModel.getBundleDescription();
@@ -606,7 +636,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 		try {
 			addImportedPackages = true;
-			IClasspathEntry[] entries = computePluginEntries();
+			IClasspathEntry[] entries = computePluginEntriesByModel();
 			for (IClasspathEntry cpe : entries) {
 				if (cpe.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
 					IProject project = root.getProject(cpe.getPath().lastSegment());
