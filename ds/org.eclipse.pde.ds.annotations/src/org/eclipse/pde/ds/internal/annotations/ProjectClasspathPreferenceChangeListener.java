@@ -63,7 +63,9 @@ public class ProjectClasspathPreferenceChangeListener implements IPreferenceChan
 				IPluginModelBase model = PluginRegistry.findModel(project.getProject());
 				if (model != null) {
 					try {
-						initializer.requestClasspathContainerUpdate(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, project, new RequiredPluginsClasspathContainer(model, ClasspathUtilCore.getBuild(model)));
+						initializer.requestClasspathContainerUpdate(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, project,
+								new RequiredPluginsClasspathContainer(model, ClasspathUtilCore.getBuild(model),
+										project.getProject()));
 					} catch (CoreException e) {
 						Activator.log(e);
 					}

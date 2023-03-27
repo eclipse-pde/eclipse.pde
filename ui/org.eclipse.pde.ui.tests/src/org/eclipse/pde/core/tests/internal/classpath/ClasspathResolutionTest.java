@@ -52,7 +52,7 @@ public class ClasspathResolutionTest {
 		project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 		IJavaProject javaProject = (IJavaProject) project.getNature(JavaCore.NATURE_ID);
 		RequiredPluginsClasspathContainer container = new RequiredPluginsClasspathContainer(
-				PDECore.getDefault().getModelManager().findModel(project));
+				PDECore.getDefault().getModelManager().findModel(project), project);
 		for (IClasspathEntry entry : container.getClasspathEntries()) {
 			if (entry.getPath().lastSegment().contains("org.w3c.dom.events")) {
 				fail(entry.getPath() + " erronesously present in container");
@@ -81,7 +81,7 @@ public class ClasspathResolutionTest {
 		// In Java 11, javax.annotation is not present, so the bundle *must* be
 		// part of classpath
 		RequiredPluginsClasspathContainer container = new RequiredPluginsClasspathContainer(
-				PDECore.getDefault().getModelManager().findModel(project));
+				PDECore.getDefault().getModelManager().findModel(project), project);
 		assertTrue("javax.annotation is missing from required bundle",
 				Arrays.stream(container.getClasspathEntries()).map(IClasspathEntry::getPath).map(IPath::lastSegment)
 				.anyMatch(fileName -> fileName.contains("javax.annotation")));
@@ -99,7 +99,7 @@ public class ClasspathResolutionTest {
 		// In Java 11, javax.annotation is not present, so the bundle *must* be
 		// part of classpath, even if no BREE is specified
 		RequiredPluginsClasspathContainer container = new RequiredPluginsClasspathContainer(
-				PDECore.getDefault().getModelManager().findModel(project));
+				PDECore.getDefault().getModelManager().findModel(project), project);
 		assertTrue("javax.annotation is missing from required bundle",
 				Arrays.stream(container.getClasspathEntries()).map(IClasspathEntry::getPath).map(IPath::lastSegment)
 				.anyMatch(fileName -> fileName.contains("javax.annotation")));
@@ -113,7 +113,7 @@ public class ClasspathResolutionTest {
 		// In Java 8, javax.annotation is present, so the bundle must *NOT* be
 		// part of classpath
 		RequiredPluginsClasspathContainer container = new RequiredPluginsClasspathContainer(
-				PDECore.getDefault().getModelManager().findModel(project));
+				PDECore.getDefault().getModelManager().findModel(project), project);
 		assertTrue("javax.annotations shouldn't be present in required bundles",
 				Arrays.stream(container.getClasspathEntries()).map(IClasspathEntry::getPath).map(IPath::lastSegment)
 				.noneMatch(fileName -> fileName.contains("javax.annotation")));
@@ -128,7 +128,7 @@ public class ClasspathResolutionTest {
 		// Require-Capability
 		// --> javax.annotation bundle must not be on the classpath
 		RequiredPluginsClasspathContainer container = new RequiredPluginsClasspathContainer(
-				PDECore.getDefault().getModelManager().findModel(project));
+				PDECore.getDefault().getModelManager().findModel(project), project);
 		assertTrue("javax.annotations shouldn't be present in required bundles",
 				Arrays.stream(container.getClasspathEntries()).map(IClasspathEntry::getPath).map(IPath::lastSegment)
 				.noneMatch(fileName -> fileName.contains("javax.annotation")));

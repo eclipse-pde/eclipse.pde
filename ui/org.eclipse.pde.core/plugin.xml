@@ -118,6 +118,16 @@
          </run>
       </runtime>
    </extension>
+   <extension
+         id="org.eclipse.pde.BndNature"
+         name="%natures.bndNature.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.pde.internal.core.natures.BndProject">
+         </run>
+      </runtime>
+   </extension>
 
 <!-- ================================================================================= -->
 <!-- Builders                                                                          -->
@@ -163,6 +173,16 @@
          </run>
       </builder>
    </extension>
+   <extension
+      id="org.eclipse.pde.BndBuilder"
+      name="%builders.bndBuilder.name"
+      point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.eclipse.pde.internal.core.bnd.BndBuilder">
+         </run>
+      </builder>
+	</extension> 
 
 <!-- ================================================================================= -->
 <!-- Markers                                                                           -->
@@ -409,5 +429,5 @@
           <locator
                 class="org.eclipse.pde.internal.core.LocalMavenPluginSourcePathLocator"
                 complexity="low"/>
-    </extension> 
+    </extension>
 </plugin>

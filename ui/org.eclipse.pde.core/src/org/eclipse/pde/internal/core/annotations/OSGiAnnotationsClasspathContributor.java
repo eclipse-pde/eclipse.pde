@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
@@ -47,13 +48,24 @@ public class OSGiAnnotationsClasspathContributor implements IClasspathContributo
 	public List<IClasspathEntry> getInitialEntries(BundleDescription project) {
 		IPluginModelBase model = PluginRegistry.findModel(project);
 		if (model != null) {
-			return OSGI_ANNOTATIONS.stream().map(PluginRegistry::findModel).filter(Objects::nonNull)
-					.filter(IPluginModelBase::isEnabled).map(IPluginModelBase::getInstallLocation)
-					.filter(Objects::nonNull).map(Path::new).map(path -> JavaCore.newLibraryEntry(path, path, Path.ROOT,
-							new IAccessRule[0], new IClasspathAttribute[0], false))
-					.collect(Collectors.toList());
+			return entries().collect(Collectors.toList());
 		}
 		return Collections.emptyList();
+	}
+
+	static Stream<IClasspathEntry> entries() {
+		return annotations().map(IPluginModelBase::getInstallLocation)
+				.filter(Objects::nonNull).map(Path::new).map(path -> JavaCore.newLibraryEntry(path, path, Path.ROOT,
+						new IAccessRule[0], new IClasspathAttribute[0], false));
+	}
+
+	/**
+	 * @return s stream of all current aviable annotations in the current plugin
+	 *         registry
+	 */
+	public static Stream<IPluginModelBase> annotations() {
+		return OSGI_ANNOTATIONS.stream().map(PluginRegistry::findModel).filter(Objects::nonNull)
+				.filter(IPluginModelBase::isEnabled);
 	}
 
 	@Override
