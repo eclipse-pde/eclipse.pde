@@ -19,20 +19,23 @@ import static org.eclipse.pde.ui.tests.launcher.FeatureBasedLaunchTest.concat;
 import static org.eclipse.pde.ui.tests.launcher.FeatureBasedLaunchTest.toDefaultStartData;
 import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.bundle;
 import static org.eclipse.pde.ui.tests.util.TargetPlatformUtil.resolution;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.osgi.framework.Constants.REQUIRE_BUNDLE;
 import static org.osgi.framework.Constants.RESOLUTION_OPTIONAL;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.net.URI;
+import java.io.InputStream;
+import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
@@ -865,22 +868,15 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		IPluginModelBase plugin1 = workspaceBundle("plugin.a", "1.0.0").findModel();
 		IPluginModelBase plugin2 = workspaceBundle("plugin.a", "2.0.0").findModel();
 
-		EclipseApplicationLaunchConfiguration launch = new EclipseApplicationLaunchConfiguration();
-		ILaunch alaunch = new Launch(launchConfig, "run", null);
-		String commandLine = launch.showCommandLine(launchConfig, "run", alaunch, new NullProgressMonitor());
-		StringTokenizer tokenizer = new StringTokenizer(commandLine);
-		while (!"-configuration".equals(tokenizer.nextToken())) {
-			//
-		}
-		File configIniFile = new File(URI.create(tokenizer.nextToken() + "/config.ini"));
+		Path configIniFile = getConfigurationFolder(launchConfig).resolve("config.ini");
 		Properties configIni = new Properties();
-		try (FileInputStream input = new FileInputStream(configIniFile)) {
+		try (InputStream input = Files.newInputStream(configIniFile)) {
 			configIni.load(input);
 		}
 
 		String osgiBundles = configIni.getProperty("osgi.bundles");
-		assertTrue(osgiBundles, osgiBundles.contains(new File(plugin1.getInstallLocation()).getAbsolutePath()));
-		assertTrue(osgiBundles, osgiBundles.contains(new File(plugin2.getInstallLocation()).getAbsolutePath()));
+		assertThat(osgiBundles, containsString(getInstallLocation(plugin1)));
+		assertThat(osgiBundles, containsString(getInstallLocation(plugin2)));
 	}
 
 	@Test
@@ -899,18 +895,11 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		IPluginModelBase plugin1 = workspaceBundle("plugin.a", "1.0.0").findModel();
 		IPluginModelBase plugin2 = workspaceBundle("plugin.a", "2.0.0").findModel();
 
-		EclipseApplicationLaunchConfiguration launch = new EclipseApplicationLaunchConfiguration();
-		ILaunch alaunch = new Launch(launchConfig, "run", null);
-		String commandLine = launch.showCommandLine(launchConfig, "run", alaunch, new NullProgressMonitor());
-		StringTokenizer tokenizer = new StringTokenizer(commandLine);
-		while (!"-configuration".equals(tokenizer.nextToken())) {
-			//
-		}
-		File bundlesInfo = new File(URI
-				.create(tokenizer.nextToken() + '/' + IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR + "/bundles.info"));
-		String info = Files.readString(bundlesInfo.toPath());
-		assertTrue(info.contains(new File(plugin1.getInstallLocation()).getAbsolutePath()));
-		assertTrue(info.contains(new File(plugin2.getInstallLocation()).getAbsolutePath()));
+		Path bundlesInfo = getConfigurationFolder(launchConfig)
+				.resolve(Path.of(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR, "bundles.info"));
+		String info = Files.readString(bundlesInfo);
+		assertThat(info, containsString(getInstallLocation(plugin1)));
+		assertThat(info, containsString(getInstallLocation(plugin2)));
 	}
 
 	// --- test cases for writeBundleEntry() ----
@@ -1042,5 +1031,26 @@ public class PluginBasedLaunchTest extends AbstractLaunchTest {
 		wc.setAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES, false);
 		wc.setAttribute(IPDELauncherConstants.USE_DEFAULT, false);
 		return wc;
+	}
+
+	private static final Pattern WHITESPACE = Pattern.compile("\\s+");
+
+	private Path getConfigurationFolder(ILaunchConfigurationWorkingCopy launchConfig)
+			throws CoreException, MalformedURLException {
+		ILaunch launch = new Launch(launchConfig, ILaunchManager.RUN_MODE, null);
+		var config = new EclipseApplicationLaunchConfiguration();
+		String commandLine = config.showCommandLine(launchConfig, ILaunchManager.RUN_MODE, launch, null);
+		String configURL = WHITESPACE.splitAsStream(commandLine) //
+				.dropWhile(t -> !"-configuration".equals(t)).skip(1).findFirst().get();
+		// The configURL is not properly build, therefore this hack is necessary
+		try {
+			return Path.of(URI.create(configURL));
+		} catch (IllegalArgumentException e) {
+			return Path.of(new URL(configURL).getPath());
+		}
+	}
+
+	private static String getInstallLocation(IPluginModelBase plugin) {
+		return Path.of(plugin.getInstallLocation()).toString().replace(File.separatorChar, '/');
 	}
 }
