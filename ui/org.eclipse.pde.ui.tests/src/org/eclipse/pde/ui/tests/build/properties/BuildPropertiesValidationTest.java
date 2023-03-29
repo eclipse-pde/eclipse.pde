@@ -55,7 +55,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 			setPreferences(project, CompilerFlags.ERROR);
 			if (buildProject(project)) {
 				IResource buildProperty = project.findMember("build.properties");
-				PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
+				PropertyResourceBundle expectedValues = createResourceBundle(buildProperty);
 
 				verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
 				verifyQuickFixes(buildProperty, expectedValues);
@@ -73,7 +73,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 
 		if (buildProject(project)) {
 			IResource buildProperty = project.findMember("build.properties");
-			PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
+			PropertyResourceBundle expectedValues = createResourceBundle(buildProperty);
 
 			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.WARNING);
 			verifyQuickFixes(buildProperty, expectedValues);
@@ -90,7 +90,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 
 		if (buildProject(project)) {
 			IResource buildProperty = project.findMember("build.properties");
-			PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
+			PropertyResourceBundle expectedValues = createResourceBundle(buildProperty);
 
 			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
 			verifyQuickFixes(buildProperty, expectedValues);
@@ -105,7 +105,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		setPreferences(project, CompilerFlags.ERROR);
 		if (buildProject(project)) {
 			IResource buildProperty = project.findMember("build.properties");
-			PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
+			PropertyResourceBundle expectedValues = createResourceBundle(buildProperty);
 
 			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
 			verifyQuickFixes(buildProperty, expectedValues);
@@ -121,7 +121,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		setPreferences(project, CompilerFlags.ERROR);
 		if (buildProject(project)) {
 			IResource buildProperty = project.findMember("build.properties");
-			PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
+			PropertyResourceBundle expectedValues = createResourceBundle(buildProperty);
 
 			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
 			verifyQuickFixes(buildProperty, expectedValues);
@@ -137,7 +137,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		setPreferences(project, CompilerFlags.ERROR);
 		if (buildProject(project)) {
 			IResource buildProperty = project.findMember("build.properties");
-			PropertyResourceBundle expectedValues = new PropertyResourceBundle(new FileInputStream(buildProperty.getLocation().toFile()));
+			PropertyResourceBundle expectedValues = createResourceBundle(buildProperty);
 
 			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
 			verifyQuickFixes(buildProperty, expectedValues);
@@ -153,8 +153,7 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		setPreferences(project, CompilerFlags.ERROR);
 		if (buildProject(project)) {
 			IResource buildProperty = project.findMember("build.properties");
-			PropertyResourceBundle expectedValues = new PropertyResourceBundle(
-					new FileInputStream(buildProperty.getLocation().toFile()));
+			PropertyResourceBundle expectedValues = createResourceBundle(buildProperty);
 
 			verifyBuildPropertiesMarkers(buildProperty, expectedValues, CompilerFlags.ERROR);
 			verifyQuickFixes(buildProperty, expectedValues);
@@ -182,4 +181,11 @@ public class BuildPropertiesValidationTest extends AbstractBuildValidationTest {
 		IMarker[] markersAfterBuild = buildProperty.findMarkers(PDEMarkerFactory.MARKER_ID, false, IResource.DEPTH_ZERO);
 		assertArrayEquals("validation should not have recreated unchanged markers", initialMarkers, markersAfterBuild);
 	}
+
+	private PropertyResourceBundle createResourceBundle(IResource buildProperty) throws IOException {
+		try (FileInputStream stream = new FileInputStream(buildProperty.getLocation().toFile())) {
+			return new PropertyResourceBundle(stream);
+		}
+	}
+
 }
