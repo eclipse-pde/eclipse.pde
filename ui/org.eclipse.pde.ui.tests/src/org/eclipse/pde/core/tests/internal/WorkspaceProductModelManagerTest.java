@@ -53,11 +53,11 @@ public class WorkspaceProductModelManagerTest {
 
 		createProduct(project, "aProduct");
 
-		Collection<IProductModel> products = mm.getModel(project);
+		Collection<IProductModel> products = getProductModel(project, mm);
 		assertSingleProductWithId("aProduct", products);
 
 		project.getFile("aProduct.product").delete(true, null);
-		assertNull(mm.getModel(project));
+		assertNull(getProductModel(project, mm));
 	}
 
 	@Test
@@ -71,7 +71,7 @@ public class WorkspaceProductModelManagerTest {
 
 		createProduct(project, "folder1/aProduct");
 
-		assertNull(mm.getModel(project));
+		assertNull(getProductModel(project, mm));
 	}
 
 	@Test
@@ -83,7 +83,7 @@ public class WorkspaceProductModelManagerTest {
 		srcFolder.setDerived(true, null);
 		createProduct(project, "src/aProduct");
 
-		Collection<IProductModel> products = mm.getModel(project);
+		Collection<IProductModel> products = getProductModel(project, mm);
 		assertSingleProductWithId("aProduct", products);
 	}
 
@@ -97,7 +97,7 @@ public class WorkspaceProductModelManagerTest {
 		folder.setDerived(true, null);
 		createProduct(project, "src/subFolder/aProduct");
 
-		Collection<IProductModel> products = mm.getModel(project);
+		Collection<IProductModel> products = getProductModel(project, mm);
 		assertSingleProductWithId("aProduct", products);
 	}
 
@@ -144,6 +144,7 @@ public class WorkspaceProductModelManagerTest {
 		IClasspathEntry cpEntry = JavaCore.newSourceEntry(srcFolder.getFullPath());
 		JavaCore.create(project).setRawClasspath(new IClasspathEntry[] { cpEntry }, null);
 		project.build(IncrementalProjectBuilder.FULL_BUILD, null);
+		WorkspaceModelManagerTest.awaitJobs();
 		return project;
 	}
 
@@ -152,4 +153,10 @@ public class WorkspaceProductModelManagerTest {
 		IProductModel product = products.iterator().next();
 		assertEquals(expectedId, product.getProduct().getId());
 	}
+
+	private Collection<IProductModel> getProductModel(IProject project, TestWorkspaceProductModelManager manager) {
+		WorkspaceModelManagerTest.awaitJobs();
+		return manager.getModel(project);
+	}
+
 }
