@@ -33,6 +33,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.WorkspacePluginModelManager;
 import org.eclipse.pde.internal.core.project.PDEProject;
+import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.junit.*;
 import org.junit.rules.TestRule;
@@ -61,9 +62,9 @@ public class WorkspaceModelManagerTest {
 	public void testGetModel_projectCreated() throws CoreException {
 		TestWorkspaceModelManager mm = createWorkspaceModelManager();
 		IProject project = getWorkspaceProject("plugin.a");
-		assertNull(mm.getModel(project));
+		assertNull(getPluginModel(project, mm));
 		createModelProject("plugin.a", "1.0.0");
-		IPluginModelBase model = mm.getModel(project);
+		IPluginModelBase model = getPluginModel(project, mm);
 		assertExistingModel("plugin.a", "1.0.0", model);
 	}
 
@@ -72,7 +73,7 @@ public class WorkspaceModelManagerTest {
 		// simulate start-up with workspace with existing, open projects
 		IProject existingProject = createModelProject("plugin.a", "1.0.0");
 		TestWorkspaceModelManager mm = createWorkspaceModelManager(false);
-		IPluginModelBase model = mm.getModel(existingProject);
+		IPluginModelBase model = getPluginModel(existingProject, mm);
 		assertExistingModel("plugin.a", "1.0.0", model);
 	}
 
@@ -82,7 +83,7 @@ public class WorkspaceModelManagerTest {
 		List<IModelProviderEvent> events = new ArrayList<>();
 		mm.addModelProviderListener(events::add);
 
-		IPluginModelBase model = mm.getModel(createModelProject("plugin.a", "1.0.0"));
+		IPluginModelBase model = getPluginModel(createModelProject("plugin.a", "1.0.0"), mm);
 
 		assertEquals(1, events.size());
 		IModelProviderEvent event = events.get(0);
@@ -105,7 +106,7 @@ public class WorkspaceModelManagerTest {
 	public void testChangeEvents_singleModelRemoved() throws CoreException {
 		TestWorkspaceModelManager mm = createWorkspaceModelManager();
 		IProject project = createModelProject("plugin.a", "1.0.0");
-		IPluginModelBase model = mm.getModel(project);
+		IPluginModelBase model = getPluginModel(project, mm);
 		List<IModelProviderEvent> events = new ArrayList<>();
 		mm.addModelProviderListener(events::add);
 
@@ -130,7 +131,7 @@ public class WorkspaceModelManagerTest {
 			description.setBundleRoot(bundleRootPath);
 		});
 
-		IPluginModelBase model = mm.getModel(project);
+		IPluginModelBase model = getPluginModel(project, mm);
 		assertExistingModel("plugin.a", "1.0.0", model);
 		assertFalse(manifest(project).exists());
 		assertTrue(project.getFile("other/root/META-INF/MANIFEST.MF").exists());
@@ -148,11 +149,11 @@ public class WorkspaceModelManagerTest {
 
 		project.close(null);
 
-		assertNull(mm.getModel(project));
+		assertNull(getPluginModel(project, mm));
 
 		project.open(null);
 
-		IPluginModelBase model = mm.getModel(project);
+		IPluginModelBase model = getPluginModel(project, mm);
 		assertExistingModel("plugin.a", "2.0.0", model);
 		assertEquals(manifestIn(project, "otherRoot"), model.getUnderlyingResource());
 	}
@@ -167,7 +168,7 @@ public class WorkspaceModelManagerTest {
 		manifest(project).delete(true, null);
 
 		project.delete(true, null);
-		assertNull(mm.getModel(project));
+		assertNull(getPluginModel(project, mm));
 	}
 
 	@Test
@@ -179,19 +180,19 @@ public class WorkspaceModelManagerTest {
 
 		setBundleRoot(project, "otherRoot");
 
-		IPluginModelBase model1 = mm.getModel(project);
+		IPluginModelBase model1 = getPluginModel(project, mm);
 		assertExistingModel("plugin.a", "2.0.0", model1);
 		assertEquals(manifestIn(project, "otherRoot"), model1.getUnderlyingResource());
 
 		setBundleRoot(project, "root2");
 
-		IPluginModelBase model2 = mm.getModel(project);
+		IPluginModelBase model2 = getPluginModel(project, mm);
 		assertExistingModel("plugin.a", "3.0.0", model2);
 		assertEquals(manifestIn(project, "root2"), model2.getUnderlyingResource());
 
 		setBundleRoot(project, null);
 
-		IPluginModelBase model0 = mm.getModel(project);
+		IPluginModelBase model0 = getPluginModel(project, mm);
 		assertExistingModel("plugin.a", "1.0.0", model0);
 		assertEquals(manifest(project), model0.getUnderlyingResource());
 	}
@@ -204,11 +205,11 @@ public class WorkspaceModelManagerTest {
 		copyFile(manifest(project), manifestIn(project, "otherRoot"), replaceVersionTo("2.0.0"));
 
 		manifest(project).delete(true, null);
-		assertNull(mm.getModel(project));
+		assertNull(getPluginModel(project, mm));
 
 		setBundleRoot(project, "otherRoot");
 
-		IPluginModelBase model = mm.getModel(project);
+		IPluginModelBase model = getPluginModel(project, mm);
 		assertExistingModel("plugin.a", "2.0.0", model);
 		assertEquals(manifestIn(project, "otherRoot"), model.getUnderlyingResource());
 	}
@@ -222,11 +223,11 @@ public class WorkspaceModelManagerTest {
 		setBundleRoot(project, "otherRoot");
 
 		manifestIn(project, "otherRoot").delete(true, null);
-		assertNull(mm.getModel(project));
+		assertNull(getPluginModel(project, mm));
 
 		setBundleRoot(project, null);
 
-		IPluginModelBase model = mm.getModel(project);
+		IPluginModelBase model = getPluginModel(project, mm);
 		assertExistingModel("plugin.a", "1.0.0", model);
 		assertEquals(manifest(project), model.getUnderlyingResource());
 	}
@@ -269,6 +270,7 @@ public class WorkspaceModelManagerTest {
 	private static IProject createModelProject(String symbolicName, String version) throws CoreException {
 		IProject project = ProjectUtils.createPluginProject(symbolicName, symbolicName, version);
 		project.build(IncrementalProjectBuilder.FULL_BUILD, null);
+		awaitJobs();
 		return project;
 	}
 
@@ -283,6 +285,7 @@ public class WorkspaceModelManagerTest {
 	private void setBundleRoot(IProject project, String path) throws CoreException {
 		PDEProject.setBundleRoot(project, path != null ? project.getFolder(path) : null);
 		project.build(IncrementalProjectBuilder.FULL_BUILD, null);
+		awaitJobs();
 	}
 
 	private void copyFile(IFile source, IFile target, UnaryOperator<String> modifications)
@@ -304,6 +307,17 @@ public class WorkspaceModelManagerTest {
 		assertNotNull(model);
 		assertEquals(symbolicName, model.getPluginBase().getId());
 		assertEquals(version, model.getPluginBase().getVersion());
+	}
+
+	private IPluginModelBase getPluginModel(IProject project, TestWorkspaceModelManager manager) {
+		awaitJobs();
+		return manager.getModel(project);
+	}
+
+	static void awaitJobs() {
+		// TODO: Make PDE's Plugin/Feature/Product model thread-safe and this
+		// method obsolete
+		TestUtils.waitForJobs(WorkspaceProductModelManagerTest.class.getName(), 100, 10000);
 	}
 
 }
