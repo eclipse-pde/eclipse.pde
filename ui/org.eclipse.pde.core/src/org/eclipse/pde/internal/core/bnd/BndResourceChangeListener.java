@@ -24,7 +24,6 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -36,26 +35,8 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.RequiredPluginsClasspathContainer;
 import org.eclipse.pde.internal.core.natures.BndProject;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
 
-@Component(service = {})
 public class BndResourceChangeListener implements IResourceChangeListener {
-
-	@Reference
-	private IWorkspace workspace;
-
-	@Activate
-	void start() {
-		workspace.addResourceChangeListener(this);
-	}
-
-	@Deactivate
-	void stop() {
-		workspace.removeResourceChangeListener(this);
-	}
 
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {

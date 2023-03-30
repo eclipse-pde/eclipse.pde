@@ -116,4 +116,3 @@ Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.eclipse.pde.core
-Service-Component: OSGI-INF/org.eclipse.pde.internal.core.bnd.BndResourceChangeListener.xml
