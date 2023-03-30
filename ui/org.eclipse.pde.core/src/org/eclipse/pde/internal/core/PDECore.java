@@ -39,6 +39,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.eclipse.pde.internal.core.bnd.BndResourceChangeListener;
 import org.eclipse.pde.internal.core.builders.FeatureRebuilder;
 import org.eclipse.pde.internal.core.builders.PluginRebuilder;
 import org.eclipse.pde.internal.core.project.BundleProjectService;
@@ -184,6 +185,8 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	 */
 	private ServiceRegistration<IBundleProjectService> fBundleProjectService;
 
+	private BndResourceChangeListener bndResourceChangeListener;
+
 	public PDECore() {
 		inst = this;
 	}
@@ -319,7 +322,8 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		context.registerService(DebugOptionsListener.class.getName(), this, props);
 
 		// use save participant to clean orphaned profiles.
-		ResourcesPlugin.getWorkspace().addSaveParticipant(PLUGIN_ID, new ISaveParticipant() {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		workspace.addSaveParticipant(PLUGIN_ID, new ISaveParticipant() {
 			@Override
 			public void saving(ISaveContext saveContext) throws CoreException {
 				P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
@@ -337,7 +341,8 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 			public void doneSaving(ISaveContext saveContext) {
 			}
 		});
-
+		bndResourceChangeListener = new BndResourceChangeListener();
+		workspace.addResourceChangeListener(bndResourceChangeListener);
 	}
 
 	public BundleContext getBundleContext() {
@@ -388,7 +393,9 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 			fBundleProjectService = null;
 		}
 
-		ResourcesPlugin.getWorkspace().removeSaveParticipant(PLUGIN_ID);
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		workspace.removeSaveParticipant(PLUGIN_ID);
+		workspace.removeResourceChangeListener(bndResourceChangeListener);
 	}
 
 	/**
