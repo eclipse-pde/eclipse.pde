@@ -183,7 +183,6 @@ public interface IXMLConstants {
 	public static final String PROPERTY_SIGN_KEYSTORE = "sign.keystore"; //$NON-NLS-1$
 	public static final String PROPERTY_SIGN_STOREPASS = "sign.storepass"; //$NON-NLS-1$
 	public static final String PROPERTY_SIGN_KEYPASS = "sign.keypass"; //$NON-NLS-1$
-	public static final String PROPERTY_PACK = "jarProcessor.pack200"; //$NON-NLS-1$
 	public static final String PROPERTY_UNSIGN = "jarProcessor.unsign"; //$NON-NLS-1$
 	public static final String PROPERTY_SIGN = "jarProcessor.sign"; //$NON-NLS-1$
 
