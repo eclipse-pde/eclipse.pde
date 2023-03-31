@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.pde.runtime; singleton:=true
-Bundle-Version: 3.7.600.qualifier
+Bundle-Version: 3.8.0.qualifier
 Bundle-Activator: org.eclipse.pde.internal.runtime.PDERuntimePlugin
 Bundle-Vendor: %provider-name
 Bundle-Localization: plugin
@@ -24,6 +24,6 @@ Export-Package: org.eclipse.pde.internal.runtime;x-internal:=true,
  org.eclipse.pde.internal.runtime.spy.dialogs;x-internal:=true,
  org.eclipse.pde.internal.runtime.spy.handlers;x-internal:=true,
  org.eclipse.pde.internal.runtime.spy.sections;x-internal:=true
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.eclipse.pde.runtime
