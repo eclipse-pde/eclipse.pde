@@ -13,23 +13,37 @@
 
 package org.eclipse.pde.build.internal.tests.p2;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.net.URI;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.zip.ZipOutputStream;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
 import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
-import org.eclipse.equinox.p2.repository.artifact.*;
+import org.eclipse.equinox.p2.repository.artifact.ArtifactKeyQuery;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactDescriptor;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
 import org.eclipse.pde.build.internal.tests.Utils;
@@ -556,11 +570,6 @@ public class P2Tests extends P2TestCase {
 		IInstallableUnit iu = getIU(metadata, "org.eclipse.tips.core");
 		assertNotNull(iu);
 
-		// bug 289866
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("pack.excludes=plugins/org.eclipse.tips.feature_" + iu.getVersion() + ".jar\n");
-		Utils.writeBuffer(repo.getFile("pack.properties"), buffer);
-
 		assertResourceFile(buildFolder, "repo/artifacts.xml");
 
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"),
@@ -568,11 +577,11 @@ public class P2Tests extends P2TestCase {
 		assertNotNull(resource);
 		String keystorePath = FileLocator.toFileURL(resource).getPath();
 
-		buffer = new StringBuffer();
+		StringBuffer buffer = new StringBuffer();
 		buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>               \n");
 		buffer.append("<project name=\"project\" default=\"default\">           \n");
 		buffer.append("    <target name=\"default\">                            \n");
-		buffer.append("    	<p2.process.artifacts  repositoryPath=\"" + repoLocation + "\" pack=\"true\">  \n");
+		buffer.append("    	<p2.process.artifacts  repositoryPath=\"" + repoLocation + "\">  \n");
 		buffer.append("    	   <sign keystore=\"" + keystorePath + "\"         \n");
 		buffer.append("    			 keypass=\"keypass\"                        \n");
 		buffer.append("    			 storepass=\"storepass\"                    \n");
@@ -590,8 +599,6 @@ public class P2Tests extends P2TestCase {
 
 		IFolder repoFolder = buildFolder.getFolder("repo");
 		IArtifactRepository repository = loadArtifactRepository(repoLocation);
-		Map<String, String> repoProps = repository.getProperties();
-		assertEquals(repoProps.get("publishPackFilesAsSiblings"), "true");
 		IQueryResult<IArtifactKey> keys = repository.query(ArtifactKeyQuery.ALL_KEYS, null);
 		for (IArtifactKey key : keys) {
 			IArtifactDescriptor[] descriptors = repository.getArtifactDescriptors(key);
