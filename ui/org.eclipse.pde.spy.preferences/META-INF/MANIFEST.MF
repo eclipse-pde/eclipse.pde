@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.pde.spy.preferences;singleton:=true
-Bundle-Version: 0.12.500.qualifier
+Bundle-Version: 0.13.0.qualifier
 Automatic-Module-Name: org.eclipse.pde.spy.preferences
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Vendor: %provider-name
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.e4.ui.model.workbench;bundle-version="1.1.0",
