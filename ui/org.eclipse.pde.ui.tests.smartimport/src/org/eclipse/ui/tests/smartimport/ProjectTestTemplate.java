@@ -21,6 +21,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.reddeer.common.logging.Logger;
 import org.eclipse.reddeer.common.matcher.RegexMatcher;
@@ -155,7 +156,9 @@ public abstract class ProjectTestTemplate {
 		ProblemsView problemsView = new ProblemsView();
 		problemsView.open();
 		List<Problem> problems = problemsView.getProblems(ProblemType.ERROR);
-		assertTrue("There should be no errors in imported project", problems.isEmpty());
+		assertTrue("There should be no errors in imported project: " + System.lineSeparator()
+				+ problems.stream().map(String::valueOf).collect(Collectors.joining(System.lineSeparator())),
+				problems.isEmpty());
 
 	}
 

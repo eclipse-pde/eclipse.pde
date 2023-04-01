@@ -79,6 +79,9 @@ public class CoreUtility {
 	}
 
 	public static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
+		if (proj.hasNature(natureId)) {
+			return;
+		}
 		IProjectDescription description = proj.getDescription();
 		String[] prevNatures = description.getNatureIds();
 		String[] newNatures = new String[prevNatures.length + 1];

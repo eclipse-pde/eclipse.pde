@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.natures;
 
-import aQute.bnd.build.Project;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.JavaCore;
@@ -36,8 +34,7 @@ public class BndProject extends BaseProject {
 
 	public static boolean isBndProject(IProject project) {
 		if (project.isOpen() && hasRequiredNatures(project)) {
-			IFile buildFile = project.getFile(Project.BNDFILE);
-			return buildFile.exists();
+			return true;
 		}
 		return false;
 	}

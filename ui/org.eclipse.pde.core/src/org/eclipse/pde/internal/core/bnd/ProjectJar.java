@@ -14,9 +14,12 @@
 package org.eclipse.pde.internal.core.bnd;
 
 import aQute.bnd.osgi.Jar;
+import aQute.bnd.osgi.ManifestResource;
 import aQute.bnd.osgi.Resource;
 import java.io.InputStream;
 import java.util.function.Predicate;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -51,6 +54,12 @@ public class ProjectJar extends Jar {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void setManifest(Manifest manifest) {
+		super.setManifest(manifest);
+		putResource(JarFile.MANIFEST_NAME, new ManifestResource(manifest));
 	}
 
 	@Override

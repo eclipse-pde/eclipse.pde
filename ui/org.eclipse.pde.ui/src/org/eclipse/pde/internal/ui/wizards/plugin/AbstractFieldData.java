@@ -34,6 +34,7 @@ public abstract class AbstractFieldData implements IFieldData {
 	private String fFramework;
 	private IWorkingSet[] fWorkingSets;
 	private String fExecutionEnvironment;
+	private boolean automaticMetadataGeneration;
 
 	@Override
 	public String getId() {
@@ -155,5 +156,13 @@ public abstract class AbstractFieldData implements IFieldData {
 
 	public String getExecutionEnvironment() {
 		return fExecutionEnvironment;
+	}
+
+	public void setAutomaticMetadataGeneration(boolean automaticMetadataGeneration) {
+		this.automaticMetadataGeneration = automaticMetadataGeneration;
+	}
+
+	public boolean isAutomaticMetadataGeneration() {
+		return automaticMetadataGeneration;
 	}
 }
