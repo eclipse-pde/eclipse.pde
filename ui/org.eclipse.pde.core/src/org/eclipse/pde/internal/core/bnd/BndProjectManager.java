@@ -76,6 +76,7 @@ public class BndProjectManager {
 		String outputLocation = javaProject.getOutputLocation().makeRelativeTo(base).toString();
 		bnd.setProperty(Constants.DEFAULT_PROP_SRC_DIR, src.stream().collect(Collectors.joining(DELIMITER)));
 		bnd.setProperty(Constants.DEFAULT_PROP_BIN_DIR, outputLocation);
+		bnd.setProperty(Constants.DEFAULT_PROP_TARGET_DIR, outputLocation);
 		String buildPath = bnd.getProperty(Constants.BUILDPATH);
 		Stream<String> enhnacedBuildPath = OSGiAnnotationsClasspathContributor.annotations()
 				.map(p -> p.getPluginBase().getId());

@@ -27,6 +27,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -47,6 +48,9 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	private IStructuredSelection fSelection;
 
 	private static final String S_OSGI_PROJECT = "osgiProject"; //$NON-NLS-1$
+	private static final String S_FRAMEWORK_TYPE = "frameworkType"; //$NON-NLS-1$
+	private static final String S_AUTOMATIC_METADATA = "automaticMetadata"; //$NON-NLS-1$
+	private Button useAutomaticMetadata;
 
 	public NewProjectCreationPage(String pageName, AbstractFieldData data, boolean fragment, IStructuredSelection selection) {
 		super(pageName);
@@ -68,6 +72,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 				"org.eclipse.pde.ui.pluginWorkingSet", "org.eclipse.ui.resourceWorkingSetPage"}); //$NON-NLS-1$ //$NON-NLS-2$
 
 		updateRuntimeDependency();
+		updateAutomatic();
 
 		Dialog.applyDialogFont(control);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, fFragment ? IHelpContextIds.NEW_FRAGMENT_STRUCTURE_PAGE : IHelpContextIds.NEW_PROJECT_STRUCTURE_PAGE);
@@ -107,7 +112,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	protected void createFormatGroup(Composite container) {
 		Group group = new Group(container, SWT.NONE);
 		group.setText(PDEUIMessages.NewProjectCreationPage_target);
-		group.setLayout(new GridLayout(2, false));
+		group.setLayout(new GridLayout(3, false));
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label label = new Label(group, SWT.NONE);
@@ -121,8 +126,12 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 
 		IDialogSettings settings = getDialogSettings();
 		boolean osgiProject = (settings == null) ? false : settings.getBoolean(S_OSGI_PROJECT);
+		boolean automaticMetadata = (settings == null || settings.get(S_AUTOMATIC_METADATA) == null) ? false
+				: settings.getBoolean(S_AUTOMATIC_METADATA);
+		String fwType = settings == null || settings.get(S_FRAMEWORK_TYPE) == null ? ICoreConstants.EQUINOX
+				: settings.get(S_FRAMEWORK_TYPE);
 
-		fEclipseButton = createButton(group, SWT.RADIO, 2, 30);
+		fEclipseButton = createButton(group, SWT.RADIO, 3, 30);
 		fEclipseButton.setText(PDEUIMessages.NewProjectCreationPage_pDependsOnRuntime);
 		fEclipseButton.setSelection(!osgiProject);
 		fEclipseButton.addSelectionListener(widgetSelectedAdapter(e -> updateRuntimeDependency()));
@@ -134,12 +143,23 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fOSGiCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
 		fOSGiCombo.setItems(new String[] {ICoreConstants.EQUINOX, PDEUIMessages.NewProjectCreationPage_standard});
 
-		fOSGiCombo.setText(ICoreConstants.EQUINOX);
+		fOSGiCombo.setText(fwType);
+		useAutomaticMetadata = new Button(group, SWT.CHECK);
+		useAutomaticMetadata.setText(PDEUIMessages.NewProjectCreationPage_automaticMetadataLabel);
+		useAutomaticMetadata.setToolTipText(PDEUIMessages.NewProjectCreationPage_automaticMetadataTooltip);
+		useAutomaticMetadata.setSelection(automaticMetadata);
+		fOSGiCombo.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> updateAutomatic()));
+	}
+
+	private void updateAutomatic() {
+		boolean standardSelected = PDEUIMessages.NewProjectCreationPage_standard.equals(fOSGiCombo.getText());
+		useAutomaticMetadata.setVisible(standardSelected);
 	}
 
 	private void updateRuntimeDependency() {
 		boolean depends = fEclipseButton.getSelection();
 		fOSGiCombo.setEnabled(!depends);
+		useAutomaticMetadata.setEnabled(!depends);
 	}
 
 	private Button createButton(Composite container, int style, int span, int indent) {
@@ -182,6 +202,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fData.setHasBundleStructure(true);
 		fData.setOSGiFramework(fOSGIButton.getSelection() ? fOSGiCombo.getText() : null);
 		fData.setWorkingSets(getSelectedWorkingSets());
+		fData.setAutomaticMetadataGeneration(useAutomaticMetadata.getSelection());
 	}
 
 	@Override
@@ -229,5 +250,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 
 	public void saveSettings(IDialogSettings settings) {
 		settings.put(S_OSGI_PROJECT, !fEclipseButton.getSelection());
+		settings.put(S_AUTOMATIC_METADATA, useAutomaticMetadata.getSelection());
+		settings.put(S_FRAMEWORK_TYPE, fOSGiCombo.getText());
 	}
 }

@@ -46,12 +46,15 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 			boolean ui = data.isUIPlugin();
 			boolean rcp = data.isRCPApplicationPlugin();
 			boolean osgi = data.getOSGiFramework() != null;
+			boolean automatic = data.isAutomaticMetadataGeneration();
 			WizardElement welement = (WizardElement) element;
 			boolean active = TemplateWizardHelper.isActive(welement);
 			boolean uiFlag = TemplateWizardHelper.getFlag(welement, TemplateWizardHelper.FLAG_UI, true);
 			boolean javaFlag = TemplateWizardHelper.getFlag(welement, TemplateWizardHelper.FLAG_JAVA, true);
 			boolean rcpFlag = TemplateWizardHelper.getFlag(welement, TemplateWizardHelper.FLAG_RCP, false);
 			boolean osgiFlag = TemplateWizardHelper.getFlag(welement, TemplateWizardHelper.FLAG_OSGI, false);
+			boolean bndFlag = osgiFlag && javaFlag
+					&& TemplateWizardHelper.getFlag(welement, TemplateWizardHelper.FLAG_BND, false);
 			boolean activatorFlag = TemplateWizardHelper.getFlag(welement, TemplateWizardHelper.FLAG_ACTIVATOR, false);
 
 			//filter out wizards from disabled activities
@@ -72,6 +75,11 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 			//filter out non-RCP wizard if RCP option is selected
 			if (!osgi && (rcp != rcpFlag))
 				return false;
+			// filter out items that require bnd but not having automatic
+			// enabled
+			if (automatic && !bndFlag) {
+				return false;
+			}
 			//filter out non-UI wizards if UI option is selected for rcp and osgi projects
 			return (osgi == osgiFlag && ((!osgiFlag && !rcpFlag) || ui == uiFlag));
 		}
