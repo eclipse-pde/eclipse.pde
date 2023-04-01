@@ -18,6 +18,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import aQute.bnd.build.Project;
+import aQute.bnd.build.model.BndEditModel;
+import aQute.bnd.properties.Document;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import org.eclipse.core.resources.*;
@@ -33,6 +37,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.natures.BndProject;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.project.PDEProject;
@@ -316,8 +321,11 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			CoreUtility.createProject(project, fProjectProvider.getLocationPath(), null);
 			project.open(null);
 		}
-		if (!project.hasNature(PDE.PLUGIN_NATURE))
+		if (isAutomaticMetadata()) {
+			CoreUtility.addNatureToProject(project, BndProject.NATURE_ID, null);
+		} else {
 			CoreUtility.addNatureToProject(project, PDE.PLUGIN_NATURE, null);
+		}
 		if (!fData.isSimple() && !project.hasNature(JavaCore.NATURE_ID))
 			CoreUtility.addNatureToProject(project, JavaCore.NATURE_ID, null);
 		if (!fData.isSimple() && fData.getSourceFolderName() != null && fData.getSourceFolderName().trim().length() > 0) {
@@ -347,7 +355,6 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			setClasspath(project, fData);
 			subMonitor.worked(1);
 		}
-
 		if (fData instanceof PluginFieldData) {
 			PluginFieldData data = (PluginFieldData) fData;
 
@@ -360,17 +367,21 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			if (data.doEnableAPITooling()) {
 				addApiAnalysisNature();
 			}
-
 		}
-		// generate the manifest file
-		subMonitor.subTask(PDEUIMessages.NewProjectCreationOperation_manifestFile);
-		createManifest(project);
-		subMonitor.worked(1);
+		if (isAutomaticMetadata()) {
+			subMonitor.subTask(PDEUIMessages.NewProjectCreationOperation_manifestFile);
+			createBnd(project, subMonitor.split(1));
+		} else {
+			// generate the manifest file
+			subMonitor.subTask(PDEUIMessages.NewProjectCreationOperation_manifestFile);
+			createManifest(project);
+			subMonitor.worked(1);
 
-		// generate the build.properties file
-		subMonitor.subTask(PDEUIMessages.NewProjectCreationOperation_buildPropertiesFile);
-		createBuildPropertiesFile(project);
-		subMonitor.worked(1);
+			// generate the build.properties file
+			subMonitor.subTask(PDEUIMessages.NewProjectCreationOperation_buildPropertiesFile);
+			createBuildPropertiesFile(project);
+			subMonitor.worked(1);
+		}
 
 		// generate content contributed by template wizards
 		boolean contentWizardResult = true;
@@ -399,12 +410,41 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		if (fData.hasBundleStructure() && fModel instanceof WorkspaceBundlePluginModelBase) {
 			adjustManifests(subMonitor.split(1), project, fModel.getPluginBase());
 		}
-
-		fModel.save();
-		openFile((IFile) fModel.getUnderlyingResource());
+		if (fModel != null) {
+			fModel.save();
+			openFile((IFile) fModel.getUnderlyingResource());
+		} else {
+			IFile file = project.getFile(Project.BNDFILE);
+			if (file.exists()) {
+				openFile(file);
+			}
+		}
 		subMonitor.worked(1);
 
 		fResult = contentWizardResult;
+	}
+
+	private boolean isAutomaticMetadata() {
+		if (fData instanceof PluginFieldData d) {
+			return d.isAutomaticMetadataGeneration();
+		}
+		return false;
+	}
+
+	private void createBnd(IProject project, IProgressMonitor monitor) throws CoreException {
+		Document document = new Document(""); //$NON-NLS-1$
+		BndEditModel model = new BndEditModel();
+		model.setBundleSymbolicName(fData.getId());
+		model.setBundleName(fData.getName());
+		model.setBundleVendor(fData.getProvider());
+		model.setBundleVersion(fData.getVersion());
+		IFile file = project.getFile(Project.BNDFILE);
+		try {
+			file.create(model.toAsciiStream(document), true, monitor);
+		} catch (IOException e) {
+			throw new CoreException(Status.error("Can't create bnd properties file", e)); //$NON-NLS-1$
+		}
+
 	}
 
 	private Set<String> getImportPackagesSet() {

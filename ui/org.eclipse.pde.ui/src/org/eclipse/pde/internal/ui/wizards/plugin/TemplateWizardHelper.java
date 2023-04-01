@@ -24,6 +24,7 @@ public class TemplateWizardHelper {
 	public static final String FLAG_JAVA = "java"; //$NON-NLS-1$
 	public static final String FLAG_RCP = "rcp"; //$NON-NLS-1$
 	public static final String FLAG_OSGI = "pureOSGi"; //$NON-NLS-1$
+	public static final String FLAG_BND = "bnd"; //$NON-NLS-1$
 	public static final String FLAG_ACTIVATOR = "requiresActivator"; //$NON-NLS-1$
 
 	public static Boolean getFlag(WizardElement element, String name) {
