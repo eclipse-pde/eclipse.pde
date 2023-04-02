@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bnd;
 
-import aQute.bnd.build.Project;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -51,7 +50,8 @@ public class BndResourceChangeListener implements IResourceChangeListener {
 						IResource resource = delta.getResource();
 						if (resource instanceof IFile) {
 							IFile file = (IFile) resource;
-							if (Project.BNDFILE.equals(file.getName()) && BndProject.isBndProject(file.getProject())) {
+							if (BndProject.INSTRUCTIONS_FILE.equals(file.getName())
+									&& BndProject.isBndProject(file.getProject())) {
 								updateProjects.add(file.getProject());
 							}
 						}

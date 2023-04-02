@@ -15,8 +15,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.ArrayList;
@@ -178,22 +176,21 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	public void refresh() {
 		if (fBlockListener)
 			return;
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		// if we are refactoring, the Manifest moves before the editor closes.  This could cause the model to be null on a refresh()
-		if (model == null)
-			return;
-		IPlugin plugin = (IPlugin) model.getPluginBase();
-		// Only update this field if it already has not been modified
-		// This will prevent the cursor from being set to position 0 after
-		// accepting a field assist proposal using \r
-		if (fClassEntry.isDirty() == false) {
-			fClassEntry.setValue(plugin.getClassName(), true);
+		if (getPage().getModel() instanceof IPluginModelBase model) {
+			IPlugin plugin = (IPlugin) model.getPluginBase();
+			// Only update this field if it already has not been modified
+			// This will prevent the cursor from being set to position 0 after
+			// accepting a field assist proposal using \r
+			if (fClassEntry.isDirty() == false) {
+				fClassEntry.setValue(plugin.getClassName(), true);
+			}
+			if (fLazyStart != null) {
+				IManifestHeader header = getLazyStartHeader();
+				fLazyStart.setSelection(header instanceof LazyStartHeader && ((LazyStartHeader) header).isLazyStart());
+			}
+			super.refresh();
 		}
-		if (fLazyStart != null) {
-			IManifestHeader header = getLazyStartHeader();
-			fLazyStart.setSelection(header instanceof LazyStartHeader && ((LazyStartHeader) header).isLazyStart());
-		}
-		super.refresh();
 	}
 
 	private LazyStartHeader[] getLazyStartHeaders() {

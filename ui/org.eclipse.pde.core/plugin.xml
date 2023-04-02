@@ -338,6 +338,13 @@
             priority="high"
             file-names="plugin.properties"/>
       <content-type
+            base-type="org.eclipse.jdt.core.javaProperties"
+            default-charset="UTF-8"
+            file-names="bnd.bnd,pde.bnd"
+            id="org.eclipse.pde.bndInstructions"
+            name="%bndInstructionsName"
+            priority="high"/>
+      <content-type
             id="org.eclipse.pde.buildProperties"
             name="%buildPropertiesName"
             base-type="org.eclipse.jdt.core.javaProperties"

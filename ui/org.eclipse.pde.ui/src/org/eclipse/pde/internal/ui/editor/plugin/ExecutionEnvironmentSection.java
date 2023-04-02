@@ -416,8 +416,10 @@ public class ExecutionEnvironmentSection extends TableSection {
 
 	protected boolean isFragment() {
 		InputContextManager manager = getPage().getPDEEditor().getContextManager();
-		IPluginModelBase model = (IPluginModelBase) manager.getAggregateModel();
-		return model.isFragmentModel();
+		if (manager.getAggregateModel() instanceof IPluginModelBase model) {
+			return model.isFragmentModel();
+		}
+		return false;
 	}
 
 	@Override

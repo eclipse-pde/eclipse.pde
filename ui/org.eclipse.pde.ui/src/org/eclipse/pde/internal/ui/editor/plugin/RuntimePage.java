@@ -31,12 +31,10 @@ public class RuntimePage extends PDEFormPage {
 
 	@Override
 	protected String getHelpResource() {
-		IPluginModelBase base = (IPluginModelBase) getPDEEditor().getAggregateModel();
-		if (base == null) {
-			return null;
+		if (getPDEEditor().getAggregateModel() instanceof IPluginModelBase base) {
+			if (base.isFragmentModel())
+				return IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME;
 		}
-		if (base.isFragmentModel())
-			return IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME;
 		return IHelpContextIds.MANIFEST_PLUGIN_RUNTIME;
 	}
 
@@ -61,14 +59,14 @@ public class RuntimePage extends PDEFormPage {
 			mform.addPart(new LibraryVisibilitySection(this, form.getBody()));
 		}
 
-		IPluginModelBase base = (IPluginModelBase) getPDEEditor().getAggregateModel();
-		if (base == null) {
-			return;
+		if (getPDEEditor().getAggregateModel() instanceof IPluginModelBase base) {
+			if (base.isFragmentModel())
+				PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
+						IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME);
+			else
+				PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(),
+						IHelpContextIds.MANIFEST_PLUGIN_RUNTIME);
 		}
-		if (base.isFragmentModel())
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME);
-		else
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_RUNTIME);
 	}
 
 	private boolean isBundle() {

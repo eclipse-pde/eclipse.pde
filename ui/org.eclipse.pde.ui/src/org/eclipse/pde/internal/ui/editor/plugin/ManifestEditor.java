@@ -39,17 +39,20 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.build.IBuildObject;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelProvider;
+import org.eclipse.pde.internal.core.natures.BndProject;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.bnd.BndInputContext;
 import org.eclipse.pde.internal.ui.editor.build.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsAction;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
+import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
@@ -97,7 +100,9 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			if (model instanceof IBundlePluginModelProvider)
 				model = ((IBundlePluginModelProvider) model).getBundlePluginModel();
 			if (model instanceof IPluginModelBase) {
-				String filename = ((IPluginModelBase) model).isFragmentModel() ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
+				String filename = ((IPluginModelBase) model).isFragmentModel()
+						? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR
+						: ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
 				if (!(object instanceof IPluginExtension) && !(object instanceof IPluginExtensionPoint)) {
 					String installLocation = model.getInstallLocation();
 					if (installLocation == null)
@@ -194,6 +199,16 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			fragment = name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
 			buildFile = container.getFile(ICoreConstants.BUILD_PROPERTIES_PATH);
 			manifestFile = container.getFile(ICoreConstants.MANIFEST_PATH);
+		} else if (name.endsWith(BndProject.INSTRUCTIONS_FILE_EXTENSION)) {
+			IProject project = file.getProject();
+			manifestFile = PDEProject.getManifest(project);
+			buildFile = PDEProject.getBuildProperties(project);
+			pluginFile = PDEProject.getPluginXml(project);
+			if (name.equalsIgnoreCase(BndProject.INSTRUCTIONS_FILE)) {
+				IEditorInput in = new FileEditorInput(file);
+				manager.putContext(in, new BndInputContext(this, in, true));
+				manager.monitorFile(file);
+			}
 		}
 		if (manifestFile == null) {
 			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OpenPluginManifestsAction_title,
@@ -221,6 +236,18 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			fShowExtensions = fPrefs.getBoolean(ICoreConstants.EXTENSIONS_PROPERTY, true);
 			fEquinox = fPrefs.getBoolean(ICoreConstants.EQUINOX_PROPERTY, true);
 		}
+	}
+
+	@Override
+	public IBaseModel getAggregateModel() {
+		IBaseModel aggregateModel = super.getAggregateModel();
+		if (aggregateModel == null && fInputContextManager != null) {
+			InputContext bndContext = fInputContextManager.findContext(BndInputContext.CONTEXT_ID);
+			if (bndContext != null) {
+				return bndContext.getModel();
+			}
+		}
+		return aggregateModel;
 	}
 
 	@Override
@@ -254,6 +281,11 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			if (!fInputContextManager.hasContext(BuildInputContext.CONTEXT_ID)) {
 				IEditorInput in = new FileEditorInput(file);
 				fInputContextManager.putContext(in, new BuildInputContext(this, in, false));
+			}
+		} else if (name.equalsIgnoreCase(BndProject.INSTRUCTIONS_FILE)) {
+			if (!fInputContextManager.hasContext(BndInputContext.CONTEXT_ID)) {
+				IEditorInput in = new FileEditorInput(file);
+				fInputContextManager.putContext(in, new BndInputContext(this, in, false));
 			}
 		}
 	}
@@ -361,7 +393,8 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			File dir = file.getParentFile();
 			pluginFile = createPluginFile(dir);
 			manifestFile = new File(dir, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
-		} else if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
+		} else if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)
+				|| name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
 			pluginFile = file;
 			File dir = file.getParentFile();
 			buildFile = new File(dir, ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
@@ -376,7 +409,8 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			if (pluginFile.exists()) {
 				IFileStore store = EFS.getStore(pluginFile.toURI());
 				IEditorInput in = new FileStoreEditorInput(store);
-				manager.putContext(in, new PluginInputContext(this, in, file == pluginFile, name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)));
+				manager.putContext(in, new PluginInputContext(this, in, file == pluginFile,
+						name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)));
 			}
 			if (buildFile.exists()) {
 				IFileStore store = EFS.getStore(buildFile.toURI());
@@ -430,20 +464,24 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 
 			if (zip.getEntry(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR) != null) {
 				input = new JarEntryEditorInput(new JarEntryFile(zip, ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR));
-				manager.putContext(input, new BundleInputContext(this, input, storage.getName().equals(ICoreConstants.MANIFEST_FILENAME)));
+				manager.putContext(input, new BundleInputContext(this, input,
+						storage.getName().equals(ICoreConstants.MANIFEST_FILENAME)));
 			}
 
 			if (zip.getEntry(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) != null) {
 				input = new JarEntryEditorInput(new JarEntryFile(zip, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR));
-				manager.putContext(input, new PluginInputContext(this, input, storage.getName().equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), false));
+				manager.putContext(input, new PluginInputContext(this, input,
+						storage.getName().equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), false));
 			} else if (zip.getEntry(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR) != null) {
 				input = new JarEntryEditorInput(new JarEntryFile(zip, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR));
-				manager.putContext(input, new PluginInputContext(this, input, storage.getName().equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR), true));
+				manager.putContext(input, new PluginInputContext(this, input,
+						storage.getName().equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR), true));
 			}
 
 			if (zip.getEntry(ICoreConstants.BUILD_FILENAME_DESCRIPTOR) != null) {
 				input = new JarEntryEditorInput(new JarEntryFile(zip, ICoreConstants.BUILD_FILENAME_DESCRIPTOR));
-				manager.putContext(input, new BuildInputContext(this, input, storage.getName().equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)));
+				manager.putContext(input, new BuildInputContext(this, input,
+						storage.getName().equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)));
 			}
 		} finally {
 			try {
@@ -471,6 +509,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		addSourcePage(BundleInputContext.CONTEXT_ID);
 		addSourcePage(PluginInputContext.CONTEXT_ID);
 		addSourcePage(BuildInputContext.CONTEXT_ID);
+		addSourcePage(BndInputContext.CONTEXT_ID);
 	}
 
 	private boolean isSourcePageID(String pageID) {
@@ -478,14 +517,16 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			return false;
 		}
 		// Determine whether the page ID is a source page ID
-		switch (pageID) {
+		switch (pageID)
+			{
 			case BuildInputContext.CONTEXT_ID: // build.properites
 			case PluginInputContext.CONTEXT_ID: // plugin.xml
 			case BundleInputContext.CONTEXT_ID: // MANIFEST.MF
-			return true;
-		default:
-			break;
-		}
+			case BndInputContext.CONTEXT_ID: // bnd instruction
+				return true;
+			default:
+				break;
+			}
 		return false;
 	}
 
@@ -503,6 +544,12 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		// MANIFEST.MF, plugin.xml), then return the page ID belonging to the
 		// input context or file used to open this editor
 		if (firstPageId == null) {
+			if (fInputContextManager.hasContext(BndInputContext.CONTEXT_ID)) {
+				InputContext context = fInputContextManager.findContext(BndInputContext.CONTEXT_ID);
+				if (context != null) {
+					return context.getId();
+				}
+			}
 			return OverviewPage.PAGE_ID;
 		} else if (isSourcePageID(firstPageId)) {
 			return getPrimarySourceInputContextID();
@@ -513,13 +560,14 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 
 	@Override
 	protected String getPropertyEditorPageKey(IFileEditorInput input) {
-		// We are using the project itself to persist the editor page key property
+		// We are using the project itself to persist the editor page key
+		// property
 		// The value persists even after the editor is closed
 		// The project is used rather than the file in this case because the
 		// manifest editor has 3 input files and only one build.properties,
 		// one MANIFEST.MF and one plugin.xml should exist for each project.
 		// We also want the last editor page to be shared between the two
-		// input contexts.  The build.properties file has its own editor.
+		// input contexts. The build.properties file has its own editor.
 		IFile file = input.getFile();
 		IProject project = file.getProject();
 		// Ensure the project is defined
@@ -538,13 +586,14 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 
 	@Override
 	protected void setPropertyEditorPageKey(IFileEditorInput input, String pageId) {
-		// We are using the project itself to persist the editor page key property
+		// We are using the project itself to persist the editor page key
+		// property
 		// The value persists even after the editor is closed
 		// The project is used rather than the file in this case because the
 		// manifest editor has 3 input files and only one build.properties,
 		// one MANIFEST.MF and one plugin.xml should exist for each project.
 		// We also want the last editor page to be shared between the two
-		// input contexts.  The build.properties file has its own editor.
+		// input contexts. The build.properties file has its own editor.
 		IFile file = input.getFile();
 		IProject project = file.getProject();
 		// Ensure the project is defined
@@ -592,7 +641,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 
 	@Override
 	public <T> T getAdapter(Class<T> key) {
-		//No property sheet needed - block super
+		// No property sheet needed - block super
 		if (key.equals(IPropertySheetPage.class)) {
 			return null;
 		}
@@ -601,13 +650,15 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 
 	@Override
 	public String getTitle() {
-		IPluginModelBase model = (IPluginModelBase) getAggregateModel();
-		if (model == null || !model.isValid())
-			return super.getTitle();
-		String text = getTitleText(model.getPluginBase());
-		if (text == null)
-			return super.getTitle();
-		return model.getResourceString(text);
+		if (getAggregateModel() instanceof IPluginModelBase model) {
+			if (!model.isValid())
+				return super.getTitle();
+			String text = getTitleText(model.getPluginBase());
+			if (text == null)
+				return super.getTitle();
+			return model.getResourceString(text);
+		}
+		return super.getTitle();
 	}
 
 	@Override
@@ -632,7 +683,8 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		InputContext context = null;
 		if (object instanceof IFile) {
 			String name = ((IFile) object).getName();
-			if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR))
+			if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)
+					|| name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR))
 				context = fInputContextManager.findContext(PluginInputContext.CONTEXT_ID);
 			else if (name.equals(ICoreConstants.MANIFEST_FILENAME))
 				context = fInputContextManager.findContext(BundleInputContext.CONTEXT_ID);
@@ -653,11 +705,13 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	@Override
 	public void showEditorInput(IEditorInput editorInput) {
 		String name = editorInput.getName();
-		String id = getActivePageInstance().getId();
+		IFormPage page = getActivePageInstance();
+		String id = page == null ? "" : page.getId(); //$NON-NLS-1$
 		if (name.equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
 			if (!BuildInputContext.CONTEXT_ID.equals(id))
 				setActivePage(SHOW_SOURCE ? BuildInputContext.CONTEXT_ID : BuildPage.PAGE_ID);
-		} else if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
+		} else if (name.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)
+				|| name.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)) {
 			if (!PluginInputContext.CONTEXT_ID.equals(id)) {
 				if (SHOW_SOURCE) {
 					setActivePage(PluginInputContext.CONTEXT_ID);

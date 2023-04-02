@@ -31,17 +31,18 @@ public class ManifestOutlinePage extends FormOutlinePage {
 	protected Object[] getChildren(Object parent) {
 		if (parent instanceof PDEFormPage) {
 			PDEFormPage page = (PDEFormPage) parent;
-			IPluginModelBase model = (IPluginModelBase) page.getModel();
-			if (model != null && model.isValid()) {
-				IPluginBase pluginBase = model.getPluginBase();
-				if (page.getId().equals(DependenciesPage.PAGE_ID))
-					return pluginBase.getImports();
-				if (page.getId().equals(RuntimePage.PAGE_ID))
-					return pluginBase.getLibraries();
-				if (page.getId().equals(ExtensionsPage.PAGE_ID))
-					return pluginBase.getExtensions();
-				if (page.getId().equals(ExtensionPointsPage.PAGE_ID))
-					return pluginBase.getExtensionPoints();
+			if (page.getModel() instanceof IPluginModelBase model) {
+				if (model.isValid()) {
+					IPluginBase pluginBase = model.getPluginBase();
+					if (page.getId().equals(DependenciesPage.PAGE_ID))
+						return pluginBase.getImports();
+					if (page.getId().equals(RuntimePage.PAGE_ID))
+						return pluginBase.getLibraries();
+					if (page.getId().equals(ExtensionsPage.PAGE_ID))
+						return pluginBase.getExtensions();
+					if (page.getId().equals(ExtensionPointsPage.PAGE_ID))
+						return pluginBase.getExtensionPoints();
+				}
 			}
 		}
 		return new Object[0];

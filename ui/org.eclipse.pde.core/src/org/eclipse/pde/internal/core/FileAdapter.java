@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core;
 import java.io.File;
 import java.util.Locale;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.pde.internal.core.natures.BndProject;
 
 public class FileAdapter extends PlatformObject {
 	private final File fFile;
@@ -35,7 +36,10 @@ public class FileAdapter extends PlatformObject {
 
 	public boolean isManifest() {
 		String fileName = fFile.getName();
-		return (fileName.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) || fileName.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR) || fileName.equalsIgnoreCase(ICoreConstants.MANIFEST_FILENAME));
+		return (fileName.equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR)
+				|| fileName.equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR)
+				|| fileName.equalsIgnoreCase(ICoreConstants.MANIFEST_FILENAME))
+				|| fileName.equalsIgnoreCase(BndProject.INSTRUCTIONS_FILE);
 	}
 
 	public boolean isSchema() {
