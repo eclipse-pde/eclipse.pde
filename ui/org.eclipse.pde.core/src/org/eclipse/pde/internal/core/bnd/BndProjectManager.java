@@ -53,7 +53,8 @@ public class BndProjectManager {
 			if (projectPath != null) {
 				File projectFolder = projectPath.toFile();
 				if (projectFolder != null) {
-					Project bnd = new Project(getWorkspace(), projectFolder);
+					Project bnd = new Project(getWorkspace(), projectFolder,
+							new File(projectFolder, BndProject.INSTRUCTIONS_FILE));
 					bnd.setBase(projectFolder);
 					setupProject(bnd, project);
 					return Optional.of(bnd);

@@ -108,9 +108,11 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 	private String getSectionDescription() {
 		IPluginModelBase model = getModel();
 		if (isBundle()) {
-			return (model.isFragmentModel()) ? PDEUIMessages.ClasspathSection_fragment : PDEUIMessages.ClasspathSection_plugin;
+			return (model != null && model.isFragmentModel()) ? PDEUIMessages.ClasspathSection_fragment
+					: PDEUIMessages.ClasspathSection_plugin;
 		}
-		return (model.isFragmentModel()) ? PDEUIMessages.ManifestEditor_LibrarySection_fdesc : PDEUIMessages.ManifestEditor_LibrarySection_desc;
+		return (model != null && model.isFragmentModel()) ? PDEUIMessages.ManifestEditor_LibrarySection_fdesc
+				: PDEUIMessages.ManifestEditor_LibrarySection_desc;
 	}
 
 	protected boolean isBundle() {
@@ -144,8 +146,10 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		section.setClient(container);
 
 		IPluginModelBase model = getModel();
-		fLibraryTable.setInput(model.getPluginBase());
-		model.addModelChangedListener(this);
+		if (model != null) {
+			fLibraryTable.setInput(model.getPluginBase());
+			model.addModelChangedListener(this);
+		}
 	}
 
 	private void updateButtons() {
@@ -696,7 +700,10 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 	}
 
 	private IPluginModelBase getModel() {
-		return (IPluginModelBase) getPage().getModel();
+		if (getPage().getModel() instanceof IPluginModelBase base) {
+			return base;
+		}
+		return null;
 	}
 
 	@Override
