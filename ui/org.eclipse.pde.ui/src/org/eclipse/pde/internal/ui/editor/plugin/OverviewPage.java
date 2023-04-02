@@ -32,6 +32,7 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.nls.GetNonExternalizedStringsAction;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsAction;
@@ -198,11 +199,14 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 	}
 
 	private boolean isFragment() {
-		if (getPDEEditor().getContextManager() == null) {
+		InputContextManager contextManager = getPDEEditor().getContextManager();
+		if (contextManager == null) {
 			return false;
 		}
-		IPluginModelBase model = (IPluginModelBase) getPDEEditor().getContextManager().getAggregateModel();
-		return model.isFragmentModel();
+		if (contextManager.getAggregateModel() instanceof IPluginModelBase model) {
+			return model.isFragmentModel();
+		}
+		return false;
 	}
 
 	private boolean isBundle() {
@@ -210,8 +214,14 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 	}
 
 	private boolean isEditable() {
-		IPluginModelBase model = (IPluginModelBase) getPDEEditor().getContextManager().getAggregateModel();
-		return model.isEditable();
+		InputContextManager contextManager = getPDEEditor().getContextManager();
+		if (contextManager == null) {
+			return false;
+		}
+		if (contextManager.getAggregateModel() instanceof IPluginModelBase model) {
+			return model.isEditable();
+		}
+		return false;
 	}
 
 	@Override

@@ -84,13 +84,20 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	public RequiresSection(DependenciesPage page, Composite parent, String[] labels) {
 		super(page, parent, Section.DESCRIPTION, labels);
 		getSection().setText(PDEUIMessages.RequiresSection_title);
-		boolean fragment = ((IPluginModelBase) getPage().getModel()).isFragmentModel();
+		boolean fragment = isFragment();
 		if (fragment)
 			getSection().setDescription(PDEUIMessages.RequiresSection_fDesc);
 		else
 			getSection().setDescription(PDEUIMessages.RequiresSection_desc);
 		getTablePart().setEditable(false);
 		resetImportInsertIndex();
+	}
+
+	private boolean isFragment() {
+		if (getPage().getModel() instanceof IPluginModelBase plugin) {
+			return plugin.isFragmentModel();
+		}
+		return false;
 	}
 
 	@Override
@@ -211,9 +218,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 	@Override
 	public void dispose() {
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		if (model != null)
+		if (getPage().getModel() instanceof IPluginModelBase model) {
 			model.removeModelChangedListener(this);
+		}
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
 		super.dispose();
 	}
@@ -490,15 +497,14 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	}
 
 	public void initialize() {
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		if (model == null)
-			return;
-		fImportViewer.setInput(model.getPluginBase());
-		updateButtons();
-		model.addModelChangedListener(this);
 		PDECore.getDefault().getModelManager().addPluginModelListener(this);
-		fAddAction.setEnabled(model.isEditable());
-		fRemoveAction.setEnabled(model.isEditable());
+		if (getPage().getModel() instanceof IPluginModelBase model) {
+			fImportViewer.setInput(model.getPluginBase());
+			updateButtons();
+			model.addModelChangedListener(this);
+			fAddAction.setEnabled(model.isEditable());
+			fRemoveAction.setEnabled(model.isEditable());
+		}
 	}
 
 	private void makeActions() {

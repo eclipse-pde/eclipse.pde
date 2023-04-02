@@ -128,7 +128,7 @@ public class BndBuilder extends IncrementalProjectBuilder {
 					if (resource instanceof IFile) {
 						IFile file = (IFile) resource;
 						String name = file.getName();
-						if (name.endsWith(CLASS_EXTENSION) || file.getName().equals(Project.BNDFILE)) {
+						if (name.endsWith(CLASS_EXTENSION) || file.getName().equals(BndProject.INSTRUCTIONS_FILE)) {
 							result.set(true);
 							return false;
 						}

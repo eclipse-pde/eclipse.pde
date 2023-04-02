@@ -18,7 +18,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import aQute.bnd.build.Project;
 import aQute.bnd.build.model.BndEditModel;
 import aQute.bnd.properties.Document;
 import java.io.IOException;
@@ -414,7 +413,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			fModel.save();
 			openFile((IFile) fModel.getUnderlyingResource());
 		} else {
-			IFile file = project.getFile(Project.BNDFILE);
+			IFile file = project.getFile(BndProject.INSTRUCTIONS_FILE);
 			if (file.exists()) {
 				openFile(file);
 			}
@@ -438,7 +437,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		model.setBundleName(fData.getName());
 		model.setBundleVendor(fData.getProvider());
 		model.setBundleVersion(fData.getVersion());
-		IFile file = project.getFile(Project.BNDFILE);
+		IFile file = project.getFile(BndProject.INSTRUCTIONS_FILE);
 		try {
 			file.create(model.toAsciiStream(document), true, monitor);
 		} catch (IOException e) {
