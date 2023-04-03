@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.core.natures;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.core.bnd.BndBuilder;
 
 public class BndProject extends BaseProject {
@@ -45,7 +44,7 @@ public class BndProject extends BaseProject {
 
 	private static boolean hasRequiredNatures(IProject project) {
 		try {
-			return project.hasNature(BndProject.NATURE_ID) && project.hasNature(JavaCore.NATURE_ID);
+			return project.hasNature(BndProject.NATURE_ID);
 		} catch (CoreException e) {
 			return false;
 		}

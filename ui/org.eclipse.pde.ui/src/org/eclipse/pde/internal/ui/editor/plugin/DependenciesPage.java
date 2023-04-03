@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.ArrayList;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -66,7 +67,8 @@ public class DependenciesPage extends PDEFormPage {
 			ImportPackageSection importPackageSection = new ImportPackageSection(this, right);
 			importPackageSection.getSection().descriptionVerticalSpacing = requiresSection.getSection().getTextClientHeightDifference();
 			managedForm.addPart(importPackageSection);
-			if (getModel().isEditable())
+			IBaseModel model = getModel();
+			if (model != null && model.isEditable())
 				managedForm.addPart(new DependencyManagementSection(this, left));
 			else
 				gd.horizontalSpan = 2;

@@ -26,6 +26,7 @@ import org.eclipse.jdt.ui.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -115,8 +116,9 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 		update(null);
 		makeActions();
 
-		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		model.addModelChangedListener(this);
+		if (getPage().getModel() instanceof IPluginModelBase model) {
+			model.addModelChangedListener(this);
+		}
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -152,7 +154,8 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 		fPackageExportContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		EditableTablePart tablePart = getTablePart();
-		tablePart.setEditable(getPage().getModel().isEditable());
+		IBaseModel model = getPage().getModel();
+		tablePart.setEditable(model != null && model.isEditable());
 		createViewerPartControl(fPackageExportContainer, SWT.FULL_SELECTION, 2, toolkit);
 		fPackageExportViewer = tablePart.getTableViewer();
 		fPackageExportViewer.setContentProvider(new TableContentProvider());

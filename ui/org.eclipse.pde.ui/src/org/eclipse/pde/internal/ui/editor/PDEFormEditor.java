@@ -888,7 +888,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 
 	@Override
 	protected final void addPages() {
-		fError = getAggregateModel() == null;
+		fError = hasMissingResources();
 		if (fError) {
 			try {
 				addPage(new MissingResourcePage(this));
@@ -897,6 +897,10 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 			}
 		} else
 			addEditorPages();
+	}
+
+	protected boolean hasMissingResources() {
+		return getAggregateModel() == null;
 	}
 
 	protected abstract void addEditorPages();

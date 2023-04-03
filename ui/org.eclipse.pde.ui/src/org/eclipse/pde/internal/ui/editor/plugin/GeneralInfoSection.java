@@ -99,7 +99,10 @@ public abstract class GeneralInfoSection extends PDESection {
 
 	protected IPluginBase getPluginBase() {
 		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
-		return ((IPluginModelBase) model).getPluginBase();
+		if (model instanceof IPluginModelBase base) {
+			return base.getPluginBase();
+		}
+		return null;
 	}
 
 	/**
@@ -128,7 +131,7 @@ public abstract class GeneralInfoSection extends PDESection {
 	protected IBundle getBundle() {
 		BundleInputContext context = getBundleContext();
 		if (context != null) {
-			IBundleModel model = (IBundleModel) context.getModel();
+			IBundleModel model = context.getModel();
 			return model.getBundle();
 		}
 		return null;

@@ -81,6 +81,11 @@ public class BundleInputContext extends UTF8InputContext {
 	}
 
 	@Override
+	public BundleModel getModel() {
+		return (BundleModel) super.getModel();
+	}
+
+	@Override
 	public String getId() {
 		return CONTEXT_ID;
 	}
@@ -178,7 +183,7 @@ public class BundleInputContext extends UTF8InputContext {
 	public void doRevert() {
 		fEditOperations.clear();
 		fOperationTable.clear();
-		AbstractEditingModel model = (AbstractEditingModel) getModel();
+		AbstractEditingModel model = getModel();
 		model.reconciled(model.getDocument());
 	}
 

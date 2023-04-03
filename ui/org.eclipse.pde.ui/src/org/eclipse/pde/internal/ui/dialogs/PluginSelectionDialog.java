@@ -156,6 +156,9 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 	}
 
 	private static void addSelfAndDirectImports(HashSet<String> set, IPluginModelBase model) {
+		if (model == null) {
+			return;
+		}
 		set.add(model.getPluginBase().getId());
 		IPluginImport[] imports = model.getPluginBase().getImports();
 		for (IPluginImport pImport : imports) {
