@@ -33,15 +33,23 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.natures.BndProject;
+import org.eclipse.pde.internal.core.project.PDEProject;
 
 public class BndBuilder extends IncrementalProjectBuilder {
 
 	private static final String CLASS_EXTENSION = ".class"; //$NON-NLS-1$
 
-	private static final Predicate<IResource> classFilter = resource -> {
+	// This is currently disabled as it sometimes lead to jar not generated as
+	// JDT is clearing the outputfolder while the build is running, need to
+	// investigate if we can avoid this and it actually has benefits to build
+	// everything async.
+	private static final boolean USE_JOB = false;
+
+	private static final Predicate<IResource> CLASS_FILTER = resource -> {
 		if (resource instanceof IFile) {
 			return resource.getName().endsWith(CLASS_EXTENSION);
 		}
@@ -55,19 +63,23 @@ public class BndBuilder extends IncrementalProjectBuilder {
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		IProject project = getProject();
-		if (BndProject.isBndProject(project) && hasRelevantDelta(getDelta(project))) {
-			Job buildJob = buildJobMap.compute(project, (p, oldJob) -> {
-				Job job = Job.create(NLS.bind(PDECoreMessages.BundleBuilder_building, project.getName()),
-						new BndBuild(p, oldJob));
-				job.addJobChangeListener(new JobChangeAdapter() {
-					@Override
-					public void done(IJobChangeEvent event) {
-						buildJobMap.remove(p, job);
-					}
+		if (BndProject.isBndProject(project) && (requireBuild(project) || hasRelevantDelta(getDelta(project)))) {
+			if (USE_JOB) {
+				Job buildJob = buildJobMap.compute(project, (p, oldJob) -> {
+					Job job = Job.create(NLS.bind(PDECoreMessages.BundleBuilder_building, project.getName()),
+							new BndBuild(p, oldJob));
+					job.addJobChangeListener(new JobChangeAdapter() {
+						@Override
+						public void done(IJobChangeEvent event) {
+							buildJobMap.remove(p, job);
+						}
+					});
+					return job;
 				});
-				return job;
-			});
-			buildJob.schedule();
+				buildJob.schedule();
+			} else {
+				buildProjectJar(project, monitor);
+			}
 		}
 		return new IProject[] { project };
 	}
@@ -94,27 +106,37 @@ public class BndBuilder extends IncrementalProjectBuilder {
 					return;
 				}
 			}
-			try {
-				Optional<Project> bndProject = BndProjectManager.getBndProject(project);
-				if (bndProject.isEmpty()) {
-					return;
-				}
-				if (monitor.isCanceled()) {
-					return;
-				}
-				try (Project bnd = bndProject.get(); ProjectBuilder builder = new ProjectBuilder(bnd)) {
-					builder.setBase(bnd.getBase());
-					ProjectJar jar = new ProjectJar(project, classFilter);
-					builder.setJar(jar);
-					builder.build();
-				}
-				if (monitor.isCanceled()) {
-					return;
-				}
-			} catch (Exception e) {
-				PDECore.log(e);
-			}
+			buildProjectJar(project, monitor);
 		}
+
+	}
+
+	private static void buildProjectJar(IProject project, IProgressMonitor monitor) {
+		try {
+			Optional<Project> bndProject = BndProjectManager.getBndProject(project);
+			if (bndProject.isEmpty()) {
+				return;
+			}
+			if (monitor.isCanceled()) {
+				return;
+			}
+			try (Project bnd = bndProject.get(); ProjectBuilder builder = new ProjectBuilder(bnd)) {
+				builder.setBase(bnd.getBase());
+				ProjectJar jar = new ProjectJar(project, CLASS_FILTER);
+				builder.setJar(jar);
+				builder.build();
+			}
+			if (monitor.isCanceled()) {
+				return;
+			}
+		} catch (Exception e) {
+			PDECore.log(e);
+		}
+	}
+
+	private static boolean requireBuild(IProject project) {
+		// If there is no manifest file yet, always generate one
+		return !PDEProject.getManifest(project).exists();
 	}
 
 	private static boolean hasRelevantDelta(IResourceDelta delta) throws CoreException {
@@ -128,7 +150,8 @@ public class BndBuilder extends IncrementalProjectBuilder {
 					if (resource instanceof IFile) {
 						IFile file = (IFile) resource;
 						String name = file.getName();
-						if (name.endsWith(CLASS_EXTENSION) || file.getName().equals(BndProject.INSTRUCTIONS_FILE)) {
+						if (name.endsWith(CLASS_EXTENSION) || file.getName().equals(BndProject.INSTRUCTIONS_FILE)
+								|| name.equals(ICoreConstants.MANIFEST_FILENAME)) {
 							result.set(true);
 							return false;
 						}

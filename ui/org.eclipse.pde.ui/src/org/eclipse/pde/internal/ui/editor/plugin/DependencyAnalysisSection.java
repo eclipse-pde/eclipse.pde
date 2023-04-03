@@ -40,8 +40,13 @@ public class DependencyAnalysisSection extends PDESection {
 	}
 
 	private String getFormText() {
-		boolean editable = getPage().getModel().isEditable();
-		if (getPage().getModel() instanceof IPluginModel) {
+		IBaseModel model = getPage().getModel();
+		if (model == null) {
+			return ""; // we don't know the type so we can't give //$NON-NLS-1$
+						// a suitable hint (at the momment)
+		}
+		boolean editable = model.isEditable();
+		if (model instanceof IPluginModel) {
 			if (editable)
 				return PDEUIMessages.DependencyAnalysisSection_plugin_editable;
 			return PDEUIMessages.DependencyAnalysisSection_plugin_notEditable;

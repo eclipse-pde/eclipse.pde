@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -67,15 +66,17 @@ public class PDEProject {
 			}
 		}
 		if (BndProject.isBndProject(project)) {
-			IJavaProject javaProject = JavaCore.create(project);
-			IPath outputLocation;
+
 			try {
-				outputLocation = javaProject.getOutputLocation();
-				IWorkspaceRoot workspaceRoot = project.getWorkspace().getRoot();
-				IFolder outputFolder = workspaceRoot.getFolder(outputLocation);
-				return outputFolder;
-			} catch (JavaModelException e) {
-				// can't get output folder... fall through as last resort.
+				if (project.hasNature(JavaCore.NATURE_ID)) {
+					IJavaProject javaProject = JavaCore.create(project);
+					IPath outputLocation = javaProject.getOutputLocation();
+					IWorkspaceRoot workspaceRoot = project.getWorkspace().getRoot();
+					return workspaceRoot.getFolder(outputLocation);
+				}
+			} catch (CoreException e) {
+				// can't determine the bundle root then from java settings!
+				// fall through as last resort
 			}
 		}
 		return project;
