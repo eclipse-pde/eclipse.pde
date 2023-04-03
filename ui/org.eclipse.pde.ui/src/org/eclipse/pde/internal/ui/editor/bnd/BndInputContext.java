@@ -16,15 +16,18 @@ package org.eclipse.pde.internal.ui.editor.bnd;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.context.IInputContextListener;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.pde.internal.ui.editor.plugin.BundleInputContext;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.IEditorInput;
 
-public class BndInputContext extends InputContext {
+public class BndInputContext extends InputContext implements IInputContextListener, IModelChangedListener {
 	public static final String CONTEXT_ID = "bnd-context"; //$NON-NLS-1$
 
 	public BndInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
@@ -39,7 +42,15 @@ public class BndInputContext extends InputContext {
 
 	@Override
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
-		return new BndModel();
+		IDocument document = getDocumentProvider().getDocument(input);
+		BndModel model = new BndModel(document);
+		model.load();
+		return model;
+	}
+
+	@Override
+	public BndModel getModel() {
+		return (BndModel) super.getModel();
 	}
 
 	@Override
@@ -58,5 +69,46 @@ public class BndInputContext extends InputContext {
 	@Override
 	protected String getPartitionName() {
 		return "___bnd_partition"; //$NON-NLS-1$
+	}
+
+	@Override
+	public void contextAdded(InputContext context) {
+		if (context instanceof BundleInputContext bundleContext) {
+			bundleContext.getModel().addModelChangedListener(this);
+		}
+	}
+
+	@Override
+	public void contextRemoved(InputContext context) {
+		if (context instanceof BundleInputContext bundleContext) {
+			bundleContext.getModel().removeModelChangedListener(this);
+		}
+	}
+
+	@Override
+	public void monitoredFileAdded(IFile monitoredFile) {
+
+	}
+
+	@Override
+	public boolean monitoredFileRemoved(IFile monitoredFile) {
+		return false;
+	}
+
+	@Override
+	public void modelChanged(IModelChangedEvent event) {
+		String changedProperty = event.getChangedProperty();
+		Object newValue = event.getNewValue();
+		BndModel model = getModel();
+		try {
+			// first sync editor with document
+			model.load();
+			// update the value
+			model.genericSet(changedProperty, newValue);
+			// update the document
+			model.saveChanges();
+		} catch (Exception e) {
+			// can't sync with bnd file then
+		}
 	}
 }

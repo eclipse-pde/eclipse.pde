@@ -66,18 +66,20 @@ public class BndProjectManager {
 
 	private static void setupProject(Project bnd, IProject project) throws CoreException {
 		IPath base = project.getFullPath();
-		IJavaProject javaProject = JavaCore.create(project);
-		IClasspathEntry[] classpath = javaProject.getRawClasspath();
-		List<String> src = new ArrayList<>(1);
-		for (IClasspathEntry cpe : classpath) {
-			if (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-				src.add(cpe.getPath().makeRelativeTo(base).toString());
+		if (project.hasNature(JavaCore.NATURE_ID)) {
+			IJavaProject javaProject = JavaCore.create(project);
+			IClasspathEntry[] classpath = javaProject.getRawClasspath();
+			List<String> src = new ArrayList<>(1);
+			for (IClasspathEntry cpe : classpath) {
+				if (cpe.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+					src.add(cpe.getPath().makeRelativeTo(base).toString());
+				}
 			}
+			String outputLocation = javaProject.getOutputLocation().makeRelativeTo(base).toString();
+			bnd.setProperty(Constants.DEFAULT_PROP_SRC_DIR, src.stream().collect(Collectors.joining(DELIMITER)));
+			bnd.setProperty(Constants.DEFAULT_PROP_BIN_DIR, outputLocation);
+			bnd.setProperty(Constants.DEFAULT_PROP_TARGET_DIR, outputLocation);
 		}
-		String outputLocation = javaProject.getOutputLocation().makeRelativeTo(base).toString();
-		bnd.setProperty(Constants.DEFAULT_PROP_SRC_DIR, src.stream().collect(Collectors.joining(DELIMITER)));
-		bnd.setProperty(Constants.DEFAULT_PROP_BIN_DIR, outputLocation);
-		bnd.setProperty(Constants.DEFAULT_PROP_TARGET_DIR, outputLocation);
 		String buildPath = bnd.getProperty(Constants.BUILDPATH);
 		Stream<String> enhnacedBuildPath = OSGiAnnotationsClasspathContributor.annotations()
 				.map(p -> p.getPluginBase().getId());

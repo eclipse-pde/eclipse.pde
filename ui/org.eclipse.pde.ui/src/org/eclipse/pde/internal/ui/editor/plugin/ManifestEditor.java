@@ -206,8 +206,10 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			pluginFile = PDEProject.getPluginXml(project);
 			if (name.equalsIgnoreCase(BndProject.INSTRUCTIONS_FILE)) {
 				IEditorInput in = new FileEditorInput(file);
-				manager.putContext(in, new BndInputContext(this, in, true));
+				BndInputContext bndInputContext = new BndInputContext(this, in, true);
+				manager.putContext(in, bndInputContext);
 				manager.monitorFile(file);
+				manager.addInputContextListener(bndInputContext);
 			}
 		}
 		if (manifestFile == null) {
@@ -219,16 +221,16 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			IEditorInput in = new FileEditorInput(manifestFile);
 			manager.putContext(in, new BundleInputContext(this, in, file == manifestFile));
 		}
+		manager.monitorFile(manifestFile);
 		if (pluginFile.exists()) {
 			FileEditorInput in = new FileEditorInput(pluginFile);
 			manager.putContext(in, new PluginInputContext(this, in, file == pluginFile, fragment));
 		}
+		manager.monitorFile(pluginFile);
 		if (buildFile.exists()) {
 			FileEditorInput in = new FileEditorInput(buildFile);
 			manager.putContext(in, new BuildInputContext(this, in, false));
 		}
-		manager.monitorFile(manifestFile);
-		manager.monitorFile(pluginFile);
 		manager.monitorFile(buildFile);
 
 		fPrefs = new ProjectScope(container.getProject()).getNode(PDECore.PLUGIN_ID);
@@ -239,22 +241,15 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	}
 
 	@Override
-	public IBaseModel getAggregateModel() {
-		IBaseModel aggregateModel = super.getAggregateModel();
-		if (aggregateModel == null && fInputContextManager != null) {
-			InputContext bndContext = fInputContextManager.findContext(BndInputContext.CONTEXT_ID);
-			if (bndContext != null) {
-				return bndContext.getModel();
-			}
-		}
-		return aggregateModel;
-	}
-
-	@Override
 	protected InputContextManager createInputContextManager() {
 		PluginInputContextManager manager = new PluginInputContextManager(this);
 		manager.setUndoManager(new PluginUndoManager(this));
 		return manager;
+	}
+
+	@Override
+	protected boolean hasMissingResources() {
+		return super.hasMissingResources() && fInputContextManager.findContext(BndInputContext.CONTEXT_ID) == null;
 	}
 
 	@Override
@@ -336,9 +331,9 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 
 	@Override
 	public boolean monitoredFileRemoved(IFile file) {
-		//TODO may need to check with the user if there
-		//are unsaved changes in the model for the
-		//file that just got removed under us.
+		// TODO may need to check with the user if there
+		// are unsaved changes in the model for the
+		// file that just got removed under us.
 		return true;
 	}
 
@@ -358,7 +353,11 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 
 	@Override
 	public void contextRemoved(InputContext context) {
-		close(true);
+		InputContext bundleInput = fInputContextManager.findContext(BundleInputContext.CONTEXT_ID);
+		InputContext instructionInput = fInputContextManager.findContext(BndInputContext.CONTEXT_ID);
+		if (bundleInput == null && instructionInput == null) {
+			close(true);
+		}
 	}
 
 	private void updateFirstThreePages() {

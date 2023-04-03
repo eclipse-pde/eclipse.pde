@@ -13,20 +13,48 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.bnd;
 
-import org.eclipse.pde.core.IBaseModel;
+import aQute.bnd.build.model.BndEditModel;
+import java.io.IOException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.pde.core.*;
 
-public class BndModel implements IBaseModel {
+/**
+ * Extension to a bnd edit model that implements the base model methods and
+ * maintain the document to load/store changes
+ */
+public class BndModel extends BndEditModel implements IBaseModel, IModelChangeProvider {
 
+	private BndDocument bndDocument;
+	private volatile boolean valid;
 	private volatile boolean disposed;
 
-	@Override
-	public <T> T getAdapter(Class<T> adapter) {
-		return null;
+	public BndModel(IDocument document) {
+		bndDocument = new BndDocument(document);
 	}
 
 	@Override
-	public void dispose() {
-		disposed = true;
+	public void load() {
+		try {
+			loadFrom(bndDocument);
+			valid = true;
+		} catch (IOException e) {
+			valid = false;
+		}
+	}
+
+	@Override
+	public void saveChanges() throws IOException {
+		super.saveChangesTo(bndDocument);
+	}
+
+	@Override
+	public boolean isEditable() {
+		return true;
+	}
+
+	@Override
+	public boolean isValid() {
+		return valid;
 	}
 
 	@Override
@@ -35,13 +63,36 @@ public class BndModel implements IBaseModel {
 	}
 
 	@Override
-	public boolean isEditable() {
-		return false;
+	public void dispose() {
+		disposed = true;
 	}
 
 	@Override
-	public boolean isValid() {
-		return true;
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter == aQute.bnd.properties.IDocument.class) {
+			return adapter.cast(bndDocument);
+		}
+		return null;
+	}
+
+	@Override
+	public void addModelChangedListener(IModelChangedListener listener) {
+
+	}
+
+	@Override
+	public void fireModelChanged(IModelChangedEvent event) {
+
+	}
+
+	@Override
+	public void fireModelObjectChanged(Object object, String property, Object oldValue, Object newValue) {
+
+	}
+
+	@Override
+	public void removeModelChangedListener(IModelChangedListener listener) {
+
 	}
 
 }

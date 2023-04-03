@@ -198,7 +198,8 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
-		if (getPage().getModel().isEditable())
+		IBaseModel model = getPage().getModel();
+		if (model != null && model.isEditable())
 			updateButtons();
 	}
 

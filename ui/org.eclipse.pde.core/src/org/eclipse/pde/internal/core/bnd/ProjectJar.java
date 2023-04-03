@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.function.Predicate;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -27,22 +28,23 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.internal.core.project.PDEProject;
 
 public class ProjectJar extends Jar {
 
-	private IFolder outputFolder;
+	private final IContainer outputFolder;
 
 	public ProjectJar(IProject project, Predicate<IResource> filter) throws CoreException {
 		super(project.getName());
+		outputFolder = PDEProject.getBundleRoot(project);
+		FileResource.addResources(this, outputFolder, filter);
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			IJavaProject javaProject = JavaCore.create(project);
-			IPath outputLocation = javaProject.getOutputLocation();
 			IWorkspaceRoot workspaceRoot = project.getWorkspace().getRoot();
-			outputFolder = workspaceRoot.getFolder(outputLocation);
-			FileResource.addResources(this, outputFolder, filter);
 			IClasspathEntry[] classpath = javaProject.getResolvedClasspath(true);
 			for (IClasspathEntry cp : classpath) {
 				if (cp.getEntryKind() == IClasspathEntry.CPE_SOURCE && !cp.isTest()) {
@@ -67,7 +69,7 @@ public class ProjectJar extends Jar {
 		if (resource instanceof FileResource) {
 			return super.putResource(path, resource, overwrite);
 		}
-		IFile file = outputFolder.getFile(path);
+		IFile file = outputFolder.getFile(new Path(path));
 		try {
 			if (file.exists()) {
 				if (overwrite) {
@@ -99,10 +101,6 @@ public class ProjectJar extends Jar {
 				folder.create(true, true, null);
 			}
 		}
-	}
-
-	public IFolder getOutputFolder() {
-		return outputFolder;
 	}
 
 }
