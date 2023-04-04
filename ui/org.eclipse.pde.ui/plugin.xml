@@ -1378,6 +1378,7 @@
    <extension
           point="org.eclipse.ui.perspectiveExtensions">
        <perspectiveExtension
+             editorOnboardingImage="$nl$/icons/onboarding_plugins.png"
              editorOnboardingText="%perspectiveExtension.editorOnboardingText"
              targetID="org.eclipse.pde.ui.PDEPerspective">
          <actionSet
