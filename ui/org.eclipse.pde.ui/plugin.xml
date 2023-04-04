@@ -1378,7 +1378,8 @@
    <extension
           point="org.eclipse.ui.perspectiveExtensions">
        <perspectiveExtension
-            targetID="org.eclipse.pde.ui.PDEPerspective">
+             editorOnboardingText="%perspectiveExtension.editorOnboardingText"
+             targetID="org.eclipse.pde.ui.PDEPerspective">
          <actionSet
                id="org.eclipse.debug.ui.breakpointActionSet">
          </actionSet>
@@ -1466,6 +1467,9 @@
           <viewShortcut
                 id="org.eclipse.pde.ui.TargetPlatformState">
           </viewShortcut>
+          <editorOnboardingCommand
+                id="org.eclipse.ui.window.quickAccess">
+          </editorOnboardingCommand>
       </perspectiveExtension>
     </extension>
     <extension
