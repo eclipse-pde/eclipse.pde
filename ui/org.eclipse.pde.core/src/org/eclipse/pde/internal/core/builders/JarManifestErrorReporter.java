@@ -143,6 +143,15 @@ public class JarManifestErrorReporter extends ErrorReporter {
 					if (l == 0) {
 						report(PDECoreMessages.BundleErrorReporter_noMainSection, 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 						return;
+					} else if (l != document.getNumberOfLines() - 1) {
+						VirtualMarker marker = report(PDECoreMessages.BundleErrorReporter_noNameHeader, lineNumber,
+								CompilerFlags.ERROR, PDEMarkerFactory.M_EXTRANEOUS_EMPTY_LINES,
+								PDEMarkerFactory.CAT_FATAL);
+						if (marker != null) {
+							marker.setAttribute("emptyLine", l); //$NON-NLS-1$
+							return;
+						}
+						continue;
 					}
 					/* flush last line */
 					if (header != null) {

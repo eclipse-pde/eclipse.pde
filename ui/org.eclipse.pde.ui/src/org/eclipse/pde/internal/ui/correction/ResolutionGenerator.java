@@ -125,6 +125,9 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				return new IMarkerResolution[] {new AddBundleClassPathMarkerResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker)};
 			case PDEMarkerFactory.M_LAZYLOADING_HAS_NO_EFFECT :
 				return new IMarkerResolution[] {new RemoveLazyLoadingDirectiveResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker.getAttribute("header", ICoreConstants.ECLIPSE_LAZYSTART), marker)}; //$NON-NLS-1$
+			case PDEMarkerFactory.M_EXTRANEOUS_EMPTY_LINES:
+				return new IMarkerResolution[] {
+						new ExtraneousLinesResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker) };
 			case PDEMarkerFactory.M_NO_LINE_TERMINATION :
 				if (marker.getAttribute(PDEMarkerFactory.ATTR_HAS_CONTENT, true)) {
 					return new IMarkerResolution[] {new NoLineTerminationResolution(AbstractPDEMarkerResolution.CREATE_TYPE,marker)};
