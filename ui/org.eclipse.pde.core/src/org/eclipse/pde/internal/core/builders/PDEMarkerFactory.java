@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2021 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -76,6 +76,7 @@ public class PDEMarkerFactory {
 	public static final int M_EXEC_ENV_TOO_LOW = 0x1029; // other problem
 	public static final int M_CONFLICTING_AUTOMATIC_MODULE = 0x1030; // other
 																		// problem
+	public static final int M_EXTRANEOUS_EMPTY_LINES = 0X1031; // fatal problem
 
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;
@@ -99,6 +100,7 @@ public class PDEMarkerFactory {
 	public static final String ATTR_CAN_ADD = "deprecatedAutostart.canAdd"; //$NON-NLS-1$
 	public static final String ATTR_HEADER = "deprecatedAutostart.header"; //$NON-NLS-1$
 	public static final String REQUIRED_EXEC_ENV = "executionEnvironment.key"; //$NON-NLS-1$
+	public static final String EMPTY_LINE = "emptyLine"; //$NON-NLS-1$
 	/**
 	 * Boolean attribute for marker added when no newline is found at the end of a manifest. Value is
 	 * <code>true</code> if there is character content on the last line that should be
