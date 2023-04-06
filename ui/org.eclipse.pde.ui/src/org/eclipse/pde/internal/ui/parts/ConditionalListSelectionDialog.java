@@ -67,6 +67,15 @@ public class ConditionalListSelectionDialog extends ElementListSelectionDialog {
 		super.setElements(elements);
 		fElements = elements;
 	}
+	
+	@Override
+	protected void updateOkState() {
+		super.updateOkState();
+		Button ok = getOkButton();
+		if (ok != null && !ok.isEnabled()) {
+			ok.setEnabled(fElements.length != 0);
+		}
+	}
 
 	public void setConditionalElements(Object[] elements) {
 		fConditionalElements = elements;
