@@ -75,7 +75,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		PDEPreferencesManager corePrefs = PDECore.getDefault().getPreferencesManager();
 		corePrefs.setDefault(ICoreConstants.WORKSPACE_PLUGINS_OVERRIDE_TARGET, true);
 		corePrefs.setDefault(ICoreConstants.DISABLE_API_ANALYSIS_BUILDER, false);
-		corePrefs.setDefault(ICoreConstants.RUN_API_ANALYSIS_AS_JOB, true);
 		corePrefs.setDefault(ICoreConstants.ADD_SWT_NON_DISPOSAL_REPORTING, true);
 		corePrefs.setDefault(ICoreConstants.TEST_PLUGIN_PATTERN, ICoreConstants.TEST_PLUGIN_PATTERN_DEFAULTVALUE);
 	}
