@@ -46,7 +46,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 			boolean ui = data.isUIPlugin();
 			boolean rcp = data.isRCPApplicationPlugin();
 			boolean osgi = data.getOSGiFramework() != null;
-			boolean automatic = data.isAutomaticMetadataGeneration();
+			boolean automatic = osgi && data.isAutomaticMetadataGeneration();
 			WizardElement welement = (WizardElement) element;
 			boolean active = TemplateWizardHelper.isActive(welement);
 			boolean uiFlag = TemplateWizardHelper.getFlag(welement, TemplateWizardHelper.FLAG_UI, true);
