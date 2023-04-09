@@ -533,19 +533,11 @@ public class TargetLocationsGroup {
 		DeleteButtonState state = DeleteButtonState.computeState(canRemove, canEnable, canDisable);
 		switch (state)
 			{
-			case DISABLE:
-				fRemoveButton.setText(Messages.BundleContainerTable_Btn_Text_Disable);
-				break;
-			case ENABLE:
-				fRemoveButton.setText(Messages.BundleContainerTable_Btn_Text_Enable);
-				break;
-			case TOGGLE:
-				fRemoveButton.setText(Messages.BundleContainerTable_Btn_Text_Toggle);
-				break;
-			default:
-				fRemoveButton.setText(Messages.BundleContainerTable_Btn_Text_Remove);
-				break;
-			}
+			case DISABLE -> fRemoveButton.setText(Messages.BundleContainerTable_Btn_Text_Disable);
+			case ENABLE -> fRemoveButton.setText(Messages.BundleContainerTable_Btn_Text_Enable);
+			case TOGGLE -> fRemoveButton.setText(Messages.BundleContainerTable_Btn_Text_Toggle);
+			default -> fRemoveButton.setText(Messages.BundleContainerTable_Btn_Text_Remove);
+			};
 		fRemoveButton.setEnabled(state != DeleteButtonState.NONE);
 		fRemoveButton.setData(BUTTON_STATE, state);
 	}

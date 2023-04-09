@@ -338,15 +338,10 @@ public class ImportPackageSection extends TableSection {
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case ADD_INDEX :
-				handleAdd();
-				break;
-			case REMOVE_INDEX :
-				handleRemove();
-				break;
-			case PROPERTIES_INDEX :
-				handleOpenProperties();
-		}
+			case ADD_INDEX -> handleAdd();
+			case REMOVE_INDEX -> handleRemove();
+			case PROPERTIES_INDEX -> handleOpenProperties();
+		};
 	}
 
 	private IPackageFragment getPackageFragment(ISelection sel) {

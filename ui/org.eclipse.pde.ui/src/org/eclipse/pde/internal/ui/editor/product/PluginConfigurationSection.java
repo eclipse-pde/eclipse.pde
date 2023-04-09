@@ -82,16 +82,13 @@ public class PluginConfigurationSection extends TableSection {
 		@Override
 		public String getColumnText(Object obj, int index) {
 			IPluginConfiguration configuration = (IPluginConfiguration) obj;
-			switch (index) {
-				case 0 :
-					return configuration.getId();
+			return switch (index) {
+				case 0 -> configuration.getId();
 					//return super.getColumnText(PluginRegistry.findModel(configuration.getId()), index);
-				case 1 :
-					return (configuration.getStartLevel() == 0) ? "default" : Integer.toString(configuration.getStartLevel()); //$NON-NLS-1$
-				case 2 :
-					return Boolean.toString(configuration.isAutoStart());
-			}
-			return null;
+				case 1 -> (configuration.getStartLevel() == 0) ? "default" : Integer.toString(configuration.getStartLevel()); //$NON-NLS-1$
+				case 2 -> Boolean.toString(configuration.isAutoStart());
+				default -> null;
+			};
 		}
 
 	}

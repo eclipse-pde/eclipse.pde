@@ -89,17 +89,10 @@ public class BuildInputContext extends InputContext {
 				ops.remove(op);
 			}
 			switch (event.getChangeType()) {
-				case IModelChangedEvent.REMOVE :
-					deleteKey(key, ops);
-					break;
-				case IModelChangedEvent.INSERT :
-					insertKey(key, ops);
-					break;
-				case IModelChangedEvent.CHANGE :
-					modifyKey(key, ops);
-				default :
-					break;
-			}
+				case IModelChangedEvent.REMOVE -> deleteKey(key, ops);
+				case IModelChangedEvent.INSERT -> insertKey(key, ops);
+				case IModelChangedEvent.CHANGE -> modifyKey(key, ops);
+			};
 		}
 	}
 

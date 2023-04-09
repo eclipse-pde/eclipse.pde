@@ -340,18 +340,11 @@ public class ExportPackageSection extends TableSection {
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case ADD_INDEX :
-				handleAdd();
-				break;
-			case REMOVE_INDEX :
-				handleRemove();
-				break;
-			case PROPERTIES_INDEX :
-				handleOpenProperties();
-				break;
-			case CALCULATE_USE_INDEX :
-				calculateUses();
-		}
+			case ADD_INDEX -> handleAdd();
+			case REMOVE_INDEX -> handleRemove();
+			case PROPERTIES_INDEX -> handleOpenProperties();
+			case CALCULATE_USE_INDEX -> calculateUses();
+		};
 	}
 
 	private void handleOpenProperties() {

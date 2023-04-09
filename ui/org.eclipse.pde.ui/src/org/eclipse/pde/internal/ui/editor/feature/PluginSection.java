@@ -136,16 +136,10 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case NEW :
-				handleNew();
-				break;
-			case REMOVE :
-				handleDelete();
-				break;
-			case SYNC :
-				handleSynchronize();
-				break;
-		}
+			case NEW -> handleNew();
+			case REMOVE -> handleDelete();
+			case SYNC -> handleSynchronize();
+		};
 	}
 
 	@Override

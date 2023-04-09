@@ -82,14 +82,13 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 		@Override
 		public Image getImage() {
 			if (fResolution instanceof AbstractPDEMarkerResolution) {
-				switch (((AbstractPDEMarkerResolution) fResolution).getType()) {
-					case AbstractPDEMarkerResolution.CREATE_TYPE :
-						return fCreateImage;
-					case AbstractPDEMarkerResolution.REMOVE_TYPE :
-						return fRemoveImage;
-					case AbstractPDEMarkerResolution.RENAME_TYPE :
-						return fRenameImage;
-				}
+				return switch (((AbstractPDEMarkerResolution) fResolution).getType())
+					{
+					case AbstractPDEMarkerResolution.CREATE_TYPE -> fCreateImage;
+					case AbstractPDEMarkerResolution.REMOVE_TYPE -> fRemoveImage;
+					case AbstractPDEMarkerResolution.RENAME_TYPE -> fRenameImage;
+					default -> null;
+					};
 			}
 			if (fResolution instanceof IMarkerResolution2) {
 				IMarkerResolution2 resolution = (IMarkerResolution2) fResolution;

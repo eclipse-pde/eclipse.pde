@@ -417,22 +417,12 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			for (int i = 0; i < string.length(); i++) {
 				char c = string.charAt(i);
 				switch (c) {
-				case '\n':
-					buffer.append("\\n"); //$NON-NLS-1$
-					break;
-				case '\r':
-					buffer.append("\\r"); //$NON-NLS-1$
-					break;
-				case '\t':
-					buffer.append("\\t"); //$NON-NLS-1$
-					break;
-				case ' ':
-					buffer.append('*');
-					break;
-				default:
-					buffer.append(c);
-					break;
-				}
+				case '\n' -> buffer.append("\\n"); //$NON-NLS-1$
+				case '\r' -> buffer.append("\\r"); //$NON-NLS-1$
+				case '\t' -> buffer.append("\\t"); //$NON-NLS-1$
+				case ' ' -> buffer.append('*');
+				default -> buffer.append(c);
+				};
 			}
 			System.out.println(buffer.toString());
 		} catch (BadLocationException e) {

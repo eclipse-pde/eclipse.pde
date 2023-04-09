@@ -176,15 +176,10 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 			if (settings.get(PROP_SYNCHRO_MODE) != null) {
 				int mode = settings.getInt(PROP_SYNCHRO_MODE);
 				switch (mode) {
-					case SELECTED_FEATURES :
-						fSelectedFeaturesButton.setSelection(true);
-						break;
-					case ALL_FEATURES :
-						fAllFeaturesButton.setSelection(true);
-						break;
-					default :
-						fSelectedFeaturesButton.setSelection(true);
-				}
+					case SELECTED_FEATURES -> fSelectedFeaturesButton.setSelection(true);
+					case ALL_FEATURES -> fAllFeaturesButton.setSelection(true);
+					default -> fSelectedFeaturesButton.setSelection(true);
+				};
 			} else
 				fSelectedFeaturesButton.setSelection(true);
 		} else {

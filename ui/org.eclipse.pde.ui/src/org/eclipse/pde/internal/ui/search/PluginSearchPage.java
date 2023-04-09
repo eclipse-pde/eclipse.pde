@@ -215,14 +215,11 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 	}
 
 	private int getWorkspaceScope() {
-		switch (container.getSelectedScope()) {
-			case ISearchPageContainer.SELECTION_SCOPE :
-				return PluginSearchScope.SCOPE_SELECTION;
-			case ISearchPageContainer.WORKING_SET_SCOPE :
-				return PluginSearchScope.SCOPE_WORKING_SETS;
-			default :
-				return PluginSearchScope.SCOPE_WORKSPACE;
-		}
+		return switch (container.getSelectedScope()) {
+			case ISearchPageContainer.SELECTION_SCOPE -> PluginSearchScope.SCOPE_SELECTION;
+			case ISearchPageContainer.WORKING_SET_SCOPE -> PluginSearchScope.SCOPE_WORKING_SETS;
+			default -> PluginSearchScope.SCOPE_WORKSPACE;
+		};
 	}
 
 	private void hookListeners() {

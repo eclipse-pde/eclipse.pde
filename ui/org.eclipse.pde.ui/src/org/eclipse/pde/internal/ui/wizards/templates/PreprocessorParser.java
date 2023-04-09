@@ -95,30 +95,20 @@ public class PreprocessorParser {
 					boolean bleft = ((Boolean) leftValue).booleanValue();
 					boolean bright = ((Boolean) rightValue).booleanValue();
 
-					switch (opcode) {
-						case OP_AND :
-							result = bleft && bright;
-							break;
-						case OP_OR :
-							result = bleft || bright;
-							break;
-						case OP_EQ :
-							result = bleft == bright;
-							break;
-						case OP_NEQ :
-							result = bleft != bright;
-							break;
-					}
+					result = switch (opcode) {
+						case OP_AND -> bleft && bright;
+						case OP_OR -> bleft || bright;
+						case OP_EQ -> bleft == bright;
+						case OP_NEQ -> bleft != bright;
+						default -> result;
+					};
 				}
 				if (leftValue instanceof String && rightValue instanceof String) {
-					switch (opcode) {
-						case OP_EQ :
-							result = leftValue.equals(rightValue);
-							break;
-						case OP_NEQ :
-							result = leftValue.equals(rightValue);
-							break;
-					}
+					result = switch (opcode) {
+						case OP_EQ -> leftValue.equals(rightValue);
+						case OP_NEQ -> leftValue.equals(rightValue);
+						default -> result;
+					};
 				}
 			}
 			return result ? Boolean.TRUE : Boolean.FALSE;
@@ -224,20 +214,13 @@ public class PreprocessorParser {
 
 			int opcode = 0;
 
-			switch (token) {
-				case T_AND :
-					opcode = OP_AND;
-					break;
-				case T_OR :
-					opcode = OP_OR;
-					break;
-				case T_EQ :
-					opcode = OP_EQ;
-					break;
-				case T_NEQ :
-					opcode = OP_NEQ;
-					break;
-			}
+			opcode = switch (token) {
+				case T_AND -> opcode = OP_AND;
+				case T_OR -> OP_OR;
+				case T_EQ -> OP_EQ;
+				case T_NEQ -> OP_NEQ;
+				default -> opcode;
+			};
 			if (opcode != 0) {
 				pushNode(opcode);
 				continue;

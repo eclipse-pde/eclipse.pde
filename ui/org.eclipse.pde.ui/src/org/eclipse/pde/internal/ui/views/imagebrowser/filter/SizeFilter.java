@@ -36,31 +36,21 @@ public class SizeFilter implements IFilter {
 
 	@Override
 	public boolean accept(final ImageElement element) {
-		boolean accept = true;
+		
 
-		switch (mWidthType) {
-			case TYPE_EXACT :
-				accept &= (element.getImageData().width == mWidth);
-				break;
-			case TYPE_BIGGER_EQUALS :
-				accept &= (element.getImageData().width >= mWidth);
-				break;
-			case TYPE_SMALLER_EQUALS :
-				accept &= (element.getImageData().width <= mWidth);
-				break;
-		}
+		boolean accept = true & switch (mWidthType) {
+			case TYPE_EXACT -> (element.getImageData().width == mWidth);
+			case TYPE_BIGGER_EQUALS -> (element.getImageData().width >= mWidth);
+			case TYPE_SMALLER_EQUALS -> (element.getImageData().width <= mWidth);
+			default -> true;
+		};
 
-		switch (mHeightType) {
-			case TYPE_EXACT :
-				accept &= (element.getImageData().height == mHeight);
-				break;
-			case TYPE_BIGGER_EQUALS :
-				accept &= (element.getImageData().height >= mHeight);
-				break;
-			case TYPE_SMALLER_EQUALS :
-				accept &= (element.getImageData().height <= mHeight);
-				break;
-		}
+		accept &= switch (mHeightType) {
+			case TYPE_EXACT -> (element.getImageData().height == mHeight);
+			case TYPE_BIGGER_EQUALS -> (element.getImageData().height >= mHeight);
+			case TYPE_SMALLER_EQUALS -> (element.getImageData().height <= mHeight);
+			default -> accept;
+		};
 
 		return accept;
 	}

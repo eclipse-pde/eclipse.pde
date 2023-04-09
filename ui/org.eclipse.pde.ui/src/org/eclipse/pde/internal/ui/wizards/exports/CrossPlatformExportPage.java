@@ -80,13 +80,9 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 		@Override
 		protected void buttonSelected(Button button, int index) {
 			switch (index) {
-				case 0 :
-					handleSelectAll(true);
-					break;
-				case 1 :
-					handleSelectAll(false);
-					break;
-			}
+				case 0 -> handleSelectAll(true);
+				case 1 -> handleSelectAll(false);
+			};
 		}
 	}
 
