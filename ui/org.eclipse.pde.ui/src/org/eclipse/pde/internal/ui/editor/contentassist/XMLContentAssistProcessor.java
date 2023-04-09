@@ -364,15 +364,12 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 
 	private ICompletionProposal[] computeCompletionProposal(IDocumentElementNode node, int offset, IDocument doc) {
 		int prop_type = determineAssistType(node, doc, offset);
-		switch (prop_type) {
-			case F_ADD_ATTRIB :
-				return computeAddAttributeProposal(F_INFER_BY_OBJECT, node, offset, doc, null, node.getXMLTagName());
-			case F_OPEN_TAG :
-				return computeOpenTagProposal(node, offset, doc);
-			case F_ADD_CHILD :
-				return computeAddChildProposal(node, offset, doc, null);
-		}
-		return null;
+		return switch (prop_type) {
+			case F_ADD_ATTRIB -> computeAddAttributeProposal(F_INFER_BY_OBJECT, node, offset, doc, null, node.getXMLTagName());
+			case F_OPEN_TAG -> computeOpenTagProposal(node, offset, doc);
+			case F_ADD_CHILD -> computeAddChildProposal(node, offset, doc, null);
+			default -> null;
+		};
 	}
 
 	private int determineAssistType(IDocumentElementNode node, IDocument doc, int offset) {
@@ -785,24 +782,15 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 
 	public Image getImage(int type) {
 		if (fImages[type] == null) {
-			switch (type) {
-				case F_EXTENSION_POINT :
-				case F_EXTENSION_ATTRIBUTE_POINT_VALUE :
-					return fImages[type] = PDEPluginImages.DESC_EXT_POINT_OBJ.createImage();
-				case F_EXTENSION_POINT_AND_VALUE :
-				case F_EXTENSION :
-					return fImages[type] = PDEPluginImages.DESC_EXTENSION_OBJ.createImage();
-				case F_ELEMENT :
-				case F_CLOSE_TAG :
-					return fImages[type] = PDEPluginImages.DESC_XML_ELEMENT_OBJ.createImage();
-				case F_ATTRIBUTE :
-				case F_ATTRIBUTE_VALUE :
-					return fImages[type] = PDEPluginImages.DESC_ATT_URI_OBJ.createImage();
-				case F_ATTRIBUTE_ID_VALUE :
-					return fImages[type] = PDEPluginImages.DESC_ATT_ID_OBJ.createImage();
-				case F_ATTRIBUTE_BOOLEAN_VALUE :
-					return fImages[type] = PDEPluginImages.DESC_ATT_BOOLEAN_OBJ.createImage();
-			}
+			fImages[type] = switch (type) {
+				case F_EXTENSION_POINT, F_EXTENSION_ATTRIBUTE_POINT_VALUE -> PDEPluginImages.DESC_EXT_POINT_OBJ.createImage();
+				case F_EXTENSION_POINT_AND_VALUE, F_EXTENSION -> PDEPluginImages.DESC_EXTENSION_OBJ.createImage();
+				case F_ELEMENT, F_CLOSE_TAG -> PDEPluginImages.DESC_XML_ELEMENT_OBJ.createImage();
+				case F_ATTRIBUTE, F_ATTRIBUTE_VALUE -> PDEPluginImages.DESC_ATT_URI_OBJ.createImage();
+				case F_ATTRIBUTE_ID_VALUE -> PDEPluginImages.DESC_ATT_ID_OBJ.createImage();
+				case F_ATTRIBUTE_BOOLEAN_VALUE -> PDEPluginImages.DESC_ATT_BOOLEAN_OBJ.createImage();
+				default -> fImages[type];
+			};
 		}
 		return fImages[type];
 	}

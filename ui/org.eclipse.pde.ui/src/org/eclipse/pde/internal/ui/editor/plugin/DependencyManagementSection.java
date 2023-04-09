@@ -305,19 +305,11 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case ADD_INDEX :
-				handleNew();
-				break;
-			case REMOVE_INDEX :
-				handleRemove();
-				break;
-			case UP_INDEX :
-				handleUp();
-				break;
-			case DOWN_INDEX :
-				handleDown();
-				break;
-		}
+			case ADD_INDEX -> handleNew();
+			case REMOVE_INDEX -> handleRemove();
+			case UP_INDEX -> handleUp();
+			case DOWN_INDEX -> handleDown();
+		};
 	}
 
 	@Override

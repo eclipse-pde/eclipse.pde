@@ -155,18 +155,10 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			mFilters.add(textPatternFilter);
 			Combo source = (Combo) e.getSource();
 			switch (source.getSelectionIndex()) {
-				case 0 :
-					mFilters.add(enabledIcons);
-					break;
-				case 1 :
-					mFilters.add(disabledIcons);
-					break;
-				case 2 :
-					mFilters.add(wizard);
-					break;
-				case 3 :
-				default :
-			}
+				case 0 -> mFilters.add(enabledIcons);
+				case 1 -> mFilters.add(disabledIcons);
+				case 2 -> mFilters.add(wizard);
+			};
 			page = 0; // reset to 1st page
 			scanImages();
 		}));

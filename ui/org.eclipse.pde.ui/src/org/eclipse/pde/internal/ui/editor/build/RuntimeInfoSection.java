@@ -90,16 +90,10 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		public void buttonSelected(Button button, int index) {
 			if (getViewer() == fLibraryPart.getViewer()) {
 				switch (index) {
-					case F_NEW_INDEX :
-						handleNew();
-						break;
-					case F_UP_UNDEX : // move up
-						updateJarsCompileOrder(true);
-						break;
-					case F_DOWN_INDEX : // move down
-						updateJarsCompileOrder(false);
-						break;
-				}
+					case F_NEW_INDEX -> handleNew();
+					case F_UP_UNDEX -> updateJarsCompileOrder(true);
+					case F_DOWN_INDEX -> updateJarsCompileOrder(false);
+				};
 			} else if (getViewer() == fFolderPart.getViewer() && index == F_NEW_INDEX)
 				handleNewFolder();
 			else

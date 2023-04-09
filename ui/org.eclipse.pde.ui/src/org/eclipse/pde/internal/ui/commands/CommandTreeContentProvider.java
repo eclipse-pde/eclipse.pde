@@ -107,13 +107,11 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		switch (fCurContent) {
-			case F_CAT_CONTENT :
-				return fCatMap.keySet().toArray();
-			case F_CON_CONTENT :
-				return new Object[0];
-		}
-		return null;
+		return switch (fCurContent) {
+			case F_CAT_CONTENT -> fCatMap.keySet().toArray();
+			case F_CON_CONTENT -> new Object[0];
+			default -> null;
+		};
 	}
 
 	@Override

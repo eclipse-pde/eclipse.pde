@@ -173,19 +173,11 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case NEW_PLUGIN :
-				handleNewPlugin();
-				break;
-			case NEW_FEATURE :
-				handleNewFeature();
-				break;
-			case REMOVE :
-				handleDelete();
-				break;
-			case RECOMPUTE_IMPORT :
-				recomputeImports();
-				break;
-		}
+			case NEW_PLUGIN -> handleNewPlugin();
+			case NEW_FEATURE -> handleNewFeature();
+			case REMOVE -> handleDelete();
+			case RECOMPUTE_IMPORT -> recomputeImports();
+		};
 	}
 
 	private void handleNewPlugin() {

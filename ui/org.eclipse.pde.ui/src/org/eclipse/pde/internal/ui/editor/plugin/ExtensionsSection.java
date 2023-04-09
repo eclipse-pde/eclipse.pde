@@ -337,22 +337,12 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case BUTTON_ADD :
-				handleNew();
-				break;
-			case BUTTON_REMOVE :
-				handleDelete();
-				break;
-			case BUTTON_EDIT :
-				handleEdit();
-				break;
-			case BUTTON_MOVE_UP :
-				handleMove(true);
-				break;
-			case BUTTON_MOVE_DOWN :
-				handleMove(false);
-				break;
-		}
+			case BUTTON_ADD -> handleNew();
+			case BUTTON_REMOVE -> handleDelete();
+			case BUTTON_EDIT -> handleEdit();
+			case BUTTON_MOVE_UP -> handleMove(true);
+			case BUTTON_MOVE_DOWN -> handleMove(false);
+		};
 	}
 
 	@Override

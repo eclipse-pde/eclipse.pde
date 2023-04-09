@@ -178,19 +178,12 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 	}
 
 	private String getOperationText(IModelChangedEvent op) {
-		String opText = ""; //$NON-NLS-1$
-		switch (op.getChangeType()) {
-			case IModelChangedEvent.INSERT :
-				opText = PDEUIMessages.UpdateManager_op_add;
-				break;
-			case IModelChangedEvent.REMOVE :
-				opText = PDEUIMessages.UpdateManager_op_remove;
-				break;
-			case IModelChangedEvent.CHANGE :
-				opText = PDEUIMessages.UpdateManager_op_change;
-				break;
-		}
-		return opText;
+		return switch (op.getChangeType()) {
+			case IModelChangedEvent.INSERT -> PDEUIMessages.UpdateManager_op_add;
+			case IModelChangedEvent.REMOVE -> PDEUIMessages.UpdateManager_op_remove;
+			case IModelChangedEvent.CHANGE -> PDEUIMessages.UpdateManager_op_change;
+			default -> ""; //$NON-NLS-1$
+		};
 	}
 
 	@Override

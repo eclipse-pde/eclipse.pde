@@ -47,19 +47,11 @@ public class ImportActionGroup extends ActionGroup {
 			fSel = selection;
 			fImportType = importType;
 			switch (fImportType) {
-				case PluginImportOperation.IMPORT_BINARY :
-					setText(PDEUIMessages.PluginsView_asBinaryProject);
-					break;
-				case PluginImportOperation.IMPORT_BINARY_WITH_LINKS :
-					setText(PDEUIMessages.ImportActionGroup_binaryWithLinkedContent);
-					break;
-				case PluginImportOperation.IMPORT_WITH_SOURCE :
-					setText(PDEUIMessages.PluginsView_asSourceProject);
-					break;
-				case PluginImportOperation.IMPORT_FROM_REPOSITORY :
-					setText(PDEUIMessages.ImportActionGroup_Repository_project);
-					break;
-			}
+				case PluginImportOperation.IMPORT_BINARY -> setText(PDEUIMessages.PluginsView_asBinaryProject);
+				case PluginImportOperation.IMPORT_BINARY_WITH_LINKS -> setText(PDEUIMessages.ImportActionGroup_binaryWithLinkedContent);
+				case PluginImportOperation.IMPORT_WITH_SOURCE -> setText(PDEUIMessages.PluginsView_asSourceProject);
+				case PluginImportOperation.IMPORT_FROM_REPOSITORY -> setText(PDEUIMessages.ImportActionGroup_Repository_project);
+			};
 		}
 
 		@Override

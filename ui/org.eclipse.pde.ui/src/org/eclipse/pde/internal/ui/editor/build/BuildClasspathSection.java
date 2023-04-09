@@ -341,14 +341,8 @@ public class BuildClasspathSection extends TableSection {
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case 0 :
-				handleNew();
-				break;
-			case 1 :
-				handleDelete();
-				break;
-			default :
-				break;
+			case 0 -> handleNew();
+			case 1 -> handleDelete();
 		}
 	}
 

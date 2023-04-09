@@ -533,13 +533,11 @@ public class JavaResolutionFactory {
 	}
 
 	private static final Object createWrapper(AbstractManifestChange change, int type, int relevance) {
-		switch (type) {
-			case TYPE_JAVA_COMPLETION :
-				return createJavaCompletionProposal(change, relevance);
-			case TYPE_CLASSPATH_FIX :
-				return createClasspathFixProposal(change, relevance);
-		}
-		return null;
+		return switch (type) {
+			case TYPE_JAVA_COMPLETION -> createJavaCompletionProposal(change, relevance);
+			case TYPE_CLASSPATH_FIX -> createClasspathFixProposal(change, relevance);
+			default -> null;
+		};
 	}
 
 	// Methods to wrap a AbstractMethodChange into a consumable format

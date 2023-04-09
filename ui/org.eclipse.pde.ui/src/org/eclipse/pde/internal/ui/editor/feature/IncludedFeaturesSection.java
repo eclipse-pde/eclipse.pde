@@ -141,22 +141,12 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case NEW :
-				handleNew();
-				break;
-			case REMOVE :
-				handleDelete();
-				break;
-			case SYNC:
-				handleSynchronize();
-				break;
-			case UP :
-				handleUp();
-				break;
-			case DOWN :
-				handleDown();
-				break;
-		}
+			case NEW -> handleNew();
+			case REMOVE -> handleDelete();
+			case SYNC -> handleSynchronize();
+			case UP -> handleUp();
+			case DOWN -> handleDown();
+		};
 	}
 
 	private void handleSynchronize() {

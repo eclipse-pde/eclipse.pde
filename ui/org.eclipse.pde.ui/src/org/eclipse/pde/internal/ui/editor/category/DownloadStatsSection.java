@@ -154,20 +154,11 @@ public class DownloadStatsSection extends TableSection {
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case 0 :
-				handleNewFeature();
-				break;
-			case 1 :
-				handleNewBundle();
-				break;
-			case 2 :
-				handleRemove();
-				break;
-			case 3 :
-				handleRemoveAll();
-				break;
-
-		}
+			case 0 -> handleNewFeature();
+			case 1 -> handleNewBundle();
+			case 2 -> handleRemove();
+			case 3 -> handleRemoveAll();
+		};
 	}
 
 	private void handleRemove() {

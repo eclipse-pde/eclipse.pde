@@ -126,18 +126,10 @@ public class CategoryDetailsSection extends PDESection implements IPartSelection
 
 	private void clearField(String property) {
 		switch (property) {
-		case PROPERTY_NAME:
-			fNameText.setValue(null, true);
-			break;
-		case PROPERTY_TYPE:
-			fLabelText.setValue(null, true);
-			break;
-		case PROPERTY_DESC:
-			fDescriptionText.setValue(null, true);
-			break;
-		default:
-			break;
-		}
+		case PROPERTY_NAME -> fNameText.setValue(null, true);
+		case PROPERTY_TYPE -> fLabelText.setValue(null, true);
+		case PROPERTY_DESC -> fDescriptionText.setValue(null, true);
+		};
 	}
 
 	private void clearFields() {
