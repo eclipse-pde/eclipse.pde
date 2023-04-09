@@ -909,24 +909,14 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 			}
 			if (controls.contains(control)) {
 				switch (key.intValue()) {
-					case CompilerFlags.PLUGIN_FLAGS : {
-						fBuilders.add(PDE.MANIFEST_BUILDER_ID);
-						break;
-					}
-					case CompilerFlags.SCHEMA_FLAGS : {
-						fBuilders.add(PDE.SCHEMA_BUILDER_ID);
-						break;
-					}
-					case CompilerFlags.FEATURE_FLAGS :
-					case CompilerFlags.SITE_FLAGS : {
-						fBuilders.add(PDE.FEATURE_BUILDER_ID);
-						break;
-					}
+					case CompilerFlags.PLUGIN_FLAGS -> fBuilders.add(PDE.MANIFEST_BUILDER_ID);
+					case CompilerFlags.SCHEMA_FLAGS -> fBuilders.add(PDE.SCHEMA_BUILDER_ID);
+					case CompilerFlags.FEATURE_FLAGS, CompilerFlags.SITE_FLAGS -> fBuilders.add(PDE.FEATURE_BUILDER_ID);
+					};
 				}
 				return;
 			}
 		}
-	}
 
 	/**
 	 * Performs a full build of the workspace

@@ -789,14 +789,10 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 * @return source of the import
 	 */
 	public Object getImportSource() {
-		switch (getImportOrigin()) {
-			case FROM_TARGET_DEFINITION :
-				return getTargetDefinition();
-			case FROM_ACTIVE_PLATFORM :
-			case FROM_DIRECTORY :
-			default :
-				return getDropLocation();
-		}
+		return switch (getImportOrigin()) {
+			case FROM_TARGET_DEFINITION -> getTargetDefinition();
+			default -> getDropLocation();
+		};
 	}
 
 	/**

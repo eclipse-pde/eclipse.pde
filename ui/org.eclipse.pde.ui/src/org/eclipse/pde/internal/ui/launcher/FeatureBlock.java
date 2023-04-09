@@ -116,14 +116,11 @@ public class FeatureBlock {
 			}
 			if (obj instanceof FeatureLaunchModel) {
 				FeatureLaunchModel model = (FeatureLaunchModel) obj;
-				switch (index) {
-					case COLUMN_FEATURE_NAME :
-						return model.getId();
-					case COLUMN_PLUGIN_RESOLUTION :
-						return getResolutionLabel(model.getResolutionValue());
-					default :
-						return ""; //$NON-NLS-1$
-				}
+				return switch (index) {
+					case COLUMN_FEATURE_NAME -> model.getId();
+					case COLUMN_PLUGIN_RESOLUTION -> getResolutionLabel(model.getResolutionValue());
+					default -> ""; //$NON-NLS-1$
+				};
 			}
 			return ""; //$NON-NLS-1$
 		}
@@ -438,14 +435,11 @@ public class FeatureBlock {
 			Tree tree = fTree.getTree();
 			tree.setSortColumn(tc);
 			if (sortDirn == 0) {
-				switch (tree.getSortDirection()) {
-					case SWT.DOWN :
-						sortDirn = SWT.UP;
-						break;
-					case SWT.UP :
-					default :
-						sortDirn = SWT.DOWN;
-				}
+				sortDirn = switch (tree.getSortDirection()) {
+					case SWT.DOWN -> SWT.UP;
+					case SWT.UP -> SWT.DOWN;
+					default -> SWT.DOWN;
+				};
 			}
 			tree.setSortDirection(sortDirn);
 			int sortOrder = sortDirn == SWT.UP ? -1 : 1;
@@ -553,16 +547,12 @@ public class FeatureBlock {
 
 		private String getLocation(int comboIndex) {
 			String location = null;
-			switch (comboIndex) {
-				case 0 :
-					location = IPDELauncherConstants.LOCATION_DEFAULT;
-					break;
-				case 1 :
-					location = IPDELauncherConstants.LOCATION_WORKSPACE;
-					break;
-				case 2 :
-					location = IPDELauncherConstants.LOCATION_EXTERNAL;
-			}
+			location = switch (comboIndex) {
+				case 0 -> IPDELauncherConstants.LOCATION_DEFAULT;
+				case 1 -> IPDELauncherConstants.LOCATION_WORKSPACE;
+				case 2 -> IPDELauncherConstants.LOCATION_EXTERNAL;
+				default -> location;
+			};
 			return location;
 		}
 	}

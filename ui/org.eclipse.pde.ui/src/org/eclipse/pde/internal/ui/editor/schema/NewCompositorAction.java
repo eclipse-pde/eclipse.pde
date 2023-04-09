@@ -34,16 +34,11 @@ public class NewCompositorAction extends Action {
 		String text = upperCaseFirstLetter(ISchemaCompositor.kindTable[kind]);
 		setText("&" + text); //$NON-NLS-1$
 		setToolTipText(NLS.bind(PDEUIMessages.SchemaEditor_NewCompositor_tooltip, text));
-		ImageDescriptor desc = null;
-
-		switch (kind) {
-			case ISchemaCompositor.SEQUENCE :
-				desc = PDEPluginImages.DESC_SEQ_SC_OBJ;
-				break;
-			case ISchemaCompositor.CHOICE :
-				desc = PDEPluginImages.DESC_CHOICE_SC_OBJ;
-				break;
-		}
+		ImageDescriptor desc = switch (kind) {
+			case ISchemaCompositor.SEQUENCE -> PDEPluginImages.DESC_SEQ_SC_OBJ;
+			case ISchemaCompositor.CHOICE -> PDEPluginImages.DESC_CHOICE_SC_OBJ;
+			default -> null;
+		};
 		setImageDescriptor(desc);
 		setEnabled(source.getSchema().isEditable());
 	}

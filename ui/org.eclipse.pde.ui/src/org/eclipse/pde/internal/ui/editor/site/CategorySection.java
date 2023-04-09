@@ -323,21 +323,12 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case BUTTON_ADD_CATEGORY :
-				handleAddCategoryDefinition();
-				break;
-			case BUTTON_ADD_FEATURE :
-				handleNewFeature();
-				break;
-			case BUTTON_BUILD_FEATURE :
-				handleBuild();
-				break;
-			case BUTTON_BUILD_ALL :
-				((SiteEditor) getPage().getPDEEditor()).handleBuild(fModel.getSite().getFeatures());
-				break;
-			case BUTTON_IMPORT_ENVIRONMENT :
-				handleImportEnvironment();
-		}
+			case BUTTON_ADD_CATEGORY -> handleAddCategoryDefinition();
+			case BUTTON_ADD_FEATURE -> handleNewFeature();
+			case BUTTON_BUILD_FEATURE -> handleBuild();
+			case BUTTON_BUILD_ALL -> ((SiteEditor) getPage().getPDEEditor()).handleBuild(fModel.getSite().getFeatures());
+			case BUTTON_IMPORT_ENVIRONMENT -> handleImportEnvironment();
+		};
 	}
 
 	@Override

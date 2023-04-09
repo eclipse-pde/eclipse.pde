@@ -207,19 +207,11 @@ public class ExecutionEnvironmentSection extends TableSection {
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case 0 :
-				handleAdd();
-				break;
-			case 1 :
-				handleRemove();
-				break;
-			case 2 :
-				handleUp();
-				break;
-			case 3 :
-				handleDown();
-				break;
-		}
+			case 0 -> handleAdd();
+			case 1 -> handleRemove();
+			case 2 -> handleUp();
+			case 3 -> handleDown();
+		};
 	}
 
 	@Override

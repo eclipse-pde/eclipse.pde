@@ -74,13 +74,11 @@ public class ArchiveSection extends PDESection {
 		@Override
 		public String getColumnText(Object obj, int index) {
 			ISiteArchive archive = (ISiteArchive) obj;
-			switch (index) {
-				case 0 :
-					return archive.getPath();
-				case 1 :
-					return archive.getURL();
-			}
-			return ""; //$NON-NLS-1$
+			return switch (index) {
+				case 0 -> archive.getPath();
+				case 1 -> archive.getURL();
+				default -> ""; //$NON-NLS-1$
+			};
 		}
 
 		@Override

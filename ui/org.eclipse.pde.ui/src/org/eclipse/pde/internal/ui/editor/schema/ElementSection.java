@@ -748,16 +748,10 @@ public class ElementSection extends TreeSection {
 			if (realTarget == null)
 				continue;
 			switch (currentOperation) {
-				case DND.DROP_COPY :
-					doPaste(realTarget, sibling, object);
-					break;
-				case DND.DROP_MOVE :
-					doMove(realTarget, sibling, object);
-					break;
-				case DND.DROP_LINK :
-					doLink(realTarget, sibling, object);
-					break;
-			}
+				case DND.DROP_COPY -> doPaste(realTarget, sibling, object);
+				case DND.DROP_MOVE -> doMove(realTarget, sibling, object);
+				case DND.DROP_LINK -> doLink(realTarget, sibling, object);
+			};
 		}
 	}
 

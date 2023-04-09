@@ -78,14 +78,11 @@ public class SourceInformationProvider implements IInformationProvider, IInforma
 				String perspectiveId = perspective.getId();
 				if (fCurrentPerspective == null || fCurrentPerspective != perspectiveId) {
 					fCurrentPerspective = perspectiveId;
-					switch (fImpType) {
-						case F_MANIFEST_IMP :
-							fImplementation = new ManifestTextHover(fSourcePage);
-							break;
-						case F_XML_IMP :
-							fImplementation = new PluginXMLTextHover(fSourcePage);
-							break;
-					}
+					fImplementation = switch (fImpType) {
+						case F_MANIFEST_IMP -> new ManifestTextHover(fSourcePage);
+						case F_XML_IMP -> new PluginXMLTextHover(fSourcePage);
+						default -> null;
+						};
 				}
 			}
 		}

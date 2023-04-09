@@ -500,19 +500,12 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	private Image getObjectImage(ResolverError obj) {
 		int type = obj.getType();
-		switch (type) {
-			case ResolverError.MISSING_IMPORT_PACKAGE :
-			case ResolverError.EXPORT_PACKAGE_PERMISSION :
-			case ResolverError.IMPORT_PACKAGE_PERMISSION :
-			case ResolverError.IMPORT_PACKAGE_USES_CONFLICT :
-				return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
-			case ResolverError.MISSING_EXECUTION_ENVIRONMENT :
-				return get(PDEPluginImages.DESC_JAVA_LIB_OBJ);
-			case ResolverError.FRAGMENT_BUNDLE_PERMISSION :
-			case ResolverError.FRAGMENT_CONFLICT :
-				return get(PDEPluginImages.DESC_FRAGMENT_OBJ);
-		}
-		return get(PDEPluginImages.DESC_PLUGIN_OBJ);
+		return switch (type) {
+			case ResolverError.MISSING_IMPORT_PACKAGE, ResolverError.EXPORT_PACKAGE_PERMISSION, ResolverError.IMPORT_PACKAGE_PERMISSION, ResolverError.IMPORT_PACKAGE_USES_CONFLICT -> JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
+			case ResolverError.MISSING_EXECUTION_ENVIRONMENT -> get(PDEPluginImages.DESC_JAVA_LIB_OBJ);
+			case ResolverError.FRAGMENT_BUNDLE_PERMISSION, ResolverError.FRAGMENT_CONFLICT -> get(PDEPluginImages.DESC_FRAGMENT_OBJ);
+			default -> get(PDEPluginImages.DESC_PLUGIN_OBJ);
+		};
 	}
 
 	private Image getObjectImage(ExecutionEnvironment environment) {
@@ -696,17 +689,13 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	private Image getObjectImage(ISchemaCompositor compositor) {
-		switch (compositor.getKind()) {
-			case ISchemaCompositor.ALL :
-				return get(PDEPluginImages.DESC_ALL_SC_OBJ);
-			case ISchemaCompositor.CHOICE :
-				return get(PDEPluginImages.DESC_CHOICE_SC_OBJ);
-			case ISchemaCompositor.SEQUENCE :
-				return get(PDEPluginImages.DESC_SEQ_SC_OBJ);
-			case ISchemaCompositor.GROUP :
-				return get(PDEPluginImages.DESC_GROUP_SC_OBJ);
-		}
-		return null;
+		return switch (compositor.getKind()) {
+			case ISchemaCompositor.ALL -> get(PDEPluginImages.DESC_ALL_SC_OBJ);
+			case ISchemaCompositor.CHOICE -> get(PDEPluginImages.DESC_CHOICE_SC_OBJ);
+			case ISchemaCompositor.SEQUENCE -> get(PDEPluginImages.DESC_SEQ_SC_OBJ);
+			case ISchemaCompositor.GROUP -> get(PDEPluginImages.DESC_GROUP_SC_OBJ);
+			default -> null;
+		};
 	}
 
 	private Image getObjectImage(IFeatureURLElement url) {
@@ -843,14 +832,11 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	private Image getObjectImage(IStatus status) {
 		int sev = status.getSeverity();
-		switch (sev) {
-			case IStatus.ERROR :
-				return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJS_ERROR_TSK);
-			case IStatus.WARNING :
-				return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJS_WARN_TSK);
-			default :
-				return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJS_INFO_TSK);
-		}
+		return switch (sev) {
+			case IStatus.ERROR -> PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJS_ERROR_TSK);
+			case IStatus.WARNING -> PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJS_WARN_TSK);
+			default -> PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJS_INFO_TSK);
+		};
 	}
 
 	public boolean isFullNameModeEnabled() {

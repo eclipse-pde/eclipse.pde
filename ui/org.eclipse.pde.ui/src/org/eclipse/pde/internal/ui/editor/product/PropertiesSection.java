@@ -76,18 +76,14 @@ public class PropertiesSection extends TableSection {
 		@Override
 		public String getColumnText(Object obj, int index) {
 			IConfigurationProperty configuration = (IConfigurationProperty) obj;
-			switch (index) {
-				case 0 :
-					return configuration.getName();
+			return switch (index) {
+				case 0 -> configuration.getName();
 					//return super.getColumnText(PluginRegistry.findModel(configuration.getId()), index);
-				case 1 :
-					return configuration.getValue();
-				case 2 :
-					return configuration.getOs();
-				case 3 :
-					return configuration.getArch();
-			}
-			return null;
+				case 1 -> configuration.getValue();
+				case 2 -> configuration.getOs();
+				case 3 -> configuration.getArch();
+				default -> null;
+			};
 		}
 
 	}
@@ -267,16 +263,10 @@ public class PropertiesSection extends TableSection {
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case 0 :
-				handleAdd();
-				break;
-			case 1 :
-				handleEdit();
-				break;
-			case 2 :
-				handleRemove();
-				break;
-		}
+			case 0 -> handleAdd();
+			case 1 -> handleEdit();
+			case 2 -> handleRemove();
+		};
 	}
 
 	@Override

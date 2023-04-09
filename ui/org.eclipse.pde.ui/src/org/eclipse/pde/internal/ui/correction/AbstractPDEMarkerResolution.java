@@ -68,20 +68,13 @@ public abstract class AbstractPDEMarkerResolution extends WorkbenchMarkerResolut
 	public Image getImage() {
 		if (image == null) {
 			PDELabelProvider labelProvider = PDEPlugin.getDefault().getLabelProvider();
-			switch (this.getType()) {
-			case AbstractPDEMarkerResolution.CREATE_TYPE:
-				image = labelProvider.get(PDEPluginImages.DESC_ADD_ATT);
-				break;
-			case AbstractPDEMarkerResolution.REMOVE_TYPE:
-				image = labelProvider.get(PDEPluginImages.DESC_DELETE);
-				break;
-			case AbstractPDEMarkerResolution.RENAME_TYPE:
-				image = labelProvider.get(PDEPluginImages.DESC_REFRESH);
-				break;
-			case AbstractPDEMarkerResolution.CONFIGURE_TYPE:
-				image = labelProvider.get(PDEPluginImages.DESC_CON_SEV);
-				break;
-			}
+			image = switch (this.getType()) {
+			case AbstractPDEMarkerResolution.CREATE_TYPE -> labelProvider.get(PDEPluginImages.DESC_ADD_ATT);
+			case AbstractPDEMarkerResolution.REMOVE_TYPE -> labelProvider.get(PDEPluginImages.DESC_DELETE);
+			case AbstractPDEMarkerResolution.RENAME_TYPE -> labelProvider.get(PDEPluginImages.DESC_REFRESH);
+			case AbstractPDEMarkerResolution.CONFIGURE_TYPE -> labelProvider.get(PDEPluginImages.DESC_CON_SEV);
+			default -> image;
+			};
 		}
 		return image;
 	}

@@ -206,22 +206,12 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case NEW_INDEX :
-				handleNew();
-				break;
-			case ADD_INDEX :
-				handleAdd();
-				break;
-			case REMOVE_INDEX :
-				handleRemove();
-				break;
-			case UP_INDEX :
-				handleUp();
-				break;
-			case DOWN_INDEX :
-				handleDown();
-				break;
-		}
+			case NEW_INDEX -> handleNew();
+			case ADD_INDEX -> handleAdd();
+			case REMOVE_INDEX -> handleRemove();
+			case UP_INDEX -> handleUp();
+			case DOWN_INDEX ->handleDown();
+		};
 	}
 
 	@Override

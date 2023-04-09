@@ -66,13 +66,11 @@ public class RepositoryReferenceSection extends TableSection {
 		@Override
 		public String getColumnText(Object obj, int index) {
 			IRepositoryReference repo = (IRepositoryReference) obj;
-			switch (index) {
-				case 0 :
-					return repo.getURL();
-				case 1 :
-					return Boolean.toString(repo.getEnabled());
-			}
-			return null;
+			return switch (index) {
+				case 0 -> repo.getURL();
+				case 1 -> Boolean.toString(repo.getEnabled());
+				default -> null;
+			};
 		}
 
 	}
@@ -168,19 +166,11 @@ public class RepositoryReferenceSection extends TableSection {
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case 0 :
-				handleAdd();
-				break;
-			case 1 :
-			handleEdit(fRepositoryTable.getStructuredSelection());
-				break;
-			case 2 :
-				handleDelete();
-				break;
-			case 3 :
-				handleRemoveAll();
-				break;
-		}
+			case 0 -> handleAdd();
+			case 1 -> handleEdit(fRepositoryTable.getStructuredSelection());
+			case 2 -> handleDelete();
+			case 3 -> handleRemoveAll();
+		};
 	}
 
 
