@@ -21,17 +21,17 @@ import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
- * <p>Represents a resolution to the problem of the bundle manifest
- * having extraneous lines.</p>
+ * <p>
+ * Represents a resolution to the problem of the bundle manifest having
+ * extraneous lines.
+ * </p>
  */
 public class ExtraneousLinesResolution extends AbstractManifestMarkerResolution {
 
 	/**
 	 * Creates a new resolution
 	 *
-	 * @param type
-	 *            {@link AbstractPDEMarkerResolution#REMOVE_TYPE} to delete
-	 *            lines
+	 * @param type {@link AbstractPDEMarkerResolution#REMOVE_TYPE} to delete lines
 	 */
 	public ExtraneousLinesResolution(int type, IMarker marker) {
 		super(type, marker);
