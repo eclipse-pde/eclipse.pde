@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -72,7 +72,7 @@ public class ConditionalListSelectionDialog extends ElementListSelectionDialog {
 	protected void updateOkState() {
 		super.updateOkState();
 		Button ok = getOkButton();
-		if (ok != null && !ok.isEnabled()) {
+		if (ok != null && !ok.isEnabled() && fElements != null) {
 			ok.setEnabled(fElements.length != 0);
 		}
 	}
