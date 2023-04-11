@@ -501,26 +501,25 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	public Control createControl(Composite parent) {
 		fParent = parent;
 		fMainComp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
-		if (fProject == null) {
-			SWTFactory.createVerticalSpacer(parent, 1);
-			fTabFolder = new TabFolder(fMainComp, SWT.NONE);
-			GridData gd = new GridData(GridData.FILL_BOTH);
-			gd.heightHint = 375;
-			fTabFolder.setLayoutData(gd);
-		}
-
+		SWTFactory.createVerticalSpacer(parent, 1);
+		fTabFolder = new TabFolder(fMainComp, SWT.NONE);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 375;
+		fTabFolder.setLayoutData(gd);
+		
 		Composite main = (fTabFolder == null ? fMainComp : fTabFolder);
 		//plugins page
-		createPage(CompilerFlags.PLUGIN_FLAGS, main, PDEUIMessages.CompilersConfigurationBlock_plugins, PDEUIMessages.CompilersConfigurationBlock_label);
+		createPage(CompilerFlags.PLUGIN_FLAGS, main, PDEUIMessages.CompilersConfigurationBlock_plugins,
+				PDEUIMessages.CompilersConfigurationBlock_label);
 
-		if (fProject == null) {
-			//the sharing property page does not use these two tabs
-			//schema page
-			createPage(CompilerFlags.SCHEMA_FLAGS, main, PDEUIMessages.CompilersConfigurationBlock_schemas, PDEUIMessages.CompilersConfigurationBlock_altlabel);
+		// the sharing property page now use these two tabs too
+		// schema page
+		createPage(CompilerFlags.SCHEMA_FLAGS, main, PDEUIMessages.CompilersConfigurationBlock_schemas,
+				PDEUIMessages.CompilersConfigurationBlock_altlabel);
 
-			//features / sites page
-			createPage(CompilerFlags.FEATURE_FLAGS, main, PDEUIMessages.CompilersConfigurationBlock_features, PDEUIMessages.CompilersConfigurationBlock_label);
-		}
+		// features / sites page
+		createPage(CompilerFlags.FEATURE_FLAGS, main, PDEUIMessages.CompilersConfigurationBlock_features,
+				PDEUIMessages.CompilersConfigurationBlock_label);
 		restoreExpansionState();
 		org.eclipse.jface.dialogs.Dialog.applyDialogFont(fParent);
 		return fMainComp;
@@ -537,12 +536,10 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	private Composite createPage(int kind, Composite folder, String name, String description) {
 		Composite page = SWTFactory.createComposite(folder, 1, 1, GridData.FILL_BOTH);
 		Composite parent = page;
-		if (fProject == null) {
-			TabItem tab = new TabItem((TabFolder) folder, SWT.NONE);
-			tab.setText(name);
-			tab.setControl(page);
-			parent = SWTFactory.createComposite(page, 2, 1, GridData.FILL_BOTH);
-		}
+		TabItem tab = new TabItem((TabFolder) folder, SWT.NONE);
+		tab.setText(name);
+		tab.setControl(page);
+		parent = SWTFactory.createComposite(page, 2, 1, GridData.FILL_BOTH);
 		SWTFactory.createWrapLabel(parent, description, 2);
 		SWTFactory.createVerticalSpacer(parent, 1);
 		switch (kind) {
