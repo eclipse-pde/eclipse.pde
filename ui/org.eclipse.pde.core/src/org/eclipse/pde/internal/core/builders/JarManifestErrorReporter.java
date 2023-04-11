@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -143,6 +143,15 @@ public class JarManifestErrorReporter extends ErrorReporter {
 					if (l == 0) {
 						report(PDECoreMessages.BundleErrorReporter_noMainSection, 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 						return;
+					} else if (l != document.getNumberOfLines() - 1) {
+						VirtualMarker marker = report(PDECoreMessages.BundleErrorReporter_noNameHeader, lineNumber,
+								CompilerFlags.ERROR, PDEMarkerFactory.M_EXTRANEOUS_EMPTY_LINES,
+								PDEMarkerFactory.CAT_FATAL);
+						if (marker != null) {
+							marker.setAttribute("emptyLine", l); //$NON-NLS-1$
+							return;
+						}
+						continue;
 					}
 					/* flush last line */
 					if (header != null) {
