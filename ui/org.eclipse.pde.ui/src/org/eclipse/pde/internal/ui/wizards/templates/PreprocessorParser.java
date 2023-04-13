@@ -213,7 +213,7 @@ public class PreprocessorParser {
 			}
 
 			int opcode = switch (token) {
-				case T_AND -> opcode = OP_AND;
+				case T_AND -> OP_AND;
 				case T_OR -> OP_OR;
 				case T_EQ -> OP_EQ;
 				case T_NEQ -> OP_NEQ;
