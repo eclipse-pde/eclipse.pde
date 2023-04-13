@@ -212,14 +212,12 @@ public class PreprocessorParser {
 				continue;
 			}
 
-			int opcode = 0;
-
-			opcode = switch (token) {
-				case T_AND -> opcode = OP_AND;
+			int opcode = switch (token) {
+				case T_AND -> OP_AND;
 				case T_OR -> OP_OR;
 				case T_EQ -> OP_EQ;
 				case T_NEQ -> OP_NEQ;
-				default -> opcode;
+				default -> 0;
 			};
 			if (opcode != 0) {
 				pushNode(opcode);

@@ -38,10 +38,10 @@ public class SizeFilter implements IFilter {
 	public boolean accept(final ImageElement element) {
 		
 
-		boolean accept = true & switch (mWidthType) {
-			case TYPE_EXACT -> (element.getImageData().width == mWidth);
-			case TYPE_BIGGER_EQUALS -> (element.getImageData().width >= mWidth);
-			case TYPE_SMALLER_EQUALS -> (element.getImageData().width <= mWidth);
+		boolean accept = switch (mWidthType) {
+			case TYPE_EXACT -> element.getImageData().width == mWidth;
+			case TYPE_BIGGER_EQUALS -> element.getImageData().width >= mWidth;
+			case TYPE_SMALLER_EQUALS -> element.getImageData().width <= mWidth;
 			default -> true;
 		};
 
