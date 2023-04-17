@@ -75,7 +75,7 @@ public class UpdateClasspathJob extends Job {
 
 		@Override
 		public void run(IProgressMonitor monitor) throws CoreException {
-			fCanceled = doUpdateClasspath(monitor, fModels);
+			fCanceled = !doUpdateClasspath(monitor, fModels);
 		}
 
 		public boolean isCanceled() {
