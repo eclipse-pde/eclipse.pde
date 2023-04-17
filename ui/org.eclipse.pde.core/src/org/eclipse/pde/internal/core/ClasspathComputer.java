@@ -15,12 +15,15 @@ package org.eclipse.pde.internal.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IFile;
@@ -28,7 +31,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaModelStatus;
@@ -53,6 +55,11 @@ import org.eclipse.team.core.RepositoryProvider;
 
 public class ClasspathComputer {
 
+	private record ClasspathConfiguration(IPluginModelBase model, IJavaProject javaProject,
+			IClasspathAttribute[] defaultAttrs, Map<IPath, IClasspathEntry> originalByPath,
+			List<IClasspathEntry> reloaded) {
+	}
+
 	private static Map<String, Integer> fSeverityTable = null;
 	private static final int SEVERITY_ERROR = 3;
 	private static final int SEVERITY_WARNING = 2;
@@ -65,79 +72,91 @@ public class ClasspathComputer {
 
 	public static IClasspathEntry[] getClasspath(IProject project, IPluginModelBase model, Map<String, IPath> sourceLibraryMap, boolean clear, boolean overrideCompliance) throws CoreException {
 		IJavaProject javaProject = JavaCore.create(project);
-		ArrayList<IClasspathEntry> result = new ArrayList<>();
-		IBuild build = getBuild(project);
+		List<IClasspathEntry> originalClasspath = clear ? List.of() : Arrays.asList(javaProject.getRawClasspath());
+		ClasspathConfiguration context = new ClasspathConfiguration(model, javaProject,
+				getClasspathAttributes(project, model), mapFirstSeenByPath(originalClasspath.stream()),
+				new ArrayList<>());
 
 		// add JRE and set compliance options
 		String ee = getExecutionEnvironment(model.getBundleDescription());
-		result.add(createEntryUsingPreviousEntry(javaProject, ee, PDECore.JRE_CONTAINER_PATH));
-		setComplianceOptions(JavaCore.create(project), ee, overrideCompliance);
+		addContainerEntry(getEEPath(ee), context);
+		setComplianceOptions(javaProject, ee, overrideCompliance);
 
 		// add pde container
-		result.add(createEntryUsingPreviousEntry(javaProject, ee, PDECore.REQUIRED_PLUGINS_CONTAINER_PATH));
+		addContainerEntry(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, context);
 
 		// add own libraries/source
-		addSourceAndLibraries(project, model, build, clear, sourceLibraryMap, result);
+		addSourceAndLibraries(sourceLibraryMap != null ? sourceLibraryMap : Collections.emptyMap(), context);
 
-		IClasspathEntry[] entries = result.toArray(new IClasspathEntry[result.size()]);
+		boolean isTestPlugin = hasTestPluginName(project);
+		IClasspathEntry[] entries = collectInOriginalOrder(originalClasspath, context.reloaded, isTestPlugin);
 		IJavaModelStatus validation = JavaConventions.validateClasspath(javaProject, entries, javaProject.getOutputLocation());
 		if (!validation.isOK()) {
 			PDECore.logErrorMessage(validation.getMessage());
 			throw new CoreException(validation);
 		}
-		return result.toArray(new IClasspathEntry[result.size()]);
+		return entries;
 	}
 
-	private static void addSourceAndLibraries(IProject project, IPluginModelBase model, IBuild build, boolean clear,
-			Map<String, IPath> sourceLibraryMap, ArrayList<IClasspathEntry> result) throws CoreException {
-		boolean isTestPlugin = hasTestPluginName(project);
-		HashSet<IPath> paths = new HashSet<>();
-
-		// keep existing source folders
-		if (!clear) {
-			IClasspathEntry[] entries = JavaCore.create(project).getRawClasspath();
-			for (IClasspathEntry entry : entries) {
-				if (entry.getPath() != null ) {
-					if (PDECore.JRE_CONTAINER_PATH.isPrefixOf(entry.getPath())
-							|| PDECore.REQUIRED_PLUGINS_CONTAINER_PATH.equals(entry.getPath())) {
-						continue;
-					}
-				}
-				if (entry.getEntryKind() == IClasspathEntry.CPE_SOURCE
-						|| entry.getEntryKind() == IClasspathEntry.CPE_PROJECT
-						|| entry.getEntryKind() == IClasspathEntry.CPE_LIBRARY
-						|| entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
-					if (paths.add(entry.getPath())) {
-						result.add(updateTestAttribute(isTestPlugin, entry));
-					}
-				}
-			}
+	private static IClasspathEntry[] collectInOriginalOrder(List<IClasspathEntry> originalClasspath,
+			List<IClasspathEntry> reloaded, boolean isTestPlugin) {
+		// preserve original entries which eventually weren't reloaded
+		Map<IPath, IClasspathEntry> resultingReloadedByPath = mapFirstSeenByPath(reloaded.stream());
+		List<IClasspathEntry> result = new ArrayList<>(originalClasspath);
+		result.replaceAll(e -> {
+			IClasspathEntry replacement = resultingReloadedByPath.remove(pathWithoutEE(e.getPath()));
+			return replacement != null ? replacement : e;
+		});
+		// using the order of reloading, append new entries (in the map still)
+		result.addAll(resultingReloadedByPath.values());
+		if (isTestPlugin) {
+			// don't remove existing TEST attributes, but set if advised
+			result.replaceAll(e -> updateTestAttribute(true, e));
 		}
+		return result.toArray(IClasspathEntry[]::new);
+	}
 
-		IClasspathAttribute[] attrs = getClasspathAttributes(project, model);
-		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
+	private static Map<IPath, IClasspathEntry> mapFirstSeenByPath(Stream<IClasspathEntry> entryStream) {
+		return entryStream.collect(
+				Collectors.toMap(e -> pathWithoutEE(e.getPath()), e -> e, (first, dupe) -> first, LinkedHashMap::new));
+	}
+
+	private static IPath pathWithoutEE(IPath path) {
+		// The path member of IClasspathEntry for JRE_CONTAINER_PATH may
+		// also declare an Execution Environment, which is an attribute.
+		return PDECore.JRE_CONTAINER_PATH.isPrefixOf(path) ? PDECore.JRE_CONTAINER_PATH : path;
+	}
+
+	private static void addContainerEntry(IPath path, ClasspathConfiguration context) {
+		IClasspathEntry original = context.originalByPath.get(pathWithoutEE(path));
+		context.reloaded.add(JavaCore.newContainerEntry(path, //
+				original != null ? original.getAccessRules() : null,
+				original != null ? original.getExtraAttributes() : context.defaultAttrs,
+				original != null ? original.isExported() : false));
+	}
+
+	private static void addSourceAndLibraries(Map<String, IPath> sourceLibraryMap, ClasspathConfiguration context)
+			throws CoreException {
+		IPluginLibrary[] libraries = context.model.getPluginBase().getLibraries();
+		IBuild build = getBuild(context.javaProject.getProject());
 		for (IPluginLibrary library : libraries) {
 			IBuildEntry buildEntry = build == null ? null : build.getEntry("source." + library.getName()); //$NON-NLS-1$
 			if (buildEntry != null) {
-				addSourceFolder(buildEntry, project, paths, result, isTestPlugin);
+				addSourceFolders(buildEntry, context);
+			} else if (library.getName().equals(".")) { //$NON-NLS-1$
+				addJARdPlugin(".", sourceLibraryMap, context); //$NON-NLS-1$
 			} else {
-				IPath sourceAttachment = sourceLibraryMap != null ? sourceLibraryMap.get(library.getName()) : null;
-				if (library.getName().equals(".")) { //$NON-NLS-1$
-					addJARdPlugin(project, ClasspathUtilCore.getFilename(model), sourceAttachment, attrs, result);
-				} else {
-					addLibraryEntry(project, library, sourceAttachment, attrs, result);
-				}
+				addLibraryEntry(library, sourceLibraryMap, context);
 			}
 		}
 		if (libraries.length == 0) {
 			if (build != null) {
 				IBuildEntry buildEntry = build.getEntry("source.."); //$NON-NLS-1$
 				if (buildEntry != null) {
-					addSourceFolder(buildEntry, project, paths, result, isTestPlugin);
+					addSourceFolders(buildEntry, context);
 				}
-			} else if (ClasspathUtilCore.hasBundleStructure(model)) {
-				IPath sourceAttachment = sourceLibraryMap != null ? (IPath) sourceLibraryMap.get(".") : null; //$NON-NLS-1$
-				addJARdPlugin(project, ClasspathUtilCore.getFilename(model), sourceAttachment, attrs, result);
+			} else if (ClasspathUtilCore.hasBundleStructure(context.model)) {
+				addJARdPlugin(".", sourceLibraryMap, context); //$NON-NLS-1$
 			}
 		}
 	}
@@ -202,28 +221,27 @@ public class ClasspathComputer {
 		return attributes;
 	}
 
-	private static void addSourceFolder(IBuildEntry buildEntry, IProject project, HashSet<IPath> paths,
-			ArrayList<IClasspathEntry> result, boolean isTestPlugin) throws CoreException {
+	private static void addSourceFolders(IBuildEntry buildEntry, ClasspathConfiguration context)
+			throws CoreException {
 		String[] folders = buildEntry.getTokens();
+		IProject project = context.javaProject.getProject();
 		for (String folder : folders) {
 			IPath path = project.getFullPath().append(folder);
-			if (paths.add(path)) {
-				if (project.findMember(folder) == null) {
-					CoreUtility.createFolder(project.getFolder(folder));
-				} else {
-					IPackageFragmentRoot root = JavaCore.create(project).getPackageFragmentRoot(path.toString());
-					if (root.exists() && root.getKind() == IPackageFragmentRoot.K_BINARY) {
-						result.add(root.getRawClasspathEntry());
-						continue;
-					}
-				}
-				if (isTestPlugin) {
-					result.add(JavaCore.newSourceEntry(path, null, null, null, new IClasspathAttribute[] {
-							JavaCore.newClasspathAttribute(IClasspathAttribute.TEST, "true") })); //$NON-NLS-1$
-				} else {
-					result.add(JavaCore.newSourceEntry(path));
+			IClasspathEntry orig = context.originalByPath.get(pathWithoutEE(path));
+			if (orig != null) {
+				context.reloaded.add(orig);
+				continue;
+			}
+			if (project.findMember(folder) == null) {
+				CoreUtility.createFolder(project.getFolder(folder));
+			} else {
+				IPackageFragmentRoot root = context.javaProject.getPackageFragmentRoot(path.toString());
+				if (root.exists() && root.getKind() == IPackageFragmentRoot.K_BINARY) {
+					context.reloaded.add(root.getRawClasspathEntry());
+					continue;
 				}
 			}
+			context.reloaded.add(JavaCore.newSourceEntry(path));
 		}
 	}
 
@@ -237,45 +255,59 @@ public class ClasspathComputer {
 		return (buildModel != null) ? buildModel.getBuild() : null;
 	}
 
-	private static void addLibraryEntry(IProject project, IPluginLibrary library, IPath sourceAttachment, IClasspathAttribute[] attrs, ArrayList<IClasspathEntry> result) throws JavaModelException {
+	private static void addLibraryEntry(IPluginLibrary library, Map<String, IPath> sourceLibraryMap,
+			ClasspathConfiguration context) throws JavaModelException {
 		String name = ClasspathUtilCore.expandLibraryName(library.getName());
-		IResource jarFile = project.findMember(name);
+		IResource jarFile = context.javaProject.getProject().findMember(name);
 		if (jarFile == null) {
 			return;
 		}
 
-		IPackageFragmentRoot root = JavaCore.create(project).getPackageFragmentRoot(jarFile);
+		IPath sourceAttachment = sourceLibraryMap.get(library.getName());
+		boolean isExported = library.isExported();
+
+		IPackageFragmentRoot root = context.javaProject.getPackageFragmentRoot(jarFile);
 		if (root.exists() && root.getKind() == IPackageFragmentRoot.K_BINARY) {
 			IClasspathEntry oldEntry = root.getRawClasspathEntry();
-			// If we have the same binary root but new or different source, we should recreate the entry
-			if ((sourceAttachment == null && oldEntry.getSourceAttachmentPath() != null) || (sourceAttachment != null && sourceAttachment.equals(oldEntry.getSourceAttachmentPath()))) {
-				if (!result.contains(oldEntry)) {
-					result.add(oldEntry);
-					return;
-				}
+			// If we have the same binary root but new or different source, we
+			// should recreate the entry. That is when the source attachment:
+			// - is not defined: the default could be available now, or
+			// - is overridden with a different value.
+			if ((sourceAttachment == null && oldEntry.getSourceAttachmentPath() != null)
+					|| (sourceAttachment != null && sourceAttachment.equals(oldEntry.getSourceAttachmentPath()))) {
+				context.reloaded.add(oldEntry);
+				return;
 			}
+			isExported = oldEntry.isExported();
 		}
-
-		IClasspathEntry entry = createClasspathEntry(project, jarFile, name, sourceAttachment, attrs, library.isExported());
-		if (!result.contains(entry)) {
-			result.add(entry);
-		}
+		reloadClasspathEntry(jarFile, name, sourceAttachment, isExported, context);
 	}
 
-	private static void addJARdPlugin(IProject project, String filename, IPath sourceAttachment, IClasspathAttribute[] attrs, ArrayList<IClasspathEntry> result) {
+	private static void addJARdPlugin(String libraryName, Map<String, IPath> sourceLibraryMap,
+			ClasspathConfiguration context) {
+		String filename = ClasspathUtilCore.getFilename(context.model);
 		String name = ClasspathUtilCore.expandLibraryName(filename);
-		IResource jarFile = project.findMember(name);
+		IResource jarFile = context.javaProject.getProject().findMember(name);
 		if (jarFile != null) {
-			IClasspathEntry entry = createClasspathEntry(project, jarFile, filename, sourceAttachment, attrs, true);
-			if (!result.contains(entry)) {
-				result.add(entry);
-			}
+			IPath sourceAttachment = sourceLibraryMap.get(libraryName);
+			reloadClasspathEntry(jarFile, filename, sourceAttachment, true, context);
 		}
 	}
 
-	private static IClasspathEntry createClasspathEntry(IProject project, IResource library, String fileName, IPath sourceAttachment, IClasspathAttribute[] attrs, boolean isExported) {
-		IResource resource = sourceAttachment != null ? project.findMember(sourceAttachment) : project.findMember(ClasspathUtilCore.getSourceZipName(fileName));
-		return JavaCore.newLibraryEntry(library.getFullPath(), resource == null ? null : resource.getFullPath(), null, new IAccessRule[0], attrs, isExported);
+	private static void reloadClasspathEntry(IResource library, String fileName, IPath sourceAttachment,
+			boolean isExported, ClasspathConfiguration context) {
+		IClasspathEntry orig = context.originalByPath.get(pathWithoutEE(library.getFullPath()));
+		if (orig != null && sourceAttachment == null) {
+			sourceAttachment = orig.getSourceAttachmentPath();
+		}
+		IProject project = context.javaProject.getProject();
+		IResource source = sourceAttachment != null ? project.findMember(sourceAttachment)
+				: project.findMember(ClasspathUtilCore.getSourceZipName(fileName));
+		sourceAttachment = source == null ? null : source.getFullPath();
+		context.reloaded.add(JavaCore.newLibraryEntry(library.getFullPath(), sourceAttachment, null,
+				orig != null ? orig.getAccessRules() : null, //
+				orig != null ? orig.getExtraAttributes() : context.defaultAttrs,
+				orig != null ? orig.isExported() : isExported));
 	}
 
 	private static String getExecutionEnvironment(BundleDescription bundleDescription) {
@@ -396,36 +428,6 @@ public class ClasspathComputer {
 				map.put(key, minimumValue);
 			}
 		}
-	}
-
-	/**
-	 * Returns a new classpath container entry for the given execution environment.  If the given java project
-	 * has an existing JRE/EE classpath entry, the access rules, extra attributes and isExported settings of
-	 * the existing entry will be added to the new execution entry.
-	 *
-	 * @param javaProject project to check for existing classpath entries
-	 * @param ee id of the execution environment to create an entry for
-	 * @param path id of the container to create an entry for
-	 *
-	 * @return new classpath container entry
-	 * @throws CoreException if there is a problem accessing the classpath entries of the project
-	 */
-	public static IClasspathEntry createEntryUsingPreviousEntry(IJavaProject javaProject, String ee, IPath path) throws CoreException {
-		IClasspathEntry[] entries = javaProject.getRawClasspath();
-		for (IClasspathEntry entry : entries) {
-			if (path.isPrefixOf(entry.getPath()) && path.equals(PDECore.JRE_CONTAINER_PATH)) {
-				return JavaCore.newContainerEntry(getEEPath(ee), entry.getAccessRules(), entry.getExtraAttributes(), entry.isExported());
-			}
-			if (entry.getPath().equals(path)) {
-				return JavaCore.newContainerEntry(path, entry.getAccessRules(), entry.getExtraAttributes(), entry.isExported());
-			}
-		}
-
-		if (path.equals(PDECore.JRE_CONTAINER_PATH)) {
-			return createJREEntry(ee);
-		}
-
-		return JavaCore.newContainerEntry(path);
 	}
 
 	/**
