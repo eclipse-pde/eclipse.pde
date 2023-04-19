@@ -165,16 +165,10 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	@Override
 	public boolean acceptMember(IApiMember member) {
 		// don't consider inner types, as they are considered with the root type
-		switch (member.getType()) {
-			case IApiElement.TYPE: {
-				IApiType type = (IApiType) member;
-				return !(type.isMemberType() || type.isLocal());
-			}
-			default: {
-				return true;
-			}
+		if (member instanceof IApiType type) {
+			return !(type.isMemberType() || type.isLocal());
 		}
-
+		return true;
 	}
 
 	/**

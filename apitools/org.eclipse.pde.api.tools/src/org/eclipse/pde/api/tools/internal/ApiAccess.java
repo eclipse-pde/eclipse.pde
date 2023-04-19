@@ -77,14 +77,11 @@ public class ApiAccess implements IApiAccess {
 	 * @return the textual representation of an {@link IApiAccess}
 	 */
 	public static String getAccessText(int access) {
-		switch (access) {
-			case IApiAccess.NORMAL:
-				return "NORMAL"; //$NON-NLS-1$
-			case IApiAccess.FRIEND:
-				return "FRIEND"; //$NON-NLS-1$
-			default:
-				break;
-		}
-		return "<UNKNOWN ACCESS LEVEL>"; //$NON-NLS-1$
+		return switch (access)
+			{
+			case IApiAccess.NORMAL -> "NORMAL"; //$NON-NLS-1$
+			case IApiAccess.FRIEND -> "FRIEND"; //$NON-NLS-1$
+			default -> "<UNKNOWN ACCESS LEVEL>"; //$NON-NLS-1$
+			};
 	}
 }

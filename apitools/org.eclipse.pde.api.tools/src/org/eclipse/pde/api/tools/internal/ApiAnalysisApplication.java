@@ -279,12 +279,11 @@ public class ApiAnalysisApplication implements IApplication {
 			IStatus resolutionStatus = definition.resolve(new NullProgressMonitor());
 			switch (resolutionStatus.getSeverity())
 				{
-				case IStatus.WARNING:
+				case IStatus.WARNING ->
 					System.out.println("WARNING resolving target platform: " + resolutionStatus.getMessage()); //$NON-NLS-1$
-					break;
-				case IStatus.ERROR:
+				case IStatus.ERROR -> 
 					throw new CoreException(resolutionStatus);
-				default: // Nothing
+				default -> { /*Nothing*/ }
 				}
 			// remove ".target"
 			String baselineName = baselineFileName.substring(0, baselineFileName.lastIndexOf('.'));

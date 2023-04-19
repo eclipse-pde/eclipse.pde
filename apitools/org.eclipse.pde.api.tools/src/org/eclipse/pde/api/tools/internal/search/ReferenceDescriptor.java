@@ -87,16 +87,13 @@ public class ReferenceDescriptor implements IReferenceDescriptor {
 
 	@Override
 	public int getReferenceType() {
-		switch (getReferencedMember().getElementType()) {
-			case IElementDescriptor.TYPE:
-				return IReference.T_TYPE_REFERENCE;
-			case IElementDescriptor.METHOD:
-				return IReference.T_METHOD_REFERENCE;
-			case IElementDescriptor.FIELD:
-				return IReference.T_FIELD_REFERENCE;
-			default:
-				return -1;
-		}
+		return switch (getReferencedMember().getElementType())
+			{
+			case IElementDescriptor.TYPE -> IReference.T_TYPE_REFERENCE;
+			case IElementDescriptor.METHOD -> IReference.T_METHOD_REFERENCE;
+			case IElementDescriptor.FIELD -> IReference.T_FIELD_REFERENCE;
+			default -> -1;
+			};
 	}
 
 	@Override

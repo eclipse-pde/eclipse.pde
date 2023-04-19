@@ -125,13 +125,10 @@ public class IncrementalApiBuilder {
 
 		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
-			switch (delta.getResource().getType()) {
-				case IResource.ROOT:
-				case IResource.PROJECT:
-				case IResource.FOLDER: {
-					return true;
-				}
-				case IResource.FILE: {
+			return switch (delta.getResource().getType())
+				{
+				case IResource.ROOT, IResource.PROJECT, IResource.FOLDER -> true;
+				case IResource.FILE -> {
 					IFile resource = (IFile) delta.getResource();
 					String fileName = resource.getName();
 					if (Util.isClassFile(fileName)) {
@@ -183,12 +180,10 @@ public class IncrementalApiBuilder {
 							}
 						}
 					}
-					break;
+					yield false;
 				}
-				default:
-					break;
-			}
-			return false;
+				default -> false;
+				};
 		}
 	}
 
@@ -606,17 +601,12 @@ public class IncrementalApiBuilder {
 				type = JAVA__FILE;
 			}
 		}
-		HashSet<IPath> paths = null;
-		switch (type) {
-			case JAVA__FILE:
-				paths = this.builder.src_locs.get(resource.getProject());
-				break;
-			case CLASS_FILE:
-				paths = this.builder.output_locs.get(resource.getProject());
-				break;
-			default:
-				break;
-		}
+		HashSet<IPath> paths = switch (type)
+			{
+			case JAVA__FILE -> this.builder.src_locs.get(resource.getProject());
+			case CLASS_FILE -> this.builder.output_locs.get(resource.getProject());
+			default -> null;
+			};
 		if (paths != null) {
 			for (IPath path : paths) {
 				if (path.isPrefixOf(typepath)) {

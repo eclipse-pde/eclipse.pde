@@ -134,20 +134,21 @@ public class ApiDescriptionProcessor {
 
 		@Override
 		public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
-			switch (element.getElementType()) {
-				case IElementDescriptor.PACKAGE: {
-					return true;
+			return switch (element.getElementType())
+				{
+				case IElementDescriptor.PACKAGE -> {
+					yield true;
 				}
-				case IElementDescriptor.TYPE: {
+				case IElementDescriptor.TYPE -> {
 					members.clear();
 					members.add(element);
-					return true;
+					yield true;
 				}
-				default: {
+				default -> {
 					members.add(element);
+					yield false;
 				}
-			}
-			return false;
+				};
 		}
 
 		@Override
@@ -342,15 +343,15 @@ public class ApiDescriptionProcessor {
 			ArrayList<String> missing = new ArrayList<>();
 			JavadocTagManager jtm = ApiPlugin.getJavadocTagManager();
 			switch (member) {
-				case IApiJavadocTag.MEMBER_FIELD:
+				case IApiJavadocTag.MEMBER_FIELD -> {
 					if (RestrictionModifiers.isReferenceRestriction(res)) {
 						if (!containsRestrictionTag(tags, "@noreference")) { //$NON-NLS-1$
 							IApiJavadocTag tag = jtm.getTag(IApiJavadocTag.NO_REFERENCE_TAG_ID);
 							missing.add(tag.getCompleteTag(type, member));
 						}
 					}
-					break;
-				case IApiJavadocTag.MEMBER_METHOD:
+				}
+				case IApiJavadocTag.MEMBER_METHOD -> {
 					if (RestrictionModifiers.isReferenceRestriction(res)) {
 						if (!containsRestrictionTag(tags, "@noreference")) { //$NON-NLS-1$
 							IApiJavadocTag tag = jtm.getTag(IApiJavadocTag.NO_REFERENCE_TAG_ID);
@@ -363,8 +364,8 @@ public class ApiDescriptionProcessor {
 							missing.add(tag.getCompleteTag(type, member));
 						}
 					}
-					break;
-				case IApiJavadocTag.MEMBER_NONE:
+				}
+				case IApiJavadocTag.MEMBER_NONE -> {
 					if (RestrictionModifiers.isImplementRestriction(res)) {
 						if (!containsRestrictionTag(tags, "@noimplement")) { //$NON-NLS-1$
 							IApiJavadocTag tag = jtm.getTag(IApiJavadocTag.NO_IMPLEMENT_TAG_ID);
@@ -383,9 +384,8 @@ public class ApiDescriptionProcessor {
 							missing.add(tag.getCompleteTag(type, member));
 						}
 					}
-					break;
-				default:
-					break;
+				}
+				default -> { /**/ }
 			}
 			return missing.toArray(new String[missing.size()]);
 		}
@@ -414,27 +414,23 @@ public class ApiDescriptionProcessor {
 		private IElementDescriptor findDescriptorByName(String name, String signature) {
 			for (IElementDescriptor desc : apis) {
 				switch (desc.getElementType()) {
-					case IElementDescriptor.TYPE: {
+					case IElementDescriptor.TYPE -> {
 						if (((IReferenceTypeDescriptor) desc).getName().equals(name)) {
 							return desc;
 						}
-						break;
 					}
-					case IElementDescriptor.METHOD: {
+					case IElementDescriptor.METHOD -> {
 						IMethodDescriptor method = (IMethodDescriptor) desc;
 						if (method.getName().equals(name) && method.getSignature().equals(signature)) {
 							return desc;
 						}
-						break;
 					}
-					case IElementDescriptor.FIELD: {
+					case IElementDescriptor.FIELD -> {
 						if (((IFieldDescriptor) desc).getName().equals(name)) {
 							return desc;
 						}
-						break;
 					}
-					default:
-						break;
+					default -> { /**/ }
 				}
 			}
 			return null;
@@ -674,19 +670,17 @@ public class ApiDescriptionProcessor {
 			res = Integer.parseInt(element.getAttribute(IApiXmlConstants.ATTR_RESTRICTIONS));
 		} else {
 			switch (descriptor.getElementType()) {
-				case IElementDescriptor.FIELD: {
+				case IElementDescriptor.FIELD -> {
 					res = annotateRestriction(element, IApiXmlConstants.ATTR_REFERENCE, RestrictionModifiers.NO_REFERENCE, res);
-					break;
 				}
-				case IElementDescriptor.METHOD: {
+				case IElementDescriptor.METHOD -> {
 					IMethodDescriptor method = (IMethodDescriptor) descriptor;
 					res = annotateRestriction(element, IApiXmlConstants.ATTR_REFERENCE, RestrictionModifiers.NO_REFERENCE, res);
 					if (!method.isConstructor()) {
 						res = annotateRestriction(element, IApiXmlConstants.ATTR_OVERRIDE, RestrictionModifiers.NO_OVERRIDE, res);
 					}
-					break;
 				}
-				case IElementDescriptor.TYPE: {
+				case IElementDescriptor.TYPE -> {
 					IReferenceTypeDescriptor rtype = (IReferenceTypeDescriptor) descriptor;
 					res = annotateRestriction(element, IApiXmlConstants.ATTR_IMPLEMENT, RestrictionModifiers.NO_IMPLEMENT, res);
 					if (earlierversion && RestrictionModifiers.isImplementRestriction(res)) {
@@ -726,10 +720,8 @@ public class ApiDescriptionProcessor {
 							}
 						}
 					}
-					break;
 				}
-				default:
-					break;
+				default -> { /**/ }
 			}
 		}
 		return res;

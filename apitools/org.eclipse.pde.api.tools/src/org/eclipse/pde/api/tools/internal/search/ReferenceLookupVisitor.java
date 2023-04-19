@@ -116,19 +116,12 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 	@Override
 	public boolean visitMember(IMemberDescriptor referencedMember) {
 		targetMember = referencedMember;
-		switch (targetMember.getElementType()) {
-			case IElementDescriptor.TYPE: {
-				targetType = (IReferenceTypeDescriptor) targetMember;
-				break;
-			}
-			case IElementDescriptor.METHOD:
-			case IElementDescriptor.FIELD: {
-				targetType = targetMember.getEnclosingType();
-				break;
-			}
-			default:
-				break;
-		}
+		targetType = switch (targetMember.getElementType())
+			{
+			case IElementDescriptor.TYPE -> (IReferenceTypeDescriptor) targetMember;
+			case IElementDescriptor.METHOD, IElementDescriptor.FIELD -> targetMember.getEnclosingType();
+			default -> null;
+			};
 		currType = null;
 		try {
 			IApiTypeRoot typeRoot = null;
@@ -157,19 +150,16 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 		int lineNumber = reference.getLineNumber();
 		IMemberDescriptor origin = reference.getMember();
 		if (currType != null) {
-			switch (targetMember.getElementType()) {
-				case IElementDescriptor.TYPE:
-					ref = Reference.typeReference(currType, targetType.getQualifiedName(), refKind);
-					break;
-				case IElementDescriptor.METHOD:
-					ref = Reference.methodReference(currType, targetType.getQualifiedName(), targetMember.getName(), ((IMethodDescriptor) targetMember).getSignature(), refKind);
-					break;
-				case IElementDescriptor.FIELD:
-					ref = Reference.fieldReference(currType, targetType.getQualifiedName(), targetMember.getName(), refKind);
-					break;
-				default:
-					break;
-			}
+			ref = switch (targetMember.getElementType())
+				{
+				case IElementDescriptor.TYPE -> Reference.typeReference(currType, targetType.getQualifiedName(),
+						refKind);
+				case IElementDescriptor.METHOD -> Reference.methodReference(currType, targetType.getQualifiedName(),
+						targetMember.getName(), ((IMethodDescriptor) targetMember).getSignature(), refKind);
+				case IElementDescriptor.FIELD -> Reference.fieldReference(currType, targetType.getQualifiedName(),
+						targetMember.getName(), refKind);
+				default -> null;
+				};
 		}
 		if (ref != null) {
 			try {

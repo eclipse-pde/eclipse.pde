@@ -117,7 +117,7 @@ public class UseScanParser {
 	protected void processElement(String uri, String localName, String name, Attributes attributes, int type) throws SAXException {
 		if (name != null) {
 			switch (name) {
-			case IApiXmlConstants.REFERENCES:
+				case IApiXmlConstants.REFERENCES -> {
 				// Check that the current target component and referencing component
 				// match what is in the file
 				String target = attributes.getValue(IApiXmlConstants.ATTR_REFEREE);
@@ -142,28 +142,21 @@ public class UseScanParser {
 					enterVisibility(-1);
 					System.out.println("Internal error: invalid visibility: " + visString); //$NON-NLS-1$
 				}
-				break;
-			case IApiXmlConstants.ELEMENT_TARGET:{
+			}
+			case IApiXmlConstants.ELEMENT_TARGET -> {
 				String qName = attributes.getValue(IApiXmlConstants.ATTR_TYPE);
 				String memberName = attributes.getValue(IApiXmlConstants.ATTR_MEMBER_NAME);
 				String signature = attributes.getValue(IApiXmlConstants.ATTR_SIGNATURE);
-				IMemberDescriptor member = null;
-				switch (type) {
-				case IReference.T_TYPE_REFERENCE:
-					member = Factory.typeDescriptor(qName);
-					break;
-				case IReference.T_METHOD_REFERENCE:
-					member = Factory.methodDescriptor(qName, memberName, signature);
-					break;
-				case IReference.T_FIELD_REFERENCE:
-					member = Factory.fieldDescriptor(qName, memberName);
-					break;
-				default:
-					break;
-				}	enterTargetMember(member);
-					break;
-				}
-			case IApiXmlConstants.REFERENCE_KIND:
+				IMemberDescriptor member = switch (type)
+					{
+					case IReference.T_TYPE_REFERENCE -> Factory.typeDescriptor(qName);
+					case IReference.T_METHOD_REFERENCE -> Factory.methodDescriptor(qName, memberName, signature);
+					case IReference.T_FIELD_REFERENCE -> Factory.fieldDescriptor(qName, memberName);
+					default -> null;
+					};
+				enterTargetMember(member);
+			}
+			case IApiXmlConstants.REFERENCE_KIND -> {
 				String value = attributes.getValue(IApiXmlConstants.ATTR_KIND);
 				if (value != null) {
 					try {
@@ -173,11 +166,10 @@ public class UseScanParser {
 						System.out.println(NLS.bind("Internal error: invalid reference kind: {0}", value)); //$NON-NLS-1$
 					}
 				}
-				break;
-			case IApiXmlConstants.ATTR_REFERENCE:{
+			}
+			case IApiXmlConstants.ATTR_REFERENCE -> {
 				String qName = attributes.getValue(IApiXmlConstants.ATTR_TYPE);
 				if (qName != null) {
-
 					String memberName = attributes.getValue(IApiXmlConstants.ATTR_MEMBER_NAME);
 					String signature = attributes.getValue(IApiXmlConstants.ATTR_SIGNATURE);
 					IMemberDescriptor origin = null;
@@ -203,10 +195,9 @@ public class UseScanParser {
 					}
 				} else {
 					System.out.println(NLS.bind("Element {0} is missing type attribute and will be skipped", targetMember.getName())); //$NON-NLS-1$
-				}	break;
 				}
-			default:
-				break;
+			}
+			default -> { /**/ }
 			}
 		}
 	}

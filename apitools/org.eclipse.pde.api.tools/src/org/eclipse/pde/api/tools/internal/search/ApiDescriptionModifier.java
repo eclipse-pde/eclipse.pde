@@ -100,25 +100,19 @@ public class ApiDescriptionModifier extends ApiDescriptionVisitor {
 
 	@Override
 	public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
-		switch (element.getElementType()) {
-			case IElementDescriptor.COMPONENT:
-				return true;
-			case IElementDescriptor.PACKAGE:
-				IPackageDescriptor pkg = (IPackageDescriptor) element;
-				if (fInternalPackages != null) {
-					if (matchesPattern(pkg.getName(), fInternalPackages)) {
-						fDescription.setVisibility(element, VisibilityModifiers.PRIVATE);
-					}
-				}
-				if (fApiPackages != null) {
-					if (matchesPattern(pkg.getName(), fApiPackages)) {
-						fDescription.setVisibility(element, VisibilityModifiers.API);
-					}
-				}
-				return false;
-			default:
-				return false;
+		int elementType = element.getElementType();
+		if (elementType == IElementDescriptor.COMPONENT) {
+			return true;
+		} else if (elementType == IElementDescriptor.PACKAGE) {
+			IPackageDescriptor pkg = (IPackageDescriptor) element;
+			if (fInternalPackages != null && matchesPattern(pkg.getName(), fInternalPackages)) {
+				fDescription.setVisibility(element, VisibilityModifiers.PRIVATE);
+			}
+			if (fApiPackages != null && matchesPattern(pkg.getName(), fApiPackages)) {
+				fDescription.setVisibility(element, VisibilityModifiers.API);
+			}
 		}
+		return false;
 	}
 
 	/**

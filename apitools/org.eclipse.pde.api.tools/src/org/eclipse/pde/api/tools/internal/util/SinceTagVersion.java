@@ -51,25 +51,16 @@ public class SinceTagVersion {
 		loop: for (int i = 0, max = chars.length; i < max; i++) {
 			char currentChar = chars[i];
 			switch (mode) {
-				case READ_VERSION:
+				case READ_VERSION -> {
 					switch (currentChar) {
-						case '0':
-						case '1':
-						case '2':
-						case '3':
-						case '4':
-						case '5':
-						case '6':
-						case '7':
-						case '8':
-						case '9':
+						case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> {
 							mode = INSIDE_VERSION;
 							i--;
-							break;
-						default:
+						}
+						default -> { /**/ }
 					}
-					break;
-				case INSIDE_VERSION:
+				}
+				case INSIDE_VERSION -> {
 					// read sequence of digits
 					int start = i;
 					loop2: while (i < max) {
@@ -115,9 +106,8 @@ public class SinceTagVersion {
 						return;
 					}
 					mode = READ_VERSION;
-					break;
-				default:
-					break;
+				}
+				default -> { /**/ }
 			}
 		}
 		if (this.versionString == null) {

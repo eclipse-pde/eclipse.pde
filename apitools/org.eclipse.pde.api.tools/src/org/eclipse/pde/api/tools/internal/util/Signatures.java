@@ -454,13 +454,8 @@ public final class Signatures {
 						int lastDotPosition = i;
 						i++;
 						while (i < chars.length && currentChar != ';' && currentChar != '<') {
-							switch (currentChar) {
-								case '/':
-								case '.':
-									lastDotPosition = i;
-									break;
-								default:
-									break;
+							if (currentChar == '/' || currentChar == '.') {
+								lastDotPosition = i;
 							}
 							i++;
 							currentChar = chars[i];
@@ -540,34 +535,31 @@ public final class Signatures {
 	 * This is called for SingleVariableDeclaration and MethodDeclaration
 	 */
 	private static Type getType(ASTNode node) {
-		switch (node.getNodeType()) {
-			case ASTNode.SINGLE_VARIABLE_DECLARATION: {
-				SingleVariableDeclaration param = (SingleVariableDeclaration) node;
-				Type type = param.getType();
-				int extraDim = param.getExtraDimensions();
+		if (node.getNodeType() == ASTNode.SINGLE_VARIABLE_DECLARATION) {
+			SingleVariableDeclaration param = (SingleVariableDeclaration) node;
+			Type type = param.getType();
+			int extraDim = param.getExtraDimensions();
 
-				if (extraDim == 0) {
-					return type;
-				}
-				AST ast = type.getAST();
-				type = (Type) ASTNode.copySubtree(ast, type);
-				type = ast.newArrayType(type, extraDim);
+			if (extraDim == 0) {
 				return type;
 			}
-			default: {
-				// ASTNode.METHOD_DECLARATION
-				MethodDeclaration methodDeclaration = (MethodDeclaration) node;
-				Type type = methodDeclaration.getReturnType2();
-				int extraDim = methodDeclaration.getExtraDimensions();
+			AST ast = type.getAST();
+			type = (Type) ASTNode.copySubtree(ast, type);
+			type = ast.newArrayType(type, extraDim);
+			return type;
+		} else {
+			// ASTNode.METHOD_DECLARATION
+			MethodDeclaration methodDeclaration = (MethodDeclaration) node;
+			Type type = methodDeclaration.getReturnType2();
+			int extraDim = methodDeclaration.getExtraDimensions();
 
-				if (extraDim == 0) {
-					return type;
-				}
-				AST ast = type.getAST();
-				type = (Type) ASTNode.copySubtree(ast, type);
-				type = ast.newArrayType(type, extraDim);
+			if (extraDim == 0) {
 				return type;
 			}
+			AST ast = type.getAST();
+			type = (Type) ASTNode.copySubtree(ast, type);
+			type = ast.newArrayType(type, extraDim);
+			return type;
 		}
 	}
 
@@ -602,8 +594,9 @@ public final class Signatures {
 	 *         be derived
 	 */
 	public static String getTypeSignature(Type type, boolean erased) {
-		switch (type.getNodeType()) {
-			case ASTNode.SIMPLE_TYPE: {
+		return switch (type.getNodeType())
+			{
+			case ASTNode.SIMPLE_TYPE -> {
 				String fullyQualifiedName = ((SimpleType) type).getName().getFullyQualifiedName();
 				if (!fullyQualifiedName.contains(".") && erased) { //$NON-NLS-1$
 					// check if generic parameter
@@ -622,13 +615,13 @@ public final class Signatures {
 								for (TypeParameter typeParameter : typeParameters) {
 									if (fullyQualifiedName.equals(typeParameter.getName().getFullyQualifiedName())) {
 										if (typeParameter.typeBounds().isEmpty()) {
-											return Signature.createTypeSignature("Object", false); //$NON-NLS-1$
+											yield Signature.createTypeSignature("Object", false); //$NON-NLS-1$
 										} else {
 											// the erasure of a type
 											// variable is the erasure of
 											// its leftmost bound
 											Type bound = (Type) typeParameter.typeBounds().get(0);
-											return getTypeSignature(bound, erased);
+											yield getTypeSignature(bound, erased);
 										}
 									}
 								}
@@ -640,27 +633,18 @@ public final class Signatures {
 					}
 
 				}
-				return Signature.createTypeSignature(fullyQualifiedName, false);
+				yield Signature.createTypeSignature(fullyQualifiedName, false);
 			}
-			case ASTNode.QUALIFIED_TYPE: {
-				return Signature.createTypeSignature(((QualifiedType) type).getName().getFullyQualifiedName(), false);
-			}
-			case ASTNode.ARRAY_TYPE: {
+			case ASTNode.QUALIFIED_TYPE -> Signature.createTypeSignature(((QualifiedType) type).getName().getFullyQualifiedName(), false);
+			case ASTNode.ARRAY_TYPE -> {
 				ArrayType a = (ArrayType) type;
-				return Signature.createArraySignature(getTypeSignature(a.getElementType(), erased), a.getDimensions());
+				yield Signature.createArraySignature(getTypeSignature(a.getElementType(), erased), a.getDimensions());
 			}
-			case ASTNode.PARAMETERIZED_TYPE: {
-				// we don't need to care about the other scoping types only the
-				// base type
-				return getTypeSignature(((ParameterizedType) type).getType(), erased);
-			}
-			case ASTNode.PRIMITIVE_TYPE: {
-				return Signature.createTypeSignature(((PrimitiveType) type).getPrimitiveTypeCode().toString(), false);
-			}
-			default:
-				break;
-		}
-		return null;
+			// we don't need to care about the other scoping types only the base type
+			case ASTNode.PARAMETERIZED_TYPE -> getTypeSignature(((ParameterizedType) type).getType(), erased);
+			case ASTNode.PRIMITIVE_TYPE -> Signature.createTypeSignature(((PrimitiveType) type).getPrimitiveTypeCode().toString(), false);
+			default -> null;
+			};
 	}
 
 	/**
