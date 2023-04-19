@@ -197,20 +197,17 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 	 */
 	void flushElementCache(IJavaElement element) {
 		switch (element.getElementType()) {
-			case IJavaElement.COMPILATION_UNIT: {
+			case IJavaElement.COMPILATION_UNIT -> {
 				ICompilationUnit unit = (ICompilationUnit) element;
 				IType type = unit.findPrimaryType();
 				if (type != null) {
 					ApiModelCache.getCache().removeElementInfo(ApiBaselineManager.WORKSPACE_API_BASELINE_ID, element.getJavaProject().getElementName(), type.getFullyQualifiedName(), IApiElement.TYPE);
 				}
-				break;
 			}
-			case IJavaElement.JAVA_PROJECT: {
+			case IJavaElement.JAVA_PROJECT -> {
 				ApiModelCache.getCache().removeElementInfo(ApiBaselineManager.WORKSPACE_API_BASELINE_ID, element.getElementName(), null, IApiElement.COMPONENT);
-				break;
 			}
-			default:
-				break;
+			default -> { /**/ }
 		}
 	}
 

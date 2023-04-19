@@ -122,18 +122,12 @@ public class UseReportConverter extends HTMLConvertor {
 		 *         <code>null</code>
 		 */
 		IReferenceTypeDescriptor getEnclosingDescriptor(IMemberDescriptor member) {
-			switch (member.getElementType()) {
-				case IElementDescriptor.TYPE: {
-					return (IReferenceTypeDescriptor) member;
-				}
-				case IElementDescriptor.METHOD:
-				case IElementDescriptor.FIELD: {
-					return member.getEnclosingType();
-				}
-				default:
-					break;
-			}
-			return null;
+			return switch (member.getElementType())
+				{
+				case IElementDescriptor.TYPE -> (IReferenceTypeDescriptor) member;
+				case IElementDescriptor.METHOD, IElementDescriptor.FIELD -> member.getEnclosingType();
+				default -> null;
+				};
 		}
 
 		@Override
@@ -260,134 +254,112 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 			refs.add(new Reference(fromMember, lineNumber, visibility, formatMessages(reference.getProblemMessages())));
 			switch (fromMember.getElementType()) {
-				case IElementDescriptor.TYPE: {
+				case IElementDescriptor.TYPE -> {
 					switch (visibility) {
-						case VisibilityModifiers.API: {
+						case VisibilityModifiers.API -> {
 							this.currentmember.counts.total_api_type_count++;
 							this.currenttype.counts.total_api_type_count++;
 							this.currentreferee.counts.total_api_type_count++;
 							this.currentreport.counts.total_api_type_count++;
-							break;
 						}
-						case VisibilityModifiers.PRIVATE: {
+						case VisibilityModifiers.PRIVATE -> {
 							this.currentmember.counts.total_private_type_count++;
 							this.currenttype.counts.total_private_type_count++;
 							this.currentreferee.counts.total_private_type_count++;
 							this.currentreport.counts.total_private_type_count++;
-							break;
 						}
-						case VisibilityModifiers.PRIVATE_PERMISSIBLE: {
+						case VisibilityModifiers.PRIVATE_PERMISSIBLE -> {
 							this.currentmember.counts.total_permissable_type_count++;
 							this.currenttype.counts.total_permissable_type_count++;
 							this.currentreferee.counts.total_permissable_type_count++;
 							this.currentreport.counts.total_permissable_type_count++;
-							break;
 						}
-						case FRAGMENT_PERMISSIBLE: {
+						case FRAGMENT_PERMISSIBLE -> {
 							this.currentmember.counts.total_fragment_permissible_type_count++;
 							this.currenttype.counts.total_fragment_permissible_type_count++;
 							this.currentreferee.counts.total_fragment_permissible_type_count++;
 							this.currentreport.counts.total_fragment_permissible_type_count++;
-							break;
 						}
-						case VisibilityModifiers.ILLEGAL_API: {
+						case VisibilityModifiers.ILLEGAL_API -> {
 							this.currentmember.counts.total_illegal_type_count++;
 							this.currenttype.counts.total_illegal_type_count++;
 							this.currentreferee.counts.total_illegal_type_count++;
 							this.currentreport.counts.total_illegal_type_count++;
-							break;
 						}
-						default:
-							break;
+						default -> { /**/ }
 					}
-					break;
 				}
-				case IElementDescriptor.METHOD: {
+				case IElementDescriptor.METHOD -> {
 					switch (visibility) {
-						case VisibilityModifiers.API: {
+						case VisibilityModifiers.API -> {
 							this.currentmember.counts.total_api_method_count++;
 							this.currenttype.counts.total_api_method_count++;
 							this.currentreferee.counts.total_api_method_count++;
 							this.currentreport.counts.total_api_method_count++;
-							break;
 						}
-						case VisibilityModifiers.PRIVATE: {
+						case VisibilityModifiers.PRIVATE -> {
 							this.currentmember.counts.total_private_method_count++;
 							this.currenttype.counts.total_private_method_count++;
 							this.currentreferee.counts.total_private_method_count++;
 							this.currentreport.counts.total_private_method_count++;
-							break;
 						}
-						case VisibilityModifiers.PRIVATE_PERMISSIBLE: {
+						case VisibilityModifiers.PRIVATE_PERMISSIBLE -> {
 							this.currentmember.counts.total_permissable_method_count++;
 							this.currenttype.counts.total_permissable_method_count++;
 							this.currentreferee.counts.total_permissable_method_count++;
 							this.currentreport.counts.total_permissable_method_count++;
-							break;
 						}
-						case FRAGMENT_PERMISSIBLE: {
+						case FRAGMENT_PERMISSIBLE -> {
 							this.currentmember.counts.total_fragment_permissible_method_count++;
 							this.currenttype.counts.total_fragment_permissible_method_count++;
 							this.currentreferee.counts.total_fragment_permissible_method_count++;
 							this.currentreport.counts.total_fragment_permissible_method_count++;
-							break;
 						}
-						case VisibilityModifiers.ILLEGAL_API: {
+						case VisibilityModifiers.ILLEGAL_API -> {
 							this.currentmember.counts.total_illegal_method_count++;
 							this.currenttype.counts.total_illegal_method_count++;
 							this.currentreferee.counts.total_illegal_method_count++;
 							this.currentreport.counts.total_illegal_method_count++;
-							break;
 						}
-						default:
-							break;
+						default -> { /**/ }
 					}
-					break;
 				}
-				case IElementDescriptor.FIELD: {
+				case IElementDescriptor.FIELD -> {
 					switch (visibility) {
-						case VisibilityModifiers.API: {
+						case VisibilityModifiers.API -> {
 							this.currentmember.counts.total_api_field_count++;
 							this.currenttype.counts.total_api_field_count++;
 							this.currentreferee.counts.total_api_field_count++;
 							this.currentreport.counts.total_api_field_count++;
-							break;
 						}
-						case VisibilityModifiers.PRIVATE: {
+						case VisibilityModifiers.PRIVATE -> {
 							this.currentmember.counts.total_private_field_count++;
 							this.currenttype.counts.total_private_field_count++;
 							this.currentreferee.counts.total_private_field_count++;
 							this.currentreport.counts.total_private_field_count++;
-							break;
 						}
-						case VisibilityModifiers.PRIVATE_PERMISSIBLE: {
+						case VisibilityModifiers.PRIVATE_PERMISSIBLE -> {
 							this.currentmember.counts.total_permissable_field_count++;
 							this.currenttype.counts.total_permissable_field_count++;
 							this.currentreferee.counts.total_permissable_field_count++;
 							this.currentreport.counts.total_permissable_field_count++;
-							break;
 						}
-						case FRAGMENT_PERMISSIBLE: {
+						case FRAGMENT_PERMISSIBLE -> {
 							this.currentmember.counts.total_fragment_permissible_field_count++;
 							this.currenttype.counts.total_fragment_permissible_field_count++;
 							this.currentreferee.counts.total_fragment_permissible_field_count++;
 							this.currentreport.counts.total_fragment_permissible_field_count++;
-							break;
 						}
-						case VisibilityModifiers.ILLEGAL_API: {
+						case VisibilityModifiers.ILLEGAL_API -> {
 							this.currentmember.counts.total_illegal_field_count++;
 							this.currenttype.counts.total_illegal_field_count++;
 							this.currentreferee.counts.total_illegal_field_count++;
 							this.currentreport.counts.total_illegal_field_count++;
-							break;
 						}
-						default:
-							break;
+						default -> { /**/ }
 					}
-					break;
 				}
-				default:
-					break;
+				default -> { /**/ }
 			}
 		}
 	}
@@ -1389,35 +1361,22 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @throws CoreException
 	 */
 	String getDisplayName(IElementDescriptor desc, boolean qualifiedparams, boolean qualified) throws CoreException {
-		String displayname = null;
-		switch (desc.getElementType()) {
-			case IElementDescriptor.TYPE: {
+		return switch (desc.getElementType()) {
+			case IElementDescriptor.TYPE ->  {
 				IReferenceTypeDescriptor rtype = (IReferenceTypeDescriptor) desc;
-				displayname = Signatures.getTypeSignature(rtype.getSignature(), rtype.getGenericSignature(), qualified);
-				break;
+				yield Signatures.getTypeSignature(rtype.getSignature(), rtype.getGenericSignature(), qualified);
 			}
-			case IElementDescriptor.METHOD: {
+			case IElementDescriptor.METHOD -> {
 				IMethodDescriptor method = (IMethodDescriptor) desc;
-				if (qualified) {
-					displayname = Signatures.getQualifiedMethodSignature(method, qualifiedparams, qualifiedparams);
-				} else {
-					displayname = Signatures.getMethodSignature(method, qualifiedparams);
-				}
-				break;
+				yield qualified ? Signatures.getQualifiedMethodSignature(method, qualifiedparams, qualifiedparams)
+						: Signatures.getMethodSignature(method, qualifiedparams);
 			}
-			case IElementDescriptor.FIELD: {
+			case IElementDescriptor.FIELD -> {
 				IFieldDescriptor field = (IFieldDescriptor) desc;
-				if (qualified) {
-					displayname = Signatures.getQualifiedFieldSignature(field);
-				} else {
-					displayname = field.getName();
-				}
-				break;
+				yield qualified ? Signatures.getQualifiedFieldSignature(field) : field.getName();
 			}
-			default:
-				break;
-		}
-		return displayname;
+			default -> null;
+		};
 	}
 
 	/**

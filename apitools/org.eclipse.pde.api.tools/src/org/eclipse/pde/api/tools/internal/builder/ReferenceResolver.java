@@ -126,19 +126,15 @@ public final class ReferenceResolver {
 		buffer.append(reference.getMember().getApiComponent().getSymbolicName());
 		buffer.append("#"); //$NON-NLS-1$
 		buffer.append(reference.getReferencedTypeName());
-		switch (reference.getReferenceType()) {
-			case IReference.T_FIELD_REFERENCE:
-				buffer.append("#"); //$NON-NLS-1$
-				buffer.append(reference.getReferencedMemberName());
-				break;
-			case IReference.T_METHOD_REFERENCE:
-				buffer.append("#"); //$NON-NLS-1$
-				buffer.append(reference.getReferencedMemberName());
-				buffer.append("#"); //$NON-NLS-1$
-				buffer.append(reference.getReferencedSignature());
-				break;
-			default:
-				break;
+		if (reference.getReferenceType() == IReference.T_FIELD_REFERENCE) {
+			buffer.append("#"); //$NON-NLS-1$
+			buffer.append(reference.getReferencedMemberName());
+
+		} else if (reference.getReferenceType() == IReference.T_METHOD_REFERENCE) {
+			buffer.append("#"); //$NON-NLS-1$
+			buffer.append(reference.getReferencedMemberName());
+			buffer.append("#"); //$NON-NLS-1$
+			buffer.append(reference.getReferencedSignature());
 		}
 		return buffer.toString();
 	}

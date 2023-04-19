@@ -224,134 +224,112 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			}
 			refs.add(new Reference(fromMember, lineNumber, visibility, formatMessages(reference.getProblemMessages())));
 			switch (fromMember.getElementType()) {
-				case IElementDescriptor.TYPE: {
+				case IElementDescriptor.TYPE -> {
 					switch (visibility) {
-						case VisibilityModifiers.API: {
+						case VisibilityModifiers.API -> {
 							this.consumer.counts.total_api_type_count++;
 							this.currentProducer.counts.total_api_type_count++;
 							this.currentmember.counts.total_api_type_count++;
 							this.currenttype.counts.total_api_type_count++;
-							break;
 						}
-						case VisibilityModifiers.PRIVATE: {
+						case VisibilityModifiers.PRIVATE -> {
 							this.consumer.counts.total_private_type_count++;
 							this.currentProducer.counts.total_private_type_count++;
 							this.currentmember.counts.total_private_type_count++;
 							this.currenttype.counts.total_private_type_count++;
-							break;
 						}
-						case VisibilityModifiers.PRIVATE_PERMISSIBLE: {
+						case VisibilityModifiers.PRIVATE_PERMISSIBLE -> {
 							this.consumer.counts.total_permissable_type_count++;
 							this.currentProducer.counts.total_permissable_type_count++;
 							this.currentmember.counts.total_permissable_type_count++;
 							this.currenttype.counts.total_permissable_type_count++;
-							break;
 						}
-						case FRAGMENT_PERMISSIBLE: {
+						case FRAGMENT_PERMISSIBLE -> {
 							this.consumer.counts.total_fragment_permissible_type_count++;
 							this.currentProducer.counts.total_fragment_permissible_type_count++;
 							this.currentmember.counts.total_fragment_permissible_type_count++;
 							this.currenttype.counts.total_fragment_permissible_type_count++;
-							break;
 						}
-						case VisibilityModifiers.ILLEGAL_API: {
+						case VisibilityModifiers.ILLEGAL_API -> {
 							this.consumer.counts.total_illegal_type_count++;
 							this.currentProducer.counts.total_illegal_type_count++;
 							this.currentmember.counts.total_illegal_type_count++;
 							this.currenttype.counts.total_illegal_type_count++;
-							break;
 						}
-						default:
-							break;
+						default -> { /**/ }
 					}
-					break;
 				}
-				case IElementDescriptor.METHOD: {
+				case IElementDescriptor.METHOD -> {
 					switch (visibility) {
-						case VisibilityModifiers.API: {
+						case VisibilityModifiers.API -> {
 							this.consumer.counts.total_api_method_count++;
 							this.currentProducer.counts.total_api_method_count++;
 							this.currentmember.counts.total_api_method_count++;
 							this.currenttype.counts.total_api_method_count++;
-							break;
 						}
-						case VisibilityModifiers.PRIVATE: {
+						case VisibilityModifiers.PRIVATE -> {
 							this.consumer.counts.total_private_method_count++;
 							this.currentProducer.counts.total_private_method_count++;
 							this.currentmember.counts.total_private_method_count++;
 							this.currenttype.counts.total_private_method_count++;
-							break;
 						}
-						case VisibilityModifiers.PRIVATE_PERMISSIBLE: {
+						case VisibilityModifiers.PRIVATE_PERMISSIBLE -> {
 							this.consumer.counts.total_permissable_method_count++;
 							this.currentProducer.counts.total_permissable_method_count++;
 							this.currentmember.counts.total_permissable_method_count++;
 							this.currenttype.counts.total_permissable_method_count++;
-							break;
 						}
-						case FRAGMENT_PERMISSIBLE: {
+						case FRAGMENT_PERMISSIBLE -> {
 							this.consumer.counts.total_fragment_permissible_method_count++;
 							this.currentProducer.counts.total_fragment_permissible_method_count++;
 							this.currentmember.counts.total_fragment_permissible_method_count++;
 							this.currenttype.counts.total_fragment_permissible_method_count++;
-							break;
 						}
-						case VisibilityModifiers.ILLEGAL_API: {
+						case VisibilityModifiers.ILLEGAL_API -> {
 							this.consumer.counts.total_illegal_method_count++;
 							this.currentProducer.counts.total_illegal_method_count++;
 							this.currentmember.counts.total_illegal_method_count++;
 							this.currenttype.counts.total_illegal_method_count++;
-							break;
 						}
-						default:
-							break;
+						default -> { /**/ }
 					}
-					break;
 				}
-				case IElementDescriptor.FIELD: {
+				case IElementDescriptor.FIELD -> {
 					switch (visibility) {
-						case VisibilityModifiers.API: {
+						case VisibilityModifiers.API -> {
 							this.consumer.counts.total_api_field_count++;
 							this.currentProducer.counts.total_api_field_count++;
 							this.currentmember.counts.total_api_field_count++;
 							this.currenttype.counts.total_api_field_count++;
-							break;
 						}
-						case VisibilityModifiers.PRIVATE: {
+						case VisibilityModifiers.PRIVATE -> {
 							this.consumer.counts.total_private_field_count++;
 							this.currentProducer.counts.total_private_field_count++;
 							this.currentmember.counts.total_private_field_count++;
 							this.currenttype.counts.total_private_field_count++;
-							break;
 						}
-						case VisibilityModifiers.PRIVATE_PERMISSIBLE: {
+						case VisibilityModifiers.PRIVATE_PERMISSIBLE -> {
 							this.consumer.counts.total_permissable_field_count++;
 							this.currentProducer.counts.total_permissable_field_count++;
 							this.currentmember.counts.total_permissable_field_count++;
 							this.currenttype.counts.total_permissable_field_count++;
-							break;
 						}
-						case FRAGMENT_PERMISSIBLE: {
+						case FRAGMENT_PERMISSIBLE -> {
 							this.consumer.counts.total_fragment_permissible_field_count++;
 							this.currentProducer.counts.total_fragment_permissible_field_count++;
 							this.currentmember.counts.total_fragment_permissible_field_count++;
 							this.currenttype.counts.total_fragment_permissible_field_count++;
-							break;
 						}
-						case VisibilityModifiers.ILLEGAL_API: {
+						case VisibilityModifiers.ILLEGAL_API -> {
 							this.consumer.counts.total_illegal_field_count++;
 							this.currentProducer.counts.total_illegal_field_count++;
 							this.currentmember.counts.total_illegal_field_count++;
 							this.currenttype.counts.total_illegal_field_count++;
-							break;
 						}
-						default:
-							break;
+						default -> { /**/ }
 					}
-					break;
 				}
-				default:
-					break;
+				default -> { /**/ }
 			}
 		}
 
@@ -381,18 +359,12 @@ public class ConsumerReportConvertor extends UseReportConverter {
 		 *         <code>null</code>
 		 */
 		private IReferenceTypeDescriptor getEnclosingDescriptor(IMemberDescriptor member) {
-			switch (member.getElementType()) {
-				case IElementDescriptor.TYPE: {
-					return (IReferenceTypeDescriptor) member;
-				}
-				case IElementDescriptor.METHOD:
-				case IElementDescriptor.FIELD: {
-					return member.getEnclosingType();
-				}
-				default:
-					break;
-			}
-			return null;
+			return switch (member.getElementType())
+				{
+				case IElementDescriptor.TYPE -> (IReferenceTypeDescriptor) member;
+				case IElementDescriptor.METHOD, IElementDescriptor.FIELD -> member.getEnclosingType();
+				default -> null;
+				};
 		}
 
 		/**

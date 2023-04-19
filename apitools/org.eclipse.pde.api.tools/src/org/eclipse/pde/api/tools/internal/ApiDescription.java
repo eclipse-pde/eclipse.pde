@@ -129,28 +129,23 @@ public class ApiDescription implements IApiDescription {
 			String type = null;
 			String name = null;
 			switch (element.getElementType()) {
-				case IElementDescriptor.FIELD: {
+				case IElementDescriptor.FIELD -> {
 					type = "Field"; //$NON-NLS-1$
 					name = ((IMemberDescriptor) element).getName();
-					break;
 				}
-				case IElementDescriptor.METHOD: {
+				case IElementDescriptor.METHOD -> {
 					type = "Method"; //$NON-NLS-1$
 					name = ((IMemberDescriptor) element).getName();
-					break;
 				}
-				case IElementDescriptor.PACKAGE: {
+				case IElementDescriptor.PACKAGE -> {
 					type = "Package"; //$NON-NLS-1$
 					name = ((IPackageDescriptor) element).getName();
-					break;
 				}
-				case IElementDescriptor.TYPE: {
+				case IElementDescriptor.TYPE -> {
 					type = "Type"; //$NON-NLS-1$
 					name = ((IMemberDescriptor) element).getName();
-					break;
 				}
-				default:
-					break;
+				default -> { /**/ }
 			}
 			StringBuilder buffer = new StringBuilder();
 			buffer.append(type == null ? "Unknown" : type).append(" Node: ").append(name == null ? "Unknown Name" : name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -214,16 +209,15 @@ public class ApiDescription implements IApiDescription {
 				return;
 			}
 			switch (element.getElementType()) {
-				case IElementDescriptor.METHOD: {
+				case IElementDescriptor.METHOD -> {
 					IMethodDescriptor md = (IMethodDescriptor) element;
 					Element method = document.createElement(IApiXmlConstants.ELEMENT_METHOD);
 					method.setAttribute(IApiXmlConstants.ATTR_NAME, md.getName());
 					method.setAttribute(IApiXmlConstants.ATTR_SIGNATURE, md.getSignature());
 					persistAnnotations(method);
 					parentElement.appendChild(method);
-					break;
 				}
-				case IElementDescriptor.FIELD: {
+				case IElementDescriptor.FIELD -> {
 					IFieldDescriptor fd = (IFieldDescriptor) element;
 					Element field = document.createElement(IApiXmlConstants.ELEMENT_FIELD);
 					field.setAttribute(IApiXmlConstants.ATTR_NAME, fd.getName());
@@ -231,8 +225,7 @@ public class ApiDescription implements IApiDescription {
 					parentElement.appendChild(field);
 					break;
 				}
-				default:
-					break;
+				default -> { /**/ }
 			}
 		}
 

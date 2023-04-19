@@ -207,13 +207,9 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		@Override
 		public void visitBaseType(char descriptor) {
-			switch (descriptor) {
-				case 'J':
-				case 'D':
-					argumentcount += 2;
-					break;
-				default:
-					this.argumentcount++;
+			argumentcount++;
+			if (descriptor == 'J' || descriptor == 'D') {
+				argumentcount++;
 			}
 		}
 
@@ -269,43 +265,20 @@ public class ReferenceExtractor extends ClassVisitor {
 		@Override
 		public void visitVarInsn(int opcode, int var) {
 			this.stringLiteral = null;
-			switch (opcode) {
-				case Opcodes.ASTORE: {
-					if (this.lastLineNumber != -1) {
-						this.localVariableMarker = new LocalLineNumberMarker(this.lastLineNumber, var);
-					}
-					break;
-				}
-				default: {
-					break;
-				}
+			if (opcode == Opcodes.ASTORE && this.lastLineNumber != -1) {
+				this.localVariableMarker = new LocalLineNumberMarker(this.lastLineNumber, var);
 			}
 		}
 
 		@Override
 		public void visitFieldInsn(int opcode, String owner, String name, String desc) {
-			int refType = -1;
-			switch (opcode) {
-				case Opcodes.PUTSTATIC: {
-					refType = IReference.REF_PUTSTATIC;
-					break;
-				}
-				case Opcodes.PUTFIELD: {
-					refType = IReference.REF_PUTFIELD;
-					break;
-				}
-				case Opcodes.GETSTATIC: {
-					refType = IReference.REF_GETSTATIC;
-					break;
-				}
-				case Opcodes.GETFIELD: {
-					refType = IReference.REF_GETFIELD;
-					break;
-				}
-				default: {
-					break;
-				}
-			}
+			int refType = switch (opcode) {
+				case Opcodes.PUTSTATIC -> IReference.REF_PUTSTATIC;
+				case Opcodes.PUTFIELD -> IReference.REF_PUTFIELD;
+				case Opcodes.GETSTATIC -> IReference.REF_GETSTATIC;
+				case Opcodes.GETFIELD -> IReference.REF_GETFIELD;
+				default -> -1;
+			};
 			if (refType != -1) {
 				Reference reference = ReferenceExtractor.this.addFieldReference(Type.getObjectType(owner), name, refType);
 				if (reference != null) {
@@ -351,7 +324,7 @@ public class ReferenceExtractor extends ClassVisitor {
 			int kind = -1;
 			int flags = 0;
 			switch (opcode) {
-				case Opcodes.INVOKESPECIAL: {
+				case Opcodes.INVOKESPECIAL -> {
 					kind = ("<init>".equals(name) ? IReference.REF_CONSTRUCTORMETHOD : IReference.REF_SPECIALMETHOD); //$NON-NLS-1$
 					if (kind == IReference.REF_CONSTRUCTORMETHOD) {
 						if (!implicitConstructor && this.methodName.equals("<init>") && !fSuperStack.isEmpty() && (fSuperStack.peek()).equals(declaringType.getClassName())) { //$NON-NLS-1$
@@ -364,9 +337,8 @@ public class ReferenceExtractor extends ClassVisitor {
 							}
 						}
 					}
-					break;
 				}
-				case Opcodes.INVOKESTATIC: {
+				case Opcodes.INVOKESTATIC -> {
 					kind = IReference.REF_STATICMETHOD;
 					// check for reference to a class literal
 					if (name.equals("forName")) { //$NON-NLS-1$
@@ -386,9 +358,8 @@ public class ReferenceExtractor extends ClassVisitor {
 							}
 						}
 					}
-					break;
 				}
-				case Opcodes.INVOKEVIRTUAL: {
+				case Opcodes.INVOKEVIRTUAL -> {
 					kind = IReference.REF_VIRTUALMETHOD;
 					// try to determine if this is a default method
 					if (fVersion >= Opcodes.V1_8) {
@@ -425,15 +396,11 @@ public class ReferenceExtractor extends ClassVisitor {
 							}
 						}
 					}
-					break;
 				}
-				case Opcodes.INVOKEINTERFACE: {
+				case Opcodes.INVOKEINTERFACE -> {
 					kind = IReference.REF_INTERFACEMETHOD;
-					break;
 				}
-				default: {
-					break;
-				}
+				default -> { /**/ }
 			}
 			if (kind != -1) {
 				Reference reference = ReferenceExtractor.this.addMethodReference(declaringType, name, desc, kind, flags);
@@ -517,19 +484,16 @@ public class ReferenceExtractor extends ClassVisitor {
 			Type type = this.getTypeFromDescription(desc);
 			int kind = -1;
 			switch (opcode) {
-				case Opcodes.ANEWARRAY: {
+				case Opcodes.ANEWARRAY -> {
 					kind = IReference.REF_ARRAYALLOC;
-					break;
 				}
-				case Opcodes.CHECKCAST: {
+				case Opcodes.CHECKCAST -> {
 					kind = IReference.REF_CHECKCAST;
-					break;
 				}
-				case Opcodes.INSTANCEOF: {
+				case Opcodes.INSTANCEOF -> {
 					kind = IReference.REF_INSTANCEOF;
-					break;
 				}
-				case Opcodes.NEW: {
+				case Opcodes.NEW -> {
 					// we can omit the NEW case as it is caught by the
 					// constructor call
 					// handle it only for anonymous / local types
@@ -539,11 +503,8 @@ public class ReferenceExtractor extends ClassVisitor {
 							this.linePositionTracker.addLocation(reference);
 						}
 					}
-					break;
 				}
-				default: {
-					break;
-				}
+				default -> { /**/ }
 			}
 			if (kind != -1) {
 				Reference reference = ReferenceExtractor.this.addTypeReference(type, kind);

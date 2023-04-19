@@ -119,25 +119,19 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 
 	@Override
 	public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
-		switch (element.getElementType()) {
-			case IElementDescriptor.PACKAGE: {
-				// A null package indicates there was an override for the
-				// package in a different context.
-				// Package rules are stored in the manifest, not the API
-				// description file.
-				// No need to add empty packages.
-				if (fPackage != null && fPackage.hasChildNodes()) {
-					fComponent.appendChild(fPackage);
-				}
-				fPackage = null;
-				break;
+		int elementType = element.getElementType();
+		if (elementType == IElementDescriptor.PACKAGE) {
+			// A null package indicates there was an override for the
+			// package in a different context.
+			// Package rules are stored in the manifest, not the API
+			// description file.
+			// No need to add empty packages.
+			if (fPackage != null && fPackage.hasChildNodes()) {
+				fComponent.appendChild(fPackage);
 			}
-			case IElementDescriptor.TYPE: {
-				fTypeStack.pop();
-				break;
-			}
-			default:
-				break;
+			fPackage = null;
+		} else if (elementType == IElementDescriptor.TYPE) {
+			fTypeStack.pop();
 		}
 	}
 

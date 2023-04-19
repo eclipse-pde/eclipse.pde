@@ -108,18 +108,11 @@ public class MissingRefReportConverter extends UseReportConverter {
 					key = entry.getKey();
 					types = entry.getValue();
 					switch (key.intValue()) {
-						case IApiProblem.API_USE_SCAN_TYPE_PROBLEM:
-							typeProblems.append(getProblemTable(types));
-							break;
-						case IApiProblem.API_USE_SCAN_METHOD_PROBLEM:
-							methodProblems.append(getProblemTable(types));
-							break;
-						case IApiProblem.API_USE_SCAN_FIELD_PROBLEM:
-							fieldProblems.append(getProblemTable(types));
-							break;
-						default:
-							break;
-					}
+						case IApiProblem.API_USE_SCAN_TYPE_PROBLEM -> typeProblems.append(getProblemTable(types));
+						case IApiProblem.API_USE_SCAN_METHOD_PROBLEM -> methodProblems.append(getProblemTable(types));
+						case IApiProblem.API_USE_SCAN_FIELD_PROBLEM -> fieldProblems.append(getProblemTable(types));
+						default -> { /**/ }
+						}
 				}
 				buffer.append(getProblemsTableHeader(SearchMessages.MissingRefReportConverter_ProblemDetails, SearchMessages.MissingRefReportConverter_ProblemTypes));
 				if (typeProblems.length() > 0) {
@@ -274,17 +267,10 @@ public class MissingRefReportConverter extends UseReportConverter {
 				}
 				list.add(pb);
 				switch (pb.getKind()) {
-					case 1:
-						++typeProblems;
-						break;
-					case 2:
-						++methodProblems;
-						break;
-					case 3:
-						++fieldProblems;
-						break;
-					default:
-						break;
+					case 1 -> ++typeProblems;
+					case 2 -> ++methodProblems;
+					case 3 -> ++fieldProblems;
+					default -> { /**/ }
 				}
 			}
 		}
