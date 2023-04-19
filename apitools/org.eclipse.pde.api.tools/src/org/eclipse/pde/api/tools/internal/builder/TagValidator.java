@@ -137,12 +137,11 @@ public class TagValidator extends Validator {
 			return;
 		}
 		switch (node.getNodeType()) {
-			case ASTNode.TYPE_DECLARATION: {
+			case ASTNode.TYPE_DECLARATION -> {
 				TypeDeclaration type = (TypeDeclaration) node;
 				processTypeNode(type, tags);
-				break;
 			}
-			case ASTNode.ENUM_DECLARATION: {
+			case ASTNode.ENUM_DECLARATION -> {
 				Item item = getItem();
 				Set<String> supported = getSupportedTagNames(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_NONE);
 				HashSet<String> processed = new HashSet<>();
@@ -160,9 +159,8 @@ public class TagValidator extends Validator {
 					}
 					processed.add(tagname);
 				}
-				break;
 			}
-			case ASTNode.ENUM_CONSTANT_DECLARATION: {
+			case ASTNode.ENUM_CONSTANT_DECLARATION -> {
 				Item item = getItem();
 				for (TagElement tag : tags) {
 					String tagname = tag.getTagName();
@@ -171,9 +169,8 @@ public class TagValidator extends Validator {
 					}
 					createTagProblem(item.typename, tag, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_an_enum_constant);
 				}
-				break;
 			}
-			case ASTNode.ANNOTATION_TYPE_DECLARATION: {
+			case ASTNode.ANNOTATION_TYPE_DECLARATION -> {
 				Item item = getItem();
 				Set<String> supported = getSupportedTagNames(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_NONE);
 				HashSet<String> processed = new HashSet<>();
@@ -191,14 +188,12 @@ public class TagValidator extends Validator {
 					}
 					processed.add(tagname);
 				}
-				break;
 			}
-			case ASTNode.METHOD_DECLARATION: {
+			case ASTNode.METHOD_DECLARATION -> {
 				MethodDeclaration method = (MethodDeclaration) node;
 				processMethodNode(method, tags);
-				break;
 			}
-			case ASTNode.ANNOTATION_TYPE_MEMBER_DECLARATION: {
+			case ASTNode.ANNOTATION_TYPE_MEMBER_DECLARATION -> {
 				Item item = getItem();
 				for (TagElement tag : tags) {
 					String tagname = tag.getTagName();
@@ -207,15 +202,12 @@ public class TagValidator extends Validator {
 					}
 					createTagProblem(item.typename, tag, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_an_annotation_method);
 				}
-				break;
 			}
-			case ASTNode.FIELD_DECLARATION: {
+			case ASTNode.FIELD_DECLARATION -> {
 				FieldDeclaration field = (FieldDeclaration) node;
 				processFieldNode(field, tags);
-				break;
 			}
-			default:
-				break;
+			default -> { /**/ }
 		}
 	}
 
@@ -289,11 +281,8 @@ public class TagValidator extends Validator {
 				boolean ispackage = Flags.isPackageDefault(flags);
 				Set<String> supportedtags = getSupportedTagNames(pkind, IApiJavadocTag.MEMBER_FIELD);
 				switch (pkind) {
-					case IApiJavadocTag.TYPE_ANNOTATION: {
-						createTagProblem(item.typename, tag, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_annotation_field);
-						break;
-					}
-					case IApiJavadocTag.TYPE_ENUM: {
+					case IApiJavadocTag.TYPE_ANNOTATION -> createTagProblem(item.typename, tag, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_annotation_field);
+					case IApiJavadocTag.TYPE_ENUM -> {
 						if (!supportedtags.contains(tagname)) {
 							createTagProblem(item.typename, tag, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_enum_field);
 						} else if (isprivate) {
@@ -301,17 +290,15 @@ public class TagValidator extends Validator {
 						} else if (!item.visible) {
 							createTagProblem(item.typename, tag, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_not_visible_enum_field);
 						}
-						break;
 					}
-					case IApiJavadocTag.TYPE_INTERFACE: {
+					case IApiJavadocTag.TYPE_INTERFACE -> {
 						if (!supportedtags.contains(tagname)) {
 							createTagProblem(item.typename, tag, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_an_interface_field);
 						} else if (!item.visible) {
 							createTagProblem(item.typename, tag, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_not_visible_interface_field);
 						}
-						break;
 					}
-					case IApiJavadocTag.TYPE_CLASS: {
+					case IApiJavadocTag.TYPE_CLASS -> {
 						if (!supportedtags.contains(tagname)) {
 							createTagProblem(item.typename, tag, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_a_field);
 						} else if (isprivate) {
@@ -321,11 +308,8 @@ public class TagValidator extends Validator {
 						} else if (!item.visible) {
 							createTagProblem(item.typename, tag, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_a_field_that_is_not_visible);
 						}
-						break;
 					}
-					default: {
-						break;
-					}
+					default -> { /**/ }
 				}
 			}
 			processed.add(tagname);
@@ -356,7 +340,7 @@ public class TagValidator extends Validator {
 				createTagProblem(item.typename, tag, IElementDescriptor.METHOD, IApiProblem.DUPLICATE_TAG_USE, IApiMarkerConstants.DUPLICATE_TAG_MARKER_ID, null);
 			} else {
 				switch (pkind) {
-					case IApiJavadocTag.TYPE_ENUM: {
+					case IApiJavadocTag.TYPE_ENUM -> {
 						if (!supportedtags.contains(tagname)) {
 							createTagProblem(item.typename, tag, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_an_enum_method);
 						} else if (Flags.isPrivate(mods)) {
@@ -366,9 +350,8 @@ public class TagValidator extends Validator {
 						} else if (!item.visible) {
 							createTagProblem(item.typename, tag, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_not_visible_enum_method);
 						}
-						break;
 					}
-					case IApiJavadocTag.TYPE_INTERFACE: {
+					case IApiJavadocTag.TYPE_INTERFACE -> {
 						if (!supportedtags.contains(tagname)) {
 							createTagProblem(item.typename, tag, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_an_interface_method);
 						} else if (!item.visible) {
@@ -376,9 +359,8 @@ public class TagValidator extends Validator {
 						} else if (!Flags.isDefaultMethod(mods) && JavadocTagManager.TAG_NOOVERRIDE.equals(tagname)) {
 							createTagProblem(item.typename, tag, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, BuilderMessages.TagValidator_nondefault_interface_method);
 						}
-						break;
 					}
-					case IApiJavadocTag.TYPE_CLASS: {
+					case IApiJavadocTag.TYPE_CLASS -> {
 						if (!supportedtags.contains(tagname)) {
 							createTagProblem(item.typename, tag, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, isconstructor ? BuilderMessages.TagValidator_a_constructor : BuilderMessages.TagValidator_a_method);
 						} else if (Flags.isPrivate(mods)) {
@@ -406,11 +388,8 @@ public class TagValidator extends Validator {
 						} else if (!item.visible) {
 							createTagProblem(item.typename, tag, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, isconstructor ? BuilderMessages.TagValidator_not_visible_constructor : BuilderMessages.TagValidator_a_method_that_is_not_visible);
 						}
-						break;
 					}
-					default: {
-						break;
-					}
+					default -> { /**/ }
 				}
 			}
 			processed.add(tagname);
@@ -478,38 +457,20 @@ public class TagValidator extends Validator {
 		if (JavadocTagManager.ALL_ANNOTATIONS.contains(name)) {
 			ASTNode parent = node.getParent();
 			switch (parent.getNodeType()) {
-				case ASTNode.TYPE_DECLARATION: {
-					checkType(node, (TypeDeclaration) node.getParent());
-					break;
-				}
-				case ASTNode.ENUM_DECLARATION: {
-					checkEnum(node, (EnumDeclaration) parent);
-					break;
-				}
-				case ASTNode.ENUM_CONSTANT_DECLARATION: {
-					Item item = getItem();
-					createAnnotationProblem(item.typename, node, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, BuilderMessages.TagValidator_an_enum_constant);
-					break;
-				}
-				case ASTNode.ANNOTATION_TYPE_DECLARATION: {
-					checkAnnotation(node, (AnnotationTypeDeclaration) parent);
-					break;
-				}
-				case ASTNode.ANNOTATION_TYPE_MEMBER_DECLARATION: {
-					Item item = getItem();
-					createAnnotationProblem(item.typename, node, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, BuilderMessages.TagValidator_an_annotation_method);
-					break;
-				}
-				case ASTNode.FIELD_DECLARATION: {
-					checkField(node, (FieldDeclaration) parent);
-					break;
-				}
-				case ASTNode.METHOD_DECLARATION: {
-					checkMethod(node, (MethodDeclaration) parent);
-					break;
-				}
-				default:
-					break;
+				case ASTNode.TYPE_DECLARATION -> checkType(node, (TypeDeclaration) node.getParent());
+				case ASTNode.ENUM_DECLARATION -> checkEnum(node, (EnumDeclaration) parent);
+				case ASTNode.ENUM_CONSTANT_DECLARATION -> createAnnotationProblem(getItem().typename, node,
+						IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_ANNOTATION_USE,
+						IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID,
+						BuilderMessages.TagValidator_an_enum_constant);
+				case ASTNode.ANNOTATION_TYPE_DECLARATION -> checkAnnotation(node, (AnnotationTypeDeclaration) parent);
+				case ASTNode.ANNOTATION_TYPE_MEMBER_DECLARATION -> createAnnotationProblem(getItem().typename, node,
+						IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_ANNOTATION_USE,
+						IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID,
+						BuilderMessages.TagValidator_an_annotation_method);
+				case ASTNode.FIELD_DECLARATION -> checkField(node, (FieldDeclaration) parent);
+				case ASTNode.METHOD_DECLARATION -> checkMethod(node, (MethodDeclaration) parent);
+				default -> { /**/ }
 			}
 		}
 		return false;
@@ -616,11 +577,10 @@ public class TagValidator extends Validator {
 			boolean ispackage = Flags.isPackageDefault(flags);
 			Set<String> supportedtags = ApiPlugin.getJavadocTagManager().getAnntationsForType(pkind, IApiJavadocTag.MEMBER_FIELD);
 			switch (pkind) {
-				case IApiJavadocTag.TYPE_ANNOTATION: {
+				case IApiJavadocTag.TYPE_ANNOTATION -> {
 					createAnnotationProblem(item.typename, node, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, BuilderMessages.TagValidator_annotation_field);
-					break;
 				}
-				case IApiJavadocTag.TYPE_ENUM: {
+				case IApiJavadocTag.TYPE_ENUM -> {
 					if (!supportedtags.contains(name)) {
 						createAnnotationProblem(item.typename, node, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, BuilderMessages.TagValidator_enum_field);
 					} else if (isprivate) {
@@ -628,17 +588,15 @@ public class TagValidator extends Validator {
 					} else if (!item.visible) {
 						createAnnotationProblem(item.typename, node, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, BuilderMessages.TagValidator_not_visible_enum_field);
 					}
-					break;
 				}
-				case IApiJavadocTag.TYPE_INTERFACE: {
+				case IApiJavadocTag.TYPE_INTERFACE -> {
 					if (!supportedtags.contains(name)) {
 						createAnnotationProblem(item.typename, node, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, BuilderMessages.TagValidator_an_interface_field);
 					} else if (!item.visible) {
 						createAnnotationProblem(item.typename, node, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, BuilderMessages.TagValidator_not_visible_interface_field);
 					}
-					break;
 				}
-				case IApiJavadocTag.TYPE_CLASS: {
+				case IApiJavadocTag.TYPE_CLASS -> {
 					if (!supportedtags.contains(name)) {
 						createAnnotationProblem(item.typename, node, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, BuilderMessages.TagValidator_a_field);
 					} else if (isprivate) {
@@ -648,11 +606,8 @@ public class TagValidator extends Validator {
 					} else if (!item.visible) {
 						createAnnotationProblem(item.typename, node, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, BuilderMessages.TagValidator_a_field_that_is_not_visible);
 					}
-					break;
 				}
-				default: {
-					break;
-				}
+				default -> { /**/ }
 			}
 			fProcessedAnnotations.add(name);
 		}
@@ -675,7 +630,7 @@ public class TagValidator extends Validator {
 			createAnnotationProblem(item.typename, node, IElementDescriptor.METHOD, IApiProblem.DUPLICATE_ANNOTATION_USE, IApiMarkerConstants.DUPLICATE_ANNOTATION_MARKER_ID, null);
 		} else {
 			switch (pkind) {
-				case IApiJavadocTag.TYPE_ENUM: {
+				case IApiJavadocTag.TYPE_ENUM -> {
 					if (!supportedtags.contains(name)) {
 						createAnnotationProblem(item.typename, node, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, BuilderMessages.TagValidator_an_enum_method);
 					} else if (Flags.isPrivate(flags)) {
@@ -685,9 +640,8 @@ public class TagValidator extends Validator {
 					} else if (!item.visible) {
 						createAnnotationProblem(item.typename, node, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, BuilderMessages.TagValidator_not_visible_enum_method);
 					}
-					break;
 				}
-				case IApiJavadocTag.TYPE_INTERFACE: {
+				case IApiJavadocTag.TYPE_INTERFACE -> {
 					if (!supportedtags.contains(name)) {
 						createAnnotationProblem(item.typename, node, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, BuilderMessages.TagValidator_an_interface_method);
 					} else if (!item.visible) {
@@ -695,9 +649,8 @@ public class TagValidator extends Validator {
 					} else if (!Flags.isDefaultMethod(flags) && JavadocTagManager.ANNOTATION_NOOVERRIDE.equals(name)) {
 						createAnnotationProblem(item.typename, node, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, BuilderMessages.TagValidator_nondefault_interface_method);
 					}
-					break;
 				}
-				case IApiJavadocTag.TYPE_CLASS: {
+				case IApiJavadocTag.TYPE_CLASS -> {
 					if (!supportedtags.contains(name)) {
 						createAnnotationProblem(item.typename, node, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, isconstructor ? BuilderMessages.TagValidator_a_constructor : BuilderMessages.TagValidator_a_method);
 					} else if (Flags.isPrivate(flags)) {
@@ -725,11 +678,8 @@ public class TagValidator extends Validator {
 					} else if (!item.visible) {
 						createAnnotationProblem(item.typename, node, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, isconstructor ? BuilderMessages.TagValidator_not_visible_constructor : BuilderMessages.TagValidator_a_method_that_is_not_visible);
 					}
-					break;
 				}
-				default: {
-					break;
-				}
+				default -> { /**/ }
 			}
 		}
 		fProcessedAnnotations.add(name);

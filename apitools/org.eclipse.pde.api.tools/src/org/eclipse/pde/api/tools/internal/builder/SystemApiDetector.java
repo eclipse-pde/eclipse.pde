@@ -66,16 +66,13 @@ public class SystemApiDetector extends AbstractProblemDetector {
 	@Override
 	protected int getElementType(IReference reference) {
 		IApiMember member = reference.getMember();
-		switch (member.getType()) {
-			case IApiElement.TYPE:
-				return IElementDescriptor.TYPE;
-			case IApiElement.METHOD:
-				return IElementDescriptor.METHOD;
-			case IApiElement.FIELD:
-				return IElementDescriptor.FIELD;
-			default:
-				return 0;
-		}
+		return switch (member.getType())
+			{
+			case IApiElement.TYPE -> IElementDescriptor.TYPE;
+			case IApiElement.METHOD -> IElementDescriptor.METHOD;
+			case IApiElement.FIELD -> IElementDescriptor.FIELD;
+			default -> 0;
+			};
 	}
 
 	@Override
@@ -86,35 +83,28 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		if (simpleTypeName.indexOf('$') != -1) {
 			simpleTypeName = simpleTypeName.replace('$', '.');
 		}
-		switch (reference.getReferenceType()) {
-			case IReference.T_TYPE_REFERENCE: {
-				return new String[] {
+		return switch (reference.getReferenceType())
+			{
+			case IReference.T_TYPE_REFERENCE -> new String[] {
 						getDisplay(member, false), simpleTypeName, eeValue, };
-			}
-			case IReference.T_FIELD_REFERENCE: {
-				return new String[] {
+			case IReference.T_FIELD_REFERENCE -> new String[] {
 						getDisplay(member, false), simpleTypeName,
 						reference.getReferencedMemberName(), eeValue, };
-			}
-			case IReference.T_METHOD_REFERENCE: {
+			case IReference.T_METHOD_REFERENCE -> {
 				String referenceMemberName = reference.getReferencedMemberName();
-				if (Util.isConstructor(referenceMemberName)) {
-					return new String[] {
+				yield Util.isConstructor(referenceMemberName) ? new String[] {
 							getDisplay(member, false),
 							Signature.toString(reference.getReferencedSignature(), simpleTypeName, null, false, false),
-							eeValue, };
-				} else {
-					return new String[] {
+						eeValue, }
+						: new String[] {
 							getDisplay(member, false),
 							simpleTypeName,
 							Signature.toString(reference.getReferencedSignature(), referenceMemberName, null, false, false),
 							eeValue, };
 				}
-			}
-			default:
-				break;
-		}
-		return null;
+			default -> null;
+			};
+
 	}
 
 	/**
@@ -131,46 +121,35 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		if (typeName.indexOf('$') != -1) {
 			typeName = typeName.replace('$', '.');
 		}
-		switch (member.getType()) {
-			case IApiElement.FIELD: {
+		return switch (member.getType())
+			{
+			case IApiElement.FIELD -> {
 				StringBuilder buffer = new StringBuilder();
 				IApiField field = (IApiField) member;
 				buffer.append(typeName).append('.').append(field.getName());
-				return String.valueOf(buffer);
+				yield String.valueOf(buffer);
 			}
-			case IApiElement.METHOD: {
+			case IApiElement.METHOD -> {
 				// reference in a method declaration
 				IApiMethod method = (IApiMethod) member;
-				if (qualified) {
-					return Signatures.getMethodSignature(method);
-				}
-				return Signatures.getQualifiedMethodSignature(method);
+				yield qualified ? Signatures.getMethodSignature(method)
+						: Signatures.getQualifiedMethodSignature(method);
 			}
-			default:
-				break;
-		}
-		return typeName;
+			default -> typeName;
+			};
 	}
 
 	@Override
 	protected int getProblemFlags(IReference reference) {
-		switch (reference.getReferenceType()) {
-			case IReference.T_TYPE_REFERENCE: {
-				return IApiProblem.NO_FLAGS;
-			}
-			case IReference.T_METHOD_REFERENCE: {
-				if (Util.isConstructor(reference.getReferencedMemberName())) {
-					return IApiProblem.CONSTRUCTOR_METHOD;
-				}
-				return IApiProblem.METHOD;
-			}
-			case IReference.T_FIELD_REFERENCE: {
-				return IApiProblem.FIELD;
-			}
-			default: {
-				return IApiProblem.NO_FLAGS;
-			}
-		}
+		return switch (reference.getReferenceType())
+			{
+			case IReference.T_TYPE_REFERENCE -> IApiProblem.NO_FLAGS;
+			case IReference.T_METHOD_REFERENCE -> Util.isConstructor(reference.getReferencedMemberName())
+					? IApiProblem.CONSTRUCTOR_METHOD
+					: IApiProblem.METHOD;
+			case IReference.T_FIELD_REFERENCE -> IApiProblem.FIELD;
+			default -> IApiProblem.NO_FLAGS;
+			};
 	}
 
 	@Override
@@ -186,35 +165,33 @@ public class SystemApiDetector extends AbstractProblemDetector {
 		if (simpleTypeName.indexOf('$') != -1) {
 			simpleTypeName = simpleTypeName.replace('$', '.');
 		}
-		switch (reference.getReferenceType()) {
-			case IReference.T_TYPE_REFERENCE: {
-				return new String[] {
+		return switch (reference.getReferenceType()) {
+			case IReference.T_TYPE_REFERENCE -> {
+				yield new String[] {
 						getDisplay(member, false), simpleTypeName, eeValue, };
 			}
-			case IReference.T_FIELD_REFERENCE: {
-				return new String[] {
+			case IReference.T_FIELD_REFERENCE -> {
+				yield new String[] {
 						getDisplay(member, false), simpleTypeName,
 						reference.getReferencedMemberName(), eeValue, };
 			}
-			case IReference.T_METHOD_REFERENCE: {
+			case IReference.T_METHOD_REFERENCE -> {
 				String referenceMemberName = reference.getReferencedMemberName();
 				if (Util.isConstructor(referenceMemberName)) {
-					return new String[] {
+					yield new String[] {
 							getDisplay(member, false),
 							Signature.toString(reference.getReferencedSignature(), simpleTypeName, null, false, false),
 							eeValue, };
 				} else {
-					return new String[] {
+					yield new String[] {
 							getDisplay(member, false),
 							simpleTypeName,
 							Signature.toString(reference.getReferencedSignature(), referenceMemberName, null, false, false),
 							eeValue, };
 				}
 			}
-			default:
-				break;
-		}
-		return null;
+			default -> null;
+			};
 	}
 
 	@Override
@@ -224,8 +201,9 @@ public class SystemApiDetector extends AbstractProblemDetector {
 
 	@Override
 	protected Position getSourceRange(IType type, IDocument document, IReference reference) throws CoreException, BadLocationException {
-		switch (reference.getReferenceType()) {
-			case IReference.T_TYPE_REFERENCE: {
+		return switch (reference.getReferenceType())
+			{
+			case IReference.T_TYPE_REFERENCE -> {
 				int linenumber = reference.getLineNumber();
 				if (linenumber > 0) {
 					// line number starts at 0 for the
@@ -251,21 +229,20 @@ public class SystemApiDetector extends AbstractProblemDetector {
 						// the first occurrence
 						pos = new Position(offset, line.length());
 					}
-					return pos;
+					yield pos;
 				} else {
 					IApiMember apiMember = reference.getMember();
 					switch (apiMember.getType()) {
-						case IApiElement.FIELD: {
+						case IApiElement.FIELD -> {
 							IApiField field = (IApiField) reference.getMember();
-							return getSourceRangeForField(type, reference, field);
+							yield getSourceRangeForField(type, reference, field);
 						}
-						case IApiElement.METHOD: {
+						case IApiElement.METHOD -> {
 							// reference in a method declaration
 							IApiMethod method = (IApiMethod) reference.getMember();
-							return getSourceRangeForMethod(type, reference, method);
+							yield getSourceRangeForMethod(type, reference, method);
 						}
-						default:
-							break;
+						default -> { /**/ }
 					}
 					// reference in a type declaration
 					ISourceRange range = type.getNameRange();
@@ -274,21 +251,22 @@ public class SystemApiDetector extends AbstractProblemDetector {
 						pos = new Position(range.getOffset(), range.getLength());
 					}
 					if (pos == null) {
-						return defaultSourcePosition(type, reference);
+						yield defaultSourcePosition(type, reference);
 					}
-					return pos;
+					yield pos;
 				}
 			}
-			case IReference.T_FIELD_REFERENCE: {
+			case IReference.T_FIELD_REFERENCE -> {
 				int linenumber = reference.getLineNumber();
 				if (linenumber > 0) {
-					return getFieldNameRange(reference.getReferencedTypeName(), reference.getReferencedMemberName(), document, reference);
+					yield getFieldNameRange(reference.getReferencedTypeName(), reference.getReferencedMemberName(),
+							document, reference);
 				}
 				// reference in a field declaration
 				IApiField field = (IApiField) reference.getMember();
-				return getSourceRangeForField(type, reference, field);
+				yield getSourceRangeForField(type, reference, field);
 			}
-			case IReference.T_METHOD_REFERENCE: {
+			case IReference.T_METHOD_REFERENCE -> {
 				if (reference.getLineNumber() >= 0) {
 					String referenceMemberName = reference.getReferencedMemberName();
 					String methodName = null;
@@ -300,17 +278,16 @@ public class SystemApiDetector extends AbstractProblemDetector {
 					}
 					Position pos = getMethodNameRange(isConstructor, methodName, document, reference);
 					if (pos == null) {
-						return defaultSourcePosition(type, reference);
+						yield defaultSourcePosition(type, reference);
 					}
-					return pos;
+					yield pos;
 				}
 				// reference in a method declaration
 				IApiMethod method = (IApiMethod) reference.getMember();
-				return getSourceRangeForMethod(type, reference, method);
+				yield getSourceRangeForMethod(type, reference, method);
 			}
-			default:
-				return null;
-		}
+			default -> null;
+			};
 	}
 
 	@Override

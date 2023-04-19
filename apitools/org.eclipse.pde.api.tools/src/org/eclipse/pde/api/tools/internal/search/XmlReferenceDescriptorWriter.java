@@ -197,17 +197,13 @@ public class XmlReferenceDescriptorWriter {
 	 * @return
 	 */
 	private String getRefTypeName(int type) {
-		switch (type) {
-			case IReference.T_TYPE_REFERENCE:
-				return TYPE_REFERENCES;
-			case IReference.T_METHOD_REFERENCE:
-				return METHOD_REFERENCES;
-			case IReference.T_FIELD_REFERENCE:
-				return FIELD_REFERENCES;
-			default:
-				break;
-		}
-		return "unknown_reference_kinds"; //$NON-NLS-1$
+		return switch (type)
+			{
+			case IReference.T_TYPE_REFERENCE -> TYPE_REFERENCES;
+			case IReference.T_METHOD_REFERENCE -> METHOD_REFERENCES;
+			case IReference.T_FIELD_REFERENCE -> FIELD_REFERENCES;
+			default -> "unknown_reference_kinds"; //$NON-NLS-1$
+			};
 	}
 
 	/**
@@ -340,22 +336,20 @@ public class XmlReferenceDescriptorWriter {
 	 */
 	private void addMemberDetails(Element element, IMemberDescriptor member) {
 		switch (member.getElementType()) {
-			case IElementDescriptor.TYPE:
-				element.setAttribute(IApiXmlConstants.ATTR_TYPE, ((IReferenceTypeDescriptor) member).getQualifiedName());
-				break;
-			case IElementDescriptor.FIELD:
+			case IElementDescriptor.TYPE -> element.setAttribute(IApiXmlConstants.ATTR_TYPE,
+					((IReferenceTypeDescriptor) member).getQualifiedName());
+			case IElementDescriptor.FIELD -> {
 				IReferenceTypeDescriptor encl = member.getEnclosingType();
 				element.setAttribute(IApiXmlConstants.ATTR_TYPE, encl.getQualifiedName());
 				element.setAttribute(IApiXmlConstants.ATTR_MEMBER_NAME, member.getName());
-				break;
-			case IElementDescriptor.METHOD:
-				encl = member.getEnclosingType();
+			}
+			case IElementDescriptor.METHOD -> {
+				IReferenceTypeDescriptor encl = member.getEnclosingType();
 				element.setAttribute(IApiXmlConstants.ATTR_TYPE, encl.getQualifiedName());
 				element.setAttribute(IApiXmlConstants.ATTR_MEMBER_NAME, member.getName());
 				element.setAttribute(IApiXmlConstants.ATTR_SIGNATURE, ((IMethodDescriptor) member).getSignature());
-				break;
-			default:
-				break;
+			}
+			default -> { /**/ }
 		}
 	}
 
@@ -462,17 +456,13 @@ public class XmlReferenceDescriptorWriter {
 	 * @throws CoreException
 	 */
 	private String getText(IMemberDescriptor member) throws CoreException {
-		switch (member.getElementType()) {
-			case IElementDescriptor.TYPE:
-				return Signatures.getQualifiedTypeSignature((IReferenceTypeDescriptor) member);
-			case IElementDescriptor.METHOD:
-				return Signatures.getQualifiedMethodSignature((IMethodDescriptor) member);
-			case IElementDescriptor.FIELD:
-				return Signatures.getQualifiedFieldSignature((IFieldDescriptor) member);
-			default:
-				break;
-		}
-		return null;
+		return switch (member.getElementType())
+			{
+			case IElementDescriptor.TYPE -> Signatures.getQualifiedTypeSignature((IReferenceTypeDescriptor) member);
+			case IElementDescriptor.METHOD -> Signatures.getQualifiedMethodSignature((IMethodDescriptor) member);
+			case IElementDescriptor.FIELD -> Signatures.getQualifiedFieldSignature((IFieldDescriptor) member);
+			default -> null;
+			};
 	}
 
 	/**

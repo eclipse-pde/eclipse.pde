@@ -35,12 +35,7 @@ public class NonApiProjectDescription extends ProjectApiDescription {
 
 	@Override
 	protected boolean isInsertOnResolve(IElementDescriptor elementDescriptor) {
-		switch (elementDescriptor.getElementType()) {
-			case IElementDescriptor.PACKAGE:
-				return true;
-			default:
-				return false;
-		}
+		return elementDescriptor.getElementType() == IElementDescriptor.PACKAGE;
 	}
 
 }

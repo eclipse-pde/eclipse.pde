@@ -156,29 +156,25 @@ public abstract class Validator extends ASTVisitor {
 	 * @return the fully qualified name of the parent
 	 */
 	protected String getTypeName(ASTNode node, StringBuilder buffer) {
-		switch (node.getNodeType()) {
-			case ASTNode.COMPILATION_UNIT: {
-				CompilationUnit unit = (CompilationUnit) node;
-				PackageDeclaration packageDeclaration = unit.getPackage();
-				if (packageDeclaration != null) {
-					buffer.insert(0, '.');
-					buffer.insert(0, packageDeclaration.getName().getFullyQualifiedName());
-				}
-				return String.valueOf(buffer);
+		if (node.getNodeType() == ASTNode.COMPILATION_UNIT) {
+			CompilationUnit unit = (CompilationUnit) node;
+			PackageDeclaration packageDeclaration = unit.getPackage();
+			if (packageDeclaration != null) {
+				buffer.insert(0, '.');
+				buffer.insert(0, packageDeclaration.getName().getFullyQualifiedName());
 			}
-			default: {
-				if (node instanceof AbstractTypeDeclaration) {
-					AbstractTypeDeclaration typeDeclaration = (AbstractTypeDeclaration) node;
-					if (typeDeclaration.isPackageMemberTypeDeclaration()) {
-						buffer.insert(0, typeDeclaration.getName().getIdentifier());
-					} else {
-						buffer.insert(0, typeDeclaration.getName().getFullyQualifiedName());
-						buffer.insert(0, '$');
-					}
+			return buffer.toString();
+		} else {
+			if (node instanceof AbstractTypeDeclaration typeDeclaration) {
+				if (typeDeclaration.isPackageMemberTypeDeclaration()) {
+					buffer.insert(0, typeDeclaration.getName().getIdentifier());
+				} else {
+					buffer.insert(0, typeDeclaration.getName().getFullyQualifiedName());
+					buffer.insert(0, '$');
 				}
 			}
+			return getTypeName(node.getParent(), buffer);
 		}
-		return getTypeName(node.getParent(), buffer);
 	}
 
 	/**

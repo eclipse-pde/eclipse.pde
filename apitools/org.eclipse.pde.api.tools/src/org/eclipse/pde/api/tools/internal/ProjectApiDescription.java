@@ -428,16 +428,13 @@ public class ProjectApiDescription extends ApiDescription {
 
 	@Override
 	protected boolean isInsertOnResolve(IElementDescriptor elementDescriptor) {
-		switch (elementDescriptor.getElementType()) {
-			case IElementDescriptor.METHOD:
-			case IElementDescriptor.FIELD:
-				return false;
-			case IElementDescriptor.TYPE:
-				// no need to insert member types
-				return ((IReferenceTypeDescriptor) elementDescriptor).getEnclosingType() == null;
-			default:
-				return true;
-		}
+		return switch (elementDescriptor.getElementType())
+			{
+			case IElementDescriptor.METHOD, IElementDescriptor.FIELD -> false;
+			// no need to insert member types
+			case IElementDescriptor.TYPE -> ((IReferenceTypeDescriptor) elementDescriptor).getEnclosingType() == null;
+			default -> true;
+			};
 	}
 
 	@Override
@@ -451,21 +448,21 @@ public class ProjectApiDescription extends ApiDescription {
 					for (IPackageFragmentRoot root : roots) {
 						IClasspathEntry entry = root.getRawClasspathEntry();
 						switch (entry.getEntryKind()) {
-							case IClasspathEntry.CPE_SOURCE:
-							case IClasspathEntry.CPE_LIBRARY:
+							case IClasspathEntry.CPE_SOURCE, IClasspathEntry.CPE_LIBRARY -> {
 								IPackageFragment fragment = root.getPackageFragment(pkg.getName());
 								if (fragment.exists()) {
 									fragments.add(fragment);
 								}
-								break;
-							default:
+							}
+							default -> {
 								if (!root.isArchive() && root.getKind() == IPackageFragmentRoot.K_BINARY) {
 									// class file folder
-									fragment = root.getPackageFragment(pkg.getName());
+									IPackageFragment fragment = root.getPackageFragment(pkg.getName());
 									if (fragment.exists()) {
 										fragments.add(fragment);
 									}
 								}
+							}
 						}
 					}
 					if (fragments.isEmpty()) {
@@ -620,14 +617,12 @@ public class ProjectApiDescription extends ApiDescription {
 	}
 
 	private IElementDescriptor getElementDescriptor(IJavaElement element) {
-		switch (element.getElementType()) {
-			case IJavaElement.PACKAGE_FRAGMENT:
-				return Factory.packageDescriptor(element.getElementName());
-			case IJavaElement.TYPE:
-				return Factory.typeDescriptor(((IType) element).getFullyQualifiedName('$'));
-			default:
-				return null;
-		}
+		return switch (element.getElementType())
+			{
+			case IJavaElement.PACKAGE_FRAGMENT -> Factory.packageDescriptor(element.getElementName());
+			case IJavaElement.TYPE -> Factory.typeDescriptor(((IType) element).getFullyQualifiedName('$'));
+			default -> null;
+			};
 	}
 
 	/**

@@ -385,17 +385,16 @@ public class Reference implements IReference {
 						return;
 					}
 					switch (getReferenceType()) {
-						case IReference.T_TYPE_REFERENCE:
+						case IReference.T_TYPE_REFERENCE -> {
 							fResolved = type;
-							break;
-						case IReference.T_FIELD_REFERENCE:
+						}
+						case IReference.T_FIELD_REFERENCE -> {
 							resolveField(type, getReferencedMemberName());
-							break;
-						case IReference.T_METHOD_REFERENCE:
+						}
+						case IReference.T_METHOD_REFERENCE -> {
 							resolveVirtualMethod(type, getReferencedMemberName(), getReferencedSignature());
-							break;
-						default:
-							break;
+						}
+						default -> { /**/ }
 					}
 				}
 			}
@@ -415,16 +414,14 @@ public class Reference implements IReference {
 			if (type == null) {
 				return false;
 			}
-			switch (getReferenceType()) {
-				case IReference.T_TYPE_REFERENCE:
-					return true;
-				case IReference.T_FIELD_REFERENCE:
-					return resolveField(type, getReferencedMemberName());
-				case IReference.T_METHOD_REFERENCE:
-					return resolveMethod(sourceComponent, type, getReferencedMemberName(), getReferencedSignature());
-				default:
-					break;
-			}
+			return switch (getReferenceType())
+				{
+				case IReference.T_TYPE_REFERENCE -> true;
+				case IReference.T_FIELD_REFERENCE -> resolveField(type, getReferencedMemberName());
+				case IReference.T_METHOD_REFERENCE -> resolveMethod(sourceComponent, type, getReferencedMemberName(),
+						getReferencedSignature());
+				default -> false;
+				};
 		}
 		return false;
 	}
@@ -579,8 +576,9 @@ public class Reference implements IReference {
 				return true;
 			}
 		}
-		switch (this.fKind) {
-			case IReference.REF_INTERFACEMETHOD:
+		return switch (this.fKind)
+			{
+			case IReference.REF_INTERFACEMETHOD -> {
 				// resolve method in super interfaces rather than class
 				String[] interfacesNames = type.getSuperInterfaceNames();
 				if (interfacesNames != null) {
@@ -588,74 +586,74 @@ public class Reference implements IReference {
 						IApiTypeRoot classFile = Util.getClassFile(new IApiComponent[] { sourceComponent }, interfacesName);
 						if (classFile == null) {
 							ApiPlugin.logErrorMessage("Class file for " + interfacesName + " was not found for " + sourceComponent.getName()); //$NON-NLS-1$ //$NON-NLS-2$
-							return false;
+							yield false;
 						}
 						IApiType superinterface = classFile.getStructure();
 						if (superinterface != null && resolveMethod(sourceComponent, superinterface, methodName, methodSignature)) {
-							return true;
+							yield true;
 						}
 					}
 				}
-				break;
-			case IReference.REF_STATICMETHOD:
+				yield false;
+			}
+			case IReference.REF_STATICMETHOD -> {
 				String superclassName = type.getSuperclassName();
 				if (superclassName != null) {
 					IApiTypeRoot classFile = Util.getClassFile(new IApiComponent[] { sourceComponent }, superclassName);
 					if (classFile == null) {
 						ApiPlugin.logErrorMessage("Class file for " + superclassName + " was not found for " + sourceComponent.getName()); //$NON-NLS-1$ //$NON-NLS-2$
-						return false;
+						yield false;
 					}
 					IApiType superclass = classFile.getStructure();
 					boolean resolved = resolveMethod(sourceComponent, superclass, methodName, methodSignature);
 					if (resolved) {
-						return resolved;
+						yield resolved;
 					}
 				}
-				break;
-			case IReference.REF_VIRTUALMETHOD:
-			case IReference.REF_SPECIALMETHOD:
+				yield false;
+			}
+			case IReference.REF_VIRTUALMETHOD, IReference.REF_SPECIALMETHOD -> {
 				// check polymorphic methods: polymorphic method signature is
 				// ([Ljava/lang/Object;)Ljava/lang/Object;
 				target = type.getMethod(methodName, "([Ljava/lang/Object;)Ljava/lang/Object;"); //$NON-NLS-1$
 				if (target != null) {
 					if (methodName.equals(target.getName()) && target.isPolymorphic()) {
-						return true;
+						yield true;
 					}
 				}
-				superclassName = type.getSuperclassName();
+				String superclassName = type.getSuperclassName();
 				if (superclassName != null) {
 					IApiTypeRoot classFile = Util.getClassFile(new IApiComponent[] { sourceComponent }, superclassName);
 					if (classFile == null) {
 						ApiPlugin.logErrorMessage("Class file for " + superclassName + " was not found for " + sourceComponent.getName()); //$NON-NLS-1$ //$NON-NLS-2$
-						return false;
+						yield false;
 					}
 					IApiType superclass = classFile.getStructure();
 					boolean resolved = resolveMethod(sourceComponent, superclass, methodName, methodSignature);
 					if (resolved) {
-						return resolved;
+						yield resolved;
 					}
 				}
 				if (Flags.isAbstract(type.getModifiers())) {
-					interfacesNames = type.getSuperInterfaceNames();
+					String[] interfacesNames = type.getSuperInterfaceNames();
 					if (interfacesNames != null) {
 						for (String interfacesName : interfacesNames) {
 							IApiTypeRoot classFile = Util.getClassFile(new IApiComponent[] { sourceComponent }, interfacesName);
 							if (classFile == null) {
 								ApiPlugin.logErrorMessage("Class file for " + interfacesName + " was not found for " + sourceComponent.getName()); //$NON-NLS-1$ //$NON-NLS-2$
-								return false;
+								yield false;
 							}
 							IApiType superinterface = classFile.getStructure();
 							if (superinterface != null && resolveMethod(sourceComponent, superinterface, methodName, methodSignature)) {
-								return true;
+								yield true;
 							}
 						}
 					}
 				}
-				break;
-			default:
-				break;
-		}
-		return false;
+				yield false;
+			}
+			default -> false;
+			};
 	}
 
 	/**

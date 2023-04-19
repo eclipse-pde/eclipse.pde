@@ -34,18 +34,17 @@ public class CRCVisitor extends ApiDescriptionVisitor {
 		String signature = null;
 		String name = null;
 		switch (element.getElementType()) {
-			case IElementDescriptor.TYPE:
+			case IElementDescriptor.TYPE -> {
 				signature = ((IReferenceTypeDescriptor) element).getSignature();
-				break;
-			case IElementDescriptor.METHOD:
+			}
+			case IElementDescriptor.METHOD -> {
 				signature = ((IMethodDescriptor) element).getSignature();
 				name = ((IMethodDescriptor) element).getName();
-				break;
-			case IElementDescriptor.FIELD:
+			}
+			case IElementDescriptor.FIELD -> {
 				name = ((IFieldDescriptor) element).getName();
-				break;
-			default:
-				break;
+			}
+			default -> { /**/ }
 		}
 		if (signature != null) {
 			fCrc.update(signature.getBytes());
