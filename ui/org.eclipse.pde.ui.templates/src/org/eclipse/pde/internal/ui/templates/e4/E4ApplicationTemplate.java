@@ -16,7 +16,7 @@
 package org.eclipse.pde.internal.ui.templates.e4;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
@@ -24,7 +24,6 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.templates.*;
 import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.templates.PluginReference;
 import org.eclipse.pde.ui.templates.TemplateOption;
 
 public class E4ApplicationTemplate extends PDETemplateSection {
@@ -43,6 +42,18 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 	static final String E4_MODEL_FILE = "Application.e4xmi"; //$NON-NLS-1$
 	// name of the EMPTY application model file stored in the org.eclipse.pde.ui.templates/templates_3.5/E4Application/bin folder
 	private static final String EMPTY_E4_MODEL_FILE = "bin" + File.separator + E4_MODEL_FILE; //$NON-NLS-1$
+
+	private static final List<String> REQUIRED_BUNDLES = List.of(//
+			"javax.inject", //$NON-NLS-1$
+			"org.eclipse.core.runtime", //$NON-NLS-1$
+			"org.eclipse.swt", //$NON-NLS-1$
+			"org.eclipse.e4.ui.model.workbench", //$NON-NLS-1$
+			"org.eclipse.jface", //$NON-NLS-1$
+			"org.eclipse.e4.ui.services", //$NON-NLS-1$
+			"org.eclipse.e4.ui.workbench", //$NON-NLS-1$
+			"org.eclipse.e4.core.di", //$NON-NLS-1$
+			"org.eclipse.e4.ui.di", //$NON-NLS-1$
+			"org.eclipse.e4.core.contexts"); //$NON-NLS-1$
 
 	private TemplateOption lifeCycleClassnameOption;
 
@@ -202,25 +213,11 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
-
-		String[] dependencies = new String[] {"javax.inject", //$NON-NLS-1$
-				"org.eclipse.core.runtime", "org.eclipse.swt", //$NON-NLS-1$//$NON-NLS-2$
-				"org.eclipse.e4.ui.model.workbench", "org.eclipse.jface", //$NON-NLS-1$ //$NON-NLS-2$
-				"org.eclipse.e4.ui.services", "org.eclipse.e4.ui.workbench", //$NON-NLS-1$ //$NON-NLS-2$
-				"org.eclipse.e4.core.di", "org.eclipse.e4.ui.di", //$NON-NLS-1$ //$NON-NLS-2$
-				"org.eclipse.e4.core.contexts",}; //$NON-NLS-1$
-
-		final ArrayList<IPluginReference> result = new ArrayList<>(dependencies.length);
-		for (final String dependency : dependencies) {
-			String versionString = "0.0.0"; //$NON-NLS-1$
-			result.add(new PluginReference(dependency, versionString, IMatchRules.GREATER_OR_EQUAL));
-		}
-		return result.toArray(new IPluginReference[0]);
-
+		return AbstractE4NewPluginTemplateWizard.createPluginReferences(REQUIRED_BUNDLES);
 	}
 
 	@Override
 	public String[] getNewFiles() {
-		return new String[] {"icons/", "css/default.css", "Application.e4xmi"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return new String[] { "icons/", "css/default.css", "Application.e4xmi" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

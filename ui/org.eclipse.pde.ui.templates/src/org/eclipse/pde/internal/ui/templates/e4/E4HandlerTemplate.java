@@ -15,7 +15,7 @@
 
 package org.eclipse.pde.internal.ui.templates.e4;
 
-import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
@@ -23,11 +23,17 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.templates.*;
 import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.templates.PluginReference;
 
 public class E4HandlerTemplate extends PDETemplateSection {
 
 	static final String E4_FRAGMENT_FILE = "fragment.e4xmi"; //$NON-NLS-1$
+
+	private static final List<String> REQUIRED_BUNDLES = List.of(//
+			"javax.inject", //$NON-NLS-1$
+			"org.eclipse.osgi", //$NON-NLS-1$
+			"org.eclipse.jface", //$NON-NLS-1$
+			"org.eclipse.e4.ui.services", //$NON-NLS-1$
+			"org.eclipse.e4.core.di.annotations"); //$NON-NLS-1$
 
 	/**
 	 * Constructor for HelloWorldTemplate.
@@ -53,7 +59,6 @@ public class E4HandlerTemplate extends PDETemplateSection {
 		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.E4HandlerTemplate_packageName, (String) null, 0);
 		addOption("className", PDETemplateMessages.E4HandlerTemplate_className, "HelloWorldHandler", 0); //$NON-NLS-1$ //$NON-NLS-2$
 		addOption("message", PDETemplateMessages.E4HandlerMessage, PDETemplateMessages.E4HandlerMessage_default, 0); //$NON-NLS-1$
-
 	}
 
 	@Override
@@ -61,7 +66,6 @@ public class E4HandlerTemplate extends PDETemplateSection {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		initializeFields(data.getId());
-
 	}
 
 	@Override
@@ -90,8 +94,6 @@ public class E4HandlerTemplate extends PDETemplateSection {
 		markPagesAdded();
 	}
 
-
-
 	@Override
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.e4.workbench.model"; //$NON-NLS-1$
@@ -99,9 +101,7 @@ public class E4HandlerTemplate extends PDETemplateSection {
 
 	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
-
 		createE4ModelExtension();
-
 	}
 
 	private void createE4ModelExtension() throws CoreException {
@@ -121,7 +121,6 @@ public class E4HandlerTemplate extends PDETemplateSection {
 			plugin.add(extension);
 	}
 
-
 	@Override
 	public String[] getNewFiles() {
 		return new String[] { "icons/", E4_FRAGMENT_FILE }; //$NON-NLS-1$
@@ -129,20 +128,7 @@ public class E4HandlerTemplate extends PDETemplateSection {
 
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		ArrayList<PluginReference> result = new ArrayList<>();
-
-		final int matchRule = IMatchRules.GREATER_OR_EQUAL;
-
-		result.add(new PluginReference("javax.inject", null, matchRule)); //$NON-NLS-1$
-		result.add(new PluginReference("org.eclipse.osgi", null, matchRule)); //$NON-NLS-1$
-		result.add(new PluginReference("org.eclipse.jface", null, matchRule)); //$NON-NLS-1$
-		result.add(new PluginReference("org.eclipse.e4.ui.services", null, matchRule)); //$NON-NLS-1$
-		result.add(new PluginReference("org.eclipse.e4.core.di.annotations", null, matchRule)); //$NON-NLS-1$
-
-		return result.toArray(new IPluginReference[result.size()]);
-
+		return AbstractE4NewPluginTemplateWizard.createPluginReferences(REQUIRED_BUNDLES);
 	}
-
-
 
 }

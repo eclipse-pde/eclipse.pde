@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.e4;
 
+import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -45,8 +46,7 @@ public abstract class AbstractE4NewPluginTemplateWizard extends NewPluginTemplat
 	/** The template must generate an E4 compliant plugin */
 	protected void setE4Plugin(boolean e4Mode) {
 		IFieldData data = getData();
-		if (data instanceof PluginFieldData) {
-			PluginFieldData pfd = (PluginFieldData) data;
+		if (data instanceof PluginFieldData pfd) {
 			pfd.setE4Plugin(e4Mode);
 		}
 	}
@@ -115,13 +115,13 @@ public abstract class AbstractE4NewPluginTemplateWizard extends NewPluginTemplat
 		String filename = getFilenameToEdit();
 		if (filename != null) {
 			final IFile file = project.getFile(filename);
-		if (file != null) {
-			final FileEditorInput input = new FileEditorInput(file);
-			final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			final IWorkbenchPage page = window.getActivePage();
-			if (page != null)
-				page.openEditor(input, MODEL_EDITOR_ID);
-		}
+			if (file != null) {
+				final FileEditorInput input = new FileEditorInput(file);
+				final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+				final IWorkbenchPage page = window.getActivePage();
+				if (page != null)
+					page.openEditor(input, MODEL_EDITOR_ID);
+			}
 		}
 	}
 
@@ -133,5 +133,10 @@ public abstract class AbstractE4NewPluginTemplateWizard extends NewPluginTemplat
 		return null;
 	}
 
+	static IPluginReference[] createPluginReferences(List<String> requiredBundles) {
+		return requiredBundles.stream()//
+				.map(bsn -> new PluginReference(bsn, null, IMatchRules.GREATER_OR_EQUAL))
+				.toArray(IPluginReference[]::new);
+	}
 
 }
