@@ -29,8 +29,9 @@ pipeline {
 						*/target/work/data/.metadata/*.log, \
 						*/tests/target/work/data/.metadata/*.log, \
 						apiAnalyzer-workspace/.metadata/*.log')
-					publishIssues issues:[scanForIssues(tool: java()), scanForIssues(tool: mavenConsole())]
 					junit '**/target/surefire-reports/*.xml'
+					discoverGitReferenceBuild referenceJob: 'eclipse.pde/master'
+					recordIssues publishAllIssues: true, tools: [java(), mavenConsole(), javaDoc()]
 				}
 			}
 		}
