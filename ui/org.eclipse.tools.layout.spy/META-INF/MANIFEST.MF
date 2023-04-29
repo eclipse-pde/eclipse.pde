@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.jface.databinding;bundle-version="1.9.0",
  org.eclipse.ui;bundle-version="3.109.0"
 Import-Package: org.eclipse.core.runtime;version="3.5.0",
  org.eclipse.osgi.util,
- org.osgi.framework;version="1.10.0"
+ org.osgi.framework;version="[1.10.0,2.0.0)"
 Bundle-Vendor: %provider-name
 Export-Package: org.eclipse.tools.layout.spy.internal.dialogs;x-internal:=true,
  org.eclipse.tools.layout.spy.internal.displayfilter;x-internal:=true,
