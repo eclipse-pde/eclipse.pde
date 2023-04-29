@@ -18,4 +18,7 @@ jobs:
     uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/checkMergeCommits.yml@master
   build:
     uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/mavenBuild.yml@master
-
+  public-test-results:
+    if: ${{ always() }}
+    needs: build
+    uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/publishTestResults.yml@master
