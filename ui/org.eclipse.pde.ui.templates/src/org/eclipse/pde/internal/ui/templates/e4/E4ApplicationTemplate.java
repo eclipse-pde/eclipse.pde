@@ -44,7 +44,6 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 	private static final String EMPTY_E4_MODEL_FILE = "bin" + File.separator + E4_MODEL_FILE; //$NON-NLS-1$
 
 	private static final List<String> REQUIRED_BUNDLES = List.of(//
-			"javax.inject", //$NON-NLS-1$
 			"org.eclipse.core.runtime", //$NON-NLS-1$
 			"org.eclipse.swt", //$NON-NLS-1$
 			"org.eclipse.e4.ui.model.workbench", //$NON-NLS-1$
