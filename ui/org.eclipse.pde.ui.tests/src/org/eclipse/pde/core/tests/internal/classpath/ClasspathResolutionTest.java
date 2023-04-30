@@ -32,6 +32,7 @@ import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.junit.*;
 import org.junit.rules.TestRule;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 public class ClasspathResolutionTest {
 
@@ -42,6 +43,14 @@ public class ClasspathResolutionTest {
 	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
 	@Rule
 	public final TestRule deleteCreatedTestProjectsAfter = ProjectUtils.DELETE_CREATED_WORKSPACE_PROJECTS_AFTER;
+
+	private static String javaxAnnotationProviderBSN;
+
+	@BeforeClass
+	public static void getJavaxAnnotationProviderBSN() {
+		Bundle bundle = FrameworkUtil.getBundle(javax.annotation.PostConstruct.class);
+		javaxAnnotationProviderBSN = bundle.getSymbolicName();
+	}
 
 	@Test
 	public void testImportSystemPackageDoesntAddExtraBundleJava11() throws Exception {
@@ -73,17 +82,17 @@ public class ClasspathResolutionTest {
 
 	@Test
 	public void testImportExternalPreviouslySystemPackageAddsExtraBundle() throws Exception {
-		loadTargetPlatform("javax.annotation");
+		loadTargetPlatform(javaxAnnotationProviderBSN);
 		IProject project = ProjectUtils.importTestProject("tests/projects/demoMissedExternalPackage");
 		// In Java 11, javax.annotation is not present, so the bundle *must* be
 		// part of classpath
 		List<String> classpathEntries = getRequiredPluginContainerEntries(project);
-		assertThat(classpathEntries).anyMatch(filename -> filename.contains("javax.annotation"));
+		assertThat(classpathEntries).anyMatch(filename -> filename.contains(javaxAnnotationProviderBSN));
 	}
 
 	@Test
 	public void testImportExternalPreviouslySystemPackageAddsExtraBundle_missingBREE() throws Exception {
-		loadTargetPlatform("javax.annotation");
+		loadTargetPlatform(javaxAnnotationProviderBSN);
 		IProject project = ProjectUtils.importTestProject("tests/projects/demoMissedExternalPackageNoBREE");
 
 		IExecutionEnvironment java11 = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-11");
@@ -91,12 +100,12 @@ public class ClasspathResolutionTest {
 		// In Java 11, javax.annotation is not present, so the bundle *must* be
 		// part of classpath, even if no BREE is specified
 		List<String> classpathEntries = getRequiredPluginContainerEntries(project);
-		assertThat(classpathEntries).anyMatch(filename -> filename.contains("javax.annotation"));
+		assertThat(classpathEntries).anyMatch(filename -> filename.contains(javaxAnnotationProviderBSN));
 	}
 
 	@Test
 	public void testImportSystemPackageDoesntAddExtraBundleJava8() throws Exception {
-		loadTargetPlatform("javax.annotation");
+		loadTargetPlatform(javaxAnnotationProviderBSN);
 		IProject project = ProjectUtils.importTestProject("tests/projects/demoMissedSystemPackageJava8");
 		// In Java 8, javax.annotation is present, so the bundle must *NOT* be
 		// part of classpath
@@ -106,7 +115,7 @@ public class ClasspathResolutionTest {
 
 	@Test
 	public void testImportSystemPackageDoesntAddExtraBundleJava8_osgiEERequirement() throws Exception {
-		loadTargetPlatform("javax.annotation");
+		loadTargetPlatform(javaxAnnotationProviderBSN);
 		IProject project = ProjectUtils.importTestProject("tests/projects/demoMissedSystemPackageJava8OsgiEERequirement");
 		// bundle is build with java 11, but declares java 8 requirement via
 		// Require-Capability

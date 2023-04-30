@@ -124,7 +124,7 @@ public class ViewTemplate extends PDETemplateSection {
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 
 		IBundle bundle = ((IBundlePluginModelBase) model).getBundleModel().getBundle();
-		bundle.setHeader(Constants.IMPORT_PACKAGE, "javax.inject"); //$NON-NLS-1$
+		bundle.setHeader(Constants.IMPORT_PACKAGE, "javax.inject;version=\"[1.0.0,2.0.0)\""); //$NON-NLS-1$
 
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension("org.eclipse.ui.views", true); //$NON-NLS-1$

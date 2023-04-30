@@ -19,8 +19,6 @@
       <plugin id="$pluginId$"/>
       <plugin id="com.sun.jna"/>
       <plugin id="com.sun.jna.platform"/>
-      <plugin id="javax.annotation"/>
-      <plugin id="javax.inject"/>
       <plugin id="org.apache.batik.constants"/>
       <plugin id="org.apache.batik.css"/>
       <plugin id="org.apache.batik.i18n"/>
