@@ -28,8 +28,6 @@ public class E4ViewTemplate extends PDETemplateSection {
 	static final String E4_FRAGMENT_FILE = "fragment.e4xmi"; //$NON-NLS-1$
 
 	private static final List<String> REQUIRED_BUNDLES = List.of(//
-			"javax.inject", //$NON-NLS-1$
-			"org.eclipse.osgi", //$NON-NLS-1$
 			"org.eclipse.jface", //$NON-NLS-1$
 			"org.eclipse.e4.ui.model.workbench", //$NON-NLS-1$
 			"org.eclipse.e4.ui.di", //$NON-NLS-1$

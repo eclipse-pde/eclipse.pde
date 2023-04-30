@@ -29,8 +29,6 @@ public class E4HandlerTemplate extends PDETemplateSection {
 	static final String E4_FRAGMENT_FILE = "fragment.e4xmi"; //$NON-NLS-1$
 
 	private static final List<String> REQUIRED_BUNDLES = List.of(//
-			"javax.inject", //$NON-NLS-1$
-			"org.eclipse.osgi", //$NON-NLS-1$
 			"org.eclipse.jface", //$NON-NLS-1$
 			"org.eclipse.e4.ui.services", //$NON-NLS-1$
 			"org.eclipse.e4.core.di.annotations"); //$NON-NLS-1$

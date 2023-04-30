@@ -21,7 +21,9 @@ import org.eclipse.pde.ui.templates.ITemplateSection;
 public class E4ToolbarContributionNewWizard extends AbstractE4NewPluginTemplateWizard {
 
 	private static final List<String> PACKAGE_IMPORTS = List.of( //
-			"javax.annotation;version=\"1.2.0\""); //$NON-NLS-1$
+			"javax.annotation;version=\"[1.2.0,2.0.0)\"", //$NON-NLS-1$
+			"javax.inject;version=\"[1.0.0,2.0.0)\"", //$NON-NLS-1$
+			"org.osgi.framework;version=\"[1.10.0,2.0.0)\""); //$NON-NLS-1$
 
 	@Override
 	public void init(IFieldData data) {
