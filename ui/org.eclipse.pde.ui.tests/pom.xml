@@ -43,16 +43,6 @@
               <artifactId>org.eclipse.osgi.compatibility.state</artifactId>
               <version>0.0.0</version>
             </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>javax.xml</artifactId>
-              <version>0.0.0</version>
-            </dependency>
-            <dependency>
-              <type>eclipse-plugin</type>
-              <artifactId>javax.annotation</artifactId>
-              <version>0.0.0</version>
-            </dependency>
           </dependencies>
         </configuration>
       </plugin>
