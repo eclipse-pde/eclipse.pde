@@ -386,7 +386,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 					fSelOffset = ((PluginAttribute) att).getValueOffset();
 					fSelLen = ((PluginAttribute) att).getValueLength();
 				}
-			} else if (XMLInsertionComputer.hasOptionalChildren(schemaElement, false, new HashSet<ISchemaObject>()) && value != null) {
+			} else if (XMLInsertionComputer.hasOptionalChildren(schemaElement, false, new HashSet<>()) && value != null) {
 				int ind = value.indexOf('>');
 				if (ind > 0) {
 					fSelOffset = offset + ind + 1;

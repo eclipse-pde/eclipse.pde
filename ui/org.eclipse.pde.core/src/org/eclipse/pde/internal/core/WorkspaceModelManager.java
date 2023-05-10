@@ -116,7 +116,7 @@ public abstract class WorkspaceModelManager<T> extends AbstractModelManager
 
 	private void ensureModelsMapCreated() {
 		if (fModels == null) {
-			fModels = Collections.synchronizedMap(new LinkedHashMap<IProject, T>());
+			fModels = Collections.synchronizedMap(new LinkedHashMap<>());
 		}
 	}
 

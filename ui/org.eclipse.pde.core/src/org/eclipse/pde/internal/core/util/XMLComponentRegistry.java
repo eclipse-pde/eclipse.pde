@@ -61,9 +61,9 @@ public class XMLComponentRegistry {
 	private final Map<String, HashMap<String, String>> fElementComponentMap;
 
 	private XMLComponentRegistry() {
-		fSchemaComponentMap = Collections.synchronizedMap(new HashMap<String, HashMap<String, String>>());
-		fAttributeComponentMap = Collections.synchronizedMap(new HashMap<String, HashMap<String, String>>());
-		fElementComponentMap = Collections.synchronizedMap(new HashMap<String, HashMap<String, String>>());
+		fSchemaComponentMap = Collections.synchronizedMap(new HashMap<>());
+		fAttributeComponentMap = Collections.synchronizedMap(new HashMap<>());
+		fElementComponentMap = Collections.synchronizedMap(new HashMap<>());
 	}
 
 	public static XMLComponentRegistry Instance() {
