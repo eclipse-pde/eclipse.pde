@@ -43,8 +43,8 @@ public class PDEXMLHelper {
 	protected PDEXMLHelper() throws FactoryConfigurationError {
 		fSAXFactory = SAXParserFactory.newInstance();
 		fDOMFactory = DocumentBuilderFactory.newInstance();
-		fSAXParserQueue = Collections.synchronizedList(new LinkedList<SoftReference<SAXParser>>());
-		fDOMParserQueue = Collections.synchronizedList(new LinkedList<SoftReference<DocumentBuilder>>());
+		fSAXParserQueue = Collections.synchronizedList(new LinkedList<>());
+		fDOMParserQueue = Collections.synchronizedList(new LinkedList<>());
 		fSAXPoolLimit = FMAXPOOLLIMIT;
 		fDOMPoolLimit = FMAXPOOLLIMIT;
 	}

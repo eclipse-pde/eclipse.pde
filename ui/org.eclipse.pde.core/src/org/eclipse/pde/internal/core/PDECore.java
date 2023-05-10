@@ -312,9 +312,9 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		fFeatureRebuilder.start();
 
 		fTargetPlatformService = context.registerService(ITargetPlatformService.class,
-				TargetPlatformService.getDefault(), new Hashtable<String, Object>());
+				TargetPlatformService.getDefault(), new Hashtable<>());
 		fBundleProjectService = context.registerService(IBundleProjectService.class, BundleProjectService.getDefault(),
-				new Hashtable<String, Object>());
+				new Hashtable<>());
 
 		// Register the debug options listener service (tracing)
 		Hashtable<String, String> props = new Hashtable<>(2);

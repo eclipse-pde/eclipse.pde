@@ -599,7 +599,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 	protected void performDefaults() {
 		super.performDefaults();
 		// set the options to be an empty set
-		DebugOptionsHandler.getDebugOptions().setOptions(new HashMap<String, String>());
+		DebugOptionsHandler.getDebugOptions().setOptions(new HashMap<>());
 		// destroy the model so that it can be re-built.
 		purgeModel();
 		// set the viewers input to null

@@ -318,7 +318,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		// We can always consider all platforms since the profile wouldn't contain it if it was not interesting
 		boolean onlyStrict = !fSynchronizer.getIncludeAllRequired();
 		IProfile metadata = fSynchronizer.getProfile();
-		PermissiveSlicer slicer = new PermissiveSlicer(metadata, new HashMap<String, String>(), true, false, true, onlyStrict, false);
+		PermissiveSlicer slicer = new PermissiveSlicer(metadata, new HashMap<>(), true, false, true, onlyStrict, false);
 		IQueryable<IInstallableUnit> slice = slicer.slice(fUnits, new NullProgressMonitor());
 
 		if (slicer.getStatus().getSeverity() == IStatus.ERROR) {

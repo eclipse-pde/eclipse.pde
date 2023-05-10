@@ -125,7 +125,7 @@ public class ManifestUtils {
 				File file = new File(bundleLocation, JarFile.MANIFEST_NAME);
 				if (file.exists()) {
 					try (InputStream stream = new FileInputStream(file);) {
-						Map<String, String> map = ManifestElement.parseBundleManifest(stream, new HashMap<String, String>(10));
+						Map<String, String> map = ManifestElement.parseBundleManifest(stream, new HashMap<>(10));
 						if (map != null && map.containsKey(Constants.BUNDLE_SYMBOLICNAME)) {
 							return map;
 						}
