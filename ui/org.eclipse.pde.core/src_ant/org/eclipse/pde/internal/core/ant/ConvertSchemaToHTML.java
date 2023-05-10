@@ -212,7 +212,7 @@ public class ConvertSchemaToHTML extends Task {
 
 		if (OSGiFile.exists()) {
 			try {
-				Map<String, String> headers = ManifestElement.parseBundleManifest(new FileInputStream(OSGiFile), new HeaderMap<String, String>());
+				Map<String, String> headers = ManifestElement.parseBundleManifest(new FileInputStream(OSGiFile), new HeaderMap<>());
 				String value = headers.get(Constants.BUNDLE_SYMBOLICNAME);
 				if (value == null) {
 					return null;

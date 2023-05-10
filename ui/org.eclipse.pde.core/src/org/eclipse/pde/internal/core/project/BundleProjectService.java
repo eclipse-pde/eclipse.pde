@@ -282,7 +282,7 @@ public final class BundleProjectService implements IBundleProjectService {
 			if (manifestStream == null) {
 				return null;
 			}
-			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable<String, String>(10));
+			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable<>(10));
 		} catch (BundleException | IOException e) {
 			throw new CoreException(Status.error(NLS.bind(Messages.TargetBundle_ErrorReadingManifest, bundleLocation.getAbsolutePath()), e));
 		} finally {

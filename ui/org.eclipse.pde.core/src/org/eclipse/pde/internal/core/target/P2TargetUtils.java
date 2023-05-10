@@ -1324,7 +1324,7 @@ public class P2TargetUtils {
 		// slice IUs and all prerequisites
 		PermissiveSlicer slicer = null;
 		if (getIncludeAllEnvironments()) {
-			slicer = new PermissiveSlicer(allMetadata, new HashMap<String, String>(), true, false, true, true, false);
+			slicer = new PermissiveSlicer(allMetadata, new HashMap<>(), true, false, true, true, false);
 		} else {
 			Map<String, String> props = new HashMap<>();
 			props.put("osgi.os", definition.getOS() != null ? definition.getOS() : Platform.getOS()); //$NON-NLS-1$

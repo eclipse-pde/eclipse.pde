@@ -91,7 +91,7 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 	}
 
 	public AbstractModel() {
-		fListeners = Collections.synchronizedList(new ArrayList<IModelChangedListener>());
+		fListeners = Collections.synchronizedList(new ArrayList<>());
 	}
 
 	@Override

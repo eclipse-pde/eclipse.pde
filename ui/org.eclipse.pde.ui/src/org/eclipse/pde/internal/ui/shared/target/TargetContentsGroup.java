@@ -629,7 +629,7 @@ public class TargetContentsGroup {
 			if (manifestStream == null) {
 				return null;
 			}
-			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable<String, String>(10));
+			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable<>(10));
 		} catch (BundleException e) {
 			PDEPlugin.log(e);
 		} finally {
