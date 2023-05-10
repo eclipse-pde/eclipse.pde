@@ -51,6 +51,7 @@ import org.eclipse.pde.ui.tests.util.ProjectUtils.CoreConsumer;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
+import org.osgi.framework.FrameworkUtil;
 
 public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 
@@ -68,9 +69,9 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 	@Test
 	public void testGetMergedBundleMap_autostartLevels() throws Throwable {
 		TargetPlatformUtil.setRunningPlatformAsTarget();
-
+		String javaxInjectProvider = FrameworkUtil.getBundle(javax.inject.Inject.class).getSymbolicName();
 		createFeatureProject(FeatureBasedLaunchTest.class.getName() + "-feature", "1.0.0", f -> {
-			addIncludedPlugin(f, "javax.inject", DEFAULT_VERSION);
+			addIncludedPlugin(f, javaxInjectProvider, DEFAULT_VERSION);
 			addIncludedPlugin(f, "org.eclipse.core.runtime", DEFAULT_VERSION);
 			addIncludedPlugin(f, "org.eclipse.ui", DEFAULT_VERSION);
 		});
@@ -84,9 +85,9 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 		}
 
 		assertThat(byId)//
-		.as("old entry without configuration has defaults").containsEntry("javax.inject", "default:default")
+		.as("old entry without config has defaults").containsEntry(javaxInjectProvider, "default:default")
 		.as("use configured start-levels").containsEntry("org.eclipse.core.runtime", "1:true")
-		.as("ignore configured start-levels of uncheckedplugin")
+		.as("ignore configured start-levels of unchecked plugin")
 		.containsEntry("org.eclipse.ui", "default:default");
 	}
 
