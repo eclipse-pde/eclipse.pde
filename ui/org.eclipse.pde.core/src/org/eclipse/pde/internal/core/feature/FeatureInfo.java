@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.ifeature.IFeature;

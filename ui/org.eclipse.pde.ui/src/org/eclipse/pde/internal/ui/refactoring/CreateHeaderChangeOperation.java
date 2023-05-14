@@ -16,17 +16,32 @@ package org.eclipse.pde.internal.ui.refactoring;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.LocationKind;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.project.PDEProject;
-import org.eclipse.pde.internal.core.text.bundle.*;
+import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
+import org.eclipse.pde.internal.core.text.bundle.BundleTextChangeListener;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
+import org.eclipse.pde.internal.core.text.bundle.FragmentHostHeader;
+import org.eclipse.pde.internal.core.text.bundle.PackageFriend;
+import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
+import org.eclipse.pde.internal.core.text.bundle.RequireBundleObject;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
-import org.eclipse.text.edits.*;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.TextEdit;
 
 public class CreateHeaderChangeOperation implements IWorkspaceRunnable {
 

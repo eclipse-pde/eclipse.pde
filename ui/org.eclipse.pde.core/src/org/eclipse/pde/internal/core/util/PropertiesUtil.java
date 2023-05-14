@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.util;
 
 import java.io.PrintWriter;
 import java.util.Enumeration;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 

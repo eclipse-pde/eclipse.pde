@@ -15,7 +15,10 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.schema.*;
+import org.eclipse.pde.internal.core.schema.Schema;
+import org.eclipse.pde.internal.core.schema.SchemaElement;
+import org.eclipse.pde.internal.core.schema.SchemaRootElement;
+import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.PDELabelUtility;

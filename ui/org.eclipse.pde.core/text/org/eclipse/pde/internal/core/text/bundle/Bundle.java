@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.text.bundle;
 
 import java.util.Iterator;
 import java.util.Map;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;

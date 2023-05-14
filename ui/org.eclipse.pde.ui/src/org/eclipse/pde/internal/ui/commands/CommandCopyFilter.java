@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.commands;
 
 import java.util.ArrayList;
+
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public abstract class CommandCopyFilter {

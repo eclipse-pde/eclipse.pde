@@ -16,7 +16,11 @@ package org.eclipse.pde.internal.ui.editor.contentassist;
 
 import java.util.HashMap;
 import java.util.TreeSet;
-import org.eclipse.pde.internal.core.ischema.*;
+
+import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
+import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
 public class XMLElementProposalComputer {

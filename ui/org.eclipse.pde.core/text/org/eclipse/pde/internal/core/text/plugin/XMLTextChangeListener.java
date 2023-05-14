@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.text.plugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;

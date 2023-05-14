@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.compare;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
 import org.eclipse.jface.resource.JFaceResources;
@@ -26,7 +27,10 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
-import org.eclipse.pde.internal.ui.editor.text.*;
+import org.eclipse.pde.internal.ui.editor.text.ColorManager;
+import org.eclipse.pde.internal.ui.editor.text.IColorManager;
+import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
+import org.eclipse.pde.internal.ui.editor.text.XMLPartitionScanner;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.graphics.Font;

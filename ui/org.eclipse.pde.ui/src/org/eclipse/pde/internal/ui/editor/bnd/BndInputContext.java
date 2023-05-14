@@ -16,10 +16,13 @@ package org.eclipse.pde.internal.ui.editor.bnd;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.IInputContextListener;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;

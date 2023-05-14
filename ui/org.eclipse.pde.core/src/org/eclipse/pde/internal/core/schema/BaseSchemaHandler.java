@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.schema;
 
 import java.io.StringReader;
 import java.util.LinkedList;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

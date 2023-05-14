@@ -14,9 +14,13 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import java.io.File;
+
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * An EditorInput for a JarEntryFile.

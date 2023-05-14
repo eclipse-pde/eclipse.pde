@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
+
 import org.eclipse.pde.internal.core.ischema.ISchemaEnumeration;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 

@@ -14,7 +14,10 @@
 package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.jface.viewers.ViewerDropAdapter;
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
 import org.eclipse.swt.dnd.TransferData;
 

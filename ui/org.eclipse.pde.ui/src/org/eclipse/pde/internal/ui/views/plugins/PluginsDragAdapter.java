@@ -15,10 +15,14 @@ package org.eclipse.pde.internal.ui.views.plugins;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.FileAdapter;
-import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.widgets.Control;
 
 public class PluginsDragAdapter extends DragSourceAdapter {

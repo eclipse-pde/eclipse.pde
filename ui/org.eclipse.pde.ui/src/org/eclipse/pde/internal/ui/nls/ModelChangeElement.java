@@ -14,12 +14,15 @@
 package org.eclipse.pde.internal.ui.nls;
 
 import java.util.Properties;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
-import org.eclipse.pde.internal.core.text.plugin.*;
+import org.eclipse.pde.internal.core.text.plugin.PluginAttribute;
+import org.eclipse.pde.internal.core.text.plugin.PluginElementNode;
+import org.eclipse.pde.internal.core.text.plugin.PluginExtensionPointNode;
 
 public class ModelChangeElement {
 

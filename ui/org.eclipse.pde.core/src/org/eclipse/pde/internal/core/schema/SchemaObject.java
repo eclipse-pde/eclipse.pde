@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.Serializable;
+
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;

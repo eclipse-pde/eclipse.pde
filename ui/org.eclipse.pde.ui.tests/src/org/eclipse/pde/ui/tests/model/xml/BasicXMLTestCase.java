@@ -16,7 +16,9 @@ package org.eclipse.pde.ui.tests.model.xml;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IExtensionsModelFactory;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.junit.Test;
 

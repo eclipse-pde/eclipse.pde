@@ -14,20 +14,51 @@
 
 package org.eclipse.pde.internal.build.builder;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.SequenceInputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Attributes.Name;
 import java.util.jar.Manifest;
-import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.p2.publisher.eclipse.*;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.equinox.p2.publisher.eclipse.Feature;
+import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
+import org.eclipse.equinox.p2.publisher.eclipse.URLEntry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
-import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
+import org.eclipse.pde.internal.build.BundleHelper;
+import org.eclipse.pde.internal.build.Config;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
+import org.eclipse.pde.internal.build.Messages;
+import org.eclipse.pde.internal.build.SourceFeatureWriter;
+import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator.CompiledEntry;
-import org.eclipse.pde.internal.build.site.*;
+import org.eclipse.pde.internal.build.site.BuildTimeFeature;
+import org.eclipse.pde.internal.build.site.BuildTimeSite;
+import org.eclipse.pde.internal.build.site.PDEState;
 import org.osgi.framework.Version;
 
 public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesConstants {

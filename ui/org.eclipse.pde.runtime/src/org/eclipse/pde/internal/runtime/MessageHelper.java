@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime;
 
-import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
+import org.eclipse.osgi.service.resolver.VersionConstraint;
 import org.eclipse.osgi.util.NLS;
 
 public class MessageHelper {

@@ -12,10 +12,18 @@
  ******************************************************************************/
 package org.eclipse.pde.internal.build.builder;
 
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
+import org.eclipse.pde.internal.build.AssemblyInformation;
+import org.eclipse.pde.internal.build.Utils;
 
 public class CompilationScriptGenerator extends AbstractScriptGenerator {
 

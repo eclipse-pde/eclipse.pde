@@ -18,6 +18,7 @@ import static java.util.Collections.singleton;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;

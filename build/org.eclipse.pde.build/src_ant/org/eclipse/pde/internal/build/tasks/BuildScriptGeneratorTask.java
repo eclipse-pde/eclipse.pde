@@ -18,12 +18,19 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Properties;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.URIUtil;
-import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.build.site.*;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
+import org.eclipse.pde.internal.build.BuildScriptGenerator;
+import org.eclipse.pde.internal.build.BundleHelper;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.build.Utils;
+import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
+import org.eclipse.pde.internal.build.site.ProfileManager;
+import org.eclipse.pde.internal.build.site.QualifierReplacer;
 
 /**
  * Generate build scripts for the listed elements. This is the implementation of the "eclipse.buildScript" Ant task.

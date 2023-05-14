@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.build;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;

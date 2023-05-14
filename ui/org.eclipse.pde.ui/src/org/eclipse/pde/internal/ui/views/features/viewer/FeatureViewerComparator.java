@@ -14,8 +14,12 @@
 package org.eclipse.pde.internal.ui.views.features.viewer;
 
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.iproduct.*;
+import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.core.iproduct.IProductFeature;
+import org.eclipse.pde.internal.core.iproduct.IProductModel;
+import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.eclipse.pde.internal.ui.views.features.support.FeatureSupport;
 import org.eclipse.pde.internal.ui.views.features.support.FeaturesViewInput;
 

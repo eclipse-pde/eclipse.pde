@@ -14,15 +14,36 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
-import java.io.*;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.build.builder.*;
+import org.eclipse.pde.internal.build.builder.BuildDirector;
+import org.eclipse.pde.internal.build.builder.CompilationScriptGenerator;
+import org.eclipse.pde.internal.build.builder.DevClassPathHelper;
+import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;
+import org.eclipse.pde.internal.build.builder.SourceGenerator;
 import org.eclipse.pde.internal.build.packager.PackageScriptGenerator;
-import org.eclipse.pde.internal.build.site.*;
+import org.eclipse.pde.internal.build.site.BuildTimeFeature;
+import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
+import org.eclipse.pde.internal.build.site.QualifierReplacer;
 import org.osgi.framework.Version;
 
 public class BuildScriptGenerator extends AbstractScriptGenerator {

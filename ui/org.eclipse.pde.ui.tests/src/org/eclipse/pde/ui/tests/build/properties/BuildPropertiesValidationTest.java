@@ -20,7 +20,10 @@ import static org.junit.Assert.fail;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.PropertyResourceBundle;
-import org.eclipse.core.resources.*;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;

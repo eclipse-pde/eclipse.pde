@@ -15,7 +15,9 @@ package org.eclipse.ui.trace.internal.providers;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.ui.trace.internal.Messages;
-import org.eclipse.ui.trace.internal.datamodel.*;
+import org.eclipse.ui.trace.internal.datamodel.TracingComponent;
+import org.eclipse.ui.trace.internal.datamodel.TracingComponentDebugOption;
+import org.eclipse.ui.trace.internal.datamodel.TracingNode;
 import org.eclipse.ui.trace.internal.utils.TracingConstants;
 import org.eclipse.ui.trace.internal.utils.TracingUtils;
 

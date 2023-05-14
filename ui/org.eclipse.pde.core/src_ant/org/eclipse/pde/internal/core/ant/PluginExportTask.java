@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.ant;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;

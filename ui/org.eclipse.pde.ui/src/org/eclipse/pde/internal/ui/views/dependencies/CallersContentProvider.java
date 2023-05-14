@@ -13,7 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.dependencies;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+
 import org.eclipse.osgi.service.resolver.BundleDescription;
 
 public class CallersContentProvider extends DependenciesViewPageContentProvider {

@@ -15,8 +15,12 @@ package org.eclipse.pde.internal.ui.views.features.viewer;
 
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.pde.internal.core.FeatureModelManager;
+import org.eclipse.pde.internal.core.IFeatureModelDelta;
+import org.eclipse.pde.internal.core.IFeatureModelListener;
 import org.eclipse.pde.internal.ui.views.features.model.IProductModelListener;
 import org.eclipse.pde.internal.ui.views.features.model.ProductModelManager;
 import org.eclipse.pde.internal.ui.views.features.support.FeaturesViewInput;

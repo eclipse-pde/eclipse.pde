@@ -13,15 +13,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.text.IDocumentRange;
 import org.eclipse.pde.internal.core.text.IEditingModel;
-import org.eclipse.pde.internal.core.text.bundle.*;
+import org.eclipse.pde.internal.core.text.bundle.BasePackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.BundleActivatorHeader;
+import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
+import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
-import org.eclipse.pde.internal.ui.editor.text.*;
+import org.eclipse.pde.internal.ui.editor.text.BundleHyperlink;
+import org.eclipse.pde.internal.ui.editor.text.JavaHyperlink;
+import org.eclipse.pde.internal.ui.editor.text.PackageHyperlink;
+import org.eclipse.pde.internal.ui.editor.text.TranslationHyperlink;
 
 public class BundleHyperlinkDetector implements IHyperlinkDetector {
 

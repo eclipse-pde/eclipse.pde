@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.isite.IRepositoryReference;
 import org.w3c.dom.Element;

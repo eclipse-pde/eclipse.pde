@@ -13,8 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.actions;
 
-import java.util.*;
-import org.eclipse.jface.action.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.pde.internal.ui.editor.PDELauncherFormEditor.LauncherAction;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;

@@ -15,8 +15,10 @@ package org.eclipse.pde.internal.core;
 
 import java.io.StringReader;
 import java.util.Stack;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;

@@ -14,6 +14,7 @@
 package org.eclipse.ui.trace.internal.providers;
 
 import java.util.Collection;
+
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.ui.trace.internal.datamodel.TracingNode;
 

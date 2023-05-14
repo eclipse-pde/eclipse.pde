@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
-import org.eclipse.pde.core.target.ITargetDefinition;
-
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 

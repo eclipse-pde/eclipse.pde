@@ -14,7 +14,9 @@
 package org.eclipse.pde.internal.ui.util;
 
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.ui.console.*;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleConstants;
+import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.actions.CloseConsoleAction;
 import org.eclipse.ui.part.IPageBookViewPage;
 

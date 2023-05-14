@@ -17,6 +17,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.regex.Pattern;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;

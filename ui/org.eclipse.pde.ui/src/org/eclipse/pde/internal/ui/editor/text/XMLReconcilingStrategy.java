@@ -13,14 +13,26 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
+
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.text.IDocumentExtension3;
+import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ISynchronizable;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
 import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.texteditor.spelling.*;
+import org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector;
+import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
+import org.eclipse.ui.texteditor.spelling.SpellingProblem;
+import org.eclipse.ui.texteditor.spelling.SpellingReconcileStrategy;
 
 /**
  * Reconcile strategy used for spell checking XML documents.

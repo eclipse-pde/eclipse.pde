@@ -13,7 +13,13 @@
  *******************************************************************************/
 package org.eclipse.ui.trace.internal.datamodel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.trace.internal.utils.TracingConstants;
 import org.eclipse.ui.trace.internal.utils.TracingUtils;

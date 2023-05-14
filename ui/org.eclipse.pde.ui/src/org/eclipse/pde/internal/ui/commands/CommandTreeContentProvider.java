@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.commands;
 
 import java.util.ArrayList;
 import java.util.TreeMap;
+
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.common.NotDefinedException;

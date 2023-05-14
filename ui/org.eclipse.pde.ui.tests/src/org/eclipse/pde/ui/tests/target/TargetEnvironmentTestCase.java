@@ -19,6 +19,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Dictionary;
 import java.util.Properties;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;

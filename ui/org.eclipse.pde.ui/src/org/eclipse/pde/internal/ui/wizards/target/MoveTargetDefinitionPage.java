@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.wizards.target;
 
 import java.util.Collection;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;

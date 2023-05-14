@@ -14,9 +14,8 @@
 package org.eclipse.pde.ui.tests.classpathresolver;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.core.resources.IProjectNature;
+import org.eclipse.core.runtime.CoreException;
 
 public class TestProjectNature implements IProjectNature {
 

@@ -14,7 +14,11 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.io.File;
-import javax.xml.parsers.*;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -30,7 +34,9 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.build.RuntimeInstallJob;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressConstants;
-import org.w3c.dom.*;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class FeatureExportWizard extends AntGeneratingExportWizard {
 	private static final String STORE_SECTION = "FeatureExportWizard"; //$NON-NLS-1$

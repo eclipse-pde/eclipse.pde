@@ -14,9 +14,17 @@
 package org.eclipse.pde.internal.ui.nls;
 
 import java.lang.reflect.InvocationTargetException;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ltk.core.refactoring.*;
-import org.eclipse.ltk.core.refactoring.participants.*;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.CompositeChange;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
+import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
+import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
+import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class ExternalizeStringsProcessor extends RefactoringProcessor {

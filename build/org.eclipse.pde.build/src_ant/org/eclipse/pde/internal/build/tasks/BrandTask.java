@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.build.tasks;
 
 import java.io.File;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.BrandingIron;

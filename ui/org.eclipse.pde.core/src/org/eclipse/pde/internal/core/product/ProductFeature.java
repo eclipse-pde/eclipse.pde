@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
+
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.iproduct.IProductFeature;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;

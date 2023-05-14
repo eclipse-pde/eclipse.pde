@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.editor.text;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;

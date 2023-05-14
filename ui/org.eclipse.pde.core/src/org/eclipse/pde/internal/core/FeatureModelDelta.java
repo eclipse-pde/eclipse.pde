@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.util.ArrayList;
+
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 public class FeatureModelDelta implements IFeatureModelDelta {

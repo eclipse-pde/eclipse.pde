@@ -15,11 +15,15 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
-import org.eclipse.pde.internal.core.target.*;
+import org.eclipse.pde.internal.core.target.DirectoryBundleContainer;
+import org.eclipse.pde.internal.core.target.FeatureBundleContainer;
+import org.eclipse.pde.internal.core.target.IUBundleContainer;
+import org.eclipse.pde.internal.core.target.ProfileBundleContainer;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 /**

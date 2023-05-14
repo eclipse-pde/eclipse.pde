@@ -18,13 +18,29 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URISyntaxException;
 import java.util.EventListener;
-import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.runtime.registry.model.*;
+
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IRegistryEventListener;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.runtime.registry.model.Bundle;
+import org.eclipse.pde.internal.runtime.registry.model.Extension;
+import org.eclipse.pde.internal.runtime.registry.model.ExtensionPoint;
+import org.eclipse.pde.internal.runtime.registry.model.ModelChangeDelta;
+import org.eclipse.pde.internal.runtime.registry.model.ModelChangeListener;
+import org.eclipse.pde.internal.runtime.registry.model.RegistryModel;
+import org.eclipse.pde.internal.runtime.registry.model.ServiceName;
 import org.eclipse.pde.internal.runtime.registry.model.ServiceRegistration;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
-import org.junit.*;
-import org.osgi.framework.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleListener;
+import org.osgi.framework.ServiceEvent;
+import org.osgi.framework.ServiceListener;
+import org.osgi.framework.ServiceReference;
 
 public abstract class AbstractRegistryModelTest implements ModelChangeListener {
 

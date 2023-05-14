@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.util.Locale;
+
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.internal.core.natures.BndProject;
 

@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.util.ArrayList;
 import java.util.Vector;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaProject;

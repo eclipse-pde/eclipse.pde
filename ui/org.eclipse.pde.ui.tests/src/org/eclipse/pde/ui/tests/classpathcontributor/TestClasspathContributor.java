@@ -13,7 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.classpathcontributor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;

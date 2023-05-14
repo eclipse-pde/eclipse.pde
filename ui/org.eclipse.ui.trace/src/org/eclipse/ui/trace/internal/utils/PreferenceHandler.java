@@ -13,9 +13,17 @@
  *******************************************************************************/
 package org.eclipse.ui.trace.internal.utils;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.ui.trace.internal.TracingUIActivator;
 import org.osgi.service.prefs.BackingStoreException;
 

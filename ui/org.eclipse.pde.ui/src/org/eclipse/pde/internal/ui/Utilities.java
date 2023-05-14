@@ -13,8 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Date;
+
 import org.eclipse.core.runtime.Platform;
 
 /**

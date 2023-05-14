@@ -14,16 +14,33 @@
 package org.eclipse.pde.ui.templates;
 
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.wizards.*;
-import org.eclipse.pde.internal.ui.wizards.plugin.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
+import org.eclipse.pde.internal.ui.wizards.NewWizard;
+import org.eclipse.pde.internal.ui.wizards.WizardElement;
+import org.eclipse.pde.internal.ui.wizards.plugin.AbstractFieldData;
+import org.eclipse.pde.internal.ui.wizards.plugin.NewProjectCreationFromTemplatePage;
+import org.eclipse.pde.internal.ui.wizards.plugin.NewProjectCreationOperation;
+import org.eclipse.pde.internal.ui.wizards.plugin.NewProjectCreationPage;
+import org.eclipse.pde.internal.ui.wizards.plugin.PluginContentPage;
+import org.eclipse.pde.internal.ui.wizards.plugin.PluginFieldData;
 import org.eclipse.pde.ui.IPluginContentWizard;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;

@@ -16,7 +16,10 @@ package org.eclipse.pde.internal.ui.views.dependencies;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.PlatformUI;
 
 public class HistoryListAction extends Action {

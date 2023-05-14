@@ -13,7 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.features.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;

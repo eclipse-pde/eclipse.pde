@@ -13,14 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bnd;
 
-import aQute.bnd.osgi.Jar;
-import aQute.bnd.osgi.Resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.function.Predicate;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
@@ -29,6 +28,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+
+import aQute.bnd.osgi.Jar;
+import aQute.bnd.osgi.Resource;
 
 /**
  * Wraps an {@link IFile} to a BND {@link Resource} that can be used to perform

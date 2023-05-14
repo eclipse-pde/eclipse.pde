@@ -14,12 +14,12 @@
 
 package org.eclipse.pde.ui.tests.performance.parts;
 
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.test.performance.PerformanceTestCase;
 import org.osgi.framework.Bundle;
 

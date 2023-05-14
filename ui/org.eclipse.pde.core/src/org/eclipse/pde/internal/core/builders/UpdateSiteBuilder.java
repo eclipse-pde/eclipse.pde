@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.util.Arrays;
 import java.util.Map;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;

@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.util.ArrayList;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginElement;

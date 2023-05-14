@@ -18,7 +18,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-import org.eclipse.pde.internal.core.text.bundle.*;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageHeader;
+import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
+import org.eclipse.pde.internal.core.text.bundle.PackageFriend;
+import org.eclipse.pde.internal.core.text.bundle.PackageObject;
 import org.eclipse.text.edits.TextEdit;
 import org.junit.Test;
 import org.osgi.framework.Constants;

@@ -17,7 +17,9 @@ import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.parts.PluginVersionPart;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 
 public class VersionDialog extends StatusDialog {
 

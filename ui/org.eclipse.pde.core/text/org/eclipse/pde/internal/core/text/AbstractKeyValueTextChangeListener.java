@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.text;
 
 import java.util.HashMap;
+
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
 import org.eclipse.text.edits.DeleteEdit;

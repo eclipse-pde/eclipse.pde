@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.annotations;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+
+import junit.framework.Test;
 
 /**
  * Tests a variety of invalid annotation use on classes

@@ -16,7 +16,9 @@ package org.eclipse.pde.internal.ui.commands;
 import org.eclipse.core.commands.Command;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 
 public class QueryByTag extends QueryControl {
 

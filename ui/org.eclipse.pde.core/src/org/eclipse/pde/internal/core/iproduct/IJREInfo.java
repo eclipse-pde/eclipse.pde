@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.iproduct;
 
 import java.io.File;
+
 import org.eclipse.core.runtime.IPath;
 
 /**

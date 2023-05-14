@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.IPluginSourcePathLocator;

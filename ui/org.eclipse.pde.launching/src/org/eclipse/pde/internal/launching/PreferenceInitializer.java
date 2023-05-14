@@ -13,7 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.launching;
 
-import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.pde.internal.launching.launcher.OSGiFrameworkManager;
 import org.osgi.service.prefs.BackingStoreException;
 

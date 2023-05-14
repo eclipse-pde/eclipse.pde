@@ -17,7 +17,9 @@ package org.eclipse.pde.internal.ui.editor.site;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class SynchronizePropertiesWizard extends Wizard {
 	private SynchronizePropertiesWizardPage fMainPage;

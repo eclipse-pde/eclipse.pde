@@ -14,9 +14,14 @@
 
 package org.eclipse.pde.internal.build.tasks;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.PatternSet;
 import org.apache.tools.ant.types.resources.Files;

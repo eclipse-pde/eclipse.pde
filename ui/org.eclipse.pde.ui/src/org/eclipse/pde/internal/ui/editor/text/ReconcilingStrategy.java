@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.editor.text;
 
 import java.util.ArrayList;
+
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;

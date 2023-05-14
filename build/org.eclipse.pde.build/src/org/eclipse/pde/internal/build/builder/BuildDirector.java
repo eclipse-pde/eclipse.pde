@@ -14,13 +14,28 @@
 package org.eclipse.pde.internal.build.builder;
 
 import java.io.File;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.p2.publisher.eclipse.Feature;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
+import org.eclipse.pde.internal.build.AssemblyInformation;
+import org.eclipse.pde.internal.build.Config;
+import org.eclipse.pde.internal.build.Messages;
+import org.eclipse.pde.internal.build.SourceFeatureInformation;
+import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.build.builder.ClasspathComputer3_0.ClasspathElement;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 import org.osgi.framework.Version;

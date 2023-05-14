@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.performance;
 
-import junit.framework.Test;
-
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+
+import junit.framework.Test;
 
 
 /**

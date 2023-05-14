@@ -14,7 +14,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dialogs;
 
-import org.eclipse.core.commands.*;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.window.Window;
@@ -23,7 +25,9 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.feature.FeatureEditor;
-import org.eclipse.pde.internal.ui.editor.plugin.*;
+import org.eclipse.pde.internal.ui.editor.plugin.BundleInputContext;
+import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
+import org.eclipse.pde.internal.ui.editor.plugin.PluginInputContext;
 import org.eclipse.pde.internal.ui.search.ManifestEditorOpener;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;

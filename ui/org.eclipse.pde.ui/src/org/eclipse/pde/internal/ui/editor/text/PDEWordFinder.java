@@ -14,7 +14,10 @@
 
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 
 /**
  * PDEWordFinder

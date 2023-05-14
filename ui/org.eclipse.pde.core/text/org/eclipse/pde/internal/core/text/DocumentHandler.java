@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.text;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Stack;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;

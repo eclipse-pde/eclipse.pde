@@ -15,7 +15,9 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferencePage;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;

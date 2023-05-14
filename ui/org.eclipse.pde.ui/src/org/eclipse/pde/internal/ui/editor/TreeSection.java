@@ -19,7 +19,9 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.internal.ui.parts.StructuredViewerPart;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public abstract class TreeSection extends StructuredViewerSection {

@@ -13,7 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.performance;
 
-import org.eclipse.pde.ui.tests.performance.parts.*;
+import org.eclipse.pde.ui.tests.performance.parts.OpenManifestEditorPerfTest;
+import org.eclipse.pde.ui.tests.performance.parts.PDEModelManagerPerfTest;
+import org.eclipse.pde.ui.tests.performance.parts.SchemaLoaderPerfTest;
+import org.eclipse.pde.ui.tests.performance.parts.SchemaTraversePerfTest;
+import org.eclipse.pde.ui.tests.performance.parts.TargetPlatformPerfTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

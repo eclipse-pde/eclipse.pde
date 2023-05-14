@@ -13,8 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
-import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.XMLSourcePage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class SiteSourcePage extends XMLSourcePage {

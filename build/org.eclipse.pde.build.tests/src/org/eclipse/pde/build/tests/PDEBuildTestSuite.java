@@ -13,7 +13,11 @@
 
 package org.eclipse.pde.build.tests;
 
-import org.eclipse.pde.build.internal.tests.*;
+import org.eclipse.pde.build.internal.tests.AssembleTests;
+import org.eclipse.pde.build.internal.tests.FetchTests;
+import org.eclipse.pde.build.internal.tests.ProductTests;
+import org.eclipse.pde.build.internal.tests.ScriptGenerationTests;
+import org.eclipse.pde.build.internal.tests.SourceTests;
 import org.eclipse.pde.build.internal.tests.p2.LicenseTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

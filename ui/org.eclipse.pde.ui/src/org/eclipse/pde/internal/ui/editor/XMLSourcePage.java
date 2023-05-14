@@ -15,7 +15,10 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
-import org.eclipse.pde.internal.ui.editor.text.*;
+import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
+import org.eclipse.pde.internal.ui.editor.text.IColorManager;
+import org.eclipse.pde.internal.ui.editor.text.PluginXMLConfiguration;
+import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 
 public abstract class XMLSourcePage extends PDEProjectionSourcePage {

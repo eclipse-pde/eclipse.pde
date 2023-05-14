@@ -14,11 +14,19 @@
 package org.eclipse.pde.internal.ui.wizards;
 
 import java.util.Iterator;
-import org.eclipse.core.runtime.*;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardNode;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.internal.ui.elements.ElementList;
 import org.eclipse.pde.internal.ui.elements.ListContentProvider;
 import org.eclipse.pde.ui.IPluginContentWizard;
@@ -26,7 +34,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 
 public abstract class WizardListSelectionPage extends BaseWizardSelectionPage implements IExecutableExtension {
 	protected TableViewer wizardSelectionViewer;

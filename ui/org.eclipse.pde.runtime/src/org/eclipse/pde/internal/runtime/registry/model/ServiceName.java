@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.runtime.registry.model;
 
 import java.util.Arrays;
+
 import org.osgi.framework.ServiceReference;
 
 public class ServiceName extends ModelObject implements Comparable<ServiceName> {

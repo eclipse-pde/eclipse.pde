@@ -15,9 +15,12 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.ISharedImages;

@@ -17,14 +17,22 @@ package org.eclipse.pde.ui.tests.classpathcontributor;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.IClasspathContainer;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.ui.tests.classpathresolver.ClasspathResolverTest;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
-import org.junit.*;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TestRule;
 
 /**

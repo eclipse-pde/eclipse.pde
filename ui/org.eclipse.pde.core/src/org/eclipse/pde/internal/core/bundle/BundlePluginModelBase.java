@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IEditable;

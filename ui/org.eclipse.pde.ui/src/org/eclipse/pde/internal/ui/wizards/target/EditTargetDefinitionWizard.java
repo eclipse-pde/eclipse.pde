@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.ui.wizards.target;
 import static java.util.function.Predicate.not;
 
 import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;

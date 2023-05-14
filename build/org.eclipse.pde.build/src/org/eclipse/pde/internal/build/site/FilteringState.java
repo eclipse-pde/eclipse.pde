@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.build.site;
 
 import java.util.SortedSet;
+
 import org.eclipse.osgi.service.resolver.BundleDescription;
 
 public class FilteringState extends PDEState {

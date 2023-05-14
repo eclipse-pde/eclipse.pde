@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.build.builder;
 
 import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 

@@ -13,12 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
-import org.eclipse.pde.internal.launching.IPDEConstants;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.pde.internal.launching.IPDEConstants;
 
 public class OSGiMigrationDelegate extends PDEMigrationDelegate {
 

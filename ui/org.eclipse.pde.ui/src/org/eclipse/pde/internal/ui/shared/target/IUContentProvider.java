@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.viewers.ITreeContentProvider;

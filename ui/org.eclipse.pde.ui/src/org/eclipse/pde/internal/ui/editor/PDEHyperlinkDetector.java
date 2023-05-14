@@ -18,7 +18,10 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
-import org.eclipse.pde.internal.core.text.*;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
+import org.eclipse.pde.internal.core.text.IDocumentRange;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
 
 public abstract class PDEHyperlinkDetector implements IHyperlinkDetector {

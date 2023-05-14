@@ -13,11 +13,31 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import org.eclipse.ant.core.AntRunner;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
@@ -25,7 +45,9 @@ import org.eclipse.pde.build.IFetchFactory;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.ant.IScriptRunner;
 import org.eclipse.pde.internal.build.fetch.CVSFetchTaskFactory;
-import org.eclipse.pde.internal.build.site.*;
+import org.eclipse.pde.internal.build.site.BuildTimeFeature;
+import org.eclipse.pde.internal.build.site.BuildTimeFeatureFactory;
+import org.eclipse.pde.internal.build.site.QualifierReplacer;
 import org.osgi.framework.Version;
 
 /**

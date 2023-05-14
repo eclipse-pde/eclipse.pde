@@ -21,7 +21,11 @@ import java.util.List;
 
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.*;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCS;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 

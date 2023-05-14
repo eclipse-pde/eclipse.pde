@@ -13,8 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.commands;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Map.Entry;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.runtime.ListenerList;
 

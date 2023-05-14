@@ -14,11 +14,14 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.Collection;
+
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.pde.internal.core.util.PDEJavaHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 public class PackageSelectionDialog extends ElementListSelectionDialog {

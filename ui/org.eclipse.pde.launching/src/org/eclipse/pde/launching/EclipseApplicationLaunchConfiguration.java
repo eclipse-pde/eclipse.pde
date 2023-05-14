@@ -15,10 +15,21 @@
 package org.eclipse.pde.launching;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.eclipse.core.runtime.*;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -29,7 +40,13 @@ import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.launching.IPDEConstants;
-import org.eclipse.pde.internal.launching.launcher.*;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.eclipse.pde.internal.launching.launcher.EclipsePluginValidationOperation;
+import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
+import org.eclipse.pde.internal.launching.launcher.LaunchConfigurationHelper;
+import org.eclipse.pde.internal.launching.launcher.LaunchPluginValidator;
+import org.eclipse.pde.internal.launching.launcher.LauncherUtils;
+import org.eclipse.pde.internal.launching.launcher.RequirementHelper;
 
 /**
  * A launch delegate for launching Eclipse applications

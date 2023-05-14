@@ -14,6 +14,7 @@
 package org.eclipse.pde.core.plugin;
 
 import java.net.URL;
+
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModelChangeProvider;

@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.plugin;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Locale;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;

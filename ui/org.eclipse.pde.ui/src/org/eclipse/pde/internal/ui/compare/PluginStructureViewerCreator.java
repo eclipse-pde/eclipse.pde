@@ -13,8 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.compare;
 
-import org.eclipse.compare.*;
-import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.IViewerCreator;
+import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.DocumentRangeNode;
+import org.eclipse.compare.structuremergeviewer.StructureDiffViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.widgets.Composite;

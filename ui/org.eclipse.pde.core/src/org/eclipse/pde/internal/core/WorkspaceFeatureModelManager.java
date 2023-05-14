@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.util.Map.Entry;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceDelta;

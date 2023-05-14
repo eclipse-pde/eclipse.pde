@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IModelChangedEvent;

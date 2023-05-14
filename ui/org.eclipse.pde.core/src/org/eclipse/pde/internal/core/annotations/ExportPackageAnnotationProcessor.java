@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.annotations;
 
 import java.util.Optional;
+
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;

@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.text.plugin;
 
 import java.io.PrintWriter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.internal.core.text.DocumentAttributeNode;

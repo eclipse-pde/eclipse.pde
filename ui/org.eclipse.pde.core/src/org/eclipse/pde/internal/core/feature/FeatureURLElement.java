@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.feature;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
 import org.w3c.dom.Node;

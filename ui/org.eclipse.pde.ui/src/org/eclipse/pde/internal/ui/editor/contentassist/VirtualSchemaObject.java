@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.ui.editor.contentassist;
 
 import java.io.PrintWriter;
 import java.net.URL;
+
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;

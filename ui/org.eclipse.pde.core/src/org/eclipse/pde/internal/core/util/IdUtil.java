@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.util;
 
 import java.util.StringTokenizer;
+
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;

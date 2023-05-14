@@ -16,6 +16,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.util.Locale;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.project.IBundleProjectDescription;

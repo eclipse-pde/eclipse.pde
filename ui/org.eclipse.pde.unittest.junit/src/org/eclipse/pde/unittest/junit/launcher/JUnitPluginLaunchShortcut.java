@@ -13,15 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.unittest.junit.launcher;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.pde.ui.launcher.JUnitWorkbenchLaunchShortcut;
 import org.eclipse.pde.unittest.junit.JUnitPluginTestPlugin;
 import org.eclipse.unittest.ui.ConfigureViewerSupport;
-
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-
-import org.eclipse.jdt.core.IJavaElement;
 
 /**
  * The launch shortcut to launch JUnit Plug-in tests.

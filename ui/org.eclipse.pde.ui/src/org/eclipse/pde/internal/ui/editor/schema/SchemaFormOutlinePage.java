@@ -15,7 +15,13 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.internal.core.ischema.IDocumentSection;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
