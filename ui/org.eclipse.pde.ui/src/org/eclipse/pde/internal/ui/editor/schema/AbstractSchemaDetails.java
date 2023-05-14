@@ -15,7 +15,9 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.IBaseModel;
@@ -24,7 +26,9 @@ import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.core.schema.SchemaObject;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
+import org.eclipse.pde.internal.ui.editor.PDEDetails;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.parts.ComboPart;
 import org.eclipse.pde.internal.ui.parts.PDESourceViewer;
 import org.eclipse.swt.SWT;
@@ -33,10 +37,15 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IFormPart;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
 
 public abstract class AbstractSchemaDetails extends PDEDetails {
 

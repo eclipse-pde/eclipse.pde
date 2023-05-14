@@ -13,15 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
 import java.util.Collections;
 import java.util.TreeSet;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.internal.launching.launcher.LauncherUtils;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 
 public class JUnitProgramBlock extends ProgramBlock {

@@ -14,15 +14,23 @@
 package org.eclipse.pde.internal.ui.build;
 
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.build.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
+import org.eclipse.pde.internal.build.BuildScriptGenerator;
+import org.eclipse.pde.internal.build.IXMLConstants;
+import org.eclipse.pde.internal.core.ClasspathHelper;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
-import org.eclipse.pde.internal.core.ifeature.*;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 
 /**
  * Action to generate an ant build file for a feature that contains the ant targets to build this bundle

@@ -16,6 +16,7 @@ package org.eclipse.pde.ui.tests.target;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
+
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.junit.Test;
 

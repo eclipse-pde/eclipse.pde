@@ -13,9 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.bnd;
 
-import aQute.bnd.properties.IRegion;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+
+import aQute.bnd.properties.IRegion;
 
 /**
  * This class wraps from JFace text framework to bnd-document

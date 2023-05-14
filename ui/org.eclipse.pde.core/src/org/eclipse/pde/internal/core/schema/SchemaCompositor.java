@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
 import java.util.Vector;
+
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.core.ModelChangedEvent;

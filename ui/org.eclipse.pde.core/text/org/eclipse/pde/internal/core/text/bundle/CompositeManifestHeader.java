@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
+
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.bundle.BundleObject;

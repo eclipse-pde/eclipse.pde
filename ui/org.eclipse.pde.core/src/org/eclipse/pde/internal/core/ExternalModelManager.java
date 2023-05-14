@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;

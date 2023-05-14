@@ -14,17 +14,24 @@
 package org.eclipse.pde.internal.ui.annotations;
 
 import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.ITypeRoot;
-import org.eclipse.jdt.core.dom.*;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.IAnnotationBinding;
+import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
-import org.eclipse.pde.internal.core.annotations.*;
+import org.eclipse.pde.internal.core.annotations.CustomHeaderAnnotationProcessor;
+import org.eclipse.pde.internal.core.annotations.ExportPackageAnnotationProcessor;
+import org.eclipse.pde.internal.core.annotations.OSGiAnnotationProcessor;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;

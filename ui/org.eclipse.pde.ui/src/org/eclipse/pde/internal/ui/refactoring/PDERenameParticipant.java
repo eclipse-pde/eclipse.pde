@@ -15,11 +15,23 @@ package org.eclipse.pde.internal.ui.refactoring;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.ltk.core.refactoring.*;
-import org.eclipse.ltk.core.refactoring.participants.*;
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.CompositeChange;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
+import org.eclipse.ltk.core.refactoring.participants.ISharableParticipant;
+import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
+import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
+import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 import org.eclipse.pde.internal.core.project.PDEProject;
 
 public abstract class PDERenameParticipant extends RenameParticipant implements ISharableParticipant {

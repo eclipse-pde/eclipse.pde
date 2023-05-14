@@ -13,22 +13,32 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.plugins;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.project.BundleProjectService;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.wizards.imports.*;
+import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
+import org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizard;
+import org.eclipse.pde.internal.ui.wizards.imports.RepositoryImportWizard;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.ScmUrlImportDescription;

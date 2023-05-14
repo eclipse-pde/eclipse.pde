@@ -14,11 +14,18 @@
 package org.eclipse.ui.trace.internal;
 
 import java.io.File;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.Map;
+
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.runnable.StartupMonitor;
-import org.eclipse.ui.trace.internal.utils.*;
+import org.eclipse.ui.trace.internal.utils.DebugOptionsHandler;
+import org.eclipse.ui.trace.internal.utils.PreferenceHandler;
+import org.eclipse.ui.trace.internal.utils.TracingConstants;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 

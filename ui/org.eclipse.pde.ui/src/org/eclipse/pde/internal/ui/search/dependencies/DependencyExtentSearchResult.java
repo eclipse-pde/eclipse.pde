@@ -17,13 +17,19 @@ package org.eclipse.pde.internal.ui.search.dependencies;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import org.eclipse.jdt.core.*;
+
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IParent;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.search.SearchResult;
 import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.text.*;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.IEditorMatchAdapter;
+import org.eclipse.search.ui.text.IFileMatchAdapter;
+import org.eclipse.search.ui.text.Match;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 

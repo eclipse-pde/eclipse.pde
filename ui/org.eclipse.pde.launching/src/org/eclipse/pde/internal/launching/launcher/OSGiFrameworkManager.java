@@ -13,8 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;

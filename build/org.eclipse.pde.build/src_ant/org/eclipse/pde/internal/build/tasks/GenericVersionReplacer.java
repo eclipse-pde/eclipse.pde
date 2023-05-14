@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.build.tasks;
 
 import java.io.File;
+
 import org.apache.tools.ant.Task;
 
 /**

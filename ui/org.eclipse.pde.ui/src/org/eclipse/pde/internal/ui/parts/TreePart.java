@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.parts;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;

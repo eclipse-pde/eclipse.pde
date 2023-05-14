@@ -13,11 +13,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.ant;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.pde.build.IAntScript;
 

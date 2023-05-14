@@ -13,11 +13,35 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.internal.p2.engine.SimpleProfileRegistry;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
 import org.eclipse.equinox.p2.core.IAgentLocation;
@@ -30,7 +54,10 @@ import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.builder.BuildDirector;
-import org.eclipse.pde.internal.build.site.*;
+import org.eclipse.pde.internal.build.site.BuildTimeFeature;
+import org.eclipse.pde.internal.build.site.BuildTimeSite;
+import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
+import org.eclipse.pde.internal.build.site.PDEState;
 import org.eclipse.pde.internal.build.site.compatibility.SiteManager;
 import org.osgi.framework.Version;
 

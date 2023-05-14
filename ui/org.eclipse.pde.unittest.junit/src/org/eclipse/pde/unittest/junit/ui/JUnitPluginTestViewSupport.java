@@ -13,11 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.unittest.junit.ui;
 
+import org.eclipse.jdt.ui.unittest.junit.ui.JUnitTestViewSupport;
 import org.eclipse.pde.unittest.junit.launcher.JUnitPluginLaunchConfigurationDelegate;
 import org.eclipse.unittest.launcher.ITestRunnerClient;
 import org.eclipse.unittest.model.ITestRunSession;
-
-import org.eclipse.jdt.ui.unittest.junit.ui.JUnitTestViewSupport;
 
 public class JUnitPluginTestViewSupport extends JUnitTestViewSupport {
 	@Override

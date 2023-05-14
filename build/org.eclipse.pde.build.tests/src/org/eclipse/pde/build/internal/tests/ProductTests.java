@@ -13,15 +13,34 @@
 
 package org.eclipse.pde.build.internal.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.PrintStream;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.jar.Attributes;
-import org.apache.tools.ant.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Target;
+import org.apache.tools.ant.Task;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
@@ -29,8 +48,13 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.StateObjectFactory;
 import org.eclipse.pde.build.internal.tests.ant.AntUtils;
 import org.eclipse.pde.build.internal.tests.ant.TestBrandTask;
-import org.eclipse.pde.build.tests.*;
-import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.build.tests.Activator;
+import org.eclipse.pde.build.tests.BuildConfiguration;
+import org.eclipse.pde.build.tests.PDETestCase;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
+import org.eclipse.pde.internal.build.AssemblyInformation;
+import org.eclipse.pde.internal.build.Config;
+import org.eclipse.pde.internal.build.ProductGenerator;
 import org.eclipse.pde.internal.swt.tools.IconExe;
 import org.junit.Test;
 import org.osgi.framework.Version;

@@ -15,7 +15,11 @@
 package org.eclipse.pde.internal.runtime;
 
 import java.lang.reflect.InvocationTargetException;
-import org.eclipse.core.runtime.*;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.swt.widgets.Shell;

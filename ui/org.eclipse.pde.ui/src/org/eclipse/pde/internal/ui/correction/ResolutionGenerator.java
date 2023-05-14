@@ -18,14 +18,19 @@ package org.eclipse.pde.internal.ui.correction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDEState;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IMarkerResolution;
+import org.eclipse.ui.IMarkerResolution2;
+import org.eclipse.ui.IMarkerResolutionGenerator2;
 import org.osgi.framework.Constants;
 
 public class ResolutionGenerator implements IMarkerResolutionGenerator2 {

@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.util;
 
 import java.io.IOException;
 import java.net.URL;
+
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;

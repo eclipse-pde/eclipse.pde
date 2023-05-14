@@ -14,7 +14,12 @@
 
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.ListIterator;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;

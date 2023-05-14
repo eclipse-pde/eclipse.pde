@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.target;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;

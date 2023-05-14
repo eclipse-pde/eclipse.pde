@@ -16,11 +16,19 @@ package org.eclipse.pde.internal.ui.editor.site;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.pde.core.IWritable;
-import org.eclipse.pde.internal.core.isite.*;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.core.isite.ISite;
+import org.eclipse.pde.internal.core.isite.ISiteArchive;
+import org.eclipse.pde.internal.core.isite.ISiteCategory;
+import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
+import org.eclipse.pde.internal.core.isite.ISiteFeature;
+import org.eclipse.pde.internal.core.isite.ISiteModel;
+import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 
 public class SiteOutlinePage extends FormOutlinePage {
 	private LabelProvider fLabelProvider;

@@ -14,16 +14,25 @@
  ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IEditable;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.core.site.ExternalSiteModel;
@@ -32,7 +41,10 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.XMLInputContext;
 import org.eclipse.text.edits.TextEdit;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.IURIEditorInput;
 
 public class CategoryInputContext extends XMLInputContext {
 	public static final String CONTEXT_ID = "category-context"; //$NON-NLS-1$

@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.text.bundle;
 
 import java.util.ArrayList;
+
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ibundle.IBundle;

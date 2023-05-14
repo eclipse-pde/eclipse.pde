@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;

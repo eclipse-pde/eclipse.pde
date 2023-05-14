@@ -21,7 +21,9 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.pde.internal.core.text.IModelTextChangeListener;
 import org.eclipse.pde.internal.core.text.plugin.PluginModel;
 import org.eclipse.pde.internal.core.text.plugin.XMLTextChangeListener;
-import org.eclipse.text.edits.*;
+import org.eclipse.text.edits.MalformedTreeException;
+import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.TextEdit;
 import org.junit.Before;
 
 public abstract class XMLModelTestCase {

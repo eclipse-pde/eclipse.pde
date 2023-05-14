@@ -14,7 +14,10 @@
 package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.util.ArrayList;
-import org.eclipse.core.commands.*;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;

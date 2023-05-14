@@ -14,10 +14,14 @@
 package org.eclipse.pde.internal.build.tasks;
 
 import java.util.Properties;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
+import org.eclipse.pde.internal.build.BundleHelper;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.build.packager.PackagerGenerator;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 import org.eclipse.pde.internal.build.site.ProfileManager;

@@ -16,8 +16,13 @@ package org.eclipse.pde.internal.build;
 import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.p2.publisher.eclipse.*;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.equinox.p2.publisher.eclipse.Feature;
+import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
+import org.eclipse.equinox.p2.publisher.eclipse.URLEntry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.site.BuildTimeFeature;

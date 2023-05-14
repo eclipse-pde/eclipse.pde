@@ -15,6 +15,7 @@ package org.eclipse.pde.core.plugin;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;

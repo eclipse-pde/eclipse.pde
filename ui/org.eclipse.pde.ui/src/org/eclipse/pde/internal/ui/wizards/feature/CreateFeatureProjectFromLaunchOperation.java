@@ -17,6 +17,7 @@ package org.eclipse.pde.internal.ui.wizards.feature;
 
 import java.util.Collections;
 import java.util.Set;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;

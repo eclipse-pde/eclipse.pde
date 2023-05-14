@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
 import java.util.Comparator;
+
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 
 public class XMLElementProposalComparator implements Comparator<Object> {

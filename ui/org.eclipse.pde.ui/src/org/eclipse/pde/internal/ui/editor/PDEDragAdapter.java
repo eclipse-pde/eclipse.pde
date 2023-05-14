@@ -14,11 +14,21 @@
 
 package org.eclipse.pde.internal.ui.editor;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.plugin.IWritableDelimiter;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Tree;
 
 public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant {
 

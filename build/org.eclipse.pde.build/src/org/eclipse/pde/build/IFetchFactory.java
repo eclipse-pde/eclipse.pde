@@ -16,6 +16,7 @@ package org.eclipse.pde.build;
 
 import java.util.Map;
 import java.util.Properties;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 

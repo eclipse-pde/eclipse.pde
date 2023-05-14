@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Locale;
+
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;

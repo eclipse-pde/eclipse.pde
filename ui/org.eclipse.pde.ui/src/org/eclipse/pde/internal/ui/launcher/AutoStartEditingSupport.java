@@ -14,7 +14,10 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.Arrays;
-import org.eclipse.jface.viewers.*;
+
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.pde.internal.ui.shared.CachedCheckboxTreeViewer;
 import org.eclipse.swt.SWT;
 

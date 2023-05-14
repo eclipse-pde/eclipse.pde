@@ -15,8 +15,13 @@ package org.eclipse.pde.internal.build;
 
 import java.io.IOException;
 import java.net.URL;
+
 import org.eclipse.ant.core.AntRunner;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 

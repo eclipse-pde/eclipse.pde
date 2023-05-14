@@ -13,10 +13,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.bnd;
 
-import aQute.bnd.build.model.BndEditModel;
 import java.io.IOException;
+
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IModelChangeProvider;
+import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IModelChangedListener;
+
+import aQute.bnd.build.model.BndEditModel;
 
 /**
  * Extension to a bnd edit model that implements the base model methods and

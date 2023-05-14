@@ -16,10 +16,13 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.text.MessageFormat;
+
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.internal.core.util.*;
+import org.eclipse.pde.internal.core.util.IdUtil;
+import org.eclipse.pde.internal.core.util.UtilMessages;
+import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.BundleProviderHistoryUtil;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
@@ -27,7 +30,9 @@ import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 
 public abstract class ContentPage extends WizardPage {
 

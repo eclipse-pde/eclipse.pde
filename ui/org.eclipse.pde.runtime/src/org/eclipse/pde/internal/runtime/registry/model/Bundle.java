@@ -13,7 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.runtime.MultiStatus;
 import org.osgi.framework.BundleException;
 

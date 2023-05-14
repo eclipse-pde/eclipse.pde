@@ -14,7 +14,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
-import org.eclipse.ui.console.*;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleFactory;
+import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.IOConsole;
 
 /**
  * Console factory extension used to create a "Host OSGi Console".

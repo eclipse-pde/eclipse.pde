@@ -15,6 +15,7 @@
 package org.eclipse.pde.core;
 
 import java.util.List;
+
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.PluginRegistry;

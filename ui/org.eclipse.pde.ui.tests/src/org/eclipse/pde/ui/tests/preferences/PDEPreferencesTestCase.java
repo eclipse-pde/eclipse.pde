@@ -23,7 +23,9 @@ import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
+import org.eclipse.pde.internal.ui.IPreferenceConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.junit.Test;
 
 

@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.iproduct;
 
 import java.io.Serializable;
+
 import org.eclipse.pde.core.IWritable;
 import org.w3c.dom.Node;
 

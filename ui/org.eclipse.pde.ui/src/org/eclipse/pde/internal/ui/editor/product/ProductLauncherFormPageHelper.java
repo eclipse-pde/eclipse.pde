@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;

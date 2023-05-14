@@ -13,7 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.nls;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 

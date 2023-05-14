@@ -13,12 +13,18 @@
  *******************************************************************************/
 package org.eclipse.pde.build.tests;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
+
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 
 public class BuildConfiguration {

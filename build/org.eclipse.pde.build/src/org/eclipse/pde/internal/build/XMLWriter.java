@@ -13,9 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
-import java.io.*;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Map;
 
 /**
  * A simple XML writer.

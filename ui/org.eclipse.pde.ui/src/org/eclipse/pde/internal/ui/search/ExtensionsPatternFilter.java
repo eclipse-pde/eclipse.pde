@@ -13,9 +13,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginAttribute;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.IPluginParent;
 import org.eclipse.pde.internal.core.bundle.BundlePlugin;
 import org.eclipse.pde.internal.ui.util.ExtensionsFilterUtil;
 import org.eclipse.ui.dialogs.PatternFilter;

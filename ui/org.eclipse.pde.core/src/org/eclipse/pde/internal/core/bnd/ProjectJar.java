@@ -13,13 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bnd;
 
-import aQute.bnd.osgi.Jar;
-import aQute.bnd.osgi.ManifestResource;
-import aQute.bnd.osgi.Resource;
 import java.io.InputStream;
 import java.util.function.Predicate;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -33,6 +31,10 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.core.project.PDEProject;
+
+import aQute.bnd.osgi.Jar;
+import aQute.bnd.osgi.ManifestResource;
+import aQute.bnd.osgi.Resource;
 
 public class ProjectJar extends Jar {
 

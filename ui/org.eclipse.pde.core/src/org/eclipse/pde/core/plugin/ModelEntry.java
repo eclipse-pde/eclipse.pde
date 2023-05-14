@@ -14,6 +14,7 @@
 package org.eclipse.pde.core.plugin;
 
 import java.util.ArrayList;
+
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 

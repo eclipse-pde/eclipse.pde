@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.build.tasks;
 
 import java.util.Locale;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 

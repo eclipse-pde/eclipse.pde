@@ -16,19 +16,37 @@ package org.eclipse.pde.launching;
 
 import java.io.File;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.stream.Collectors;
-import org.eclipse.core.runtime.*;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.launching.*;
-import org.eclipse.pde.internal.launching.launcher.*;
+import org.eclipse.pde.internal.launching.IPDEConstants;
+import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
+import org.eclipse.pde.internal.launching.PDEMessages;
+import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
+import org.eclipse.pde.internal.launching.launcher.LaunchConfigurationHelper;
+import org.eclipse.pde.internal.launching.launcher.LaunchPluginValidator;
+import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
+import org.eclipse.pde.internal.launching.launcher.OSGiFrameworkManager;
+import org.eclipse.pde.internal.launching.launcher.RequirementHelper;
 
 /**
  * A launch delegate for launching the Equinox framework

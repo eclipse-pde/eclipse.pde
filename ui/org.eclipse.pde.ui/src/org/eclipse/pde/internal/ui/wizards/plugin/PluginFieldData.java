@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import java.util.ArrayList;
+
 import org.eclipse.pde.ui.IPluginFieldData;
 import org.eclipse.pde.ui.templates.ITemplateSection;
 

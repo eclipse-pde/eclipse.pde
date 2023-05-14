@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationFileInfo;

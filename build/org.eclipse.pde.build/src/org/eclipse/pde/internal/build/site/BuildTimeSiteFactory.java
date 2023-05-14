@@ -15,11 +15,20 @@ package org.eclipse.pde.internal.build.site;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
-import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.build.BundleHelper;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
+import org.eclipse.pde.internal.build.Messages;
+import org.eclipse.pde.internal.build.PDEUIStateWrapper;
+import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.build.site.compatibility.FeatureReference;
 
 public class BuildTimeSiteFactory /*extends BaseSiteFactory*/ implements IPDEBuildConstants {

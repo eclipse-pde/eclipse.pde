@@ -15,7 +15,10 @@ package org.eclipse.pde.ui.launcher;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.*;
+import org.eclipse.debug.ui.CommonTab;
+import org.eclipse.debug.ui.EnvironmentTab;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
 import org.eclipse.jdt.internal.junit.launcher.AssertionVMArg;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;

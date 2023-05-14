@@ -14,7 +14,9 @@
 package org.eclipse.pde.internal.ui.editor.context;
 
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
+import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.pde.internal.ui.editor.text.XMLPartitionScanner;
 import org.eclipse.pde.internal.ui.editor.text.XMLStringPartitionScanner;

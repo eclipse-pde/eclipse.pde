@@ -20,12 +20,17 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetLocation;
+import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.eclipse.pde.core.target.NameVersionDescriptor;
+import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.junit.Test;
 

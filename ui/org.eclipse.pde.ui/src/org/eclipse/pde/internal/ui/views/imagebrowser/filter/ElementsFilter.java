@@ -15,7 +15,10 @@
 
 package org.eclipse.pde.internal.ui.views.imagebrowser.filter;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.pde.internal.ui.views.imagebrowser.ImageElement;
 
 public class ElementsFilter implements IFilter {

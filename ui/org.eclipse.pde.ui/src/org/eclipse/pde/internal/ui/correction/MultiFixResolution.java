@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import java.util.ArrayList;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;

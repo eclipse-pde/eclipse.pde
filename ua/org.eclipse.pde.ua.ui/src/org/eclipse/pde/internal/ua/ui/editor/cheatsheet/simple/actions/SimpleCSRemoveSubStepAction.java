@@ -15,7 +15,13 @@
 package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConditionalSubItem;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConstants;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSObject;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSRepeatedSubItem;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItem;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItemObject;
 
 public class SimpleCSRemoveSubStepAction extends Action {
 

@@ -17,8 +17,12 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.io.File;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
+
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -31,15 +35,23 @@ import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.AbstractEditingModel;
 import org.eclipse.pde.internal.core.text.IDocumentKey;
-import org.eclipse.pde.internal.core.text.bundle.*;
+import org.eclipse.pde.internal.core.text.bundle.BundleModel;
+import org.eclipse.pde.internal.core.text.bundle.ManifestHeader;
+import org.eclipse.pde.internal.core.text.bundle.PDEManifestElement;
+import org.eclipse.pde.internal.core.text.bundle.PackageFriend;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
 import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.ManifestDocumentSetupParticipant;
 import org.eclipse.pde.internal.ui.editor.context.UTF8InputContext;
-import org.eclipse.text.edits.*;
-import org.eclipse.ui.*;
+import org.eclipse.text.edits.DeleteEdit;
+import org.eclipse.text.edits.InsertEdit;
+import org.eclipse.text.edits.ReplaceEdit;
+import org.eclipse.text.edits.TextEdit;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IURIEditorInput;
 import org.osgi.framework.Constants;
 
 public class BundleInputContext extends UTF8InputContext {

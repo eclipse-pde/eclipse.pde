@@ -15,10 +15,25 @@ package org.eclipse.pde.internal.launching.launcher;
 
 import java.io.File;
 import java.util.ArrayList;
-import org.eclipse.core.runtime.*;
-import org.eclipse.debug.core.*;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchListener;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.pde.internal.launching.*;
+import org.eclipse.pde.internal.launching.IPDEConstants;
+import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
+import org.eclipse.pde.internal.launching.PDEMessages;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 
 public class LaunchListener implements ILaunchListener, IDebugEventSetListener {

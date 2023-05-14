@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;

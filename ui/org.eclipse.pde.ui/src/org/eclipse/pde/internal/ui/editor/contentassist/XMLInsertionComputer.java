@@ -15,13 +15,28 @@
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
 import java.util.HashSet;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.*;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IIdentifiable;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.pde.core.plugin.IPluginParent;
+import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
+import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
+import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
+import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.eclipse.pde.internal.core.schema.SchemaAttribute;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;

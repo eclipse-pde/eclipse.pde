@@ -16,7 +16,11 @@
 package org.eclipse.pde.internal.ui.editor.actions;
 
 import java.io.File;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.URIUtil;
@@ -30,7 +34,9 @@ import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.schema.SchemaEditor;
 
 /**

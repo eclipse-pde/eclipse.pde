@@ -17,7 +17,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.pde.build.tests.BuildConfiguration;

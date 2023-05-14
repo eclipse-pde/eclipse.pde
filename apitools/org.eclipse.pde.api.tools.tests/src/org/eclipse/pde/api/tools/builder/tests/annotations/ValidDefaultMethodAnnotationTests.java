@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.annotations;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
+
+import junit.framework.Test;
 
 /**
  * Tests valid annotations on interface default methods

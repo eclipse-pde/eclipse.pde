@@ -15,7 +15,10 @@ package org.eclipse.pde.internal.ui.wizards;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import org.eclipse.core.runtime.*;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
 import org.eclipse.swt.graphics.Image;

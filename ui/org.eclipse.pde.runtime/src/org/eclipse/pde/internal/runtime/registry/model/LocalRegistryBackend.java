@@ -18,11 +18,36 @@ package org.eclipse.pde.internal.runtime.registry.model;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
-import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.*;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IRegistryEventListener;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.PlatformAdmin;
+import org.eclipse.osgi.service.resolver.ResolverError;
+import org.eclipse.osgi.service.resolver.State;
+import org.eclipse.osgi.service.resolver.VersionConstraint;
 import org.eclipse.osgi.util.ManifestElement;
-import org.eclipse.pde.internal.runtime.*;
-import org.osgi.framework.*;
+import org.eclipse.pde.internal.runtime.MessageHelper;
+import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
+import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.BundleListener;
+import org.osgi.framework.Constants;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceEvent;
+import org.osgi.framework.ServiceListener;
+import org.osgi.framework.ServiceReference;
 
 public class LocalRegistryBackend implements IRegistryEventListener, BundleListener, ServiceListener, RegistryBackend {
 

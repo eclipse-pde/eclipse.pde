@@ -13,7 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.text.rules.*;
+import org.eclipse.jface.text.rules.ICharacterScanner;
+import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.IWordDetector;
+import org.eclipse.jface.text.rules.WordPatternRule;
 
 public class ArgumentRule extends WordPatternRule {
 

@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.editor.actions;
 
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;

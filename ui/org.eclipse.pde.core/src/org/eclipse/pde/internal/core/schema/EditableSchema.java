@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
 import java.net.URL;
+
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;

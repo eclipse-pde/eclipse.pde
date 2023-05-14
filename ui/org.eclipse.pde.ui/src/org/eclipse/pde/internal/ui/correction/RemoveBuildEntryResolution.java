@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.correction;
 
 import java.util.Arrays;
 import java.util.Set;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.util.NLS;

@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.text.plugin;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginObject;

@@ -14,11 +14,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 
 public class SourceInformationProvider implements IInformationProvider, IInformationProviderExtension2, IPartListener {
 

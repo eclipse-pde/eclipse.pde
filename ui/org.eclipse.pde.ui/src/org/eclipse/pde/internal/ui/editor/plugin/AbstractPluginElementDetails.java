@@ -17,7 +17,9 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import org.eclipse.pde.internal.ui.editor.PDEDetails;
 import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.actions.ActionFactory;
 
 public abstract class AbstractPluginElementDetails extends PDEDetails {

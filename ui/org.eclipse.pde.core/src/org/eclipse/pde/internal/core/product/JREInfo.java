@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.product;
 
 import java.io.File;
 import java.io.PrintWriter;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;

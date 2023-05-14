@@ -14,6 +14,7 @@ t SPDX-License-Identifier: EPL-2.0
 package org.eclipse.pde.internal.build.site.compatibility;
 
 import java.util.StringTokenizer;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.p2.publisher.eclipse.IPlatformEntry;
 

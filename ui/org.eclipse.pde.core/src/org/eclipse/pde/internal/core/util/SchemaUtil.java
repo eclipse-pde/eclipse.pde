@@ -20,8 +20,10 @@ import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.eclipse.pde.internal.core.PDECore;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;

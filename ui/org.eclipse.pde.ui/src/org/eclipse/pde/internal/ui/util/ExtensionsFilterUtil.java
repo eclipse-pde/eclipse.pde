@@ -13,10 +13,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginAttribute;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.text.plugin.PluginNode;
 import org.eclipse.pde.internal.ui.search.ExtensionsPatternFilter;
 

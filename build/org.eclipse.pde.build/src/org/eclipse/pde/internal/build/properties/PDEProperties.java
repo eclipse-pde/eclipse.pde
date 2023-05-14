@@ -15,13 +15,22 @@ package org.eclipse.pde.internal.build.properties;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.ant.core.IAntPropertyValueProvider;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.build.BundleHelper;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
+import org.eclipse.pde.internal.build.Messages;
 
 public class PDEProperties implements IAntPropertyValueProvider {
 	static private final String PREFIX = "eclipse.pdebuild"; //$NON-NLS-1$

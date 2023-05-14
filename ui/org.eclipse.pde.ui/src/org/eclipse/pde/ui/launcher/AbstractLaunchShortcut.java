@@ -14,11 +14,20 @@
 package org.eclipse.pde.ui.launcher;
 
 import java.util.ArrayList;
+
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.ui.*;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 

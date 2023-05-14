@@ -17,6 +17,7 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.util.Arrays;
 import java.util.HashSet;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;

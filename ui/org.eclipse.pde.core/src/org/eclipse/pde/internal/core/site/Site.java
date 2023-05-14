@@ -18,6 +18,7 @@ package org.eclipse.pde.internal.core.site;
 import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.Vector;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IWritable;

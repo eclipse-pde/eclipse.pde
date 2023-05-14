@@ -13,7 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ua.core.cheatsheet.comp;
 
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.*;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCS;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSDependency;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSIntro;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSOnCompletion;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSParam;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTask;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup;
 
 public class CompCSModelFactory implements ICompCSModelFactory {
 

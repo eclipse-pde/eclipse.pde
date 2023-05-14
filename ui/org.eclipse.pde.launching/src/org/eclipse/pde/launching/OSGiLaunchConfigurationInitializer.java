@@ -15,6 +15,7 @@ package org.eclipse.pde.launching;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.core.plugin.IPluginModelBase;

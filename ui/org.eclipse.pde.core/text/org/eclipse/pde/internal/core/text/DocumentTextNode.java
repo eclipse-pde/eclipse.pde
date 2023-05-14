@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.text;
 
 import java.util.HashMap;
+
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 
 public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNode {

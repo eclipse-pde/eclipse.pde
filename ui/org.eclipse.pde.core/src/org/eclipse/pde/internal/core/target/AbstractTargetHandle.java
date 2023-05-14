@@ -16,6 +16,7 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.InputStream;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;

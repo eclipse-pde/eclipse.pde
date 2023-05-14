@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.search;
 
 import java.util.Set;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;

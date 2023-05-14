@@ -18,6 +18,7 @@ package org.eclipse.pde.internal.core.target;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Objects;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;

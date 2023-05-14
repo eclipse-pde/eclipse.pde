@@ -17,7 +17,9 @@ package org.eclipse.pde.ui.templates;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 /**
  * Implementation of the AbstractTemplateOption that allows users to choose a value from

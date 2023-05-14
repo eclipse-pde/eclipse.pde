@@ -14,17 +14,37 @@
 package org.eclipse.pde.internal.ui.compare;
 
 import java.nio.charset.Charset;
-import org.eclipse.compare.*;
-import org.eclipse.compare.structuremergeviewer.*;
+
+import org.eclipse.compare.IEditableContent;
+import org.eclipse.compare.IEncodedStreamContentAccessor;
+import org.eclipse.compare.ISharedDocumentAdapter;
+import org.eclipse.compare.IStreamContentAccessor;
+import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.structuremergeviewer.DocumentRangeNode;
+import org.eclipse.compare.structuremergeviewer.IStructureComparator;
+import org.eclipse.compare.structuremergeviewer.StructureCreator;
+import org.eclipse.compare.structuremergeviewer.StructureRootNode;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.resource.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.core.text.plugin.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.core.text.plugin.FragmentModel;
+import org.eclipse.pde.internal.core.text.plugin.PluginModel;
+import org.eclipse.pde.internal.core.text.plugin.PluginModelBase;
+import org.eclipse.pde.internal.ui.PDELabelProvider;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.graphics.Image;
 
 public class PluginStructureCreator extends StructureCreator {

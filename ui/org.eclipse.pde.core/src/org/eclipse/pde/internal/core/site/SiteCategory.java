@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.isite.ISite;
 import org.eclipse.pde.internal.core.isite.ISiteCategory;

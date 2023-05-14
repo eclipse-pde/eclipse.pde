@@ -15,7 +15,9 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
  * This action toggles whether the Outline page links its selection to the

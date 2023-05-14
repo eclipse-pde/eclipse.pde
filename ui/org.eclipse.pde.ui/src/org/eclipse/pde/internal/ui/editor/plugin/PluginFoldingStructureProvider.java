@@ -13,9 +13,16 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import java.util.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.pde.core.plugin.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
+import org.eclipse.pde.core.plugin.IExtensions;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.ui.editor.AbstractFoldingStructureProvider;

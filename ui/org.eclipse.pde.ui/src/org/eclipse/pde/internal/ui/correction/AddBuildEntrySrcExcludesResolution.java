@@ -14,12 +14,15 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import java.util.Arrays;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
-import org.eclipse.pde.internal.core.text.build.*;
+import org.eclipse.pde.internal.core.text.build.Build;
+import org.eclipse.pde.internal.core.text.build.BuildEntry;
+import org.eclipse.pde.internal.core.text.build.BuildModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class AddBuildEntrySrcExcludesResolution extends BuildEntryMarkerResolution {

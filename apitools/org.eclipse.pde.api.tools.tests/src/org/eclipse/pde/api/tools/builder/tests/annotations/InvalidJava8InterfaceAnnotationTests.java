@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.annotations;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
+
+import junit.framework.Test;
 
 /**
  * Tests invalid annotation in Java 8 interfaces

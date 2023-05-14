@@ -13,7 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
 import org.eclipse.swt.widgets.Control;

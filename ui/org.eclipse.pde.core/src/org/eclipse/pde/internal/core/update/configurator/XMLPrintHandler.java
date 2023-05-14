@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.update.configurator;
 
 import java.io.IOException;
 import java.io.Writer;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;

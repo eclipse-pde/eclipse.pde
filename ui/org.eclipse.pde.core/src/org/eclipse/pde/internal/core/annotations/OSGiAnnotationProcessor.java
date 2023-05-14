@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.annotations;
 
 import java.util.Optional;
 import java.util.stream.Stream;
+
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.Expression;

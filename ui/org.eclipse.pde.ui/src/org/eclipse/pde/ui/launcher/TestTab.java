@@ -28,7 +28,10 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 
 /**
  * The launch configuration tab for JUnit Plug-in Tests. This tab enhances the

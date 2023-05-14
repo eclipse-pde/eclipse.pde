@@ -14,7 +14,9 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 

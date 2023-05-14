@@ -14,6 +14,7 @@
 package org.eclipse.pde.ui.templates;
 
 import java.net.URL;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

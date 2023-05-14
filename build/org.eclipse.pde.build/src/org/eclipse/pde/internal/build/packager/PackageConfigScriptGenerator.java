@@ -13,12 +13,29 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.packager;
 
-import java.io.*;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Properties;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
+import org.eclipse.pde.internal.build.AssembleConfigScriptGenerator;
+import org.eclipse.pde.internal.build.Config;
+import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
+import org.eclipse.pde.internal.build.Messages;
+import org.eclipse.pde.internal.build.ShapeAdvisor;
+import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.build.ant.FileSet;
 import org.eclipse.pde.internal.build.builder.BuildDirector;
 import org.eclipse.pde.internal.build.builder.ModelBuildScriptGenerator;

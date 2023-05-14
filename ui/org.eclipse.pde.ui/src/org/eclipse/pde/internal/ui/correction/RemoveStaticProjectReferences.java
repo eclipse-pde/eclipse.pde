@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.ui.PDEUIMessages;

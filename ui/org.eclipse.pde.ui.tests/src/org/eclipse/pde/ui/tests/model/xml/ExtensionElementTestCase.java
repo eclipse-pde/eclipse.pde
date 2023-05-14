@@ -16,7 +16,9 @@ package org.eclipse.pde.ui.tests.model.xml;
 import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginObject;
 import org.junit.Test;
 
 public class ExtensionElementTestCase extends ExtensionTestCase {

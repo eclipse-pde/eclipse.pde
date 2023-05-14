@@ -15,7 +15,11 @@ package org.eclipse.pde.internal.junit.runtime;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+
 import org.eclipse.core.runtime.FileLocator;
 import org.osgi.framework.Bundle;
 

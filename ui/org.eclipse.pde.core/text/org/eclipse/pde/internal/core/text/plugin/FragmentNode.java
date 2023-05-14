@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.text.plugin;
 
 import java.util.ArrayList;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IMatchRules;

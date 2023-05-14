@@ -14,7 +14,10 @@
 package org.eclipse.pde.internal.ui.views.plugins;
 
 import java.lang.reflect.InvocationTargetException;
-import org.eclipse.core.commands.*;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;

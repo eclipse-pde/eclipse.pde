@@ -13,15 +13,26 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.IWizardNode;
-import org.eclipse.pde.internal.ui.elements.*;
+import org.eclipse.pde.internal.ui.elements.ElementLabelProvider;
+import org.eclipse.pde.internal.ui.elements.ListContentProvider;
+import org.eclipse.pde.internal.ui.elements.TreeContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Tree;
 
 public abstract class WizardTreeSelectionPage extends BaseWizardSelectionPage {
 	private TreeViewer categoryTreeViewer;

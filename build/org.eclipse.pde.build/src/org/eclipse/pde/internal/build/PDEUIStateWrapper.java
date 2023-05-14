@@ -14,7 +14,10 @@
 
 package org.eclipse.pde.internal.build;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.service.resolver.State;
 

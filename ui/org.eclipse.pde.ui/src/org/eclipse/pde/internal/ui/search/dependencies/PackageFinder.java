@@ -14,12 +14,34 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dependencies;
 
-import java.util.*;
-import org.eclipse.core.resources.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.core.util.*;
+import org.eclipse.jdt.core.IClassFile;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.ToolFactory;
+import org.eclipse.jdt.core.util.IClassFileReader;
+import org.eclipse.jdt.core.util.IConstantPool;
+import org.eclipse.jdt.core.util.IConstantPoolConstant;
+import org.eclipse.jdt.core.util.IConstantPoolEntry;
+import org.eclipse.jdt.core.util.IExceptionAttribute;
+import org.eclipse.jdt.core.util.IFieldInfo;
+import org.eclipse.jdt.core.util.IMethodInfo;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;

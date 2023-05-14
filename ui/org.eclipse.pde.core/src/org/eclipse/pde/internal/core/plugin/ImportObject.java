@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.plugin;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
+
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.core.IWritable;

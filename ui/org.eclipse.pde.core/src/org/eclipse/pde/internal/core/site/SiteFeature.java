@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
 import java.util.Vector;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;

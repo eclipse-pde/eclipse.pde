@@ -17,7 +17,20 @@ import org.eclipse.pde.internal.core.text.DocumentNodeFactory;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.core.text.plugin.DocumentGenericNode;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSAction;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSCommand;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConditionalSubItem;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConstants;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSDescription;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSIntro;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSModelFactory;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSObject;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSOnCompletion;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSPerformWhen;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSRepeatedSubItem;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItem;
 
 public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 		ISimpleCSModelFactory {

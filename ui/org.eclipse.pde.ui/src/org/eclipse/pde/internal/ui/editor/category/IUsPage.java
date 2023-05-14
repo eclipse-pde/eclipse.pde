@@ -17,12 +17,24 @@
  ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
 
-import org.eclipse.pde.internal.core.isite.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.core.isite.ISiteBundle;
+import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
+import org.eclipse.pde.internal.core.isite.ISiteFeature;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.PDEDetailsSections;
+import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.PDEMasterDetailsBlock;
+import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.DetailsPart;
+import org.eclipse.ui.forms.IDetailsPage;
+import org.eclipse.ui.forms.IDetailsPageProvider;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class IUsPage extends PDEFormPage {

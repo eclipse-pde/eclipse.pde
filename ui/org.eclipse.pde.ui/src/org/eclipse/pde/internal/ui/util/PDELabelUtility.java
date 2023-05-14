@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.ui.util;
 
 import java.util.HashSet;
+
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 

@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.ui.wizards.product;
 
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.core.iproduct.IProduct;

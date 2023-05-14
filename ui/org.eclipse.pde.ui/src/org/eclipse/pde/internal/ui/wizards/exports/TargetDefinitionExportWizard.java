@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.io.File;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -24,7 +25,9 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.ExportTargetJob;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 

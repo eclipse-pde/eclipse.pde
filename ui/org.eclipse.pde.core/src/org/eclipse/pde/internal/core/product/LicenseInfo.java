@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
+
 import org.eclipse.pde.internal.core.iproduct.ILicenseInfo;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.w3c.dom.Node;

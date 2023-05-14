@@ -15,7 +15,10 @@ package org.eclipse.pde.internal.build;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import org.eclipse.core.runtime.*;
+
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.ILogListener;
+import org.eclipse.core.runtime.IStatus;
 import org.osgi.framework.Bundle;
 
 public class AntLogAdapter implements ILog {

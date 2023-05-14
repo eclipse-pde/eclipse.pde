@@ -14,15 +14,29 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import java.util.Map;
+
 import org.eclipse.jdt.ui.IContextMenuConstants;
 import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
-import org.eclipse.jface.action.*;
-import org.eclipse.pde.internal.ui.editor.actions.*;
-import org.eclipse.ui.*;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.pde.internal.ui.editor.actions.FormatAction;
+import org.eclipse.pde.internal.ui.editor.actions.HyperlinkAction;
+import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorActionBarContributor;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.editors.text.TextEditorActionContributor;
 import org.eclipse.ui.forms.editor.IFormPage;
-import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 
 public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 

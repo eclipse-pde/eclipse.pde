@@ -14,11 +14,22 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.fetch;
 
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.build.*;
-import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.build.Constants;
+import org.eclipse.pde.build.IAntScript;
+import org.eclipse.pde.build.IFetchFactory;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
+import org.eclipse.pde.internal.build.Messages;
+import org.eclipse.pde.internal.build.Utils;
 
 /**
  * An <code>FetchTaskFactory</code> for building fetch scripts that will

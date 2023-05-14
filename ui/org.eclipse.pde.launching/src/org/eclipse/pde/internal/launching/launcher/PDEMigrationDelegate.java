@@ -15,8 +15,12 @@ package org.eclipse.pde.internal.launching.launcher;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.debug.core.*;
-import org.eclipse.jdt.launching.*;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 
 public class PDEMigrationDelegate implements ILaunchConfigurationMigrationDelegate {

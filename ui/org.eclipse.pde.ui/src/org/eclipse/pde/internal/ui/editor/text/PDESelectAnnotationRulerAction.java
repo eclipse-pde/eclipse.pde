@@ -16,10 +16,19 @@ package org.eclipse.pde.internal.ui.editor.text;
 
 import java.util.Iterator;
 import java.util.ResourceBundle;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.source.*;
+
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationAccessExtension;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
+import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.ITextEditorExtension;
+import org.eclipse.ui.texteditor.SelectMarkerRulerAction;
 
 public class PDESelectAnnotationRulerAction extends SelectMarkerRulerAction {
 

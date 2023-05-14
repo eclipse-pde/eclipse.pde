@@ -14,6 +14,7 @@
 package org.eclipse.pde.core.target;
 
 import java.net.URI;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

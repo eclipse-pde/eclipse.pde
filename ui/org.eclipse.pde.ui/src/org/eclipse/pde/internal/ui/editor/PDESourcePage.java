@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import java.util.ResourceBundle;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.ui.JavaUI;
@@ -23,11 +24,30 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.internal.core.text.*;
-import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.editor.actions.*;
+import org.eclipse.pde.internal.core.text.AbstractEditingModel;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
+import org.eclipse.pde.internal.core.text.IDocumentRange;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
+import org.eclipse.pde.internal.core.text.IEditingModel;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.editor.actions.FormatAction;
+import org.eclipse.pde.internal.ui.editor.actions.HyperlinkAction;
+import org.eclipse.pde.internal.ui.editor.actions.PDEActionConstants;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator;
 import org.eclipse.pde.internal.ui.editor.outline.IOutlineSelectionHandler;
@@ -36,7 +56,9 @@ import org.eclipse.pde.internal.ui.editor.text.PDESelectAnnotationRulerAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.forms.IManagedForm;
@@ -45,7 +67,11 @@ import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.part.IShowInTargetList;
-import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
+import org.eclipse.ui.texteditor.DefaultRangeIndicator;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.ResourceAction;
+import org.eclipse.ui.texteditor.TextOperationAction;
 
 public abstract class PDESourcePage extends TextEditor implements IFormPage, IGotoMarker, ISelectionChangedListener, IOutlineContentCreator, IOutlineSelectionHandler {
 

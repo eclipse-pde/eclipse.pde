@@ -14,8 +14,11 @@
 package org.eclipse.pde.internal.build.packager;
 
 import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.build.AssemblyInformation;
+import org.eclipse.pde.internal.build.BuildScriptGenerator;
+import org.eclipse.pde.internal.build.Utils;
 import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 
 public class PackagerGenerator extends BuildScriptGenerator {

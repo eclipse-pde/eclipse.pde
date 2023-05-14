@@ -15,7 +15,11 @@
 package org.eclipse.pde.internal.ui.refactoring;
 
 import java.util.HashMap;
-import org.eclipse.core.resources.*;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;

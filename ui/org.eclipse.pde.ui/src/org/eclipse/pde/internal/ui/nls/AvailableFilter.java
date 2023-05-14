@@ -16,7 +16,10 @@ package org.eclipse.pde.internal.ui.nls;
 
 import java.util.Set;
 import java.util.regex.Pattern;
-import org.eclipse.jface.viewers.*;
+
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 
 public class AvailableFilter extends ViewerFilter {

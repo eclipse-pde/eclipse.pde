@@ -14,11 +14,22 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.util.ArrayList;
+
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.core.ifeature.IFeature;
+import org.eclipse.pde.internal.core.ifeature.IFeatureChild;
+import org.eclipse.pde.internal.core.ifeature.IFeatureData;
+import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
+import org.eclipse.pde.internal.core.ifeature.IFeatureInfo;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.core.ifeature.IFeatureURL;
+import org.eclipse.pde.internal.core.ifeature.IFeatureURLElement;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.build.BuildPage;

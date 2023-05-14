@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.builders;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;

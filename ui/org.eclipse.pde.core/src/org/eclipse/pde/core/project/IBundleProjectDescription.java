@@ -14,6 +14,7 @@
 package org.eclipse.pde.core.project;
 
 import java.net.URI;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;

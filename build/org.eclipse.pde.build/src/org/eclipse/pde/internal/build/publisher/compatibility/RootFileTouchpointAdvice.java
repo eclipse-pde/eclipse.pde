@@ -16,9 +16,12 @@ package org.eclipse.pde.internal.build.publisher.compatibility;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
-import org.eclipse.equinox.p2.metadata.*;
+import org.eclipse.equinox.p2.metadata.ITouchpointData;
+import org.eclipse.equinox.p2.metadata.ITouchpointInstruction;
+import org.eclipse.equinox.p2.metadata.MetadataFactory;
 import org.eclipse.equinox.p2.publisher.AbstractPublisherAction;
 import org.eclipse.equinox.p2.publisher.actions.ITouchpointAdvice;
 import org.eclipse.equinox.p2.publisher.actions.RootFilesAdvice;

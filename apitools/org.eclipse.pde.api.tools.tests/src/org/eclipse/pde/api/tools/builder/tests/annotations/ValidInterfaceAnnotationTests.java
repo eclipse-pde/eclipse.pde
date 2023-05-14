@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.annotations;
 
-import junit.framework.Test;
-
 import org.eclipse.core.runtime.IPath;
+
+import junit.framework.Test;
 
 /**
  * Tests valid annotations on interfaces

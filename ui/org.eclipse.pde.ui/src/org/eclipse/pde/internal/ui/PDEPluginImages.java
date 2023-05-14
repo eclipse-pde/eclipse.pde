@@ -16,6 +16,7 @@
 package org.eclipse.pde.internal.ui;
 
 import java.net.URL;
+
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;

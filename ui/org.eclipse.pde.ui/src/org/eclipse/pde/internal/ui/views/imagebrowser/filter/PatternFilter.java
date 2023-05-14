@@ -16,6 +16,7 @@
 package org.eclipse.pde.internal.ui.views.imagebrowser.filter;
 
 import java.util.regex.Pattern;
+
 import org.eclipse.pde.internal.ui.views.imagebrowser.ImageElement;
 
 public class PatternFilter implements IFilter {

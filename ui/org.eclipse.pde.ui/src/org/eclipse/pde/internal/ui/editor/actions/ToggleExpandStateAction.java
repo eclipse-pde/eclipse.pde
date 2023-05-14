@@ -14,8 +14,11 @@
 package org.eclipse.pde.internal.ui.editor.actions;
 
 import java.util.Iterator;
+
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.pde.core.plugin.IPluginParent;
 import org.eclipse.pde.internal.core.text.plugin.PluginExtensionNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginParentNode;

@@ -15,7 +15,13 @@ package org.eclipse.pde.internal.ui.views.dependencies;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import org.eclipse.osgi.service.resolver.*;
+
+import org.eclipse.osgi.service.resolver.BaseDescription;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.HostSpecification;
+import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.osgi.framework.Constants;
 

@@ -14,7 +14,9 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class SynchronizeVersionsWizard extends Wizard {
 	private FeatureEditor featureEditor;

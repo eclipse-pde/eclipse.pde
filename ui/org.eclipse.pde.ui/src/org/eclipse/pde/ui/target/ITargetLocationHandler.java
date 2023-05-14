@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.target;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.pde.core.target.ITargetDefinition;

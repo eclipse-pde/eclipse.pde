@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.PrintWriter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchema;

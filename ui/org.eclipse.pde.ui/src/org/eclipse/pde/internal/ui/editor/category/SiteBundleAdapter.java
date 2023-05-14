@@ -17,6 +17,7 @@ package org.eclipse.pde.internal.ui.editor.category;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Objects;
+
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.isite.ISiteBundle;
 

@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.trace.internal;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.trace.internal.datamodel.TracingNode;
 
 /**
