@@ -17,7 +17,13 @@ package org.eclipse.pde.internal.ua.core.cheatsheet.simple.text;
 import java.util.List;
 
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSDescription;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSModel;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSOnCompletion;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSPerformWhen;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSRunContainerObject;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItemObject;
 
 public class SimpleCSItem extends SimpleCSObject implements ISimpleCSItem {
 

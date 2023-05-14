@@ -14,8 +14,11 @@
 package org.eclipse.pde.internal.build.site;
 
 import java.io.File;
-import java.net.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
+
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.p2.publisher.eclipse.Feature;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;

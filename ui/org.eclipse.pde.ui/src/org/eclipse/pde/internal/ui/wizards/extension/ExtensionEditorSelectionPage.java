@@ -20,7 +20,9 @@ import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.elements.ElementList;
-import org.eclipse.pde.internal.ui.wizards.*;
+import org.eclipse.pde.internal.ui.wizards.WizardElement;
+import org.eclipse.pde.internal.ui.wizards.WizardListSelectionPage;
+import org.eclipse.pde.internal.ui.wizards.WizardNode;
 import org.eclipse.pde.ui.IBasePluginWizard;
 import org.eclipse.pde.ui.IExtensionEditorWizard;
 

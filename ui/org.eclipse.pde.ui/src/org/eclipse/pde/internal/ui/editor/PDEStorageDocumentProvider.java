@@ -17,10 +17,13 @@ package org.eclipse.pde.internal.ui.editor;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
+
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;

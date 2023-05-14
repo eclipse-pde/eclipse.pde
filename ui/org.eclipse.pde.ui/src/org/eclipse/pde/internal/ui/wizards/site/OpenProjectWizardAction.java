@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.wizards.site;
 
 import java.util.Hashtable;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.StructuredSelection;

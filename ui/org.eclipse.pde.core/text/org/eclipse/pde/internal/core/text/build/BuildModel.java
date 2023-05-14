@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.text.build;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.build.IBuild;

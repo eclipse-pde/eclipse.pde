@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.editor.context;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.ui.IEditorInput;
 

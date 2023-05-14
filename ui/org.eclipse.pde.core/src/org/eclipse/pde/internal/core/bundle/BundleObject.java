@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.bundle;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.IModelChangeProvider;

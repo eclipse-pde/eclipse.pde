@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.wizards.templates;
 
 import java.util.Hashtable;
 import java.util.Stack;
+
 import org.eclipse.pde.ui.templates.IVariableProvider;
 
 public class PreprocessorParser {

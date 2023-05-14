@@ -14,7 +14,12 @@
 
 package org.eclipse.pde.internal.ua.core.cheatsheet.comp;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
 import org.eclipse.core.resources.IFile;

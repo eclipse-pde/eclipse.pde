@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;

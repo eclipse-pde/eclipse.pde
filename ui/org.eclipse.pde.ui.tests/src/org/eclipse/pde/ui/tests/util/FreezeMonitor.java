@@ -14,8 +14,13 @@
 
 package org.eclipse.pde.ui.tests.util;
 
-import java.lang.management.*;
-import org.eclipse.core.runtime.*;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 public class FreezeMonitor {

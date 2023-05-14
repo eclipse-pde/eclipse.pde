@@ -14,7 +14,9 @@
 package org.eclipse.pde.internal.ui.samples;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferenceNode;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;

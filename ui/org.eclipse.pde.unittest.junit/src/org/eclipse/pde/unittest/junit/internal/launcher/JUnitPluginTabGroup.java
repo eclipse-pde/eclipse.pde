@@ -13,26 +13,21 @@
  *******************************************************************************/
 package org.eclipse.pde.unittest.junit.internal.launcher;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.CommonTab;
+import org.eclipse.debug.ui.EnvironmentTab;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
+import org.eclipse.jdt.internal.junit.launcher.AssertionVMArg;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.ui.launcher.AbstractPDELaunchConfigurationTabGroup;
 import org.eclipse.pde.ui.launcher.ConfigurationTab;
 import org.eclipse.pde.ui.launcher.PluginJUnitMainTab;
 import org.eclipse.pde.ui.launcher.PluginsTab;
 import org.eclipse.pde.ui.launcher.TracingTab;
 import org.eclipse.pde.unittest.junit.launcher.JUnitPluginTestTab;
-
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-
-import org.eclipse.debug.ui.CommonTab;
-import org.eclipse.debug.ui.EnvironmentTab;
-import org.eclipse.debug.ui.ILaunchConfigurationDialog;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
-
-import org.eclipse.jdt.internal.junit.launcher.AssertionVMArg;
-
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 public class JUnitPluginTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 

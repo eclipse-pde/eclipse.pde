@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.refactoring;
 
 import java.util.HashMap;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;

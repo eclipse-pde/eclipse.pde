@@ -13,8 +13,22 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
-import org.eclipse.pde.internal.core.ischema.*;
-import org.eclipse.pde.internal.core.schema.*;
+import org.eclipse.pde.internal.core.ischema.ISchema;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
+import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
+import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaType;
+import org.eclipse.pde.internal.core.schema.Schema;
+import org.eclipse.pde.internal.core.schema.SchemaAttribute;
+import org.eclipse.pde.internal.core.schema.SchemaComplexType;
+import org.eclipse.pde.internal.core.schema.SchemaCompositor;
+import org.eclipse.pde.internal.core.schema.SchemaElement;
+import org.eclipse.pde.internal.core.schema.SchemaElementReference;
+import org.eclipse.pde.internal.core.schema.SchemaSimpleType;
 import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 
 public class SchemaRearranger {

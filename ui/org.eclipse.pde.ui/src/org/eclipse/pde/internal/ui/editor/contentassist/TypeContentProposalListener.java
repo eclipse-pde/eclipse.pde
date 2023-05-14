@@ -14,7 +14,11 @@
 
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
-import org.eclipse.jface.fieldassist.*;
+import org.eclipse.jface.fieldassist.ContentProposalAdapter;
+import org.eclipse.jface.fieldassist.IContentProposal;
+import org.eclipse.jface.fieldassist.IContentProposalListener;
+import org.eclipse.jface.fieldassist.IContentProposalListener2;
+import org.eclipse.jface.fieldassist.IContentProposalProvider;
 
 /**
  * TypeContentProposalListener

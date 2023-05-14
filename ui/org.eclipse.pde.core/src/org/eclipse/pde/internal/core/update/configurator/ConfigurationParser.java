@@ -23,9 +23,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.StringTokenizer;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.osgi.util.NLS;
 import org.xml.sax.Attributes;

@@ -17,7 +17,14 @@ package org.eclipse.pde.internal.ua.ui.wizards.cheatsheet;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.pde.internal.ua.core.cheatsheet.comp.CompCSWorkspaceModel;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.*;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCS;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSConstants;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSIntro;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSOnCompletion;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTask;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup;
 
 public class CompCSCreationOperation extends BaseCSCreationOperation {
 

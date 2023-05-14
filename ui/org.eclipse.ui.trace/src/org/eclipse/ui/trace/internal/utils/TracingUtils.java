@@ -16,7 +16,11 @@ package org.eclipse.ui.trace.internal.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.StringTokenizer;
+
 import org.eclipse.ui.trace.internal.TracingUIActivator;
 import org.eclipse.ui.trace.internal.datamodel.TracingComponentDebugOption;
 import org.osgi.framework.Bundle;

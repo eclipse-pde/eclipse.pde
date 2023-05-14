@@ -17,6 +17,7 @@ package org.eclipse.pde.internal.core.target;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;

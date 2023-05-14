@@ -14,7 +14,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log.jdt;
 
-import org.eclipse.core.commands.*;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jdt.debug.ui.console.JavaStackTraceConsoleFactory;
 import org.eclipse.ui.ISources;

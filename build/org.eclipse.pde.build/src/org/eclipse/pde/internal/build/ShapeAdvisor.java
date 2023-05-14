@@ -14,7 +14,9 @@
 
 package org.eclipse.pde.internal.build;
 
-import java.util.*;
+import java.util.Properties;
+import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;

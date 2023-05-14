@@ -13,14 +13,26 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.packager;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
-import org.eclipse.core.runtime.*;
+import java.util.Properties;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
+import org.eclipse.pde.internal.build.BundleHelper;
+import org.eclipse.pde.internal.build.Config;
+import org.eclipse.pde.internal.build.Messages;
+import org.eclipse.pde.internal.build.Utils;
 
 public class FetchFileGenerator extends AbstractScriptGenerator {
 	private static final String ENTRY_SEPARATOR = "%"; //$NON-NLS-1$

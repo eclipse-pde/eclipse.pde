@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.util.ArrayList;
+
 import org.eclipse.pde.core.plugin.ModelEntry;
 
 public class PluginModelDelta {

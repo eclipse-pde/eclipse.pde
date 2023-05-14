@@ -15,13 +15,24 @@
 package org.eclipse.pde.internal.launching;
 
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
-import org.eclipse.pde.internal.launching.launcher.*;
-import org.osgi.framework.*;
+import org.eclipse.pde.internal.launching.launcher.LaunchConfigurationListener;
+import org.eclipse.pde.internal.launching.launcher.LaunchListener;
+import org.eclipse.pde.internal.launching.launcher.LauncherUtils;
+import org.eclipse.pde.internal.launching.launcher.OSGiFrameworkManager;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleListener;
 
 public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 

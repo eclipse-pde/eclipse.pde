@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import java.util.StringTokenizer;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IBaseModel;

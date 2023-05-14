@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.build.generator;
 
 import java.net.URISyntaxException;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.URIUtil;

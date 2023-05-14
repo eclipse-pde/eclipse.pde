@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 

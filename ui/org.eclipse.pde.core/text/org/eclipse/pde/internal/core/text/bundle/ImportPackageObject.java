@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.text.bundle;
 
 import java.io.PrintWriter;
 import java.util.Arrays;
+
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;

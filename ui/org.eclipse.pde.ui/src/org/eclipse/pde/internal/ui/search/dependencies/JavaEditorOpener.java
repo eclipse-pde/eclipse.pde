@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.search.dependencies;
 
 import java.util.HashMap;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;

@@ -18,6 +18,7 @@ package org.eclipse.pde.internal.build.site;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+
 import org.eclipse.equinox.internal.p2.publisher.eclipse.FeatureManifestParser;
 import org.eclipse.equinox.p2.publisher.eclipse.Feature;
 import org.xml.sax.SAXException;

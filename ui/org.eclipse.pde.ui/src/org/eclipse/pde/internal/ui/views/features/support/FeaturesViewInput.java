@@ -13,7 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.features.support;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;

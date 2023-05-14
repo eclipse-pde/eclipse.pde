@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.editor.site;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
+
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
 

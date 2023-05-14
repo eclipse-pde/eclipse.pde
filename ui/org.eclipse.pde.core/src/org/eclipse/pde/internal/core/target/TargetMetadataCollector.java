@@ -17,6 +17,7 @@ import java.io.File;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.pde.core.target.ITargetDefinition;

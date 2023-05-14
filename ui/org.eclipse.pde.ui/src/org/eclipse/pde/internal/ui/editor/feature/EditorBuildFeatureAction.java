@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.operation.IRunnableWithProgress;

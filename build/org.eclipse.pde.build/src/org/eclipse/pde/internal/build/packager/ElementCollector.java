@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.build.packager;
 
 import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.pde.internal.build.AssemblyInformation;

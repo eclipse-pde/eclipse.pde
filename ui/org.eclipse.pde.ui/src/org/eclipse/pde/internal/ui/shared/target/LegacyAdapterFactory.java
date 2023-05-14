@@ -13,12 +13,18 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Adapters;
+import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
-import org.eclipse.pde.ui.target.*;
+import org.eclipse.pde.ui.target.ITargetLocationEditor;
+import org.eclipse.pde.ui.target.ITargetLocationHandler;
+import org.eclipse.pde.ui.target.ITargetLocationUpdater;
 
 @SuppressWarnings("deprecation")
 public class LegacyAdapterFactory implements IAdapterFactory {

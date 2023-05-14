@@ -13,12 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bnd;
 
-import aQute.bnd.build.Container;
-import aQute.bnd.build.Container.TYPE;
-import aQute.bnd.build.Project;
-import aQute.bnd.build.Workspace;
-import aQute.bnd.osgi.Constants;
-import aQute.bnd.osgi.Processor;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -40,6 +35,13 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.annotations.OSGiAnnotationsClasspathContributor;
 import org.eclipse.pde.internal.core.natures.BndProject;
+
+import aQute.bnd.build.Container;
+import aQute.bnd.build.Container.TYPE;
+import aQute.bnd.build.Project;
+import aQute.bnd.build.Workspace;
+import aQute.bnd.osgi.Constants;
+import aQute.bnd.osgi.Processor;
 
 public class BndProjectManager {
 

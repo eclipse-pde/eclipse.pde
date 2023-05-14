@@ -15,7 +15,9 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.jface.text.information.IInformationPresenter;
-import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.text.source.IOverviewRuler;
+import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration;
 import org.eclipse.swt.widgets.Composite;

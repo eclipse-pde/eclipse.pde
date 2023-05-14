@@ -14,7 +14,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.framework.console.ConsoleSession;
 import org.eclipse.osgi.util.NLS;

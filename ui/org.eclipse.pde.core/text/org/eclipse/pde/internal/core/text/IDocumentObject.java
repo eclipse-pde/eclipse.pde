@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.core.text;
 
 import java.util.List;
+
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IWritable;
 

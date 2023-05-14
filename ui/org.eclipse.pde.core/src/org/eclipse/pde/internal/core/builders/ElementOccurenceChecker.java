@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.builders;
 
 import java.util.HashMap;
 import java.util.HashSet;
+
 import org.eclipse.pde.internal.core.ischema.ISchemaComplexType;
 import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;

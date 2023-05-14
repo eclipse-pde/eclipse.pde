@@ -13,12 +13,23 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.tasks;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.SequenceInputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
 import java.util.jar.Attributes;
 import java.util.jar.Attributes.Name;
 import java.util.jar.Manifest;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 

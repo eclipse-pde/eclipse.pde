@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.build.site;
 
 import java.util.Calendar;
 import java.util.Properties;
+
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.osgi.framework.Version;

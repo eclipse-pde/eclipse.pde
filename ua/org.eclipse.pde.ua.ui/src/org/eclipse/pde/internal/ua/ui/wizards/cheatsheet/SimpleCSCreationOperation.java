@@ -18,7 +18,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSDescription;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSIntro;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSModelFactory;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.text.SimpleCSModel;
 
 public class SimpleCSCreationOperation extends BaseCSCreationOperation {

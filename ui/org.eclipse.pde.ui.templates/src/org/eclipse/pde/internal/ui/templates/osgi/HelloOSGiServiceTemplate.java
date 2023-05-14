@@ -18,7 +18,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.IPluginReference;
-import org.eclipse.pde.internal.ui.templates.*;
+import org.eclipse.pde.internal.ui.templates.IHelpContextIds;
+import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
+import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
 
 public class HelloOSGiServiceTemplate extends PDETemplateSection {
 

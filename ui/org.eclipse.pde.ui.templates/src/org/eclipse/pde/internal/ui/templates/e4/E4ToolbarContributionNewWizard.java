@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.templates.e4;
 
 import java.util.List;
+
 import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.ITemplateSection;

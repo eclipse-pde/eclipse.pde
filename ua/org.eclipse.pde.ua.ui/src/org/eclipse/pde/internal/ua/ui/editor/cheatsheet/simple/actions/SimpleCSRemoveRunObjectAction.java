@@ -15,7 +15,13 @@
 package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.simple.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConstants;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSObject;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSPerformWhen;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSRunContainerObject;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSRunObject;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItem;
 
 public class SimpleCSRemoveRunObjectAction extends Action {
 

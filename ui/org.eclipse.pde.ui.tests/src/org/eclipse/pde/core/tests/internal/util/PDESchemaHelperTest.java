@@ -18,6 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.core.iproduct.IConfigurationProperty;
 import org.eclipse.pde.internal.core.product.ProductModel;

@@ -16,7 +16,9 @@ package org.eclipse.pde.internal.ui;
 
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.pde.internal.ui.views.target.TargetStateView;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IFolderLayout;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
 public class PDEPerspective implements IPerspectiveFactory {

@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.ui.views.imagebrowser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.graphics.ImageData;
 

@@ -15,6 +15,7 @@ package org.eclipse.ui.trace.internal;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.dialogs.PatternFilter;

@@ -17,6 +17,7 @@
 package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
+
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.ICoreConstants;

@@ -18,6 +18,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.Collections;
 import java.util.List;
+
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IDynamicReferenceProvider;
 import org.eclipse.core.resources.IProject;

@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.schema;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.PDECore;

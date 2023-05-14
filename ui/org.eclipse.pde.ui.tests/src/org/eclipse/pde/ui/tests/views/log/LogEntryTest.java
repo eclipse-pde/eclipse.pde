@@ -20,6 +20,7 @@ import static org.junit.Assert.fail;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
 import org.eclipse.ui.internal.views.log.LogEntry;
 import org.junit.Test;
 

@@ -14,7 +14,14 @@
 package org.eclipse.pde.internal.runtime.registry;
 
 import org.eclipse.core.runtime.Status;
-import org.eclipse.pde.internal.runtime.registry.model.*;
+import org.eclipse.pde.internal.runtime.registry.model.Bundle;
+import org.eclipse.pde.internal.runtime.registry.model.Extension;
+import org.eclipse.pde.internal.runtime.registry.model.ExtensionPoint;
+import org.eclipse.pde.internal.runtime.registry.model.ModelChangeDelta;
+import org.eclipse.pde.internal.runtime.registry.model.ModelChangeListener;
+import org.eclipse.pde.internal.runtime.registry.model.ModelObject;
+import org.eclipse.pde.internal.runtime.registry.model.ServiceName;
+import org.eclipse.pde.internal.runtime.registry.model.ServiceRegistration;
 import org.eclipse.ui.progress.UIJob;
 
 public class RegistryBrowserModelChangeListener implements ModelChangeListener {

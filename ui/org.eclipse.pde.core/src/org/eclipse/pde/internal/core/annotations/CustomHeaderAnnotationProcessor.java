@@ -17,6 +17,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.internal.core.ibundle.IBundle;

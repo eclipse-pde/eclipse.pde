@@ -15,11 +15,15 @@ package org.eclipse.pde.internal.ui.editor.schema;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 import org.eclipse.pde.internal.ui.editor.ModelDataTransfer;
-import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.widgets.Control;
 
 public class ElementSectionDragAdapter extends DragSourceAdapter {

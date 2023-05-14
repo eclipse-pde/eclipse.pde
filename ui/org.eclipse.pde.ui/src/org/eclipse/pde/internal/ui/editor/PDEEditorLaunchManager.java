@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.ui.editor;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 

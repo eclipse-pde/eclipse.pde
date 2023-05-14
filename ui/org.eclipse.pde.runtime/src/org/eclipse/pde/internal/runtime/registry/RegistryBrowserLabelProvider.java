@@ -14,11 +14,28 @@
 package org.eclipse.pde.internal.runtime.registry;
 
 import java.util.Arrays;
+
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.runtime.*;
-import org.eclipse.pde.internal.runtime.registry.model.*;
+import org.eclipse.pde.internal.runtime.OverlayIcon;
+import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
+import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
+import org.eclipse.pde.internal.runtime.registry.model.Attribute;
+import org.eclipse.pde.internal.runtime.registry.model.Bundle;
+import org.eclipse.pde.internal.runtime.registry.model.BundleLibrary;
+import org.eclipse.pde.internal.runtime.registry.model.BundlePrerequisite;
+import org.eclipse.pde.internal.runtime.registry.model.ConfigurationElement;
+import org.eclipse.pde.internal.runtime.registry.model.Extension;
+import org.eclipse.pde.internal.runtime.registry.model.ExtensionPoint;
+import org.eclipse.pde.internal.runtime.registry.model.Folder;
+import org.eclipse.pde.internal.runtime.registry.model.Property;
+import org.eclipse.pde.internal.runtime.registry.model.ServiceName;
+import org.eclipse.pde.internal.runtime.registry.model.ServiceRegistration;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;

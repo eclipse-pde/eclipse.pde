@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.InputStream;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 

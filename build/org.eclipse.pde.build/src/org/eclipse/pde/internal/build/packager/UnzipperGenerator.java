@@ -13,11 +13,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.packager;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
+import org.eclipse.pde.internal.build.Config;
+import org.eclipse.pde.internal.build.Utils;
 
 public class UnzipperGenerator extends AbstractScriptGenerator {
 	private static final String DATA_SEPARATOR = "|"; //$NON-NLS-1$

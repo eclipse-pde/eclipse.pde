@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.builders;
 
 import java.util.Vector;
+
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginImport;

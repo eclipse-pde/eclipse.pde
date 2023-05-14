@@ -17,6 +17,7 @@ package org.eclipse.pde.internal.core.schema;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Vector;
+
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.internal.core.PDECoreMessages;

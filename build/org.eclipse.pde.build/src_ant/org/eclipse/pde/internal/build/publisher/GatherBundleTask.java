@@ -14,12 +14,22 @@ t SPDX-License-Identifier: EPL-2.0
 package org.eclipse.pde.internal.build.publisher;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.jar.JarFile;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.PatternSet.NameEntry;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.p2.publisher.PublisherInfo;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;

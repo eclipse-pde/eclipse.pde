@@ -15,7 +15,9 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
-import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.NameVersionDescriptor;
+import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.ui.target.ITargetLocationHandler;
 

@@ -17,8 +17,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.project.BundleProjectService;
 import org.eclipse.team.core.ScmUrlImportDescription;
 import org.eclipse.team.core.Team;

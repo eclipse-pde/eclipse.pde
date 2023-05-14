@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.PrintWriter;
+
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 

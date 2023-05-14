@@ -13,8 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.nls;
 
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginModel;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.ui.PDELabelProvider;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.graphics.Image;
 
 public class ModelChangeLabelProvider extends PDELabelProvider {

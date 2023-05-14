@@ -13,11 +13,10 @@
  *******************************************************************************/
 package org.eclipse.pde.unittest.junit.launcher;
 
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.pde.ui.launcher.TestTab;
 import org.eclipse.pde.unittest.junit.JUnitPluginTestPlugin;
 import org.eclipse.unittest.ui.ConfigureViewerSupport;
-
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 
 public class JUnitPluginTestTab extends TestTab {
 

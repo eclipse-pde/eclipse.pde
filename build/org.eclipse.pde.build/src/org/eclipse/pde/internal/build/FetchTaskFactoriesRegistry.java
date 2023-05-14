@@ -14,8 +14,13 @@
  **********************************************************************/
 package org.eclipse.pde.internal.build;
 
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.build.IFetchFactory;
 
 /**

@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;

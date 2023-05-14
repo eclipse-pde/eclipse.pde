@@ -14,8 +14,12 @@
 
 package org.eclipse.pde.internal.build.publisher.compatibility;
 
-import java.util.*;
-import org.eclipse.equinox.p2.publisher.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.eclipse.equinox.p2.publisher.IPublisherAdvice;
+import org.eclipse.equinox.p2.publisher.PublisherInfo;
+import org.eclipse.equinox.p2.publisher.PublisherResult;
 
 /**
  * A class to enable carrying GeneratorResults across multiple invocations of the Generator.

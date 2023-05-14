@@ -17,6 +17,7 @@ package org.eclipse.pde.internal.core.search;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.pde.core.IIdentifiable;

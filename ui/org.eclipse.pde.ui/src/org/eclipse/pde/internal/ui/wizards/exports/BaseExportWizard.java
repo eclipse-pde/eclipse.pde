@@ -20,7 +20,9 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IExportWizard;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 
 public abstract class BaseExportWizard extends Wizard implements IExportWizard, ILaunchingPreferenceConstants {
 

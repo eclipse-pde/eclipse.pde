@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;

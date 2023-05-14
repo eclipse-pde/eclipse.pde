@@ -16,7 +16,9 @@ package org.eclipse.pde.internal.core.product;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.xml.parsers.SAXParser;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;

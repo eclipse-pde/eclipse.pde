@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.text.bundle;
 
 import java.io.PrintWriter;
+
 import org.eclipse.pde.internal.core.bundle.BundleObject;
 
 public class PackageFriend extends BundleObject {

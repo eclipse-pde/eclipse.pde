@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.ant;
 
 import java.io.File;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;

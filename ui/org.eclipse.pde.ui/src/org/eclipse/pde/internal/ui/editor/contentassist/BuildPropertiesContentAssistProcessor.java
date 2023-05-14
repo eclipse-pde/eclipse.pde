@@ -14,8 +14,11 @@ package org.eclipse.pde.internal.ui.editor.contentassist;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.ui.PDEPluginImages;

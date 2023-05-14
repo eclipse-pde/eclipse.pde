@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
 import java.util.Objects;
+
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IRepositoryInfo;
 import org.w3c.dom.Element;

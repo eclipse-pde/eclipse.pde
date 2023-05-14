@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.text.plugin;
 
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;

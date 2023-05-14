@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import java.util.Set;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.internal.core.text.IEditingModel;

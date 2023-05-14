@@ -16,9 +16,19 @@ package org.eclipse.pde.internal.runtime.registry;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.pde.internal.runtime.registry.model.*;
+import org.eclipse.pde.internal.runtime.registry.model.Attribute;
+import org.eclipse.pde.internal.runtime.registry.model.Bundle;
+import org.eclipse.pde.internal.runtime.registry.model.ConfigurationElement;
+import org.eclipse.pde.internal.runtime.registry.model.Extension;
+import org.eclipse.pde.internal.runtime.registry.model.ExtensionPoint;
+import org.eclipse.pde.internal.runtime.registry.model.Folder;
+import org.eclipse.pde.internal.runtime.registry.model.ModelObject;
+import org.eclipse.pde.internal.runtime.registry.model.RegistryModel;
+import org.eclipse.pde.internal.runtime.registry.model.ServiceName;
+import org.eclipse.pde.internal.runtime.registry.model.ServiceRegistration;
 
 public class RegistryBrowserContentProvider implements ITreeContentProvider {
 

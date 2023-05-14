@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.build.packager;
 
 import java.util.Collection;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.AssemblyInformation;

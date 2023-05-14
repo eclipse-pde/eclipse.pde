@@ -17,14 +17,23 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 import org.eclipse.pde.internal.core.schema.SchemaRootElement;
-import org.eclipse.pde.internal.core.text.*;
+import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
+import org.eclipse.pde.internal.core.text.IDocumentElementNode;
+import org.eclipse.pde.internal.core.text.IDocumentTextNode;
 import org.eclipse.pde.internal.ui.editor.PDEHyperlinkDetector;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
-import org.eclipse.pde.internal.ui.editor.text.*;
+import org.eclipse.pde.internal.ui.editor.text.JavaHyperlink;
+import org.eclipse.pde.internal.ui.editor.text.ResourceHyperlink;
+import org.eclipse.pde.internal.ui.editor.text.SchemaHyperlink;
+import org.eclipse.pde.internal.ui.editor.text.TranslationHyperlink;
+import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
 
 public class ManifestHyperlinkDetector extends PDEHyperlinkDetector {
 

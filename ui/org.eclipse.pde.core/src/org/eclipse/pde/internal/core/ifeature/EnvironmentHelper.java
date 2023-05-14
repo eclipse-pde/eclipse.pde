@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.ifeature;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.core.target.ITargetDefinition;
 

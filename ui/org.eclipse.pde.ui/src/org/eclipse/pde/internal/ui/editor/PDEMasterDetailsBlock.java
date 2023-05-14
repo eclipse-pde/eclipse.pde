@@ -15,7 +15,9 @@ package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.DetailsPart;
+import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.MasterDetailsBlock;
 import org.eclipse.ui.forms.widgets.Section;
 
 public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {

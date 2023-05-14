@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
-
-import org.eclipse.jface.wizard.Wizard;
 
 /**
  * Wizard for adding a bundle container to a target.  Provides a selection page

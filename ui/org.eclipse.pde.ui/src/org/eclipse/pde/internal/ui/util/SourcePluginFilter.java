@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.util;
 
 import java.util.function.Predicate;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;

@@ -16,7 +16,9 @@ package org.eclipse.pde.internal.core.builders;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.util.SAXParserWrapper;

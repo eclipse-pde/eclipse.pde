@@ -15,11 +15,20 @@ package org.eclipse.pde.internal.ui.views.target;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.IPage;
+import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.part.PageBookView;
 
 public class TargetStateView extends PageBookView {
 

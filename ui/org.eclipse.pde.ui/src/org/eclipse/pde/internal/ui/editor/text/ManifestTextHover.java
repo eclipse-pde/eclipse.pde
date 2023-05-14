@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.editor.text;
 
 import java.util.Iterator;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaProject;

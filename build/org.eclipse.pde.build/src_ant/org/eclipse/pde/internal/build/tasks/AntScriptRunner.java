@@ -17,6 +17,7 @@ package org.eclipse.pde.internal.build.tasks;
 import java.io.File;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Ant;
 import org.apache.tools.ant.taskdefs.Property;

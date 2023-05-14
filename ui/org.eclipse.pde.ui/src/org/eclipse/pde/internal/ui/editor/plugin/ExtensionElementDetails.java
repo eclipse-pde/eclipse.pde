@@ -16,21 +16,40 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.ArrayList;
+
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.ischema.*;
+import org.eclipse.pde.core.plugin.IPluginAttribute;
+import org.eclipse.pde.core.plugin.IPluginElement;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ischema.IMetaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
+import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.plugin.rows.*;
+import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
+import org.eclipse.pde.internal.ui.editor.PDEFormPage;
+import org.eclipse.pde.internal.ui.editor.PDESection;
+import org.eclipse.pde.internal.ui.editor.plugin.rows.BooleanAttributeRow;
+import org.eclipse.pde.internal.ui.editor.plugin.rows.ChoiceAttributeRow;
+import org.eclipse.pde.internal.ui.editor.plugin.rows.ClassAttributeRow;
+import org.eclipse.pde.internal.ui.editor.plugin.rows.ExtensionAttributeRow;
+import org.eclipse.pde.internal.ui.editor.plugin.rows.IdAttributeRow;
+import org.eclipse.pde.internal.ui.editor.plugin.rows.ResourceAttributeRow;
+import org.eclipse.pde.internal.ui.editor.plugin.rows.TextAttributeRow;
+import org.eclipse.pde.internal.ui.editor.plugin.rows.TranslatableAttributeRow;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.SharedScrolledComposite;
 
 public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	private IPluginElement input;

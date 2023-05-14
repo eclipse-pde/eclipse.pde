@@ -14,11 +14,14 @@
 
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-
 import java.util.ArrayList;
+
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.pde.internal.core.text.IEditingModel;
 import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 import org.eclipse.swt.widgets.Composite;

@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.nls;
 
 import java.util.ArrayList;
+
 import org.eclipse.core.resources.IFile;
 
 public class ModelChangeFile {

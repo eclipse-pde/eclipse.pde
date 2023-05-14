@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.text;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.text.edits.TextEdit;

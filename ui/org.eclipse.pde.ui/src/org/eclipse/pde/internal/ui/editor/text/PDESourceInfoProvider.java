@@ -15,7 +15,9 @@
 
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;

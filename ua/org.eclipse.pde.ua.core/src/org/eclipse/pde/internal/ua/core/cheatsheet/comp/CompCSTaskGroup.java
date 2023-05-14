@@ -20,7 +20,12 @@ import java.util.List;
 
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
-import org.eclipse.pde.internal.ua.core.icheatsheet.comp.*;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModel;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSModelFactory;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSObject;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTask;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup;
+import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskObject;
 import org.w3c.dom.Element;
 
 public class CompCSTaskGroup extends CompCSTaskObject implements

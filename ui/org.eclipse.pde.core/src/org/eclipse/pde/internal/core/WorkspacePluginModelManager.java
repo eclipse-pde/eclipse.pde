@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;

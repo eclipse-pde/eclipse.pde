@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.text;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.pde.core.IModel;
 
 public interface IDocumentElementNode extends Serializable, IDocumentRange, IDocumentXMLNode {

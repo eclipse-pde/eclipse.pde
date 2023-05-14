@@ -14,13 +14,25 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.FindReplaceDocumentAdapter;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 import org.eclipse.osgi.service.resolver.BaseDescription;
-import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.plugin.IFragment;
+import org.eclipse.pde.core.plugin.IPlugin;
+import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.plugin.PluginObjectNode;
-import org.eclipse.pde.internal.ui.editor.plugin.*;
+import org.eclipse.pde.internal.ui.editor.plugin.ExtensionsPage;
+import org.eclipse.pde.internal.ui.editor.plugin.ExtensionsSection;
+import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorPart;

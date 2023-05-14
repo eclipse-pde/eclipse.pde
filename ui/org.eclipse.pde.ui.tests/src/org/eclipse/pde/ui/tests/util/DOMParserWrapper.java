@@ -16,7 +16,11 @@ package org.eclipse.pde.ui.tests.util;
 
 import java.io.File;
 import java.io.IOException;
-import javax.xml.parsers.*;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;

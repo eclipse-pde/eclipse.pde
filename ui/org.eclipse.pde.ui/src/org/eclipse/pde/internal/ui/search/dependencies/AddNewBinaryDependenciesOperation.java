@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.ui.search.dependencies;
 
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;

@@ -15,12 +15,19 @@ package org.eclipse.pde.internal.build.site;
 
 import java.io.File;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Properties;
 import java.util.jar.JarFile;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.pde.build.Constants;
-import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
+import org.eclipse.pde.internal.build.IPDEBuildConstants;
+import org.eclipse.pde.internal.build.PDEUIStateWrapper;
+import org.eclipse.pde.internal.build.Utils;
 
 public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 	private final String installedBaseURL;

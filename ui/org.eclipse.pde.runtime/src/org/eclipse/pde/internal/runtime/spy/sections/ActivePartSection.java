@@ -15,18 +15,32 @@
 package org.eclipse.pde.internal.runtime.spy.sections;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.runtime.*;
+import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
+import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
+import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.*;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.E4PartWrapper;
+import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.PageBookView;
 import org.osgi.framework.Bundle;

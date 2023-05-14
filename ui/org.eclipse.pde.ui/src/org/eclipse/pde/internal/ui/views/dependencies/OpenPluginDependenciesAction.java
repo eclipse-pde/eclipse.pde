@@ -15,7 +15,10 @@ package org.eclipse.pde.internal.ui.views.dependencies;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.IPDEUIConstants;
+import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEPluginImages;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 

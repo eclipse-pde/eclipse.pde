@@ -16,8 +16,13 @@ package org.eclipse.pde.internal.ui.templates;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.ui.templates.OptionTemplateSection;
 import org.eclipse.pde.ui.templates.PluginReference;

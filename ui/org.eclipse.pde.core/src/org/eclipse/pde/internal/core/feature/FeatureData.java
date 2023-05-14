@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.feature;
 
 import java.io.File;
 import java.io.PrintWriter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.XMLPrintHandler;
 import org.eclipse.pde.internal.core.ifeature.IFeatureData;

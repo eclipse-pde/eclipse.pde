@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.plugin;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;

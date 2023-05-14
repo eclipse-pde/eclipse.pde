@@ -15,10 +15,20 @@ package org.eclipse.pde.internal.build.builder;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.p2.publisher.eclipse.IPlatformEntry;
-import org.eclipse.pde.internal.build.*;
+import org.eclipse.pde.internal.build.AbstractScriptGenerator;
+import org.eclipse.pde.internal.build.AssemblyInformation;
+import org.eclipse.pde.internal.build.BundleHelper;
+import org.eclipse.pde.internal.build.Config;
 
 /**
  * Instance of this class and subclasses are created on a plugin / feature basis. 

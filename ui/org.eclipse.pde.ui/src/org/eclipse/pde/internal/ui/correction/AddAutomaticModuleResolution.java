@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.correction;
 
 import java.util.HashSet;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;

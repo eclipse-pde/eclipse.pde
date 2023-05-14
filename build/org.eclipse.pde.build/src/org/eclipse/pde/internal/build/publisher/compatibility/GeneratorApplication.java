@@ -17,13 +17,25 @@ import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
 import org.eclipse.equinox.internal.p2.updatesite.SiteXMLAction;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.Version;
-import org.eclipse.equinox.p2.publisher.*;
-import org.eclipse.equinox.p2.publisher.actions.*;
-import org.eclipse.equinox.p2.publisher.eclipse.*;
+import org.eclipse.equinox.p2.publisher.AbstractPublisherApplication;
+import org.eclipse.equinox.p2.publisher.IPublisherAction;
+import org.eclipse.equinox.p2.publisher.IPublisherResult;
+import org.eclipse.equinox.p2.publisher.Publisher;
+import org.eclipse.equinox.p2.publisher.PublisherInfo;
+import org.eclipse.equinox.p2.publisher.actions.IVersionAdvice;
+import org.eclipse.equinox.p2.publisher.actions.RootFilesAction;
+import org.eclipse.equinox.p2.publisher.actions.RootIUAction;
+import org.eclipse.equinox.p2.publisher.actions.RootIUResultFilterAdvice;
+import org.eclipse.equinox.p2.publisher.actions.VersionAdvice;
+import org.eclipse.equinox.p2.publisher.eclipse.BundlesAction;
+import org.eclipse.equinox.p2.publisher.eclipse.EquinoxLauncherCUAction;
+import org.eclipse.equinox.p2.publisher.eclipse.FeaturesAction;
+import org.eclipse.equinox.p2.publisher.eclipse.ProductAction;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 
 public class GeneratorApplication extends AbstractPublisherApplication {

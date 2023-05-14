@@ -19,7 +19,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import org.eclipse.pde.internal.ua.core.cheatsheet.simple.*;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCS;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSConstants;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSDescription;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSIntro;
+import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSItem;
 import org.junit.Test;
 
 /**

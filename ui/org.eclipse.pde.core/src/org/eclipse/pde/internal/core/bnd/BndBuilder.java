@@ -13,13 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bnd;
 
-import aQute.bnd.build.Project;
-import aQute.bnd.build.ProjectBuilder;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -38,6 +37,9 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.natures.BndProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
+
+import aQute.bnd.build.Project;
+import aQute.bnd.build.ProjectBuilder;
 
 public class BndBuilder extends IncrementalProjectBuilder {
 

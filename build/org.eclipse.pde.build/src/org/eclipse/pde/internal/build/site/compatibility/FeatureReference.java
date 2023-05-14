@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.build.site.compatibility;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.p2.publisher.eclipse.Feature;
 import org.eclipse.pde.internal.build.site.BuildTimeFeatureFactory;

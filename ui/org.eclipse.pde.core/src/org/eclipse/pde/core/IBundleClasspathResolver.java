@@ -16,6 +16,7 @@ package org.eclipse.pde.core;
 
 import java.util.Collection;
 import java.util.Map;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;

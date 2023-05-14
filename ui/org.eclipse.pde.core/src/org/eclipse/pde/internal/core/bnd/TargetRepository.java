@@ -13,10 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bnd;
 
-import aQute.bnd.osgi.Instruction;
-import aQute.bnd.osgi.repository.BaseRepository;
-import aQute.bnd.osgi.resource.ResourceUtils;
-import aQute.bnd.service.RepositoryPlugin;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -33,6 +29,7 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
@@ -42,6 +39,11 @@ import org.eclipse.pde.internal.core.ClasspathUtilCore;
 import org.eclipse.pde.internal.core.PDECore;
 import org.osgi.resource.Capability;
 import org.osgi.resource.Requirement;
+
+import aQute.bnd.osgi.Instruction;
+import aQute.bnd.osgi.repository.BaseRepository;
+import aQute.bnd.osgi.resource.ResourceUtils;
+import aQute.bnd.service.RepositoryPlugin;
 
 public class TargetRepository extends BaseRepository implements RepositoryPlugin {
 

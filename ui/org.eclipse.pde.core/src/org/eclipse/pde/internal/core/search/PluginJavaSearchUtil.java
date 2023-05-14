@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.search;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;

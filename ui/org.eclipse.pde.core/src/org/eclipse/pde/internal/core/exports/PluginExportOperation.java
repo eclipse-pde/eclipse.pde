@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.core.exports;
 
 import java.io.File;
 import java.util.Dictionary;
+
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.TargetPlatform;

@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.ui.wizards;
 
 import java.util.Dictionary;
+
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
