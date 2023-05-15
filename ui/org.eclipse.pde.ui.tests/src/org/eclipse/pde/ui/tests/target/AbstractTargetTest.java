@@ -170,8 +170,8 @@ public abstract class AbstractTargetTest extends PDETestCase {
 	 */
 	private IPath doUnZip(IPath location, String archivePath) throws IOException {
 		URL zipURL = PDETestsPlugin.getBundleContext().getBundle().getEntry(archivePath);
-		Path zipPath = new Path(new File(FileLocator.toFileURL(zipURL).getFile()).getAbsolutePath());
-		try (ZipFile zipFile = new ZipFile(zipPath.toFile())) {
+		File zipPath = new File(FileLocator.toFileURL(zipURL).getFile());
+		try (ZipFile zipFile = new ZipFile(zipPath)) {
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 			IPath parent = location.removeLastSegments(1);
 			while (entries.hasMoreElements()) {

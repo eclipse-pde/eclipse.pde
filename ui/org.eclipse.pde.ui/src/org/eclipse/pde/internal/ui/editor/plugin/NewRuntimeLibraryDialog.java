@@ -14,7 +14,9 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.HashSet;
+import java.util.Set;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -38,7 +40,7 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 	private IPluginLibrary[] libraries;
 	private DuplicateStatusValidator validator;
 	private String libraryName;
-	private HashSet<Path> librarySet;
+	private Set<IPath> librarySet;
 
 	class DuplicateStatusValidator {
 		public IStatus validate(String text) {

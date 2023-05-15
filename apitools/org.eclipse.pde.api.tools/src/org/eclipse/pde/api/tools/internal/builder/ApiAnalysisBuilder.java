@@ -844,7 +844,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		if (hasFatalProblem) {
 			task = () -> {
 				cleanupMarkers(project);
-				IApiProblem problem = ApiProblemFactory.newFatalProblem(Path.EMPTY.toString(), new String[] { project.getName() }, IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM);
+				IApiProblem problem = ApiProblemFactory.newFatalProblem("", new String[] { project.getName() }, IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM); //$NON-NLS-1$
 				createMarkerForProblem(IApiProblem.CATEGORY_FATAL_PROBLEM, IApiMarkerConstants.FATAL_PROBLEM_MARKER, problem);
 			};
 		} else {
@@ -1262,7 +1262,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		loop: for (int i = 0, max = workspaceModels.length; i < max; i++) {
 			desc = workspaceModels[i].getBundleDescription();
 			if (desc != null) {
-				Path path = new Path(desc.getLocation());
+				IPath path = new Path(desc.getLocation());
 				if (path.equals(location)) {
 					currentModel = workspaceModels[i];
 					break loop;

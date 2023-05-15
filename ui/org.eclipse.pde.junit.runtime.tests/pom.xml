@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright (c) 2019 Julian Honnen
- 
+
   This program and the accompanying materials
   are made available under the terms of the Eclipse Public License 2.0
   which accompanies this distribution, and is available at
   https://www.eclipse.org/legal/epl-2.0/
- 
+
   SPDX-License-Identifier: EPL-2.0
- 
+
   Contributors:
      Julian Honnen <julian.honnen@vector.com> - initial implementation
 -->
@@ -24,7 +24,7 @@
 		<relativePath>../../</relativePath>
 	</parent>
 	<artifactId>org.eclipse.pde.junit.runtime.tests</artifactId>
-	<version>3.7.0-SNAPSHOT</version>
+	<version>3.7.100-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
 	<properties>
 		<code.ignoredWarnings>-warn:-discouraged</code.ignoredWarnings>

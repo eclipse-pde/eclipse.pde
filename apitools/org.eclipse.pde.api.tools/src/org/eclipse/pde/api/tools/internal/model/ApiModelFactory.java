@@ -340,8 +340,7 @@ public class ApiModelFactory {
 	/**
 	 * Create predictable location description for a target definition. Form is
 	 * <code>target:/targetSeq/definitionLocation</code>. A location must be
-	 * compatible with
-	 * {@link org.eclipse.core.runtime.Path#fromPortableString(String)}.
+	 * compatible with {@link IPath#fromPortableString(String)}.
 	 *
 	 * @param definition the target platform definition
 	 * @return an encoded location
@@ -364,7 +363,7 @@ public class ApiModelFactory {
 	 *
 	 * @param definition
 	 * @return a stable identifier, in portable OS format as per
-	 *         {@link org.eclipse.core.runtime.Path#fromPortableString(String)}.
+	 *         {@link IPath#fromPortableString(String)}.
 	 */
 	private static String getDefinitionIdentifier(ITargetDefinition definition) {
 		ITargetHandle targetHandle = definition.getHandle();

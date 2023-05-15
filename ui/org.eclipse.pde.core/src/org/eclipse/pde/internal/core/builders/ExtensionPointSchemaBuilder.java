@@ -147,7 +147,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 				ensureFoldersExist(file.getProject(), getDocLocation(file));
 				String outputFileName = getOutputFileName(file);
 				IWorkspace workspace = file.getWorkspace();
-				Path outputPath = new Path(outputFileName);
+				IPath outputPath = new Path(outputFileName);
 
 				SchemaDescriptor desc = new SchemaDescriptor(file, false);
 				Schema schema = (Schema) desc.getSchema(false);

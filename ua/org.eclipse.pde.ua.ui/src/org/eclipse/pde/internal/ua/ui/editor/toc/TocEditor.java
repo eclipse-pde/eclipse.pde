@@ -152,7 +152,7 @@ public class TocEditor extends MultiSourceEditor {
 				for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 					Object obj = iter.next();
 					if (obj instanceof TocObject && ((TocObject) obj).getPath() != null) {
-						Path resourcePath = new Path(((TocObject) obj).getPath());
+						IPath resourcePath = new Path(((TocObject) obj).getPath());
 
 						if (!resourcePath.isEmpty()) {
 							TocModel model = (TocModel) getAggregateModel();

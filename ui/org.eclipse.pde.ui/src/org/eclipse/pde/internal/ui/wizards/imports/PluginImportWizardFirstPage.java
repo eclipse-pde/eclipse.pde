@@ -499,7 +499,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				setPageComplete(false);
 				return;
 			}
-			if (!Path.ROOT.isValidPath(importDirectory.getText())) {
+			if (!IPath.EMPTY.isValidPath(importDirectory.getText())) {
 				setErrorMessage(PDEUIMessages.ImportWizard_errors_buildFolderInvalid);
 				setPageComplete(false);
 				return;

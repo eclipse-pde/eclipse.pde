@@ -398,7 +398,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 				IPath path = new Path(token).addTrailingSeparator();
 				if (path.segmentCount() == 1 && path.segment(0).equals(".")) { //$NON-NLS-1$
 					// translate "." to root path
-					path = Path.ROOT;
+					path = IPath.ROOT;
 				}
 				OutputFolder outputFolder = fOutputFolderMap.get(path);
 				if (outputFolder == null) {

@@ -30,7 +30,6 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -92,7 +91,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		if (compliance != null) {
 			setProjectCompliance(javaProject, compliance);
 		}
-		return project != null ? project.getFullPath() : Path.EMPTY;
+		return project != null ? project.getFullPath() : IPath.EMPTY;
 	}
 
 	/**

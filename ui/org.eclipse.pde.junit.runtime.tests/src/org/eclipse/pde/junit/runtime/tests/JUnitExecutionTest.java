@@ -65,7 +65,7 @@ public class JUnitExecutionTest {
 
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		for (URL resource : Collections.list(bundle.findEntries("test-bundles", "*", false))) {
-			Path resourcePath = new Path(FileLocator.toFileURL(resource).getPath());
+			IPath resourcePath = new Path(FileLocator.toFileURL(resource).getPath());
 			IPath descriptionPath = resourcePath.append(IProjectDescription.DESCRIPTION_FILE_NAME);
 			if (!descriptionPath.toFile().exists())
 				continue;

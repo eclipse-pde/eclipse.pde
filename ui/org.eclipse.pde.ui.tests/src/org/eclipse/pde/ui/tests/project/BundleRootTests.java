@@ -233,7 +233,7 @@ public class BundleRootTests {
 
 		IBundleProjectService service = getBundleProjectService();
 		// reset the root
-		Path root = new Path("bundle/root");
+		IPath root = new Path("bundle/root");
 		service.setBundleRoot(project, root);
 
 		// Resurrect the bundle project, with a modified version

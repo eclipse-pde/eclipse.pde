@@ -87,7 +87,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	static ITargetHandle restoreHandle(URI uri) throws CoreException {
 		String part = uri.getSchemeSpecificPart();
 		try {
-			Path path = new Path(part);
+			IPath path = new Path(part);
 			String name = path.lastSegment();
 			if (name.endsWith(ICoreConstants.TARGET_FILE_EXTENSION)) {
 				String lng = name.substring(0, name.length() - ICoreConstants.TARGET_FILE_EXTENSION.length() - 1);

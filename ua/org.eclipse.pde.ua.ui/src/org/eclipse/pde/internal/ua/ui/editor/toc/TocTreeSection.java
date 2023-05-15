@@ -612,7 +612,7 @@ public class TocTreeSection extends TreeSection {
 	 */
 	private void open(TocObject obj) {
 		String path = obj.getPath();
-		Path resourcePath = path != null ? new Path(path) : null;
+		IPath resourcePath = path != null ? new Path(path) : null;
 		if (!isEditable() || resourcePath == null || resourcePath.isEmpty()) {
 			MessageDialog.openWarning(
 					PDEUserAssistanceUIPlugin.getActiveWorkbenchShell(),
@@ -633,7 +633,7 @@ public class TocTreeSection extends TreeSection {
 	}
 
 	public IFile openFile(String path, boolean isTOCFile) {
-		Path resourcePath = new Path(path);
+		IPath resourcePath = new Path(path);
 		if (isEditable()) {
 			if (!resourcePath.isEmpty()) {
 				IResource page = findResource(resourcePath);
@@ -715,7 +715,7 @@ public class TocTreeSection extends TreeSection {
 		return null;
 	}
 
-	private IResource findResource(Path resourcePath) {
+	private IResource findResource(IPath resourcePath) {
 		IProject pluginProject = fModel.getUnderlyingResource().getProject();
 		return pluginProject.findMember(resourcePath);
 	}
@@ -922,7 +922,7 @@ public class TocTreeSection extends TreeSection {
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
 				// If the array contains Strings, we treat them as file paths
-				Path path = new Path((String) droppings[i]);
+				IPath path = new Path((String) droppings[i]);
 				IFile file = root.getFileForLocation(path);
 				if (file == null) {
 					continue;
@@ -979,7 +979,7 @@ public class TocTreeSection extends TreeSection {
 	 *
 	 * @return The generated name of the Topic.
 	 */
-	private String generateTitle(TocTopic targetParent, Path path) {
+	private String generateTitle(TocTopic targetParent, IPath path) {
 		String title = TocHTMLTitleUtil.findTitle(path.toFile());
 		if (title == null) {
 			int numChildren = targetParent.getChildren().size();

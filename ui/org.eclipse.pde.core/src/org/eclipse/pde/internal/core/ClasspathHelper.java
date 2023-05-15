@@ -172,7 +172,7 @@ public class ClasspathHelper {
 	// creates a map whose key is a Path to the source directory/jar and the value is a Path output directory or jar.
 	private static Map<IPath, List<IPath>> getClasspathMap(IProject project, boolean checkExcluded,
 			boolean absolutePaths) throws JavaModelException {
-		Set<Path> excluded = getFoldersToExclude(project, checkExcluded);
+		Set<IPath> excluded = getFoldersToExclude(project, checkExcluded);
 		IJavaProject jProject = JavaCore.create(project);
 		Map<IPath, List<IPath>> map = new LinkedHashMap<>();
 		IClasspathEntry[] entries = jProject.getRawClasspath();
@@ -380,14 +380,14 @@ public class ClasspathHelper {
 
 	private static final Pattern BIN_EXCLUDES_SEPARATOR = Pattern.compile(","); //$NON-NLS-1$
 
-	private static Set<Path> getFoldersToExclude(IProject project, boolean checkExcluded) {
+	private static Set<IPath> getFoldersToExclude(IProject project, boolean checkExcluded) {
 		if (checkExcluded) {
 			IEclipsePreferences pref = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
 			if (pref != null) {
 				String binExcludes = pref.get(ICoreConstants.SELFHOSTING_BIN_EXCLUDES, ""); //$NON-NLS-1$
 				if (!binExcludes.isBlank()) {
 					Stream<String> elements = BIN_EXCLUDES_SEPARATOR.splitAsStream(binExcludes);
-					return elements.map(String::trim).map(Path::new).collect(Collectors.toUnmodifiableSet());
+					return elements.map(String::trim).map(IPath::fromOSString).collect(Collectors.toUnmodifiableSet());
 				}
 			}
 		}

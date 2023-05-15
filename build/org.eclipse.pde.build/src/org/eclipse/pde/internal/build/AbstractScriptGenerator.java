@@ -477,7 +477,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			BundleHelper.getDefault().getLog().log(e.getStatus());
 			return null;
 		}
-		Path path = new Path(location);
+		IPath path = new Path(location);
 		String id = path.segment(0);
 		BundleDescription[] matches = state.getState().getBundles(id);
 		if (matches != null && matches.length != 0) {
@@ -536,7 +536,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		return null;
 	}
 
-	private String checkFile(IPath base, Path target, boolean makeRelative) {
+	private String checkFile(IPath base, IPath target, boolean makeRelative) {
 		IPath path = base.append(target.removeFirstSegments(1));
 		String result = path.toOSString();
 		if (!new File(result).exists())
