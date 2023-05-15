@@ -69,7 +69,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		final String JAR = "jar"; //$NON-NLS-1$
 		final String DOT_JAR = '.' + JAR;
 		if (!AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER)) {
-			Path path = new Path(bundle.getLocation());
+			IPath path = new Path(bundle.getLocation());
 			if (shape.equals(ShapeAdvisor.FILE) && !JAR.equalsIgnoreCase(path.getFileExtension()))
 				return path.lastSegment().concat(DOT_JAR);
 			return path.lastSegment();
@@ -81,7 +81,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 
 	private String getFinalName(BuildTimeFeature feature) {
 		if (!AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER)) {
-			Path featurePath = new Path(feature.getURL().getPath());
+			IPath featurePath = new Path(feature.getURL().getPath());
 			return featurePath.segment(featurePath.segmentCount() - 2);
 		}
 		return feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
@@ -105,7 +105,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		ArrayList<FileSet> p2Features = BuildDirector.p2Gathering ? new ArrayList<>() : null;
 		ArrayList<FileSet> p2Bundles = BuildDirector.p2Gathering ? new ArrayList<>() : null;
 		for (BundleDescription plugin2 : plugins) {
-			Path pluginLocation = new Path(plugin2.getLocation());
+			IPath pluginLocation = new Path(plugin2.getLocation());
 			String location = pluginLocation.toOSString();
 			boolean isFolder = isFolder(pluginLocation);
 
@@ -172,7 +172,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		return "package" + '.' + getTargetElement() + (config.length() > 0 ? "." : "") + config; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
-	private boolean isFolder(Path pluginLocation) {
+	private boolean isFolder(IPath pluginLocation) {
 		return pluginLocation.toFile().isDirectory();
 	}
 

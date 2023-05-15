@@ -20,7 +20,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -55,9 +55,9 @@ public class OSGiAnnotationsClasspathContributor implements IClasspathContributo
 	}
 
 	static Stream<IClasspathEntry> entries() {
-		return annotations().map(IPluginModelBase::getInstallLocation)
-				.filter(Objects::nonNull).map(Path::new).map(path -> JavaCore.newLibraryEntry(path, path, Path.ROOT,
-						new IAccessRule[0], new IClasspathAttribute[0], false));
+		return annotations().map(IPluginModelBase::getInstallLocation).filter(Objects::nonNull).map(IPath::fromOSString)
+				.map(path -> JavaCore.newLibraryEntry(path, path, IPath.ROOT, new IAccessRule[0],
+						new IClasspathAttribute[0], false));
 	}
 
 	/**

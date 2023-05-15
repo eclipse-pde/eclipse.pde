@@ -462,7 +462,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				destinations.add(destination);
 			}
 			String logFolder = (availableJar.getType() == CompiledEntry.FOLDER) ? getJARLocation(name) : getTempJARFolderLocation(name);
-			Path logPath = new Path(logFolder + Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION));
+			IPath logPath = new Path(logFolder + Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION));
 			FileSet logSet = new FileSet(logPath.removeLastSegments(1).toString(), null, logPath.lastSegment(), null, null, null, null);
 			script.printCopyTask(null, destination.toString(), new FileSet[] {logSet}, false, false);
 		}
@@ -1335,7 +1335,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 					try {
 						BundleDescription bundle = state.getBundle(Long.valueOf(id2).longValue());
 						if (bundle != null && !Utils.isBinary(bundle)) {
-							Path bundleLocation = new Path(bundle.getLocation());
+							IPath bundleLocation = new Path(bundle.getLocation());
 							results.add(bundleLocation.append("compilation.problem")); //$NON-NLS-1$
 							results.add(Utils.getPropertyFormat(PROPERTY_PLUGIN_TEMP) + '/' + getNormalizedName(bundle) + "/compilation.problem"); //$NON-NLS-1$
 						}

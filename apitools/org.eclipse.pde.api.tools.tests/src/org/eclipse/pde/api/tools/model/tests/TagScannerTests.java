@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.CompilationUnit;
@@ -84,7 +83,7 @@ public class TagScannerTests {
 	 * @return a new compilation unit
 	 */
 	private CompilationUnit getCompilationUnit(String name) {
-		Path path = (Path) SRC_LOC.append(name);
+		IPath path = SRC_LOC.append(name);
 		return new CompilationUnit(path.toOSString(), IApiCoreConstants.UTF_8);
 	}
 
@@ -495,7 +494,7 @@ public class TagScannerTests {
 
 		// Bug 402393 - The description returned is for the parent element
 		// and is expected because the root type has a restricted sub-type
-		//Bug 539513 - Incorrect warning on nested interface 
+		//Bug 539513 - Incorrect warning on nested interface
 		// Api description of inner nested interface should contain the relevant restrictions
 		// only when there is no restriction, then parent's restriction should be used
 		assertNotNull("the description for TestInterface4$Inner2 should exist", description); //$NON-NLS-1$
@@ -526,7 +525,7 @@ public class TagScannerTests {
 
 		// Bug 402393 - The description returned is for the parent element
 		// and is expected because the root type has a restricted sub-type
-		//Bug 539513 - Incorrect warning on nested interface 
+		//Bug 539513 - Incorrect warning on nested interface
 		// Api description of inner nested interface should contain the relevant restrictions
 		// only when there is no restriction, then parent's restriction should be used
 		assertNotNull("the description for TestInterface5$Inner2 should exist", description); //$NON-NLS-1$

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
@@ -261,7 +262,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 
 			String[] tokens = entry.getTokens();
 			for (String token : tokens) {
-				Path path = new Path(token);
+				IPath path = new Path(token);
 				if (path.segmentCount() >= 2 && path.segment(0).equals("..")) { //$NON-NLS-1$
 					for (int j = 0; j < fModels.length; j++) {
 						if (fModels[j].getPluginBase().getId().equals(path.segment(1)) && !result.contains(fModels[j])) {

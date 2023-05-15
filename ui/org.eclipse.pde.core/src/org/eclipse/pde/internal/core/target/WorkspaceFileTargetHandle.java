@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -51,7 +52,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	 */
 	static ITargetHandle restoreHandle(URI uri) {
 		String part = uri.getSchemeSpecificPart();
-		Path path = new Path(part);
+		IPath path = new Path(part);
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		return new WorkspaceFileTargetHandle(file);
 	}

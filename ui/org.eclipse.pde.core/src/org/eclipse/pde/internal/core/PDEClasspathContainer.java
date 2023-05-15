@@ -97,7 +97,7 @@ public class PDEClasspathContainer {
 			// If the jarred plugin contains any jarred libraries they must be extracted as the compiler can't handle nested jar files
 			File[] extractedLibraries = PDECore.getDefault().getModelManager().getExternalModelManager().getExtractedLibraries(model);
 			for (File libraryFile : extractedLibraries) {
-				Path path = new Path(libraryFile.getAbsolutePath());
+				IPath path = new Path(libraryFile.getAbsolutePath());
 				addLibraryEntry(path, path, rules, getClasspathAttributes(model), entries);
 			}
 		} else {

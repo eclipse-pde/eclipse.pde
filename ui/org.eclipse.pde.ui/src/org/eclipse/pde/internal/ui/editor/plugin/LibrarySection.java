@@ -19,6 +19,7 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -103,7 +104,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 	private TableViewer fLibraryTable;
 
 	class LibraryFilter extends JARFileFilter {
-		public LibraryFilter(HashSet<IPath> set) {
+		public LibraryFilter(Set<IPath> set) {
 			super(set);
 		}
 
@@ -673,7 +674,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 
 	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
-		HashSet<Path> librarySet = null;
+		Set<IPath> librarySet = null;
 		// Only source objects that are plugin libraries that have not already
 		// been specified can be pasted
 		for (Object sourceObject : sourceObjects) {
@@ -696,10 +697,10 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		return true;
 	}
 
-	private HashSet<Path> createPluginLibrarySet() {
+	private Set<IPath> createPluginLibrarySet() {
 		// Get the current libraries and add them to a set for easy searching
 		IPluginLibrary[] libraries = getModel().getPluginBase().getLibraries();
-		HashSet<Path> librarySet = new HashSet<>();
+		Set<IPath> librarySet = new HashSet<>();
 		for (IPluginLibrary library : libraries) {
 			librarySet.add(new Path(ClasspathUtilCore.expandLibraryName(library.getName())));
 		}

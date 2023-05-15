@@ -457,7 +457,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		ArrayList<FileSet> binaryBundles = new ArrayList<>();
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, null, null, null, null);
 		for (BundleDescription plugin : plugins) {
-			Path pluginLocation = new Path(plugin.getLocation());
+			IPath pluginLocation = new Path(plugin.getLocation());
 			if (Utils.isBinary(plugin))
 				binaryBundles.add(new FileSet(pluginLocation.removeLastSegments(1).toOSString(), null, pluginLocation.lastSegment(), null, null, null, null));
 			else

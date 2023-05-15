@@ -307,12 +307,12 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 	private void create30SourceFragment(FeatureEntry fragment, FeatureEntry plugin) throws CoreException {
 		// create the directory for the plugin
-		Path sourceFragmentDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(fragment, true));
+		IPath sourceFragmentDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(fragment, true));
 		File sourceFragmentDir = new File(sourceFragmentDirURL.toOSString());
 		new File(sourceFragmentDir, "META-INF").mkdirs(); //$NON-NLS-1$
 		try {
 			// read the content of the template file
-			Path fragmentPath = new Path(TEMPLATE + "/30/fragment/" + Constants.BUNDLE_FILENAME_DESCRIPTOR);//$NON-NLS-1$
+			IPath fragmentPath = new Path(TEMPLATE + "/30/fragment/" + Constants.BUNDLE_FILENAME_DESCRIPTOR);//$NON-NLS-1$
 			URL templateLocation = BundleHelper.getDefault().find(fragmentPath);
 			if (templateLocation == null) {
 				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, NLS.bind(Messages.error_readingDirectory, fragmentPath), null);
@@ -671,7 +671,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 		// Create the MANIFEST.MF
 		StringBuffer buffer;
-		Path templateManifest = new Path(TEMPLATE + "/30/plugin/" + Constants.BUNDLE_FILENAME_DESCRIPTOR); //$NON-NLS-1$
+		IPath templateManifest = new Path(TEMPLATE + "/30/plugin/" + Constants.BUNDLE_FILENAME_DESCRIPTOR); //$NON-NLS-1$
 		URL templateManifestURL = BundleHelper.getDefault().find(templateManifest);
 		if (templateManifestURL == null) {
 			IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, NLS.bind(Messages.error_readingDirectory, templateManifest), null);

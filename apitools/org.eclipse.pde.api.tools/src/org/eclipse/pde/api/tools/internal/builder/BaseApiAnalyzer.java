@@ -320,7 +320,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject[] projects = root.getProjects();
-		Path componentLocation = new Path(component.getLocation());
+		IPath componentLocation = new Path(component.getLocation());
 		for (IProject project : projects) {
 			IPath projectLocation = project.getLocation();
 			if (projectLocation != null && projectLocation.isPrefixOf(componentLocation)) {
@@ -1913,7 +1913,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @return a new API component resolution problem or <code>null</code>
 	 */
 	private void createApiComponentResolutionProblem(final IApiComponent component, final String message) {
-		IApiProblem problem = ApiProblemFactory.newApiComponentResolutionProblem(Path.EMPTY.toString(), new String[] {
+		IApiProblem problem = ApiProblemFactory.newApiComponentResolutionProblem("", new String[] { //$NON-NLS-1$
 				component.getSymbolicName(), message }, new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { Integer.valueOf(IApiMarkerConstants.API_COMPONENT_RESOLUTION_MARKER_ID) }, IElementDescriptor.RESOURCE, IApiProblem.API_COMPONENT_RESOLUTION);
 		addProblem(problem);
 	}
