@@ -165,7 +165,7 @@ public class GETFetchFactory implements IFetchFactory {
 		// if we have a feature or un-packed plug-in then we need to unzip it
 		boolean unpack = Boolean.valueOf((String) entryInfos.get(UNPACK)).booleanValue();
 		if (unpack || ELEMENT_TYPE_FEATURE.equals(entryInfos.get(KEY_ELEMENT_TYPE))) {
-			Path destPath = new Path(dest);
+			IPath destPath = new Path(dest);
 			String unzipped = destPath.removeLastSegments(1).toOSString();
 			if (destPath.getFileExtension().equalsIgnoreCase("jar")) { //$NON-NLS-1$
 				unzipped = destPath.removeFileExtension().toOSString();

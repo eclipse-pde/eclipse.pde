@@ -218,7 +218,7 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 		// On Mac OS, if user selects *.app, then location
 		// should be reset to *.app/Contents/Eclipse if that exists
 		if (System.getProperty("os.name").startsWith("Mac")) {//$NON-NLS-1$ //$NON-NLS-2$
-			Path nPath = new Path(newPath);
+			IPath nPath = new Path(newPath);
 			if (nPath.lastSegment() == null) {
 				return newLoc;
 			}

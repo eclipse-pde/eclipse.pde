@@ -329,7 +329,7 @@ public class FeatureImportWizardPage extends WizardPage {
 			IPath curr = getDropLocation();
 			if (curr.segmentCount() == 0)
 				errorMessage = PDEUIMessages.FeatureImportWizard_errors_locationMissing;
-			else if (!Path.ROOT.isValidPath(fDropLocation.getText()))
+			else if (!IPath.ROOT.isValidPath(fDropLocation.getText()))
 				errorMessage = PDEUIMessages.FeatureImportWizard_errors_buildFolderInvalid;
 			else {
 				File file = curr.toFile();

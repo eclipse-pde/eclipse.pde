@@ -41,7 +41,6 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -233,8 +232,8 @@ public abstract class AbstractBuildValidationTest {
 	 */
 	protected IPath doUnZip(IPath location, String archivePath) throws IOException {
 		URL zipURL = PDETestsPlugin.getBundleContext().getBundle().getEntry(archivePath);
-		Path zipPath = new Path(new File(FileLocator.toFileURL(zipURL).getFile()).getAbsolutePath());
-		try (ZipFile zipFile = new ZipFile(zipPath.toFile())) {
+		File zipPath = new File(FileLocator.toFileURL(zipURL).getFile());
+		try (ZipFile zipFile = new ZipFile(zipPath)) {
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 			IPath parent = location.removeLastSegments(1);
 			while (entries.hasMoreElements()) {

@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.core.search;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -76,7 +77,7 @@ public class PluginJavaSearchUtil {
 		for (IPluginModelBase model : models) {
 			IResource resource = model.getUnderlyingResource();
 			if (resource == null) {
-				ArrayList<Path> libraryPaths = new ArrayList<>();
+				List<IPath> libraryPaths = new ArrayList<>();
 				addLibraryPaths(model, libraryPaths);
 				for (IPackageFragmentRoot root : roots) {
 					if (libraryPaths.contains(root.getPath())) {
@@ -109,7 +110,7 @@ public class PluginJavaSearchUtil {
 		}
 	}
 
-	private static void addLibraryPaths(IPluginModelBase model, ArrayList<Path> libraryPaths) {
+	private static void addLibraryPaths(IPluginModelBase model, List<IPath> libraryPaths) {
 		IPluginBase plugin = model.getPluginBase();
 
 		IFragmentModel[] fragments = new IFragmentModel[0];
@@ -139,7 +140,7 @@ public class PluginJavaSearchUtil {
 		}
 	}
 
-	private static void findLibraryInFragments(IFragmentModel[] fragments, String libraryName, ArrayList<Path> libraryPaths) {
+	private static void findLibraryInFragments(IFragmentModel[] fragments, String libraryName, List<IPath> libraryPaths) {
 		for (IFragmentModel fragment : fragments) {
 			String path = fragment.getInstallLocation() + IPath.SEPARATOR + libraryName;
 			if (new File(path).exists()) {

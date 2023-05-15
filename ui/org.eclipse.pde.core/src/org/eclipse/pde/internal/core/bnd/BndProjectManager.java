@@ -112,7 +112,7 @@ public class BndProjectManager {
 			}
 			File file = container.getFile();
 			if (file.exists()) {
-				Path path = new Path(file.getAbsolutePath());
+				IPath path = new Path(file.getAbsolutePath());
 				IClasspathAttribute[] attributes;
 				if (isTest) {
 					attributes = new IClasspathAttribute[] {
@@ -120,7 +120,7 @@ public class BndProjectManager {
 				} else {
 					attributes = new IClasspathAttribute[0];
 				}
-				entries.add(JavaCore.newLibraryEntry(path, null, Path.ROOT, new IAccessRule[0], attributes, false));
+				entries.add(JavaCore.newLibraryEntry(path, null, IPath.ROOT, new IAccessRule[0], attributes, false));
 			}
 		}
 	}

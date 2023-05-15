@@ -19,6 +19,7 @@ import java.util.Arrays;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -435,7 +436,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 
 		if (prefs != null) {
 			String path = pathText.getText().trim();
-			if (!Path.EMPTY.isValidPath(path)) {
+			if (!IPath.EMPTY.isValidPath(path)) {
 				setErrorMessage(String.format(Messages.DSAnnotationPropertyPage_errorMessage_path));
 				return false;
 			}

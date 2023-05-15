@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -444,7 +445,7 @@ public class LauncherSection extends PDESection {
 
 	private void openImage(String value) {
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
-		Path path = new Path(value);
+		IPath path = new Path(value);
 		if (path.isEmpty()) {
 			MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_emptyPath); //
 			return;

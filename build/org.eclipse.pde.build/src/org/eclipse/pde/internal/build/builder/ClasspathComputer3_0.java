@@ -396,7 +396,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 		String path = null;
 		String subPath = null;
-		Path libraryPath = new Path(libraryName);
+		IPath libraryPath = new Path(libraryName);
 		if (libraryPath.isAbsolute()) {
 			path = libraryPath.toOSString();
 		} else if ("jar".equalsIgnoreCase(basePath.getFileExtension())) { //$NON-NLS-1$
@@ -464,7 +464,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 					//Potential pb: here there maybe a nasty case where the libraries variable may refer to something which is part of the base
 					//but $xx$ will replace it by the $xx instead of $basexx. The solution is for the user to use the explicitly set the content
 					// of its build.property file
-					addPathAndCheck(model, Path.EMPTY, libraryName, modelProperties, classpath);
+					addPathAndCheck(model, IPath.EMPTY, libraryName, modelProperties, classpath);
 				}
 			}
 		} else {
@@ -474,15 +474,15 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 				if (element.equals(jar.getName(false)))
 					break;
 				addDevEntries(model, location, classpath, Utils.getArrayFromString((String) modelProperties.get(PROPERTY_OUTPUT_PREFIX + element)), modelProperties);
-				addPathAndCheck(model, Path.EMPTY, element, modelProperties, classpath);
+				addPathAndCheck(model, IPath.EMPTY, element, modelProperties, classpath);
 			}
 			// Then we add all the "pure libraries" (the one that does not contain source)
 			String[] libraries = getClasspathEntries(model);
 			for (String libraryName : libraries) {
 				if (modelProperties.get(PROPERTY_SOURCE_PREFIX + libraryName) == null) {
 					//Potential pb: if the pure library is something that is being compiled (which is supposetly not the case, but who knows...)
-					//the user will get $basexx instead of $ws 
-					addPathAndCheck(model, Path.EMPTY, libraryName, modelProperties, classpath);
+					//the user will get $basexx instead of $ws
+					addPathAndCheck(model, IPath.EMPTY, libraryName, modelProperties, classpath);
 				}
 			}
 		}

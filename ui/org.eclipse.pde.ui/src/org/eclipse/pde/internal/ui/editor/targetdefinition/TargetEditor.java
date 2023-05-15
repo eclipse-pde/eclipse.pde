@@ -464,7 +464,7 @@ public class TargetEditor extends FormEditor {
 				targetFile = fTargetFileInWorkspace.getLocation().toFile();
 			} else if (input instanceof IURIEditorInput) {
 				String part = ((IURIEditorInput) input).getURI().getSchemeSpecificPart();
-				Path path = new Path(part);
+				IPath path = new Path(part);
 				fTargetFileInWorkspace = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 				targetFile = path.toFile();
 			}

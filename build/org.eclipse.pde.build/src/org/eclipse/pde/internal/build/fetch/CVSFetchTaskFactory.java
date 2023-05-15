@@ -295,7 +295,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		buffer.append(sep);
 		buffer.append(module);
 
-		Path modulePath = new Path(module);
+		IPath modulePath = new Path(module);
 		if (!modulePath.lastSegment().equals(projectName)) {
 			buffer.append(";project=\""); //$NON-NLS-1$
 			buffer.append(projectName);

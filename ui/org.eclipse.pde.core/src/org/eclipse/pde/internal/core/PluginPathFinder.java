@@ -138,7 +138,7 @@ public class PluginPathFinder {
 			try {
 				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 				location = manager.performStringSubstitution(location);
-				Path path = new Path(location);
+				IPath path = new Path(location);
 				if (path.isAbsolute()) {
 					file = path.toFile();
 				} else {

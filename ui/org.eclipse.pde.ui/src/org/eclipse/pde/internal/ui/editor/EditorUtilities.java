@@ -16,16 +16,18 @@ package org.eclipse.pde.internal.ui.editor;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.nio.file.Files;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
@@ -68,18 +70,15 @@ public class EditorUtilities {
 		String imagePath = provider.getText().getText();
 		String message = null;
 		try {
-			IPath path = getFullPath(new Path(imagePath), product);
-			URL url = new URL(path.toString());
-			ImageLoader loader = new ImageLoader();
-			try (InputStream stream = url.openStream()) {
-				ImageData[] idata = loader.load(stream);
+			try (InputStream stream = getResourceStream(imagePath, product)) {
+				ImageData[] idata = new ImageLoader().load(stream);
 				if (idata != null && idata.length > 0)
 					return idata;
 			}
 			message = PDEUIMessages.EditorUtilities_noImageData;
 		} catch (SWTException e) {
 			message = PDEUIMessages.EditorUtilities_pathNotValidImage;
-		} catch (IOException e) {
+		} catch (IOException | CoreException e) {
 			message = PDEUIMessages.EditorUtilities_invalidFilePath;
 		}
 		validator.addMessage(message, IMessageProvider.WARNING);
@@ -206,33 +205,32 @@ public class EditorUtilities {
 		return width + " x " + height; //$NON-NLS-1$
 	}
 
-	private static IPath getFullPath(IPath path, IProduct product) throws MalformedURLException {
-		String filePath = path.toString();
+	private static InputStream getResourceStream(String filePath, IProduct product) throws IOException, CoreException {
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 		// look in root
 		if (filePath.indexOf('/') == 0) {
-			IResource resource = root.findMember(filePath);
-			if (resource != null)
-				return new Path("file:", resource.getLocation().toString()); //$NON-NLS-1$
-			throw new MalformedURLException();
+			if (root.findMember(filePath) instanceof IFile file) {
+				return file.getContents();
+			}
+			throw new IOException();
 		}
 		// look in project
 		IProject project = product.getModel().getUnderlyingResource().getProject();
-		IResource resource = project.findMember(filePath);
-		if (resource != null)
-			return new Path("file:", resource.getLocation().toString()); //$NON-NLS-1$
-
+		if (project.findMember(filePath) instanceof IFile file) {
+			return file.getContents();
+		}
 		// look in external models
 		IPluginModelBase model = PluginRegistry.findModel(product.getDefiningPluginId());
 		if (model != null && model.getInstallLocation() != null) {
 			File modelNode = new File(model.getInstallLocation());
-			String pluginPath = modelNode.getAbsolutePath();
-			if (modelNode.isFile() && CoreUtility.jarContainsResource(modelNode, filePath, false))
-				return new Path("jar:file:", pluginPath + "!/" + filePath); //$NON-NLS-1$ //$NON-NLS-2$
-			return new Path("file:", pluginPath + "/" + filePath); //$NON-NLS-1$ //$NON-NLS-2$
+			if (modelNode.isFile() && CoreUtility.jarContainsResource(modelNode, filePath, false)) {
+				URI jarURI = URIUtil.toJarURI(modelNode.toURI(), IPath.fromOSString(filePath));
+				return jarURI.toURL().openStream();
+			}
+			return Files.newInputStream(modelNode.toPath().resolve(filePath));
 		}
 		// no file found - throw exception
-		throw new MalformedURLException();
+		throw new IOException();
 	}
 
 	private static IPath getRootPath(IPath path, String definingPluginId) {
