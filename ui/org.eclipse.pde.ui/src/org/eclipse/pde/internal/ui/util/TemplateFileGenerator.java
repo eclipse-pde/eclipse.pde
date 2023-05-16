@@ -37,7 +37,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -210,7 +209,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 			if (!pluginJar.exists())
 				return;
 			String templateDirectory = file.substring(exclamation + 1); // "/some/path/"
-			IPath path = new Path(templateDirectory);
+			IPath path = IPath.fromOSString(templateDirectory);
 			try (ZipFile zipFile = new ZipFile(pluginJar)) {
 				generateFiles(zipFile, path, fProject, true, false, monitor);
 			} catch (IOException ioe) {
@@ -245,7 +244,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 					if (isOkToCreateFolder(member) == false)
 						continue;
 					String folderName = getProcessedString(member.getName(), member.getName());
-					dstContainer = dst.getFolder(new Path(folderName));
+					dstContainer = dst.getFolder(IPath.fromOSString(folderName));
 				}
 				if (dstContainer instanceof IFolder && !dstContainer.exists())
 					((IFolder) dstContainer).create(true, true, monitor);
@@ -267,7 +266,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 		String targetFileName = getProcessedString(fileName, fileName);
 
 		monitor.subTask(targetFileName);
-		IFile dstFile = dst.getFile(new Path(targetFileName));
+		IFile dstFile = dst.getFile(IPath.fromOSString(targetFileName));
 
 		try (InputStream stream = getProcessedStream(fileName, input, binary)) {
 			if (dstFile.exists()) {
@@ -286,7 +285,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 
 		for (Enumeration<? extends ZipEntry> zipEntries = zipFile.entries(); zipEntries.hasMoreElements();) {
 			ZipEntry zipEntry = zipEntries.nextElement();
-			IPath entryPath = new Path(zipEntry.getName());
+			IPath entryPath = IPath.fromOSString(zipEntry.getName());
 			if (entryPath.segmentCount() <= pathLength) {
 				// ancestor or current directory
 				continue;
@@ -307,7 +306,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 		}
 
 		for (ZipEntry zipEnry : childZipEntries.values()) {
-			String name = new Path(zipEnry.getName()).lastSegment().toString();
+			String name = IPath.fromOSString(zipEnry.getName()).lastSegment().toString();
 			if (zipEnry.isDirectory()) {
 				IContainer dstContainer = null;
 
@@ -325,7 +324,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 					if (isOkToCreateFolder(new File(path.toFile(), name)) == false)
 						continue;
 					String folderName = getProcessedString(name, name);
-					dstContainer = dst.getFolder(new Path(folderName));
+					dstContainer = dst.getFolder(IPath.fromOSString(folderName));
 				}
 				if (dstContainer instanceof IFolder && !dstContainer.exists())
 					((IFolder) dstContainer).create(true, true, monitor);
@@ -386,31 +385,31 @@ public class TemplateFileGenerator implements IVariableProvider {
 		// Prevent needless copying
 		// TODO: MP: SPLASH: Propagate / share copy prevention code with org.eclipse.pde.internal.ui.templates.ide.SplashHandlersTemplate
 		if (copyFile.endsWith(javaSuffix)) {
-			if ((copyFile.endsWith(targetFile) == false) || fProject.exists(new Path("src" + '/' + fPackage.replace('.', '/') + '/' + targetFile))) { //$NON-NLS-1$
+			if ((copyFile.endsWith(targetFile) == false) || fProject.exists(IPath.fromOSString("src" + '/' + fPackage.replace('.', '/') + '/' + targetFile))) { //$NON-NLS-1$
 				return false;
 			}
 		} else if (copyFile.endsWith("splash.bmp") && //$NON-NLS-1$
-				(fProject.exists(new Path("splash.bmp")))) { //$NON-NLS-1$
+				(fProject.exists(IPath.fromOSString("splash.bmp")))) { //$NON-NLS-1$
 			return false;
 		} else if (copyFile.endsWith(".png")) { //$NON-NLS-1$
 			if (copyFile.endsWith("af.png") && //$NON-NLS-1$
-					fProject.exists(new Path("icons/af.png"))) { //$NON-NLS-1$
+					fProject.exists(IPath.fromOSString("icons/af.png"))) { //$NON-NLS-1$
 				return false;
 			} else if (copyFile.endsWith("embedded.png") && //$NON-NLS-1$
-					fProject.exists(new Path("icons/embedded.png"))) { //$NON-NLS-1$
+					fProject.exists(IPath.fromOSString("icons/embedded.png"))) { //$NON-NLS-1$
 				return false;
 			} else if (copyFile.endsWith("enterprise.png") && //$NON-NLS-1$
-					fProject.exists(new Path("icons/enterprise.png"))) { //$NON-NLS-1$
+					fProject.exists(IPath.fromOSString("icons/enterprise.png"))) { //$NON-NLS-1$
 				return false;
 			} else if (copyFile.endsWith("rcp.png") && //$NON-NLS-1$
-					fProject.exists(new Path("icons/rcp.png"))) { //$NON-NLS-1$
+					fProject.exists(IPath.fromOSString("icons/rcp.png"))) { //$NON-NLS-1$
 				return false;
 			} else if (copyFile.endsWith("languages.png") && //$NON-NLS-1$
-					fProject.exists(new Path("icons/languages.png"))) { //$NON-NLS-1$
+					fProject.exists(IPath.fromOSString("icons/languages.png"))) { //$NON-NLS-1$
 				return false;
 			}
 		} else if (copyFile.endsWith("splashExtension.exsd") && //$NON-NLS-1$
-				(fProject.exists(new Path("schema/splashExtension.exsd")))) { //$NON-NLS-1$
+				(fProject.exists(IPath.fromOSString("schema/splashExtension.exsd")))) { //$NON-NLS-1$
 			return false;
 		}
 
@@ -464,7 +463,7 @@ public class TemplateFileGenerator implements IVariableProvider {
 		String packageName = packageValue != null ? packageValue.toString() : null;
 		if (packageName == null)
 			packageName = fModel.getPluginBase().getId();
-		IPath path = new Path(packageName.replace('.', File.separatorChar));
+		IPath path = IPath.fromOSString(packageName.replace('.', File.separatorChar));
 		if (sourceFolder != null)
 			path = sourceFolder.getProjectRelativePath().append(path);
 

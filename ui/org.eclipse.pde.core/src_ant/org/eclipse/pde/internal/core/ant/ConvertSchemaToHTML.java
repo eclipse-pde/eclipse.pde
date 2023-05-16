@@ -32,7 +32,6 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
@@ -72,7 +71,7 @@ public class ConvertSchemaToHTML extends Task {
 		if (manifest == null) {
 			throw new BuildException(NLS.bind(PDECoreMessages.Builders_Convert_missingAttribute, "manifest")); //$NON-NLS-1$
 		}
-		if (!new Path(destination).isValidPath(destination)) {
+		if (!IPath.fromOSString(destination).isValidPath(destination)) {
 			throw new BuildException(NLS.bind(PDECoreMessages.Builders_Convert_illegalValue, "destination")); //$NON-NLS-1$
 		}
 
@@ -112,7 +111,7 @@ public class ConvertSchemaToHTML extends Task {
 					}
 				}
 
-				File directory = new Path(destination).isAbsolute() ? new File(destination) : new File(getProject().getBaseDir(), destination);
+				File directory = IPath.fromOSString(destination).isAbsolute() ? new File(destination) : new File(getProject().getBaseDir(), destination);
 				if (!directory.exists() || !directory.isDirectory()) {
 					if (!directory.mkdirs()) {
 						schema.dispose();
@@ -208,7 +207,7 @@ public class ConvertSchemaToHTML extends Task {
 	}
 
 	private String getPluginID() {
-		File file = new Path(manifest).isAbsolute() ? new File(manifest) : new File(getProject().getBaseDir(), manifest);
+		File file = IPath.fromOSString(manifest).isAbsolute() ? new File(manifest) : new File(getProject().getBaseDir(), manifest);
 		File OSGiFile = new File(file.getParentFile(), ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 
 		if (OSGiFile.exists()) {
@@ -239,11 +238,11 @@ public class ConvertSchemaToHTML extends Task {
 		String[] paths = this.additionalSearchPaths.split(","); //$NON-NLS-1$
 		List<IPath> result = new ArrayList<>(paths.length);
 		for (String pathString : paths) {
-			IPath path = new Path(pathString);
+			IPath path = IPath.fromOSString(pathString);
 			if (path.isValidPath(pathString)) {
 				if (!path.isAbsolute()) {
 					File baseDir = getProject().getBaseDir();
-					path = new Path(baseDir.getPath()).append(path);
+					path = IPath.fromOSString(baseDir.getPath()).append(path);
 				}
 				result.add(path);
 			} else {
@@ -254,7 +253,7 @@ public class ConvertSchemaToHTML extends Task {
 	}
 
 	private IPluginModelBase readManifestFile() throws BuildException {
-		File file = new Path(manifest).isAbsolute() ? new File(manifest) : new File(getProject().getBaseDir(), manifest);
+		File file = IPath.fromOSString(manifest).isAbsolute() ? new File(manifest) : new File(getProject().getBaseDir(), manifest);
 		InputStream stream = null;
 		try {
 			stream = new BufferedInputStream(new FileInputStream(file));

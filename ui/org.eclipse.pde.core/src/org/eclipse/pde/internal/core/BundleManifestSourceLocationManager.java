@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.osgi.util.ManifestElement;
@@ -78,7 +77,7 @@ public class BundleManifestSourceLocationManager {
 				if (location != null) {
 					try {
 						File file = new File(location);
-						IPath sourceLocation = Path.fromOSString(file.getAbsolutePath());
+						IPath sourceLocation = IPath.fromOSString(file.getAbsolutePath());
 						return Optional.of(sourceLocation);
 					} catch (RuntimeException e) {
 						// cannot be used then...
@@ -94,7 +93,7 @@ public class BundleManifestSourceLocationManager {
 		if (plugin != null) {
 			String path = plugin.getInstallLocation();
 			if (path != null) {
-				IPath location = Path.fromOSString(path);
+				IPath location = IPath.fromOSString(path);
 				return Optional.of(location);
 			}
 		}
@@ -241,7 +240,7 @@ public class BundleManifestSourceLocationManager {
 						PDECore.log(Status.error(NLS.bind(PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, currentPlugin.getId(), currentPlugin.getVersion()), e));
 					}
 					if (manifestElements != null) {
-						IPath path = Path.fromOSString(model.getInstallLocation());
+						IPath path = IPath.fromOSString(model.getInstallLocation());
 						if (path.toFile().exists()) {
 							for (ManifestElement element : manifestElements) {
 								String binaryPluginName = element.getValue();

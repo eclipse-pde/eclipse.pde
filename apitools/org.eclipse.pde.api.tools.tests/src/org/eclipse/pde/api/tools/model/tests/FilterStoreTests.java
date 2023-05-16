@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.pde.api.tools.internal.FilterStore;
@@ -123,14 +122,14 @@ public class FilterStoreTests extends AbstractApiTest {
 		assertNull("FilterStore should not support resources", resources); //$NON-NLS-1$
 
 		// C4
-		IPath resource = new Path("src/x/y/z/C4.java"); //$NON-NLS-1$
+		IPath resource = IPath.fromOSString("src/x/y/z/C4.java"); //$NON-NLS-1$
 		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.toPortableString(), null, null, null, null, -1,
 				-1, -1, IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT,
 				IApiProblem.NO_FLAGS);
 		assertTrue("the usage problem for src/x/y/z/C4.java should be filtered", store.isFiltered(problem)); //$NON-NLS-1$
 
 		// C1
-		resource = new Path("src/x/C1.java"); //$NON-NLS-1$
+		resource = IPath.fromOSString("src/x/C1.java"); //$NON-NLS-1$
 		problem = ApiProblemFactory.newApiProblem(resource.toPortableString(), null, null, null, null, -1, -1, -1,
 				IApiProblem.CATEGORY_COMPATIBILITY, 4, IDelta.REMOVED, IDelta.FIELD);
 		assertTrue("the removed binary problem for src/x/C1.java should be filtered", store.isFiltered(problem)); //$NON-NLS-1$
@@ -139,7 +138,7 @@ public class FilterStoreTests extends AbstractApiTest {
 		assertTrue("the changed binary problem for src/x/C1.java should be filtered", store.isFiltered(problem)); //$NON-NLS-1$
 
 		// C3
-		resource = new Path("src/x/y/C3.java"); //$NON-NLS-1$
+		resource = IPath.fromOSString("src/x/y/C3.java"); //$NON-NLS-1$
 		problem = ApiProblemFactory.newApiProblem(resource.toPortableString(), null, null, null, null, -1, -1, -1,
 				IApiProblem.CATEGORY_VERSION, 7, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS);
 		assertTrue("the major version problem for src/x/y/C3.java should be filtered", store.isFiltered(problem)); //$NON-NLS-1$
@@ -148,7 +147,7 @@ public class FilterStoreTests extends AbstractApiTest {
 		assertTrue("the minor version problem for src/x/y/C3.java should be filtered", store.isFiltered(problem)); //$NON-NLS-1$
 
 		// MANIFEST.MF
-		resource = new Path("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+		resource = IPath.fromOSString("META-INF/MANIFEST.MF"); //$NON-NLS-1$
 		problem = ApiProblemFactory.newApiProblem(resource.toPortableString(), null, null, null, null, -1, -1, -1,
 				IApiProblem.CATEGORY_SINCETAGS, 7, IApiProblem.SINCE_TAG_MISSING, IApiProblem.NO_FLAGS);
 		assertTrue("the missing since tag problem should be filtered for META-INF/MANIFEST.MF", //$NON-NLS-1$
@@ -173,7 +172,7 @@ public class FilterStoreTests extends AbstractApiTest {
 	@Test
 	public void testNonExistantProblem() throws CoreException {
 		FilterStore store = getFilterStore();
-		IPath resource = new Path(XML_LOC + "/src/x/y/z/C4.java"); //$NON-NLS-1$
+		IPath resource = IPath.fromOSString(XML_LOC + "/src/x/y/z/C4.java"); //$NON-NLS-1$
 		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.toPortableString(), null, null, null, null, -1,
 				-1, -1, IApiProblem.CATEGORY_USAGE, 0, IApiProblem.MINOR_VERSION_CHANGE, IDelta.ADDED);
 		assertFalse("the bogus problem should not be filtered", store.isFiltered(problem)); //$NON-NLS-1$
@@ -189,7 +188,7 @@ public class FilterStoreTests extends AbstractApiTest {
 		BundleComponent component = getComponent();
 		FilterStore store = getFilterStore();
 
-		IPath resource = new Path("src/x/y/z/C4.java"); //$NON-NLS-1$
+		IPath resource = IPath.fromOSString("src/x/y/z/C4.java"); //$NON-NLS-1$
 		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.toPortableString(), null, null, null, null, -1,
 				-1, -1, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
 		store.addFilters(
@@ -211,7 +210,7 @@ public class FilterStoreTests extends AbstractApiTest {
 	public void testAddRemoveFromProblem() throws CoreException {
 		BundleComponent component = getComponent();
 		FilterStore store = getFilterStore();
-		IPath resource = new Path("src/x/y/z/C4.java"); //$NON-NLS-1$
+		IPath resource = IPath.fromOSString("src/x/y/z/C4.java"); //$NON-NLS-1$
 		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.toPortableString(), null, null, null, null, -1,
 				-1, -1, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT, IApiProblem.NO_FLAGS);
 

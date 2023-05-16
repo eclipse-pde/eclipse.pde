@@ -24,7 +24,6 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -94,7 +93,7 @@ public class BundleRootTests {
 		IProject project = createProject();
 		assertEquals("Bundle root unspecified - should be project itself", project, PDEProject.getBundleRoot(project));
 		// set to something
-		IFolder folder = project.getFolder(new Path("bundle/root"));
+		IFolder folder = project.getFolder(IPath.fromOSString("bundle/root"));
 		PDEProject.setBundleRoot(project, folder);
 		assertEquals("Wrong bundle root", folder, PDEProject.getBundleRoot(project));
 		// set to null
@@ -116,7 +115,7 @@ public class BundleRootTests {
 		IBundleProjectDescription description = service.getDescription(project);
 		assertNull("Bundle root unspecified - should be project itself (null)", description.getBundleRoot());
 		// set to something
-		IFolder folder = project.getFolder(new Path("bundle/root"));
+		IFolder folder = project.getFolder(IPath.fromOSString("bundle/root"));
 		service.setBundleRoot(project, folder.getProjectRelativePath());
 		description = service.getDescription(project);
 		assertEquals("Wrong bundle root", folder.getProjectRelativePath(), description.getBundleRoot());
@@ -146,17 +145,17 @@ public class BundleRootTests {
 	public void testPluginModelInstallLocation() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
-		IPath root = new Path("some/place");
+		IPath root = IPath.fromOSString("some/place");
 		description.setBundleRoot(root);
-		IBundleClasspathEntry cp1 = getBundleProjectService().newBundleClasspathEntry(new Path("src"), new Path("bin"), new Path("the.jar"));
+		IBundleClasspathEntry cp1 = getBundleProjectService().newBundleClasspathEntry(IPath.fromOSString("src"), IPath.fromOSString("bin"), IPath.fromOSString("the.jar"));
 		description.setBundleClasspath(new IBundleClasspathEntry[]{cp1});
-		IPath nls = new Path("plugin.properties");
+		IPath nls = IPath.fromOSString("plugin.properties");
 		description.setLocalization(nls);
 		description.apply(null);
 
 		ProjectCreationTests.waitForBuild();
 		IPluginModelBase model = PluginRegistry.findModel(project);
-		assertEquals("Wrong install location", project.getFolder(root).getLocation(), new Path(model.getInstallLocation()));
+		assertEquals("Wrong install location", project.getFolder(root).getLocation(), IPath.fromOSString(model.getInstallLocation()));
 	}
 
 	/**
@@ -169,11 +168,11 @@ public class BundleRootTests {
 	public void testBundleRoot() throws CoreException {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
-		IPath root = new Path("bundle/root");
+		IPath root = IPath.fromOSString("bundle/root");
 		description.setBundleRoot(root);
-		IBundleClasspathEntry cp1 = getBundleProjectService().newBundleClasspathEntry(new Path("src"), new Path("bin"), new Path("the.jar"));
+		IBundleClasspathEntry cp1 = getBundleProjectService().newBundleClasspathEntry(IPath.fromOSString("src"), IPath.fromOSString("bin"), IPath.fromOSString("the.jar"));
 		description.setBundleClasspath(new IBundleClasspathEntry[]{cp1});
-		IPath nls = new Path("plugin.properties");
+		IPath nls = IPath.fromOSString("plugin.properties");
 		description.setLocalization(nls);
 		description.setActivator("org.eclipse.foo.SomeActivator");
 		description.apply(null);
@@ -191,7 +190,7 @@ public class BundleRootTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
 		assertNull("Wrong host", d2.getHost());
 		assertEquals("Wrong localization", nls, d2.getLocalization());
@@ -233,7 +232,7 @@ public class BundleRootTests {
 
 		IBundleProjectService service = getBundleProjectService();
 		// reset the root
-		IPath root = new Path("bundle/root");
+		IPath root = IPath.fromOSString("bundle/root");
 		service.setBundleRoot(project, root);
 
 		// Resurrect the bundle project, with a modified version
@@ -245,8 +244,8 @@ public class BundleRootTests {
 
 		// validate
 		IBundleProjectDescription d2 = service.getDescription(project);
-		IPath nls = new Path("plugin.properties");
-		IBundleClasspathEntry cp1 = service.newBundleClasspathEntry(new Path("src"), new Path("bin"), new Path("the.jar"));
+		IPath nls = IPath.fromOSString("plugin.properties");
+		IBundleClasspathEntry cp1 = service.newBundleClasspathEntry(IPath.fromOSString("src"), IPath.fromOSString("bin"), IPath.fromOSString("the.jar"));
 
 		assertEquals("Wrong bundle root", root, d2.getBundleRoot());
 		assertEquals("Should be no activator", "org.eclipse.foo.SomeActivator", d2.getActivator());
@@ -259,7 +258,7 @@ public class BundleRootTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertEquals("Wrong Bundle-Vendor", "Some Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "2.0.0", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
 		assertNull("Wrong host", d2.getHost());
 		assertEquals("Wrong localization", nls, d2.getLocalization());

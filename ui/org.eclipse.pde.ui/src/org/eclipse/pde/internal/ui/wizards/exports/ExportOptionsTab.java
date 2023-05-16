@@ -16,7 +16,7 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.build.site.QualifierReplacer;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -239,7 +239,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 	}
 
 	protected String validateAntCombo() {
-		String path = new Path(fAntCombo.getText()).lastSegment();
+		String path = IPath.fromOSString(fAntCombo.getText()).lastSegment();
 		if ("build.xml".equals(path)) //$NON-NLS-1$
 			return PDEUIMessages.ExportOptionsTab_antReservedMessage;
 		return null;

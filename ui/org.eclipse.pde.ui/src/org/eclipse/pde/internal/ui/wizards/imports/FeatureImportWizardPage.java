@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
@@ -320,7 +319,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		dialog.setText(PDEUIMessages.FeatureImportWizard_messages_folder_title);
 		dialog.setMessage(PDEUIMessages.FeatureImportWizard_messages_folder_message);
 		String res = dialog.open();
-		return res != null ? new Path(res) : null;
+		return res != null ? IPath.fromOSString(res) : null;
 	}
 
 	private void validateDropLocation() {
@@ -349,7 +348,7 @@ public class FeatureImportWizardPage extends WizardPage {
 	 * Returns the drop location.
 	 */
 	public IPath getDropLocation() {
-		return new Path(fDropLocation.getText().trim());
+		return IPath.fromOSString(fDropLocation.getText().trim());
 	}
 
 	public boolean isOtherLocation() {

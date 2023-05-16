@@ -45,7 +45,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
 import org.eclipse.osgi.signedcontent.SignedContent;
@@ -124,8 +124,8 @@ public abstract class PDETestCase {
 			buildFolder.create(true, true, null);
 		}
 
-		URL resource = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("/resources/" + resources),
-				null);
+		URL resource = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID),
+				IPath.fromOSString("/resources/" + resources), null);
 		if (resource != null) {
 			String path = FileLocator.toFileURL(resource).getPath();
 
@@ -141,8 +141,8 @@ public abstract class PDETestCase {
 	}
 
 	protected void runBuild(IFolder buildFolder) throws Exception {
-		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/build.xml"),
-				null);
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
+				IPath.fromOSString("/scripts/build.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 
 		runAntScript(buildXMLPath, new String[] { "main" }, buildFolder.getLocation().toOSString(), null);
@@ -150,7 +150,7 @@ public abstract class PDETestCase {
 
 	protected void runProductBuild(IFolder buildFolder) throws Exception {
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
-				new Path("/scripts/productBuild/productBuild.xml"), null);
+				IPath.fromOSString("/scripts/productBuild/productBuild.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 
 		runAntScript(buildXMLPath, new String[] { "main" }, buildFolder.getLocation().toOSString(), null);
@@ -158,7 +158,7 @@ public abstract class PDETestCase {
 
 	protected void generateScripts(IFolder buildFolder, Properties generateProperties) throws Exception {
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
-				new Path("/scripts/genericTargets.xml"), null);
+				IPath.fromOSString("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 
 		runAntScript(buildXMLPath, new String[] { "generateScript" }, buildFolder.getLocation().toOSString(),

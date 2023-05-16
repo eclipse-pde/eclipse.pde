@@ -31,7 +31,6 @@ import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.osgi.util.NLS;
@@ -202,7 +201,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	 * @throws CoreException
 	 */
 	protected BuildTimeFeature readFeature(String element) throws CoreException {
-		IPath root = new Path(installLocation);
+		IPath root = IPath.fromOSString(installLocation);
 		root = root.append(DEFAULT_FEATURE_LOCATION);
 		root = root.append(element);
 		try {

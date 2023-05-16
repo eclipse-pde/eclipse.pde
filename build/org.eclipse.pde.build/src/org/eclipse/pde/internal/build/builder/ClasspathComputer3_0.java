@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
@@ -275,7 +274,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	private void addRuntimeLibraries(BundleDescription model, List<Object> classpath, String baseLocation) throws CoreException {
 		String[] libraries = getClasspathEntries(model);
 		String root = generator.getLocation(model);
-		IPath base = Utils.makeRelative(new Path(root), new Path(baseLocation));
+		IPath base = Utils.makeRelative(IPath.fromOSString(root), IPath.fromOSString(baseLocation));
 		Properties modelProps = getBuildPropertiesFor(model);
 		if (modelProps != AbstractScriptGenerator.MissingProperties.getInstance())
 			ModelBuildScriptGenerator.specialDotProcessing(modelProps, libraries);
@@ -342,7 +341,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		String[] libraries = getClasspathEntries(plugin);
 
 		String root = generator.getLocation(fragment);
-		IPath base = Utils.makeRelative(new Path(root), new Path(baseLocation));
+		IPath base = Utils.makeRelative(IPath.fromOSString(root), IPath.fromOSString(baseLocation));
 		Properties modelProps = getBuildPropertiesFor(fragment);
 		for (String element : libraries) {
 			addPathAndCheck(fragment, base, element, modelProps, classpath);
@@ -396,7 +395,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 
 		String path = null;
 		String subPath = null;
-		IPath libraryPath = new Path(libraryName);
+		IPath libraryPath = IPath.fromOSString(libraryName);
 		if (libraryPath.isAbsolute()) {
 			path = libraryPath.toOSString();
 		} else if ("jar".equalsIgnoreCase(basePath.getFileExtension())) { //$NON-NLS-1$
@@ -497,7 +496,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 				//the user will get $basexx instead of $ws 
 				String[] toAdd = computeExtraPath(element, classpath, location);
 				if (toAdd != null && toAdd.length == 2)
-					addPathAndCheck(null, new Path(toAdd[0]), toAdd[1], modelProperties, classpath);
+					addPathAndCheck(null, IPath.fromOSString(toAdd[0]), toAdd[1], modelProperties, classpath);
 			}
 		}
 
@@ -508,7 +507,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			//the user will get $basexx instead of $ws 
 			String[] toAdd = computeExtraPath(element, classpath, location);
 			if (toAdd != null && toAdd.length == 2)
-				addPathAndCheck(null, new Path(toAdd[0]), toAdd[1], modelProperties, classpath);
+				addPathAndCheck(null, IPath.fromOSString(toAdd[0]), toAdd[1], modelProperties, classpath);
 		}
 	}
 
@@ -549,7 +548,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 					for (int i = 4; i < urlfragments.length; i++) {
 						entry += '/' + urlfragments[i];
 					}
-					return new String[] {Utils.makeRelative(new Path(bundleLocation), new Path(location)).toOSString(), entry};
+					return new String[] {Utils.makeRelative(IPath.fromOSString(bundleLocation), IPath.fromOSString(location)).toOSString(), entry};
 				}
 			} else if (urlfragments[1].equalsIgnoreCase("resource")) { //$NON-NLS-1$
 				String message = NLS.bind(Messages.exception_url, generator.getModel().getSymbolicName() + '/' + generator.getPropertiesFileName() + ": " + url); //$NON-NLS-1$
@@ -561,7 +560,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		try {
 			URL extraURL = new URL(url);
 			try {
-				relativePath = Utils.makeRelative(new Path(FileLocator.resolve(extraURL).getFile()), new Path(location)).toOSString();
+				relativePath = Utils.makeRelative(IPath.fromOSString(FileLocator.resolve(extraURL).getFile()), IPath.fromOSString(location)).toOSString();
 			} catch (IOException e) {
 				String message = NLS.bind(Messages.exception_url, generator.getModel().getSymbolicName() + '/' + generator.getPropertiesFileName() + ": " + url); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_MALFORMED_URL, message, e));
@@ -703,7 +702,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		else
 			entries = generator.devEntries.getDevClassPath(model.getSymbolicName());
 
-		IPath root = Utils.makeRelative(new Path(generator.getLocation(model)), new Path(baseLocation));
+		IPath root = Utils.makeRelative(IPath.fromOSString(generator.getLocation(model)), IPath.fromOSString(baseLocation));
 		for (String entry : entries) {
 			addPathAndCheck(model, root, entry, modelProperties, classpath);
 		}

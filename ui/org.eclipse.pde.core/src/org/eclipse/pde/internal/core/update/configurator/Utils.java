@@ -21,7 +21,6 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.datalocation.Location;
@@ -169,12 +168,12 @@ class Utils {
 			// it is not relative, return as is (avoid creating garbage)
 			return relativeLocation;
 		}
-		IPath relativePath = new Path(relativeLocation.getPath());
+		IPath relativePath = IPath.fromOSString(relativeLocation.getPath());
 		if (relativePath.isAbsolute()) {
 			return relativeLocation;
 		}
 		try {
-			IPath absolutePath = new Path(base.getPath()).append(relativeLocation.getPath());
+			IPath absolutePath = IPath.fromOSString(base.getPath()).append(relativeLocation.getPath());
 			// File.toURL() is the best way to create a file: URL
 			return absolutePath.toFile().toURL();
 		} catch (MalformedURLException e) {

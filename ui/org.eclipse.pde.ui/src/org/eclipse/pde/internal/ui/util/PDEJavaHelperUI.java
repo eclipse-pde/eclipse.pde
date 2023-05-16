@@ -23,7 +23,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
@@ -145,7 +145,7 @@ public class PDEJavaHelperUI {
 						return wizard.getQualifiedNameWithArgs();
 				}
 			} else if (createIfNoNature) {
-				IResource resource = project.findMember(new Path(name));
+				IResource resource = project.findMember(IPath.fromOSString(name));
 				if (resource != null && resource instanceof IFile) {
 					IWorkbenchPage page = PDEPlugin.getActivePage();
 					IDE.openEditor(page, (IFile) resource, true);
@@ -158,7 +158,7 @@ public class PDEJavaHelperUI {
 					if (dResult == Window.OK) {
 						String newValue = wizard.getQualifiedName();
 						name = newValue.replace('.', '/') + ".java"; //$NON-NLS-1$
-						resource = project.findMember(new Path(name));
+						resource = project.findMember(IPath.fromOSString(name));
 						if (resource != null && resource instanceof IFile) {
 							IWorkbenchPage page = PDEPlugin.getActivePage();
 							IDE.openEditor(page, (IFile) resource, true);

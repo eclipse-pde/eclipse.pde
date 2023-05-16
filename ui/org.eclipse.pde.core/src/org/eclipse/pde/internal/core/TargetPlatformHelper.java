@@ -43,7 +43,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.JavaCore;
@@ -184,7 +183,7 @@ public class TargetPlatformHelper {
 			// if the path is relative, the last segment is the bundle symbolic
 			// name
 			// Otherwise, we need to retrieve the bundle symbolic name ourselves
-			IPath path = new Path(bundle);
+			IPath path = IPath.fromOSString(bundle);
 			String id = null;
 			if (path.isAbsolute()) {
 				id = getSymbolicName(bundle);

@@ -27,7 +27,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.pde.api.tools.internal.ApiFilterStore;
@@ -105,7 +104,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		IProject project = jproject.getProject();
 
 		//C4
-		IResource resource = project.findMember(new Path("src/x/y/z/C4.java")); //$NON-NLS-1$
+		IResource resource = project.findMember(IPath.fromOSString("src/x/y/z/C4.java")); //$NON-NLS-1$
 		assertNotNull("the resource src/x/y/z/C4.java must exist", resource); //$NON-NLS-1$
 		IApiProblemFilter[] filters = store.getFilters(resource);
 		assertEquals("There should be 1 filter for src/x/y/z/C4.java", 1, filters.length); //$NON-NLS-1$
@@ -113,7 +112,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		assertTrue("the usage problem for src/x/y/z/C4.java should be filtered", store.isFiltered(problem)); //$NON-NLS-1$
 
 		//C1
-		resource = project.findMember(new Path("src/x/C1.java")); //$NON-NLS-1$
+		resource = project.findMember(IPath.fromOSString("src/x/C1.java")); //$NON-NLS-1$
 		assertNotNull("the resource src/x/C1.java must exist", resource); //$NON-NLS-1$
 		filters = store.getFilters(resource);
 		assertEquals("there should be 2 filters for src/x/C1.java", 2, filters.length); //$NON-NLS-1$
@@ -123,7 +122,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		assertTrue("the changed binary problem for src/x/C1.java should be filtered", store.isFiltered(problem)); //$NON-NLS-1$
 
 		//C3
-		resource = project.findMember(new Path("src/x/y/C3.java")); //$NON-NLS-1$
+		resource = project.findMember(IPath.fromOSString("src/x/y/C3.java")); //$NON-NLS-1$
 		assertNotNull("the resource src/x/y/C3.java must exist", resource); //$NON-NLS-1$
 		filters = store.getFilters(resource);
 		assertEquals("there should be 2 filters for src/x/y/C3.java", 2, filters.length); //$NON-NLS-1$
@@ -133,7 +132,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		assertTrue("the minor version problem for src/x/y/C3.java should be filtered", store.isFiltered(problem)); //$NON-NLS-1$
 
 		//MANIFEST.MF
-		resource = project.findMember(new Path("META-INF/MANIFEST.MF")); //$NON-NLS-1$
+		resource = project.findMember(IPath.fromOSString("META-INF/MANIFEST.MF")); //$NON-NLS-1$
 		assertNotNull("the resource META-INF/MANIFEST.MF must exist", resource); //$NON-NLS-1$
 		filters = store.getFilters(resource);
 		assertEquals("there should be 3 filters for META-INF/MANIFEST.MF", 3, filters.length); //$NON-NLS-1$
@@ -170,7 +169,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		assertNotNull("the testing project api component must exist", component); //$NON-NLS-1$
 		IApiFilterStore store = component.getFilterStore();
 		IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
-		IResource resource = project.findMember(new Path("src/x/y/z/C4.java")); //$NON-NLS-1$
+		IResource resource = project.findMember(IPath.fromOSString("src/x/y/z/C4.java")); //$NON-NLS-1$
 		assertNotNull("the resource src/x/y/z/C4.java must exist", resource); //$NON-NLS-1$
 		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
 				null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, 0, IApiProblem.MINOR_VERSION_CHANGE,
@@ -188,7 +187,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 		assertNotNull("the testing project api component must exist", component); //$NON-NLS-1$
 		IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
-		IResource resource = project.findMember(new Path("src/x/y/z/C4.java")); //$NON-NLS-1$
+		IResource resource = project.findMember(IPath.fromOSString("src/x/y/z/C4.java")); //$NON-NLS-1$
 		assertNotNull("the resource src/x/y/z/C4.java must exist", resource); //$NON-NLS-1$
 		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
 				null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT,
@@ -210,7 +209,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 		assertNotNull("the testing project api component must exist", component); //$NON-NLS-1$
 		IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
-		IResource resource = project.findMember(new Path("src/x/y/z/C4.java")); //$NON-NLS-1$
+		IResource resource = project.findMember(IPath.fromOSString("src/x/y/z/C4.java")); //$NON-NLS-1$
 		assertNotNull("the resource src/x/y/z/C4.java must exist", resource); //$NON-NLS-1$
 		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
 				null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT,
@@ -235,7 +234,7 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 		IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 		assertNotNull("the testing project api component must exist", component); //$NON-NLS-1$
 		IProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME).getProject();
-		IResource resource = project.findMember(new Path("src/x/y/z/C4.java")); //$NON-NLS-1$
+		IResource resource = project.findMember(IPath.fromOSString("src/x/y/z/C4.java")); //$NON-NLS-1$
 		assertNotNull("the resource src/x/y/z/C4.java must exist", resource); //$NON-NLS-1$
 		IApiProblem problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
 				null, null, null, null, -1, -1, -1, IApiProblem.CATEGORY_USAGE, 0, RestrictionModifiers.NO_IMPLEMENT,

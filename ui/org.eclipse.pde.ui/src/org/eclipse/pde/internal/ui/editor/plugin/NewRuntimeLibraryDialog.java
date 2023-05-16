@@ -18,7 +18,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.internal.core.ClasspathUtilCore;
@@ -53,7 +52,7 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 			if (libraries == null || libraries.length == 0)
 				return Status.OK_STATUS;
 
-			if (librarySet.contains(new Path(ClasspathUtilCore.expandLibraryName(text))))
+			if (librarySet.contains(IPath.fromOSString(ClasspathUtilCore.expandLibraryName(text))))
 				return Status.error(PDEUIMessages.ManifestEditor_RuntimeLibraryDialog_validationError);
 			return Status.OK_STATUS;
 		}
@@ -65,7 +64,7 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 		this.validator = new DuplicateStatusValidator();
 		librarySet = new HashSet<>();
 		for (IPluginLibrary library : libraries) {
-			librarySet.add(new Path(ClasspathUtilCore.expandLibraryName(library.getName())));
+			librarySet.add(IPath.fromOSString(ClasspathUtilCore.expandLibraryName(library.getName())));
 		}
 		setStatusLineAboveButtons(true);
 	}

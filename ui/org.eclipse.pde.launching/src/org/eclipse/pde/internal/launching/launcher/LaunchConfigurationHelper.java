@@ -30,7 +30,7 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -370,7 +370,7 @@ public class LaunchConfigurationHelper {
 			buf.append(TargetPlatformHelper.REFERENCE_PREFIX);
 		}
 		buf.append(TargetPlatformHelper.FILE_URL_PREFIX);
-		buf.append(new Path(model.getInstallLocation()).removeTrailingSeparator().toString());
+		buf.append(IPath.fromOSString(model.getInstallLocation()).removeTrailingSeparator().toString());
 		return buf.toString();
 	}
 

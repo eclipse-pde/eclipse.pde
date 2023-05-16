@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -36,7 +35,7 @@ public class TestBundleClasspathResolver implements IBundleClasspathResolver {
 
 		paths.add(javaProject.getProject().getFolder("cpe").getLocation());
 
-		result.put(new Path("library.jar"), paths);
+		result.put(IPath.fromOSString("library.jar"), paths);
 
 		return result;
 	}

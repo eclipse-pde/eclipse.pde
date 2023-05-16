@@ -23,7 +23,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -288,7 +288,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		if (fOptionsTab != null) {
 			String path = fOptionsTab.getAntBuildFileName();
 			String warningMessage = null;
-			if (path != null && path.length() > 0 && "build.xml".equals(new Path(path).lastSegment())) //$NON-NLS-1$
+			if (path != null && path.length() > 0 && "build.xml".equals(IPath.fromOSString(path).lastSegment())) //$NON-NLS-1$
 				warningMessage = PDEUIMessages.ExportOptionsTab_antReservedMessage;
 			setMessage(warningMessage, IMessageProvider.WARNING);
 		}

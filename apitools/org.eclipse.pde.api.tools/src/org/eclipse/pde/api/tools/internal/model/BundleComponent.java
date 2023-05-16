@@ -42,8 +42,8 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
@@ -840,7 +840,7 @@ public class BundleComponent extends Component {
 		ZipFile jarFile = null;
 		InputStream stream = null;
 		try {
-			String extension = new Path(bundleLocation.getName()).getFileExtension();
+			String extension = IPath.fromOSString(bundleLocation.getName()).getFileExtension();
 			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
 				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
 				ZipEntry manifestEntry = jarFile.getEntry(xmlFileName);
@@ -878,7 +878,7 @@ public class BundleComponent extends Component {
 		InputStream stream = null;
 		String contents = null;
 		try {
-			String extension = new Path(bundleLocation.getName()).getFileExtension();
+			String extension = IPath.fromOSString(bundleLocation.getName()).getFileExtension();
 			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
 				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
 				ZipEntry manifestEntry = jarFile.getEntry(IApiCoreConstants.API_DESCRIPTION_XML_NAME);
@@ -914,7 +914,7 @@ public class BundleComponent extends Component {
 	 * @throws MalformedURLException
 	 */
 	protected static URL getFileInBundle(File bundleLocation, String filePath) throws MalformedURLException {
-		String extension = new Path(bundleLocation.getName()).getFileExtension();
+		String extension = IPath.fromOSString(bundleLocation.getName()).getFileExtension();
 		StringBuilder urlSt = new StringBuilder();
 		if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
 			urlSt.append("jar:file:"); //$NON-NLS-1$

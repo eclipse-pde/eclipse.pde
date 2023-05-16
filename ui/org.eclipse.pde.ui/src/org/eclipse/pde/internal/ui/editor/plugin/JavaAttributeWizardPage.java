@@ -19,7 +19,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -120,7 +120,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			return null;
 		IType type = null;
 		String fileName = typeName.replace('.', '/') + ".java"; //$NON-NLS-1$
-		IJavaElement element = javaProject.findElement(new Path(fileName));
+		IJavaElement element = javaProject.findElement(IPath.fromOSString(fileName));
 		if (element == null)
 			return null;
 		if (element instanceof IOrdinaryClassFile) {

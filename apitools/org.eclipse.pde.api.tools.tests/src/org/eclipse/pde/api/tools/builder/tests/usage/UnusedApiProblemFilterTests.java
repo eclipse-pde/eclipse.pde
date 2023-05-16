@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
@@ -43,7 +42,7 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	private static final String AFTER = "after"; //$NON-NLS-1$
 
 	private IPath fRootPath = super.getTestSourcePath().append("filters"); //$NON-NLS-1$
-	private IPath fFiltersPath = new Path("/usagetests/.settings/.api_filters"); //$NON-NLS-1$
+	private IPath fFiltersPath = IPath.fromOSString("/usagetests/.settings/.api_filters"); //$NON-NLS-1$
 
 	public UnusedApiProblemFilterTests(String name) {
 		super(name);
@@ -115,7 +114,7 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	}
 
 	private IPath getUpdatePath(String path) {
-		return new Path("/usagetests/src/x/y/z/").append(path); //$NON-NLS-1$
+		return IPath.fromOSString("/usagetests/src/x/y/z/").append(path); //$NON-NLS-1$
 	}
 
 	/**
@@ -267,7 +266,7 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 		removeBaseline(BASELINE);
 		String testname = "test1"; //$NON-NLS-1$
 		String sourcename = "testUF1.java"; //$NON-NLS-1$
-		IPath path = new Path("usagetest/x/y/z").append(sourcename); //$NON-NLS-1$
+		IPath path = IPath.fromOSString("usagetest/x/y/z").append(sourcename); //$NON-NLS-1$
 		expectingNoProblemsFor(path);
 		deployTest(getBeforePath(testname, sourcename), getAfterPath(testname, sourcename), getFilterFilePath(testname), getUpdatePath(sourcename), inc);
 	}

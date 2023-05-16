@@ -33,8 +33,8 @@ import java.util.jar.JarFile;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -117,13 +117,13 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		String[] icons = os != null ? productFile.getIcons(os) : productFile.getIcons();
 		for (String icon2 : icons) {
 
-			String icon = Utils.makeRelative(new Path(icon2), new Path(productFile.getLocation().getParent())).toOSString();
+			String icon = Utils.makeRelative(IPath.fromOSString(icon2), IPath.fromOSString(productFile.getLocation().getParent())).toOSString();
 
 			String location = findFile(icon, true);
 			if (location == null) {
 				File iconFile = new File(productFile.getLocation().getParentFile(), icon);
 				if (iconFile.exists())
-					location = Utils.makeRelative(new Path(iconFile.getAbsolutePath()), new Path(workingDirectory)).toOSString();
+					location = Utils.makeRelative(IPath.fromOSString(iconFile.getAbsolutePath()), IPath.fromOSString(workingDirectory)).toOSString();
 			}
 			if (location != null)
 				result += ", " + Utils.getPropertyFormat(PROPERTY_BASEDIR) + '/' + location; //$NON-NLS-1$
@@ -439,7 +439,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (feature.isBinary())
 			return null;
 		try {
-			return AbstractScriptGenerator.readProperties(new Path(feature.getRootLocation()).toOSString(), PROPERTIES_FILE, IStatus.OK);
+			return AbstractScriptGenerator.readProperties(IPath.fromOSString(feature.getRootLocation()).toOSString(), PROPERTIES_FILE, IStatus.OK);
 		} catch (CoreException e) {
 			return null;
 		}
@@ -454,7 +454,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		for (BundleDescription plugin : plugins) {
 			String placeToGather = getLocation(plugin);
 
-			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), TARGET_GATHER_SOURCES, null, null, properties);
+			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, Utils.makeRelative(IPath.fromOSString(placeToGather), IPath.fromOSString(workingDirectory)).toOSString(), TARGET_GATHER_SOURCES, null, null, properties);
 
 			Properties bundleProperties = (Properties) plugin.getUserObject();
 			//Source code for plugins with . on the classpath must be put in a folder in the final jar.
@@ -476,7 +476,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		properties.put(PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE));
 		for (BuildTimeFeature feature : features) {
 			String placeToGather = feature.getRootLocation();
-			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), TARGET_GATHER_SOURCES, null, null, properties);
+			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, Utils.makeRelative(IPath.fromOSString(placeToGather), IPath.fromOSString(workingDirectory)).toOSString(), TARGET_GATHER_SOURCES, null, null, properties);
 		}
 
 		script.printTargetEnd();
@@ -643,14 +643,14 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, null, null, null, null);
 		for (BundleDescription plugin : plugins) {
 			String placeToGather = getLocation(plugin);
-			printCustomGatherCall(ModelBuildScriptGenerator.getNormalizedName(plugin), Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS), null);
+			printCustomGatherCall(ModelBuildScriptGenerator.getNormalizedName(plugin), Utils.makeRelative(IPath.fromOSString(placeToGather), IPath.fromOSString(workingDirectory)).toOSString(), PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS), null);
 		}
 
 		Set<BuildTimeFeature> featureSet = new HashSet<>();
 		for (BuildTimeFeature feature : features) {
 			String placeToGather = feature.getRootLocation();
 			String featureFullName = feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
-			printCustomGatherCall(featureFullName, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
+			printCustomGatherCall(featureFullName, Utils.makeRelative(IPath.fromOSString(placeToGather), IPath.fromOSString(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
 			featureSet.add(feature);
 		}
 
@@ -660,7 +660,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				continue;
 			String placeToGather = feature.getRootLocation();
 			String featureFullName = feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
-			printCustomGatherCall(featureFullName, Utils.makeRelative(new Path(placeToGather), new Path(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
+			printCustomGatherCall(featureFullName, Utils.makeRelative(IPath.fromOSString(placeToGather), IPath.fromOSString(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
 		}
 		script.printTargetEnd();
 		script.println();

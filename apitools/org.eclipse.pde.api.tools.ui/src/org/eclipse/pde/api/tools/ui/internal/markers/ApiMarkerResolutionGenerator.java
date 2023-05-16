@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
@@ -146,7 +145,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 			IApiComponent component = ApiBaselineManager.getManager().getWorkspaceBaseline().getApiComponent(project);
 			if (component != null) {
 				IApiFilterStore store = component.getFilterStore();
-				IPath path = new Path(values[1]);
+				IPath path = IPath.fromOSString(values[1]);
 				IResource resource = project.findMember(path);
 				if (resource == null) {
 					resource = project.getFile(path);

@@ -14,7 +14,6 @@
 package org.eclipse.pde.api.tools.builder.tests.compatibility;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -32,7 +31,7 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/hierarchy"); //$NON-NLS-1$
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = IPath.fromOSString("bundle.a/src/a/classes/hierarchy"); //$NON-NLS-1$
 
 	/**
 	 * Package prefix for test classes

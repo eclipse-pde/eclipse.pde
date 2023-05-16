@@ -21,7 +21,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -220,8 +220,8 @@ public class ExtensionPointDetails extends PDEDetails {
 				dialog.setInput(project);
 				dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 				String filePath = fSchemaEntry.getValue();
-				if (filePath != null && filePath.length() != 0 && project.exists(new Path(filePath)))
-					dialog.setInitialSelection(project.getFile(new Path(filePath)));
+				if (filePath != null && filePath.length() != 0 && project.exists(IPath.fromOSString(filePath)))
+					dialog.setInitialSelection(project.getFile(IPath.fromOSString(filePath)));
 				else
 					dialog.setInitialSelection(null);
 				dialog.create();

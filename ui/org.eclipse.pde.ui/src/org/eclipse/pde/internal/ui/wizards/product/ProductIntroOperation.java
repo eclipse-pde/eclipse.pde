@@ -30,9 +30,9 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
@@ -243,7 +243,7 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 					}
 				}
 				if (dstContainer == null) {
-					dstContainer = dst.getFolder(new Path(member.getName()));
+					dstContainer = dst.getFolder(IPath.fromOSString(member.getName()));
 				}
 				if (dstContainer instanceof IFolder && !dstContainer.exists())
 					((IFolder) dstContainer).create(true, true, monitor);
@@ -262,7 +262,7 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 	private void copyFile(String fileName, InputStream input, IContainer dst, boolean binary, IProgressMonitor monitor) throws CoreException {
 
 		monitor.subTask(fileName);
-		IFile dstFile = dst.getFile(new Path(fileName));
+		IFile dstFile = dst.getFile(IPath.fromOSString(fileName));
 
 		try (InputStream stream = getProcessedStream(fileName, input, binary)) {
 			if (dstFile.exists()) {

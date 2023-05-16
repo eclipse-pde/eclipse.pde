@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -45,7 +44,7 @@ public class $wizardPageClassName$ extends WizardNewFileCreationPage {
 		
 		editor = new FileFieldEditor("fileSelect","Select File: ",fileSelectionArea); //$NON-NLS-1$ //$NON-NLS-2$
 		editor.getTextControl(fileSelectionArea).addModifyListener(e -> {
-			IPath path = new Path($wizardPageClassName$.this.editor.getStringValue());
+			IPath path = IPath.fromOSString($wizardPageClassName$.this.editor.getStringValue());
 			setFileName(path.lastSegment());
 		});
 %if wizardFileFilters == "All"

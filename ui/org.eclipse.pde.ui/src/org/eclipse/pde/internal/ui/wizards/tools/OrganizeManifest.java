@@ -35,7 +35,6 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -583,7 +582,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 						value = value.substring(fileExtIndex + 1);
 						for (String iconExtension : F_ICON_EXTENSIONS) {
 							if (value.equalsIgnoreCase(iconExtension)) {
-								IPath path = new Path(F_NL_PREFIX);
+								IPath path = IPath.fromOSString(F_NL_PREFIX);
 								String newValue = attribute.getValue();
 								if (newValue.charAt(0) != IPath.SEPARATOR)
 									path = path.addTrailingSeparator();

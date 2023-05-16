@@ -38,7 +38,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -458,7 +457,7 @@ public class ApiDescriptionProcessor {
 			ZipFile jarFile = null;
 			InputStream stream = null;
 			try {
-				String extension = new Path(location.getName()).getFileExtension();
+				String extension = IPath.fromOSString(location.getName()).getFileExtension();
 				if (extension != null && extension.equals("jar") && location.isFile()) { //$NON-NLS-1$
 					jarFile = new ZipFile(location, ZipFile.OPEN_READ);
 					ZipEntry manifestEntry = jarFile.getEntry(IApiCoreConstants.COMPONENT_XML_NAME);

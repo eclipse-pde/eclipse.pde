@@ -88,7 +88,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
@@ -311,7 +310,7 @@ public final class Util {
 	 */
 	private static int DELETE_MAX_WAIT = 10000;
 
-	public static final IPath MANIFEST_PROJECT_RELATIVE_PATH = new Path(JarFile.MANIFEST_NAME);
+	public static final IPath MANIFEST_PROJECT_RELATIVE_PATH = IPath.fromOSString(JarFile.MANIFEST_NAME);
 
 	public static final String ORG_ECLIPSE_SWT = "org.eclipse.swt"; //$NON-NLS-1$
 
@@ -1207,7 +1206,7 @@ public final class Util {
 	public static IType updateType(String typeName, IJavaProject javaProject) throws JavaModelException {
 		String typeNameWithDot = typeName.replace('$', '.');
 		String typeNameWithSeparator = typeNameWithDot.replace(".", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-		IPath path = new Path(typeNameWithSeparator);
+		IPath path = IPath.fromOSString(typeNameWithSeparator);
 		IPath pathExceptLastSegment = path.removeLastSegments(1);
 		IJavaElement packFrag = javaProject.findElement(pathExceptLastSegment, DefaultWorkingCopyOwner.PRIMARY);
 		if (packFrag instanceof PackageFragment) {

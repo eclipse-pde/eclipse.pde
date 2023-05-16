@@ -91,12 +91,12 @@ public class $wizardClassName$ extends Wizard implements INewWizard {
 		// create a sample file
 		monitor.beginTask("Creating " + fileName, 2);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IResource resource = root.findMember(new Path(containerName));
+		IResource resource = root.findMember(IPath.fromOSString(containerName));
 		if (!resource.exists() || !(resource instanceof IContainer)) {
 			throw new CoreException(Status.error("Container \"" + containerName + "\" does not exist."));
 		}
 		IContainer container = (IContainer) resource;
-		final IFile file = container.getFile(new Path(fileName));
+		final IFile file = container.getFile(IPath.fromOSString(fileName));
 		try {
 			InputStream stream = openContentStream();
 			if (file.exists()) {

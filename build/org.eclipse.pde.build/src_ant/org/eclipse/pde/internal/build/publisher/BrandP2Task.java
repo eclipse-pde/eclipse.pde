@@ -31,7 +31,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
 import org.eclipse.equinox.internal.p2.engine.Phase;
@@ -133,7 +133,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 	}
 
 	private void cleanupRepositories(IMetadataRepositoryManager metadataManager, IArtifactRepositoryManager artifactManager) {
-		URI destination = new Path(getRootFolder()).toFile().toURI();
+		URI destination = IPath.fromOSString(getRootFolder()).toFile().toURI();
 
 		if (metadataManager != null) {
 			if (removeMetadataRepo)

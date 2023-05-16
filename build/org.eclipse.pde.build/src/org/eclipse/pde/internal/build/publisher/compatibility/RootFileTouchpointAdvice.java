@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
 import org.eclipse.equinox.p2.metadata.ITouchpointData;
 import org.eclipse.equinox.p2.metadata.ITouchpointInstruction;
@@ -62,7 +61,7 @@ public class RootFileTouchpointAdvice extends RootFilesAdvice implements ITouchp
 		if (launcherFile.exists()) {
 			configInstruction = "setLauncherName(name:" + launcherName + ");"; //$NON-NLS-1$ //$NON-NLS-2$
 			if (Constants.OS_MACOSX.equals(os)) {
-				IPath path = new Path(launcherFile.getAbsolutePath());
+				IPath path = IPath.fromOSString(launcherFile.getAbsolutePath());
 				File appFolder = path.removeLastSegments(3).toFile();
 				configInstruction += "chmod(targetDir:${installFolder}/" + appFolder.getName() + "/Contents/MacOS/, targetFile:" + launcherFile.getName() + ", permissions:755);"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			} else if (!Constants.OS_WIN32.equals(os)) {

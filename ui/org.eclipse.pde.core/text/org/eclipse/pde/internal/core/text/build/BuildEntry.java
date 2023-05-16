@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.pde.core.build.IBuild;
@@ -286,7 +285,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 		if (root == null) {
 			return token;
 		}
-		return (new Path(token)).makeRelativeTo(root).toPortableString();
+		return (IPath.fromOSString(token)).makeRelativeTo(root).toPortableString();
 	}
 
 	/**
@@ -300,7 +299,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 		if (root == null) {
 			return token;
 		}
-		return root.append(new Path(token)).toPortableString();
+		return root.append(IPath.fromOSString(token)).toPortableString();
 	}
 
 }

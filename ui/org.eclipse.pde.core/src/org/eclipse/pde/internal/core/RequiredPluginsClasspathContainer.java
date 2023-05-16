@@ -36,7 +36,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -287,7 +286,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		Rule rule = new Rule();
 		rule.discouraged = helper.getAccessCode(desc, export) == StateHelper.ACCESS_DISCOURAGED;
 		String name = export.getName();
-		rule.path = (name.equals(".")) ? new Path("*") : new Path(name.replace('.', '/') + "/*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		rule.path = (name.equals(".")) ? IPath.fromOSString("*") : IPath.fromOSString(name.replace('.', '/') + "/*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return rule;
 	}
 
@@ -451,11 +450,11 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 	protected void addExtraClasspathEntries(HashSet<BundleDescription> added, ArrayList<IClasspathEntry> entries, String[] tokens) {
 		for (String token : tokens) {
-			IPath path = Path.fromPortableString(token);
+			IPath path = IPath.fromPortableString(token);
 			if (!path.isAbsolute()) {
 				File file = new File(fModel.getInstallLocation(), path.toString());
 				if (file.exists()) {
-					IFile resource = PDECore.getWorkspace().getRoot().getFileForLocation(new Path(file.getAbsolutePath()));
+					IFile resource = PDECore.getWorkspace().getRoot().getFileForLocation(IPath.fromOSString(file.getAbsolutePath()));
 					if (resource != null && resource.getProject().equals(fModel.getUnderlyingResource().getProject())) {
 						addExtraLibrary(resource.getFullPath(), null, entries);
 						continue;
@@ -463,7 +462,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				}
 				if (path.segmentCount() >= 3 && "..".equals(path.segment(0))) { //$NON-NLS-1$
 					path = path.removeFirstSegments(1);
-					path = Path.fromPortableString("platform:/plugin/").append(path); //$NON-NLS-1$
+					path = IPath.fromPortableString("platform:/plugin/").append(path); //$NON-NLS-1$
 				} else {
 					continue;
 				}
@@ -571,7 +570,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 				for (ExportPackageDescription expkg : expkgs) {
 					Rule rule = new Rule();
 					rule.discouraged = restrictPackage(projectDesc, expkg);
-					rule.path = new Path(expkg.getName().replace('.', '/') + "/*"); //$NON-NLS-1$
+					rule.path = IPath.fromOSString(expkg.getName().replace('.', '/') + "/*"); //$NON-NLS-1$
 					rules.add(rule);
 				}
 				map.put(bdesc, rules);
@@ -609,7 +608,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		if (path.segmentCount() > 1) {
 			IPath srcPath = null;
 			if (model != null) {
-				IPath shortPath = path.removeFirstSegments(path.matchingFirstSegments(new Path(model.getInstallLocation())));
+				IPath shortPath = path.removeFirstSegments(path.matchingFirstSegments(IPath.fromOSString(model.getInstallLocation())));
 				srcPath = ClasspathUtilCore.getSourceAnnotation(model, shortPath.toString());
 			} else {
 				String filename = ClasspathUtilCore.getSourceZipName(path.lastSegment());

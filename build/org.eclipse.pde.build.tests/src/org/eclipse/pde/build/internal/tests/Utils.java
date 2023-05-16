@@ -46,7 +46,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
@@ -106,7 +105,7 @@ public class Utils {
 		if (element != null) {
 			// get the productBuild/allElements.xml and replace @ELEMENT@ with element
 			URL allElements = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID),
-					new Path("/resources/allElements.xml"), null);
+					IPath.fromOSString("/resources/allElements.xml"), null);
 			Map<String, String> replacements = new HashMap<>(1);
 			replacements.put("ELEMENT", element);
 			transferAndReplace(allElements, buildFolder.getFile("allElements.xml"), replacements);

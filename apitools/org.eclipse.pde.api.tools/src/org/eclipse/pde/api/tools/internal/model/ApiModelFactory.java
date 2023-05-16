@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -57,9 +56,9 @@ public class ApiModelFactory {
 	public static final IApiComponent[] NO_COMPONENTS = new IApiComponent[0];
 
 	/**
-	 * Prefix for API baseline locations indicates the baseline was derived from
-	 * a target definition. These locations must be compatible with
-	 * {@link Path#fromPortableString(String)}.
+	 * Prefix for API baseline locations indicates the baseline was derived from a
+	 * target definition. These locations must be compatible with
+	 * {@link IPath#fromPortableString(String)}.
 	 */
 	private static final String TARGET_PREFIX = "target:"; //$NON-NLS-1$
 
@@ -142,7 +141,7 @@ public class ApiModelFactory {
 	 * @throws CoreException
 	 */
 	private static boolean isBinaryProject(String location) throws CoreException {
-		IPath path = new Path(location);
+		IPath path = IPath.fromOSString(location);
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment());
 		return project != null && (!project.exists() || Util.isBinaryProject(project));
 	}

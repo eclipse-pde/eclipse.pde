@@ -26,7 +26,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -112,7 +111,7 @@ public class BndProjectManager {
 			}
 			File file = container.getFile();
 			if (file.exists()) {
-				IPath path = new Path(file.getAbsolutePath());
+				IPath path = IPath.fromOSString(file.getAbsolutePath());
 				IClasspathAttribute[] attributes;
 				if (isTest) {
 					attributes = new IClasspathAttribute[] {
@@ -130,7 +129,7 @@ public class BndProjectManager {
 		for (Project dep : project.getBuildDependencies()) {
 			File base = dep.getBase();
 			@SuppressWarnings("deprecation")
-			IContainer[] containers = root.findContainersForLocation(new Path(base.getAbsolutePath()));
+			IContainer[] containers = root.findContainersForLocation(IPath.fromOSString(base.getAbsolutePath()));
 			for (IContainer container : containers) {
 				if (container instanceof IProject) {
 					IProject p = (IProject) container;

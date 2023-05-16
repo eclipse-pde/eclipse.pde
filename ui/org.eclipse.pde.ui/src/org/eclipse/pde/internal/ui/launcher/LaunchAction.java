@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
@@ -92,7 +91,7 @@ public class LaunchAction extends Action {
 	public static Set<IPluginModelBase> getLaunchedBundlesForProduct(IProduct product)
 			throws CoreException {
 		IResource resource = product.getModel().getUnderlyingResource();
-		IPath fullPath = resource != null ? resource.getFullPath() : Path.fromOSString(product.getProductId());
+		IPath fullPath = resource != null ? resource.getFullPath() : IPath.fromOSString(product.getProductId());
 		LaunchAction launchAction = new LaunchAction(product, fullPath, null);
 		ILaunchConfigurationWorkingCopy config = launchAction.createConfiguration();
 		return BundleLauncherHelper.getMergedBundleMap(config, false).keySet();
@@ -371,7 +370,7 @@ public class LaunchAction extends Action {
 		if (path == null || path.length() == 0) {
 			return null;
 		}
-		IResource resource = PDEPlugin.getWorkspace().getRoot().findMember(new Path(path));
+		IResource resource = PDEPlugin.getWorkspace().getRoot().findMember(IPath.fromOSString(path));
 		if (resource != null) {
 			IPath fullPath = resource.getLocation();
 			return fullPath == null ? null : fullPath.toOSString();
@@ -426,7 +425,7 @@ public class LaunchAction extends Action {
 		for (ILaunchConfiguration config : manager.getLaunchConfigurations(type)) {
 			if (!DebugUITools.isPrivate(config)) {
 				String path = config.getAttribute(IPDELauncherConstants.PRODUCT_FILE, ""); //$NON-NLS-1$
-				if (fPath.equals(new Path(path))) {
+				if (fPath.equals(IPath.fromOSString(path))) {
 					result.add(config);
 				}
 			}

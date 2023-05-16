@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -179,7 +178,7 @@ public class CSSSection extends PDESection {
 						entry = wkspc.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
 						wkspc.getBuild().add(entry);
 					}
-					IPath pth = new Path(getCSSInfo().getFilePath());
+					IPath pth = IPath.fromOSString(getCSSInfo().getFilePath());
 					String path = pth.removeFirstSegments(1).toString();
 					if (!entry.contains(path))
 						entry.addToken(path);

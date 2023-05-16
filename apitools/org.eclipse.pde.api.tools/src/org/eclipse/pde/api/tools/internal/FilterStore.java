@@ -28,7 +28,7 @@ import java.util.zip.ZipFile;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.model.BundleComponent;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
@@ -145,7 +145,7 @@ public class FilterStore implements IApiFilterStore {
 			ZipFile jarFile = null;
 			InputStream filterstream = null;
 			File loc = new File(fComponent.getLocation());
-			String extension = new Path(loc.getName()).getFileExtension();
+			String extension = IPath.fromOSString(loc.getName()).getFileExtension();
 			try {
 				if (extension != null && extension.equals("jar") && loc.isFile()) { //$NON-NLS-1$
 					jarFile = new ZipFile(loc, ZipFile.OPEN_READ);
@@ -214,7 +214,7 @@ public class FilterStore implements IApiFilterStore {
 			// one is missing a path they may still be equal
 			String problemPath = problem.getResourcePath();
 			String filterProblemPath = filterProblem.getResourcePath();
-			if (problemPath != null && filterProblemPath != null && !(new Path(problemPath).equals(new Path(filterProblemPath)))) {
+			if (problemPath != null && filterProblemPath != null && !(IPath.fromOSString(problemPath).equals(IPath.fromOSString(filterProblemPath)))) {
 				return false;
 			}
 			String problemTypeName = problem.getTypeName();

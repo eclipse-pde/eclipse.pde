@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -255,7 +254,7 @@ public class ConfigurationSection extends PDESection {
 
 	private void handleOpen() {
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
-		IPath path = new Path(fCustomEntry.getValue());
+		IPath path = IPath.fromOSString(fCustomEntry.getValue());
 		if (path.isEmpty()) {
 			MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_emptyPath); //
 			return;

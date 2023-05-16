@@ -19,7 +19,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.AssemblyInformation;
@@ -96,7 +95,7 @@ public class CompilationScriptGenerator extends AbstractScriptGenerator {
 	private void generatePlugins() throws CoreException {
 		Set<BundleDescription> plugins = assemblyData.getAllCompiledPlugins();
 		List<BundleDescription> sortedPlugins = Utils.extractPlugins(getSite(false).getRegistry().getSortedBundles(), plugins);
-		IPath basePath = new Path(workingDirectory);
+		IPath basePath = IPath.fromOSString(workingDirectory);
 
 		Set<Long> bucket = null;
 		if (parallel) {
@@ -118,7 +117,7 @@ public class CompilationScriptGenerator extends AbstractScriptGenerator {
 				bucket.add(Long.valueOf(bundle.getBundleId()));
 			}
 
-			IPath location = Utils.makeRelative(new Path(getLocation(bundle)), basePath);
+			IPath location = Utils.makeRelative(IPath.fromOSString(getLocation(bundle)), basePath);
 			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toString(), TARGET_BUILD_JARS, null, null, null);
 		}
 

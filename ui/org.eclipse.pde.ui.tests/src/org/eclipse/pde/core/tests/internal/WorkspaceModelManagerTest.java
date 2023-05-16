@@ -36,7 +36,6 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.WorkspaceModelManager;
@@ -137,7 +136,7 @@ public class WorkspaceModelManagerTest {
 	@Test
 	public void testBundleRootHandling_projectCreatedWithNonDefaultBundleRoot() throws CoreException {
 		TestWorkspaceModelManager mm = createWorkspaceModelManager();
-		IPath bundleRootPath = Path.forPosix("other/root");
+		IPath bundleRootPath = IPath.forPosix("other/root");
 
 		IProject project = ProjectUtils.createPluginProject("plugin.a", "plugin.a", "1.0.0", (description, service) -> {
 			description.setBundleRoot(bundleRootPath);

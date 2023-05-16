@@ -29,7 +29,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
@@ -158,7 +158,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 				if (resource == null)
 					return openExternalPlugin(new File(model.getInstallLocation()), filename);
 				IProject project = resource.getProject();
-				return openWorkspacePlugin(PDEProject.getBundleRelativeFile(project, new Path(filename)));
+				return openWorkspacePlugin(PDEProject.getBundleRelativeFile(project, IPath.fromOSString(filename)));
 			}
 		}
 		if (object instanceof BaseDescription) {

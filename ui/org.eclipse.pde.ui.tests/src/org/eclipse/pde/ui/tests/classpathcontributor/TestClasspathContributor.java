@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -36,13 +35,13 @@ public class TestClasspathContributor implements IClasspathContributor {
 	public static List<IClasspathEntry> entries;
 	public static List<IClasspathEntry> entries2;
 	static {
-		IPath testPath = ResourcesPlugin.getWorkspace().getRoot().getFullPath().append(new Path("TestPath"));
+		IPath testPath = ResourcesPlugin.getWorkspace().getRoot().getFullPath().append(IPath.fromOSString("TestPath"));
 		entries = new ArrayList<>();
 		entries.add(JavaCore.newContainerEntry(testPath));
 		entries.add(JavaCore.newLibraryEntry(testPath, null, null));
 		entries.add(JavaCore.newProjectEntry(testPath));
 		entries.add(JavaCore.newSourceEntry(testPath));
-		IPath testPath2 = ResourcesPlugin.getWorkspace().getRoot().getFullPath().append(new Path("TestPath2"));
+		IPath testPath2 = ResourcesPlugin.getWorkspace().getRoot().getFullPath().append(IPath.fromOSString("TestPath2"));
 		entries2 = new ArrayList<>();
 		entries2.add(JavaCore.newContainerEntry(testPath2));
 		entries2.add(JavaCore.newLibraryEntry(testPath2, null, null));

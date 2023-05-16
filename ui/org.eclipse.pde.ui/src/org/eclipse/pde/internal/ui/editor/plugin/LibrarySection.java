@@ -28,7 +28,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -480,7 +479,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		IProject project = ((IModel) getPage().getModel()).getUnderlyingResource().getProject();
 		HashSet<IPath> set = new HashSet<>();
 		for (IPluginLibrary library : libraries) {
-			IPath bundlePath = new Path(ClasspathUtilCore.expandLibraryName(library.getName()));
+			IPath bundlePath = IPath.fromOSString(ClasspathUtilCore.expandLibraryName(library.getName()));
 			IPath buildPath = PDEProject.getBundleRoot(project).getProjectRelativePath().append(bundlePath);
 			set.add(buildPath);
 		}
@@ -585,7 +584,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 					// do not add the old paths (handling deletion/renaming)
 					IPath path = entries[i].getPath().removeFirstSegments(1).removeTrailingSeparator();
 					for (int j = 0; j < oldPaths.length; j++)
-						if (oldPaths[j] != null && path.equals(new Path(oldPaths[j]).removeTrailingSeparator()))
+						if (oldPaths[j] != null && path.equals(IPath.fromOSString(oldPaths[j]).removeTrailingSeparator()))
 							continue entryLoop;
 				} else if (entries[i].getEntryKind() == IClasspathEntry.CPE_CONTAINER)
 					if (index == -1)
@@ -690,7 +689,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 			}
 			// No duplicate libraries are allowed
 			IPluginLibrary library = (IPluginLibrary) sourceObject;
-			if (librarySet.contains(new Path(ClasspathUtilCore.expandLibraryName(library.getName())))) {
+			if (librarySet.contains(IPath.fromOSString(ClasspathUtilCore.expandLibraryName(library.getName())))) {
 				return false;
 			}
 		}
@@ -702,7 +701,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		IPluginLibrary[] libraries = getModel().getPluginBase().getLibraries();
 		Set<IPath> librarySet = new HashSet<>();
 		for (IPluginLibrary library : libraries) {
-			librarySet.add(new Path(ClasspathUtilCore.expandLibraryName(library.getName())));
+			librarySet.add(IPath.fromOSString(ClasspathUtilCore.expandLibraryName(library.getName())));
 		}
 		return librarySet;
 	}

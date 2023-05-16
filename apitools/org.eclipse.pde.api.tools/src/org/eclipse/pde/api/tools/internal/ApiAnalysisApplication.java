@@ -37,7 +37,6 @@ import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.app.IApplication;
@@ -281,7 +280,7 @@ public class ApiAnalysisApplication implements IApplication {
 				{
 				case IStatus.WARNING ->
 					System.out.println("WARNING resolving target platform: " + resolutionStatus.getMessage()); //$NON-NLS-1$
-				case IStatus.ERROR -> 
+				case IStatus.ERROR ->
 					throw new CoreException(resolutionStatus);
 				default -> { /*Nothing*/ }
 				}
@@ -314,8 +313,8 @@ public class ApiAnalysisApplication implements IApplication {
 			return null;
 		}
 		IProjectDescription projectDescription = ResourcesPlugin.getWorkspace()
-				.loadProjectDescription(Path.fromOSString(dotProject.getAbsolutePath()));
-		projectDescription.setLocation(Path.fromOSString(projectPath.getAbsolutePath()));
+				.loadProjectDescription(IPath.fromOSString(dotProject.getAbsolutePath()));
+		projectDescription.setLocation(IPath.fromOSString(projectPath.getAbsolutePath()));
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectDescription.getName());
 
 		ICoreRunnable projectRemover;

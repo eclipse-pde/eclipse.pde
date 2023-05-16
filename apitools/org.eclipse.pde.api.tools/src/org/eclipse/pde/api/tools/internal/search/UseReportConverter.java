@@ -50,7 +50,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.osgi.util.NLS;
@@ -859,8 +858,8 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	protected String getHTMLFileLocation(File xmlfile) {
 		File reportRoot = new File(getXmlLocation());
-		IPath xml = new Path(xmlfile.getPath());
-		IPath report = new Path(reportRoot.getPath());
+		IPath xml = IPath.fromOSString(xmlfile.getPath());
+		IPath report = IPath.fromOSString(reportRoot.getPath());
 		int segments = xml.matchingFirstSegments(report);
 		if (segments > 0) {
 			if (xml.getDevice() != null) {

@@ -36,7 +36,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.DebugPlugin;
@@ -120,7 +119,7 @@ public class LauncherUtils {
 				@SuppressWarnings("unchecked")
 				Object service = context.getService(references[0]);
 				if (service instanceof Location) {
-					URL workspaceURL = new Path(workspace).toFile().toURI().toURL();
+					URL workspaceURL = IPath.fromOSString(workspace).toFile().toURI().toURL();
 					Location targetLocation = ((Location) service).createLocation(null, workspaceURL, false);
 					targetLocation.set(targetLocation.getDefault(), false);
 					isLocked = targetLocation.isLocked();
@@ -141,7 +140,7 @@ public class LauncherUtils {
 			throw new CoreException(Status.CANCEL_STATUS);
 		}
 
-		File workspaceFile = new Path(workspace).toFile().getAbsoluteFile();
+		File workspaceFile = IPath.fromOSString(workspace).toFile().getAbsoluteFile();
 		if (configuration.getAttribute(IPDELauncherConstants.DOCLEAR, false) && workspaceFile.exists()) {
 			if (configuration.getAttribute(IPDELauncherConstants.ASKCLEAR, true)) {
 				int result = 0;

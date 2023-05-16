@@ -18,7 +18,6 @@ import java.io.File;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
@@ -102,7 +101,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return new Path(""); //$NON-NLS-1$
+		return IPath.fromOSString(""); //$NON-NLS-1$
 	}
 
 	@Override
@@ -129,7 +128,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 		cleanBuild();
 		fullBuild();
 		expectingNoJDTProblems();
-		IPath manifestPath = new Path("deltatest").append("META-INF").append("MANIFEST.MF"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		IPath manifestPath = IPath.fromOSString("deltatest").append("META-INF").append("MANIFEST.MF"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		ApiProblem[] problems = getEnv().getProblemsFor(manifestPath, null);
 		assertProblems(problems);
 	}

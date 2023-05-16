@@ -34,7 +34,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -117,7 +116,7 @@ public class AbstractTargetEditorTest {
 
 	public static ITextFileBuffer getTextFileBufferFromFile(File file) {
 		try {
-			IPath path = Path.fromOSString(file.getAbsolutePath());
+			IPath path = IPath.fromOSString(file.getAbsolutePath());
 			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 			manager.connect(path, LocationKind.LOCATION, null);
 			return manager.getTextFileBuffer(path, LocationKind.LOCATION);

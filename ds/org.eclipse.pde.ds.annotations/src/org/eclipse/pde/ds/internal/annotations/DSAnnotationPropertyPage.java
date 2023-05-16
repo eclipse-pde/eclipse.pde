@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
@@ -442,7 +441,7 @@ public class DSAnnotationPropertyPage extends PropertyPage implements IWorkbench
 			}
 
 			prefs.putBoolean(Activator.PREF_ENABLED, enableCheckbox.getSelection());
-			prefs.put(Activator.PREF_PATH, new Path(path).toString());
+			prefs.put(Activator.PREF_PATH, IPath.fromOSString(path).toString());
 
 			DSAnnotationVersion[] versions = DSAnnotationVersion.values();
 			int specVersionIndex = Math.max(Math.min(specVersionCombo.getSelectionIndex(), DSAnnotationVersion.V1_3.ordinal()), 0);

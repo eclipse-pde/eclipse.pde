@@ -39,7 +39,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
@@ -82,7 +82,7 @@ public class ProductTests extends PDETestCase {
 		if (!executable.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", executable.getAbsolutePath());
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
-				new Path("/scripts/productBuild/allElements.xml"), null);
+				IPath.fromOSString("/scripts/productBuild/allElements.xml"), null);
 		properties.put("allElementsFile", FileLocator.toFileURL(resource).getPath());
 		Utils.storeBuildProperties(buildFolder, properties);
 
@@ -215,7 +215,7 @@ public class ProductTests extends PDETestCase {
 		properties.put("configs", "win32,win32,x86");
 
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
-				new Path("/scripts/productBuild/productBuild.xml"), null);
+				IPath.fromOSString("/scripts/productBuild/productBuild.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] { "generateFeature", "generate" },
 				buildFolder.getLocation().toOSString(), properties);
@@ -236,7 +236,7 @@ public class ProductTests extends PDETestCase {
 		properties.put("pluginPath", Platform.getInstallLocation().getURL().getPath());
 
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
-				new Path("/scripts/productBuild/productBuild.xml"), null);
+				IPath.fromOSString("/scripts/productBuild/productBuild.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] { "generateFeature" }, buildFolder.getLocation().toOSString(),
 				properties);
@@ -286,7 +286,7 @@ public class ProductTests extends PDETestCase {
 
 		// steal the icons from test 237922
 		URL ico = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID),
-				new Path("/resources/237922/rcp/icons/mail.ico"), null);
+				IPath.fromOSString("/resources/237922/rcp/icons/mail.ico"), null);
 		IFile icoFile = buildFolder.getFile("mail.ico");
 		icoFile.create(ico.openStream(), IResource.FORCE, null);
 
@@ -633,7 +633,7 @@ public class ProductTests extends PDETestCase {
 
 		// steal the icons from test 237922
 		URL ico = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID),
-				new Path("/resources/237922/rcp/icons/mail.ico"), null);
+				IPath.fromOSString("/resources/237922/rcp/icons/mail.ico"), null);
 		IFile icoFile = a.getFile("mail.ico");
 		icoFile.create(ico.openStream(), IResource.FORCE, null);
 

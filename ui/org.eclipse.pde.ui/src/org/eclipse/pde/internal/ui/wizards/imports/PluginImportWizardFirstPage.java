@@ -32,7 +32,6 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -392,7 +391,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		dialog.setMessage(PDEUIMessages.ImportWizard_messages_folder_message);
 		String res = dialog.open();
 		if (res != null) {
-			return new Path(res);
+			return IPath.fromOSString(res);
 		}
 		return null;
 	}
@@ -493,7 +492,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			return;
 		}
 		if (importDirectoryButton.getSelection()) {
-			IPath curr = new Path(importDirectory.getText());
+			IPath curr = IPath.fromOSString(importDirectory.getText());
 			if (curr.segmentCount() == 0 && curr.getDevice() == null) {
 				setErrorMessage(PDEUIMessages.ImportWizard_errors_locationMissing);
 				setPageComplete(false);

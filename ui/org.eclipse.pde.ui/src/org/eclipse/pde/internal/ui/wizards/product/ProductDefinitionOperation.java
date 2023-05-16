@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
@@ -391,7 +390,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	private String getURL(String location) {
 		if (location == null || location.trim().length() == 0)
 			return null;
-		IPath path = new Path(location);
+		IPath path = IPath.fromOSString(location);
 		if (!path.isAbsolute())
 			return location;
 		String projectName = path.segment(0);
@@ -411,7 +410,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	private String getFullyQualifiedURL(String location) {
 		if (location == null || location.trim().length() == 0)
 			return null;
-		IPath path = new Path(location);
+		IPath path = IPath.fromOSString(location);
 		if (!path.isAbsolute())
 			return location;
 		String projectName = path.segment(0);

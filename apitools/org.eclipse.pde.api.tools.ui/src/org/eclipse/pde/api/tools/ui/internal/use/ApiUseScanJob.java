@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.URIUtil;
@@ -97,7 +96,7 @@ public class ApiUseScanJob extends Job {
 			if (xmlPath == null) {
 				abort(Messages.ApiUseScanJob_missing_xml_loc);
 			}
-			rootpath = new Path(xmlPath);
+			rootpath = IPath.fromOSString(xmlPath);
 			int kind = this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_KIND, 0);
 			if (kind != ApiUseLaunchDelegate.KIND_HTML_ONLY) {
 				localmonitor.setTaskName(Messages.ApiUseScanJob_preparing_for_scan);

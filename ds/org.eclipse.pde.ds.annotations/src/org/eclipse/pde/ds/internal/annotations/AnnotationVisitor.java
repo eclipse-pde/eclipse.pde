@@ -47,7 +47,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -345,7 +344,7 @@ public class AnnotationVisitor extends ASTVisitor {
 		}
 
 		// set up document to edit
-		IPath path = new Path(state.getPath()).append(name).addFileExtension("xml"); //$NON-NLS-1$
+		IPath path = IPath.fromOSString(state.getPath()).append(name).addFileExtension("xml"); //$NON-NLS-1$
 
 		String dsKey = path.toPortableString();
 		dsKeys.put(implClass, dsKey);
@@ -359,7 +358,7 @@ public class AnnotationVisitor extends ASTVisitor {
 		// handle file move/rename
 		String oldPath = state.getModelFile(implClass);
 		if (oldPath != null && !oldPath.equals(dsKey) && !file.exists()) {
-			IFile oldFile = PDEProject.getBundleRelativeFile(project, Path.fromPortableString(oldPath));
+			IFile oldFile = PDEProject.getBundleRelativeFile(project, IPath.fromPortableString(oldPath));
 			if (oldFile.exists()) {
 				try {
 					oldFile.move(file.getFullPath(), true, true, null);
@@ -1609,7 +1608,7 @@ public class AnnotationVisitor extends ASTVisitor {
 
 		for (int i = 0; i < files.length; ++i) {
 			String file = files[i];
-			IFile wsFile = PDEProject.getBundleRelativeFile(project, new Path(file));
+			IFile wsFile = PDEProject.getBundleRelativeFile(project, IPath.fromOSString(file));
 			if (!wsFile.exists()) {
 				problemReporter.reportProblem(annotation, "properties", i, NLS.bind(Messages.AnnotationProcessor_invalidComponentPropertyFile, file), file); //$NON-NLS-1$
 			}

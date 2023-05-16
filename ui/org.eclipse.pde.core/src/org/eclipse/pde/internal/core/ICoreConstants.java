@@ -18,7 +18,6 @@ package org.eclipse.pde.internal.core;
 import java.util.Locale;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.osgi.framework.Constants;
 
@@ -314,12 +313,12 @@ public interface ICoreConstants {
 	String FEATURE_FOLDER_NAME = "features"; //$NON-NLS-1$
 
 	// Common paths
-	IPath MANIFEST_PATH = new Path(BUNDLE_FILENAME_DESCRIPTOR);
-	IPath PLUGIN_PATH = new Path(PLUGIN_FILENAME_DESCRIPTOR);
-	IPath FRAGMENT_PATH = new Path(FRAGMENT_FILENAME_DESCRIPTOR);
-	IPath FEATURE_PATH = new Path(FEATURE_FILENAME_DESCRIPTOR);
-	IPath BUILD_PROPERTIES_PATH = new Path(BUILD_FILENAME_DESCRIPTOR);
-	IPath OSGI_INF_PATH = new Path(OSGI_INF_FOLDER_NAME);
+	IPath MANIFEST_PATH = IPath.fromOSString(BUNDLE_FILENAME_DESCRIPTOR);
+	IPath PLUGIN_PATH = IPath.fromOSString(PLUGIN_FILENAME_DESCRIPTOR);
+	IPath FRAGMENT_PATH = IPath.fromOSString(FRAGMENT_FILENAME_DESCRIPTOR);
+	IPath FEATURE_PATH = IPath.fromOSString(FEATURE_FILENAME_DESCRIPTOR);
+	IPath BUILD_PROPERTIES_PATH = IPath.fromOSString(BUILD_FILENAME_DESCRIPTOR);
+	IPath OSGI_INF_PATH = IPath.fromOSString(OSGI_INF_FOLDER_NAME);
 
 	// Extension point identifiers
 	String EXTENSION_POINT_SOURCE = PDECore.PLUGIN_ID + ".source"; //$NON-NLS-1$

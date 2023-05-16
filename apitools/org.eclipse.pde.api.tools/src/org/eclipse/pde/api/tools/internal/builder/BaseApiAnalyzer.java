@@ -46,7 +46,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -320,7 +319,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject[] projects = root.getProjects();
-		IPath componentLocation = new Path(component.getLocation());
+		IPath componentLocation = IPath.fromOSString(component.getLocation());
 		for (IProject project : projects) {
 			IPath projectLocation = project.getLocation();
 			if (projectLocation != null && projectLocation.isPrefixOf(componentLocation)) {
@@ -1865,7 +1864,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					// marker should be on the same project as fJavaProject
 					int flag = delta.getFlags();
 					if (flag == IDelta.REEXPORTED_API_TYPE) {
-						resource = project.findMember(new Path(JarFile.MANIFEST_NAME));
+						resource = project.findMember(IPath.fromOSString(JarFile.MANIFEST_NAME));
 						charStart = 0;
 						charEnd = 0;
 						lineNumber = 1;
@@ -2558,7 +2557,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (ApiPlugin.DEBUG_API_ANALYZER) {
 			System.out.println("Checking if the default API baseline is set"); //$NON-NLS-1$
 		}
-		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem(Path.EMPTY.toString(), new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { Integer.valueOf(IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID) }, IElementDescriptor.RESOURCE, IApiProblem.API_BASELINE_MISSING);
+		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem("", //$NON-NLS-1$
+				new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID },
+				new Object[] { Integer.valueOf(IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID) },
+				IElementDescriptor.RESOURCE, IApiProblem.API_BASELINE_MISSING);
 		addProblem(problem);
 	}
 
@@ -2566,7 +2568,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (ignoreMissingComponentInBaseline()) {
 			return;
 		}
-		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem(Path.EMPTY.toString(),
+		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem("", //$NON-NLS-1$
 				new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID },
 				new Object[] { Integer.valueOf(IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID) },
 				IElementDescriptor.RESOURCE, IApiProblem.API_PLUGIN_NOT_PRESENT_IN_BASELINE);
@@ -2646,7 +2648,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 			return;
 		}
-		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem(Path.EMPTY.toString(),
+		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem("", //$NON-NLS-1$
 				new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID },
 				new Object[] { Integer.valueOf(IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID) },
 				IElementDescriptor.RESOURCE, IApiProblem.API_BASELINE_MISMATCH);

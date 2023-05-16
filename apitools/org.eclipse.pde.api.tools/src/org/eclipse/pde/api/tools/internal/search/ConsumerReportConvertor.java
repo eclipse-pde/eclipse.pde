@@ -28,8 +28,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -619,7 +619,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 		PrintWriter writer = null;
 		File originhtml = null;
 		try {
-			File htmlroot = new Path(getHtmlLocation()).append(parentConsumer.name).append(producer.name).toFile();
+			File htmlroot = IPath.fromOSString(getHtmlLocation()).append(parentConsumer.name).append(producer.name).toFile();
 			if (!htmlroot.exists()) {
 				htmlroot.mkdirs();
 			}

@@ -44,7 +44,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
@@ -584,10 +583,10 @@ public class PluginImportOperation extends WorkspaceJob {
 		// Link the plug-in content
 		File srcFile = new File(model.getInstallLocation());
 		if (srcFile.isFile()) {
-			IFile dstFile = project.getFile(new Path(srcFile.getName()));
+			IFile dstFile = project.getFile(IPath.fromOSString(srcFile.getName()));
 			dstFile.createLink(srcFile.toURI(), IResource.NONE, subMonitor.split(1));
 		} else {
-			IFolder dstFile = project.getFolder(new Path(srcFile.getName()));
+			IFolder dstFile = project.getFolder(IPath.fromOSString(srcFile.getName()));
 			dstFile.createLink(srcFile.toURI(), IResource.NONE, subMonitor.split(1));
 		}
 
@@ -848,7 +847,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			String[] libraries = getLibraryNames(model);
 			for (String library : libraries) {
 				String zipName = ClasspathUtilCore.getSourceZipName(library);
-				IPath srcPath = fAlternateSource.findSourcePath(model.getPluginBase(), new Path(zipName));
+				IPath srcPath = fAlternateSource.findSourcePath(model.getPluginBase(), IPath.fromOSString(zipName));
 				if (srcPath != null) {
 					return fAlternateSource;
 				}
@@ -867,7 +866,7 @@ public class PluginImportOperation extends WorkspaceJob {
 		String[] libraries = getLibraryNames(model);
 		for (String library : libraries) {
 			String zipName = ClasspathUtilCore.getSourceZipName(library);
-			IPath srcPath = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
+			IPath srcPath = manager.findSourcePath(model.getPluginBase(), IPath.fromOSString(zipName));
 			if (srcPath != null) {
 				return manager;
 			}
@@ -922,10 +921,10 @@ public class PluginImportOperation extends WorkspaceJob {
 				String zipName = ClasspathUtilCore.getSourceZipName(libraries[i]);
 				IPluginBase pluginBase = model.getPluginBase();
 				// check default locations
-				IPath srcPath = manager.findSourcePath(pluginBase, new Path(zipName));
+				IPath srcPath = manager.findSourcePath(pluginBase, IPath.fromOSString(zipName));
 				if (srcPath != null) {
 					zipName = srcPath.lastSegment();
-					IPath dstPath = new Path(zipName);
+					IPath dstPath = IPath.fromOSString(zipName);
 					sourceMap.put(libraries[i], dstPath);
 					if (project.findMember(dstPath) == null) {
 						if (mode == IMPORT_BINARY) {
@@ -975,18 +974,18 @@ public class PluginImportOperation extends WorkspaceJob {
 							List<IPath> excludeFolders = new ArrayList<>(sourceRoots.size());
 							for (String root : sourceRoots) {
 								if (!root.equals(DEFAULT_LIBRARY_NAME)) {
-									excludeFolders.add(new Path(root));
+									excludeFolders.add(IPath.fromOSString(root));
 								}
 							}
 							Set<IPath> collectedPackages = new HashSet<>();
 							PluginImportHelper.extractJavaSourceFromArchive(srcFile, excludeFolders,
 									destination.getFullPath(), collectedPackages, subMonitor.split(1));
 							addBuildEntry(buildModel, "source." + DEFAULT_LIBRARY_NAME, DEFAULT_SOURCE_DIR + "/"); //$NON-NLS-1$ //$NON-NLS-2$
-							addPackageEntries(collectedPackages, new Path(DEFAULT_SOURCE_DIR), packageLocations);
+							addPackageEntries(collectedPackages, IPath.fromOSString(DEFAULT_SOURCE_DIR), packageLocations);
 
 						}
 					} else if (sourceRoots.contains(getSourceDirName(library))) {
-						IPath sourceDir = new Path(getSourceDirName(library));
+						IPath sourceDir = IPath.fromOSString(getSourceDirName(library));
 						if (!project.getFolder(sourceDir).exists()) {
 							Set<IPath> collectedPackages = new HashSet<>();
 							PluginImportHelper.extractFolderFromArchive(srcFile, sourceDir, project.getFullPath(),
@@ -1004,10 +1003,10 @@ public class PluginImportOperation extends WorkspaceJob {
 			boolean sourceFound = false;
 			for (String library : libraries) {
 				String zipName = ClasspathUtilCore.getSourceZipName(library);
-				IPath srcPath = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
+				IPath srcPath = manager.findSourcePath(model.getPluginBase(), IPath.fromOSString(zipName));
 				if (srcPath != null) {
 					sourceFound = true;
-					IPath dstPath = new Path(getSourceDirName(library));
+					IPath dstPath = IPath.fromOSString(getSourceDirName(library));
 					IResource destination = project.getFolder(dstPath);
 					if (!destination.exists()) {
 						Set<IPath> collectedPackages = new HashSet<>();
@@ -1041,7 +1040,7 @@ public class PluginImportOperation extends WorkspaceJob {
 		IImportStructureProvider provider;
 		Object root;
 		IPath prefixPath;
-		IPath defaultSourcePath = new Path(DEFAULT_SOURCE_DIR);
+		IPath defaultSourcePath = IPath.fromOSString(DEFAULT_SOURCE_DIR);
 		ZipFile zip = null;
 		try {
 			if (isJARd(model)) {
@@ -1053,7 +1052,7 @@ public class PluginImportOperation extends WorkspaceJob {
 				provider = FileSystemStructureProvider.INSTANCE;
 				File rootFile = new File(model.getInstallLocation());
 				root = rootFile;
-				prefixPath = new Path(rootFile.getPath()).append(defaultSourcePath);
+				prefixPath = IPath.fromOSString(rootFile.getPath()).append(defaultSourcePath);
 			}
 
 			ArrayList<Object> collected = new ArrayList<>();

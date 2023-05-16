@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
@@ -162,7 +161,7 @@ public class PluginImportHelper {
 	public static void collectJavaPackages(IImportStructureProvider provider, List<Object> javaFiles, IPath prefixPath, Set<IPath> packageList) {
 		for (Object object : javaFiles) {
 			String stringPath = provider.getFullPath(object);
-			IPath path = new Path(stringPath);
+			IPath path = IPath.fromOSString(stringPath);
 			path = path.removeLastSegments(1);
 
 			// If the current path starts with the given prefix, remove the prefix
@@ -269,7 +268,7 @@ public class PluginImportHelper {
 
 					// Note: any unjarred class files should be at the root of the binary jar/folder (i.e. we shouldn't see lib/org/eclipse/foo/myclass.class)
 					String fullPath = provider.getFullPath(curr);
-					IPath packagePath = new Path(fullPath);
+					IPath packagePath = IPath.fromOSString(fullPath);
 					IPath destination = null;
 
 					// The last segment currently is the filename
@@ -283,7 +282,7 @@ public class PluginImportHelper {
 
 					// If the file doesn't belong to a package, put it in the project root
 					if (destination == null) {
-						destination = new Path(""); //$NON-NLS-1$
+						destination = IPath.fromOSString(""); //$NON-NLS-1$
 					}
 
 					// Add the file to the appropriate list in the map

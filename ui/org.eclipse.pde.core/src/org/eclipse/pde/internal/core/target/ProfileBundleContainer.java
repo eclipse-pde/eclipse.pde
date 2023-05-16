@@ -31,7 +31,6 @@ import java.util.Properties;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.URIUtil;
@@ -258,7 +257,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	 * @throws CoreException
 	 */
 	private IPath resolveHomeLocation() throws CoreException {
-		return new Path(resolveVariables(fHome));
+		return IPath.fromOSString(resolveVariables(fHome));
 	}
 
 	/**
@@ -274,7 +273,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		if (fConfiguration == null) {
 			configuration = home.append("configuration"); //$NON-NLS-1$
 		} else {
-			configuration = new Path(resolveVariables(fConfiguration));
+			configuration = IPath.fromOSString(resolveVariables(fConfiguration));
 		}
 		File file = configuration.toFile();
 		if (file.exists()) {
@@ -349,13 +348,13 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			if (p2Area != null) {
 				if (p2Area.startsWith(VAR_USER_HOME)) {
 					String base = substituteVar(configProps, p2Area, VAR_USER_HOME, PROP_USER_HOME, configArea);
-					p2Area = new Path(base).toFile().getAbsolutePath();
+					p2Area = IPath.fromOSString(base).toFile().getAbsolutePath();
 				} else if (p2Area.startsWith(VAR_USER_DIR)) {
 					String base = substituteVar(configProps, p2Area, VAR_USER_DIR, PROP_USER_DIR, configArea);
-					p2Area = new Path(base).toFile().getAbsolutePath();
+					p2Area = IPath.fromOSString(base).toFile().getAbsolutePath();
 				} else if (p2Area.startsWith(VAR_CONFIG_DIR)) {
 					String base = substituteVar(configProps, p2Area, VAR_CONFIG_DIR, PROP_CONFIG_DIR, configArea);
-					p2Area = new Path(base).toFile().getAbsolutePath();
+					p2Area = IPath.fromOSString(base).toFile().getAbsolutePath();
 				}
 				p2DataArea = new File(p2Area);
 			}
@@ -372,7 +371,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		}
 
 		@SuppressWarnings("restriction")
-		File profile = new Path(p2DataArea.getAbsolutePath())
+		File profile = IPath.fromOSString(p2DataArea.getAbsolutePath())
 				.append(org.eclipse.equinox.internal.p2.engine.EngineActivator.ID).append("profileRegistry") //$NON-NLS-1$
 				.append(profileName + ".profile").toFile(); //$NON-NLS-1$
 

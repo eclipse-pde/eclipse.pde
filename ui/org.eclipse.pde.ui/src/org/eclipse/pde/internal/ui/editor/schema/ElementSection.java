@@ -19,7 +19,7 @@ package org.eclipse.pde.internal.ui.editor.schema;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -750,7 +750,7 @@ public class ElementSection extends TreeSection {
 					ISchema includedSchema = include.getIncludedSchema();
 					if (includedSchema != null && includedSchema.equals(schema)) {
 						String location = include.getLocation();
-						SchemaEditor.openToElement(new Path(location), element);
+						SchemaEditor.openToElement(IPath.fromOSString(location), element);
 						break;
 					}
 				}

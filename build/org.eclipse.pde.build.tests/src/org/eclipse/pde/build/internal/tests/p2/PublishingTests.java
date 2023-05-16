@@ -41,7 +41,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
@@ -698,7 +698,7 @@ public class PublishingTests extends P2TestCase {
 
 		// steal the icons from test 237922
 		URL ico = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID),
-				new Path("/resources/237922/rcp/icons/mail.ico"), null);
+				IPath.fromOSString("/resources/237922/rcp/icons/mail.ico"), null);
 		IFile icoFile = rcp.getFile("mail.ico");
 		icoFile.create(ico.openStream(), IResource.FORCE, null);
 
@@ -987,7 +987,7 @@ public class PublishingTests extends P2TestCase {
 		Utils.storeBuildProperties(f, properties);
 
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"),
-				new org.eclipse.core.runtime.Path("/resources/keystore/keystore"), null);
+				IPath.fromOSString("/resources/keystore/keystore"), null);
 		assertNotNull(resource);
 		String keystorePath = FileLocator.toFileURL(resource).getPath();
 
@@ -1116,7 +1116,7 @@ public class PublishingTests extends P2TestCase {
 
 		URI uri = URIUtil.fromString("file:"
 				+ buildFolder.getFolder("I.TestBuild/f-TestBuild-group.group.group.zip").getLocation().toOSString());
-		IMetadataRepository repo = loadMetadataRepository(URIUtil.toJarURI(uri, new Path("")));
+		IMetadataRepository repo = loadMetadataRepository(URIUtil.toJarURI(uri, IPath.fromOSString("")));
 		IInstallableUnit iuA = getIU(repo, "a");
 		assertTouchpoint(iuA, "zipped", "true");
 
@@ -1185,7 +1185,7 @@ public class PublishingTests extends P2TestCase {
 		// reusing the metadata from part 1
 		uri = URIUtil.fromString(
 				"file:" + build2.getFolder("I.TestBuild/f-TestBuild-group.group.group.zip").getLocation().toOSString());
-		repo = loadMetadataRepository(URIUtil.toJarURI(uri, new Path("")));
+		repo = loadMetadataRepository(URIUtil.toJarURI(uri, IPath.fromOSString("")));
 
 		iuB = getIU(repo, "b");
 		assertTrue(Boolean.valueOf(iuB.getProperties().get("pde.build")).booleanValue());

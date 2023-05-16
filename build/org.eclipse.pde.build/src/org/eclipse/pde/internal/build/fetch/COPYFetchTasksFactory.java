@@ -20,7 +20,6 @@ import java.util.Properties;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.IAntScript;
@@ -67,7 +66,7 @@ public class COPYFetchTasksFactory implements IFetchFactory, IPDEBuildConstants 
 		// we directly copy the disc content into the destination
 		String root = (String) entryInfos.get(KEY_ROOT);
 		String path = (String) entryInfos.get(KEY_PATH);
-		IPath sourcePath = new Path(root);
+		IPath sourcePath = IPath.fromOSString(root);
 		if (path != null) {
 			sourcePath = sourcePath.append(path);
 		} else {
@@ -83,7 +82,7 @@ public class COPYFetchTasksFactory implements IFetchFactory, IPDEBuildConstants 
 		String path = (String) entryInfos.get(KEY_PATH);
 
 		for (String file : files) {
-			IPath filePath = new Path(root);
+			IPath filePath = IPath.fromOSString(root);
 			if (path != null) {
 				filePath = filePath.append(path).append(file);
 			} else {

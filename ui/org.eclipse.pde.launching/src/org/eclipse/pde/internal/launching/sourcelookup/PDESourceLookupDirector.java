@@ -31,7 +31,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
@@ -132,7 +131,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 
 		IPluginModelBase[] models = entry.getWorkspaceModels();
 		for (IPluginModelBase model : models) {
-			if (isPerfectMatch(model, new Path(location))) {
+			if (isPerfectMatch(model, IPath.fromOSString(location))) {
 				IResource resource = model.getUnderlyingResource();
 				// if the plug-in matches a workspace model,
 				// add the project and any libraries not coming via a container
@@ -160,7 +159,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 
 			models = entry.getExternalModels();
 			for (IPluginModelBase model : models) {
-				if (isPerfectMatch(model, new Path(location))) {
+				if (isPerfectMatch(model, IPath.fromOSString(location))) {
 					// try all source zips found in the source code locations
 					IClasspathEntry[] entries = PDEClasspathContainer.getExternalEntries(model);
 					for (IClasspathEntry entrie : entries) {
@@ -190,7 +189,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	}
 
 	private boolean isPerfectMatch(IPluginModelBase model, IPath path) {
-		return model == null ? false : path.equals(new Path(model.getInstallLocation()));
+		return model == null ? false : path.equals(IPath.fromOSString(model.getInstallLocation()));
 	}
 
 	private IRuntimeClasspathEntry convertClasspathEntry(IClasspathEntry entry) {

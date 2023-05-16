@@ -28,7 +28,6 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -65,7 +64,7 @@ public class JUnitExecutionTest {
 
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		for (URL resource : Collections.list(bundle.findEntries("test-bundles", "*", false))) {
-			IPath resourcePath = new Path(FileLocator.toFileURL(resource).getPath());
+			IPath resourcePath = IPath.fromOSString(FileLocator.toFileURL(resource).getPath());
 			IPath descriptionPath = resourcePath.append(IProjectDescription.DESCRIPTION_FILE_NAME);
 			if (!descriptionPath.toFile().exists())
 				continue;

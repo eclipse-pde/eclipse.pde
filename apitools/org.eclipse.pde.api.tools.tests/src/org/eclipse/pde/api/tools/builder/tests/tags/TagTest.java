@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
@@ -38,8 +37,8 @@ import junit.framework.TestSuite;
  */
 public abstract class TagTest extends ApiBuilderTest {
 
-	protected static IPath WORKSPACE_PATH = new Path("src/a/b/c"); //$NON-NLS-1$
-	protected static IPath WORKSPACE_PATH_DEFAULT = new Path("src"); //$NON-NLS-1$
+	protected static IPath WORKSPACE_PATH = IPath.fromOSString("src/a/b/c"); //$NON-NLS-1$
+	protected static IPath WORKSPACE_PATH_DEFAULT = IPath.fromOSString("src"); //$NON-NLS-1$
 
 	public TagTest(String name) {
 		super(name);
@@ -173,7 +172,7 @@ public abstract class TagTest extends ApiBuilderTest {
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return new Path("tags"); //$NON-NLS-1$
+		return IPath.fromOSString("tags"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -191,9 +190,9 @@ public abstract class TagTest extends ApiBuilderTest {
 	 */
 	protected void deployTagTest(String sourcename, boolean incremental, boolean usedefault) {
 		try {
-			IPath path = new Path(getTestingProjectName()).append(WORKSPACE_PATH).append(sourcename);
+			IPath path = IPath.fromOSString(getTestingProjectName()).append(WORKSPACE_PATH).append(sourcename);
 			if (usedefault) {
-				path = new Path(getTestingProjectName()).append(WORKSPACE_PATH_DEFAULT).append(sourcename);
+				path = IPath.fromOSString(getTestingProjectName()).append(WORKSPACE_PATH_DEFAULT).append(sourcename);
 			}
 			createWorkspaceFile(path, TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(sourcename));
 			if (incremental) {

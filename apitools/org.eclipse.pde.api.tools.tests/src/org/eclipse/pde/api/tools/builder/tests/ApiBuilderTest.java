@@ -41,7 +41,6 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -384,7 +383,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		IPath ppath = getEnv().addProject(projectName, usetestcompliance ? getTestCompliance() : null);
 		IProject project = getEnv().getProject(ppath);
 		IProjectDescription description = workspace.newProjectDescription(projectName);
-		IPath locationPath = new Path(projectDir.getAbsolutePath());
+		IPath locationPath = IPath.fromOSString(projectDir.getAbsolutePath());
 		description.setLocation(locationPath);
 
 		URI locationURI = description.getLocationURI();

@@ -17,8 +17,8 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
@@ -60,7 +60,7 @@ public class BuildTimeFeatureFactory /*extends BaseFeatureFactory */implements /
 			URL featureURL = new URL(url, BuildTimeFeature.FEATURE_XML);
 			feature = parseBuildFeature(featureURL);
 
-			String qualifier = AbstractScriptGenerator.readProperties(new Path(url.getFile()).removeLastSegments(1).toOSString(), PROPERTIES_FILE, IStatus.OK).getProperty(PROPERTY_QUALIFIER);
+			String qualifier = AbstractScriptGenerator.readProperties(IPath.fromOSString(url.getFile()).removeLastSegments(1).toOSString(), PROPERTIES_FILE, IStatus.OK).getProperty(PROPERTY_QUALIFIER);
 			String newVersion = QualifierReplacer.replaceQualifierInVersion(feature.getVersion(), feature.getId(), qualifier, site != null ? site.getFeatureVersions() : null);
 			if (newVersion != null) {
 				//a feature version ending in qualifier using context will be further modified based on its included plugins				

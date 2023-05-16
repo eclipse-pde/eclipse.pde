@@ -28,7 +28,6 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -227,7 +226,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 			}
 			String value = getHeaderValue(headers, Constants.BUNDLE_LOCALIZATION);
 			if (value != null) {
-				setLocalization(new Path(value));
+				setLocalization(IPath.fromOSString(value));
 			}
 			elements = parseHeader(headers, Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 			if (elements != null && elements.length > 0) {
@@ -345,7 +344,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 							for (String name : names) {
 								strings.remove(name);
 								// if the library is a folder, account for trailing slash - see bug 306991
-								IPath path = new Path(name);
+								IPath path = IPath.fromOSString(name);
 								if (path.getFileExtension() == null) {
 									strings.remove(name + "/"); //$NON-NLS-1$
 								}
@@ -355,7 +354,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 						if (!strings.isEmpty()) {
 							IPath[] paths = new IPath[strings.size()];
 							for (int i = 0; i < strings.size(); i++) {
-								paths[i] = new Path(strings.get(i));
+								paths[i] = IPath.fromOSString(strings.get(i));
 							}
 							setBinIncludes(paths);
 						}
@@ -381,7 +380,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 				entry = build.getEntry(IBuildEntry.OUTPUT_PREFIX + libraryName);
 				if (entry == null) {
 					// no source or class file folder
-					return new IBundleClasspathEntry[] {getBundleProjectService().newBundleClasspathEntry(null, null, new Path(libraryName))};
+					return new IBundleClasspathEntry[] {getBundleProjectService().newBundleClasspathEntry(null, null, IPath.fromOSString(libraryName))};
 				}
 				// base the entries on class file folders
 				return getClasspathEntries(project, entry, true);
@@ -406,14 +405,14 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 		String[] tokens = entry.getTokens();
 		IPath lib = null;
 		if (binary) {
-			lib = new Path(entry.getName().substring(IBuildEntry.OUTPUT_PREFIX.length()));
+			lib = IPath.fromOSString(entry.getName().substring(IBuildEntry.OUTPUT_PREFIX.length()));
 		} else {
-			lib = new Path(entry.getName().substring(IBuildEntry.JAR_PREFIX.length()));
+			lib = IPath.fromOSString(entry.getName().substring(IBuildEntry.JAR_PREFIX.length()));
 		}
 		if (tokens != null && tokens.length > 0) {
 			IBundleClasspathEntry[] bces = new IBundleClasspathEntry[tokens.length];
 			for (int i = 0; i < tokens.length; i++) {
-				IPath path = new Path(tokens[i]);
+				IPath path = IPath.fromOSString(tokens[i]);
 				IBundleClasspathEntry spec = null;
 				if (binary) {
 					spec = getBundleProjectService().newBundleClasspathEntry(null, path, lib);

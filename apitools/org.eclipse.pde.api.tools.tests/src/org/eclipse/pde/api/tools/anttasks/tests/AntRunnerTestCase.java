@@ -27,7 +27,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 public abstract class AntRunnerTestCase {
@@ -55,7 +54,7 @@ public abstract class AntRunnerTestCase {
 		IProject builderProject = newTest();
 
 		// create build folder for this test
-		IPath resourcePath = new Path(resources);
+		IPath resourcePath = IPath.fromOSString(resources);
 		for (int i = 0, max = resourcePath.segmentCount(); i < max; i++) {
 			String segment = resourcePath.segment(i);
 			if (i == 0) {
@@ -75,7 +74,7 @@ public abstract class AntRunnerTestCase {
 		}
 
 		IPath pluginDirectoryPath = TestSuiteHelper.getPluginDirectoryPath();
-		String path = pluginDirectoryPath.append(new Path("/test-anttasks/" + resources)).toOSString(); //$NON-NLS-1$
+		String path = pluginDirectoryPath.append(IPath.fromOSString("/test-anttasks/" + resources)).toOSString(); //$NON-NLS-1$
 		File sourceFile = new File(path);
 		if (!sourceFile.exists()) {
 			System.err.println("Source folder " + path + " is missing"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -105,7 +104,7 @@ public abstract class AntRunnerTestCase {
 		if (resources.length > 1) {
 			for (int index = 1; index < resources.length; ++index) {
 				IPath pluginDirectoryPath = TestSuiteHelper.getPluginDirectoryPath();
-				String path = pluginDirectoryPath.append(new Path("/test-anttasks/" + parentFolder + resources[index])).toOSString(); //$NON-NLS-1$
+				String path = pluginDirectoryPath.append(IPath.fromOSString("/test-anttasks/" + parentFolder + resources[index])).toOSString(); //$NON-NLS-1$
 				File sourceDataFile = new File(path);
 				path = buildFolder.getLocation().toOSString();
 				File destinationDataFile = new File(path);

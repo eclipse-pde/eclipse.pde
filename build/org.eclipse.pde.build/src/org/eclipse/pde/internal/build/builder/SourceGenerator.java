@@ -39,7 +39,6 @@ import java.util.jar.Manifest;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.p2.publisher.eclipse.Feature;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
@@ -307,12 +306,12 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 	private void create30SourceFragment(FeatureEntry fragment, FeatureEntry plugin) throws CoreException {
 		// create the directory for the plugin
-		IPath sourceFragmentDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(fragment, true));
+		IPath sourceFragmentDirURL = IPath.fromOSString(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(fragment, true));
 		File sourceFragmentDir = new File(sourceFragmentDirURL.toOSString());
 		new File(sourceFragmentDir, "META-INF").mkdirs(); //$NON-NLS-1$
 		try {
 			// read the content of the template file
-			IPath fragmentPath = new Path(TEMPLATE + "/30/fragment/" + Constants.BUNDLE_FILENAME_DESCRIPTOR);//$NON-NLS-1$
+			IPath fragmentPath = IPath.fromOSString(TEMPLATE + "/30/fragment/" + Constants.BUNDLE_FILENAME_DESCRIPTOR);//$NON-NLS-1$
 			URL templateLocation = BundleHelper.getDefault().find(fragmentPath);
 			if (templateLocation == null) {
 				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, NLS.bind(Messages.error_readingDirectory, fragmentPath), null);
@@ -539,7 +538,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 	}
 
 	public void generateSourcePlugin(FeatureEntry sourceEntry, BundleDescription originalBundle) throws CoreException {
-		IPath sourcePluginDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + sourceEntry.getId() + '_' + originalBundle.getVersion());
+		IPath sourcePluginDirURL = IPath.fromOSString(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + sourceEntry.getId() + '_' + originalBundle.getVersion());
 
 		Manifest manifest = new Manifest();
 		Attributes attributes = manifest.getMainAttributes();
@@ -665,13 +664,13 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		sourceFeature.addEntry(result);
 
 		// create the directory for the plugin
-		IPath sourcePluginDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(result, true));
+		IPath sourcePluginDirURL = IPath.fromOSString(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(result, true));
 		File sourcePluginDir = sourcePluginDirURL.toFile();
 		new File(sourcePluginDir, "META-INF").mkdirs(); //$NON-NLS-1$
 
 		// Create the MANIFEST.MF
 		StringBuffer buffer;
-		IPath templateManifest = new Path(TEMPLATE + "/30/plugin/" + Constants.BUNDLE_FILENAME_DESCRIPTOR); //$NON-NLS-1$
+		IPath templateManifest = IPath.fromOSString(TEMPLATE + "/30/plugin/" + Constants.BUNDLE_FILENAME_DESCRIPTOR); //$NON-NLS-1$
 		URL templateManifestURL = BundleHelper.getDefault().find(templateManifest);
 		if (templateManifestURL == null) {
 			IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, NLS.bind(Messages.error_readingDirectory, templateManifest), null);

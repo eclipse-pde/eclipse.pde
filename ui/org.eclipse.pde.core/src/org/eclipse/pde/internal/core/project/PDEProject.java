@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.IJavaProject;
@@ -61,7 +60,7 @@ public class PDEProject {
 		if (node != null) {
 			String string = node.get(BUNDLE_ROOT_PATH, null);
 			if (string != null) {
-				IPath path = Path.fromPortableString(string);
+				IPath path = IPath.fromPortableString(string);
 				return project.getFolder(path);
 			}
 		}
@@ -225,7 +224,7 @@ public class PDEProject {
 	 * @return <code>.options</code> file that may or may not exist
 	 */
 	public static IFile getOptionsFile(IProject project) {
-		return getBundleRelativeFile(project, new Path(ICoreConstants.OPTIONS_FILENAME));
+		return getBundleRelativeFile(project, IPath.fromOSString(ICoreConstants.OPTIONS_FILENAME));
 	}
 
 	/**
@@ -247,7 +246,7 @@ public class PDEProject {
 	 * @return <code>META-INF/</code> folder that may or may not exist
 	 */
 	public static IFolder getMetaInf(IProject project) {
-		return getBundleRelativeFolder(project, new Path(ICoreConstants.MANIFEST_FOLDER_NAME));
+		return getBundleRelativeFolder(project, IPath.fromOSString(ICoreConstants.MANIFEST_FOLDER_NAME));
 	}
 
 	/**
@@ -282,7 +281,7 @@ public class PDEProject {
 	public static IFile getLocalizationFile(IProject project) {
 		IPluginModelBase model = PluginRegistry.findModel(project);
 		String localization = PDEManager.getBundleLocalization(model);
-		return getBundleRelativeFile(project, new Path(localization + ".properties")); //$NON-NLS-1$
+		return getBundleRelativeFile(project, IPath.fromOSString(localization + ".properties")); //$NON-NLS-1$
 	}
 
 	// TODO: schema folder?

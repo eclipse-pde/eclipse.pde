@@ -21,7 +21,6 @@ import java.util.Collections;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.plugin.IPluginObject;
@@ -134,14 +133,14 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 		}
 		File file = editor.getEditorInput().getAdapter(File.class);
 		if (file != null) {
-			IPath path = new Path(installLocation);
+			IPath path = IPath.fromOSString(installLocation);
 			IPath filePath = null;
 			if (ICoreConstants.MANIFEST_FILENAME.equals(file.getName()))
-				filePath = new Path(file.getParentFile().getParent());
+				filePath = IPath.fromOSString(file.getParentFile().getParent());
 			else if (file.getName().endsWith("jar")) { //$NON-NLS-1$
-				filePath = new Path(file.getPath());
+				filePath = IPath.fromOSString(file.getPath());
 			} else {
-				filePath = new Path(file.getParent());
+				filePath = IPath.fromOSString(file.getParent());
 			}
 			return path.equals(filePath);
 		}

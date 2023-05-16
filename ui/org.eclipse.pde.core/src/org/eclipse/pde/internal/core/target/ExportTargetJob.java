@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
@@ -218,7 +217,7 @@ public class ExportTargetJob extends Job {
 	}
 
 	private IStatus copy(String src, IFileStore destinationParent, IFileSystem fileSystem, IProgressMonitor monitor) throws CoreException {
-		IPath srcPath = new Path(src);
+		IPath srcPath = IPath.fromOSString(src);
 
 		IFileStore source = fileSystem.getStore(srcPath);
 		String elementName = srcPath.segment(srcPath.segmentCount() - 1);

@@ -41,7 +41,6 @@ import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -287,7 +286,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 					IApiBaseline newbaseline = null;
 					for (File baseline : baselines) {
 						if (baseline.exists()) {
-							newbaseline = new ApiBaseline(new Path(baseline.getName()).removeFileExtension().toString());
+							newbaseline = new ApiBaseline(IPath.fromOSString(baseline.getName()).removeFileExtension().toString());
 							handlecache.put(newbaseline.getName(), baseline.getAbsolutePath());
 							bcache.put(newbaseline.getName(), newbaseline);
 						}
@@ -413,7 +412,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 					celement = document.createElement(IApiXmlConstants.ELEMENT_APICOMPONENT);
 					celement.setAttribute(IApiXmlConstants.ATTR_ID, iApiComponent.getSymbolicName());
 					celement.setAttribute(IApiXmlConstants.ATTR_VERSION, iApiComponent.getVersion());
-					celement.setAttribute(IApiXmlConstants.ATTR_LOCATION, new Path(iApiComponent.getLocation()).toPortableString());
+					celement.setAttribute(IApiXmlConstants.ATTR_LOCATION, IPath.fromOSString(iApiComponent.getLocation()).toPortableString());
 					root.appendChild(celement);
 				}
 			}
@@ -459,7 +458,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			if (root.getNodeName().equals(IApiXmlConstants.ELEMENT_APIPROFILE)) {
 				String baselineLocation = root.getAttribute(IApiXmlConstants.ATTR_LOCATION);
 				if (baselineLocation != null && !baselineLocation.equals(Util.EMPTY_STRING)) {
-					baseline.setLocation(Path.fromPortableString(baselineLocation).toOSString());
+					baseline.setLocation(IPath.fromPortableString(baselineLocation).toOSString());
 				}
 				// un-pooled components
 				NodeList children = root.getElementsByTagName(IApiXmlConstants.ELEMENT_APICOMPONENT);
@@ -470,7 +469,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 					// them
 					if (componentNode.getParentNode().equals(root)) {
 						String location = componentNode.getAttribute(IApiXmlConstants.ATTR_LOCATION);
-						IApiComponent component = ApiModelFactory.newApiComponent(baseline, Path.fromPortableString(location).toOSString());
+						IApiComponent component = ApiModelFactory.newApiComponent(baseline, IPath.fromPortableString(location).toOSString());
 						if (component != null) {
 							components.add(component);
 						}
@@ -482,7 +481,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 				IApiComponent component = null;
 				for (int j = 0; j < children.getLength(); j++) {
 					String location = ((Element) children.item(j)).getAttribute(IApiXmlConstants.ATTR_LOCATION);
-					IPath poolPath = Path.fromPortableString(location);
+					IPath poolPath = IPath.fromPortableString(location);
 					NodeList componentNodes = root.getElementsByTagName(IApiXmlConstants.ELEMENT_APICOMPONENT);
 					for (int i = 0; i < componentNodes.getLength(); i++) {
 						Element compElement = (Element) componentNodes.item(i);
