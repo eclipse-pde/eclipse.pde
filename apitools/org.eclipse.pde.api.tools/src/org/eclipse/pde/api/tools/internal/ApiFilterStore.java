@@ -46,7 +46,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
@@ -203,7 +202,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 			if (resourcePath == null) {
 				continue;
 			}
-			IResource resource = fProject.getProject().findMember(new Path(resourcePath));
+			IResource resource = fProject.getProject().findMember(IPath.fromOSString(resourcePath));
 			if (resource == null) {
 				continue;
 			}
@@ -270,7 +269,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		if (resourcePath == null) {
 			return false;
 		}
-		IResource resource = fProject.getProject().findMember(new Path(resourcePath));
+		IResource resource = fProject.getProject().findMember(IPath.fromOSString(resourcePath));
 		if (resource == null) {
 			if (ApiPlugin.DEBUG_FILTER_STORE) {
 				System.out.println("no resource exists: [" + resourcePath + "]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -341,7 +340,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 			if (resourcePath == null) {
 				continue;
 			}
-			IResource resource = fProject.getProject().findMember(new Path(resourcePath));
+			IResource resource = fProject.getProject().findMember(IPath.fromOSString(resourcePath));
 			if (resource == null) {
 				resource = fProject.getProject().getFile(resourcePath);
 			}
@@ -548,7 +547,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 			if (resourcePath == null) {
 				continue;
 			}
-			IResource resource = fProject.getProject().findMember(new Path(resourcePath));
+			IResource resource = fProject.getProject().findMember(IPath.fromOSString(resourcePath));
 			if (resource == null) {
 				continue;
 			}
@@ -591,7 +590,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 			IPath path = fProject.getPath();
 			return path.append(FilterStore.SETTINGS_FOLDER).append(IApiCoreConstants.API_FILTERS_XML_NAME);
 		}
-		return new Path(FilterStore.SETTINGS_FOLDER).append(IApiCoreConstants.API_FILTERS_XML_NAME);
+		return IPath.fromOSString(FilterStore.SETTINGS_FOLDER).append(IApiCoreConstants.API_FILTERS_XML_NAME);
 	}
 
 	static String getLineDelimiterPreference(IFile file) {

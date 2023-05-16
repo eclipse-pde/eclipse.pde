@@ -14,7 +14,6 @@
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -33,12 +32,12 @@ public class DependentUsageTests extends UsageTest {
 
 	static final String WITHOUTTAG = "withouttag"; //$NON-NLS-1$
 	static final String WITHTAG = "withtag"; //$NON-NLS-1$
-	static final IPath C_PATH = new Path("/refproject/src/c/"); //$NON-NLS-1$
-	static final IPath F_PATH = new Path("/refproject/src/f/"); //$NON-NLS-1$
-	static final IPath I_PATH = new Path("/refproject/src/i/"); //$NON-NLS-1$
-	static final IPath M_PATH = new Path("/refproject/src/m/"); //$NON-NLS-1$
-	static final IPath XYZ_PATH = new Path("/usagetests/src/x/y/z/"); //$NON-NLS-1$
-	static final IPath MPPATH = new Path("/refproject/src/pack/multi/part"); //$NON-NLS-1$
+	static final IPath C_PATH = IPath.fromOSString("/refproject/src/c/"); //$NON-NLS-1$
+	static final IPath F_PATH = IPath.fromOSString("/refproject/src/f/"); //$NON-NLS-1$
+	static final IPath I_PATH = IPath.fromOSString("/refproject/src/i/"); //$NON-NLS-1$
+	static final IPath M_PATH = IPath.fromOSString("/refproject/src/m/"); //$NON-NLS-1$
+	static final IPath XYZ_PATH = IPath.fromOSString("/usagetests/src/x/y/z/"); //$NON-NLS-1$
+	static final IPath MPPATH = IPath.fromOSString("/refproject/src/pack/multi/part"); //$NON-NLS-1$
 
 	public DependentUsageTests(String name) {
 		super(name);

@@ -33,7 +33,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -255,7 +254,7 @@ public class ConvertPreferencesWizard extends Wizard {
 	}
 
 	private String getLineSeparatorFromFile(String filePath) throws CoreException {
-		IPath path = Path.fromOSString(filePath);
+		IPath path = IPath.fromOSString(filePath);
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		ITextFileBuffer buffer = manager.getTextFileBuffer(path, LocationKind.LOCATION);
 

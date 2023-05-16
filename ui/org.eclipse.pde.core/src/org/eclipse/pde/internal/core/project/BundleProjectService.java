@@ -31,7 +31,6 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.ManifestElement;
@@ -266,7 +265,7 @@ public final class BundleProjectService implements IBundleProjectService {
 	private Map<String, String> loadManifest(File bundleLocation) throws CoreException {
 		ZipFile jarFile = null;
 		InputStream manifestStream = null;
-		String extension = new Path(bundleLocation.getName()).getFileExtension();
+		String extension = IPath.fromOSString(bundleLocation.getName()).getFileExtension();
 		try {
 			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
 				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);

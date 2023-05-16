@@ -43,7 +43,6 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -381,7 +380,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		String temp = ""; //$NON-NLS-1$
 		for (int j = 0; j < baseCount - count; j++)
 			temp += "../"; //$NON-NLS-1$
-		return new Path(temp).append(location.removeFirstSegments(count));
+		return IPath.fromOSString(temp).append(location.removeFirstSegments(count));
 	}
 
 	/**

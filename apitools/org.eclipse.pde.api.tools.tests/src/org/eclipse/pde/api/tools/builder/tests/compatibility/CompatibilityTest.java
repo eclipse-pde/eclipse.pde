@@ -19,7 +19,6 @@ import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
@@ -47,7 +46,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return new Path("compat"); //$NON-NLS-1$
+		return IPath.fromOSString("compat"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -171,7 +170,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 			manager.addApiBaseline(baseline);
 			manager.setDefaultApiBaseline(baseline.getName());
 		}
-		getEnv().setRevertSourcePath(new Path(BASELINE));
+		getEnv().setRevertSourcePath(IPath.fromOSString(BASELINE));
 	}
 
 	@Override
@@ -221,7 +220,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 		} else {
 			fullBuild();
 		}
-		ApiProblem[] problems = getEnv().getProblemsFor(new Path(workspaceFile.segment(0)).append(JarFile.MANIFEST_NAME), null);
+		ApiProblem[] problems = getEnv().getProblemsFor(IPath.fromOSString(workspaceFile.segment(0)).append(JarFile.MANIFEST_NAME), null);
 		assertProblems(problems);
 	}
 

@@ -28,7 +28,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -390,12 +389,12 @@ public class LaunchArgumentsHelper {
 			if (project.getFile("startup.jar").exists()) //$NON-NLS-1$
 				return project.getFile("startup.jar").getLocation().toOSString(); //$NON-NLS-1$
 		}
-		File startupJar = new Path(TargetPlatform.getLocation()).append("startup.jar").toFile(); //$NON-NLS-1$
+		File startupJar = IPath.fromOSString(TargetPlatform.getLocation()).append("startup.jar").toFile(); //$NON-NLS-1$
 
 		// if something goes wrong with the preferences, fall back on the startup.jar
 		// in the running eclipse.
 		if (!startupJar.exists())
-			startupJar = new Path(TargetPlatform.getDefaultLocation()).append("startup.jar").toFile(); //$NON-NLS-1$
+			startupJar = IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("startup.jar").toFile(); //$NON-NLS-1$
 
 		return startupJar.exists() ? startupJar.getAbsolutePath() : null;
 	}

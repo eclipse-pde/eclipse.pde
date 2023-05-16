@@ -24,7 +24,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -163,7 +162,7 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 				try {
 					path = manager.performStringSubstitution(path, false);
-					IPath uriPath = new Path(path).makeAbsolute();
+					IPath uriPath = IPath.fromOSString(path).makeAbsolute();
 					IFile[] containers = root.findFilesForLocationURI(URIUtil.toURI(uriPath));
 					if (containers.length > 0)
 						res = containers[0];

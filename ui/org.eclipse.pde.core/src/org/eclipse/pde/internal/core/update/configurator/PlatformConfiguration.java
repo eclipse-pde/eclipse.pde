@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * This class is responsible for providing the features and plugins (bundles) to
@@ -54,7 +54,7 @@ public class PlatformConfiguration implements IConfigurationConstants {
 		try {
 			if (url != null && url.getProtocol().equals("file") //$NON-NLS-1$
 					&& url.getPath().endsWith("configuration/org.eclipse.update/platform.xml")) { //$NON-NLS-1$
-				installLocation = new Path(url.getPath()).removeLastSegments(3).toFile().toURL();
+				installLocation = IPath.fromOSString(url.getPath()).removeLastSegments(3).toFile().toURL();
 			}
 		} catch (Exception e) {
 			//

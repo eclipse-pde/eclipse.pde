@@ -40,7 +40,6 @@ import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jdt.core.ElementChangedEvent;
@@ -231,7 +230,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	public Object createAdapterChild(FileAdapter parent, File file) {
 		if (!file.isDirectory()) {
 			if (file.isFile()) {
-				IPackageFragmentRoot root = findPackageFragmentRoot(new Path(file.getAbsolutePath()));
+				IPackageFragmentRoot root = findPackageFragmentRoot(IPath.fromOSString(file.getAbsolutePath()));
 				if (root != null) {
 					return root;
 				}

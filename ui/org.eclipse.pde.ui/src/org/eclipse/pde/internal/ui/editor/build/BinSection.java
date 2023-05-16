@@ -17,7 +17,7 @@ package org.eclipse.pde.internal.ui.editor.build;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -97,7 +97,7 @@ public class BinSection extends BuildContentsSection {
 					if (event.getNewValue().equals(".")) //$NON-NLS-1$
 						return;
 					// adding token
-					IFile file = fBundleRoot.getFile(new Path(event.getNewValue().toString()));
+					IFile file = fBundleRoot.getFile(IPath.fromOSString(event.getNewValue().toString()));
 					if (!file.exists())
 						return;
 					fParentResource = fOriginalResource = file;
@@ -106,7 +106,7 @@ public class BinSection extends BuildContentsSection {
 					if (event.getOldValue().equals(".")) //$NON-NLS-1$
 						return;
 					// removing token
-					IFile file = fBundleRoot.getFile(new Path(event.getOldValue().toString()));
+					IFile file = fBundleRoot.getFile(IPath.fromOSString(event.getOldValue().toString()));
 					if (!file.exists())
 						return;
 					fParentResource = fOriginalResource = file;

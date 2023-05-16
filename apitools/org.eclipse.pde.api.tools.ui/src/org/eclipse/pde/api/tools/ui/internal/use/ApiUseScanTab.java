@@ -23,7 +23,6 @@ import java.util.regex.PatternSyntaxException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
@@ -617,13 +616,13 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(ApiUseLaunchDelegate.SEARCH_MODIFIERS, modifiers);
 		String filterRoot = this.filterRoot.getText().trim();
 		if (filterRoot.length() > 0) {
-			IPath path = new Path(filterRoot);
+			IPath path = IPath.fromOSString(filterRoot);
 			configuration.setAttribute(ApiUseLaunchDelegate.FILTER_ROOT, path.toPortableString());
 		} else {
 			configuration.removeAttribute(ApiUseLaunchDelegate.FILTER_ROOT);
 		}
 
-		IPath path = new Path(this.reportlocation.getText().trim());
+		IPath path = IPath.fromOSString(this.reportlocation.getText().trim());
 		configuration.setAttribute(ApiUseLaunchDelegate.REPORT_PATH, path.toPortableString());
 		configuration.setAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, this.searchScope.getText().trim());
 		configuration.setAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, this.targetScope.getText().trim());

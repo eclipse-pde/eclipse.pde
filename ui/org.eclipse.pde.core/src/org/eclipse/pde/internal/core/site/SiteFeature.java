@@ -20,7 +20,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.isite.ISiteCategory;
 import org.eclipse.pde.internal.core.isite.ISiteFeature;
@@ -226,7 +226,7 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 			return null;
 		}
 		IProject project = resource.getProject();
-		IFile file = project.getFile(new Path(fUrl));
+		IFile file = project.getFile(IPath.fromOSString(fUrl));
 		if (file.exists()) {
 			return file;
 		}

@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IRegistryEventListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -321,7 +320,7 @@ public class LocalRegistryBackend implements IRegistryEventListener, BundleListe
 			bundleEntry = FileLocator.resolve(bundleEntry);
 		} catch (IOException e) { // do nothing
 		}
-		IPath path = new Path(bundleEntry.getFile());
+		IPath path = IPath.fromOSString(bundleEntry.getFile());
 		String pathString = path.removeTrailingSeparator().toOSString();
 		if (pathString.startsWith("file:")) //$NON-NLS-1$
 			pathString = pathString.substring(5);

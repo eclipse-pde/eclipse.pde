@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.osgi.service.resolver.ResolverError;
@@ -121,7 +120,7 @@ public class SystemLibraryApiComponent extends Component {
 		}
 		if (fLibraries.length == 0) {
 			if (fLocation != null) {
-				IPath newPath = new Path(fLocation);
+				IPath newPath = IPath.fromOSString(fLocation);
 				// The ArchiveApiTypeContainer will recognize this and load the modules using
 				// the JRT file system.
 				newPath = newPath.append("lib").append("jrt-fs.jar"); //$NON-NLS-1$ //$NON-NLS-2$

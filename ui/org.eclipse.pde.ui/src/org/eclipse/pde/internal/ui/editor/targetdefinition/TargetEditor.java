@@ -40,7 +40,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
@@ -464,7 +463,7 @@ public class TargetEditor extends FormEditor {
 				targetFile = fTargetFileInWorkspace.getLocation().toFile();
 			} else if (input instanceof IURIEditorInput) {
 				String part = ((IURIEditorInput) input).getURI().getSchemeSpecificPart();
-				IPath path = new Path(part);
+				IPath path = IPath.fromOSString(part);
 				fTargetFileInWorkspace = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 				targetFile = path.toFile();
 			}

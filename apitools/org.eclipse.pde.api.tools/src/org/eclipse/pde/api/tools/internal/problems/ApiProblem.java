@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.problems;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -219,7 +219,7 @@ public class ApiProblem implements IApiProblem {
 					}
 				} else if (this.fResourcePath == null) {
 					return false;
-				} else if (!new Path(resourcePath).equals(new Path(fResourcePath))) {
+				} else if (!IPath.fromOSString(resourcePath).equals(IPath.fromOSString(fResourcePath))) {
 					return false;
 				}
 				String typeName = problem.getTypeName();

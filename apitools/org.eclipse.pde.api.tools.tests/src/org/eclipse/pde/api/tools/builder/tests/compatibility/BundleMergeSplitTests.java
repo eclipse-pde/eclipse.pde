@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
@@ -288,7 +287,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		performMergeSplit();
 		// no problems should appear in an incremental build either
 		IProject project = getEnv().getProject("a.b.c.core"); //$NON-NLS-1$
-		IFile file = project.getFile(new Path("src").append("a").append("b").append("c").append("core").append("ClassD.java")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		IFile file = project.getFile(IPath.fromOSString("src").append("a").append("b").append("c").append("core").append("ClassD.java")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		IPath replacement = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(WORKSPACE_ROOT).append("test10").append("post-changes").append("ClassD.java"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		updateWorkspaceFile(file.getFullPath(), replacement);
 		incrementalBuild();
@@ -384,7 +383,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return new Path(""); //$NON-NLS-1$
+		return IPath.fromOSString(""); //$NON-NLS-1$
 	}
 
 	@Override

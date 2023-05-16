@@ -31,7 +31,6 @@ import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -841,7 +840,7 @@ public class ProjectModifyOperation {
 						modified = true;
 						// folders need trailing slash - see bug 306991
 						String name = names[i];
-						IPath path = new Path(names[i]);
+						IPath path = IPath.fromOSString(names[i]);
 						String extension = path.getFileExtension();
 						if (extension == null) {
 							if (!name.endsWith("/")) { //$NON-NLS-1$

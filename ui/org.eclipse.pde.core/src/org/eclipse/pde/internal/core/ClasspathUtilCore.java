@@ -22,7 +22,6 @@ import java.util.Collection;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -57,7 +56,7 @@ public class ClasspathUtilCore {
 
 	public static Collection<ClasspathLibrary> collectLibraries(IPluginModelBase model) {
 		if (new File(model.getInstallLocation()).isFile()) {
-			return singleton(new ClasspathLibrary(new Path(model.getInstallLocation()), model, null));
+			return singleton(new ClasspathLibrary(IPath.fromOSString(model.getInstallLocation()), model, null));
 		}
 
 		return collectLibraryEntries(model);
@@ -191,7 +190,7 @@ public class ClasspathUtilCore {
 		IPath path = getPath(model, zipName, isJarShape);
 		if (path == null) {
 			SourceLocationManager manager = PDECore.getDefault().getSourceLocationManager();
-			path = manager.findSourcePath(model.getPluginBase(), new Path(zipName));
+			path = manager.findSourcePath(model.getPluginBase(), IPath.fromOSString(zipName));
 		}
 		return path;
 	}
@@ -228,7 +227,7 @@ public class ClasspathUtilCore {
 			File file = new File(libraryName);
 			if (file.isAbsolute()) {
 				if (file.exists()) {
-					return new Path(libraryName);
+					return IPath.fromOSString(libraryName);
 				}
 				// absolute file can not be relative
 				return null;
@@ -238,7 +237,7 @@ public class ClasspathUtilCore {
 				// directory containing a file
 				file = new File(model.getInstallLocation(), libraryName);
 				if (file.exists()) {
-					return new Path(file.getAbsolutePath());
+					return IPath.fromOSString(file.getAbsolutePath());
 				}
 			}
 		}
@@ -251,7 +250,7 @@ public class ClasspathUtilCore {
 	}
 
 	public static String getFilename(IPluginModelBase model) {
-		return new Path(model.getInstallLocation()).lastSegment();
+		return IPath.fromOSString(model.getInstallLocation()).lastSegment();
 	}
 
 	public static class ClasspathLibrary {

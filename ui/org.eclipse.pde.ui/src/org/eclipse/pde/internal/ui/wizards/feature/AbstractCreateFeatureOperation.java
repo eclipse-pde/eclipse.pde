@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -121,7 +120,7 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 
 			IJavaProject jproject = JavaCore.create(fProject);
 			jproject.setOutputLocation(fProject.getFullPath().append(fFeatureData.getJavaBuildFolderName()), monitor);
-			jproject.setRawClasspath(new IClasspathEntry[] {JavaCore.newSourceEntry(fProject.getFullPath().append(fFeatureData.getSourceFolderName())), JavaCore.newContainerEntry(new Path(JavaRuntime.JRE_CONTAINER))}, monitor);
+			jproject.setRawClasspath(new IClasspathEntry[] {JavaCore.newSourceEntry(fProject.getFullPath().append(fFeatureData.getSourceFolderName())), JavaCore.newContainerEntry(IPath.fromOSString(JavaRuntime.JRE_CONTAINER))}, monitor);
 		}
 	}
 

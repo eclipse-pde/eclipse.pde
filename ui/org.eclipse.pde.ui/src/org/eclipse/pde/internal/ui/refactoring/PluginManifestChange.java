@@ -21,8 +21,8 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
@@ -180,6 +180,6 @@ public class PluginManifestChange {
 	}
 
 	private static boolean isGoodFolderMatch(String value, String oldName) {
-		return new Path(oldName).isPrefixOf(new Path(value));
+		return IPath.fromOSString(oldName).isPrefixOf(IPath.fromOSString(value));
 	}
 }

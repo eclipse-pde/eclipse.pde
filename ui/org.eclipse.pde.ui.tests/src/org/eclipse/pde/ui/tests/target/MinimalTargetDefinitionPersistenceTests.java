@@ -34,7 +34,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.TargetPlatform;
@@ -97,7 +96,7 @@ public class MinimalTargetDefinitionPersistenceTests {
 	 * @return path to JDT feature
 	 */
 	protected IPath getJdtFeatureLocation() {
-		IPath path = new Path(TargetPlatform.getDefaultLocation());
+		IPath path = IPath.fromOSString(TargetPlatform.getDefaultLocation());
 		path = path.append("features");
 		File dir = path.toFile();
 		assertTrue("Missing features directory", dir.exists() && !dir.isFile());
@@ -110,7 +109,7 @@ public class MinimalTargetDefinitionPersistenceTests {
 			}
 		}
 		assertNotNull("Missing JDT feature", location);
-		return new Path(location);
+		return IPath.fromOSString(location);
 	}
 
 	/**
@@ -121,14 +120,14 @@ public class MinimalTargetDefinitionPersistenceTests {
 	@Test
 	public void testWorkspaceTargetHandleMemento() throws CoreException {
 		ITargetPlatformService service = getTargetService();
-		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("does/not/exist"));
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(IPath.fromOSString("does/not/exist"));
 		ITargetHandle handle = service.getTarget(file);
 		assertFalse("Target should not exist", handle.exists());
 		String memento = handle.getMemento();
 		assertNotNull("Missing memento", memento);
 		ITargetHandle handle2 = service.getTarget(memento);
 		assertEquals("Restore failed", handle, handle2);
-		IFile file2 = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("does/not/exist/either"));
+		IFile file2 = ResourcesPlugin.getWorkspace().getRoot().getFile(IPath.fromOSString("does/not/exist/either"));
 		ITargetHandle handle3 = service.getTarget(file2);
 		assertFalse("Should be different targets", handle.equals(handle3));
 	}
@@ -251,8 +250,8 @@ public class MinimalTargetDefinitionPersistenceTests {
 		ITargetLocation[] containers = target.getTargetLocations();
 		assertEquals("Wrong number of bundles", 1, containers.length);
 		assertTrue("Container should be a profile container", containers[0] instanceof ProfileBundleContainer);
-		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()),
-				new Path(getResolvedLocation(containers[0])));
+		assertEquals("Wrong home location", IPath.fromOSString(TargetPlatform.getDefaultLocation()),
+				IPath.fromOSString(getResolvedLocation(containers[0])));
 	}
 
 	/**
@@ -278,8 +277,8 @@ public class MinimalTargetDefinitionPersistenceTests {
 		ITargetLocation[] containers = target.getTargetLocations();
 		assertEquals("Wrong number of bundles", 1, containers.length);
 		assertTrue("Container should be a directory container", containers[0] instanceof DirectoryBundleContainer);
-		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()).append("plugins"),
-				new Path(getResolvedLocation(containers[0])));
+		assertEquals("Wrong home location", IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("plugins"),
+				IPath.fromOSString(getResolvedLocation(containers[0])));
 	}
 
 	/**
@@ -318,8 +317,8 @@ public class MinimalTargetDefinitionPersistenceTests {
 		ITargetLocation[] containers = target.getTargetLocations();
 		assertEquals("Wrong number of bundles", 1, containers.length);
 		assertTrue("Container should be a directory container", containers[0] instanceof DirectoryBundleContainer);
-		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()).append("plugins"),
-				new Path(getResolvedLocation(containers[0])));
+		assertEquals("Wrong home location", IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("plugins"),
+				IPath.fromOSString(getResolvedLocation(containers[0])));
 	}
 
 	/**
@@ -348,16 +347,16 @@ public class MinimalTargetDefinitionPersistenceTests {
 		assertTrue(containers[1] instanceof DirectoryBundleContainer);
 		assertTrue(containers[2] instanceof DirectoryBundleContainer);
 
-		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()),
-				new Path(getResolvedLocation(containers[0])));
+		assertEquals("Wrong home location", IPath.fromOSString(TargetPlatform.getDefaultLocation()),
+				IPath.fromOSString(getResolvedLocation(containers[0])));
 
 		String string = VariablesPlugin.getDefault().getStringVariableManager()
 				.performStringSubstitution("${workspace_loc}");
-		assertEquals("Wrong 1st additional location", new Path(string).append("stuff"),
-				new Path(getResolvedLocation(containers[1])));
+		assertEquals("Wrong 1st additional location", IPath.fromOSString(string).append("stuff"),
+				IPath.fromOSString(getResolvedLocation(containers[1])));
 
-		assertEquals("Wrong 2nd additional location", new Path(TargetPlatform.getDefaultLocation()).append("dropins"),
-				new Path(getResolvedLocation(containers[2])));
+		assertEquals("Wrong 2nd additional location", IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("dropins"),
+				IPath.fromOSString(getResolvedLocation(containers[2])));
 	}
 
 	/**
@@ -417,12 +416,12 @@ public class MinimalTargetDefinitionPersistenceTests {
 		assertTrue(containers[1] instanceof FeatureBundleContainer);
 		assertTrue(containers[2] instanceof DirectoryBundleContainer);
 
-		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()),
-				new Path(getResolvedLocation(containers[0])));
+		assertEquals("Wrong home location", IPath.fromOSString(TargetPlatform.getDefaultLocation()),
+				IPath.fromOSString(getResolvedLocation(containers[0])));
 		assertEquals("Wrong 1st additional location", "org.eclipse.jdt",
 				((FeatureBundleContainer) containers[1]).getFeatureId());
-		assertEquals("Wrong 2nd additional location", new Path(TargetPlatform.getDefaultLocation()).append("dropins"),
-				new Path(getResolvedLocation(containers[2])));
+		assertEquals("Wrong 2nd additional location", IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("dropins"),
+				IPath.fromOSString(getResolvedLocation(containers[2])));
 
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[] {
 				new NameVersionDescriptor("org.eclipse.debug.core", null),
@@ -466,12 +465,12 @@ public class MinimalTargetDefinitionPersistenceTests {
 		assertTrue(containers[1] instanceof FeatureBundleContainer);
 		assertTrue(containers[2] instanceof DirectoryBundleContainer);
 
-		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()),
-				new Path(getResolvedLocation(containers[0])));
+		assertEquals("Wrong home location", IPath.fromOSString(TargetPlatform.getDefaultLocation()),
+				IPath.fromOSString(getResolvedLocation(containers[0])));
 		assertEquals("Wrong 1st additional location", "org.eclipse.jdt",
 				((FeatureBundleContainer) containers[1]).getFeatureId());
-		assertEquals("Wrong 2nd additional location", new Path(TargetPlatform.getDefaultLocation()).append("dropins"),
-				new Path(getResolvedLocation(containers[2])));
+		assertEquals("Wrong 2nd additional location", IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("dropins"),
+				IPath.fromOSString(getResolvedLocation(containers[2])));
 
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[] {
 				new NameVersionDescriptor("org.eclipse.debug.core", null),
@@ -512,8 +511,8 @@ public class MinimalTargetDefinitionPersistenceTests {
 		assertEquals("Wrong number of bundles", 2, containers.length);
 		assertTrue("Container should be a profile container", containers[0] instanceof ProfileBundleContainer);
 		assertTrue("Container should be a profile container", containers[1] instanceof FeatureBundleContainer);
-		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()),
-				new Path(getResolvedLocation(containers[0])));
+		assertEquals("Wrong home location", IPath.fromOSString(TargetPlatform.getDefaultLocation()),
+				IPath.fromOSString(getResolvedLocation(containers[0])));
 		assertEquals("Wrong feature location", "org.eclipse.jdt",
 				((FeatureBundleContainer) containers[1]).getFeatureId());
 
@@ -548,8 +547,8 @@ public class MinimalTargetDefinitionPersistenceTests {
 		ITargetLocation[] containers = target.getTargetLocations();
 		assertEquals("Wrong number of bundles", 1, containers.length);
 		assertTrue("Container should be a directory container", containers[0] instanceof DirectoryBundleContainer);
-		assertEquals("Wrong home location", new Path(TargetPlatform.getDefaultLocation()).append("plugins"),
-				new Path(getResolvedLocation(containers[0])));
+		assertEquals("Wrong home location", IPath.fromOSString(TargetPlatform.getDefaultLocation()).append("plugins"),
+				IPath.fromOSString(getResolvedLocation(containers[0])));
 
 		target.resolve(null);
 

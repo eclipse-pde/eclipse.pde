@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
@@ -39,8 +38,8 @@ import junit.framework.TestSuite;
 public abstract class AnnotationTest extends ApiBuilderTest {
 
 	// reuse the Javadoc tag project
-	protected static IPath WORKSPACE_PATH = new Path("src/a/b/c"); //$NON-NLS-1$
-	protected static IPath WORKSPACE_PATH_DEFAULT = new Path("src"); //$NON-NLS-1$
+	protected static IPath WORKSPACE_PATH = IPath.fromOSString("src/a/b/c"); //$NON-NLS-1$
+	protected static IPath WORKSPACE_PATH_DEFAULT = IPath.fromOSString("src"); //$NON-NLS-1$
 
 	/**
 	 * Constructor
@@ -183,7 +182,7 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return new Path("annotations"); //$NON-NLS-1$
+		return IPath.fromOSString("annotations"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -201,9 +200,9 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 	 */
 	protected void deployAnnotationTest(String sourcename, boolean incremental, boolean usedefault) {
 		try {
-			IPath path = new Path(getTestingProjectName()).append(WORKSPACE_PATH).append(sourcename);
+			IPath path = IPath.fromOSString(getTestingProjectName()).append(WORKSPACE_PATH).append(sourcename);
 			if (usedefault) {
-				path = new Path(getTestingProjectName()).append(WORKSPACE_PATH_DEFAULT).append(sourcename);
+				path = IPath.fromOSString(getTestingProjectName()).append(WORKSPACE_PATH_DEFAULT).append(sourcename);
 			}
 			createWorkspaceFile(path, TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(sourcename));
 			if (incremental) {
@@ -229,9 +228,9 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 	 */
 	protected void deployAnnotationTestWithErrors(String sourcename, boolean incremental, boolean usedefault) {
 		try {
-			IPath path = new Path(getTestingProjectName()).append(WORKSPACE_PATH).append(sourcename);
+			IPath path = IPath.fromOSString(getTestingProjectName()).append(WORKSPACE_PATH).append(sourcename);
 			if (usedefault) {
-				path = new Path(getTestingProjectName()).append(WORKSPACE_PATH_DEFAULT).append(sourcename);
+				path = IPath.fromOSString(getTestingProjectName()).append(WORKSPACE_PATH_DEFAULT).append(sourcename);
 			}
 			createWorkspaceFile(path, TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(sourcename));
 			if (incremental) {

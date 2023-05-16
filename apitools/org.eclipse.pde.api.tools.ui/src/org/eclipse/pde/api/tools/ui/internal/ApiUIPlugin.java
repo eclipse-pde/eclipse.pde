@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaElement;
@@ -95,7 +95,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		Bundle bundle = Platform.getBundle(IApiToolsConstants.ID_API_TOOLS_UI_PLUGIN);
 		URL url = null;
 		if (bundle != null) {
-			url = FileLocator.find(bundle, new Path(path), null);
+			url = FileLocator.find(bundle, IPath.fromOSString(path), null);
 			desc = ImageDescriptor.createFromURL(url);
 		}
 		reg.put(key, desc);

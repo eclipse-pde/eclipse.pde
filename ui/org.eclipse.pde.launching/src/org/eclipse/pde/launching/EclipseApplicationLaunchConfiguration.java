@@ -27,7 +27,6 @@ import java.util.stream.Stream;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.variables.IStringVariableManager;
@@ -121,7 +120,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		boolean showSplash = prop.containsKey("osgi.splashPath") || prop.containsKey("splashLocation"); //$NON-NLS-1$ //$NON-NLS-2$
 		TargetPlatformHelper.checkPluginPropertiesConsistency(fAllBundles, getConfigDir(configuration));
 		programArgs.add("-configuration"); //$NON-NLS-1$
-		programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
+		programArgs.add("file:" + IPath.fromOSString(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
 
 		// add the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
@@ -136,9 +135,9 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 
 				IPath path = null;
 				if (TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$
-					path = new Path(TargetPlatform.getLocation()).append("Eclipse.app/Contents/MacOS/eclipse"); //$NON-NLS-1$
+					path = IPath.fromOSString(TargetPlatform.getLocation()).append("Eclipse.app/Contents/MacOS/eclipse"); //$NON-NLS-1$
 				} else {
-					path = new Path(TargetPlatform.getLocation()).append("eclipse"); //$NON-NLS-1$
+					path = IPath.fromOSString(TargetPlatform.getLocation()).append("eclipse"); //$NON-NLS-1$
 					if (TargetPlatform.getOS().equals("win32")) { //$NON-NLS-1$
 						path = path.addFileExtension("exe"); //$NON-NLS-1$
 					}
@@ -158,7 +157,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	}
 
 	private String computeShowsplashArgument() {
-		IPath eclipseHome = new Path(TargetPlatform.getLocation());
+		IPath eclipseHome = IPath.fromOSString(TargetPlatform.getLocation());
 		IPath fullPath = eclipseHome.append("eclipse"); //$NON-NLS-1$
 		return fullPath.toOSString() + " -showsplash 600"; //$NON-NLS-1$
 	}

@@ -34,7 +34,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.JavaCore;
@@ -179,7 +178,7 @@ public class CoreUtility {
 		}
 
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
-		IContainer container = root.getContainerForLocation(new Path(bundle.getLocation()));
+		IContainer container = root.getContainerForLocation(IPath.fromOSString(bundle.getLocation()));
 		if (container == null) {
 			return true;
 		}
@@ -269,7 +268,7 @@ public class CoreUtility {
 		ZipFile jarFile = null;
 		InputStream stream = null;
 		try {
-			String extension = new Path(bundleLocation.getName()).getFileExtension();
+			String extension = IPath.fromOSString(bundleLocation.getName()).getFileExtension();
 			if ("jar".equals(extension) && bundleLocation.isFile()) { //$NON-NLS-1$
 				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
 				ZipEntry manifestEntry = jarFile.getEntry(path);

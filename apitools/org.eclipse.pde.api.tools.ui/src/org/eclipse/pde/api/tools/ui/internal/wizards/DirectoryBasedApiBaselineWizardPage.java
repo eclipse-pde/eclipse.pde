@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -63,7 +62,7 @@ import org.eclipse.ui.PlatformUI;
 public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 	public static boolean isApplicable(IApiBaseline profile) {
 		String loc = profile.getLocation();
-		return loc != null && new Path(loc).toFile().exists();
+		return loc != null && IPath.fromOSString(loc).toFile().exists();
 	}
 
 	/**
@@ -150,7 +149,7 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 			}
 			String newPath = dialog.open();
 			if (newPath != null
-					&& (!new Path(loctext).equals(new Path(newPath)) || getCurrentComponents().length == 0)) {
+					&& (!IPath.fromOSString(loctext).equals(IPath.fromOSString(newPath)) || getCurrentComponents().length == 0)) {
 				/*
 				 * If the path is identical, but there is no component loaded, we still want to
 				 * reload. This might be the case if the combo is initialized by copy/paste with
@@ -160,9 +159,9 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 				locationcombo.setText(updatedLocation);
 				// If current name matches with the last segment of old location then
 				// update the current name with last segment of new location
-				if (nametext.getText().equals(new Path(loctext).lastSegment())) {
-					nametext.setText(new Path(updatedLocation).lastSegment() == null ? "" //$NON-NLS-1$
-							: new Path(updatedLocation).lastSegment());
+				if (nametext.getText().equals(IPath.fromOSString(loctext).lastSegment())) {
+					nametext.setText(IPath.fromOSString(updatedLocation).lastSegment() == null ? "" //$NON-NLS-1$
+							: IPath.fromOSString(updatedLocation).lastSegment());
 					nametext.setFocus();
 					nametext.selectAll();
 				}
@@ -218,7 +217,7 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 		// On Mac OS, if user selects *.app, then location
 		// should be reset to *.app/Contents/Eclipse if that exists
 		if (System.getProperty("os.name").startsWith("Mac")) {//$NON-NLS-1$ //$NON-NLS-2$
-			IPath nPath = new Path(newPath);
+			IPath nPath = IPath.fromOSString(newPath);
 			if (nPath.lastSegment() == null) {
 				return newLoc;
 			}
@@ -246,7 +245,7 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 				Set<String> locations = new HashSet<>();
 				String loc = fProfile.getLocation();
 				if (loc != null) {
-					IPath location = new Path(loc);
+					IPath location = IPath.fromOSString(loc);
 					// check if the location is a file
 					if (location.toFile().isDirectory()) {
 						locations.add(location.removeTrailingSeparator().toOSString());
@@ -254,7 +253,7 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 				} else {
 					for (IApiComponent component : components) {
 						if (!component.isSystemComponent()) {
-							IPath location = new Path(component.getLocation()).removeLastSegments(1);
+							IPath location = IPath.fromOSString(component.getLocation()).removeLastSegments(1);
 							if (location.toFile().isDirectory()) {
 								locations.add(location.removeTrailingSeparator().toOSString());
 							}
@@ -272,7 +271,7 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 				Location location = Platform.getInstallLocation();
 				if (location != null) {
 					URL url = location.getURL();
-					IPath path = new Path(url.getFile()).removeTrailingSeparator();
+					IPath path = IPath.fromOSString(url.getFile()).removeTrailingSeparator();
 					if (path.toFile().exists()) {
 						locationcombo.add(path.toOSString());
 						locationcombo.select(0);
@@ -337,7 +336,7 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 			reloadbutton.setEnabled(false);
 			return false;
 		}
-		if (!new Path(text).toFile().exists()) {
+		if (!IPath.fromOSString(text).toFile().exists()) {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_24);
 			reloadbutton.setEnabled(false);
 			return false;

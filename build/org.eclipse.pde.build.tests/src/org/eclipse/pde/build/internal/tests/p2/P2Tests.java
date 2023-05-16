@@ -33,7 +33,7 @@ import java.util.zip.ZipOutputStream;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
@@ -148,7 +148,7 @@ public class P2Tests extends P2TestCase {
 		properties.put("arch", arch);
 		properties.put("equinoxLauncherJar", getEquinoxLauncherPath());
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
-				new Path("/scripts/genericTargets.xml"), null);
+				IPath.fromOSString("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] { "runDirector" }, buildFolder.getLocation().toOSString(), properties);
 
@@ -264,7 +264,7 @@ public class P2Tests extends P2TestCase {
 		properties.put("arch", "x86_64");
 		properties.put("equinoxLauncherJar", getEquinoxLauncherPath());
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
-				new Path("/scripts/genericTargets.xml"), null);
+				IPath.fromOSString("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] { "runDirector" }, buildFolder.getLocation().toOSString(), properties);
 
@@ -512,7 +512,7 @@ public class P2Tests extends P2TestCase {
 		properties.put("repoBaseLocation", buildFolder.getFolder("repo").getLocation().toOSString());
 		properties.put("transformedRepoLocation", buildFolder.getFolder("outRepo").getLocation().toOSString());
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
-				new Path("/scripts/genericTargets.xml"), null);
+				IPath.fromOSString("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] { "transformRepos" }, buildFolder.getLocation().toOSString(),
 				properties);
@@ -573,7 +573,7 @@ public class P2Tests extends P2TestCase {
 		assertResourceFile(buildFolder, "repo/artifacts.xml");
 
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"),
-				new Path("/resources/keystore/keystore"), null);
+				IPath.fromOSString("/resources/keystore/keystore"), null);
 		assertNotNull(resource);
 		String keystorePath = FileLocator.toFileURL(resource).getPath();
 
@@ -1014,7 +1014,7 @@ public class P2Tests extends P2TestCase {
 		properties.put("arch", "x86");
 		properties.put("equinoxLauncherJar", getEquinoxLauncherPath());
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
-				new Path("/scripts/genericTargets.xml"), null);
+				IPath.fromOSString("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] { "runDirector" }, buildFolder.getLocation().toOSString(), properties);
 

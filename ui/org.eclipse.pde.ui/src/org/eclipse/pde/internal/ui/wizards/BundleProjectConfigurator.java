@@ -30,7 +30,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -136,7 +135,7 @@ public class BundleProjectConfigurator implements ProjectConfigurator {
 	}
 
 	private boolean hasOSGiManifest(IContainer container) {
-		IFile manifestResource = container.getFile(new Path(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR));
+		IFile manifestResource = container.getFile(IPath.fromOSString(ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR));
 		if (manifestResource.exists()) {
 			Manifest manifest = new Manifest();
 			try (InputStream stream = manifestResource.getContents()) {

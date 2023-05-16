@@ -29,7 +29,6 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.PatternSet.NameEntry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.p2.publisher.PublisherInfo;
 import org.eclipse.pde.build.Constants;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
@@ -250,11 +249,11 @@ public class GatherBundleTask extends AbstractPublisherTask {
 			//handling more than one include here would involve correlating the includes files
 			//with the pattern that included them.
 			if (includes.length == 1) {
-				IPath prefix = new Path(includes[0]).removeLastSegments(1);
+				IPath prefix = IPath.fromOSString(includes[0]).removeLastSegments(1);
 				int count = prefix.segmentCount();
 				String[] files = outputFiles.getDirectoryScanner().getIncludedFiles();
 				for (String file : files) {
-					IPath suffix = new Path(file).removeFirstSegments(count);
+					IPath suffix = IPath.fromOSString(file).removeFirstSegments(count);
 					String computerPath = dot ? suffix.toString() : key + '/' + suffix.toString();
 					computer.addFile(computerPath, new File(baseDir, file));
 				}

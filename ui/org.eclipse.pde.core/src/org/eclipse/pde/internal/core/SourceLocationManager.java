@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.spi.RegistryContributor;
@@ -278,7 +277,7 @@ public class SourceLocationManager implements ICoreConstants {
 				Version vid = new Version(version);
 				pluginDir += "_" + vid; //$NON-NLS-1$
 			}
-			IPath path = Path.fromOSString(pluginDir);
+			IPath path = IPath.fromOSString(pluginDir);
 			return sourceFilePath == null ? path : path.append(sourceFilePath);
 		} catch (IllegalArgumentException e) {
 			return null;
@@ -373,14 +372,14 @@ public class SourceLocationManager implements ICoreConstants {
 			text = text.trim();
 			int commaIndex = text.lastIndexOf(',');
 			if (commaIndex == -1) {
-				return Path.fromOSString(text);
+				return IPath.fromOSString(text);
 			}
 			int atLoc = text.indexOf('@');
 			path = (atLoc == -1) ? text.substring(0, commaIndex) : text.substring(atLoc + 1, commaIndex);
 		} catch (RuntimeException e) {
 			return null;
 		}
-		return Path.fromOSString(path);
+		return IPath.fromOSString(path);
 	}
 
 	/**
@@ -415,7 +414,7 @@ public class SourceLocationManager implements ICoreConstants {
 			for (IConfigurationElement element : children) {
 				if (element.getName().equals("location")) { //$NON-NLS-1$
 					String pathValue = element.getAttribute("path"); //$NON-NLS-1$
-					IPath path = Path.fromOSString(base.getInstallLocation()).append(pathValue);
+					IPath path = IPath.fromOSString(base.getInstallLocation()).append(pathValue);
 					if (path.toFile().exists()) {
 						result.locations.add(path);
 					}

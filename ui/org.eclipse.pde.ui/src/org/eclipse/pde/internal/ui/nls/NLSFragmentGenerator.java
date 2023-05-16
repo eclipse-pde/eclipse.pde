@@ -40,7 +40,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardContainer;
@@ -362,7 +361,7 @@ public class NLSFragmentGenerator {
 						String name = zfe.getName();
 
 						String[] segments = name.split(SLASH);
-						IPath path = Path.fromPortableString(join(SLASH, segments, 0, segments.length - 1));
+						IPath path = IPath.fromPortableString(join(SLASH, segments, 0, segments.length - 1));
 						String resourceName = segments[segments.length - 1];
 						String localizedResourceName = localeSpecificName(resourceName, locale);
 						if (propertiesFilter.include(name)) {
@@ -390,7 +389,7 @@ public class NLSFragmentGenerator {
 						String relativePath = file.getAbsolutePath().substring(installLocation.length())
 								.replace(File.separatorChar, SLASH.charAt(0));
 						String[] segments = relativePath.split(SLASH);
-						IPath path = Path.fromPortableString(join(SLASH, segments, 0, segments.length - 1));
+						IPath path = IPath.fromPortableString(join(SLASH, segments, 0, segments.length - 1));
 						String resourceName = segments[segments.length - 1];
 						String localizedResourceName = localeSpecificName(resourceName, locale);
 

@@ -26,7 +26,6 @@ import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -326,7 +325,7 @@ public class UseScanManager {
 				while (entries.hasMoreElements()) {
 					ZipEntry o = entries.nextElement();
 					if (o.isDirectory()) {
-						IPath path = new Path(o.getName());
+						IPath path = IPath.fromOSString(o.getName());
 						int count = path.segmentCount();
 						if (count > 2) {
 							return NAME_REGEX.matcher(path.segment(0)).matches() || NAME_REGEX.matcher(path.segment(1)).matches();
@@ -346,7 +345,7 @@ public class UseScanManager {
 	 */
 	public static boolean isValidScanLocation(String location) {
 		if (location != null && location.length() > 0) {
-			IPath path = new Path(location);
+			IPath path = IPath.fromOSString(location);
 			File file = path.toFile();
 			return isValidDirectory(file) || isValidArchive(file);
 		}

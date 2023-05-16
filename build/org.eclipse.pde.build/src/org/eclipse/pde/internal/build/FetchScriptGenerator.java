@@ -36,7 +36,6 @@ import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.osgi.util.NLS;
@@ -515,7 +514,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		}
 
 		File target = new File(root, DEFAULT_RETRIEVE_FILENAME_DESCRIPTOR);
-		IPath destination = new Path(root.getAbsolutePath()).append("tempFeature/"); //$NON-NLS-1$
+		IPath destination = IPath.fromOSString(root.getAbsolutePath()).append("tempFeature/"); //$NON-NLS-1$
 		try {
 			AntScript retrieve = new AntScript(new BufferedOutputStream(new FileOutputStream(target)));
 			try {
@@ -618,7 +617,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected IPath computeFinalLocation(String type, String elementName, Version version) {
-		IPath location = new Path(Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY));
+		IPath location = IPath.fromOSString(Utils.getPropertyFormat(PROPERTY_BUILD_DIRECTORY));
 		if (type.equals(IFetchFactory.ELEMENT_TYPE_FEATURE))
 			location = location.append(DEFAULT_FEATURE_LOCATION);
 		else

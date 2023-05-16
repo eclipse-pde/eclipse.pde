@@ -49,7 +49,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.URIUtil;
@@ -123,7 +122,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		@Override
 		public boolean visit(IResourceProxy proxy) {
 			if (proxy.getType() == IResource.FILE) {
-				if (ICoreConstants.TARGET_FILE_EXTENSION.equalsIgnoreCase(new Path(proxy.getName()).getFileExtension())) {
+				if (ICoreConstants.TARGET_FILE_EXTENSION.equalsIgnoreCase(IPath.fromOSString(proxy.getName()).getFileExtension())) {
 					fList.add(proxy.requestResource());
 				}
 				return false;
@@ -521,8 +520,8 @@ public class TargetPlatformService implements ITargetPlatformService {
 			if (location != null) {
 				URL url = location.getURL();
 				if (url != null) {
-					IPath installPath = new Path(url.getFile());
-					IPath configPath = new Path(configLocation);
+					IPath installPath = IPath.fromOSString(url.getFile());
+					IPath configPath = IPath.fromOSString(configLocation);
 					if (installPath.isPrefixOf(configPath)) {
 						// if it is the default configuration area, do not specify explicitly
 						configPath = configPath.removeFirstSegments(installPath.segmentCount());

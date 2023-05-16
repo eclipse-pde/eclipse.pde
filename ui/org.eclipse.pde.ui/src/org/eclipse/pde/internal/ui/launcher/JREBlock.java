@@ -21,7 +21,6 @@ import java.util.Comparator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -208,7 +207,7 @@ public class JREBlock {
 		String jre = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String) null);
 		IPath jrePath = null;
 		if (jre != null) {
-			jrePath = Path.fromPortableString(jre);
+			jrePath = IPath.fromPortableString(jre);
 		}
 		String vmInstallName = null;
 		String eeId = null;

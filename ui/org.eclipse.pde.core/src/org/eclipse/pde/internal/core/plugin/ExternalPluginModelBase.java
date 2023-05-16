@@ -21,7 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.ICoreConstants;
@@ -81,7 +80,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 
 	@Override
 	public void load(BundleDescription description, PDEState state) {
-		IPath path = new Path(description.getLocation());
+		IPath path = IPath.fromOSString(description.getLocation());
 		String device = path.getDevice();
 		if (device != null) {
 			path = path.setDevice(device.toUpperCase());

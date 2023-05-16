@@ -27,7 +27,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.action.IToolBarManager;
@@ -152,7 +151,7 @@ public class TocEditor extends MultiSourceEditor {
 				for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 					Object obj = iter.next();
 					if (obj instanceof TocObject && ((TocObject) obj).getPath() != null) {
-						IPath resourcePath = new Path(((TocObject) obj).getPath());
+						IPath resourcePath = IPath.fromOSString(((TocObject) obj).getPath());
 
 						if (!resourcePath.isEmpty()) {
 							TocModel model = (TocModel) getAggregateModel();

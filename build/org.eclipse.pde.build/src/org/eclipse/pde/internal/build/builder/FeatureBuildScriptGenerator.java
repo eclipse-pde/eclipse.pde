@@ -29,7 +29,6 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -198,7 +197,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	private void generateGatherLogsTarget() {
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_LOGS, TARGET_INIT, null, null, null);
-		String destinationTempFolder = new Path(featureTempFolder).append(DEFAULT_PLUGIN_LOCATION).toString();
+		String destinationTempFolder = IPath.fromOSString(featureTempFolder).append(DEFAULT_PLUGIN_LOCATION).toString();
 		script.printMkdirTask(destinationTempFolder);
 		script.printProperty(PROPERTY_DESTINATION_TEMP_FOLDER, destinationTempFolder);
 		script.printConditionIsSet(PROPERTY_LOG_EXTENSION_PARAM, PROPERTY_LOG_EXTENSION, PROPERTY_LOG_EXTENSION, PROPERTY_LOG_EXTENSION_PARAM);
@@ -282,10 +281,10 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		Map<String, String> params = new HashMap<>(1);
 		params.put(PROPERTY_INCLUDE_CHILDREN, "true"); //$NON-NLS-1$
 		params.put(PROPERTY_TARGET, TARGET_GATHER_LOGS);
-		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(featureTempFolder).append(DEFAULT_PLUGIN_LOCATION).toString());
+		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, IPath.fromOSString(featureTempFolder).append(DEFAULT_PLUGIN_LOCATION).toString());
 		params.put(Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION_PARAM), Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION));
 		script.printAntCallTask(TARGET_ALL_CHILDREN, false, params);
-		IPath destination = new Path(Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION)).append(featureFullName + ".log.zip"); //$NON-NLS-1$
+		IPath destination = IPath.fromOSString(Utils.getPropertyFormat(PROPERTY_FEATURE_DESTINATION)).append(featureFullName + ".log.zip"); //$NON-NLS-1$
 		script.printZipTask(destination.toString(), featureTempFolder, true, false, null);
 		script.printDeleteTask(featureTempFolder, null, null);
 		script.printTargetEnd();
@@ -328,7 +327,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		Map<String, String> callbackParams = null;
 		if (customFeatureCallbacks != null) {
 			callbackParams = new HashMap<>(2);
-			callbackParams.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE)).append(DEFAULT_PLUGIN_LOCATION).toString());
+			callbackParams.put(PROPERTY_DESTINATION_TEMP_FOLDER, IPath.fromOSString(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE)).append(DEFAULT_PLUGIN_LOCATION).toString());
 			callbackParams.put(PROPERTY_FEATURE_DIRECTORY, featureTemp);
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, callbackParams, null);
 		}
@@ -358,7 +357,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 			script.println("   buildResultFolder=\"" + featureTemp + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("   baseDirectory=\"${basedir}\""); //$NON-NLS-1$
 		if (getLicenseFeature() != null) {
-			IPath licenseLocation = Utils.makeRelative(new Path(getLicenseFeatureRootLocation()), new Path(featureRootLocation));
+			IPath licenseLocation = Utils.makeRelative(IPath.fromOSString(getLicenseFeatureRootLocation()), IPath.fromOSString(featureRootLocation));
 			String licensePath = licenseLocation.isAbsolute() ? licenseLocation.toString() : "${basedir}/" + licenseLocation.toString(); //$NON-NLS-1$
 			script.println("   licenseDirectory=\"" + licensePath + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -385,14 +384,14 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		Map<String, String> callbackParams = null;
 		if (customFeatureCallbacks != null) {
 			callbackParams = new HashMap<>(2);
-			callbackParams.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE)).append(DEFAULT_PLUGIN_LOCATION).toString());
+			callbackParams.put(PROPERTY_DESTINATION_TEMP_FOLDER, IPath.fromOSString(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE)).append(DEFAULT_PLUGIN_LOCATION).toString());
 			callbackParams.put(PROPERTY_FEATURE_DIRECTORY, root);
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, callbackParams, null);
 		}
 
 		Map<String, String> params = new HashMap<>(2);
 		params.put(PROPERTY_TARGET, TARGET_GATHER_BIN_PARTS);
-		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, new Path(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE)).append(DEFAULT_PLUGIN_LOCATION).toString());
+		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, IPath.fromOSString(Utils.getPropertyFormat(PROPERTY_FEATURE_BASE)).append(DEFAULT_PLUGIN_LOCATION).toString());
 		script.printAntCallTask(TARGET_CHILDREN, true, params);
 
 		if (include != null) {
@@ -441,7 +440,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 			return;
 		}
 
-		IPath licenseLocation = Utils.makeRelative(new Path(getLicenseFeatureRootLocation()), new Path(featureRootLocation));
+		IPath licenseLocation = Utils.makeRelative(IPath.fromOSString(getLicenseFeatureRootLocation()), IPath.fromOSString(featureRootLocation));
 		String licensePath = licenseLocation.isAbsolute() ? licenseLocation.toString() : "${basedir}/" + licenseLocation.toString(); //$NON-NLS-1$
 
 		if (printCopy) {
@@ -551,7 +550,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 					fromDir = getLicenseFeatureRootLocation();
 				}
 				if (file.startsWith("file:")) { //$NON-NLS-1$
-					IPath target = new Path(file.substring(5));
+					IPath target = IPath.fromOSString(file.substring(5));
 					fileSet[j] = new FileSet(fromDir + target.removeLastSegments(1), null, target.lastSegment(), null, null, null, null);
 				} else {
 					fileSet[j] = new FileSet(fromDir + file, null, "**", null, null, null, null); //$NON-NLS-1$
@@ -680,7 +679,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 					params.put(PROPERTY_WS, aMatchingConfig.getWs());
 				if (!aMatchingConfig.getArch().equals(Config.ANY))
 					params.put(PROPERTY_ARCH, aMatchingConfig.getArch());
-				IPath location = Utils.makeRelative(new Path(getLocation(current)), new Path(featureRootLocation));
+				IPath location = Utils.makeRelative(IPath.fromOSString(getLocation(current)), IPath.fromOSString(featureRootLocation));
 				script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toString(), Utils.getPropertyFormat(PROPERTY_TARGET), null, null, params);
 			}
 		}
@@ -726,7 +725,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 				continue;
 
 			String includedFeatureDirectory = includedFeature.getRootLocation();
-			IPath location = Utils.makeRelative(new Path(includedFeatureDirectory), new Path(featureRootLocation));
+			IPath location = Utils.makeRelative(IPath.fromOSString(includedFeatureDirectory), IPath.fromOSString(featureRootLocation));
 			script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toString(), Utils.getPropertyFormat(PROPERTY_TARGET), null, null, null);
 		}
 		//}
@@ -820,7 +819,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	private void generateRefreshTarget() {
 		script.println();
 		script.printTargetDeclaration(TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, NLS.bind(Messages.build_feature_refresh, feature.getId()));
-		script.printConvertPathTask(new Path(featureRootLocation).removeLastSegments(0).toOSString().replace('\\', '/'), PROPERTY_RESOURCE_PATH, false);
+		script.printConvertPathTask(IPath.fromOSString(featureRootLocation).removeLastSegments(0).toOSString().replace('\\', '/'), PROPERTY_RESOURCE_PATH, false);
 		script.printRefreshLocalTask(Utils.getPropertyFormat(PROPERTY_RESOURCE_PATH), "infinite"); //$NON-NLS-1$
 		Map<String, String> params = new HashMap<>(2);
 		params.put(PROPERTY_TARGET, TARGET_REFRESH);

@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
@@ -172,7 +171,7 @@ public class ProjectUtils {
 		if (entry == null) {
 			throw new IllegalArgumentException(path + " does not exist");
 		}
-		IPath projectFile = Path.fromPortableString(entry.getPath()).append(IProjectDescription.DESCRIPTION_FILE_NAME);
+		IPath projectFile = IPath.fromPortableString(entry.getPath()).append(IProjectDescription.DESCRIPTION_FILE_NAME);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProjectDescription projectDescription = workspace.loadProjectDescription(projectFile);
 		IProject project = workspace.getRoot().getProject(projectDescription.getName());

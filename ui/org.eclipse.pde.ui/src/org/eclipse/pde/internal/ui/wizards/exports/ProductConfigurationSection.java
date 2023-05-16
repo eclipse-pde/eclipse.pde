@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -172,8 +171,8 @@ public class ProductConfigurationSection {
 		if (path == null || path.length() == 0)
 			return null;
 
-		IPath thePath = new Path(path);
-		return thePath.segmentCount() < 2 ? null : PDEPlugin.getWorkspace().getRoot().getFile(new Path(path));
+		IPath thePath = IPath.fromOSString(path);
+		return thePath.segmentCount() < 2 ? null : PDEPlugin.getWorkspace().getRoot().getFile(IPath.fromOSString(path));
 	}
 
 	protected void updateProductFields() {
@@ -237,7 +236,7 @@ public class ProductConfigurationSection {
 		if (configLocation.length() == 0)
 			return PDEUIMessages.ProductExportWizardPage_noProduct;
 
-		IPath path = new Path(configLocation);
+		IPath path = IPath.fromOSString(configLocation);
 		IResource resource = PDEPlugin.getWorkspace().getRoot().findMember(path);
 		if (resource == null || !(resource instanceof IFile))
 			return PDEUIMessages.ProductExportWizardPage_productNotExists;

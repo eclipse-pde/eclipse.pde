@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -551,7 +550,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
 	private boolean resourceExists(String location) {
 		String bundleJar = null;
-		IPath path = new Path(location);
+		IPath path = IPath.fromOSString(location);
 		if ("platform:".equals(path.getDevice()) && path.segmentCount() > 2) { //$NON-NLS-1$
 			if ("plugin".equals(path.segment(0))) { //$NON-NLS-1$
 				String id = path.segment(1);
@@ -560,7 +559,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 					path = path.setDevice(null).removeFirstSegments(2);
 					String bundleLocation = model.getInstallLocation();
 					if (new File(bundleLocation).isDirectory()) {
-						path = new Path(model.getInstallLocation()).append(path);
+						path = IPath.fromOSString(model.getInstallLocation()).append(path);
 					} else {
 						bundleJar = bundleLocation;
 					}
@@ -575,7 +574,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 					path = path.removeFirstSegments(3);
 					String bundleLocation = model.getInstallLocation();
 					if (new File(bundleLocation).isDirectory()) {
-						path = new Path(model.getInstallLocation()).append(path);
+						path = IPath.fromOSString(model.getInstallLocation()).append(path);
 					} else {
 						bundleJar = bundleLocation;
 					}
@@ -602,7 +601,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
 		for (int i = 0; i < paths.size(); i++) {
 			if (bundleJar == null) {
-				IPath currPath = new Path(paths.get(i));
+				IPath currPath = IPath.fromOSString(paths.get(i));
 				if (currPath.isAbsolute() && currPath.toFile().exists()) {
 					return true;
 				}

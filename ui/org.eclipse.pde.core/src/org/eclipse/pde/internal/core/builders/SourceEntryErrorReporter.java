@@ -28,7 +28,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -377,7 +376,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			}
 			String[] tokens = sourceEntry.getTokens();
 			for (final String token : tokens) {
-				IPath path = new Path(token).addTrailingSeparator();
+				IPath path = IPath.fromOSString(token).addTrailingSeparator();
 				SourceFolder sourceFolder = fSourceFolderMap.get(path);
 				if (sourceFolder == null) {
 					sourceFolder = new SourceFolder(path, null);
@@ -395,7 +394,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			}
 			String[] tokens = outputEntry.getTokens();
 			for (String token : tokens) {
-				IPath path = new Path(token).addTrailingSeparator();
+				IPath path = IPath.fromOSString(token).addTrailingSeparator();
 				if (path.segmentCount() == 1 && path.segment(0).equals(".")) { //$NON-NLS-1$
 					// translate "." to root path
 					path = IPath.ROOT;

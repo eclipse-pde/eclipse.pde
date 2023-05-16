@@ -898,7 +898,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		for (Entry<ITargetDefinition, IPath> entry : fMoved.entrySet()) {
 			try {
 				ITargetDefinition target = entry.getKey();
-				// IPath path = Path.fromPortableString((String) fMoved.get(target));
+				// IPath path = IPath.fromPortableString((String) fMoved.get(target));
 				IFile targetFile = PDECore.getWorkspace().getRoot().getFile(entry.getValue());
 
 				WorkspaceFileTargetHandle wrkspcTargetHandle = new WorkspaceFileTargetHandle(targetFile);

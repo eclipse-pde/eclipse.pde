@@ -31,7 +31,7 @@ import java.util.TreeSet;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
@@ -981,7 +981,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			}
 			// we have a value from a resource attribute
 			if (iconPath != null) {
-				String ext = new Path(iconPath).getFileExtension();
+				String ext = IPath.fromOSString(iconPath).getFileExtension();
 				// if the resource targets a folder, the file extension will be null
 				if (ext == null)
 					return null;

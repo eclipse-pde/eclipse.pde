@@ -39,7 +39,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -334,7 +333,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 			if (!pluginJar.exists())
 				return;
 			String templateDirectory = file.substring(exclamation + 1); // "/some/path/"
-			IPath path = new Path(templateDirectory);
+			IPath path = IPath.fromOSString(templateDirectory);
 			try (ZipFile zipFile = new ZipFile(pluginJar)) {
 				generateFiles(zipFile, path, project, true, false, monitor);
 			} catch (IOException ioe) {
@@ -449,7 +448,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 					if (isOkToCreateFolder(member) == false)
 						continue;
 					String folderName = getProcessedString(member.getName(), member.getName());
-					dstContainer = dst.getFolder(new Path(folderName));
+					dstContainer = dst.getFolder(IPath.fromOSString(folderName));
 				}
 				if (dstContainer instanceof IFolder && !dstContainer.exists())
 					((IFolder) dstContainer).create(true, true, monitor);
@@ -474,7 +473,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 
 		for (Enumeration<? extends ZipEntry> zipEntries = zipFile.entries(); zipEntries.hasMoreElements();) {
 			ZipEntry zipEntry = zipEntries.nextElement();
-			IPath entryPath = new Path(zipEntry.getName());
+			IPath entryPath = IPath.fromOSString(zipEntry.getName());
 			if (entryPath.segmentCount() <= pathLength) {
 				// ancestor or current directory
 				continue;
@@ -495,7 +494,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 		}
 
 		for (ZipEntry zipEnry : childZipEntries.values()) {
-			String name = new Path(zipEnry.getName()).lastSegment().toString();
+			String name = IPath.fromOSString(zipEnry.getName()).lastSegment().toString();
 			if (zipEnry.isDirectory()) {
 				IContainer dstContainer = null;
 
@@ -513,7 +512,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 					if (isOkToCreateFolder(new File(path.toFile(), name)) == false)
 						continue;
 					String folderName = getProcessedString(name, name);
-					dstContainer = dst.getFolder(new Path(folderName));
+					dstContainer = dst.getFolder(IPath.fromOSString(folderName));
 				}
 				if (dstContainer instanceof IFolder && !dstContainer.exists())
 					((IFolder) dstContainer).create(true, true, monitor);
@@ -536,7 +535,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 		String packageName = packageValue != null ? packageValue.toString() : null;
 		if (packageName == null)
 			packageName = model.getPluginBase().getId();
-		IPath path = new Path(packageName.replace('.', File.separatorChar));
+		IPath path = IPath.fromOSString(packageName.replace('.', File.separatorChar));
 		if (sourceFolder != null)
 			path = sourceFolder.getProjectRelativePath().append(path);
 
@@ -553,7 +552,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 		String targetFileName = getProcessedString(fileName, fileName);
 
 		monitor.subTask(targetFileName);
-		IFile dstFile = dst.getFile(new Path(targetFileName));
+		IFile dstFile = dst.getFile(IPath.fromOSString(targetFileName));
 
 		try (InputStream stream = getProcessedStream(fileName, input, binary)) {
 			if (dstFile.exists()) {

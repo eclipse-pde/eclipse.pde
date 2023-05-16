@@ -25,7 +25,6 @@ import java.util.Properties;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
@@ -69,7 +68,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		final String JAR = "jar"; //$NON-NLS-1$
 		final String DOT_JAR = '.' + JAR;
 		if (!AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER)) {
-			IPath path = new Path(bundle.getLocation());
+			IPath path = IPath.fromOSString(bundle.getLocation());
 			if (shape.equals(ShapeAdvisor.FILE) && !JAR.equalsIgnoreCase(path.getFileExtension()))
 				return path.lastSegment().concat(DOT_JAR);
 			return path.lastSegment();
@@ -81,7 +80,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 
 	private String getFinalName(BuildTimeFeature feature) {
 		if (!AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_AS_NORMALIZER)) {
-			IPath featurePath = new Path(feature.getURL().getPath());
+			IPath featurePath = IPath.fromOSString(feature.getURL().getPath());
 			return featurePath.segment(featurePath.segmentCount() - 2);
 		}
 		return feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
@@ -97,7 +96,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		try {
 			String url = getSite(false).getSiteContentProvider().getInstalledBaseURL();
 			if (url != null)
-				baseLocation = new Path(url);
+				baseLocation = IPath.fromOSString(url);
 		} catch (CoreException e) {
 			//nothing
 		}
@@ -105,14 +104,14 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		ArrayList<FileSet> p2Features = BuildDirector.p2Gathering ? new ArrayList<>() : null;
 		ArrayList<FileSet> p2Bundles = BuildDirector.p2Gathering ? new ArrayList<>() : null;
 		for (BundleDescription plugin2 : plugins) {
-			IPath pluginLocation = new Path(plugin2.getLocation());
+			IPath pluginLocation = IPath.fromOSString(plugin2.getLocation());
 			String location = pluginLocation.toOSString();
 			boolean isFolder = isFolder(pluginLocation);
 
 			//try to relate the plugin location to the ${baseLocation} property
 			if (baseLocation != null && baseLocation.isPrefixOf(pluginLocation)) {
 				IPath relative = pluginLocation.removeFirstSegments(baseLocation.segmentCount());
-				location = new Path(Utils.getPropertyFormat(PROPERTY_BASE_LOCATION)).append(relative).toOSString();
+				location = IPath.fromOSString(Utils.getPropertyFormat(PROPERTY_BASE_LOCATION)).append(relative).toOSString();
 			}
 			if (BuildDirector.p2Gathering) {
 				p2Bundles.add(new FileSet(pluginLocation.removeLastSegments(1).toOSString(), null, pluginLocation.lastSegment(), null, null, null, null));
@@ -124,11 +123,11 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		}
 
 		for (BuildTimeFeature feature2 : features) {
-			IPath featureLocation = new Path(feature2.getRootLocation()); // Here we assume that all the features are local
+			IPath featureLocation = IPath.fromOSString(feature2.getRootLocation()); // Here we assume that all the features are local
 			String location = featureLocation.toOSString();
 			if (baseLocation != null && baseLocation.isPrefixOf(featureLocation)) {
 				IPath relative = featureLocation.removeFirstSegments(baseLocation.segmentCount());
-				location = new Path(Utils.getPropertyFormat(PROPERTY_BASE_LOCATION)).append(relative).toOSString();
+				location = IPath.fromOSString(Utils.getPropertyFormat(PROPERTY_BASE_LOCATION)).append(relative).toOSString();
 			}
 
 			if (BuildDirector.p2Gathering) {
@@ -247,7 +246,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 
 	protected Object[] getFinalShape(BundleDescription bundle) {
 		if (AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE) == true) {
-			String shape = isFolder(new Path(bundle.getLocation())) ? ShapeAdvisor.FOLDER : ShapeAdvisor.FILE;
+			String shape = isFolder(IPath.fromOSString(bundle.getLocation())) ? ShapeAdvisor.FOLDER : ShapeAdvisor.FILE;
 			return new Object[] {getFinalName(bundle, shape), shape};
 		}
 		return shapeAdvisor.getFinalShape(bundle);

@@ -21,7 +21,6 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IAccessRule;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -55,7 +54,7 @@ public class PDEClasspathContainer {
 	private static HashMap<IPath, IAccessRule> ACCESSIBLE_RULES = new HashMap<>();
 	private static HashMap<IPath, IAccessRule> DISCOURAGED_RULES = new HashMap<>();
 
-	private static final IAccessRule EXCLUDE_ALL_RULE = JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE | IAccessRule.IGNORE_IF_BETTER); //$NON-NLS-1$
+	private static final IAccessRule EXCLUDE_ALL_RULE = JavaCore.newAccessRule(IPath.fromOSString("**/*"), IAccessRule.K_NON_ACCESSIBLE | IAccessRule.IGNORE_IF_BETTER); //$NON-NLS-1$
 
 	protected void addProjectEntry(IProject project, Rule[] rules, boolean exportsExternalAnnotations,
 			ArrayList<IClasspathEntry> entries) throws CoreException {
@@ -90,14 +89,14 @@ public class PDEClasspathContainer {
 		if (isJarShape) {
 			IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, ".", isJarShape); //$NON-NLS-1$
 			if (srcPath == null) {
-				srcPath = new Path(model.getInstallLocation());
+				srcPath = IPath.fromOSString(model.getInstallLocation());
 			}
-			addLibraryEntry(new Path(model.getInstallLocation()), srcPath, rules, getClasspathAttributes(model), entries);
+			addLibraryEntry(IPath.fromOSString(model.getInstallLocation()), srcPath, rules, getClasspathAttributes(model), entries);
 
 			// If the jarred plugin contains any jarred libraries they must be extracted as the compiler can't handle nested jar files
 			File[] extractedLibraries = PDECore.getDefault().getModelManager().getExternalModelManager().getExtractedLibraries(model);
 			for (File libraryFile : extractedLibraries) {
-				IPath path = new Path(libraryFile.getAbsolutePath());
+				IPath path = IPath.fromOSString(libraryFile.getAbsolutePath());
 				addLibraryEntry(path, path, rules, getClasspathAttributes(model), entries);
 			}
 		} else {
@@ -106,9 +105,9 @@ public class PDEClasspathContainer {
 				// If there are no libraries, assume the root of the plug-in is the library '.'
 				IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, ".", isJarShape); //$NON-NLS-1$
 				if (srcPath == null) {
-					srcPath = new Path(model.getInstallLocation());
+					srcPath = IPath.fromOSString(model.getInstallLocation());
 				}
-				addLibraryEntry(new Path(model.getInstallLocation()), srcPath, rules, getClasspathAttributes(model), entries);
+				addLibraryEntry(IPath.fromOSString(model.getInstallLocation()), srcPath, rules, getClasspathAttributes(model), entries);
 			} else {
 				for (IPluginLibrary library : libraries) {
 					if (IPluginLibrary.RESOURCE.equals(library.getType())) {

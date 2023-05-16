@@ -20,7 +20,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.log.Logger;
@@ -92,7 +92,7 @@ public class TogglePreferenceTraceControl {
 
 	protected ImageDescriptor getImageDescriptor() {
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
-		URL url = FileLocator.find(bundle, new Path("$nl$/icons/trace_preferences.png"), null);
+		URL url = FileLocator.find(bundle, IPath.fromOSString("$nl$/icons/trace_preferences.png"), null);
 		return ImageDescriptor.createFromURL(url);
 	}
 }

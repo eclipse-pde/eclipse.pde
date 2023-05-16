@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.pde.launching;singleton:=true
-Bundle-Version: 3.11.0.qualifier
+Bundle-Version: 3.11.100.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Vendor: %provider-name
 Require-Bundle: org.eclipse.jdt.junit.core;bundle-version="[3.6.0,4.0.0)",
  org.eclipse.jdt.launching;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.debug.core;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.core.runtime;bundle-version="[3.11.0,4.0.0)",
+ org.eclipse.core.runtime;bundle-version="[3.27.0,4.0.0)",
  org.eclipse.jdt.core;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.variables;bundle-version="[3.1.0,4.0.0)",
  org.eclipse.pde.build;bundle-version="[3.2.0,4.0.0)",

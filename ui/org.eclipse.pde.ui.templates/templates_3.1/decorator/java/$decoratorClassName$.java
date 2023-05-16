@@ -4,7 +4,7 @@ import java.net.URL;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
  * An example showing how to control when an element is decorated. This example
  * decorates only elements that are instances of IResource and whose attribute
  * is 'Read-only'.
- * 
+ *
  * @see ILightweightLabelDecorator
  */
 public class $decoratorClassName$ implements ILightweightLabelDecorator {
@@ -58,11 +58,11 @@ public class $decoratorClassName$ implements ILightweightLabelDecorator {
 		ResourceAttributes attrs = resource.getResourceAttributes();
 		if (attrs.isReadOnly()){
 			URL url = FileLocator.find(
-					Platform.getBundle("$pluginId$"), new Path(iconPath), null); //NON-NLS-1
+					Platform.getBundle("$pluginId$"), IPath.fromOSString(iconPath), null); //NON-NLS-1
 
 			if (url == null)
 				return;
-			descriptor = ImageDescriptor.createFromURL(url);			
+			descriptor = ImageDescriptor.createFromURL(url);
 %if decoratorPlacement == "BOTTOM_RIGHT"
 			quadrant = IDecoration.BOTTOM_RIGHT;
 %else
@@ -78,8 +78,8 @@ public class $decoratorClassName$ implements ILightweightLabelDecorator {
 %				if decoratorPlacement == "UNDERLAY"
 			quadrant = IDecoration.UNDERLAY;
 %				endif
-%			endif	
-%		endif	
+%			endif
+%		endif
 %	endif
 %endif
 			decoration.addOverlay(descriptor,quadrant);

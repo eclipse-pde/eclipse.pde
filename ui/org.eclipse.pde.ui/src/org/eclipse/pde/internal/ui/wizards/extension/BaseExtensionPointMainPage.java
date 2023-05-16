@@ -30,7 +30,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.Viewer;
@@ -249,7 +248,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 
 	private IFile generateSchemaFile(String pluginId, String id, String name, boolean shared, String schema, IProgressMonitor monitor) throws CoreException {
 		IWorkspace workspace = fContainer.getWorkspace();
-		IPath schemaPath = new Path(schema).removeLastSegments(1);
+		IPath schemaPath = IPath.fromOSString(schema).removeLastSegments(1);
 		IPath newSchemaPath = fContainer.getProjectRelativePath().append(schemaPath);
 		monitor.subTask(PDEUIMessages.BaseExtensionPoint_generating);
 		if (newSchemaPath.isEmpty() == false) {
@@ -284,7 +283,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 						if (!schema.endsWith(".exsd")) //$NON-NLS-1$
 							schemaName = schema + ".exsd"; //$NON-NLS-1$
 
-						IFile file = fContainer.getFile(new Path(schema));
+						IFile file = fContainer.getFile(IPath.fromOSString(schema));
 						// do not overwrite if schema already exists
 						if (!file.exists())
 							try {
@@ -311,7 +310,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		if (fSchemaText != null) {
 			String schema = fSchemaText.getText();
 			if (schema.length() == 0) {
-				if (fSchemaLocationText != null && SCHEMA_DIR.equals(new Path(fSchemaLocationText.getText()).lastSegment())) {
+				if (fSchemaLocationText != null && SCHEMA_DIR.equals(IPath.fromOSString(fSchemaLocationText.getText()).lastSegment())) {
 					return ""; //$NON-NLS-1$
 				}
 				return SCHEMA_DIR;

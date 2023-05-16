@@ -16,7 +16,7 @@ package org.eclipse.pde.internal.runtime;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -115,7 +115,7 @@ public class PDERuntimePluginImages {
 
 	private static URL makeIconURL(String prefix, String name) {
 		String path = "$nl$/" + prefix + name; //$NON-NLS-1$
-		return FileLocator.find(PDERuntimePlugin.getDefault().getBundle(), new Path(path), null);
+		return FileLocator.find(PDERuntimePlugin.getDefault().getBundle(), IPath.fromOSString(path), null);
 	}
 
 	public static Image manage(String key, ImageDescriptor desc) {

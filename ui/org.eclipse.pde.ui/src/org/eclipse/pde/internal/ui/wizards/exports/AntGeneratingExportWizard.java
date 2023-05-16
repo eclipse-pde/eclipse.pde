@@ -26,7 +26,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -142,8 +142,8 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 	protected abstract Document generateAntTask();
 
 	protected void generateAntBuildFile(String filename) {
-		String parent = new Path(filename).removeLastSegments(1).toOSString();
-		String buildFilename = new Path(filename).lastSegment();
+		String parent = IPath.fromOSString(filename).removeLastSegments(1).toOSString();
+		String buildFilename = IPath.fromOSString(filename).lastSegment();
 		if (!buildFilename.endsWith(".xml")) //$NON-NLS-1$
 			buildFilename += ".xml"; //$NON-NLS-1$
 		File dir = new File(new File(parent).getAbsolutePath());
@@ -163,12 +163,12 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 
 	private void setDefaultValues(File dir, String buildFilename) {
 		try {
-			IContainer container = PDEPlugin.getWorkspace().getRoot().getContainerForLocation(new Path(dir.toString()));
+			IContainer container = PDEPlugin.getWorkspace().getRoot().getContainerForLocation(IPath.fromOSString(dir.toString()));
 			if (container != null && container.exists()) {
 				IProject project = container.getProject();
 				if (project != null) {
 					project.refreshLocal(IResource.DEPTH_INFINITE, null);
-					IFile file = container.getFile(new Path(buildFilename));
+					IFile file = container.getFile(IPath.fromOSString(buildFilename));
 					if (file.exists())
 						BaseBuildAction.setDefaultValues(file);
 				}

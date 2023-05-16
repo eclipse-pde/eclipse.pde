@@ -27,7 +27,6 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
@@ -159,7 +158,7 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 					for (IClasspathEntry classpathEntry : classpathEntries) {
 						if (classpathEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
 							IPath sourcePath = classpathEntry.getPath().removeFirstSegments(1); // Entries include project as first segment
-							if (sourcePath.equals(new Path(sourceFolder))) {
+							if (sourcePath.equals(IPath.fromOSString(sourceFolder))) {
 								IPath outputPath = classpathEntry.getOutputLocation();
 								if (outputPath == null) {
 									outputPath = javaProject.getOutputLocation();
@@ -183,7 +182,7 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 			Set<IProject> projects = new HashSet<>();
 			for (Object exportedItem : exportedItems) {
 				if (exportedItem instanceof IPluginModelBase) {
-					IPath installLocation = new Path(((IPluginModelBase) exportedItem).getInstallLocation());
+					IPath installLocation = IPath.fromOSString(((IPluginModelBase) exportedItem).getInstallLocation());
 					IProject project = PDECore.getWorkspace().getRoot().getProject(installLocation.lastSegment());
 					if (project.exists()) {
 						projects.add(project);
@@ -194,7 +193,7 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 					for (IFeaturePlugin plugin : plugins) {
 						IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(plugin.getId());
 						if (model != null) {
-							IPath installLocation = new Path(model.getInstallLocation());
+							IPath installLocation = IPath.fromOSString(model.getInstallLocation());
 							IProject project = PDECore.getWorkspace().getRoot().getProject(installLocation.lastSegment());
 							if (project.exists()) {
 								projects.add(project);

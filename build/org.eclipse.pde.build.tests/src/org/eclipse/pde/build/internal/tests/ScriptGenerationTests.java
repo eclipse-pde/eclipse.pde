@@ -52,6 +52,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.Messages;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
@@ -685,13 +686,13 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.generateFeature(buildFolder, "f", null, null, "2.0.0");
 		IFolder f = buildFolder.getFolder("features/f");
 		f.refreshLocal(IResource.DEPTH_INFINITE, null);
-		f.move(new org.eclipse.core.runtime.Path("F1"), true, null);
+		f.move(IPath.fromOSString("F1"), true, null);
 		Utils.generateFeature(buildFolder, "f", null, null, "1.0.0.z1234");
 		f.refreshLocal(IResource.DEPTH_INFINITE, null);
-		f.move(new org.eclipse.core.runtime.Path("F2"), true, null);
+		f.move(IPath.fromOSString("F2"), true, null);
 		Utils.generateFeature(buildFolder, "f", null, null, "1.0.0.v_5678");
 		f.refreshLocal(IResource.DEPTH_INFINITE, null);
-		f.move(new org.eclipse.core.runtime.Path("F3"), true, null);
+		f.move(IPath.fromOSString("F3"), true, null);
 
 		generateScripts(buildFolder, BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", "sdk"));
 
@@ -1161,7 +1162,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.generateBundleManifest(cdc, "cdc", "1.0.0", additionalAttributes);
 
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
-				new org.eclipse.core.runtime.Path("/scripts/productBuild/productBuild.xml"), null);
+				IPath.fromOSString("/scripts/productBuild/productBuild.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 
 		Properties generateProperties = new Properties();
@@ -1303,7 +1304,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		Utils.writeBuffer(p1.getFile("src/a.java"), new StringBuffer("class A {}"));
 
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"),
-				new org.eclipse.core.runtime.Path("/resources/keystore/keystore"), null);
+				IPath.fromOSString("/resources/keystore/keystore"), null);
 		assertNotNull(resource);
 		String keystorePath = FileLocator.toFileURL(resource).getPath();
 
@@ -1355,7 +1356,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertZipContents(buildFolder, "I.TestBuild/f-TestBuild.zip", zipEntries);
 
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"),
-				new org.eclipse.core.runtime.Path("/resources/keystore/keystore"), null);
+				IPath.fromOSString("/resources/keystore/keystore"), null);
 		assertNotNull(resource);
 		String keystorePath = FileLocator.toFileURL(resource).getPath();
 
@@ -1831,7 +1832,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		properties.put("configs", "win32,win32,x86");
 		properties.put("verify", "true");
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
-				new org.eclipse.core.runtime.Path("/scripts/productBuild/productBuild.xml"), null);
+				IPath.fromOSString("/scripts/productBuild/productBuild.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] { "generateFeature" }, buildFolder.getLocation().toOSString(),
 				properties);

@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.p2.publisher.QuotedTokenizer;
@@ -316,7 +316,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		if (rootFeature == null)
 			return index;
 
-		Properties properties = AbstractScriptGenerator.readProperties(new Path(rootFeature.getRootLocation()).toOSString(), PROPERTIES_FILE, IStatus.OK);
+		Properties properties = AbstractScriptGenerator.readProperties(IPath.fromOSString(rootFeature.getRootLocation()).toOSString(), PROPERTIES_FILE, IStatus.OK);
 		String[] extraEntries = Utils.getArrayFromString(properties.getProperty(PRODUCT_PREFIX + productFile.getId()));
 		for (String extraEntry : extraEntries) {
 			Map<String, Object> entry = Utils.parseExtraBundlesString(extraEntry, true);

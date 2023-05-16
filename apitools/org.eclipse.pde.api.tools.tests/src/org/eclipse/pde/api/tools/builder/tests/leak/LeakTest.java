@@ -18,7 +18,6 @@ import java.lang.reflect.Method;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
@@ -35,7 +34,7 @@ import junit.framework.TestSuite;
  */
 public abstract class LeakTest extends ApiBuilderTest {
 
-	protected static IPath WORKSPACE_PATH = new Path("leakproject/src/x/y/z"); //$NON-NLS-1$
+	protected static IPath WORKSPACE_PATH = IPath.fromOSString("leakproject/src/x/y/z"); //$NON-NLS-1$
 
 	protected final String TESTING_INTERNAL_CLASS_NAME = "internal"; //$NON-NLS-1$
 	protected final String TESTING_INTERNAL_INTERFACE_NAME = "Iinternal"; //$NON-NLS-1$
@@ -58,7 +57,7 @@ public abstract class LeakTest extends ApiBuilderTest {
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return new Path("leak"); //$NON-NLS-1$
+		return IPath.fromOSString("leak"); //$NON-NLS-1$
 	}
 
 	@Override

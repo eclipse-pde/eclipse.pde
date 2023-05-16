@@ -26,7 +26,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -71,7 +70,7 @@ public class ProjectJar extends Jar {
 		if (resource instanceof FileResource) {
 			return super.putResource(path, resource, overwrite);
 		}
-		IFile file = outputFolder.getFile(new Path(path));
+		IFile file = outputFolder.getFile(IPath.fromOSString(path));
 		try {
 			if (file.exists()) {
 				if (overwrite) {

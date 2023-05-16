@@ -25,7 +25,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
@@ -154,7 +153,7 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 	 */
 	private StubApiComponent(IApiBaseline baseline, String fileName, String profileName) {
 		super(baseline);
-		IPath path = new Path(fileName);
+		IPath path = IPath.fromOSString(fileName);
 		fLibraries = new LibraryLocation[] { new LibraryLocation(path, null, null) };
 		fExecEnv = new String[] { profileName };
 		fVersion = fExecEnv[0];

@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -48,7 +47,7 @@ public class ExternalDependencyTestUtils {
 	 */
 	public static IProject setupProject() {
 		IPath pluginDirectoryPath = TestSuiteHelper.getPluginDirectoryPath();
-		String path = pluginDirectoryPath.append(new Path("/test-apiusescan/projects/" + PROJECT_NAME + ".zip")).toOSString(); //$NON-NLS-1$ //$NON-NLS-2$
+		String path = pluginDirectoryPath.append(IPath.fromOSString("/test-apiusescan/projects/" + PROJECT_NAME + ".zip")).toOSString(); //$NON-NLS-1$ //$NON-NLS-2$
 		File sourceFile = new File(path);
 		if (!sourceFile.exists()) {
 			return null;

@@ -29,7 +29,6 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.compiler.batch.BatchCompiler;
@@ -119,7 +118,7 @@ public class TestSuiteHelper {
 	 * @throws CoreException
 	 */
 	public static IApiBaseline createTestingBaseline(String testDirectory) throws CoreException {
-		return createTestingBaseline(null, new Path(testDirectory));
+		return createTestingBaseline(null, IPath.fromOSString(testDirectory));
 	}
 
 	/**
@@ -666,19 +665,19 @@ public class TestSuiteHelper {
 		if (Platform.isRunning()) {
 			try {
 				URL platformURL = Platform.getBundle("org.eclipse.pde.api.tools.tests").getEntry("/"); //$NON-NLS-1$ //$NON-NLS-2$
-				return new Path(new File(FileLocator.toFileURL(platformURL).getFile()).getAbsolutePath());
+				return IPath.fromOSString(new File(FileLocator.toFileURL(platformURL).getFile()).getAbsolutePath());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		return new Path(System.getProperty("user.dir")); //$NON-NLS-1$
+		return IPath.fromOSString(System.getProperty("user.dir")); //$NON-NLS-1$
 	}
 
 	/**
 	 * @return the path for the system property <code>user.dir</code>
 	 */
 	public static IPath getUserDirectoryPath() {
-		return new Path(System.getProperty("user.dir")); //$NON-NLS-1$
+		return IPath.fromOSString(System.getProperty("user.dir")); //$NON-NLS-1$
 	}
 
 }

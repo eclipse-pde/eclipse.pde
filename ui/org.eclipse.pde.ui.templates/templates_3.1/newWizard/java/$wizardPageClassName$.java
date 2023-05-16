@@ -3,7 +3,7 @@ package $packageName$;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
@@ -33,7 +33,7 @@ public class $wizardPageClassName$ extends WizardPage {
 
 	/**
 	 * Constructor for SampleNewWizardPage.
-	 * 
+	 *
 	 * @param pageName
 	 */
 	public $wizardPageClassName$(ISelection selection) {
@@ -112,7 +112,7 @@ public class $wizardPageClassName$ extends WizardPage {
 		if (dialog.open() == ContainerSelectionDialog.OK) {
 			Object[] result = dialog.getResult();
 			if (result.length == 1) {
-				containerText.setText(((Path) result[0]).toString());
+				containerText.setText(result[0].toString());
 			}
 		}
 	}
@@ -123,7 +123,7 @@ public class $wizardPageClassName$ extends WizardPage {
 
 	private void dialogChanged() {
 		IResource container = ResourcesPlugin.getWorkspace().getRoot()
-				.findMember(new Path(getContainerName()));
+				.findMember(IPath.fromOSString(getContainerName()));
 		String fileName = getFileName();
 
 		if (getContainerName().length() == 0) {

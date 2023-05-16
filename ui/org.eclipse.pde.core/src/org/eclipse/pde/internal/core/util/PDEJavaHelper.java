@@ -24,7 +24,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -156,7 +155,7 @@ public class PDEJavaHelper {
 	public static boolean isJRELibrary(IPackageFragmentRoot root) {
 		try {
 			IPath path = root.getRawClasspathEntry().getPath();
-			if (path.equals(new Path(JavaRuntime.JRE_CONTAINER)) || path.equals(new Path(JavaRuntime.JRELIB_VARIABLE))) {
+			if (path.equals(IPath.fromOSString(JavaRuntime.JRE_CONTAINER)) || path.equals(IPath.fromOSString(JavaRuntime.JRELIB_VARIABLE))) {
 				return true;
 			}
 		} catch (JavaModelException e) {
@@ -234,7 +233,7 @@ public class PDEJavaHelper {
 				return searchWorkspaceForPackage(packageName, base);
 			}
 			IJavaProject jp = JavaCore.create(proj);
-			IPath path = new Path(base.getInstallLocation());
+			IPath path = IPath.fromOSString(base.getInstallLocation());
 			// if model is in jar form
 			if (!path.toFile().isDirectory()) {
 				IPackageFragmentRoot root = jp.findPackageFragmentRoot(path);
@@ -269,7 +268,7 @@ public class PDEJavaHelper {
 	private static IPackageFragment searchWorkspaceForPackage(String packageName, IPluginModelBase base) {
 		IPluginLibrary[] libs = base.getPluginBase().getLibraries();
 		ArrayList<IPath> libPaths = new ArrayList<>();
-		IPath path = new Path(base.getInstallLocation());
+		IPath path = IPath.fromOSString(base.getInstallLocation());
 		if (libs.length == 0) {
 			libPaths.add(path);
 		}

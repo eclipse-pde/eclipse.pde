@@ -27,7 +27,6 @@ import java.net.URISyntaxException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.ITargetDefinition;
@@ -87,7 +86,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	static ITargetHandle restoreHandle(URI uri) throws CoreException {
 		String part = uri.getSchemeSpecificPart();
 		try {
-			IPath path = new Path(part);
+			IPath path = IPath.fromOSString(part);
 			String name = path.lastSegment();
 			if (name.endsWith(ICoreConstants.TARGET_FILE_EXTENSION)) {
 				String lng = name.substring(0, name.length() - ICoreConstants.TARGET_FILE_EXTENSION.length() - 1);

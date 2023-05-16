@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.ui.wizards;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.internal.ui.elements.ElementList;
 import org.eclipse.ui.IPluginContribution;
 
@@ -65,7 +64,7 @@ public class WizardCollectionElement extends ElementList implements IPluginContr
 
 	public IPath getPath() {
 		if (parent == null)
-			return new Path(""); //$NON-NLS-1$
+			return IPath.fromOSString(""); //$NON-NLS-1$
 
 		return parent.getPath().append(getLabel());
 	}

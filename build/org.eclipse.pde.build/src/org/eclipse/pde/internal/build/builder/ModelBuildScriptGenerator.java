@@ -32,7 +32,6 @@ import java.util.jar.JarFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -381,7 +380,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				} else {
 					// gather up source that was built for this plug-in
 					// The two steps are required, because some plug-ins (xerces, junit, ...) don't build their source: the source already comes zipped
-					IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
+					IPath location = Utils.makeRelative(IPath.fromOSString(getLocation(plugin)), IPath.fromOSString(getLocation(model)));
 					script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_BUILD_SOURCES, null, null, null);
 					Map<String, String> params = new HashMap<>(1);
 					params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR) + "/src"); //$NON-NLS-1$
@@ -443,7 +442,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateGatherLogTarget() throws CoreException {
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_LOGS, TARGET_INIT, PROPERTY_DESTINATION_TEMP_FOLDER, null, null);
-		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
+		IPath baseDestination = IPath.fromOSString(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
 		baseDestination = baseDestination.append(fullName);
 		Map<String, String> params = null;
 		if (customBuildCallbacks != null) {
@@ -462,7 +461,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				destinations.add(destination);
 			}
 			String logFolder = (availableJar.getType() == CompiledEntry.FOLDER) ? getJARLocation(name) : getTempJARFolderLocation(name);
-			IPath logPath = new Path(logFolder + Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION));
+			IPath logPath = IPath.fromOSString(logFolder + Utils.getPropertyFormat(PROPERTY_LOG_EXTENSION));
 			FileSet logSet = new FileSet(logPath.removeLastSegments(1).toString(), null, logPath.lastSegment(), null, null, null, null);
 			script.printCopyTask(null, destination.toString(), new FileSet[] {logSet}, false, false);
 		}
@@ -481,7 +480,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateZipIndividualTarget(String zipName, String source) {
 		script.println();
 		script.printTargetDeclaration(zipName, TARGET_INIT, null, null, null);
-		IPath root = new Path(Utils.getPropertyFormat(IXMLConstants.PROPERTY_BASEDIR));
+		IPath root = IPath.fromOSString(Utils.getPropertyFormat(IXMLConstants.PROPERTY_BASEDIR));
 		script.printZipTask(root.append(zipName).toString(), root.append(source).toString(), false, false, null);
 		script.printTargetEnd();
 	}
@@ -495,7 +494,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_SOURCES, TARGET_INIT, PROPERTY_DESTINATION_TEMP_FOLDER, null, null);
 
-		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
+		IPath baseDestination = IPath.fromOSString(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
 		baseDestination = baseDestination.append(fullName);
 		Map<String, String> params = null;
 		if (customBuildCallbacks != null) {
@@ -530,7 +529,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_INDIVIDUAL_SOURCES, TARGET_INIT, null, null, null);
 
-		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
+		IPath baseDestination = IPath.fromOSString(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
 
 		Map<String, String> params = null;
 		if (customBuildCallbacks != null) {
@@ -563,7 +562,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.println();
 		script.printTargetDeclaration(TARGET_COPY_SRC_INCLUDES, TARGET_INIT, null, null, null);
 
-		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_SOURCE_DESTINATION_FOLDER));
+		IPath baseDestination = IPath.fromOSString(Utils.getPropertyFormat(PROPERTY_SOURCE_DESTINATION_FOLDER));
 		String include = (String) getBuildProperties().get(PROPERTY_SRC_INCLUDES);
 		String exclude = (String) getBuildProperties().get(PROPERTY_SRC_EXCLUDES);
 		if (include != null || exclude != null) {
@@ -646,10 +645,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			if (hostLocation != null && modelLocation != null) {
 				IPath location = null;
 				if (new File(hostLocation).isFile()) {
-					location = Utils.makeRelative(new Path(hostLocation), new Path(modelLocation));
+					location = Utils.makeRelative(IPath.fromOSString(hostLocation), IPath.fromOSString(modelLocation));
 				} else {
-					IPath hostPath = new Path(hostLocation);
-					location = Utils.makeRelative(hostPath.append(JarFile.MANIFEST_NAME), new Path(modelLocation));
+					IPath hostPath = IPath.fromOSString(hostLocation);
+					location = Utils.makeRelative(hostPath.append(JarFile.MANIFEST_NAME), IPath.fromOSString(modelLocation));
 				}
 				if (location.isAbsolute())
 					params.put(PROPERTY_EXTRA_MANIFESTS, location.toString());
@@ -663,7 +662,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generatePublishBinPartsTarget() throws CoreException {
 		script.println();
 		script.printTargetDeclaration(TARGET_PUBLISH_BIN_PARTS, TARGET_INIT, PROPERTY_P2_PUBLISH_PARTS, PROPERTY_COMPILE_PROBLEM_MARKER_EXISTS, null);
-		IPath destination = new Path(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
+		IPath destination = IPath.fromOSString(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
 		destination = destination.append(fullName);
 		String root = destination.toString();
 		script.printMkdirTask(root);
@@ -690,7 +689,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				Set<BundleDescription> pluginsToGatherSourceFrom = getPluginSourceProviders();
 				if (pluginsToGatherSourceFrom != null) {
 					for (BundleDescription plugin : pluginsToGatherSourceFrom) {
-						IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
+						IPath location = Utils.makeRelative(IPath.fromOSString(getLocation(plugin)), IPath.fromOSString(getLocation(model)));
 						Map<String, String> taskParams = new HashMap<>(1);
 						taskParams.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/sources"); //$NON-NLS-1$
 						script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_GATHER_INDIVIDUAL_SOURCES, null, null, taskParams);
@@ -765,7 +764,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateGatherBinPartsTarget() throws CoreException {
 		script.println();
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, TARGET_INIT, PROPERTY_DESTINATION_TEMP_FOLDER, null, null);
-		IPath destination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
+		IPath destination = IPath.fromOSString(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
 		destination = destination.append(fullName);
 		String root = destination.toString();
 		script.printMkdirTask(root);
@@ -827,7 +826,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			Set<BundleDescription> pluginsToGatherSourceFrom = getPluginSourceProviders();
 			if (pluginsToGatherSourceFrom != null) {
 				for (BundleDescription plugin : pluginsToGatherSourceFrom) {
-					IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
+					IPath location = Utils.makeRelative(IPath.fromOSString(getLocation(plugin)), IPath.fromOSString(getLocation(model)));
 					Map<String, String> taskParams = new HashMap<>(1);
 					taskParams.put(PROPERTY_DESTINATION_TEMP_FOLDER, root);
 					script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_GATHER_INDIVIDUAL_SOURCES, null, null, taskParams);
@@ -996,7 +995,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateRefreshTarget() {
 		script.println();
 		script.printTargetDeclaration(TARGET_REFRESH, TARGET_INIT, PROPERTY_ECLIPSE_RUNNING, null, Messages.build_plugin_refresh);
-		script.printConvertPathTask(new Path(getLocation(model)).removeLastSegments(0).toOSString().replace('\\', '/'), PROPERTY_RESOURCE_PATH, false);
+		script.printConvertPathTask(IPath.fromOSString(getLocation(model)).removeLastSegments(0).toOSString().replace('\\', '/'), PROPERTY_RESOURCE_PATH, false);
 		script.printRefreshLocalTask(Utils.getPropertyFormat(PROPERTY_RESOURCE_PATH), "infinite"); //$NON-NLS-1$
 		script.printTargetEnd();
 	}
@@ -1335,7 +1334,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 					try {
 						BundleDescription bundle = state.getBundle(Long.valueOf(id2).longValue());
 						if (bundle != null && !Utils.isBinary(bundle)) {
-							IPath bundleLocation = new Path(bundle.getLocation());
+							IPath bundleLocation = IPath.fromOSString(bundle.getLocation());
 							results.add(bundleLocation.append("compilation.problem")); //$NON-NLS-1$
 							results.add(Utils.getPropertyFormat(PROPERTY_PLUGIN_TEMP) + '/' + getNormalizedName(bundle) + "/compilation.problem"); //$NON-NLS-1$
 						}
@@ -1627,7 +1626,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		String jarLocation = getJARLocation(entry.getName(true));
 		if (entry.getType() != CompiledEntry.FOLDER) {
-			script.printMkdirTask(new Path(jarLocation).removeLastSegments(1).toString());
+			script.printMkdirTask(IPath.fromOSString(jarLocation).removeLastSegments(1).toString());
 			if (workspaceFiles != null)
 				script.printJarTask(jarLocation, destdir, workspaceFiles, getEmbeddedManifestFile(entry, destdir), null, "preserve"); //$NON-NLS-1$
 			else
@@ -1747,7 +1746,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 
 		String srcLocation = getSRCLocation(name);
-		String srcParent = new Path(srcLocation).removeLastSegments(1).toString();
+		String srcParent = IPath.fromOSString(srcLocation).removeLastSegments(1).toString();
 		script.printMkdirTask(srcParent);
 		script.printAntCallTask("zip." + srcName, true, null); //$NON-NLS-1$
 		script.printTargetEnd();
@@ -1761,7 +1760,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (count != 0) {
 			String dest = null;
 			if (srcName.equals(SRC_ZIP))
-				dest = new Path(srcName).removeLastSegments(1).toString(); //src.zip can go in the root
+				dest = IPath.fromOSString(srcName).removeLastSegments(1).toString(); //src.zip can go in the root
 			else
 				dest = srcName.substring(0, srcName.length() - 4); //remove .zip, the rest go in folders
 			String toDir = Utils.getPropertyFormat(PROPERTY_SOURCE_DESTINATION_FOLDER) + '/' + dest;
@@ -1816,7 +1815,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * @return String
 	 */
 	protected String getTempJARFolderLocation(String jarName) {
-		IPath destination = new Path(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER));
+		IPath destination = IPath.fromOSString(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER));
 		destination = destination.append(jarName + ".bin"); //$NON-NLS-1$
 		return destination.toString();
 	}
@@ -1828,7 +1827,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	 * @return String
 	 */
 	protected String getJARLocation(String jarName) {
-		return new Path(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER)).append(jarName).toString();
+		return IPath.fromOSString(Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER)).append(jarName).toString();
 	}
 
 	protected String[] getClasspathEntries(BundleDescription lookedUpModel) throws CoreException {

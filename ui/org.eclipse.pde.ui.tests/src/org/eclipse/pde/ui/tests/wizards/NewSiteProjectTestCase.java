@@ -29,7 +29,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
@@ -53,7 +52,7 @@ public class NewSiteProjectTestCase {
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(EXISTING_PROJECT_NAME);
 			project.create(new NullProgressMonitor());
 			project.open(new NullProgressMonitor());
-			IFile file = project.getFile(new Path("site.xml")); //$NON-NLS-1$
+			IFile file = project.getFile(IPath.fromOSString("site.xml")); //$NON-NLS-1$
 			String content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //$NON-NLS-1$
 					+ "<site>" //$NON-NLS-1$
 					+ "<category-def name=\"new_category_1\" label=\"New Category 1\"/>" //$NON-NLS-1$
@@ -98,8 +97,8 @@ public class NewSiteProjectTestCase {
 		} catch (Exception e) {
 		}
 		assertTrue("site.xml not created.", project //$NON-NLS-1$
-				.exists(new Path("site.xml"))); //$NON-NLS-1$
-		WorkspaceSiteModel model = new WorkspaceSiteModel(project.getFile(new Path("site.xml"))); //$NON-NLS-1$
+				.exists(IPath.fromOSString("site.xml"))); //$NON-NLS-1$
+		WorkspaceSiteModel model = new WorkspaceSiteModel(project.getFile(IPath.fromOSString("site.xml"))); //$NON-NLS-1$
 		model.load();
 		assertTrue("Model cannot be loaded.", model.isLoaded()); //$NON-NLS-1$
 		assertTrue("Model is not valid.", model.isValid()); //$NON-NLS-1$
@@ -118,7 +117,7 @@ public class NewSiteProjectTestCase {
 			fail("testExistingSiteProject: " + e); //$NON-NLS-1$
 		}
 		ensureCreated(project);
-		WorkspaceSiteModel model = new WorkspaceSiteModel(project.getFile(new Path("site.xml"))); //$NON-NLS-1$
+		WorkspaceSiteModel model = new WorkspaceSiteModel(project.getFile(IPath.fromOSString("site.xml"))); //$NON-NLS-1$
 		model.load();
 		assertTrue("Existig site overwritten.", model.getSite() //$NON-NLS-1$
 				.getCategoryDefinitions().length > 0);
@@ -139,7 +138,7 @@ public class NewSiteProjectTestCase {
 		}
 		ensureCreated(project);
 		assertFalse("index.html should have not been generated.", project //$NON-NLS-1$
-				.exists(new Path("index.html"))); //$NON-NLS-1$
+				.exists(IPath.fromOSString("index.html"))); //$NON-NLS-1$
 	}
 
 	@Test
@@ -154,13 +153,13 @@ public class NewSiteProjectTestCase {
 			fail("testSiteProjectWithWeb: " + e); //$NON-NLS-1$
 		}
 		ensureCreated(project);
-		assertTrue("index.html not generated.", project.exists(new Path( //$NON-NLS-1$
+		assertTrue("index.html not generated.", project.exists(IPath.fromOSString( //$NON-NLS-1$
 				"index.html"))); //$NON-NLS-1$
-		IFolder webFolder = project.getFolder(new Path("testWeb")); //$NON-NLS-1$
+		IFolder webFolder = project.getFolder(IPath.fromOSString("testWeb")); //$NON-NLS-1$
 		assertTrue("Web folder not generated.", webFolder.exists()); //$NON-NLS-1$
-		assertTrue("site.xsl not generated.", webFolder.exists(new Path( //$NON-NLS-1$
+		assertTrue("site.xsl not generated.", webFolder.exists(IPath.fromOSString( //$NON-NLS-1$
 				"site.xsl"))); //$NON-NLS-1$
-		assertTrue("site.css not generated.", webFolder.exists(new Path( //$NON-NLS-1$
+		assertTrue("site.css not generated.", webFolder.exists(IPath.fromOSString( //$NON-NLS-1$
 				"site.css"))); //$NON-NLS-1$
 	}
 }

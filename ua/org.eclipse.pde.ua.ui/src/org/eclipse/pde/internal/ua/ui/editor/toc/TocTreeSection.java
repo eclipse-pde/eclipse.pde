@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -612,7 +611,7 @@ public class TocTreeSection extends TreeSection {
 	 */
 	private void open(TocObject obj) {
 		String path = obj.getPath();
-		IPath resourcePath = path != null ? new Path(path) : null;
+		IPath resourcePath = path != null ? IPath.fromOSString(path) : null;
 		if (!isEditable() || resourcePath == null || resourcePath.isEmpty()) {
 			MessageDialog.openWarning(
 					PDEUserAssistanceUIPlugin.getActiveWorkbenchShell(),
@@ -633,7 +632,7 @@ public class TocTreeSection extends TreeSection {
 	}
 
 	public IFile openFile(String path, boolean isTOCFile) {
-		IPath resourcePath = new Path(path);
+		IPath resourcePath = IPath.fromOSString(path);
 		if (isEditable()) {
 			if (!resourcePath.isEmpty()) {
 				IResource page = findResource(resourcePath);
@@ -663,7 +662,7 @@ public class TocTreeSection extends TreeSection {
 		String filename = null;
 
 		// Find the folder associated with the specified path
-		IPath initialFolder = new Path(path.trim());
+		IPath initialFolder = IPath.fromOSString(path.trim());
 		if (!initialFolder.isEmpty()) {
 			IPath newPath = selectedFolder.getFullPath().append(initialFolder);
 
@@ -922,7 +921,7 @@ public class TocTreeSection extends TreeSection {
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
 				// If the array contains Strings, we treat them as file paths
-				IPath path = new Path((String) droppings[i]);
+				IPath path = IPath.fromOSString((String) droppings[i]);
 				IFile file = root.getFileForLocation(path);
 				if (file == null) {
 					continue;

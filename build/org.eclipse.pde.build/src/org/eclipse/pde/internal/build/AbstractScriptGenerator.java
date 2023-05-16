@@ -39,7 +39,6 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.internal.p2.engine.SimpleProfileRegistry;
@@ -477,13 +476,13 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			BundleHelper.getDefault().getLog().log(e.getStatus());
 			return null;
 		}
-		IPath path = new Path(location);
+		IPath path = IPath.fromOSString(location);
 		String id = path.segment(0);
 		BundleDescription[] matches = state.getState().getBundles(id);
 		if (matches != null && matches.length != 0) {
 			BundleDescription bundle = matches[0];
 			if (bundle != null) {
-				String result = checkFile(new Path(bundle.getLocation()), path, makeRelative);
+				String result = checkFile(IPath.fromOSString(bundle.getLocation()), path, makeRelative);
 				if (result != null)
 					return result;
 			}
@@ -500,7 +499,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 		String featureRoot = feature.getRootLocation();
 		if (featureRoot != null)
-			return checkFile(new Path(featureRoot), path, makeRelative);
+			return checkFile(IPath.fromOSString(featureRoot), path, makeRelative);
 		return null;
 	}
 
@@ -542,7 +541,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		if (!new File(result).exists())
 			return null;
 		if (makeRelative)
-			return Utils.makeRelative(path, new Path(workingDirectory)).toOSString();
+			return Utils.makeRelative(path, IPath.fromOSString(workingDirectory)).toOSString();
 		return result;
 	}
 
@@ -706,7 +705,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		if (target == null || !target.exists())
 			return null;
 
-		IPath path = new Path(target.getAbsolutePath());
+		IPath path = IPath.fromOSString(target.getAbsolutePath());
 		if (!path.lastSegment().endsWith(PROFILE) && !path.lastSegment().endsWith(PROFILE_GZ))
 			return null;
 

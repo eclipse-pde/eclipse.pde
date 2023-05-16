@@ -27,7 +27,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginReference;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.util.CoreUtility;
@@ -49,9 +48,9 @@ public class PluginClassCodeGenerator {
 		String packageName = (nameloc == -1) ? "" : fQualifiedClassName.substring(0, nameloc); //$NON-NLS-1$
 		String className = fQualifiedClassName.substring(nameloc + 1);
 
-		IPath path = new Path(packageName.replace('.', '/'));
+		IPath path = IPath.fromOSString(packageName.replace('.', '/'));
 		if (fPluginData.getSourceFolderName().trim().length() > 0)
-			path = new Path(fPluginData.getSourceFolderName()).append(path);
+			path = IPath.fromOSString(fPluginData.getSourceFolderName()).append(path);
 
 		CoreUtility.createFolder(fProject.getFolder(path));
 

@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -222,7 +221,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		SubMonitor subMonitor = SubMonitor.convert(monitor);
 		IJavaProject jProject = JavaCore.create(project);
 
-		IClasspathEntry jreCPEntry = JavaCore.newContainerEntry(new Path("org.eclipse.jdt.launching.JRE_CONTAINER")); //$NON-NLS-1$
+		IClasspathEntry jreCPEntry = JavaCore.newContainerEntry(IPath.fromOSString("org.eclipse.jdt.launching.JRE_CONTAINER")); //$NON-NLS-1$
 
 		String libName = model.getFeature().getInstallHandler().getLibrary();
 		IClasspathEntry handlerCPEntry = JavaCore.newLibraryEntry(project.getFullPath().append(libName), null, null);

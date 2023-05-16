@@ -18,7 +18,7 @@ package org.eclipse.pde.internal.ui;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -356,7 +356,7 @@ public class PDEPluginImages {
 
 	private static URL makeImageURL(String prefix, String name) {
 		String path = "$nl$/" + prefix + name; //$NON-NLS-1$
-		return FileLocator.find(PDEPlugin.getDefault().getBundle(), new Path(path), null);
+		return FileLocator.find(PDEPlugin.getDefault().getBundle(), IPath.fromOSString(path), null);
 	}
 
 	public static Image manage(Display display, String key, ImageDescriptor desc) {

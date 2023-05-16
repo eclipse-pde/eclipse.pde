@@ -17,7 +17,7 @@ package org.eclipse.pde.internal.ui.views.imagebrowser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.graphics.ImageData;
 
 public class ImageElement {
@@ -56,7 +56,7 @@ public class ImageElement {
 	}
 
 	public String getFileName() {
-		return new Path(mPath).lastSegment();
+		return IPath.fromOSString(mPath).lastSegment();
 	}
 
 	@Override

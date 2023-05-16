@@ -44,7 +44,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
@@ -95,7 +94,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 	static final String ANNOTATIONS_PACKAGE = COMPONENT_ANNOTATION.substring(0, COMPONENT_ANNOTATION.lastIndexOf('.'));
 
-	private static final IPath COMPONENT_ANNOTATION_PATH = new Path(COMPONENT_ANNOTATION.replace('.',  '/'));
+	private static final IPath COMPONENT_ANNOTATION_PATH = IPath.fromOSString(COMPONENT_ANNOTATION.replace('.',  '/'));
 
 	private static final Pattern ACCESS_RULE_PATTERN = Pattern.compile("(\\*\\*)|\\*|\\?"); //$NON-NLS-1$
 
@@ -268,7 +267,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			for (String cuKey : projectContext.getUnprocessed()) {
 				boolean exists = false;
 				try {
-					IJavaElement cu = project.findElement(new Path(cuKey));
+					IJavaElement cu = project.findElement(IPath.fromOSString(cuKey));
 					IResource file;
 					if (cu != null && cu.getElementType() == IJavaElement.COMPILATION_UNIT
 							&& (file = cu.getResource()) != null && file.exists()
@@ -375,7 +374,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			// delete all abandoned files
 			ArrayList<IStatus> deleteStatuses = new ArrayList<>(2);
 			for (String dsKey : abandoned) {
-				IPath path = Path.fromPortableString(dsKey);
+				IPath path = IPath.fromPortableString(dsKey);
 
 				if (debug.isDebugging()) {
 					debug.trace(String.format("Deleting %s", path)); //$NON-NLS-1$
@@ -469,12 +468,12 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 		boolean changed = false;
 		for (String dsKey : abandoned) {
-			IPath path = Path.fromPortableString(dsKey);
+			IPath path = IPath.fromPortableString(dsKey);
 			changed |= entries.remove(path);
 		}
 
 		for (String dsKey : retained) {
-			IPath path = Path.fromPortableString(dsKey);
+			IPath path = IPath.fromPortableString(dsKey);
 			if (!isManifestEntryIncluded(entries, path)) {
 				changed |= entries.add(path);
 			}
@@ -515,7 +514,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 		String[] elements = header.split("\\s*,\\s*"); //$NON-NLS-1$
 		for (String element : elements) {
 			if (element.length() != 0) {
-				entries.add(new Path(element));
+				entries.add(IPath.fromOSString(element));
 			}
 		}
 	}
@@ -553,7 +552,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 		if (includes != null) {
 			for (String dsKey : abandoned) {
-				String path = Path.fromPortableString(dsKey).toString();
+				String path = IPath.fromPortableString(dsKey).toString();
 				if (includes.contains(path)) {
 					includes.removeToken(path);
 				}
@@ -573,7 +572,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 			Iterator<String> iterator = retained.stream().sorted().iterator();
 			while (iterator.hasNext()) {
 				String dsKey = iterator.next();
-				IPath path = Path.fromPortableString(dsKey);
+				IPath path = IPath.fromPortableString(dsKey);
 				if (!isBuildEntryIncluded(entries, path)) {
 					includes.addToken(path.toString());
 				}
@@ -588,7 +587,7 @@ public class DSAnnotationCompilationParticipant extends CompilationParticipant {
 
 		for (String include : includes.getTokens()) {
 			if ((include = include.trim()).length() != 0) {
-				entries.add(new Path(include));
+				entries.add(IPath.fromOSString(include));
 			}
 		}
 	}

@@ -21,7 +21,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaElement;
@@ -101,7 +101,7 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 									if (resourcedeltas != null) {
 										IResourceDelta rdelta = null;
 										for (IResourceDelta resourcedelta : resourcedeltas) {
-											rdelta = resourcedelta.findMember(new Path(Util.MANIFEST_NAME));
+											rdelta = resourcedelta.findMember(IPath.fromOSString(Util.MANIFEST_NAME));
 											if (rdelta != null && rdelta.getKind() == IResourceDelta.CHANGED && (rdelta.getFlags() & IResourceDelta.CONTENT) > 0) {
 												if (ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 													System.out.println("--> processing manifest delta"); //$NON-NLS-1$

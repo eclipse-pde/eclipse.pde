@@ -27,7 +27,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
@@ -63,7 +62,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 
 	static {
 		JAVADOC_SRC_DIR = getSourceDirectory("javadoc"); //$NON-NLS-1$
-		JAVADOC_READ_SRC_DIR = getSourceDirectory(new Path("a").append("b").append("c")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		JAVADOC_READ_SRC_DIR = getSourceDirectory(IPath.fromOSString("a").append("b").append("c")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	@Override

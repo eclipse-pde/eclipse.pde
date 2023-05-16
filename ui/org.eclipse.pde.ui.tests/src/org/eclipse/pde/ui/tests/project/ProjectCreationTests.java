@@ -42,7 +42,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -88,7 +87,7 @@ public class ProjectCreationTests {
 	protected static final IBundleClasspathEntry DEFAULT_BUNDLE_CLASSPATH_ENTRY;
 
 	static {
-		DEFAULT_BUNDLE_CLASSPATH_ENTRY = getBundleProjectService().newBundleClasspathEntry(null, null, new Path("."));
+		DEFAULT_BUNDLE_CLASSPATH_ENTRY = getBundleProjectService().newBundleClasspathEntry(null, null, IPath.fromOSString("."));
 	}
 
 	@Rule
@@ -159,7 +158,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
 		assertNull("Wrong host", d2.getHost());
 		assertNull("Wrong localization", d2.getLocalization());
@@ -212,7 +211,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
 		assertNull("Wrong host", d2.getHost());
 		assertNull("Wrong localization", d2.getLocalization());
@@ -294,7 +293,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
 		assertEquals("Wrong host", host, d2.getHost());
 		assertNull("Wrong localization", d2.getLocalization());
@@ -331,8 +330,8 @@ public class ProjectCreationTests {
 				new VersionRange(new Version("1.0.0"), true, new Version("2.0.0"), false));
 		description.setHost(host);
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
-		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(new Path("frag"), new Path("bin"),
-				new Path("frag.jar"));
+		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(IPath.fromOSString("frag"), IPath.fromOSString("bin"),
+				IPath.fromOSString("frag.jar"));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { e1 });
 		description.apply(null);
 
@@ -349,7 +348,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "1.2.2", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
 		assertEquals("Wrong host", host, d2.getHost());
 		assertNull("Wrong localization", d2.getLocalization());
@@ -381,8 +380,8 @@ public class ProjectCreationTests {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
-		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(new Path("src1"), null, new Path("the.jar"));
-		IBundleClasspathEntry e2 = service.newBundleClasspathEntry(new Path("src2"), null, new Path("the.jar"));
+		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(IPath.fromOSString("src1"), null, IPath.fromOSString("the.jar"));
+		IBundleClasspathEntry e2 = service.newBundleClasspathEntry(IPath.fromOSString("src2"), null, IPath.fromOSString("the.jar"));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { e1, e2 });
 		description.setBundleVersion(new Version("1.2.3"));
 		description.apply(null);
@@ -401,7 +400,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "1.2.3", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
 		assertNull("Wrong host", d2.getHost());
 		assertNull("Wrong localization", d2.getLocalization());
@@ -441,9 +440,9 @@ public class ProjectCreationTests {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
-		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(new Path("src1"), null, new Path("."));
-		IBundleClasspathEntry e2 = service.newBundleClasspathEntry(new Path("src2"), new Path("bin2"),
-				new Path("two.jar"));
+		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(IPath.fromOSString("src1"), null, IPath.fromOSString("."));
+		IBundleClasspathEntry e2 = service.newBundleClasspathEntry(IPath.fromOSString("src2"), IPath.fromOSString("bin2"),
+				IPath.fromOSString("two.jar"));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { e1, e2 });
 		description.setBundleVersion(new Version("1.2.3"));
 		description.apply(null);
@@ -462,7 +461,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "1.2.3", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
 		assertNull("Wrong host", d2.getHost());
 		assertNull("Wrong localization", d2.getLocalization());
@@ -508,7 +507,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
 		assertNull("Wrong host", d2.getHost());
 		assertNull("Wrong localization", d2.getLocalization());
@@ -541,9 +540,9 @@ public class ProjectCreationTests {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		description.setSingleton(true);
-		IPath src = new Path("src");
+		IPath src = IPath.fromOSString("src");
 		IBundleProjectService service = getBundleProjectService();
-		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
+		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, IPath.fromOSString("."));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { spec });
 		IPackageExportDescription ex0 = service.newPackageExport("a.b.c", new Version("2.0.0"), true, null);
 		IPackageExportDescription ex1 = service.newPackageExport("a.b.c.interal", null, false, null);
@@ -567,7 +566,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
 		assertNull("Wrong host", d2.getHost());
 		assertNull("Wrong localization", d2.getLocalization());
@@ -605,9 +604,9 @@ public class ProjectCreationTests {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		description.setSingleton(true);
-		IPath src = new Path("src");
+		IPath src = IPath.fromOSString("src");
 		IBundleProjectService service = getBundleProjectService();
-		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
+		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, IPath.fromOSString("."));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { spec });
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.apply(null);
@@ -631,7 +630,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
 		assertEquals("Wrong host", host, d2.getHost());
 		assertNull("Wrong localization", d2.getLocalization());
@@ -664,11 +663,11 @@ public class ProjectCreationTests {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		description.setSingleton(true);
-		IPath src = new Path("src");
+		IPath src = IPath.fromOSString("src");
 		IBundleProjectService service = getBundleProjectService();
-		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
+		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, IPath.fromOSString("."));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { spec });
-		description.setBinIncludes(new IPath[] { new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) });
+		description.setBinIncludes(new IPath[] { IPath.fromOSString(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) });
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.setEquinox(true);
@@ -691,7 +690,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong activation policy", Constants.ACTIVATION_LAZY, d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertEquals("Wrong number of entries on bin.includes", 1, binIncludes.length);
-		assertEquals("Wrong bin.includes", new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
+		assertEquals("Wrong bin.includes", IPath.fromOSString(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
 		assertNotNull("Bundle-Classpath should be specified", classpath);
 		assertEquals("Wrong number of bundle classpath entries", 1, classpath.length);
@@ -700,7 +699,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong header", project.getName(), d2.getHeader(Constants.BUNDLE_NAME));
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "3.2.1", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		String[] ees = d2.getExecutionEnvironments();
 		assertNotNull("Wrong execution environments", ees);
 		assertEquals("Wrong number of execution environments", 1, ees.length);
@@ -745,8 +744,8 @@ public class ProjectCreationTests {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
-		IPath src = new Path("srcA");
-		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("a.jar"));
+		IPath src = IPath.fromOSString("srcA");
+		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, IPath.fromOSString("a.jar"));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { spec });
 		IPackageExportDescription ex0 = service.newPackageExport("a.b.c", new Version("2.0.0"), true, null);
 		IPackageExportDescription ex1 = service.newPackageExport("a.b.c.interal", null, false, null);
@@ -759,15 +758,15 @@ public class ProjectCreationTests {
 
 		// modify the project
 		IBundleProjectDescription modify = service.getDescription(project);
-		IPath srcB = new Path("srcB");
-		IBundleClasspathEntry specB = service.newBundleClasspathEntry(srcB, null, new Path("b.jar"));
+		IPath srcB = IPath.fromOSString("srcB");
+		IBundleClasspathEntry specB = service.newBundleClasspathEntry(srcB, null, IPath.fromOSString("b.jar"));
 		modify.setBundleClasspath(new IBundleClasspathEntry[] { specB });
 		IPackageExportDescription ex4 = service.newPackageExport("x.y.z.interal", null, false,
 				new String[] { "zz.top" });
 		modify.setPackageExports(new IPackageExportDescription[] { ex0, ex2, ex4, ex3 }); // remove,
 		// add,
 		// re-order
-		modify.setBinIncludes(new IPath[] { new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) });
+		modify.setBinIncludes(new IPath[] { IPath.fromOSString(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) });
 		modify.setActivator("org.eclipse.foo.Activator");
 		modify.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		modify.apply(null);
@@ -779,7 +778,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong activation policy", Constants.ACTIVATION_LAZY, d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertEquals("Wrong number of entries on bin.includes", 1, binIncludes.length);
-		assertEquals("Wrong bin.includes entry", new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
+		assertEquals("Wrong bin.includes entry", IPath.fromOSString(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
 		assertNotNull("Wrong Bundle-Classpath", classpath);
 		assertEquals("Wrong number of Bundle-Classpath entries", 1, classpath.length);
@@ -787,7 +786,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
 		assertNull("Wrong host", d2.getHost());
 		assertNull("Wrong localization", d2.getLocalization());
@@ -948,7 +947,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
 		assertNull("Wrong host", d2.getHost());
 		assertNull("Wrong localization", d2.getLocalization());
@@ -980,8 +979,8 @@ public class ProjectCreationTests {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
-		IBundleClasspathEntry one = service.newBundleClasspathEntry(null, null, new Path("one.jar"));
-		IBundleClasspathEntry two = service.newBundleClasspathEntry(null, null, new Path("lib/two.jar"));
+		IBundleClasspathEntry one = service.newBundleClasspathEntry(null, null, IPath.fromOSString("one.jar"));
+		IBundleClasspathEntry two = service.newBundleClasspathEntry(null, null, IPath.fromOSString("lib/two.jar"));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { one, two });
 		IPackageExportDescription exp1 = service.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, null);
 		IPackageExportDescription exp2 = service.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, null);
@@ -991,7 +990,7 @@ public class ProjectCreationTests {
 		description.apply(null);
 		// create bogus jar files
 		createBogusJar(project.getFile("one.jar"));
-		createBogusJar(project.getFile(new Path("lib/two.jar")));
+		createBogusJar(project.getFile(IPath.fromOSString("lib/two.jar")));
 
 		IBundleProjectDescription d2 = service.getDescription(project);
 
@@ -1007,7 +1006,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", new Version("1.0.0"), d2.getBundleVersion());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		String[] ees = d2.getExecutionEnvironments();
 		assertNotNull("Wrong execution environments", ees);
 		assertEquals("Wrong number of execution environments", 1, ees.length);
@@ -1067,8 +1066,8 @@ public class ProjectCreationTests {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
-		IBundleClasspathEntry one = service.newBundleClasspathEntry(null, new Path("bin1"), new Path("one.jar"));
-		IBundleClasspathEntry two = service.newBundleClasspathEntry(null, new Path("bin2"), new Path("two.jar"));
+		IBundleClasspathEntry one = service.newBundleClasspathEntry(null, IPath.fromOSString("bin1"), IPath.fromOSString("one.jar"));
+		IBundleClasspathEntry two = service.newBundleClasspathEntry(null, IPath.fromOSString("bin2"), IPath.fromOSString("two.jar"));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { one, two });
 		IPackageExportDescription exp1 = service.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, null);
 		IPackageExportDescription exp2 = service.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, null);
@@ -1094,7 +1093,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", new Version("1.0.0"), d2.getBundleVersion());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		String[] ees = d2.getExecutionEnvironments();
 		assertNotNull("Wrong execution environments", ees);
 		assertEquals("Wrong number of execution environments", 1, ees.length);
@@ -1149,7 +1148,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
 		assertNull("Wrong host", d2.getHost());
 		assertNull("Wrong localization", d2.getLocalization());
@@ -1186,11 +1185,11 @@ public class ProjectCreationTests {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		description.setSingleton(true);
-		IPath src = new Path("src");
+		IPath src = IPath.fromOSString("src");
 		IBundleProjectService service = getBundleProjectService();
-		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
+		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, IPath.fromOSString("."));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { spec });
-		description.setBinIncludes(new IPath[] { new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) });
+		description.setBinIncludes(new IPath[] { IPath.fromOSString(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) });
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.setTargetVersion(IBundleProjectDescription.VERSION_3_1);
@@ -1210,7 +1209,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong activation policy", Constants.ACTIVATION_LAZY, d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertEquals("Wrong number of entries on bin.includes", 1, binIncludes.length);
-		assertEquals("Wrong bin.includes", new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
+		assertEquals("Wrong bin.includes", IPath.fromOSString(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
 		assertNotNull("Bundle-Classpath should be specified", classpath);
 		assertEquals("Wrong number of bundle classpath entries", 1, classpath.length);
@@ -1218,7 +1217,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		String[] ees = d2.getExecutionEnvironments();
 		assertNotNull("Wrong execution environments", ees);
 		assertEquals("Wrong number of execution environments", 1, ees.length);
@@ -1287,11 +1286,11 @@ public class ProjectCreationTests {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		description.setSingleton(true);
-		IPath src = new Path("src");
+		IPath src = IPath.fromOSString("src");
 		IBundleProjectService service = getBundleProjectService();
-		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
+		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, IPath.fromOSString("."));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { spec });
-		description.setBinIncludes(new IPath[] { new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) });
+		description.setBinIncludes(new IPath[] { IPath.fromOSString(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) });
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setTargetVersion(IBundleProjectDescription.VERSION_3_1);
 		description.setEquinox(true);
@@ -1303,7 +1302,7 @@ public class ProjectCreationTests {
 		assertNull("Wrong activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertEquals("Wrong number of entries on bin.includes", 1, binIncludes.length);
-		assertEquals("Wrong bin.includes", new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
+		assertEquals("Wrong bin.includes", IPath.fromOSString(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
 		assertNotNull("Bundle-Classpath should be specified", classpath);
 		assertEquals("Wrong number of bundle classpath entries", 1, classpath.length);
@@ -1311,7 +1310,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
 		assertNull("Wrong host", d2.getHost());
 		assertNull("Wrong localization", d2.getLocalization());
@@ -1354,11 +1353,11 @@ public class ProjectCreationTests {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		description.setSingleton(true);
-		IPath src = new Path("src");
+		IPath src = IPath.fromOSString("src");
 		IBundleProjectService service = getBundleProjectService();
-		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
+		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, IPath.fromOSString("."));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { spec });
-		description.setBinIncludes(new IPath[] { new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) });
+		description.setBinIncludes(new IPath[] { IPath.fromOSString(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) });
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.setTargetVersion(IBundleProjectDescription.VERSION_3_2);
@@ -1371,7 +1370,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong activation policy", Constants.ACTIVATION_LAZY, d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertEquals("Wrong number of entries on bin.includes", 1, binIncludes.length);
-		assertEquals("Wrong bin.includes", new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
+		assertEquals("Wrong bin.includes", IPath.fromOSString(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
 		assertNotNull("Bundle-Classpath should be specified", classpath);
 		assertEquals("Wrong number of bundle classpath entries", 1, classpath.length);
@@ -1379,7 +1378,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
 		assertNull("Wrong host", d2.getHost());
 		assertNull("Wrong localization", d2.getLocalization());
@@ -1422,11 +1421,11 @@ public class ProjectCreationTests {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		description.setSingleton(true);
-		IPath src = new Path("src");
+		IPath src = IPath.fromOSString("src");
 		IBundleProjectService service = getBundleProjectService();
-		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, new Path("."));
+		IBundleClasspathEntry spec = service.newBundleClasspathEntry(src, null, IPath.fromOSString("."));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { spec });
-		description.setBinIncludes(new IPath[] { new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) });
+		description.setBinIncludes(new IPath[] { IPath.fromOSString(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR) });
 		description.setActivator("org.eclipse.foo.Activator");
 		description.setTargetVersion(IBundleProjectDescription.VERSION_3_2);
 		description.setEquinox(true);
@@ -1438,7 +1437,7 @@ public class ProjectCreationTests {
 		assertNull("Wrong activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
 		assertEquals("Wrong number of entries on bin.includes", 1, binIncludes.length);
-		assertEquals("Wrong bin.includes", new Path(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
+		assertEquals("Wrong bin.includes", IPath.fromOSString(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR), binIncludes[0]);
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
 		assertNotNull("Bundle-Classpath should be specified", classpath);
 		assertEquals("Wrong number of bundle classpath entries", 1, classpath.length);
@@ -1446,7 +1445,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		assertNull("Wrong execution environments", d2.getExecutionEnvironments());
 		assertNull("Wrong host", d2.getHost());
 		assertNull("Wrong localization", d2.getLocalization());
@@ -1653,7 +1652,7 @@ public class ProjectCreationTests {
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
 		assertEquals("Wrong number of Bundle-Classpath entries", 1, classpath.length);
 		assertEquals("Wrong Bundle-Classpath entry",
-				getBundleProjectService().newBundleClasspathEntry(src.getProjectRelativePath(), null, new Path(".")),
+				getBundleProjectService().newBundleClasspathEntry(src.getProjectRelativePath(), null, IPath.fromOSString(".")),
 				classpath[0]);
 
 		// raw class path should still be intact
@@ -1676,8 +1675,8 @@ public class ProjectCreationTests {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
-		IBundleClasspathEntry one = service.newBundleClasspathEntry(new Path("src"),
-				new Path("WebContent/WEB-INF/classes"), new Path("WebContent/WEB-INF/classes"));
+		IBundleClasspathEntry one = service.newBundleClasspathEntry(IPath.fromOSString("src"),
+				IPath.fromOSString("WebContent/WEB-INF/classes"), IPath.fromOSString("WebContent/WEB-INF/classes"));
 		description.setBundleClasspath(new IBundleClasspathEntry[] { one });
 		IPackageExportDescription exp1 = service.newPackageExport("org.eclipse.one", new Version("1.0.0"), true, null);
 		IPackageExportDescription exp2 = service.newPackageExport("org.eclipse.two", new Version("1.0.0"), true, null);
@@ -1699,7 +1698,7 @@ public class ProjectCreationTests {
 		assertEquals("Wrong Bundle-Name", project.getName(), d2.getBundleName());
 		assertNull("Wrong Bundle-Vendor", d2.getBundleVendor());
 		assertEquals("Wrong version", new Version("1.0.0"), d2.getBundleVersion());
-		assertEquals("Wrong default output folder", new Path("bin"), d2.getDefaultOutputFolder());
+		assertEquals("Wrong default output folder", IPath.fromOSString("bin"), d2.getDefaultOutputFolder());
 		String[] ees = d2.getExecutionEnvironments();
 		assertNotNull("Wrong execution environments", ees);
 		assertEquals("Wrong number of execution environments", 1, ees.length);

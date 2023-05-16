@@ -20,7 +20,6 @@ import java.net.URL;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -45,7 +44,7 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 		URL parentURL = parentDesc == null ? null : parentDesc.getSchemaURL();
 		if (schemaLocation.startsWith("schema://")) { //$NON-NLS-1$
 			// extract plug-in ID
-			IPath path = new Path(schemaLocation.substring(9));
+			IPath path = IPath.fromOSString(schemaLocation.substring(9));
 			return getPluginRelativePath(path.segment(0), path.removeFirstSegments(1), parentURL, additionalSearchLocations);
 		}
 
@@ -54,7 +53,7 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 		}
 
 		// parent-relative location
-		IPath path = new Path(parentURL.getPath());
+		IPath path = IPath.fromOSString(parentURL.getPath());
 		path = path.removeLastSegments(1).append(schemaLocation);
 		return new URL(parentURL.getProtocol(), parentURL.getHost(), path.toString());
 	}

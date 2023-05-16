@@ -14,7 +14,6 @@
 package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
@@ -36,7 +35,7 @@ public class InvalidJava8InterfaceTagTests extends InvalidInterfaceMethodTagTest
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return new Path("tags").append("java8").append("interface"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		return IPath.fromOSString("tags").append("java8").append("interface"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	@Override

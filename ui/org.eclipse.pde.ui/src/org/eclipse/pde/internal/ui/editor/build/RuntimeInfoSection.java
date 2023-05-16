@@ -26,7 +26,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -715,7 +714,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 
 	private IPackageFragmentRoot getSourceFolder(String folderName, IPackageFragmentRoot[] sourceFolders) {
 		for (IPackageFragmentRoot sourceFolder : sourceFolders)
-			if (sourceFolder.getPath().removeFirstSegments(1).equals(new Path(folderName)))
+			if (sourceFolder.getPath().removeFirstSegments(1).equals(IPath.fromOSString(folderName)))
 				return sourceFolder;
 		return null;
 	}

@@ -35,7 +35,6 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.query.IQueryResult;
@@ -88,7 +87,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 */
 	public static URI getURI(String relativePath) throws Exception {
 		URL url = PDETestsPlugin.getBundleContext().getBundle().getEntry(relativePath);
-		IPath path = new Path(new File(FileLocator.toFileURL(url).getFile()).getAbsolutePath());
+		IPath path = IPath.fromOSString(new File(FileLocator.toFileURL(url).getFile()).getAbsolutePath());
 		return URIUtil.toURI(path);
 	}
 

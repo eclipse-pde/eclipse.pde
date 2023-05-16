@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.BaseLabelProvider;
@@ -137,7 +136,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 				case IDelta.API_BASELINE_ELEMENT_TYPE:
 					return getBaselineImage();
 				case IDelta.API_COMPONENT_ELEMENT_TYPE: {
-					IPath path = new Path(problem.getResourcePath());
+					IPath path = IPath.fromOSString(problem.getResourcePath());
 					// try to find the component via the resource handle
 					IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 					if (res != null) {

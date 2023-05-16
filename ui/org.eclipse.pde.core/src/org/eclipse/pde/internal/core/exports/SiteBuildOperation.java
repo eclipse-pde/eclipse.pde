@@ -22,9 +22,9 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
@@ -144,7 +144,7 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 	 * @param service
 	 */
 	private String findBuiltVersion(String id, int major, int minor, int service) {
-		IFolder featuresFolder = fSiteContainer.getFolder(new Path("features")); //$NON-NLS-1$
+		IFolder featuresFolder = fSiteContainer.getFolder(IPath.fromOSString("features")); //$NON-NLS-1$
 		if (!featuresFolder.exists()) {
 			return null;
 		}
