@@ -21,7 +21,6 @@ import java.util.HashSet;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
@@ -105,7 +104,7 @@ public abstract class SearchTest {
 			String name1 = pathname.getName();
 			if (Util.isArchive(name1)) {
 				if (projectnames != null) {
-					IPath path = new Path(pathname.getAbsolutePath());
+					IPath path = IPath.fromOSString(pathname.getAbsolutePath());
 					return projectnames.contains(path.removeFileExtension().lastSegment());
 				} else {
 					return true;

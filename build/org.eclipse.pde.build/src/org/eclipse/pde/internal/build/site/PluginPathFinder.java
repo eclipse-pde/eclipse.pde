@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.build.Utils;
 
@@ -41,13 +40,13 @@ public class PluginPathFinder {
 	 * @return path of plugins or features directory of an extension site
 	 */
 	private static String getSitePath(String platformHome, File linkFile, boolean features) {
-		String prefix = new Path(platformHome).removeLastSegments(1).toString();
+		String prefix = IPath.fromOSString(platformHome).removeLastSegments(1).toString();
 		Properties properties = new Properties();
 		try (FileInputStream fis = new FileInputStream(linkFile)) {
 			properties.load(fis);
 			String path = properties.getProperty("path"); //$NON-NLS-1$
 			if (path != null) {
-				if (!new Path(path).isAbsolute())
+				if (!IPath.fromOSString(path).isAbsolute())
 					path = prefix + IPath.SEPARATOR + path;
 				path += IPath.SEPARATOR + ECLIPSE + IPath.SEPARATOR;
 				if (features)

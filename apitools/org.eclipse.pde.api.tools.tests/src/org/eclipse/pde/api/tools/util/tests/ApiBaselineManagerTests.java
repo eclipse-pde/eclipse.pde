@@ -34,7 +34,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -410,7 +409,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	public void testWPUpdateSourceAdded() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
-		IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute().makeAbsolute());
+		IPackageFragmentRoot root = project.findPackageFragmentRoot(IPath.fromOSString(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute().makeAbsolute());
 		assertNotNull("the 'src' package fragment root must exist", root); //$NON-NLS-1$
 		assertTestSource(root, TESTING_PACKAGE, "TestClass1"); //$NON-NLS-1$
 		assertSourceResctriction(TESTING_PACKAGE, "TestClass1", RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
@@ -424,10 +423,10 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	public void testWPUpdateSourceRemoved() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
-		IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
+		IPackageFragmentRoot root = project.findPackageFragmentRoot(IPath.fromOSString(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
 		assertNotNull("the 'src' package fragment root must exist", root); //$NON-NLS-1$
 		assertTestSource(root, TESTING_PACKAGE, "TestClass1"); //$NON-NLS-1$
-		IJavaElement element = project.findElement(new Path("a/b/c/TestClass1.java")); //$NON-NLS-1$
+		IJavaElement element = project.findElement(IPath.fromOSString("a/b/c/TestClass1.java")); //$NON-NLS-1$
 		assertNotNull("the class a.b.c.TestClass1 must exist in the project", element); //$NON-NLS-1$
 		element.getResource().delete(true, new NullProgressMonitor());
 		IApiDescription desc = getTestProjectApiDescription();
@@ -481,12 +480,12 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	public void testWPUpdateSourceTypeChanged() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
-		IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
+		IPackageFragmentRoot root = project.findPackageFragmentRoot(IPath.fromOSString(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
 		assertNotNull("the 'src' package fragment root must exist", root); //$NON-NLS-1$
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		IPackageFragment fragment = root.getPackageFragment("a.b.c"); //$NON-NLS-1$
 		FileUtils.importFileFromDirectory(SRC_LOC.append("TestClass2.java").toFile(), fragment.getPath(), monitor); //$NON-NLS-1$
-		ICompilationUnit element = (ICompilationUnit) project.findElement(new Path("a/b/c/TestClass2.java")); //$NON-NLS-1$
+		ICompilationUnit element = (ICompilationUnit) project.findElement(IPath.fromOSString("a/b/c/TestClass2.java")); //$NON-NLS-1$
 		assertNotNull("TestClass2 must exist in the test project", element); //$NON-NLS-1$
 		updateTagInSource(element, "TestClass2", null, "@noinstantiate", false); //$NON-NLS-1$ //$NON-NLS-2$
 		IApiDescription desc = getTestProjectApiDescription();
@@ -509,10 +508,10 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	public void testWPUpdateSourceInnerTypeChanged() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
-		IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
+		IPackageFragmentRoot root = project.findPackageFragmentRoot(IPath.fromOSString(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
 		assertNotNull("the 'src' package fragment root must exist", root); //$NON-NLS-1$
 		assertTestSource(root, TESTING_PACKAGE, "TestClass3"); //$NON-NLS-1$
-		ICompilationUnit element = (ICompilationUnit) project.findElement(new Path("a/b/c/TestClass3.java")); //$NON-NLS-1$
+		ICompilationUnit element = (ICompilationUnit) project.findElement(IPath.fromOSString("a/b/c/TestClass3.java")); //$NON-NLS-1$
 		assertNotNull("TestClass3 must exist in the test project", element); //$NON-NLS-1$
 		updateTagInSource(element, "InnerTestClass3", null, "@noinstantiate", false); //$NON-NLS-1$ //$NON-NLS-2$
 		IApiDescription desc = getTestProjectApiDescription();
@@ -535,10 +534,10 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	public void testWPUpdateSourceMethodChanged() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
-		IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
+		IPackageFragmentRoot root = project.findPackageFragmentRoot(IPath.fromOSString(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
 		assertNotNull("the 'src' package fragment root must exist", root); //$NON-NLS-1$
 		assertTestSource(root, TESTING_PACKAGE, "TestClass1"); //$NON-NLS-1$
-		ICompilationUnit element = (ICompilationUnit) project.findElement(new Path("a/b/c/TestClass1.java")); //$NON-NLS-1$
+		ICompilationUnit element = (ICompilationUnit) project.findElement(IPath.fromOSString("a/b/c/TestClass1.java")); //$NON-NLS-1$
 		assertNotNull("TestClass1 must exist in the test project", element); //$NON-NLS-1$
 		updateTagInSource(element, "foo", "()V", "@nooverride", false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		IApiDescription desc = getTestProjectApiDescription();
@@ -559,10 +558,10 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	public void testWPUpdateSourceFieldChanged() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
-		IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
+		IPackageFragmentRoot root = project.findPackageFragmentRoot(IPath.fromOSString(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
 		assertNotNull("the 'src' package fragment root must exist", root); //$NON-NLS-1$
 		assertTestSource(root, TESTING_PACKAGE, "TestField9"); //$NON-NLS-1$
-		ICompilationUnit element = (ICompilationUnit) project.findElement(new Path("a/b/c/TestField9.java")); //$NON-NLS-1$
+		ICompilationUnit element = (ICompilationUnit) project.findElement(IPath.fromOSString("a/b/c/TestField9.java")); //$NON-NLS-1$
 		assertNotNull("TestField9 must exist in the test project", element); //$NON-NLS-1$
 		updateTagInSource(element, "field", null, "@noreference", false); //$NON-NLS-1$ //$NON-NLS-2$
 		IApiDescription desc = getTestProjectApiDescription();
@@ -582,10 +581,10 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	public void testWPUpdateSourceMethodRemoveTag() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
-		IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
+		IPackageFragmentRoot root = project.findPackageFragmentRoot(IPath.fromOSString(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
 		assertNotNull("the 'src' package fragment root must exist", root); //$NON-NLS-1$
 		assertTestSource(root, TESTING_PACKAGE, "TestClass1"); //$NON-NLS-1$
-		ICompilationUnit element = (ICompilationUnit) project.findElement(new Path("a/b/c/TestClass1.java")); //$NON-NLS-1$
+		ICompilationUnit element = (ICompilationUnit) project.findElement(IPath.fromOSString("a/b/c/TestClass1.java")); //$NON-NLS-1$
 		assertNotNull("TestClass1 must exist in the test project", element); //$NON-NLS-1$
 		updateTagInSource(element, "foo", "()V", "@nooverride", true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		IApiDescription desc = getTestProjectApiDescription();
@@ -604,10 +603,10 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	public void testWPUpdateSourceTypeRemoveTag() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
-		IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
+		IPackageFragmentRoot root = project.findPackageFragmentRoot(IPath.fromOSString(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
 		assertNotNull("the 'src' package fragment root must exist", root); //$NON-NLS-1$
 		assertTestSource(root, TESTING_PACKAGE, "TestClass3"); //$NON-NLS-1$
-		ICompilationUnit element = (ICompilationUnit) project.findElement(new Path("a/b/c/TestClass3.java")); //$NON-NLS-1$
+		ICompilationUnit element = (ICompilationUnit) project.findElement(IPath.fromOSString("a/b/c/TestClass3.java")); //$NON-NLS-1$
 		assertNotNull("TestClass3 must exist in the test project", element); //$NON-NLS-1$
 		updateTagInSource(element, "InnerTestClass3", null, "@noextend", true); //$NON-NLS-1$ //$NON-NLS-2$
 		IApiDescription desc = getTestProjectApiDescription();
@@ -627,10 +626,10 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	public void testWPUpdateSourceFieldRemoveTag() throws Exception {
 		IJavaProject project = getTestingProject();
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
-		IPackageFragmentRoot root = project.findPackageFragmentRoot(new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
+		IPackageFragmentRoot root = project.findPackageFragmentRoot(IPath.fromOSString(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute());
 		assertNotNull("the 'src' package fragment root must exist", root); //$NON-NLS-1$
 		assertTestSource(root, TESTING_PACKAGE, "TestField9"); //$NON-NLS-1$
-		ICompilationUnit element = (ICompilationUnit) project.findElement(new Path("a/b/c/TestField9.java")); //$NON-NLS-1$
+		ICompilationUnit element = (ICompilationUnit) project.findElement(IPath.fromOSString("a/b/c/TestField9.java")); //$NON-NLS-1$
 		assertNotNull("TestField9 must exist in the test project", element); //$NON-NLS-1$
 		updateTagInSource(element, "field1", null, "@noreference", true); //$NON-NLS-1$ //$NON-NLS-2$
 		IApiDescription desc = getTestProjectApiDescription();
@@ -660,7 +659,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			int before = component.getApiTypeContainers().length;
 
 			// add to classpath
-			folder = assertTestLibrary(project, new Path("libx"), "component.a_1.0.0.jar"); //$NON-NLS-1$ //$NON-NLS-2$
+			folder = assertTestLibrary(project, IPath.fromOSString("libx"), "component.a_1.0.0.jar"); //$NON-NLS-1$ //$NON-NLS-2$
 			assertNotNull("The new library path should not be null", folder); //$NON-NLS-1$
 
 			// re-retrieve updated component
@@ -684,7 +683,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			assertNotNull("The testing project must exist", project); //$NON-NLS-1$
 
 			// add to classpath
-			IFolder folder = assertTestLibrary(project, new Path("libx"), "component.a_1.0.0.jar"); //$NON-NLS-1$ //$NON-NLS-2$
+			IFolder folder = assertTestLibrary(project, IPath.fromOSString("libx"), "component.a_1.0.0.jar"); //$NON-NLS-1$ //$NON-NLS-2$
 			IApiComponent component = getWorkspaceBaseline().getApiComponent(project.getElementName());
 			assertNotNull("the workspace component must exist", component); //$NON-NLS-1$
 			int before = component.getApiTypeContainers().length;
@@ -697,7 +696,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			// remove from bundle class path
 			IBundleProjectService service = ProjectUtils.getBundleProjectService();
 			IBundleProjectDescription description = service.getDescription(project.getProject());
-			description.setBundleClasspath(new IBundleClasspathEntry[] { service.newBundleClasspathEntry(new Path(ProjectUtils.SRC_FOLDER), null, null) });
+			description.setBundleClasspath(new IBundleClasspathEntry[] { service.newBundleClasspathEntry(IPath.fromOSString(ProjectUtils.SRC_FOLDER), null, null) });
 			description.apply(null);
 			waitForAutoBuild();
 
@@ -746,7 +745,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		IContainer container = ProjectUtils.addFolderToProject(project.getProject(), "src2"); //$NON-NLS-1$
 		// add to bundle class path
 		IBundleProjectService service = ProjectUtils.getBundleProjectService();
-		IBundleClasspathEntry next = service.newBundleClasspathEntry(new Path("src2"), new Path("bin3"), new Path("next.jar")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		IBundleClasspathEntry next = service.newBundleClasspathEntry(IPath.fromOSString("src2"), IPath.fromOSString("bin3"), IPath.fromOSString("next.jar")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		ProjectUtils.addBundleClasspathEntry(project.getProject(), next);
 		waitForAutoBuild();
 
@@ -767,7 +766,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
 
 		// add the package
-		assertTestPackage(project, new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute(), "a.test1.c.d"); //$NON-NLS-1$
+		assertTestPackage(project, IPath.fromOSString(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute(), "a.test1.c.d"); //$NON-NLS-1$
 
 		IApiDescription desc = getTestProjectApiDescription();
 		assertNotNull("the testing project api description must exist", desc); //$NON-NLS-1$
@@ -786,7 +785,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
 
 		// add the package
-		IPath srcroot = new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute();
+		IPath srcroot = IPath.fromOSString(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute();
 		IPackageFragment fragment = assertTestPackage(project, srcroot, "a.test2"); //$NON-NLS-1$
 		assertNotNull("the package " + TESTING_PACKAGE + " must exist", fragment); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -809,7 +808,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
 
 		// add package
-		assertTestPackage(project, new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute(), "export1"); //$NON-NLS-1$
+		assertTestPackage(project, IPath.fromOSString(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute(), "export1"); //$NON-NLS-1$
 
 		// update
 		setPackageToApi(project, "export1"); //$NON-NLS-1$
@@ -829,7 +828,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
 
 		// add package
-		assertTestPackage(project, new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute(), "export1"); //$NON-NLS-1$
+		assertTestPackage(project, IPath.fromOSString(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute(), "export1"); //$NON-NLS-1$
 
 		// export the package
 		ProjectUtils.addExportedPackage(project.getProject(), "export1", true, null); //$NON-NLS-1$
@@ -851,7 +850,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		assertNotNull("The testing project must exist", project); //$NON-NLS-1$
 
 		// add package
-		assertTestPackage(project, new Path(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute(), "export1"); //$NON-NLS-1$
+		assertTestPackage(project, IPath.fromOSString(project.getElementName()).append(ProjectUtils.SRC_FOLDER).makeAbsolute(), "export1"); //$NON-NLS-1$
 
 		setPackageToApi(project, "export1"); //$NON-NLS-1$
 		IApiAnnotations annot = getTestProjectApiDescription().resolveAnnotations(Factory.packageDescriptor("export1")); //$NON-NLS-1$

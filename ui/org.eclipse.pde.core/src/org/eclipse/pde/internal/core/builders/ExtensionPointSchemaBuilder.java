@@ -34,7 +34,6 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
@@ -147,7 +146,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 				ensureFoldersExist(file.getProject(), getDocLocation(file));
 				String outputFileName = getOutputFileName(file);
 				IWorkspace workspace = file.getWorkspace();
-				IPath outputPath = new Path(outputFileName);
+				IPath outputPath = IPath.fromOSString(outputFileName);
 
 				SchemaDescriptor desc = new SchemaDescriptor(file, false);
 				Schema schema = (Schema) desc.getSchema(false);
@@ -172,12 +171,12 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 	}
 
 	private void ensureFoldersExist(IProject project, String pathName) throws CoreException {
-		IPath path = new Path(pathName);
+		IPath path = IPath.fromOSString(pathName);
 		IContainer parent = project;
 
 		for (int i = 0; i < path.segmentCount(); i++) {
 			String segment = path.segment(i);
-			IFolder folder = parent.getFolder(new Path(segment));
+			IFolder folder = parent.getFolder(IPath.fromOSString(segment));
 			if (!folder.exists()) {
 				folder.create(true, true, null);
 			}
@@ -235,7 +234,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 		monitor.subTask(NLS.bind(PDECoreMessages.Builders_Schema_removing, outputFileName));
 
 		IWorkspace workspace = file.getWorkspace();
-		IPath path = new Path(outputFileName);
+		IPath path = IPath.fromOSString(outputFileName);
 		if (workspace.getRoot().exists(path)) {
 			IFile outputFile = workspace.getRoot().getFile(path);
 			if (outputFile != null) {

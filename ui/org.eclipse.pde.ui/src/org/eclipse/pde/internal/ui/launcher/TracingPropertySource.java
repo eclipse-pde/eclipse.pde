@@ -24,7 +24,6 @@ import java.util.Properties;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -249,7 +248,7 @@ public class TracingPropertySource {
 		Object[] sortedKeys = getSortedKeys(fTemplate.size());
 		for (Object keyObject : sortedKeys) {
 			String key = (String) keyObject;
-			IPath path = new Path(key);
+			IPath path = IPath.fromOSString(key);
 			path = path.removeFirstSegments(1);
 			String shortKey = path.toString();
 			String value = fTemplate.get(key);
@@ -292,7 +291,7 @@ public class TracingPropertySource {
 			String svalue = value.toString();
 			if (value instanceof Integer)
 				svalue = fBooleanChoices[((Integer) value).intValue()];
-			IPath path = new Path(pid).append(shortKey);
+			IPath path = IPath.fromOSString(pid).append(shortKey);
 			fMasterOptions.setProperty(path.toString(), svalue);
 		}
 		fModified = false;

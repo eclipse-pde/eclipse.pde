@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.ua.ui.editor.toc;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.pde.core.IBaseModel;
@@ -168,7 +167,7 @@ public class TocDropAdapter extends ViewerDropAdapter {
 			IBaseModel model = fSection.getPage().getModel();
 			String[] fileNames = (String[]) FileTransfer.getInstance().nativeToJava(event.currentDataType);
 			for (String fileName : fileNames) {
-				IPath path = new Path(fileName);
+				IPath path = IPath.fromOSString(fileName);
 
 				// Make sure that the file is in the workspace
 				if (ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path) == null) {

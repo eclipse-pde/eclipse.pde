@@ -41,7 +41,6 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
@@ -626,9 +625,9 @@ public class TargetContentsGroup {
 	private IPath getParentPath(TargetBundle bundle) {
 		URI location = bundle.getBundleInfo().getLocation();
 		if (location == null) {
-			return new Path(Messages.TargetContentsGroup_8);
+			return IPath.fromOSString(Messages.TargetContentsGroup_8);
 		}
-		IPath path = new Path(URIUtil.toUnencodedString(location));
+		IPath path = IPath.fromOSString(URIUtil.toUnencodedString(location));
 		path = path.removeLastSegments(1);
 		return path;
 	}
@@ -644,7 +643,7 @@ public class TargetContentsGroup {
 	protected Map<String, String> loadManifest(File bundleLocation) throws IOException {
 		ZipFile jarFile = null;
 		InputStream manifestStream = null;
-		String extension = new Path(bundleLocation.getName()).getFileExtension();
+		String extension = IPath.fromOSString(bundleLocation.getName()).getFileExtension();
 		try {
 			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
 				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);

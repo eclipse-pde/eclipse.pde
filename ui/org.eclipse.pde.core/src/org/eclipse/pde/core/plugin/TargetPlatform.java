@@ -21,7 +21,6 @@ import java.util.function.Supplier;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -93,7 +92,7 @@ public class TargetPlatform {
 		Location location = Platform.getInstallLocation();
 		if (location != null) {
 			URL url = Platform.getInstallLocation().getURL();
-			IPath path = new Path(url.getFile()).removeTrailingSeparator();
+			IPath path = IPath.fromOSString(url.getFile()).removeTrailingSeparator();
 			return path.toOSString();
 		}
 		return ""; //$NON-NLS-1$

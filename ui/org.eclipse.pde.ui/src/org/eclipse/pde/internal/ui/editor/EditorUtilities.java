@@ -26,7 +26,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -236,7 +235,7 @@ public class EditorUtilities {
 	private static IPath getRootPath(IPath path, String definingPluginId) {
 		IPluginModelBase model = PluginRegistry.findModel(definingPluginId);
 		if (model != null && model.getInstallLocation() != null) {
-			IPath newPath = new Path(model.getInstallLocation()).append(path);
+			IPath newPath = IPath.fromOSString(model.getInstallLocation()).append(path);
 			IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 			IContainer container = root.getContainerForLocation(newPath);
 			if (container != null)
@@ -248,7 +247,7 @@ public class EditorUtilities {
 	private static IResource getImageResource(String value, String definingPluginId) {
 		if (value == null)
 			return null;
-		IPath path = new Path(value);
+		IPath path = IPath.fromOSString(value);
 		if (path.isEmpty())
 			return null;
 

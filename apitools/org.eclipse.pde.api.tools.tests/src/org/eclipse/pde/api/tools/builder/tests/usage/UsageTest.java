@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
@@ -49,7 +48,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 	protected static final String INNER_NAME2 = "inner2"; //$NON-NLS-1$
 	protected static final String OUTER_INAME = "Iouter"; //$NON-NLS-1$
 
-	public static IPath SOURCE_PATH = new Path("src/x/y/z"); //$NON-NLS-1$
+	public static IPath SOURCE_PATH = IPath.fromOSString("src/x/y/z"); //$NON-NLS-1$
 
 	public UsageTest(String name) {
 		super(name);
@@ -87,7 +86,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return new Path(USAGE);
+		return IPath.fromOSString(USAGE);
 	}
 
 	@Override
@@ -117,7 +116,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 	 */
 	protected void deployUsageTest(String typename, boolean inc) {
 		try {
-			IPath typepath = new Path(getTestingProjectName()).append(SOURCE_PATH).append(typename).addFileExtension("java"); //$NON-NLS-1$
+			IPath typepath = IPath.fromOSString(getTestingProjectName()).append(SOURCE_PATH).append(typename).addFileExtension("java"); //$NON-NLS-1$
 			createWorkspaceFile(typepath, TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(typename).addFileExtension("java")); //$NON-NLS-1$
 			if (inc) {
 				incrementalBuild();

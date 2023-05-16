@@ -14,7 +14,6 @@
 package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
 
 import junit.framework.Test;
@@ -36,7 +35,7 @@ public class ValidJava8InterfaceTagTests extends
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return new Path("tags").append("java8").append("interface").append("valid"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
+		return IPath.fromOSString("tags").append("java8").append("interface").append("valid"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
 	}
 
 	@Override

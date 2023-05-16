@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
@@ -167,7 +166,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		String zipPath = getBaselineLocation();
 		if (zipPath != null) {
 			IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
-			IPath path = new Path(zipPath);
+			IPath path = IPath.fromOSString(zipPath);
 			String id = path.lastSegment();
 			IApiBaseline perfline = manager.getApiBaseline(id);
 			if (perfline == null) {
@@ -225,7 +224,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		// Get projects directories
 		long start = System.currentTimeMillis();
 		String fullSourceZipPath = getWorkspaceLocation();
-		IPath path = new Path(fullSourceZipPath);
+		IPath path = IPath.fromOSString(fullSourceZipPath);
 		String dirName = path.lastSegment();
 		String fileExtension = path.getFileExtension();
 		dirName = dirName.substring(0, dirName.length() - fileExtension.length());
@@ -340,7 +339,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		} else {
 			fullBuild();
 		}
-		ApiProblem[] problems = getEnv().getProblemsFor(new Path(workspaceFile.segment(0)).append(JarFile.MANIFEST_NAME), null);
+		ApiProblem[] problems = getEnv().getProblemsFor(IPath.fromOSString(workspaceFile.segment(0)).append(JarFile.MANIFEST_NAME), null);
 		assertProblems(problems);
 	}
 

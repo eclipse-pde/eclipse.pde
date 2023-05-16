@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
@@ -132,7 +131,7 @@ public class TargetPersistence36Helper {
 					String text = element.getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_PATH);
 					if (text.length() != 0) {
 						// new format - JRE container path
-						IPath path = Path.fromPortableString(text);
+						IPath path = IPath.fromPortableString(text);
 						definition.setJREContainer(path);
 					}
 				} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.ARGUMENTS)) {

@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.internal.core.BundleManifestSourceLocationManager;
@@ -84,7 +83,7 @@ public class AlternateSourceLocations extends SourceLocationManager {
 			for (int i = 0; i < bundles.length; i++) {
 				String path = bundles[i].getSourcePath();
 				if (path != null) {
-					oldSourceRoots.add(Path.fromOSString(models[i].getInstallLocation()).append(path));
+					oldSourceRoots.add(IPath.fromOSString(models[i].getInstallLocation()).append(path));
 				}
 			}
 		}

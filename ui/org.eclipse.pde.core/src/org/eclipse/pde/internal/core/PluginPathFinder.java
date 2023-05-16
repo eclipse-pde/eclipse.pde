@@ -25,7 +25,6 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.pde.internal.core.update.configurator.PlatformConfiguration;
@@ -45,13 +44,13 @@ public class PluginPathFinder {
 	 * @return path of plugins or features directory of an extension site
 	 */
 	private static String getSitePath(String platformHome, File linkFile, boolean features) {
-		String prefix = new Path(platformHome).removeLastSegments(1).toString();
+		String prefix = IPath.fromOSString(platformHome).removeLastSegments(1).toString();
 		Properties properties = new Properties();
 		try (FileInputStream fis = new FileInputStream(linkFile)) {
 			properties.load(fis);
 			String path = properties.getProperty("path"); //$NON-NLS-1$
 			if (path != null) {
-				if (!new Path(path).isAbsolute()) {
+				if (!IPath.fromOSString(path).isAbsolute()) {
 					path = prefix + IPath.SEPARATOR + path;
 				}
 				path += IPath.SEPARATOR + "eclipse" + IPath.SEPARATOR; //$NON-NLS-1$
@@ -110,7 +109,7 @@ public class PluginPathFinder {
 		File file = getPlatformFile(platformHome);
 		if (file != null) {
 			try {
-				String value = new Path(platformHome).toFile().toURL().toExternalForm();
+				String value = IPath.fromOSString(platformHome).toFile().toURL().toExternalForm();
 				System.setProperty(URL_PROPERTY, value);
 				try {
 					PlatformConfiguration config = new PlatformConfiguration(file.toURL());
@@ -138,7 +137,7 @@ public class PluginPathFinder {
 			try {
 				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 				location = manager.performStringSubstitution(location);
-				IPath path = new Path(location);
+				IPath path = IPath.fromOSString(location);
 				if (path.isAbsolute()) {
 					file = path.toFile();
 				} else {

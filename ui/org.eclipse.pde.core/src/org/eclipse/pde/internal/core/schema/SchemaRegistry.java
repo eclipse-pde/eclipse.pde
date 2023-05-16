@@ -19,7 +19,6 @@ import java.net.URL;
 import java.util.HashMap;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.IPluginBase;
@@ -112,7 +111,7 @@ public class SchemaRegistry {
 		IPluginModelBase model = point.getPluginModel();
 		URL url = getSchemaURL(model.getPluginBase().getId(), schema);
 		if (url == null) {
-			url = getSchemaFromSourceExtension(point.getPluginBase(), new Path(schema));
+			url = getSchemaFromSourceExtension(point.getPluginBase(), IPath.fromOSString(schema));
 		}
 		return url;
 	}

@@ -43,7 +43,6 @@ import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -337,7 +336,7 @@ public abstract class AbstractTargetTest extends PDETestCase {
 
 	public static ITextFileBuffer getTextFileBufferFromFile(File file) {
 		try {
-			IPath path = Path.fromOSString(file.getAbsolutePath());
+			IPath path = IPath.fromOSString(file.getAbsolutePath());
 			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 			manager.connect(path, LocationKind.LOCATION, null);
 			return manager.getTextFileBuffer(path, LocationKind.LOCATION);

@@ -17,7 +17,6 @@ import java.util.jar.JarFile;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
@@ -41,10 +40,10 @@ public class VersionTest extends CompatibilityTest {
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/version"); //$NON-NLS-1$
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_INTERNAL = new Path("bundle.a/src/a/version/internal"); //$NON-NLS-1$
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = IPath.fromOSString("bundle.a/src/a/version"); //$NON-NLS-1$
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_INTERNAL = IPath.fromOSString("bundle.a/src/a/version/internal"); //$NON-NLS-1$
 
-	protected static IPath MANIFEST_PATH = new Path("bundle.a").append(JarFile.MANIFEST_NAME); //$NON-NLS-1$
+	protected static IPath MANIFEST_PATH = IPath.fromOSString("bundle.a").append(JarFile.MANIFEST_NAME); //$NON-NLS-1$
 
 	/**
 	 * Package prefix for test classes

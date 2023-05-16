@@ -25,7 +25,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
@@ -52,7 +51,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	 */
 	static ITargetHandle restoreHandle(URI uri) {
 		String part = uri.getSchemeSpecificPart();
-		IPath path = new Path(part);
+		IPath path = IPath.fromOSString(part);
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		return new WorkspaceFileTargetHandle(file);
 	}

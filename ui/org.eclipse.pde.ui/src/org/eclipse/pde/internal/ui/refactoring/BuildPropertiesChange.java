@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.core.refactoring.Change;
@@ -89,7 +88,7 @@ public class BuildPropertiesChange {
 		IPath resPath = res.getProjectRelativePath();
 		String[] tokens = entry.getTokens();
 		for (String token : tokens) {
-			if (resPath.isPrefixOf(new Path(token))) {
+			if (resPath.isPrefixOf(IPath.fromOSString(token))) {
 				try {
 					entry.renameToken(token, string.concat(token.substring(resPath.toString().length())));
 				} catch (CoreException e) {

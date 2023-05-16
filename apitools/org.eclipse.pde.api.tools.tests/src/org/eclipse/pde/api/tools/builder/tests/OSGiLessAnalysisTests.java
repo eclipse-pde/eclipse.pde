@@ -22,8 +22,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.builder.BaseApiAnalyzer;
 import org.eclipse.pde.api.tools.internal.builder.BuildContext;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
@@ -44,8 +44,8 @@ public class OSGiLessAnalysisTests {
 
 	@Test
 	public void testAnalyzer() throws CoreException {
-		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("baseline", new Path("test-analyzer-1")); //$NON-NLS-1$ //$NON-NLS-2$
-		IApiBaseline current = TestSuiteHelper.createTestingBaseline("current", new Path("test-analyzer-2")); //$NON-NLS-1$ //$NON-NLS-2$
+		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("baseline", IPath.fromOSString("test-analyzer-1")); //$NON-NLS-1$ //$NON-NLS-2$
+		IApiBaseline current = TestSuiteHelper.createTestingBaseline("current", IPath.fromOSString("test-analyzer-2")); //$NON-NLS-1$ //$NON-NLS-2$
 		BaseApiAnalyzer analyzer = new BaseApiAnalyzer();
 		IApiComponent component = current.getApiComponent("test.bundle.a"); //$NON-NLS-1$
 		assertNotNull("Missing API component test.bundle.a", component); //$NON-NLS-1$

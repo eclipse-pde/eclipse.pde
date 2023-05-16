@@ -23,7 +23,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.core.IJavaProject;
@@ -170,7 +169,7 @@ public class VMHelper {
 
 		// Launch configuration has a JRE or EE set, throw exception if associated vm not found
 		if (jre != null) {
-			IPath jrePath = Path.fromPortableString(jre);
+			IPath jrePath = IPath.fromPortableString(jre);
 			IVMInstall vm = JavaRuntime.getVMInstall(jrePath);
 			if (vm == null) {
 				String id = JavaRuntime.getExecutionEnvironmentId(jrePath);
@@ -238,7 +237,7 @@ public class VMHelper {
 	 */
 	public static IRuntimeClasspathEntry getJREEntry(ILaunchConfiguration configuration) throws CoreException {
 		IVMInstall jre = createLauncher(configuration);
-		IPath containerPath = new Path(JavaRuntime.JRE_CONTAINER);
+		IPath containerPath = IPath.fromOSString(JavaRuntime.JRE_CONTAINER);
 		containerPath = containerPath.append(jre.getVMInstallType().getId());
 		containerPath = containerPath.append(jre.getName());
 		return JavaRuntime.newRuntimeContainerClasspathEntry(containerPath, IRuntimeClasspathEntry.BOOTSTRAP_CLASSES);

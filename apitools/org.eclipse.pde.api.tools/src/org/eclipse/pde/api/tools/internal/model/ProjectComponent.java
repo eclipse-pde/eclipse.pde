@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -105,7 +104,7 @@ public class ProjectComponent extends BundleComponent {
 	 */
 	public ProjectComponent(IApiBaseline baseline, String location, IPluginModelBase model, long bundleid) throws CoreException {
 		super(baseline, location, bundleid);
-		IPath path = new Path(location);
+		IPath path = IPath.fromOSString(location);
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment());
 		this.fProject = JavaCore.create(project);
 		this.fModel = model;
@@ -367,7 +366,7 @@ public class ProjectComponent extends BundleComponent {
 	 * @return {@link IApiTypeContainer} or <code>null</code>
 	 */
 	private IApiTypeContainer findApiTypeContainer(String location) {
-		IResource res = fProject.getProject().findMember(new Path(location));
+		IResource res = fProject.getProject().findMember(IPath.fromOSString(location));
 		if (res != null) {
 			if (res.getType() == IResource.FILE) {
 				return new ArchiveApiTypeContainer(this, res.getLocation().toOSString());
@@ -390,7 +389,7 @@ public class ProjectComponent extends BundleComponent {
 	private static IApiTypeContainer getApiTypeContainer(String location, ProjectComponent component,
 			Map<IPath, IApiTypeContainer> outputLocationToContainer) throws CoreException {
 		IJavaProject project = component.fProject;
-		IResource res = project.getProject().findMember(new Path(location));
+		IResource res = project.getProject().findMember(IPath.fromOSString(location));
 		if (res != null) {
 			IPackageFragmentRoot root = project.getPackageFragmentRoot(res);
 			if (root.exists()) {

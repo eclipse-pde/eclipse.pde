@@ -17,7 +17,7 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.io.File;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -211,7 +211,7 @@ public class ExportDestinationTab extends AbstractExportTab {
 		if (fArchiveFileButton.getSelection()) {
 			String path = fArchiveCombo.getText();
 			if (path != null && path.length() > 0) {
-				String fileName = new Path(path).lastSegment();
+				String fileName = IPath.fromOSString(path).lastSegment();
 				if (!fileName.endsWith(ZIP_EXTENSION)) {
 					fileName += ZIP_EXTENSION;
 				}
@@ -225,7 +225,7 @@ public class ExportDestinationTab extends AbstractExportTab {
 		if (fArchiveFileButton.getSelection()) {
 			String path = fArchiveCombo.getText();
 			if (path.length() > 0) {
-				path = new Path(path).removeLastSegments(1).toOSString();
+				path = IPath.fromOSString(path).removeLastSegments(1).toOSString();
 				return new File(path).getAbsolutePath();
 			}
 			return ""; //$NON-NLS-1$

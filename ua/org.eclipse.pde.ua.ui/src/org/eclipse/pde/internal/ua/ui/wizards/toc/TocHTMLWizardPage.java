@@ -14,8 +14,8 @@
 
 package org.eclipse.pde.internal.ua.ui.wizards.toc;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
@@ -48,7 +48,7 @@ public class TocHTMLWizardPage extends WizardNewFileCreationPage {
 			return false;
 		}
 
-		if(!HelpEditorUtil.hasValidPageExtension(new Path(fLastFilename)))
+		if(!HelpEditorUtil.hasValidPageExtension(IPath.fromOSString(fLastFilename)))
 		{	String message = NLS.bind(
 				TocWizardMessages.TocHTMLWizardPage_errorMessage2,
 				HelpEditorUtil.getPageExtensionList());

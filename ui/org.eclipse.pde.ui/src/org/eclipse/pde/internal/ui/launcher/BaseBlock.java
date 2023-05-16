@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
@@ -168,7 +167,7 @@ public abstract class BaseBlock {
 				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 				try {
 					path = manager.performStringSubstitution(path, false);
-					IPath uriPath = new Path(path).makeAbsolute();
+					IPath uriPath = IPath.fromOSString(path).makeAbsolute();
 					IContainer[] containers = root.findContainersForLocationURI(URIUtil.toURI(uriPath));
 					if (containers.length > 0) {
 						res = containers[0];

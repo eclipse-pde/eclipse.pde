@@ -14,7 +14,6 @@
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -528,7 +527,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	private void x15(boolean inc) throws Exception {
 		String typename = "test15"; //$NON-NLS-1$
 		expectingNoJDTProblems();
-		IPath typepath = new Path(getTestingProjectName()).append(UsageTest.SOURCE_PATH).append(typename).addFileExtension("java"); //$NON-NLS-1$
+		IPath typepath = IPath.fromOSString(getTestingProjectName()).append(UsageTest.SOURCE_PATH).append(typename).addFileExtension("java"); //$NON-NLS-1$
 		expectingNoProblemsFor(typepath);
 		deployUsageTest(typename, inc);
 	}

@@ -23,7 +23,7 @@ import java.util.Properties;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 
@@ -36,7 +36,7 @@ public class BuildConfiguration {
 	static {
 		// use the template build.properties from pde.build
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
-				new Path("/templates/headless-build/build.properties"), null);
+				IPath.fromOSString("/templates/headless-build/build.properties"), null);
 		try {
 			String buildPropertiesPath = FileLocator.toFileURL(resource).getPath();
 			defaultBuildConfig.load(new BufferedInputStream(new FileInputStream(buildPropertiesPath)));

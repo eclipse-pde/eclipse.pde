@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
@@ -48,7 +47,7 @@ public abstract class Java7UsageTest extends ApiBuilderTest {
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return new Path("usage").append("java7"); //$NON-NLS-1$ //$NON-NLS-2$
+		return IPath.fromOSString("usage").append("java7"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	@Override
@@ -98,7 +97,7 @@ public abstract class Java7UsageTest extends ApiBuilderTest {
 	 */
 	protected void deployUsageTest(String typename, boolean inc) {
 		try {
-			IPath typepath = new Path(getTestingProjectName()).append(UsageTest.SOURCE_PATH).append(typename).addFileExtension("java"); //$NON-NLS-1$
+			IPath typepath = IPath.fromOSString(getTestingProjectName()).append(UsageTest.SOURCE_PATH).append(typename).addFileExtension("java"); //$NON-NLS-1$
 			createWorkspaceFile(typepath, TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(typename).addFileExtension("java")); //$NON-NLS-1$
 			if (inc) {
 				incrementalBuild();

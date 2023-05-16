@@ -24,9 +24,9 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -200,7 +200,7 @@ public class AbstractApiTest {
 		ApiTestingEnvironment.dispose(getWorkspaceBaseline());
 		IProject pro = getProject(name);
 		if (pro.exists()) {
-			ResourceEventWaiter waiter = new ResourceEventWaiter(new Path(name), IResourceChangeEvent.POST_CHANGE,
+			ResourceEventWaiter waiter = new ResourceEventWaiter(IPath.fromOSString(name), IResourceChangeEvent.POST_CHANGE,
 					IResourceDelta.CHANGED, 0);
 			pro.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
 			Object obj = waiter.waitForEvent();

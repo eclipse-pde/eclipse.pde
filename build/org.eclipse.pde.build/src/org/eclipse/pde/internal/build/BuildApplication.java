@@ -20,7 +20,7 @@ import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -56,7 +56,7 @@ public class BuildApplication implements IApplication {
 		String[] result = new String[length + 2];
 		System.arraycopy(args, 0, result, 0, length);
 		result[length] = "-f"; //$NON-NLS-1$
-		URL buildURL = BundleHelper.getDefault().find(new Path("/scripts/build.xml")); //$NON-NLS-1$
+		URL buildURL = BundleHelper.getDefault().find(IPath.fromOSString("/scripts/build.xml")); //$NON-NLS-1$
 		result[length + 1] = FileLocator.toFileURL(buildURL).getFile();
 		return result;
 	}

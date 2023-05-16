@@ -17,7 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 
 import junit.framework.Test;
@@ -33,7 +32,7 @@ public abstract class SinceTagTest extends CompatibilityTest {
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/since"); //$NON-NLS-1$
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = IPath.fromOSString("bundle.a/src/a/since"); //$NON-NLS-1$
 
 	/**
 	 * Package prefix for test classes

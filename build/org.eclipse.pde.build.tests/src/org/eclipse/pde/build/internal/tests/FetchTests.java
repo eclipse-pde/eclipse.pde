@@ -29,7 +29,7 @@ import java.util.jar.Manifest;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
@@ -94,7 +94,7 @@ public class FetchTests extends PDETestCase {
 		fetchProperties.put("id", "org.eclipse.pde.build.container.feature");
 
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
-				new Path("/scripts/genericTargets.xml"), null);
+				IPath.fromOSString("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] { "fetchElement" }, buildFolder.getLocation().toOSString(),
 				fetchProperties);
@@ -127,7 +127,7 @@ public class FetchTests extends PDETestCase {
 		fetchProperties.put("id", "org.eclipse.cvs");
 
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
-				new Path("/scripts/genericTargets.xml"), null);
+				IPath.fromOSString("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] { "fetchElement" }, buildFolder.getLocation().toOSString(),
 				fetchProperties);
@@ -216,7 +216,7 @@ public class FetchTests extends PDETestCase {
 		fetchProperties.put("id", "org.eclipse.cvs");
 
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
-				new Path("/scripts/genericTargets.xml"), null);
+				IPath.fromOSString("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] { "fetchElement" }, buildFolder.getLocation().toOSString(),
 				fetchProperties);
@@ -244,7 +244,7 @@ public class FetchTests extends PDETestCase {
 		fetchProperties.put("id", "F1");
 
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
-				new Path("/scripts/genericTargets.xml"), null);
+				IPath.fromOSString("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] { "fetchElement" }, buildFolder.getLocation().toOSString(),
 				fetchProperties);
@@ -305,7 +305,7 @@ public class FetchTests extends PDETestCase {
 		fetchProperties.put("id", "org.eclipse.pde.build.container.feature");
 
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
-				new Path("/scripts/genericTargets.xml"), null);
+				IPath.fromOSString("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] { "fetchElement" }, buildFolder.getLocation().toOSString(),
 				fetchProperties);
@@ -322,9 +322,9 @@ public class FetchTests extends PDETestCase {
 		// copy over the directory.txt file and make sure that it has the right location
 		// for the repository
 		URL mapFile = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"),
-				new Path("/resources/p2.get/directory.txt.template"), null);
+				IPath.fromOSString("/resources/p2.get/directory.txt.template"), null);
 		URL repoLocation = FileLocator.find(Platform.getBundle("org.eclipse.pde.build.tests"),
-				new Path("/resources/repos/1"), null);
+				IPath.fromOSString("/resources/repos/1"), null);
 		repoLocation = FileLocator.resolve(repoLocation);
 		Map<String, String> replacements = new HashMap<>();
 		replacements.put("repoLocation", repoLocation.toExternalForm());
@@ -340,7 +340,7 @@ public class FetchTests extends PDETestCase {
 		fetchProperties.put("id", "org.eclipse.pde.build.container.feature");
 
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"),
-				new Path("/scripts/genericTargets.xml"), null);
+				IPath.fromOSString("/scripts/genericTargets.xml"), null);
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] { "fetchElement" }, buildFolder.getLocation().toOSString(),
 				fetchProperties);

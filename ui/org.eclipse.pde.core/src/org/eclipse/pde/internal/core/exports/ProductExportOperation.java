@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -450,7 +449,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 		if (path == null || path.length() == 0) {
 			return null;
 		}
-		IResource resource = PDECore.getWorkspace().getRoot().findMember(new Path(path));
+		IResource resource = PDECore.getWorkspace().getRoot().findMember(IPath.fromOSString(path));
 		if (resource != null) {
 			IPath fullPath = resource.getLocation();
 			return fullPath == null ? null : fullPath.toOSString();

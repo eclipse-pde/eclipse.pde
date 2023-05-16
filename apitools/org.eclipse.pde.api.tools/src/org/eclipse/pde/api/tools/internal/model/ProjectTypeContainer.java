@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.provisional.model.ApiTypeContainerVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
@@ -137,7 +136,7 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 			pkg = qualifiedName.substring(0, index);
 			cfName = qualifiedName.substring(index + 1);
 		}
-		IFolder folder = fRoot.getFolder(new Path(pkg.replace('.', IPath.SEPARATOR)));
+		IFolder folder = fRoot.getFolder(IPath.fromOSString(pkg.replace('.', IPath.SEPARATOR)));
 		if (folder.exists()) {
 			IFile file = folder.getFile(cfName + Util.DOT_CLASS_SUFFIX);
 			if (file.exists()) {

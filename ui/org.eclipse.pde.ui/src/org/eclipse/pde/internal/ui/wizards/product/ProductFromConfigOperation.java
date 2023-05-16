@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -77,7 +76,7 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 			// Set JRE info from information from the launch configuration
 			String jreString = fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String) null);
 			if (jreString != null) {
-				IPath jreContainerPath = new Path(jreString);
+				IPath jreContainerPath = IPath.fromOSString(jreString);
 				IJREInfo jreInfo = product.getJREInfo();
 				if (jreInfo == null) {
 					jreInfo = product.getModel().getFactory().createJVMInfo();
@@ -95,7 +94,7 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 				super.initializeProduct(product);
 			} else {
 				String path = fLaunchConfiguration.getAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, "/"); //$NON-NLS-1$
-				IContainer container = PDEPlugin.getWorkspace().getRoot().getContainerForLocation(new Path(path));
+				IContainer container = PDEPlugin.getWorkspace().getRoot().getContainerForLocation(IPath.fromOSString(path));
 				if (container != null) {
 					IConfigurationFileInfo info = factory.createConfigFileInfo();
 					info.setUse(null, "custom"); //$NON-NLS-1$

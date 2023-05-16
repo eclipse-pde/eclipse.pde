@@ -21,7 +21,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.ITargetDefinition;
@@ -119,7 +118,7 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 	 * @throws CoreException
 	 */
 	private IPath resolveHomeLocation() throws CoreException {
-		return new Path(resolveVariables(fHome));
+		return IPath.fromOSString(resolveVariables(fHome));
 	}
 
 	@Override

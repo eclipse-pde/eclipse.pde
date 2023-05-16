@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.ant;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 
 public class ZipFileSet extends FileSet {
 
@@ -53,7 +53,7 @@ public class ZipFileSet extends FileSet {
 		script.printAttribute("excludesfile", excludesfile, false); //$NON-NLS-1$
 		script.printAttribute("casesensitive", casesensitive, false); //$NON-NLS-1$
 		if (prefixHasWildcards()) {
-			String pre = new Path(prefix).removeLastSegments(1).toString();
+			String pre = IPath.fromOSString(prefix).removeLastSegments(1).toString();
 			script.printAttribute("prefix", pre, false); //$NON-NLS-1$
 		} else if (file) {
 			script.printAttribute("fullpath", prefix, false); //$NON-NLS-1$

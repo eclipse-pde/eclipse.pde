@@ -36,8 +36,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.JavaCore;
@@ -320,7 +320,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		InputStream manifestStream = null;
 		ZipFile jarFile = null;
 		try {
-			if ("jar".equalsIgnoreCase(new Path(bundleLocation.getName()).getFileExtension()) && bundleLocation.isFile()) { //$NON-NLS-1$
+			if ("jar".equalsIgnoreCase(IPath.fromOSString(bundleLocation.getName()).getFileExtension()) && bundleLocation.isFile()) { //$NON-NLS-1$
 				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
 				ZipEntry manifestEntry = jarFile.getEntry(JarFile.MANIFEST_NAME);
 				if (manifestEntry != null) {

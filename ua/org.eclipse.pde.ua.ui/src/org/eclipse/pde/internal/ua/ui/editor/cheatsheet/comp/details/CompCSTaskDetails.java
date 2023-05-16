@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -302,7 +301,7 @@ public class CompCSTaskDetails extends CSAbstractDetails {
 
 	private void handleLinkEventPathEntry(String absolutePath) {
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
-		IPath path = new Path(absolutePath);
+		IPath path = IPath.fromOSString(absolutePath);
 		// If the path is empty open the new simple cheat sheet wizard
 		if (path.isEmpty()) {
 			handleLinkWizardPathEntry();

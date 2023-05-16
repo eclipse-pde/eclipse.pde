@@ -41,7 +41,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -191,7 +190,7 @@ public class ClasspathHelper {
 				source = entry.getPath();
 				output = entry.getPath();
 				if (source.segmentCount() == 1) {
-					source = new Path(DOT);
+					source = IPath.fromOSString(DOT);
 				}
 			}
 			if (output != null && !excluded.contains(output)) {
@@ -246,13 +245,13 @@ public class ClasspathHelper {
 		// search for a library that exists in jar form on the buildpath
 		IPath path = null;
 		if (libName.equals(DOT)) {
-			path = new Path(DOT);
+			path = IPath.fromOSString(DOT);
 		} else {
 			IResource res = project.findMember(libName);
 			if (res != null) {
 				path = res.getFullPath();
 			} else {
-				path = new Path(libName);
+				path = IPath.fromOSString(libName);
 			}
 		}
 
@@ -337,7 +336,7 @@ public class ClasspathHelper {
 					file = new File(file, libName);
 					if (file.exists()) {
 						// Postfix fragment annotation for fragment path (fix bug 294211)
-						return List.of(new Path(file.getPath() + FRAGMENT_ANNOTATION));
+						return List.of(IPath.fromOSString(file.getPath() + FRAGMENT_ANNOTATION));
 					}
 				}
 			}
@@ -357,7 +356,7 @@ public class ClasspathHelper {
 	 * from fragments.  This is needed to fix bug 294211.
 	 */
 	private static List<IPath> postfixFragmentAnnotation(List<IPath> paths) {
-		return paths.stream().map(p -> new Path(p + FRAGMENT_ANNOTATION)).collect(Collectors.toList());
+		return paths.stream().map(p -> IPath.fromOSString(p + FRAGMENT_ANNOTATION)).collect(Collectors.toList());
 	}
 
 	private static IPath resolvePath(IProject project, IPath path) {
@@ -369,7 +368,7 @@ public class ClasspathHelper {
 			// make path relative to bundle root
 			path = path.makeRelativeTo(rootPath);
 			if (path.segmentCount() == 0) {
-				return new Path(DOT);
+				return IPath.fromOSString(DOT);
 			}
 			if (bundleRoot.findMember(path) != null) {
 				return path;

@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -245,7 +244,7 @@ public class SchemaIncludesSection extends TableSection {
 			if (!(edinput instanceof IFileEditorInput))
 				return;
 			String path = ((ISchemaInclude) object).getLocation();
-			IPath includePath = new Path(((ISchemaInclude) object).getLocation());
+			IPath includePath = IPath.fromOSString(((ISchemaInclude) object).getLocation());
 			boolean result = false;
 			if (path.startsWith("schema:")) { //$NON-NLS-1$
 				result = SchemaEditor.openSchema(includePath);

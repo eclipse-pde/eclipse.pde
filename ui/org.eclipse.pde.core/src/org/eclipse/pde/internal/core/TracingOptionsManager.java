@@ -32,7 +32,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 
@@ -72,7 +71,7 @@ public class TracingOptionsManager {
 	}
 
 	private boolean belongsTo(String option, String pluginId) {
-		IPath path = new Path(option);
+		IPath path = IPath.fromOSString(option);
 		String firstSegment = path.segment(0);
 		return pluginId.equalsIgnoreCase(firstSegment);
 	}
@@ -143,7 +142,7 @@ public class TracingOptionsManager {
 		Properties properties = getTracingOptions(map);
 		for (Enumeration<Object> keys = properties.keys(); keys.hasMoreElements();) {
 			String key = keys.nextElement().toString();
-			IPath path = new Path(key);
+			IPath path = IPath.fromOSString(key);
 			if (path.segmentCount() < 1 || !selected.contains(path.segment(0))) {
 				properties.remove(key);
 			}

@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.BidiUtils;
@@ -445,12 +444,12 @@ public class LauncherSection extends PDESection {
 
 	private void openImage(String value) {
 		IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
-		IPath path = new Path(value);
+		IPath path = IPath.fromOSString(value);
 		if (path.isEmpty()) {
 			MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.WindowImagesSection_open, PDEUIMessages.WindowImagesSection_emptyPath); //
 			return;
 		}
-		IResource resource = root.findMember(new Path(value));
+		IResource resource = root.findMember(IPath.fromOSString(value));
 		try {
 			if (resource != null && resource instanceof IFile)
 				IDE.openEditor(PDEPlugin.getActivePage(), (IFile) resource, true);

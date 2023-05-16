@@ -44,7 +44,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -96,17 +95,17 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 *
 	 * @since 1.0.1
 	 */
-	static final IPath SETTINGS_PATH = new Path(".settings"); //$NON-NLS-1$
+	static final IPath SETTINGS_PATH = IPath.fromOSString(".settings"); //$NON-NLS-1$
 
 	/**
 	 * Project relative path to the build.properties file
 	 */
-	public static final IPath BUILD_PROPERTIES_PATH = new Path("build.properties"); //$NON-NLS-1$
+	public static final IPath BUILD_PROPERTIES_PATH = IPath.fromOSString("build.properties"); //$NON-NLS-1$
 
 	/**
 	 * Project relative path to the manifest file.
 	 */
-	public static final IPath MANIFEST_PATH = new Path(JarFile.MANIFEST_NAME);
+	public static final IPath MANIFEST_PATH = IPath.fromOSString(JarFile.MANIFEST_NAME);
 
 	/**
 	 * {@link Comparator} to sort {@link ManifestElement}s
@@ -1181,7 +1180,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		if (resourcePath == null) {
 			return null;
 		}
-		IResource resource = currentproject.findMember(new Path(resourcePath));
+		IResource resource = currentproject.findMember(IPath.fromOSString(resourcePath));
 		if (resource == null) {
 			// might be re-exported try to look it up
 			IJavaProject jp = JavaCore.create(currentproject);
@@ -1262,7 +1261,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		loop: for (int i = 0, max = workspaceModels.length; i < max; i++) {
 			desc = workspaceModels[i].getBundleDescription();
 			if (desc != null) {
-				IPath path = new Path(desc.getLocation());
+				IPath path = IPath.fromOSString(desc.getLocation());
 				if (path.equals(location)) {
 					currentModel = workspaceModels[i];
 					break loop;

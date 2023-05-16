@@ -39,7 +39,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.pde.core.IModel;
@@ -231,7 +231,7 @@ public abstract class WorkspaceModelManager<T> extends AbstractModelManager
 	protected IPreferenceChangeListener createBundleRootChangeListener() {
 		return e -> {
 			if (PDEProject.BUNDLE_ROOT_PATH.equals(e.getKey()) && !isInRemovedBranch(e.getNode())) {
-				String projectName = Path.forPosix(e.getNode().absolutePath()).segment(1);
+				String projectName = IPath.forPosix(e.getNode().absolutePath()).segment(1);
 				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 
 				// bundle-root changed (null value means default): try to

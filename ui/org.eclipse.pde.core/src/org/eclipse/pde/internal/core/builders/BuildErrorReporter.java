@@ -43,7 +43,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -667,17 +666,17 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			IPath resourcePath = null;
 			String entry = null;
 			if ((mh == null || mh.getValue() == null)) { // check for default location
-				resourcePath = new Path(Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME);
+				resourcePath = IPath.fromOSString(Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME);
 				entry = Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
 			} else { // check for the real location
 				String localization = mh.getValue();
 				int index = localization.lastIndexOf('/');
 				if (index != -1) { // if we're a folder
 					entry = localization.substring(0, index + 1);
-					resourcePath = new Path(entry);
+					resourcePath = IPath.fromOSString(entry);
 				} else { // if we're just a file location
 					entry = mh.getValue().concat(".properties"); //$NON-NLS-1$
-					resourcePath = new Path(entry);
+					resourcePath = IPath.fromOSString(entry);
 				}
 			}
 			if (entry != null) {
@@ -735,7 +734,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 						}
 					}
 				} else {
-					if (fProject.exists(new Path("Application.e4xmi"))) { //$NON-NLS-1$
+					if (fProject.exists(IPath.fromOSString("Application.e4xmi"))) { //$NON-NLS-1$
 						// Default if not specified
 						validateBinIncludes(binIncludes, "Application.e4xmi"); //$NON-NLS-1$
 					}
@@ -853,7 +852,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			}
 			// account for trailing slash on class file folders
 			if (!found) {
-				IPath path = new Path(key);
+				IPath path = IPath.fromOSString(key);
 				if (path.getFileExtension() == null) {
 					if (!key.endsWith("/")) { //$NON-NLS-1$
 						key = key + "/"; //$NON-NLS-1$
@@ -953,7 +952,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				File external = new File(location);
 				if (external.exists()) {
 					if (external.isDirectory()) {
-						IPath p = new Path(location).addTrailingSeparator().append(libname);
+						IPath p = IPath.fromOSString(location).addTrailingSeparator().append(libname);
 						return new File(p.toOSString()).exists();
 					}
 					return CoreUtility.jarContainsResource(external, libname, false);
@@ -1112,7 +1111,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 							// True is valid if the bundle root is the default (the project)
 							entryCorrect = fProject.equals(PDEProject.getBundleRoot(fProject));
 						} else {
-							IPath prefFile = new Path(tokens[0]);
+							IPath prefFile = IPath.fromOSString(tokens[0]);
 							if (prefFile.isAbsolute()) {
 								entryCorrect = prefFile.toFile().exists();
 							} else {

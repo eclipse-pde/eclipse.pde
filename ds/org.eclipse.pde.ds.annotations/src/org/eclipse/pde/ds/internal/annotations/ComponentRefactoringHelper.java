@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -179,7 +178,7 @@ public class ComponentRefactoringHelper {
 			String modelPath = state.getModelFile(type.getFullyQualifiedName());
 			if (modelPath != null) {
 				IProject project = type.getJavaProject().getProject();
-				IFile modelFile = PDEProject.getBundleRelativeFile(project, Path.fromPortableString(modelPath));
+				IFile modelFile = PDEProject.getBundleRelativeFile(project, IPath.fromPortableString(modelPath));
 				if (modelFile.isAccessible()) {
 					modelFiles.put(type, modelFile);
 					deltaFactory.change(modelFile);
@@ -188,7 +187,7 @@ public class ComponentRefactoringHelper {
 					componentNames.put(modelFile, compName);
 
 					// TODO centralize this?
-					IPath newPath = new Path(state.getPath()).addTrailingSeparator()
+					IPath newPath = IPath.fromOSString(state.getPath()).addTrailingSeparator()
 							.append(compName).addFileExtension("xml"); //$NON-NLS-1$
 					IFile newModelFile = PDEProject.getBundleRelativeFile(project, newPath);
 					renames.put(modelFile, newModelFile);

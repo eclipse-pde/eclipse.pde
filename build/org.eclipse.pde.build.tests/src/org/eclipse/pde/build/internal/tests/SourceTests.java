@@ -38,7 +38,7 @@ import org.apache.tools.ant.Target;
 import org.apache.tools.ant.taskdefs.Ant;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.pde.build.internal.tests.ant.AntUtils;
@@ -521,7 +521,7 @@ public class SourceTests extends PDETestCase {
 
 		// top level feature must be in buildDirectory
 		Utils.createFolder(build2, "features");
-		sdkFolder.move(new Path("../2/features/sdk"), true, null);
+		sdkFolder.move(IPath.fromOSString("../2/features/sdk"), true, null);
 
 		String oldBuild = buildFolder.getLocation().toOSString();
 		Utils.generateAllElements(build2, "sdk");

@@ -26,7 +26,7 @@ import org.eclipse.core.databinding.observable.list.ComputedList;
 import org.eclipse.core.databinding.observable.sideeffect.ISideEffectFactory;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.WidgetSideEffects;
@@ -145,7 +145,7 @@ public class LayoutSpyDialog {
 		parentRectangleColor = resources.createColor(SELECTED_PARENT_OVERLAY_COLOR);
 		childRectangleColor = resources.createColor(SELECTED_CHILD_OVERLAY_COLOR);
 		Bundle bundle = FrameworkUtil.getBundle(LayoutSpyDialog.class);
-		final URL fullPathString = FileLocator.find(bundle, new Path("icons/up_nav.png"), null);
+		final URL fullPathString = FileLocator.find(bundle, IPath.fromOSString("icons/up_nav.png"), null);
 
 		ImageDescriptor imageDesc = ImageDescriptor.createFromURL(fullPathString);
 

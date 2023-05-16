@@ -32,7 +32,6 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -283,7 +282,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 				} else if (resource.equals(".") || resource.equals("./") || resource.equals(".\\")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					// ignore - should be root directory
 				} else if (resource.lastIndexOf(IPath.SEPARATOR) == resource.length() - 1) {
-					IFolder folder = fBundleRoot.getFolder(new Path(resource));
+					IFolder folder = fBundleRoot.getFolder(IPath.fromOSString(resource));
 					if (!folder.exists())
 						continue;
 					fTreeViewer.setSubtreeChecked(folder, isIncluded);
@@ -296,7 +295,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 					if (isIncluded)
 						fileExt.add(resource.substring(2));
 				} else {
-					IFile file = fBundleRoot.getFile(new Path(resource));
+					IFile file = fBundleRoot.getFile(IPath.fromOSString(resource));
 					if (!file.exists())
 						continue;
 					fTreeViewer.setChecked(file, isIncluded);
@@ -383,7 +382,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 								&& libraries.length != 0) {
 							for (IBuildEntry library : libraries) {
 								String libName = library.getName().substring(7);
-								IPath path = fBundleRoot.getFile(new Path(libName)).getProjectRelativePath().makeRelativeTo(fBundleRoot.getProjectRelativePath());
+								IPath path = fBundleRoot.getFile(IPath.fromOSString(libName)).getProjectRelativePath().makeRelativeTo(fBundleRoot.getProjectRelativePath());
 								if (path.segmentCount() == 1 && !includes.contains(libName) && !libName.equals(resource.getName()))
 									includes.addToken(libName);
 							}

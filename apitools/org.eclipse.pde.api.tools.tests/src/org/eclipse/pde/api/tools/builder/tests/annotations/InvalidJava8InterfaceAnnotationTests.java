@@ -14,7 +14,6 @@
 package org.eclipse.pde.api.tools.builder.tests.annotations;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
@@ -36,7 +35,7 @@ public class InvalidJava8InterfaceAnnotationTests extends InvalidInterfaceAnnota
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return new Path("annotations").append("java8").append("interface"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		return IPath.fromOSString("annotations").append("java8").append("interface"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	@Override

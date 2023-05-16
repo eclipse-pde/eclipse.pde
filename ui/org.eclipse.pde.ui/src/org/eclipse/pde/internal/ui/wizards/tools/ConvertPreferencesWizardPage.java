@@ -19,7 +19,6 @@ import java.io.File;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.util.BidiUtils;
@@ -180,8 +179,8 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 		if (path == null || path.length() == 0)
 			return null;
 
-		IPath thePath = new Path(path);
-		return thePath.segmentCount() < 2 ? null : PDEPlugin.getWorkspace().getRoot().getFile(new Path(path));
+		IPath thePath = IPath.fromOSString(path);
+		return thePath.segmentCount() < 2 ? null : PDEPlugin.getWorkspace().getRoot().getFile(IPath.fromOSString(path));
 	}
 
 	private File getPreferencesFile(String path) {

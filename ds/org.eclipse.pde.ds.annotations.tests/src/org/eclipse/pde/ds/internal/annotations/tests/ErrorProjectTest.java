@@ -7,12 +7,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.junit.Test;
 
 public class ErrorProjectTest extends CompilationParticipantTest {
 
-	private static final IPath PATH_PREFIX = new Path("src/ds/annotations/test2/");
+	private static final IPath PATH_PREFIX = IPath.fromOSString("src/ds/annotations/test2/");
 
 	@Override
 	protected String getTestProjectName() {

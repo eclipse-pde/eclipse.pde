@@ -35,7 +35,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -174,7 +173,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			// SOURCE.<LIBRARY_NAME>
 			IBuildEntry entry = factory.createEntry(IBuildEntry.JAR_PREFIX + libraryName);
 			if (srcFolder.length() > 0)
-				entry.addToken(new Path(srcFolder).addTrailingSeparator().toString());
+				entry.addToken(IPath.fromOSString(srcFolder).addTrailingSeparator().toString());
 			else
 				entry.addToken("."); //$NON-NLS-1$
 			model.getBuild().add(entry);
@@ -183,7 +182,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			entry = factory.createEntry(IBuildEntry.OUTPUT_PREFIX + libraryName);
 			String outputFolder = fData.getOutputFolderName().trim();
 			if (outputFolder.length() > 0)
-				entry.addToken(new Path(outputFolder).addTrailingSeparator().toString());
+				entry.addToken(IPath.fromOSString(outputFolder).addTrailingSeparator().toString());
 			else
 				entry.addToken("."); //$NON-NLS-1$
 			model.getBuild().add(entry);

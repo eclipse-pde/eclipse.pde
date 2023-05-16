@@ -24,7 +24,6 @@ import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -107,7 +106,7 @@ public class JavadocLocationManager {
 					String attr = element.getAttribute("archive"); //$NON-NLS-1$
 					boolean archive = attr == null ? false : "true".equals(attr); //$NON-NLS-1$
 
-					IPath modelPath = new Path(base.getInstallLocation());
+					IPath modelPath = IPath.fromOSString(base.getInstallLocation());
 					StringBuilder buffer = new StringBuilder();
 					File file = modelPath.toFile();
 					if (file.exists()) {

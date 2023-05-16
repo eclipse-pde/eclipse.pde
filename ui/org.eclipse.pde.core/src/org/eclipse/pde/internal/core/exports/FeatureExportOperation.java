@@ -54,7 +54,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
@@ -461,7 +460,7 @@ public class FeatureExportOperation extends Job {
 				for (int i = 0; i < classpath.length; i++) {
 					urls[i] = classpath[i].getEntryURL();
 				}
-				IPath path = new Path(entry.getEntryURL().toString()).removeLastSegments(2);
+				IPath path = IPath.fromOSString(entry.getEntryURL().toString()).removeLastSegments(2);
 				path = path.append("bin"); //$NON-NLS-1$
 				try {
 					urls[classpath.length] = new URL(path.toString());

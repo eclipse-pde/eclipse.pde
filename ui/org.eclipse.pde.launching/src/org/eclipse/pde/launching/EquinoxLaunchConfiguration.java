@@ -26,8 +26,8 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -88,7 +88,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
 		saveConfigurationFile(configuration);
 		programArgs.add("-configuration"); //$NON-NLS-1$
-		programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
+		programArgs.add("file:" + IPath.fromOSString(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
 
 		String[] args = super.getProgramArguments(configuration);
 		Collections.addAll(programArgs, args);

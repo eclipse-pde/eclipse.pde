@@ -36,7 +36,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -457,21 +456,21 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		ArrayList<FileSet> binaryBundles = new ArrayList<>();
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, null, null, null, null);
 		for (BundleDescription plugin : plugins) {
-			IPath pluginLocation = new Path(plugin.getLocation());
+			IPath pluginLocation = IPath.fromOSString(plugin.getLocation());
 			if (Utils.isBinary(plugin))
 				binaryBundles.add(new FileSet(pluginLocation.removeLastSegments(1).toOSString(), null, pluginLocation.lastSegment(), null, null, null, null));
 			else
-				printCustomGatherCall(ModelBuildScriptGenerator.getNormalizedName(plugin), Utils.makeRelative(pluginLocation, new Path(workingDirectory)).toOSString(), PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS), null);
+				printCustomGatherCall(ModelBuildScriptGenerator.getNormalizedName(plugin), Utils.makeRelative(pluginLocation, IPath.fromOSString(workingDirectory)).toOSString(), PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS), null);
 		}
 
 		Set<BuildTimeFeature> featureSet = BuildDirector.p2Gathering ? new HashSet<>() : null;
 		for (BuildTimeFeature feature : features) {
-			IPath featureLocation = new Path(feature.getRootLocation());
+			IPath featureLocation = IPath.fromOSString(feature.getRootLocation());
 			if (feature.isBinary()) {
 				binaryFeatures.add(new FileSet(featureLocation.removeLastSegments(1).toOSString(), null, featureLocation.lastSegment(), null, null, null, null));
 			} else {
 				String featureFullName = feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
-				printCustomGatherCall(featureFullName, Utils.makeRelative(featureLocation, new Path(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
+				printCustomGatherCall(featureFullName, Utils.makeRelative(featureLocation, IPath.fromOSString(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
 				featureSet.add(feature);
 			}
 		}
@@ -484,9 +483,9 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 				oldExecutableFeature = feature;
 				script.printAntCallTask(TARGET_P2_COMPATIBILITY_GATHER_EXECUTABLE, true, null);
 			} else {
-				IPath featureLocation = new Path(feature.getRootLocation());
+				IPath featureLocation = IPath.fromOSString(feature.getRootLocation());
 				String featureFullName = feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
-				printCustomGatherCall(featureFullName, Utils.makeRelative(featureLocation, new Path(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
+				printCustomGatherCall(featureFullName, Utils.makeRelative(featureLocation, IPath.fromOSString(workingDirectory)).toOSString(), PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE), '/' + DEFAULT_FEATURE_LOCATION);
 			}
 		}
 
@@ -514,7 +513,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	}
 
 	private void generateCompatibilityGatherExecutable(BuildTimeFeature executableFeature) {
-		IPath featureLocation = new Path(executableFeature.getRootLocation());
+		IPath featureLocation = IPath.fromOSString(executableFeature.getRootLocation());
 		String featureFullName = executableFeature.getId() + "_" + executableFeature.getVersion(); //$NON-NLS-1$
 
 		File productDir = new File(getWorkingDirectory(), DEFAULT_FEATURE_LOCATION + '/' + CONTAINER_FEATURE + "/product"); //$NON-NLS-1$
@@ -542,7 +541,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		script.println("/>"); //$NON-NLS-1$
 
 		Map<String, String> params = new HashMap<>();
-		params.put(PROPERTY_PROJECT_LOCATION, "${basedir}/" + Utils.makeRelative(featureLocation, new Path(workingDirectory)).toOSString()); //$NON-NLS-1$
+		params.put(PROPERTY_PROJECT_LOCATION, "${basedir}/" + Utils.makeRelative(featureLocation, IPath.fromOSString(workingDirectory)).toOSString()); //$NON-NLS-1$
 		params.put(PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE));
 		params.put(PROPERTY_PROJECT_NAME, featureFullName);
 		params.put(PROPERTY_TARGET_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + DEFAULT_FEATURE_LOCATION);

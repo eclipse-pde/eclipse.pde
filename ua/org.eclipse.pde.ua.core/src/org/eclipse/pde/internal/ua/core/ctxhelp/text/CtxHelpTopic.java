@@ -14,7 +14,6 @@
 package org.eclipse.pde.internal.ua.core.ctxhelp.text;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 /**
  * Represents a topic entry in context help. Topics are used to open related
@@ -73,7 +72,7 @@ public class CtxHelpTopic extends CtxHelpObject {
 	public IPath getLocation() {
 		String value = getXMLAttributeValue(ATTRIBUTE_HREF);
 		if (value != null) {
-			return new Path(value);
+			return IPath.fromOSString(value);
 		}
 		return null;
 	}

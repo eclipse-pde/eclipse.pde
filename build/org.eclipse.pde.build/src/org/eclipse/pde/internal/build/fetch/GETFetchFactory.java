@@ -22,7 +22,6 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.IAntScript;
@@ -126,7 +125,7 @@ public class GETFetchFactory implements IFetchFactory {
 			//if a dest was specified, make sure the parent directory exists
 			script.printTabs();
 			script.print(TAG_OPEN + TASK_MKDIR);
-			script.printAttribute(ATTRIBUTE_DIR, new Path(dest).removeLastSegments(1).toOSString(), true);
+			script.printAttribute(ATTRIBUTE_DIR, IPath.fromOSString(dest).removeLastSegments(1).toOSString(), true);
 			script.print(TAG_CLOSE);
 			script.println();
 		} else {
@@ -165,7 +164,7 @@ public class GETFetchFactory implements IFetchFactory {
 		// if we have a feature or un-packed plug-in then we need to unzip it
 		boolean unpack = Boolean.valueOf((String) entryInfos.get(UNPACK)).booleanValue();
 		if (unpack || ELEMENT_TYPE_FEATURE.equals(entryInfos.get(KEY_ELEMENT_TYPE))) {
-			IPath destPath = new Path(dest);
+			IPath destPath = IPath.fromOSString(dest);
 			String unzipped = destPath.removeLastSegments(1).toOSString();
 			if (destPath.getFileExtension().equalsIgnoreCase("jar")) { //$NON-NLS-1$
 				unzipped = destPath.removeFileExtension().toOSString();

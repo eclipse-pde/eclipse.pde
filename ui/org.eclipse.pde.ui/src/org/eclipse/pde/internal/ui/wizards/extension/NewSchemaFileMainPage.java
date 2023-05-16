@@ -19,7 +19,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -150,7 +150,7 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 
 			// Ensure valid target container
 			IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
-			IResource resource = root.findMember(new Path(newContainerName));
+			IResource resource = root.findMember(IPath.fromOSString(newContainerName));
 			if (resource instanceof IContainer) {
 				fContainer = (IContainer) resource;
 			} else {

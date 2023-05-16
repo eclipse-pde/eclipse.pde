@@ -22,8 +22,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -68,7 +68,7 @@ public class SystemApiDescriptionProcessor {
 			ZipFile jarFile = null;
 			InputStream stream = null;
 			try {
-				String extension = new Path(location.getName()).getFileExtension();
+				String extension = IPath.fromOSString(location.getName()).getFileExtension();
 				if (extension != null && extension.equals("jar") && location.isFile()) { //$NON-NLS-1$
 					jarFile = new ZipFile(location, ZipFile.OPEN_READ);
 					ZipEntry manifestEntry = jarFile.getEntry(IApiCoreConstants.SYSTEM_API_DESCRIPTION_XML_NAME);

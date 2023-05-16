@@ -24,7 +24,6 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -210,7 +209,7 @@ class ExternalLibraryCache {
 			File location = new File(installLocation);
 			if (location.isDirectory()) {
 				File result = new File(location, path);
-				return result.exists() ? new Path(result.getAbsolutePath()) : null;
+				return result.exists() ? IPath.fromOSString(result.getAbsolutePath()) : null;
 			}
 
 			if (location.isFile()) {
@@ -237,7 +236,7 @@ class ExternalLibraryCache {
 				}
 				// Only return the resolved path if the destination file is non-empty, i.e.,
 				// return null for the empty marker file.
-				return fDestFile.length() == 0 ? null : new Path(fDestFile.getAbsolutePath());
+				return fDestFile.length() == 0 ? null : IPath.fromOSString(fDestFile.getAbsolutePath());
 			}
 		}
 

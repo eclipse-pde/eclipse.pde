@@ -33,7 +33,6 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
@@ -51,7 +50,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private static final int EXTENSIONS = 0x2;
 	private static final int BUILD = 0x4;
 	private static final int STRUCTURE = 0x8;
-	static final IPath SETTINGS_PATH = new Path(".settings"); //$NON-NLS-1$
+	static final IPath SETTINGS_PATH = IPath.fromOSString(".settings"); //$NON-NLS-1$
 
 	private static IProject[] EMPTY_LIST = new IProject[0];
 

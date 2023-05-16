@@ -21,7 +21,6 @@ import java.util.zip.ZipFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 
@@ -47,7 +46,7 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 
 	@Override
 	public IPath getFullPath() {
-		return new Path(fEntryName);
+		return IPath.fromOSString(fEntryName);
 	}
 
 	@Override

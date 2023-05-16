@@ -10,7 +10,7 @@ import java.io.InputStream;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.Document;
 import org.eclipse.pde.internal.ds.core.IDSModel;
 import org.eclipse.pde.internal.ds.core.text.DSModel;
@@ -33,7 +33,7 @@ public abstract class AnnotationProcessorTest extends TestBase {
 		testProject = ResourcesPlugin.getWorkspace().getRoot().getProject(getTestProjectName());
 		assumeTrue("Test project does not exist!", testProject.exists());
 
-		IFile dsFile = testProject.getFile(new Path(getComponentDescriptorPath()));
+		IFile dsFile = testProject.getFile(IPath.fromOSString(getComponentDescriptorPath()));
 		assertTrue("Missing component descriptor!", dsFile.exists());
 
 		ByteArrayOutputStream buf = new ByteArrayOutputStream();

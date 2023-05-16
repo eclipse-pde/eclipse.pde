@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.core;
 import java.io.File;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.IPluginSourcePathLocator;
 import org.eclipse.pde.core.plugin.IPluginBase;
 
@@ -36,7 +35,7 @@ public class LocalMavenPluginSourcePathLocator implements IPluginSourcePathLocat
 			String sourceFileName = bundleFileName.substring(0, bundleFileName.lastIndexOf(".jar")) + "-sources.jar"; //$NON-NLS-1$ //$NON-NLS-2$
 			File sourceFile = new File(path.getParentFile(), sourceFileName);
 			if (sourceFile.isFile()) {
-				return new Path(sourceFile.getAbsolutePath());
+				return IPath.fromOSString(sourceFile.getAbsolutePath());
 			}
 		}
 		return null;

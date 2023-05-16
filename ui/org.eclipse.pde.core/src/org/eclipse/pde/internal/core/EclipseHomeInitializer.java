@@ -14,7 +14,7 @@
 package org.eclipse.pde.internal.core;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.ClasspathVariableInitializer;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.core.plugin.TargetPlatform;
@@ -33,7 +33,7 @@ public class EclipseHomeInitializer extends ClasspathVariableInitializer {
 
 	public static void resetEclipseHomeVariable() {
 		try {
-			JavaCore.setClasspathVariable(ECLIPSE_HOME_VARIABLE, new Path(TargetPlatform.getLocation()), null);
+			JavaCore.setClasspathVariable(ECLIPSE_HOME_VARIABLE, IPath.fromOSString(TargetPlatform.getLocation()), null);
 		} catch (CoreException e) {
 		}
 	}

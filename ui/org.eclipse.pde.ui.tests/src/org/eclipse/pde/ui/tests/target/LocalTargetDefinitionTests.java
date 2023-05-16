@@ -36,7 +36,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -158,7 +157,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		Set<URI> uris = getAllBundleURIs(definition);
 
 		// the old way
-		IPath location = new Path(TargetPlatform.getDefaultLocation());
+		IPath location = IPath.fromOSString(TargetPlatform.getDefaultLocation());
 		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile());
 		// pluginPaths will be null (and NPE) when self-hosting and the target
 		// platform is not a real installation
@@ -282,7 +281,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		Set<URI> uris = getAllBundleURIs(definition);
 
 		// the old way
-		IPath location = new Path(TargetPlatform.getDefaultLocation());
+		IPath location = IPath.fromOSString(TargetPlatform.getDefaultLocation());
 		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile());
 		// pluginPaths will be null (and NPE) when self-hosting and the target
 		// platform is not a real installation
@@ -307,7 +306,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		Set<URI> uris = getAllBundleURIs(definition);
 
 		// the old way
-		IPath location = new Path(TargetPlatform.getDefaultLocation());
+		IPath location = IPath.fromOSString(TargetPlatform.getDefaultLocation());
 		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile());
 		// pluginPaths will be null (and NPE) when self-hosting and the target
 		// platform is not a real installation
@@ -406,7 +405,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 * @return path to JDT feature
 	 */
 	protected IPath getJdtFeatureLocation() {
-		IPath path = new Path(TargetPlatform.getDefaultLocation());
+		IPath path = IPath.fromOSString(TargetPlatform.getDefaultLocation());
 		path = path.append("features");
 		File dir = path.toFile();
 		assertTrue("Missing features directory", dir.exists() && !dir.isFile());
@@ -419,7 +418,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			}
 		}
 		assertNotNull("Missing JDT feature", location);
-		return new Path(location);
+		return IPath.fromOSString(location);
 	}
 
 	/**

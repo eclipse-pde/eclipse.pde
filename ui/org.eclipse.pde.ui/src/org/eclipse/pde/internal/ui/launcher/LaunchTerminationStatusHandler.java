@@ -20,8 +20,8 @@ import java.io.File;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -80,7 +80,7 @@ public class LaunchTerminationStatusHandler implements IStatusHandler {
 	}
 
 	private void openInEditor(File log) {
-		IFileStore fileStore = EFS.getLocalFileSystem().getStore(new Path(log.getAbsolutePath()));
+		IFileStore fileStore = EFS.getLocalFileSystem().getStore(IPath.fromOSString(log.getAbsolutePath()));
 		if (!fileStore.fetchInfo().isDirectory() && fileStore.fetchInfo().exists()) {
 			IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
 			IWorkbenchPage page = ww.getActivePage();

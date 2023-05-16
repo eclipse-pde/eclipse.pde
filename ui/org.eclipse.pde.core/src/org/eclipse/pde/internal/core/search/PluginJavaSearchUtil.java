@@ -21,7 +21,6 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -120,14 +119,14 @@ public class PluginJavaSearchUtil {
 
 		File file = new File(model.getInstallLocation());
 		if (file.isFile()) {
-			libraryPaths.add(new Path(file.getAbsolutePath()));
+			libraryPaths.add(IPath.fromOSString(file.getAbsolutePath()));
 		} else {
 			IPluginLibrary[] libraries = plugin.getLibraries();
 			for (IPluginLibrary library : libraries) {
 				String libraryName = ClasspathUtilCore.expandLibraryName(library.getName());
 				String path = plugin.getModel().getInstallLocation() + IPath.SEPARATOR + libraryName;
 				if (new File(path).exists()) {
-					libraryPaths.add(new Path(path));
+					libraryPaths.add(IPath.fromOSString(path));
 				} else {
 					findLibraryInFragments(fragments, libraryName, libraryPaths);
 				}
@@ -144,7 +143,7 @@ public class PluginJavaSearchUtil {
 		for (IFragmentModel fragment : fragments) {
 			String path = fragment.getInstallLocation() + IPath.SEPARATOR + libraryName;
 			if (new File(path).exists()) {
-				libraryPaths.add(new Path(path));
+				libraryPaths.add(IPath.fromOSString(path));
 				break;
 			}
 		}

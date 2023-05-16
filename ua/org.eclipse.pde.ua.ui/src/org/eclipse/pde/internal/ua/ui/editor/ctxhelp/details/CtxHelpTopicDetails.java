@@ -16,7 +16,6 @@ package org.eclipse.pde.internal.ua.ui.editor.ctxhelp.details;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpTopic;
@@ -84,7 +83,7 @@ public class CtxHelpTopicDetails extends CtxHelpAbstractDetails {
 			public void textValueChanged(FormEntry entry) { // Ensure data object is defined
 				if (fTopic != null) {
 					// TODO Do we need better testing for path validity?
-					fTopic.setLocation(new Path(fLinkEntry.getValue()));
+					fTopic.setLocation(IPath.fromOSString(fLinkEntry.getValue()));
 				}
 			}
 

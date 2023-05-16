@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.natures.PDE;
@@ -57,7 +56,7 @@ public class FeatureProjectConfigurator implements ProjectConfigurator {
 
 	@Override
 	public boolean shouldBeAnEclipseProject(IContainer container, IProgressMonitor monitor) {
-		return container.getFile(new Path(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)).exists();
+		return container.getFile(IPath.fromOSString(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)).exists();
 	}
 
 	@Override

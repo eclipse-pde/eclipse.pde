@@ -527,7 +527,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				workspace.prepareOperation(workspace.getRoot(), monitor);
 				// The following assert method throws CoreExceptions as stated in the IResource.copy API
 				// and assert for programming errors. See checkCopyRequirements for more information.
-				IPath destPath = new Path(destDesc.getName()).makeAbsolute();
+				IPath destPath = IPath.fromOSString(destDesc.getName()).makeAbsolute();
 				assertCopyRequirements(destPath, getType(), updateFlags);
 				Project destProject = (Project) workspace.getRoot().getProject(destPath.lastSegment());
 				workspace.beginOperation(true);

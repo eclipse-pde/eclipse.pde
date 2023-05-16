@@ -20,7 +20,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
@@ -198,7 +198,7 @@ public class PreferencesSection extends PDESection {
 
 			// Now get a resource from whichever path we found and ensure one last time that it exists. For example, a path might
 			// have been referenced in the products extension and subsequently deleted.
-			IFile customizationFile = project.getWorkspace().getRoot().getFile(new Path(preferenceCustomizationPath));
+			IFile customizationFile = project.getWorkspace().getRoot().getFile(IPath.fromOSString(preferenceCustomizationPath));
 			if (!customizationFile.exists()) {
 				byte[] bytes = "".getBytes(); //$NON-NLS-1$
 				InputStream source = new ByteArrayInputStream(bytes);

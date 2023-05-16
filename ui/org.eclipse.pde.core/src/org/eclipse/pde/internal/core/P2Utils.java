@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
@@ -136,7 +135,7 @@ public class P2Utils {
 	 * 	to locate a bundles.info
 	 */
 	public static BundleInfo[] readBundles(String platformHome, File configurationArea) {
-		IPath basePath = new Path(platformHome);
+		IPath basePath = IPath.fromOSString(platformHome);
 		if (configurationArea == null) {
 			return null;
 		}
@@ -165,7 +164,7 @@ public class P2Utils {
 	 * 	to locate a source.info
 	 */
 	public static BundleInfo[] readSourceBundles(String platformHome, File configurationArea) {
-		IPath basePath = new Path(platformHome);
+		IPath basePath = IPath.fromOSString(platformHome);
 		if (configurationArea == null) {
 			return null;
 		}

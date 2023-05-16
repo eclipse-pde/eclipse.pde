@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
@@ -190,7 +189,7 @@ public abstract class DeltaTestSetup {
 	}
 
 	private IPath getBaseLineFolder(String name) {
-		return new Path(WORKSPACE_NAME).append(name);
+		return IPath.fromOSString(WORKSPACE_NAME).append(name);
 	}
 
 	protected IApiBaseline getBeforeState() {

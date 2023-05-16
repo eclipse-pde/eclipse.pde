@@ -18,7 +18,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSHelpObject;
@@ -256,7 +255,7 @@ public class SimpleCSHelpDetails extends CSAbstractSubDetails {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		dialog.setInput(root);
 		// Set the initial selection using the existing path (if any)
-		IPath path = new Path(fHelpText.getText());
+		IPath path = IPath.fromOSString(fHelpText.getText());
 		// Path must be non-empty, absolute and have at least two segments
 		if ((path.isEmpty() == false) && path.isAbsolute()
 				&& (path.segmentCount() > 1)) {

@@ -21,7 +21,6 @@ import java.util.Properties;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.build.Constants;
@@ -117,7 +116,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		// rather than the plug-in manifest.
 		if (prebuilt) {
 			locationToCheck = locationToCheck.removeLastSegments(1);
-			locationToCheck = locationToCheck.append(new Path(module).lastSegment());
+			locationToCheck = locationToCheck.append(IPath.fromOSString(module).lastSegment());
 		} else {
 			if (type.equals(ELEMENT_TYPE_FEATURE)) {
 				locationToCheck = locationToCheck.append(Constants.FEATURE_FILENAME_DESCRIPTOR);
@@ -147,9 +146,9 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		for (String file : files) {
 			IPath filePath;
 			if (path != null) {
-				filePath = new Path(path).append(file);
+				filePath = IPath.fromOSString(path).append(file);
 			} else {
-				filePath = new Path((String) entryInfos.get(KEY_ELEMENT_NAME)).append(file);
+				filePath = IPath.fromOSString((String) entryInfos.get(KEY_ELEMENT_NAME)).append(file);
 			}
 			String tag = (String) entryInfos.get(IFetchFactory.KEY_ELEMENT_TAG);
 			String cvsRoot = (String) entryInfos.get(KEY_CVSROOT);
@@ -295,7 +294,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		buffer.append(sep);
 		buffer.append(module);
 
-		IPath modulePath = new Path(module);
+		IPath modulePath = IPath.fromOSString(module);
 		if (!modulePath.lastSegment().equals(projectName)) {
 			buffer.append(";project=\""); //$NON-NLS-1$
 			buffer.append(projectName);
