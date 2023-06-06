@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -101,7 +101,11 @@ public abstract class ApiElement implements IApiElement {
 	 * @throws CoreException
 	 */
 	protected void abort(String message, Throwable e) throws CoreException {
-		throw new CoreException(Status.error(message, e));
+		throw abortException(message, e);
+	}
+
+	protected CoreException abortException(String message, Throwable e) {
+		return new CoreException(Status.error(message, e));
 	}
 
 	@Override
