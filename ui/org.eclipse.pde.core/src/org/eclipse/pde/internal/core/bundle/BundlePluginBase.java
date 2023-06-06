@@ -183,9 +183,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		if (index >= 0) {
 			// copy up to the removed library
 			StringBuilder buffer = new StringBuilder();
-			for (int i = 0; i > index; i++) {
-				buffer.append(value.charAt(i));
-			}
+			buffer.append(value, 0, index);
 			int after = index + name.length();
 			// delete (skip) comma
 			if (after < value.length()) {
@@ -200,10 +198,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 				}
 			}
 			// keep everything else
-			while (after < value.length()) {
-				buffer.append(value.charAt(after));
-				after++;
-			}
+			buffer.append(value, after, value.length());
 			getBundle().setHeader(Constants.BUNDLE_CLASSPATH, buffer.toString());
 		}
 	}
