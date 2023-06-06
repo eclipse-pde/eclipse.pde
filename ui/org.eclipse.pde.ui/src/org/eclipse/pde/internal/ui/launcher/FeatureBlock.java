@@ -1352,8 +1352,7 @@ public class FeatureBlock {
 				tree.setCheckedElements(fFeatureModels.values().toArray());
 			} else {
 				ArrayList<FeatureLaunchModel> selectedFeatureList = new ArrayList<>();
-				for (Object name : selected) {
-					String currentSelected = (String) name;
+				for (String currentSelected : selected) {
 					String[] attributes = currentSelected.split(":"); //$NON-NLS-1$
 					if (attributes.length > 0) {
 						String id = attributes[0];
