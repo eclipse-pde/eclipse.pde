@@ -268,7 +268,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 			if (iPluginObject instanceof IPluginParent) {
 				IPluginParent pluginElement = (IPluginParent) iPluginObject;
 				if (pluginElement.getChildren().length > 0) {
-					boolean isChildrenMatch = doFilter(viewer, pluginElement, pluginElement.getChildren(), addChildren | fMatchingLeafs.contains(pluginElement));
+					boolean isChildrenMatch = doFilter(viewer, pluginElement, pluginElement.getChildren(), addChildren || fMatchingLeafs.contains(pluginElement));
 					isAnyChildMatch |= isChildrenMatch;
 					if (isChildrenMatch) {
 						fFoundAnyElementsCache.add(pluginElement);

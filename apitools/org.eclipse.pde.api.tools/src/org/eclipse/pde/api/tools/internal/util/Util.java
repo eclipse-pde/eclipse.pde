@@ -2116,7 +2116,7 @@ public final class Util {
 			String[] jarsNames = null;
 			ArrayList<String> paths = new ArrayList<>();
 			if ("DRLVM".equals(vmName)) { //$NON-NLS-1$
-				FilenameFilter jarFilter = (dir, name) -> name.endsWith(DOT_JAR) & !name.endsWith("-src.jar"); //$NON-NLS-1$
+				FilenameFilter jarFilter = (dir, name) -> name.endsWith(DOT_JAR) && !name.endsWith("-src.jar"); //$NON-NLS-1$
 				jarsNames = new File(jreDir + "/lib/boot/").list(jarFilter); //$NON-NLS-1$
 				addJarEntries(jreDir + "/lib/boot/", jarsNames, paths); //$NON-NLS-1$
 			} else {
