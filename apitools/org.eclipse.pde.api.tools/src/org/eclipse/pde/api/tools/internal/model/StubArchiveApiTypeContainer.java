@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -94,31 +94,20 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 		@Override
 		public byte[] getContents() throws CoreException {
 			StubArchiveApiTypeContainer archive = (StubArchiveApiTypeContainer) getParent();
-			ZipFile zipFile = archive.open();
-			ZipEntry entry = zipFile.getEntry(getName());
-			InputStream stream = null;
-			if (entry != null) {
-				try {
-					stream = zipFile.getInputStream(entry);
-				} catch (IOException e) {
-					abort("Failed to open class file: " + getTypeName() + " in archive: " + archive.fLocation, e); //$NON-NLS-1$ //$NON-NLS-2$
-					return null;
-				}
-				try {
-					return stream.readAllBytes();
-				} catch (IOException ioe) {
-					abort("Unable to read class file: " + getTypeName(), ioe); //$NON-NLS-1$
-					return null; // never gets here
-				} finally {
-					try {
-						stream.close();
-					} catch (IOException e) {
-						ApiPlugin.log(e);
+			try (ZipFile zipFile = archive.open()) {
+				ZipEntry entry = zipFile.getEntry(getName());
+				if (entry != null) {
+					try (InputStream stream = zipFile.getInputStream(entry)) {
+						return stream.readAllBytes();
 					}
 				}
+				throw abortException("Class file not found: " + getTypeName() + " in archive: " + archive.fLocation, //$NON-NLS-1$ //$NON-NLS-2$
+						null);
+			} catch (IOException e) {
+				ApiPlugin.log(e);
+				throw abortException(
+						"Failed to read class file: " + getTypeName() + " in archive: " + archive.fLocation, e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			abort("Class file not found: " + getTypeName() + " in archive: " + archive.fLocation, null); //$NON-NLS-1$ //$NON-NLS-2$
-			return null;
 		}
 	}
 

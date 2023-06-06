@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -113,12 +114,14 @@ public class TargetDefinitionManager implements IRegistryChangeListener {
 		value = elem.getAttribute("definition"); //$NON-NLS-1$
 		String symbolicName = elem.getDeclaringExtension().getContributor().getName();
 		URL url = getResourceURL(symbolicName, value);
-		try {
-			if (url != null && url.openStream().available() > 0) {
-				return true;
+		if (url != null) {
+			try (InputStream s = url.openStream()) {
+				if (s.available() > 0) {
+					return true;
+				}
+			} catch (IOException e) {
+				// file does not exist
 			}
-		} catch (IOException e) {
-			// file does not exist
 		}
 		return false;
 	}
