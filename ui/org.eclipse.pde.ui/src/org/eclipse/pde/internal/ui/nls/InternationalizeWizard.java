@@ -181,8 +181,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 		List<IProject> projects = new ArrayList<>();
 		List<IPluginModelBase> pluginModels = getPluginModelsForInternationalization();
 
-		for (Object pluginModelObject : pluginModels) {
-			IPluginModelBase pluginModel = (IPluginModelBase) pluginModelObject;
+		for (IPluginModelBase pluginModel : pluginModels) {
 			//Externalize only workspace plug-ins since external plug-ins are already externalized
 			if (!(pluginModel instanceof ExternalPluginModel)) {
 				IProject project = pluginModel.getUnderlyingResource().getProject();
