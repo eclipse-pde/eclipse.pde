@@ -96,7 +96,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	 */
 	private int fCurrentHighlightRangeOffset;
 
-	private final int F_NOT_SET = -1;
+	private static final int F_NOT_SET = -1;
 
 	private PDERefactoringAction fRenameAction;
 

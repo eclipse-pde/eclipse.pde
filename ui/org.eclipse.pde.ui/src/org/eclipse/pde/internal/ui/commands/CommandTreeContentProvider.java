@@ -25,8 +25,8 @@ import org.eclipse.ui.commands.ICommandService;
 
 public class CommandTreeContentProvider implements ITreeContentProvider {
 
-	protected final int F_CAT_CONTENT = 0; // category grouped content
-	protected final int F_CON_CONTENT = 1; // context grouped content
+	protected static final int F_CAT_CONTENT = 0; // category grouped content
+	protected static final int F_CON_CONTENT = 1; // context grouped content
 
 	private ICommandService fComServ;
 	private TreeMap<Category, ArrayList<Command>> fCatMap; // mapping of commands to category

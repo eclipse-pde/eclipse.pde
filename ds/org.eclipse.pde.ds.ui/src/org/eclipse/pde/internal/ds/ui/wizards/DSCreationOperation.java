@@ -65,7 +65,7 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 	private String fComponentName;
 	private String fImplementationClass;
 
-	private final String DS_MANIFEST_KEY = "Service-Component"; //$NON-NLS-1$
+	private static final String DS_MANIFEST_KEY = "Service-Component"; //$NON-NLS-1$
 
 	/**
 	 *
