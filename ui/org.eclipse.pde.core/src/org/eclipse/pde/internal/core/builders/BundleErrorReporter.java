@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2021 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -144,7 +144,18 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				stateObjectFactory.createBundleDescription(null, dictionaryManifest, null, 1);
 			} catch (BundleException e) {
 				if (e.getType() == BundleException.MANIFEST_ERROR) {
-					report(e.getMessage(), 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+					// Extract header from the error message and obtain the line
+					// number of the header
+					String msg = e.getMessage();
+					String[] splitArray = msg.split(":"); //$NON-NLS-1$
+					String firstString = splitArray[0];
+					String[] splitToken = firstString.split(" "); //$NON-NLS-1$
+					String lastString = splitToken[splitToken.length - 1];
+					IHeader header = null;
+					header = getHeader(lastString);
+					// Reporting falls back on line 1, in case of parse error
+					int line = header == null ? 1 : header.getLineNumber();
+					report(e.getMessage(), line, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 					return;
 				}
 			} catch (CoreException e) {
