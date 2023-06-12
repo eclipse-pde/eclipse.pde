@@ -2492,34 +2492,22 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (manifestFile != null && manifestFile.getType() == IResource.FILE) {
 			path = manifestFile.getProjectRelativePath().toPortableString();
 			IFile file = (IFile) manifestFile;
-			InputStream inputStream = null;
-			LineNumberReader reader = null;
-			try {
-				inputStream = file.getContents(true);
+			try (InputStream inputStream = file.getContents(true)) {
 				contents = Util.getInputStreamAsCharArray(inputStream, StandardCharsets.UTF_8);
-				reader = new LineNumberReader(new BufferedReader(new StringReader(new String(contents))));
-				int lineCounter = 0;
-				String line = null;
-				loop: while ((line = reader.readLine()) != null) {
-					lineCounter++;
-					if (line.startsWith(Constants.BUNDLE_VERSION)) {
-						lineNumber = lineCounter;
-						break loop;
+				try (LineNumberReader reader = new LineNumberReader(
+						new BufferedReader(new StringReader(new String(contents))))) {
+					int lineCounter = 0;
+					String line = null;
+					loop: while ((line = reader.readLine()) != null) {
+						lineCounter++;
+						if (line.startsWith(Constants.BUNDLE_VERSION)) {
+							lineNumber = lineCounter;
+							break loop;
+						}
 					}
 				}
 			} catch (CoreException | IOException e) {
 				// ignore
-			} finally {
-				try {
-					if (inputStream != null) {
-						inputStream.close();
-					}
-					if (reader != null) {
-						reader.close();
-					}
-				} catch (IOException e) {
-					// ignore
-				}
 			}
 		}
 		if (lineNumber != -1 && contents != null) {

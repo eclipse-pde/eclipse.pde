@@ -314,10 +314,7 @@ public class AnalysisReportConversionTask extends Task {
 	 */
 	private void dumpIndexFile(File reportsRoot, Summary[] summaries, Summary allNonApiBundleSummary) {
 		File htmlFile = new File(this.htmlReportsLocation, "index.html"); //$NON-NLS-1$
-		PrintWriter writer = null;
-		try {
-			FileWriter fileWriter = new FileWriter(htmlFile);
-			writer = new PrintWriter(new BufferedWriter(fileWriter));
+		try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(htmlFile)))) {
 			if (allNonApiBundleSummary != null) {
 				writer.println(MessageFormat.format(Messages.fullReportTask_indexheader, NLS.bind(Messages.fullReportTask_nonApiBundleSummary, allNonApiBundleSummary.link)));
 			} else {
@@ -335,10 +332,6 @@ public class AnalysisReportConversionTask extends Task {
 			writer.flush();
 		} catch (IOException e) {
 			throw new BuildException(NLS.bind(Messages.ioexception_writing_html_file, htmlFile.getAbsolutePath()));
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
 		}
 	}
 
@@ -403,10 +396,7 @@ public class AnalysisReportConversionTask extends Task {
 				throw new BuildException(NLS.bind(Messages.could_not_create_file, htmlName));
 			}
 		}
-		PrintWriter writer = null;
-		try {
-			FileWriter fileWriter = new FileWriter(htmlFile);
-			writer = new PrintWriter(new BufferedWriter(fileWriter));
+		try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(htmlFile)))) {
 			if (report.isNonApiBundlesReport()) {
 				dumpNonApiBundles(writer, report);
 			} else {
@@ -420,10 +410,6 @@ public class AnalysisReportConversionTask extends Task {
 			writer.flush();
 		} catch (IOException e) {
 			throw new BuildException(NLS.bind(Messages.ioexception_writing_html_file, htmlName));
-		} finally {
-			if (writer != null) {
-				writer.close();
-			}
 		}
 	}
 
