@@ -15,6 +15,7 @@
 package org.eclipse.pde.internal.ui.editor;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
@@ -47,8 +48,11 @@ public class PDEStorageDocumentProvider extends StorageDocumentProvider {
 			if (editorInput instanceof IURIEditorInput) {
 				IURIEditorInput input = (IURIEditorInput) editorInput;
 				IFileStore store = EFS.getStore(input.getURI());
-				InputStream is = store.openInputStream(EFS.CACHE, new NullProgressMonitor());
-				setDocumentContent(document, is, encoding);
+				try (InputStream is = store.openInputStream(EFS.CACHE, new NullProgressMonitor())) {
+					setDocumentContent(document, is, encoding);
+				} catch (IOException closeException) {
+					// ignore
+				}
 				set = true;
 			}
 		}

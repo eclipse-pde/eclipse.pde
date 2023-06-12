@@ -555,14 +555,12 @@ public class BuildState {
 		File file = getSerializationFile(project);
 		if (file != null && file.exists()) {
 			try {
-				DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
-				try {
+				try (DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
 					return read(in);
 				} finally {
 					if (ApiPlugin.DEBUG_BUILDER) {
 						System.out.println("ApiAnalysisBuilder: Saved state thinks last build failed for " + project.getName()); //$NON-NLS-1$
 					}
-					in.close();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
