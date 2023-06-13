@@ -155,7 +155,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		private String wMatch = "*"; //$NON-NLS-1$
 
 		protected void setMatchText(String match) {
-			if (match.indexOf('*') != 0 & match.indexOf('?') != 0 & match.indexOf('.') != 0) {
+			if (match.indexOf('*') != 0 && match.indexOf('?') != 0 && match.indexOf('.') != 0) {
 				match = "*" + match; //$NON-NLS-1$
 			}
 			wMatch = match + "*"; //$NON-NLS-1$

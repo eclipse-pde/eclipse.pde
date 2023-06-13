@@ -99,7 +99,7 @@ public class ExportDialog extends Dialog {
 	public ExportDialog(Shell shell, String title) {
 		this(shell, title, ActionMessages.ExportDialogDescription, Util.EMPTY_STRING, newText -> {
 			if (newText != null && newText.length() > 0) {
-				if (!newText.endsWith(".html") & !newText.endsWith(".xml")) { //$NON-NLS-1$ //$NON-NLS-2$
+				if (!newText.endsWith(".html") && !newText.endsWith(".xml")) { //$NON-NLS-1$ //$NON-NLS-2$
 					return ActionMessages.ExportDialogErrorMessage;
 				}
 				return null;

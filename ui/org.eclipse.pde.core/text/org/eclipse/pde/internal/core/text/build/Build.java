@@ -89,7 +89,7 @@ public class Build implements IBuild {
 				int offset = document.getLineOffset(i);
 				int length = document.getLineLength(i);
 				String line = document.get(offset, length);
-				if (line.startsWith("#") | line.startsWith("!")) { //$NON-NLS-1$ //$NON-NLS-2$
+				if (line.startsWith("#") || line.startsWith("!")) { //$NON-NLS-1$ //$NON-NLS-2$
 					if (currentKey != null) {
 						currentKey.setLength(offset - 1 - currentKey.getOffset());
 						currentKey = null;
