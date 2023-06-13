@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@ package org.eclipse.pde.api.tools.internal.comparator;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
 
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
@@ -228,15 +229,8 @@ public class Delta implements IDelta {
 			}
 		} else if (other.datas == null) {
 			return false;
-		} else {
-			if (this.datas.length != other.datas.length) {
-				return false;
-			}
-			for (int i = 0, max = this.datas.length; i < max; i++) {
-				if (!this.datas[i].equals(other.datas[i])) {
-					return false;
-				}
-			}
+		} else if (!Arrays.equals(this.datas, other.datas)) {
+			return false;
 		}
 		if (this.componentID == null) {
 			if (other.componentID != null) {
@@ -340,7 +334,7 @@ public class Delta implements IDelta {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((this.datas == null) ? 0 : this.datas.hashCode());
+		result = prime * result + ((this.datas == null) ? 0 : Arrays.hashCode(this.datas));
 		result = prime * result + this.elementType;
 		result = prime * result + this.flags;
 		result = prime * result + ((this.key == null) ? 0 : this.key.hashCode());

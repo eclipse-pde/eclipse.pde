@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2021 IBM Corporation and others.
+ *  Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -183,11 +183,12 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	private static IEditorPart openExternalPlugin(File location, String filename) {
 		IEditorInput input = null;
 		if (location.isFile()) {
-			try {
-				ZipFile zipFile = new ZipFile(location);
-				if (zipFile.getEntry(filename) != null)
+			try (ZipFile zipFile = new ZipFile(location)) {
+				if (zipFile.getEntry(filename) != null) {
 					input = new JarEntryEditorInput(new JarEntryFile(zipFile, filename));
+				}
 			} catch (IOException e) {
+				// ignore
 			}
 		} else {
 			File file = new File(location, filename);

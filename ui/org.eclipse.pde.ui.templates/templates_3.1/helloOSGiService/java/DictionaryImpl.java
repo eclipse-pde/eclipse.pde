@@ -4,19 +4,19 @@ import java.util.Set;
 
 public class DictionaryImpl implements Dictionary {
 
-	private final Set<String> fWords = Set.of("$word1$", "$word2$", "$word3$");
-	private final String fLanguage = "$language$";
+	private static final Set<String> WORDS = Set.of("$word1$", "$word2$", "$word3$");
+	private static final String LANGUAGE = "$language$";
 
 	public String getLanguage() {
-		return fLanguage;
+		return LANGUAGE;
 	}
 
 	public boolean check(String word) {
-		return fWords.contains(word);
+		return WORDS.contains(word);
 	}
 
 	public String toString() {
-		return fLanguage;
+		return LANGUAGE;
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -212,8 +212,8 @@ public class ConvertSchemaToHTML extends Task {
 		File OSGiFile = new File(file.getParentFile(), ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 
 		if (OSGiFile.exists()) {
-			try {
-				Map<String, String> headers = ManifestElement.parseBundleManifest(new FileInputStream(OSGiFile), new HeaderMap<>());
+			try (FileInputStream manifestStream = new FileInputStream(OSGiFile)) {
+				Map<String, String> headers = ManifestElement.parseBundleManifest(manifestStream, new HeaderMap<>());
 				String value = headers.get(Constants.BUNDLE_SYMBOLICNAME);
 				if (value == null) {
 					return null;

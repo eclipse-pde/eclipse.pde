@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2021 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1983,15 +1983,14 @@ public final class Util {
 				new File(destDirPath, fileDir).mkdirs();
 				// write file
 				File outFile = new File(destDirPath, filePath);
-				BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outFile));
-				int n = 0;
-				InputStream inputStream = tarFile.getInputStream(zEntry);
-				BufferedInputStream stream = new BufferedInputStream(inputStream);
-				while ((n = stream.read(buf)) >= 0) {
-					outputStream.write(buf, 0, n);
+				try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outFile))) {
+					int n = 0;
+					try (BufferedInputStream stream = new BufferedInputStream(tarFile.getInputStream(zEntry))) {
+						while ((n = stream.read(buf)) >= 0) {
+							outputStream.write(buf, 0, n);
+						}
+					}
 				}
-				outputStream.close();
-				stream.close();
 			}
 		}
 	}
@@ -2117,7 +2116,7 @@ public final class Util {
 			String[] jarsNames = null;
 			ArrayList<String> paths = new ArrayList<>();
 			if ("DRLVM".equals(vmName)) { //$NON-NLS-1$
-				FilenameFilter jarFilter = (dir, name) -> name.endsWith(DOT_JAR) & !name.endsWith("-src.jar"); //$NON-NLS-1$
+				FilenameFilter jarFilter = (dir, name) -> name.endsWith(DOT_JAR) && !name.endsWith("-src.jar"); //$NON-NLS-1$
 				jarsNames = new File(jreDir + "/lib/boot/").list(jarFilter); //$NON-NLS-1$
 				addJarEntries(jreDir + "/lib/boot/", jarsNames, paths); //$NON-NLS-1$
 			} else {
