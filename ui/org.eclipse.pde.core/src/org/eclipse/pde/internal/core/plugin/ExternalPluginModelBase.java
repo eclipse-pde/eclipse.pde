@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import org.eclipse.core.runtime.IPath;
@@ -92,7 +93,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 
 	@Override
 	protected Long getResourceTimeStamp() {
-		java.nio.file.Path installFile = java.nio.file.Path.of(getInstallLocation());
+		Path installFile = Path.of(getInstallLocation());
 		BasicFileAttributes installFileAttribute;
 		try {
 			installFileAttribute = Files.readAttributes(installFile, BasicFileAttributes.class);
@@ -103,8 +104,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 			return installFileAttribute.lastModifiedTime().toMillis();
 		}
 		try {
-			java.nio.file.Path manifestFile = java.nio.file.Path.of(getInstallLocation(),
-					ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
+			Path manifestFile = Path.of(getInstallLocation(), ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
 			return Files.getLastModifiedTime(manifestFile).toMillis();
 		} catch (IOException e) {
 			try {

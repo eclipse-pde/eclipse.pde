@@ -24,7 +24,7 @@ import java.io.FileReader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -177,7 +177,7 @@ public abstract class PDETestCase {
 			AntRunner runner = new AntRunner();
 			runner.run(args);
 		} catch (InvocationTargetException e) {
-			java.nio.file.Path logPath = Paths.get(antHome, "log.log");
+			Path logPath = Path.of(antHome, "log.log");
 			String logContent = Files.readString(logPath);
 			System.err.println("### Ant log file content from " + logPath + ":");
 			System.err.println(logContent);

@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -301,9 +302,9 @@ public class WorkspaceModelManagerTest {
 
 	private void copyFile(IFile source, IFile target, UnaryOperator<String> modifications)
 			throws IOException, CoreException {
-		try (Stream<String> lines = Files.lines(java.nio.file.Path.of(source.getLocationURI()))) {
+		try (Stream<String> lines = Files.lines(Path.of(source.getLocationURI()))) {
 			Iterable<String> bs = lines.map(modifications)::iterator;
-			java.nio.file.Path targetPath = java.nio.file.Path.of(target.getLocationURI());
+			Path targetPath = Path.of(target.getLocationURI());
 			Files.createDirectories(targetPath.getParent());
 			Files.write(targetPath, bs);
 			target.refreshLocal(IResource.DEPTH_INFINITE, null);
