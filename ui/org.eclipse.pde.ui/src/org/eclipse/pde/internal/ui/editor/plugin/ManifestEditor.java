@@ -181,11 +181,10 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	}
 
 	private static IEditorPart openExternalPlugin(File location, String filename) {
-		IEditorInput input = null;
 		if (location.isFile()) {
 			try (ZipFile zipFile = new ZipFile(location)) {
 				if (zipFile.getEntry(filename) != null) {
-					input = new JarEntryEditorInput(new JarEntryFile(zipFile, filename));
+					return openEditor(new JarEntryEditorInput(new JarEntryFile(zipFile, filename)));
 				}
 			} catch (IOException e) {
 				// ignore
@@ -193,15 +192,14 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		} else {
 			File file = new File(location, filename);
 			if (file.exists()) {
-				IFileStore store;
 				try {
-					store = EFS.getStore(file.toURI());
-					input = new FileStoreEditorInput(store);
+					IFileStore store = EFS.getStore(file.toURI());
+					return openEditor(new FileStoreEditorInput(store));
 				} catch (CoreException e) {
 				}
 			}
 		}
-		return openEditor(input);
+		return null;
 	}
 
 	public static IEditorPart openEditor(IEditorInput input) {
@@ -495,8 +493,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 
 	protected void createJarEntryContexts(InputContextManager manager, JarEntryEditorInput input) {
 		IStorage storage = input.getStorage();
-		ZipFile zip = storage.getAdapter(ZipFile.class);
-		try {
+		try (ZipFile zip = storage.getAdapter(ZipFile.class)) {
 			if (zip == null)
 				return;
 
@@ -521,12 +518,8 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 				manager.putContext(input, new BuildInputContext(this, input,
 						storage.getName().equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)));
 			}
-		} finally {
-			try {
-				if (zip != null)
-					zip.close();
-			} catch (IOException e) {
-			}
+		} catch (IOException e) {
+			// ignore
 		}
 	}
 
