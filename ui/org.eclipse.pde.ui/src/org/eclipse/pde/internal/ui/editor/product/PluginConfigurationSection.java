@@ -202,7 +202,7 @@ public class PluginConfigurationSection extends TableSection {
 	private void handleAdd() {
 		IProduct product = getProduct();
 		Set<String> configuredPlugins = getConfiguredPlugins(product);
-		IPluginModelBase[] selectablePlugins = LaunchAction.getModels(product).stream()
+		IPluginModelBase[] selectablePlugins = LaunchAction.getAllLaunchedPlugins(product)
 				.filter(p -> !(p instanceof IFragmentModel) && !configuredPlugins.contains(p.getPluginBase().getId()))
 				.toArray(IPluginModelBase[]::new);
 		var dialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), selectablePlugins, true);
