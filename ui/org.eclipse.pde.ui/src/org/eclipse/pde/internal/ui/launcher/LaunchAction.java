@@ -51,9 +51,11 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -158,10 +160,13 @@ public class LaunchAction extends Action {
 
 		Set<String> wsplugins = new HashSet<>();
 		Set<String> explugins = new HashSet<>();
-		Set<IPluginModelBase> models = getModels(fProduct);
-		for (IPluginModelBase model : models) {
-			appendBundle(model.getUnderlyingResource() == null ? explugins : wsplugins, model);
-		}
+		Set<IPluginModelBase> listedPlugins = getModels(fProduct);
+		allLaunchedPlugins(listedPlugins, fProduct).forEach(model -> {
+			Optional<AdditionalPluginData> configuration = getPluginConfiguration(model);
+			if (configuration.isPresent() || listedPlugins.contains(model)) {
+				appendBundle(model.getUnderlyingResource() == null ? explugins : wsplugins, model, configuration);
+			}
+		});
 		wc.setAttribute(IPDELauncherConstants.SELECTED_WORKSPACE_BUNDLES, wsplugins);
 		wc.setAttribute(IPDELauncherConstants.SELECTED_TARGET_BUNDLES, explugins);
 
@@ -170,7 +175,7 @@ public class LaunchAction extends Action {
 			Set<IPluginModelBase> mixedProductPlugins = fProduct.getType() == ProductType.MIXED
 					? getModelsFromListedPlugins(fProduct)
 					: Collections.emptySet();
-			refreshFeatureLaunchPlugins(wc, models, mixedProductPlugins);
+			refreshFeatureLaunchPlugins(wc, listedPlugins, mixedProductPlugins);
 		} else {
 			wc.removeAttribute(IPDELauncherConstants.USE_CUSTOM_FEATURES);
 			wc.removeAttribute(IPDELauncherConstants.SELECTED_FEATURES);
@@ -187,7 +192,7 @@ public class LaunchAction extends Action {
 		return wc;
 	}
 
-	private void refreshFeatureLaunchPlugins(ILaunchConfigurationWorkingCopy wc, Set<IPluginModelBase> allModels,
+	private void refreshFeatureLaunchPlugins(ILaunchConfigurationWorkingCopy wc, Set<IPluginModelBase> includedPlugins,
 			Set<IPluginModelBase> mixedProductPlugins) {
 		FeatureModelManager featureManager = PDECore.getDefault().getFeatureModelManager();
 		Set<String> selectedFeatures = Arrays.stream(fProduct.getFeatures()) //
@@ -195,7 +200,7 @@ public class LaunchAction extends Action {
 				.map(m -> formatFeatureEntry(m.getFeature().getId(), IPDELauncherConstants.LOCATION_DEFAULT))
 				.collect(Collectors.toCollection(LinkedHashSet::new));
 
-		Set<String> additionalPlugins = allModels.stream()
+		Set<String> additionalPlugins = allLaunchedPlugins(includedPlugins, fProduct)
 				.map(model -> getPluginConfiguration(model)
 						.map(c -> formatAdditionalPluginEntry(model, c.fResolution, true, c.fStartLevel, c.fAutoStart)))
 				.flatMap(Optional::stream).collect(Collectors.toCollection(LinkedHashSet::new));
@@ -209,8 +214,8 @@ public class LaunchAction extends Action {
 		wc.setAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS, additionalPlugins);
 	}
 
-	private void appendBundle(Set<String> plugins, IPluginModelBase model) {
-		AdditionalPluginData config = getPluginConfiguration(model).orElse(FeatureBlock.DEFAULT_PLUGIN_DATA);
+	private void appendBundle(Set<String> plugins, IPluginModelBase model, Optional<AdditionalPluginData> pConfig) {
+		AdditionalPluginData config = pConfig.orElse(FeatureBlock.DEFAULT_PLUGIN_DATA);
 		String entry = BundleLauncherHelper.formatBundleEntry(model, config.fStartLevel, config.fAutoStart);
 		plugins.add(entry);
 	}
@@ -361,6 +366,20 @@ public class LaunchAction extends Action {
 				launchPlugins.add(model);
 			}
 		}
+	}
+
+	public static Stream<IPluginModelBase> getAllLaunchedPlugins(IProduct product) {
+		return allLaunchedPlugins(getModels(product), product);
+	}
+
+	private static Stream<IPluginModelBase> allLaunchedPlugins(Set<IPluginModelBase> includedPlugins,
+			IProduct product) {
+		if (product.includeRequirementsAutomatically()) {
+			Stream<BundleDescription> bundles = includedPlugins.stream().map(IPluginModelBase::getBundleDescription);
+			Set<BundleDescription> closure = DependencyManager.findRequirementsClosure(bundles.toList());
+			return closure.stream().map(PluginRegistry::findModel);
+		}
+		return includedPlugins.stream();
 	}
 
 	private String getTemplateConfigIni(String os) {
