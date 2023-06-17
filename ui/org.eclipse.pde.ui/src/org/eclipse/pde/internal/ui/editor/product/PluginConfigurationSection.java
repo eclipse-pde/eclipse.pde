@@ -21,18 +21,18 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Util;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -55,7 +55,6 @@ import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -70,34 +69,13 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public class PluginConfigurationSection extends TableSection {
 
-	private static class ContentProvider implements IStructuredContentProvider {
-
-		private IProduct fProduct;
-
-		ContentProvider() {
-		}
-
-		@Override
-		public Object[] getElements(Object inputElement) {
-			return fProduct.getPluginConfigurations();
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			if (oldInput == newInput)
-				return;
-			fProduct = (IProduct) newInput;
-			//TODO refresh
-		}
-
-	}
-
 	private class LabelProvider extends PDELabelProvider {
 
 		@Override
 		public Image getColumnImage(Object obj, int index) {
-			if (index == 0)
+			if (index == 0) {
 				return super.getColumnImage(PluginRegistry.findModel(((IPluginConfiguration) obj).getId()), index);
+			}
 			return null;
 		}
 
@@ -106,25 +84,20 @@ public class PluginConfigurationSection extends TableSection {
 			IPluginConfiguration configuration = (IPluginConfiguration) obj;
 			return switch (index) {
 				case 0 -> configuration.getId();
-					//return super.getColumnText(PluginRegistry.findModel(configuration.getId()), index);
-				case 1 -> (configuration.getStartLevel() == 0) ? "default" : Integer.toString(configuration.getStartLevel()); //$NON-NLS-1$
+				case 1 -> {
+					int startLevel = configuration.getStartLevel();
+					yield startLevel == 0 ? "default" : Integer.toString(startLevel); //$NON-NLS-1$
+				}
 				case 2 -> Boolean.toString(configuration.isAutoStart());
 				default -> null;
 			};
 		}
-
 	}
 
 	private TableViewer fConfigurationsTable;
 	private TableEditor fLevelColumnEditor;
 	private TableEditor fAutoColumnEditor;
 
-	//private IStructuredSelection fLastSelection = null;
-
-	/**
-	 * @param page
-	 * @param parent
-	 */
 	public PluginConfigurationSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION, getButtonLabels());
 	}
@@ -139,34 +112,30 @@ public class PluginConfigurationSection extends TableSection {
 	}
 
 	/*
-	 * Return a comma-separated list of bundles that typically require auto-start and optionally
-	 * require a special startlevel. Each entry is of the form <bundleID>[@ [<startlevel>] [":start"]]
-	 * If the startlevel is omitted then the framework will use the default start level for the bundle.
-	 * The "start" tag indicates that the bundle is autostarted.
-	 *
-	 * This list loosely based on TargetPlatform.getBundleList and more specifically on
-	 * TargetPlatformHelper.getDefaultBundleList(). Both of these implementations are
-	 * problematic because they are out of date, and also leave out commonly used bundles.
-	 *
-	 * This list attempts to describe a typical set up on the assumption that an advanced user can
-	 * further modify it. The list is hard-coded rather than walking the plugin requirements of
-	 * the product and all required products. The reason for this is that there are some bundles,
-	 * such as org.eclipse.equinox.ds, that are typically needed but users do not remember to
-	 * add them, and they are not required by any bundle. The idea of this list is to suggest
-	 * these commonly used bundles and start levels that clients typically do not remember.
-	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=426529
-	 *
-	 * We use the same String format described in TargetPlatform so that in the future, we could
+	 * A list of bundles that typically require auto-start and optionally
+	 * require a special startlevel. If the startlevel is zero then the
+	 * framework will use the default start level for the bundle. This list
+	 * loosely based on TargetPlatform.getBundleList and more specifically on
+	 * TargetPlatformHelper.getDefaultBundleList(). Both of these
+	 * implementations are problematic because they are out of date, and also
+	 * leave out commonly used bundles. This list attempts to describe a typical
+	 * set up on the assumption that an advanced user can further modify it. The
+	 * list is hard-coded rather than walking the plugin requirements of the
+	 * product and all required products. The reason for this is that there are
+	 * some bundles, such as org.eclipse.equinox.ds, that are typically needed
+	 * but users do not remember to add them, and they are not required by any
+	 * bundle. The idea of this list is to suggest these commonly used bundles
+	 * and start levels that clients typically do not remember. See
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=426529 We use the same
+	 * String format described in TargetPlatform so that in the future, we could
 	 * obtain this list from another source that uses the same format.
 	 */
-	private static List<String[]> getBundlesWithStartLevels() {
-		return List.of(//
-				new String[] { "org.apache.felix.scr", "2", "start" }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				new String[] { "org.eclipse.core.runtime", "", "start" }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				new String[] { "org.eclipse.equinox.common", "2", "start" }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				new String[] { "org.eclipse.equinox.event", "2", "start" }, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				new String[] { "org.eclipse.equinox.simpleconfigurator", "1", "start" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	}
+	private static final Map<String, Integer> RECOMMENDED_AUTOSTART_BUNDLES = Map.of( //
+			"org.apache.felix.scr", 2, //$NON-NLS-1$
+			"org.eclipse.core.runtime", 0, //$NON-NLS-1$
+			"org.eclipse.equinox.common", 2, //$NON-NLS-1$
+			"org.eclipse.equinox.event", 2, //$NON-NLS-1$
+			"org.eclipse.equinox.simpleconfigurator", 1); //$NON-NLS-1$
 
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
@@ -190,27 +159,20 @@ public class PluginConfigurationSection extends TableSection {
 		final TableColumn autoColumnEditor = new TableColumn(table, SWT.LEFT);
 		autoColumnEditor.setText(PDEUIMessages.EquinoxPluginBlock_autoColumn);
 
-		table.addControlListener(new ControlListener() {
-
-			@Override
-			public void controlMoved(ControlEvent e) {
-			}
-
-			@Override
-			public void controlResized(ControlEvent e) {
-				int size = table.getSize().x;
-				column1.setWidth(size / 7 * 4);
-				levelColumnEditor.setWidth(size / 7 * 2);
-				autoColumnEditor.setWidth(size / 7 * 1);
-			}
-
-		});
+		table.addControlListener(ControlListener.controlResizedAdapter(e -> {
+			int size = table.getSize().x;
+			column1.setWidth(size / 7 * 4);
+			levelColumnEditor.setWidth(size / 7 * 2);
+			autoColumnEditor.setWidth(size / 7 * 1);
+		}));
 
 		table.setHeaderVisible(true);
 		toolkit.paintBordersFor(container);
-		fConfigurationsTable.setLabelProvider(getLabelProvider());
-		fConfigurationsTable.setContentProvider(new ContentProvider());
-		fConfigurationsTable.setInput(getProduct());
+		fConfigurationsTable.setLabelProvider(new LabelProvider());
+		IProduct product = getProduct();
+		IStructuredContentProvider productConfigurationContent = i -> getProduct().getPluginConfigurations();
+		fConfigurationsTable.setContentProvider(productConfigurationContent);
+		fConfigurationsTable.setInput(product);
 		createEditors();
 
 		section.setClient(container);
@@ -222,50 +184,41 @@ public class PluginConfigurationSection extends TableSection {
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case 0 :
+			case 0:
 				handleAdd();
 				break;
-			case 1 :
+			case 1:
 				handleAddDefaults();
 				break;
-			case 2 :
+			case 2:
 				handleRemove();
 				break;
-			case 3 :
+			case 3:
 				handleRemoveAll();
 				break;
 		}
 	}
 
 	private void handleAdd() {
-
-		Collection<IPluginModelBase> pluginModelBases = LaunchAction.getModels(getProduct());
-		IPluginConfiguration[] configs = getProduct().getPluginConfigurations();
-		pluginModelBases
-				.removeIf(p -> p instanceof IFragmentModel || pluginConfigurationContainsProductPlugin(configs, p));
-
-		PluginSelectionDialog pluginSelectionDialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(),
-				pluginModelBases.toArray(IPluginModelBase[]::new), true);
-		if (pluginSelectionDialog.open() == Window.OK) {
-			for (Object object : pluginSelectionDialog.getResult()) {
+		IProduct product = getProduct();
+		Set<String> configuredPlugins = getConfiguredPlugins(product);
+		IPluginModelBase[] selectablePlugins = LaunchAction.getModels(product).stream()
+				.filter(p -> !(p instanceof IFragmentModel) && !configuredPlugins.contains(p.getPluginBase().getId()))
+				.toArray(IPluginModelBase[]::new);
+		var dialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), selectablePlugins, true);
+		if (dialog.open() == Window.OK) {
+			for (Object object : dialog.getResult()) {
 				IPluginModelBase pluginModelBase = (IPluginModelBase) object;
 				addPlugin(pluginModelBase.getPluginBase().getId());
 			}
 		}
 	}
 
-	private boolean pluginConfigurationContainsProductPlugin(IPluginConfiguration[] configs, IPluginModelBase plugin) {
-		String bsn = plugin.getPluginBase().getId();
-		return Arrays.stream(configs).map(IPluginConfiguration::getId).anyMatch(bsn::equals);
-	}
-
 	private void handleRemove() {
 		IStructuredSelection ssel = fConfigurationsTable.getStructuredSelection();
 		if (!ssel.isEmpty()) {
-			Object[] objects = ssel.toArray();
-			IPluginConfiguration[] configurations = new IPluginConfiguration[objects.length];
-			System.arraycopy(objects, 0, configurations, 0, objects.length);
-			getProduct().removePluginConfigurations(configurations);
+			List<IPluginConfiguration> configs = ssel.toList();
+			getProduct().removePluginConfigurations(configs.toArray(IPluginConfiguration[]::new));
 		}
 		clearEditors();
 	}
@@ -277,54 +230,51 @@ public class PluginConfigurationSection extends TableSection {
 	}
 
 	private void handleAddDefaults() {
-		List<String[]> plugins = getBundlesWithStartLevels();
 		IProduct product = getProduct();
-		if (!plugins.isEmpty()) {
-			// Build a user-presentable description of the plugins and start levels.
-			StringBuilder bundlesList = new StringBuilder();
-			bundlesList.append('\n');
-			bundlesList.append('\n');
-			for (String[] config : plugins) {
+		Set<String> configuredPluginIDs = getConfiguredPlugins(product);
+		// Build a user-presentable description of the plugins and start levels.
+		StringBuilder bundlesList = new StringBuilder();
+		RECOMMENDED_AUTOSTART_BUNDLES.forEach((pluginID, autoStartLevel) -> {
+			if (!configuredPluginIDs.contains(pluginID)) {
 				bundlesList.append('\t');
-				bundlesList.append(config[0]);
-				bundlesList.append(", "); //$NON-NLS-1$ // Not translated. This is bundle syntax, not a sentence
-				String startLevel = config[1];
-				if (startLevel.length() > 0) {
+				bundlesList.append(pluginID);
+				bundlesList.append(", "); //$NON-NLS-1$
+				if (autoStartLevel > 0) {
 					bundlesList.append(PDEUIMessages.EquinoxPluginBlock_levelColumn);
 					bundlesList.append(' ');
-					bundlesList.append(startLevel);
+					bundlesList.append(autoStartLevel);
 				} else {
-					String defaultLevelColumn = NLS.bind(PDEUIMessages.EquinoxPluginBlock_defaultLevelColumn, "Default"); //$NON-NLS-1$
-					bundlesList.append(defaultLevelColumn);
-				}
-				if ("start".equals(config[2])) { //$NON-NLS-1$
-					bundlesList.append(", "); //$NON-NLS-1$
-					bundlesList.append(PDEUIMessages.EquinoxPluginBlock_autoColumn);
+					bundlesList.append(NLS.bind(PDEUIMessages.EquinoxPluginBlock_defaultLevelColumn, "Default")); //$NON-NLS-1$
 				}
 				bundlesList.append('\n');
 			}
-			bundlesList.append('\n');
+		});
+		if (!bundlesList.isEmpty()) {
 			// Confirm with user
-			if (MessageDialog.openConfirm(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.Product_PluginSection_RecommendedBundles_title, NLS.bind(PDEUIMessages.Product_PluginSection_RecommendedBundles_message, bundlesList.toString()))) {
+			String message = NLS.bind(PDEUIMessages.Product_PluginSection_RecommendedBundles_message, bundlesList);
+			if (MessageDialog.openConfirm(PDEPlugin.getActiveWorkbenchShell(),
+					PDEUIMessages.Product_PluginSection_RecommendedBundles_title, message)) {
 				List<IPluginConfiguration> pluginConfigs = new ArrayList<>();
 				IProductModelFactory factory = product.getModel().getFactory();
-				// Build the model objects for the plugins and add to the product model.
-				for (String[] pluginStartConfig : plugins) {
+				// Build the model objects for the plugins and add to the
+				// product model.
+				RECOMMENDED_AUTOSTART_BUNDLES.forEach((pluginID, autoStartLevel) -> {
 					IPluginConfiguration configuration = factory.createPluginConfiguration();
-					configuration.setId(pluginStartConfig[0]);
-					String startString = pluginStartConfig[1];
-					if (startString.length() > 0) {
-						configuration.setStartLevel(Integer.parseInt(startString));
+					configuration.setId(pluginID);
+					if (autoStartLevel > 0) {
+						configuration.setStartLevel(autoStartLevel);
 					}
-					configuration.setAutoStart("start".equals(pluginStartConfig[2])); //$NON-NLS-1$
+					configuration.setAutoStart(true);
 					pluginConfigs.add(configuration);
-				}
+				});
 				product.addPluginConfigurations(pluginConfigs.toArray(IPluginConfiguration[]::new));
 				showControls();
 			}
 		} else {
 			// The user already had all the recommended bundles
-			MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.Product_PluginSection_RecommendedBundles_title, PDEUIMessages.Product_PluginSection_NoRecommendedBundles_message);
+			MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(),
+					PDEUIMessages.Product_PluginSection_RecommendedBundles_title,
+					PDEUIMessages.Product_PluginSection_NoRecommendedBundles_message);
 		}
 	}
 
@@ -333,28 +283,30 @@ public class PluginConfigurationSection extends TableSection {
 		updateRemoveButtons(true, false);
 	}
 
+	private Set<String> getConfiguredPlugins(IProduct product) {
+		IPluginConfiguration[] configurations = product.getPluginConfigurations();
+		return Arrays.stream(configurations).map(IPluginConfiguration::getId).collect(Collectors.toSet());
+	}
+
 	private void addPlugin(String id) {
 		IProduct product = getProduct();
 		IProductModelFactory factory = product.getModel().getFactory();
 		IPluginConfiguration configuration = factory.createPluginConfiguration();
 		configuration.setId(id);
-		product.addPluginConfigurations(new IPluginConfiguration[] {configuration});
+		product.addPluginConfigurations(new IPluginConfiguration[] { configuration });
 		fConfigurationsTable.setSelection(new StructuredSelection(configuration));
 		showControls();
 	}
 
-	private ILabelProvider getLabelProvider() {
-		return new LabelProvider();
-	}
-
 	private void clearEditors() {
 		Control oldEditor = fLevelColumnEditor.getEditor();
-		if (oldEditor != null && !oldEditor.isDisposed())
+		if (oldEditor != null && !oldEditor.isDisposed()) {
 			oldEditor.dispose();
-
+		}
 		oldEditor = fAutoColumnEditor.getEditor();
-		if (oldEditor != null && !oldEditor.isDisposed())
+		if (oldEditor != null && !oldEditor.isDisposed()) {
 			oldEditor.dispose();
+		}
 	}
 
 	private void createEditors() {
@@ -386,9 +338,9 @@ public class PluginConfigurationSection extends TableSection {
 		if (selection.isEmpty())
 			return;
 		final TableItem item = table.getSelection()[0];
-		if (item != null && !isEditable())
+		if (item != null && !isEditable()) {
 			return;
-
+		}
 		if (item != null) {
 			final IPluginConfiguration ppc = (IPluginConfiguration) selection.getFirstElement();
 			final Spinner spinner = new Spinner(table, SWT.BORDER);
@@ -406,8 +358,8 @@ public class PluginConfigurationSection extends TableSection {
 			fLevelColumnEditor.setEditor(spinner, item, 1);
 
 			final CCombo combo = new CCombo(table, SWT.BORDER | SWT.READ_ONLY);
-			//TODO is there need for the default options ??
-			combo.setItems(new String[] {Boolean.toString(true), Boolean.toString(false)});
+			// TODO is there need for the default options ??
+			combo.setItems(new String[] { Boolean.toString(true), Boolean.toString(false) });
 			combo.setText(item.getText(2));
 			combo.pack();
 			combo.addSelectionListener(widgetSelectedAdapter(e -> {
@@ -435,23 +387,21 @@ public class PluginConfigurationSection extends TableSection {
 			return;
 		}
 		Table table = fConfigurationsTable.getTable();
-		int count = table.getItemCount();
-		Object[] objects = e.getChangedObjects();
 		boolean refreshRemove = false;
 		boolean refreshRemoveAll = false;
 		if (e.getChangeType() == IModelChangedEvent.INSERT) {
-			if (count == 0) {
+			if (table.getItemCount() == 0) {
 				refreshRemoveAll = true;
 			}
-			for (Object object : objects) {
-				if (object instanceof IPluginConfiguration)
+			for (Object object : e.getChangedObjects()) {
+				if (object instanceof IPluginConfiguration) {
 					fConfigurationsTable.add(object);
+				}
 			}
 		} else if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 			refreshRemove = refreshRemoveAll = true;
-			int index = table.getSelectionIndex();
 			boolean global = false;
-			for (Object object : objects) {
+			for (Object object : e.getChangedObjects()) {
 				if (object instanceof IPluginConfiguration)
 					fConfigurationsTable.remove(object);
 				else if (object instanceof IProductPlugin) {
@@ -459,19 +409,17 @@ public class PluginConfigurationSection extends TableSection {
 					break;
 				}
 			}
-
-			if (global)
+			if (global) {
 				handleGlobalRefresh();
-
+			}
 			// Update Selection
-
+			int count = table.getItemCount();
 			if (count == 0) {
 				table.deselectAll();
 				clearEditors();
-			} else if (index < count) {
-				table.setSelection(index);
 			} else {
-				table.setSelection(count - 1);
+				int index = table.getSelectionIndex();
+				table.setSelection(Math.min(index, count - 1));
 			}
 
 		}
