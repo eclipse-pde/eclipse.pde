@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.launcher;
 
+import org.eclipse.pde.ui.tests.launcher.product.ProductEditorLaunchingTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -21,8 +22,13 @@ import org.junit.runners.Suite.SuiteClasses;
  * @since 3.5
  */
 @RunWith(Suite.class)
-@SuiteClasses({ FeatureBasedLaunchTest.class, PluginBasedLaunchTest.class, LaunchConfigurationHelperTestCase.class,
-	LaunchConfigurationMigrationTest.class })
+@SuiteClasses({ //
+	FeatureBasedLaunchTest.class, //
+	PluginBasedLaunchTest.class, //
+	LaunchConfigurationHelperTestCase.class, //
+	LaunchConfigurationMigrationTest.class, //
+	ProductEditorLaunchingTest.class, //
+})
 public class AllLauncherTests {
 
 }

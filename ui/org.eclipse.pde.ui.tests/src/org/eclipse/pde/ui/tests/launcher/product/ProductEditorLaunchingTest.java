@@ -44,7 +44,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestRule;
 
-public class TestProductEditorLaunching {
+public class ProductEditorLaunchingTest {
 
 	@ClassRule
 	public static final TestRule CLEAR_WORKSPACE = ProjectUtils.DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER;
