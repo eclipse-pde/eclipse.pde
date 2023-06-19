@@ -325,8 +325,12 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.addSaveParticipant(PLUGIN_ID, new ISaveParticipant() {
 			@Override
-			public void saving(ISaveContext saveContext) throws CoreException {
-				P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
+			public void saving(ISaveContext saveContext) {
+				try {
+					P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
+				} catch (CoreException e) {
+					getLog().warn("Can't cleanup orphaned target definition profiles, will retry later.", e); //$NON-NLS-1$
+				}
 			}
 
 			@Override
