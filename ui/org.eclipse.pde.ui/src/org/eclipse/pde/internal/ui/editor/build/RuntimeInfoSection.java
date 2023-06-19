@@ -128,7 +128,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 					case F_NEW_INDEX -> handleNew();
 					case F_UP_UNDEX -> updateJarsCompileOrder(true);
 					case F_DOWN_INDEX -> updateJarsCompileOrder(false);
-				};
+				}
 			} else if (getViewer() == fFolderPart.getViewer() && index == F_NEW_INDEX)
 				handleNewFolder();
 			else

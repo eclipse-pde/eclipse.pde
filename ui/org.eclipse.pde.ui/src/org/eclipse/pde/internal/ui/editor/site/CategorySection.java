@@ -358,7 +358,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			case BUTTON_BUILD_FEATURE -> handleBuild();
 			case BUTTON_BUILD_ALL -> ((SiteEditor) getPage().getPDEEditor()).handleBuild(fModel.getSite().getFeatures());
 			case BUTTON_IMPORT_ENVIRONMENT -> handleImportEnvironment();
-		};
+		}
 	}
 
 	@Override

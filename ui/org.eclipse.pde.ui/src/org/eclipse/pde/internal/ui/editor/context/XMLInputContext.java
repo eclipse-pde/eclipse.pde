@@ -436,7 +436,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				case '\t' -> buffer.append("\\t"); //$NON-NLS-1$
 				case ' ' -> buffer.append('*');
 				default -> buffer.append(c);
-				};
+				}
 			}
 			System.out.println(buffer.toString());
 		} catch (BadLocationException e) {

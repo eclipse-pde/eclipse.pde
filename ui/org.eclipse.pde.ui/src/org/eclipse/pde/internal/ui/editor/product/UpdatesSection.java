@@ -179,13 +179,12 @@ public class UpdatesSection extends TableSection {
 
 	@Override
 	protected void buttonSelected(int index) {
-		switch (index)
-		{
+		switch (index) {
 			case 0 -> handleAdd();
 			case 1 -> handleEdit(fRepositoryTable.getStructuredSelection());
 			case 2 -> handleDelete();
 			case 3 -> handleRemoveAll();
-		};
+		}
 	}
 
 	@Override

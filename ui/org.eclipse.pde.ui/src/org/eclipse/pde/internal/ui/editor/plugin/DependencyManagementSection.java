@@ -347,7 +347,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 			case REMOVE_INDEX -> handleRemove();
 			case UP_INDEX -> handleUp();
 			case DOWN_INDEX -> handleDown();
-		};
+		}
 	}
 
 	@Override
