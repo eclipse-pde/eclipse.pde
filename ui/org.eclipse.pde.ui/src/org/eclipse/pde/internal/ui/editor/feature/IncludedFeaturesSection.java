@@ -168,7 +168,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 			case SYNC -> handleSynchronize();
 			case UP -> handleUp();
 			case DOWN -> handleDown();
-		};
+		}
 	}
 
 	private void handleSynchronize() {

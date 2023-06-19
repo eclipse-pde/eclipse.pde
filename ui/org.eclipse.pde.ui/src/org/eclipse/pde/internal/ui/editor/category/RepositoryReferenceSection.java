@@ -188,7 +188,7 @@ public class RepositoryReferenceSection extends TableSection {
 			case 1 -> handleEdit(fRepositoryTable.getStructuredSelection());
 			case 2 -> handleDelete();
 			case 3 -> handleRemoveAll();
-		};
+		}
 	}
 
 

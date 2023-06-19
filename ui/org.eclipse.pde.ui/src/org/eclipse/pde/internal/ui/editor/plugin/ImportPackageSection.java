@@ -387,7 +387,7 @@ public class ImportPackageSection extends TableSection {
 			case ADD_INDEX -> handleAdd();
 			case REMOVE_INDEX -> handleRemove();
 			case PROPERTIES_INDEX -> handleOpenProperties();
-		};
+		}
 	}
 
 	private IPackageFragment getPackageFragment(ISelection sel) {

@@ -140,7 +140,7 @@ public class CategoryDetailsSection extends PDESection implements IPartSelection
 		case PROPERTY_NAME -> fNameText.setValue(null, true);
 		case PROPERTY_TYPE -> fLabelText.setValue(null, true);
 		case PROPERTY_DESC -> fDescriptionText.setValue(null, true);
-		};
+		}
 	}
 
 	private void clearFields() {

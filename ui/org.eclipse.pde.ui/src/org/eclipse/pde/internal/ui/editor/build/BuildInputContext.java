@@ -99,7 +99,7 @@ public class BuildInputContext extends InputContext {
 				case IModelChangedEvent.REMOVE -> deleteKey(key, ops);
 				case IModelChangedEvent.INSERT -> insertKey(key, ops);
 				case IModelChangedEvent.CHANGE -> modifyKey(key, ops);
-			};
+			}
 		}
 	}
 

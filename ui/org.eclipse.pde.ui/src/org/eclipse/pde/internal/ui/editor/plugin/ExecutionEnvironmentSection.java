@@ -239,7 +239,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 			case 1 -> handleRemove();
 			case 2 -> handleUp();
 			case 3 -> handleDown();
-		};
+		}
 	}
 
 	@Override
