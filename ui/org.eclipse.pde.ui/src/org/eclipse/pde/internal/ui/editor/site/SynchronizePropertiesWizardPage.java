@@ -186,7 +186,7 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 					case SELECTED_FEATURES -> fSelectedFeaturesButton.setSelection(true);
 					case ALL_FEATURES -> fAllFeaturesButton.setSelection(true);
 					default -> fSelectedFeaturesButton.setSelection(true);
-				};
+				}
 			} else
 				fSelectedFeaturesButton.setSelection(true);
 		} else {

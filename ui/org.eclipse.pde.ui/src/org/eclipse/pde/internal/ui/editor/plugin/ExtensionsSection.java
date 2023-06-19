@@ -392,7 +392,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			case BUTTON_EDIT -> handleEdit();
 			case BUTTON_MOVE_UP -> handleMove(true);
 			case BUTTON_MOVE_DOWN -> handleMove(false);
-		};
+		}
 	}
 
 	@Override

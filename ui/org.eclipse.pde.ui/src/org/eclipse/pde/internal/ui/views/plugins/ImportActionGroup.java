@@ -61,7 +61,7 @@ public class ImportActionGroup extends ActionGroup {
 				case PluginImportOperation.IMPORT_BINARY_WITH_LINKS -> setText(PDEUIMessages.ImportActionGroup_binaryWithLinkedContent);
 				case PluginImportOperation.IMPORT_WITH_SOURCE -> setText(PDEUIMessages.PluginsView_asSourceProject);
 				case PluginImportOperation.IMPORT_FROM_REPOSITORY -> setText(PDEUIMessages.ImportActionGroup_Repository_project);
-			};
+			}
 		}
 
 		@Override

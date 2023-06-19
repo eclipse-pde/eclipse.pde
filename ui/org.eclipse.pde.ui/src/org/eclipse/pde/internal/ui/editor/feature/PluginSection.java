@@ -161,7 +161,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			case NEW -> handleNew();
 			case REMOVE -> handleDelete();
 			case SYNC -> handleSynchronize();
-		};
+		}
 	}
 
 	@Override

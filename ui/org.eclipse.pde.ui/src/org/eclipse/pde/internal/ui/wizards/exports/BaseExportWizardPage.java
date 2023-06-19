@@ -101,7 +101,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 				case 0 -> handleSelectAll(true);
 				case 1 -> handleSelectAll(false);
 				case 2 -> handleWorkingSets();
-			};
+			}
 		}
 	}
 

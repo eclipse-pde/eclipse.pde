@@ -297,7 +297,7 @@ public class PropertiesSection extends TableSection {
 			case 0 -> handleAdd();
 			case 1 -> handleEdit();
 			case 2 -> handleRemove();
-		};
+		}
 	}
 
 	@Override

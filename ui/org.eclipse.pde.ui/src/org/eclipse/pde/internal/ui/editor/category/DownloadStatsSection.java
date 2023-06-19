@@ -178,7 +178,7 @@ public class DownloadStatsSection extends TableSection {
 			case 1 -> handleNewBundle();
 			case 2 -> handleRemove();
 			case 3 -> handleRemoveAll();
-		};
+		}
 	}
 
 	private void handleRemove() {

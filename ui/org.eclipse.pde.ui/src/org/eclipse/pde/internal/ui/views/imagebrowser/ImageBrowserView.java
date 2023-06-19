@@ -195,7 +195,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 				case 0 -> mFilters.add(enabledIcons);
 				case 1 -> mFilters.add(disabledIcons);
 				case 2 -> mFilters.add(wizard);
-			};
+			}
 			page = 0; // reset to 1st page
 			scanImages();
 		}));

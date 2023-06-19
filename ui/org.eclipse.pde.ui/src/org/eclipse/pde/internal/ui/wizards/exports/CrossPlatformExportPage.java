@@ -89,7 +89,7 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 			switch (index) {
 				case 0 -> handleSelectAll(true);
 				case 1 -> handleSelectAll(false);
-			};
+			}
 		}
 	}
 

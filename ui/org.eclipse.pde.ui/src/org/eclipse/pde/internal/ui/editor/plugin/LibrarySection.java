@@ -246,7 +246,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 			case REMOVE_INDEX -> handleRemove();
 			case UP_INDEX -> handleUp();
 			case DOWN_INDEX ->handleDown();
-		};
+		}
 	}
 
 	@Override

@@ -374,7 +374,7 @@ public class ExportPackageSection extends TableSection {
 			case REMOVE_INDEX -> handleRemove();
 			case PROPERTIES_INDEX -> handleOpenProperties();
 			case CALCULATE_USE_INDEX -> calculateUses();
-		};
+		}
 	}
 
 	private void handleOpenProperties() {
