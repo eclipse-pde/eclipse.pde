@@ -74,7 +74,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 					if (resource != null && resource instanceof IFile) {
 						IFile file = (IFile) resource;
 						String extension = file.getFileExtension();
-						return extension != null && extension.toLowerCase().equals("xml"); //$NON-NLS-1$
+						return extension != null && extension.equalsIgnoreCase("xml"); //$NON-NLS-1$
 					}
 					return false;
 				}
