@@ -108,7 +108,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 			}
 		}
 		int index = this.reportLocation.lastIndexOf('.');
-		if (index == -1 || !this.reportLocation.substring(index).toLowerCase().equals(".xml")) { //$NON-NLS-1$
+		if (index == -1 || !this.reportLocation.substring(index).equalsIgnoreCase(".xml")) { //$NON-NLS-1$
 			throw new BuildException(Messages.deltaReportTask_xmlFileLocationShouldHaveAnXMLExtension);
 		}
 		// unzip reference

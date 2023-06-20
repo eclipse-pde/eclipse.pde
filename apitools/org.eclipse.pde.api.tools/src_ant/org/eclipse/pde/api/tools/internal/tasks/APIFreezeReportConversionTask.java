@@ -462,7 +462,7 @@ public class APIFreezeReportConversionTask extends Task {
 		File outputFile = null;
 		if (this.htmlFileLocation == null) {
 			int index = this.xmlFileLocation.lastIndexOf('.');
-			if (index == -1 || !this.xmlFileLocation.substring(index).toLowerCase().equals(".xml")) { //$NON-NLS-1$
+			if (index == -1 || !this.xmlFileLocation.substring(index).equalsIgnoreCase(".xml")) { //$NON-NLS-1$
 				throw new BuildException(Messages.deltaReportTask_xmlFileLocationShouldHaveAnXMLExtension);
 			}
 			this.htmlFileLocation = extractNameFromXMLName(index);
@@ -473,7 +473,7 @@ public class APIFreezeReportConversionTask extends Task {
 		} else {
 			// check if the htmlFileLocation is a file and not a directory
 			int index = this.htmlFileLocation.lastIndexOf('.');
-			if (index == -1 || !this.htmlFileLocation.substring(index).toLowerCase().equals(".html")) { //$NON-NLS-1$
+			if (index == -1 || !this.htmlFileLocation.substring(index).equalsIgnoreCase(".html")) { //$NON-NLS-1$
 				throw new BuildException(Messages.deltaReportTask_htmlFileLocationShouldHaveAnHtmlExtension);
 			}
 			outputFile = new File(this.htmlFileLocation);

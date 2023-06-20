@@ -38,7 +38,8 @@ public class TracingUtils {
 	 * @return Returns true if the specified {@link String} is the value 'true' or 'false'; Otherwise false is returned.
 	 */
 	public static boolean isValueBoolean(final String value) {
-		return (value != null) && (value.toLowerCase().equals(TracingConstants.DEBUG_OPTION_VALUE_FALSE) || value.toLowerCase().equals(TracingConstants.DEBUG_OPTION_VALUE_TRUE));
+		return (value != null) && (value.equalsIgnoreCase(TracingConstants.DEBUG_OPTION_VALUE_FALSE)
+				|| value.equalsIgnoreCase(TracingConstants.DEBUG_OPTION_VALUE_TRUE));
 	}
 
 	/**
