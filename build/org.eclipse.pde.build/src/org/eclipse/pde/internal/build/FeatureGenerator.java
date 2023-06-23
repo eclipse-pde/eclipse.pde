@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -70,12 +71,13 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		public boolean equals(Object obj) {
 			if (obj instanceof Entry) {
 				Entry objEntry = (Entry) obj;
-				if (!(id.equals(((Entry) obj).id) && version.equals(objEntry.version)))
+				if (!(id.equals(((Entry) obj).id) && version.equals(objEntry.version))) {
 					return false;
+				}
 				return getAttributes().equals(objEntry.getAttributes());
 			}
 
-			return id.equals(obj);
+			return false;
 		}
 
 		@Override
@@ -91,12 +93,14 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 
 		public void addAttribute(String key, String value) {
 			if (VERSION.equals(key)) {
-				if (value != null && value.length() > 0)
+				if (value != null && value.length() > 0) {
 					version = value;
+				}
 				return;
 			}
-			if (attributes == null)
+			if (attributes == null) {
 				attributes = new LinkedHashMap<>();
+			}
 			attributes.put(key, value);
 		}
 
@@ -132,8 +136,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	private Properties buildProperties;
 
 	private static Set<Entry> createSet(String[] contents) {
-		if (contents == null)
+		if (contents == null) {
 			return new LinkedHashSet<>(0);
+		}
 		Set<Entry> result = new LinkedHashSet<>(contents.length);
 		for (String content : contents)
 			if (content != null) {
@@ -311,7 +316,6 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	 * Based on the version of OSGi that we have in our state, add the appropriate plug-ins/fragments/features
 	 * for the launcher.
 	 */
-	@SuppressWarnings("unlikely-arg-type")
 	private void addLauncher(PDEState state, Set<Entry> plugins, Set<Entry> fragments, Set<Entry> features) {
 		BundleDescription bundle = state.getResolvedBundle(BUNDLE_OSGI);
 		if (bundle == null)
@@ -319,8 +323,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		Version osgiVersion = bundle.getVersion();
 		if (osgiVersion.compareTo(new Version("3.3")) < 0) { //$NON-NLS-1$
 			// we have an OSGi version that is less than 3.3 so add the old launcher
-			if (!features.contains(FEATURE_PLATFORM_LAUNCHERS))
+			if (!contains(features, FEATURE_PLATFORM_LAUNCHERS)) {
 				features.add(new Entry(FEATURE_PLATFORM_LAUNCHERS));
+			}
 		} else {
 			// we have OSGi version 3.3 or greater so add the executable feature
 			// and the launcher plug-in and fragments
@@ -332,8 +337,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			}
 			if (executableFeature != null) {
 				/* the executable feature includes the launcher and fragments already */
-				if (!features.contains(FEATURE_EQUINOX_EXECUTABLE))
+				if (!contains(features, FEATURE_EQUINOX_EXECUTABLE)) {
 					features.add(new Entry(FEATURE_EQUINOX_EXECUTABLE));
+				}
 			} else {
 				// We don't have the executable feature, at least try and get the launcher jar and fragments 
 				plugins.add(new Entry(BUNDLE_EQUINOX_LAUNCHER));
@@ -343,10 +349,10 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				for (Config config : configs) {
 					String fragment = BUNDLE_EQUINOX_LAUNCHER + '.' + config.getWs() + '.' + config.getOs();
 					//macosx doesn't have the arch on its fragment 
-					if (config.getOs().compareToIgnoreCase("macosx") != 0 || config.getArch().equals("x86_64")) //$NON-NLS-1$ //$NON-NLS-2$
+					if (config.getOs().compareToIgnoreCase("macosx") != 0 || config.getArch().equals("x86_64")) {//$NON-NLS-1$ //$NON-NLS-2$
 						fragment += '.' + config.getArch();
-
-					if (!fragments.contains(fragment)) {
+					}
+					if (!contains(fragments, fragment)) {
 						Entry entry = new Entry(fragment);
 						entry.addAttribute("unpack", "true"); //$NON-NLS-1$//$NON-NLS-2$
 						fragments.add(entry);
@@ -354,6 +360,10 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				}
 			}
 		}
+	}
+
+	private boolean contains(Set<Entry> features, String id) {
+		return features.stream().anyMatch(e -> Objects.equals(e.getId(), id));
 	}
 
 	/**
@@ -376,8 +386,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 		PDEState state = verify ? getSite(false).getRegistry() : null;
 		BundleHelper helper = BundleHelper.getDefault();
 
-		if (verify && includeLaunchers)
+		if (verify && includeLaunchers) {
 			addLauncher(state, plugins, fragments, features);
+		}
 
 		String featureName = buildProperties != null ? (String) buildProperties.get(PROPERTY_GENERATED_FEATURE_LABEL) : null;
 
