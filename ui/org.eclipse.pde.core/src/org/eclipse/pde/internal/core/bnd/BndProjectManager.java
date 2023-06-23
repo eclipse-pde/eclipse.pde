@@ -91,13 +91,14 @@ public class BndProjectManager {
 	}
 
 	static synchronized Workspace getWorkspace() throws Exception {
-		Processor run = new Processor();
-		run.setProperty(Constants.STANDALONE, TRUE);
-		IPath path = PDECore.getDefault().getStateLocation().append(Project.BNDCNF);
 		if (workspace == null) {
-			workspace = Workspace.createStandaloneWorkspace(run, path.toFile().toURI());
-			workspace.addBasicPlugin(TargetRepository.getTargetRepository());
-			workspace.refresh();
+			try (Processor run = new Processor()) {
+				run.setProperty(Constants.STANDALONE, TRUE);
+				IPath path = PDECore.getDefault().getStateLocation().append(Project.BNDCNF);
+				workspace = Workspace.createStandaloneWorkspace(run, path.toFile().toURI());
+				workspace.addBasicPlugin(TargetRepository.getTargetRepository());
+				workspace.refresh();
+			}
 		}
 		return workspace;
 	}
