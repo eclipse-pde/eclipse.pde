@@ -23,7 +23,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -38,6 +37,7 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
 import org.eclipse.pde.internal.core.util.XmlTransformerFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -153,7 +153,8 @@ public class TargetDefinitionPersistenceHelper {
 	 */
 	public static void initFromXML(ITargetDefinition definition, InputStream input)
 			throws CoreException, ParserConfigurationException, SAXException, IOException {
-		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		DocumentBuilder parser = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE()
+				.newDocumentBuilder();
 		parser.setErrorHandler(new DefaultHandler());
 		Document doc = parser.parse(new InputSource(input));
 

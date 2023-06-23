@@ -36,6 +36,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
+import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import org.xml.sax.Attributes;
@@ -168,7 +169,7 @@ public class XMLErrorReporter extends DefaultHandler {
 
 	@Override
 	public void startDocument() throws SAXException {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilderFactory factory = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 		try {
 			// TODO we should be using a dom level 2 impl
 			fXMLDocument = factory.newDocumentBuilder().newDocument();
