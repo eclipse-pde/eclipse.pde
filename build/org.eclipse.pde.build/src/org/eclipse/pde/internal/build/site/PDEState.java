@@ -318,45 +318,29 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 	//Return a dictionary representing a manifest. The data may result from plugin.xml conversion  
 	private Dictionary<String, String> basicLoadManifest(File bundleLocation) {
-		InputStream manifestStream = null;
-		ZipFile jarFile = null;
 		try {
 			if ("jar".equalsIgnoreCase(IPath.fromOSString(bundleLocation.getName()).getFileExtension()) && bundleLocation.isFile()) { //$NON-NLS-1$
-				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
-				ZipEntry manifestEntry = jarFile.getEntry(JarFile.MANIFEST_NAME);
-				if (manifestEntry != null) {
-					manifestStream = jarFile.getInputStream(manifestEntry);
+				try (ZipFile jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ)) {
+					ZipEntry manifestEntry = jarFile.getEntry(JarFile.MANIFEST_NAME);
+					if (manifestEntry != null) {
+						try (InputStream manifestStream = jarFile.getInputStream(manifestEntry)) {
+							if (manifestStream != null) {
+								return new Hashtable<>(ManifestElement.parseBundleManifest(manifestStream, null));
+							}
+						}
+					}
 				}
 			} else {
-				manifestStream = new BufferedInputStream(new FileInputStream(new File(bundleLocation, JarFile.MANIFEST_NAME)));
+				try (InputStream manifestStream = new FileInputStream(new File(bundleLocation, JarFile.MANIFEST_NAME))) {
+					return new Hashtable<>(ManifestElement.parseBundleManifest(manifestStream, null));
+				}
 			}
-		} catch (IOException e) {
+		} catch (IOException | BundleException e) {
 			//ignore
 		}
 
 		//It is not a manifest, but a plugin or a fragment
-		if (manifestStream == null)
-			return null;
-
-		try {
-			Hashtable<String, String> result = new Hashtable<>();
-			result.putAll(ManifestElement.parseBundleManifest(manifestStream, null));
-			return result;
-		} catch (IOException | BundleException e) {
-			return null;
-		} finally {
-			try {
-				manifestStream.close();
-			} catch (IOException e1) {
-				//Ignore
-			}
-			try {
-				if (jarFile != null)
-					jarFile.close();
-			} catch (IOException e2) {
-				//Ignore
-			}
-		}
+		return null;
 	}
 
 	private boolean enforceSymbolicName(File bundleLocation, Dictionary<String, String> initialManifest) {
