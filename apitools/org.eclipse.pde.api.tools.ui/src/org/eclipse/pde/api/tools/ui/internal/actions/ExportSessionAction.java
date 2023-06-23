@@ -45,10 +45,12 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.views.APIToolingView;
+import org.eclipse.pde.internal.core.util.XmlTransformerFactory;
 
 /**
  * Drop-down action to select the active session.
  */
+@SuppressWarnings("restriction")
 public class ExportSessionAction extends Action {
 	private static final String DELTAS_XSLT_TRANSFORM_PATH = "/compare.xsl"; //$NON-NLS-1$
 	private static final String XML_FILE_EXTENSION = ".xml"; //$NON-NLS-1$
@@ -153,9 +155,8 @@ public class ExportSessionAction extends Action {
 							}
 							writer = new BufferedWriter(new FileWriter(reportFile));
 							Result result = new StreamResult(writer);
-							// create an instance of TransformerFactory
-							TransformerFactory transFact = TransformerFactory.newInstance();
-							Transformer trans = transFact.newTransformer(xsltSource);
+							TransformerFactory f = XmlTransformerFactory.createTransformerFactoryWithErrorOnDOCTYPE();
+							Transformer trans = f.newTransformer(xsltSource);
 							trans.transform(xmlSource, result);
 						} catch (TransformerException | IOException e) {
 							ApiUIPlugin.log(e);
