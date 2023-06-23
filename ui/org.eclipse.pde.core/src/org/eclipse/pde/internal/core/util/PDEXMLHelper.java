@@ -22,10 +22,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.SAXException;
 
 /**
  * PDEXMLHelper
@@ -33,38 +29,18 @@ import org.xml.sax.SAXException;
  */
 public class PDEXMLHelper {
 
-	protected static SAXParserFactory fSAXFactory;
 	protected static PDEXMLHelper fPinstance;
 	protected static DocumentBuilderFactory fDOMFactory;
-	protected static List<SoftReference<SAXParser>> fSAXParserQueue;
 	protected static List<SoftReference<DocumentBuilder>> fDOMParserQueue;
 	protected static int fSAXPoolLimit;
 	protected static int fDOMPoolLimit;
 	protected static final int FMAXPOOLLIMIT = 1;
 
 	protected PDEXMLHelper() throws FactoryConfigurationError {
-		fSAXFactory = SAXParserFactory.newInstance();
 		fDOMFactory = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
-		fSAXParserQueue = Collections.synchronizedList(new LinkedList<>());
 		fDOMParserQueue = Collections.synchronizedList(new LinkedList<>());
 		fSAXPoolLimit = FMAXPOOLLIMIT;
 		fDOMPoolLimit = FMAXPOOLLIMIT;
-	}
-
-	public synchronized SAXParser getDefaultSAXParser() throws ParserConfigurationException, SAXException {
-
-		SAXParser parser = null;
-		if (fSAXParserQueue.isEmpty()) {
-			parser = fSAXFactory.newSAXParser();
-		} else {
-			SoftReference<SAXParser> reference = fSAXParserQueue.remove(0);
-			if (reference.get() != null) {
-				parser = reference.get();
-			} else {
-				parser = fSAXFactory.newSAXParser();
-			}
-		}
-		return parser;
 	}
 
 	public synchronized DocumentBuilder getDefaultDOMParser() throws ParserConfigurationException {
@@ -88,13 +64,6 @@ public class PDEXMLHelper {
 			fPinstance = new PDEXMLHelper();
 		}
 		return fPinstance;
-	}
-
-	public synchronized void recycleSAXParser(SAXParser parser) {
-		if (fSAXParserQueue.size() < fSAXPoolLimit) {
-			SoftReference<SAXParser> reference = new SoftReference<>(parser);
-			fSAXParserQueue.add(reference);
-		}
 	}
 
 	public synchronized void recycleDOMParser(DocumentBuilder parser) {

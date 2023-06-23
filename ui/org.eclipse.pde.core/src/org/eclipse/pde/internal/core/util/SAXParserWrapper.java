@@ -36,28 +36,14 @@ public class SAXParserWrapper {
 
 	public static void parse(File f, DefaultHandler dh)
 			throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
-		parse(p -> p.parse(f, dh));
+		SAXParser fParser = XmlParserFactory.createSAXParserWithErrorOnDOCTYPE();
+		fParser.parse(f, dh);
 	}
 
 	public static void parse(InputStream is, DefaultHandler dh)
 			throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
-		parse(p -> p.parse(is, dh));
+		SAXParser fParser = XmlParserFactory.createSAXParserWithErrorOnDOCTYPE();
+		fParser.parse(is, dh);
 	}
 
-	// NOTE: If other parser method calls are required, the corresponding
-	// wrapper method needs to be added here
-
-	private interface ParseProcess {
-		void parseWith(SAXParser parser) throws SAXException, IOException;
-	}
-
-	private static void parse(ParseProcess pp)
-			throws ParserConfigurationException, SAXException, FactoryConfigurationError, IOException {
-		SAXParser fParser = PDEXMLHelper.Instance().getDefaultSAXParser();
-		try {
-			pp.parseWith(fParser);
-		} finally {
-			PDEXMLHelper.Instance().recycleSAXParser(fParser);
-		}
-	}
 }

@@ -36,10 +36,8 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -79,6 +77,7 @@ import org.eclipse.pde.api.tools.internal.util.SourceDefaultHandler;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.internal.core.TargetWeaver;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
+import org.eclipse.pde.internal.core.util.XmlParserFactory;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
@@ -1068,15 +1067,9 @@ public class BundleComponent extends Component {
 	 * @return true if it contains a source extension point, false otherwise
 	 */
 	private static boolean containsSourceExtensionPoint(String pluginXMLContents) {
-		SAXParserFactory factory = null;
-		try {
-			factory = SAXParserFactory.newInstance();
-		} catch (FactoryConfigurationError e) {
-			return false;
-		}
 		SAXParser saxParser = null;
 		try {
-			saxParser = factory.newSAXParser();
+			saxParser = XmlParserFactory.createSAXParserWithErrorOnDOCTYPE();
 		} catch (ParserConfigurationException | SAXException e) {
 			// ignore
 		}

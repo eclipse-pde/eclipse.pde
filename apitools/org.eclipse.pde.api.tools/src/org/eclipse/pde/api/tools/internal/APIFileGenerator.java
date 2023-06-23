@@ -32,10 +32,8 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.JavaCore;
@@ -48,6 +46,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.internal.core.util.XmlParserFactory;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.xml.sax.Attributes;
@@ -459,15 +458,9 @@ public class APIFileGenerator {
 	 * @return true if it contains a source extension point, false otherwise
 	 */
 	private boolean containsAPIToolsNature(String pluginXMLContents) {
-		SAXParserFactory factory = null;
-		try {
-			factory = SAXParserFactory.newInstance();
-		} catch (FactoryConfigurationError e) {
-			return false;
-		}
 		SAXParser saxParser = null;
 		try {
-			saxParser = factory.newSAXParser();
+			saxParser = XmlParserFactory.createSAXParserIgnoringDOCTYPE();
 		} catch (ParserConfigurationException | SAXException e) {
 			// ignore
 		}
