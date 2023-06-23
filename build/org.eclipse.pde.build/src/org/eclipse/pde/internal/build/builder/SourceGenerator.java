@@ -25,6 +25,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.SequenceInputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -320,9 +323,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			}
 
 			//Copy the fragment.xml
-			try {
-				InputStream fragmentXML = BundleHelper.getDefault().getBundle().getEntry(TEMPLATE + "/30/fragment/fragment.xml").openStream(); //$NON-NLS-1$
-				Utils.transferStreams(fragmentXML, new FileOutputStream(sourceFragmentDirURL.append(Constants.FRAGMENT_FILENAME_DESCRIPTOR).toOSString()));
+			Path dest = new File(sourceFragmentDirURL.append(Constants.FRAGMENT_FILENAME_DESCRIPTOR).toOSString()).toPath();
+			try (InputStream fragmentXML = BundleHelper.getDefault().getBundle().getEntry(TEMPLATE + "/30/fragment/fragment.xml").openStream()) { //$NON-NLS-1$
+				Files.copy(fragmentXML, dest, StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e1) {
 				String message = NLS.bind(Messages.exception_readingFile, TEMPLATE + "/30/fragment/fragment.xml"); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e1));
@@ -345,8 +348,8 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			// Set the platform filter of the fragment
 			beginId = Utils.scan(buffer, beginId, REPLACED_PLATFORM_FILTER);
 			buffer.replace(beginId, beginId + REPLACED_PLATFORM_FILTER.length(), "(& (osgi.ws=" + fragment.getWS() + ") (osgi.os=" + fragment.getOS() + ") (osgi.arch=" + fragment.getArch() + "))"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-
-			Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(sourceFragmentDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toOSString()));
+			Path destManifest = sourceFragmentDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toPath();
+			Files.writeString(destManifest, buffer.toString());
 			Collection<String> copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFragment", sourceFragmentDir.getAbsolutePath()); //$NON-NLS-1$
 			if (copiedFiles.contains(Constants.BUNDLE_FILENAME_DESCRIPTOR)) {
 				//make sure the manifest.mf has the versions we want
@@ -467,7 +470,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		}
 		if (attrFound) {
 			try {
-				Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(featureFile));
+				Files.writeString(featureFile.toPath(), buffer.toString());
 			} catch (IOException e) {
 				//ignore
 			}
@@ -688,17 +691,18 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		//set the version number
 		beginId = Utils.scan(buffer, beginId, REPLACED_PLUGIN_VERSION);
 		buffer.replace(beginId, beginId + REPLACED_PLUGIN_VERSION.length(), result.getVersion());
+		String destName = sourcePluginDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toOSString();
 		try {
-			Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(sourcePluginDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toOSString()));
+			Files.writeString(new File(destName).toPath(), buffer.toString());
 		} catch (IOException e1) {
 			String message = NLS.bind(Messages.exception_writingFile, templateManifestURL.toExternalForm());
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e1));
 		}
 
 		//Copy the plugin.xml
-		try {
-			InputStream pluginXML = BundleHelper.getDefault().getBundle().getEntry(TEMPLATE + "/30/plugin/plugin.xml").openStream(); //$NON-NLS-1$
-			Utils.transferStreams(pluginXML, new FileOutputStream(sourcePluginDirURL.append(Constants.PLUGIN_FILENAME_DESCRIPTOR).toOSString()));
+		Path dest = sourcePluginDirURL.append(Constants.PLUGIN_FILENAME_DESCRIPTOR).toPath();
+		try (InputStream pluginXML = BundleHelper.getDefault().getBundle().getEntry(TEMPLATE + "/30/plugin/plugin.xml").openStream()) { //$NON-NLS-1$
+			Files.copy(pluginXML, dest, StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e1) {
 			String message = NLS.bind(Messages.exception_readingFile, TEMPLATE + "/30/plugin/plugin.xml"); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e1));
