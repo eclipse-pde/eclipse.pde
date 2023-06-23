@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.resources.IProject;
 
@@ -23,7 +23,7 @@ import org.eclipse.core.resources.IProject;
  */
 public class BuildStamps {
 
-	private static Map<IProject, long[]> fStamps = new HashMap<>();
+	private static final Map<IProject, Long> fStamps = new ConcurrentHashMap<>();
 
 	/**
 	 * Returns the current build time stamp for the given project.
@@ -31,12 +31,8 @@ public class BuildStamps {
 	 * @param project project
 	 * @return relative build time stamp
 	 */
-	public static synchronized long getBuildStamp(IProject project) {
-		long[] stamp = fStamps.get(project);
-		if (stamp != null) {
-			return stamp[0];
-		}
-		return 0L;
+	public static long getBuildStamp(IProject project) {
+		return fStamps.getOrDefault(project, 0L);
 	}
 
 	/**
@@ -45,12 +41,7 @@ public class BuildStamps {
 	 *
 	 * @param project project being built
 	 */
-	public static synchronized void incBuildStamp(IProject project) {
-		long[] stamp = fStamps.get(project);
-		if (stamp != null) {
-			stamp[0] = stamp[0]++;
-		} else {
-			fStamps.put(project, new long[] { 1L });
-		}
+	public static void incBuildStamp(IProject project) {
+		fStamps.compute(project, (p, v) -> v == null ? 1L : v + 1L);
 	}
 }
