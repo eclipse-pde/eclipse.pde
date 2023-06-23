@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -36,6 +35,7 @@ import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.util.XmlParserFactory;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
@@ -199,7 +199,7 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 					try {
 						InputStream stream = new BufferedInputStream(((IFile) res).getContents(true));
 						PluginHandler handler = new PluginHandler(true);
-						SAXParserFactory.newInstance().newSAXParser().parse(stream, handler);
+						XmlParserFactory.createSAXParserWithErrorOnDOCTYPE().parse(stream, handler);
 						return handler.getSchemaVersion();
 					} catch (CoreException | SAXException | IOException | ParserConfigurationException e) {
 					}

@@ -37,7 +37,6 @@ import java.util.zip.ZipFile;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -66,7 +65,6 @@ public class JNLPGenerator extends DefaultHandler {
 	 * feature.includes = extension
 	 * feature.plugin = jar
 	 */
-	private final static SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 	private PrintWriter out;
 	private String destination;
 	private String provider;
@@ -109,8 +107,7 @@ public class JNLPGenerator extends DefaultHandler {
 		this.locale = locale;
 		this.generateOfflineAllowed = generateOfflineAllowed;
 		try {
-			parserFactory.setNamespaceAware(true);
-			parser = parserFactory.newSAXParser();
+			parser = XmlParserFactory.createNsAwareSAXParserWithErrorOnDOCTYPE();
 		} catch (ParserConfigurationException | SAXException e) {
 			System.out.println(e);
 		}

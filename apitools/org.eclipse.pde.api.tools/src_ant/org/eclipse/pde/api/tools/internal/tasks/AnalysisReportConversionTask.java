@@ -27,7 +27,6 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -35,6 +34,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.internal.core.util.XmlParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -429,10 +429,9 @@ public class AnalysisReportConversionTask extends Task {
 		if (!this.reportsRoot.exists() || !this.reportsRoot.isDirectory()) {
 			throw new BuildException(NLS.bind(Messages.invalid_directory_name, this.xmlReportsLocation));
 		}
-		SAXParserFactory factory = SAXParserFactory.newInstance();
 		SAXParser parser = null;
 		try {
-			parser = factory.newSAXParser();
+			parser = XmlParserFactory.createSAXParserWithErrorOnDOCTYPE();
 		} catch (ParserConfigurationException | SAXException e) {
 			e.printStackTrace();
 		}

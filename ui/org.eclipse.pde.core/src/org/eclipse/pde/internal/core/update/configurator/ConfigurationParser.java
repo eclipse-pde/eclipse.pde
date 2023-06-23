@@ -26,10 +26,10 @@ import java.util.StringTokenizer;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.util.XmlParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -43,7 +43,6 @@ class ConfigurationParser extends DefaultHandler implements IConfigurationConsta
 
 	private static final String URL_PROPERTY = "org.eclipse.update.resolution_url"; //$NON-NLS-1$
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	private final static SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 	private SAXParser parser;
 
 	private URL currentSiteURL;
@@ -58,8 +57,7 @@ class ConfigurationParser extends DefaultHandler implements IConfigurationConsta
 	public ConfigurationParser() throws InvocationTargetException {
 
 		try {
-			parserFactory.setNamespaceAware(true);
-			this.parser = parserFactory.newSAXParser();
+			this.parser = XmlParserFactory.createSAXParserWithErrorOnDOCTYPE(true);
 		} catch (ParserConfigurationException | SAXException e) {
 			Utils.log(Utils.newStatus("ConfigurationParser", e)); //$NON-NLS-1$
 			throw new InvocationTargetException(e);
