@@ -339,7 +339,7 @@ public class TarFile implements Closeable {
 			if (size < 0) {
 				return size;
 			}
-			return data[0];
+			return data[0] & 0xFF;
 		}
 	}
 
