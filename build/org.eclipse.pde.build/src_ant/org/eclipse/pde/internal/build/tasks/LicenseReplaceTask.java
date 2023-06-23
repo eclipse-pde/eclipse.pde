@@ -330,18 +330,17 @@ public class LicenseReplaceTask extends Task {
 		for (String propertyFile : propertyFiles) {
 			File featurePropertyFile = new File(filePath, propertyFile);
 			File licensePropertyFile = new File(licensePath, propertyFile);
-			FileInputStream fis = null;
 			if (featurePropertyFile.exists()) {
 				try {
-					fis = new FileInputStream(licensePropertyFile);
 					Properties licenseProperties = new Properties();
-					licenseProperties.load(fis);
-					fis.close();
+					try (FileInputStream fis = new FileInputStream(licensePropertyFile)) {
+						licenseProperties.load(fis);
+					}
 
-					fis = new FileInputStream(featurePropertyFile);
 					Properties featureProperties = new Properties();
-					featureProperties.load(fis);
-					fis.close();
+					try (FileInputStream fis = new FileInputStream(featurePropertyFile)) {
+						featureProperties.load(fis);
+					}
 
 					Enumeration<Object> licenseKeys = licenseProperties.keys();
 					while (licenseKeys.hasMoreElements()) {
