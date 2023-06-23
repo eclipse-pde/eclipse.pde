@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.feature.FeatureData;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -91,7 +92,7 @@ public class FeatureDataTestCase {
 	}
 
 	public static FeatureData fromXml(String xml) throws Exception {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilderFactory factory = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		InputSource is = new InputSource(new StringReader(xml));
 		Document doc = builder.parse(is);

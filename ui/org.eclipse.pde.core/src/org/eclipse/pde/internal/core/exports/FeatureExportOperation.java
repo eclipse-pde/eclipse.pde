@@ -102,6 +102,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.target.TargetMetadataCollector;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
 import org.osgi.framework.InvalidSyntaxException;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -886,7 +887,7 @@ public class FeatureExportOperation extends Job {
 		File scriptFile = null;
 		try {
 			scriptFile = createScriptFile("zip.xml"); //$NON-NLS-1$
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory factory = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 			Document doc = factory.newDocumentBuilder().newDocument();
 
 			Element root = doc.createElement("project"); //$NON-NLS-1$
@@ -958,7 +959,8 @@ public class FeatureExportOperation extends Job {
 	private void createFeature(String featureID, String featureLocation, Object[] featuresExported, Document doc, Element root, Properties prop) throws IOException {
 		try {
 			if (doc == null) {
-				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				DocumentBuilderFactory factory = XmlDocumentBuilderFactory
+						.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 				doc = factory.newDocumentBuilder().newDocument();
 				root = doc.createElement("feature"); //$NON-NLS-1$
 				root.setAttribute("id", featureID); //$NON-NLS-1$
@@ -1064,7 +1066,7 @@ public class FeatureExportOperation extends Job {
 		}
 
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory factory = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 			Document doc = factory.newDocumentBuilder().newDocument();
 			Element root = doc.createElement("feature"); //$NON-NLS-1$
 			root.setAttribute("id", featureID); //$NON-NLS-1$

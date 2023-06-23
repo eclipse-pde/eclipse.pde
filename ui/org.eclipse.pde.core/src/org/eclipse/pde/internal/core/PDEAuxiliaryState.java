@@ -33,6 +33,7 @@ import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
+import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.w3c.dom.Document;
@@ -202,7 +203,7 @@ public class PDEAuxiliaryState {
 	 */
 	protected void savePluginInfo(File dir) {
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory factory = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 			Document doc = factory.newDocumentBuilder().newDocument();
 			Element root = doc.createElement(ELEMENT_ROOT);
 
@@ -262,7 +263,8 @@ public class PDEAuxiliaryState {
 		File file = new File(dir, CACHE_EXTENSION);
 		if (file.exists() && file.isFile()) {
 			try {
-				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				DocumentBuilderFactory factory = XmlDocumentBuilderFactory
+						.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 				DocumentBuilder documentBuilder = factory.newDocumentBuilder();
 				documentBuilder.setErrorHandler(new DefaultHandler());
 				Document doc = documentBuilder.parse(file);
@@ -302,7 +304,8 @@ public class PDEAuxiliaryState {
 	 */
 	public static void writePluginInfo(IPluginModelBase[] models, File destination) {
 		try {
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder builder = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE()
+					.newDocumentBuilder();
 			Document doc = builder.newDocument();
 
 			Element root = doc.createElement(ELEMENT_ROOT);

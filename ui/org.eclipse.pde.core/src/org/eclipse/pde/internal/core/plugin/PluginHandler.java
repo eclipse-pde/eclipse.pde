@@ -23,6 +23,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.util.IdUtil;
+import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -99,7 +100,7 @@ public class PluginHandler extends DefaultHandler {
 
 	@Override
 	public void startDocument() throws SAXException {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilderFactory factory = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 		try {
 			fDocument = factory.newDocumentBuilder().newDocument();
 		} catch (ParserConfigurationException e) {

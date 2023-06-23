@@ -36,7 +36,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -69,6 +68,7 @@ import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.core.target.TargetFeature;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
 import org.eclipse.pde.internal.core.util.XmlTransformerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -701,7 +701,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		Element containerElement;
 		Document document;
 		try {
-			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder docBuilder = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE()
+					.newDocumentBuilder();
 			document = docBuilder.newDocument();
 		} catch (Exception e) {
 			PDECore.log(e);

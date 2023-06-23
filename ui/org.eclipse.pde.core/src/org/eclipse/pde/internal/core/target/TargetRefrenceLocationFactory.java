@@ -17,13 +17,13 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetLocationFactory;
+import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -36,7 +36,8 @@ public class TargetRefrenceLocationFactory implements ITargetLocationFactory {
 					Status.error(NLS.bind(Messages.TargetRefrenceLocationFactory_Unsupported_Type, type)));
 		}
 		try {
-			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder docBuilder = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE()
+					.newDocumentBuilder();
 			Document document = docBuilder
 					.parse(new ByteArrayInputStream(serializedXML.getBytes(StandardCharsets.UTF_8)));
 			Element location = document.getDocumentElement();
