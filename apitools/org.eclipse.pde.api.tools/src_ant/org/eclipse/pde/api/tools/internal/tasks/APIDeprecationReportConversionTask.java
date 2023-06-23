@@ -25,7 +25,6 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -34,6 +33,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.internal.core.util.XmlParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -311,10 +311,9 @@ public class APIDeprecationReportConversionTask extends Task {
 			System.out.println("xmlFileLocation : " + this.xmlFileLocation); //$NON-NLS-1$
 			System.out.println("htmlFileLocation : " + this.htmlFileLocation); //$NON-NLS-1$
 		}
-		SAXParserFactory factory = SAXParserFactory.newInstance();
 		SAXParser parser = null;
 		try {
-			parser = factory.newSAXParser();
+			parser = XmlParserFactory.createSAXParserWithErrorOnDOCTYPE();
 		} catch (ParserConfigurationException | SAXException e) {
 			e.printStackTrace();
 		}

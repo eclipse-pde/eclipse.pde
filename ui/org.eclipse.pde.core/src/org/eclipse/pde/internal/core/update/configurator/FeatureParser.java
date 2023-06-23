@@ -20,9 +20,9 @@ import java.net.URL;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.util.XmlParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -40,16 +40,13 @@ class FeatureParser extends DefaultHandler {
 	private FeatureEntry feature;
 	private URL url;
 
-	private final static SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-
 	/**
 	 * Constructs a feature parser.
 	 */
 	public FeatureParser() {
 		super();
 		try {
-			parserFactory.setNamespaceAware(true);
-			this.parser = parserFactory.newSAXParser();
+			this.parser = XmlParserFactory.createSAXParserWithErrorOnDOCTYPE(true);
 		} catch (ParserConfigurationException | SAXException e) {
 			System.out.println(e);
 		}

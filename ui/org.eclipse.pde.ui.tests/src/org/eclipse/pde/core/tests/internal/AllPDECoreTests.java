@@ -11,6 +11,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	XmlTransformerTest.class, //
 	WorkspaceModelManagerTest.class, //
 	WorkspaceProductModelManagerTest.class, //
+	XmlParserFactoryTest.class //
 })
 public class AllPDECoreTests {
 }

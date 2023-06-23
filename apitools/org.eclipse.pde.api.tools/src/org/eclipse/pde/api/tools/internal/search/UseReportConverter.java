@@ -38,7 +38,6 @@ import java.util.regex.PatternSyntaxException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -66,6 +65,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
 import org.eclipse.pde.api.tools.internal.provisional.search.IMetadata;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.internal.core.util.XmlParserFactory;
 import org.eclipse.pde.internal.core.util.XmlTransformerFactory;
 import org.osgi.framework.Version;
 import org.w3c.dom.Element;
@@ -741,9 +741,8 @@ public class UseReportConverter extends HTMLConvertor {
 	 */
 	SAXParser getParser() throws Exception {
 		if (this.parser == null) {
-			SAXParserFactory factory = SAXParserFactory.newInstance();
 			try {
-				this.parser = factory.newSAXParser();
+				this.parser = XmlParserFactory.createSAXParserWithErrorOnDOCTYPE();
 			} catch (ParserConfigurationException pce) {
 				throw new Exception(SearchMessages.UseReportConverter_pce_error_getting_parser, pce);
 			} catch (SAXException se) {
