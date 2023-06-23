@@ -13,20 +13,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -383,39 +380,6 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return IPath.fromOSString(temp).append(location.removeFirstSegments(count));
 	}
 
-	/**
-	 * Transfers all available bytes from the given input stream to the given
-	 * output stream. Regardless of failure, this method closes both streams.
-	 * 
-	 * @param source
-	 * @param destination
-	 * @throws IOException
-	 */
-	public static void transferStreams(InputStream source, OutputStream destination) throws IOException {
-		source = new BufferedInputStream(source);
-		destination = new BufferedOutputStream(destination);
-		try {
-			byte[] buffer = new byte[8192];
-			while (true) {
-				int bytesRead = -1;
-				if ((bytesRead = source.read(buffer)) == -1)
-					break;
-				destination.write(buffer, 0, bytesRead);
-			}
-		} finally {
-			try {
-				source.close();
-			} catch (IOException e) {
-				// ignore
-			}
-			try {
-				destination.close();
-			} catch (IOException e) {
-				// ignore
-			}
-		}
-	}
-
 	static public void copyFile(String src, String dest) throws IOException {
 		File source = new File(src);
 		if (!source.exists())
@@ -430,17 +394,6 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 
 	public static void copy(File source, File destination) throws IOException {
 		org.eclipse.pde.internal.publishing.Utils.copy(source, destination);
-	}
-
-	public static void writeBuffer(StringBuffer buffer, File outputFile) throws IOException {
-		FileOutputStream stream = null;
-		try {
-			outputFile.getParentFile().mkdirs();
-			stream = new FileOutputStream(outputFile);
-			stream.write(buffer.toString().getBytes());
-		} finally {
-			close(stream);
-		}
 	}
 
 	public static void writeProperties(Properties properites, File outputFile, String comment) throws IOException {
@@ -521,32 +474,9 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 						}
 						continue;
 					}
-
-					FileInputStream inputStream = null;
-					FileOutputStream outputStream = null;
-
-					try {
-						inputStream = new FileInputStream(file);
-					} catch (FileNotFoundException e) {
-						String message = NLS.bind(Messages.exception_missingFile, file.getAbsolutePath());
-						throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
-					}
-
 					String fileToCopy = toDir + '/' + file.getName();
 					try {
-						outputStream = new FileOutputStream(fileToCopy);
-					} catch (FileNotFoundException e) {
-						try {
-							inputStream.close();
-						} catch (IOException e1) {
-							// Ignored
-						}
-						String message = NLS.bind(Messages.exception_missingFile, fileToCopy);
-						throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
-					}
-
-					try {
-						Utils.transferStreams(inputStream, outputStream);
+						Files.copy(file.toPath(), Path.of(fileToCopy));
 						copiedFiles.add(file.getName());
 					} catch (IOException e) {
 						String message = NLS.bind(Messages.exception_writingFile, fileToCopy);
@@ -934,21 +864,11 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	 * @throws IOException
 	 */
 	static public StringBuffer readFile(File target) throws IOException {
-		return readFile(new FileInputStream(target));
+		return new StringBuffer(new String(Files.readAllBytes(target.toPath())));
 	}
 
 	static public StringBuffer readFile(InputStream stream) throws IOException {
-		StringBuffer result = new StringBuffer();
-		char[] buf = new char[4096];
-		int count;
-		try (InputStreamReader reader = new InputStreamReader(new BufferedInputStream(stream))) {
-			count = reader.read(buf, 0, buf.length);
-			while (count != -1) {
-				result.append(buf, 0, count);
-				count = reader.read(buf, 0, buf.length);
-			}
-		}
-		return result;
+		return new StringBuffer(new String(stream.readAllBytes()));
 	}
 
 	/**
@@ -983,7 +903,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		if (currentVersion.equals(newVersion))
 			return;
 		buffer.replace(begin, end, newVersion);
-		transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(buildFile));
+		Files.writeString(buildFile.toPath(), buffer.toString());
 	}
 
 	public static Enumeration<Object> getArrayEnumerator(Object[] array) {

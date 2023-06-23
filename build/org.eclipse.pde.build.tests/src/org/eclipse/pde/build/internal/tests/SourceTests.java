@@ -19,11 +19,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Dictionary;
 import java.util.HashSet;
 import java.util.Properties;
@@ -360,10 +360,10 @@ public class SourceTests extends PDETestCase {
 
 		try (ZipFile zip = new ZipFile(buildFolder.getFile("I.TestBuild/eclipse.zip").getLocation().toFile())) {
 			ZipEntry entry = zip.getEntry("eclipse/plugins/bundleA.source_1.0.0.jar");
-			InputStream in = new BufferedInputStream(zip.getInputStream(entry));
 			IFile jar = buildFolder.getFile("bundleA.source_1.0.0.jar");
-			OutputStream out = new BufferedOutputStream(new FileOutputStream(jar.getLocation().toFile()));
-			org.eclipse.pde.internal.build.Utils.transferStreams(in, out);
+			try (InputStream in = zip.getInputStream(entry)) {
+				Files.copy(in, jar.getLocation().toFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
+			}
 		}
 
 		entries.clear();

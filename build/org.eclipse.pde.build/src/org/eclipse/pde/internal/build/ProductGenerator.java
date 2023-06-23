@@ -20,6 +20,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Dictionary;
@@ -187,7 +188,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 		try {
 			File p2Inf = new File(root, "p2.inf"); //$NON-NLS-1$
-			Utils.writeBuffer(buffer, p2Inf);
+			Files.writeString(p2Inf.toPath(), buffer.toString());
 		} catch (IOException e) {
 			return false;
 		}

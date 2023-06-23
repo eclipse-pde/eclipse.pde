@@ -19,12 +19,13 @@ import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -409,8 +410,10 @@ public abstract class PDETestCase {
 
 				command = new String[] { "ls", "-la", extractedFile.getLocation().toOSString() };
 				proc = Runtime.getRuntime().exec(command);
-				Utils.transferStreams(proc.getInputStream(),
-						new FileOutputStream(tempFolder.getFile("ls.out").getLocation().toFile()));
+				Path dest = tempFolder.getFile("ls.out").getLocation().toFile().toPath();
+				try (InputStream inputStream = proc.getInputStream()) {
+					Files.copy(inputStream, dest, StandardCopyOption.REPLACE_EXISTING);
+				}
 				proc.waitFor();
 
 				assertLogContainsLine(tempFolder.getFile("ls.out"), permissions);
