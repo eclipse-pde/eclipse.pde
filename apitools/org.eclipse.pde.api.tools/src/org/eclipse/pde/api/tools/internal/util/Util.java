@@ -141,6 +141,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
+import org.eclipse.pde.internal.core.util.XmlTransformerFactory;
 import org.objectweb.asm.Opcodes;
 import org.osgi.framework.Version;
 import org.w3c.dom.Document;
@@ -153,6 +154,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @since 1.0.0
  */
+@SuppressWarnings("restriction")
 public final class Util {
 
 	public static final String DOT_TGZ = ".tgz"; //$NON-NLS-1$
@@ -1900,7 +1902,7 @@ public final class Util {
 	public static String serializeDocument(Document document) throws CoreException {
 		try {
 			ByteArrayOutputStream s = new ByteArrayOutputStream();
-			TransformerFactory factory = TransformerFactory.newInstance();
+			TransformerFactory factory = XmlTransformerFactory.createTransformerFactoryWithErrorOnDOCTYPE();
 			Transformer transformer = factory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$

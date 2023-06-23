@@ -69,6 +69,7 @@ import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.core.target.TargetFeature;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.util.XmlTransformerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -733,7 +734,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		try {
 			document.appendChild(containerElement);
 			StreamResult result = new StreamResult(new StringWriter());
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			TransformerFactory f = XmlTransformerFactory.createTransformerFactoryWithErrorOnDOCTYPE();
+			Transformer transformer = f.newTransformer();
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes"); //$NON-NLS-1$
 			transformer.transform(new DOMSource(document), result);
 			return result.getWriter().toString();

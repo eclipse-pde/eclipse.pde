@@ -7,6 +7,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({ //
 	DependencyManagerTest.class, //
+	XmlTransformerTest.class, //
 	WorkspaceModelManagerTest.class, //
 	WorkspaceProductModelManagerTest.class, //
 })

@@ -35,6 +35,7 @@ import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetLocationFactory;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.util.XmlTransformerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -250,7 +251,8 @@ public class TargetPersistence38Helper {
 					throw new CoreException(Status.error(NLS.bind(Messages.TargetPersistence38Helper_NoTargetLocationExtension, type)));
 				}
 				StreamResult result = new StreamResult(new StringWriter());
-				Transformer transformer = TransformerFactory.newInstance().newTransformer();
+				TransformerFactory factory = XmlTransformerFactory.createTransformerFactoryWithErrorOnDOCTYPE();
+				Transformer transformer = factory.newTransformer();
 				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes"); //$NON-NLS-1$
 				transformer.transform(new DOMSource(location), result);
 				container = locFactory.getTargetLocation(type, result.getWriter().toString());
