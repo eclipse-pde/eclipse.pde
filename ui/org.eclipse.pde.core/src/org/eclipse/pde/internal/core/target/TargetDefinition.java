@@ -63,6 +63,7 @@ import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -136,7 +137,8 @@ public class TargetDefinition implements ITargetDefinition {
 
 	private static Document createNewDocument() {
 		try {
-			DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory dfactory = XmlDocumentBuilderFactory
+					.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 			DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
 			Document doc = docBuilder.newDocument();
 			ProcessingInstruction instruction = doc.createProcessingInstruction(
@@ -1171,7 +1173,7 @@ public class TargetDefinition implements ITargetDefinition {
 		List<Element> oldIUContainers = new ArrayList<>();
 		List<Element> oldGenericContainers = new ArrayList<>();
 
-		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilderFactory dfactory = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
 		for (ITargetLocation targetLocation : targetLocations) {
 			String type = targetLocation.getType();

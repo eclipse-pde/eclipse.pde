@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -47,6 +46,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -87,7 +87,7 @@ public class XmlReferenceDescriptorWriter {
 	public XmlReferenceDescriptorWriter(String location) {
 		fLocation = location;
 		try {
-			parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			parser = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
 		} catch (FactoryConfigurationError | ParserConfigurationException pce) {
 			ApiPlugin.log(pce);

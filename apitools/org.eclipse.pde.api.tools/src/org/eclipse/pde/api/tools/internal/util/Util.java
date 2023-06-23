@@ -141,6 +141,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
+import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
 import org.eclipse.pde.internal.core.util.XmlTransformerFactory;
 import org.objectweb.asm.Opcodes;
 import org.osgi.framework.Version;
@@ -1788,7 +1789,7 @@ public final class Util {
 	 * @throws CoreException if unable to create a new document
 	 */
 	public static Document newDocument() throws CoreException {
-		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilderFactory dfactory = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 		DocumentBuilder docBuilder = null;
 		try {
 			docBuilder = dfactory.newDocumentBuilder();
@@ -1811,7 +1812,8 @@ public final class Util {
 		Element root = null;
 		InputStream stream = null;
 		try {
-			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder parser = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE()
+					.newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
 			stream = new ByteArrayInputStream(document.getBytes(StandardCharsets.UTF_8));
 			root = parser.parse(stream).getDocumentElement();

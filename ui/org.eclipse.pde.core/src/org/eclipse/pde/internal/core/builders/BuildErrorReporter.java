@@ -30,7 +30,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -72,6 +71,7 @@ import org.eclipse.pde.internal.core.text.build.BuildEntry;
 import org.eclipse.pde.internal.core.text.build.BuildModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
+import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
 import org.osgi.framework.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -691,7 +691,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	// if we're defining fragments, make sure they have entries in plugin.xml
 	private void validateFragmentContributions(IBuildEntry binIncludes) {
 		try {
-			DocumentBuilder newDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder newDocumentBuilder = XmlDocumentBuilderFactory
+					.createDocumentBuilderFactoryWithErrorOnDOCTYPE().newDocumentBuilder();
 			newDocumentBuilder.setErrorHandler(new PDEErrorHandler());
 			Document doc = newDocumentBuilder.parse(PDEProject.getPluginXml(fProject).getContents());
 			XPath xpath = XPathFactory.newInstance().newXPath();
@@ -707,7 +708,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	// if we're defining an application, make sure it has entries in plugin.xml
 	private void validateApplicationContributions(IBuildEntry binIncludes) {
 		try {
-			DocumentBuilder newDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder newDocumentBuilder = XmlDocumentBuilderFactory
+					.createDocumentBuilderFactoryWithErrorOnDOCTYPE().newDocumentBuilder();
 			newDocumentBuilder.setErrorHandler(new PDEErrorHandler());
 			Document doc = newDocumentBuilder.parse(PDEProject.getPluginXml(fProject).getContents());
 			XPath xpath = XPathFactory.newInstance().newXPath();
