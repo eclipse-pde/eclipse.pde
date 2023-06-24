@@ -16,6 +16,8 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.plugin.IMatchRules;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -83,7 +85,7 @@ public class DependencyAnalysisSection extends PDESection {
 						doFindLoops(pluginModel);
 
 					} else {
-						IPluginModelBase plugin = PluginRegistry.findModel(pluginModel.getPluginBase().getId());
+						IPluginModelBase plugin = getStatePlugin(pluginModel);
 						if (e.getHref().equals("references")) { //$NON-NLS-1$
 							new OpenPluginReferencesAction(plugin).run();
 						} else if (e.getHref().equals("hierarchy")) { //$NON-NLS-1$
@@ -94,6 +96,13 @@ public class DependencyAnalysisSection extends PDESection {
 			}
 		});
 		section.setClient(formText);
+	}
+
+	private IPluginModelBase getStatePlugin(IPluginModelBase pluginModel) {
+		// The pluginModel set for this page does not have a BundleDescriptor
+		// set, therefore search the pluginModel from the registry that has it
+		IPluginBase pluginBase = pluginModel.getPluginBase();
+		return PluginRegistry.findModel(pluginBase.getId(), pluginBase.getVersion(), IMatchRules.PERFECT, null);
 	}
 
 	private void doFindLoops(IPluginModelBase pluginModelBase) {
