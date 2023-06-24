@@ -753,6 +753,7 @@ public abstract class AbstractPluginBlock {
 	protected void setText(IPluginModelBase model, String value) {
 		Widget widget = fPluginTreeViewer.testFindItem(model);
 		if (widget instanceof TreeItem item) {
+			// TODO: unify this?!
 			int index = value == null ? -1 : value.indexOf(':');
 			String levelValue = index == -1 ? "" : value.substring(0, index); //$NON-NLS-1$
 			String autoValue = null;
