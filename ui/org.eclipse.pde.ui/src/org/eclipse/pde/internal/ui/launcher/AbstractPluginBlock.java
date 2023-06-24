@@ -761,7 +761,7 @@ public abstract class AbstractPluginBlock {
 			if (model.isFragmentModel()) {
 				autoValue = "false"; //$NON-NLS-1$
 				item.setText(2, autoValue);
-				// FIXME is this the right place for this logic?
+				// FIXME is this the right place for this logic? Fix this
 			} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(modelName) || IPDEBuildConstants.BUNDLE_DS.equals(modelName)) {
 				autoValue = "true"; //$NON-NLS-1$
 				item.setText(2, autoValue);

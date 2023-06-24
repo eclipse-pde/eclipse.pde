@@ -133,20 +133,13 @@ public class P2Utils {
 						info.setMarkedAsStarted(false);
 					}
 				} else {
-					if (IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR.equals(modelName)) {
-						info.setStartLevel(1);
-						info.setMarkedAsStarted(true);
-					} else if (IPDEBuildConstants.BUNDLE_EQUINOX_COMMON.equals(modelName)) {
-						info.setStartLevel(2);
-						info.setMarkedAsStarted(true);
-					} else if (IPDEBuildConstants.BUNDLE_OSGI.equals(modelName)) {
-						info.setStartLevel(-1);
-						info.setMarkedAsStarted(true);
-					} else if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(modelName)) {
-						info.setStartLevel(refactoredRuntime ? 4 : 2);
-						info.setMarkedAsStarted(true);
-					} else if (IPDEBuildConstants.BUNDLE_DS.equals(modelName)) {
-						info.setStartLevel(2);
+					Integer startLevel = IPDEBuildConstants.RECOMMENDED_AUTO_START_BUNDLE_LEVELS.get(modelName);
+					if (startLevel != null) {
+						if (IPDEBuildConstants.BUNDLE_CORE_RUNTIME.equals(modelName)) {
+							//TODO: Check this again
+							startLevel = refactoredRuntime ? 4 : 2;
+						}
+						info.setStartLevel(startLevel);
 						info.setMarkedAsStarted(true);
 					} else {
 						info.setStartLevel(defaultStartLevel);

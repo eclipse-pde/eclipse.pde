@@ -135,6 +135,7 @@ public class TargetPlatformHelper {
 	/**
 	 * @return the default list of bundles to use in the osgi.bundles property
 	 */
+	// TODO: Unify this
 	public static String getDefaultBundleList() {
 		StringBuilder buffer = new StringBuilder();
 		double targetVersion = getTargetVersion();
