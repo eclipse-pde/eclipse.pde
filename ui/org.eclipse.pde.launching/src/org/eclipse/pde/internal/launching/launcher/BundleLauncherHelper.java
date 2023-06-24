@@ -538,20 +538,49 @@ public class BundleLauncherHelper {
 		addBundleToMap(map, bundle, DEFAULT_START_LEVELS);
 	}
 
-	private static final Map<String, String> AUTO_STARTED_BUNDLE_LEVELS = Map.ofEntries( //
-			Map.entry(IPDEBuildConstants.BUNDLE_DS, "1"), //$NON-NLS-1$
-			Map.entry(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR, "1"), //$NON-NLS-1$
-			Map.entry(IPDEBuildConstants.BUNDLE_EQUINOX_COMMON, "2"), //$NON-NLS-1$
-			Map.entry(IPDEBuildConstants.BUNDLE_OSGI, "1"), //$NON-NLS-1$
-			Map.entry(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, DEFAULT), //
-			Map.entry(IPDEBuildConstants.BUNDLE_FELIX_SCR, "1")); //$NON-NLS-1$
+	/*
+	 * A list of bundles that typically require auto-start and optionally
+	 * require a special startlevel. If the startlevel is zero then the
+	 * framework will use the default start level for the bundle. This list
+	 * loosely based on TargetPlatform.getBundleList and more specifically on
+	 * TargetPlatformHelper.getDefaultBundleList(). Both of these
+	 * implementations are problematic because they are out of date, and also
+	 * leave out commonly used bundles. This list attempts to describe a typical
+	 * set up on the assumption that an advanced user can further modify it. The
+	 * list is hard-coded rather than walking the plugin requirements of the
+	 * product and all required products. The reason for this is that there are
+	 * some bundles, such as org.eclipse.equinox.ds, that are typically needed
+	 * but users do not remember to add them, and they are not required by any
+	 * bundle. The idea of this list is to suggest these commonly used bundles
+	 * and start levels that clients typically do not remember. See
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=426529
+	 */
+	public static final Map<String, Integer> RECOMMENDED_AUTO_START_BUNDLE_LEVELS = Map.of( //
+			IPDEBuildConstants.BUNDLE_DS, 1, //
+			IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR, 1, //
+			IPDEBuildConstants.BUNDLE_EQUINOX_COMMON, 2, //
+			IPDEBuildConstants.BUNDLE_EQUINOX_EVENT, 2, //
+			IPDEBuildConstants.BUNDLE_OSGI, 1, //
+			IPDEBuildConstants.BUNDLE_CORE_RUNTIME, 0, // zero means default
+			IPDEBuildConstants.BUNDLE_FELIX_SCR, 2); //
 
 	public static String resolveSystemRunLevelText(BundleDescription description) {
-		return AUTO_STARTED_BUNDLE_LEVELS.get(description.getSymbolicName());
+		return autoStartLevelToString(RECOMMENDED_AUTO_START_BUNDLE_LEVELS.get(description.getSymbolicName()));
 	}
 
 	public static String resolveSystemAutoText(BundleDescription description) {
-		return AUTO_STARTED_BUNDLE_LEVELS.containsKey(description.getSymbolicName()) ? "true" : null; //$NON-NLS-1$
+		return RECOMMENDED_AUTO_START_BUNDLE_LEVELS.containsKey(description.getSymbolicName()) ? "true" : null; //$NON-NLS-1$
+	}
+
+	public static int parseAutoStartLevel(String startLevel) {
+		return startLevel == null || startLevel.isBlank() || startLevel.equals(DEFAULT) ? 0 : Integer.parseInt(startLevel);
+	}
+
+	public static String autoStartLevelToString(Integer startLevel) {
+		if (startLevel == null) {
+			return null;
+		}
+		return startLevel == 0 ? DEFAULT : Integer.toString(startLevel);
 	}
 
 	public static String formatBundleEntry(IPluginModelBase model, String startLevel, String autoStart) {
