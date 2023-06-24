@@ -21,11 +21,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -160,8 +159,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 		@Override
 		public boolean select(Viewer v, Object parent, Object element) {
-			if (element instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase) element;
+			if (element instanceof IPluginModelBase model) {
 				return model.getUnderlyingResource() != null || model.isEnabled() != fEnabled;
 			}
 			return true;
@@ -171,19 +169,14 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	static class WorkspaceFilter extends ViewerFilter {
 		@Override
 		public boolean select(Viewer v, Object parent, Object element) {
-			if (element instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase) element;
-				return model.getUnderlyingResource() == null;
-			}
-			return true;
+			return !(element instanceof IPluginModelBase model) || model.getUnderlyingResource() == null;
 		}
 	}
 
 	static class JavaFilter extends ViewerFilter {
 		@Override
 		public boolean select(Viewer v, Object parent, Object element) {
-			if (element instanceof IPackageFragment) {
-				IPackageFragment packageFragment = (IPackageFragment) element;
+			if (element instanceof IPackageFragment packageFragment) {
 				try {
 					return packageFragment.hasChildren();
 				} catch (JavaModelException e) {
@@ -430,32 +423,26 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 	private FileAdapter getSelectedFile() {
 		Object obj = getSelectedObject();
-		if (obj instanceof FileAdapter)
-			return (FileAdapter) obj;
-		return null;
+		return obj instanceof FileAdapter fileAdapter ? fileAdapter : null;
 	}
 
 	private IPluginModelBase getEnclosingModel() {
 		Object obj = getSelectedObject();
-		if (obj == null)
-			return null;
-		if (obj instanceof IPluginModelBase)
-			return (IPluginModelBase) obj;
-		if (obj instanceof FileAdapter) {
-			FileAdapter file = (FileAdapter) obj;
-			if (file.isManifest()) {
-				FileAdapter parent = file.getParent();
-				if (parent instanceof ModelFileAdapter)
-					return ((ModelFileAdapter) parent).getModel();
-			}
+		if (obj instanceof IPluginModelBase pluginModel) {
+			return pluginModel;
+		}
+		if (obj instanceof FileAdapter file && file.isManifest()
+				&& file.getParent() instanceof ModelFileAdapter modelFileAdapter) {
+			return modelFileAdapter.getModel();
 		}
 		return null;
 	}
 
 	private Object getSelectedObject() {
 		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
-		if (selection.isEmpty() || selection.size() != 1)
+		if (selection.isEmpty() || selection.size() != 1) {
 			return null;
+		}
 		return selection.getFirstElement();
 	}
 
@@ -466,8 +453,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		if (selection.size() == 1) {
 			Object sobj = selection.getFirstElement();
 			boolean addSeparator = false;
-			if (sobj instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase) sobj;
+			if (sobj instanceof IPluginModelBase model) {
 				File file = new File(model.getInstallLocation());
 				if (file.isFile() || model.getUnderlyingResource() != null) {
 					manager.add(fOpenAction);
@@ -475,7 +461,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 				if (model.getUnderlyingResource() != null)
 					allowRefactoring = true;
 			}
-			if (sobj instanceof FileAdapter && ((FileAdapter) sobj).isDirectory() == false) {
+			if (sobj instanceof FileAdapter fileAdapter && !fileAdapter.isDirectory()) {
 				manager.add(fOpenAction);
 				MenuManager openWithMenu = new MenuManager(PDEUIMessages.PluginsView_openWith);
 				fillOpenWithMenu(openWithMenu, sobj);
@@ -552,16 +538,11 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 	public boolean isShowInApplicable() {
 		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
-		if (selection.isEmpty())
+		if (selection.isEmpty()) {
 			return false;
-		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
-			Object obj = iter.next();
-			if (!(obj instanceof IPluginModelBase))
-				return false;
-			if (((IPluginModelBase) obj).getUnderlyingResource() == null)
-				return false;
 		}
-		return true;
+		return selection.toList().stream()
+				.allMatch(e -> e instanceof IPluginModelBase plugin && plugin.getUnderlyingResource() != null);
 	}
 
 	private void fillOpenWithMenu(IMenuManager manager, Object obj) {
@@ -632,9 +613,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 				PDEState state = TargetPlatformHelper.getPDEState();
 				Tree tree = fTreeViewer.getTree();
 				if (!tree.isDisposed()) {
-					tree.getDisplay().asyncExec(() -> {
-						fTreeViewer.addFilter(new SourcePluginFilter(state));
-					});
+					tree.getDisplay().asyncExec(() -> fTreeViewer.addFilter(new SourcePluginFilter(state)));
 				}
 			}).schedule();
 		}
@@ -651,10 +630,10 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 	private void handleDoubleClick() {
 		Object obj = getSelectedObject();
-		if (obj instanceof IPluginModelBase) {
+		if (obj instanceof IPluginModelBase pluginModel) {
 			boolean expanded = false;
 			// only expand target models
-			if (((IPluginModelBase) obj).getUnderlyingResource() == null) {
+			if (pluginModel.getUnderlyingResource() == null) {
 				expanded = fTreeViewer.getExpandedState(obj);
 				fTreeViewer.setExpandedState(obj, !expanded);
 			}
@@ -662,8 +641,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 				// not expandable, open editor
 				ManifestEditor.openPluginEditor((IPluginModelBase) obj);
 			}
-		} else if (obj instanceof FileAdapter) {
-			FileAdapter adapter = (FileAdapter) obj;
+		} else if (obj instanceof FileAdapter adapter) {
 			if (adapter.isDirectory()) {
 				fTreeViewer.setExpandedState(adapter, !fTreeViewer.getExpandedState(adapter));
 				return;
@@ -681,8 +659,9 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	}
 
 	private static boolean isOpenableStorage(Object storage) {
-		if (storage instanceof IJarEntryResource)
-			return ((IJarEntryResource) storage).isFile();
+		if (storage instanceof IJarEntryResource resource) {
+			return resource.isFile();
+		}
 		return storage instanceof IStorage;
 	}
 
@@ -698,11 +677,11 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 	private void handleSelectDependencies() {
 		IStructuredSelection selection = fTreeViewer.getStructuredSelection();
-		if (selection.isEmpty())
+		if (selection.isEmpty()) {
 			return;
-
+		}
 		List<IPluginModelBase> models = Arrays.stream(selection.toArray()).filter(IPluginModelBase.class::isInstance)
-				.map(IPluginModelBase.class::cast).collect(Collectors.toList());
+				.map(IPluginModelBase.class::cast).toList();
 		Set<BundleDescription> set = DependencyManager.getSelfAndDependencies(models);
 		ArrayList<IPluginModelBase> result = new ArrayList<>(set.size());
 		for (BundleDescription bundle : set) {
@@ -718,8 +697,8 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		Object[] elements = provider.getElements(fTreeViewer.getInput());
 		ArrayList<Object> result = new ArrayList<>();
 		for (Object element : elements) {
-			if (element instanceof IPluginModelBase) {
-				String id = ((IPluginModelBase) element).getPluginBase().getId();
+			if (element instanceof IPluginModelBase pluginModel) {
+				String id = pluginModel.getPluginBase().getId();
 				if (PDECore.getDefault().getSearchablePluginsManager().isInJavaSearch(id))
 					result.add(element);
 			}
@@ -770,7 +749,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		}
 		// Start busy indicator.
 		final File file = localFile;
-		final boolean result[] = new boolean[1];
+		final boolean[] result = new boolean[] { false };
 		BusyIndicator.showWhile(fTreeViewer.getTree().getDisplay(), () -> {
 			// Open file using shell.
 			String path = file.getAbsolutePath();
@@ -821,11 +800,11 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	private void handleSelectionChanged(ISelection selection) {
 		String text = ""; //$NON-NLS-1$
 		Object obj = getSelectedObject();
-		if (obj instanceof IPluginModelBase) {
-			text = ((IPluginModelBase) obj).getInstallLocation();
+		if (obj instanceof IPluginModelBase pluginModel) {
+			text = pluginModel.getInstallLocation();
 		}
-		if (obj instanceof FileAdapter) {
-			text = ((FileAdapter) obj).getFile().getAbsolutePath();
+		if (obj instanceof FileAdapter fileAdapter) {
+			text = fileAdapter.getFile().getAbsolutePath();
 		}
 		getViewSite().getActionBars().getStatusLineManager().setMessage(text);
 	}
@@ -853,11 +832,10 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	}
 
 	private String getInputPath(Object input) {
-		if (input instanceof FileAdapter) {
-			return "file: " + ((FileAdapter) input).getFile().getAbsolutePath(); //$NON-NLS-1$
+		if (input instanceof FileAdapter fileAdapter) {
+			return "file: " + fileAdapter.getFile().getAbsolutePath(); //$NON-NLS-1$
 		}
-		if (input instanceof IPluginModelBase) {
-			IPluginModelBase model = (IPluginModelBase) input;
+		if (input instanceof IPluginModelBase model) {
 			return "plugin: " + model.getInstallLocation(); //$NON-NLS-1$
 		}
 		return ""; //$NON-NLS-1$
@@ -914,11 +892,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 	private boolean isVisible(IPluginModelBase entry) {
 		ViewerFilter[] filters = fTreeViewer.getFilters();
-		for (int i = 0; i < filters.length; i++) {
-			if (!filters[i].select(fTreeViewer, fRoot, entry))
-				return false;
-		}
-		return true;
+		return Stream.of(filters).allMatch(f -> f.select(fTreeViewer, fRoot, entry));
 	}
 
 	@Override
@@ -941,21 +915,16 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	 */
 	protected IShowInSource getShowInSource() {
 		return () -> {
-			ArrayList<IResource> resourceList = new ArrayList<>();
 			IStructuredSelection selection = fTreeViewer.getStructuredSelection();
 			IStructuredSelection resources;
 			if (selection.isEmpty()) {
 				resources = null;
 			} else {
-				for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
-					Object obj = iter.next();
-					if (obj instanceof IPluginModelBase) {
-						resourceList.add(((IPluginModelBase) obj).getUnderlyingResource());
-					}
-				}
+				Stream<IPluginModelBase> plugins = selection.toList().stream()
+						.filter(IPluginModelBase.class::isInstance).map(IPluginModelBase.class::cast);
+				List<IResource> resourceList = plugins.map(IPluginModelBase::getUnderlyingResource).toList();
 				resources = new StructuredSelection(resourceList);
 			}
-
 			return new ShowInContext(fTreeViewer.getInput(), resources);
 		};
 	}
