@@ -562,7 +562,8 @@ public class BundleLauncherHelper {
 			IPDEBuildConstants.BUNDLE_EQUINOX_EVENT, 2, //
 			IPDEBuildConstants.BUNDLE_OSGI, 1, //
 			IPDEBuildConstants.BUNDLE_CORE_RUNTIME, 0, // zero means default
-			IPDEBuildConstants.BUNDLE_FELIX_SCR, 2); //
+			IPDEBuildConstants.BUNDLE_FELIX_SCR, 2, //
+			IPDEBuildConstants.BUNDLE_ARIES_SPIFLY, 2); //
 
 	public static String resolveSystemRunLevelText(BundleDescription description) {
 		return autoStartLevelToString(RECOMMENDED_AUTO_START_BUNDLE_LEVELS.get(description.getSymbolicName()));

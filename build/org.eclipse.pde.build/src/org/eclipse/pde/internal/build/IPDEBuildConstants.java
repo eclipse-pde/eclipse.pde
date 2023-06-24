@@ -145,6 +145,7 @@ public interface IPDEBuildConstants {
 	public static final String BUNDLE_SIMPLE_CONFIGURATOR = "org.eclipse.equinox.simpleconfigurator"; //$NON-NLS-1$
 	public static final String BUNDLE_DS = "org.eclipse.equinox.ds"; //$NON-NLS-1$
 	public static final String BUNDLE_FELIX_SCR = "org.apache.felix.scr"; //$NON-NLS-1$
+	public static final String BUNDLE_ARIES_SPIFLY = "org.apache.aries.spifly.dynamic.bundle"; //$NON-NLS-1$
 	public static final String FEATURE_PLATFORM_LAUNCHERS = "org.eclipse.platform.launchers"; //$NON-NLS-1$
 	public static final String FEATURE_EQUINOX_EXECUTABLE = "org.eclipse.equinox.executable"; //$NON-NLS-1$
 
