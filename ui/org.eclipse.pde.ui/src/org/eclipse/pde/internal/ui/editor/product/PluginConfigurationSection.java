@@ -37,6 +37,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IFragmentModel;
+import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.iproduct.IPluginConfiguration;
@@ -232,10 +233,12 @@ public class PluginConfigurationSection extends TableSection {
 	private void handleAddDefaults() {
 		IProduct product = getProduct();
 		Set<String> configuredPluginIDs = getConfiguredPlugins(product);
+		Set<String> allPlugins = LaunchAction.getAllLaunchedPlugins(product) //
+				.map(IPluginModelBase::getPluginBase).map(IPluginBase::getId).collect(Collectors.toSet());
 		// Build a user-presentable description of the plugins and start levels.
 		StringBuilder bundlesList = new StringBuilder();
 		RECOMMENDED_AUTOSTART_BUNDLES.forEach((pluginID, autoStartLevel) -> {
-			if (!configuredPluginIDs.contains(pluginID)) {
+			if (!configuredPluginIDs.contains(pluginID) && allPlugins.contains(pluginID)) {
 				bundlesList.append('\t');
 				bundlesList.append(pluginID);
 				bundlesList.append(", "); //$NON-NLS-1$
