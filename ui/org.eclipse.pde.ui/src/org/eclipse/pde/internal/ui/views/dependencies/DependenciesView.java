@@ -17,6 +17,7 @@ package org.eclipse.pde.internal.ui.views.dependencies;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.action.Action;
@@ -228,7 +229,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	private ShowLoopsAction fShowLoops;
 
 	// history of input elements (as Strings). No duplicates
-	private ArrayList<String> fInputHistory;
+	private List<String> fInputHistory;
 
 	private DependencyLoop[] fLoops;
 
@@ -374,8 +375,9 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		fPartCallersList = new DummyPart(site);
 		fPartCallersTree = new DummyPart(site);
 
-		if (memento == null)
+		if (memento == null) {
 			return;
+		}
 		String id = memento.getString(MEMENTO_KEY_INPUT);
 		if (id != null) {
 			IPluginModelBase plugin = PluginRegistry.findModel(id);
@@ -393,11 +395,9 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	}
 
 	public void openTo(Object object) {
-		if (object != null && !object.equals(fInput)) {
-			if (object instanceof IPluginModelBase) {
-				String id = ((IPluginModelBase) object).getPluginBase().getId();
-				addHistoryEntry(id);
-			}
+		if (object != null && !object.equals(fInput) && object instanceof IPluginModelBase pluginModel) {
+			String id = pluginModel.getPluginBase().getId();
+			addHistoryEntry(id);
 		}
 		updateInput(object);
 	}
@@ -431,9 +431,9 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 */
 	private void findLoops() {
 		fLoops = NO_LOOPS;
-		if (fInput != null && fInput instanceof IPluginModel) {
+		if (fInput instanceof IPluginModel pluginModel) {
 			BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell().getDisplay(), () -> {
-				IPlugin plugin = ((IPluginModel) fInput).getPlugin();
+				IPlugin plugin = pluginModel.getPlugin();
 				DependencyLoop[] loops = DependencyLoopFinder.findLoops(plugin);
 				if (loops.length > 0) {
 					fLoops = loops;
@@ -447,8 +447,8 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	@Override
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
-		if (fInput != null && fInput instanceof IPluginModelBase) {
-			String inputPluginId = ((IPluginModelBase) fInput).getPluginBase().getId();
+		if (fInput instanceof IPluginModelBase pluginModel) {
+			String inputPluginId = pluginModel.getPluginBase().getId();
 			memento.putString(MEMENTO_KEY_INPUT, inputPluginId);
 		}
 	}
@@ -500,20 +500,20 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 			return;
 		}
 		IStructuredSelection selection = null;
-		if (currPage instanceof DependenciesViewPage) {
-			selection = ((DependenciesViewPage) currPage).getSelection();
-			((DependenciesViewPage) currPage).setActive(false);
+		if (currPage instanceof DependenciesViewPage dependenciesViewPage) {
+			selection = dependenciesViewPage.getSelection();
+			dependenciesViewPage.setActive(false);
 		}
 		IPage p = pageRec.page;
-		if (p instanceof DependenciesViewPage) {
-			((DependenciesViewPage) p).setInput(fInput);
+		if (p instanceof DependenciesViewPage dependenciesViewPage) {
+			dependenciesViewPage.setInput(fInput);
 			// configure view before actually showing it
-			((DependenciesViewPage) p).setActive(true);
+			dependenciesViewPage.setActive(true);
 		}
 		super.showPageRec(pageRec);
-		if (p instanceof DependenciesViewPage) {
+		if (p instanceof DependenciesViewPage dependenciesViewPage) {
 			updateTitle(fInput);
-			((DependenciesViewPage) p).setSelection(selection);
+			dependenciesViewPage.setSelection(selection);
 		}
 	}
 
@@ -614,10 +614,11 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	}
 
 	protected void enableStateView(boolean enabled) {
-		if (fLastDependenciesPart != null)
+		if (fLastDependenciesPart != null) {
 			partActivated(fLastDependenciesPart);
-		else
+		} else {
 			partActivated(getDefaultPart());
+		}
 		fLastDependenciesPart = null;
 		getViewSite().getActionBars().getToolBarManager().update(true);
 	}

@@ -16,13 +16,11 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.core.plugin.IPluginModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.builders.DependencyLoop;
 import org.eclipse.pde.internal.core.builders.DependencyLoopFinder;
-import org.eclipse.pde.internal.core.ibundle.IBundleFragmentModel;
 import org.eclipse.pde.internal.ui.PDELabelProvider;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -41,7 +39,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class DependencyAnalysisSection extends PDESection {
-	private FormText formText;
 
 	public DependencyAnalysisSection(PDEFormPage page, Composite parent, int style) {
 		super(page, parent, ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE | style);
@@ -54,22 +51,21 @@ public class DependencyAnalysisSection extends PDESection {
 			return ""; // we don't know the type so we can't give //$NON-NLS-1$
 						// a suitable hint (at the momment)
 		}
-		boolean editable = model.isEditable();
 		if (model instanceof IPluginModel) {
-			if (editable)
-				return PDEUIMessages.DependencyAnalysisSection_plugin_editable;
-			return PDEUIMessages.DependencyAnalysisSection_plugin_notEditable;
+			return model.isEditable() //
+					? PDEUIMessages.DependencyAnalysisSection_plugin_editable
+					: PDEUIMessages.DependencyAnalysisSection_plugin_notEditable;
 		}
-		if (editable)
-			return PDEUIMessages.DependencyAnalysisSection_fragment_editable;
-		return PDEUIMessages.DependencyAnalysisSection_fragment_notEditable;
+		return model.isEditable() //
+				? PDEUIMessages.DependencyAnalysisSection_fragment_editable
+				: PDEUIMessages.DependencyAnalysisSection_fragment_notEditable;
 	}
 
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.DependencyAnalysisSection_title);
 
-		formText = toolkit.createFormText(section, true);
+		FormText formText = toolkit.createFormText(section, true);
 		formText.setText(getFormText(), true, false);
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		formText.setImage("loops", lp.get(PDEPluginImages.DESC_LOOP_OBJ)); //$NON-NLS-1$
@@ -79,58 +75,38 @@ public class DependencyAnalysisSection extends PDESection {
 		formText.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				if (e.getHref().equals("unused")) //$NON-NLS-1$
-					doFindUnusedDependencies();
-				else if (e.getHref().equals("loops")) //$NON-NLS-1$
-					doFindLoops();
-				else if (e.getHref().equals("references")) { //$NON-NLS-1$
-					String id = null;
-					if (getPlugin() == null) {
-						// if plugin is null, get id of bundle fragment
-						IBaseModel model = getPage().getModel();
-						if (model instanceof IBundleFragmentModel)
-							id = ((IBundleFragmentModel) model).getFragment().getId();
+				if (getPage().getModel() instanceof IPluginModelBase pluginModel) {
+					if (e.getHref().equals("unused")) { //$NON-NLS-1$
+						new UnusedDependenciesAction(pluginModel, false).run();
+
+					} else if (e.getHref().equals("loops")) { //$NON-NLS-1$
+						doFindLoops(pluginModel);
+
+					} else {
+						IPluginModelBase plugin = PluginRegistry.findModel(pluginModel.getPluginBase().getId());
+						if (e.getHref().equals("references")) { //$NON-NLS-1$
+							new OpenPluginReferencesAction(plugin).run();
+						} else if (e.getHref().equals("hierarchy")) { //$NON-NLS-1$
+							new OpenPluginDependenciesAction(plugin).run();
+						}
 					}
-					else {
-						id = getPlugin().getId();
-					}
-					new OpenPluginReferencesAction(PluginRegistry.findModel(id)).run();
 				}
-				else if (e.getHref().equals("hierarchy")) //$NON-NLS-1$
-					new OpenPluginDependenciesAction(PluginRegistry.findModel(getPlugin().getId())).run();
 			}
 		});
-
 		section.setClient(formText);
 	}
 
-	protected IPlugin getPlugin() {
-		IBaseModel model = getPage().getModel();
-		IPlugin plugin = null;
-		if (model instanceof IPluginModel) {
-			plugin = ((IPluginModel) model).getPlugin();
-		}
-		return plugin;
-	}
-
-	protected void doFindLoops() {
-		IBaseModel model = getPage().getModel();
-		if (model instanceof IPluginModel) {
-			IPlugin plugin = ((IPluginModel) model).getPlugin();
-			DependencyLoop[] loops = DependencyLoopFinder.findLoops(plugin);
+	private void doFindLoops(IPluginModelBase pluginModelBase) {
+		if (pluginModelBase instanceof IPluginModel pluginModel) {
+			DependencyLoop[] loops = DependencyLoopFinder.findLoops(pluginModel.getPlugin());
 			if (loops.length == 0)
-				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.DependencyAnalysisSection_loops, PDEUIMessages.DependencyAnalysisSection_noCycles); //
+				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(),
+						PDEUIMessages.DependencyAnalysisSection_loops,
+						PDEUIMessages.DependencyAnalysisSection_noCycles);
 			else {
 				LoopDialog dialog = new LoopDialog(PDEPlugin.getActiveWorkbenchShell(), loops);
 				dialog.open();
 			}
-		}
-	}
-
-	protected void doFindUnusedDependencies() {
-		IBaseModel model = getPage().getModel();
-		if (model instanceof IPluginModelBase) {
-			new UnusedDependenciesAction((IPluginModelBase) model, false).run();
 		}
 	}
 
