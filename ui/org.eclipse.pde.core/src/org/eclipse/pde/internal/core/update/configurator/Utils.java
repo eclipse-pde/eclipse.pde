@@ -19,6 +19,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -39,7 +40,7 @@ class Utils {
 	}
 
 	public static void log(IStatus status) {
-		Platform.getLog(Utils.class).log(status);
+		ILog.of(Utils.class).log(status);
 	}
 
 	/**

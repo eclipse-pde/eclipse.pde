@@ -75,7 +75,7 @@ public class BundleHelper {
 
 	public final ILog getLog() {
 		if (log == null)
-			return Platform.getLog(bundle);
+			return ILog.of(bundle);
 		return log;
 	}
 
