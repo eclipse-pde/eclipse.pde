@@ -36,6 +36,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -520,7 +521,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			}
 			return String.join(",", packages); //$NON-NLS-1$
 		} catch (CoreException e) {
-			Platform.getLog(PDEState.class).log(Status.error("failed to read system packages for " + environment, e)); //$NON-NLS-1$
+			ILog.of(PDEState.class).log(Status.error("failed to read system packages for " + environment, e)); //$NON-NLS-1$
 		}
 		return null;
 	}
