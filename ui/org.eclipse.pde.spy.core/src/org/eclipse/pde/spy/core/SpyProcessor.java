@@ -23,6 +23,7 @@ import javax.inject.Inject;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -88,7 +89,7 @@ public class SpyProcessor {
 			} catch (InvalidRegistryObjectException e1) {
 				e1.printStackTrace();
 			} catch (ClassNotFoundException e1) {
-				Platform.getLog(this.getClass()).error("The class '" + partID + "' can not be instantiated. Check name or launch config");
+				ILog.of(this.getClass()).error("The class '" + partID + "' can not be instantiated. Check name or launch config");
 				e1.printStackTrace();
 			}
 
@@ -106,7 +107,7 @@ public class SpyProcessor {
 				return cmd;
 			}
 		}
-		Platform.getLog(this.getClass()).error("The Spy command (with ID : " + SPY_COMMAND
+		ILog.of(this.getClass()).error("The Spy command (with ID : " + SPY_COMMAND
 				+ " cannot be found (It should be provided by org.eclipse.pde.spy.core/fragmenE4.xmi");
 
 		return null;
