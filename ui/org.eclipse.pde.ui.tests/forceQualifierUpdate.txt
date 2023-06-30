@@ -2,4 +2,5 @@ Bug 534597 - Unanticipated comparator errors in I20180511-2000
 Bug 566115 - Comparator error in I build (I20200816-1800)
 Bug 566147 - Comparator errors in I20200817-1800
 Bug 575106 - Comparator error in 20210729-0050
-Bug 577522 - Update test framework dependencies 
+Bug 577522 - Update test framework dependencies
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1184

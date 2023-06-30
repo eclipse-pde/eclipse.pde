@@ -1,1 +1,2 @@
 Bug 559190 - I20200114-1805 - Comparator errors
+https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/issues/1184
