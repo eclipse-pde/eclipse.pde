@@ -89,11 +89,7 @@ public class PluginStructureCreator extends StructureCreator {
 
 	@Override
 	protected IStructureComparator createStructureComparator(Object input, IDocument document, ISharedDocumentAdapter adapter, IProgressMonitor monitor) throws CoreException {
-		final boolean isEditable;
-		if (input instanceof IEditableContent)
-			isEditable = ((IEditableContent) input).isEditable();
-		else
-			isEditable = false;
+		final boolean isEditable = input instanceof IEditableContent content && content.isEditable();
 
 		// Create a label provider to provide the text of the elements
 		final PDELabelProvider labelProvider = new PDELabelProvider();
@@ -129,8 +125,7 @@ public class PluginStructureCreator extends StructureCreator {
 
 	@Override
 	public String getContents(Object node, boolean ignoreWhitespace) {
-		if (node instanceof IStreamContentAccessor) {
-			IStreamContentAccessor sca = (IStreamContentAccessor) node;
+		if (node instanceof IStreamContentAccessor sca) {
 			try {
 				return ManifestStructureCreator.readString(sca);
 			} catch (CoreException ex) {
@@ -161,9 +156,8 @@ public class PluginStructureCreator extends StructureCreator {
 	}
 
 	private boolean isFragment(Object input) {
-		if (input instanceof ITypedElement && ((ITypedElement) input).getName().equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR))
-			return true;
-		return false;
+		return input instanceof ITypedElement element
+				&& element.getName().equals(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
 	}
 
 	private PluginModelBase createModel(Object input, IDocument document, boolean isFragment) throws CoreException {
@@ -180,9 +174,9 @@ public class PluginStructureCreator extends StructureCreator {
 
 	private String getCharset(Object input) {
 		String charset = null;
-		if (input instanceof IEncodedStreamContentAccessor) {
+		if (input instanceof IEncodedStreamContentAccessor accessor) {
 			try {
-				charset = ((IEncodedStreamContentAccessor) input).getCharset();
+				charset = accessor.getCharset();
 			} catch (Exception e) {
 				// ignore, will use default
 			}
@@ -233,8 +227,7 @@ public class PluginStructureCreator extends StructureCreator {
 	}
 
 	private void createNode(DocumentRangeNode parent, int type, Object element, PDELabelProvider labelProvider, ResourceManager resources) {
-		if (element instanceof IDocumentElementNode) {
-			IDocumentElementNode node = (IDocumentElementNode) element;
+		if (element instanceof IDocumentElementNode node) {
 			ImageDescriptor imageDescriptor = getImageDescriptor(element);
 			Image image = null;
 			if (imageDescriptor != null) {
