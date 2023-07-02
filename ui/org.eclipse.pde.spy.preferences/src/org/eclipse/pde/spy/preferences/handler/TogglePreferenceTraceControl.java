@@ -62,7 +62,7 @@ public class TogglePreferenceTraceControl {
 		toolItem = new ToolItem(toolBar, SWT.CHECK);
 		toolItem.setSelection(tracePreferences);
 		toolItem.setToolTipText(Messages.TogglePreferenceTraceControl_Toggle_Preference_Trace);
-		toolItem.setImage(getResourceManager().createImage(getImageDescriptor()));
+		toolItem.setImage(getResourceManager().create(getImageDescriptor()));
 		toolItem.addSelectionListener(SelectionListener.widgetSelectedAdapter(event -> {
 			Object source = event.getSource();
 			if (source instanceof ToolItem) {

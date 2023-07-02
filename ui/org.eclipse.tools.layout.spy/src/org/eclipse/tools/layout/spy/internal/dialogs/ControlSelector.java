@@ -20,15 +20,12 @@ import java.util.function.Consumer;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jface.databinding.swt.WidgetSideEffects;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Composite;
@@ -47,8 +44,7 @@ public class ControlSelector {
 	private static final int EDGE_SIZE = 4;
 
 	private Shell overlay;
-	private LocalResourceManager resources;
-	private Color selectionRectangleColor;
+	private final Color selectionRectangleColor = new Color(255, 255, 0);
 	private Display display;
 	private WritableValue<@Nullable Control> currentSelection = new WritableValue<>(null, null);
 	private Region region;
@@ -69,8 +65,6 @@ public class ControlSelector {
 		display = Display.getCurrent();
 		overlay = new Shell(SWT.ON_TOP | SWT.NO_TRIM);
 		overlay.addPaintListener(this::paint);
-		resources = new LocalResourceManager(JFaceResources.getResources(), overlay);
-		selectionRectangleColor = resources.createColor(new RGB(255, 255, 0));
 		display.addFilter(SWT.MouseMove, moveFilter);
 		display.addFilter(SWT.MouseDown, selectFilter);
 		overlay.addDisposeListener(this::disposed);
