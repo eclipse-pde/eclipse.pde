@@ -52,9 +52,8 @@ public class ToggleLayoutControl {
 			@Preference(value = PreferenceConstants.HIERARCHICAL_LAYOUT) boolean hierarchicalLayoutPreference) {
 		if (toolItem != null && !toolItem.isDisposed()) {
 			toolItem.setSelection(hierarchicalLayoutPreference);
-			toolItem.setImage(
-					hierarchicalLayoutPreference ? getResourceManager().create(getHierarchicalImageDescriptor())
-							: getResourceManager().create(getFlatImageDescriptor()));
+			toolItem.setImage(getResourceManager().create(getImageDescriptor(
+					"$nl$/icons/" + (hierarchicalLayoutPreference ? "hierarchicalLayout.png" : "flatLayout.png"))));
 			toolItem.setToolTipText(
 					hierarchicalLayoutPreference ? Messages.ToggleLayoutControl_Toggle_to_flat_layout : Messages.ToggleLayoutControl_Toggle_to_hierarchical_layout);
 		}
@@ -69,8 +68,8 @@ public class ToggleLayoutControl {
 				hierarchicalLayoutPreference ? Messages.ToggleLayoutControl_Toggle_to_flat_layout : Messages.ToggleLayoutControl_Toggle_to_hierarchical_layout);
 		toolItem.addSelectionListener(SelectionListener.widgetSelectedAdapter(event -> {
 			Object source = event.getSource();
-			if (source instanceof ToolItem) {
-				preferences.putBoolean(PreferenceConstants.HIERARCHICAL_LAYOUT, ((ToolItem) source).getSelection());
+			if (source instanceof ToolItem item) {
+				preferences.putBoolean(PreferenceConstants.HIERARCHICAL_LAYOUT, item.getSelection());
 				try {
 					preferences.flush();
 				} catch (BackingStoreException e) {
@@ -95,15 +94,9 @@ public class ToggleLayoutControl {
 		return resourceManager;
 	}
 
-	protected ImageDescriptor getFlatImageDescriptor() {
-		Bundle bundle = FrameworkUtil.getBundle(getClass());
-		URL url = FileLocator.find(bundle, IPath.fromOSString("$nl$/icons/flatLayout.png"), null);
-		return ImageDescriptor.createFromURL(url);
-	}
-
-	protected ImageDescriptor getHierarchicalImageDescriptor() {
-		Bundle bundle = FrameworkUtil.getBundle(getClass());
-		URL url = FileLocator.find(bundle, IPath.fromOSString("$nl$/icons/hierarchicalLayout.png"), null);
+	static ImageDescriptor getImageDescriptor(String imagePath) {
+		Bundle bundle = FrameworkUtil.getBundle(ToggleLayoutControl.class);
+		URL url = FileLocator.find(bundle, IPath.fromOSString(imagePath), null);
 		return ImageDescriptor.createFromURL(url);
 	}
 }

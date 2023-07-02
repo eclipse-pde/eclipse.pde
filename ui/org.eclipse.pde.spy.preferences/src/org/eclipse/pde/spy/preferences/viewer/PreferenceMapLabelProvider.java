@@ -39,8 +39,7 @@ public class PreferenceMapLabelProvider extends ObservableMapLabelProvider imple
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		String columnText = super.getColumnText(element, columnIndex);
-		if ("".equals(columnText) && element instanceof PreferenceEntry) {
-			PreferenceEntry entry = (PreferenceEntry) element;
+		if ("".equals(columnText) && element instanceof PreferenceEntry entry) {
 			switch (columnIndex) {
 			case 1:
 				columnText = entry.getKey();
@@ -61,7 +60,7 @@ public class PreferenceMapLabelProvider extends ObservableMapLabelProvider imple
 
 	@Override
 	public Font getFont(Object element) {
-		if (element instanceof PreferenceEntry && ((PreferenceEntry) element).isRecentlyChanged()) {
+		if (element instanceof PreferenceEntry preferenceEntry && preferenceEntry.isRecentlyChanged()) {
 			return getResourceManager().create(fontDescriptor);
 		}
 		return null;
