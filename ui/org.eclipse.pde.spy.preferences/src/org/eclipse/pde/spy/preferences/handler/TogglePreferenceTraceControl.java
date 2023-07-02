@@ -13,18 +13,15 @@
  *******************************************************************************/
 package org.eclipse.pde.spy.preferences.handler;
 
-import java.net.URL;
+import static org.eclipse.pde.spy.preferences.handler.ToggleLayoutControl.getImageDescriptor;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.log.Logger;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
@@ -34,8 +31,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.prefs.BackingStoreException;
 
 @SuppressWarnings("restriction")
@@ -62,11 +57,10 @@ public class TogglePreferenceTraceControl {
 		toolItem = new ToolItem(toolBar, SWT.CHECK);
 		toolItem.setSelection(tracePreferences);
 		toolItem.setToolTipText(Messages.TogglePreferenceTraceControl_Toggle_Preference_Trace);
-		toolItem.setImage(getResourceManager().create(getImageDescriptor()));
+		toolItem.setImage(getResourceManager().create(getImageDescriptor("$nl$/icons/trace_preferences.png")));
 		toolItem.addSelectionListener(SelectionListener.widgetSelectedAdapter(event -> {
-			Object source = event.getSource();
-			if (source instanceof ToolItem) {
-				preferences.putBoolean(PreferenceConstants.TRACE_PREFERENCES, ((ToolItem) source).getSelection());
+			if (event.getSource() instanceof ToolItem item) {
+				preferences.putBoolean(PreferenceConstants.TRACE_PREFERENCES, item.getSelection());
 				try {
 					preferences.flush();
 				} catch (BackingStoreException e) {
@@ -88,11 +82,5 @@ public class TogglePreferenceTraceControl {
 			resourceManager = new LocalResourceManager(JFaceResources.getResources());
 		}
 		return resourceManager;
-	}
-
-	protected ImageDescriptor getImageDescriptor() {
-		Bundle bundle = FrameworkUtil.getBundle(getClass());
-		URL url = FileLocator.find(bundle, IPath.fromOSString("$nl$/icons/trace_preferences.png"), null);
-		return ImageDescriptor.createFromURL(url);
 	}
 }

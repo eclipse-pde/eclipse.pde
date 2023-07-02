@@ -128,9 +128,7 @@ public class LayoutSpyDialog {
 		{
 			overlay.addPaintListener(this::paintOverlay);
 			region = new Region();
-			overlay.addDisposeListener((DisposeEvent) -> {
-				region.dispose();
-			});
+			overlay.addDisposeListener(e -> region.dispose());
 			overlay.setRegion(region);
 		}
 
@@ -211,7 +209,7 @@ public class LayoutSpyDialog {
 		overlayEnabled = WidgetProperties.buttonSelection().observe(showOverlayButton);
 		childList.setContentProvider(new ObservableListContentProvider<>());
 		childList.setLabelProvider(new LayoutSpyLabelProvider());
-		listContents = new ComputedList<Control>() {
+		listContents = new ComputedList<>() {
 			@Override
 			protected List<Control> calculate() {
 				Composite control = parentControl.getValue();
