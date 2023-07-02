@@ -62,7 +62,7 @@ public class PreferenceMapLabelProvider extends ObservableMapLabelProvider imple
 	@Override
 	public Font getFont(Object element) {
 		if (element instanceof PreferenceEntry && ((PreferenceEntry) element).isRecentlyChanged()) {
-			return getResourceManager().createFont(fontDescriptor);
+			return getResourceManager().create(fontDescriptor);
 		}
 		return null;
 	}

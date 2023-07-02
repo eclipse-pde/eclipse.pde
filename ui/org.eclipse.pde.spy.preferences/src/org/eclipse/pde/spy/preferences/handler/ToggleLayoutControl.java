@@ -53,8 +53,8 @@ public class ToggleLayoutControl {
 		if (toolItem != null && !toolItem.isDisposed()) {
 			toolItem.setSelection(hierarchicalLayoutPreference);
 			toolItem.setImage(
-					hierarchicalLayoutPreference ? getResourceManager().createImage(getHierarchicalImageDescriptor())
-							: getResourceManager().createImage(getFlatImageDescriptor()));
+					hierarchicalLayoutPreference ? getResourceManager().create(getHierarchicalImageDescriptor())
+							: getResourceManager().create(getFlatImageDescriptor()));
 			toolItem.setToolTipText(
 					hierarchicalLayoutPreference ? Messages.ToggleLayoutControl_Toggle_to_flat_layout : Messages.ToggleLayoutControl_Toggle_to_hierarchical_layout);
 		}

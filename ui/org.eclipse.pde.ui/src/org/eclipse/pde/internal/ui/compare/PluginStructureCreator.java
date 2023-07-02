@@ -153,7 +153,7 @@ public class PluginStructureCreator extends StructureCreator {
 		try {
 			String id = isFragment ? "fragment" : "plugin"; //$NON-NLS-1$ //$NON-NLS-2$
 			ImageDescriptor icon = isFragment ? PDEPluginImages.DESC_FRAGMENT_MF_OBJ : PDEPluginImages.DESC_PLUGIN_MF_OBJ;
-			PluginNode parent = new PluginNode(rootNode, ROOT, id, resources.createImage(icon), document, 0, document.getLength());
+			PluginNode parent = new PluginNode(rootNode, ROOT, id, resources.create(icon), document, 0, document.getLength());
 			createChildren(parent, model, labelProvider, resources);
 		} finally {
 			model.dispose();
@@ -238,7 +238,7 @@ public class PluginStructureCreator extends StructureCreator {
 			ImageDescriptor imageDescriptor = getImageDescriptor(element);
 			Image image = null;
 			if (imageDescriptor != null) {
-				image = resources.createImage(imageDescriptor);
+				image = resources.create(imageDescriptor);
 			}
 			new PluginNode(parent, type, labelProvider.getText(element), image, parent.getDocument(), node.getOffset(), node.getLength());
 		}

@@ -50,7 +50,6 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.FormData;
@@ -76,9 +75,6 @@ import org.osgi.framework.FrameworkUtil;
  */
 public class LayoutSpyDialog {
 	private static final int EDGE_SIZE = 4;
-	private static final RGB SELECTED_PARENT_OVERLAY_COLOR = new RGB(255, 0, 0);
-	private static final RGB SELECTED_CHILD_OVERLAY_COLOR = new RGB(255, 255, 0);
-
 	/**
 	 * Value used to indicate an unknown hint value
 	 */
@@ -98,8 +94,8 @@ public class LayoutSpyDialog {
 	private WritableValue<Boolean> controlSelectorOpen = new WritableValue<>(Boolean.FALSE, null);
 	private ComputedList<Control> listContents;
 	private IViewerObservableValue<@Nullable Control> selectedChild;
-	private Color parentRectangleColor;
-	private Color childRectangleColor;
+	private final Color parentRectangleColor = new Color(255, 0, 0);
+	private final Color childRectangleColor = new Color(255, 255, 0);
 	private ResourceManager resources;
 	private Region region;
 	private ISWTObservableValue<Boolean> overlayEnabled;
@@ -142,14 +138,12 @@ public class LayoutSpyDialog {
 		shell.setText(Messages.LayoutSpyDialog_shell_text);
 
 		resources = new LocalResourceManager(JFaceResources.getResources(), shell);
-		parentRectangleColor = resources.createColor(SELECTED_PARENT_OVERLAY_COLOR);
-		childRectangleColor = resources.createColor(SELECTED_CHILD_OVERLAY_COLOR);
 		Bundle bundle = FrameworkUtil.getBundle(LayoutSpyDialog.class);
 		final URL fullPathString = FileLocator.find(bundle, IPath.fromOSString("icons/up_nav.png"), null);
 
 		ImageDescriptor imageDesc = ImageDescriptor.createFromURL(fullPathString);
 
-		upImage = resources.createImage(imageDesc);
+		upImage = resources.create(imageDesc);
 
 		Composite infoRegion = new Composite(shell, SWT.NONE);
 		{
