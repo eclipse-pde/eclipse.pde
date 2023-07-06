@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Tests for Generic Target Platform Editor
 Bundle-SymbolicName: org.eclipse.pde.genericeditor.extension.tests
 Bundle-Version: 1.2.100.qualifier
-Bundle-ClassPath: .
 Bundle-Vendor: Eclipse.org
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.junit;bundle-version="4.12.0",

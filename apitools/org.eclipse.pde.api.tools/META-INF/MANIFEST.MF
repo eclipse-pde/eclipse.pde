@@ -38,7 +38,5 @@ Import-Package: com.ibm.icu.util,
  org.objectweb.asm.signature;version="[9.4.0,10.0.0)",
  org.objectweb.asm.tree;version="[9.4.0,10.0.0)"
 Bundle-Activator: org.eclipse.pde.api.tools.internal.provisional.ApiPlugin
-Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: .
 Automatic-Module-Name: org.eclipse.pde.api.tools
