@@ -20,6 +20,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -177,7 +178,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		if (initialInf.exists()) {
 			//copy over initial contents
 			try {
-				StringBuffer inf = Utils.readFile(initialInf);
+				String inf = Files.readString(initialInf.toPath(), StandardCharsets.ISO_8859_1);
 				buffer.append(inf);
 				buffer.append('\n');
 			} catch (IOException e) {
@@ -189,7 +190,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 
 		try {
 			Files.createDirectories(Path.of(root));
-			Files.writeString(Path.of(root, "p2.inf"), buffer.toString()); //$NON-NLS-1$
+			Files.writeString(Path.of(root, "p2.inf"), buffer.toString(), StandardCharsets.ISO_8859_1); //$NON-NLS-1$
 		} catch (IOException e) {
 			return false;
 		}

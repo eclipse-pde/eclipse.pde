@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.SequenceInputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -38,6 +39,9 @@ import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.Attributes.Name;
 import java.util.jar.Manifest;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -323,7 +327,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			}
 
 			//Copy the fragment.xml
-			Path dest = new File(sourceFragmentDirURL.append(Constants.FRAGMENT_FILENAME_DESCRIPTOR).toOSString()).toPath();
+			Path dest = sourceFragmentDirURL.append(Constants.FRAGMENT_FILENAME_DESCRIPTOR).toPath();
 			try (InputStream fragmentXML = BundleHelper.getDefault().getBundle().getEntry(TEMPLATE + "/30/fragment/fragment.xml").openStream()) { //$NON-NLS-1$
 				Files.copy(fragmentXML, dest, StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e1) {
@@ -331,22 +335,25 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e1));
 			}
 
-			StringBuffer buffer = Utils.readFile(templateLocation.openStream());
+			StringBuilder buffer;
+			try (InputStream locationContent = templateLocation.openStream()) {
+				buffer = new StringBuilder(new String(locationContent.readAllBytes()));
+			}
 			//Set the Id of the fragment
-			int beginId = Utils.scan(buffer, 0, REPLACED_FRAGMENT_ID);
+			int beginId = buffer.indexOf(REPLACED_FRAGMENT_ID, 0);
 			buffer.replace(beginId, beginId + REPLACED_FRAGMENT_ID.length(), fragment.getId());
 			//		set the version number
-			beginId = Utils.scan(buffer, beginId, REPLACED_FRAGMENT_VERSION);
+			beginId = buffer.indexOf(REPLACED_FRAGMENT_VERSION, beginId);
 			buffer.replace(beginId, beginId + REPLACED_FRAGMENT_VERSION.length(), fragment.getVersion());
 			// Set the Id of the plugin for the fragment
-			beginId = Utils.scan(buffer, beginId, REPLACED_PLUGIN_ID);
+			beginId = buffer.indexOf(REPLACED_PLUGIN_ID, beginId);
 			buffer.replace(beginId, beginId + REPLACED_PLUGIN_ID.length(), plugin.getId());
 			//		set the version number of the plugin to which the fragment is attached to
 			BundleDescription effectivePlugin = getSite().getRegistry().getResolvedBundle(plugin.getId(), plugin.getVersion());
-			beginId = Utils.scan(buffer, beginId, REPLACED_PLUGIN_VERSION);
+			beginId = buffer.indexOf(REPLACED_PLUGIN_VERSION, beginId);
 			buffer.replace(beginId, beginId + REPLACED_PLUGIN_VERSION.length(), effectivePlugin.getVersion().toString());
 			// Set the platform filter of the fragment
-			beginId = Utils.scan(buffer, beginId, REPLACED_PLATFORM_FILTER);
+			beginId = buffer.indexOf(REPLACED_PLATFORM_FILTER, beginId);
 			buffer.replace(beginId, beginId + REPLACED_PLATFORM_FILTER.length(), "(& (osgi.ws=" + fragment.getWS() + ") (osgi.os=" + fragment.getOS() + ") (osgi.arch=" + fragment.getArch() + "))"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			Path destManifest = sourceFragmentDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toPath();
 			Files.writeString(destManifest, buffer.toString());
@@ -418,31 +425,33 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 	}
 
 	private void replaceXMLAttribute(String location, String tag, String attr, String newValue) {
-		File featureFile = new File(location);
-		if (!featureFile.exists())
+		Path featureFile = Path.of(location);
+		if (!Files.isRegularFile(featureFile)) {
 			return;
-
-		StringBuffer buffer = null;
+		}
+		Charset fileCharset;
+		StringBuilder buffer = null;
 		try {
-			buffer = Utils.readFile(featureFile);
-		} catch (IOException e) {
+			fileCharset = getFileEncoding(featureFile);
+			buffer = new StringBuilder(Files.readString(featureFile, fileCharset));
+		} catch (IOException | XMLStreamException e) {
 			return;
 		}
 
-		int startComment = Utils.scan(buffer, 0, COMMENT_START_TAG);
-		int endComment = startComment > -1 ? Utils.scan(buffer, startComment, COMMENT_END_TAG) : -1;
-		int startTag = Utils.scan(buffer, 0, tag);
+		int startComment = buffer.indexOf(COMMENT_START_TAG, 0);
+		int endComment = startComment > -1 ? buffer.indexOf(COMMENT_END_TAG, startComment) : -1;
+		int startTag = buffer.indexOf(tag, 0);
 		while (startComment != -1 && startTag > startComment && startTag < endComment) {
-			startTag = Utils.scan(buffer, endComment, tag);
-			startComment = Utils.scan(buffer, endComment, COMMENT_START_TAG);
-			endComment = startComment > -1 ? Utils.scan(buffer, startComment, COMMENT_END_TAG) : -1;
+			startTag = buffer.indexOf(tag, endComment);
+			startComment = buffer.indexOf(COMMENT_START_TAG, endComment);
+			endComment = startComment > -1 ? buffer.indexOf(COMMENT_END_TAG, startComment) : -1;
 		}
 		if (startTag == -1)
 			return;
-		int endTag = Utils.scan(buffer, startTag, ">"); //$NON-NLS-1$
+		int endTag = buffer.indexOf(">", startTag); //$NON-NLS-1$
 		boolean attrFound = false;
 		while (!attrFound) {
-			int startAttributeWord = Utils.scan(buffer, startTag, attr);
+			int startAttributeWord = buffer.indexOf(attr, startTag);
 			if (startAttributeWord == -1 || startAttributeWord > endTag)
 				return;
 			if (!Character.isWhitespace(buffer.charAt(startAttributeWord - 1))) {
@@ -463,17 +472,26 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 				continue;
 			}
 
-			int startVersionId = Utils.scan(buffer, startAttributeWord + 1, "\""); //$NON-NLS-1$
-			int endVersionId = Utils.scan(buffer, startVersionId + 1, "\""); //$NON-NLS-1$
+			int startVersionId = buffer.indexOf("\"", startAttributeWord + 1); //$NON-NLS-1$
+			int endVersionId = buffer.indexOf("\"", startVersionId + 1); //$NON-NLS-1$
 			buffer.replace(startVersionId + 1, endVersionId, newValue);
 			attrFound = true;
 		}
 		if (attrFound) {
 			try {
-				Files.writeString(featureFile.toPath(), buffer.toString());
+				Files.writeString(featureFile, buffer.toString(), fileCharset);
 			} catch (IOException e) {
 				//ignore
 			}
+		}
+	}
+
+	private static Charset getFileEncoding(Path file) throws IOException, XMLStreamException {
+		try (InputStream is = Files.newInputStream(file)) {
+			XMLInputFactory factory = XMLInputFactory.newFactory();
+			factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+			String encoding = factory.createXMLStreamReader(is).getEncoding();
+			return Charset.forName(encoding);
 		}
 	}
 
@@ -672,7 +690,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		new File(sourcePluginDir, "META-INF").mkdirs(); //$NON-NLS-1$
 
 		// Create the MANIFEST.MF
-		StringBuffer buffer;
+		StringBuilder buffer;
 		IPath templateManifest = IPath.fromOSString(TEMPLATE + "/30/plugin/" + Constants.BUNDLE_FILENAME_DESCRIPTOR); //$NON-NLS-1$
 		URL templateManifestURL = BundleHelper.getDefault().find(templateManifest);
 		if (templateManifestURL == null) {
@@ -680,20 +698,20 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			BundleHelper.getDefault().getLog().log(status);
 			return null;
 		}
-		try {
-			buffer = Utils.readFile(templateManifestURL.openStream());
+		try (InputStream manifestStream = templateManifestURL.openStream()) {
+			buffer = new StringBuilder(new String(manifestStream.readAllBytes()));
 		} catch (IOException e1) {
 			String message = NLS.bind(Messages.exception_readingFile, templateManifestURL.toExternalForm());
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e1));
 		}
-		int beginId = Utils.scan(buffer, 0, REPLACED_PLUGIN_ID);
+		int beginId = buffer.indexOf(REPLACED_PLUGIN_ID, 0);
 		buffer.replace(beginId, beginId + REPLACED_PLUGIN_ID.length(), result.getId());
 		//set the version number
-		beginId = Utils.scan(buffer, beginId, REPLACED_PLUGIN_VERSION);
+		beginId = buffer.indexOf(REPLACED_PLUGIN_VERSION, beginId);
 		buffer.replace(beginId, beginId + REPLACED_PLUGIN_VERSION.length(), result.getVersion());
-		String destName = sourcePluginDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toOSString();
+		Path destName = sourcePluginDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toPath();
 		try {
-			Files.writeString(new File(destName).toPath(), buffer.toString());
+			Files.writeString(destName, buffer.toString());
 		} catch (IOException e1) {
 			String message = NLS.bind(Messages.exception_writingFile, templateManifestURL.toExternalForm());
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e1));
