@@ -827,52 +827,6 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	}
 
 	/**
-	 * 
-	 * @param buf
-	 * @param start
-	 * @param target
-	 * @return int
-	 */
-	static public int scan(StringBuffer buf, int start, String target) {
-		return scan(buf, start, new String[] {target});
-	}
-
-	/**
-	 * 
-	 * @param buf
-	 * @param start
-	 * @param targets
-	 * @return int
-	 */
-	static public int scan(StringBuffer buf, int start, String[] targets) {
-		for (int i = start; i < buf.length(); i++) {
-			for (String target : targets) {
-				if (i < buf.length() - target.length()) {
-					String match = buf.substring(i, i + target.length());
-					if (target.equals(match))
-						return i;
-				}
-			}
-		}
-		return -1;
-	}
-
-	/**
-	 * Return a buffer containing the contents of the file at the specified location.
-	 * 
-	 * @param target the file
-	 * @return StringBuffer
-	 * @throws IOException
-	 */
-	static public StringBuffer readFile(File target) throws IOException {
-		return new StringBuffer(new String(Files.readAllBytes(target.toPath())));
-	}
-
-	static public StringBuffer readFile(InputStream stream) throws IOException {
-		return new StringBuffer(new String(stream.readAllBytes()));
-	}
-
-	/**
 	 * Custom build scripts should have their version number matching the
 	 * version number defined by the feature/plugin/fragment descriptor.
 	 * This is a best effort job so do not worry if the expected tags were
@@ -880,31 +834,29 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	 * 
 	 * @param buildFile
 	 * @param propertyName
-	 * @param version
+	 * @param newVersion
 	 * @throws IOException
 	 *
 	 */
-	public static void updateVersion(File buildFile, String propertyName, String version) throws IOException {
-		StringBuffer buffer = readFile(buildFile);
-		int pos = scan(buffer, 0, propertyName);
+	public static void updateVersion(File buildFile, String propertyName, String newVersion) throws IOException {
+		String value = Files.readString(buildFile.toPath());
+		int pos = value.indexOf(propertyName);
 		if (pos == -1)
 			return;
-		pos = scan(buffer, pos, "value"); //$NON-NLS-1$
+		pos = value.indexOf("value", pos); //$NON-NLS-1$
 		if (pos == -1)
 			return;
-		int begin = scan(buffer, pos, "\""); //$NON-NLS-1$
+		int begin = value.indexOf("\"", pos); //$NON-NLS-1$
 		if (begin == -1)
 			return;
 		begin++;
-		int end = scan(buffer, begin, "\""); //$NON-NLS-1$
+		int end = value.indexOf("\"", begin); //$NON-NLS-1$
 		if (end == -1)
 			return;
-		String currentVersion = buffer.substring(begin, end);
-		String newVersion = version;
-		if (currentVersion.equals(newVersion))
-			return;
-		buffer.replace(begin, end, newVersion);
-		Files.writeString(buildFile.toPath(), buffer.toString());
+		String currentVersion = value.substring(begin, end);
+		if (!currentVersion.equals(newVersion)) {
+			Files.writeString(buildFile.toPath(), new StringBuilder(value).replace(begin, end, newVersion));
+		}
 	}
 
 	public static Enumeration<Object> getArrayEnumerator(Object[] array) {
