@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Dictionary;
@@ -187,8 +188,8 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		generateP2InfCUs(buffer, startIndex, cus, launchers);
 
 		try {
-			File p2Inf = new File(root, "p2.inf"); //$NON-NLS-1$
-			Files.writeString(p2Inf.toPath(), buffer.toString());
+			Files.createDirectories(Path.of(root));
+			Files.writeString(Path.of(root, "p2.inf"), buffer.toString()); //$NON-NLS-1$
 		} catch (IOException e) {
 			return false;
 		}
