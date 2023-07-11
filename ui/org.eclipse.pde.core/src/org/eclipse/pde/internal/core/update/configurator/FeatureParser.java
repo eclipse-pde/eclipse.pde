@@ -21,8 +21,8 @@ import java.net.URL;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -35,6 +35,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @since 3.0
  */
 class FeatureParser extends DefaultHandler {
+	private static final ILog LOG = ILog.get();
 
 	private SAXParser parser;
 	private FeatureEntry feature;
@@ -43,12 +44,12 @@ class FeatureParser extends DefaultHandler {
 	/**
 	 * Constructs a feature parser.
 	 */
+	@SuppressWarnings("restriction")
 	public FeatureParser() {
-		super();
 		try {
-			this.parser = PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE(true);
+			this.parser = org.eclipse.core.internal.runtime.XmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE(true);
 		} catch (ParserConfigurationException | SAXException e) {
-			System.out.println(e);
+			LOG.error(e.getLocalizedMessage(), e);
 		}
 	}
 
@@ -57,20 +58,11 @@ class FeatureParser extends DefaultHandler {
 	 */
 	public FeatureEntry parse(URL featureURL) {
 		feature = null;
-		InputStream in = null;
-		try {
+		try (InputStream in = featureURL.openStream()) {
 			this.url = featureURL;
-			in = featureURL.openStream();
 			parser.parse(new InputSource(in), this);
 		} catch (SAXException | IOException e) {
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e1) {
-					Utils.log(e1.getLocalizedMessage());
-				}
-			}
+			LOG.error(e.getLocalizedMessage(), e);
 		}
 		return feature;
 	}

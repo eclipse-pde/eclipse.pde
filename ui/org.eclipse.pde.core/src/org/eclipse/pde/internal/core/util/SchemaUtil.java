@@ -23,6 +23,7 @@ import java.net.URLConnection;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
 
 import org.eclipse.pde.internal.core.PDECore;
 import org.xml.sax.SAXException;
@@ -65,7 +66,10 @@ public class SchemaUtil {
 		try {
 			connection = getURLConnection(url);
 			try (InputStream input = connection.getInputStream()) {
-				SAXParserWrapper.parse(input, handler);
+				@SuppressWarnings("restriction")
+				SAXParser parser = org.eclipse.core.internal.runtime.XmlProcessorFactory
+						.createSAXParserWithErrorOnDOCTYPE();
+				parser.parse(input, handler);
 			}
 		} catch (MalformedURLException | SAXException e) {
 			// Ignore

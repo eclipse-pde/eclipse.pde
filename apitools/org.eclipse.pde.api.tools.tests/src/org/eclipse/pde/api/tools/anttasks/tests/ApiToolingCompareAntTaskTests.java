@@ -22,9 +22,9 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.internal.runtime.XmlProcessorFactory;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -60,7 +60,7 @@ public class ApiToolingCompareAntTaskTests extends AntRunnerTestCase {
 		assertTrue("report folder must exist", folder.exists()); //$NON-NLS-1$
 		assertTrue("report xml must exist", folder.getFile("compare.xml").exists()); //$NON-NLS-1$ //$NON-NLS-2$
 		InputSource is = new InputSource(folder.getFile("compare.xml").getContents()); //$NON-NLS-1$
-		DocumentBuilder db = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
+		DocumentBuilder db = XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 		Document doc = db.parse(is);
 		NodeList elems = doc.getElementsByTagName("delta"); //$NON-NLS-1$
 		boolean found = false;

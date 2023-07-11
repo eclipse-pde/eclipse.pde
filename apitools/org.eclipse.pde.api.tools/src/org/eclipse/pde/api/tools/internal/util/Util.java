@@ -104,7 +104,6 @@ import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.internal.compiler.codegen.ConstantPool;
 import org.eclipse.jdt.internal.core.BinaryType;
 import org.eclipse.jdt.internal.core.ClassFile;
 import org.eclipse.jdt.internal.core.CompilationUnit;
@@ -140,7 +139,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.objectweb.asm.Opcodes;
 import org.osgi.framework.Version;
 import org.w3c.dom.Document;
@@ -153,7 +151,6 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @since 1.0.0
  */
-@SuppressWarnings("restriction")
 public final class Util {
 
 	public static final String DOT_TGZ = ".tgz"; //$NON-NLS-1$
@@ -1769,15 +1766,13 @@ public final class Util {
 	 * @return document
 	 * @throws CoreException if unable to create a new document
 	 */
+	@SuppressWarnings("restriction")
 	public static Document newDocument() throws CoreException {
-		DocumentBuilder docBuilder = null;
 		try {
-			docBuilder = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
+			return org.eclipse.core.internal.runtime.XmlProcessorFactory.newDocumentWithErrorOnDOCTYPE();
 		} catch (ParserConfigurationException e) {
 			throw new CoreException(Status.error("Unable to create new XML document.", e)); //$NON-NLS-1$
 		}
-		Document doc = docBuilder.newDocument();
-		return doc;
 	}
 
 	/**
@@ -1789,25 +1784,15 @@ public final class Util {
 	 * @throws CoreException if unable to parse the document
 	 */
 	public static Element parseDocument(String document) throws CoreException {
-		Element root = null;
-		InputStream stream = null;
-		try {
-			DocumentBuilder parser = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
+		try (InputStream stream = new ByteArrayInputStream(document.getBytes(StandardCharsets.UTF_8))) {
+			@SuppressWarnings("restriction")
+			DocumentBuilder parser = org.eclipse.core.internal.runtime.XmlProcessorFactory
+					.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
-			stream = new ByteArrayInputStream(document.getBytes(StandardCharsets.UTF_8));
-			root = parser.parse(stream).getDocumentElement();
+			return parser.parse(stream).getDocumentElement();
 		} catch (ParserConfigurationException | FactoryConfigurationError | SAXException | IOException e) {
 			throw new CoreException(Status.error("Unable to parse XML document.", e)); //$NON-NLS-1$
-		} finally {
-			try {
-				if (stream != null) {
-					stream.close();
-				}
-			} catch (IOException e) {
-				throw new CoreException(Status.error("Unable to parse XML document.", e)); //$NON-NLS-1$
-			}
 		}
-		return root;
 	}
 
 	/**
@@ -1883,7 +1868,9 @@ public final class Util {
 	public static String serializeDocument(Document document) throws CoreException {
 		try {
 			ByteArrayOutputStream s = new ByteArrayOutputStream();
-			TransformerFactory factory = PDEXmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE();
+			@SuppressWarnings("restriction")
+			TransformerFactory factory = org.eclipse.core.internal.runtime.XmlProcessorFactory
+					.createTransformerFactoryWithErrorOnDOCTYPE();
 			Transformer transformer = factory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
@@ -2397,7 +2384,9 @@ public final class Util {
 	}
 
 	public static boolean isConstructor(String referenceMemberName) {
-		return Arrays.equals(ConstantPool.Init, referenceMemberName.toCharArray());
+		@SuppressWarnings("restriction")
+		char[] init = org.eclipse.jdt.internal.compiler.codegen.ConstantPool.Init;
+		return Arrays.equals(init, referenceMemberName.toCharArray());
 	}
 
 	public static boolean isManifest(IPath path) {

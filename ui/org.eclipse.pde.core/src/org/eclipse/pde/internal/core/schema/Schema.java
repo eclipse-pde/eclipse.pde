@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
+import javax.xml.parsers.SAXParser;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.PlatformObject;
@@ -54,7 +56,6 @@ import org.eclipse.pde.internal.core.ischema.ISchemaRootElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
 import org.eclipse.pde.internal.core.ischema.ISchemaType;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
-import org.eclipse.pde.internal.core.util.SAXParserWrapper;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -450,7 +451,10 @@ public class Schema extends PlatformObject implements ISchema {
 	public void load(InputStream stream) {
 		try {
 			XMLDefaultHandler handler = new XMLDefaultHandler(fAbbreviated);
-			SAXParserWrapper.parse(stream, handler);
+			@SuppressWarnings("restriction")
+			SAXParser parser = org.eclipse.core.internal.runtime.XmlProcessorFactory
+					.createSAXParserWithErrorOnDOCTYPE();
+			parser.parse(stream, handler);
 			traverseDocumentTree(handler.getDocumentElement());
 		} catch (SAXException e) {
 			// ignore parse errors - 'loaded' will be false anyway

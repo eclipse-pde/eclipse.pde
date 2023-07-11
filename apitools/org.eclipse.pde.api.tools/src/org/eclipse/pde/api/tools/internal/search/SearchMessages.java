@@ -104,8 +104,6 @@ public class SearchMessages extends NLS {
 	public static String UseReportConverter_scan_date;
 	public static String UseReportConverter_scan_details;
 	public static String UseReportConverter_scope_pattern;
-	public static String UseReportConverter_se_error_parser_handle;
-	public static String UseReportConverter_pce_error_getting_parser;
 	public static String UseReportConverter_preparing_html_root;
 	public static String UseReportConverter_preparing_report_metadata;
 	public static String UseReportConverter_preparing_xml_root;

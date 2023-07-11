@@ -39,7 +39,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IMetadata;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.DefaultHandler;
@@ -65,11 +64,12 @@ public class XmlSearchReporter implements IApiSearchReporter {
 	 *            to write the reports to
 	 * @param debug if debugging infos should be written out to the console
 	 */
+	@SuppressWarnings("restriction")
 	public XmlSearchReporter(String location, boolean debug) {
 		fLocation = location;
 		this.debug = debug;
 		try {
-			parser = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
+			parser = org.eclipse.core.internal.runtime.XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
 		} catch (FactoryConfigurationError | ParserConfigurationException pce) {
 			ApiPlugin.log(pce);

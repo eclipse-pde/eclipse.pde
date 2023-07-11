@@ -32,7 +32,6 @@ import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.w3c.dom.Document;
@@ -202,7 +201,8 @@ public class PDEAuxiliaryState {
 	 */
 	protected void savePluginInfo(File dir) {
 		try {
-			Document doc = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE().newDocument();
+			@SuppressWarnings("restriction")
+			Document doc = org.eclipse.core.internal.runtime.XmlProcessorFactory.newDocumentWithErrorOnDOCTYPE();
 			Element root = doc.createElement(ELEMENT_ROOT);
 
 			Iterator<String> iter = fPluginInfos.keySet().iterator();
@@ -261,7 +261,9 @@ public class PDEAuxiliaryState {
 		File file = new File(dir, CACHE_EXTENSION);
 		if (file.exists() && file.isFile()) {
 			try {
-				DocumentBuilder documentBuilder = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
+				@SuppressWarnings("restriction")
+				DocumentBuilder documentBuilder = org.eclipse.core.internal.runtime.XmlProcessorFactory
+						.createDocumentBuilderWithErrorOnDOCTYPE();
 				documentBuilder.setErrorHandler(new DefaultHandler());
 				Document doc = documentBuilder.parse(file);
 				Element root = doc.getDocumentElement();
@@ -300,9 +302,9 @@ public class PDEAuxiliaryState {
 	 */
 	public static void writePluginInfo(IPluginModelBase[] models, File destination) {
 		try {
-			DocumentBuilder builder = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
-			Document doc = builder.newDocument();
-
+			@SuppressWarnings("restriction")
+			Document doc = org.eclipse.core.internal.runtime.XmlProcessorFactory
+					.newDocumentWithErrorOnDOCTYPE();
 			Element root = doc.createElement(ELEMENT_ROOT);
 			doc.appendChild(root);
 			for (int i = 0; i < models.length; i++) {

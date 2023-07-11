@@ -38,7 +38,6 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -200,9 +199,10 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 	}
 
 	@Override
+	@SuppressWarnings("restriction")
 	public void startDocument() throws SAXException {
 		try {
-			fXMLDocument = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE().newDocument();
+			fXMLDocument = org.eclipse.core.internal.runtime.XmlProcessorFactory.newDocumentWithErrorOnDOCTYPE();
 		} catch (ParserConfigurationException e) {
 		}
 	}

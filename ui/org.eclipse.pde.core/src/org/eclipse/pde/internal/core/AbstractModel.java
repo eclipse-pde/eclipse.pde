@@ -40,7 +40,6 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.ModelChangedEvent;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.xml.sax.SAXException;
 
 public abstract class AbstractModel extends PlatformObject implements IModel, IModelChangeProviderExtension, Serializable {
@@ -236,8 +235,9 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 		throw new CoreException(Status.error("Error in the manifest file", e)); //$NON-NLS-1$
 	}
 
+	@SuppressWarnings("restriction")
 	protected SAXParser getSaxParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError {
-		return PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
+		return org.eclipse.core.internal.runtime.XmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
 	}
 
 	@Override
