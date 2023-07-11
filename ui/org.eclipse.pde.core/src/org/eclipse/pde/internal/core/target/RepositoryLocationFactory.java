@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetLocationFactory;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.osgi.resource.Requirement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -43,7 +42,9 @@ public class RepositoryLocationFactory implements ITargetLocationFactory {
 					Status.error(NLS.bind(Messages.TargetRefrenceLocationFactory_Unsupported_Type, type)));
 		}
 		try {
-			DocumentBuilder docBuilder = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
+			@SuppressWarnings("restriction")
+			DocumentBuilder docBuilder = org.eclipse.core.internal.runtime.XmlProcessorFactory
+					.createDocumentBuilderWithErrorOnDOCTYPE();
 			Document document = docBuilder
 					.parse(new ByteArrayInputStream(serializedXML.getBytes(StandardCharsets.UTF_8)));
 			Element location = document.getDocumentElement();

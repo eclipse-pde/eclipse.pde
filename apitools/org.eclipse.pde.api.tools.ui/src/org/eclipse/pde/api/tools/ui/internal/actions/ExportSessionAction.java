@@ -27,6 +27,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.eclipse.core.internal.runtime.XmlProcessorFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -45,7 +46,6 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.views.APIToolingView;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 
 /**
  * Drop-down action to select the active session.
@@ -155,7 +155,7 @@ public class ExportSessionAction extends Action {
 							}
 							writer = new BufferedWriter(new FileWriter(reportFile));
 							Result result = new StreamResult(writer);
-							TransformerFactory f = PDEXmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE();
+							TransformerFactory f = XmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE();
 							Transformer trans = f.newTransformer(xsltSource);
 							trans.transform(xmlSource, result);
 						} catch (TransformerException | IOException e) {

@@ -48,7 +48,6 @@ import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 import org.eclipse.pde.internal.core.util.HeaderMap;
-import org.eclipse.pde.internal.core.util.SAXParserWrapper;
 import org.osgi.framework.Constants;
 
 /**
@@ -64,6 +63,7 @@ public class ConvertSchemaToHTML extends Task {
 	private String additionalSearchPaths;
 
 	@Override
+	@SuppressWarnings("restriction")
 	public void execute() throws BuildException {
 		if (destination == null) {
 			throw new BuildException(NLS.bind(PDECoreMessages.Builders_Convert_missingAttribute, "destination")); //$NON-NLS-1$
@@ -98,7 +98,8 @@ public class ConvertSchemaToHTML extends Task {
 			try {
 				File schemaFile = new File(model.getInstallLocation(), schemaLocation);
 				XMLDefaultHandler handler = new XMLDefaultHandler();
-				SAXParserWrapper.parse(schemaFile, handler);
+				org.eclipse.core.internal.runtime.XmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE()
+						.parse(schemaFile, handler);
 				URL url = schemaFile.toURL();
 				SchemaDescriptor desc = new SchemaDescriptor(extPoint.getFullId(), url, searchPaths);
 				schema = (Schema) desc.getSchema(false);

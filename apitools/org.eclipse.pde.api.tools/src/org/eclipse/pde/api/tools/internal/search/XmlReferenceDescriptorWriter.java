@@ -46,7 +46,6 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -84,10 +83,11 @@ public class XmlReferenceDescriptorWriter {
 	 *            to write the reports to
 	 * @param debug if debugging infos should be written out to the console
 	 */
+	@SuppressWarnings("restriction")
 	public XmlReferenceDescriptorWriter(String location) {
 		fLocation = location;
 		try {
-			parser = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
+			parser = org.eclipse.core.internal.runtime.XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
 		} catch (FactoryConfigurationError | ParserConfigurationException pce) {
 			ApiPlugin.log(pce);

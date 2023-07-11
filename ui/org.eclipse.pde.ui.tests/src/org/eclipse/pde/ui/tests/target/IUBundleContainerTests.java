@@ -31,6 +31,7 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.internal.runtime.XmlProcessorFactory;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -51,7 +52,6 @@ import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
 import org.eclipse.pde.internal.core.target.TargetPersistence38Helper;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -555,7 +555,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		TargetDefinitionPersistenceHelper.persistXML(td, out);
 		String xml = new String(out.toByteArray());
-		DocumentBuilder parser = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
+		DocumentBuilder parser = XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 		parser.setErrorHandler(new DefaultHandler());
 		Document doc = parser.parse(new InputSource(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))));
 

@@ -14,7 +14,6 @@
 package org.eclipse.pde.api.tools.internal;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -46,7 +45,6 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.xml.sax.Attributes;
@@ -458,27 +456,16 @@ public class APIFileGenerator {
 	 * @return true if it contains a source extension point, false otherwise
 	 */
 	private boolean containsAPIToolsNature(String pluginXMLContents) {
-		SAXParser saxParser = null;
 		try {
-			saxParser = PDEXmlProcessorFactory.createSAXParserIgnoringDOCTYPE();
-		} catch (ParserConfigurationException | SAXException e) {
-			// ignore
-		}
-
-		if (saxParser == null) {
+			@SuppressWarnings("restriction")
+			SAXParser saxParser = org.eclipse.core.internal.runtime.XmlProcessorFactory
+					.createSAXParserIgnoringDOCTYPE();
+			APIToolsNatureDefaultHandler defaultHandler = new APIToolsNatureDefaultHandler();
+			saxParser.parse(new InputSource(new StringReader(pluginXMLContents)), defaultHandler);
+			return defaultHandler.isAPIToolsNature();
+		} catch (SAXException | IOException | ParserConfigurationException e) {
 			return false;
 		}
-
-		// Parse
-		InputSource inputSource = new InputSource(new BufferedReader(new StringReader(pluginXMLContents)));
-		try {
-			APIToolsNatureDefaultHandler defaultHandler = new APIToolsNatureDefaultHandler();
-			saxParser.parse(inputSource, defaultHandler);
-			return defaultHandler.isAPIToolsNature();
-		} catch (SAXException | IOException e) {
-			// ignore
-		}
-		return false;
 	}
 
 }

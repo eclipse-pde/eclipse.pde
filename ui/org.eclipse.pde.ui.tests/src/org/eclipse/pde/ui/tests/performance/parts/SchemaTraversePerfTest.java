@@ -18,9 +18,9 @@ import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URLConnection;
 
+import org.eclipse.core.internal.runtime.XmlProcessorFactory;
 import org.eclipse.pde.internal.core.XMLDefaultHandler;
 import org.eclipse.pde.internal.core.schema.EditableSchema;
-import org.eclipse.pde.internal.core.util.SAXParserWrapper;
 import org.eclipse.pde.internal.core.util.SchemaUtil;
 
 public class SchemaTraversePerfTest extends AbstractSchemaPerfTest {
@@ -44,7 +44,7 @@ public class SchemaTraversePerfTest extends AbstractSchemaPerfTest {
 		URLConnection connection = SchemaUtil.getURLConnection(fXSDFile.toURI().toURL());
 		try (InputStream input = connection.getInputStream()) {
 			XMLDefaultHandler handler = new XMLDefaultHandler(true);
-			SAXParserWrapper.parse(input, handler);
+			XmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE().parse(input, handler);
 			EditableSchema schema = new EditableSchema("pluginID", "pointID", "name", true);
 			schema.traverseDocumentTree(handler.getDocumentElement());
 		} finally {

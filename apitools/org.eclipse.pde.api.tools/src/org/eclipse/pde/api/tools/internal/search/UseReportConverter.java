@@ -42,7 +42,6 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -65,7 +64,6 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
 import org.eclipse.pde.api.tools.internal.provisional.search.IMetadata;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.osgi.framework.Version;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -738,18 +736,10 @@ public class UseReportConverter extends HTMLConvertor {
 	 * @throws Exception forwarded general exception that can be trapped in Ant
 	 *             builds
 	 */
-	SAXParser getParser() throws Exception {
+	@SuppressWarnings("restriction")
+	private SAXParser getParser() throws ParserConfigurationException, SAXException {
 		if (this.parser == null) {
-			try {
-				this.parser = PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
-			} catch (ParserConfigurationException pce) {
-				throw new Exception(SearchMessages.UseReportConverter_pce_error_getting_parser, pce);
-			} catch (SAXException se) {
-				throw new Exception(SearchMessages.UseReportConverter_se_error_parser_handle, se);
-			}
-			if (this.parser == null) {
-				throw new Exception(SearchMessages.could_not_create_sax_parser);
-			}
+			this.parser = org.eclipse.core.internal.runtime.XmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
 		}
 		return this.parser;
 	}
@@ -819,8 +809,9 @@ public class UseReportConverter extends HTMLConvertor {
 	protected void applyXSLT(Source xslt, File xmlfile, File htmlfile) throws TransformerException {
 		Source xml = new StreamSource(xmlfile);
 		Result html = new StreamResult(htmlfile);
-		TransformerFactory factory = PDEXmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE();
-		Transformer former = factory.newTransformer(xslt);
+		@SuppressWarnings("restriction")
+		Transformer former = org.eclipse.core.internal.runtime.XmlProcessorFactory
+				.createTransformerFactoryWithErrorOnDOCTYPE().newTransformer(xslt);
 		former.transform(xml, html);
 	}
 

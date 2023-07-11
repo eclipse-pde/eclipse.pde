@@ -22,7 +22,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.util.IdUtil;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -98,9 +97,11 @@ public class PluginHandler extends DefaultHandler {
 	}
 
 	@Override
+	@SuppressWarnings("restriction")
 	public void startDocument() throws SAXException {
 		try {
-			fDocument = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE().newDocument();
+			fDocument = org.eclipse.core.internal.runtime.XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE()
+					.newDocument();
 		} catch (ParserConfigurationException e) {
 		}
 	}

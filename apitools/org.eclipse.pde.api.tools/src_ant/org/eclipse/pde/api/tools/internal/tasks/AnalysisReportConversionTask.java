@@ -34,7 +34,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -429,15 +428,7 @@ public class AnalysisReportConversionTask extends Task {
 		if (!this.reportsRoot.exists() || !this.reportsRoot.isDirectory()) {
 			throw new BuildException(NLS.bind(Messages.invalid_directory_name, this.xmlReportsLocation));
 		}
-		SAXParser parser = null;
-		try {
-			parser = PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
-		} catch (ParserConfigurationException | SAXException e) {
-			e.printStackTrace();
-		}
-		if (parser == null) {
-			throw new BuildException(Messages.could_not_create_sax_parser);
-		}
+		SAXParser parser = createSAXParser();
 
 		if (this.htmlReportsLocation == null) {
 			this.htmlReportsLocation = this.xmlReportsLocation;
@@ -487,6 +478,15 @@ public class AnalysisReportConversionTask extends Task {
 			}
 		} catch (SAXException | IOException e) {
 			// ignore
+		}
+	}
+
+	@SuppressWarnings("restriction")
+	static SAXParser createSAXParser() {
+		try {
+			return org.eclipse.core.internal.runtime.XmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
+		} catch (ParserConfigurationException | SAXException e) {
+			throw new BuildException(Messages.could_not_create_sax_parser, e);
 		}
 	}
 

@@ -118,7 +118,8 @@ class MissingRefParser extends UseScanParser {
 		components = sort(components);
 
 		visitor.visitScan();
-		SAXParser parser = getParser();
+		@SuppressWarnings("restriction")
+		SAXParser parser = org.eclipse.core.internal.runtime.XmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
 		// Treat each top level directory as a producer component
 		for (File component : components) {
 			if (component.isDirectory()) {

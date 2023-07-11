@@ -16,14 +16,11 @@ package org.eclipse.pde.internal.core.target;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
-import javax.xml.parsers.DocumentBuilder;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetLocationFactory;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -36,9 +33,9 @@ public class TargetRefrenceLocationFactory implements ITargetLocationFactory {
 					Status.error(NLS.bind(Messages.TargetRefrenceLocationFactory_Unsupported_Type, type)));
 		}
 		try {
-			DocumentBuilder docBuilder = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
-			Document document = docBuilder
-					.parse(new ByteArrayInputStream(serializedXML.getBytes(StandardCharsets.UTF_8)));
+			@SuppressWarnings("restriction")
+			Document document = org.eclipse.core.internal.runtime.XmlProcessorFactory
+					.parseWithErrorOnDOCTYPE(new ByteArrayInputStream(serializedXML.getBytes(StandardCharsets.UTF_8)));
 			Element location = document.getDocumentElement();
 			return new TargetReferenceBundleContainer(
 					location.getAttribute(TargetReferenceBundleContainer.ATTRIBUTE_URI));
