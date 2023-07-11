@@ -31,6 +31,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.core.internal.runtime.XmlProcessorFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -40,7 +41,6 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.core.target.TargetFeature;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.osgi.resource.Capability;
 import org.osgi.resource.Requirement;
 import org.w3c.dom.Document;
@@ -154,7 +154,7 @@ public class RepositoryBundleContainer extends AbstractBundleContainer {
 	@Override
 	public String serialize() {
 		try {
-			DocumentBuilder docBuilder = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
+			DocumentBuilder docBuilder = XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 			Document document = docBuilder.newDocument();
 			Element containerElement = document.createElement(TargetDefinitionPersistenceHelper.LOCATION);
 			containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE, TYPE);
@@ -166,7 +166,7 @@ public class RepositoryBundleContainer extends AbstractBundleContainer {
 			}
 			document.appendChild(containerElement);
 			StreamResult result = new StreamResult(new StringWriter());
-			TransformerFactory f = PDEXmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE();
+			TransformerFactory f = XmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE();
 			Transformer transformer = f.newTransformer();
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes"); //$NON-NLS-1$
 			transformer.transform(new DOMSource(document), result);

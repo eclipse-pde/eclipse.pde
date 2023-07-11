@@ -63,7 +63,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.DependencyManager;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -373,7 +372,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		try {
 			stream.write(xml.getBytes(StandardCharsets.UTF_8));
 		} catch (IOException e) {
-			abort("Error writing pofile descrition", e); //$NON-NLS-1$
+			throw new CoreException(Status.error("Error writing pofile descrition", e)); //$NON-NLS-1$
 		}
 	}
 
@@ -423,18 +422,6 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	}
 
 	/**
-	 * Throws a core exception with the given message and underlying exception,
-	 * if any.
-	 *
-	 * @param message error message
-	 * @param e underlying exception or <code>null</code>
-	 * @throws CoreException
-	 */
-	private static void abort(String message, Throwable e) throws CoreException {
-		throw new CoreException(Status.error(message, e));
-	}
-
-	/**
 	 * Restore a baseline from the given input stream (persisted baseline).
 	 *
 	 * @param baseline the given baseline to restore
@@ -444,14 +431,8 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 */
 	public IApiComponent[] readBaselineComponents(ApiBaseline baseline, InputStream stream) throws CoreException {
 		long start = System.currentTimeMillis();
-		DocumentBuilder parser = null;
+		DocumentBuilder parser = getConfiguredParser();
 		IApiComponent[] restored = null;
-		try {
-			parser = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
-			parser.setErrorHandler(new DefaultHandler());
-		} catch (ParserConfigurationException | FactoryConfigurationError e) {
-			abort("Error restoring API baseline", e); //$NON-NLS-1$
-		}
 		try {
 			Document document = parser.parse(stream);
 			Element root = document.getDocumentElement();
@@ -505,12 +486,24 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 				restored = components.toArray(new IApiComponent[components.size()]);
 			}
 		} catch (IOException | SAXException e) {
-			abort("Error restoring API baseline", e); //$NON-NLS-1$
+			throw new CoreException(Status.error("Error restoring API baseline", e)); //$NON-NLS-1$
 		}
 		if (ApiPlugin.DEBUG_BASELINE_MANAGER) {
 			System.out.println("Time to restore a persisted baseline : " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return restored;
+	}
+
+	private static DocumentBuilder getConfiguredParser() throws CoreException {
+		try {
+			@SuppressWarnings("restriction")
+			DocumentBuilder parser = org.eclipse.core.internal.runtime.XmlProcessorFactory
+					.createDocumentBuilderWithErrorOnDOCTYPE();
+			parser.setErrorHandler(new DefaultHandler());
+			return parser;
+		} catch (ParserConfigurationException | FactoryConfigurationError e) {
+			throw new CoreException(Status.error("Error restoring API baseline", e)); //$NON-NLS-1$
+		}
 	}
 
 	@Override

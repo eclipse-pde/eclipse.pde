@@ -29,7 +29,6 @@ public class Messages extends NLS {
 	public static String deltaReportTask_entry_major_version;
 	public static String deltaReportTask_entry_minor_version;
 	public static String deltaReportTask_missingXmlFileLocation;
-	public static String deltaReportTask_couldNotCreateSAXParser;
 	public static String deltaReportTask_xmlFileLocationShouldHaveAnXMLExtension;
 	public static String deltaReportTask_htmlFileLocationShouldHaveAnHtmlExtension;
 	public static String deltaReportTask_missingXmlFile;
@@ -118,7 +117,6 @@ public class Messages extends NLS {
 	public static String ChangedElement;
 
 	public static String deprecationReportTask_componentEntry;
-	public static String deprecationReportTask_couldNotCreateSAXParser;
 	public static String deprecationReportTask_endComponentEntry;
 	public static String deprecationReportTask_entry;
 	public static String deprecationReportTask_footer;

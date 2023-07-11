@@ -17,10 +17,6 @@ package org.eclipse.pde.internal.core.plugin;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
@@ -35,11 +31,9 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.osgi.framework.Version;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 public abstract class PluginBase extends AbstractExtensions implements IPluginBase {
 	private static final long serialVersionUID = 1L;
@@ -401,11 +395,6 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 			}
 		}
 		return super.hasRequiredAttributes();
-	}
-
-	protected SAXParser getSaxParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError {
-		return PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
-
 	}
 
 	public static int getMatchRule(VersionRange versionRange) {

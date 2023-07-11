@@ -62,7 +62,6 @@ import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -136,8 +135,9 @@ public class TargetDefinition implements ITargetDefinition {
 
 	private static Document createNewDocument() {
 		try {
-			DocumentBuilder docBuilder = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
-			Document doc = docBuilder.newDocument();
+			@SuppressWarnings("restriction")
+			Document doc = org.eclipse.core.internal.runtime.XmlProcessorFactory
+					.createDocumentBuilderWithErrorOnDOCTYPE().newDocument();
 			ProcessingInstruction instruction = doc.createProcessingInstruction(
 					TargetDefinitionPersistenceHelper.PDE_INSTRUCTION,
 					TargetDefinitionPersistenceHelper.ATTR_VERSION + "=\"" + ICoreConstants.TARGET38 + "\""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1170,7 +1170,9 @@ public class TargetDefinition implements ITargetDefinition {
 		List<Element> oldIUContainers = new ArrayList<>();
 		List<Element> oldGenericContainers = new ArrayList<>();
 
-		DocumentBuilder docBuilder = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
+		@SuppressWarnings("restriction")
+		DocumentBuilder docBuilder = org.eclipse.core.internal.runtime.XmlProcessorFactory
+				.createDocumentBuilderWithErrorOnDOCTYPE();
 		for (ITargetLocation targetLocation : targetLocations) {
 			String type = targetLocation.getType();
 			if (targetLocation instanceof DirectoryBundleContainer) {

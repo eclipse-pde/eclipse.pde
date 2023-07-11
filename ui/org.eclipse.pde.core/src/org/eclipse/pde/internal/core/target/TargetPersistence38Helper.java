@@ -21,7 +21,6 @@ import java.util.List;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -35,7 +34,6 @@ import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetLocationFactory;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -251,8 +249,9 @@ public class TargetPersistence38Helper {
 					throw new CoreException(Status.error(NLS.bind(Messages.TargetPersistence38Helper_NoTargetLocationExtension, type)));
 				}
 				StreamResult result = new StreamResult(new StringWriter());
-				TransformerFactory factory = PDEXmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE();
-				Transformer transformer = factory.newTransformer();
+				@SuppressWarnings("restriction")
+				Transformer transformer = org.eclipse.core.internal.runtime.XmlProcessorFactory
+						.createTransformerFactoryWithErrorOnDOCTYPE().newTransformer();
 				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes"); //$NON-NLS-1$
 				transformer.transform(new DOMSource(location), result);
 				container = locFactory.getTargetLocation(type, result.getWriter().toString());

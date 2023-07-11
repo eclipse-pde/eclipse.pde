@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -35,7 +34,6 @@ import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -244,7 +242,9 @@ public class UseScanParser {
 		localmonitor.setWorkRemaining(referees.length);
 		visitor.visitScan();
 		try {
-			SAXParser parser = getParser();
+			@SuppressWarnings("restriction")
+			SAXParser parser = org.eclipse.core.internal.runtime.XmlProcessorFactory
+					.createSAXParserWithErrorOnDOCTYPE();
 			// Treat each top level directory as a producer component
 			for (File referee : referees) {
 				if (referee.isDirectory()) {
@@ -296,24 +296,6 @@ public class UseScanParser {
 			}
 		} finally {
 			visitor.endVisitScan();
-		}
-	}
-
-	/**
-	 * Returns a parser
-	 *
-	 * @return default parser
-	 * @throws Exception forwarded general exception that can be trapped in Ant
-	 *             builds
-	 */
-	SAXParser getParser() throws Exception {
-		try {
-			return PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
-
-		} catch (ParserConfigurationException pce) {
-			throw new Exception(SearchMessages.UseReportConverter_pce_error_getting_parser, pce);
-		} catch (SAXException se) {
-			throw new Exception(SearchMessages.UseReportConverter_se_error_parser_handle, se);
 		}
 	}
 

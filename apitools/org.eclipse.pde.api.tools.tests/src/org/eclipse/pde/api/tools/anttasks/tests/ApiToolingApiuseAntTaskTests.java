@@ -24,10 +24,10 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.internal.runtime.XmlProcessorFactory;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -66,7 +66,7 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 	public void test1() throws Exception {
 		IFolder reportFolder = runTaskAndVerify("test1"); //$NON-NLS-1$
 		InputSource is = new InputSource(reportFolder.getFile("not_searched.xml").getContents()); //$NON-NLS-1$
-		DocumentBuilder db = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
+		DocumentBuilder db = XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 		Document doc = db.parse(is);
 
 		NodeList elems = doc.getElementsByTagName("component"); //$NON-NLS-1$

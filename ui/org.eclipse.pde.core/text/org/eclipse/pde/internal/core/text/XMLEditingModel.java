@@ -33,7 +33,6 @@ import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.util.SAXParserWrapper;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -46,11 +45,13 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 	}
 
 	@Override
+	@SuppressWarnings("restriction")
 	public void load(InputStream source, boolean outOfSync) {
 		try {
 			fLoaded = true;
 			status = Status.OK_STATUS;
-			SAXParserWrapper.parse(source, createDocumentHandler(this, true));
+			org.eclipse.core.internal.runtime.XmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE().parse(source,
+					createDocumentHandler(this, true));
 		} catch (SAXException e) {
 			fLoaded = false;
 			status = Status.error(e.getMessage(), e);
@@ -67,9 +68,11 @@ public abstract class XMLEditingModel extends AbstractEditingModel {
 	protected abstract DefaultHandler createDocumentHandler(IModel model, boolean reconciling);
 
 	@Override
+	@SuppressWarnings("restriction")
 	public void adjustOffsets(IDocument document) {
 		try {
-			SAXParserWrapper.parse(getInputStream(document), createDocumentHandler(this, false));
+			org.eclipse.core.internal.runtime.XmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE()
+					.parse(getInputStream(document), createDocumentHandler(this, false));
 		} catch (SAXException | IOException | ParserConfigurationException | FactoryConfigurationError e) {
 		}
 	}

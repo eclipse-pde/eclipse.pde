@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -163,7 +162,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	public abstract void adjustOffsets(IDocument document) throws CoreException;
 
 	protected InputStream getInputStream(IDocument document) {
-		return new BufferedInputStream(new ByteArrayInputStream(document.get().getBytes(getCharset())));
+		return new ByteArrayInputStream(document.get().getBytes(getCharset()));
 	}
 
 	@Override

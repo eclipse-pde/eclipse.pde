@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -77,7 +76,6 @@ import org.eclipse.pde.api.tools.internal.util.SourceDefaultHandler;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.internal.core.TargetWeaver;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
@@ -1066,27 +1064,16 @@ public class BundleComponent extends Component {
 	 * @return true if it contains a source extension point, false otherwise
 	 */
 	private static boolean containsSourceExtensionPoint(String pluginXMLContents) {
-		SAXParser saxParser = null;
 		try {
-			saxParser = PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
-		} catch (ParserConfigurationException | SAXException e) {
-			// ignore
-		}
-
-		if (saxParser == null) {
+			@SuppressWarnings("restriction")
+			SAXParser saxParser = org.eclipse.core.internal.runtime.XmlProcessorFactory
+					.createSAXParserWithErrorOnDOCTYPE();
+			SourceDefaultHandler defaultHandler = new SourceDefaultHandler();
+			saxParser.parse(new InputSource(new StringReader(pluginXMLContents)), defaultHandler);
+			return defaultHandler.isSource();
+		} catch (SAXException | IOException | ParserConfigurationException e) {
 			return false;
 		}
-
-		// Parse
-		InputSource inputSource = new InputSource(new BufferedReader(new StringReader(pluginXMLContents)));
-		try {
-			SourceDefaultHandler defaultHandler = new SourceDefaultHandler();
-			saxParser.parse(inputSource, defaultHandler);
-			return defaultHandler.isSource();
-		} catch (SAXException | IOException e) {
-			// ignore
-		}
-		return false;
 	}
 
 	@Override

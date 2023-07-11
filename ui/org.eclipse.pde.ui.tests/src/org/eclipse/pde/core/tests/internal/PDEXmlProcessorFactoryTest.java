@@ -51,7 +51,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
+import org.eclipse.core.internal.runtime.XmlProcessorFactory;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -69,7 +69,7 @@ public class PDEXmlProcessorFactoryTest {
 
 	@Test
 	public void testParseXmlWithExternalEntity() throws Exception {
-		SAXParser parser = PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
+		SAXParser parser = XmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
 		try {
 			testParseXmlWithExternalEntity(parser, this::createMalciousXml);
 			assertTrue("SAXParseException expected", false);
@@ -82,19 +82,19 @@ public class PDEXmlProcessorFactoryTest {
 
 	@Test
 	public void testParseXmlWithoutExternalEntity() throws Exception {
-		SAXParser parser = PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
+		SAXParser parser = XmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
 		testParseXmlWithExternalEntity(parser, this::createNormalXml);
 	}
 
 	@Test
 	public void testParseXmlWithIgnoredExternalEntity() throws Exception {
-		SAXParser parser = PDEXmlProcessorFactory.createSAXParserIgnoringDOCTYPE();
+		SAXParser parser = XmlProcessorFactory.createSAXParserIgnoringDOCTYPE();
 		testParseXmlWithExternalEntity(parser, this::createMalciousXml);
 	}
 
 	@Test
 	public void testParseXmlWithoutIgnoredExternalEntity() throws Exception {
-		SAXParser parser = PDEXmlProcessorFactory.createSAXParserIgnoringDOCTYPE();
+		SAXParser parser = XmlProcessorFactory.createSAXParserIgnoringDOCTYPE();
 		testParseXmlWithExternalEntity(parser, this::createNormalXml);
 	}
 
@@ -140,7 +140,7 @@ public class PDEXmlProcessorFactoryTest {
 
 	@Test
 	public void testDocumentBuilderXmlWithExternalEntity() throws Exception {
-		DocumentBuilder documentBuilder = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
+		DocumentBuilder documentBuilder = XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 		try {
 			testParseXmlWithExternalEntity(documentBuilder, this::createMalciousXml);
 			assertTrue("SAXParseException expected", false);
@@ -152,40 +152,37 @@ public class PDEXmlProcessorFactoryTest {
 
 	@Test
 	public void testDocumentBuilderFactoryWithoutExternalEntity() throws Exception {
-		DocumentBuilderFactory documentBuilderFactory = PDEXmlProcessorFactory
-				.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
+		DocumentBuilderFactory documentBuilderFactory = XmlProcessorFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 		testParseXmlWithExternalEntity(documentBuilderFactory.newDocumentBuilder(), this::createNormalXml);
 	}
 
 	@Test
 	public void testDocumentBuilderWithoutExternalEntity() throws Exception {
-		DocumentBuilder documentBuilder = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
+		DocumentBuilder documentBuilder = XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 		testParseXmlWithExternalEntity(documentBuilder, this::createNormalXml);
 	}
 
 	@Test
 	public void testDocumentBuilderFactoryIgnoringDoctypeNormal() throws Exception {
-		DocumentBuilderFactory documentBuilderFactory = PDEXmlProcessorFactory
-				.createDocumentBuilderFactoryIgnoringDOCTYPE();
+		DocumentBuilderFactory documentBuilderFactory = XmlProcessorFactory.createDocumentBuilderFactoryIgnoringDOCTYPE();
 		testParseXmlWithExternalEntity(documentBuilderFactory.newDocumentBuilder(), this::createNormalXml);
 	}
 
 	@Test
 	public void testDocumentBuilderFactoryIgnoringDoctypeMalcious() throws Exception {
-		DocumentBuilderFactory documentBuilderFactory = PDEXmlProcessorFactory
-				.createDocumentBuilderFactoryIgnoringDOCTYPE();
+		DocumentBuilderFactory documentBuilderFactory = XmlProcessorFactory.createDocumentBuilderFactoryIgnoringDOCTYPE();
 		testParseXmlWithExternalEntity(documentBuilderFactory.newDocumentBuilder(), this::createMalciousXml);
 	}
 
 	@Test
 	public void testDocumentBuilderIgnoringDoctypeNormal() throws Exception {
-		testParseXmlWithExternalEntity(PDEXmlProcessorFactory.createDocumentBuilderIgnoringDOCTYPE(),
+		testParseXmlWithExternalEntity(XmlProcessorFactory.createDocumentBuilderIgnoringDOCTYPE(),
 				this::createNormalXml);
 	}
 
 	@Test
 	public void testDocumentBuilderIgnoringDoctypeMalcious() throws Exception {
-		testParseXmlWithExternalEntity(PDEXmlProcessorFactory.createDocumentBuilderIgnoringDOCTYPE(),
+		testParseXmlWithExternalEntity(XmlProcessorFactory.createDocumentBuilderIgnoringDOCTYPE(),
 				this::createMalciousXml);
 	}
 
@@ -209,8 +206,7 @@ public class PDEXmlProcessorFactoryTest {
 
 	@Test
 	public void testTransformXmlWithExternalEntity() throws Exception {
-		TransformerFactory transformerFactory = PDEXmlProcessorFactory
-				.createTransformerFactoryWithErrorOnDOCTYPE();
+		TransformerFactory transformerFactory = XmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE();
 		try {
 			testParseXmlWithExternalEntity(transformerFactory, this::createMalciousXml);
 			assertTrue("TransformerException expected", false);
@@ -222,8 +218,7 @@ public class PDEXmlProcessorFactoryTest {
 
 	@Test
 	public void testTransformXmlWithoutExternalEntity() throws Exception {
-		TransformerFactory transformerFactory = PDEXmlProcessorFactory
-				.createTransformerFactoryWithErrorOnDOCTYPE();
+		TransformerFactory transformerFactory = XmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE();
 		testParseXmlWithExternalEntity(transformerFactory, this::createNormalXml);
 	}
 
@@ -339,31 +334,31 @@ public class PDEXmlProcessorFactoryTest {
 	public static void main(String[] args) throws Exception {
 		for (int i = 1; i < 1000; i++) {
 			long n0 = System.nanoTime();
-			sink = PDEXmlProcessorFactory.createSAXParserIgnoringDOCTYPE();
+			sink = XmlProcessorFactory.createSAXParserIgnoringDOCTYPE();
 			long n1 = System.nanoTime();
 			System.out.println("createSAXParserIgnoringDOCTYPE run " + i + ": " + (n1 - n0) + "ns");
 			// ~ run 999: 60000ns =0,06ms
 
 			n0 = System.nanoTime();
-			sink = PDEXmlProcessorFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
+			sink = XmlProcessorFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 			n1 = System.nanoTime();
 			System.out.println("createDocumentBuilderFactoryWithErrorOnDOCTYPE run " + i + ": " + (n1 - n0) + "ns");
 			// ~ run 999: 5000000ns =5ms
 
 			n0 = System.nanoTime();
-			sink = PDEXmlProcessorFactory.createDocumentBuilderIgnoringDOCTYPE();
+			sink = XmlProcessorFactory.createDocumentBuilderIgnoringDOCTYPE();
 			n1 = System.nanoTime();
 			System.out.println("createDocumentBuilderIgnoringDOCTYPE run " + i + ": " + (n1 - n0) + "ns");
 			// ~ run 999: 40000ns =0,04ms
 
 			n0 = System.nanoTime();
-			sink = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
+			sink = XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 			n1 = System.nanoTime();
 			System.out.println("createDocumentBuilderWithErrorOnDOCTYPE run " + i + ": " + (n1 - n0) + "ns");
 			// ~ run 999: 30000ns =0,03ms
 
 			n0 = System.nanoTime();
-			sink = PDEXmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE();
+			sink = XmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE();
 			n1 = System.nanoTime();
 			System.out.println("createTransformerFactoryWithErrorOnDOCTYPE run " + i + ": " + (n1 - n0) + "ns");
 			// ~ run 999: 5000000ns =5ms

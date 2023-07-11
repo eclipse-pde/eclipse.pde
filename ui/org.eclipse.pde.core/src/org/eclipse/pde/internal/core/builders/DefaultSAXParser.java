@@ -18,17 +18,20 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.util.SAXParserWrapper;
 import org.xml.sax.SAXException;
 
 public class DefaultSAXParser {
 
 	public static void parse(IFile file, XMLErrorReporter reporter) {
 		try (InputStream stream = new BufferedInputStream(file.getContents())) {
-			SAXParserWrapper.parse(stream, reporter);
+			@SuppressWarnings("restriction")
+			SAXParser parser = org.eclipse.core.internal.runtime.XmlProcessorFactory
+					.createSAXParserWithErrorOnDOCTYPE();
+			parser.parse(stream, reporter);
 		} catch (CoreException | SAXException | IOException | ParserConfigurationException e) {
 		}
 	}

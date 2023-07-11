@@ -17,7 +17,6 @@ package org.eclipse.pde.internal.core.update.configurator;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -98,12 +97,7 @@ public class PlatformConfiguration implements IConfigurationConstants {
 		}
 
 		// try to load saved configuration file (watch for failed prior save())
-		ConfigurationParser parser = null;
-		try {
-			parser = new ConfigurationParser();
-		} catch (InvocationTargetException e) {
-			throw (Exception) e.getTargetException();
-		}
+		ConfigurationParser parser = new ConfigurationParser();
 
 		config = null;
 		Exception originalException = null;
