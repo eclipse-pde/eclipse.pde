@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -476,7 +477,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 					}
 					String fileToCopy = toDir + '/' + file.getName();
 					try {
-						Files.copy(file.toPath(), Path.of(fileToCopy));
+						Files.copy(file.toPath(), Path.of(fileToCopy), StandardCopyOption.REPLACE_EXISTING);
 						copiedFiles.add(file.getName());
 					} catch (IOException e) {
 						String message = NLS.bind(Messages.exception_writingFile, fileToCopy);
