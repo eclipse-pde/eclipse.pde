@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2021 IBM Corporation and others.
+ *  Copyright (c) 2004, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Hannes Wellmann - Enhance computation of system-package provided by a ExecutionEnvironment
  *******************************************************************************/
 package org.eclipse.pde.internal.build.site;
 
@@ -28,10 +29,14 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Function;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -44,6 +49,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -388,7 +394,6 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 		// initialize profileManager and get the JRE profiles
 		String[] javaProfiles = getJavaProfiles();
-		String systemPackages = null;
 		String ee = null;
 
 		for (Config aConfig : configs) {
@@ -435,7 +440,8 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			if (profileProps != null) {
 				String profileName = profileProps.getProperty(ProfileManager.PROFILE_NAME);
 				if (AbstractScriptGenerator.getImmutableAntProperty(profileName) != null || (j == 0 && !added)) {
-					systemPackages = profileProps.getProperty(ProfileManager.SYSTEM_PACKAGES);
+					IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(javaProfiles[j]);
+					String systemPackages = getSystemPackages(env, profileProps);
 					ee = profileProps.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
 
 					prop = new Hashtable<>();
@@ -459,7 +465,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		for (String execEnvID : eeJava10AndBeyond) {
 			prop = new Hashtable<>();
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(execEnvID);
-			systemPackages = querySystemPackages(env);
+			String systemPackages = querySystemPackages(env, null);
 			String currentEE = previousEE + "," + execEnvID; //$NON-NLS-1$
 			if (systemPackages == null) {
 				previousEE = currentEE;
@@ -480,13 +486,178 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		}
 	}
 
-	public static String querySystemPackages(IExecutionEnvironment environment) {
-		// Copy of org.eclipse.pde.internal.core.TargetPlatformHelper.querySystemPackages()
-		IVMInstall vm = bestVmInstallFor(environment);
-		if (vm == null || !JavaRuntime.isModularJava(vm)) {
+	public static String getSystemPackages(IExecutionEnvironment environment, Properties profileProperties) {
+		// The pre-defined lists of system-packages are incomplete. Always overwrite, if we have a more up-to-date one.
+		String systemPackages = querySystemPackages(environment, profileProperties);
+		if (systemPackages == null && profileProperties != null) {
+			// Unable to compute system-packages, probably OSGi specific EE, use the those its profile
+			systemPackages = profileProperties.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
+		}
+		return systemPackages;
+	}
+
+	private static final Pattern COMMA = Pattern.compile(","); //$NON-NLS-1$
+
+	public static String querySystemPackages(IExecutionEnvironment environment, Properties preJava9ProfileProperties) {
+		if (environment == null) {
 			return null;
 		}
-		String release = environment.getProfileProperties().getProperty(JavaCore.COMPILER_COMPLIANCE);
+		String eeId = environment.getId();
+		Integer releaseVersion = readJavaReleaseVersion(eeId);
+		if (releaseVersion == null) {
+			return null;
+		}
+		Collection<String> systemPackages;
+		if (releaseVersion <= 8) {
+			IVMInstall eeVM = bestVmInstallFor(environment, vms -> null); // Use selected VM or a perfect match
+			if (eeVM != null) {
+				// In case a VM is selected for an EE, query that VM and use its system-packages
+				systemPackages = querySystemPackages(eeVM, null);
+			} else {
+				// No VM selected for the non-modular EE:
+				// Compose list of available system-packages from the java.* packages in the predefined profiles in o.e.osgi respectively the hard-coded lists of java-packages in this class
+				// plus the non-java packages of this workspace's default VM.
+				// The reasoning for this is, that the OSGi standard only requires the java.* packages of an EE to be present, everything else is optional.
+				// Therefore the Workspaces default VM (which can also be set as target VM in the active target-definition) is the best guess for them.
+				// See also OSGi 8.0 specification chapter 3.4 Execution Environment
+
+				List<String> javaPackages = PRE_JAVA_9_SYSTEM_PACKAGES.get(eeId);
+				if (javaPackages == null) {
+					String profileSystemPackages = preJava9ProfileProperties.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES, ""); //$NON-NLS-1$
+					if (profileSystemPackages.isBlank()) {
+						return null;
+					}
+					javaPackages = COMMA.splitAsStream(profileSystemPackages).filter(p -> p.startsWith("java.")).toList(); //$NON-NLS-1$
+				}
+				IVMInstall targetVM = JavaRuntime.getDefaultVMInstall(); // Set by the Target-Definition if specified there
+				Collection<String> targetVMSystemPackages = querySystemPackages(targetVM, null);
+				if (targetVMSystemPackages == null) {
+					return null;
+				}
+				Stream<String> targetVMNonJavaPackages = targetVMSystemPackages.stream().filter(p -> !p.startsWith("java.")); //$NON-NLS-1$
+
+				systemPackages = Stream.concat(javaPackages.stream(), targetVMNonJavaPackages).sorted().toList();
+			}
+		} else {
+			IVMInstall vm = bestVmInstallFor(environment, vms -> vms[0]);
+			if (vm == null) {
+				return null;
+			}
+			systemPackages = querySystemPackages(vm, environment);
+		}
+		return String.join(",", systemPackages); //$NON-NLS-1$
+	}
+
+	@SuppressWarnings("nls")
+	private static Integer readJavaReleaseVersion(String eeId) {
+		if (eeId.startsWith("JavaSE-")) { //$NON-NLS-1$
+			try {
+				return Integer.parseInt(eeId.substring("JavaSE-".length())); //$NON-NLS-1$
+			} catch (NumberFormatException e) { // Another EE
+			}
+		}
+		return switch (eeId) {
+			// There is no EE for Java 1.0 in OSGi
+			case "JRE-1.1" -> 1;
+			case "J2SE-1.2" -> 2;
+			case "J2SE-1.3" -> 3;
+			case "J2SE-1.4" -> 4;
+			case "J2SE-1.5" -> 5;
+			case "JavaSE-1.6" -> 6;
+			case "JavaSE-1.7" -> 7;
+			case "JavaSE-1.8" -> 8;
+			default -> null;
+		};
+	}
+
+	// Old JDKs can for example be obtained from https://www.oracle.com/java/technologies/downloads/archive/
+	@SuppressWarnings("nls")
+	private static final Map<String, List<String>> PRE_JAVA_9_SYSTEM_PACKAGES = Map.of(//
+			"JRE-1.1", List.of("java.applet", //
+					"java.awt", //
+					"java.awt.datatransfer", //
+					"java.awt.event", //
+					"java.awt.image", //
+					"java.awt.peer", //
+					"java.beans", //
+					"java.io", //
+					"java.lang", //
+					"java.lang.reflect", //
+					"java.math", //
+					"java.net", //
+					"java.rmi", //
+					"java.rmi.dgc", //
+					"java.rmi.registry", //
+					"java.rmi.server", //
+					"java.security", //
+					"java.security.acl", //
+					"java.security.interfaces", //
+					"java.sql", //
+					"java.text", //
+					"java.text.resources", //
+					"java.util", //
+					"java.util.zip"),
+			"J2SE-1.2", List.of("java.applet", //
+					"java.awt", //
+					"java.awt.color", //
+					"java.awt.datatransfer", //
+					"java.awt.dnd", //
+					"java.awt.dnd.peer", //
+					"java.awt.event", //
+					"java.awt.font", //
+					"java.awt.geom", //
+					"java.awt.im", //
+					"java.awt.image", //
+					"java.awt.image.renderable", //
+					"java.awt.peer", //
+					"java.awt.print", //
+					"java.awt.resources", //
+					"java.beans", //
+					"java.beans.beancontext", //
+					"java.io", //
+					"java.lang", //
+					"java.lang.ref", //
+					"java.lang.reflect", //
+					"java.math", //
+					"java.net", //
+					"java.rmi", //
+					"java.rmi.activation", //
+					"java.rmi.dgc", //
+					"java.rmi.registry", //
+					"java.rmi.server", //
+					"java.security", //
+					"java.security.acl", //
+					"java.security.cert", //
+					"java.security.interfaces", //
+					"java.security.spec", //
+					"java.sql", //
+					"java.text", //
+					"java.text.resources", //
+					"java.util", //
+					"java.util.jar", //
+					"java.util.zip"));
+
+	private static Collection<String> querySystemPackages(IVMInstall vm, IExecutionEnvironment environment) {
+		if (!JavaRuntime.isModularJava(vm)) {
+			Set<String> classFileDirectories = new HashSet<>();
+			for (LibraryLocation libLocation : JavaRuntime.getLibraryLocations(vm)) {
+				IPath path = libLocation.getSystemLibraryPath();
+				if (path != null) {
+					try (ZipFile zip = new ZipFile(path.toFile())) {
+						// Collect names of all directories that contain a .class file
+						zip.stream().filter(e -> !e.isDirectory()).map(ZipEntry::getName) //
+								.filter(n -> n.endsWith(".class")) //$NON-NLS-1$
+								.map(n -> n.substring(0, n.lastIndexOf('/'))) //
+								.forEach(classFileDirectories::add);
+					} catch (IOException e) {
+						ILog.get().error("Failed to read packages in JVM library for " + vm + ", at " + path, e); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+				}
+			}
+			return classFileDirectories.stream().map(n -> n.replace('/', '.')).sorted().toList();
+		}
+
+		String release = environment != null ? environment.getProfileProperties().getProperty(JavaCore.COMPILER_COMPLIANCE) : null;
 		try {
 			Collection<String> packages = new TreeSet<>();
 			String jrtPath = "lib/" + org.eclipse.jdt.internal.compiler.util.JRTUtil.JRT_FS_JAR; //$NON-NLS-1$
@@ -503,17 +674,14 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 					}
 				}
 			}
-			return String.join(",", packages); //$NON-NLS-1$
+			return packages;
 		} catch (CoreException e) {
-			ILog.of(PDEState.class).log(Status.error("failed to read system packages for " + environment, e)); //$NON-NLS-1$
+			ILog.of(PDEState.class).log(Status.error("Failed to read system packages for " + environment, e)); //$NON-NLS-1$
 		}
 		return null;
 	}
 
-	private static IVMInstall bestVmInstallFor(IExecutionEnvironment environment) {
-		if (environment == null) {
-			return null;
-		}
+	private static IVMInstall bestVmInstallFor(IExecutionEnvironment environment, Function<IVMInstall[], IVMInstall> nonStrictDefaultSelector) {
 		IVMInstall defaultVM = environment.getDefaultVM();
 		if (defaultVM != null) {
 			return defaultVM;
@@ -522,12 +690,8 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		if (compatible.length == 0) {
 			return null;
 		}
-		for (IVMInstall vm : compatible) {
-			if (environment.isStrictlyCompatible(vm)) {
-				return vm;
-			}
-		}
-		return compatible[0];
+		Optional<IVMInstall> vm = Arrays.stream(compatible).filter(environment::isStrictlyCompatible).findFirst();
+		return vm.isPresent() ? vm.get() : nonStrictDefaultSelector.apply(compatible);
 	}
 
 	public State getState() {

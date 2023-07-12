@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020, 2021 Red Hat Inc. and others.
+ * Copyright (c) 2020, 2023 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,6 +19,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -36,8 +37,10 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.MinimalState;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.RequiredPluginsClasspathContainer;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.junit.BeforeClass;
@@ -45,6 +48,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
+import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -120,22 +124,27 @@ public class ClasspathResolutionTest {
 	@Test
 	public void testImportSystemPackageDoesntAddExtraBundleJava8() throws Exception {
 		loadTargetPlatform(javaxAnnotationProviderBSN);
-		IProject project = ProjectUtils.importTestProject("tests/projects/demoMissedSystemPackageJava8");
-		// In Java 8, javax.annotation is present, so the bundle must *NOT* be
-		// part of classpath
-		List<String> classpathEntries = getRequiredPluginContainerEntries(project);
-		assertThat(classpathEntries).isEmpty();
+		try (var mocked = mockExtraExtraJRESystemPackages("JavaSE-1.8", List.of("javax.annotation"))) {
+			IProject project = ProjectUtils.importTestProject("tests/projects/demoMissedSystemPackageJava8");
+			// In Java 8, javax.annotation is present, so the bundle must *NOT*
+			// be part of classpath
+			List<String> classpathEntries = getRequiredPluginContainerEntries(project);
+			assertThat(classpathEntries).isEmpty();
+		}
 	}
 
 	@Test
 	public void testImportSystemPackageDoesntAddExtraBundleJava8_osgiEERequirement() throws Exception {
 		loadTargetPlatform(javaxAnnotationProviderBSN);
-		IProject project = ProjectUtils.importTestProject("tests/projects/demoMissedSystemPackageJava8OsgiEERequirement");
-		// bundle is build with java 11, but declares java 8 requirement via
-		// Require-Capability
-		// --> javax.annotation bundle must not be on the classpath
-		List<String> classpathEntries = getRequiredPluginContainerEntries(project);
-		assertThat(classpathEntries).isEmpty();
+		try (var mocked = mockExtraExtraJRESystemPackages("JavaSE-1.8", List.of("javax.annotation"))) {
+			IProject project = ProjectUtils
+					.importTestProject("tests/projects/demoMissedSystemPackageJava8OsgiEERequirement");
+			// bundle is build with java 11, but declares java 8 requirement via
+			// Require-Capability
+			// --> javax.annotation bundle must not be on the classpath
+			List<String> classpathEntries = getRequiredPluginContainerEntries(project);
+			assertThat(classpathEntries).isEmpty();
+		}
 	}
 
 	// --- utilitiy methods ---
@@ -152,5 +161,31 @@ public class ClasspathResolutionTest {
 		Set<String> bundleNames = Set.of(bundleName, "org.eclipse.osgi");
 		Predicate<Bundle> bundleFilter = b -> bundleNames.contains(b.getSymbolicName());
 		TargetPlatformUtil.setRunningPlatformSubSetAsTarget("Target containing " + bundleName, bundleFilter);
+	}
+
+	private AutoCloseable mockExtraExtraJRESystemPackages(String eeId, List<String> extraPackages) {
+		// We want to test that the packages provided by a Java-1.8 VM are
+		// consumed from the VM and not from another bundle in the TP.
+		// Unfortunately we don't have a Java-1.8 VM in the CI, it is always a
+		// more recent one, but more recent ones don't contain the packages we
+		// want anymore. Therefore we have to mock the TP system-properties and
+		// pretend the desired package are contained in the VM for the purpose
+		// of this test.
+
+		IExecutionEnvironment ee = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(eeId);
+		Properties profileProps = ee.getProfileProperties();
+		String mockedSystemPackages = TargetPlatformHelper.getSystemPackages(ee, profileProps)
+				+ "," + String.join(",", extraPackages);
+
+		var mockedPDEState = Mockito.mockStatic(TargetPlatformHelper.class, Mockito.CALLS_REAL_METHODS);
+		mockedPDEState.when(() -> TargetPlatformHelper.getSystemPackages(ee, profileProps))
+		.thenReturn(mockedSystemPackages);
+		// Beware that the static mock is thread-local!
+		MinimalState.reloadSystemPackagesIntoState();
+		mockedPDEState.verify(() -> TargetPlatformHelper.getSystemPackages(ee, profileProps), Mockito.times(1));
+		return () -> {
+			mockedPDEState.close();
+			MinimalState.reloadSystemPackagesIntoState();
+		};
 	}
 }

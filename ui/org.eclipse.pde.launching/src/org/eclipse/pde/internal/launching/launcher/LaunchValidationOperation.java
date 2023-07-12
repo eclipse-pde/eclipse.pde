@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2022 IBM Corporation and others.
+ *  Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Hannes Wellmann - Enhance computation of system-package provided by a ExecutionEnvironment
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
@@ -17,10 +18,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -60,27 +59,22 @@ public class LaunchValidationOperation implements IWorkspaceRunnable {
 	@SuppressWarnings("unchecked")
 	protected Dictionary<String, String>[] getPlatformProperties() throws CoreException {
 		IExecutionEnvironment[] envs = getMatchingEnvironments();
-		if (envs.length == 0) {
-			return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
-		}
-		// add java profiles for those EE's that have a .profile file in the current system bundle
-		List<Dictionary<String, String>> result = new ArrayList<>(envs.length);
-		for (IExecutionEnvironment env : envs) {
+		Dictionary<String, String> environmentProperties = TargetPlatformHelper.getTargetEnvironment();
+		// Only add the highest EE of the supplied VM, to match the runtime's behavior
+		for (int i = envs.length - 1; i > 0; i--) {
+			IExecutionEnvironment env = envs[i];
+			// add java profiles for those EE's that have a .profile file in the current system bundle
 			Properties profileProps = getJavaProfileProperties(env.getId());
 			if (profileProps == null) {
 				// Java10 onwards, we take profile via this method
 				profileProps = env.getProfileProperties();
 			}
 			if (profileProps != null) {
-				Dictionary<String, String> props = TargetPlatformHelper.getTargetEnvironment();
-				TargetPlatformHelper.addEnvironmentProperties(props, env, profileProps);
-				result.add(props);
+				TargetPlatformHelper.addEnvironmentProperties(environmentProperties, env, profileProps);
+				break;
 			}
 		}
-		if (!result.isEmpty()) {
-			return result.toArray(Dictionary[]::new);
-		}
-		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
+		return new Dictionary[] {environmentProperties};
 	}
 
 	protected IExecutionEnvironment[] getMatchingEnvironments() throws CoreException {
