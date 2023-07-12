@@ -61,7 +61,6 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -141,8 +140,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.search.SkippedComponent;
-import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
-import org.eclipse.pde.internal.core.util.XmlTransformerFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.objectweb.asm.Opcodes;
 import org.osgi.framework.Version;
 import org.w3c.dom.Document;
@@ -318,18 +316,6 @@ public final class Util {
 	public static final String ORG_ECLIPSE_SWT = "org.eclipse.swt"; //$NON-NLS-1$
 
 	public static final int LATEST_OPCODES_ASM = Opcodes.ASM9;
-
-	/**
-	 * Throws an exception with the given message and underlying exception.
-	 *
-	 * @param message error message
-	 * @param exception underlying exception, or <code>null</code>
-	 * @throws CoreException
-	 */
-	private static void abort(String message, Throwable exception) throws CoreException {
-		IStatus status = Status.error(message, exception);
-		throw new CoreException(status);
-	}
 
 	/**
 	 * Appends a property to the given string buffer with the given key and
@@ -1789,12 +1775,11 @@ public final class Util {
 	 * @throws CoreException if unable to create a new document
 	 */
 	public static Document newDocument() throws CoreException {
-		DocumentBuilderFactory dfactory = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 		DocumentBuilder docBuilder = null;
 		try {
-			docBuilder = dfactory.newDocumentBuilder();
+			docBuilder = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 		} catch (ParserConfigurationException e) {
-			abort("Unable to create new XML document.", e); //$NON-NLS-1$
+			throw new CoreException(Status.error("Unable to create new XML document.", e)); //$NON-NLS-1$
 		}
 		Document doc = docBuilder.newDocument();
 		return doc;
@@ -1812,20 +1797,19 @@ public final class Util {
 		Element root = null;
 		InputStream stream = null;
 		try {
-			DocumentBuilder parser = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE()
-					.newDocumentBuilder();
+			DocumentBuilder parser = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
 			stream = new ByteArrayInputStream(document.getBytes(StandardCharsets.UTF_8));
 			root = parser.parse(stream).getDocumentElement();
 		} catch (ParserConfigurationException | FactoryConfigurationError | SAXException | IOException e) {
-			abort("Unable to parse XML document.", e); //$NON-NLS-1$
+			throw new CoreException(Status.error("Unable to parse XML document.", e)); //$NON-NLS-1$
 		} finally {
 			try {
 				if (stream != null) {
 					stream.close();
 				}
 			} catch (IOException e) {
-				abort("Unable to parse XML document.", e); //$NON-NLS-1$
+				throw new CoreException(Status.error("Unable to parse XML document.", e)); //$NON-NLS-1$
 			}
 		}
 		return root;
@@ -1904,7 +1888,7 @@ public final class Util {
 	public static String serializeDocument(Document document) throws CoreException {
 		try {
 			ByteArrayOutputStream s = new ByteArrayOutputStream();
-			TransformerFactory factory = XmlTransformerFactory.createTransformerFactoryWithErrorOnDOCTYPE();
+			TransformerFactory factory = PDEXmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE();
 			Transformer transformer = factory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
@@ -1914,9 +1898,8 @@ public final class Util {
 			transformer.transform(source, outputTarget);
 			return s.toString(IApiCoreConstants.UTF_8);
 		} catch (TransformerException | IOException e) {
-			abort("Unable to serialize XML document.", e); //$NON-NLS-1$
+			throw new CoreException(Status.error("Unable to serialize XML document.", e)); //$NON-NLS-1$
 		}
-		return null;
 	}
 
 	/**
@@ -2558,9 +2541,9 @@ public final class Util {
 			try (InputStream stream = new BufferedInputStream(new FileInputStream(file));) {
 				contents = getInputStreamAsCharArray(stream, StandardCharsets.ISO_8859_1);
 			} catch (FileNotFoundException e) {
-				abort(NLS.bind(UtilMessages.Util_couldNotFindFilterFile, location), e);
+				throw new CoreException(Status.error(NLS.bind(UtilMessages.Util_couldNotFindFilterFile, location), e));
 			} catch (IOException e) {
-				abort(NLS.bind(UtilMessages.Util_problemWithFilterFile, location), e);
+				throw new CoreException(Status.error(NLS.bind(UtilMessages.Util_problemWithFilterFile, location), e));
 			}
 			if (contents != null) {
 				try(LineNumberReader reader = new LineNumberReader(new StringReader(new String(contents)));){
@@ -2579,7 +2562,7 @@ public final class Util {
 						}
 					}
 				} catch (IOException e) {
-					abort(NLS.bind(UtilMessages.Util_problemWithFilterFile, location), e);
+					throw new CoreException(Status.error(NLS.bind(UtilMessages.Util_problemWithFilterFile, location), e));
 				}
 			}
 		}
@@ -2618,7 +2601,7 @@ public final class Util {
 					}
 				}
 			} catch (PatternSyntaxException e) {
-				abort(NLS.bind(UtilMessages.comparison_invalidRegularExpression, componentname), e);
+				throw new CoreException(Status.error(NLS.bind(UtilMessages.comparison_invalidRegularExpression, componentname), e));
 			}
 		}
 	}

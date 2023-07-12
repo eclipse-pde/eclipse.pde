@@ -29,7 +29,7 @@ import javax.xml.parsers.SAXParser;
 
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.util.XmlParserFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -57,7 +57,7 @@ class ConfigurationParser extends DefaultHandler implements IConfigurationConsta
 	public ConfigurationParser() throws InvocationTargetException {
 
 		try {
-			this.parser = XmlParserFactory.createSAXParserWithErrorOnDOCTYPE(true);
+			this.parser = PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE(true);
 		} catch (ParserConfigurationException | SAXException e) {
 			Utils.log(Utils.newStatus("ConfigurationParser", e)); //$NON-NLS-1$
 			throw new InvocationTargetException(e);

@@ -51,7 +51,7 @@ import org.eclipse.pde.internal.core.target.P2TargetUtils;
 import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
 import org.eclipse.pde.internal.core.target.TargetPersistence38Helper;
-import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -555,8 +555,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		TargetDefinitionPersistenceHelper.persistXML(td, out);
 		String xml = new String(out.toByteArray());
-		DocumentBuilder parser = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE()
-				.newDocumentBuilder();
+		DocumentBuilder parser = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 		parser.setErrorHandler(new DefaultHandler());
 		Document doc = parser.parse(new InputSource(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))));
 

@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -36,7 +35,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
-import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 import org.xml.sax.Attributes;
@@ -169,10 +168,9 @@ public class XMLErrorReporter extends DefaultHandler {
 
 	@Override
 	public void startDocument() throws SAXException {
-		DocumentBuilderFactory factory = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 		try {
 			// TODO we should be using a dom level 2 impl
-			fXMLDocument = factory.newDocumentBuilder().newDocument();
+			fXMLDocument = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE().newDocument();
 		} catch (ParserConfigurationException e) {
 		}
 	}

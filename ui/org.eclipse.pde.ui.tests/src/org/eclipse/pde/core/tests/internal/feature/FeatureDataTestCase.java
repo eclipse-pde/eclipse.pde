@@ -21,13 +21,12 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.feature.FeatureData;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -92,8 +91,7 @@ public class FeatureDataTestCase {
 	}
 
 	public static FeatureData fromXml(String xml) throws Exception {
-		DocumentBuilderFactory factory = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
-		DocumentBuilder builder = factory.newDocumentBuilder();
+		DocumentBuilder builder = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 		InputSource is = new InputSource(new StringReader(xml));
 		Document doc = builder.parse(is);
 

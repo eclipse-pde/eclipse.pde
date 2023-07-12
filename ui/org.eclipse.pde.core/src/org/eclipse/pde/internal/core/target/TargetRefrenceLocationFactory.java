@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetLocationFactory;
-import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -36,8 +36,7 @@ public class TargetRefrenceLocationFactory implements ITargetLocationFactory {
 					Status.error(NLS.bind(Messages.TargetRefrenceLocationFactory_Unsupported_Type, type)));
 		}
 		try {
-			DocumentBuilder docBuilder = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE()
-					.newDocumentBuilder();
+			DocumentBuilder docBuilder = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 			Document document = docBuilder
 					.parse(new ByteArrayInputStream(serializedXML.getBytes(StandardCharsets.UTF_8)));
 			Element location = document.getDocumentElement();
