@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2022 IBM Corporation and others.
+ * Copyright (c) 2008, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -324,7 +324,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 	@Test
 	public void testDynamicSystemPackages() throws Exception {
 		IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-11");
-		String systemPackages = TargetPlatformHelper.querySystemPackages(env);
+		String systemPackages = TargetPlatformHelper.getSystemPackages(env, null);
 		assertThat(systemPackages).isNotNull();
 		assertThat(systemPackages.split(",")).contains("java.lang", "javax.sql", "org.w3c.dom.css");
 	}

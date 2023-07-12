@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2022 IBM Corporation and others.
+ * Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -290,14 +290,9 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 */
 	@SuppressWarnings("deprecation")
 	private void initialize(Properties profile, ExecutionEnvironmentDescription description) throws CoreException {
-		String value = profile.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
-		if (value == null) {
-			// In Java-10 and beyond, we query system-packages list from the JRE
-			String environmentId = description.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL);
-			IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
-			IExecutionEnvironment environment = manager.getEnvironment(environmentId);
-			value = TargetPlatformHelper.querySystemPackages(environment);
-		}
+		String environmentId = description.getProperty(ExecutionEnvironmentDescription.CLASS_LIB_LEVEL);
+		IExecutionEnvironment ee = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(environmentId);
+		String value = TargetPlatformHelper.getSystemPackages(ee, profile);
 		String[] systemPackages = null;
 		if (value != null) {
 			systemPackages = value.split(","); //$NON-NLS-1$

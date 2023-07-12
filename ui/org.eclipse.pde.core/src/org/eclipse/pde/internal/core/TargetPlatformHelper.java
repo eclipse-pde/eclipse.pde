@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2022 IBM Corporation and others.
+ * Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,7 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -45,8 +44,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -354,14 +351,11 @@ public class TargetPlatformHelper {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Dictionary<String, String>[] getPlatformProperties(String[] profiles, MinimalState state) {
-		if (profiles == null || profiles.length == 0) {
-			return new Dictionary[] { getTargetEnvironment(state) };
-		}
-
+	public static Dictionary<String, String>[] getPlatformProperties(String[] profilesArr, MinimalState state) {
+		List<String> profiles = profilesArr != null ? Arrays.asList(profilesArr) : List.of();
 		// add java profiles for those EE's that have a .profile file in the
 		// current system bundle
-		List<Dictionary<String, String>> result = new ArrayList<>(profiles.length);
+		List<Dictionary<String, String>> result = new ArrayList<>(profiles.size());
 		for (String profile : profiles) {
 			IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(profile);
 			if (environment != null) {
@@ -381,10 +375,7 @@ public class TargetPlatformHelper {
 
 	public static void addEnvironmentProperties(Dictionary<String, String> properties,
 			IExecutionEnvironment environment, Properties profileProps) {
-		String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
-		if (systemPackages == null) { // java 10 and beyond
-			systemPackages = querySystemPackages(environment);
-		}
+		String systemPackages = getSystemPackages(environment, profileProps);
 		if (systemPackages != null) {
 			properties.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
 		}
@@ -396,54 +387,8 @@ public class TargetPlatformHelper {
 		}
 	}
 
-	@SuppressWarnings("restriction")
-	public static String querySystemPackages(IExecutionEnvironment environment) {
-		IVMInstall vm = bestVmInstallFor(environment);
-		if (vm == null || !JavaRuntime.isModularJava(vm)) {
-			return null;
-		}
-		String release = environment.getProfileProperties().getProperty(JavaCore.COMPILER_COMPLIANCE);
-		try {
-			Collection<String> packages = new TreeSet<>();
-			String jrtPath = "lib/" + org.eclipse.jdt.internal.compiler.util.JRTUtil.JRT_FS_JAR; //$NON-NLS-1$
-			String path = new File(vm.getInstallLocation(), jrtPath).toString(); // $NON-NLS-1$
-			var jrt = org.eclipse.jdt.internal.core.builder.ClasspathLocation.forJrtSystem(path, null, null, release);
-			for (String moduleName : jrt.getModuleNames(null)) {
-				var module = jrt.getModule(moduleName);
-				if (module == null) {
-					continue;
-				}
-				for (var packageExport : module.exports()) {
-					if (!packageExport.isQualified()) {
-						packages.add(new String(packageExport.name()));
-					}
-				}
-			}
-			return String.join(",", packages); //$NON-NLS-1$
-		} catch (CoreException e) {
-			PDECore.logException(e, "failed to read system packages for " + environment); //$NON-NLS-1$
-		}
-		return null;
-	}
-
-	private static IVMInstall bestVmInstallFor(IExecutionEnvironment environment) {
-		if (environment == null) {
-			return null;
-		}
-		IVMInstall defaultVM = environment.getDefaultVM();
-		if (defaultVM != null) {
-			return defaultVM;
-		}
-		IVMInstall[] compatible = environment.getCompatibleVMs();
-		if (compatible.length == 0) {
-			return null;
-		}
-		for (IVMInstall vm : compatible) {
-			if (environment.isStrictlyCompatible(vm)) {
-				return vm;
-			}
-		}
-		return compatible[0];
+	public static String getSystemPackages(IExecutionEnvironment environment, Properties profileProperties) {
+		return org.eclipse.pde.internal.build.site.PDEState.getSystemPackages(environment, profileProperties);
 	}
 
 	public static String[] getKnownExecutionEnvironments() {

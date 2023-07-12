@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2021 Julian Honnen
+ *  Copyright (c) 2021, 2023 Julian Honnen
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.IBaseModel;
-import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
@@ -52,7 +51,7 @@ public class BundleErrorReporterTest {
 	@Test
 	public void testErrorOnUnresolvedJrePackage() throws Exception {
 		IProject project = ProjectUtils.createPluginProject(manifest.getProject().getName(),
-				JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-11")).getProject();
+				JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-1.8")).getProject();
 
 		IFile manifest = project.getFile("META-INF/MANIFEST.MF");
 		PDEModelUtility.modifyModel(new ModelModification(manifest) {
@@ -60,7 +59,7 @@ public class BundleErrorReporterTest {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				IBundlePluginModelBase modelBase = (IBundlePluginModelBase) model;
 				IBundle bundle = modelBase.getBundleModel().getBundle();
-				bundle.setHeader(Constants.IMPORT_PACKAGE, "javax.xml.ws");
+				bundle.setHeader(Constants.IMPORT_PACKAGE, "java.lang.module");
 			}
 		}, null);
 
@@ -72,7 +71,7 @@ public class BundleErrorReporterTest {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				IBundlePluginModelBase modelBase = (IBundlePluginModelBase) model;
 				IBundle bundle = modelBase.getBundleModel().getBundle();
-				bundle.setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, "JavaSE-1.8");
+				bundle.setHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, "JavaSE-11");
 			}
 		};
 		PDEModelUtility.modifyModel(modification, null);
@@ -82,9 +81,8 @@ public class BundleErrorReporterTest {
 
 	private List<IMarker> findUnresolvedImportsMarkers() throws CoreException {
 		manifest.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
-		return Arrays.stream(manifest.findMarkers(PDEMarkerFactory.MARKER_ID, false, 0)).filter(
-				m -> m.getAttribute(PDEMarkerFactory.compilerKey, "").equals(CompilerFlags.P_UNRESOLVED_IMPORTS))
-				.toList();
+		return Arrays.stream(manifest.findMarkers(PDEMarkerFactory.MARKER_ID, false, 0))
+				.filter(m -> m.getAttribute(IMarker.SEVERITY, -1) == IMarker.SEVERITY_ERROR).toList();
 	}
 
 	@After

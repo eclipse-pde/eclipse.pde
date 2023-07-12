@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2021 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
+ *     Hannes Wellmann - Enhance computation of system-package provided by a ExecutionEnvironment
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -22,15 +23,26 @@ import java.util.Dictionary;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.PropertyChangeEvent;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
@@ -242,6 +254,88 @@ public class MinimalState {
 		return false;
 	}
 
+	static {
+		// Listen to changes in the available VMInstalls and
+		// ExecutionEnvironment defaults
+		@SuppressWarnings("restriction")
+		String nodeQualifier = org.eclipse.jdt.internal.launching.LaunchingPlugin.ID_PLUGIN;
+		IEclipsePreferences launchingNode = InstanceScope.INSTANCE.getNode(nodeQualifier);
+		launchingNode.addPreferenceChangeListener(e -> {
+			if (e.getKey().equals("org.eclipse.jdt.launching.PREF_DEFAULT_ENVIRONMENTS_XML")) { //$NON-NLS-1$
+				Object oldValue = e.getOldValue() == null ? "" : e.getOldValue(); //$NON-NLS-1$
+				Object newValue = e.getNewValue() == null ? "" : e.getNewValue(); //$NON-NLS-1$
+				if (!oldValue.equals(newValue)) {
+					triggerSystemPackagesReload();
+				}
+			}
+		});
+		JavaRuntime.addVMInstallChangedListener(new IVMInstallChangedListener() {
+			@Override
+			public void vmRemoved(IVMInstall vm) {
+				triggerSystemPackagesReload();
+			}
+
+			@Override
+			public void vmChanged(PropertyChangeEvent event) {
+				triggerSystemPackagesReload();
+			}
+
+			@Override
+			public void vmAdded(IVMInstall vm) {
+				triggerSystemPackagesReload();
+			}
+
+			@Override
+			public void defaultVMInstallChanged(IVMInstall previous, IVMInstall current) {
+				triggerSystemPackagesReload();
+			}
+		});
+	}
+	private static final String PDE_MANIFEST_BUILDER = "org.eclipse.pde.ManifestBuilder"; //$NON-NLS-1$
+
+	public static void triggerSystemPackagesReload() {
+		final String jobFamily = "pde.internal.ReresolveStateAfterVMorEEchanges"; //$NON-NLS-1$
+		Job.getJobManager().cancel(jobFamily);
+		WorkspaceJob job = new WorkspaceJob("Re-resolve Target state after VM-Install or EE change") { //$NON-NLS-1$
+			@Override
+			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+				// The list of EEs has changed: re-read all available
+				// VM-installs/EEs and re-resolve state with new properties
+				return reloadSystemPackagesIntoState();
+			}
+
+			@Override
+			public boolean belongsTo(Object family) {
+				return jobFamily.equals(family);
+			}
+		};
+		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
+		job.schedule(200); // Small delay to bulk-handle multiple changes
+	}
+
+	// Visible for testing only
+	public static IStatus reloadSystemPackagesIntoState() {
+		MinimalState state = PDECore.getDefault().getModelManager().getState();
+		if (state.fNoProfile) {
+			return Status.OK_STATUS;
+		}
+		state.fEEListChanged = true;
+		StateDelta delta = state.internalResolveState(true);
+		if (delta.getChanges().length == 0) {
+			return Status.OK_STATUS;
+		}
+		// Perform PDE-Manifest build, to re-validate all Manifests
+		MultiStatus status = new MultiStatus(MinimalState.class, 0, "Reload of JRE system-packages encountered issues"); //$NON-NLS-1$
+		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+			try {
+				project.build(IncrementalProjectBuilder.FULL_BUILD, PDE_MANIFEST_BUILDER, null, null);
+			} catch (CoreException e) { // ignore
+				status.add(e.getStatus());
+			}
+		}
+		return status;
+	}
+
 	public void removeBundleDescription(BundleDescription description) {
 		if (description != null) {
 			fState.removeBundle(description);
@@ -269,7 +363,7 @@ public class MinimalState {
 		if (!fNoProfile) {
 			fExecutionEnvironments = knownExecutionEnviroments;
 		}
-		fEEListChanged = true; // alway indicate the list has changed
+		fEEListChanged = true; // always indicate the list has changed
 	}
 
 	public void addBundleDescription(BundleDescription toAdd) {
