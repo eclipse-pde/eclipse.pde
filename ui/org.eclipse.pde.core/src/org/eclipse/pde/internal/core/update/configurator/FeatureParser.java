@@ -22,7 +22,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.util.XmlParserFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -46,7 +46,7 @@ class FeatureParser extends DefaultHandler {
 	public FeatureParser() {
 		super();
 		try {
-			this.parser = XmlParserFactory.createSAXParserWithErrorOnDOCTYPE(true);
+			this.parser = PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE(true);
 		} catch (ParserConfigurationException | SAXException e) {
 			System.out.println(e);
 		}

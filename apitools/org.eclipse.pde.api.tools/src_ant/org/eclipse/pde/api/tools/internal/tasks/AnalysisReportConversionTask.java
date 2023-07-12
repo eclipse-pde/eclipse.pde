@@ -34,7 +34,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.internal.core.util.XmlParserFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -431,7 +431,7 @@ public class AnalysisReportConversionTask extends Task {
 		}
 		SAXParser parser = null;
 		try {
-			parser = XmlParserFactory.createSAXParserWithErrorOnDOCTYPE();
+			parser = PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
 		} catch (ParserConfigurationException | SAXException e) {
 			e.printStackTrace();
 		}

@@ -45,7 +45,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.views.APIToolingView;
-import org.eclipse.pde.internal.core.util.XmlTransformerFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 
 /**
  * Drop-down action to select the active session.
@@ -155,7 +155,7 @@ public class ExportSessionAction extends Action {
 							}
 							writer = new BufferedWriter(new FileWriter(reportFile));
 							Result result = new StreamResult(writer);
-							TransformerFactory f = XmlTransformerFactory.createTransformerFactoryWithErrorOnDOCTYPE();
+							TransformerFactory f = PDEXmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE();
 							Transformer trans = f.newTransformer(xsltSource);
 							trans.transform(xmlSource, result);
 						} catch (TransformerException | IOException e) {

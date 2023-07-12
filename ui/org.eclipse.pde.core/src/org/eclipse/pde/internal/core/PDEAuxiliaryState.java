@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -33,7 +32,7 @@ import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.w3c.dom.Document;
@@ -203,8 +202,7 @@ public class PDEAuxiliaryState {
 	 */
 	protected void savePluginInfo(File dir) {
 		try {
-			DocumentBuilderFactory factory = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
-			Document doc = factory.newDocumentBuilder().newDocument();
+			Document doc = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE().newDocument();
 			Element root = doc.createElement(ELEMENT_ROOT);
 
 			Iterator<String> iter = fPluginInfos.keySet().iterator();
@@ -263,9 +261,7 @@ public class PDEAuxiliaryState {
 		File file = new File(dir, CACHE_EXTENSION);
 		if (file.exists() && file.isFile()) {
 			try {
-				DocumentBuilderFactory factory = XmlDocumentBuilderFactory
-						.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
-				DocumentBuilder documentBuilder = factory.newDocumentBuilder();
+				DocumentBuilder documentBuilder = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 				documentBuilder.setErrorHandler(new DefaultHandler());
 				Document doc = documentBuilder.parse(file);
 				Element root = doc.getDocumentElement();
@@ -304,8 +300,7 @@ public class PDEAuxiliaryState {
 	 */
 	public static void writePluginInfo(IPluginModelBase[] models, File destination) {
 		try {
-			DocumentBuilder builder = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE()
-					.newDocumentBuilder();
+			DocumentBuilder builder = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 			Document doc = builder.newDocument();
 
 			Element root = doc.createElement(ELEMENT_ROOT);

@@ -65,8 +65,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
 import org.eclipse.pde.api.tools.internal.provisional.search.IMetadata;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.internal.core.util.XmlParserFactory;
-import org.eclipse.pde.internal.core.util.XmlTransformerFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.osgi.framework.Version;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -742,7 +741,7 @@ public class UseReportConverter extends HTMLConvertor {
 	SAXParser getParser() throws Exception {
 		if (this.parser == null) {
 			try {
-				this.parser = XmlParserFactory.createSAXParserWithErrorOnDOCTYPE();
+				this.parser = PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
 			} catch (ParserConfigurationException pce) {
 				throw new Exception(SearchMessages.UseReportConverter_pce_error_getting_parser, pce);
 			} catch (SAXException se) {
@@ -820,7 +819,7 @@ public class UseReportConverter extends HTMLConvertor {
 	protected void applyXSLT(Source xslt, File xmlfile, File htmlfile) throws TransformerException {
 		Source xml = new StreamSource(xmlfile);
 		Result html = new StreamResult(htmlfile);
-		TransformerFactory factory = XmlTransformerFactory.createTransformerFactoryWithErrorOnDOCTYPE();
+		TransformerFactory factory = PDEXmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE();
 		Transformer former = factory.newTransformer(xslt);
 		former.transform(xml, html);
 	}

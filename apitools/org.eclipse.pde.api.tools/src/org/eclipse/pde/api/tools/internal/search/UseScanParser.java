@@ -35,7 +35,7 @@ import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.internal.core.util.XmlParserFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -308,7 +308,7 @@ public class UseScanParser {
 	 */
 	SAXParser getParser() throws Exception {
 		try {
-			return XmlParserFactory.createSAXParserWithErrorOnDOCTYPE();
+			return PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
 
 		} catch (ParserConfigurationException pce) {
 			throw new Exception(SearchMessages.UseReportConverter_pce_error_getting_parser, pce);

@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.pde.internal.core.XMLDefaultHandler;
 import org.eclipse.pde.internal.core.util.SAXParserWrapper;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
-import org.eclipse.pde.ui.tests.util.DOMParserWrapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
@@ -75,23 +74,6 @@ public class ParserWrapperTestCase {
 
 	}
 
-	@Test
-	public void testDOMParserWrapperConcurrency() throws Exception {
-
-		ParserThread[] threads = new ParserThread[FTHREADCOUNT];
-
-		for (int x = 0; x < FTHREADCOUNT; x++) {
-			threads[x] = new ParserThread(FDOM, fXMLFile);
-			threads[x].start();
-		}
-
-		for (int x = 0; x < FTHREADCOUNT; x++) {
-			threads[x].join();
-			assertFalse(threads[x].getError());
-		}
-
-	}
-
 	public static class ParserThread extends Thread {
 
 		protected final int FITERATIONS = 100;
@@ -110,10 +92,7 @@ public class ParserWrapperTestCase {
 
 			if (fParserType == ParserWrapperTestCase.FSAX) {
 				runSAX();
-			} else {
-				runDOM();
 			}
-
 		}
 
 		public void runSAX() {
@@ -136,23 +115,6 @@ public class ParserWrapperTestCase {
 
 		}
 
-		public void runDOM() {
-
-			for (int x = 0; x < FITERATIONS; x++) {
-
-				try (DOMParserWrapper parser = new DOMParserWrapper()) {
-					parser.parse(fParserXMLFile);
-				} catch (ParserConfigurationException | SAXException | FactoryConfigurationError | IOException e) {
-					e.printStackTrace();
-					fError = true;
-				}
-				// If an error was encountered abort the thread
-				// Any type of exception experienced is bad
-				if (fError)
-					return;
-
-			}
-		}
 
 		public boolean getError() {
 			return fError;

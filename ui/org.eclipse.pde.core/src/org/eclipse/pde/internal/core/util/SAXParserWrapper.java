@@ -36,13 +36,13 @@ public class SAXParserWrapper {
 
 	public static void parse(File f, DefaultHandler dh)
 			throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
-		SAXParser fParser = XmlParserFactory.createSAXParserWithErrorOnDOCTYPE();
+		SAXParser fParser = PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
 		fParser.parse(f, dh);
 	}
 
 	public static void parse(InputStream is, DefaultHandler dh)
 			throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
-		SAXParser fParser = XmlParserFactory.createSAXParserWithErrorOnDOCTYPE();
+		SAXParser fParser = PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
 		fParser.parse(is, dh);
 	}
 

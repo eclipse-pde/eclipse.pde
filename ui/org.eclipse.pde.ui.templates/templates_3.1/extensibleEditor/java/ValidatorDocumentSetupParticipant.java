@@ -4,6 +4,7 @@ import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipantExtension;
@@ -40,7 +41,14 @@ public class ValidatorDocumentSetupParticipant implements IDocumentSetupParticip
 				this.marker = null;
 			}
 			try (StringReader reader = new StringReader(event.getDocument().get());) {
-				DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				// completely disable DOCTYPE declaration:
+				try {
+					factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true); //$NON-NLS-1$
+				} catch (ParserConfigurationException e) {
+					throw new RuntimeException(e.getMessage(), e);
+				}
+				DocumentBuilder documentBuilder = factory.newDocumentBuilder();
 				documentBuilder.parse(new InputSource(reader));
 			} catch (Exception ex) {
 				try {

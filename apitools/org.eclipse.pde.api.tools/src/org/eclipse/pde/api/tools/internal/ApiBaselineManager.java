@@ -63,7 +63,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ModelEntry;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.DependencyManager;
-import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -447,7 +447,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		DocumentBuilder parser = null;
 		IApiComponent[] restored = null;
 		try {
-			parser = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE().newDocumentBuilder();
+			parser = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
 		} catch (ParserConfigurationException | FactoryConfigurationError e) {
 			abort("Error restoring API baseline", e); //$NON-NLS-1$

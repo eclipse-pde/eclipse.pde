@@ -46,7 +46,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.internal.core.util.XmlParserFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.xml.sax.Attributes;
@@ -460,7 +460,7 @@ public class APIFileGenerator {
 	private boolean containsAPIToolsNature(String pluginXMLContents) {
 		SAXParser saxParser = null;
 		try {
-			saxParser = XmlParserFactory.createSAXParserIgnoringDOCTYPE();
+			saxParser = PDEXmlProcessorFactory.createSAXParserIgnoringDOCTYPE();
 		} catch (ParserConfigurationException | SAXException e) {
 			// ignore
 		}

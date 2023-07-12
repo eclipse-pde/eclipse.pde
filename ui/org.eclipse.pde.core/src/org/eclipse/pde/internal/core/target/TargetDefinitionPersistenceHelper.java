@@ -37,8 +37,7 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
-import org.eclipse.pde.internal.core.util.XmlTransformerFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -124,7 +123,7 @@ public class TargetDefinitionPersistenceHelper {
 			return;
 		}
 		StreamResult outputTarget = new StreamResult(output);
-		TransformerFactory factory = XmlTransformerFactory.createTransformerFactoryWithErrorOnDOCTYPE();
+		TransformerFactory factory = PDEXmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE();
 		Transformer transformer = factory.newTransformer();
 		transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
@@ -153,8 +152,7 @@ public class TargetDefinitionPersistenceHelper {
 	 */
 	public static void initFromXML(ITargetDefinition definition, InputStream input)
 			throws CoreException, ParserConfigurationException, SAXException, IOException {
-		DocumentBuilder parser = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE()
-				.newDocumentBuilder();
+		DocumentBuilder parser = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 		parser.setErrorHandler(new DefaultHandler());
 		Document doc = parser.parse(new InputSource(input));
 

@@ -77,7 +77,7 @@ import org.eclipse.pde.api.tools.internal.util.SourceDefaultHandler;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.internal.core.TargetWeaver;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
-import org.eclipse.pde.internal.core.util.XmlParserFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
@@ -1069,7 +1069,7 @@ public class BundleComponent extends Component {
 	private static boolean containsSourceExtensionPoint(String pluginXMLContents) {
 		SAXParser saxParser = null;
 		try {
-			saxParser = XmlParserFactory.createSAXParserWithErrorOnDOCTYPE();
+			saxParser = PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
 		} catch (ParserConfigurationException | SAXException e) {
 			// ignore
 		}

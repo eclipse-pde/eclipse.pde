@@ -16,10 +16,9 @@ package org.eclipse.pde.internal.core;
 import java.io.StringReader;
 import java.util.Stack;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
@@ -75,9 +74,8 @@ public class XMLDefaultHandler extends DefaultHandler {
 
 	@Override
 	public void startDocument() throws SAXException {
-		DocumentBuilderFactory factory = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 		try {
-			fDocument = factory.newDocumentBuilder().newDocument();
+			fDocument = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE().newDocument();
 		} catch (ParserConfigurationException e) {
 		}
 	}

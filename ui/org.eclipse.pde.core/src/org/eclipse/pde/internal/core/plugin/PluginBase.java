@@ -35,7 +35,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
-import org.eclipse.pde.internal.core.util.XmlParserFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.osgi.framework.Version;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -404,7 +404,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	}
 
 	protected SAXParser getSaxParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError {
-		return XmlParserFactory.createSAXParserWithErrorOnDOCTYPE();
+		return PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE();
 
 	}
 
