@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.ui.wizards.exports;
 
 import java.io.File;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -29,7 +28,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
 import org.eclipse.pde.internal.core.exports.FeatureExportOperation;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.build.RuntimeInstallJob;
@@ -134,8 +133,7 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 	@Override
 	protected Document generateAntTask() {
 		try {
-			DocumentBuilderFactory factory = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
-			Document doc = factory.newDocumentBuilder().newDocument();
+			Document doc = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE().newDocument();
 			Element root = doc.createElement("project"); //$NON-NLS-1$
 			root.setAttribute("name", "build"); //$NON-NLS-1$ //$NON-NLS-2$
 			root.setAttribute("default", "feature_export"); //$NON-NLS-1$ //$NON-NLS-2$

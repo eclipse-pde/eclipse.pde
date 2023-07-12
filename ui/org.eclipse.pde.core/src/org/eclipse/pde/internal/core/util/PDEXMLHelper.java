@@ -13,15 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
-import java.lang.ref.SoftReference;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * PDEXMLHelper
@@ -30,33 +22,13 @@ import javax.xml.parsers.ParserConfigurationException;
 public class PDEXMLHelper {
 
 	protected static PDEXMLHelper fPinstance;
-	protected static DocumentBuilderFactory fDOMFactory;
-	protected static List<SoftReference<DocumentBuilder>> fDOMParserQueue;
 	protected static int fSAXPoolLimit;
 	protected static int fDOMPoolLimit;
 	protected static final int FMAXPOOLLIMIT = 1;
 
 	protected PDEXMLHelper() throws FactoryConfigurationError {
-		fDOMFactory = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
-		fDOMParserQueue = Collections.synchronizedList(new LinkedList<>());
 		fSAXPoolLimit = FMAXPOOLLIMIT;
 		fDOMPoolLimit = FMAXPOOLLIMIT;
-	}
-
-	public synchronized DocumentBuilder getDefaultDOMParser() throws ParserConfigurationException {
-
-		DocumentBuilder parser = null;
-		if (fDOMParserQueue.isEmpty()) {
-			parser = fDOMFactory.newDocumentBuilder();
-		} else {
-			SoftReference<DocumentBuilder> reference = fDOMParserQueue.remove(0);
-			if (reference.get() != null) {
-				parser = reference.get();
-			} else {
-				parser = fDOMFactory.newDocumentBuilder();
-			}
-		}
-		return parser;
 	}
 
 	public static PDEXMLHelper Instance() throws FactoryConfigurationError {
@@ -64,13 +36,6 @@ public class PDEXMLHelper {
 			fPinstance = new PDEXMLHelper();
 		}
 		return fPinstance;
-	}
-
-	public synchronized void recycleDOMParser(DocumentBuilder parser) {
-		if (fDOMParserQueue.size() < fDOMPoolLimit) {
-			SoftReference<DocumentBuilder> reference = new SoftReference<>(parser);
-			fDOMParserQueue.add(reference);
-		}
 	}
 
 	public static String getWritableString(String source) {

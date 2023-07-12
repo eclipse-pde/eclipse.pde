@@ -39,7 +39,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter;
 import org.eclipse.pde.api.tools.internal.provisional.search.IMetadata;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.DefaultHandler;
@@ -69,7 +69,7 @@ public class XmlSearchReporter implements IApiSearchReporter {
 		fLocation = location;
 		this.debug = debug;
 		try {
-			parser = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE().newDocumentBuilder();
+			parser = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
 		} catch (FactoryConfigurationError | ParserConfigurationException pce) {
 			ApiPlugin.log(pce);

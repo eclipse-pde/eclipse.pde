@@ -68,8 +68,7 @@ import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.core.target.TargetFeature;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
-import org.eclipse.pde.internal.core.util.XmlTransformerFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -701,8 +700,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		Element containerElement;
 		Document document;
 		try {
-			DocumentBuilder docBuilder = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE()
-					.newDocumentBuilder();
+			DocumentBuilder docBuilder = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 			document = docBuilder.newDocument();
 		} catch (Exception e) {
 			PDECore.log(e);
@@ -735,7 +733,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		try {
 			document.appendChild(containerElement);
 			StreamResult result = new StreamResult(new StringWriter());
-			TransformerFactory f = XmlTransformerFactory.createTransformerFactoryWithErrorOnDOCTYPE();
+			TransformerFactory f = PDEXmlProcessorFactory.createTransformerFactoryWithErrorOnDOCTYPE();
 			Transformer transformer = f.newTransformer();
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes"); //$NON-NLS-1$
 			transformer.transform(new DOMSource(document), result);

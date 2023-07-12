@@ -34,7 +34,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
@@ -63,7 +62,7 @@ import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -137,9 +136,7 @@ public class TargetDefinition implements ITargetDefinition {
 
 	private static Document createNewDocument() {
 		try {
-			DocumentBuilderFactory dfactory = XmlDocumentBuilderFactory
-					.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
-			DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
+			DocumentBuilder docBuilder = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 			Document doc = docBuilder.newDocument();
 			ProcessingInstruction instruction = doc.createProcessingInstruction(
 					TargetDefinitionPersistenceHelper.PDE_INSTRUCTION,
@@ -1173,8 +1170,7 @@ public class TargetDefinition implements ITargetDefinition {
 		List<Element> oldIUContainers = new ArrayList<>();
 		List<Element> oldGenericContainers = new ArrayList<>();
 
-		DocumentBuilderFactory dfactory = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
-		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
+		DocumentBuilder docBuilder = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE();
 		for (ITargetLocation targetLocation : targetLocations) {
 			String type = targetLocation.getType();
 			if (targetLocation instanceof DirectoryBundleContainer) {

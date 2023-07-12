@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -39,7 +38,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
-import org.eclipse.pde.internal.core.util.XmlDocumentBuilderFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -202,9 +201,8 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 
 	@Override
 	public void startDocument() throws SAXException {
-		DocumentBuilderFactory factory = XmlDocumentBuilderFactory.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 		try {
-			fXMLDocument = factory.newDocumentBuilder().newDocument();
+			fXMLDocument = PDEXmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE().newDocument();
 		} catch (ParserConfigurationException e) {
 		}
 	}

@@ -35,7 +35,7 @@ import org.eclipse.pde.core.plugin.IPluginObject;
 import org.eclipse.pde.core.plugin.ISharedPluginModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.util.XmlParserFactory;
+import org.eclipse.pde.internal.core.util.PDEXmlProcessorFactory;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
@@ -199,7 +199,7 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 					try {
 						InputStream stream = new BufferedInputStream(((IFile) res).getContents(true));
 						PluginHandler handler = new PluginHandler(true);
-						XmlParserFactory.createSAXParserWithErrorOnDOCTYPE().parse(stream, handler);
+						PDEXmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE().parse(stream, handler);
 						return handler.getSchemaVersion();
 					} catch (CoreException | SAXException | IOException | ParserConfigurationException e) {
 					}
