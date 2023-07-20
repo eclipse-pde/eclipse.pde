@@ -16,6 +16,7 @@ package org.eclipse.pde.internal.genericeditor.target.extension.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -54,11 +55,12 @@ public class Node {
 	}
 
 	public List<Node> getChildNodes() {
-		return childNodes;
+		List<Node> nodes = childNodes;
+		return nodes == null ? new ArrayList<>() : nodes;
 	}
 
 	public List<Node> getChildNodesByTag(String nodeTag) {
-		return childNodes.stream().filter(n -> n.getNodeTag().equals(nodeTag)).collect(Collectors.toList());
+		return childNodes.stream().filter(n -> Objects.equals(n.getNodeTag(), nodeTag)).collect(Collectors.toList());
 	}
 
 	public void addChildNode(Node child) {
