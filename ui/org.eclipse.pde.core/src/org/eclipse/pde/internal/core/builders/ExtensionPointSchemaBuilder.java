@@ -138,7 +138,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 
 		SchemaErrorReporter reporter = new SchemaErrorReporter(file);
 		DefaultSAXParser.parse(file, reporter);
-		reporter.validate(monitor);
+		reporter.validateContent(monitor);
 
 		try (StringWriter swriter = new StringWriter(); PrintWriter writer = new PrintWriter(swriter)) {
 			boolean generateDoc = CompilerFlags.getBoolean(file.getProject(), CompilerFlags.S_CREATE_DOCS);

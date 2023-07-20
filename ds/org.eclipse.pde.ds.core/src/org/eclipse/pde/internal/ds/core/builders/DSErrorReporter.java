@@ -27,6 +27,8 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
+import org.eclipse.pde.internal.core.builders.XMLErrorReporter;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ds.core.Activator;
@@ -56,7 +58,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 	}
 
 	@Override
-	public void validateContent(IProgressMonitor monitor) {
+	public void validate(IProgressMonitor monitor) {
 
 		try {
 			Document textDocument = CoreUtility.getTextDocument(fFile
@@ -93,7 +95,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 		String message = NLS.bind(Messages.DSErrorReporter_attrValue, attr
 				.getValue(), attr.getName());
 		report(message, getLine(element, attr.getName()), ERROR,
-				DSMarkerFactory.CAT_OTHER);
+				PDEMarkerFactory.CAT_OTHER);
 	}
 
 	private void validateReferenceElements(IDSReference[] references) {
@@ -147,7 +149,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 				.getAttribute(IDSConstants.ATTRIBUTE_REFERENCE_NAME);
 		String message = NLS.bind(Messages.DSErrorReporter_invalidTarget, name,
 				target);
-		report(message, getLine(element), ERROR, DSMarkerFactory.CAT_OTHER);
+		report(message, getLine(element), ERROR, PDEMarkerFactory.CAT_OTHER);
 	}
 
 	private void validateReferenceElementNames(Hashtable<String, String> referencedNames,
@@ -171,7 +173,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 				Messages.DSErrorReporter_duplicateReferenceName, name);
 		report(message,
 				getLine(element, IDSConstants.ATTRIBUTE_REFERENCE_NAME), ERROR,
-				DSMarkerFactory.CAT_OTHER);
+				PDEMarkerFactory.CAT_OTHER);
 	}
 
 	private void validateReferencePolicy(Element element) {
@@ -203,7 +205,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 		Attr attr = element
 				.getAttributeNode(IDSConstants.ATTRIBUTE_REFERENCE_POLICY);
 		report(message, getLine(element, attr.getName()), ERROR,
-				DSMarkerFactory.CAT_OTHER);
+				PDEMarkerFactory.CAT_OTHER);
 	}
 
 	private void validateReferenceCardinality(Element element) {
@@ -242,7 +244,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 		if (attr == null || attr.getValue() == null || attr.getName() == null)
 			return;
 		report(message, getLine(element, attr.getName()), ERROR,
-				DSMarkerFactory.CAT_OTHER);
+				PDEMarkerFactory.CAT_OTHER);
 	}
 
 	private void validatePropertiesElements(IDSProperties[] propertiesElements) {
@@ -261,7 +263,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 .bind(
 							Messages.DSErrorReporter_cannotFindProperties,
 							properties.getEntry()), getLine(element), WARNING,
-							DSMarkerFactory.CAT_OTHER);
+							PDEMarkerFactory.CAT_OTHER);
 				}
 			}
 
@@ -368,7 +370,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 		String message = NLS.bind(
 				Messages.DSErrorReporter_propertyTypeCastException,
 				new String[] { value, type });
-		report(message, getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
+		report(message, getLine(element), WARNING, PDEMarkerFactory.CAT_OTHER);
 	}
 
 	/**
@@ -409,7 +411,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 	private void reportEmptyPropertyValue(Element element, String propertyName) {
 		String message = NLS.bind(Messages.DSErrorReporter_emptyPropertyValue,
 				propertyName);
-		report(message, getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
+		report(message, getLine(element), WARNING, PDEMarkerFactory.CAT_OTHER);
 
 	}
 
@@ -418,7 +420,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 		String message = NLS.bind(
 				Messages.DSErrorReporter_singleAndMultipleAttrValue,
 				propertyName, value);
-		report(message, getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
+		report(message, getLine(element), WARNING, PDEMarkerFactory.CAT_OTHER);
 	}
 
 	private void validatePropertyTypes(Element element) {
@@ -485,7 +487,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 			String attName, int severity) {
 		String message = NLS.bind(Messages.DSErrorReporter_requiredAttribute,
 				attName, element.getNodeName());
-		report(message, getLine(element), severity, DSMarkerFactory.CAT_OTHER);
+		report(message, getLine(element), severity, PDEMarkerFactory.CAT_OTHER);
 	}
 
 	/**
@@ -507,7 +509,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 		Element element = (Element) elementsByTagName.item(index);
 		report(NLS.bind(Messages.DSErrorReporter_cannotFindJavaType, resource,
 				attributeConstant), getLine(element), WARNING,
-				DSMarkerFactory.CAT_OTHER);
+				PDEMarkerFactory.CAT_OTHER);
 	}
 
 	private void validateComponentElement(IDSComponent component) {
@@ -518,7 +520,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 				report(NLS.bind(Messages.DSErrorReporter_requiredElement,
 						IDSConstants.ELEMENT_IMPLEMENTATION),
 						getLine(getDocumentRoot()), ERROR,
-						DSMarkerFactory.CAT_OTHER);
+						PDEMarkerFactory.CAT_OTHER);
 			}
 
 			// validate boolean values
@@ -556,7 +558,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 					report(
 							Messages.DSErrorReporter_invalidConfigurationPolicyValue,
 							getLine(element), WARNING,
-							DSMarkerFactory.CAT_OTHER);
+							PDEMarkerFactory.CAT_OTHER);
 				}
 			}
 		}
@@ -589,13 +591,13 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 	private void reportInvalidImmediateFactory(Element element) {
 		report(Messages.DSErrorReporter_invalidImmediateValueFactory,
-				getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
+				getLine(element), WARNING, PDEMarkerFactory.CAT_OTHER);
 
 	}
 
 	private void reportInvalidImmediate(Element element) {
 		report(Messages.DSErrorReporter_invalidImmediateValue,
-				getLine(element), WARNING, DSMarkerFactory.CAT_OTHER);
+				getLine(element), WARNING, PDEMarkerFactory.CAT_OTHER);
 	}
 
 	private void validateEmpty(Element element, Attr attr) {
@@ -612,7 +614,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 		String message = NLS.bind(Messages.DSErrorReporter_emptyAttrValue, attr
 				.getName());
 		report(message, getLine(element, attr.getName()), ERROR,
-				DSMarkerFactory.CAT_OTHER);
+				PDEMarkerFactory.CAT_OTHER);
 	}
 
 	private void validateServiceElement(IDSService service) {
@@ -635,7 +637,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 	private void reportEmptyService(Element element) {
 		report(Messages.DSErrorReporter_illegalEmptyService, getLine(element),
-				ERROR, DSMarkerFactory.CAT_OTHER);
+				ERROR, PDEMarkerFactory.CAT_OTHER);
 	}
 
 	private void validateServiceFactory(Element element, IDSService service) {
@@ -658,14 +660,14 @@ public class DSErrorReporter extends XMLErrorReporter {
 
 	private void reportIllegalServiceFactory_Immediate(Element element) {
 		report(Messages.DSErrorReporter_illegalServiceFactory_Immediate,
-				getLine(element), ERROR, DSMarkerFactory.CAT_OTHER);
+				getLine(element), ERROR, PDEMarkerFactory.CAT_OTHER);
 
 
 	}
 
 	private void reportIllegalServiceFactory(Element element) {
 		report(Messages.DSErrorReporter_illegalServiceFactory,
-				getLine(element), ERROR, DSMarkerFactory.CAT_OTHER);
+				getLine(element), ERROR, PDEMarkerFactory.CAT_OTHER);
 	}
 
 	private void validateProvideElement(IDSProvide[] providedServices) {
@@ -702,7 +704,7 @@ public class DSErrorReporter extends XMLErrorReporter {
 			String message = NLS.bind(
 					Messages.DSErrorReporter_duplicatedInterface, interface1);
 			report(message, getLine(element), WARNING,
-					DSMarkerFactory.CAT_OTHER);
+					PDEMarkerFactory.CAT_OTHER);
 		} else {
 			providedInterfaces.put(interface1, interface1);
 		}

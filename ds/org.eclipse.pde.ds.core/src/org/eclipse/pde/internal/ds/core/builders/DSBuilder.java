@@ -33,7 +33,9 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.builders.DefaultSAXParser;
 import org.eclipse.pde.internal.core.builders.PDEBuilderHelper;
+import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.ds.core.Activator;
 import org.eclipse.pde.internal.ds.core.Messages;
 
@@ -130,7 +132,7 @@ public class DSBuilder extends IncrementalProjectBuilder {
 	@Override
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		// bug 426874 - delete markers set and files created
-		getProject().deleteMarkers(DSMarkerFactory.MARKER_ID, true, IResource.DEPTH_INFINITE);
+		getProject().deleteMarkers(PDEMarkerFactory.MARKER_ID, true, IResource.DEPTH_INFINITE);
 	}
 
 
