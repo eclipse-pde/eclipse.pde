@@ -15,9 +15,11 @@
 package org.eclipse.pde.internal.core.builders;
 
 import java.io.StringReader;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.Stack;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -38,6 +40,7 @@ import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMarker;
+import org.eclipse.pde.internal.core.util.PDEXMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -74,7 +77,7 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 
 	private IDocument fTextDocument;
 
-	private Stack<Element> fElementStack;
+	private Deque<Element> fElementStack;
 
 	private Element fRootElement;
 
@@ -100,7 +103,7 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 			manager.disconnect(file.getFullPath(), LocationKind.NORMALIZE, null);
 			fFindReplaceAdapter = new FindReplaceDocumentAdapter(fTextDocument);
 			fOffsetTable = new HashMap<>();
-			fElementStack = new Stack<>();
+			fElementStack = new ArrayDeque<>();
 		} catch (CoreException e) {
 			PDECore.log(e);
 		}
@@ -268,13 +271,9 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 
 	private int getStartOffset(String elementName) throws BadLocationException {
 		int line = fLocator.getLineNumber();
-		int col = fLocator.getColumnNumber();
-		if (col < 0) {
-			col = fTextDocument.getLineLength(line);
-		}
 		String text = fTextDocument.get(fHighestOffset + 1, fTextDocument.getLineOffset(line) - fHighestOffset - 1);
 
-		ArrayList<Position> commentPositions = new ArrayList<>();
+		List<Position> commentPositions = new ArrayList<>();
 		for (int idx = 0; idx < text.length();) {
 			idx = text.indexOf("<!--", idx); //$NON-NLS-1$
 			if (idx == -1) {
@@ -296,8 +295,7 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 				break;
 			}
 			boolean valid = true;
-			for (int i = 0; i < commentPositions.size(); i++) {
-				Position pos = commentPositions.get(i);
+			for (Position pos : commentPositions) {
 				if (pos.includes(idx)) {
 					valid = false;
 					break;
@@ -314,39 +312,12 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 	}
 
 	private int getAttributeOffset(String name, String value, int offset) throws BadLocationException {
-		IRegion nameRegion = fFindReplaceAdapter.find(offset, name + "=\"" + getWritableString(value), true, false, false, false); //$NON-NLS-1$
+		String valueStr = PDEXMLHelper.getWritableAttributeString(value);
+		IRegion nameRegion = fFindReplaceAdapter.find(offset, name + "=\"" + valueStr, true, false, false, false); //$NON-NLS-1$
 		if (nameRegion != null) {
 			return nameRegion.getOffset();
 		}
 		return -1;
-	}
-
-	private String getWritableString(String source) {
-		StringBuilder buf = new StringBuilder();
-		for (int i = 0; i < source.length(); i++) {
-			char c = source.charAt(i);
-			switch (c) {
-				case '&' :
-					buf.append("&amp;"); //$NON-NLS-1$
-					break;
-				case '<' :
-					buf.append("&lt;"); //$NON-NLS-1$
-					break;
-				case '>' :
-					buf.append("&gt;"); //$NON-NLS-1$
-					break;
-				case '\'' :
-					buf.append("&apos;"); //$NON-NLS-1$
-					break;
-				case '\"' :
-					buf.append("&quot;"); //$NON-NLS-1$
-					break;
-				default :
-					buf.append(c);
-					break;
-			}
-		}
-		return buf.toString();
 	}
 
 	/**
