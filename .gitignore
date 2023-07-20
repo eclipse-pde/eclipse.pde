@@ -8,6 +8,7 @@ heapdump.*
 core.*
 Snap.*
 /.project
+*.class
 
 # maven
 /*/*/target/
