@@ -137,6 +137,8 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				return new IMarkerResolution[] {new NoLineTerminationResolution(AbstractPDEMarkerResolution.REMOVE_TYPE, marker)};
 			case PDEMarkerFactory.M_R4_SYNTAX_IN_R3_BUNDLE :
 				return new IMarkerResolution[] {new AddBundleManifestVersionResolution(marker)};
+			case PDEMarkerFactory.M_NO_MANDATORY_ATTR_IMPORT_PACKAGE:
+				return new IMarkerResolution[] { new AddMandatoryAttributeImportPackageResolution(marker) };
 		case PDEMarkerFactory.M_SERVICECOMPONENT_MISSING_LAZY:
 			return new IMarkerResolution[] {
 					new AddActivationPolicyResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker) };

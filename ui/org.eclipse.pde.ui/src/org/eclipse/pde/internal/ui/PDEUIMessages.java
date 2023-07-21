@@ -2609,6 +2609,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String RemoveImportPkgResolution_label;
 
+	public static String AddMandatoryAttrResolution_label;
+
+	public static String AddMandatoryAttrResolution_description;
+
 	public static String NoLineTerminationResolutionCreate_description;
 
 	public static String NoLineTerminationResolutionCreate_label;

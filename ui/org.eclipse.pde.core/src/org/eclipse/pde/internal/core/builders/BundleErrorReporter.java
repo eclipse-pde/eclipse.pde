@@ -1223,7 +1223,39 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 							addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,CompilerFlags.P_UNRESOLVED_IMPORTS);
 							return;
 						}
-					} else {
+
+						Map<String, Object> exportAttributes = export.getAttributes();
+						Map<String, Object> exportDirectives = export.getDirectives();
+						if (exportDirectives != null) {
+							if (exportDirectives.containsKey(Constants.RESOLUTION_MANDATORY)) {
+								Map<String, Object> importAttributes = importSpec.getAttributes();
+								String[] mandatories = (String[]) exportDirectives.get(Constants.RESOLUTION_MANDATORY);
+								for (String mandatory : mandatories) {
+									if (importAttributes == null || !importAttributes.containsKey(mandatory)
+											|| importAttributes.get(mandatory).toString() != exportAttributes
+													.get(mandatory).toString()) {
+									VirtualMarker marker = report(
+											NLS.bind(PDECoreMessages.BundleErrorReporter_MissingMandatoryDirective,
+													name),
+											getPackageLine(header, element), severity,
+											PDEMarkerFactory.M_NO_MANDATORY_ATTR_IMPORT_PACKAGE,
+											PDEMarkerFactory.CAT_FATAL);
+									addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,
+											CompilerFlags.P_UNRESOLVED_IMPORTS);
+
+									if (marker != null) {
+										marker.setAttribute("packageName", name); //$NON-NLS-1$
+										marker.setAttribute("mandatoryattrkey", //$NON-NLS-1$
+												mandatory);
+										marker.setAttribute("mandatoryvalue", //$NON-NLS-1$
+												exportAttributes.get(mandatory));
+									}
+								}
+								}
+							}
+						}
+
+				} else {
 						VirtualMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_unresolvedExporter,new String[] { export.getSupplier().getSymbolicName(), name }),getPackageLine(header, element), severity, PDEMarkerFactory.CAT_OTHER);
 						addMarkerAttribute(marker,PDEMarkerFactory.compilerKey, CompilerFlags.P_UNRESOLVED_IMPORTS);
 						return;
@@ -1235,6 +1267,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						PDEMarkerFactory.CAT_FATAL);
 				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_UNRESOLVED_IMPORTS);
 				if (marker != null) {
+					// marker.setAttribute(PDEMarkerFactory.M_NO_MANDATORY_ATTR_IMPORT_PACKAGE);
 					marker.setAttribute("packageName", name); //$NON-NLS-1$
 					if (optional) {
 						marker.setAttribute("optional", true); //$NON-NLS-1$
