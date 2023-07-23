@@ -249,6 +249,10 @@ public class PDECoreMessages extends NLS {
 
 	public static String ManifestConsistencyChecker_buildPropertiesSubtask;
 
+	public static String AddMandatoryAttrResolution_label;
+
+	public static String AddMandatoryAttrResolution_description;
+
 	public static String BuildErrorReporter_missingEntry;
 	public static String BuildErrorReporter_missingFolder;
 	public static String BuildErrorReporter_emptyEntry;

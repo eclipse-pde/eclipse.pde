@@ -17,12 +17,12 @@ package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageHeader;
 import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
 
 /**
@@ -62,12 +62,12 @@ public class AddMandatoryAttributeImportPackageResolution extends AbstractManife
 
 	@Override
 	public String getDescription() {
-		return PDEUIMessages.AddMandatoryAttrResolution_label;
+		return PDECoreMessages.AddMandatoryAttrResolution_label;
 	}
 
 	@Override
 	public String getLabel() {
-		return PDEUIMessages.AddMandatoryAttrResolution_description;
+		return PDECoreMessages.AddMandatoryAttrResolution_description;
 	}
 
 }
