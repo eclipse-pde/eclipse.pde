@@ -354,6 +354,7 @@ public class TargetLocationsGroup {
 
 		MenuManager menuManager = new MenuManager();
 		menuManager.add(fCopySelectionAction);
+		menuManager.add(new CopyLocationAction(fTreeViewer));
 
 		Menu menu = menuManager.createContextMenu(tree);
 		tree.setMenu(menu);

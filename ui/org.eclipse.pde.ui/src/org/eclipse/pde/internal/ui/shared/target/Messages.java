@@ -71,6 +71,8 @@ public class Messages extends NLS {
 	public static String BundleContainerTable_Btn_Text_Toggle;
 	public static String BundleContainerTable_14;
 	public static String BundleContainerTable_15;
+
+	public static String CopyLocationAction_copyLocation;
 	public static String EditBundleContainerWizard_0;
 	public static String EditDirectoryContainerPage_0;
 	public static String EditDirectoryContainerPage_1;

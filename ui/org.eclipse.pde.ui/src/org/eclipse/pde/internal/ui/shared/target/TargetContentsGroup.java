@@ -316,8 +316,9 @@ public class TargetContentsGroup {
 				fTree.collapseAll();
 			}
 		});
+		fMenuManager.add(new CopyLocationAction(fTree));
 		Menu contextMenu = fMenuManager.createContextMenu(tree);
-		tree.setMenu(contextMenu);
+		fTree.getTree().setMenu(contextMenu);
 
 		return fTree;
 	}
