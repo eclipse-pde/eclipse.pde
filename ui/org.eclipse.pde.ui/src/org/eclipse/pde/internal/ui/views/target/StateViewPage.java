@@ -60,6 +60,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferencePage;
+import org.eclipse.pde.internal.ui.shared.target.CopyLocationAction;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.views.dependencies.DependenciesViewComparator;
 import org.eclipse.pde.internal.ui.views.plugins.ImportActionGroup;
@@ -459,6 +460,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 				actionGroup.fillContextMenu(menu);
 				menu.add(new Separator());
 			}
+			menu.add(new CopyLocationAction(fTreeViewer));
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		}
 	}
