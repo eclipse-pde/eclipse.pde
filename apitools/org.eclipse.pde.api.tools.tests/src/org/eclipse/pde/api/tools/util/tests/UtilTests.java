@@ -25,8 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -458,8 +457,7 @@ public class UtilTests {
 				return false;
 			}
 		}
-		List<IApiComponent> allComponents = new ArrayList<>();
-		String[] componentNames = new String[] {
+		IApiComponent[] components = Stream.of( //
 				"org.eclipse.swt", //$NON-NLS-1$
 				"org.eclipse.equinox.simpleconfigurator.manipulator", //$NON-NLS-1$
 				"org.eclipse.team.ui", //$NON-NLS-1$
@@ -503,7 +501,6 @@ public class UtilTests {
 				"org.eclipse.jdt", //$NON-NLS-1$
 				"org.eclipse.osgi.util", //$NON-NLS-1$
 				"org.sat4j.pb", //$NON-NLS-1$
-				"org.hamcrest.core", //$NON-NLS-1$
 				"org.eclipse.jdt.junit4.runtime", //$NON-NLS-1$
 				"org.eclipse.equinox.p2.artifact.repository", //$NON-NLS-1$
 				"org.eclipse.core.databinding.property", //$NON-NLS-1$
@@ -644,13 +641,8 @@ public class UtilTests {
 				"org.eclipse.equinox.app", //$NON-NLS-1$
 				"org.eclipse.ui.net", //$NON-NLS-1$
 				"org.eclipse.equinox.p2.publisher", //$NON-NLS-1$
-				"org.eclipse.ecf.provider.filetransfer.httpclient", //$NON-NLS-1$
-		};
-		for (String componentName : componentNames) {
-			allComponents.add(new LocalApiComponent(componentName));
-		}
-		IApiComponent[] components = new IApiComponent[allComponents.size()];
-		allComponents.toArray(components);
+				"org.eclipse.ecf.provider.filetransfer.httpclient" //$NON-NLS-1$
+		).map(LocalApiComponent::new).toArray(IApiComponent[]::new);
 		FilteredElements excludedElements = new FilteredElements();
 		try {
 			Util.collectRegexIds(line, excludedElements, components, false);
