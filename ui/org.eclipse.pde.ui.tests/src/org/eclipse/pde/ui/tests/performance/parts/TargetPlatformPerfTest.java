@@ -50,6 +50,7 @@ import org.eclipse.pde.ui.tests.util.TargetPlatformUtil;
 import org.eclipse.pde.ui.tests.util.TestBundleCreator;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
+import org.junit.Assert;
 import org.osgi.framework.Version;
 
 /**
@@ -117,7 +118,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 		// Create a workspace model
 		IWorkspace ws = ResourcesPlugin.getWorkspace();
 		IProject proj = ws.getRoot().getProject(SEARCH_TEST_WORKSPACE_NAME);
-		assertFalse("Project should not exist", proj.exists());
+		Assert.assertFalse("Project should not exist", proj.exists());
 		IBundleProjectDescription description = service.getDescription(proj);
 		description.setSymbolicName(SEARCH_TEST_WORKSPACE_NAME);
 		description.setBundleVersion(new Version("1.1.1"));
@@ -203,19 +204,19 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 	private void executeSearchTest() {
 		IPluginModelBase[] models;
 		models = PluginRegistry.getAllModels();
-		assertEquals(SEARCH_TEST_EXTERNAL_COUNT + 1, models.length);
+		Assert.assertEquals(SEARCH_TEST_EXTERNAL_COUNT + 1, models.length);
 		models = PluginRegistry.getWorkspaceModels();
-		assertEquals(1, models.length);
+		Assert.assertEquals(1, models.length);
 		models = PluginRegistry.getExternalModels();
-		assertEquals(SEARCH_TEST_EXTERNAL_COUNT, models.length);
+		Assert.assertEquals(SEARCH_TEST_EXTERNAL_COUNT, models.length);
 
 		IPluginModelBase model;
 		IWorkspace ws = ResourcesPlugin.getWorkspace();
 		model = PluginRegistry.findModel(SEARCH_TEST_WORKSPACE_NAME);
-		assertNotNull(model);
+		Assert.assertNotNull(model);
 		IProject project = ws.getRoot().getProject(SEARCH_TEST_WORKSPACE_NAME);
 		model = PluginRegistry.findModel(project);
-		assertNotNull(model);
+		Assert.assertNotNull(model);
 
 		model = PluginRegistry.findModel(SEARCH_TEST_EXTERNAL_NAME);
 		openRequiredBundles(model, new HashSet<>());
@@ -230,7 +231,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 	 * @param allBundleNames set of symbolic names that have been looked up to prevent stack overflows
 	 */
 	private void openRequiredBundles(IPluginModelBase model, Set<String> allBundleNames) {
-		assertNotNull(model);
+		Assert.assertNotNull(model);
 		BundleSpecification[] required = model.getBundleDescription().getRequiredBundles();
 		for (BundleSpecification element : required) {
 			if (!allBundleNames.contains(element.getName())) {

@@ -5,7 +5,6 @@ Bundle-SymbolicName: org.eclipse.pde.api.tools.tests
 Bundle-Version: 1.3.200.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eclipse.core.runtime,
- org.junit,
  org.eclipse.pde.api.tools;bundle-version="1.0.600",
  org.eclipse.jdt.launching;bundle-version="[3.6.100,4.0.0)",
  org.eclipse.debug.core,
@@ -33,15 +32,19 @@ Export-Package: org.eclipse.pde.api.tools.anttasks.tests,
  org.eclipse.pde.api.tools.builder.tests.tags,
  org.eclipse.pde.api.tools.builder.tests.usage,
  org.eclipse.pde.api.tools.comparator.tests,
- org.eclipse.pde.api.tools.model.tests;uses:="junit.framework,org.eclipse.pde.api.tools.model.component",
+ org.eclipse.pde.api.tools.model.tests,
  org.eclipse.pde.api.tools.problems.tests,
  org.eclipse.pde.api.tools.reference.tests,
  org.eclipse.pde.api.tools.search.tests,
  org.eclipse.pde.api.tools.tests,
  org.eclipse.pde.api.tools.tests.util,
- org.eclipse.pde.api.tools.util.tests;uses:="junit.framework"
+ org.eclipse.pde.api.tools.util.tests
 Bundle-Activator: org.eclipse.pde.api.tools.tests.ApiTestsPlugin
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
-Import-Package: org.eclipse.equinox.frameworkadmin
+Import-Package: junit.framework,
+ org.eclipse.equinox.frameworkadmin,
+ org.junit,
+ org.junit.runner,
+ org.junit.runners
 Automatic-Module-Name: org.eclipse.pde.api.tools.tests
