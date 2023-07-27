@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import static org.eclipse.pde.internal.core.DependencyManager.Options.INCLUDE_OPTIONAL_DEPENDENCIES;
+
 import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
@@ -60,13 +63,18 @@ import aQute.bnd.build.Project;
 public class RequiredPluginsClasspathContainer extends PDEClasspathContainer implements IClasspathContainer {
 
 	@SuppressWarnings("nls")
-	private static final Collection<String> JUNIT5_RUNTIME_PLUGINS = Set.of("org.junit", "junit-jupiter-api",
-			"junit-jupiter-engine", "junit-platform-commons", "junit-platform-engine", "org.hamcrest.core",
-			"org.opentest4j");
+	private static final Set<String> JUNIT5_RUNTIME_PLUGINS = Set.of("org.junit", //
+			"junit-jupiter-engine", // BSN of the bundle from Maven-Central
+			"org.junit.jupiter.engine"); // BSN of the bundle from Eclipse-Orbit
+	@SuppressWarnings("nls")
+	private static final Set<String> JUNIT5_API_PLUGINS = Set.of( //
+			"junit-jupiter-api", // BSN of the bundle from Maven-Central
+			"org.junit.jupiter.api"); // BSN of the bundle from Eclipse-Orbit
 
 	private final IPluginModelBase fModel;
 	private IBuild fBuild;
 
+	private List<BundleDescription> junit5RuntimeClosure;
 	private IClasspathEntry[] fEntries;
 	private boolean addImportedPackages;
 
@@ -489,18 +497,16 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			return;
 		}
 
+		if (junit5RuntimeClosure == null) {
+			junit5RuntimeClosure = collectJunit5RuntimeRequirements();
+		}
+
 		String id = fModel.getPluginBase().getId();
-		if (id != null && JUNIT5_RUNTIME_PLUGINS.contains(id)) {
+		if (id != null && junit5RuntimeClosure.stream().map(BundleDescription::getSymbolicName).anyMatch(id::equals)) {
 			return; // never extend the classpath of a junit bundle
 		}
 
-		for (String pluginId : JUNIT5_RUNTIME_PLUGINS) {
-			IPluginModelBase model = PluginRegistry.findModel(pluginId);
-			if (model == null || !model.isEnabled()) {
-				continue;
-			}
-
-			BundleDescription desc = model.getBundleDescription();
+		for (BundleDescription desc : junit5RuntimeClosure) {
 			if (added.contains(desc)) {
 				continue; // bundle has explicit dependency
 			}
@@ -509,11 +515,20 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 			Map<BundleDescription, List<Rule>> rules = Map.of(desc, List.of());
 			addPlugin(desc, true, rules, entries);
 		}
-
 	}
 
-	private static boolean containsJunit5Dependency(Collection<BundleDescription> dependencies) {
-		return dependencies.stream().anyMatch(desc -> "junit-jupiter-api".equals(desc.getName()) || "org.junit.jupiter.api".equals(desc.getName())); //$NON-NLS-1$ //$NON-NLS-2$
+	private boolean containsJunit5Dependency(Collection<BundleDescription> dependencies) {
+		return dependencies.stream().map(BundleDescription::getSymbolicName).anyMatch(JUNIT5_API_PLUGINS::contains);
+	}
+
+	private static List<BundleDescription> collectJunit5RuntimeRequirements() {
+		List<BundleDescription> roots = JUNIT5_RUNTIME_PLUGINS.stream().map(PluginRegistry::findModel)
+				.filter(Objects::nonNull).filter(IPluginModelBase::isEnabled)
+				.map(IPluginModelBase::getBundleDescription).toList();
+		Set<BundleDescription> closure = DependencyManager.findRequirementsClosure(roots,
+				INCLUDE_OPTIONAL_DEPENDENCIES);
+		String systemBundleBSN = TargetPlatformHelper.getPDEState().getSystemBundle();
+		return closure.stream().filter(b -> !b.getSymbolicName().equals(systemBundleBSN)).toList();
 	}
 
 	private void addSecondaryDependencies(BundleDescription desc, Set<BundleDescription> added,
