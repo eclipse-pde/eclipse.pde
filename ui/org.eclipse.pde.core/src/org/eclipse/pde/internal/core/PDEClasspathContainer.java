@@ -13,10 +13,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import static org.eclipse.jdt.core.JavaCore.newClasspathAttribute;
+
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -33,31 +36,20 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 
 public class PDEClasspathContainer {
 
-	public static class Rule {
-		IPath path;
-		boolean discouraged;
-
-		@Override
-		public boolean equals(Object other) {
-			if (!(other instanceof Rule)) {
-				return false;
-			}
-			return discouraged == ((Rule) other).discouraged && path.equals(((Rule) other).path);
-		}
-
+	static record Rule(IPath path, boolean discouraged) {
 		@Override
 		public String toString() {
 			return discouraged ? path.toString() + " [discouraged]" : path.toString(); //$NON-NLS-1$
 		}
 	}
 
-	private static HashMap<IPath, IAccessRule> ACCESSIBLE_RULES = new HashMap<>();
-	private static HashMap<IPath, IAccessRule> DISCOURAGED_RULES = new HashMap<>();
+	private static final Map<IPath, IAccessRule> ACCESSIBLE_RULES = new ConcurrentHashMap<>();
+	private static final Map<IPath, IAccessRule> DISCOURAGED_RULES = new ConcurrentHashMap<>();
 
 	private static final IAccessRule EXCLUDE_ALL_RULE = JavaCore.newAccessRule(IPath.fromOSString("**/*"), IAccessRule.K_NON_ACCESSIBLE | IAccessRule.IGNORE_IF_BETTER); //$NON-NLS-1$
 
-	protected void addProjectEntry(IProject project, Rule[] rules, boolean exportsExternalAnnotations,
-			ArrayList<IClasspathEntry> entries) throws CoreException {
+	protected void addProjectEntry(IProject project, List<Rule> rules, boolean exportsExternalAnnotations,
+			List<IClasspathEntry> entries) throws CoreException {
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			IAccessRule[] accessRules = rules != null ? getAccessRules(rules) : null;
 			IClasspathAttribute[] extraAttribs = getClasspathAttributesForProject(project, exportsExternalAnnotations);
@@ -79,12 +71,12 @@ public class PDEClasspathContainer {
 	}
 
 	public static IClasspathEntry[] getExternalEntries(IPluginModelBase model) {
-		ArrayList<IClasspathEntry> entries = new ArrayList<>();
-		addExternalPlugin(model, new Rule[0], entries);
+		List<IClasspathEntry> entries = new ArrayList<>();
+		addExternalPlugin(model, List.of(), entries);
 		return entries.toArray(new IClasspathEntry[entries.size()]);
 	}
 
-	protected static void addExternalPlugin(IPluginModelBase model, Rule[] rules, ArrayList<IClasspathEntry> entries) {
+	protected static void addExternalPlugin(IPluginModelBase model, List<Rule> rules, List<IClasspathEntry> entries) {
 		boolean isJarShape = new File(model.getInstallLocation()).isFile();
 		if (isJarShape) {
 			IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, ".", isJarShape); //$NON-NLS-1$
@@ -132,7 +124,8 @@ public class PDEClasspathContainer {
 		}
 	}
 
-	protected static void addLibraryEntry(IPath path, IPath srcPath, Rule[] rules, IClasspathAttribute[] attributes, ArrayList<IClasspathEntry> entries) {
+	protected static void addLibraryEntry(IPath path, IPath srcPath, List<Rule> rules, IClasspathAttribute[] attributes,
+			List<IClasspathEntry> entries) {
 		IClasspathEntry entry = null;
 		if (rules != null) {
 			entry = JavaCore.newLibraryEntry(path, srcPath, null, getAccessRules(rules), attributes, false);
@@ -144,23 +137,17 @@ public class PDEClasspathContainer {
 		}
 	}
 
-	protected static IAccessRule[] getAccessRules(Rule[] rules) {
-		IAccessRule[] accessRules = new IAccessRule[rules.length + 1];
-		for (int i = 0; i < rules.length; i++) {
-			Rule rule = rules[i];
-			accessRules[i] = rule.discouraged ? getDiscouragedRule(rule.path) : getAccessibleRule(rule.path);
+	protected static IAccessRule[] getAccessRules(List<Rule> rules) {
+		IAccessRule[] accessRules = new IAccessRule[rules.size() + 1];
+		int i = 0;
+		for (Rule rule : rules) {
+			IPath path = rule.path;
+			accessRules[i++] = rule.discouraged
+					? DISCOURAGED_RULES.computeIfAbsent(path, p -> JavaCore.newAccessRule(p, IAccessRule.K_DISCOURAGED))
+					: ACCESSIBLE_RULES.computeIfAbsent(path, p -> JavaCore.newAccessRule(p, IAccessRule.K_ACCESSIBLE));
 		}
-		accessRules[rules.length] = EXCLUDE_ALL_RULE;
+		accessRules[rules.size()] = EXCLUDE_ALL_RULE;
 		return accessRules;
-	}
-
-	private static synchronized IAccessRule getAccessibleRule(IPath path) {
-		IAccessRule rule = ACCESSIBLE_RULES.get(path);
-		if (rule == null) {
-			rule = JavaCore.newAccessRule(path, IAccessRule.K_ACCESSIBLE);
-			ACCESSIBLE_RULES.put(path, rule);
-		}
-		return rule;
 	}
 
 	private static IClasspathAttribute[] getClasspathAttributes(IPluginModelBase model) {
@@ -168,26 +155,15 @@ public class PDEClasspathContainer {
 		JavadocLocationManager manager = PDECore.getDefault().getJavadocLocationManager();
 		String location = manager.getJavadocLocation(model);
 		if (location != null) {
-			attributes
-					.add(JavaCore.newClasspathAttribute(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, location));
+			attributes.add(newClasspathAttribute(IClasspathAttribute.JAVADOC_LOCATION_ATTRIBUTE_NAME, location));
 		}
 		if (model.getPluginBase().exportsExternalAnnotations()) {
 			String installLocation = model.getInstallLocation();
-			attributes.add(
-					JavaCore.newClasspathAttribute(IClasspathAttribute.EXTERNAL_ANNOTATION_PATH,
-							installLocation));
+			attributes.add(newClasspathAttribute(IClasspathAttribute.EXTERNAL_ANNOTATION_PATH, installLocation));
 		}
 		return attributes.toArray(IClasspathAttribute[]::new);
 	}
 
-	private static synchronized IAccessRule getDiscouragedRule(IPath path) {
-		IAccessRule rule = DISCOURAGED_RULES.get(path);
-		if (rule == null) {
-			rule = JavaCore.newAccessRule(path, IAccessRule.K_DISCOURAGED);
-			DISCOURAGED_RULES.put(path, rule);
-		}
-		return rule;
-	}
 
 	protected static IPluginModelBase resolveLibraryInFragments(IPluginModelBase model, String libraryName) {
 		BundleDescription desc = model.getBundleDescription();
