@@ -67,7 +67,8 @@ public class ComponentManifestTests {
 			reqs.add(new RequiredComponentDescription("org.eclipse.ui.workbench.texteditor", new BundleVersionRange("[3.3.0,4.0.0)"))); //$NON-NLS-1$ //$NON-NLS-2$
 			reqs.add(new RequiredComponentDescription("org.eclipse.ui.ide", new BundleVersionRange("[3.3.0,4.0.0)"))); //$NON-NLS-1$ //$NON-NLS-2$
 			reqs.add(new RequiredComponentDescription("org.eclipse.ui.editors", new BundleVersionRange("[3.3.0,4.0.0)"))); //$NON-NLS-1$ //$NON-NLS-2$
-			reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", new BundleVersionRange("[3.3.0,4.0.0)"))); //$NON-NLS-1$ //$NON-NLS-2$
+			reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", //$NON-NLS-1$
+					new BundleVersionRange("[3.29.0,4.0.0)"))); //$NON-NLS-1$
 
 			for (int i = 0; i < reqs.size(); i++) {
 				assertEquals("Wrong required component", reqs.get(i), requiredComponents[i]); //$NON-NLS-1$
