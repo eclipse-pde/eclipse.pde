@@ -2230,6 +2230,32 @@
                 type="org.eclipse.jface.viewers.ITreeContentProvider">
           </adapter>
        </factory>
+      <factory
+             adaptableType="org.eclipse.pde.internal.core.target.RepositoryBundleContainer"
+             class="org.eclipse.pde.internal.ui.shared.target.RepositoryBundleContainerAdapterFactory">
+          <adapter
+                type="org.eclipse.pde.ui.target.ITargetLocationHandler">
+          </adapter>
+          <adapter
+                type="org.eclipse.jface.viewers.ILabelProvider">
+          </adapter>
+          <adapter
+                type="org.eclipse.jface.viewers.ITreeContentProvider">
+          </adapter>
+       </factory>
+       <factory
+             adaptableType="org.eclipse.pde.internal.ui.shared.target.RepositoryBundleContainerAdapterFactory$RequirementNode"
+             class="org.eclipse.pde.internal.ui.shared.target.RepositoryBundleContainerAdapterFactory">
+          <adapter
+                type="org.eclipse.pde.ui.target.ITargetLocationHandler">
+          </adapter>
+          <adapter
+                type="org.eclipse.jface.viewers.ILabelProvider">
+          </adapter>
+          <adapter
+                type="org.eclipse.jface.viewers.ITreeContentProvider">
+          </adapter>
+       </factory>
    </extension>
    <extension
          point="org.eclipse.pde.ui.targetLocationProvisioners">
@@ -2246,9 +2272,18 @@
             class="org.eclipse.pde.internal.ui.shared.target.TargetReferenceLocationWizard"
             icon="icons/obj16/target_profile_xml_obj.png"
             id="org.eclipse.pde.ui.TargetReferenceProvisioner"
-            name="%locationProvider.name">
+            name="%locationProvider.reference.name">
             <description>
-            %locationProvider.description
+            %locationProvider.reference.description
+         </description>
+      </locationProvider>
+      <locationProvider
+            class="org.eclipse.pde.internal.ui.shared.target.RepositoryLocationWizard"
+            icon="icons/dview16/memory_view.png"
+            id="org.eclipse.pde.ui.TargetReferenceProvisioner"
+            name="%locationProvider.repository.name">
+            <description>
+            %locationProvider.repository.description
          </description>
       </locationProvider>
    </extension>

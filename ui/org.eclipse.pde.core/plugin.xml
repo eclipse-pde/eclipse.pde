@@ -437,4 +437,12 @@
                 class="org.eclipse.pde.internal.core.LocalMavenPluginSourcePathLocator"
                 complexity="low"/>
     </extension>
+        <extension
+              point="org.eclipse.pde.core.targetLocations">
+           <targetLocation
+                 canUpdate="true"
+                 locationFactory="org.eclipse.pde.internal.core.target.RepositoryLocationFactory"
+                 type="Repository">
+           </targetLocation>
+        </extension>
 </plugin>

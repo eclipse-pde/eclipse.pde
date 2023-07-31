@@ -42,6 +42,7 @@ public class PDEPluginImages {
 
 	private static final String PATH_OBJ = ICONS_PATH + "obj16/"; //$NON-NLS-1$
 	private static final String PATH_VIEW = ICONS_PATH + "view16/"; //$NON-NLS-1$
+	private static final String PATH_DVIEW = ICONS_PATH + "dview16/"; //$NON-NLS-1$
 	private static final String PATH_LCL = ICONS_PATH + "elcl16/"; //$NON-NLS-1$
 	private static final String PATH_LCL_DISABLED = ICONS_PATH + "dlcl16/"; //$NON-NLS-1$
 	private static final String PATH_TOOL = ICONS_PATH + "etool16/"; //$NON-NLS-1$
@@ -316,6 +317,7 @@ public class PDEPluginImages {
 	 * View
 	 */
 	public static final ImageDescriptor DESC_ARGUMENT_TAB = create(PATH_VIEW, "variable_tab.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_TARGET_REPO = create(PATH_DVIEW, "memory_view.png"); //$NON-NLS-1$
 
 	private static ImageDescriptor create(String prefix, String name) {
 		return ImageDescriptor.createFromURL(makeImageURL(prefix, name));
