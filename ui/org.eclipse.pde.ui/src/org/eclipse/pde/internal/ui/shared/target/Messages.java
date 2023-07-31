@@ -152,6 +152,11 @@ public class Messages extends NLS {
 	public static String EditTargetContainerPage_Edit_Title;
 	public static String EditTargetContainerPage_Message;
 	public static String EditTargetContainerPage_Not_A_File;
+	public static String EditRepositoryContainerPage_Message;
+	public static String EditRepositoryContainerPage_Add_Title;
+	public static String EditRepositoryContainerPage_Edit_Title;
+	public static String SelectRepositoryContentPage_Title;
+	public static String SelectRepositoryContentPage_Description;
 
 	static {
 		// initialize resource bundle
