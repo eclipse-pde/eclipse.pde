@@ -512,6 +512,16 @@ public abstract class AbstractPluginBlock {
 			Object element = event.getElement();
 			if (element instanceof IPluginModelBase) {
 				handleCheckStateChanged(event);
+			} else if (element instanceof NamedElement namedElement) {
+				TreeItem item = (TreeItem) fPluginTreeViewer.testFindItem(namedElement);
+				if (item != null) {
+					if (item.getText().equals("Workspace")) { //$NON-NLS-1$
+						fNumWorkspaceChecked = event.getChecked() ? getWorkspaceModels().length : 0;
+					} else {
+						fNumExternalChecked = event.getChecked() ? getExternalModels().length : 0;
+					}
+					updateCounter();
+				}
 			} else {
 				countSelectedModels();
 			}
