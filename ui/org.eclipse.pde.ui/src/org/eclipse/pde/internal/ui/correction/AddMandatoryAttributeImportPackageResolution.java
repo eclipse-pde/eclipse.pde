@@ -17,6 +17,7 @@ package org.eclipse.pde.internal.ui.correction;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.text.bundle.Bundle;
 import org.eclipse.pde.internal.core.text.bundle.BundleModel;
@@ -50,19 +51,30 @@ public class AddMandatoryAttributeImportPackageResolution extends AbstractManife
 			ImportPackageHeader header = (ImportPackageHeader) bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
 			if (header != null) {
 				ImportPackageObject obj = header.getPackage(packagename);
-				obj.setAttribute((String) marker.getAttribute("mandatoryattrkey"), //$NON-NLS-1$
-						(String) marker.getAttribute("mandatoryvalue"));//$NON-NLS-1$
-				header.removePackage(packagename);
-				header.addPackage(obj);
+				obj.setAttribute(getAttributeName(), getAttributeValue());
+				header.update(true);
 			}
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		}
 	}
 
+	private String getAttributeValue() throws CoreException {
+		return (String) marker.getAttribute("mandatoryAttrValue"); //$NON-NLS-1$
+	}
+
+	private String getAttributeName() throws CoreException {
+		return (String) marker.getAttribute("mandatoryAttrName"); //$NON-NLS-1$
+	}
+
 	@Override
 	public String getDescription() {
-		return PDECoreMessages.AddMandatoryAttrResolution_label;
+		try {
+			return NLS.bind(PDECoreMessages.AddMandatoryAttrResolution_label, getAttributeName(), getAttributeValue());
+		} catch (CoreException e) {
+			PDEPlugin.log(e);
+			return NLS.bind(PDECoreMessages.AddMandatoryAttrResolution_label, "", ""); //$NON-NLS-1$//$NON-NLS-2$
+		}
 	}
 
 	@Override

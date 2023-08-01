@@ -22,9 +22,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -34,6 +34,7 @@ import java.util.StringTokenizer;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -56,6 +57,7 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.osgi.service.resolver.BaseDescription;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -1175,7 +1177,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 		}
 
-		HashMap<String, ExportPackageDescription> exported = getAvailableExportedPackages(desc.getContainingState());
+		Map<String, List<ExportPackageDescription>> exported = getAvailableExportedPackages(desc.getContainingState());
 
 		ImportPackageSpecification[] imports = desc.getImportPackages();
 		if (desc.hasDynamicImports()) {
@@ -1213,8 +1215,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				boolean optional = isOptional(element);
 				int severity = getRequireBundleSeverity(element, optional);
 
-				ExportPackageDescription export = exported.get(name);
-				if (export != null) {
+				List<ExportPackageDescription> exports = exported.getOrDefault(name, List.of());
+				if (!exports.isEmpty()) {
+					exports.sort(RESOLVED_FIRST);
+					ExportPackageDescription export = exports.get(0);
 					if (export.getSupplier().isResolved()) {
 						Version version = export.getVersion();
 						org.eclipse.osgi.service.resolver.VersionRange range = importSpec.getVersionRange();
@@ -1223,20 +1227,18 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 							addMarkerAttribute(marker,PDEMarkerFactory.compilerKey,CompilerFlags.P_UNRESOLVED_IMPORTS);
 							return;
 						}
+						String[] mandatoryAttributes = (String[]) export.getDirective(Constants.RESOLUTION_MANDATORY);
+						if (mandatoryAttributes != null) {
+							Map<String, Object> exportAttributes = export.getAttributes();
+							Map<String, Object> importAttributes = importSpec.getAttributes();
+							for (String mandatory : mandatoryAttributes) {
+								Object exportValue = exportAttributes != null ? exportAttributes.get(mandatory) : null;
+								Object importValue = importAttributes != null ? importAttributes.get(mandatory) : null;
 
-						Map<String, Object> exportAttributes = export.getAttributes();
-						Map<String, Object> exportDirectives = export.getDirectives();
-						if (exportDirectives != null) {
-							if (exportDirectives.containsKey(Constants.RESOLUTION_MANDATORY)) {
-								Map<String, Object> importAttributes = importSpec.getAttributes();
-								String[] mandatories = (String[]) exportDirectives.get(Constants.RESOLUTION_MANDATORY);
-								for (String mandatory : mandatories) {
-									if (importAttributes == null || !importAttributes.containsKey(mandatory)
-											|| importAttributes.get(mandatory).toString() != exportAttributes
-													.get(mandatory).toString()) {
+								if (importValue == null || !importValue.equals(exportValue)) {
 									VirtualMarker marker = report(
 											NLS.bind(PDECoreMessages.BundleErrorReporter_MissingMandatoryDirective,
-													name),
+													name, mandatory),
 											getPackageLine(header, element), severity,
 											PDEMarkerFactory.M_NO_MANDATORY_ATTR_IMPORT_PACKAGE,
 											PDEMarkerFactory.CAT_FATAL);
@@ -1245,17 +1247,14 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 									if (marker != null) {
 										marker.setAttribute("packageName", name); //$NON-NLS-1$
-										marker.setAttribute("mandatoryattrkey", //$NON-NLS-1$
-												mandatory);
-										marker.setAttribute("mandatoryvalue", //$NON-NLS-1$
-												exportAttributes.get(mandatory));
+										marker.setAttribute("mandatoryAttrName", mandatory); //$NON-NLS-1$
+										marker.setAttribute("mandatoryAttrValue", exportValue); //$NON-NLS-1$
 									}
-								}
+									return;
 								}
 							}
 						}
-
-				} else {
+					} else {
 						VirtualMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_unresolvedExporter,new String[] { export.getSupplier().getSymbolicName(), name }),getPackageLine(header, element), severity, PDEMarkerFactory.CAT_OTHER);
 						addMarkerAttribute(marker,PDEMarkerFactory.compilerKey, CompilerFlags.P_UNRESOLVED_IMPORTS);
 						return;
@@ -1277,24 +1276,13 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 	}
 
-	private HashMap<String, ExportPackageDescription> getAvailableExportedPackages(State state) {
-		BundleDescription[] bundles = state.getBundles();
+	private static final Comparator<BaseDescription> RESOLVED_FIRST = Comparator
+			.comparing((BaseDescription d) -> d.getSupplier().isResolved()).reversed(); // false<true
 
-		HashMap<String, ExportPackageDescription> exported = new HashMap<>();
-		for (BundleDescription bundle : bundles) {
-			ExportPackageDescription[] exports = bundle.getExportPackages();
-			for (ExportPackageDescription export : exports) {
-				String name = export.getName();
-				if (exported.containsKey(name)) {
-					if (export.getSupplier().isResolved()) {
-						exported.put(name, export);
-					}
-				} else {
-					exported.put(name, export);
-				}
-			}
-		}
-		return exported;
+	private Map<String, List<ExportPackageDescription>> getAvailableExportedPackages(State state) {
+		BundleDescription[] bundles = state.getBundles();
+		return Arrays.stream(bundles).map(b -> b.getExportPackages()).flatMap(Arrays::stream)
+				.collect(Collectors.groupingBy(BaseDescription::getName, Collectors.toCollection(ArrayList::new)));
 	}
 
 	protected void validateExportPackage(IProgressMonitor monitor) {
