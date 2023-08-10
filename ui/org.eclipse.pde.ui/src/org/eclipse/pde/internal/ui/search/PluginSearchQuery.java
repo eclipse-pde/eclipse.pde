@@ -42,12 +42,10 @@ public class PluginSearchQuery implements ISearchQuery {
 		final AbstractTextSearchResult result = (AbstractTextSearchResult) getSearchResult();
 		result.removeAll();
 		ISearchResultCollector collector = match -> {
-			if (match instanceof ISourceObject) {
-				ISourceObject object1 = (ISourceObject) match;
+			if (match instanceof ISourceObject object1) {
 				result.addMatch(new Match(match, Match.UNIT_LINE, object1.getStartLine() - 1, 1));
 			}
-			if (match instanceof IFeaturePlugin) {
-				IFeaturePlugin object2 = (IFeaturePlugin) match;
+			if (match instanceof IFeaturePlugin object2) {
 				result.addMatch(new Match(object2, Match.UNIT_LINE, -1, 1));
 			}
 		};

@@ -136,8 +136,7 @@ public class PluginBlock extends AbstractPluginBlock {
 				// If we have checked elements, save them to the config
 				Object[] selected = fPluginTreeViewer.getCheckedLeafElements();
 				for (Object selectedElement : selected) {
-					if (selectedElement instanceof IPluginModelBase) {
-						IPluginModelBase model = (IPluginModelBase) selectedElement;
+					if (selectedElement instanceof IPluginModelBase model) {
 						if (model.getUnderlyingResource() == null) {
 							tBuffer.add(model);
 						} else {

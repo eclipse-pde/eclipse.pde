@@ -30,8 +30,7 @@ public class ManifestTypeRenameParticipant extends PDERenameParticipant {
 
 	@Override
 	protected boolean initialize(Object element) {
-		if (element instanceof IType) {
-			IType type = (IType) element;
+		if (element instanceof IType type) {
 			IJavaProject javaProject = (IJavaProject) type.getAncestor(IJavaElement.JAVA_PROJECT);
 			IProject project = javaProject.getProject();
 			if (WorkspaceModelManager.isPluginProject(project)) {

@@ -31,9 +31,7 @@ public class FeatureTreeCalleesContentProvider extends AbstractFeatureTreeConten
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof IProductModel) {
-			IProductModel productModel = (IProductModel) parentElement;
-
+		if (parentElement instanceof IProductModel productModel) {
 			Object[] features = productModel.getProduct().getFeatures();
 			Object[] plugins = productModel.getProduct().getPlugins();
 
@@ -42,9 +40,7 @@ public class FeatureTreeCalleesContentProvider extends AbstractFeatureTreeConten
 			all.addAll(Arrays.asList(plugins));
 
 			return all.toArray();
-		} else if (parentElement instanceof IFeatureModel) {
-			IFeatureModel featureModel = (IFeatureModel) parentElement;
-
+		} else if (parentElement instanceof IFeatureModel featureModel) {
 			Object[] features = featureModel.getFeature().getIncludedFeatures();
 			Object[] plugins = featureModel.getFeature().getPlugins();
 
@@ -53,12 +49,10 @@ public class FeatureTreeCalleesContentProvider extends AbstractFeatureTreeConten
 			all.addAll(Arrays.asList(plugins));
 
 			return all.toArray();
-		} else if (parentElement instanceof IFeatureChild) {
-			IFeatureChild featureChild = (IFeatureChild) parentElement;
+		} else if (parentElement instanceof IFeatureChild featureChild) {
 			IFeatureModel featureModel = fFeatureModelManager.findFeatureModel(featureChild.getId());
 			return getChildren(featureModel);
-		} else if (parentElement instanceof IProductFeature) {
-			IProductFeature productFeature = (IProductFeature) parentElement;
+		} else if (parentElement instanceof IProductFeature productFeature) {
 			IFeatureModel featureModel = fFeatureModelManager.findFeatureModel(productFeature.getId());
 			return getChildren(featureModel);
 		}

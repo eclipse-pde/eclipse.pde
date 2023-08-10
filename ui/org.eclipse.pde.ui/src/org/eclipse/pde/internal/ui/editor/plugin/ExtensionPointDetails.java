@@ -207,9 +207,8 @@ public class ExtensionPointDetails extends PDEDetails {
 					}
 				});
 				dialog.setValidator(selection -> {
-					if (selection == null || selection.length != 1 || !(selection[0] instanceof IFile))
+					if (selection == null || selection.length != 1 || !(selection[0] instanceof IFile file))
 						return Status.error(PDEUIMessages.ManifestEditor_ExtensionPointDetails_validate_errorStatus);
-					IFile file = (IFile) selection[0];
 					String ext = file.getFullPath().getFileExtension();
 					if ("exsd".equals(ext) || "mxsd".equals(ext)) //$NON-NLS-1$ //$NON-NLS-2$
 						return Status.OK_STATUS;

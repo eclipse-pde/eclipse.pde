@@ -129,16 +129,14 @@ public class ProductConfigurationSection {
 
 		if (!selection.isEmpty()) {
 			Object object = selection.getFirstElement();
-			if (object instanceof IFile) {
-				IFile file = (IFile) object;
+			if (object instanceof IFile file) {
 				if ("product".equals(file.getFileExtension())) { //$NON-NLS-1$
 					String entry = file.getFullPath().toString();
 					if (fProductCombo.indexOf(entry) == -1)
 						fProductCombo.add(entry, 0);
 					fProductCombo.setText(entry);
 				}
-			} else if (object instanceof IContainer) {
-				IContainer container = (IContainer) object;
+			} else if (object instanceof IContainer container) {
 				try {
 					if (container.isAccessible()) {
 						IResource[] resources = container.members();

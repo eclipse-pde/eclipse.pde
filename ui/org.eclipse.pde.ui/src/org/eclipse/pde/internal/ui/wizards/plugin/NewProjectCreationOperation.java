@@ -222,13 +222,11 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		pluginBase.setVersion(fData.getVersion());
 		pluginBase.setName(fData.getName());
 		pluginBase.setProviderName(fData.getProvider());
-		if (fModel instanceof IBundlePluginModelBase) {
-			IBundlePluginModelBase bmodel = ((IBundlePluginModelBase) fModel);
+		if (fModel instanceof IBundlePluginModelBase bmodel) {
 			((IBundlePluginBase) bmodel.getPluginBase()).setTargetVersion(targetVersion);
 			bmodel.getBundleModel().getBundle().setHeader(Constants.BUNDLE_MANIFESTVERSION, "2"); //$NON-NLS-1$
 		}
-		if (pluginBase instanceof IFragment) {
-			IFragment fragment = (IFragment) pluginBase;
+		if (pluginBase instanceof IFragment fragment) {
 			IFragmentFieldData data = (IFragmentFieldData) fData;
 			fragment.setPluginId(data.getPluginId());
 			fragment.setPluginVersion(data.getPluginVersion());
@@ -398,9 +396,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 			setClasspath(project, fData);
 			subMonitor.worked(1);
 		}
-		if (fData instanceof PluginFieldData) {
-			PluginFieldData data = (PluginFieldData) fData;
-
+		if (fData instanceof PluginFieldData data) {
 			// generate top-level Java class if that option is selected
 			if (data.doGenerateClass()) {
 				generateTopLevelPluginClass(project, subMonitor.split(1));
@@ -581,8 +577,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		int numUnits = 4;
 		if (fData.hasBundleStructure())
 			numUnits++;
-		if (fData instanceof IPluginFieldData) {
-			IPluginFieldData data = (IPluginFieldData) fData;
+		if (fData instanceof IPluginFieldData data) {
 			if (data.doGenerateClass())
 				numUnits++;
 			if (fContentWizard != null)

@@ -47,8 +47,7 @@ public class ProductSupport {
 	}
 
 	public IProductModel toProductModel(Object obj) {
-		if (obj instanceof IProduct) {
-			IProduct product = (IProduct) obj;
+		if (obj instanceof IProduct product) {
 			return getManager().findProductModel(product.getId());
 		} else if (obj instanceof IProductModel) {
 			return (IProductModel) obj;

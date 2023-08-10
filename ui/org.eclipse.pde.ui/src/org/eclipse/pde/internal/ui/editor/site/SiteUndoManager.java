@@ -87,8 +87,7 @@ public class SiteUndoManager extends ModelUndoManager {
 					site.addArchives(new ISiteArchive[] {(ISiteArchive) element});
 				} else if (element instanceof ISiteCategoryDefinition) {
 					site.addCategoryDefinitions(new ISiteCategoryDefinition[] {(ISiteCategoryDefinition) element});
-				} else if (element instanceof ISiteCategory) {
-					ISiteCategory category = (ISiteCategory) element;
+				} else if (element instanceof ISiteCategory category) {
 					ISiteFeature feature = (ISiteFeature) category.getParent();
 					feature.addCategories(new ISiteCategory[] {category});
 				}
@@ -110,8 +109,7 @@ public class SiteUndoManager extends ModelUndoManager {
 					site.removeArchives(new ISiteArchive[] {(ISiteArchive) element});
 				} else if (element instanceof ISiteCategoryDefinition) {
 					site.removeCategoryDefinitions(new ISiteCategoryDefinition[] {(ISiteCategoryDefinition) element});
-				} else if (element instanceof ISiteCategory) {
-					ISiteCategory category = (ISiteCategory) element;
+				} else if (element instanceof ISiteCategory category) {
 					ISiteFeature feature = (ISiteFeature) category.getParent();
 					feature.removeCategories(new ISiteCategory[] {category});
 				}
@@ -123,8 +121,7 @@ public class SiteUndoManager extends ModelUndoManager {
 
 	private void executeChange(Object element, String propertyName, Object oldValue, Object newValue) {
 
-		if (element instanceof SiteObject) {
-			SiteObject sobj = (SiteObject) element;
+		if (element instanceof SiteObject sobj) {
 			try {
 				sobj.restoreProperty(propertyName, oldValue, newValue);
 			} catch (CoreException e) {
@@ -137,8 +134,7 @@ public class SiteUndoManager extends ModelUndoManager {
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object object = event.getChangedObjects()[0];
-			if (object instanceof ISiteObject) {
-				ISiteObject obj = (ISiteObject) object;
+			if (object instanceof ISiteObject obj) {
 				//Ignore events from objects that are not yet in the model.
 				if (!(obj instanceof ISite) && !obj.isInTheModel())
 					return;

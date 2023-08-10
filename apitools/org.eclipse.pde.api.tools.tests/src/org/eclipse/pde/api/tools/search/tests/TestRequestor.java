@@ -159,8 +159,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	 * @return true if the project represented by the given component is API tools enabled false otherwise
 	 */
 	private boolean isApiComponent(IApiComponent component) {
-		if(component instanceof ProjectComponent) {
-			ProjectComponent comp = (ProjectComponent) component;
+		if(component instanceof ProjectComponent comp) {
 			return comp.hasApiDescription();
 		}
 		else {

@@ -98,8 +98,7 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	private void findSourceElement() throws Exception {
 		IJavaReferenceType declaringType = null;
 		String sourcePath = null;
-		if (fElement instanceof IJavaStackFrame) {
-			IJavaStackFrame stackFrame = (IJavaStackFrame) fElement;
+		if (fElement instanceof IJavaStackFrame stackFrame) {
 			declaringType = stackFrame.getReferenceType();
 			// under JSR 45 source path from the stack frame is more precise than anything derived from the type:
 			sourcePath = stackFrame.getSourcePath();
@@ -198,8 +197,7 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 			}
 			// then check its fragments
 			IJavaObject frgArray = getObject(manager, "fragments", false); //$NON-NLS-1$
-			if (frgArray instanceof IJavaArray) {
-				IJavaArray fragments = (IJavaArray) frgArray;
+			if (frgArray instanceof IJavaArray fragments) {
 				for (int i = 0; i < fragments.getLength(); i++) {
 					IJavaObject fragment = (IJavaObject) fragments.getValue(i);
 					if (!fragment.isNull()) {
@@ -226,8 +224,7 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	 */
 	private Object searchClasspathEntries(IJavaObject entriesOwner, String typeName) throws CoreException {
 		IJavaObject cpeArray = getObject(entriesOwner, "entries", false); //$NON-NLS-1$
-		if (cpeArray instanceof IJavaArray) {
-			IJavaArray entries = (IJavaArray) cpeArray;
+		if (cpeArray instanceof IJavaArray entries) {
 			for (int i = 0; i < entries.getLength(); i++) {
 				IJavaObject entry = (IJavaObject) entries.getValue(i);
 				if (!entry.isNull()) {
@@ -351,8 +348,7 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 
 	private boolean isDebugTargetRunning() {
 		boolean isDebugTargetRunning = false;
-		if (fElement instanceof IDebugElement) {
-			IDebugElement debugElement = (IDebugElement) fElement;
+		if (fElement instanceof IDebugElement debugElement) {
 			IDebugTarget debugTarget = debugElement.getDebugTarget();
 			isDebugTargetRunning = debugTarget != null && !debugTarget.isDisconnected() && !debugTarget.isTerminated();
 		}

@@ -166,8 +166,7 @@ public class IncrementalApiBuilder {
 							if (component != null) {
 								try {
 									IApiAnnotations annotations = component.getApiDescription().resolveAnnotations(Factory.typeDescriptor(type.replace('/', '.')));
-									if (annotations instanceof TypeAnnotations) {
-										TypeAnnotations ta = (TypeAnnotations) annotations;
+									if (annotations instanceof TypeAnnotations ta) {
 										if (ta.getBuildStamp() == BuildStamps.getBuildStamp(resource.getProject())) {
 											// note description change in
 											// addition to structure

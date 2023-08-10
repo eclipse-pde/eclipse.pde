@@ -134,8 +134,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 
 		@Override
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof BundleDescription) {
-				BundleDescription desc = (BundleDescription) parentElement;
+			if (parentElement instanceof BundleDescription desc) {
 				if (desc.isResolved()) {
 					Object[] required = getResolvedDependencies(desc.getRequiredBundles());
 					Object[] imported = getResolvedDependencies(desc.getImportPackages());
@@ -198,8 +197,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		public void update(ViewerCell cell) {
 			Object element = cell.getElement();
 			StyledString styledString = new StyledString();
-			if (element instanceof ImportPackageSpecification) {
-				ImportPackageSpecification spec = (ImportPackageSpecification) element;
+			if (element instanceof ImportPackageSpecification spec) {
 				styledString.append(spec.getName());
 				ExportPackageDescription supplier = (ExportPackageDescription) spec.getSupplier();
 				if (isJREPackage(supplier)) {
@@ -221,8 +219,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		private void getElementString(Object element, StyledString styledString, boolean showLocation) {
 			if (element instanceof BundleSpecification) {
 				styledString.append(((BundleSpecification) element).getSupplier().toString());
-			} else if (element instanceof BundleDescription) {
-				BundleDescription description = (BundleDescription) element;
+			} else if (element instanceof BundleDescription description) {
 				styledString.append(fSharedProvider.getObjectText(description));
 				Version version = description.getVersion();
 				// Bug 183417 - Bidi3.3: Elements' labels in the extensions page in the fragment manifest characters order is incorrect
@@ -259,13 +256,11 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		@Override
 		public String getText(Object element) {
 			String result = element.toString();
-			if (element instanceof ImportPackageSpecification) {
-				ImportPackageSpecification spec = (ImportPackageSpecification) element;
+			if (element instanceof ImportPackageSpecification spec) {
 				result = spec.getName();
 			} else if (element instanceof BundleSpecification) {
 				result = ((BundleSpecification) element).getSupplier().toString();
-			} else if (element instanceof BundleDescription) {
-				BundleDescription description = (BundleDescription) element;
+			} else if (element instanceof BundleDescription description) {
 				result = fSharedProvider.getObjectText(description);
 			}
 			return result;

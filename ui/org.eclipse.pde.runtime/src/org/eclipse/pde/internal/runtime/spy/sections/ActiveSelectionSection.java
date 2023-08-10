@@ -63,8 +63,7 @@ public class ActiveSelectionSection implements ISpySection {
 			Class<?>[] interfaces = clazz.getInterfaces();
 			buffer.append(toolkit.createInterfaceSection(text, PDERuntimeMessages.SpyDialog_activeSelectionInterfaces_desc, clazz.getInterfaces()));
 
-			if (selection instanceof IStructuredSelection) {
-				IStructuredSelection ss = (IStructuredSelection) selection;
+			if (selection instanceof IStructuredSelection ss) {
 				int size = ss.size();
 				if (size == 1) {
 					clazz = ss.getFirstElement().getClass();

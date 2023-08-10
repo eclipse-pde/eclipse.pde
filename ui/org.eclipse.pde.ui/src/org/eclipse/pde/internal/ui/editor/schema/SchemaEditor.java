@@ -252,9 +252,8 @@ public class SchemaEditor extends MultiSourceEditor {
 	public static void openToElement(IPath path, ISchemaElement element) {
 		if (openSchema(path)) {
 			IEditorPart editorPart = PDEPlugin.getActivePage().getActiveEditor();
-			if (!(editorPart instanceof SchemaEditor))
+			if (!(editorPart instanceof SchemaEditor schemaEditor))
 				return; // something messed up, schema editor should be open
-			SchemaEditor schemaEditor = (SchemaEditor) editorPart;
 			schemaEditor.selectReveal(element);
 		}
 	}

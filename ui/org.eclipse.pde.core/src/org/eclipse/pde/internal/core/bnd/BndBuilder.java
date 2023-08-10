@@ -149,8 +149,7 @@ public class BndBuilder extends IncrementalProjectBuilder {
 				@Override
 				public boolean visit(IResourceDelta delta) throws CoreException {
 					IResource resource = delta.getResource();
-					if (resource instanceof IFile) {
-						IFile file = (IFile) resource;
+					if (resource instanceof IFile file) {
 						String name = file.getName();
 						if (name.endsWith(CLASS_EXTENSION) || file.getName().equals(BndProject.INSTRUCTIONS_FILE)
 								|| name.equals(ICoreConstants.MANIFEST_FILENAME)) {

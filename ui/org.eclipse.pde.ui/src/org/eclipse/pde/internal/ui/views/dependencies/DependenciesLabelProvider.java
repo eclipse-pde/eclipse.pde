@@ -92,8 +92,7 @@ public class DependenciesLabelProvider extends LabelProvider {
 	public Image getImage(Object obj) {
 		int flags = 0;
 		String id = null;
-		if (obj instanceof IPluginImport) {
-			IPluginImport iobj = (IPluginImport) obj;
+		if (obj instanceof IPluginImport iobj) {
 			id = iobj.getId();
 			if (fShowReexport && iobj.isReexported())
 				flags = SharedLabelProvider.F_EXPORT;

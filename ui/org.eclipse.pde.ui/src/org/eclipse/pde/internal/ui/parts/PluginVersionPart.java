@@ -90,8 +90,7 @@ public class PluginVersionPart {
 
 		@Override
 		public Object[] getElements(Object element) {
-			if (element instanceof ModelEntry) {
-				ModelEntry entry = (ModelEntry) element;
+			if (element instanceof ModelEntry entry) {
 				return entry.getActiveModels();
 			}
 			return new Object[0];

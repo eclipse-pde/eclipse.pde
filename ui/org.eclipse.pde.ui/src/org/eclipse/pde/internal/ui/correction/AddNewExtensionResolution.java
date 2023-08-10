@@ -38,11 +38,9 @@ public class AddNewExtensionResolution extends AbstractPDEMarkerResolution {
 	@Override
 	protected void createChange(IBaseModel model) {
 		IEditorPart part = PDEPlugin.getActivePage().getActiveEditor();
-		if (part instanceof ManifestEditor) {
-			ManifestEditor editor = (ManifestEditor) part;
+		if (part instanceof ManifestEditor editor) {
 			IBaseModel base = editor.getAggregateModel();
-			if (base instanceof IBundlePluginModelBase) {
-				IBundlePluginModelBase pluginModel = (IBundlePluginModelBase) base;
+			if (base instanceof IBundlePluginModelBase pluginModel) {
 				NewExtensionWizard wizard = new NewExtensionWizard(pluginModel.getUnderlyingResource().getProject(), pluginModel, editor) {
 					@Override
 					public boolean performFinish() {

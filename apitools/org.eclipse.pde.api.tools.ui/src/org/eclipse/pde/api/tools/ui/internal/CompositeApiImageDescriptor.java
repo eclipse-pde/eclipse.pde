@@ -98,8 +98,7 @@ public class CompositeApiImageDescriptor extends CompositeImageDescriptor {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof CompositeApiImageDescriptor) {
-			CompositeApiImageDescriptor other = (CompositeApiImageDescriptor) obj;
+		if (obj instanceof CompositeApiImageDescriptor other) {
 			return (fOriginalImage.equals(other.fOriginalImage) && fFlags == other.fFlags);
 		}
 		return false;

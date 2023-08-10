@@ -70,9 +70,7 @@ public class JavaSearchActionGroup extends ActionGroup {
 	public void fillContextMenu(IMenuManager menu) {
 		ActionContext context = getContext();
 		ISelection selection = context.getSelection();
-		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
-			IStructuredSelection sSelection = (IStructuredSelection) selection;
-
+		if (!selection.isEmpty() && selection instanceof IStructuredSelection sSelection) {
 			boolean addSeparator = false;
 
 			if (canDoJavaSearchOperation(sSelection, true)) {

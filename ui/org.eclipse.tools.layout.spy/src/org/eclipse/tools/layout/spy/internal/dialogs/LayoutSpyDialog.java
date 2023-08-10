@@ -235,8 +235,7 @@ public class LayoutSpyDialog {
 
 	private void setChildrenColoring(Control control) {
 		control.setData(LayoutIssuesDebugFilter.IGNORE_BY_LAYOUT_ISSUES_DEBUG_FILTER);
-		if (control instanceof Composite) {
-			Composite c = (Composite) control;
+		if (control instanceof Composite c) {
 			for (Control child : c.getChildren()) {
 				setChildrenColoring(child);
 			}
@@ -425,8 +424,7 @@ public class LayoutSpyDialog {
 	 */
 	private void goDown() {
 		Control child = getSelectedChild();
-		if (child instanceof Composite) {
-			Composite composite = (Composite) child;
+		if (child instanceof Composite composite) {
 			openComposite(composite);
 		}
 	}
@@ -476,9 +474,7 @@ public class LayoutSpyDialog {
 	private static Point computeHintAdjustment(Control control) {
 		int widthAdjustment;
 		int heightAdjustment;
-		if (control instanceof Scrollable) {
-			// For composites, subtract off the trim size
-			Scrollable composite = (Scrollable) control;
+		if (control instanceof Scrollable composite) {
 			Rectangle trim = composite.computeTrim(0, 0, 0, 0);
 
 			widthAdjustment = trim.width;
@@ -499,9 +495,7 @@ public class LayoutSpyDialog {
 	 * that dimension.
 	 */
 	private static boolean isGrowableLayout(Control control, boolean horizontal) {
-		if (control instanceof Composite) {
-			Composite composite = (Composite) control;
-
+		if (control instanceof Composite composite) {
 			Layout theLayout = composite.getLayout();
 			if (theLayout instanceof GridLayout) {
 				Control[] children = composite.getChildren();
@@ -579,8 +573,7 @@ public class LayoutSpyDialog {
 			Object layoutData = child.getLayoutData();
 			if (layoutData == null) {
 				builder.append("getLayoutData() == null\n"); //$NON-NLS-1$
-			} else if (layoutData instanceof GridData) {
-				GridData grid = (GridData) layoutData;
+			} else if (layoutData instanceof GridData grid) {
 				builder.append(GridDataFactory.createFrom(grid));
 				widthHintFromLayoutData = grid.widthHint;
 				heightHintFromLayoutData = grid.heightHint;
@@ -597,9 +590,7 @@ public class LayoutSpyDialog {
 								Messages.LayoutSpyDialog_warning_grab_vertical_scrolling));
 					}
 				}
-			} else if (layoutData instanceof FormData) {
-				FormData formData = (FormData) layoutData;
-
+			} else if (layoutData instanceof FormData formData) {
 				widthHintFromLayoutData = formData.width;
 				heightHintFromLayoutData = formData.height;
 			} else {
@@ -730,8 +721,7 @@ public class LayoutSpyDialog {
 			Layout layout = parent.getLayout();
 
 			if (layout != null) {
-				if (layout instanceof GridLayout) {
-					GridLayout grid = (GridLayout) layout;
+				if (layout instanceof GridLayout grid) {
 					builder.append(GridLayoutFactory.createFrom(grid));
 
 					boolean hasVerticallyTruncadeControls = false;

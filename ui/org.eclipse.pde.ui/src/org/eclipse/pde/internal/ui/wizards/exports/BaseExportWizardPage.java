@@ -193,8 +193,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 			fExportPart.updateCounterLabel();
 		});
 		Object input = getInput();
-		if (input instanceof FeatureModelManager) {
-			FeatureModelManager fmm = (FeatureModelManager) input;
+		if (input instanceof FeatureModelManager fmm) {
 			IFeatureModel[] models = fmm.getWorkspaceModels();
 			for (IFeatureModel iFeatureModel : models) {
 				if (iFeatureModel.getFeature().getId() == null) {
@@ -214,8 +213,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		for (Object elem : fSelection.toArray()) {
 			IProject project = null;
 
-			if (elem instanceof IFile) {
-				IFile file = (IFile) elem;
+			if (elem instanceof IFile file) {
 				project = file.getProject();
 			} else if (elem instanceof IProject) {
 				project = (IProject) elem;

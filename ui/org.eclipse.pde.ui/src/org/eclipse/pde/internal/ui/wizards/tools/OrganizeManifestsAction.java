@@ -57,8 +57,7 @@ public class OrganizeManifestsAction extends AbstractHandler {
 		if (!PlatformUI.getWorkbench().saveAllEditors(true))
 			return;
 
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection ssel) {
 			Iterator<?> it = ssel.iterator();
 			ArrayList<IProject> projects = new ArrayList<>();
 			while (it.hasNext()) {

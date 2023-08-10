@@ -36,11 +36,9 @@ public class PluginSupport {
 	public IPluginModelBase toPluginModel(Object obj) {
 		if (obj instanceof IPluginModelBase) {
 			return (IPluginModelBase) obj;
-		} else if (obj instanceof IFeaturePlugin) {
-			IFeaturePlugin featurePlugin = (IFeaturePlugin) obj;
+		} else if (obj instanceof IFeaturePlugin featurePlugin) {
 			return getManager().findModel(featurePlugin.getId());
-		} else if (obj instanceof IProductPlugin) {
-			IProductPlugin productPlugin = (IProductPlugin) obj;
+		} else if (obj instanceof IProductPlugin productPlugin) {
 			return getManager().findModel(productPlugin.getId());
 		} else if (obj instanceof IProject) {
 			return getManager().findModel((IProject) obj);

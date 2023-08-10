@@ -2666,8 +2666,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @return Java project or <code>null</code>
 	 */
 	private IJavaProject getJavaProject(IApiComponent component) {
-		if (component instanceof ProjectComponent) {
-			ProjectComponent pp = (ProjectComponent) component;
+		if (component instanceof ProjectComponent pp) {
 			return pp.getJavaProject();
 		}
 		return null;

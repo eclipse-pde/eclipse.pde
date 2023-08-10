@@ -66,12 +66,10 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 
 	@Override
 	public Image getImage(Object element) {
-		if (element instanceof IApiComponent) {
-			IApiComponent comp = (IApiComponent) element;
+		if (element instanceof IApiComponent comp) {
 			return getApiComponentImage(comp);
 		}
-		if (element instanceof IResource) {
-			IResource resource = (IResource) element;
+		if (element instanceof IResource resource) {
 			switch (resource.getType()) {
 				case IResource.FILE:
 					return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
@@ -92,8 +90,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 		if (element instanceof EEEntry) {
 			return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY);
 		}
-		if (element instanceof IApiProblemFilter) {
-			IApiProblemFilter filter = (IApiProblemFilter) element;
+		if (element instanceof IApiProblemFilter filter) {
 			IApiProblem problem = filter.getUnderlyingProblem();
 			/*
 			 * int flags = (problem.getSeverity() == ApiPlugin.SEVERITY_ERROR ?
@@ -195,8 +192,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 
 	@Override
 	public String getText(Object element) {
-		if (element instanceof IApiComponent) {
-			IApiComponent comp = (IApiComponent) element;
+		if (element instanceof IApiComponent comp) {
 			return MessageFormat.format(Messages.ApiToolsLabelProvider_0, comp.getSymbolicName(), comp.getVersion());
 		}
 		if (element instanceof File) {
@@ -206,8 +202,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 				return ((File) element).getName();
 			}
 		}
-		if (element instanceof IApiBaseline) {
-			IApiBaseline baseline = (IApiBaseline) element;
+		if (element instanceof IApiBaseline baseline) {
 			StringBuilder buffer = new StringBuilder();
 			buffer.append(baseline.getName());
 			if (isDefaultBaseline(baseline)) {
@@ -218,12 +213,10 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 		if (element instanceof EEEntry) {
 			return ((EEEntry) element).toString();
 		}
-		if (element instanceof IApiProblemFilter) {
-			IApiProblemFilter filter = (IApiProblemFilter) element;
+		if (element instanceof IApiProblemFilter filter) {
 			return filter.getUnderlyingProblem().getMessage();
 		}
-		if (element instanceof IResource) {
-			IResource resource = (IResource) element;
+		if (element instanceof IResource resource) {
 			IPath path = resource.getProjectRelativePath();
 			StringBuilder buffer = new StringBuilder();
 			buffer.append(path.removeFileExtension().lastSegment());
@@ -246,8 +239,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 	 * @return if the profile is the default or not
 	 */
 	protected boolean isDefaultBaseline(Object element) {
-		if (element instanceof IApiBaseline) {
-			IApiBaseline profile = (IApiBaseline) element;
+		if (element instanceof IApiBaseline profile) {
 			IApiBaseline def = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
 			if (def != null) {
 				return profile.getName().equals(def.getName());

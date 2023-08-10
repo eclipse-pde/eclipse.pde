@@ -110,8 +110,7 @@ public class FeatureUndoManager extends ModelUndoManager {
 	}
 
 	private void executeChange(Object element, String propertyName, Object oldValue, Object newValue) {
-		if (element instanceof FeatureObject) {
-			FeatureObject pobj = (FeatureObject) element;
+		if (element instanceof FeatureObject pobj) {
 			try {
 				pobj.restoreProperty(propertyName, oldValue, newValue);
 			} catch (CoreException e) {

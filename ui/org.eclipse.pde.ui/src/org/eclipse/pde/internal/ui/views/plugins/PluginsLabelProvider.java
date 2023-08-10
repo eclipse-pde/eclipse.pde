@@ -105,8 +105,7 @@ public class PluginsLabelProvider extends LabelProvider {
 			return getImage((FileAdapter) obj);
 		}
 
-		if (obj instanceof IPackageFragmentRoot) {
-			IPackageFragmentRoot root = (IPackageFragmentRoot) obj;
+		if (obj instanceof IPackageFragmentRoot root) {
 			boolean hasSource = false;
 
 			try {

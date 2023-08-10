@@ -55,8 +55,7 @@ public class UpdateClasspathAction extends AbstractHandler {
 			for (Object elem : elems) {
 				IProject project = null;
 
-				if (elem instanceof IFile) {
-					IFile file = (IFile) elem;
+				if (elem instanceof IFile file) {
 					project = file.getProject();
 				} else if (elem instanceof IProject) {
 					project = (IProject) elem;

@@ -154,8 +154,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof LocalTargetHandle) {
-			LocalTargetHandle handle = (LocalTargetHandle) obj;
+		if (obj instanceof LocalTargetHandle handle) {
 			return handle.fTimeStamp == fTimeStamp;
 		}
 		return false;

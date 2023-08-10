@@ -50,8 +50,7 @@ public final class JavadocTagManager {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof Key) {
-				Key other = (Key) obj;
+			if (obj instanceof Key other) {
 				return type == other.type && member == other.member;
 			}
 			return super.equals(obj);

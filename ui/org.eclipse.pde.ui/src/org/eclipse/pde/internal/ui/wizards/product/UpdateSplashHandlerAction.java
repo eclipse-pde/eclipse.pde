@@ -362,8 +362,7 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		IPluginObject[] pluginObjects = extension.getChildren();
 		// Process all children
 		for (IPluginObject pluginObject : pluginObjects) {
-			if (pluginObject instanceof IPluginElement) {
-				IPluginElement element = (IPluginElement) pluginObject;
+			if (pluginObject instanceof IPluginElement element) {
 				// Find splash handler elements
 				if (element.getName().equals(F_ELEMENT_PRODUCT_BINDING)) {
 					// Get the splash ID attribute
@@ -395,8 +394,7 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		IPluginObject[] pluginObjects = extension.getChildren();
 		// Process all children
 		for (IPluginObject pluginObject : pluginObjects) {
-			if (pluginObject instanceof IPluginElement) {
-				IPluginElement element = (IPluginElement) pluginObject;
+			if (pluginObject instanceof IPluginElement element) {
 				// Find splash handler elements
 				if (element.getName().equals(F_ELEMENT_SPLASH_HANDLER)) {
 					// Get the id attribute
@@ -445,8 +443,7 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		IPluginObject[] pluginObjects = extension.getChildren();
 		// Process all children
 		for (IPluginObject pluginObject : pluginObjects) {
-			if (pluginObject instanceof IPluginElement) {
-				IPluginElement element = (IPluginElement) pluginObject;
+			if (pluginObject instanceof IPluginElement element) {
 				// Find product binding elements
 				if (element.getName().equals(F_ELEMENT_PRODUCT_BINDING)) {
 					// Get the id attribute

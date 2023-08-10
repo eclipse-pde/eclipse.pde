@@ -281,24 +281,20 @@ public class ElementOccurenceChecker {
 	}
 
 	private static void processObjectMax(ISchemaObject schemaObject, HashSet<ElementOccurrenceResult> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker, Element element) {
-		if (schemaObject instanceof ISchemaElement) {
-			ISchemaElement schemaElement = (ISchemaElement) schemaObject;
+		if (schemaObject instanceof ISchemaElement schemaElement) {
 			Element childElement = findChildElement(element, schemaElement.getName());
 			if (childElement != null) {
 				processElementMax(schemaElement, elementSet, siblings, multiplicityTracker, childElement);
 			}
-		} else if (schemaObject instanceof ISchemaCompositor) {
-			ISchemaCompositor sCompositor = (ISchemaCompositor) schemaObject;
+		} else if (schemaObject instanceof ISchemaCompositor sCompositor) {
 			processCompositorMax(sCompositor, elementSet, siblings, multiplicityTracker, element);
 		}
 	}
 
 	private static void processObjectMin(ISchemaObject schemaObject, HashSet<ElementOccurrenceResult> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker) {
-		if (schemaObject instanceof ISchemaElement) {
-			ISchemaElement schemaElement = (ISchemaElement) schemaObject;
+		if (schemaObject instanceof ISchemaElement schemaElement) {
 			processElementMin(schemaElement, elementSet, siblings, multiplicityTracker);
-		} else if (schemaObject instanceof ISchemaCompositor) {
-			ISchemaCompositor sCompositor = (ISchemaCompositor) schemaObject;
+		} else if (schemaObject instanceof ISchemaCompositor sCompositor) {
 			processCompositorMin(sCompositor, elementSet, siblings, multiplicityTracker);
 		}
 	}

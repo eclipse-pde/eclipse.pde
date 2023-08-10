@@ -237,8 +237,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		IHeader header = getHeader(Constants.EXPORT_PACKAGE);
 
 		// check for missing exported packages
-		if (fModel instanceof IBundlePluginModelBase) {
-			IBundlePluginModelBase bundleModel = (IBundlePluginModelBase) fModel;
+		if (fModel instanceof IBundlePluginModelBase bundleModel) {
 			IBundle bundle = bundleModel.getBundleModel().getBundle();
 			IManifestHeader bundleClasspathheader = bundle.getManifestHeader(Constants.BUNDLE_CLASSPATH);
 
@@ -251,8 +250,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					if (ManifestUtils.isImmediateRoot(root)) {
 						IJavaElement[] javaElements = root.getChildren();
 						for (int j = 0; j < javaElements.length; j++) {
-							if (javaElements[j] instanceof IPackageFragment) {
-								IPackageFragment fragment = (IPackageFragment) javaElements[j];
+							if (javaElements[j] instanceof IPackageFragment fragment) {
 								String name = fragment.getElementName();
 								if (name.length() == 0) {
 									continue;
@@ -1737,12 +1735,11 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 
 		IResource res = PDEProject.getBundleRoot(fProject).findMember(location);
-		if (res == null || !(res instanceof IContainer)) {
+		if (res == null || !(res instanceof IContainer folder)) {
 			VirtualMarker marker = report(PDECoreMessages.BundleErrorReporter_localization_folder_not_exist, header.getLineNumber(), CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_RESOURCE), PDEMarkerFactory.CAT_OTHER);
 			addMarkerAttribute(marker, PDEMarkerFactory.compilerKey, CompilerFlags.P_UNKNOWN_RESOURCE);
 			return;
 		}
-		IContainer folder = (IContainer) res;
 		try {
 			IResource[] children = folder.members();
 			for (int i = 0; i < children.length; i++) {

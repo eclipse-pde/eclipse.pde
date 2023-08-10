@@ -281,12 +281,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 
 	@Override
 	public void setActiveEditor(IEditorPart targetEditor) {
-		if (targetEditor instanceof PDESourcePage) {
-			// Fixing the 'goto line' problem -
-			// the action is thinking that source page
-			// is a standalone editor and tries to activate it
-			// #19361
-			PDESourcePage page = (PDESourcePage) targetEditor;
+		if (targetEditor instanceof PDESourcePage page) {
 			PDEPlugin.getActivePage().activate(page.getEditor());
 			return;
 		}

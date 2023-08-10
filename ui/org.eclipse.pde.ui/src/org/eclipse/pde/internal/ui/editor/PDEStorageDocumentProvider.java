@@ -45,8 +45,7 @@ public class PDEStorageDocumentProvider extends StorageDocumentProvider {
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput, String encoding) throws CoreException {
 		boolean set = super.setDocumentContent(document, editorInput, encoding);
 		if (!set) {
-			if (editorInput instanceof IURIEditorInput) {
-				IURIEditorInput input = (IURIEditorInput) editorInput;
+			if (editorInput instanceof IURIEditorInput input) {
 				IFileStore store = EFS.getStore(input.getURI());
 				try (InputStream is = store.openInputStream(EFS.CACHE, new NullProgressMonitor())) {
 					setDocumentContent(document, is, encoding);
@@ -68,8 +67,7 @@ public class PDEStorageDocumentProvider extends StorageDocumentProvider {
 
 	@Override
 	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
-		if (element instanceof IAdaptable) {
-			IAdaptable input = (IAdaptable) element;
+		if (element instanceof IAdaptable input) {
 			File file = input.getAdapter(File.class);
 			if (file == null && (input instanceof IURIEditorInput)) {
 				URI uri = ((IURIEditorInput) input).getURI();

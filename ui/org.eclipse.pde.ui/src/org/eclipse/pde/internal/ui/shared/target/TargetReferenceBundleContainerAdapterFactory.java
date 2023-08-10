@@ -48,8 +48,7 @@ public class TargetReferenceBundleContainerAdapterFactory implements IAdapterFac
 
 		@Override
 		public String getText(Object element) {
-			if (element instanceof TargetReferenceBundleContainer) {
-				TargetReferenceBundleContainer container = (TargetReferenceBundleContainer) element;
+			if (element instanceof TargetReferenceBundleContainer container) {
 				String name = container.targetDefinition().map(ITargetDefinition::getName).orElse(null);
 				if (name != null && !name.isBlank()) {
 					return name;
@@ -90,8 +89,7 @@ public class TargetReferenceBundleContainerAdapterFactory implements IAdapterFac
 		@Override
 		public IStatus reload(ITargetDefinition target, ITargetLocation[] targetLocations, IProgressMonitor monitor) {
 			for (ITargetLocation location : targetLocations) {
-				if (location instanceof TargetReferenceBundleContainer) {
-					TargetReferenceBundleContainer targetRefrenceBundleContainer = (TargetReferenceBundleContainer) location;
+				if (location instanceof TargetReferenceBundleContainer targetRefrenceBundleContainer) {
 					targetRefrenceBundleContainer.reload();
 				}
 			}
@@ -123,8 +121,7 @@ public class TargetReferenceBundleContainerAdapterFactory implements IAdapterFac
 			if (element instanceof TargetReferenceBundleContainer) {
 				return true;
 			}
-			if (element instanceof TargetLocationWrapper) {
-				TargetLocationWrapper wrapper = (TargetLocationWrapper) element;
+			if (element instanceof TargetLocationWrapper wrapper) {
 				return wrapper.as(ITreeContentProvider.class).map(provider -> provider.hasChildren(wrapper.wrappedItem))
 						.orElse(Boolean.FALSE);
 			}
@@ -143,16 +140,14 @@ public class TargetReferenceBundleContainerAdapterFactory implements IAdapterFac
 
 		@Override
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof TargetReferenceBundleContainer) {
-				TargetReferenceBundleContainer container = (TargetReferenceBundleContainer) parentElement;
+			if (parentElement instanceof TargetReferenceBundleContainer container) {
 				ITargetLocation[] targetLocations = container.targetDefinition()
 						.map(ITargetDefinition::getTargetLocations).orElse(null);
 				if (targetLocations != null && targetLocations.length > 0) {
 					return Arrays.stream(targetLocations).map(TargetLocationWrapper::new).toArray();
 				}
 			}
-			if (parentElement instanceof TargetLocationWrapper) {
-				TargetLocationWrapper wrapper = (TargetLocationWrapper) parentElement;
+			if (parentElement instanceof TargetLocationWrapper wrapper) {
 				return wrapper.as(ITreeContentProvider.class).map(provider -> provider.getChildren(wrapper.wrappedItem))
 						.stream().flatMap(Arrays::stream).map(TargetLocationWrapper::new).toArray();
 			}

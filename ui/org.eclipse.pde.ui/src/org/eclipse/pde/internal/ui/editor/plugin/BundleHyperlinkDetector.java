@@ -47,10 +47,9 @@ public class BundleHyperlinkDetector implements IHyperlinkDetector {
 			return null;
 
 		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset(), false);
-		if (!(element instanceof ManifestHeader))
+		if (!(element instanceof ManifestHeader header))
 			return null;
 
-		ManifestHeader header = (ManifestHeader) element;
 		if (!header.getModel().isEditable())
 			return null;
 

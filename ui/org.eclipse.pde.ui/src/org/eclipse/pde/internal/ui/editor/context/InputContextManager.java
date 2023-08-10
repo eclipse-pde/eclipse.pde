@@ -273,8 +273,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	private void removeContext(IFile file) {
 		for (InputContext context : inputContexts.values()) {
 			IEditorInput input = context.getInput();
-			if (input instanceof IFileEditorInput) {
-				IFileEditorInput fileInput = (IFileEditorInput) input;
+			if (input instanceof IFileEditorInput fileInput) {
 				if (file.equals(fileInput.getFile())) {
 					inputContexts.remove(input);
 					fireContextChange(context, false);

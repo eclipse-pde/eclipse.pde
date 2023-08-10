@@ -206,8 +206,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 			fRemoveButton.setEnabled(size > 0);
 			if (size == 1) {
 				Object element = ss.getFirstElement();
-				if (element instanceof IApiProblemFilter) {
-					IApiProblemFilter filter = (IApiProblemFilter) element;
+				if (element instanceof IApiProblemFilter filter) {
 					String comment = filter.getComment();
 					fEditButton.setEnabled(true);
 					if (comment != null) {
@@ -229,8 +228,7 @@ public class ApiFiltersPropertyPage extends PropertyPage {
 			if (fViewer.isExpandable(o)) {
 				fViewer.setExpandedState(o, !fViewer.getExpandedState(o));
 			} else {
-				if (o instanceof IApiProblemFilter) {
-					IApiProblemFilter filter = (IApiProblemFilter) o;
+				if (o instanceof IApiProblemFilter filter) {
 					handleEdit(filter);
 				}
 			}

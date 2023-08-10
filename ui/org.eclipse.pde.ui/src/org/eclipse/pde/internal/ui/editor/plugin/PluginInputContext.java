@@ -100,8 +100,7 @@ public class PluginInputContext extends XMLInputContext {
 
 		while (iter.hasNext()) {
 			Object object = iter.next();
-			if (object instanceof IDocumentElementNode) {
-				IDocumentElementNode node = (IDocumentElementNode) object;
+			if (object instanceof IDocumentElementNode node) {
 				if (node.getParentNode() instanceof PluginBaseNode) {
 					TextEdit edit = map.get(node);
 					if (edit instanceof InsertEdit) {

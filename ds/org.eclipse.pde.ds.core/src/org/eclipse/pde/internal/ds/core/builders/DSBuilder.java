@@ -51,9 +51,7 @@ public class DSBuilder extends IncrementalProjectBuilder {
 
 		@Override
 		public boolean visit(IResource resource) {
-			if (resource instanceof IProject) {
-				// TODO only check PDE projects...
-				IProject project = (IProject) resource;
+			if (resource instanceof IProject project) {
 				try {
 					return (project.hasNature(PDE_NATURE));
 				} catch (CoreException e) {
@@ -61,9 +59,7 @@ public class DSBuilder extends IncrementalProjectBuilder {
 					return false;
 				}
 			}
-			if (resource instanceof IFile) {
-				// see if this is it
-				IFile candidate = (IFile) resource;
+			if (resource instanceof IFile candidate) {
 				if (isDSFile(candidate)) {
 					checkFile(candidate, monitor);
 					return true;
@@ -84,9 +80,7 @@ public class DSBuilder extends IncrementalProjectBuilder {
 		public boolean visit(IResourceDelta delta) {
 			IResource resource = delta.getResource();
 
-			if (resource instanceof IProject) {
-				// TODO only check PDE projects...
-				IProject project = (IProject) resource;
+			if (resource instanceof IProject project) {
 				try {
 					return (project.hasNature(PDE_NATURE));
 				} catch (CoreException e) {
@@ -94,9 +88,7 @@ public class DSBuilder extends IncrementalProjectBuilder {
 					return false;
 				}
 			}
-			if (resource instanceof IFile) {
-				// see if this is it
-				IFile candidate = (IFile) resource;
+			if (resource instanceof IFile candidate) {
 				if (isDSFile(candidate)) {
 					// That's it, but only check it if it has been added or changed
 					if (delta.getKind() != IResourceDelta.REMOVED) {

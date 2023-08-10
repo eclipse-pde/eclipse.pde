@@ -112,27 +112,23 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			if (object instanceof IPluginBase)
 				return ((IPluginBase) object).getId();
 
-			if (object instanceof IPluginImport) {
-				IPluginImport dep = (IPluginImport) object;
+			if (object instanceof IPluginImport dep) {
 				return dep.getId() + " - " //$NON-NLS-1$
 						+ dep.getPluginBase().getId();
 			}
 
-			if (object instanceof IPluginExtension) {
-				IPluginExtension extension = (IPluginExtension) object;
+			if (object instanceof IPluginExtension extension) {
 				return extension.getPoint() + " - " + extension.getPluginBase().getId(); //$NON-NLS-1$
 			}
 
 			if (object instanceof IPluginExtensionPoint)
 				return ((IPluginExtensionPoint) object).getFullId();
 
-			if (object instanceof ExportPackageDescription) {
-				ExportPackageDescription epd = (ExportPackageDescription) object;
+			if (object instanceof ExportPackageDescription epd) {
 				return epd.getName() + ' ' + '(' + epd.getVersion() + ')';
 			}
 
-			if (object instanceof IFeatureModel) {
-				IFeatureModel fModel = (IFeatureModel) object;
+			if (object instanceof IFeatureModel fModel) {
 				IFeature feature = fModel.getFeature();
 				return feature.getId() + ' ' + '(' + feature.getVersion() + ')';
 			}
@@ -147,8 +143,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 		@Override
 		public String decorateText(String text, Object element) {
-			if (element instanceof ExportPackageDescription) {
-				ExportPackageDescription epd = (ExportPackageDescription) element;
+			if (element instanceof ExportPackageDescription epd) {
 				return text.concat(" - " + epd.getSupplier().getSymbolicName()); //$NON-NLS-1$
 			}
 			return text;
@@ -190,23 +185,18 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 		@Override
 		public Image getImage(Object element) {
-			if (element instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase) element;
+			if (element instanceof IPluginModelBase model) {
 				return getImage(model.getInstallLocation());
-			} else if (element instanceof IPluginExtensionPoint) {
-				IPluginExtensionPoint model = (IPluginExtensionPoint) element;
+			} else if (element instanceof IPluginExtensionPoint model) {
 				return getImage(model.getModel().getInstallLocation());
-			} else if (element instanceof IPluginExtension) {
-				IPluginExtension model = (IPluginExtension) element;
+			} else if (element instanceof IPluginExtension model) {
 				return getImage(model.getModel().getInstallLocation());
-			} else if (element instanceof ExportPackageDescription) {
-				ExportPackageDescription model = (ExportPackageDescription) element;
+			} else if (element instanceof ExportPackageDescription model) {
 				String id = model.getSupplier().getName();
 				String version = model.getSupplier().getVersion().toString();
 				IPluginModelBase base = getModel(id, version);
 				return getImage(base.getInstallLocation());
-			} else if (element instanceof IFeatureModel) {
-				IFeatureModel model = (IFeatureModel) element;
+			} else if (element instanceof IFeatureModel model) {
 				return getImage(model.getInstallLocation());
 			}
 			return null;
@@ -214,23 +204,18 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 		@Override
 		public String getText(Object element) {
-			if (element instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase) element;
+			if (element instanceof IPluginModelBase model) {
 				return model.getInstallLocation();
-			} else if (element instanceof IPluginExtensionPoint) {
-				IPluginExtensionPoint model = (IPluginExtensionPoint) element;
+			} else if (element instanceof IPluginExtensionPoint model) {
 				return model.getModel().getInstallLocation();
-			} else if (element instanceof IPluginExtension) {
-				IPluginExtension model = (IPluginExtension) element;
+			} else if (element instanceof IPluginExtension model) {
 				return model.getModel().getInstallLocation();
-			} else if (element instanceof ExportPackageDescription) {
-				ExportPackageDescription model = (ExportPackageDescription) element;
+			} else if (element instanceof ExportPackageDescription model) {
 				String id = model.getSupplier().getName();
 				String version = model.getSupplier().getVersion().toString();
 				IPluginModelBase base = getModel(id, version);
 				return base.getInstallLocation();
-			} else if (element instanceof IFeatureModel) {
-				IFeatureModel model = (IFeatureModel) element;
+			} else if (element instanceof IFeatureModel model) {
 				return model.getInstallLocation();
 			}
 			return null;
@@ -481,20 +466,15 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 	@Override
 	public String getElementName(Object item) {
-		if (item instanceof IPluginModelBase) {
-			IPluginModelBase model = (IPluginModelBase) item;
+		if (item instanceof IPluginModelBase model) {
 			return model.getPluginBase().getId();
-		} else if (item instanceof IPluginExtensionPoint) {
-			IPluginExtensionPoint model = (IPluginExtensionPoint) item;
+		} else if (item instanceof IPluginExtensionPoint model) {
 			return model.getFullId();
-		} else if (item instanceof IPluginExtension) {
-			IPluginExtension model = (IPluginExtension) item;
+		} else if (item instanceof IPluginExtension model) {
 			return model.getPoint();
-		} else if (item instanceof ExportPackageDescription) {
-			ExportPackageDescription model = (ExportPackageDescription) item;
+		} else if (item instanceof ExportPackageDescription model) {
 			return model.getName();
-		} else if (item instanceof IFeatureModel) {
-			IFeatureModel model = (IFeatureModel) item;
+		} else if (item instanceof IFeatureModel model) {
 			return model.getFeature().getId();
 		}
 		return null;
@@ -650,31 +630,26 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 		@Override
 		protected void storeItemToMemento(Object item, IMemento memento) {
-			if (item instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase) item;
+			if (item instanceof IPluginModelBase model) {
 				memento.putInteger(M_TYPE, TYPE_PLUGIN);
 				memento.putString(M_PLUGIN_ID, model.getPluginBase().getId());
 				memento.putString(M_PLUGIN_VERSION, model.getPluginBase().getVersion());
-			} else if (item instanceof IPluginExtensionPoint) {
-				IPluginExtensionPoint model = (IPluginExtensionPoint) item;
+			} else if (item instanceof IPluginExtensionPoint model) {
 				memento.putInteger(M_TYPE, TYPE_EXTENSION_POINT);
 				memento.putString(M_ID, model.getFullId());
 				memento.putString(M_PLUGIN_ID, model.getPluginBase().getId());
 				memento.putString(M_PLUGIN_VERSION, model.getPluginBase().getVersion());
-			} else if (item instanceof IPluginExtension) {
-				IPluginExtension model = (IPluginExtension) item;
+			} else if (item instanceof IPluginExtension model) {
 				memento.putInteger(M_TYPE, TYPE_EXTENSION);
 				memento.putString(M_ID, model.getPoint());
 				memento.putString(M_PLUGIN_ID, model.getPluginBase().getId());
 				memento.putString(M_PLUGIN_VERSION, model.getPluginBase().getVersion());
-			} else if (item instanceof ExportPackageDescription) {
-				ExportPackageDescription model = (ExportPackageDescription) item;
+			} else if (item instanceof ExportPackageDescription model) {
 				memento.putInteger(M_TYPE, TYPE_EXPORTED_PACKAGE);
 				memento.putString(M_ID, model.getName());
 				memento.putString(M_PLUGIN_ID, model.getSupplier().getSymbolicName());
 				memento.putString(M_PLUGIN_VERSION, model.getSupplier().getVersion().toString());
-			} else if (item instanceof IFeatureModel) {
-				IFeatureModel model = (IFeatureModel) item;
+			} else if (item instanceof IFeatureModel model) {
 				memento.putInteger(M_TYPE, TYPE_FEATURE);
 				memento.putString(M_ID, model.getFeature().getId());
 				memento.putString(M_PLUGIN_VERSION, model.getFeature().getVersion());
@@ -703,20 +678,15 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		@Override
 		public boolean matchItem(Object item) {
 			String id = null;
-			if (item instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase) item;
+			if (item instanceof IPluginModelBase model) {
 				id = model.getPluginBase().getId();
-			} else if (item instanceof IPluginExtensionPoint) {
-				IPluginExtensionPoint model = (IPluginExtensionPoint) item;
+			} else if (item instanceof IPluginExtensionPoint model) {
 				id = model.getFullId();
-			} else if (item instanceof IPluginExtension) {
-				IPluginExtension model = (IPluginExtension) item;
+			} else if (item instanceof IPluginExtension model) {
 				id = model.getPoint();
-			} else if (item instanceof ExportPackageDescription) {
-				ExportPackageDescription model = (ExportPackageDescription) item;
+			} else if (item instanceof ExportPackageDescription model) {
 				id = model.getName();
-			} else if (item instanceof IFeatureModel) {
-				IFeatureModel model = (IFeatureModel) item;
+			} else if (item instanceof IFeatureModel model) {
 				id = model.getFeature().getId();
 			}
 
@@ -774,33 +744,23 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		}
 
 		private int compareSimilarObjects(Object o1, Object o2) {
-			if (o1 instanceof IPluginModelBase && o2 instanceof IPluginModelBase) {
-				IPluginModelBase ipmb1 = (IPluginModelBase) o1;
-				IPluginModelBase ipmb2 = (IPluginModelBase) o2;
+			if (o1 instanceof IPluginModelBase ipmb1 && o2 instanceof IPluginModelBase ipmb2) {
 				return comparePlugins(ipmb1.getPluginBase(), ipmb2.getPluginBase());
-			} else if (o1 instanceof IPluginExtensionPoint && o2 instanceof IPluginExtensionPoint) {
-				IPluginExtensionPoint ipep1 = (IPluginExtensionPoint) o1;
-				IPluginExtensionPoint ipep2 = (IPluginExtensionPoint) o2;
+			} else if (o1 instanceof IPluginExtensionPoint ipep1 && o2 instanceof IPluginExtensionPoint ipep2) {
 				return compareExtensionPoints(ipep1, ipep2);
-			} else if (o1 instanceof IPluginExtension && o2 instanceof IPluginExtension) {
-				IPluginExtension ipe1 = (IPluginExtension) o1;
-				IPluginExtension ipe2 = (IPluginExtension) o2;
+			} else if (o1 instanceof IPluginExtension ipe1 && o2 instanceof IPluginExtension ipe2) {
 				int comparePointsResult = ipe1.getPoint().compareTo(ipe2.getPoint());
 				if (comparePointsResult == 0)
 					return comparePlugins(ipe1.getPluginBase(), ipe2.getPluginBase());
 				// else
 				return comparePointsResult;
-			} else if (o1 instanceof ExportPackageDescription && o2 instanceof ExportPackageDescription) {
-				ExportPackageDescription epd1 = (ExportPackageDescription) o1;
-				ExportPackageDescription epd2 = (ExportPackageDescription) o2;
+			} else if (o1 instanceof ExportPackageDescription epd1 && o2 instanceof ExportPackageDescription epd2) {
 				int compareNamesResult = epd1.getName().compareTo(epd2.getName());
 				if (compareNamesResult == 0)
 					return compareBundleDescriptions(epd1.getSupplier(), epd2.getSupplier());
 				// else
 				return compareNamesResult;
-			} else if (o1 instanceof IFeatureModel && o2 instanceof IFeatureModel) {
-				IFeatureModel ifm1 = (IFeatureModel) o1;
-				IFeatureModel ifm2 = (IFeatureModel) o2;
+			} else if (o1 instanceof IFeatureModel ifm1 && o2 instanceof IFeatureModel ifm2) {
 				return compareFeatures(ifm1, ifm2);
 			}
 			return 0;

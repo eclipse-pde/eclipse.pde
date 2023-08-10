@@ -212,8 +212,7 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
                         Object[] selectedAttributes = dialog.getResult();
                         StringBuilder result = new StringBuilder();
                         for (Object object : selectedAttributes) {
-                                if (object instanceof ISchemaAttribute) {
-                                        ISchemaAttribute attribute = (ISchemaAttribute) object;
+                                if (object instanceof ISchemaAttribute attribute) {
                                         String id = PDESchemaHelper.getReferenceIdentifier(attribute);
                                         if (result.length() > 0) {
                                                 result.append(","); //$NON-NLS-1$

@@ -117,8 +117,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof LineMapping) {
-				LineMapping lm = (LineMapping) obj;
+			if (obj instanceof LineMapping lm) {
 				return lm.linenumber == this.linenumber && lm.problemid == this.problemid && (this.message == null ? lm.message == null : this.message.equals(lm.message));
 			}
 			return super.equals(obj);

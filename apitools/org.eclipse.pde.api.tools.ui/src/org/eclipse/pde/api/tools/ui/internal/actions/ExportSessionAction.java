@@ -118,8 +118,7 @@ public class ExportSessionAction extends Action {
 						writer = new BufferedWriter(new FileWriter(xmlOutputFile));
 						DeltaXmlVisitor visitor = new DeltaXmlVisitor();
 						Object data = activeSession.getModel().getRoot().getData();
-						if (data instanceof IDelta) {
-							IDelta delta = (IDelta) data;
+						if (data instanceof IDelta delta) {
 							progress.split(25);
 							delta.accept(visitor);
 							writer.write(visitor.getXML());

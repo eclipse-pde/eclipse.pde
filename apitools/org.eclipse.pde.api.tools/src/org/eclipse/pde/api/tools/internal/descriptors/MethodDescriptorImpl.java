@@ -53,8 +53,7 @@ public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMetho
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof IMethodDescriptor) {
-			IMethodDescriptor method = (IMethodDescriptor) obj;
+		if (obj instanceof IMethodDescriptor method) {
 			return getName().equals(method.getName()) && getEnclosingType().equals(method.getEnclosingType()) && getSignature().equals(method.getSignature());
 		}
 		return false;

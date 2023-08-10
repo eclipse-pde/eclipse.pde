@@ -158,8 +158,7 @@ public class SchemaCompositor extends RepeatableSchemaObject implements ISchemaC
 	public void updateReferencesFor(ISchemaElement element, int kind) {
 		for (int i = children.size() - 1; i >= 0; i--) {
 			Object child = children.elementAt(i);
-			if (child instanceof SchemaElementReference) {
-				SchemaElementReference ref = (SchemaElementReference) child;
+			if (child instanceof SchemaElementReference ref) {
 				String refName = ref.getReferenceName();
 				switch (kind) {
 					case ISchema.REFRESH_ADD :

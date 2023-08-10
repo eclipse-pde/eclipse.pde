@@ -696,11 +696,10 @@ public class TocTreeSection extends TreeSection {
 		// Get the wizard page
 		IWizardPage wizardPage;
 		wizardPage = wizard.getStartingPage();
-		if (!(wizardPage instanceof WizardNewFileCreationPage)) {
+		if (!(wizardPage instanceof WizardNewFileCreationPage page)) {
 			return null;
 		}
 
-		WizardNewFileCreationPage page = (WizardNewFileCreationPage) wizardPage;
 		if (filename != null) {
 			page.setFileName(filename);
 			// Inhibit the error message when the wizard is first opened
@@ -1140,9 +1139,7 @@ public class TocTreeSection extends TreeSection {
 		// that cannot be removed
 		for (Iterator<?> i = objects.iterator(); i.hasNext();) {
 			Object object = i.next();
-			if (object instanceof TocObject) {
-				TocObject tocObject = (TocObject) object;
-
+			if (object instanceof TocObject tocObject) {
 				if (!tocObject.canBeRemoved()) {
 					i.remove();
 					beep = true;
@@ -1201,8 +1198,7 @@ public class TocTreeSection extends TreeSection {
 			Object object = iter.next();
 			if (object == null) {
 				return;
-			} else if (object instanceof TocObject) {
-				TocObject tocObject = (TocObject) object;
+			} else if (object instanceof TocObject tocObject) {
 				TocTopic parent = (TocTopic) tocObject.getParent();
 
 				// Determine the parent type

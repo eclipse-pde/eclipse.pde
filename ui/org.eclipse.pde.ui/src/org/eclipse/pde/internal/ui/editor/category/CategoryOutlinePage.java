@@ -43,8 +43,7 @@ public class CategoryOutlinePage extends FormOutlinePage {
 
 	@Override
 	protected Object[] getChildren(Object parent) {
-		if (parent instanceof PDEFormPage) {
-			PDEFormPage page = (PDEFormPage) parent;
+		if (parent instanceof PDEFormPage page) {
 			ISiteModel model = (ISiteModel) page.getModel();
 			if (model.isValid()) {
 				ISite site = model.getSite();
@@ -67,8 +66,7 @@ public class CategoryOutlinePage extends FormOutlinePage {
 				}
 			}
 		}
-		if (parent instanceof ISiteCategoryDefinition) {
-			ISiteCategoryDefinition catDef = (ISiteCategoryDefinition) parent;
+		if (parent instanceof ISiteCategoryDefinition catDef) {
 			ISiteModel model = catDef.getModel();
 			if (model.isValid()) {
 				ISite site = model.getSite();

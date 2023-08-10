@@ -116,8 +116,7 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 			IPluginObject[] pluginObjects = extension.getChildren();
 			// Process all children
 			for (IPluginObject pluginObject : pluginObjects) {
-				if (pluginObject instanceof IPluginElement) {
-					IPluginElement element = (IPluginElement) pluginObject;
+				if (pluginObject instanceof IPluginElement element) {
 					if (element.getName().equals(F_TOC_ELEMENT_TOC)) {
 						// TOC element
 						processTocElement(element, getDataTocFile());
@@ -147,8 +146,7 @@ public class RegisterTocWizardPage extends WizardPage implements IRegisterTOCDat
 
 	private void updateUIPrimary(IPluginElement parentElement) {
 		IPluginObject pluginObject = parentElement.getChildren()[0];
-		if (pluginObject instanceof IPluginElement) {
-			IPluginElement element = (IPluginElement) pluginObject;
+		if (pluginObject instanceof IPluginElement element) {
 			if (element.getName().equals(RegisterTocOperation.F_TOC_ATTRIBUTE_PRIMARY) && PDETextHelper.isDefinedAfterTrim(element.getText())) {
 				// Triggers listener to update data description on load
 				fPrimaryChkBox.setSelection(Boolean.getBoolean(element.getText().trim()));

@@ -211,8 +211,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 		IFile[] containers = root.findFilesForLocationURI(URIUtil.toURI(location));
 		for (IFile container : containers) {
 			IJavaElement element = JavaCore.create(container);
-			if (element instanceof IPackageFragmentRoot) {
-				IPackageFragmentRoot archive = (IPackageFragmentRoot) element;
+			if (element instanceof IPackageFragmentRoot archive) {
 				IPath path = archive.getSourceAttachmentPath();
 				if (path == null || path.segmentCount() == 0)
 					continue;

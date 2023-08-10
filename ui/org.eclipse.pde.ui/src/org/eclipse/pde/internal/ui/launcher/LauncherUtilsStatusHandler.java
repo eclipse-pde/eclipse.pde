@@ -92,8 +92,7 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 		ILaunchConfigurationTab[] tabs = dialog.getTabs();
 		if (tabs != null) {
 			for (ILaunchConfigurationTab tab : tabs) {
-				if (tab instanceof MainTab) {
-					MainTab mainTab = (MainTab) tab;
+				if (tab instanceof MainTab mainTab) {
 					dialog.setActiveTab(mainTab);
 					mainTab.applyData(IPDELauncherConstants.LOCATION);
 				}

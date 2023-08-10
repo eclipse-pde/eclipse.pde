@@ -151,11 +151,9 @@ public class XMLElementProposalComputer {
 	}
 
 	private static void computeObjectChildProposal(ISchemaObject schemaObject, TreeSet<ISchemaElement> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker) {
-		if (schemaObject instanceof ISchemaElement) {
-			ISchemaElement schemaElement = (ISchemaElement) schemaObject;
+		if (schemaObject instanceof ISchemaElement schemaElement) {
 			computeElementChildProposal(schemaElement, elementSet, siblings, multiplicityTracker);
-		} else if (schemaObject instanceof ISchemaCompositor) {
-			ISchemaCompositor sCompositor = (ISchemaCompositor) schemaObject;
+		} else if (schemaObject instanceof ISchemaCompositor sCompositor) {
 			computeCompositorChildProposal(sCompositor, elementSet, siblings, multiplicityTracker);
 		}
 	}

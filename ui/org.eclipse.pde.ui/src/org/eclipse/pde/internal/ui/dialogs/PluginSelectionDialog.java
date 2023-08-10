@@ -76,8 +76,7 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		@Override
 		public boolean matchItem(Object item) {
 			String id = null;
-			if (item instanceof IPluginModelBase) {
-				IPluginModelBase model = (IPluginModelBase) item;
+			if (item instanceof IPluginModelBase model) {
 				id = model.getPluginBase().getId();
 			}
 
@@ -106,9 +105,7 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 
 		private int compareSimilarObjects(Object o1, Object o2) {
-			if (o1 instanceof IPluginModelBase && o2 instanceof IPluginModelBase) {
-				IPluginModelBase ipmb1 = (IPluginModelBase) o1;
-				IPluginModelBase ipmb2 = (IPluginModelBase) o2;
+			if (o1 instanceof IPluginModelBase ipmb1 && o2 instanceof IPluginModelBase ipmb2) {
 				return comparePlugins(ipmb1.getPluginBase(), ipmb2.getPluginBase());
 			}
 			return 0;
@@ -277,8 +274,7 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 
 	@Override
 	public String getElementName(Object item) {
-		if (item instanceof IPluginModelBase) {
-			IPluginModelBase model = (IPluginModelBase) item;
+		if (item instanceof IPluginModelBase model) {
 			return model.getPluginBase().getId();
 		}
 		return null;

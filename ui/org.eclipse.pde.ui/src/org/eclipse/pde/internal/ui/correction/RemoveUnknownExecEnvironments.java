@@ -32,8 +32,7 @@ public class RemoveUnknownExecEnvironments extends AbstractManifestMarkerResolut
 	@Override
 	protected void createChange(BundleModel model) {
 		IManifestHeader header = model.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-		if (header instanceof RequiredExecutionEnvironmentHeader) {
-			RequiredExecutionEnvironmentHeader reqHeader = (RequiredExecutionEnvironmentHeader) header;
+		if (header instanceof RequiredExecutionEnvironmentHeader reqHeader) {
 			ExecutionEnvironment[] bundleEnvs = reqHeader.getEnvironments();
 			IExecutionEnvironment[] systemEnvs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
 			for (ExecutionEnvironment bundleEnv : bundleEnvs) {

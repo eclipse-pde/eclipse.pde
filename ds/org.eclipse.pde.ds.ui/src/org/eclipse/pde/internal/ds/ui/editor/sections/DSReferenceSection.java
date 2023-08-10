@@ -117,8 +117,7 @@ public class DSReferenceSection extends TableSection implements
 	static class ContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof IDSModel) {
-				IDSModel model = (IDSModel) inputElement;
+			if (inputElement instanceof IDSModel model) {
 				IDSComponent component = model.getDSComponent();
 				if (component != null)
 					return component.getReferences();

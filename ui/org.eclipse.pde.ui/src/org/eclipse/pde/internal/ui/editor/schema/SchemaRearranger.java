@@ -47,8 +47,7 @@ public class SchemaRearranger {
 		if (newParent.equals(oldParent)) {
 			return;
 		}
-		if (newParent instanceof SchemaElement) {
-			SchemaElement element = (SchemaElement) newParent;
+		if (newParent instanceof SchemaElement element) {
 			SchemaComplexType type = null;
 			if (element.getType() instanceof SchemaComplexType) {
 				type = (SchemaComplexType) element.getType();
@@ -134,8 +133,7 @@ public class SchemaRearranger {
 	}
 
 	public void pasteCompositor(ISchemaObject realTarget, ISchemaCompositor compositor, ISchemaObject sibling) {
-		if (realTarget instanceof SchemaElement) {
-			SchemaElement element = (SchemaElement) realTarget;
+		if (realTarget instanceof SchemaElement element) {
 			SchemaComplexType type = null;
 			if (element.getType() instanceof SchemaComplexType) {
 				type = (SchemaComplexType) element.getType();
@@ -151,8 +149,7 @@ public class SchemaRearranger {
 	}
 
 	public void pasteReference(ISchemaObject realTarget, ISchemaObjectReference object, ISchemaObject sibling) {
-		if (realTarget instanceof SchemaCompositor) {
-			SchemaCompositor parent = (SchemaCompositor) realTarget;
+		if (realTarget instanceof SchemaCompositor parent) {
 			((SchemaElementReference) object).setCompositor(parent);
 			parent.addChild((SchemaElementReference) object, sibling);
 		}

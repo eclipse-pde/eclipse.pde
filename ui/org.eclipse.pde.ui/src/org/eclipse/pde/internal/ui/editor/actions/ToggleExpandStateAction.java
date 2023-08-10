@@ -144,8 +144,7 @@ public class ToggleExpandStateAction extends Action {
 	 */
 	private void expandChildrenElements(Object[] children, boolean fullExpand) {
 		for (Object child : children) {
-			if (child instanceof PluginParentNode) {
-				PluginParentNode node = (PluginParentNode) child;
+			if (child instanceof PluginParentNode node) {
 				if (node.getChildCount() > 0 && fullExpand) {
 					boolean furtherExpanding = !(node instanceof PluginExtensionNode && !fExtensionTree.getExpandedState(node));
 					expandChildrenElements(node.getChildren(), furtherExpanding);
@@ -168,8 +167,7 @@ public class ToggleExpandStateAction extends Action {
 			if (!selection.isEmpty()) {
 				for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 					Object element = iterator.next();
-					if (element instanceof PluginParentNode) {
-						PluginParentNode node = (PluginParentNode) element;
+					if (element instanceof PluginParentNode node) {
 						if (node.getChildCount() > 0) {
 							isExpandable = true;
 							break;

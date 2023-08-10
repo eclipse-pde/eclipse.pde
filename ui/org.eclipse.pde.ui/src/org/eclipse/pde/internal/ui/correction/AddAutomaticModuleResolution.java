@@ -49,8 +49,7 @@ public class AddAutomaticModuleResolution extends AbstractManifestMarkerResoluti
 	@Override
 	protected void createChange(BundleModel model) {
 		IBundle bundle = model.getBundle();
-		if (bundle instanceof Bundle) {
-			Bundle bun = (Bundle) bundle;
+		if (bundle instanceof Bundle bun) {
 			IManifestHeader header = bun.getManifestHeader(ICoreConstants.AUTOMATIC_MODULE_NAME);
 			if (header == null) {
 				IManifestHeader headerName = bun.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);

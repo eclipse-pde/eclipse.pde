@@ -277,11 +277,10 @@ public class AnnotationVisitor extends ASTVisitor {
 
 	private Annotation findComponentAnnotation(AbstractTypeDeclaration type) {
 		for (Object item : type.modifiers()) {
-			if (!(item instanceof Annotation)) {
+			if (!(item instanceof Annotation annotation)) {
 				continue;
 			}
 
-			Annotation annotation = (Annotation) item;
 			IAnnotationBinding annotationBinding = annotation.resolveAnnotationBinding();
 			if (annotationBinding == null) {
 				if (debug.isDebugging()) {
@@ -610,8 +609,7 @@ public class AnnotationVisitor extends ASTVisitor {
 			configPid = (String) value;
 			validateComponentConfigPID(annotation, configPid, -1);
 			requiredVersion = DSAnnotationVersion.V1_2;
-		} else if (specVersion == DSAnnotationVersion.V1_3 && value instanceof Object[]) {
-			Object[] configPidElems = (Object[]) value;
+		} else if (specVersion == DSAnnotationVersion.V1_3 && value instanceof Object[] configPidElems) {
 			if (configPidElems.length > 0) {
 				LinkedHashSet<String> configPids = new LinkedHashSet<>(configPidElems.length);
 				HashMap<String, Integer> pidDuplicates = errorLevel.isIgnore() ? null : new HashMap<>(configPidElems.length);
@@ -856,11 +854,10 @@ public class AnnotationVisitor extends ASTVisitor {
 		if (specVersion == DSAnnotationVersion.V1_3) {
 			for (FieldDeclaration field : type.getFields()) {
 				for (Object modifier : field.modifiers()) {
-					if (!(modifier instanceof Annotation)) {
+					if (!(modifier instanceof Annotation fieldAnnotation)) {
 						continue;
 					}
 
-					Annotation fieldAnnotation = (Annotation) modifier;
 					IAnnotationBinding fieldAnnotationBinding = fieldAnnotation.resolveAnnotationBinding();
 					if (fieldAnnotationBinding == null) {
 						if (debug.isDebugging()) {
@@ -929,11 +926,10 @@ public class AnnotationVisitor extends ASTVisitor {
 
 		for (MethodDeclaration method : type.getMethods()) {
 			for (Object modifier : method.modifiers()) {
-				if (!(modifier instanceof Annotation)) {
+				if (!(modifier instanceof Annotation methodAnnotation)) {
 					continue;
 				}
 
-				Annotation methodAnnotation = (Annotation) modifier;
 				IAnnotationBinding methodAnnotationBinding = methodAnnotation.resolveAnnotationBinding();
 				if (methodAnnotationBinding == null) {
 					if (debug.isDebugging()) {

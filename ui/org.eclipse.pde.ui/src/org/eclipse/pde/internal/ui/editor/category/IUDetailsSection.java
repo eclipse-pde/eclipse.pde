@@ -178,8 +178,7 @@ abstract class IUDetailsSection<T extends IVersionable> extends PDESection imple
 	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		T item = null;
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structured = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection structured) {
 			item = fSelectionExtractor.apply(structured.getFirstElement());
 		}
 		fCurrentItem = item;

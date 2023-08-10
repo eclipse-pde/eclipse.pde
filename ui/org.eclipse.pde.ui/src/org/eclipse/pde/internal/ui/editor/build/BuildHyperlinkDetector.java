@@ -42,10 +42,9 @@ public class BuildHyperlinkDetector implements IHyperlinkDetector {
 			return null;
 
 		IDocumentRange element = fSourcePage.getRangeElement(region.getOffset(), true);
-		if (!(element instanceof BuildEntry))
+		if (!(element instanceof BuildEntry entry))
 			return null;
 
-		BuildEntry entry = (BuildEntry) element;
 		if (!entry.getModel().isEditable() || !(entry.getModel() instanceof IEditingModel))
 			return null;
 

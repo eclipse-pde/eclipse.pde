@@ -52,8 +52,7 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof Configuration) {
-				Configuration config = (Configuration) obj;
+			if (obj instanceof Configuration config) {
 				return os.equals(config.os) && ws.equals(config.ws) && arch.equals(config.arch);
 			}
 			return super.equals(obj);

@@ -318,9 +318,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		try {
 			// Paste all source objects
 			for (Object sourceObject : sourceObjects) {
-				if (sourceObject instanceof ImportObject) {
-					// Import object
-					ImportObject importObject = (ImportObject) sourceObject;
+				if (sourceObject instanceof ImportObject importObject) {
 					// Adjust all the source object transient field values to
 					// acceptable values
 					// TODO: MP: CCP: Remove unnecessary reconnected Plugin attributes
@@ -386,8 +384,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	}
 
 	private void handleOpen(ISelection sel) {
-		if (sel instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) sel;
+		if (sel instanceof IStructuredSelection ssel) {
 			if (ssel.size() == 1) {
 				Object obj = ssel.getFirstElement();
 				if (obj instanceof ImportObject) {

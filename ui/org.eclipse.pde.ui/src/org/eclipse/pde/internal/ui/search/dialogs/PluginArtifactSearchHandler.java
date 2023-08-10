@@ -48,8 +48,7 @@ public class PluginArtifactSearchHandler extends AbstractHandler {
 				FeatureEditor.openFeatureEditor((IFeatureModel) object);
 			} else {
 				IEditorPart editorPart = ManifestEditor.open(object, true);
-				if (editorPart != null && editorPart instanceof ManifestEditor) {
-					ManifestEditor editor = (ManifestEditor) editorPart;
+				if (editorPart != null && editorPart instanceof ManifestEditor editor) {
 					InputContext context = getInputContext(object, editor);
 					IDocument document = context.getDocumentProvider().getDocument(context.getInput());
 					IRegion region = ManifestEditorOpener.getAttributeMatch(editor, object, document);

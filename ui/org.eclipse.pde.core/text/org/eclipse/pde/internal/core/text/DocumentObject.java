@@ -136,8 +136,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	 * @param newValue
 	 */
 	private void firePropertyChanged(Object object, String property, Object oldValue, Object newValue) {
-		if (fModel.isEditable() && (fModel instanceof IModelChangeProvider)) {
-			IModelChangeProvider provider = (IModelChangeProvider) fModel;
+		if (fModel.isEditable() && (fModel instanceof IModelChangeProvider provider)) {
 			provider.fireModelObjectChanged(object, property, oldValue, newValue);
 		}
 	}
@@ -155,8 +154,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	 * @param changeType
 	 */
 	protected void fireStructureChanged(Object[] children, int changeType) {
-		if (fModel.isEditable() && (fModel instanceof IModelChangeProvider)) {
-			IModelChangeProvider provider = (IModelChangeProvider) fModel;
+		if (fModel.isEditable() && (fModel instanceof IModelChangeProvider provider)) {
 			IModelChangedEvent event = new ModelChangedEvent(provider, changeType, children, null);
 			provider.fireModelChanged(event);
 		}

@@ -44,11 +44,10 @@ class VersionedIdentifier {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof VersionedIdentifier)) {
+		if (!(obj instanceof VersionedIdentifier other)) {
 			return false;
 		}
 
-		VersionedIdentifier other = (VersionedIdentifier) obj;
 		if (!equalIdentifiers(other)) {
 			return false;
 		}

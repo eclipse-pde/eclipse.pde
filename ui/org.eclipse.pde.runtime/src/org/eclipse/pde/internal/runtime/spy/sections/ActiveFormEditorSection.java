@@ -42,10 +42,8 @@ public class ActiveFormEditorSection implements ISpySection {
 	@Override
 	public void build(ScrolledForm form, SpyFormToolkit toolkit, ExecutionEvent event) {
 		final IWorkbenchPart part = HandlerUtil.getActivePart(event);
-		if (!(part instanceof FormEditor))
+		if (!(part instanceof FormEditor multiEditor))
 			return;
-		FormEditor multiEditor = (FormEditor) part;
-
 		Shell shell = HandlerUtil.getActiveShell(event);
 		Object object = shell.getData();
 		if (object == null)
@@ -102,8 +100,7 @@ public class ActiveFormEditorSection implements ISpySection {
 
 		//find section which controls contains actual focus control (also recursively)
 		for (IFormPart formPart : form.getParts()) {
-			if (formPart instanceof SectionPart) {
-				SectionPart formSection = (SectionPart) formPart;
+			if (formPart instanceof SectionPart formSection) {
 				Control[] sectionWidgets = formSection.getSection().getChildren();
 				for (Control widget : sectionWidgets) {
 					if (contains(widget, focusedControl)) {
@@ -123,9 +120,7 @@ public class ActiveFormEditorSection implements ISpySection {
 			return false;
 		}
 
-		if (whereToLook instanceof Composite) {
-			Composite compositeWhereToLook = (Composite) whereToLook;
-
+		if (whereToLook instanceof Composite compositeWhereToLook) {
 			for (Control child : compositeWhereToLook.getChildren()) {
 				if (contains(child, whatToFind)) {
 					return true;

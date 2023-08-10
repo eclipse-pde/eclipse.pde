@@ -259,10 +259,9 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 				 */
 				@Override
 				protected int determineLocation(DropTargetEvent event) {
-					if (!(event.item instanceof Item)) {
+					if (!(event.item instanceof Item item)) {
 						return LOCATION_NONE;
 					}
-					Item item = (Item) event.item;
 					Point coordinates = new Point(event.x, event.y);
 					coordinates = getViewer().getControl().toControl(coordinates);
 					if (item != null) {
@@ -298,8 +297,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 						}
 						return true;
 					}
-					if (objects.length > 0 && objects[0] instanceof SiteCategoryDefinitionAdapter) {
-						SiteCategoryDefinitionAdapter adapter = (SiteCategoryDefinitionAdapter) objects[0];
+					if (objects.length > 0 && objects[0] instanceof SiteCategoryDefinitionAdapter adapter) {
 						if (op == DND.DROP_COPY && target != null) {
 							copyCategory(adapter, target);
 						} else {
@@ -544,9 +542,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			categoryDef.setName(name);
 			categoryDef.setLabel(label);
 			Object firstElement = fCategoryViewer.getStructuredSelection().getFirstElement();
-			if (firstElement instanceof SiteCategoryDefinitionAdapter) {
-				// creating new nested category inside of something existing
-				SiteCategoryDefinitionAdapter adapter = (SiteCategoryDefinitionAdapter) firstElement;
+			if (firstElement instanceof SiteCategoryDefinitionAdapter adapter) {
 				catDefReference = adapter.category.getName();
 				addCategory(categoryDef, catDefReference);
 			}
@@ -575,18 +571,14 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 				if (!handleRemoveCategoryDefinition((SiteCategoryDefinitionAdapter) object)) {
 					success = false;
 				}
-			} else if (object instanceof SiteFeatureAdapter) {
-				// No need to remove the feature if its category is already removed
-				SiteFeatureAdapter fa = (SiteFeatureAdapter) object;
+			} else if (object instanceof SiteFeatureAdapter fa) {
 				if (removedCategories.contains(fa.category))
 					continue;
 
 				if (!handleRemoveSiteFeatureAdapter(fa)) {
 					success = false;
 				}
-			} else if (object instanceof SiteBundleAdapter) {
-				// No need to remove the bundle if its category is already removed
-				SiteBundleAdapter ba = (SiteBundleAdapter) object;
+			} else if (object instanceof SiteBundleAdapter ba) {
 				if (removedCategories.contains(ba.category))
 					continue;
 
@@ -602,12 +594,10 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		try {
 			Object[] children = ((CategoryContentProvider) fCategoryViewer.getContentProvider()).getChildren(catDef);
 			for (Object element : children) {
-				if (element instanceof SiteCategoryDefinitionAdapter) {
-					SiteCategoryDefinitionAdapter adapter = (SiteCategoryDefinitionAdapter) element;
+				if (element instanceof SiteCategoryDefinitionAdapter adapter) {
 					removeCategory(adapter.category, catDef.category.getName());
 					handleRemoveCategoryDefinition(adapter);
-				} else if (element instanceof SiteFeatureAdapter) {
-					SiteFeatureAdapter adapter = (SiteFeatureAdapter) element;
+				} else if (element instanceof SiteFeatureAdapter adapter) {
 					ISiteCategory[] cats = adapter.feature.getCategories();
 					for (ISiteCategory cat : cats) {
 						if (adapter.category.equals(cat.getName()))
@@ -616,8 +606,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 					if (adapter.feature.getCategories().length == 0) {
 						fModel.getSite().removeFeatures(new ISiteFeature[] {adapter.feature});
 					}
-				} else if (element instanceof SiteBundleAdapter) {
-					SiteBundleAdapter adapter = (SiteBundleAdapter) element;
+				} else if (element instanceof SiteBundleAdapter adapter) {
 					ISiteCategory[] cats = adapter.bundle.getCategories();
 					for (ISiteCategory cat : cats) {
 						if (adapter.category.equals(cat.getName()))

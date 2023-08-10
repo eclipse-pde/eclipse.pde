@@ -164,9 +164,8 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 		ModelModification mod = new ModelModification(file) {
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (!(model instanceof IPluginModelBase))
+				if (!(model instanceof IPluginModelBase pluginModel))
 					return;
-				IPluginModelBase pluginModel = (IPluginModelBase) model;
 				IPluginExtension extension = getExtension(pluginModel, INTRO_POINT);
 				if (extension == null) {
 					extension = createIntroExtension(pluginModel);

@@ -44,8 +44,7 @@ public class SiteFeatureAdapter implements Serializable, IWritable {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof SiteFeatureAdapter) {
-			SiteFeatureAdapter adapter = (SiteFeatureAdapter) obj;
+		if (obj instanceof SiteFeatureAdapter adapter) {
 			return Objects.equals(feature, adapter.feature);
 		}
 		return super.equals(obj);

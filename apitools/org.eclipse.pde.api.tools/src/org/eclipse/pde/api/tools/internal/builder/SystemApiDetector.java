@@ -393,8 +393,7 @@ public class SystemApiDetector extends AbstractProblemDetector {
 				try {
 					IApiProblem problem = null;
 					IApiComponent component = reference.getMember().getApiComponent();
-					if (component instanceof ProjectComponent) {
-						ProjectComponent ppac = (ProjectComponent) component;
+					if (component instanceof ProjectComponent ppac) {
 						IJavaProject project = ppac.getJavaProject();
 						problem = createProblem(reference, project);
 					} else {

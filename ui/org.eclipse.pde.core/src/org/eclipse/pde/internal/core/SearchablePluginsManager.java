@@ -95,8 +95,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 				}
 				return true;
 			}
-			if (element instanceof IJavaProject) {
-				IJavaProject project = (IJavaProject) element;
+			if (element instanceof IJavaProject project) {
 				if (project.getElementName().equals(PROXY_PROJECT_NAME)) {
 					if (delta.getKind() == IJavaElementDelta.REMOVED) {
 						synchronized (fPluginIdSet) {

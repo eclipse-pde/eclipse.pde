@@ -177,8 +177,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	class TemplateContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof IPluginExtensionPoint) {
-				IPluginExtensionPoint point = (IPluginExtensionPoint) inputElement;
+			if (inputElement instanceof IPluginExtensionPoint point) {
 				String pointID = IdUtil.getFullId(point, fModel);
 				ArrayList<Object> result = new ArrayList<>();
 				if (fTemplateCollection.getWizards() != null) {
@@ -498,8 +497,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 			ISchemaElement schemaElement = null;
 			// Get the extension's schema
 			Object object = extension.getSchema();
-			if ((object != null) && (object instanceof Schema)) {
-				Schema schema = (Schema) object;
+			if ((object != null) && (object instanceof Schema schema)) {
 				if (extension instanceof PluginExtensionNode) {
 					// Get the extension's XML element name
 					String elementName = ((PluginExtensionNode) extension).getXMLTagName();
@@ -539,8 +537,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		ISelection selection = event.getSelection();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection ssel) {
 			if (!ssel.isEmpty()) {
 				Object element = ssel.getFirstElement();
 				if (element instanceof WizardElement)

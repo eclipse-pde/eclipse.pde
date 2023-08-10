@@ -358,8 +358,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 			IPluginObject[] pluginObjects = extension.getChildren();
 			// Process all children
 			for (IPluginObject pluginObject : pluginObjects) {
-				if (pluginObject instanceof IPluginElement) {
-					IPluginElement element = (IPluginElement) pluginObject;
+				if (pluginObject instanceof IPluginElement element) {
 					if (element.getName().equals(F_CS_ELEMENT_CATEGORY)) {
 						// Category element
 						// Update the category combo
@@ -382,8 +381,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 			IPluginObject[] pluginObjects = extension.getChildren();
 			// Process all children
 			for (IPluginObject pluginObject : pluginObjects) {
-				if (pluginObject instanceof IPluginElement) {
-					IPluginElement element = (IPluginElement) pluginObject;
+				if (pluginObject instanceof IPluginElement element) {
 					if (element.getName().equals(F_CS_ELEMENT_CHEATSHEET)) {
 						// Cheat sheet element
 						processCheatSheetElement(element, fDataCheatSheetID);
@@ -460,8 +458,7 @@ public abstract class RegisterCSWizardPage extends WizardPage implements IRegist
 
 	private void updateUIDescriptionText(IPluginElement parentElement) {
 		IPluginObject pluginObject = parentElement.getChildren()[0];
-		if (pluginObject instanceof IPluginElement) {
-			IPluginElement element = (IPluginElement) pluginObject;
+		if (pluginObject instanceof IPluginElement element) {
 			if (element.getName().equals(F_CS_ELEMENT_DESCRIPTION) && PDETextHelper.isDefinedAfterTrim(element.getText())) {
 				// Triggers listener to update data description on load
 				fDescriptionText.setText(element.getText().trim());

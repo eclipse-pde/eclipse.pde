@@ -228,8 +228,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 			IPluginObject[] pluginObjects = extension.getChildren();
 			// Process all children
 			for (IPluginObject pluginObject : pluginObjects) {
-				if (pluginObject instanceof IPluginElement) {
-					IPluginElement element = (IPluginElement) pluginObject;
+				if (pluginObject instanceof IPluginElement element) {
 					// Find TOC elements
 					if (element.getName().equals(ITocConstants.ELEMENT_TOC)) {
 						// TOC element
@@ -316,8 +315,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		IBundle bundle = modelBase.getBundleModel().getBundle();
 		// Get the heading specifying the singleton declaration
 		IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
-		if (header instanceof BundleSymbolicNameHeader) {
-			BundleSymbolicNameHeader symbolic = (BundleSymbolicNameHeader) header;
+		if (header instanceof BundleSymbolicNameHeader symbolic) {
 			// If the singleton declaration is false, change it to true
 			// This is required because plug-ins that specify extensions
 			// must be singletons.
@@ -327,8 +325,7 @@ public class RegisterTocOperation extends WorkspaceModifyOperation {
 		}
 		// Add the cheat sheets plug-in to the list of required bundles
 		header = bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
-		if (header instanceof RequireBundleHeader) {
-			RequireBundleHeader require = (RequireBundleHeader) header;
+		if (header instanceof RequireBundleHeader require) {
 			if (require.hasElement(F_HELP_EXTENSION_ID) == false) {
 				require.addBundle(F_HELP_EXTENSION_ID);
 			}

@@ -45,8 +45,7 @@ public class ProjectProposal {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ProjectProposal){
-			ProjectProposal proposal = (ProjectProposal) obj;
+		if (obj instanceof ProjectProposal proposal){
 			if (proposal.getFolder().equals(folder)){
 				return proposal.getImportAsList().equals(this.getImportAsList());
 			}

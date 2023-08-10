@@ -57,8 +57,7 @@ public class ApiAnnotations implements IApiAnnotations {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ApiAnnotations) {
-			ApiAnnotations desc = (ApiAnnotations) obj;
+		if (obj instanceof ApiAnnotations desc) {
 			return this.bits == desc.bits;
 		}
 		return false;

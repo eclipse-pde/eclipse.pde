@@ -112,8 +112,7 @@ public class BundleInputContext extends UTF8InputContext {
 				else if (object instanceof PackageFriend)
 					object = ((PackageFriend) object).getHeader();
 
-				if (object instanceof ManifestHeader) {
-					ManifestHeader header = (ManifestHeader) object;
+				if (object instanceof ManifestHeader header) {
 					TextEdit op = fOperationTable.get(header);
 					if (op != null) {
 						fOperationTable.remove(header);

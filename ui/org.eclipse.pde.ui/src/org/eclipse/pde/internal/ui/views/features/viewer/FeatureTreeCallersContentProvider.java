@@ -29,8 +29,7 @@ public class FeatureTreeCallersContentProvider extends AbstractFeatureTreeConten
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof IFeatureModel) {
-			IFeatureModel featureModel = (IFeatureModel) parentElement;
+		if (parentElement instanceof IFeatureModel featureModel) {
 			String featureId = featureModel.getFeature().getId();
 
 			Collection<IFeatureModel> features = fInput.getFeaturesViewInput().getIncludingFeatures(featureId);

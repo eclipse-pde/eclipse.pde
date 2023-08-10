@@ -190,8 +190,7 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 		treeviewer.addFilter(new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (element instanceof IApiComponent) {
-					IApiComponent component = (IApiComponent) element;
+				if (element instanceof IApiComponent component) {
 					try {
 						if (component.isSourceComponent() || component.isSystemComponent()) {
 							return false;

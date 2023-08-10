@@ -1279,8 +1279,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	 * @return
 	 */
 	ScrolledComposite getScrollingParent(Object obj) {
-		if (obj instanceof ExpandableComposite) {
-			ExpandableComposite ecomp = (ExpandableComposite) obj;
+		if (obj instanceof ExpandableComposite ecomp) {
 			Composite parent = ecomp.getParent();
 			while (parent != null && !(parent instanceof ScrolledComposite)) {
 				parent = parent.getParent();
@@ -1415,8 +1414,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	 */
 	private void enableControl(Control ctrl, boolean enabled) {
 		ctrl.setEnabled(enabled);
-		if (ctrl instanceof Composite) {
-			Composite comp = (Composite) ctrl;
+		if (ctrl instanceof Composite comp) {
 			Control[] children = comp.getChildren();
 			for (Control element : children) {
 				enableControl(element, enabled);

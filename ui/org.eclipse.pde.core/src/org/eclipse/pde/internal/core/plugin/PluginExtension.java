@@ -101,9 +101,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		if (obj == null) {
 			return false;
 		}
-		if (obj instanceof IPluginExtension) {
-			IPluginExtension target = (IPluginExtension) obj;
-
+		if (obj instanceof IPluginExtension target) {
 			// comparing the model is a little complicated since we need to allow text and non-text models representing the same file
 			if (target.getModel().getClass() == getModel().getClass()) {
 				if (!target.getModel().equals(getModel())) {

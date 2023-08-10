@@ -75,8 +75,7 @@ public class DependencyExtentSearchResult extends SearchResult {
 		if (m.length != 0) {
 			Collections.addAll(matches, m);
 		}
-		if (element instanceof IParent) {
-			IParent parent = (IParent) element;
+		if (element instanceof IParent parent) {
 			try {
 				IJavaElement[] children = parent.getChildren();
 				for (IJavaElement child : children) {

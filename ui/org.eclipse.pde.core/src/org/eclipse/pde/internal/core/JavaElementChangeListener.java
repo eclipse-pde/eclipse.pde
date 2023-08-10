@@ -101,8 +101,7 @@ public class JavaElementChangeListener implements IElementChangedListener {
 			return true;
 		}
 
-		if (kind == IJavaElementDelta.CHANGED && element instanceof IPackageFragmentRoot) {
-			IPackageFragmentRoot root = (IPackageFragmentRoot) element;
+		if (kind == IJavaElementDelta.CHANGED && element instanceof IPackageFragmentRoot root) {
 			return root.isArchive();
 		}
 		return false;
@@ -111,8 +110,7 @@ public class JavaElementChangeListener implements IElementChangedListener {
 	private boolean ignoreDelta(IJavaElementDelta delta) {
 		try {
 			IJavaElement element = delta.getElement();
-			if (element instanceof IPackageFragmentRoot) {
-				IPackageFragmentRoot root = (IPackageFragmentRoot) element;
+			if (element instanceof IPackageFragmentRoot root) {
 				IClasspathEntry entry = root.getRawClasspathEntry();
 				if (entry != null && entry.getEntryKind() == IClasspathEntry.CPE_CONTAINER) {
 					return true;

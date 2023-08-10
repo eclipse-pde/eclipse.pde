@@ -100,8 +100,7 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 
 	protected void fireModelChanged(IModelChangedEvent e) {
 		IModel model = getModel();
-		if (model.isEditable() && model instanceof IModelChangeProvider) {
-			IModelChangeProvider provider = (IModelChangeProvider) model;
+		if (model.isEditable() && model instanceof IModelChangeProvider provider) {
 			provider.fireModelChanged(e);
 		}
 	}

@@ -49,8 +49,7 @@ public class ReachablePlugin implements Comparable<Object> {
 
 	@Override
 	public int compareTo(Object o) {
-		if (o instanceof ReachablePlugin) {
-			ReachablePlugin toCompare = (ReachablePlugin) o;
+		if (o instanceof ReachablePlugin toCompare) {
 			int result = id.compareTo(toCompare.id);
 			if (result != 0)
 				return result;
@@ -102,8 +101,7 @@ public class ReachablePlugin implements Comparable<Object> {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ReachablePlugin) {
-			ReachablePlugin toCompare = (ReachablePlugin) obj;
+		if (obj instanceof ReachablePlugin toCompare) {
 			if (!id.equals(toCompare.id))
 				return false;
 			if (range.getIncludeMinimum() != toCompare.range.getIncludeMinimum())

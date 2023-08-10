@@ -126,8 +126,7 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ISchemaInclude) {
-			ISchemaInclude other = (ISchemaInclude) obj;
+		if (obj instanceof ISchemaInclude other) {
 			if (fLocation != null) {
 				return fLocation.equals(other.getLocation());
 			}

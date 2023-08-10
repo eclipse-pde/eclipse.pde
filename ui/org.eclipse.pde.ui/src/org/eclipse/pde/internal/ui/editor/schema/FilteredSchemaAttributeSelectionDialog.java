@@ -84,8 +84,7 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 			if (enabled) // select everything
 				return true;
 
-			if (element instanceof ISchemaAttribute) {
-				ISchemaAttribute attribute = (ISchemaAttribute) element;
+			if (element instanceof ISchemaAttribute attribute) {
 				return attribute.getUse() != ISchemaAttribute.OPTIONAL;
 			}
 			return true;
@@ -122,8 +121,7 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 
 		@Override
 		public String getText(Object element) {
-			if (element instanceof ISchemaAttribute) {
-				ISchemaAttribute attribute = (ISchemaAttribute) element;
+			if (element instanceof ISchemaAttribute attribute) {
 				if (isDuplicateElement(element)) {
 					ISchemaObject object = attribute.getParent();
 					if (object != null)
@@ -140,8 +138,7 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 
 		@Override
 		public String decorateText(String text, Object element) {
-			if (element instanceof ISchemaAttribute) {
-				ISchemaAttribute attribute = (ISchemaAttribute) element;
+			if (element instanceof ISchemaAttribute attribute) {
 				ISchemaObject object = attribute.getParent();
 				if (object != null && !isDuplicateElement(element))
 					return getQualifiedName(attribute);
@@ -160,8 +157,7 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 
 		@Override
 		public String getText(Object element) {
-			if (element instanceof ISchemaAttribute) {
-				ISchemaAttribute attribute = (ISchemaAttribute) element;
+			if (element instanceof ISchemaAttribute attribute) {
 				ISchema schema = attribute.getSchema();
 				return schema.getPointId() + ' ' + '(' + schema.getPluginId() + ')';
 			}
@@ -178,8 +174,7 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 
 		@Override
 		public boolean matchItem(Object item) {
-			if (item instanceof ISchemaAttribute) {
-				ISchemaAttribute attribute = (ISchemaAttribute) item;
+			if (item instanceof ISchemaAttribute attribute) {
 				ISchemaObject object = attribute.getParent();
 				ISchema schema = attribute.getSchema();
 				String id = getQualifiedName(attribute);
@@ -251,8 +246,7 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 
 	@Override
 	public String getElementName(Object item) {
-		if (item instanceof ISchemaAttribute) {
-			ISchemaAttribute attribute = (ISchemaAttribute) item;
+		if (item instanceof ISchemaAttribute attribute) {
 			return attribute.getName();
 		}
 		return null;

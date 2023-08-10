@@ -720,8 +720,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 		@Override
 		public int compareTo(Object o) {
-			if (o instanceof MapFileEntry) {
-				MapFileEntry entry = (MapFileEntry) o;
+			if (o instanceof MapFileEntry entry) {
 				int result = id.compareTo(entry.id);
 				if (result != 0)
 					return result;
@@ -732,8 +731,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 		@Override
 		public boolean equals(Object o) {
-			if (o instanceof MapFileEntry) {
-				MapFileEntry entry = (MapFileEntry) o;
+			if (o instanceof MapFileEntry entry) {
 				return id.equals(entry.id) && v.equals(entry.v);
 			}
 			return false;

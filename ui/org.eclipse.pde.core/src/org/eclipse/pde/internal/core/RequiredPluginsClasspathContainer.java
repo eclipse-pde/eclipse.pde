@@ -411,9 +411,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	private void addHostPlugin(HostSpecification hostSpec, HashSet<BundleDescription> added, Map<BundleDescription, ArrayList<Rule>> map, ArrayList<IClasspathEntry> entries) throws CoreException {
 		BaseDescription desc = hostSpec.getSupplier();
 
-		if (desc instanceof BundleDescription) {
-			BundleDescription host = (BundleDescription) desc;
-
+		if (desc instanceof BundleDescription host) {
 			// add host plug-in
 			if (added.add(host) && addPlugin(host, false, map, entries)) {
 				BundleSpecification[] required = host.getRequiredBundles();

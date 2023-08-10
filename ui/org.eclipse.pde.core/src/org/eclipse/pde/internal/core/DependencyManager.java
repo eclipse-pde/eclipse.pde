@@ -206,8 +206,7 @@ public class DependencyManager {
 				BundleRevision provider = wire.getCapability().getRevision();
 				// Use revision of required capability to support the case if
 				// fragments contribute new packages to their host's API.
-				if (provider instanceof BundleDescription && (includeOptional || !isOptional(wire.getRequirement()))) {
-					BundleDescription requiredBundle = (BundleDescription) provider;
+				if (provider instanceof BundleDescription requiredBundle && (includeOptional || !isOptional(wire.getRequirement()))) {
 					addNewRequiredBundle(requiredBundle, closure, pending);
 				}
 			}

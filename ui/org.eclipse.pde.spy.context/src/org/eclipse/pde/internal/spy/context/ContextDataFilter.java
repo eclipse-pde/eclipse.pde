@@ -112,11 +112,10 @@ public class ContextDataFilter extends ViewerFilter {
 	 */
 	private Collection<String> computeValues(IEclipseContext ctx) {
 		Collection<String> result = new ArrayList<>();
-		if (ctx instanceof EclipseContext) {
+		if (ctx instanceof EclipseContext currentContext) {
 			// Search for all strings in this context (values and context
 			// function)
 
-			EclipseContext currentContext = (EclipseContext) ctx;
 			extractStringsFromMap(currentContext.localData(), result);
 
 			// Search also in context functions

@@ -76,8 +76,7 @@ public abstract class AbstractFeatureTreeContentProvider
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof DeferredFeaturesViewInput) {
-			DeferredFeaturesViewInput deferredFeaturesViewInput = (DeferredFeaturesViewInput) inputElement;
+		if (inputElement instanceof DeferredFeaturesViewInput deferredFeaturesViewInput) {
 			return deferredFeaturesViewInput.isInitialized() ? deferredFeaturesViewInput.getChildren(inputElement)
 					: fDeferredTreeContentManager.getChildren(inputElement);
 		}

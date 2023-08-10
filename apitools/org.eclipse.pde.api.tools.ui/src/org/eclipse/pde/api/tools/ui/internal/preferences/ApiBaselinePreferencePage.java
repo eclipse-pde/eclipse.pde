@@ -274,8 +274,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 	 * @return if the profile is the default or not
 	 */
 	protected boolean isDefault(Object element) {
-		if (element instanceof IApiBaseline) {
-			IApiBaseline profile = (IApiBaseline) element;
+		if (element instanceof IApiBaseline profile) {
 			if (newdefault == null) {
 				IApiBaseline def = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
 				if (def != null) {
@@ -435,8 +434,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 		if (data instanceof Map) {
 			Map<?, ?> pageData = (Map<?, ?>) data;
 			Object key = pageData.get(ApiErrorsWarningsPreferencePage.DATA_SELECT_OPTION_KEY);
-			if (key instanceof String) {
-				String option = (String) key;
+			if (key instanceof String option) {
 				if (option.equals(ApiBaselinePreferencePage.MISSING_BASELINE_OPTION)) {
 					block.selectOption(0);
 				}

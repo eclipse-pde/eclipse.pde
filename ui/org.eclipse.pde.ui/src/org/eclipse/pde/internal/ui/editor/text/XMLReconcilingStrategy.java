@@ -114,8 +114,7 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 
 		while (iter.hasNext()) {
 			Annotation annotation = iter.next();
-			if (annotation instanceof SpellingAnnotation) {
-				SpellingAnnotation spellingAnnotation = (SpellingAnnotation) annotation;
+			if (annotation instanceof SpellingAnnotation spellingAnnotation) {
 				Position position = model.getPosition(spellingAnnotation);
 				if (position.overlapsWith(region.getOffset(), region.getLength())) {
 					model.removeAnnotation(spellingAnnotation);
@@ -138,8 +137,7 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 
 		while (iter.hasNext()) {
 			Object annotation = iter.next();
-			if (annotation instanceof SpellingAnnotation) {
-				SpellingAnnotation spellingAnnotation = (SpellingAnnotation) annotation;
+			if (annotation instanceof SpellingAnnotation spellingAnnotation) {
 				Position position = model.getPosition(spellingAnnotation);
 				String docContentType = docPartitioner.getContentType(position.getOffset());
 				String pdeXMLContentType = pdeXMLPartitioner.getContentType(position.getOffset());

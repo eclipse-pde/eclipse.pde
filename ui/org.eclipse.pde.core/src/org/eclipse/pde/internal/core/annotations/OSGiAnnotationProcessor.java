@@ -67,8 +67,7 @@ public interface OSGiAnnotationProcessor {
 	 */
 	static Stream<Expression> expressions(Expression expression) {
 		Expression unwrap = value(expression).orElse(expression);
-		if (unwrap instanceof ArrayInitializer) {
-			ArrayInitializer arrayInitializer = (ArrayInitializer) unwrap;
+		if (unwrap instanceof ArrayInitializer arrayInitializer) {
 			return arrayInitializer.expressions().stream().filter(Expression.class::isInstance)
 					.map(Expression.class::cast);
 		}
@@ -98,11 +97,9 @@ public interface OSGiAnnotationProcessor {
 	 *         optional if no such member exits.
 	 */
 	static Optional<Expression> member(Expression annotation, String memberName) {
-		if (annotation instanceof NormalAnnotation) {
-			NormalAnnotation normalAnnotation = (NormalAnnotation) annotation;
+		if (annotation instanceof NormalAnnotation normalAnnotation) {
 			for (Object value : normalAnnotation.values()) {
-				if (value instanceof MemberValuePair) {
-					MemberValuePair pair = (MemberValuePair) value;
+				if (value instanceof MemberValuePair pair) {
 					SimpleName name = pair.getName();
 					if (name != null && name.toString().equals(memberName)) {
 						return Optional.ofNullable(pair.getValue());
@@ -110,8 +107,7 @@ public interface OSGiAnnotationProcessor {
 				}
 			}
 		}
-		if (annotation instanceof SingleMemberAnnotation && "value".equals(memberName)) { //$NON-NLS-1$
-			SingleMemberAnnotation singleMemberAnnotation = (SingleMemberAnnotation) annotation;
+		if (annotation instanceof SingleMemberAnnotation singleMemberAnnotation && "value".equals(memberName)) { //$NON-NLS-1$
 			return Optional.ofNullable(singleMemberAnnotation.getValue());
 		}
 		return Optional.empty();

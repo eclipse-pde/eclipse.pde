@@ -451,8 +451,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		IStructuredSelection selection = fExtensionTree.getStructuredSelection();
 		if (selection.size() == 1) {
 			Object object = selection.getFirstElement();
-			if (object instanceof IPluginParent) {
-				IPluginParent parent = (IPluginParent) object;
+			if (object instanceof IPluginParent parent) {
 				if (parent.getModel().getUnderlyingResource() != null) {
 					boolean removeEnabled = !fFilteredTree.isFiltered() || isRemoveEnabled(selection);
 					fillContextMenu(getPage(), parent, manager, false, removeEnabled);
@@ -596,8 +595,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			try {
 				IStructuredSelection newSelection = null;
 				boolean sorted = fSortAction != null && fSortAction.isChecked();
-				if (object instanceof IPluginElement) {
-					IPluginElement ee = (IPluginElement) object;
+				if (object instanceof IPluginElement ee) {
 					IPluginParent parent = (IPluginParent) ee.getParent();
 					if (!sorted) {
 						int index = getNewSelectionIndex(parent.getIndexOf(ee), parent.getChildCount());
@@ -609,8 +607,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 						newSelection = index == -1 ? new StructuredSelection(parent) : new StructuredSelection(objects[index]);
 					}
 					parent.remove(ee);
-				} else if (object instanceof IPluginExtension) {
-					IPluginExtension extension = (IPluginExtension) object;
+				} else if (object instanceof IPluginExtension extension) {
 					IPluginBase plugin = extension.getPluginBase();
 					if (!sorted) {
 						int index = getNewSelectionIndex(plugin.getIndexOf(extension), plugin.getExtensions().length);
@@ -910,16 +907,14 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 
 				//
 				fExtensionTree.refresh(parent);
-				if (changeObject instanceof IPluginExtension) {
-					IPluginExtension ext = (IPluginExtension) changeObject;
+				if (changeObject instanceof IPluginExtension ext) {
 					if (ext.getSchema() == null)
 						reportMissingExtensionPointSchema(ext.getPoint());
 				}
 				fExtensionTree.setSelection(new StructuredSelection(changeObject), true);
 				fExtensionTree.getTree().setFocus();
 			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
-				if (changeObject instanceof IPluginExtension) {
-					IPluginExtension ext = (IPluginExtension) changeObject;
+				if (changeObject instanceof IPluginExtension ext) {
 					IPluginExtension[] extensions = ((IPluginBase) parent).getExtensions();
 					boolean found = false;
 					// search if there is at least another extension extending the same point than the one being removed
@@ -952,8 +947,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			return fExtensionImage;
 		}
 		Image elementImage = fGenericElementImage;
-		if (obj instanceof IPluginElement) {
-			IPluginElement element = (IPluginElement) obj;
+		if (obj instanceof IPluginElement element) {
 			Image customImage = getCustomImage(element);
 			if (customImage == null)
 				customImage = PDEPlugin.getDefault().getLabelProvider().getImage(obj);
@@ -1025,8 +1019,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 
 	public static String resolveObjectName(SchemaRegistry schemaRegistry, Object obj) {
 		boolean fullNames = PDEPlugin.isFullNameModeEnabled();
-		if (obj instanceof IPluginExtension) {
-			IPluginExtension extension = (IPluginExtension) obj;
+		if (obj instanceof IPluginExtension extension) {
 			if (!fullNames) {
 				return extension.getPoint();
 			}
@@ -1039,8 +1032,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 				return schema.getName();
 			}
 			return extension.getPoint();
-		} else if (obj instanceof IPluginElement) {
-			IPluginElement element = (IPluginElement) obj;
+		} else if (obj instanceof IPluginElement element) {
 			String baseName = element.getName();
 			String fullName = null;
 			ISchemaElement elementInfo = getSchemaElement(element);
@@ -1341,8 +1333,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			} catch (CoreException e) {
 				PDEPlugin.logException(e);
 			}
-		} else if (object instanceof IPluginExtension) {
-			IPluginExtension extension = (IPluginExtension) object;
+		} else if (object instanceof IPluginExtension extension) {
 			IPluginBase plugin = extension.getPluginBase();
 			IPluginExtension[] extensions = plugin.getExtensions();
 			int index = plugin.getIndexOf(extension);
@@ -1395,8 +1386,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		} else {
 			if (selection != null && selection.size() == 1) {
 				Object selected = selection.getFirstElement();
-				if (selected instanceof IPluginElement) {
-					IPluginElement element = (IPluginElement) selected;
+				if (selected instanceof IPluginElement element) {
 					IPluginParent parent = (IPluginParent) element.getParent();
 					// check up
 					int index = parent.getIndexOf(element);
@@ -1404,8 +1394,7 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 						upEnabled = true;
 					if (index < parent.getChildCount() - 1)
 						downEnabled = true;
-				} else if (selected instanceof IPluginExtension) {
-					IPluginExtension extension = (IPluginExtension) selected;
+				} else if (selected instanceof IPluginExtension extension) {
 					IExtensions extensions = (IExtensions) extension.getParent();
 					int index = extensions.getIndexOf(extension);
 					int size = extensions.getExtensions().length;
@@ -1618,29 +1607,18 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			return false;
 		}
 		// Validate move
-		if (sourcePluginObject instanceof IPluginExtension) {
-			IPluginExtension sourceExtensionObject = (IPluginExtension) sourcePluginObject;
-			if (targetPluginObject instanceof IPluginExtension) {
-				// Source:  Extension
-				// Target:  Extension
-				IPluginExtension targetExtensionObject = (IPluginExtension) targetPluginObject;
+		if (sourcePluginObject instanceof IPluginExtension sourceExtensionObject) {
+			if (targetPluginObject instanceof IPluginExtension targetExtensionObject) {
 				return canDropMove(targetExtensionObject, sourceExtensionObject, targetLocation);
 			} else if (targetPluginObject instanceof IPluginElement) {
 				// Source:  Extension
 				// Target:  Element
 				return false;
 			}
-		} else if (sourcePluginObject instanceof IPluginElement) {
-			IPluginElement sourceElementObject = (IPluginElement) sourcePluginObject;
-			if (targetPluginObject instanceof IPluginExtension) {
-				// Source:  Element
-				// Target:  Extension
-				IPluginExtension targetExtensionObject = (IPluginExtension) targetPluginObject;
+		} else if (sourcePluginObject instanceof IPluginElement sourceElementObject) {
+			if (targetPluginObject instanceof IPluginExtension targetExtensionObject) {
 				return canDropMove(targetExtensionObject, sourceElementObject, targetLocation);
-			} else if (targetPluginObject instanceof IPluginElement) {
-				// Source:  Element
-				// Target:  Element
-				IPluginElement targetElementObject = (IPluginElement) targetPluginObject;
+			} else if (targetPluginObject instanceof IPluginElement targetElementObject) {
 				return canDropMove(targetElementObject, sourceElementObject, targetLocation);
 			}
 		}
@@ -1826,14 +1804,12 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		IPluginParent pluginParentObject = (IPluginParent) sourceObjects[0];
 		// Remove the object from the model
 		try {
-			if (pluginParentObject instanceof IPluginExtension) {
-				IPluginExtension extension = (IPluginExtension) pluginParentObject;
+			if (pluginParentObject instanceof IPluginExtension extension) {
 				IPluginBase pluginBase = pluginParentObject.getPluginBase();
 				if (pluginBase != null) {
 					pluginBase.remove(extension);
 				}
-			} else if (pluginParentObject instanceof IPluginElement) {
-				IPluginElement element = (IPluginElement) pluginParentObject;
+			} else if (pluginParentObject instanceof IPluginElement element) {
 				IPluginObject object = element.getParent();
 				if (object instanceof IPluginParent) {
 					((IPluginParent) object).remove(element);
@@ -1866,29 +1842,18 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		IPluginParent targetPluginObject = (IPluginParent) targetObject;
 		// Validate move
 		try {
-			if (sourcePluginObject instanceof IPluginExtension) {
-				IPluginExtension sourceExtensionObject = (IPluginExtension) sourcePluginObject;
-				if (targetPluginObject instanceof IPluginExtension) {
-					// Source:  Extension
-					// Target:  Extension
-					IPluginExtension targetExtensionObject = (IPluginExtension) targetPluginObject;
+			if (sourcePluginObject instanceof IPluginExtension sourceExtensionObject) {
+				if (targetPluginObject instanceof IPluginExtension targetExtensionObject) {
 					doDropMove(targetExtensionObject, sourceExtensionObject, targetLocation);
 				} else if (targetPluginObject instanceof IPluginElement) {
 					// Source:  Extension
 					// Target:  Element
 					return;
 				}
-			} else if (sourcePluginObject instanceof IPluginElement) {
-				IPluginElement sourceElementObject = (IPluginElement) sourcePluginObject;
-				if (targetPluginObject instanceof IPluginExtension) {
-					// Source:  Element
-					// Target:  Extension
-					IPluginExtension targetExtensionObject = (IPluginExtension) targetPluginObject;
+			} else if (sourcePluginObject instanceof IPluginElement sourceElementObject) {
+				if (targetPluginObject instanceof IPluginExtension targetExtensionObject) {
 					doDropMove(targetExtensionObject, sourceElementObject, targetLocation);
-				} else if (targetPluginObject instanceof IPluginElement) {
-					// Source:  Element
-					// Target:  Element
-					IPluginElement targetElementObject = (IPluginElement) targetPluginObject;
+				} else if (targetPluginObject instanceof IPluginElement targetElementObject) {
 					doDropMove(targetElementObject, sourceElementObject, targetLocation);
 				}
 			}

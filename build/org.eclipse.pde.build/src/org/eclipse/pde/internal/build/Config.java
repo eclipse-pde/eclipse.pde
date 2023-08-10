@@ -53,10 +53,9 @@ public class Config {
 		if (this == config)
 			return true;
 
-		if (!(config instanceof Config))
+		if (!(config instanceof Config aConfig))
 			return false;
 
-		Config aConfig = (Config) config;
 		if (!os.equalsIgnoreCase(aConfig.os))
 			return false;
 

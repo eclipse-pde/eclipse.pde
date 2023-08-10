@@ -313,8 +313,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 
 		String[] remove = new String[selection.length];
 		for (int i = 0; i < selection.length; i++) {
-			if (selection[i] != null && selection[i] instanceof IPluginLibrary) {
-				IPluginLibrary ep = (IPluginLibrary) selection[i];
+			if (selection[i] != null && selection[i] instanceof IPluginLibrary ep) {
 				IPluginBase plugin = ep.getPluginBase();
 				try {
 					plugin.remove(ep);
@@ -656,9 +655,7 @@ public class LibrarySection extends TableSection implements IBuildPropertiesCons
 		try {
 			// Paste all source objects
 			for (Object sourceObject : sourceObjects) {
-				if (sourceObject instanceof PluginLibrary) {
-					// Plugin library object
-					PluginLibrary library = (PluginLibrary) sourceObject;
+				if (sourceObject instanceof PluginLibrary library) {
 					// Adjust all the source object transient field values to
 					// acceptable values
 					library.reconnect(model, plugin);

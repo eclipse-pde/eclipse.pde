@@ -65,8 +65,7 @@ public class WidgetTreeProvider implements ITreeContentProvider {
 
 	@Override
 	public Object getParent(Object element) {
-		if (element instanceof Control) {
-			Control control = (Control) element;
+		if (element instanceof Control control) {
 			return control.isDisposed() ? null : control.getParent();
 		} else if (element instanceof CTabItem) {
 			return ((CTabItem) element).getParent();

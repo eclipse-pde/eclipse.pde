@@ -187,9 +187,7 @@ public class ControlSelector {
 
 	private void mouseMove(Event e) {
 		Point globalPoint = new Point(e.x, e.y);
-		if (e.widget instanceof Control) {
-			Control control = (Control) e.widget;
-
+		if (e.widget instanceof Control control) {
 			globalPoint = control.toDisplay(globalPoint);
 		}
 		Control control = findControl(Display.getCurrent(), overlay, globalPoint);

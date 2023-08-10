@@ -38,8 +38,7 @@ public class ManifestOutlinePage extends FormOutlinePage {
 
 	@Override
 	protected Object[] getChildren(Object parent) {
-		if (parent instanceof PDEFormPage) {
-			PDEFormPage page = (PDEFormPage) parent;
+		if (parent instanceof PDEFormPage page) {
 			if (page.getModel() instanceof IPluginModelBase model) {
 				if (model.isValid()) {
 					IPluginBase pluginBase = model.getPluginBase();

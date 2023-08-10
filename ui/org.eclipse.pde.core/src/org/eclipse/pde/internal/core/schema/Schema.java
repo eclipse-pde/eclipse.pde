@@ -163,8 +163,7 @@ public class Schema extends PlatformObject implements ISchema {
 		for (Object child : children) {
 			if (child instanceof ISchemaCompositor) {
 				collectElements((ISchemaCompositor) child, result);
-			} else if (child instanceof ISchemaObjectReference) {
-				ISchemaObjectReference ref = (ISchemaObjectReference) child;
+			} else if (child instanceof ISchemaObjectReference ref) {
 				Object referenced = ref.getReferencedObject();
 				if (referenced instanceof ISchemaElement) {
 					result.addElement(referenced);

@@ -201,8 +201,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			if (item instanceof IJavaProject) {
 				item = ((IJavaProject) item).getProject();
 			}
-			if (item instanceof IProject) {
-				IProject project = (IProject) item;
+			if (item instanceof IProject project) {
 				if (WorkspaceModelManager.isPluginProject(project) && !WorkspaceModelManager.isBinaryProject(project)) {
 					IPluginModelBase model = PluginRegistry.findModel(project);
 					if (model != null)

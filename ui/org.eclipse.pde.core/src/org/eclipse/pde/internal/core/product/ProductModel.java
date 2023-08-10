@@ -85,8 +85,7 @@ public class ProductModel extends AbstractModel implements IProductModel {
 				processDocument(handler.getDocument());
 				String copyright = chandler.getCopyright();
 				if (copyright != null) {
-					if (fProduct instanceof Product) {
-						Product product = (Product) fProduct;
+					if (fProduct instanceof Product product) {
 						product.setCopyright(copyright);
 					}
 				}

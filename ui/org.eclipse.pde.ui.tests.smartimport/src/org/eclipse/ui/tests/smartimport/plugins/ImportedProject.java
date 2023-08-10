@@ -50,8 +50,7 @@ public class ImportedProject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ImportedProject){
-			ImportedProject project = (ImportedProject) obj;
+		if (obj instanceof ImportedProject project){
 			if (project.getProjectName().equals(projectName) && project.getRelativePath().equals(relativePath)){
 				return project.getImportedAsList().equals(this.getImportedAsList());
 			}

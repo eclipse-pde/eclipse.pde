@@ -120,10 +120,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!(obj instanceof BuildProblem)) {
+			if (!(obj instanceof BuildProblem bp)) {
 				return false;
 			}
-			BuildProblem bp = (BuildProblem) obj;
 			if (!fEntryName.equals(bp.fEntryName)) {
 				return false;
 			}
@@ -1232,10 +1231,9 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	}
 
 	private int getLineNumber(IBuildEntry ibe, String tokenString) {
-		if (!(ibe instanceof BuildEntry)) {
+		if (!(ibe instanceof BuildEntry be)) {
 			return 0;
 		}
-		BuildEntry be = (BuildEntry) ibe;
 		IDocument doc = ((BuildModel) be.getModel()).getDocument();
 		try {
 			int buildEntryLineNumber = doc.getLineOfOffset(be.getOffset()) + 1;

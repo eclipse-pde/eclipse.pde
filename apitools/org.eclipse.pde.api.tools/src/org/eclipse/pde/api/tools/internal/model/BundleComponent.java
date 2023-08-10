@@ -260,8 +260,7 @@ public class BundleComponent extends Component {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof BundleComponent) {
-			BundleComponent comp = (BundleComponent) obj;
+		if (obj instanceof BundleComponent comp) {
 			return getName().equals(comp.getName()) && getSymbolicName().equals(comp.getSymbolicName()) && getVersion().equals(comp.getVersion());
 		}
 		return false;

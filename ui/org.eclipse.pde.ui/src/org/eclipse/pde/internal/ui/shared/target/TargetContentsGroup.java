@@ -1016,8 +1016,7 @@ public class TargetContentsGroup {
 			result = fAllBundles.toArray();
 		} else if (fFeaureModeButton.getSelection() && parent == OTHER_CATEGORY) {
 			result = fTargetDefinition.getOtherBundles();
-		} else if (fGrouping == GROUP_BY_CONTAINER && parent instanceof ITargetLocation) {
-			ITargetLocation container = (ITargetLocation) parent;
+		} else if (fGrouping == GROUP_BY_CONTAINER && parent instanceof ITargetLocation container) {
 			result = container.getBundles();
 		} else if (fGrouping == GROUP_BY_FILE_LOC && parent instanceof IPath) {
 			List<TargetBundle> bundles = getFileBundleMapping().get(parent);

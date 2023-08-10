@@ -210,8 +210,7 @@ public abstract class Validator extends ASTVisitor {
 		if (node == null) {
 			return 0;
 		}
-		if (node instanceof AbstractTypeDeclaration) {
-			AbstractTypeDeclaration type = (AbstractTypeDeclaration) node;
+		if (node instanceof AbstractTypeDeclaration type) {
 			return type.getModifiers();
 		}
 		return getParentModifiers(node.getParent());

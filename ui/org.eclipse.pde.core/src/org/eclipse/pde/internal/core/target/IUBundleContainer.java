@@ -508,10 +508,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof IUBundleContainer)) {
+		if (!(obj instanceof IUBundleContainer other)) {
 			return false;
 		}
-		IUBundleContainer other = (IUBundleContainer) obj;
 		if (getIncludeAllRequired() != other.getIncludeAllRequired()) {
 			return false;
 		}

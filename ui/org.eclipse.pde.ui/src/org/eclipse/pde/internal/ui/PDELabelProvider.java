@@ -279,8 +279,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	public String getObjectText(ISchemaObject obj) {
 		StringBuilder text = new StringBuilder(obj.getName());
-		if (obj instanceof ISchemaRepeatable) {
-			ISchemaRepeatable rso = (ISchemaRepeatable) obj;
+		if (obj instanceof ISchemaRepeatable rso) {
 			boolean unbounded = rso.getMaxOccurs() == Integer.MAX_VALUE;
 			int maxOccurs = rso.getMaxOccurs();
 			int minOccurs = rso.getMinOccurs();
@@ -863,8 +862,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	public Image getObjectImage(PackageObject obj) {
 		int flags = 0;
-		if (obj instanceof ImportPackageObject) {
-			ImportPackageObject importPackageObject = (ImportPackageObject) obj;
+		if (obj instanceof ImportPackageObject importPackageObject) {
 			if (importPackageObject.isOptional()) {
 				flags |= F_OPTIONAL;
 			}

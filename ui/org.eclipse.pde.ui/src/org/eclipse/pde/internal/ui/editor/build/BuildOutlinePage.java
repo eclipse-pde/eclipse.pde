@@ -30,8 +30,7 @@ public class BuildOutlinePage extends FormOutlinePage {
 
 	@Override
 	protected Object[] getChildren(Object parent) {
-		if (parent instanceof PDEFormPage) {
-			PDEFormPage page = (PDEFormPage) parent;
+		if (parent instanceof PDEFormPage page) {
 			IBuildModel model = (IBuildModel) page.getModel();
 			if (model.isValid()) {
 				IBuild build = model.getBuild();

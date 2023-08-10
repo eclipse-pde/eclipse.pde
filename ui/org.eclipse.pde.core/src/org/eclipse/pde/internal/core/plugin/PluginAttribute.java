@@ -53,8 +53,7 @@ public class PluginAttribute extends PluginObject implements IPluginAttribute {
 		if (obj == null) {
 			return false;
 		}
-		if (obj instanceof IPluginAttribute) {
-			IPluginAttribute target = (IPluginAttribute) obj;
+		if (obj instanceof IPluginAttribute target) {
 			if (target.getModel().equals(getModel())) {
 				return false;
 			}

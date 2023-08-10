@@ -692,8 +692,7 @@ public class TargetEditor extends FormEditor {
 			fLoadHyperlink.setText(s);
 		}
 		ITextViewer viewer = fTextualEditor.getAdapter(ITextViewer.class);
-		if (viewer instanceof ISourceViewerExtension5) {
-			ISourceViewerExtension5 extension5 = (ISourceViewerExtension5) viewer;
+		if (viewer instanceof ISourceViewerExtension5 extension5) {
 			extension5.updateCodeMinings();
 		}
 	}

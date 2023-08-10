@@ -127,8 +127,7 @@ public class ImportPackageSection extends TableSection {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof ImportItemWrapper) {
-				ImportItemWrapper item = (ImportItemWrapper) obj;
+			if (obj instanceof ImportItemWrapper item) {
 				return getName().equals(item.getName());
 			}
 			return false;
@@ -334,8 +333,7 @@ public class ImportPackageSection extends TableSection {
 		IBundle bundle = model.getBundle();
 		// Paste all source objects
 		for (Object sourceObject : sourceObjects) {
-			if (sourceObject instanceof ImportPackageObject) {
-				ImportPackageObject importPackageObject = (ImportPackageObject) sourceObject;
+			if (sourceObject instanceof ImportPackageObject importPackageObject) {
 				// Import package object
 				// Adjust all the source object transient field values to
 				// acceptable values
@@ -391,8 +389,7 @@ public class ImportPackageSection extends TableSection {
 	}
 
 	private IPackageFragment getPackageFragment(ISelection sel) {
-		if (sel instanceof IStructuredSelection) {
-			IStructuredSelection selection = (IStructuredSelection) sel;
+		if (sel instanceof IStructuredSelection selection) {
 			if (selection.size() != 1)
 				return null;
 
@@ -471,12 +468,9 @@ public class ImportPackageSection extends TableSection {
 
 					if (selected[i] instanceof ExportPackageDescription)
 						impObject = new ImportPackageObject(fHeader, (ExportPackageDescription) selected[i], getVersionAttribute());
-					else if (selected[i] instanceof IPackageFragment) {
-						// non exported package
-						IPackageFragment fragment = ((IPackageFragment) selected[i]);
+					else if (selected[i] instanceof IPackageFragment fragment) {
 						impObject = new ImportPackageObject(fHeader, fragment.getElementName(), null, getVersionAttribute());
-					} else if (selected[i] instanceof ExportPackageObject) {
-						ExportPackageObject epo = (ExportPackageObject) selected[i];
+					} else if (selected[i] instanceof ExportPackageObject epo) {
 						impObject = new ImportPackageObject(fHeader, epo.getName(), epo.getVersion(), getVersionAttribute());
 					}
 					if (impObject != null && names.add(impObject.getName()))
@@ -647,8 +641,7 @@ public class ImportPackageSection extends TableSection {
 			} else {
 				Object[] objects = event.getChangedObjects();
 				for (Object changedObject : objects) {
-					if (changedObject instanceof ImportPackageObject) {
-						ImportPackageObject object = (ImportPackageObject) changedObject;
+					if (changedObject instanceof ImportPackageObject object) {
 						switch (event.getChangeType())
 							{
 							case IModelChangedEvent.INSERT:
@@ -754,8 +747,7 @@ public class ImportPackageSection extends TableSection {
 			IWorkingSet set = manager.createWorkingSet("temp", roots); //$NON-NLS-1$
 			new FindReferencesInWorkingSetAction(getPage().getEditorSite(), new IWorkingSet[] {set}).run(fragment);
 			manager.removeWorkingSet(set);
-		} else if (sel instanceof IStructuredSelection) {
-			IStructuredSelection selection = (IStructuredSelection) sel;
+		} else if (sel instanceof IStructuredSelection selection) {
 			PackageObject importObject = (PackageObject) selection.getFirstElement();
 			NewSearchUI.runQueryInBackground(new BlankQuery(importObject));
 		}

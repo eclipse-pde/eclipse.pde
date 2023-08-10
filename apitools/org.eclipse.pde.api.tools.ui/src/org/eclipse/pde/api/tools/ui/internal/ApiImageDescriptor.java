@@ -62,11 +62,10 @@ public class ApiImageDescriptor extends CompositeImageDescriptor {
 	 */
 	@Override
 	public boolean equals(Object object) {
-		if (!(object instanceof ApiImageDescriptor)) {
+		if (!(object instanceof ApiImageDescriptor other)) {
 			return false;
 		}
 
-		ApiImageDescriptor other = (ApiImageDescriptor) object;
 		return (getBaseImage().equals(other.getBaseImage()) && getFlags() == other.getFlags());
 	}
 

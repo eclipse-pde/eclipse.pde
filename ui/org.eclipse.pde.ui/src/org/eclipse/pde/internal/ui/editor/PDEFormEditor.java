@@ -112,8 +112,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 				return;
 			}
 
-			if (selectionProvider instanceof IPostSelectionProvider) {
-				IPostSelectionProvider provider = (IPostSelectionProvider) selectionProvider;
+			if (selectionProvider instanceof IPostSelectionProvider provider) {
 				provider.addPostSelectionChangedListener(this);
 			} else {
 				selectionProvider.addSelectionChangedListener(this);
@@ -137,8 +136,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 				return;
 			}
 
-			if (selectionProvider instanceof IPostSelectionProvider) {
-				IPostSelectionProvider provider = (IPostSelectionProvider) selectionProvider;
+			if (selectionProvider instanceof IPostSelectionProvider provider) {
 				provider.removePostSelectionChangedListener(this);
 			} else {
 				selectionProvider.removeSelectionChangedListener(this);
@@ -232,8 +230,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 			createResourceContexts(contextManager, (IFileEditorInput) input);
 		} else if (input instanceof IStorageEditorInput) {
 			createStorageContexts(contextManager, (IStorageEditorInput) input);
-		} else if (input instanceof IURIEditorInput) {
-			IURIEditorInput uriEditorInput = (IURIEditorInput) input;
+		} else if (input instanceof IURIEditorInput uriEditorInput) {
 			try {
 				IFileStore store = EFS.getStore(uriEditorInput.getURI());
 				if (!EFS.SCHEME_FILE.equals(store.getFileSystem().getScheme()))
@@ -404,8 +401,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	private boolean doRevertFormPage() {
 		boolean reverted = false;
 		IBaseModel model = getAggregateModel();
-		if (model instanceof IWorkspaceModel) {
-			IWorkspaceModel workspaceModel = (IWorkspaceModel) model;
+		if (model instanceof IWorkspaceModel workspaceModel) {
 			workspaceModel.reload();
 			reverted = true;
 		}
@@ -416,8 +412,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		boolean reverted = false;
 		IFormPage[] pages = getPages();
 		for (IFormPage page : pages) {
-			if (page instanceof PDESourcePage) {
-				PDESourcePage sourcePage = (PDESourcePage) page;
+			if (page instanceof PDESourcePage sourcePage) {
 				// Flush any pending editor operations into the document
 				// so that the revert operation executes (revert operation is
 				// aborted if the current document has not changed)
@@ -440,8 +435,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 			((PDEFormPage) currentPage).cancelEdit();
 		InputContext context = fInputContextManager.getContext(input);
 		IFormPage page = findPage(context.getId());
-		if (page != null && page instanceof PDESourcePage) {
-			PDESourcePage spage = (PDESourcePage) page;
+		if (page != null && page instanceof PDESourcePage spage) {
 			spage.doRevertToSaved();
 		}
 		editorDirtyStateChanged();
@@ -453,8 +447,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		if (mForm != null)
 			mForm.commit(false);
 		for (IFormPage page : pages) {
-			if (page instanceof PDESourcePage) {
-				PDESourcePage sourcePage = (PDESourcePage) page;
+			if (page instanceof PDESourcePage sourcePage) {
 				sourcePage.getInputContext().flushEditorInput();
 			}
 		}
@@ -806,8 +799,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	private void copyToClipboard(ISelection selection) {
 		Object[] objects = null;
 		String textVersion = null;
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection ssel) {
 			if (ssel.isEmpty())
 				return;
 			objects = ssel.toArray();
@@ -869,8 +861,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 			return false;
 		if (selection instanceof IStructuredSelection)
 			return !selection.isEmpty();
-		if (selection instanceof ITextSelection) {
-			ITextSelection textSelection = (ITextSelection) selection;
+		if (selection instanceof ITextSelection textSelection) {
 			return textSelection.getLength() > 0;
 		}
 		return false;

@@ -118,8 +118,7 @@ public class ReferenceTypeDescriptorImpl extends MemberDescriptorImpl implements
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof IReferenceTypeDescriptor) {
-			IReferenceTypeDescriptor refType = (IReferenceTypeDescriptor) obj;
+		if (obj instanceof IReferenceTypeDescriptor refType) {
 			return getQualifiedName().equals(refType.getQualifiedName());
 		}
 		return false;

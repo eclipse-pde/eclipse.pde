@@ -516,8 +516,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		FeatureChild[] fChildren = new FeatureChild[objects.length];
 		try {
 			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] instanceof FeatureChild) {
-					FeatureChild fChild = (FeatureChild) objects[i];
+				if (objects[i] instanceof FeatureChild fChild) {
 					fChild.setModel(model);
 					fChild.setParent(feature);
 					fChildren[i] = fChild;

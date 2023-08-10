@@ -46,8 +46,7 @@ public class FieldDescriptorImpl extends MemberDescriptorImpl implements IFieldD
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof IFieldDescriptor) {
-			IFieldDescriptor field = (IFieldDescriptor) obj;
+		if (obj instanceof IFieldDescriptor field) {
 			return getName().equals(field.getName()) && getEnclosingType().equals(field.getEnclosingType());
 		}
 		return false;

@@ -181,8 +181,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		if (isEclipseBundleGreaterThanVersion(4, 24)) { // Don't add allow flags for eclipse before 4.24
 			try {
 				IVMInstall vmInstall = VMHelper.getVMInstall(configuration);
-				if (vmInstall instanceof AbstractVMInstall) {
-					AbstractVMInstall install = (AbstractVMInstall) vmInstall;
+				if (vmInstall instanceof AbstractVMInstall install) {
 					String vmver = install.getJavaVersion();
 					if (vmver != null && JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_17) >= 0) {
 						if (!argumentContainsAttribute(args, allowSecurityManager)) {

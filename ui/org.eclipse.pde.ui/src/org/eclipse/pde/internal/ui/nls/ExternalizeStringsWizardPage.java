@@ -129,8 +129,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 
 		@Override
 		public Object getValue(Object element, String property) {
-			if (element instanceof ModelChangeElement) {
-				ModelChangeElement changeElement = (ModelChangeElement) element;
+			if (element instanceof ModelChangeElement changeElement) {
 				if (TABLE_PROPERTIES[KEY].equals(property)) {
 					return StringHelper.unwindEscapeChars(changeElement.getKey());
 				}
@@ -142,8 +141,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		public void modify(Object element, String property, Object value) {
 			if (element instanceof TableItem) {
 				Object data = ((TableItem) element).getData();
-				if (data instanceof ModelChangeElement) {
-					ModelChangeElement changeElement = (ModelChangeElement) data;
+				if (data instanceof ModelChangeElement changeElement) {
 					if (TABLE_PROPERTIES[KEY].equals(property)) {
 						String newKey = StringHelper.windEscapeChars((String) value);
 						validateKey(newKey, changeElement);
@@ -189,9 +187,8 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		fErrorElementFilter = new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (!(element instanceof ModelChangeElement))
+				if (!(element instanceof ModelChangeElement change))
 					return false;
-				ModelChangeElement change = (ModelChangeElement) element;
 				return change.equals(fErrorElement);
 			}
 		};
@@ -348,8 +345,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		fPropertiesViewer.setContentProvider((IStructuredContentProvider) inputElement -> {
 			if (fInputViewer.getSelection() instanceof IStructuredSelection) {
 				Object selection = fInputViewer.getStructuredSelection().getFirstElement();
-				if (selection instanceof ModelChangeFile) {
-					ModelChangeFile cf = (ModelChangeFile) selection;
+				if (selection instanceof ModelChangeFile cf) {
 					return (cf).getModel().getChangesInFile(cf.getFile()).toArray();
 				}
 			}
@@ -463,8 +459,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 
 	private void handlePropertySelection() {
 		Object selection = fPropertiesViewer.getStructuredSelection().getFirstElement();
-		if (selection instanceof ModelChangeElement && fSourceViewer.getDocument() != null) {
-			ModelChangeElement element = (ModelChangeElement) selection;
+		if (selection instanceof ModelChangeElement element && fSourceViewer.getDocument() != null) {
 			int offset = element.getOffset();
 			int length = element.getLength();
 			fSourceViewer.setSelectedRange(offset, length);

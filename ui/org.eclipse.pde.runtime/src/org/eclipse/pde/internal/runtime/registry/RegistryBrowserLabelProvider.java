@@ -149,9 +149,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 
 	@Override
 	public Image getImage(Object element) {
-		if (element instanceof Bundle) {
-			Bundle bundle = (Bundle) element;
-
+		if (element instanceof Bundle bundle) {
 			if (bundle.getFragmentHost() != null)
 				return fFragmentImage;
 
@@ -165,22 +163,19 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 			}
 		}
 
-		if (element instanceof ServiceName) {
-			ServiceName serviceName = (ServiceName) element;
+		if (element instanceof ServiceName serviceName) {
 			if (isProxyService(serviceName.getServiceReference()))
 				return fRemoteServiceProxyImage;
 			return fServiceImage;
 		}
 
-		if (element instanceof ServiceRegistration) {
-			ServiceRegistration reg = (ServiceRegistration) element;
+		if (element instanceof ServiceRegistration reg) {
 			if (isProxyService(reg))
 				return fRemoteServiceProxyImage;
 			return fPluginImage;
 		}
 
-		if (element instanceof Property) {
-			Property property = (Property) element;
+		if (element instanceof Property property) {
 			// special handling for property objectClass
 			if (property.getName().equals(Constants.OBJECTCLASS)) {
 				return PDERuntimePluginImages.get(PDERuntimePluginImages.IMG_CLASS_OBJ);
@@ -226,9 +221,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 		if (element instanceof ExtensionPoint)
 			return fExtensionPointImage;
 
-		if (element instanceof BundlePrerequisite) {
-			BundlePrerequisite prereq = (BundlePrerequisite) element;
-
+		if (element instanceof BundlePrerequisite prereq) {
 			if (prereq.isPackage())
 				return fPackageImage;
 
@@ -241,8 +234,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 		if (element instanceof ConfigurationElement)
 			return fGenericTagImage;
 
-		if (element instanceof Attribute) {
-			Attribute attr = (Attribute) element;
+		if (element instanceof Attribute attr) {
 			if (Attribute.F_LOCATION.equals(attr.getName())) {
 				return fLocationImage;
 			}
@@ -257,9 +249,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 
 	protected StyledString getStyledText(Object element) {
 
-		if (element instanceof Bundle) {
-			Bundle bundle = ((Bundle) element);
-
+		if (element instanceof Bundle bundle) {
 			StyledString sb = new StyledString(bundle.getSymbolicName());
 			String version = bundle.getVersion();
 			if (version != null) {
@@ -276,8 +266,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 			return sb;
 		}
 
-		if (element instanceof ServiceRegistration) {
-			ServiceRegistration ref = (ServiceRegistration) element;
+		if (element instanceof ServiceRegistration ref) {
 			String identifier = " (id=" + ref.getId() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 
 			StyledString ss = new StyledString();
@@ -360,9 +349,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 			return new StyledString(NLS.bind(PDERuntimeMessages.RegistryBrowserLabelProvider_contributedBy, contributor));
 
 		}
-		if (element instanceof ExtensionPoint) {
-			ExtensionPoint extPoint = (ExtensionPoint) element;
-
+		if (element instanceof ExtensionPoint extPoint) {
 			StyledString ss = new StyledString(extPoint.getUniqueIdentifier());
 			String name = extPoint.getLabel();
 			if (name != null && name.length() > 0) {
@@ -373,9 +360,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 
 			return ss;
 		}
-		if (element instanceof BundlePrerequisite) {
-			BundlePrerequisite prereq = (BundlePrerequisite) element;
-
+		if (element instanceof BundlePrerequisite prereq) {
 			StyledString ss = new StyledString(prereq.getName());
 
 			String version = prereq.getVersion();
@@ -395,16 +380,14 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 		if (element instanceof ConfigurationElement) {
 			return new StyledString(((ConfigurationElement) element).getName());
 		}
-		if (element instanceof Attribute) {
-			Attribute attribute = (Attribute) element;
+		if (element instanceof Attribute attribute) {
 			if (Attribute.F_BUNDLE.equals(attribute.getName())) {
 				return new StyledString(attribute.getValue());
 			}
 
 			return new StyledString(attribute.getName() + " = " + attribute.getValue()); //$NON-NLS-1$
 		}
-		if (element instanceof Property) {
-			Property property = (Property) element;
+		if (element instanceof Property property) {
 			return new StyledString(property.getName() + " = " + property.getValue()); //$NON-NLS-1$
 		}
 

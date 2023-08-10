@@ -24,8 +24,7 @@ public class EditorInputPropertyTester extends PropertyTester {
 
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-		if (receiver instanceof IEditorInput) {
-			IEditorInput editorInput = (IEditorInput) receiver;
+		if (receiver instanceof IEditorInput editorInput) {
 			if (CONTENT_TYPE_ID.equals(property)) {
 				String identifier = String.valueOf(expectedValue);
 				IContentTypeManager contentTypeManager = Platform.getContentTypeManager();

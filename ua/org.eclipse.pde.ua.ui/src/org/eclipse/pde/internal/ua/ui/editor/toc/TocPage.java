@@ -137,8 +137,7 @@ public class TocPage extends PDEFormPage implements IModelChangedListener {
 
 		Object[] objects = event.getChangedObjects();
 
-		if (objects[0] != null && objects[0] instanceof TocObject) {
-			TocObject object = (TocObject) objects[0];
+		if (objects[0] != null && objects[0] instanceof TocObject object) {
 			if (object.getType() == ITocConstants.TYPE_TOC) {
 				String newValue = ((Toc) object).getFieldLabel();
 

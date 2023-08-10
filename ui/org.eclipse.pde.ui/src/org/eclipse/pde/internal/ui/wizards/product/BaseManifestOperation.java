@@ -78,13 +78,11 @@ public abstract class BaseManifestOperation implements IRunnableWithProgress {
 			ModelModification mod = new ModelModification(file) {
 				@Override
 				protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-					if (!(model instanceof IBundlePluginModelBase))
+					if (!(model instanceof IBundlePluginModelBase modelBase))
 						return;
-					IBundlePluginModelBase modelBase = (IBundlePluginModelBase) model;
 					IBundle bundle = modelBase.getBundleModel().getBundle();
 					IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
-					if (header instanceof BundleSymbolicNameHeader) {
-						BundleSymbolicNameHeader symbolic = (BundleSymbolicNameHeader) header;
+					if (header instanceof BundleSymbolicNameHeader symbolic) {
 						if (!symbolic.isSingleton())
 							symbolic.setSingleton(true);
 					}

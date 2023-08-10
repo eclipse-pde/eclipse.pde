@@ -115,8 +115,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 	static class ContentProvider implements IStructuredContentProvider {
 		@Override
 		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof IBundleModel) {
-				IBundleModel model = (IBundleModel) inputElement;
+			if (inputElement instanceof IBundleModel model) {
 				IBundle bundle = model.getBundle();
 				IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 				if (header instanceof RequiredExecutionEnvironmentHeader) {

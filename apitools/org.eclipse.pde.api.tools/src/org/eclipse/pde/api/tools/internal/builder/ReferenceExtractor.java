@@ -417,8 +417,7 @@ public class ReferenceExtractor extends ClassVisitor {
 		@Override
 		public void visitInvokeDynamicInsn(String name, String desc, Handle bsm, Object... bsmArgs) {
 			for (Object arg : bsmArgs) {
-				if (arg instanceof Handle) {
-					Handle handle = (Handle) arg;
+				if (arg instanceof Handle handle) {
 					Type declaringType = Type.getObjectType(handle.getOwner());
 					Reference reference = ReferenceExtractor.this.addMethodReference(declaringType, handle.getName(), handle.getDesc(), IReference.REF_VIRTUALMETHOD, 0);
 					if (reference != null) {
@@ -564,14 +563,12 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		@Override
 		public void visitLdcInsn(Object cst) {
-			if (cst instanceof Type) {
-				Type type = (Type) cst;
+			if (cst instanceof Type type) {
 				Reference reference = ReferenceExtractor.this.addTypeReference(type, IReference.REF_CONSTANTPOOL);
 				if (reference != null) {
 					this.linePositionTracker.addLocation(reference);
 				}
-			} else if (cst instanceof String) {
-				String str = (String) cst;
+			} else if (cst instanceof String str) {
 				this.stringLiteral = (Util.EMPTY_STRING.equals(str) ? null : str);
 			}
 		}
@@ -762,15 +759,13 @@ public class ReferenceExtractor extends ClassVisitor {
 							remainingCatchLabelInfos = remaingEntriesTemp;
 						}
 					}
-				} else if (current instanceof Reference) {
-					Reference ref = (Reference) current;
+				} else if (current instanceof Reference ref) {
 					if (ref.getLineNumber() == -1) {
 						ref.setLineNumber(currentLineNumber);
 					} else {
 						currentLineNumber = ref.getLineNumber();
 					}
-				} else if (current instanceof LineInfo) {
-					LineInfo lineInfo = (LineInfo) current;
+				} else if (current instanceof LineInfo lineInfo) {
 					currentLineNumber = lineInfo.line;
 				}
 			}
@@ -810,8 +805,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof LineInfo) {
-				LineInfo lineInfo2 = (LineInfo) obj;
+			if (obj instanceof LineInfo lineInfo2) {
 				return this.line == lineInfo2.line && this.label.equals(lineInfo2.label);
 			}
 			return super.equals(obj);
@@ -841,8 +835,7 @@ public class ReferenceExtractor extends ClassVisitor {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof LocalLineNumberMarker) {
-				LocalLineNumberMarker marker = (LocalLineNumberMarker) obj;
+			if (obj instanceof LocalLineNumberMarker marker) {
 				return this.lineNumber == marker.lineNumber && this.varIndex == marker.varIndex;
 			}
 			return false;

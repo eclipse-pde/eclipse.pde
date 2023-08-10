@@ -277,8 +277,7 @@ public class ExportPackageSection extends TableSection {
 		IBundle bundle = model.getBundle();
 		// Paste all source objects
 		for (Object sourceObject : sourceObjects) {
-			if (sourceObject instanceof ExportPackageObject) {
-				ExportPackageObject exportPackageObject = (ExportPackageObject) sourceObject;
+			if (sourceObject instanceof ExportPackageObject exportPackageObject) {
 				// Export package object
 				// Adjust all the source object transient field values to
 				// acceptable values
@@ -342,8 +341,7 @@ public class ExportPackageSection extends TableSection {
 	}
 
 	private IPackageFragment getPackageFragment(ISelection sel) {
-		if (sel instanceof IStructuredSelection) {
-			IStructuredSelection selection = (IStructuredSelection) sel;
+		if (sel instanceof IStructuredSelection selection) {
 			if (selection.size() != 1)
 				return null;
 
@@ -493,8 +491,7 @@ public class ExportPackageSection extends TableSection {
 
 		Object[] objects = event.getChangedObjects();
 		for (Object changedObject : objects) {
-			if (changedObject instanceof ExportPackageObject) {
-				ExportPackageObject object = (ExportPackageObject) changedObject;
+			if (changedObject instanceof ExportPackageObject object) {
 				switch (event.getChangeType()) {
 					case IModelChangedEvent.INSERT :
 						fPackageViewer.add(object);
@@ -579,8 +576,7 @@ public class ExportPackageSection extends TableSection {
 		if (frag != null) {
 			FindReferencesAction action = new FindReferencesAction(getPage().getEditorSite());
 			action.run(frag);
-		} else if (sel instanceof IStructuredSelection) {
-			IStructuredSelection selection = (IStructuredSelection) sel;
+		} else if (sel instanceof IStructuredSelection selection) {
 			PackageObject exportObject = (PackageObject) selection.getFirstElement();
 			NewSearchUI.runQueryInBackground(new BlankQuery(exportObject));
 		}

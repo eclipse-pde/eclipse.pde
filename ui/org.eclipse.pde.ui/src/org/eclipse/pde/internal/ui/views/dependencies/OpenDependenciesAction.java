@@ -31,8 +31,7 @@ public class OpenDependenciesAction extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection ssel) {
 			openDependencies(ssel.getFirstElement());
 		}
 		return null;

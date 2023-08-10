@@ -104,8 +104,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		 */
 		public void install(ISelectionProvider selectionProvider) {
 			if (selectionProvider != null) {
-				if (selectionProvider instanceof IPostSelectionProvider) {
-					IPostSelectionProvider provider = (IPostSelectionProvider) selectionProvider;
+				if (selectionProvider instanceof IPostSelectionProvider provider) {
 					provider.addPostSelectionChangedListener(this);
 				} else {
 					selectionProvider.addSelectionChangedListener(this);
@@ -124,8 +123,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		 */
 		public void uninstall(ISelectionProvider selectionProvider) {
 			if (selectionProvider != null) {
-				if (selectionProvider instanceof IPostSelectionProvider) {
-					IPostSelectionProvider provider = (IPostSelectionProvider) selectionProvider;
+				if (selectionProvider instanceof IPostSelectionProvider provider) {
 					provider.removePostSelectionChangedListener(this);
 				} else {
 					selectionProvider.removeSelectionChangedListener(this);
@@ -195,8 +193,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	@Override
 	public void updateSelection(SelectionChangedEvent event) {
 		ISelection sel = event.getSelection();
-		if (sel instanceof IStructuredSelection) {
-			IStructuredSelection structuredSelection = (IStructuredSelection) sel;
+		if (sel instanceof IStructuredSelection structuredSelection) {
 			updateSelection(structuredSelection.getFirstElement());
 		}
 	}
@@ -378,8 +375,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		PDESelectAnnotationRulerAction action = new PDESelectAnnotationRulerAction(getBundleForConstructedKeys(), "PDESelectAnnotationRulerAction.", this, getVerticalRuler()); //$NON-NLS-1$
 		setAction(ITextEditorActionConstants.RULER_CLICK, action);
 		PDEFormEditorContributor contributor = fEditor == null ? null : fEditor.getContributor();
-		if (contributor instanceof PDEFormTextEditorContributor) {
-			PDEFormTextEditorContributor textContributor = (PDEFormTextEditorContributor) contributor;
+		if (contributor instanceof PDEFormTextEditorContributor textContributor) {
 			setAction(PDEActionConstants.OPEN, textContributor.getHyperlinkAction());
 			setAction(PDEActionConstants.FORMAT, textContributor.getFormatAction());
 		}
@@ -407,16 +403,12 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		if (event.getSource() == getSelectionProvider())
 			return;
 		ISelection sel = event.getSelection();
-		if (sel instanceof IStructuredSelection) {
-
-			IStructuredSelection structuredSel = (IStructuredSelection) sel;
+		if (sel instanceof IStructuredSelection structuredSel) {
 
 			// Store the selected object to save us having to do this again.
 			setSelectedObject(structuredSel.getFirstElement());
 
-		} else if (sel instanceof ITextSelection) {
-
-			ITextSelection textSel = (ITextSelection) sel;
+		} else if (sel instanceof ITextSelection textSel) {
 
 			setSelectedObject(getRangeElement(textSel.getOffset(), false));
 
@@ -467,8 +459,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	@Override
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		PDEFormEditorContributor contributor = fEditor == null ? null : fEditor.getContributor();
-		if (contributor instanceof PDEFormTextEditorContributor) {
-			PDEFormTextEditorContributor textContributor = (PDEFormTextEditorContributor) contributor;
+		if (contributor instanceof PDEFormTextEditorContributor textContributor) {
 			HyperlinkAction action = textContributor.getHyperlinkAction();
 			if ((action != null) && action.isEnabled() && ((action.getHyperLink() instanceof ExtensionHyperLink) == false)) {
 				// Another detector handles this the extension hyperlink case
@@ -532,9 +523,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	protected void handleSelectionChangedSourcePage(SelectionChangedEvent event) {
 
 		ISelection selection = event.getSelection();
-		if (!selection.isEmpty() && selection instanceof ITextSelection) {
-
-			ITextSelection textSel = (ITextSelection) selection;
+		if (!selection.isEmpty() && selection instanceof ITextSelection textSel) {
 
 			// Get the current element from the offset
 			int offset = textSel.getOffset();

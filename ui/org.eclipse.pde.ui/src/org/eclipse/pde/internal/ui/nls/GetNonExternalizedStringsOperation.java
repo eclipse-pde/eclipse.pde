@@ -199,8 +199,7 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 	}
 
 	private void inspectExtension(ISchema schema, IPluginParent parent, IPluginModelBase memModel, IFile file) {
-		if (parent instanceof PluginExtensionNode) {
-			PluginExtensionNode parentNode = (PluginExtensionNode) parent;
+		if (parent instanceof PluginExtensionNode parentNode) {
 			IDocumentAttributeNode[] attributes = parentNode.getNodeAttributes();
 			ISchemaElement schemaElement = schema.findElement(parentNode.getXMLTagName());
 			if (schemaElement != null) {

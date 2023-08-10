@@ -106,8 +106,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 			NodeList children = element.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++) {
 				Node child = children.item(i);
-				if (child instanceof Element) {
-					Element childElement = (Element) child;
+				if (child instanceof Element childElement) {
 					String name = childElement.getNodeName();
 					if (name != null && name.equals(ELEMENT)) {
 						String value = childElement.getAttribute(ATTR_NAME);

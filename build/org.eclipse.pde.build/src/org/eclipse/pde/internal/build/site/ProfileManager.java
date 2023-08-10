@@ -178,8 +178,7 @@ public class ProfileManager {
 				} catch (FileNotFoundException e) {
 					return null;
 				}
-		} else if (container instanceof ZipFile) {
-			ZipFile zipFile = (ZipFile) container;
+		} else if (container instanceof ZipFile zipFile) {
 			ZipEntry listEntry = ((ZipFile) container).getEntry(PROFILE_LIST);
 			if (listEntry != null)
 				try {
@@ -187,8 +186,7 @@ public class ProfileManager {
 				} catch (IOException e) {
 					return null;
 				}
-		} else if (container instanceof Bundle) {
-			Bundle systemBundle = (Bundle) container;
+		} else if (container instanceof Bundle systemBundle) {
 			URL url = systemBundle.getEntry(PROFILE_LIST);
 			if (url != null) {
 				try {

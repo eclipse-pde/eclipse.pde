@@ -87,8 +87,7 @@ public class CreateHeaderChangeOperation implements IWorkspaceRunnable {
 					IManifestHeader mHeader = bundle.getManifestHeader(fHeaderKey);
 					if (mHeader instanceof BundleSymbolicNameHeader) {
 						((BundleSymbolicNameHeader) mHeader).setId(fNewValue);
-					} else if (mHeader instanceof RequireBundleHeader) {
-						RequireBundleHeader header = (RequireBundleHeader) mHeader;
+					} else if (mHeader instanceof RequireBundleHeader header) {
 						RequireBundleObject bundles[] = header.getRequiredBundles();
 						for (RequireBundleObject requiredBundle : bundles) {
 							if (requiredBundle.getId().equals(fOldValue))
