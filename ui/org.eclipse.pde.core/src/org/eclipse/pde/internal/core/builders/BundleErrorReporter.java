@@ -1206,19 +1206,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			int length = element.getValueComponents().length;
 			for (int j = 0; j < length; j++) {
 				ImportPackageSpecification importSpec = imports[index++];
-				String name = importSpec.getName();
-				if (name.equals("java") || name.startsWith("java.")) { //$NON-NLS-1$ //$NON-NLS-2$
-					IHeader jreHeader = getHeader(ICoreConstants.ECLIPSE_JREBUNDLE);
-					if (jreHeader == null || !"true".equals(jreHeader.getValue())) { //$NON-NLS-1$
-						report(PDECoreMessages.BundleErrorReporter_importNoJRE, getPackageLine(header, element), CompilerFlags.ERROR, PDEMarkerFactory.M_JAVA_PACKAGE__PORTED, PDEMarkerFactory.CAT_FATAL);
-						continue;
-					}
-				}
-
 				if (importSpec.isResolved() || !isCheckUnresolvedImports()) {
 					continue;
 				}
-
+				String name = importSpec.getName();
 				boolean optional = isOptional(element);
 				int severity = getRequireBundleSeverity(element, optional);
 
