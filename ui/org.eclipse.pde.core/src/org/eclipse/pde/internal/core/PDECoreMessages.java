@@ -229,8 +229,6 @@ public class PDECoreMessages extends NLS {
 
 	public static String BundleErrorReporter_exportNoJRE;
 
-	public static String BundleErrorReporter_importNoJRE;
-
 	public static String ManifestConsistencyChecker_0;
 
 	public static String ManifestConsistencyChecker_buildDoesNotExist;
