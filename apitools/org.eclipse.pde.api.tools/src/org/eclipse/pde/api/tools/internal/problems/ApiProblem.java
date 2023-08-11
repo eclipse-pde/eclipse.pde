@@ -209,8 +209,7 @@ public class ApiProblem implements IApiProblem {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof IApiProblem) {
-			IApiProblem problem = (IApiProblem) obj;
+		if (obj instanceof IApiProblem problem) {
 			if (problem.getId() == fId && argumentsEqual(problem.getMessageArguments())) {
 				String resourcePath = problem.getResourcePath();
 				if (resourcePath == null) {

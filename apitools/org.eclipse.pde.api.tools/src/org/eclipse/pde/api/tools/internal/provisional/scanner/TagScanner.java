@@ -245,8 +245,7 @@ public class TagScanner {
 				if (JavadocTagManager.ANNOTATION_NOOVERRIDE.equals(name)) {
 					if (!Flags.isFinal(node.getModifiers()) && !Flags.isStatic(node.getModifiers())) {
 						ASTNode parent = node.getParent();
-						if (parent instanceof TypeDeclaration) {
-							TypeDeclaration type = (TypeDeclaration) parent;
+						if (parent instanceof TypeDeclaration type) {
 							if (type.isInterface()) {
 								if (Flags.isDefaultMethod(node.getModifiers())) {
 									restrictions |= RestrictionModifiers.NO_OVERRIDE;
@@ -480,8 +479,7 @@ public class TagScanner {
 		public boolean visit(MethodDeclaration node) {
 			if (isNotVisible(node.getModifiers())) {
 				ASTNode parent = node.getParent();
-				if (parent instanceof TypeDeclaration) {
-					TypeDeclaration type = (TypeDeclaration) parent;
+				if (parent instanceof TypeDeclaration type) {
 					if (!type.isInterface()) {
 						return false;
 					}
@@ -532,8 +530,7 @@ public class TagScanner {
 								continue;
 							}
 							ASTNode parent = node.getParent();
-							if (parent instanceof TypeDeclaration) {
-								TypeDeclaration type = (TypeDeclaration) parent;
+							if (parent instanceof TypeDeclaration type) {
 								if (type.isInterface()) {
 									if (Flags.isDefaultMethod(node.getModifiers())) {
 										restrictions |= RestrictionModifiers.NO_OVERRIDE;

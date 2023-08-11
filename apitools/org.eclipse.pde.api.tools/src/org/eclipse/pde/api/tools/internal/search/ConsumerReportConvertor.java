@@ -512,8 +512,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 					File refereehtml = null;
 					String link = null;
 					for (Object obj : scanResult) {
-						if (obj instanceof Consumer) {
-							Consumer consumer = (Consumer) obj;
+						if (obj instanceof Consumer consumer) {
 							refereehtml = new File(getReportsRoot(), consumer.name + File.separator + "index.html"); //$NON-NLS-1$
 							link = extractLinkFrom(getReportsRoot(), refereehtml.getAbsolutePath());
 							buffer.append(getReferenceTableEntry(consumer.counts, link, consumer.name, true));

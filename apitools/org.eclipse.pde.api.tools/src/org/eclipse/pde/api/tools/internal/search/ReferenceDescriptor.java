@@ -48,8 +48,7 @@ public class ReferenceDescriptor implements IReferenceDescriptor {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ReferenceDescriptor) {
-			ReferenceDescriptor rd = (ReferenceDescriptor) obj;
+		if (obj instanceof ReferenceDescriptor rd) {
 			return origin.equals(rd.origin) && target.equals(rd.target) && from.equals(rd.from) && to.equals(rd.to) && line == rd.line && kind == rd.kind && visibility == rd.visibility;
 		}
 		return false;

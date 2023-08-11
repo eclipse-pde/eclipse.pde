@@ -44,8 +44,7 @@ public class MethodKey {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof MethodKey) {
-			MethodKey key = (MethodKey) obj;
+		if (obj instanceof MethodKey key) {
 			return fSelector.equals(key.fSelector) && signaturesEqual(fSig, key.fSig) && (fConsiderTypename ? fTypename.equals(key.fTypename) : true);
 		}
 		return false;

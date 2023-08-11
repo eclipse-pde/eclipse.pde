@@ -187,10 +187,9 @@ public class Delta implements IDelta {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof Delta)) {
+		if (!(obj instanceof Delta other)) {
 			return false;
 		}
-		Delta other = (Delta) obj;
 		if (this.elementType != other.elementType) {
 			return false;
 		}

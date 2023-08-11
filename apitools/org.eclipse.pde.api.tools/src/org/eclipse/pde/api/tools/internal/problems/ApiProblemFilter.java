@@ -68,8 +68,7 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof IApiProblemFilter) {
-			IApiProblemFilter filter = (IApiProblemFilter) obj;
+		if (obj instanceof IApiProblemFilter filter) {
 			return elementsEqual(filter.getComponentId(), fComponentId) && filter.getUnderlyingProblem().equals(fProblem);
 		} else if (obj instanceof IApiProblem) {
 			return fProblem.equals(obj);
