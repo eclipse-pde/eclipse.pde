@@ -1463,8 +1463,7 @@ public class UseReportConverter extends HTMLConvertor {
 					File refereehtml = null;
 					String link = null;
 					for (Object obj : scanResult) {
-						if (obj instanceof Report) {
-							Report report = (Report) obj;
+						if (obj instanceof Report report) {
 							refereehtml = new File(getReportsRoot(), report.name + File.separator + "index.html"); //$NON-NLS-1$
 							link = extractLinkFrom(getReportsRoot(), refereehtml.getAbsolutePath());
 							buffer.append(getReferenceTableEntry(report.counts, link, report.name, true));

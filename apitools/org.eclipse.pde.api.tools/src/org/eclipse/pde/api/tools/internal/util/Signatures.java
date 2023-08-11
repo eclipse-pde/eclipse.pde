@@ -795,8 +795,7 @@ public final class Signatures {
 				}
 				continue;
 			}
-			if (parent instanceof CompilationUnit) {
-				CompilationUnit cunit = (CompilationUnit) parent;
+			if (parent instanceof CompilationUnit cunit) {
 				PackageDeclaration pdec = cunit.getPackage();
 				if (pdec != null) {
 					name.insert(0, '.');

@@ -374,8 +374,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 				buffer.append(getProblemSummaryTable());
 				if (result.size() > 0) {
 					for (Object obj : result) {
-						if (obj instanceof Report) {
-							Report report = (Report) obj;
+						if (obj instanceof Report report) {
 							File refereehtml = new File(getReportsRoot(), report.name + File.separator + "index.html"); //$NON-NLS-1$
 							String link = extractLinkFrom(getReportsRoot(), refereehtml.getAbsolutePath());
 							buffer.append(getReferenceTableEntry(report, link));

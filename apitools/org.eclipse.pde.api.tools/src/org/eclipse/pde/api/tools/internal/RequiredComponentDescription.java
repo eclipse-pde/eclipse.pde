@@ -59,8 +59,7 @@ public class RequiredComponentDescription implements IRequiredComponentDescripti
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof RequiredComponentDescription) {
-			RequiredComponentDescription desc = (RequiredComponentDescription) obj;
+		if (obj instanceof RequiredComponentDescription desc) {
 			return fId.equals(desc.fId) && fRange.equals(desc.fRange);
 		}
 		return super.equals(obj);

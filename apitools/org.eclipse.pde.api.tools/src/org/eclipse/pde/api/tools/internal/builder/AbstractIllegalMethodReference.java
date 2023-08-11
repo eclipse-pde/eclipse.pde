@@ -74,8 +74,7 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 				} catch (CoreException ce) {
 					// do nothing, skip it
 				}
-				if (member instanceof IApiMethod) {
-					IApiMethod method = (IApiMethod) member;
+				if (member instanceof IApiMethod method) {
 					if (method.isDefaultMethod()) {
 						return considerReference(reference, monitor);
 					}

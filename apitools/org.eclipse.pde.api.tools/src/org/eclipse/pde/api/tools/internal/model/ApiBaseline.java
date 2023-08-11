@@ -396,8 +396,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		}
 
 		fComponentsById.put(component.getSymbolicName(), component);
-		if (component instanceof ProjectComponent) {
-			ProjectComponent projectApiComponent = (ProjectComponent) component;
+		if (component instanceof ProjectComponent projectApiComponent) {
 			if (this.fComponentsByProjectNames == null) {
 				this.fComponentsByProjectNames = new HashMap<>();
 			}
@@ -805,8 +804,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof IApiBaseline) {
-			IApiBaseline baseline = (IApiBaseline) obj;
+		if (obj instanceof IApiBaseline baseline) {
 			return this.getName().equals(baseline.getName());
 		}
 		return super.equals(obj);

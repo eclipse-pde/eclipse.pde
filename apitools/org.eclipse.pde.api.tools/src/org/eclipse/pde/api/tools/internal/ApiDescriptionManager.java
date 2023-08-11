@@ -356,8 +356,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 			break;
 		}
 		case IApiXmlConstants.ELEMENT_FIELD:
-			if (parentNode.element instanceof IReferenceTypeDescriptor) {
-				IReferenceTypeDescriptor type = (IReferenceTypeDescriptor) parentNode.element;
+			if (parentNode.element instanceof IReferenceTypeDescriptor type) {
 				int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
 				int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
 				String name = element.getAttribute(IApiXmlConstants.ATTR_NAME);
@@ -366,8 +365,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 			}
 			break;
 		case IApiXmlConstants.ELEMENT_METHOD:
-			if (parentNode.element instanceof IReferenceTypeDescriptor) {
-				IReferenceTypeDescriptor type = (IReferenceTypeDescriptor) parentNode.element;
+			if (parentNode.element instanceof IReferenceTypeDescriptor type) {
 				int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
 				int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
 				String name = element.getAttribute(IApiXmlConstants.ATTR_NAME);
