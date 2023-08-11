@@ -41,8 +41,7 @@ public class PackageDescriptorImpl extends NamedElementDescriptorImpl implements
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof IPackageDescriptor) {
-			IPackageDescriptor pkg = (IPackageDescriptor) obj;
+		if (obj instanceof IPackageDescriptor pkg) {
 			return getName().equals(pkg.getName());
 		}
 		return false;

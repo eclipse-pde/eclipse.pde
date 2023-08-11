@@ -282,8 +282,7 @@ public class TypeStructureBuilder extends ClassVisitor {
 	 */
 	public static void setEnclosingMethod(IApiType enclosingType, ApiType currentAnonymousLocalType) {
 		IApiTypeRoot typeRoot = enclosingType.getTypeRoot();
-		if (typeRoot instanceof AbstractApiTypeRoot) {
-			AbstractApiTypeRoot abstractApiTypeRoot = (AbstractApiTypeRoot) typeRoot;
+		if (typeRoot instanceof AbstractApiTypeRoot abstractApiTypeRoot) {
 			EnclosingMethodSetter visitor = new EnclosingMethodSetter(new ClassNode(), currentAnonymousLocalType.getName());
 			try {
 				ClassReader classReader = new ClassReader(abstractApiTypeRoot.getContents());

@@ -99,8 +99,7 @@ public abstract class ApiMember extends ApiElement implements IApiMember {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof IApiElement) {
-			IApiElement element = (IApiElement) obj;
+		if (obj instanceof IApiElement element) {
 			if (element.getType() == this.getType()) {
 				return enclosingTypesEqual(this, element) && getName().equals(element.getName());
 			}

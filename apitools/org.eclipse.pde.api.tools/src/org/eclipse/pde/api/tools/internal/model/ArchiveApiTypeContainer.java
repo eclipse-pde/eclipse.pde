@@ -81,8 +81,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof ArchiveApiTypeRoot) {
-				ArchiveApiTypeRoot classFile = (ArchiveApiTypeRoot) obj;
+			if (obj instanceof ArchiveApiTypeRoot classFile) {
 				return this.getName().equals(classFile.getName());
 			}
 			return false;

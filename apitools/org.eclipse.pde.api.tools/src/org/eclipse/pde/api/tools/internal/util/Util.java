@@ -261,8 +261,7 @@ public final class Util {
 		private void cancelBuild(Object jobfamily) {
 			Job[] buildJobs = Job.getJobManager().find(jobfamily);
 			for (Job curr : buildJobs) {
-				if (curr != this && curr instanceof BuildJob) {
-					BuildJob job = (BuildJob) curr;
+				if (curr != this && curr instanceof BuildJob job) {
 					if (job.isCoveredBy(this)) {
 						curr.cancel(); // cancel all other build jobs of our
 										// kind
@@ -1198,12 +1197,10 @@ public final class Util {
 		IPath path = IPath.fromOSString(typeNameWithSeparator);
 		IPath pathExceptLastSegment = path.removeLastSegments(1);
 		IJavaElement packFrag = javaProject.findElement(pathExceptLastSegment, DefaultWorkingCopyOwner.PRIMARY);
-		if (packFrag instanceof PackageFragment) {
-			PackageFragment pf = (PackageFragment) packFrag;
+		if (packFrag instanceof PackageFragment pf) {
 			List<JavaElement> children = pf.getChildrenOfType(IJavaElement.COMPILATION_UNIT);
 			for (JavaElement object : children) {
-				if (object instanceof CompilationUnit) {
-					CompilationUnit compilationUn = (CompilationUnit) object;
+				if (object instanceof CompilationUnit compilationUn) {
 					ITypeRoot typeRoot = compilationUn.getTypeRoot();
 					if (typeRoot.findPrimaryType() == null) {
 						continue;
@@ -1216,8 +1213,7 @@ public final class Util {
 			}
 			List<JavaElement> children2 = pf.getChildrenOfType(IJavaElement.CLASS_FILE);
 			for (JavaElement object : children2) {
-				if (object instanceof ClassFile) {
-					ClassFile compilationUn = (ClassFile) object;
+				if (object instanceof ClassFile compilationUn) {
 					ITypeRoot typeRoot = compilationUn.getTypeRoot();
 					if (typeRoot.findPrimaryType() == null) {
 						continue;
@@ -1251,8 +1247,7 @@ public final class Util {
 		IJavaElement ancestor = type.getAncestor(IJavaElement.JAVA_PROJECT);
 		IType newType = null;
 		try {
-			if (ancestor instanceof IJavaProject) {
-				IJavaProject pro = (IJavaProject) ancestor;
+			if (ancestor instanceof IJavaProject pro) {
 				if (!pro.equals(javaProject)) {
 					newType = updateType(typeName, javaProject);
 					if (newType != null) {
@@ -2853,8 +2848,7 @@ public final class Util {
 		IType type = null;
 		try {
 			String pkgName = typeName.substring(0, typeName.lastIndexOf('.'));
-			if (javaProject instanceof JavaProject) {
-				JavaProject jp = (JavaProject) javaProject;
+			if (javaProject instanceof JavaProject jp) {
 				NameLookup newNameLookup = null;
 				try {
 					newNameLookup = jp.newNameLookup(DefaultWorkingCopyOwner.PRIMARY);

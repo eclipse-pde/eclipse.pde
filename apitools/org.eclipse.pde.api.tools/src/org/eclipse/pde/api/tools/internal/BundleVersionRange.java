@@ -68,8 +68,7 @@ public class BundleVersionRange implements IVersionRange {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof BundleVersionRange) {
-			BundleVersionRange range = (BundleVersionRange) obj;
+		if (obj instanceof BundleVersionRange range) {
 			return fRange.equals(range.fRange);
 		}
 		return false;

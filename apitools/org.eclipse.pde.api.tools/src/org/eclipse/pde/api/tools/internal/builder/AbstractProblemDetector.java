@@ -517,8 +517,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 					IApiComponent component = reference.getMember().getApiComponent();
 					try {
 						IApiProblem problem = null;
-						if (component instanceof ProjectComponent) {
-							ProjectComponent ppac = (ProjectComponent) component;
+						if (component instanceof ProjectComponent ppac) {
 							IJavaProject project = ppac.getJavaProject();
 							problem = createProblem(reference, project);
 						} else {

@@ -321,8 +321,7 @@ public class ApiType extends ApiMember implements IApiType {
 		if (javaEE != null) {
 			for (int i = 0; i < components.length; i++) {
 				IApiComponent iComponent = components[i];
-				if (iComponent instanceof SystemLibraryApiComponent) {
-					SystemLibraryApiComponent sysCom = (SystemLibraryApiComponent) iComponent;
+				if (iComponent instanceof SystemLibraryApiComponent sysCom) {
 					if (sysCom.getSymbolicName().equals(javaEE)) {
 						// swap i and 0;
 						IApiComponent temp = components[i];
@@ -495,8 +494,7 @@ public class ApiType extends ApiMember implements IApiType {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof IApiType) {
-			IApiType type = (IApiType) obj;
+		if (obj instanceof IApiType type) {
 			if (getApiComponent() == null) {
 				return type.getApiComponent() == null && getName().equals(type.getName());
 			}

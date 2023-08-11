@@ -629,10 +629,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 
 		@Override
 		public boolean isConflicting(ISchedulingRule rule) {
-			if (!(rule instanceof ApiAnalysisJobRule)) {
+			if (!(rule instanceof ApiAnalysisJobRule other)) {
 				return false;
 			}
-			ApiAnalysisJobRule other = (ApiAnalysisJobRule) rule;
 			return project.equals(other.project);
 		}
 

@@ -79,8 +79,7 @@ public class StubArchiveApiTypeContainer extends ApiElement implements IApiTypeC
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof ArchiveApiTypeRoot) {
-				ArchiveApiTypeRoot classFile = (ArchiveApiTypeRoot) obj;
+			if (obj instanceof ArchiveApiTypeRoot classFile) {
 				return this.getName().equals(classFile.getName());
 			}
 			return false;

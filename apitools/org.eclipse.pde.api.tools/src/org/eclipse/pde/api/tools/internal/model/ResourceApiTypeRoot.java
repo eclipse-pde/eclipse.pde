@@ -96,8 +96,7 @@ public class ResourceApiTypeRoot extends AbstractApiTypeRoot {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof IApiTypeRoot) {
-			IApiTypeRoot file = (IApiTypeRoot) obj;
+		if (obj instanceof IApiTypeRoot file) {
 			return getName().equals(file.getTypeName());
 		}
 		return super.equals(obj);

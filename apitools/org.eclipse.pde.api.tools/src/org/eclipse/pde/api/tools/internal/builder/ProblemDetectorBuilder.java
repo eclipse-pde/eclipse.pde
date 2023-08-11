@@ -197,8 +197,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	 *         not a {@link PluginProjectApiComponent}
 	 */
 	private IProject getProject(IApiComponent component) {
-		if (component instanceof ProjectComponent) {
-			ProjectComponent comp = (ProjectComponent) component;
+		if (component instanceof ProjectComponent comp) {
 			return comp.getJavaProject().getProject();
 		}
 		return null;
