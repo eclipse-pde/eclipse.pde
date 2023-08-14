@@ -27,11 +27,17 @@ import org.eclipse.pde.internal.core.PDECore;
 public class IncrementalErrorReporter {
 
 	private final IResource fResource;
+	private final String fMarkerID;
 	private final Collection<VirtualMarker> fReportedMarkers = new ArrayList<>();
 	private int fErrorCount;
 
 	public IncrementalErrorReporter(IResource file) {
+		this(file, PDEMarkerFactory.MARKER_ID);
+	}
+
+	public IncrementalErrorReporter(IResource file, String markerID) {
 		fResource = file;
+		fMarkerID = markerID;
 	}
 
 	public VirtualMarker addMarker(String message, int lineNumber, int severity, int problemID, String category) {
@@ -62,13 +68,13 @@ public class IncrementalErrorReporter {
 			// This seem to be for compatibility with some legacy code,
 			// PDE builders don't create markers with this type anymore
 			fResource.deleteMarkers(IMarker.PROBLEM, false, IResource.DEPTH_ZERO);
-			existingMarkers = fResource.findMarkers(PDEMarkerFactory.MARKER_ID, false, IResource.DEPTH_ZERO);
+			existingMarkers = fResource.findMarkers(fMarkerID, false, IResource.DEPTH_ZERO);
 		} catch (CoreException e) {
 			PDECore.logException(e);
 			// If we can't read existing, let delete them before we create new
 			existingMarkers = new IMarker[0];
 			try {
-				fResource.deleteMarkers(PDEMarkerFactory.MARKER_ID, false, IResource.DEPTH_ZERO);
+				fResource.deleteMarkers(fMarkerID, false, IResource.DEPTH_ZERO);
 			} catch (CoreException e1) {
 				PDECore.logException(e1);
 			}
@@ -112,7 +118,7 @@ public class IncrementalErrorReporter {
 		// Create only new markers
 		for (VirtualMarker reportedMarker : fReportedMarkers) {
 			try {
-				fResource.createMarker(PDEMarkerFactory.MARKER_ID, reportedMarker.getAttributes());
+				fResource.createMarker(fMarkerID, reportedMarker.getAttributes());
 			} catch (CoreException e) {
 				PDECore.logException(e);
 			}
@@ -139,7 +145,7 @@ public class IncrementalErrorReporter {
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
 			builder.append("VirtualMarker ["); //$NON-NLS-1$
-			if (fAttributes != null) {
+			if (!fAttributes.isEmpty()) {
 				builder.append("attributes="); //$NON-NLS-1$
 				builder.append(fAttributes);
 			}

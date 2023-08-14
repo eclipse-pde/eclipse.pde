@@ -35,7 +35,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -699,9 +698,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		Document document;
 		try {
 			@SuppressWarnings("restriction")
-			DocumentBuilder docBuilder = org.eclipse.core.internal.runtime.XmlProcessorFactory
-					.createDocumentBuilderWithErrorOnDOCTYPE();
-			document = docBuilder.newDocument();
+			Document d = org.eclipse.core.internal.runtime.XmlProcessorFactory.newDocumentWithErrorOnDOCTYPE();
+			document = d;
 		} catch (Exception e) {
 			PDECore.log(e);
 			return null;
