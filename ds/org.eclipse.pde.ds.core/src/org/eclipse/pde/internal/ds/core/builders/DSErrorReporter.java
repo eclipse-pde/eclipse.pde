@@ -49,12 +49,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public class DSErrorReporter extends XMLErrorReporter {
+	public static final String MARKER_ID = "org.eclipse.pde.ds.core.problem"; //$NON-NLS-1$
 	public static final int ERROR = 0;
 	public static final int WARNING = 1;
 	public static final int IGNORE = 2;
 
 	public DSErrorReporter(IFile file) {
-		super(file);
+		super(file, MARKER_ID);
 	}
 
 	@Override
