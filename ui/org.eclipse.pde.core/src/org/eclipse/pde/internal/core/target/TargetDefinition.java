@@ -136,8 +136,7 @@ public class TargetDefinition implements ITargetDefinition {
 	private static Document createNewDocument() {
 		try {
 			@SuppressWarnings("restriction")
-			Document doc = org.eclipse.core.internal.runtime.XmlProcessorFactory
-					.createDocumentBuilderWithErrorOnDOCTYPE().newDocument();
+			Document doc = org.eclipse.core.internal.runtime.XmlProcessorFactory.newDocumentWithErrorOnDOCTYPE();
 			ProcessingInstruction instruction = doc.createProcessingInstruction(
 					TargetDefinitionPersistenceHelper.PDE_INSTRUCTION,
 					TargetDefinitionPersistenceHelper.ATTR_VERSION + "=\"" + ICoreConstants.TARGET38 + "\""); //$NON-NLS-1$ //$NON-NLS-2$

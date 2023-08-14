@@ -100,8 +100,7 @@ public class PluginHandler extends DefaultHandler {
 	@SuppressWarnings("restriction")
 	public void startDocument() throws SAXException {
 		try {
-			fDocument = org.eclipse.core.internal.runtime.XmlProcessorFactory.createDocumentBuilderWithErrorOnDOCTYPE()
-					.newDocument();
+			fDocument = org.eclipse.core.internal.runtime.XmlProcessorFactory.newDocumentWithErrorOnDOCTYPE();
 		} catch (ParserConfigurationException e) {
 		}
 	}

@@ -92,7 +92,11 @@ public abstract class XMLErrorReporter extends DefaultHandler {
 	private double fSchemaVersion = 2.1;
 
 	public XMLErrorReporter(IFile file) {
-		fErrorReporter = new IncrementalErrorReporter(file);
+		this(file, PDEMarkerFactory.MARKER_ID);
+	}
+
+	public XMLErrorReporter(IFile file, String markerType) {
+		fErrorReporter = new IncrementalErrorReporter(file, markerType);
 
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		try {

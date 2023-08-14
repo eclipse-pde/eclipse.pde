@@ -133,8 +133,7 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 	protected Document generateAntTask() {
 		try {
 			@SuppressWarnings("restriction")
-			Document doc = org.eclipse.core.internal.runtime.XmlProcessorFactory
-					.createDocumentBuilderWithErrorOnDOCTYPE().newDocument();
+			Document doc = org.eclipse.core.internal.runtime.XmlProcessorFactory.newDocumentWithErrorOnDOCTYPE();
 			Element root = doc.createElement("project"); //$NON-NLS-1$
 			root.setAttribute("name", "build"); //$NON-NLS-1$ //$NON-NLS-2$
 			root.setAttribute("default", "feature_export"); //$NON-NLS-1$ //$NON-NLS-2$
