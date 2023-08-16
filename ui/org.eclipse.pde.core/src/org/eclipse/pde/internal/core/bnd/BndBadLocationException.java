@@ -11,7 +11,7 @@
  * Contributors:
  *     Christoph Läubrich - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.editor.bnd;
+package org.eclipse.pde.internal.core.bnd;
 
 import org.eclipse.jface.text.BadLocationException;
 

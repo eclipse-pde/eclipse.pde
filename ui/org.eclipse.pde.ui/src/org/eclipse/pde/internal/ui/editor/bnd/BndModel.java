@@ -20,6 +20,7 @@ import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.IModelChangedListener;
+import org.eclipse.pde.internal.core.bnd.BndDocument;
 
 import aQute.bnd.build.model.BndEditModel;
 
