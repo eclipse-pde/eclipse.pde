@@ -35,6 +35,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.natures.BndProject;
 import org.eclipse.pde.internal.core.project.PDEProject;
 
@@ -86,6 +87,14 @@ public class BndBuilder extends IncrementalProjectBuilder {
 		return new IProject[] { project };
 	}
 
+	@Override
+	protected void clean(IProgressMonitor monitor) throws CoreException {
+		IFile file = getProject().getFile(BndProject.INSTRUCTIONS_FILE);
+		if (file.exists()) {
+			file.deleteMarkers(PDEMarkerFactory.MARKER_ID, true, IResource.DEPTH_ZERO);
+		}
+	}
+
 	private static final class BndBuild implements ICoreRunnable {
 
 		private IProject project;
@@ -127,6 +136,7 @@ public class BndBuilder extends IncrementalProjectBuilder {
 				ProjectJar jar = new ProjectJar(project, CLASS_FILTER);
 				builder.setJar(jar);
 				builder.build();
+				new BndErrorReporter(project, bnd).validateContent(monitor);
 			}
 			if (monitor.isCanceled()) {
 				return;

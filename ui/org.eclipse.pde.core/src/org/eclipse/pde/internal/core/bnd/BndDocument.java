@@ -11,7 +11,7 @@
  * Contributors:
  *     Christoph Läubrich - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.ui.editor.bnd;
+package org.eclipse.pde.internal.core.bnd;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -21,7 +21,7 @@ import aQute.bnd.properties.IRegion;
 /**
  * This class wraps from JFace text framework to bnd-document
  */
-final class BndDocument implements aQute.bnd.properties.IDocument {
+public final class BndDocument implements aQute.bnd.properties.IDocument {
 
 	private final IDocument document;
 
@@ -38,6 +38,14 @@ final class BndDocument implements aQute.bnd.properties.IDocument {
 	public IRegion getLineInformation(int lineNum) throws BndBadLocationException {
 		try {
 			return new BndRegion(document.getLineInformation(lineNum));
+		} catch (BadLocationException e) {
+			throw new BndBadLocationException(e);
+		}
+	}
+
+	public int getLineOfOffset(int offset) throws BndBadLocationException {
+		try {
+			return document.getLineOfOffset(offset);
 		} catch (BadLocationException e) {
 			throw new BndBadLocationException(e);
 		}
