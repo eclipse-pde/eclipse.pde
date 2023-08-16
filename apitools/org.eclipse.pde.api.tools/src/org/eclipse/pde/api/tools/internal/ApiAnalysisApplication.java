@@ -127,6 +127,11 @@ public class ApiAnalysisApplication implements IApplication {
 			setTargetPlatform(args.tpFile);
 
 			project.build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
+			// wait untill all jobs has finished that might be sceduled as part of the
+			// build...
+			while (!Job.getJobManager().isIdle()) {
+				Thread.yield();
+			}
 			IMarker[] allProblemMarkers = project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 			Predicate<IMarker> isAPIMarker = marker -> {
 				try {
