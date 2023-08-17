@@ -35,8 +35,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	@Override
 	public void add(IPluginLibrary library) throws CoreException {
 		IDocumentElementNode parent = getEnclosingElement("runtime", true); //$NON-NLS-1$
-		if (library instanceof PluginLibraryNode) {
-			PluginLibraryNode node = (PluginLibraryNode) library;
+		if (library instanceof PluginLibraryNode node) {
 			node.setModel(getModel());
 			parent.addChildNode(node);
 			fireStructureChanged(library, IModelChangedEvent.INSERT);
@@ -46,8 +45,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	@Override
 	public void add(IPluginImport pluginImport) throws CoreException {
 		IDocumentElementNode parent = getEnclosingElement("requires", true); //$NON-NLS-1$
-		if (pluginImport instanceof PluginImportNode) {
-			PluginImportNode node = (PluginImportNode) pluginImport;
+		if (pluginImport instanceof PluginImportNode node) {
 			parent.addChildNode(node);
 			fireStructureChanged(pluginImport, IModelChangedEvent.INSERT);
 		}
@@ -56,8 +54,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	public void add(IPluginImport[] pluginImports) {
 		IDocumentElementNode parent = getEnclosingElement("requires", true); //$NON-NLS-1$
 		for (IPluginImport pluginImport : pluginImports) {
-			if (pluginImport != null && pluginImport instanceof PluginImportNode) {
-				PluginImportNode node = (PluginImportNode) pluginImport;
+			if (pluginImport != null && pluginImport instanceof PluginImportNode node) {
 				parent.addChildNode(node);
 			}
 		}
@@ -198,8 +195,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 
 	@Override
 	public void add(IPluginExtension extension) throws CoreException {
-		if (extension instanceof PluginExtensionNode) {
-			PluginExtensionNode node = (PluginExtensionNode) extension;
+		if (extension instanceof PluginExtensionNode node) {
 			node.setModel(getModel());
 			addChildNode(node);
 			fireStructureChanged(extension, IModelChangedEvent.INSERT);
@@ -226,8 +222,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 
 	@Override
 	public void add(IPluginExtensionPoint extensionPoint) throws CoreException {
-		if (extensionPoint instanceof PluginExtensionPointNode) {
-			PluginExtensionPointNode node = (PluginExtensionPointNode) extensionPoint;
+		if (extensionPoint instanceof PluginExtensionPointNode node) {
 			node.setModel(getModel());
 			extensionPoint.setInTheModel(true);
 			node.setParentNode(this);

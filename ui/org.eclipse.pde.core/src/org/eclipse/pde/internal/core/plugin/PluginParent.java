@@ -66,8 +66,7 @@ public abstract class PluginParent extends IdentifiablePluginObject implements I
 		if (obj == null) {
 			return false;
 		}
-		if (obj instanceof IPluginParent) {
-			IPluginParent target = (IPluginParent) obj;
+		if (obj instanceof IPluginParent target) {
 			if (target.getChildCount() != getChildCount()) {
 				return false;
 			}

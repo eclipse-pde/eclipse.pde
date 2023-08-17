@@ -54,8 +54,7 @@ public abstract class RequirementSpecification {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof RequirementSpecification) {
-			RequirementSpecification spec = (RequirementSpecification) obj;
+		if (obj instanceof RequirementSpecification spec) {
 			return getName().equals(spec.getName()) && isExported() == spec.isExported() && isOptional() == spec.isOptional() && equalOrNull(getVersionRange(), spec.getVersionRange());
 		}
 		return false;

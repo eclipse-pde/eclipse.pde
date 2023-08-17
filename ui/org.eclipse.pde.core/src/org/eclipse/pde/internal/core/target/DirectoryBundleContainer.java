@@ -123,8 +123,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof DirectoryBundleContainer) {
-			DirectoryBundleContainer dbc = (DirectoryBundleContainer) o;
+		if (o instanceof DirectoryBundleContainer dbc) {
 			return fPath.equals(dbc.fPath);
 		}
 		return false;

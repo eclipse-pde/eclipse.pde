@@ -129,8 +129,7 @@ public class PluginImport extends IdentifiablePluginObject implements IPluginImp
 		if (obj == null) {
 			return false;
 		}
-		if (obj instanceof IPluginImport) {
-			IPluginImport target = (IPluginImport) obj;
+		if (obj instanceof IPluginImport target) {
 			// Objects from the same model must be
 			// binary equal
 			if (target.getModel().equals(getModel())) {

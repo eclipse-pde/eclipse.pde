@@ -68,8 +68,7 @@ public class RemoteTargetHandle implements ITargetHandle {
 						state = file.isFile() ? RemoteState.EXISTS : RemoteState.NOT_FOUND;
 					} else {
 						URLConnection connection = uri.toURL().openConnection();
-						if (connection instanceof HttpURLConnection) {
-							HttpURLConnection http = (HttpURLConnection) connection;
+						if (connection instanceof HttpURLConnection http) {
 							try {
 								http.setInstanceFollowRedirects(true);
 								http.setRequestMethod("HEAD"); //$NON-NLS-1$

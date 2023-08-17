@@ -84,8 +84,7 @@ public class PluginExtensionPoint extends IdentifiablePluginObject implements IP
 		if (obj == this) {
 			return true;
 		}
-		if (obj instanceof IPluginExtensionPoint) {
-			IPluginExtensionPoint target = (IPluginExtensionPoint) obj;
+		if (obj instanceof IPluginExtensionPoint target) {
 			// Objects from the same model must be
 			// binary equal
 			if (target.getModel().equals(getModel())) {

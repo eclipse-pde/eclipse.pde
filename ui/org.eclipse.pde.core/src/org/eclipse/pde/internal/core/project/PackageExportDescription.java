@@ -58,8 +58,7 @@ public class PackageExportDescription implements IPackageExportDescription {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof PackageExportDescription) {
-			PackageExportDescription spec = (PackageExportDescription) obj;
+		if (obj instanceof PackageExportDescription spec) {
 			return getName().equals(spec.getName()) && isApi() == spec.isApi() && equalOrNull(getVersion(), spec.getVersion()) && equalOrNull(getFriends(), spec.getFriends());
 		}
 		return false;

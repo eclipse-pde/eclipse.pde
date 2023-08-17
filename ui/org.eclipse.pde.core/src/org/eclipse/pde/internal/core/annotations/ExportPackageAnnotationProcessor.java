@@ -58,8 +58,7 @@ public class ExportPackageAnnotationProcessor implements OSGiAnnotationProcessor
 	}
 
 	private static ExportPackageObject getExportPackage(IBaseModel model, String packageName) {
-		if (model instanceof IBundlePluginModelBase) {
-			IBundlePluginModelBase pluginModel = (IBundlePluginModelBase) model;
+		if (model instanceof IBundlePluginModelBase pluginModel) {
 			IBundleModel bundleModel = pluginModel.getBundleModel();
 			IBundle bundle = bundleModel.getBundle();
 			IManifestHeader header = bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
@@ -67,8 +66,7 @@ public class ExportPackageAnnotationProcessor implements OSGiAnnotationProcessor
 				bundle.setHeader(Constants.EXPORT_PACKAGE, packageName);
 				header = bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
 			}
-			if (header instanceof ExportPackageHeader) {
-				ExportPackageHeader exportPackageHeader = (ExportPackageHeader) header;
+			if (header instanceof ExportPackageHeader exportPackageHeader) {
 				ExportPackageObject packageObject = exportPackageHeader.getPackage(packageName);
 				if (packageObject == null) {
 					return exportPackageHeader.addPackage(packageName);

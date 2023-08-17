@@ -115,8 +115,7 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 
 		for (int i = 0; i < children.size(); i++) {
 			Object child = children.get(i);
-			if (child instanceof ISchemaEnumeration) {
-				ISchemaEnumeration enumeration = (ISchemaEnumeration) child;
+			if (child instanceof ISchemaEnumeration enumeration) {
 				if (i > 0) {
 					buffer.append(", "); //$NON-NLS-1$
 				}
@@ -131,8 +130,7 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 		writer.println(indent + "<restriction base=\"" + baseType.getName() + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i = 0; i < children.size(); i++) {
 			Object child = children.get(i);
-			if (child instanceof ISchemaEnumeration) {
-				ISchemaEnumeration enumeration = (ISchemaEnumeration) child;
+			if (child instanceof ISchemaEnumeration enumeration) {
 				enumeration.write(indent + Schema.INDENT, writer);
 			}
 		}
