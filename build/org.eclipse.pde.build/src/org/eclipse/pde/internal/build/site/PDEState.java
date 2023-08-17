@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -29,11 +30,11 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -73,6 +74,7 @@ import org.osgi.framework.Version;
 
 // This class provides a higher level API on the state
 public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
+	private static final ILog LOGGER = ILog.get();
 	private static final String[] MANIFEST_ENTRIES = {Constants.BUNDLE_LOCALIZATION, Constants.BUNDLE_NAME, Constants.BUNDLE_VENDOR, ECLIPSE_BUNDLE_SHAPE, ECLIPSE_SOURCE_BUNDLE, ECLIPSE_SOURCE_REF};
 	private static final int LAST_SUPPORTED_JDK = Integer.parseInt(JavaCore.latestSupportedJavaVersion());
 	private StateObjectFactory factory;
@@ -465,7 +467,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		for (String execEnvID : eeJava10AndBeyond) {
 			prop = new Hashtable<>();
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(execEnvID);
-			String systemPackages = querySystemPackages(env, null);
+			String systemPackages = getSystemPackages(env, null);
 			String currentEE = previousEE + "," + execEnvID; //$NON-NLS-1$
 			if (systemPackages == null) {
 				previousEE = currentEE;
@@ -489,9 +491,13 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	public static String getSystemPackages(IExecutionEnvironment environment, Properties profileProperties) {
 		// The pre-defined lists of system-packages are incomplete. Always overwrite, if we have a more up-to-date one.
 		String systemPackages = querySystemPackages(environment, profileProperties);
-		if (systemPackages == null && profileProperties != null) {
+		if (systemPackages.isBlank() && profileProperties != null) {
 			// Unable to compute system-packages, probably OSGi specific EE, use the those its profile
 			systemPackages = profileProperties.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
+		}
+		if (systemPackages == null || systemPackages.isBlank()) {
+			LOGGER.warn("No JVM system-packages available for environment " + environment); //$NON-NLS-1$  
+			return null;
 		}
 		return systemPackages;
 	}
@@ -500,20 +506,19 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 
 	public static String querySystemPackages(IExecutionEnvironment environment, Properties preJava9ProfileProperties) {
 		if (environment == null) {
-			return null;
+			return ""; //$NON-NLS-1$
 		}
 		String eeId = environment.getId();
 		Integer releaseVersion = readJavaReleaseVersion(eeId);
 		if (releaseVersion == null) {
-			return null;
+			return ""; //$NON-NLS-1$
 		}
 		Collection<String> systemPackages;
 		if (releaseVersion <= 8) {
-			IVMInstall eeVM = bestVmInstallFor(environment, vms -> null); // Use selected VM or a perfect match
-			if (eeVM != null) {
-				// In case a VM is selected for an EE, query that VM and use its system-packages
-				systemPackages = querySystemPackages(eeVM, null);
-			} else {
+			var strictVMSystemPackages = bestVmInstallsFor(environment, vms -> vms.filter(environment::isStrictlyCompatible)) // Use only selected VM or perfect matches
+					.map(vm -> querySystemPackages(vm, null)) // In case a VM is selected for an EE, query that VM and use its system-packages
+					.filter(Objects::nonNull).findFirst();
+			systemPackages = strictVMSystemPackages.orElseGet(() -> {
 				// No VM selected for the non-modular EE:
 				// Compose list of available system-packages from the java.* packages in the predefined profiles in o.e.osgi respectively the hard-coded lists of java-packages in this class
 				// plus the non-java packages of this workspace's default VM.
@@ -536,14 +541,13 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				}
 				Stream<String> targetVMNonJavaPackages = targetVMSystemPackages.stream().filter(p -> !p.startsWith("java.")); //$NON-NLS-1$
 
-				systemPackages = Stream.concat(javaPackages.stream(), targetVMNonJavaPackages).sorted().toList();
-			}
+				return Stream.concat(javaPackages.stream(), targetVMNonJavaPackages).sorted().toList();
+			});
 		} else {
-			IVMInstall vm = bestVmInstallFor(environment, vms -> vms[0]);
-			if (vm == null) {
-				return null;
-			}
-			systemPackages = querySystemPackages(vm, environment);
+			Comparator<IVMInstall> strictlyCompatibleFirst = Comparator.comparing(environment::isStrictlyCompatible).reversed(); // false<true
+			systemPackages = bestVmInstallsFor(environment, vms -> vms.sorted(strictlyCompatibleFirst)) // Query strictly compatible first
+					.map(vm -> querySystemPackages(vm, environment)) //
+					.filter(Objects::nonNull).findFirst().orElse(List.of());
 		}
 		return String.join(",", systemPackages); //$NON-NLS-1$
 	}
@@ -650,7 +654,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 								.map(n -> n.substring(0, n.lastIndexOf('/'))) //
 								.forEach(classFileDirectories::add);
 					} catch (IOException e) {
-						ILog.get().error("Failed to read packages in JVM library for " + vm + ", at " + path, e); //$NON-NLS-1$ //$NON-NLS-2$
+						LOGGER.error("Failed to read packages in JVM library for " + vm + ", at " + path, e); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 			}
@@ -681,17 +685,12 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		return null;
 	}
 
-	private static IVMInstall bestVmInstallFor(IExecutionEnvironment environment, Function<IVMInstall[], IVMInstall> nonStrictDefaultSelector) {
+	private static Stream<IVMInstall> bestVmInstallsFor(IExecutionEnvironment environment, UnaryOperator<Stream<IVMInstall>> vmInstallsFilter) {
 		IVMInstall defaultVM = environment.getDefaultVM();
 		if (defaultVM != null) {
-			return defaultVM;
+			return Stream.of(defaultVM); // User selected a VM for the EE, only consider that
 		}
-		IVMInstall[] compatible = environment.getCompatibleVMs();
-		if (compatible.length == 0) {
-			return null;
-		}
-		Optional<IVMInstall> vm = Arrays.stream(compatible).filter(environment::isStrictlyCompatible).findFirst();
-		return vm.isPresent() ? vm.get() : nonStrictDefaultSelector.apply(compatible);
+		return vmInstallsFilter.apply(Arrays.stream(environment.getCompatibleVMs()));
 	}
 
 	public State getState() {
