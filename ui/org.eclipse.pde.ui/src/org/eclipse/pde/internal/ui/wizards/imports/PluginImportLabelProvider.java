@@ -52,8 +52,7 @@ public class PluginImportLabelProvider extends StyledCellLabelProvider implement
 
 	private StyledString getStyledText(Object element) {
 		StyledString styledString = new StyledString();
-		if (element instanceof IPluginModelBase) {
-			IPluginModelBase plugin = (IPluginModelBase) element;
+		if (element instanceof IPluginModelBase plugin) {
 			String symbolicName = plugin.getBundleDescription().getSymbolicName();
 			Version version = plugin.getBundleDescription().getVersion();
 			styledString.append(symbolicName);

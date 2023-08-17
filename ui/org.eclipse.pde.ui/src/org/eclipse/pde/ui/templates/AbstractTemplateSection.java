@@ -769,9 +769,8 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	private IBundle getBundleFromModel() {
 
 		// Do early exit checks
-		if (model != null && (model instanceof IBundlePluginModelBase)) {
+		if (model != null && (model instanceof IBundlePluginModelBase bundlePModel)) {
 
-			IBundlePluginModelBase bundlePModel = (IBundlePluginModelBase) model;
 			IBundleModel bundleModel = bundlePModel.getBundleModel();
 
 			if (bundleModel != null) {

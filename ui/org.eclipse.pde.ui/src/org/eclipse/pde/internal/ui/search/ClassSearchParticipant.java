@@ -165,9 +165,9 @@ public class ClassSearchParticipant implements IQueryParticipant {
 	private void inspectExtension(ISchema schema, IPluginParent parent, IFile file) {
 		IPluginObject[] children = parent.getChildren();
 
-		if (parent instanceof PluginElementNode && parent.getParent() instanceof PluginElementNode) {
-			// check if this node corresponds to a Java type attribute which would have been defined has an element
-			PluginElementNode node = (PluginElementNode) parent;
+		if (parent instanceof PluginElementNode node && parent.getParent() instanceof PluginElementNode) {
+			// check if this node corresponds to a Java type attribute which
+			// would have been defined has an element
 			PluginElementNode parentNode = (PluginElementNode) parent.getParent();
 			ISchemaElement schemaElement = schema.findElement(parentNode.getName());
 			if (schemaElement != null) {

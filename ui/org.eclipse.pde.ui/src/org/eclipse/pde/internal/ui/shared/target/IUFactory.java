@@ -103,8 +103,7 @@ public class IUFactory implements IAdapterFactory, ITargetLocationHandler {
 			Object lastSegment = path.getLastSegment();
 			if (lastSegment instanceof IUBundleContainer) {
 				containers.add((IUBundleContainer) lastSegment);
-			} else if (lastSegment instanceof IUWrapper) {
-				IUWrapper wrapper = (IUWrapper) lastSegment;
+			} else if (lastSegment instanceof IUWrapper wrapper) {
 				wrappersMap.computeIfAbsent(wrapper.getParent(), k -> new HashSet<>()).add(wrapper.getIU().getId());
 			}
 		}
@@ -155,10 +154,9 @@ public class IUFactory implements IAdapterFactory, ITargetLocationHandler {
 			if (segment instanceof IUBundleContainer) {
 				// nothing to do but force reload the target
 				forceReload = true;
-			} else if (segment instanceof IUWrapper) {
+			} else if (segment instanceof IUWrapper wrapper) {
 				// TODO check if we need to force-reload here (at least in
 				// planner mode!)
-				IUWrapper wrapper = (IUWrapper) segment;
 				wrapper.getParent().removeInstallableUnit(wrapper.getIU());
 			}
 		}

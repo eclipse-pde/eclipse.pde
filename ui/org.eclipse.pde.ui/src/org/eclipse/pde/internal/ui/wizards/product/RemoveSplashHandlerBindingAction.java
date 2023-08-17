@@ -161,8 +161,7 @@ public class RemoveSplashHandlerBindingAction extends Action implements ISplashH
 		IPluginObject[] pluginObjects = extension.getChildren();
 		// Process all children
 		for (IPluginObject pluginObject : pluginObjects) {
-			if (pluginObject instanceof IPluginElement) {
-				IPluginElement element = (IPluginElement) pluginObject;
+			if (pluginObject instanceof IPluginElement element) {
 				// Find product binding elements
 				if (element.getName().equals(F_ELEMENT_PRODUCT_BINDING)) {
 					elements.add(element);

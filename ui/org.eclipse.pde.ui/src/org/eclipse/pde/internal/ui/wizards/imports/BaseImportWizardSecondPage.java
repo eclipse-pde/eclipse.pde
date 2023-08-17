@@ -224,8 +224,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 
 	protected void addUnresolvedImportPackagesModels(IPluginModelBase model, ArrayList<IPluginModelBase> result, boolean addFragments) {
 		ISharedPluginModel sharedModel = model.getPluginBase().getModel();
-		if (sharedModel instanceof BundlePluginModel) {
-			BundlePluginModel bundleModel = (BundlePluginModel) sharedModel;
+		if (sharedModel instanceof BundlePluginModel bundleModel) {
 			ImportPackageSpecification[] importPackages = bundleModel.getBundleDescription().getImportPackages();
 			for (ImportPackageSpecification importPackageSpecification : importPackages) {
 				IPluginModelBase found = findModel(importPackageSpecification.getName(), null);

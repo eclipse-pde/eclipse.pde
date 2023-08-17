@@ -356,8 +356,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 	}
 
 	private void handleOpen(ISelection sel) {
-		if (sel instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) sel;
+		if (sel instanceof IStructuredSelection ssel) {
 			if (ssel.size() == 1) {
 				Object obj = ssel.getFirstElement();
 				IPluginModelBase base = PluginRegistry.findModel((String) obj);

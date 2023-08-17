@@ -306,8 +306,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 				@Override
 				public void acceptSearchMatch(SearchMatch aMatch) throws CoreException {
 					Object element = aMatch.getElement();
-					if (element instanceof IType) {
-						IType type = (IType) element;
+					if (element instanceof IType type) {
 						// Only try to import types we can access (Bug 406232)
 						if (Flags.isPublic(type.getFlags())) {
 							if (!currentJavaProject.equals(type.getJavaProject())) {

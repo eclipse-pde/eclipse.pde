@@ -34,8 +34,7 @@ public class ManifestPackageMoveParticipant extends PDEMoveParticipant {
 
 	@Override
 	protected boolean initialize(Object element) {
-		if (element instanceof IPackageFragment) {
-			IPackageFragment fragment = (IPackageFragment) element;
+		if (element instanceof IPackageFragment fragment) {
 			IJavaProject javaProject = (IJavaProject) fragment.getAncestor(IJavaElement.JAVA_PROJECT);
 			IProject project = javaProject.getProject();
 			if (PDEProject.getManifest(project).exists()) {

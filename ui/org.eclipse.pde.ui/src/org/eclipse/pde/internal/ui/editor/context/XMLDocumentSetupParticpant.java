@@ -34,8 +34,7 @@ public class XMLDocumentSetupParticpant implements IDocumentSetupParticipant {
 		IDocumentPartitioner partitioner = createDocumentPartitioner();
 		if (partitioner != null) {
 			partitioner.connect(document);
-			if (document instanceof IDocumentExtension3) {
-				IDocumentExtension3 de3 = (IDocumentExtension3) document;
+			if (document instanceof IDocumentExtension3 de3) {
 				de3.setDocumentPartitioner(XML_PARTITIONING, partitioner);
 				partitioner = new FastPartitioner(new XMLStringPartitionScanner(), XMLStringPartitionScanner.STRING_PARTITIONS);
 				partitioner.connect(document);

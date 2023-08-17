@@ -43,8 +43,7 @@ public class AddExportPackageMarkerResolution extends AbstractManifestMarkerReso
 	@Override
 	protected void createChange(BundleModel model) {
 		IBundle bundle = model.getBundle();
-		if (bundle instanceof Bundle) {
-			Bundle bun = (Bundle) bundle;
+		if (bundle instanceof Bundle bun) {
 			ExportPackageHeader header = (ExportPackageHeader) bun.getManifestHeader(Constants.EXPORT_PACKAGE);
 			if (header == null) {
 				bundle.setHeader(Constants.EXPORT_PACKAGE, ""); //$NON-NLS-1$

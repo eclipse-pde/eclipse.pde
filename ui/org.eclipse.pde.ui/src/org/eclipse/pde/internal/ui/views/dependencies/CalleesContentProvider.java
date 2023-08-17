@@ -42,8 +42,7 @@ public class CalleesContentProvider extends DependenciesViewPageContentProvider 
 			fFragmentDescription = desc;
 			Object[] fragmentDependencies = getDependencies(desc);
 			BaseDescription host = spec.getSupplier();
-			if (host instanceof BundleDescription) {
-				BundleDescription hostDesc = (BundleDescription) host;
+			if (host instanceof BundleDescription hostDesc) {
 				// check to see if the host is already included as a dependency.  If so, we don't need to include the host manually.
 				for (Object fragmentDependency : fragmentDependencies) {
 					BundleDescription dependency = null;

@@ -107,8 +107,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 					default -> null;
 					};
 			}
-			if (fResolution instanceof IMarkerResolution2) {
-				IMarkerResolution2 resolution = (IMarkerResolution2) fResolution;
+			if (fResolution instanceof IMarkerResolution2 resolution) {
 				return resolution.getImage();
 			}
 			return null;
@@ -141,10 +140,9 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!(obj instanceof PDECompletionProposal)) {
+			if (!(obj instanceof PDECompletionProposal proposal)) {
 				return false;
 			}
-			PDECompletionProposal proposal = (PDECompletionProposal) obj;
 			return proposal.fPosition.equals(fPosition) && proposal.fResolution.equals(fResolution);
 		}
 
@@ -155,9 +153,8 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 
 		@Override
 		public int compareTo(Object arg0) {
-			if (!(arg0 instanceof PDECompletionProposal))
+			if (!(arg0 instanceof PDECompletionProposal obj))
 				return -1;
-			PDECompletionProposal obj = (PDECompletionProposal) arg0;
 			if (getDisplayString() != null) {
 				if (obj.getDisplayString() != null) {
 					return getDisplayString().compareTo(obj.getDisplayString());
@@ -243,9 +240,8 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 			});
 			while (it.hasNext()) {
 				Annotation key = it.next();
-				if (!(key instanceof SimpleMarkerAnnotation)) {
-					if (key instanceof SpellingAnnotation) {
-						SpellingAnnotation annotation = (SpellingAnnotation) key;
+				if (!(key instanceof SimpleMarkerAnnotation annotation)) {
+					if (key instanceof SpellingAnnotation annotation) {
 						if (amodel.getPosition(annotation).overlapsWith(offset, 1)) {
 							ICompletionProposal[] proposals = annotation.getSpellingProblem().getProposals();
 							Collections.addAll(proposalSet, proposals);
@@ -254,7 +250,6 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 					continue;
 				}
 
-				SimpleMarkerAnnotation annotation = (SimpleMarkerAnnotation) key;
 				populateDataModelForAnnotation(annotation);
 				IMarker marker = annotation.getMarker();
 

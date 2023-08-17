@@ -31,8 +31,7 @@ public class ExternalizeStringsLabelProvider extends LabelProvider implements IT
 
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
-		if (element instanceof ModelChangeElement) {
-			ModelChangeElement changeElement = (ModelChangeElement) element;
+		if (element instanceof ModelChangeElement changeElement) {
 			if (columnIndex == ExternalizeStringsWizardPage.VALUE) {
 				return StringHelper.unwindEscapeChars(changeElement.getValue());
 			} else if (columnIndex == ExternalizeStringsWizardPage.KEY) {
@@ -49,8 +48,7 @@ public class ExternalizeStringsLabelProvider extends LabelProvider implements IT
 
 	@Override
 	public Font getFont(Object element) {
-		if (element instanceof ModelChangeElement) {
-			ModelChangeElement changeElement = (ModelChangeElement) element;
+		if (element instanceof ModelChangeElement changeElement) {
 			if (changeElement.isExternalized()) {
 				return fFontRegistry.getBold(JFaceResources.DIALOG_FONT);
 			}

@@ -36,8 +36,7 @@ public class NewReferenceAction extends Action {
 
 	@Override
 	public void run() {
-		if (object != null && object instanceof SchemaCompositor) {
-			SchemaCompositor parent = (SchemaCompositor) object;
+		if (object != null && object instanceof SchemaCompositor parent) {
 			SchemaElementReference reference = new SchemaElementReference(parent, referencedElement.getName());
 			reference.setReferencedObject(referencedElement);
 			parent.addChild(reference);

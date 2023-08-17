@@ -83,8 +83,7 @@ public class SampleEditor extends EditorPart {
 		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
-			if (resource instanceof IFile) {
-				IFile file = (IFile) resource;
+			if (resource instanceof IFile file) {
 				if (file.equals(((IFileEditorInput) getEditorInput()).getFile())) {
 					if (delta.getKind() == IResourceDelta.REMOVED || delta.getKind() == IResourceDelta.REPLACED)
 						close();

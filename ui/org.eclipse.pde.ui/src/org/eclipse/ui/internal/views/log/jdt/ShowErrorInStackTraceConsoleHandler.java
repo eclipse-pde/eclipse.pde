@@ -54,8 +54,7 @@ public class ShowErrorInStackTraceConsoleHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchPart activePart = HandlerUtil.getActivePart(event);
-		if (activePart instanceof LogView) {
-			LogView logView = (LogView) activePart;
+		if (activePart instanceof LogView logView) {
 			if (logView.getSelectedStack() != null) {
 				if (fFactory == null) {
 					fFactory = new JavaStackTraceConsoleFactory();

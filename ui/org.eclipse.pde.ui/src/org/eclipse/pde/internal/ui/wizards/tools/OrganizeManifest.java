@@ -165,8 +165,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 				if (ManifestUtils.isImmediateRoot(root)) {
 					IJavaElement[] elements = root.getChildren();
 					for (IJavaElement element : elements)
-						if (element instanceof IPackageFragment) {
-							IPackageFragment fragment = (IPackageFragment) element;
+						if (element instanceof IPackageFragment fragment) {
 							String name = fragment.getElementName();
 							if (name.length() == 0)
 								name = "."; //$NON-NLS-1$

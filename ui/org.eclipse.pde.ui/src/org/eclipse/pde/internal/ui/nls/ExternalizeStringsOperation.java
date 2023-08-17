@@ -69,8 +69,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 		for (Object changeFileObject : fChangeFiles) {
-			if (changeFileObject instanceof ModelChangeFile) {
-				ModelChangeFile changeFile = (ModelChangeFile) changeFileObject;
+			if (changeFileObject instanceof ModelChangeFile changeFile) {
 				CompositeChange pluginChange = getChangeForPlugin(changeFile.getModel().getParentModel().getPluginBase().getId());
 				ModelChange change = changeFile.getModel();
 				IFile pFile = change.getPropertiesFile();
@@ -115,8 +114,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 
 				// Get model & set includes entry...
-				if (model instanceof IBuildModel) {
-					IBuildModel buildModel = (IBuildModel) model;
+				if (model instanceof IBuildModel buildModel) {
 					IBuildEntry binIncludes = buildModel.getBuild().getEntry(IBuildEntry.BIN_INCLUDES);
 					if (binIncludes == null) {
 						binIncludes = buildModel.getFactory().createEntry(IBuildEntry.BIN_INCLUDES);
@@ -200,8 +198,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		TextFileChange[] result = PDEModelUtility.changesForModelModication(new ModelModification(manifest) {
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (model instanceof IBundlePluginModelBase) {
-					IBundlePluginModelBase bundleModel = (IBundlePluginModelBase) model;
+				if (model instanceof IBundlePluginModelBase bundleModel) {
 					IBundle bundle = bundleModel.getBundleModel().getBundle();
 					bundle.setHeader(Constants.BUNDLE_LOCALIZATION, localiz);
 				}

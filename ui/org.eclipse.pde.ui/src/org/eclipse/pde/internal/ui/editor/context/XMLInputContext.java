@@ -69,8 +69,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 							insertNode((IDocumentElementNode) object, ops);
 						break;
 					case IModelChangedEvent.CHANGE :
-						if (object instanceof IDocumentElementNode) {
-							IDocumentElementNode node = (IDocumentElementNode) object;
+						if (object instanceof IDocumentElementNode node) {
 							IDocumentAttributeNode attr = node.getDocumentAttribute(event.getChangedProperty());
 							if (attr != null) {
 								addAttributeOperation(attr, ops, event);
@@ -486,8 +485,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		Iterator<TextEdit> iter = fOperationTable.values().iterator();
 		while (iter.hasNext()) {
 			Object object = iter.next();
-			if (object instanceof IDocumentElementNode) {
-				IDocumentElementNode node = (IDocumentElementNode) object;
+			if (object instanceof IDocumentElementNode node) {
 				if (node.getOffset() > -1) {
 					IDocumentAttributeNode[] attrs = node.getNodeAttributes();
 					for (IDocumentAttributeNode attr : attrs) {

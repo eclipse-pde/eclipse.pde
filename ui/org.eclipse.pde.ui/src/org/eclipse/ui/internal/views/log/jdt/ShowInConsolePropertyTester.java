@@ -25,8 +25,7 @@ public class ShowInConsolePropertyTester extends PropertyTester {
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if (HAS_SELECTED_STACK_PROPERTY.equals(property)) {
-			if (receiver instanceof LogView) {
-				LogView logView = (LogView) receiver;
+			if (receiver instanceof LogView logView) {
 				if (logView.getSelectedStack() != null) {
 					return true;
 				}

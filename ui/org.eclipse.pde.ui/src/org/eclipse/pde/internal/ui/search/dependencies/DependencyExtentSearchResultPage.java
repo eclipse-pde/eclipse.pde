@@ -74,8 +74,7 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 			if (element instanceof IPluginExtension)
 				return ((IPluginExtension) element).getPoint();
 
-			if (element instanceof IJavaElement) {
-				IJavaElement javaElement = (IJavaElement) element;
+			if (element instanceof IJavaElement javaElement) {
 				String text = super.getText(javaElement) + " - " //$NON-NLS-1$
 						+ javaElement.getAncestor(IJavaElement.PACKAGE_FRAGMENT).getElementName();
 				if (!(javaElement instanceof IType)) {

@@ -39,9 +39,8 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!(obj instanceof JarEntryEditorInput))
+		if (!(obj instanceof JarEntryEditorInput other))
 			return false;
-		JarEntryEditorInput other = (JarEntryEditorInput) obj;
 		return fJarEntryFile.equals(other.fJarEntryFile);
 	}
 

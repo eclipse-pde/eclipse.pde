@@ -81,8 +81,7 @@ public class ManifestStructureCreator extends StructureCreator {
 
 	@Override
 	public String getContents(Object node, boolean ignoreWhitespace) {
-		if (node instanceof IStreamContentAccessor) {
-			IStreamContentAccessor sca = (IStreamContentAccessor) node;
+		if (node instanceof IStreamContentAccessor sca) {
 			try {
 				return readString(sca);
 			} catch (CoreException ex) {

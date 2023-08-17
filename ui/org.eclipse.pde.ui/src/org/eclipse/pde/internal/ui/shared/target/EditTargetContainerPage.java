@@ -212,8 +212,7 @@ public class EditTargetContainerPage extends WizardPage implements IEditBundleCo
 			}
 		}
 		ITargetHandle handle = targetDefinition.getHandle();
-		if (handle instanceof WorkspaceFileTargetHandle) {
-			WorkspaceFileTargetHandle wsHandle = (WorkspaceFileTargetHandle) handle;
+		if (handle instanceof WorkspaceFileTargetHandle wsHandle) {
 			String name = wsHandle.getTargetFile().getProject().getName();
 			previousLocations.add(String.format("file:${project_loc:/%s}/", name)); //$NON-NLS-1$
 

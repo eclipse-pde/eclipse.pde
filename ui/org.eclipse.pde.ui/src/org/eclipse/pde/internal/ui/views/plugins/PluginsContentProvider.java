@@ -72,8 +72,7 @@ public class PluginsContentProvider implements ITreeContentProvider {
 			Object[] children = fManager.getChildren(parentElement);
 			return children;
 		}
-		if (parentElement instanceof IPluginModelBase) {
-			IPluginModelBase model = (IPluginModelBase) parentElement;
+		if (parentElement instanceof IPluginModelBase model) {
 			File file = new File(model.getInstallLocation());
 			if (!file.isFile()) {
 				FileAdapter adapter = new ModelFileAdapter(model, file, PDECore.getDefault().getSearchablePluginsManager());
@@ -115,12 +114,10 @@ public class PluginsContentProvider implements ITreeContentProvider {
 	public boolean hasChildren(Object element) {
 		if (element instanceof IDeferredWorkbenchAdapter)
 			return fManager.mayHaveChildren(element);
-		if (element instanceof IPluginModelBase) {
-			IPluginModelBase model = (IPluginModelBase) element;
+		if (element instanceof IPluginModelBase model) {
 			return model.getUnderlyingResource() == null && !new File(model.getInstallLocation()).isFile();
 		}
-		if (element instanceof FileAdapter) {
-			FileAdapter fileAdapter = (FileAdapter) element;
+		if (element instanceof FileAdapter fileAdapter) {
 			return fileAdapter.hasChildren();
 		}
 		if (element instanceof IPackageFragmentRoot || element instanceof IPackageFragment || element instanceof ICompilationUnit || element instanceof IStorage)

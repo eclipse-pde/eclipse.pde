@@ -178,10 +178,8 @@ public class SchemaIncludesSection extends TableSection {
 
 		if (dialog.open() == Window.OK) {
 			Object result = dialog.getFirstResult();
-			if (!(result instanceof IFile))
+			if (!(result instanceof IFile newInclude))
 				return;
-			IFile newInclude = (IFile) result;
-
 			String location = getIncludeLocation(newInclude);
 			ISchemaInclude include = new SchemaInclude(getSchema(), location, false);
 			ISchema schema = getSchema();

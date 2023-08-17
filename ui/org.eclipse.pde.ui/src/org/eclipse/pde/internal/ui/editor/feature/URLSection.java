@@ -347,8 +347,7 @@ public class URLSection extends TableSection {
 		}
 		IFeature feature = model.getFeature();
 		for (Object object : objects) {
-			if (object instanceof FeatureURLElement) {
-				FeatureURLElement element = (FeatureURLElement) object;
+			if (object instanceof FeatureURLElement element) {
 				element.setModel(model);
 				element.setParent(feature);
 				try {

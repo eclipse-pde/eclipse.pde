@@ -81,8 +81,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	@Override
 	public void launch(ISelection selection, String mode) {
 		IPluginModelBase model = null;
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection ssel) {
 			if (!ssel.isEmpty()) {
 				Object object = ssel.getFirstElement();
 				IProject project = null;

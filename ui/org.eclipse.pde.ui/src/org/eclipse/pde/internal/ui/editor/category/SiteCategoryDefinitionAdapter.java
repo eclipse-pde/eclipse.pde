@@ -43,8 +43,7 @@ public class SiteCategoryDefinitionAdapter implements Serializable, IWritable {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof SiteCategoryDefinitionAdapter) {
-			SiteCategoryDefinitionAdapter otherAdapter = (SiteCategoryDefinitionAdapter) obj;
+		if (obj instanceof SiteCategoryDefinitionAdapter otherAdapter) {
 			String id = category.getName();
 			String id2 = otherAdapter.category.getName();
 			boolean sameCategory = id != null && id2 != null && id.equals(id2);

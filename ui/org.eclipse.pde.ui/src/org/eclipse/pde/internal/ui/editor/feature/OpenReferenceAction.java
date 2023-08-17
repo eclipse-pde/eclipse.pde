@@ -47,8 +47,7 @@ public class OpenReferenceAction extends SelectionProviderAction {
 			IPluginBase base = ((FeaturePlugin) obj).getPluginBase();
 			if (base != null)
 				ManifestEditor.openPluginEditor((IPluginModelBase) base.getModel());
-		} else if (obj instanceof IFeatureData) {
-			IFeatureData data = (IFeatureData) obj;
+		} else if (obj instanceof IFeatureData data) {
 			String id = data.getId();
 			IResource resource = data.getModel().getUnderlyingResource();
 			if (resource != null) {
@@ -62,8 +61,7 @@ public class OpenReferenceAction extends SelectionProviderAction {
 					}
 				}
 			}
-		} else if (obj instanceof IFeatureChild) {
-			IFeatureChild included = (IFeatureChild) obj;
+		} else if (obj instanceof IFeatureChild included) {
 			IFeature feature = ((FeatureChild) included).getReferencedFeature();
 			FeatureEditor.openFeatureEditor(feature);
 		}

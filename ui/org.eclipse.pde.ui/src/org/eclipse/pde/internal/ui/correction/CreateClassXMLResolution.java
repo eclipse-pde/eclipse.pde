@@ -40,10 +40,9 @@ public class CreateClassXMLResolution extends AbstractXMLMarkerResolution {
 	@Override
 	protected void createChange(IPluginModelBase model) {
 		Object object = findNode(model);
-		if (!(object instanceof PluginAttribute))
+		if (!(object instanceof PluginAttribute attr))
 			return;
 
-		PluginAttribute attr = (PluginAttribute) object;
 		String name = TextUtil.trimNonAlphaChars(attr.getValue()).replace('$', '.');
 		IProject project = model.getUnderlyingResource().getProject();
 

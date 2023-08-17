@@ -60,10 +60,9 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 
 	@Override
 	protected void javaToNative(Object data, TransferData transferData) {
-		if (!(data instanceof Object[])) {
+		if (!(data instanceof Object[] objects)) {
 			return;
 		}
-		Object[] objects = (Object[]) data;
 		int count = objects.length;
 
 		try (ByteArrayOutputStream out = new ByteArrayOutputStream();

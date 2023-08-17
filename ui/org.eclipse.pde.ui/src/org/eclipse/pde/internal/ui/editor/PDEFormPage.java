@@ -86,8 +86,7 @@ public abstract class PDEFormPage extends FormPage {
 	}
 
 	private void resetMenu(Menu menu, Control c) {
-		if (c instanceof Composite) {
-			Composite comp = (Composite) c;
+		if (c instanceof Composite comp) {
 			Control[] children = comp.getChildren();
 			for (Control child : children) {
 				resetMenu(menu, child);
@@ -124,8 +123,7 @@ public abstract class PDEFormPage extends FormPage {
 		//check to see if our form parts are contributing actions
 		IFormPart[] parts = managedForm.getParts();
 		for (IFormPart part : parts) {
-			if (part instanceof IAdaptable) {
-				IAdaptable adapter = (IAdaptable) part;
+			if (part instanceof IAdaptable adapter) {
 				IAction[] actions = adapter.getAdapter(IAction[].class);
 				if (actions != null) {
 					for (IAction action : actions) {
@@ -246,8 +244,7 @@ public abstract class PDEFormPage extends FormPage {
 	}
 
 	protected boolean canPerformDirectly(String id, Control control) {
-		if (control instanceof Text) {
-			Text text = (Text) control;
+		if (control instanceof Text text) {
 			if (id.equals(ActionFactory.CUT.getId())) {
 				text.cut();
 				return true;
@@ -356,8 +353,7 @@ public abstract class PDEFormPage extends FormPage {
 			// Set focus on the control
 			lastControl.forceFocus();
 			// If the control is a Text widget, select its contents
-			if (lastControl instanceof Text) {
-				Text text = (Text) lastControl;
+			if (lastControl instanceof Text text) {
 				text.setSelection(0, text.getText().length());
 			}
 		} else {

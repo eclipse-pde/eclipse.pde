@@ -75,8 +75,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 	public void createPageControls(Composite pageContainer) {
 		super.createPageControls(pageContainer);
 		IWizardContainer container = getContainer();
-		if (container instanceof WizardDialog) {
-			WizardDialog dialog = (WizardDialog) container;
+		if (container instanceof WizardDialog dialog) {
 			dialog.addPageChangingListener(this);
 		}
 	}

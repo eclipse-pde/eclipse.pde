@@ -38,12 +38,10 @@ public class JavaEditorOpener {
 		}
 		if (editor != null && activate)
 			editor.getEditorSite().getPage().activate(editor);
-		if (editor instanceof ITextEditor) {
-			ITextEditor textEditor = (ITextEditor) editor;
+		if (editor instanceof ITextEditor textEditor) {
 			textEditor.selectAndReveal(offset, length);
 		} else if (editor != null) {
-			if (element instanceof IFile) {
-				IFile file = (IFile) element;
+			if (element instanceof IFile file) {
 				showWithMarker(editor, file, offset, length);
 			}
 		}

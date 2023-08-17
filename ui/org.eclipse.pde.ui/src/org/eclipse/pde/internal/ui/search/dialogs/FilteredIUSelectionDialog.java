@@ -76,8 +76,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 		public StyledString getStyledText(Object element) {
 			StyledString styledString = new StyledString();
 
-			if (element instanceof IUPackage) {
-				IUPackage iuPackage = (IUPackage) element;
+			if (element instanceof IUPackage iuPackage) {
 				styledString.append(iuPackage.getId());
 				styledString.append(' ');
 				styledString.append("(", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
@@ -90,8 +89,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 				styledString.append("(", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
 				styledString.append(iu.getVersion().toString(), StyledString.QUALIFIER_STYLER);
 				styledString.append(")", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
-			} else if (element instanceof IInstallableUnit) {
-				IInstallableUnit iu = (IInstallableUnit) element;
+			} else if (element instanceof IInstallableUnit iu) {
 				String name = iu.getProperty(IInstallableUnit.PROP_NAME, null);
 				styledString.append(iu.getId());
 				styledString.append(' ');
@@ -109,8 +107,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 		public Image getImage(Object element) {
 			if (element instanceof IUPackage) {
 				return labelProvider.get(PDEPluginImages.DESC_PACKAGE_OBJ);
-			} else if (element instanceof IInstallableUnit) {
-				IInstallableUnit iu = (IInstallableUnit) element;
+			} else if (element instanceof IInstallableUnit iu) {
 				if (QueryUtil.isGroup(iu))
 					return labelProvider.get(PDEPluginImages.DESC_FEATURE_OBJ);
 				return labelProvider.get(PDEPluginImages.DESC_PLUGIN_OBJ);

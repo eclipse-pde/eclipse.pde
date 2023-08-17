@@ -393,10 +393,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	 *
 	 */
 	private void performResolve(Object element) {
-		if (!(element instanceof ITargetDefinition)) {
+		if (!(element instanceof final ITargetDefinition target)) {
 			return;
 		}
-		final ITargetDefinition target = (ITargetDefinition) element;
 		if (target.isResolved())
 			return;
 

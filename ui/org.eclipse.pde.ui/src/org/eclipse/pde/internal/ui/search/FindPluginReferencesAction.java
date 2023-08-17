@@ -53,8 +53,7 @@ public class FindPluginReferencesAction implements IObjectActionDelegate {
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		fSearchString = null;
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection sSelection = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection sSelection) {
 			if (sSelection.size() == 1) {
 				IFile file = (IFile) sSelection.getFirstElement();
 				IPluginModelBase model = PluginRegistry.findModel(file.getProject());

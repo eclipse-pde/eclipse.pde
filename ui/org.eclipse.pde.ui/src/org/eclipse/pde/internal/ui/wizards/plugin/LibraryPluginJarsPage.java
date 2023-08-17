@@ -135,8 +135,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 			public String getText(Object obj) {
 				String name;
 				String location;
-				if (obj instanceof IFile) {
-					IFile jarFile = (IFile) obj;
+				if (obj instanceof IFile jarFile) {
 					name = jarFile.getName();
 					location = jarFile.getParent().getFullPath().toString().substring(1);
 				} else {

@@ -106,9 +106,8 @@ public class MultiFixResolution extends WorkbenchMarkerResolution {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof MultiFixResolution))
+		if (!(obj instanceof MultiFixResolution multiFix))
 			return false;
-		MultiFixResolution multiFix = (MultiFixResolution) obj;
 		try {
 			String categoryId = (String) multiFix.fMarker.getAttribute(PDEMarkerFactory.CAT_ID);
 			if (categoryId == null)

@@ -61,9 +61,8 @@ public class JRESection extends PDESection {
 	private static final class EELabelProvider extends LabelProvider {
 		@Override
 		public String getText(Object element) {
-			if (!(element instanceof IExecutionEnvironment))
+			if (!(element instanceof IExecutionEnvironment env))
 				return ""; //$NON-NLS-1$
-			IExecutionEnvironment env = (IExecutionEnvironment) element;
 			IPath path = JavaRuntime.newJREContainerPath(env);
 			IVMInstall install = JavaRuntime.getVMInstall(path);
 			String eeItem;

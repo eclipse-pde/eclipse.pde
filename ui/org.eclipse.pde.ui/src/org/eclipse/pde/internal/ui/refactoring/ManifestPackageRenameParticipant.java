@@ -40,8 +40,7 @@ public class ManifestPackageRenameParticipant extends PDERenameParticipant {
 	@Override
 	protected boolean initialize(Object element) {
 		try {
-			if (element instanceof IPackageFragment) {
-				IPackageFragment fragment = (IPackageFragment) element;
+			if (element instanceof IPackageFragment fragment) {
 				if (!fragment.containsJavaResources())
 					return false;
 				IJavaProject javaProject = (IJavaProject) fragment.getAncestor(IJavaElement.JAVA_PROJECT);

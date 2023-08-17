@@ -196,9 +196,8 @@ public class JavaResolutionFactory {
 			PDEModelUtility.modifyModel(new ModelModification(getProject()) {
 				@Override
 				protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-					if (!(model instanceof IPluginModelBase))
+					if (!(model instanceof IPluginModelBase base))
 						return;
-					IPluginModelBase base = (IPluginModelBase) model;
 					String[] pluginIdStrings = null;
 					if ("JUnit 5 bundles".equals(getChangeObject())) { //$NON-NLS-1$
 						pluginIdStrings = getJUnit5Bundles();
@@ -319,16 +318,14 @@ public class JavaResolutionFactory {
 			PDEModelUtility.modifyModel(new ModelModification(getProject()) {
 				@Override
 				protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-					if (!(model instanceof IBundlePluginModelBase))
+					if (!(model instanceof IBundlePluginModelBase base))
 						return;
-					IBundlePluginModelBase base = (IBundlePluginModelBase) model;
 					IBundle bundle = base.getBundleModel().getBundle();
 					String pkgId = ((ExportPackageDescription) getChangeObject()).getName();
 					IManifestHeader header = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
 					if (header == null) {
 						bundle.setHeader(Constants.IMPORT_PACKAGE, pkgId);
-					} else if (header instanceof ImportPackageHeader) {
-						ImportPackageHeader ipHeader = (ImportPackageHeader) header;
+					} else if (header instanceof ImportPackageHeader ipHeader) {
 						int manifestVersion = BundlePluginBase.getBundleManifestVersion(bundle);
 						String versionAttr = (manifestVersion < 2) ? ICoreConstants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;
 						ImportPackageObject impObject = new ImportPackageObject((ManifestHeader) header, (ExportPackageDescription) getChangeObject(), versionAttr);

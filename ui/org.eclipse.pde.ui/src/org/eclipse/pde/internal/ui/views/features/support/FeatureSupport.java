@@ -25,13 +25,11 @@ public class FeatureSupport {
 	public IFeatureModel toFeatureModel(Object obj) {
 		if (obj instanceof IFeatureModel) {
 			return (IFeatureModel) obj;
-		} else if (obj instanceof IIdentifiable) {
-			IIdentifiable featureOrChild = (IIdentifiable) obj;
+		} else if (obj instanceof IIdentifiable featureOrChild) {
 			return getManager().findFeatureModel(featureOrChild.getId());
 		} else if (obj instanceof IProject) {
 			return getManager().getFeatureModel((IProject) obj);
-		} else if (obj instanceof IProductFeature) {
-			IProductFeature productFeature = (IProductFeature) obj;
+		} else if (obj instanceof IProductFeature productFeature) {
 			return getManager().findFeatureModel(productFeature.getId());
 		} else {
 			return null;
