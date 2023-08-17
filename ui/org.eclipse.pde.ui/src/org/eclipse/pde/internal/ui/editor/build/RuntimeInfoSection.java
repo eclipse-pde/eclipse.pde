@@ -907,9 +907,8 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		String keyName = event.getChangedProperty();
 
 		// check if model change applies to this section
-		if (!(changeObject instanceof IBuildEntry))
+		if (!(changeObject instanceof IBuildEntry entry))
 			return;
-		IBuildEntry entry = (IBuildEntry) changeObject;
 		String entryName = entry.getName();
 		if (!entryName.startsWith(IBuildEntry.JAR_PREFIX) && !entryName.equals(PROPERTY_JAR_ORDER) && !entryName.equals(PROPERTY_BIN_INCLUDES))
 			return;

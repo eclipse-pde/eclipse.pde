@@ -145,8 +145,7 @@ public final class BuildJob extends Job {
 	private void cancelBuild(Object jobfamily) {
 		Job[] buildJobs = Job.getJobManager().find(jobfamily);
 		for (Job curr : buildJobs) {
-			if (curr != this && curr instanceof BuildJob) {
-				BuildJob job = (BuildJob) curr;
+			if (curr != this && curr instanceof BuildJob job) {
 				if (job.isCoveredBy(this)) {
 					curr.cancel(); // cancel all other build jobs of our
 									// kind

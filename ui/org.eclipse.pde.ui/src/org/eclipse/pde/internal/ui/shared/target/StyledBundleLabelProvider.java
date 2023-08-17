@@ -100,9 +100,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 				.ofNullable(Adapters.adapt(element, DelegatingStyledCellLabelProvider.IStyledLabelProvider.class))
 				.map(styleProvider -> styleProvider.getStyledText(element)).or(() -> {
 					return Optional.ofNullable(Adapters.adapt(element, ILabelProvider.class)).map(provider -> {
-						if (provider instanceof StyledBundleLabelProvider) {
+						if (provider instanceof StyledBundleLabelProvider bundleLabelProvider) {
 							// just in case someone return this class itself...
-							StyledBundleLabelProvider bundleLabelProvider = (StyledBundleLabelProvider) provider;
 							return bundleLabelProvider.getInternalStyledString(element);
 						}
 						String text = provider.getText(element);
@@ -132,8 +131,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 		} else if (element instanceof NameVersionDescriptor) {
 			appendBundleInfo(styledString, new BundleInfo(((NameVersionDescriptor) element).getId(),
 					((NameVersionDescriptor) element).getVersion(), null, BundleInfo.NO_LEVEL, false));
-		} else if (element instanceof TargetBundle) {
-			TargetBundle bundle = ((TargetBundle) element);
+		} else if (element instanceof TargetBundle bundle) {
 			if (bundle.getStatus().isOK()) {
 				appendBundleInfo(styledString, bundle.getBundleInfo());
 			} else {
@@ -148,8 +146,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			// Use a bundle info to reuse existing code
 			appendBundleInfo(styledString, new BundleInfo(((TargetFeature) element).getId(),
 					((TargetFeature) element).getVersion(), null, BundleInfo.NO_LEVEL, false));
-		} else if (element instanceof FeatureBundleContainer) {
-			FeatureBundleContainer container = (FeatureBundleContainer) element;
+		} else if (element instanceof FeatureBundleContainer container) {
 			styledString.append(container.getFeatureId());
 			String version = container.getFeatureVersion();
 			if (version != null) {
@@ -163,8 +160,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			}
 			appendLocation(styledString, container, false);
 			appendBundleCount(styledString, container);
-		} else if (element instanceof DirectoryBundleContainer) {
-			DirectoryBundleContainer container = (DirectoryBundleContainer) element;
+		} else if (element instanceof DirectoryBundleContainer container) {
 			try {
 				styledString.append(container.getLocation(false));
 			} catch (CoreException e) {
@@ -174,8 +170,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 				appendLocation(styledString, container, true);
 			}
 			appendBundleCount(styledString, container);
-		} else if (element instanceof ProfileBundleContainer) {
-			ProfileBundleContainer container = (ProfileBundleContainer) element;
+		} else if (element instanceof ProfileBundleContainer container) {
 			try {
 				styledString.append(container.getLocation(false));
 			} catch (CoreException e) {
@@ -185,8 +180,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 				appendLocation(styledString, container, true);
 			}
 			appendBundleCount(styledString, container);
-		} else if (element instanceof IUBundleContainer) {
-			IUBundleContainer container = (IUBundleContainer) element;
+		} else if (element instanceof IUBundleContainer container) {
 			URI[] repos = container.getRepositories();
 			if (repos == null || repos.length == 0) {
 				styledString.append(Messages.BundleContainerTable_8);
@@ -196,8 +190,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			appendBundleCount(styledString, container);
 		} else if (element instanceof IUWrapper) {
 			styledString = getStyledString(((IUWrapper) element).getIU());
-		} else if (element instanceof IInstallableUnit) {
-			IInstallableUnit iu = (IInstallableUnit) element;
+		} else if (element instanceof IInstallableUnit iu) {
 			String name = fTranslations.getIUProperty(iu, IInstallableUnit.PROP_NAME);
 			if (name == null) {
 				name = iu.getId();
@@ -297,9 +290,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 				.map(styleProvider -> styleProvider.getImage(element)).or(() -> {
 
 					return Optional.ofNullable(Adapters.adapt(element, ILabelProvider.class)).map(provider -> {
-						if (provider instanceof StyledBundleLabelProvider) {
+						if (provider instanceof StyledBundleLabelProvider styleLabelProvider) {
 							// just in case someone return this class itself...
-							StyledBundleLabelProvider styleLabelProvider = (StyledBundleLabelProvider) provider;
 							return styleLabelProvider.getInternalImage(element);
 						}
 						Image image = provider.getImage(element);
@@ -319,8 +311,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	 * @return an image for some PDE specific objects
 	 */
 	private Image getInternalImage(Object element) {
-		if (element instanceof TargetBundle) {
-			TargetBundle bundle = (TargetBundle) element;
+		if (element instanceof TargetBundle bundle) {
 			int flag = 0;
 			if (bundle.getStatus().getSeverity() == IStatus.WARNING
 					|| bundle.getStatus().getSeverity() == IStatus.INFO) {

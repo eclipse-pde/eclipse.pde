@@ -240,9 +240,8 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// Paste all source objects
 		for (Object sourceObject : sourceObjects) {
-			if ((sourceObject instanceof PackageFriend) && isOneObjectSelected()) {
+			if ((sourceObject instanceof PackageFriend friend) && isOneObjectSelected()) {
 				// Package friend object
-				PackageFriend friend = (PackageFriend) sourceObject;
 				// Adjust all the source object transient field values to
 				// acceptable values
 				friend.reconnect(fSelectedObjects[0]);

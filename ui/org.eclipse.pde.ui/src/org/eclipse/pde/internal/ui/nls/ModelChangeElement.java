@@ -41,28 +41,24 @@ public class ModelChangeElement {
 	public ModelChangeElement(ModelChange parent, Object incoming) {
 		fParent = parent;
 		fUnderlying = incoming;
-		if (incoming instanceof PluginElementNode) {
-			PluginElementNode elem = (PluginElementNode) incoming;
+		if (incoming instanceof PluginElementNode elem) {
 			IDocumentTextNode text = elem.getTextNode();
 			fValue = elem.getText();
 			generateValidKey(elem.getParent().getName(), elem.getName());
 			fOffset = text.getOffset();
 			fLength = text.getLength();
-		} else if (incoming instanceof PluginAttribute) {
-			PluginAttribute attr = (PluginAttribute) incoming;
+		} else if (incoming instanceof PluginAttribute attr) {
 			fValue = attr.getValue();
 			generateValidKey(attr.getEnclosingElement().getXMLTagName(), attr.getName());
 			fOffset = attr.getValueOffset();
 			fLength = attr.getValueLength();
-		} else if (incoming instanceof PluginExtensionPointNode) {
-			PluginExtensionPointNode extP = (PluginExtensionPointNode) incoming;
+		} else if (incoming instanceof PluginExtensionPointNode extP) {
 			fValue = extP.getName();
 			generateValidKey("extension-point", "name"); //$NON-NLS-1$ //$NON-NLS-2$
 			IDocumentAttributeNode attr = extP.getDocumentAttribute("name"); //$NON-NLS-1$
 			fOffset = attr.getValueOffset();
 			fLength = attr.getValueLength();
-		} else if (incoming instanceof ManifestHeader) {
-			ManifestHeader header = (ManifestHeader) incoming;
+		} else if (incoming instanceof ManifestHeader header) {
 			fValue = header.getValue();
 			generateValidKey(header.getName());
 			fLength = fValue.length();
@@ -127,18 +123,14 @@ public class ModelChangeElement {
 	public boolean updateValue() {
 		try {
 			String key = getExternKey();
-			if (fUnderlying instanceof PluginElementNode) {
-				PluginElementNode elem = (PluginElementNode) fUnderlying;
+			if (fUnderlying instanceof PluginElementNode elem) {
 				elem.setText(key);
-			} else if (fUnderlying instanceof PluginAttribute) {
-				PluginAttribute attr = (PluginAttribute) fUnderlying;
+			} else if (fUnderlying instanceof PluginAttribute attr) {
 				String attrName = attr.getName();
 				attr.getEnclosingElement().setXMLAttribute(attrName, key);
-			} else if (fUnderlying instanceof PluginExtensionPointNode) {
-				PluginExtensionPointNode extP = (PluginExtensionPointNode) fUnderlying;
+			} else if (fUnderlying instanceof PluginExtensionPointNode extP) {
 				extP.setName(key);
-			} else if (fUnderlying instanceof ManifestHeader) {
-				ManifestHeader header = (ManifestHeader) fUnderlying;
+			} else if (fUnderlying instanceof ManifestHeader header) {
 				header.setValue(key);
 			} else
 				return false;

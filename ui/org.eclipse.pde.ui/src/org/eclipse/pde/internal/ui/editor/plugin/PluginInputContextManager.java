@@ -131,8 +131,7 @@ public class PluginInputContextManager extends InputContextManager {
 	}
 
 	private void transferListeners(IModel source, IModel target) {
-		if (source instanceof IModelChangeProviderExtension && target instanceof IModelChangeProviderExtension) {
-			IModelChangeProviderExtension smodel = (IModelChangeProviderExtension) source;
+		if (source instanceof IModelChangeProviderExtension smodel && target instanceof IModelChangeProviderExtension) {
 			IModelChangeProviderExtension tmodel = (IModelChangeProviderExtension) target;
 			// first fire one last event to all the listeners to
 			// refresh

@@ -194,8 +194,7 @@ public class PluginDetailsSection extends PDESection implements IPartSelectionLi
 
 	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
-		if (selection instanceof IStructuredSelection && ((IStructuredSelection) selection).size() == 1) {
-			IStructuredSelection s = ((IStructuredSelection) selection);
+		if (selection instanceof IStructuredSelection s && ((IStructuredSelection) selection).size() == 1) {
 			Object o = s.getFirstElement();
 			if (o instanceof IFeaturePlugin) {
 				fInput = (IFeaturePlugin) o;

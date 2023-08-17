@@ -108,11 +108,10 @@ public class FeatureReferencePage extends PDEFormPage {
 
 	@Override
 	public boolean selectReveal(final Object object) {
-		if (object instanceof IFeaturePlugin) {
-			// selecton has to be done by detecting item from content provider by id of feature
-			// and using that in new selection
-			// because just using #setSelection(object) will not work
-			final IFeaturePlugin featurePlugin = (IFeaturePlugin) object;
+		if (object instanceof final IFeaturePlugin featurePlugin) {
+			// selection has to be done by detecting item from content provider
+			// by id of feature and using that in new selection because just
+			// using #setSelection(object) will not work
 			final StructuredViewer fPluginViewer = fPluginSection.getStructuredViewerPart().getViewer();
 			final IStructuredContentProvider provider = (IStructuredContentProvider) fPluginViewer.getContentProvider();
 			for (Object o : provider.getElements(fPluginViewer.getInput())) {

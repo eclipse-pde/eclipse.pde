@@ -130,8 +130,7 @@ public class FeatureBlock {
 		public Image getColumnImage(Object obj, int index) {
 			// If there is a workspace feature available, display the workspace feature icon, even if the user has selected external
 			if (index == COLUMN_FEATURE_NAME) {
-				if (obj instanceof FeatureLaunchModel) {
-					FeatureLaunchModel model = (FeatureLaunchModel) obj;
+				if (obj instanceof FeatureLaunchModel model) {
 					return pdeLabelProvider.getImage(model.getModel(true));
 				} else if (obj instanceof NamedElement) {
 					return ((NamedElement) obj).getImage();
@@ -140,8 +139,7 @@ public class FeatureBlock {
 					return pdeLabelProvider.getColumnImage(pluginModelBase, index);
 				}
 			} else if (index == COLUMN_PLUGIN_RESOLUTION) {
-				if (obj instanceof PluginLaunchModel) {
-					PluginLaunchModel pluginLaunchModel = ((PluginLaunchModel) obj);
+				if (obj instanceof PluginLaunchModel pluginLaunchModel) {
 					if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(pluginLaunchModel.getPluginResolution())) {
 						ModelEntry modelEntry = PluginRegistry.findEntry(pluginLaunchModel.getPluginModelId());
 						if (!modelEntry.hasWorkspaceModels()) {
@@ -161,8 +159,7 @@ public class FeatureBlock {
 		public String getColumnText(Object obj, int index) {
 			if (obj instanceof NamedElement && index == COLUMN_FEATURE_NAME)
 				return ((NamedElement) obj).getLabel();
-			if (obj instanceof PluginLaunchModel) {
-				PluginLaunchModel pluginLaunchModel = (PluginLaunchModel) obj;
+			if (obj instanceof PluginLaunchModel pluginLaunchModel) {
 				switch (index) {
 					case COLUMN_FEATURE_NAME :
 						return pluginLaunchModel.getPluginModelId();
@@ -170,8 +167,7 @@ public class FeatureBlock {
 						return getResolutionLabel(pluginLaunchModel.getPluginResolution());
 				}
 			}
-			if (obj instanceof FeatureLaunchModel) {
-				FeatureLaunchModel model = (FeatureLaunchModel) obj;
+			if (obj instanceof FeatureLaunchModel model) {
 				return switch (index) {
 					case COLUMN_FEATURE_NAME -> model.getId();
 					case COLUMN_PLUGIN_RESOLUTION -> getResolutionLabel(model.getResolutionValue());
@@ -200,8 +196,7 @@ public class FeatureBlock {
 
 		private StyledString getStyledText(Object element) {
 			StyledString styledString = new StyledString(getColumnText(element, COLUMN_FEATURE_NAME));
-			if (element instanceof FeatureLaunchModel) {
-				FeatureLaunchModel featureModel = (FeatureLaunchModel) element;
+			if (element instanceof FeatureLaunchModel featureModel) {
 				styledString.append(" (", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
 				String version = featureModel.getVersion();
 				int index = version.indexOf('-');
@@ -209,8 +204,7 @@ public class FeatureBlock {
 					version = version.substring(0, index);
 				styledString.append(version, StyledString.QUALIFIER_STYLER);
 				styledString.append(")", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
-			} else if (element instanceof PluginLaunchModel) {
-				PluginLaunchModel pluginLaunchModel = (PluginLaunchModel) element;
+			} else if (element instanceof PluginLaunchModel pluginLaunchModel) {
 				styledString.append(" (", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
 				String version = pluginLaunchModel.getPluginModelBase().getPluginBase().getVersion();
 				int index = version.indexOf('-');
@@ -582,15 +576,13 @@ public class FeatureBlock {
 				Object data = ((TreeItem) item).getData();
 				int comboIndex = ((Integer) value).intValue();
 				String location = getLocation(comboIndex);
-				if (data instanceof FeatureLaunchModel) {
-					FeatureLaunchModel model = (FeatureLaunchModel) data;
+				if (data instanceof FeatureLaunchModel model) {
 					if (!location.equalsIgnoreCase(model.getResolutionValue())) {
 						model.setPluginResolution(location);
 						fTree.refresh(model, true);
 						fTab.updateLaunchConfigurationDialog();
 					}
-				} else if (data instanceof PluginLaunchModel) {
-					PluginLaunchModel pluginLaunchModel = (PluginLaunchModel) data;
+				} else if (data instanceof PluginLaunchModel pluginLaunchModel) {
 					if (!location.equalsIgnoreCase(pluginLaunchModel.getPluginResolution())) {
 						pluginLaunchModel.setPluginResolution(location);
 						fTree.refresh(pluginLaunchModel, true);
@@ -1228,12 +1220,10 @@ public class FeatureBlock {
 		Object[] models = fTree.getCheckedLeafElements();
 
 		for (Object model : models) {
-			if (model instanceof FeatureLaunchModel) {
-				FeatureLaunchModel feature = (FeatureLaunchModel) model;
+			if (model instanceof FeatureLaunchModel feature) {
 				String entry = BundleLauncherHelper.formatFeatureEntry(feature.getId(), feature.getResolutionValue());
 				featuresEntry.add(entry);
-			} else if (model instanceof PluginLaunchModel) {
-				PluginLaunchModel pluginLaunchModel = (PluginLaunchModel) model;
+			} else if (model instanceof PluginLaunchModel pluginLaunchModel) {
 				pluginsEntry.add(buildAdditionalPluginEntry(pluginLaunchModel, true));
 				checkPluginLaunchModels.add(pluginLaunchModel);
 			}

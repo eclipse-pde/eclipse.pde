@@ -117,8 +117,7 @@ public class PDEModelUtility {
 			// getCommonProject will return null when project is deleted with editor open - bug 226788
 			// Solution is to use editor input if it is a FileEditorInput.
 			IEditorInput input = editor.getEditorInput();
-			if (input != null && input instanceof FileEditorInput) {
-				FileEditorInput fei = (FileEditorInput) input;
+			if (input != null && input instanceof FileEditorInput fei) {
 				IFile file = fei.getFile();
 				project = file.getProject();
 			}
@@ -538,8 +537,7 @@ public class PDEModelUtility {
 		IModelTextChangeListener[] listeners = new IModelTextChangeListener[0];
 		if (editModel instanceof AbstractEditingModel)
 			listeners = new IModelTextChangeListener[] {((AbstractEditingModel) editModel).getLastTextChangeListener()};
-		if (editModel instanceof IBundlePluginModelBase) {
-			IBundlePluginModelBase modelBase = (IBundlePluginModelBase) editModel;
+		if (editModel instanceof IBundlePluginModelBase modelBase) {
 			listeners = new IModelTextChangeListener[2];
 			listeners[F_Bi] = gatherListener(modelBase.getBundleModel());
 			listeners[F_Xi] = gatherListener(modelBase.getExtensionsModel());

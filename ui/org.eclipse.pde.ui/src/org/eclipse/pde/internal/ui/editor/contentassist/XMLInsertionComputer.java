@@ -171,11 +171,9 @@ public class XMLInsertionComputer {
 	}
 
 	protected static void computeInsertionObject(IPluginParent pElement, HashSet<String> visited, ISchemaObject schemaObject) throws CoreException {
-		if (schemaObject instanceof ISchemaElement) {
-			ISchemaElement schemaElement = (ISchemaElement) schemaObject;
+		if (schemaObject instanceof ISchemaElement schemaElement) {
 			computeInsertionElement(pElement, visited, schemaElement);
-		} else if (schemaObject instanceof ISchemaCompositor) {
-			ISchemaCompositor sCompositor = (ISchemaCompositor) schemaObject;
+		} else if (schemaObject instanceof ISchemaCompositor sCompositor) {
 			computeInsertionSequence(sCompositor, pElement, visited);
 		} else {
 			// Unknown schema object
@@ -345,8 +343,7 @@ public class XMLInsertionComputer {
 	protected static void setAttribute(IPluginParent parent, String attName, String attValue, int counter) throws CoreException {
 		if (parent instanceof IPluginElement) {
 			((IPluginElement) parent).setAttribute(attName, attValue);
-		} else if (parent instanceof IPluginExtension) {
-			IPluginExtension pe = (IPluginExtension) parent;
+		} else if (parent instanceof IPluginExtension pe) {
 			if (attName.equals(IIdentifiable.P_ID)) {
 				String currValue = pe.getId();
 				// If a value was already defined, do not override it with the

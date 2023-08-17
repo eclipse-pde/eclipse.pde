@@ -156,9 +156,9 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 			e = ((InvocationTargetException) e).getTargetException();
 		}
 		IStatus status = null;
-		if (e instanceof CoreException) {
-			// Re-use status only if it has attached exception with the stack trace
-			CoreException ce = (CoreException) e;
+		if (e instanceof CoreException ce) {
+			// Re-use status only if it has attached exception with the stack
+			// trace
 			if (ce.getStatus().getException() != null) {
 				status = ce.getStatus();
 			}
@@ -187,9 +187,8 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 			e = ((InvocationTargetException) e).getTargetException();
 		}
 		IStatus status = null;
-		if (e instanceof CoreException) {
+		if (e instanceof CoreException ce) {
 			// Re-use status only if it has attached exception with the stack trace
-			CoreException ce = (CoreException) e;
 			if (ce.getStatus().getException() != null) {
 				status = ce.getStatus();
 			}

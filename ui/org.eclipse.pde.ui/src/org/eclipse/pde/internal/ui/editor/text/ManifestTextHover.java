@@ -71,8 +71,7 @@ public class ManifestTextHover extends PDETextHover {
 	public String getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion) {
 		int offset = hoverRegion.getOffset();
 		IDocumentRange range = fSourcePage.getRangeElement(offset, false);
-		if (range instanceof IManifestHeader) {
-			IManifestHeader header = (IManifestHeader) range;
+		if (range instanceof IManifestHeader header) {
 			String headerName = header.getName();
 			if (offset >= header.getOffset() + headerName.length())
 				return checkForTranslatable(header);

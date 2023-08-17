@@ -42,8 +42,7 @@ public class SiteFeatureAdapter implements Serializable, IWritable {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof SiteFeatureAdapter) {
-			SiteFeatureAdapter adapter = (SiteFeatureAdapter) obj;
+		if (obj instanceof SiteFeatureAdapter adapter) {
 			String id = feature.getId();
 			String id2 = adapter.feature.getId();
 			boolean sameFeature = id != null && id2 != null && id.equals(id2);

@@ -89,8 +89,7 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 				return ISchemaElement.class;
 			else if (object instanceof ISchemaCompositor)
 				return ISchemaCompositor.class;
-			else if (object instanceof ISchemaAttribute) {
-				ISchemaAttribute att = (ISchemaAttribute) object;
+			else if (object instanceof ISchemaAttribute att) {
 				int kind = att.getKind();
 				switch (kind) {
 					case IMetaAttribute.JAVA :

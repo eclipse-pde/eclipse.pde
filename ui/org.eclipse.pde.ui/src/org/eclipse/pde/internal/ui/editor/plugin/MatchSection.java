@@ -278,8 +278,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		}
 
 		fCurrentImport = iimport;
-		if (fCurrentImport instanceof IPluginImport) {
-			IPluginImport pimport = (IPluginImport) fCurrentImport;
+		if (fCurrentImport instanceof IPluginImport pimport) {
 			fOptionalButton.setEnabled(isEditable());
 			fOptionalButton.setSelection(pimport.isOptional());
 			fReexportButton.setEnabled(isEditable());

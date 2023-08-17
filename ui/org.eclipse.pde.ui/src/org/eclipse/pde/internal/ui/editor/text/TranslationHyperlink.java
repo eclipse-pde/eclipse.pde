@@ -79,9 +79,8 @@ public class TranslationHyperlink extends AbstractHyperlink {
 
 		try {
 			IEditorPart editor = IDE.openEditor(PDEPlugin.getActivePage(), file);
-			if (!(editor instanceof TextEditor))
+			if (!(editor instanceof TextEditor tEditor))
 				return false;
-			TextEditor tEditor = (TextEditor) editor;
 			IDocument doc = tEditor.getDocumentProvider().getDocument(tEditor.getEditorInput());
 			if (doc == null)
 				return false;

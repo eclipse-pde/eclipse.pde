@@ -74,8 +74,7 @@ public class ImportActionGroup extends ActionGroup {
 	public void fillContextMenu(IMenuManager menu) {
 		ActionContext context = getContext();
 		ISelection selection = context.getSelection();
-		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
-			IStructuredSelection sSelection = (IStructuredSelection) selection;
+		if (!selection.isEmpty() && selection instanceof IStructuredSelection sSelection) {
 			String menuName = null;
 			if (sSelection.getFirstElement() instanceof IPluginExtension || sSelection.getFirstElement() instanceof IPluginExtensionPoint)
 				menuName = PDEUIMessages.ImportActionGroup_importContributingPlugin;
@@ -163,9 +162,8 @@ public class ImportActionGroup extends ActionGroup {
 			if (desc != null) {
 				model = PDECore.getDefault().getModelManager().findModel(desc);
 			}
-		} else if (next instanceof IPackageFragmentRoot) {
+		} else if (next instanceof IPackageFragmentRoot root) {
 			// Required for context menu on PDE classpath container entries
-			IPackageFragmentRoot root = (IPackageFragmentRoot) next;
 			if (root.isExternal()) {
 				String path = root.getPath().toOSString();
 				IPluginModelBase[] externalModels = PDECore.getDefault().getModelManager().getExternalModels();

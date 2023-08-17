@@ -102,8 +102,7 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 		if (obj instanceof ISchema) {
 			return PDEUIMessages.SchemaEditor_topic_overview;
 		}
-		if (obj instanceof IDocumentSection) {
-			IDocumentSection section = (IDocumentSection) obj;
+		if (obj instanceof IDocumentSection section) {
 			String sectionId = section.getSectionId();
 			if (sectionId.equals(IDocumentSection.EXAMPLES))
 				return PDEUIMessages.SchemaEditor_topic_examples;

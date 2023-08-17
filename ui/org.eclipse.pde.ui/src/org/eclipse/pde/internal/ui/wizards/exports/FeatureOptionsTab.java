@@ -71,8 +71,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 				@Override
 				public boolean select(Viewer viewer, Object parentElement, Object element) {
 					IResource resource = (IResource) element;
-					if (resource != null && resource instanceof IFile) {
-						IFile file = (IFile) resource;
+					if (resource != null && resource instanceof IFile file) {
 						String extension = file.getFileExtension();
 						return extension != null && extension.equalsIgnoreCase("xml"); //$NON-NLS-1$
 					}
@@ -83,8 +82,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 
 		@Override
 		protected IStatus validateItem(Object item) {
-			if (item instanceof IResource) {
-				IResource resource = (IResource) item;
+			if (item instanceof IResource resource) {
 				if (resource instanceof IFile) {
 					try {
 						IFile file = (IFile) resource;

@@ -189,8 +189,7 @@ public class DocSection extends PDESection {
 	private String getTopicName(Object object) {
 		if (object instanceof ISchema) {
 			return PDEUIMessages.SchemaEditor_topic_overview;
-		} else if (object instanceof IDocumentSection) {
-			IDocumentSection section = (IDocumentSection) object;
+		} else if (object instanceof IDocumentSection section) {
 			String sectionId = section.getSectionId();
 			if (sectionId.equals(IDocumentSection.EXAMPLES))
 				return PDEUIMessages.SchemaEditor_topic_examples;

@@ -43,8 +43,7 @@ public class PluginSearchActionGroup extends ActionGroup {
 	public void fillContextMenu(IMenuManager menu) {
 		ActionContext context = getContext();
 		ISelection selection = context.getSelection();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection sSelection = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection sSelection) {
 			if (sSelection.size() == 1) {
 				Object object = sSelection.getFirstElement();
 				addShowDescriptionAction(object, menu);
@@ -95,8 +94,7 @@ public class PluginSearchActionGroup extends ActionGroup {
 	}
 
 	private void addShowDescriptionAction(Object object, IMenuManager menu) {
-		if (object instanceof IPluginExtensionPoint) {
-			IPluginExtensionPoint extPoint = (IPluginExtensionPoint) object;
+		if (object instanceof IPluginExtensionPoint extPoint) {
 			String pointID = extPoint.getFullId();
 			if (pointID.indexOf('.') == -1) {
 				// Point ID is not fully qualified

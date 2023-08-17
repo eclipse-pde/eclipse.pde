@@ -87,8 +87,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 		ArrayList<Match> list = new ArrayList<>();
 		Object[] objects = result.getElements();
 		for (Object o : objects) {
-			if (o instanceof IPluginObject) {
-				IPluginObject object = (IPluginObject) o;
+			if (o instanceof IPluginObject object) {
 				if (isMatchContained(editor, object)) {
 					Match[] matches = getMatches(object);
 					for (Match matche : matches) {
@@ -98,8 +97,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 					}
 				}
 			}
-			if (o instanceof IFeaturePlugin) {
-				IFeaturePlugin object = (IFeaturePlugin) o;
+			if (o instanceof IFeaturePlugin object) {
 				if (isMatchContained(editor, object)) {
 					Collections.addAll(list, getMatches(object));
 				}

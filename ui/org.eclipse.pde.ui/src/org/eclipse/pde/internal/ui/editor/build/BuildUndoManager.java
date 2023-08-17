@@ -95,8 +95,7 @@ public class BuildUndoManager extends ModelUndoManager {
 	}
 
 	private void executeChange(Object element, String propertyName, Object oldValue, Object newValue) {
-		if (element instanceof BuildObject) {
-			BuildObject bobj = (BuildObject) element;
+		if (element instanceof BuildObject bobj) {
 			try {
 				bobj.restoreProperty(propertyName, oldValue, newValue);
 			} catch (CoreException e) {

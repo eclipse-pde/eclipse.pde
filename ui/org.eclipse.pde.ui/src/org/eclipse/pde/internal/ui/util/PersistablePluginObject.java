@@ -68,8 +68,7 @@ public class PersistablePluginObject extends PlatformObject implements IPersista
 			return (T) getPluginContainmentAdapter();
 		if (adapter.equals(IJavaElement.class)) {
 			IResource res = getResource();
-			if (res instanceof IProject) {
-				IProject project = (IProject) res;
+			if (res instanceof IProject project) {
 				try {
 					if (project.hasNature(JavaCore.NATURE_ID))
 						return (T) JavaCore.create(project);

@@ -21,8 +21,7 @@ public class FeatureChildViewerFilter extends ViewerFilter {
 
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
-		if (parentElement instanceof DeferredFeaturesViewInput && element instanceof IFeatureModel) {
-			DeferredFeaturesViewInput input = (DeferredFeaturesViewInput) parentElement;
+		if (parentElement instanceof DeferredFeaturesViewInput input && element instanceof IFeatureModel) {
 			IFeatureModel featureModel = (IFeatureModel) element;
 			boolean showProducts = input.getFeaturesViewInput().isIncludeProducts();
 

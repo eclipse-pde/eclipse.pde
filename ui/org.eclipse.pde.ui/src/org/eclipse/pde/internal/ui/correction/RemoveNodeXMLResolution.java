@@ -41,8 +41,7 @@ public class RemoveNodeXMLResolution extends AbstractXMLMarkerResolution {
 				((IPluginParent) parent).remove(pluginObject);
 			else if (parent instanceof PluginBaseNode)
 				((PluginBaseNode) parent).remove(pluginObject);
-			else if (pluginObject instanceof PluginAttribute) {
-				PluginAttribute attr = (PluginAttribute) pluginObject;
+			else if (pluginObject instanceof PluginAttribute attr) {
 				attr.getEnclosingElement().setXMLAttribute(attr.getName(), null);
 			}
 

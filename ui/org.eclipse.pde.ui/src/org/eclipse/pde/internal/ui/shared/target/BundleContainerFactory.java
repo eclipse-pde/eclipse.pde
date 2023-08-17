@@ -31,8 +31,7 @@ public class BundleContainerFactory implements IAdapterFactory, ITargetLocationH
 
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-		if (adaptableObject instanceof AbstractBundleContainer) {
-			AbstractBundleContainer bundleContainer = (AbstractBundleContainer) adaptableObject;
+		if (adaptableObject instanceof AbstractBundleContainer bundleContainer) {
 			if (isValidTargetLocation(bundleContainer)) {
 				if (adapterType == ITargetLocationHandler.class) {
 					return adapterType.cast(this);
@@ -50,8 +49,7 @@ public class BundleContainerFactory implements IAdapterFactory, ITargetLocationH
 	@Override
 	public boolean canEdit(ITargetDefinition target, TreePath path) {
 		Object root = path.getLastSegment();
-		if (root instanceof ITargetLocation) {
-			ITargetLocation location = (ITargetLocation) root;
+		if (root instanceof ITargetLocation location) {
 			return isValidTargetLocation(location);
 		}
 		return false;
@@ -60,8 +58,7 @@ public class BundleContainerFactory implements IAdapterFactory, ITargetLocationH
 	@Override
 	public IWizard getEditWizard(ITargetDefinition target, TreePath path) {
 		Object root = path.getFirstSegment();
-		if (root instanceof ITargetLocation) {
-			ITargetLocation location = (ITargetLocation) root;
+		if (root instanceof ITargetLocation location) {
 			if (isValidTargetLocation(location)) {
 				return new EditBundleContainerWizard(target, location);
 			}

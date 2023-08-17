@@ -94,8 +94,7 @@ public class OptionTemplateWizardPage extends WizardPage {
 	public void setVisible(boolean visible) {
 		if (visible && section.isDependentOnParentWizard()) {
 			IWizard wizard = getWizard();
-			if (wizard instanceof AbstractNewPluginTemplateWizard) {
-				AbstractNewPluginTemplateWizard templateWizard = (AbstractNewPluginTemplateWizard) wizard;
+			if (wizard instanceof AbstractNewPluginTemplateWizard templateWizard) {
 				section.initializeFields(templateWizard.getData());
 			}
 		}

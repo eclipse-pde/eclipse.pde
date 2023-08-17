@@ -366,8 +366,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 			data.key.setStoredValue(fLookupOrder[0], Integer.toString(selectionIndex), fManager);
 			fDirty = true;
 			fRebuildcount = 0;
-		} else if (e.widget instanceof Button) {
-			Button button = (Button) e.widget;
+		} else if (e.widget instanceof Button button) {
 			ControlData data = (ControlData) button.getData();
 			data.key.setStoredValue(fLookupOrder[0], Boolean.toString(button.getSelection()), fManager);
 			fDirty = true;
@@ -480,8 +479,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 				continue;
 			}
 			for (Control control : controls) {
-				if (control instanceof Combo) {
-					Combo combo = (Combo) control;
+				if (control instanceof Combo combo) {
 					ControlData data = (ControlData) combo.getData();
 					int index = 0;
 					try {
@@ -492,12 +490,10 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 					}
 					index = adjustIndex(index);
 					combo.select(data.getSelection(SEVERITIES[index]));
-				} else if (control instanceof Button) {
-					Button button = (Button) control;
+				} else if (control instanceof Button button) {
 					ControlData data = (ControlData) button.getData();
 					button.setSelection(Boolean.parseBoolean(data.key.getStoredValue(fLookupOrder, false, fManager)));
-				} else if (control instanceof Text) {
-					Text text = (Text) control;
+				} else if (control instanceof Text text) {
 					ControlData data = (ControlData) text.getData();
 					text.setText(data.key.getStoredValue(fLookupOrder, false, fManager));
 				}
@@ -512,8 +508,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 */
 	private void enableControl(Control ctrl, boolean enabled) {
 		ctrl.setEnabled(enabled);
-		if (ctrl instanceof Composite) {
-			Composite comp = (Composite) ctrl;
+		if (ctrl instanceof Composite comp) {
 			Control[] children = comp.getChildren();
 			for (Control child : children) {
 				enableControl(child, enabled);
@@ -765,8 +760,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 * @return the scrolling parent of the given object or <code>null</code> if there isn't one
 	 */
 	private ScrolledComposite getScrollingParent(Object obj) {
-		if (obj instanceof ExpandableComposite) {
-			ExpandableComposite ecomp = (ExpandableComposite) obj;
+		if (obj instanceof ExpandableComposite ecomp) {
 			Composite parent = ecomp.getParent();
 			while (parent != null && !(parent instanceof ScrolledComposite)) {
 				parent = parent.getParent();

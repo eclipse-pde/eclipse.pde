@@ -57,8 +57,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	class ApiJavaElementContentProvider extends StandardJavaElementContentProvider {
 		@Override
 		public Object[] getChildren(Object element) {
-			if (element instanceof IJavaModel) {
-				IJavaModel model = (IJavaModel) element;
+			if (element instanceof IJavaModel model) {
 				HashSet<IJavaProject> set = new HashSet<>();
 				try {
 					IJavaProject[] projects = model.getJavaProjects();

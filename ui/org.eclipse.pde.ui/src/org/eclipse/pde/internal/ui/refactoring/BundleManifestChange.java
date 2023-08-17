@@ -190,16 +190,14 @@ public class BundleManifestChange {
 	}
 
 	private static void renamePackage(IManifestHeader header, String oldName, String newName) {
-		if (header instanceof BasePackageHeader) {
-			BasePackageHeader bHeader = (BasePackageHeader) header;
+		if (header instanceof BasePackageHeader bHeader) {
 			bHeader.renamePackage(oldName, newName);
 		}
 	}
 
 	private static PDEManifestElement removePackage(IManifestHeader header, String name) {
 		PDEManifestElement result = null;
-		if (header instanceof BasePackageHeader) {
-			BasePackageHeader bHeader = (BasePackageHeader) header;
+		if (header instanceof BasePackageHeader bHeader) {
 			result = ((PackageObject) bHeader.removePackage(name));
 		}
 		return result;

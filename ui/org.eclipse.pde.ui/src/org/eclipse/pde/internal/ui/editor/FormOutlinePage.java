@@ -218,8 +218,7 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 		fOutlineSelection = true;
 		try {
 			ISelection selection = event.getSelection();
-			if (selection.isEmpty() == false && selection instanceof IStructuredSelection) {
-				IStructuredSelection ssel = (IStructuredSelection) selection;
+			if (selection.isEmpty() == false && selection instanceof IStructuredSelection ssel) {
 				Object item = ssel.getFirstElement();
 				selectionChanged(item);
 			}

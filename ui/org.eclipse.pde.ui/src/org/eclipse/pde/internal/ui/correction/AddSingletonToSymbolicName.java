@@ -49,8 +49,7 @@ public class AddSingletonToSymbolicName extends AbstractManifestMarkerResolution
 	@Override
 	protected void createChange(BundleModel model) {
 		IBundle bundle = model.getBundle();
-		if (bundle instanceof Bundle) {
-			Bundle bun = (Bundle) bundle;
+		if (bundle instanceof Bundle bun) {
 			IManifestHeader header = bun.getManifestHeader(Constants.BUNDLE_SYMBOLICNAME);
 			if (header instanceof BundleSymbolicNameHeader) {
 				if (fisDirective && TargetPlatformHelper.getTargetVersion() >= 3.1)
