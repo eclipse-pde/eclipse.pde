@@ -249,8 +249,7 @@ public abstract class InputContext {
 				if (fModel instanceof IEditingModel)
 					((IEditingModel) fModel).setStale(true);
 				edit.apply(doc);
-				if (fModel instanceof IEditingModel) {
-					IEditingModel editingModel = (IEditingModel) fModel;
+				if (fModel instanceof IEditingModel editingModel) {
 					editingModel.reconciled(doc);
 				}
 				fEditOperations.clear();
@@ -416,8 +415,7 @@ public abstract class InputContext {
 	}
 
 	public boolean matches(IResource resource) {
-		if (fEditorInput instanceof IFileEditorInput) {
-			IFileEditorInput finput = (IFileEditorInput) fEditorInput;
+		if (fEditorInput instanceof IFileEditorInput finput) {
 			IFile file = finput.getFile();
 			if (file.equals(resource))
 				return true;

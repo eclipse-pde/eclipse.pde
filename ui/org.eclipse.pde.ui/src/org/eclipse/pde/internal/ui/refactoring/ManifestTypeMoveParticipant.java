@@ -33,8 +33,7 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 
 	@Override
 	protected boolean initialize(Object element) {
-		if (element instanceof IType) {
-			IType type = (IType) element;
+		if (element instanceof IType type) {
 			IJavaProject javaProject = (IJavaProject) type.getAncestor(IJavaElement.JAVA_PROJECT);
 			IProject project = javaProject.getProject();
 			if (WorkspaceModelManager.isPluginProject(project)) {
@@ -55,8 +54,7 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 	@Override
 	protected boolean isInterestingForExtensions() {
 		Object dest = getArguments().getDestination();
-		if (dest instanceof IJavaElement) {
-			IJavaElement destination = (IJavaElement) dest;
+		if (dest instanceof IJavaElement destination) {
 			IJavaProject jProject = (IJavaProject) destination.getAncestor(IJavaElement.JAVA_PROJECT);
 			return jProject.getProject().equals(fProject);
 		}

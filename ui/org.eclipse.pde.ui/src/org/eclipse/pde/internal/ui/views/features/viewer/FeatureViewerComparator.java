@@ -42,8 +42,7 @@ public class FeatureViewerComparator extends ViewerComparator {
 
 		if (element instanceof IProductModel) {
 			return 0;
-		} else if (element instanceof IFeatureModel) {
-			IFeatureModel featureModel = (IFeatureModel) element;
+		} else if (element instanceof IFeatureModel featureModel) {
 			return (featureModel.isEditable() ? 1 : 2);
 		} else if (element instanceof IFeaturePlugin || element instanceof IProductPlugin) {
 			return 4;

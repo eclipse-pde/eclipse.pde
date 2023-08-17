@@ -636,8 +636,7 @@ public abstract class AbstractPluginBlock {
 
 	private boolean isEditable(TreeItem item) {
 		Object obj = item.getData();
-		if (obj instanceof IPluginModelBase) {
-			IPluginModelBase model = (IPluginModelBase) obj;
+		if (obj instanceof IPluginModelBase model) {
 			String systemBundleId = PDECore.getDefault().getModelManager().getSystemBundleId();
 			if (!(systemBundleId.equals(model.getPluginBase().getId()))) {
 				return fPluginTreeViewer.getChecked(model);
@@ -725,8 +724,7 @@ public abstract class AbstractPluginBlock {
 
 	protected void setText(IPluginModelBase model, String value) {
 		Widget widget = fPluginTreeViewer.testFindItem(model);
-		if (widget instanceof TreeItem) {
-			TreeItem item = (TreeItem) widget;
+		if (widget instanceof TreeItem item) {
 			int index = value == null ? -1 : value.indexOf(':');
 			String levelValue = index == -1 ? "" : value.substring(0, index); //$NON-NLS-1$
 			String autoValue = null;
@@ -789,8 +787,7 @@ public abstract class AbstractPluginBlock {
 
 		fPluginTreeViewer.setChecked(group, checked);
 
-		if (group instanceof NamedElement) {
-			NamedElement namedElement = (NamedElement) group;
+		if (group instanceof NamedElement namedElement) {
 			TreeItem item = (TreeItem) fPluginTreeViewer.testFindItem(namedElement);
 			if (item != null) {
 				TreeItem[] children = item.getItems();

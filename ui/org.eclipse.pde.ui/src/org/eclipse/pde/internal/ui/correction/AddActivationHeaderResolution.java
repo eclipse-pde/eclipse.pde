@@ -36,8 +36,7 @@ public class AddActivationHeaderResolution extends AbstractManifestMarkerResolut
 		String markerHeader = marker.getAttribute("header", ICoreConstants.ECLIPSE_AUTOSTART); //$NON-NLS-1$
 		IBundle bundle = model.getBundle();
 		IManifestHeader header = bundle.getManifestHeader(markerHeader);
-		if (header instanceof LazyStartHeader) {
-			LazyStartHeader lheader = (LazyStartHeader) header;
+		if (header instanceof LazyStartHeader lheader) {
 			String exceptions = lheader.getAttribute("exceptions"); //$NON-NLS-1$
 			if (TargetPlatformHelper.getTargetVersion() >= 3.4) {
 				bundle.setHeader(Constants.BUNDLE_ACTIVATIONPOLICY, Constants.ACTIVATION_LAZY);

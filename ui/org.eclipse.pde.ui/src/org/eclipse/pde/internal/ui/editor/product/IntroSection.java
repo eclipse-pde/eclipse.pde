@@ -238,9 +238,8 @@ public class IntroSection extends PDESection {
 		ModelModification mod = new ModelModification(fManifest) {
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (!(model instanceof IBundlePluginModelBase))
+				if (!(model instanceof IBundlePluginModelBase modelBase))
 					return;
-				IBundlePluginModelBase modelBase = (IBundlePluginModelBase) model;
 				IBundle bundle = modelBase.getBundleModel().getBundle();
 				IManifestHeader header = bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
 				if (header instanceof RequireBundleHeader) {

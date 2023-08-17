@@ -142,15 +142,13 @@ public class CommandList {
 	}
 
 	protected static String getText(Object obj) {
-		if (obj instanceof Command) {
-			Command com = (Command) obj;
+		if (obj instanceof Command com) {
 			try {
 				return com.getName();
 			} catch (NotDefinedException e) {
 				return com.getId();
 			}
-		} else if (obj instanceof Category) {
-			Category cat = (Category) obj;
+		} else if (obj instanceof Category cat) {
 			try {
 				return cat.getName();
 			} catch (NotDefinedException e) {

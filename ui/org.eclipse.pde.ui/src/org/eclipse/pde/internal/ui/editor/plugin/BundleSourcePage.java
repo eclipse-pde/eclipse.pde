@@ -143,8 +143,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 
 		@Override
 		public Object[] getElements(Object parent) {
-			if (parent instanceof BundleModel) {
-				BundleModel model = (BundleModel) parent;
+			if (parent instanceof BundleModel model) {
 				Map<String, IManifestHeader> manifest = ((Bundle) model.getBundle()).getHeaders();
 				ArrayList<IDocumentKey> keys = new ArrayList<>();
 				for (IManifestHeader header : manifest.values()) {
@@ -162,8 +161,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		// The bundle classpath header has no model data members
 		// Retrieve the plug-in library equivalents from the editor model
 		FormEditor editor = getEditor();
-		if (editor instanceof PDEFormEditor) {
-			PDEFormEditor formEditor = (PDEFormEditor) editor;
+		if (editor instanceof PDEFormEditor formEditor) {
 			IBaseModel baseModel = formEditor.getAggregateModel();
 			if (baseModel instanceof IPluginModelBase) {
 				IPluginLibrary[] libraries = ((IPluginModelBase) baseModel).getPluginBase().getLibraries();

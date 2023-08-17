@@ -51,14 +51,12 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 			if (object instanceof IPluginBase)
 				return ((IPluginBase) object).getId();
 
-			if (object instanceof IPluginImport) {
-				IPluginImport dep = (IPluginImport) object;
+			if (object instanceof IPluginImport dep) {
 				return dep.getId() + " - " //$NON-NLS-1$
 						+ dep.getPluginBase().getId();
 			}
 
-			if (object instanceof IPluginExtension) {
-				IPluginExtension extension = (IPluginExtension) object;
+			if (object instanceof IPluginExtension extension) {
 				return extension.getPoint() + " - " + extension.getPluginBase().getId(); //$NON-NLS-1$
 			}
 
@@ -66,8 +64,7 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 				return ((IPluginExtensionPoint) object).getFullId();
 			}
 
-			if (object instanceof IFeaturePlugin) {
-				final IFeaturePlugin featurePlugin = (IFeaturePlugin) object;
+			if (object instanceof final IFeaturePlugin featurePlugin) {
 				final String pluginId = featurePlugin.getId();
 				final String featureId = featurePlugin.getFeature().getId();
 				return pluginId + " - " + featureId; //$NON-NLS-1$

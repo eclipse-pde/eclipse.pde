@@ -150,9 +150,8 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (!(model instanceof IPluginModelBase))
+				if (!(model instanceof IPluginModelBase modelBase))
 					return;
-				IPluginModelBase modelBase = (IPluginModelBase) model;
 				IPluginBase base = modelBase.getPluginBase();
 				IPluginExtensionPoint[] points = base.getExtensionPoints();
 				for (IPluginExtensionPoint point : points) {
@@ -171,9 +170,8 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 
 			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-				if (!(model instanceof IPluginModelBase))
+				if (!(model instanceof IPluginModelBase modelBase))
 					return;
-				IPluginModelBase modelBase = (IPluginModelBase) model;
 				IPluginBase base = modelBase.getPluginBase();
 				IPluginExtension[] extensions = base.getExtensions();
 				String oldValue = getId();

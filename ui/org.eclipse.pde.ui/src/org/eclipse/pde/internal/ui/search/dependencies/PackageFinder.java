@@ -255,8 +255,7 @@ public class PackageFinder {
 				try {
 					IJavaElement[] children = root.getChildren();
 					for (IJavaElement child : children) {
-						if (child instanceof IPackageFragment) {
-							IPackageFragment frag = (IPackageFragment) child;
+						if (child instanceof IPackageFragment frag) {
 							IClassFile[] files = frag.getClassFiles();
 							Collections.addAll(classFiles, files);
 						}

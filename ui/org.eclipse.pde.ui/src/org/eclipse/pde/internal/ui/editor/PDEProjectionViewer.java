@@ -90,8 +90,7 @@ public class PDEProjectionViewer extends ProjectionViewer {
 		super.configure(configuration);
 		// Configure quick outline operation for the source viewer only if the
 		// given source viewer supports it
-		if (fIsQuickOutlineEnabled && configuration instanceof ChangeAwareSourceViewerConfiguration) {
-			ChangeAwareSourceViewerConfiguration sourceConfiguration = (ChangeAwareSourceViewerConfiguration) configuration;
+		if (fIsQuickOutlineEnabled && configuration instanceof ChangeAwareSourceViewerConfiguration sourceConfiguration) {
 			fOutlinePresenter = sourceConfiguration.getOutlinePresenter(this);
 			if (fOutlinePresenter != null) {
 				fOutlinePresenter.install(this);

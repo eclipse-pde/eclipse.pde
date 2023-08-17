@@ -138,8 +138,7 @@ public class ExtensionsFilterUtil {
 		while (element.getParent() != null && !(element.getParent() instanceof PluginNode)) {
 			element = element.getParent();
 		}
-		if (element instanceof IPluginExtension) {
-			IPluginExtension extension = (IPluginExtension) element;
+		if (element instanceof IPluginExtension extension) {
 			return extension.getPoint() + '.' + pluginElement.getName();
 		}
 		return null;
@@ -156,8 +155,7 @@ public class ExtensionsFilterUtil {
 		Set<String> filterPatterns = new HashSet<>();
 		while (it.hasNext()) {
 			Object treeElement = it.next();
-			if (treeElement instanceof IPluginElement) {
-				IPluginElement pluginElement = (IPluginElement) treeElement;
+			if (treeElement instanceof IPluginElement pluginElement) {
 				Set<String> customAttributes = getCustomRelations(pluginElement);
 				if (customAttributes.isEmpty()) {
 					for (String property : RELATED_ATTRIBUTES) {

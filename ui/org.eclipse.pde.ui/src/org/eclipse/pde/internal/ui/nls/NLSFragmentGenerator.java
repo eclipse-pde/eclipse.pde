@@ -510,8 +510,7 @@ public class NLSFragmentGenerator {
 		}
 
 		public boolean include(Object object) {
-			if (object instanceof IResource) {
-				IResource resource = (IResource) object;
+			if (object instanceof IResource resource) {
 				IPath path = IResource.FILE == resource.getType() ? resource.getFullPath() : resource.getFullPath().addTrailingSeparator();
 				object = path.toPortableString();
 			}

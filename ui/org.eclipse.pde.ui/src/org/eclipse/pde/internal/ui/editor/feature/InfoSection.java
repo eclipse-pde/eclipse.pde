@@ -270,8 +270,7 @@ public class InfoSection extends PDESection {
 
 	@Override
 	public boolean setFormInput(Object input) {
-		if (input instanceof IFeatureInfo) {
-			IFeatureInfo info = (IFeatureInfo) input;
+		if (input instanceof IFeatureInfo info) {
 			int index = info.getIndex();
 			if (index != -1)
 				fTabFolder.setSelection(index);
@@ -463,8 +462,7 @@ public class InfoSection extends PDESection {
 		fIgnoreChange = true;
 		String text = ""; //$NON-NLS-1$
 		String url = null;
-		if (input instanceof IFeatureInfo) {
-			IFeatureInfo info = (IFeatureInfo) input;
+		if (input instanceof IFeatureInfo info) {
 			text = info.getDescription();
 			url = info.getURL();
 		}

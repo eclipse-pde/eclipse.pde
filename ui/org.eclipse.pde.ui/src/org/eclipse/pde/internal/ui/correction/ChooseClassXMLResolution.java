@@ -30,9 +30,8 @@ public class ChooseClassXMLResolution extends AbstractXMLMarkerResolution {
 	@Override
 	protected void createChange(IPluginModelBase model) {
 		Object object = findNode(model);
-		if (!(object instanceof PluginAttribute))
+		if (!(object instanceof PluginAttribute attrib))
 			return;
-		PluginAttribute attrib = (PluginAttribute) object;
 		IDocumentElementNode element = attrib.getEnclosingElement();
 		String type = PDEJavaHelperUI.selectType(fResource, IJavaElementSearchConstants.CONSIDER_CLASSES_AND_INTERFACES);
 		if (type != null)

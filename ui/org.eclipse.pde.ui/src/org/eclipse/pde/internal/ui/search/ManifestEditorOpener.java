@@ -46,8 +46,7 @@ public class ManifestEditorOpener {
 
 	public static IEditorPart open(Match match, boolean activate) {
 		IEditorPart editorPart = ManifestEditor.open(match.getElement(), true);
-		if (editorPart != null && editorPart instanceof ManifestEditor) {
-			ManifestEditor editor = (ManifestEditor) editorPart;
+		if (editorPart != null && editorPart instanceof ManifestEditor editor) {
 			if (match.getBaseUnit() != AttributesMatch.UNIT_ATTRIBUTE_SEARCH_PATTERN) {
 				IDocument doc = editor.getDocument(match);
 				if (doc != null) {

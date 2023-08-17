@@ -58,8 +58,7 @@ public class AnnotationHover implements IAnnotationHover {
 		Iterator<Annotation> iter = model.getAnnotationIterator();
 		while (iter.hasNext()) {
 			Annotation object = iter.next();
-			if (object instanceof MarkerAnnotation) {
-				MarkerAnnotation annotation = (MarkerAnnotation) object;
+			if (object instanceof MarkerAnnotation annotation) {
 				if (compareRulerLine(model.getPosition(annotation), document, line)) {
 					IMarker marker = annotation.getMarker();
 					String message = marker.getAttribute(IMarker.MESSAGE, (String) null);

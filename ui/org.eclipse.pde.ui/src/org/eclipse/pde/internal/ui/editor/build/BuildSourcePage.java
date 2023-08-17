@@ -61,8 +61,7 @@ public class BuildSourcePage extends KeyValueSourcePage {
 
 		@Override
 		public Object[] getElements(Object parent) {
-			if (parent instanceof IBuildModel) {
-				IBuildModel model = (IBuildModel) parent;
+			if (parent instanceof IBuildModel model) {
 				IBuild build = model.getBuild();
 				return build.getBuildEntries();
 			}

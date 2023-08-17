@@ -41,8 +41,7 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 		if (parentElement instanceof ITargetDefinition) {
 			ITargetLocation[] containers = ((ITargetDefinition) parentElement).getTargetLocations();
 			return containers != null ? containers : new Object[0];
-		} else if (parentElement instanceof ITargetLocation) {
-			ITargetLocation location = (ITargetLocation) parentElement;
+		} else if (parentElement instanceof ITargetLocation location) {
 			if (location.isResolved()) {
 				IStatus status = location.getStatus();
 				if (!status.isOK() && !status.isMultiStatus()) {

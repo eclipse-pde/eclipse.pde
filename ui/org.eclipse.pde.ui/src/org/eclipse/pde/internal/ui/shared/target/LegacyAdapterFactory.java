@@ -31,8 +31,7 @@ public class LegacyAdapterFactory implements IAdapterFactory {
 
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
-		if (adaptableObject instanceof ITargetLocation) {
-			ITargetLocation location = (ITargetLocation) adaptableObject;
+		if (adaptableObject instanceof ITargetLocation location) {
 			if (adapterType == ITargetLocationHandler.class) {
 				LegacyProxy proxy = new LegacyProxy(location);
 				if (proxy.editor != null || proxy.updater != null) {

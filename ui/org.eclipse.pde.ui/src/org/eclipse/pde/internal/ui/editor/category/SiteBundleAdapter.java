@@ -44,8 +44,7 @@ public class SiteBundleAdapter implements Serializable, IWritable {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof SiteBundleAdapter) {
-			SiteBundleAdapter adapter = (SiteBundleAdapter) obj;
+		if (obj instanceof SiteBundleAdapter adapter) {
 			return Objects.equals(bundle, adapter.bundle);
 		}
 		return super.equals(obj);

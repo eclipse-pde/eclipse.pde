@@ -189,8 +189,7 @@ public abstract class DependenciesViewPage extends Page {
 				Object input = fViewer.getInput();
 				if (input instanceof IPluginBase)
 					input = ((IPluginBase) input).getModel();
-				if (input instanceof IPluginModelBase) {
-					IPluginModelBase base = (IPluginModelBase) input;
+				if (input instanceof IPluginModelBase base) {
 					IResource res = base.getUnderlyingResource();
 					if (res != null)
 						manager.add(new DependencyExtentAction(res.getProject(), id));
@@ -281,8 +280,7 @@ public abstract class DependenciesViewPage extends Page {
 		if (newFocus instanceof IPluginBase) {
 			fView.openTo(((IPluginBase) newFocus).getModel());
 		}
-		if (newFocus instanceof IPluginImport) {
-			IPluginImport pluginImport = ((IPluginImport) newFocus);
+		if (newFocus instanceof IPluginImport pluginImport) {
 			String id = pluginImport.getId();
 			IPluginModelBase model = PluginRegistry.findModel(id);
 			if (model != null) {

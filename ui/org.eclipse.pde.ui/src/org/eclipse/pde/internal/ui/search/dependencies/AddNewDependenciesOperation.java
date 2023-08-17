@@ -421,8 +421,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			bundle.setHeader(Constants.IMPORT_PACKAGE, ""); //$NON-NLS-1$
 			mheader = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
 		}
-		if (mheader instanceof ImportPackageHeader) {
-			ImportPackageHeader header = (ImportPackageHeader) mheader;
+		if (mheader instanceof ImportPackageHeader header) {
 			String versionAttr = (BundlePluginBase.getBundleManifestVersion(bundle) < 2) ? ICoreConstants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;
 			while (it.hasNext()) {
 				ImportPackageObject obj = new ImportPackageObject(header, it.next(), versionAttr);
@@ -449,8 +448,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		HashSet<String> added = new HashSet<>();
 		Iterator<String> it = depsToAdd.iterator();
 		IManifestHeader mheader = bundle.getManifestHeader(Constants.REQUIRE_BUNDLE);
-		if (mheader instanceof RequireBundleHeader) {
-			RequireBundleHeader header = (RequireBundleHeader) mheader;
+		if (mheader instanceof RequireBundleHeader header) {
 			while (it.hasNext()) {
 				String pluginId = it.next();
 				if (!added.contains(pluginId))

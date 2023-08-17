@@ -83,8 +83,7 @@ public class ElementSection extends TreeSection {
 	static class ContentProvider implements ITreeContentProvider {
 		@Override
 		public Object[] getElements(Object object) {
-			if (object instanceof Schema) {
-				Schema schema = (Schema) object;
+			if (object instanceof Schema schema) {
 				return schema.getElements();
 			}
 			return new Object[0];
@@ -393,8 +392,7 @@ public class ElementSection extends TreeSection {
 			newSelection = handleReferenceDelete((SchemaElementReference) object, generateSelection);
 		} else if (object instanceof ISchemaElement) {
 			newSelection = handleElementDelete((ISchemaElement) object, generateSelection);
-		} else if (object instanceof ISchemaAttribute) {
-			ISchemaAttribute att = (ISchemaAttribute) object;
+		} else if (object instanceof ISchemaAttribute att) {
 			if (!(att.getParent() instanceof ISchemaRootElement)) {
 				newSelection = handleAttributeDelete(att, generateSelection);
 			} else {
@@ -464,8 +462,7 @@ public class ElementSection extends TreeSection {
 		IStructuredSelection newSelection = null;
 		if (generateSelection) {
 			ISchemaObject parent = comp.getParent();
-			if (parent instanceof ISchemaElement) {
-				ISchemaElement element = (ISchemaElement) parent;
+			if (parent instanceof ISchemaElement element) {
 				ISchemaAttribute[] attributes = element.getAttributes();
 				if (attributes.length > 0)
 					newSelection = new StructuredSelection(attributes[0]);
@@ -771,9 +768,8 @@ public class ElementSection extends TreeSection {
 
 	public void handleOp(Object currentTarget, Object[] objects, int currentOperation) {
 		for (int i = 0; i < objects.length; i++) {
-			if (!(objects[i] instanceof ISchemaObject))
+			if (!(objects[i] instanceof ISchemaObject object))
 				continue;
-			ISchemaObject object = (ISchemaObject) objects[i];
 			ISchemaObject realTarget = getRealTarget(currentTarget, object);
 			ISchemaObject sibling = getSibling(currentTarget, object);
 			if (realTarget == null)

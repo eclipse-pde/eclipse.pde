@@ -64,8 +64,7 @@ public class OpenManifestHandler extends AbstractHandler {
 			}
 		}
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
+		if (selection instanceof IStructuredSelection ssel) {
 			Iterator<?> it = ssel.iterator();
 			while (it.hasNext()) {
 				Object element = it.next();

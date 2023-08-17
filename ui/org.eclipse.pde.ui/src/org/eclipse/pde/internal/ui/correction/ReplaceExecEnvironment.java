@@ -41,8 +41,7 @@ public class ReplaceExecEnvironment extends AbstractManifestMarkerResolution {
 	@Override
 	protected void createChange(BundleModel model) {
 		IManifestHeader header = model.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-		if (header instanceof RequiredExecutionEnvironmentHeader) {
-			RequiredExecutionEnvironmentHeader reqHeader = (RequiredExecutionEnvironmentHeader) header;
+		if (header instanceof RequiredExecutionEnvironmentHeader reqHeader) {
 			ExecutionEnvironment[] bundleEnvs = reqHeader.getEnvironments();
 			IExecutionEnvironment[] systemEnvs = JavaRuntime.getExecutionEnvironmentsManager()
 					.getExecutionEnvironments();

@@ -60,8 +60,7 @@ public class OSGiAnnotationsASTVisitor extends ASTVisitor {
 		}
 		List<OSGiAnnotationProcessor> processors = getPackageProcessors(packageDeclaration.getName().toString());
 		for (Object item : packageDeclaration.annotations()) {
-			if (item instanceof Annotation) {
-				Annotation annotation = (Annotation) item;
+			if (item instanceof Annotation annotation) {
 				IAnnotationBinding annotationBinding = annotation.resolveAnnotationBinding();
 				if (annotationBinding == null) {
 					// not resolvable

@@ -116,8 +116,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 
 		@Override
 		public Object[] getChildren(Object parent) {
-			if (parent instanceof ISiteCategoryDefinition) {
-				ISiteCategoryDefinition catDef = (ISiteCategoryDefinition) parent;
+			if (parent instanceof ISiteCategoryDefinition catDef) {
 				ISiteFeature[] features = fModel.getSite().getFeatures();
 				HashSet<SiteFeatureAdapter> result = new HashSet<>();
 				for (ISiteFeature feature : features) {
@@ -140,8 +139,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 
 		@Override
 		public boolean hasChildren(Object element) {
-			if (element instanceof ISiteCategoryDefinition) {
-				ISiteCategoryDefinition catDef = (ISiteCategoryDefinition) element;
+			if (element instanceof ISiteCategoryDefinition catDef) {
 				ISiteFeature[] features = fModel.getSite().getFeatures();
 				for (ISiteFeature feature : features) {
 					ISiteCategory[] cats = feature.getCategories();
@@ -220,10 +218,9 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 				 */
 				@Override
 				protected int determineLocation(DropTargetEvent event) {
-					if (!(event.item instanceof Item)) {
+					if (!(event.item instanceof Item item)) {
 						return LOCATION_NONE;
 					}
-					Item item = (Item) event.item;
 					Point coordinates = new Point(event.x, event.y);
 					coordinates = getViewer().getControl().toControl(coordinates);
 					if (item != null) {

@@ -49,8 +49,7 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 	private final class FeatureDetailsLabelProvider extends LabelProvider {
 		@Override
 		public String getText(Object element) {
-			if (element instanceof IFeatureModel) {
-				IFeatureModel featureModel = (IFeatureModel) element;
+			if (element instanceof IFeatureModel featureModel) {
 				if (filter.matchesFeatureId(featureModel)) {
 					return NLS.bind(PDEUIMessages.FeatureSelectionDialog_IdMatched, featureModel.getFeature().getId());
 				}
@@ -81,8 +80,7 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 
 		@Override
 		public boolean matchItem(Object item) {
-			if (item instanceof IFeatureModel) {
-				IFeatureModel model = (IFeatureModel) item;
+			if (item instanceof IFeatureModel model) {
 				if (matchesFeatureId(model))
 					return true;
 				return matchesPluginId(model) != null;
@@ -135,8 +133,7 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 
 		private int compareSimilarObjects(Object o1, Object o2) {
-			if (o1 instanceof IFeatureModel && o2 instanceof IFeatureModel) {
-				IFeatureModel ipmb1 = (IFeatureModel) o1;
+			if (o1 instanceof IFeatureModel ipmb1 && o2 instanceof IFeatureModel) {
 				IFeatureModel ipmb2 = (IFeatureModel) o2;
 				return compareFeatures(ipmb1.getFeature(), ipmb2.getFeature());
 			}
@@ -215,8 +212,7 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 
 	@Override
 	public String getElementName(Object item) {
-		if (item instanceof IFeatureModel) {
-			IFeatureModel model = (IFeatureModel) item;
+		if (item instanceof IFeatureModel model) {
 			return model.getFeature().getId();
 		}
 		return null;
