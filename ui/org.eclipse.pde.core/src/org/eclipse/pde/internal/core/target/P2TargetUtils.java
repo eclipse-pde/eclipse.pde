@@ -583,8 +583,7 @@ public class P2TargetUtils {
 			return installedIUs.isEmpty();
 		}
 		for (ITargetLocation container : containers) {
-			if (container instanceof IUBundleContainer) {
-				IUBundleContainer bc = (IUBundleContainer) container;
+			if (container instanceof IUBundleContainer bc) {
 				String[] ids = bc.getIds();
 				Version[] versions = bc.getVersions();
 				for (int j = 0; j < versions.length; j++) {

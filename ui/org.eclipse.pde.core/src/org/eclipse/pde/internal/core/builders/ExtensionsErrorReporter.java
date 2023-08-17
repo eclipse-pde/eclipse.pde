@@ -276,8 +276,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 			return;
 		}
 
-		if (schemaElement instanceof ISchemaRootElement) {
-			ISchemaRootElement rootElement = (ISchemaRootElement) schemaElement;
+		if (schemaElement instanceof ISchemaRootElement rootElement) {
 			String epid = schemaElement.getSchema().getPluginId();
 			if (fModel == null || fModel.getPluginBase() == null) {
 				return;
@@ -331,8 +330,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	}
 
 	private void computeAllowedElements(ISchemaType type, HashSet<String> elementSet) {
-		if (type instanceof ISchemaComplexType) {
-			ISchemaComplexType complexType = (ISchemaComplexType) type;
+		if (type instanceof ISchemaComplexType complexType) {
 			ISchemaCompositor compositor = complexType.getCompositor();
 			if (compositor != null) {
 				computeAllowedElements(compositor, elementSet);
@@ -350,8 +348,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 	private void computeAllowedElements(ISchemaCompositor compositor, HashSet<String> elementSet) {
 		ISchemaObject[] children = compositor.getChildren();
 		for (ISchemaObject child : children) {
-			if (child instanceof ISchemaObjectReference) {
-				ISchemaObjectReference ref = (ISchemaObjectReference) child;
+			if (child instanceof ISchemaObjectReference ref) {
 				ISchemaElement refElement = (ISchemaElement) ref.getReferencedObject();
 				if (refElement != null) {
 					elementSet.add(refElement.getName());
@@ -664,8 +661,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		Object[] children = restriction.getChildren();
 		String value = attr.getValue();
 		for (Object child : children) {
-			if (child instanceof ISchemaEnumeration) {
-				ISchemaEnumeration enumeration = (ISchemaEnumeration) child;
+			if (child instanceof ISchemaEnumeration enumeration) {
 				if (enumeration.getName().equals(value)) {
 					return;
 				}

@@ -92,8 +92,7 @@ public class BundleTextChangeListener extends AbstractKeyValueTextChangeListener
 				object = ((PackageFriend) object).getHeader();
 			}
 
-			if (object instanceof ManifestHeader) {
-				ManifestHeader header = (ManifestHeader) object;
+			if (object instanceof ManifestHeader header) {
 				Object op = fOperationTable.remove(header);
 				if (fReadableNames != null) {
 					fReadableNames.remove(op);

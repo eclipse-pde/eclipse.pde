@@ -187,8 +187,7 @@ public class WorkspaceExportHelper extends LaunchConfigurationDelegate {
 					if (project.exists()) {
 						projects.add(project);
 					}
-				} else if (exportedItem instanceof IFeatureModel) {
-					IFeatureModel feature = (IFeatureModel) exportedItem;
+				} else if (exportedItem instanceof IFeatureModel feature) {
 					IFeaturePlugin[] plugins = feature.getFeature().getPlugins();
 					for (IFeaturePlugin plugin : plugins) {
 						IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(plugin.getId());

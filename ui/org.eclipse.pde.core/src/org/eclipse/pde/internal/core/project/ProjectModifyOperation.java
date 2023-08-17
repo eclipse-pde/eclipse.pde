@@ -507,8 +507,7 @@ public class ProjectModifyOperation {
 		}
 
 		// manifest version
-		if (fModel instanceof IBundlePluginModelBase) {
-			IBundlePluginModelBase bmodel = ((IBundlePluginModelBase) fModel);
+		if (fModel instanceof IBundlePluginModelBase bmodel) {
 			// Target version is not persisted and does not make the model dirty.
 			// It is only used by the new project wizard to determine which templates are available.
 			((IBundlePluginBase) bmodel.getPluginBase()).setTargetVersion(targetVersion);
@@ -517,9 +516,7 @@ public class ProjectModifyOperation {
 				bmodel.getBundleModel().getBundle().setHeader(Constants.BUNDLE_MANIFESTVERSION, "2"); //$NON-NLS-1$
 			}
 		}
-		if (pluginBase instanceof IFragment) {
-			// host specification
-			IFragment fragment = (IFragment) pluginBase;
+		if (pluginBase instanceof IFragment fragment) {
 			IHostDescription host = description.getHost();
 			if (!isEqual(host, before.getHost())) {
 				fragment.setPluginId(host.getName());
@@ -688,8 +685,7 @@ public class ProjectModifyOperation {
 			}
 			// if the bundle model has been made dirty, ensure that propagates back to the root model
 			IBundleModel bundleModel = bundle.getModel();
-			if (bundleModel instanceof WorkspaceBundleModel) {
-				WorkspaceBundleModel wbm = (WorkspaceBundleModel) bundleModel;
+			if (bundleModel instanceof WorkspaceBundleModel wbm) {
 				if (wbm.isDirty()) {
 					fModel.setDirty(true);
 				}

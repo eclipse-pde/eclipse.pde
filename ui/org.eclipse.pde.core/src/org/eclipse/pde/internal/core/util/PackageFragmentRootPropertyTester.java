@@ -42,8 +42,7 @@ public class PackageFragmentRootPropertyTester extends PropertyTester {
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if (property.equals(PROP_IN_PLUGIN_CONTAINER)) {
 
-			if (receiver instanceof IPackageFragmentRoot) {
-				IPackageFragmentRoot element = (IPackageFragmentRoot) receiver;
+			if (receiver instanceof IPackageFragmentRoot element) {
 				try {
 					IClasspathEntry entry = element.getRawClasspathEntry();
 					IPath path = entry.getPath();

@@ -105,8 +105,7 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ExternalFileTargetHandle) {
-			ExternalFileTargetHandle target = (ExternalFileTargetHandle) obj;
+		if (obj instanceof ExternalFileTargetHandle target) {
 			return target.getLocation().equals(fURI);
 		}
 		return super.equals(obj);

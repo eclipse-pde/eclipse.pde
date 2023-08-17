@@ -49,8 +49,7 @@ public class BndResourceChangeListener implements IResourceChangeListener {
 					@Override
 					public boolean visit(IResourceDelta delta) throws CoreException {
 						IResource resource = delta.getResource();
-						if (resource instanceof IFile) {
-							IFile file = (IFile) resource;
+						if (resource instanceof IFile file) {
 							if (BndProject.INSTRUCTIONS_FILE.equals(file.getName())
 									&& BndProject.isBndProject(file.getProject())) {
 								updateProjects.add(file.getProject());

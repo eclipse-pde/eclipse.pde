@@ -96,10 +96,9 @@ public class RepositoryInfo extends ProductObject implements IRepositoryInfo {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof RepositoryInfo)) {
+		if (!(obj instanceof RepositoryInfo other)) {
 			return false;
 		}
-		RepositoryInfo other = (RepositoryInfo) obj;
 		return Objects.equals(fURL, other.fURL);
 	}
 

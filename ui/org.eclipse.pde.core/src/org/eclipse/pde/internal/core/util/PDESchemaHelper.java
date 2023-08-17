@@ -63,8 +63,7 @@ public class PDESchemaHelper {
 		if (restriction != null) {
 			Object[] children = restriction.getChildren();
 			for (Object child : children) {
-				if (child instanceof ISchemaEnumeration) {
-					ISchemaEnumeration enumeration = (ISchemaEnumeration) child;
+				if (child instanceof ISchemaEnumeration enumeration) {
 					String value = enumeration.getName();
 					if (value != null && value.length() > 0) {
 						attributeMap.put(value, null);
@@ -146,8 +145,7 @@ public class PDESchemaHelper {
 	}
 
 	private static String buildBasedOnValue(ISchemaObject object) {
-		if (object instanceof ISchemaElement && !(object instanceof ISchemaRootElement)) {
-			ISchemaElement schemaElement = (ISchemaElement) object;
+		if (object instanceof ISchemaElement schemaElement && !(object instanceof ISchemaRootElement)) {
 			ISchema schema = schemaElement.getSchema();
 			ISchemaElement[] elements = schema.getElements();
 			for (ISchemaElement element : elements) {

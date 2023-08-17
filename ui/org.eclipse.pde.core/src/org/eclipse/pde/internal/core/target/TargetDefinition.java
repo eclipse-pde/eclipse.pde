@@ -1219,9 +1219,8 @@ public class TargetDefinition implements ITargetDefinition {
 		NodeList nodes = containersElement.getChildNodes();
 		for (int j = 0; j < nodes.getLength(); j++) {
 			Node node = nodes.item(j);
-			if (node instanceof Element
+			if (node instanceof Element element
 					&& node.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.LOCATION)) {
-				Element element = (Element) node;
 				String type = (element).getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE);
 				switch (type) {
 				case IUBundleContainer.TYPE:

@@ -40,8 +40,7 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 
 	@Override
 	public boolean equals(Object object) {
-		if (object instanceof ImportObject) {
-			ImportObject io = (ImportObject) object;
+		if (object instanceof ImportObject io) {
 			if (iimport.equals(io.getImport())) {
 				return true;
 			}

@@ -448,8 +448,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			return;
 		}
 
-		if (pModel instanceof IBundlePluginModel) {
-			IBundlePluginModel bModel = (IBundlePluginModel) pModel;
+		if (pModel instanceof IBundlePluginModel bModel) {
 			IManifestHeader header = bModel.getBundleModel().getBundle().getManifestHeader(ICoreConstants.ECLIPSE_BUNDLE_SHAPE);
 			if (header != null) {
 				String value = header.getValue();

@@ -132,8 +132,7 @@ public class BndProjectManager {
 			@SuppressWarnings("deprecation")
 			IContainer[] containers = root.findContainersForLocation(IPath.fromOSString(base.getAbsolutePath()));
 			for (IContainer container : containers) {
-				if (container instanceof IProject) {
-					IProject p = (IProject) container;
+				if (container instanceof IProject p) {
 					entries.add(JavaCore.newProjectEntry(p.getFullPath()));
 				}
 			}

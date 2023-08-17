@@ -275,10 +275,9 @@ public class FeatureModelManager {
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_REMOVED) != 0) {
 			IModel[] removed = e.getRemovedModels();
 			for (int i = 0; i < removed.length; i++) {
-				if (!(removed[i] instanceof IFeatureModel)) {
+				if (!(removed[i] instanceof IFeatureModel model)) {
 					continue;
 				}
-				IFeatureModel model = (IFeatureModel) removed[i];
 				FeatureTable.Idver idver = fActiveModels.remove(model);
 				if (idver != null) {
 					// may need to activate another model
@@ -295,10 +294,9 @@ public class FeatureModelManager {
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_ADDED) != 0) {
 			IModel[] added = e.getAddedModels();
 			for (int i = 0; i < added.length; i++) {
-				if (!(added[i] instanceof IFeatureModel)) {
+				if (!(added[i] instanceof IFeatureModel model)) {
 					continue;
 				}
-				IFeatureModel model = (IFeatureModel) added[i];
 				if (model.getUnderlyingResource() != null) {
 					FeatureTable.Idver idver = fActiveModels.add(model);
 					delta.add(model, IFeatureModelDelta.ADDED);
@@ -339,11 +337,9 @@ public class FeatureModelManager {
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_CHANGED) != 0) {
 			IModel[] changed = e.getChangedModels();
 			for (int i = 0; i < changed.length; i++) {
-				if (!(changed[i] instanceof IFeatureModel)) {
+				if (!(changed[i] instanceof IFeatureModel model)) {
 					continue;
 				}
-				IFeatureModel model = (IFeatureModel) changed[i];
-
 				String id = model.getFeature().getId();
 				String version = model.getFeature().getVersion();
 
@@ -373,10 +369,9 @@ public class FeatureModelManager {
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_CHANGED) != 0) {
 			IModel[] changed = e.getChangedModels();
 			for (int i = 0; i < changed.length; i++) {
-				if (!(changed[i] instanceof IFeatureModel)) {
+				if (!(changed[i] instanceof IFeatureModel model)) {
 					continue;
 				}
-				IFeatureModel model = (IFeatureModel) changed[i];
 				if (!delta.contains(model, IFeatureModelDelta.ADDED | IFeatureModelDelta.REMOVED)) {
 					delta.add(model, IFeatureModelDelta.CHANGED);
 				}
