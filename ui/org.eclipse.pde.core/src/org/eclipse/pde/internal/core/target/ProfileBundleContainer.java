@@ -288,8 +288,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof ProfileBundleContainer) {
-			ProfileBundleContainer pbc = (ProfileBundleContainer) o;
+		if (o instanceof ProfileBundleContainer pbc) {
 			return fHome.equals(pbc.fHome) && isNullOrEqual(pbc.fConfiguration, fConfiguration);
 		}
 		return false;

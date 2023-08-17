@@ -57,8 +57,7 @@ public class BundleClasspathSpecification implements IBundleClasspathEntry {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof IBundleClasspathEntry) {
-			IBundleClasspathEntry spec = (IBundleClasspathEntry) obj;
+		if (obj instanceof IBundleClasspathEntry spec) {
 			return equalOrNull(getSourcePath(), spec.getSourcePath()) && equalOrNull(getBinaryPath(), spec.getBinaryPath()) && equalOrNull(getLibrary(), spec.getLibrary());
 		}
 		return false;

@@ -256,10 +256,9 @@ public class PDEExtensionRegistry {
 
 	// make sure we return the right IPluginModelBase when we have multiple versions of a plug-in Id
 	private IPluginModelBase getPlugin(IContributor icontributor, boolean searchAll) {
-		if (!(icontributor instanceof RegistryContributor)) {
+		if (!(icontributor instanceof RegistryContributor contributor)) {
 			return null;
 		}
-		RegistryContributor contributor = (RegistryContributor) icontributor;
 		long bundleId = Long.parseLong(contributor.getActualId());
 		BundleDescription desc = PDECore.getDefault().getModelManager().getState().getState().getBundle(Long.parseLong(contributor.getActualId()));
 		if (desc != null) {

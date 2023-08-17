@@ -96,14 +96,12 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	@Override
 	public void save() {
-		if (fBundleModel != null && fBundleModel instanceof IEditableModel) {
-			IEditableModel emodel = (IEditableModel) fBundleModel;
+		if (fBundleModel != null && fBundleModel instanceof IEditableModel emodel) {
 			if (emodel.isDirty()) {
 				emodel.save();
 			}
 		}
-		if (fExtensionsModel != null && fExtensionsModel instanceof IEditableModel) {
-			IEditableModel emodel = (IEditableModel) fExtensionsModel;
+		if (fExtensionsModel != null && fExtensionsModel instanceof IEditableModel emodel) {
 			if (emodel.isDirty()) {
 				emodel.save();
 			}

@@ -53,8 +53,7 @@ public class CustomHeaderAnnotationProcessor implements OSGiAnnotationProcessor 
 
 	@Override
 	public void apply(IBaseModel model) {
-		if (model instanceof IBundlePluginModelBase) {
-			IBundlePluginModelBase pluginModel = (IBundlePluginModelBase) model;
+		if (model instanceof IBundlePluginModelBase pluginModel) {
 			IBundleModel bundleModel = pluginModel.getBundleModel();
 			IBundle bundle = bundleModel.getBundle();
 			for (Entry<String, String> entry : headers) {

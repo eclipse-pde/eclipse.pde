@@ -153,8 +153,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		if (type == null) {
 			text += "EMPTY"; //$NON-NLS-1$
 		} else {
-			if (type instanceof ISchemaComplexType) {
-				ISchemaComplexType complexType = (ISchemaComplexType) type;
+			if (type instanceof ISchemaComplexType complexType) {
 				ISchemaCompositor compositor = complexType.getCompositor();
 				if (compositor != null) {
 					text += calculateChildRepresentation(compositor, addLinks);
@@ -220,8 +219,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 		super.setParent(parent);
 		if (type != null) {
 			type.setSchema(getSchema());
-			if (type instanceof ISchemaComplexType) {
-				ISchemaComplexType ctype = (ISchemaComplexType) type;
+			if (type instanceof ISchemaComplexType ctype) {
 				ISchemaCompositor comp = ctype.getCompositor();
 				if (comp != null) {
 					comp.setParent(this);
@@ -318,8 +316,7 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 			writer.println(indent2 + "</annotation>"); //$NON-NLS-1$
 		}
 
-		if (type instanceof SchemaComplexType) {
-			SchemaComplexType complexType = (SchemaComplexType) type;
+		if (type instanceof SchemaComplexType complexType) {
 			complexType.write(indent2, writer);
 		}
 		writer.println(indent + "</element>"); //$NON-NLS-1$

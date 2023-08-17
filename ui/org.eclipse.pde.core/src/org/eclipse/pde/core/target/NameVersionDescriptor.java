@@ -78,8 +78,7 @@ public class NameVersionDescriptor {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof NameVersionDescriptor) {
-			NameVersionDescriptor iud = (NameVersionDescriptor) obj;
+		if (obj instanceof NameVersionDescriptor iud) {
 			if (fId.equals(iud.fId)) {
 				return (fVersion != null && fVersion.equals(iud.fVersion)) || (fVersion == null && iud.fVersion == null);
 			}

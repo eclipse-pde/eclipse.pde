@@ -106,8 +106,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof WorkspaceFileTargetHandle) {
-			WorkspaceFileTargetHandle handle = (WorkspaceFileTargetHandle) obj;
+		if (obj instanceof WorkspaceFileTargetHandle handle) {
 			return fFile.equals(handle.fFile);
 		}
 		return false;

@@ -209,8 +209,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (obj instanceof EncodingEntry) {
-				EncodingEntry other = (EncodingEntry) obj;
+			if (obj instanceof EncodingEntry other) {
 				return other.fEncoding.equals(fEncoding) && other.fResource.equals(fResource);
 			}
 			return false;
@@ -412,8 +411,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 	private IPath getPath(Object entry) {
 		IPath path = null;
-		if (entry instanceof IClasspathEntry) {
-			IClasspathEntry cpes = (IClasspathEntry) entry;
+		if (entry instanceof IClasspathEntry cpes) {
 			path = cpes.getPath();
 		} else if (entry instanceof IPath) {
 			path = (IPath) entry;

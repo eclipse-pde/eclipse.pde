@@ -200,8 +200,7 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof FeatureBundleContainer) {
-			FeatureBundleContainer fbc = (FeatureBundleContainer) o;
+		if (o instanceof FeatureBundleContainer fbc) {
 			return fHome.equals(fbc.fHome) && fId.equals(fbc.fId) && isNullOrEqual(fVersion, fVersion);
 		}
 		return false;
