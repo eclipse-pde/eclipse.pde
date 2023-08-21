@@ -49,6 +49,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 			IResource resource = delta.getResource();
 
 			if (resource instanceof IProject project) {
+				// Only check projects with feature nature
 				try {
 					return (project.hasNature(PDE.FEATURE_NATURE));
 				} catch (CoreException e) {
@@ -57,6 +58,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 				}
 			}
 			if (resource instanceof IFile candidate) {
+				// see if this is it
 				if (isManifestFile(candidate)) {
 					// That's it, but only check it if it has been added or changed
 					if (delta.getKind() != IResourceDelta.REMOVED) {

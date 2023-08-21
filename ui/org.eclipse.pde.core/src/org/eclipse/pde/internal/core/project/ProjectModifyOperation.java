@@ -517,6 +517,7 @@ public class ProjectModifyOperation {
 			}
 		}
 		if (pluginBase instanceof IFragment fragment) {
+			// host specification
 			IHostDescription host = description.getHost();
 			if (!isEqual(host, before.getHost())) {
 				fragment.setPluginId(host.getName());

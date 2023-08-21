@@ -46,6 +46,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 			IResource resource = delta.getResource();
 
 			if (resource instanceof IProject project) {
+				// Only check projects with feature nature
 				try {
 					return (project.hasNature(PDE.SITE_NATURE));
 				} catch (CoreException e) {
@@ -54,6 +55,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 				}
 			}
 			if (resource instanceof IFile candidate) {
+				// see if this is it
 				if (candidate.getName().equals("site.xml")) { //$NON-NLS-1$
 					// That's it, but only check it if it has been added or changed
 					if (delta.getKind() != IResourceDelta.REMOVED) {
