@@ -70,6 +70,7 @@ public class ExtensionPointSchemaBuilder extends IncrementalProjectBuilder {
 			}
 
 			if (resource instanceof IFile candidate) {
+				// see if this is it
 				if (isSchemaFile(candidate)) {
 					// That's it, but only check it if it has been added or changed
 					if (delta.getKind() != IResourceDelta.REMOVED) {
