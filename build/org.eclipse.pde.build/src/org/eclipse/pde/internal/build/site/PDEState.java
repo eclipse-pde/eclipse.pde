@@ -492,11 +492,13 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		// The pre-defined lists of system-packages are incomplete. Always overwrite, if we have a more up-to-date one.
 		String systemPackages = querySystemPackages(environment, profileProperties);
 		if (systemPackages.isBlank() && profileProperties != null) {
-			// Unable to compute system-packages, probably OSGi specific EE, use the those its profile
+			// Unable to compute system-packages, probably OSGi specific EE. Use exactly the packages specified in its profile
 			systemPackages = profileProperties.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
 		}
 		if (systemPackages == null || systemPackages.isBlank()) {
-			LOGGER.warn("No JVM system-packages available for environment " + environment); //$NON-NLS-1$  
+			if (compatibleVMsFor(environment, s -> s).findAny().isPresent()) {
+				LOGGER.warn("No JVM system-packages available for environment " + environment); //$NON-NLS-1$  
+			}
 			return null;
 		}
 		return systemPackages;
@@ -515,7 +517,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		}
 		Collection<String> systemPackages;
 		if (releaseVersion <= 8) {
-			var strictVMSystemPackages = bestVmInstallsFor(environment, vms -> vms.filter(environment::isStrictlyCompatible)) // Use only selected VM or perfect matches
+			var strictVMSystemPackages = compatibleVMsFor(environment, vms -> vms.filter(environment::isStrictlyCompatible)) // Use only selected VM or perfect matches
 					.map(vm -> querySystemPackages(vm, null)) // In case a VM is selected for an EE, query that VM and use its system-packages
 					.filter(Objects::nonNull).findFirst();
 			systemPackages = strictVMSystemPackages.orElseGet(() -> {
@@ -545,7 +547,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 			});
 		} else {
 			Comparator<IVMInstall> strictlyCompatibleFirst = Comparator.comparing(environment::isStrictlyCompatible).reversed(); // false<true
-			systemPackages = bestVmInstallsFor(environment, vms -> vms.sorted(strictlyCompatibleFirst)) // Query strictly compatible first
+			systemPackages = compatibleVMsFor(environment, vms -> vms.sorted(strictlyCompatibleFirst)) // Query strictly compatible first
 					.map(vm -> querySystemPackages(vm, environment)) //
 					.filter(Objects::nonNull).findFirst().orElse(List.of());
 		}
@@ -685,7 +687,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		return null;
 	}
 
-	private static Stream<IVMInstall> bestVmInstallsFor(IExecutionEnvironment environment, UnaryOperator<Stream<IVMInstall>> vmInstallsFilter) {
+	private static Stream<IVMInstall> compatibleVMsFor(IExecutionEnvironment environment, UnaryOperator<Stream<IVMInstall>> vmInstallsFilter) {
 		IVMInstall defaultVM = environment.getDefaultVM();
 		if (defaultVM != null) {
 			return Stream.of(defaultVM); // User selected a VM for the EE, only consider that
