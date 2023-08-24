@@ -532,14 +532,18 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 				if (javaPackages == null) {
 					String profileSystemPackages = preJava9ProfileProperties.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES, ""); //$NON-NLS-1$
 					if (profileSystemPackages.isBlank()) {
-						return null;
+						return List.of();
 					}
 					javaPackages = COMMA.splitAsStream(profileSystemPackages).filter(p -> p.startsWith("java.")).toList(); //$NON-NLS-1$
 				}
 				IVMInstall targetVM = JavaRuntime.getDefaultVMInstall(); // Set by the Target-Definition if specified there
+				if (targetVM == null) {
+					LOGGER.warn("No default JRE installation selected"); //$NON-NLS-1$
+					return List.of();
+				}
 				Collection<String> targetVMSystemPackages = querySystemPackages(targetVM, null);
 				if (targetVMSystemPackages == null) {
-					return null;
+					return List.of();
 				}
 				Stream<String> targetVMNonJavaPackages = targetVMSystemPackages.stream().filter(p -> !p.startsWith("java.")); //$NON-NLS-1$
 
