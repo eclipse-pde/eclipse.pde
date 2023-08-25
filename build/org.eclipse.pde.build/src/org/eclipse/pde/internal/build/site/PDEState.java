@@ -656,10 +656,10 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 					try (ZipFile zip = new ZipFile(path.toFile())) {
 						// Collect names of all directories that contain a .class file
 						zip.stream().filter(e -> !e.isDirectory()).map(ZipEntry::getName) //
-								.filter(n -> n.endsWith(".class")) //$NON-NLS-1$
+								.filter(n -> n.endsWith(".class") && n.indexOf('/') > 0) //$NON-NLS-1$
 								.map(n -> n.substring(0, n.lastIndexOf('/'))) //
 								.forEach(classFileDirectories::add);
-					} catch (IOException e) {
+					} catch (Exception e) {
 						LOGGER.error("Failed to read packages in JVM library for " + vm + ", at " + path, e); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
