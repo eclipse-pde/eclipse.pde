@@ -299,7 +299,9 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 		}
 		if (!(this instanceof WorkspaceBaseline)) {
 			Dictionary<String, Object> dictionary = new Hashtable<>();
-			dictionary.put(Constants.FRAMEWORK_SYSTEMPACKAGES, value);
+			if (value != null) {
+				dictionary.put(Constants.FRAMEWORK_SYSTEMPACKAGES, value);
+			}
 			value = profile.getProperty(Constants.FRAMEWORK_EXECUTIONENVIRONMENT);
 			if (value != null) {
 				dictionary.put(Constants.FRAMEWORK_EXECUTIONENVIRONMENT, value);
