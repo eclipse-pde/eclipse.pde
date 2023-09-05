@@ -1218,7 +1218,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				List<ExportPackageDescription> exports = exported.getOrDefault(name, List.of());
 				if (!exports.isEmpty()) {
 					exports.sort(RESOLVED_FIRST);
-					ExportPackageDescription export = exports.get(0);
+					for (ExportPackageDescription export : exports) {
 					if (export.getSupplier().isResolved()) {
 						Version version = export.getVersion();
 						org.eclipse.osgi.service.resolver.VersionRange range = importSpec.getVersionRange();
@@ -1238,7 +1238,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 								if (importValue == null || !importValue.equals(exportValue)) {
 									VirtualMarker marker = report(
 											NLS.bind(PDECoreMessages.BundleErrorReporter_MissingMandatoryDirective,
-													name, mandatory),
+													new String[] { name, mandatory, export.getExporter().getName() }),
 											getPackageLine(header, element), severity,
 											PDEMarkerFactory.M_NO_MANDATORY_ATTR_IMPORT_PACKAGE,
 											PDEMarkerFactory.CAT_FATAL);
@@ -1250,7 +1250,6 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 										marker.setAttribute("mandatoryAttrName", mandatory); //$NON-NLS-1$
 										marker.setAttribute("mandatoryAttrValue", exportValue); //$NON-NLS-1$
 									}
-									return;
 								}
 							}
 						}
@@ -1259,6 +1258,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						addMarkerAttribute(marker,PDEMarkerFactory.compilerKey, CompilerFlags.P_UNRESOLVED_IMPORTS);
 						return;
 					}
+				}
+					return;
 				}
 
 				VirtualMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_PackageNotExported, name),
