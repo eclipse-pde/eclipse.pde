@@ -19,13 +19,10 @@ package org.eclipse.pde.internal.ui.launcher;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.StringTokenizer;
+import java.util.Objects;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -39,6 +36,7 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TracingOptionsManager;
+import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
@@ -48,8 +46,7 @@ import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.pde.ui.launcher.TracingTab;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -65,12 +62,12 @@ public class TracingBlock {
 	private Button fTracingCheck;
 	private CheckboxTableViewer fPluginViewer;
 	private IPluginModelBase[] fTraceableModels;
-	private final Properties fMasterOptions = new Properties();
+	private final Map<String, String> fMasterOptions = new HashMap<>();
 	private Button fSelectAllButton;
 	private Button fDeselectAllButton;
 	private Button fRestoreSelectedDefaultButton;
 	private Button fRestoreDefaultButton;
-	private final Hashtable<IPluginModelBase, TracingPropertySource> fPropertySources = new Hashtable<>();
+	private final Map<IPluginModelBase, TracingPropertySource> fPropertySources = new HashMap<>();
 	private FormToolkit fToolkit;
 	private ScrolledPageBook fPageBook;
 
@@ -93,12 +90,13 @@ public class TracingBlock {
 		fTracingCheck.setText(PDEUIMessages.TracingLauncherTab_tracing);
 		fTracingCheck.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fTracingCheck.addSelectionListener(widgetSelectedAdapter(e -> {
-			masterCheckChanged(true);
+			masterCheckChanged();
 			fTab.updateLaunchConfigurationDialog();
 			if (fTracingCheck.getSelection()) {
 				IStructuredSelection selection = fPluginViewer.getStructuredSelection();
 				if (!selection.isEmpty()) {
-					pluginSelected((IPluginModelBase) selection.getFirstElement(), fPluginViewer.getChecked(selection.getFirstElement()));
+					pluginSelected((IPluginModelBase) selection.getFirstElement(),
+							fPluginViewer.getChecked(selection.getFirstElement()));
 				}
 			}
 		}));
@@ -198,58 +196,49 @@ public class TracingBlock {
 		fRestoreSelectedDefaultButton.setText(PDEUIMessages.TracingBlock_restore_default_selected);
 		fRestoreSelectedDefaultButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fRestoreSelectedDefaultButton);
-		fRestoreSelectedDefaultButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection selec = fPluginViewer.getStructuredSelection();
-				if (selec.getFirstElement() instanceof IPluginModelBase) {
-					IPluginModelBase model = (IPluginModelBase) selec.getFirstElement();
-					String modelName = model.getBundleDescription().getSymbolicName();
-					if (modelName != null) {
-						Properties properties = PDECore.getDefault().getTracingOptionsManager()
-								.getTracingTemplateCopy();
-						for (String key : properties.stringPropertyNames()) {
-							if (key.startsWith(modelName + '/')) {
-								fMasterOptions.remove(key);
-								fMasterOptions.put(key, properties.getProperty(key));
-								TracingPropertySource source = getPropertySource(model);
-								source.setChanged(true);
-							}
+		fRestoreSelectedDefaultButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			IStructuredSelection selec = fPluginViewer.getStructuredSelection();
+			if (selec.getFirstElement() instanceof IPluginModelBase model) {
+				String modelName = model.getBundleDescription().getSymbolicName();
+				if (modelName != null) {
+					Map<String, String> properties = PDECore.getDefault().getTracingOptionsManager()
+							.getTracingTemplateCopy();
+					properties.forEach((key, value) -> {
+						if (key.startsWith(modelName + '/')) {
+							fMasterOptions.put(key, value);
+							TracingPropertySource source = getPropertySource(model);
+							source.setChanged(true);
 						}
-						pluginSelected(model, fPluginViewer.getChecked(model));
-					}
+					});
+					pluginSelected(model, fPluginViewer.getChecked(model));
 				}
 			}
-		});
+		}));
 
 		fRestoreDefaultButton = new Button(container, SWT.PUSH);
 		fRestoreDefaultButton.setText(PDEUIMessages.TracingBlock_restore_default);
 		fRestoreDefaultButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fRestoreDefaultButton);
-		fRestoreDefaultButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				disposePropertySources();
-				fMasterOptions.clear();
-				fMasterOptions.putAll(PDECore.getDefault().getTracingOptionsManager().getTracingTemplateCopy());
-				Object elements[] = fPluginViewer.getCheckedElements();
-				for (int i = 0; i < elements.length; i++) {
-					if (elements[i] instanceof IPluginModelBase) {
-						IPluginModelBase model = (IPluginModelBase) (elements[i]);
-						TracingPropertySource source = getPropertySource(model);
-						PageBookKey key = new PageBookKey(model, true);
-						Composite parent = fPageBook.createPage(key);
-						source.createContents(parent, true);
-						source.setChanged(false);
-					}
-				}
-				IStructuredSelection selec = fPluginViewer.getStructuredSelection();
-				if (selec.getFirstElement() instanceof IPluginModelBase) {
-					IPluginModelBase model = (IPluginModelBase) fPluginViewer.getStructuredSelection().getFirstElement();
-					pluginSelected(model, fPluginViewer.getChecked(model));
+		fRestoreDefaultButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			disposePropertySources();
+			fMasterOptions.clear();
+			fMasterOptions.putAll(PDECore.getDefault().getTracingOptionsManager().getTracingTemplateCopy());
+			Object[] elements = fPluginViewer.getCheckedElements();
+			for (Object element : elements) {
+				if (element instanceof IPluginModelBase model) {
+					TracingPropertySource source = getPropertySource(model);
+					PageBookKey key = new PageBookKey(model, true);
+					Composite parentPage = fPageBook.createPage(key);
+					source.createContents(parentPage, true);
+					source.setChanged(false);
 				}
 			}
-		});
+			IStructuredSelection selec = fPluginViewer.getStructuredSelection();
+			if (selec.getFirstElement() instanceof IPluginModelBase) {
+				IPluginModelBase model = (IPluginModelBase) fPluginViewer.getStructuredSelection().getFirstElement();
+				pluginSelected(model, fPluginViewer.getChecked(model));
+			}
+		}));
 	}
 
 	protected int createPropertySheet(Composite parent) {
@@ -282,28 +271,18 @@ public class TracingBlock {
 		try {
 			fTracingCheck.setSelection(config.getAttribute(IPDELauncherConstants.TRACING, false));
 			Map<String, String> options = config.getAttribute(IPDELauncherConstants.TRACING_OPTIONS, (Map<String, String>) null);
-			if (options == null) {
-				fMasterOptions.putAll(PDECore.getDefault().getTracingOptionsManager().getTracingTemplateCopy());
-			} else {
-				fMasterOptions.putAll(PDECore.getDefault().getTracingOptionsManager().getTracingOptions(options));
-			}
-			masterCheckChanged(false);
+			TracingOptionsManager mgr = PDECore.getDefault().getTracingOptionsManager();
+			fMasterOptions.putAll(options == null ? mgr.getTracingTemplateCopy() : mgr.getTracingOptions(options));
+			masterCheckChanged();
 			String checked = config.getAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null);
 			if (checked == null) {
 				fPluginViewer.setAllChecked(true);
 			} else if (checked.equals(IPDELauncherConstants.TRACING_NONE)) {
 				fPluginViewer.setAllChecked(false);
 			} else {
-				StringTokenizer tokenizer = new StringTokenizer(checked, ","); //$NON-NLS-1$
-				ArrayList<IPluginModelBase> list = new ArrayList<>();
-				while (tokenizer.hasMoreTokens()) {
-					String id = tokenizer.nextToken();
-					IPluginModelBase model = PluginRegistry.findModel(id);
-					model = PluginRegistry.findModel(id);
-					if (model != null) {
-						list.add(model);
-					}
-				}
+				List<IPluginModelBase> list = LaunchArgumentsHelper.splitElementsByComma(checked) //
+						.map(PluginRegistry::findModel).filter(Objects::nonNull).toList();
+
 				fPluginViewer.setCheckedElements(list.toArray());
 				IPluginModelBase model = getLastSelectedPlugin();
 				if (model == null && !list.isEmpty()) {
@@ -328,21 +307,20 @@ public class TracingBlock {
 		config.setAttribute(IPDELauncherConstants.TRACING, tracingEnabled);
 		if (tracingEnabled) {
 			boolean changes = false;
-			for (Enumeration<TracingPropertySource> elements = fPropertySources.elements(); elements.hasMoreElements();) {
-				TracingPropertySource source = elements.nextElement();
+			for (TracingPropertySource source : fPropertySources.values()) {
 				if (source.isModified()) {
 					changes = true;
 					source.save();
 				}
 			}
 			if (changes) {
-				HashMap<String, String> atts = new HashMap<>(fMasterOptions.size());
-				for (Entry<Object, Object> entry : fMasterOptions.entrySet()) {
-					String key = (String) entry.getKey();
+				Map<String, String> atts = new HashMap<>(fMasterOptions.size());
+				fMasterOptions.forEach((key, value) -> {
 					// these are comment keys which we don't want to save
-					if (!key.startsWith("#")) //$NON-NLS-1$
-						atts.put(key, (String) entry.getValue());
-				}
+					if (!key.startsWith("#")) { //$NON-NLS-1$
+						atts.put(key, value);
+					}
+				});
 				config.setAttribute(IPDELauncherConstants.TRACING_OPTIONS, atts);
 			}
 		}
@@ -383,10 +361,9 @@ public class TracingBlock {
 	}
 
 	private IPluginModelBase getSelectedModel() {
-		if (fTracingCheck.isEnabled()) {
-			Object item = fPluginViewer.getStructuredSelection().getFirstElement();
-			if (item instanceof IPluginModelBase)
-				return ((IPluginModelBase) item);
+		if (fTracingCheck.isEnabled()
+				&& fPluginViewer.getStructuredSelection().getFirstElement() instanceof IPluginModelBase pluginModel) {
+			return pluginModel;
 		}
 		return null;
 	}
@@ -409,7 +386,7 @@ public class TracingBlock {
 	private IPluginModelBase[] getTraceableModels() {
 		if (fTraceableModels == null) {
 			IPluginModelBase[] models = PluginRegistry.getActiveModels();
-			ArrayList<IPluginModelBase> result = new ArrayList<>();
+			List<IPluginModelBase> result = new ArrayList<>();
 			for (IPluginModelBase model : models) {
 				if (TracingOptionsManager.isTraceable(model))
 					result.add(model);
@@ -456,22 +433,20 @@ public class TracingBlock {
 	private TracingPropertySource getPropertySource(IPluginModelBase model) {
 		if (model == null)
 			return null;
-		TracingPropertySource source = fPropertySources.get(model);
-		if (source == null) {
-			String id = model.getPluginBase().getId();
-			Hashtable<String, String> defaults = PDECore.getDefault().getTracingOptionsManager().getTemplateTable(id);
-			source = new TracingPropertySource(model, fMasterOptions, defaults, this);
-			fPropertySources.put(model, source);
+		return fPropertySources.computeIfAbsent(model, m -> {
+			String id = m.getPluginBase().getId();
+			Map<String, String> defaults = PDECore.getDefault().getTracingOptionsManager().getTemplateTable(id);
+			TracingPropertySource source = new TracingPropertySource(m, fMasterOptions, defaults, this);
 			source.setChanged(true);
-		}
-		return source;
+			return source;
+		});
 	}
 
-	private void masterCheckChanged(boolean userChange) {
+	private void masterCheckChanged() {
 		boolean enabled = fTracingCheck.getSelection();
 		fPluginViewer.getTable().setEnabled(enabled);
 		Control currentPage = fPageBook.getCurrentPage();
-		if (currentPage != null && enabled == false) {
+		if (currentPage != null && !enabled) {
 			fPageBook.showEmptyPage();
 		}
 		if (enabled) {
@@ -479,47 +454,25 @@ public class TracingBlock {
 		}
 
 		int count = 0;
-		if(fPluginViewer!=null)
+		if (fPluginViewer != null)
 			count = fPluginViewer.getTable().getItemCount();
 		fSelectAllButton.setEnabled(enabled && count > 0);
 		fDeselectAllButton.setEnabled(enabled && count > 0);
 		fRestoreDefaultButton.setEnabled(enabled && count > 0);
 		fRestoreSelectedDefaultButton.setEnabled(!fPluginViewer.getStructuredSelection().isEmpty());
-		if (enabled == false) {
+		if (!enabled) {
 			fRestoreSelectedDefaultButton.setEnabled(false);
 		}
 	}
 
 	private void disposePropertySources() {
-		Enumeration<TracingPropertySource> elements = fPropertySources.elements();
-		while (elements.hasMoreElements()) {
-			TracingPropertySource source = elements.nextElement();
+		for (TracingPropertySource source : fPropertySources.values()) {
 			fPageBook.removePage(source.getModel());
 		}
 		fPropertySources.clear();
 	}
 
-	private static class PageBookKey {
-		IPluginModelBase fModel;
-		boolean fEnabled;
-
-		PageBookKey(IPluginModelBase model, boolean enabled) {
-			fModel = model;
-			fEnabled = enabled;
-		}
-
-		@Override
-		public boolean equals(Object object) {
-			if (object instanceof PageBookKey) {
-				return fEnabled == ((PageBookKey) object).fEnabled && fModel.equals(((PageBookKey) object).fModel);
-			}
-			return false;
-		}
-
-		@Override
-		public int hashCode() {
-			return fModel.hashCode() + (fEnabled ? 1 : 0);
-		}
+	private record PageBookKey(IPluginModelBase fModel, boolean fEnabled) {
 	}
 
 }

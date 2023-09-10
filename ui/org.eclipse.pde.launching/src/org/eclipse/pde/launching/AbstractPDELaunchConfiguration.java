@@ -25,7 +25,6 @@ import java.util.Set;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -379,7 +378,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 		// add tracing, if turned on
 		if (configuration.getAttribute(IPDELauncherConstants.TRACING, false) && !IPDELauncherConstants.TRACING_NONE.equals(configuration.getAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null))) {
 			programArgs.add("-debug"); //$NON-NLS-1$
-			programArgs.add(LaunchArgumentsHelper.getTracingFileArgument(configuration, getConfigDir(configuration).toString() + IPath.SEPARATOR + ICoreConstants.OPTIONS_FILENAME));
+			programArgs.add(LaunchArgumentsHelper.getTracingFileArgument(configuration, getConfigDir(configuration).toPath().resolve(ICoreConstants.OPTIONS_FILENAME)));
 		}
 
 		// add the program args specified by the user
@@ -459,8 +458,9 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 *         configuration
 	 */
 	protected File getConfigDir(ILaunchConfiguration configuration) {
-		if (fConfigDir == null)
+		if (fConfigDir == null) {
 			fConfigDir = LaunchConfigurationHelper.getConfigurationArea(configuration);
+		}
 		return fConfigDir;
 	}
 
