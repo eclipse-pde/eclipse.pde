@@ -22,6 +22,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -540,8 +541,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 		TargetPlatformHelper.checkPluginPropertiesConsistency(fAllBundles, getConfigurationDirectory(configuration));
 
 		programArgs.add("-configuration"); //$NON-NLS-1$
-		programArgs.add("file:" //$NON-NLS-1$
-				+ IPath.fromOSString(getConfigurationDirectory(configuration).getPath()).addTrailingSeparator().toString());
+		programArgs.add("file:" + IPath.fromFile(getConfigurationDirectory(configuration)).addTrailingSeparator()); //$NON-NLS-1$
 
 		// Specify the output folder names
 		programArgs.add("-dev"); //$NON-NLS-1$
@@ -552,8 +552,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 		if (configuration.getAttribute(IPDELauncherConstants.TRACING, false) && !IPDELauncherConstants.TRACING_NONE
 				.equals(configuration.getAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null))) {
 			programArgs.add("-debug"); //$NON-NLS-1$
-			String path = getConfigurationDirectory(configuration).getPath() + IPath.SEPARATOR
-					+ ICoreConstants.OPTIONS_FILENAME;
+			Path path = getConfigurationDirectory(configuration).toPath().resolve(ICoreConstants.OPTIONS_FILENAME);
 			programArgs.add(LaunchArgumentsHelper.getTracingFileArgument(configuration, path));
 		}
 

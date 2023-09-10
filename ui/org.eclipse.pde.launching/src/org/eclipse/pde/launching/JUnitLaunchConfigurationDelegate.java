@@ -18,6 +18,7 @@
 package org.eclipse.pde.launching;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -246,7 +247,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		// Create the .options file if tracing is turned on
 		if (configuration.getAttribute(IPDELauncherConstants.TRACING, false) && !IPDELauncherConstants.TRACING_NONE.equals(configuration.getAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null))) {
 			programArgs.add("-debug"); //$NON-NLS-1$
-			String path = getConfigurationDirectory(configuration).getPath() + IPath.SEPARATOR + ICoreConstants.OPTIONS_FILENAME;
+			Path path = getConfigurationDirectory(configuration).toPath().resolve(ICoreConstants.OPTIONS_FILENAME);
 			programArgs.add(LaunchArgumentsHelper.getTracingFileArgument(configuration, path));
 		}
 

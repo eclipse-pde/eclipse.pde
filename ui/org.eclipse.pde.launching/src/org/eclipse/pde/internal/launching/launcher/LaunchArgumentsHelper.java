@@ -17,11 +17,13 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -240,44 +242,41 @@ public class LaunchArgumentsHelper {
 		return map;
 	}
 
-	public static String getTracingFileArgument(ILaunchConfiguration config, String optionsFileName) {
+	public static String getTracingFileArgument(ILaunchConfiguration config, Path optionsFile) {
 		try {
 			TracingOptionsManager mng = PDECore.getDefault().getTracingOptionsManager();
 			Map<String, String> options = config.getAttribute(IPDELauncherConstants.TRACING_OPTIONS, (Map<String, String>) null);
 			String selected = config.getAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null);
 			if (selected == null) {
-				mng.save(optionsFileName, options);
+				mng.save(optionsFile, options);
 			} else if (!selected.equals(IPDELauncherConstants.TRACING_NONE)) {
-				HashSet<String> result = new HashSet<>();
-				StringTokenizer tokenizer = new StringTokenizer(selected, ","); //$NON-NLS-1$
-				while (tokenizer.hasMoreTokens()) {
-					result.add(tokenizer.nextToken());
-				}
-				mng.save(optionsFileName, options, result);
+				Set<String> result = splitElementsByComma(selected).collect(Collectors.toSet());
+				mng.save(optionsFile, options, result);
 			}
 		} catch (CoreException e) {
 			return ""; //$NON-NLS-1$
 		}
-		return optionsFileName;
+		return optionsFile.toString();
 	}
 
 	public static String[] constructClasspath(ILaunchConfiguration configuration) throws CoreException {
 		double targetVersion = TargetPlatformHelper.getTargetVersion();
 		String jarPath = targetVersion >= 3.3 ? getEquinoxStartupPath(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER) : getStartupJarPath();
-		if (jarPath == null && targetVersion < 3.3)
+		if (jarPath == null && targetVersion < 3.3) {
 			jarPath = getEquinoxStartupPath("org.eclipse.core.launcher"); //$NON-NLS-1$
-
-		if (jarPath == null)
+		}
+		if (jarPath == null) {
 			return null;
-
-		ArrayList<String> entries = new ArrayList<>();
-		entries.add(jarPath);
-
+		}
 		String bootstrap = configuration.getAttribute(IPDELauncherConstants.BOOTSTRAP_ENTRIES, ""); //$NON-NLS-1$
-		StringTokenizer tok = new StringTokenizer(getSubstitutedString(bootstrap), ","); //$NON-NLS-1$
-		while (tok.hasMoreTokens())
-			entries.add(tok.nextToken().trim());
-		return entries.toArray(new String[entries.size()]);
+		Stream<String> bootstrapElements = splitElementsByComma(getSubstitutedString(bootstrap));
+		return Stream.concat(Stream.of(jarPath), bootstrapElements).toArray(String[]::new);
+	}
+
+	private static final Pattern COMMA = Pattern.compile(","); //$NON-NLS-1$
+
+	public static Stream<String> splitElementsByComma(String value) {
+		return COMMA.splitAsStream(value).map(String::trim);
 	}
 
 	/**
