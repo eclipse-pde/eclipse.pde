@@ -16,12 +16,9 @@ package org.eclipse.pde.internal.ui.launcher;
 
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.Vector;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -36,11 +33,9 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class TracingPropertySource {
 	private final IPluginModelBase fModel;
-	private Vector<PropertyEditor> fDescriptors;
-	private final Hashtable<String, String> fTemplate;
-	private final Hashtable<String, Object> fValues;
-	private static final String[] fBooleanChoices = {"false", "true"}; //$NON-NLS-1$ //$NON-NLS-2$
-	private final Properties fMasterOptions;
+	private final Map<String, String> fTemplate;
+	private final Map<String, Object> fValues = new HashMap<>();
+	private final Map<String, String> fMasterOptions;
 	private boolean fModified;
 
 	// the flag fChanged is used to determine whether the model's content page
@@ -90,12 +85,14 @@ public class TracingPropertySource {
 		 *            - the control to be decorated
 		 * @param enabled
 		 */
-		protected void createCommentDecorator(Control target, boolean enabled) {
+		protected void createCommentDecorator(Control target) {
 			String commentText = getFormattedComment();
 			if (!commentText.isEmpty()) {
 				target.setToolTipText(commentText);
 			}
 		}
+
+		private static final Pattern NEW_LINE = Pattern.compile("\\r?\\n"); //$NON-NLS-1$
 
 		/**
 		 * Takes the comment lines prefixed by # and formats them. If two or
@@ -107,21 +104,22 @@ public class TracingPropertySource {
 		 */
 		protected String getFormattedComment() {
 			String commentOrig = getComment();
-			if (commentOrig == null || commentOrig.trim().isEmpty())
+			if (commentOrig == null || commentOrig.isEmpty()) {
 				return ""; //$NON-NLS-1$
-
-			String lines[] = commentOrig.trim().split("\\r?\\n"); //$NON-NLS-1$
+			}
+			String[] lines = NEW_LINE.split(commentOrig);
 			StringBuilder commentBuilder = new StringBuilder();
 			boolean needsSpace = false;
 			for (String string : lines) {
 				// remove leading hash and trim spaces around
-				string = string.replaceFirst("^#", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
+				string = (string.startsWith("#") ? string.substring(1) : string).trim(); //$NON-NLS-1$
 				if (string.isEmpty()) {
 					commentBuilder.append("\n\n"); //$NON-NLS-1$
 					needsSpace = false;
 				} else {
-					if (needsSpace)
+					if (needsSpace) {
 						commentBuilder.append(" "); //$NON-NLS-1$
+					}
 					commentBuilder.append(string);
 					needsSpace = true;
 				}
@@ -151,23 +149,15 @@ public class TracingPropertySource {
 			td.colspan = 2;
 			checkbox.setLayoutData(td);
 			checkbox.setEnabled(enabled);
-			createCommentDecorator(checkbox, enabled);
-		}
-
-		public void update() {
-			Integer value = (Integer) fValues.get(getKey());
-			checkbox.setSelection(value.intValue() == 1);
+			createCommentDecorator(checkbox);
 		}
 
 		@Override
 		public void initialize() {
-			update();
-			checkbox.addSelectionListener(widgetSelectedAdapter(e -> {
-				int value = checkbox.getSelection() ? 1 : 0;
-				valueModified(Integer.valueOf(value));
-			}));
-			int value = checkbox.getSelection() ? 1 : 0;
-			valueModified(Integer.valueOf(value));
+			boolean value = (Boolean) fValues.get(getKey());
+			checkbox.setSelection(value);
+			checkbox.addSelectionListener(widgetSelectedAdapter(e -> valueModified(checkbox.getSelection())));
+			valueModified(value);
 		}
 	}
 
@@ -190,81 +180,48 @@ public class TracingPropertySource {
 			//gd.widthHint = 100;
 			text.setLayoutData(td);
 			text.setEnabled(enabled);
-			createCommentDecorator(label, enabled);
-		}
-
-		public void update() {
-			String value = (String) fValues.get(getKey());
-			text.setText(value);
+			createCommentDecorator(label);
 		}
 
 		@Override
 		public void initialize() {
-			update();
+			String value = (String) fValues.get(getKey());
+			text.setText(value);
 			text.addModifyListener(e -> valueModified(text.getText()));
-			valueModified(text.getText());
+			valueModified(value);
 		}
 	}
 
-	public TracingPropertySource(IPluginModelBase model, Properties masterOptions, Hashtable<String, String> template,
-			TracingBlock block) {
+	public TracingPropertySource(IPluginModelBase model, Map<String, String> masterOptions,
+			Map<String, String> template, TracingBlock block) {
 		fModel = model;
 		fMasterOptions = masterOptions;
 		fTemplate = template;
 		fBlock = block;
-		fValues = new Hashtable<>();
 	}
 
 	public IPluginModelBase getModel() {
 		return fModel;
 	}
 
-	private Object[] getSortedKeys(int size) {
-		Object[] keyArray = new Object[size];
-		int i = 0;
-		for (Enumeration<String> keys = fTemplate.keys(); keys.hasMoreElements();) {
-			String key = keys.nextElement();
-			keyArray[i++] = key;
-		}
-		Arrays.sort(keyArray, this::compareKeys);
-		return keyArray;
-	}
-
-	private int compareKeys(Object o1, Object o2) {
-		String s1 = (String) o1;
-		String s2 = (String) o2;
-		// equal
-		return s1.compareTo(s2);
-	}
-
 	public void createContents(Composite parent, boolean enabled) {
-		fDescriptors = new Vector<>();
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
 		layout.rightMargin = 10;
 		layout.leftMargin = 10;
 		parent.setLayout(layout);
 		boolean bordersNeeded = false;
-		Object[] sortedKeys = getSortedKeys(fTemplate.size());
-		for (Object keyObject : sortedKeys) {
-			String key = (String) keyObject;
-			IPath path = IPath.fromOSString(key);
-			path = path.removeFirstSegments(1);
-			String shortKey = path.toString();
+		Iterable<String> sortedKeys = fTemplate.keySet().stream().sorted()::iterator;
+		for (String key : sortedKeys) {
+			String shortKey = IPath.fromOSString(key).removeFirstSegments(1).toString();
 			String value = fTemplate.get(key);
-			String lvalue = null;
-			String masterValue = fMasterOptions.getProperty(key);
-			String commentValue = fMasterOptions.getProperty("#" + key); //$NON-NLS-1$
+			String masterValue = fMasterOptions.get(key);
+			String commentValue = fMasterOptions.get("#" + key); //$NON-NLS-1$
 			PropertyEditor editor;
-			if (value != null)
-				lvalue = value.toLowerCase(Locale.ENGLISH);
-			if (lvalue != null && (lvalue.equals("true") || lvalue.equals("false"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			if (value != null && (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				editor = new BooleanEditor(shortKey, shortKey, commentValue);
 				if (masterValue != null) {
-					Integer mvalue = Integer.valueOf(masterValue.equals("true") //$NON-NLS-1$
-					? 1
-							: 0);
-					fValues.put(shortKey, mvalue);
+					fValues.put(shortKey, Boolean.valueOf(masterValue));
 				}
 			} else {
 				editor = new TextEditor(shortKey, shortKey, commentValue);
@@ -275,29 +232,19 @@ public class TracingPropertySource {
 			}
 			editor.create(parent, enabled);
 			editor.initialize();
-			fDescriptors.add(editor);
-			if (bordersNeeded)
+			if (bordersNeeded) {
 				fBlock.getToolkit().paintBordersFor(parent);
+			}
 		}
 	}
 
-	/**
-	 */
 	public void save() {
 		String pid = fModel.getPluginBase().getId();
-		for (Enumeration<String> keys = fValues.keys(); keys.hasMoreElements();) {
-			String shortKey = keys.nextElement();
-			Object value = fValues.get(shortKey);
-			String svalue = value.toString();
-			if (value instanceof Integer)
-				svalue = fBooleanChoices[((Integer) value).intValue()];
-			IPath path = IPath.fromOSString(pid).append(shortKey);
-			fMasterOptions.setProperty(path.toString(), svalue);
-		}
+		fValues.forEach((key, value) -> {
+			IPath path = IPath.fromOSString(pid).append(key);
+			fMasterOptions.put(path.toString(), value.toString());
+		});
 		fModified = false;
-	}
-
-	public void dispose() {
 	}
 
 	public boolean isModified() {
