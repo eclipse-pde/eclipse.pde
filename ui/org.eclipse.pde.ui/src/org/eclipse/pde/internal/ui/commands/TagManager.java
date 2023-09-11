@@ -23,8 +23,8 @@ import org.eclipse.core.runtime.ListenerList;
 
 public class TagManager {
 
-	private Hashtable<Command, String> fCommandToTags = new Hashtable<>();
-	private ListenerList<Listener> fListeners = new ListenerList<>();
+	private final Hashtable<Command, String> fCommandToTags = new Hashtable<>();
+	private final ListenerList<Listener> fListeners = new ListenerList<>();
 
 	public void update(Command command, String tags) {
 		if ((tags == null) || ("".equals(tags))) { //$NON-NLS-1$

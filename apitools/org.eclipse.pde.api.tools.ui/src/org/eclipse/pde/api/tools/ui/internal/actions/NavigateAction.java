@@ -28,8 +28,8 @@ import org.eclipse.ui.actions.ActionFactory;
  */
 public class NavigateAction extends Action {
 	private final boolean next;
-	private IViewSite site;
-	private TreeViewer viewer;
+	private final IViewSite site;
+	private final TreeViewer viewer;
 
 	public NavigateAction(APIToolingView view, boolean next) {
 		this.site = view.getViewSite();

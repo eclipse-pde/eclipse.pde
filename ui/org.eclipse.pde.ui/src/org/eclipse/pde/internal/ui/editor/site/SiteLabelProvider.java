@@ -25,7 +25,7 @@ import org.eclipse.ui.forms.editor.IFormPage;
 
 class SiteLabelProvider extends LabelProvider {
 
-	private PDELabelProvider fSharedProvider;
+	private final PDELabelProvider fSharedProvider;
 
 	/**
 	 * Comment for <code>fLabelProvider</code>

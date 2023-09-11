@@ -65,7 +65,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 
 	private static class IUWrapperLabelProvider extends LabelProvider implements DelegatingStyledCellLabelProvider.IStyledLabelProvider {
 
-		private PDELabelProvider labelProvider;
+		private final PDELabelProvider labelProvider;
 
 		public IUWrapperLabelProvider() {
 			labelProvider = PDEPlugin.getDefault().getLabelProvider();

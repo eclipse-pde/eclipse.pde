@@ -32,7 +32,7 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 	private int deselectAllIndex = -1;
 	private int selectIndex = -1;
 	private int deselectIndex = -1;
-	private String tableName;
+	private final String tableName;
 	private int counter;
 	private Label counterLabel;
 

@@ -118,8 +118,8 @@ public class TargetLocationsGroup {
 	private Button fShowContentButton;
 
 	private ITargetDefinition fTarget;
-	private ListenerList<ITargetChangedListener> fChangeListeners = new ListenerList<>();
-	private ListenerList<ITargetChangedListener> fReloadListeners = new ListenerList<>();
+	private final ListenerList<ITargetChangedListener> fChangeListeners = new ListenerList<>();
+	private final ListenerList<ITargetChangedListener> fReloadListeners = new ListenerList<>();
 	private static final TargetLocationHandlerAdapter ADAPTER = new TargetLocationHandlerAdapter();
 
 	/**

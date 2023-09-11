@@ -41,7 +41,7 @@ public class NewExtensionRegistryReader {
 	private final static String UNCATEGORIZED_WIZARD_CATEGORY = "org.eclipse.pde.ui.Other"; //$NON-NLS-1$
 	private final static String UNCATEGORIZED_WIZARD_CATEGORY_LABEL = "Other"; //$NON-NLS-1$
 
-	private boolean editorWizardMode;
+	private final boolean editorWizardMode;
 
 	public NewExtensionRegistryReader() {
 		this(false);

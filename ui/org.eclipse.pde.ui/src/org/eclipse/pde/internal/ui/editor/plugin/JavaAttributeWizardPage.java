@@ -40,10 +40,10 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class JavaAttributeWizardPage extends NewClassWizardPage {
 	private String className;
-	private IProject project;
-	private ISchemaAttribute attInfo;
-	private IPluginModelBase model;
-	private InitialClassProperties initialValues;
+	private final IProject project;
+	private final ISchemaAttribute attInfo;
+	private final IPluginModelBase model;
+	private final InitialClassProperties initialValues;
 	private IJavaProject javaProject;
 
 	static class InitialClassProperties {

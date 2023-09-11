@@ -16,8 +16,8 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import org.eclipse.core.resources.IProject;
 
 public class ResourceAttributeValue {
-	private IProject project;
-	private String stringValue;
+	private final IProject project;
+	private final String stringValue;
 
 	public ResourceAttributeValue(IProject project, String stringValue) {
 		this.project = project;

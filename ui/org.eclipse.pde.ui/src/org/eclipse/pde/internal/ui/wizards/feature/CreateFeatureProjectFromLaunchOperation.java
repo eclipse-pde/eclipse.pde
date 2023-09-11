@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class CreateFeatureProjectFromLaunchOperation extends CreateFeatureProjectOperation {
 
-	private ILaunchConfiguration fLaunchConfig;
+	private final ILaunchConfiguration fLaunchConfig;
 
 	public CreateFeatureProjectFromLaunchOperation(IProject project, IPath location, FeatureData featureData, ILaunchConfiguration launchConfig, Shell shell) {
 		super(project, location, featureData, null, shell);

@@ -59,12 +59,12 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class DSEditPropertyDialog extends FormDialog {
 
-	private IDSProperty fProperty;
-	private DSPropertiesSection fPropertiesSection;
+	private final IDSProperty fProperty;
+	private final DSPropertiesSection fPropertiesSection;
 	private FormEntry fNameEntry;
 	private ComboPart fTypeCombo;
 	private FormEntry fValuesEntry;
-	private boolean fAddDialog; // boolean used to erase added element whether
+	private final boolean fAddDialog; // boolean used to erase added element whether
 
 	private static final String EMPTY = ""; //$NON-NLS-1$
 

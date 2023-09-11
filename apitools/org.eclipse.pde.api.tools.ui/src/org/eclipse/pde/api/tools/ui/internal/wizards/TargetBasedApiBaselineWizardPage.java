@@ -73,8 +73,8 @@ public class TargetBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 	 * definition from which to read plug-ins.
 	 */
 	class ReloadTargetOperation implements IRunnableWithProgress {
-		private ITargetDefinition definition;
-		private String name;
+		private final ITargetDefinition definition;
+		private final String name;
 
 		/**
 		 * Constructor
@@ -153,7 +153,7 @@ public class TargetBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 	 * Initial collection of targets (handles are realized into definitions as
 	 * working copies)
 	 */
-	private List<ITargetDefinition> fTargets = new ArrayList<>();
+	private final List<ITargetDefinition> fTargets = new ArrayList<>();
 
 	private ITargetDefinition selectedTargetDefinition;
 

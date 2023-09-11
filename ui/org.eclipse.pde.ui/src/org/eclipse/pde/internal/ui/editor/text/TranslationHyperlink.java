@@ -32,7 +32,7 @@ import org.eclipse.ui.ide.IDE;
 
 public class TranslationHyperlink extends AbstractHyperlink {
 
-	private IModel fBase;
+	private final IModel fBase;
 
 	private boolean fOpened;
 

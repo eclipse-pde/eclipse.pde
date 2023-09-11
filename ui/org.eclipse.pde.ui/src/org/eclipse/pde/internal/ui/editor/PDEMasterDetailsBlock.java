@@ -21,7 +21,7 @@ import org.eclipse.ui.forms.MasterDetailsBlock;
 import org.eclipse.ui.forms.widgets.Section;
 
 public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
-	private PDEFormPage fPage;
+	private final PDEFormPage fPage;
 	private PDESection fSection;
 
 	public PDEMasterDetailsBlock(PDEFormPage page) {

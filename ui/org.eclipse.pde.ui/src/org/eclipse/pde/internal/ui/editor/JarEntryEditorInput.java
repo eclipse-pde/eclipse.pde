@@ -27,7 +27,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class JarEntryEditorInput implements IStorageEditorInput {
 
-	private IStorage fJarEntryFile;
+	private final IStorage fJarEntryFile;
 
 	public JarEntryEditorInput(IStorage jarEntryFile) {
 		fJarEntryFile = jarEntryFile;

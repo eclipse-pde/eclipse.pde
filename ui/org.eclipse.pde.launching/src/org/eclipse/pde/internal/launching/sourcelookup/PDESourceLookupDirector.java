@@ -66,7 +66,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	/**
 	 * Cache of source containers by location and id (String & String)
 	 */
-	private Map<String, List<ISourceContainer>> fSourceContainerMap = new LinkedHashMap<>();
+	private final Map<String, List<ISourceContainer>> fSourceContainerMap = new LinkedHashMap<>();
 
 	private ISourceContainer[] fJreSourceContainers;
 

@@ -76,7 +76,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	static final String SETTINGS_SECTION = "editBundleContainerWizard"; //$NON-NLS-1$
 
 	private Text fDescription;
-	private ITargetDefinition fTarget;
+	private final ITargetDefinition fTarget;
 
 	protected AddBundleContainerSelectionPage(ITargetDefinition target) {
 		super("SelectionPage"); //$NON-NLS-1$
@@ -456,9 +456,9 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	 * for the table displaying a list of possible bundle container types.
 	 */
 	abstract static class AbstractBundleContainerNode implements IWizardNode {
-		private String fTypeName;
-		private String fTypeDescription;
-		private Image fTypeImage;
+		private final String fTypeName;
+		private final String fTypeDescription;
+		private final Image fTypeImage;
 		private IWizard fWizard;
 		private boolean fPreferredOption;
 

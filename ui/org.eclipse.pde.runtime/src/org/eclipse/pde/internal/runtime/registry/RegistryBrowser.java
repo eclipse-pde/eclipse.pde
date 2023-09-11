@@ -81,7 +81,7 @@ import org.osgi.framework.BundleException;
 public class RegistryBrowser extends ViewPart {
 
 	private class GroupByAction extends Action {
-		private int actionGroupBy;
+		private final int actionGroupBy;
 
 		public GroupByAction(String name, int groupBy) {
 			super(name, AS_RADIO_BUTTON);
@@ -140,7 +140,7 @@ public class RegistryBrowser extends ViewPart {
 	private Clipboard fClipboard;
 
 	private DrillDownAdapter fDrillDownAdapter;
-	private ViewerFilter fActiveFilter = new ViewerFilter() {
+	private final ViewerFilter fActiveFilter = new ViewerFilter() {
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof ExtensionPoint)

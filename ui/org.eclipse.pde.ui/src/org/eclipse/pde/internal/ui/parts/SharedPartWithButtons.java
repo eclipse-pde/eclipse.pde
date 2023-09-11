@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public abstract class SharedPartWithButtons extends SharedPart {
-	private String[] fButtonLabels;
+	private final String[] fButtonLabels;
 	private Button[] fButtons;
 	protected Composite fButtonContainer;
 

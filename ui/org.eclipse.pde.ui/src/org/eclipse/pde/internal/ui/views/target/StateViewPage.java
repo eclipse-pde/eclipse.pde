@@ -85,25 +85,25 @@ import org.osgi.framework.Version;
 
 public class StateViewPage extends Page implements IStateDeltaListener, IPluginModelListener {
 
-	private IPropertyChangeListener fPropertyListener;
+	private final IPropertyChangeListener fPropertyListener;
 	private FilteredTree fFilteredTree = null;
 	private TreeViewer fTreeViewer = null;
-	private PageBookView fView;
+	private final PageBookView fView;
 	private Composite fComposite;
 	private Action fOpenAction;
-	private String DIALOG_SETTINGS = "targetStateView"; //$NON-NLS-1$
+	private final String DIALOG_SETTINGS = "targetStateView"; //$NON-NLS-1$
 
 	private static final String HIDE_RESOLVED = "hideResolved"; //$NON-NLS-1$
 	private static final String SHOW_NONLEAF = "hideNonLeaf"; //$NON-NLS-1$
 
-	private ViewerFilter fHideResolvedFilter = new ViewerFilter() {
+	private final ViewerFilter fHideResolvedFilter = new ViewerFilter() {
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			return ((element instanceof BundleDescription && !((BundleDescription) element).isResolved()) || parentElement instanceof BundleDescription && !((BundleDescription) parentElement).isResolved());
 		}
 	};
 
-	private ViewerFilter fShowLeaves = new ViewerFilter() {
+	private final ViewerFilter fShowLeaves = new ViewerFilter() {
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof BundleDescription) {
@@ -181,7 +181,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 	}
 
 	class StateLabelProvider extends StyledCellLabelProvider implements ILabelProvider {
-		private PDELabelProvider fSharedProvider;
+		private final PDELabelProvider fSharedProvider;
 
 		public StateLabelProvider() {
 			fSharedProvider = PDEPlugin.getDefault().getLabelProvider();

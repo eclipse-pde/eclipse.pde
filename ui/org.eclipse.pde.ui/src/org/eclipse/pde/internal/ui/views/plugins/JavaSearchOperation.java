@@ -27,8 +27,8 @@ import org.eclipse.pde.internal.core.SearchablePluginsManager;
 
 public class JavaSearchOperation implements IRunnableWithProgress {
 
-	private IPluginModelBase[] fModels;
-	private boolean fAdd;
+	private final IPluginModelBase[] fModels;
+	private final boolean fAdd;
 
 	public JavaSearchOperation(IPluginModelBase[] models, boolean add) {
 		fModels = models;

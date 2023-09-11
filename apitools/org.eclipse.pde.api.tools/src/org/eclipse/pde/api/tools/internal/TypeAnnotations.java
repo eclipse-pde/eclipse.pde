@@ -20,8 +20,8 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
  */
 public class TypeAnnotations implements IApiAnnotations {
 
-	private IApiAnnotations fAnnotations;
-	private long fBuildStamp;
+	private final IApiAnnotations fAnnotations;
+	private final long fBuildStamp;
 
 	/**
 	 * @param visibility

@@ -38,11 +38,11 @@ public abstract class TocAbstractDetails extends PDEDetails {
 
 	private static final int NUM_COLUMNS = 3;
 
-	private TocTreeSection fMasterSection;
+	private final TocTreeSection fMasterSection;
 
 	private Section fMainSection;
 
-	private String fContextID;
+	private final String fContextID;
 
 	public TocAbstractDetails(TocTreeSection masterSection, String contextID) {
 		fMasterSection = masterSection;

@@ -28,8 +28,8 @@ public class ModelChangeDelta {
 	public static final int RESOLVED = 7;
 	public static final int UNRESOLVED = 8;
 
-	private ModelObject fObject;
-	private int fFlag;
+	private final ModelObject fObject;
+	private final int fFlag;
 
 	public ModelChangeDelta(ModelObject object, int flag) {
 		fObject = object;

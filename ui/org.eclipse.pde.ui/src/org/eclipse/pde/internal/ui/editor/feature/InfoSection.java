@@ -62,9 +62,9 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class InfoSection extends PDESection {
-	private IDocument fDocument;
+	private final IDocument fDocument;
 
-	private XMLConfiguration fSourceConfiguration;
+	private final XMLConfiguration fSourceConfiguration;
 
 	private SourceViewer fSourceViewer;
 

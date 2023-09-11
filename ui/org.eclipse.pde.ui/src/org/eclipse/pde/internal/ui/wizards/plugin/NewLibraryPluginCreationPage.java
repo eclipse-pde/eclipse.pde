@@ -79,7 +79,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		}
 	}
 
-	private LibraryPluginFieldData fData;
+	private final LibraryPluginFieldData fData;
 	protected NewLibraryPluginCreationPage fMainPage;
 	protected IProjectProvider fProjectProvider;
 	protected PropertiesListener fPropertiesListener = new PropertiesListener();
@@ -93,7 +93,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	protected Button fJarredCheck;
 	protected Button fFindDependencies;
 	private Button fUpdateRefsCheck;
-	private IStructuredSelection fSelection;
+	private final IStructuredSelection fSelection;
 
 	public NewLibraryPluginCreationPage(String pageName, LibraryPluginFieldData data, IStructuredSelection selection) {
 		super(pageName);

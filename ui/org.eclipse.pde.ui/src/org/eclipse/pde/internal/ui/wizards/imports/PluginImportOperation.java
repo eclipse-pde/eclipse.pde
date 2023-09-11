@@ -117,15 +117,15 @@ public class PluginImportOperation extends WorkspaceJob {
 	private static final int MAX_RETRY = 5;
 	private static final int RETRY_DELAY = 1000;
 
-	private IPluginModelBase[] fModels;
-	private int fImportType;
-	private Hashtable<IProject, IClasspathEntry[]> fProjectClasspaths = new Hashtable<>();
+	private final IPluginModelBase[] fModels;
+	private final int fImportType;
+	private final Hashtable<IProject, IClasspathEntry[]> fProjectClasspaths = new Hashtable<>();
 
 	/**
 	 * Maps project ids to a List of IWorkingSets, the map is filled when determining what projects to delete
 	 */
-	private Map<String, List<IWorkingSet>> fProjectWorkingSets = new HashMap<>();
-	private boolean fForceAutobuild;
+	private final Map<String, List<IWorkingSet>> fProjectWorkingSets = new HashMap<>();
+	private final boolean fForceAutobuild;
 
 	// used when importing from a repository
 	private Map<IBundleImporter, ScmUrlImportDescription[]> fImportDescriptions;
@@ -184,7 +184,7 @@ public class PluginImportOperation extends WorkspaceJob {
 		/**
 		 * The list of the projects that did not get imported.
 		 */
-		private List<String> fNamesOfNotImportedProjects;
+		private final List<String> fNamesOfNotImportedProjects;
 
 		/**
 		 * Creates a warning message dialog. The message area will contain the scrollable

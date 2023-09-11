@@ -43,7 +43,7 @@ import org.eclipse.ui.IURIEditorInput;
 
 public class PluginInputContext extends XMLInputContext {
 	public static final String CONTEXT_ID = "plugin-context"; //$NON-NLS-1$
-	private boolean fIsFragment;
+	private final boolean fIsFragment;
 
 	public PluginInputContext(PDEFormEditor editor, IEditorInput input, boolean primary, boolean isFragment) {
 		super(editor, input, primary);

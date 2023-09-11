@@ -27,7 +27,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.widgets.Control;
 
 public class ElementSectionDragAdapter extends DragSourceAdapter {
-	private ISelectionProvider fSelectionProvider;
+	private final ISelectionProvider fSelectionProvider;
 	private Object fDragData;
 
 	/**

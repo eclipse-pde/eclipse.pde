@@ -107,7 +107,7 @@ public class JavadocConversionRefactoring extends Refactoring {
 	/**
 	 * The projects to check
 	 */
-	private HashSet<IProject> projects = new HashSet<>();
+	private final HashSet<IProject> projects = new HashSet<>();
 
 	/**
 	 * Whether to remove the existing javadoc tags

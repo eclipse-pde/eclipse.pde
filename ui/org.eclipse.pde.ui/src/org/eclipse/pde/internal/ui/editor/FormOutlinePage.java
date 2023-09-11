@@ -70,7 +70,7 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 	}
 
 	public static class BasicLabelProvider extends LabelProvider {
-		private ILabelProvider fWrappedLabelProvider;
+		private final ILabelProvider fWrappedLabelProvider;
 
 		public BasicLabelProvider(ILabelProvider ilp) {
 			fWrappedLabelProvider = ilp;

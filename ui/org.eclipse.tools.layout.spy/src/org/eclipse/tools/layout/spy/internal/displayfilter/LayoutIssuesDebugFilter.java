@@ -24,8 +24,8 @@ import org.eclipse.swt.widgets.Widget;
 public class LayoutIssuesDebugFilter implements Listener {
 	static LayoutIssuesDebugFilter filter;
 
-	private int extraCompositeMargin;
-	private boolean toolTip;
+	private final int extraCompositeMargin;
+	private final boolean toolTip;
 
 	public static final String IGNORE_BY_LAYOUT_ISSUES_DEBUG_FILTER = "IGNORE_BY_LayoutIssuesDebugFilter";
 

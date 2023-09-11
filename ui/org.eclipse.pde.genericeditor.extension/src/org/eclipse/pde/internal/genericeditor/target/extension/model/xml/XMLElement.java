@@ -19,16 +19,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class XMLElement {
-	private String element;
-	private int offset;
-	private String name;
-	private Map<String, String> attributes = new HashMap<>();
-	private boolean isEndElement;
-	private boolean isStartElement;
+	private final String element;
+	private final int offset;
+	private final String name;
+	private final Map<String, String> attributes = new HashMap<>();
+	private final boolean isEndElement;
+	private final boolean isStartElement;
 
-	private Pattern startElementNamePattern = Pattern.compile("<\\s*(?<name>\\w*).*", Pattern.DOTALL); //$NON-NLS-1$
-	private Pattern endElementNamePattern = Pattern.compile("</\\s*(?<name>\\w*).*", Pattern.DOTALL); //$NON-NLS-1$
-	private Pattern attributePattern = Pattern.compile("((?<key>\\w*)\\s*=\\s*\"(?<value>.*?)\")", Pattern.DOTALL);//$NON-NLS-1$
+	private final Pattern startElementNamePattern = Pattern.compile("<\\s*(?<name>\\w*).*", Pattern.DOTALL); //$NON-NLS-1$
+	private final Pattern endElementNamePattern = Pattern.compile("</\\s*(?<name>\\w*).*", Pattern.DOTALL); //$NON-NLS-1$
+	private final Pattern attributePattern = Pattern.compile("((?<key>\\w*)\\s*=\\s*\"(?<value>.*?)\")", Pattern.DOTALL);//$NON-NLS-1$
 
 	public XMLElement(String element, int offset) {
 		this.element = element;

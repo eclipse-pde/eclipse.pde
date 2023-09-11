@@ -48,7 +48,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 public class CtxHelpPage extends PDEFormPage implements IModelChangedListener {
 	public static final String PAGE_ID = "ctxHelpPage"; //$NON-NLS-1$
 
-	private CtxHelpBlock fBlock;
+	private final CtxHelpBlock fBlock;
 
 	public CtxHelpPage(FormEditor editor) {
 		super(editor, PAGE_ID, CtxHelpMessages.CtxHelpPage_title);

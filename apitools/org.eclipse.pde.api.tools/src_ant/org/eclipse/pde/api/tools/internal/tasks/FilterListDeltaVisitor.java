@@ -36,11 +36,11 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 	public static final int CHECK_OTHER = 0x02;
 	public static final int CHECK_ALL = CHECK_DEPRECATION | CHECK_OTHER;
 
-	private FilteredElements excludedElements;
-	private FilteredElements includedElements;
-	private List<String> nonExcludedElements;
+	private final FilteredElements excludedElements;
+	private final FilteredElements includedElements;
+	private final List<String> nonExcludedElements;
 
-	private int flags;
+	private final int flags;
 
 	public FilterListDeltaVisitor(FilteredElements excludedElements, FilteredElements includedElements, int flags) throws CoreException {
 		super();

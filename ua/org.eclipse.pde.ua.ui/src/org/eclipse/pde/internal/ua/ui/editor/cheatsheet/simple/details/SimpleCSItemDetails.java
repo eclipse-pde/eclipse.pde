@@ -55,9 +55,9 @@ public class SimpleCSItemDetails extends CSAbstractDetails {
 
 	private Section fMainSection;
 
-	private SimpleCSHelpDetails fHelpSection;
+	private final SimpleCSHelpDetails fHelpSection;
 
-	private SimpleCSCommandDetails fCommandSection;
+	private final SimpleCSCommandDetails fCommandSection;
 
 	private ControlDecoration fSkipInfoDecoration;
 

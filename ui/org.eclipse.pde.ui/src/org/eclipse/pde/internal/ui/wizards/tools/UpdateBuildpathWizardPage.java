@@ -33,10 +33,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class UpdateBuildpathWizardPage extends WizardPage {
-	private IPluginModelBase[] fSelected;
-	private IPluginModelBase[] fUnmigrated;
+	private final IPluginModelBase[] fSelected;
+	private final IPluginModelBase[] fUnmigrated;
 	private CheckboxTableViewer pluginListViewer;
-	private TablePart tablePart;
+	private final TablePart tablePart;
 
 	public class BuildpathContentProvider implements IStructuredContentProvider {
 		@Override

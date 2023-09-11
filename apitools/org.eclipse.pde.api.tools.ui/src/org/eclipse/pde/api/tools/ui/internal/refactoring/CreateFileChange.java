@@ -48,7 +48,7 @@ public class CreateFileChange extends ResourceChange {
 	private String fSource;
 	private String fEncoding;
 	private boolean fExplicitEncoding;
-	private long fStampToRestore;
+	private final long fStampToRestore;
 
 	public CreateFileChange(IPath path, String source, String encoding) {
 		this(path, source, encoding, IResource.NULL_STAMP);

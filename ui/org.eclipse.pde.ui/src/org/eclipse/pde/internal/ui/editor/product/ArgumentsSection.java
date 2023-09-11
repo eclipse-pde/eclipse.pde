@@ -73,7 +73,7 @@ public class ArgumentsSection extends PDESection {
 	private CTabFolder fTabFolder;
 	private ComboViewerPart fArchCombo;
 	private int fLastTab;
-	private int[] fLastArch = {0, 0, 0, 0, 0}; // default arch index is "All" (0)
+	private final int[] fLastArch = {0, 0, 0, 0, 0}; // default arch index is "All" (0)
 
 	public ArgumentsSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);

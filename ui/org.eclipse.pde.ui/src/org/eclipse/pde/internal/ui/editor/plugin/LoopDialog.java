@@ -36,9 +36,9 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.PlatformUI;
 
 public class LoopDialog extends TrayDialog {
-	private DependencyLoop[] fLoops;
+	private final DependencyLoop[] fLoops;
 	private TreeViewer fLoopViewer;
-	private Image fLoopImage;
+	private final Image fLoopImage;
 
 	class ContentProvider implements ITreeContentProvider {
 

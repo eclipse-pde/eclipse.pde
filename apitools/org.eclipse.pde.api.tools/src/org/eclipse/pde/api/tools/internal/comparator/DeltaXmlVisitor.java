@@ -32,12 +32,12 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 	/**
 	 * XML doc being generated
 	 */
-	private Document fDoc;
+	private final Document fDoc;
 
 	/**
 	 * Top deltas element
 	 */
-	private Element fDeltas;
+	private final Element fDeltas;
 
 	/**
 	 * Constructs a new visitor for the given component.

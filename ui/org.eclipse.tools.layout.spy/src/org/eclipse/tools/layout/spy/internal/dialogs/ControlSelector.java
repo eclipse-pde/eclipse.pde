@@ -43,14 +43,14 @@ import org.eclipse.swt.widgets.Shell;
 public class ControlSelector {
 	private static final int EDGE_SIZE = 4;
 
-	private Shell overlay;
+	private final Shell overlay;
 	private final Color selectionRectangleColor = new Color(255, 255, 0);
-	private Display display;
-	private WritableValue<@Nullable Control> currentSelection = new WritableValue<>(null, null);
+	private final Display display;
+	private final WritableValue<@Nullable Control> currentSelection = new WritableValue<>(null, null);
 	private Region region;
-	private Consumer<@Nullable Control> callback;
-	private Listener moveFilter = this::mouseMove;
-	private Listener selectFilter = this::select;
+	private final Consumer<@Nullable Control> callback;
+	private final Listener moveFilter = this::mouseMove;
+	private final Listener selectFilter = this::select;
 
 	/**
 	 * Instantiates and opens the control selector.

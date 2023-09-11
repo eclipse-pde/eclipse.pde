@@ -26,7 +26,7 @@ import org.eclipse.search.ui.ISearchQuery;
 
 public class FindDeclarationsAction extends BaseSearchAction {
 
-	private Object fSelectedObject;
+	private final Object fSelectedObject;
 
 	public FindDeclarationsAction(Object object) {
 		super(PDEUIMessages.SearchAction_Declaration);

@@ -27,8 +27,8 @@ public class Folder {
 	public static final int F_IMPORTED_PACKAGES = 10;
 	public static final int F_EXPORTED_PACKAGES = 11;
 
-	private int id;
-	private Object parent;
+	private final int id;
+	private final Object parent;
 
 	public Folder(int id, Object parent) {
 		this.id = id;

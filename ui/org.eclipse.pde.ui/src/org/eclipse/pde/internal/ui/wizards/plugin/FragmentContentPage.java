@@ -67,7 +67,7 @@ public class FragmentContentPage extends ContentPage {
 	private StackLayout fNotebookLayout;
 	private Composite fOldComp;
 	private Composite fNewComp;
-	private PluginVersionPart fVersionPart;
+	private final PluginVersionPart fVersionPart;
 	private Label fEELabel;
 	private Button fExeEnvButton;
 	private Combo fEEChoice;

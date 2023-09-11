@@ -57,7 +57,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	protected ProgramBlock fProgramBlock;
 	protected JREBlock fJreBlock;
 
-	private Image fImage;
+	private final Image fImage;
 
 	/**
 	 * Contructor to create a new main tab

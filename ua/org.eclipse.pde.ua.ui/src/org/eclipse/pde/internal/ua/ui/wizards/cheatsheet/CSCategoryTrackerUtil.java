@@ -28,11 +28,11 @@ public class CSCategoryTrackerUtil {
 
 	public final static int F_TYPE_OLD_CATEGORY = 2;
 
-	private HashMap<String, String> fCategoryNameMap;
+	private final HashMap<String, String> fCategoryNameMap;
 
-	private HashMap<String, String> fCategoryIDMap;
+	private final HashMap<String, String> fCategoryIDMap;
 
-	private HashMap<String, Integer> fCategoryTypeMap;
+	private final HashMap<String, Integer> fCategoryTypeMap;
 
 	public CSCategoryTrackerUtil() {
 

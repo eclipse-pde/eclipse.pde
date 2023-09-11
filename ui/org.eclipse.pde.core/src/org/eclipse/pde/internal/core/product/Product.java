@@ -69,10 +69,10 @@ public class Product extends ProductObject implements IProduct {
 	private String fVersion;
 	private IAboutInfo fAboutInfo;
 
-	private TreeMap<String, IProductObject> fPlugins = new TreeMap<>();
-	private TreeMap<String, IProductObject> fPluginConfigurations = new TreeMap<>();
-	private Set<IConfigurationProperty> fConfigurationProperties = new LinkedHashSet<>();
-	private List<IProductFeature> fFeatures = new ArrayList<>();
+	private final TreeMap<String, IProductObject> fPlugins = new TreeMap<>();
+	private final TreeMap<String, IProductObject> fPluginConfigurations = new TreeMap<>();
+	private final Set<IConfigurationProperty> fConfigurationProperties = new LinkedHashSet<>();
+	private final List<IProductFeature> fFeatures = new ArrayList<>();
 	private IConfigurationFileInfo fConfigIniInfo;
 	private IJREInfo fJVMInfo;
 	private ProductType fType = ProductType.BUNDLES;
@@ -84,7 +84,7 @@ public class Product extends ProductObject implements IProduct {
 	private IArgumentsInfo fLauncherArgs;
 	private IIntroInfo fIntroInfo;
 	private ILicenseInfo fLicenseInfo;
-	private Set<IProductObject> fRepositories = new LinkedHashSet<>();
+	private final Set<IProductObject> fRepositories = new LinkedHashSet<>();
 	private IPreferencesInfo fPreferencesInfo;
 	private ICSSInfo fCSSInfo;
 

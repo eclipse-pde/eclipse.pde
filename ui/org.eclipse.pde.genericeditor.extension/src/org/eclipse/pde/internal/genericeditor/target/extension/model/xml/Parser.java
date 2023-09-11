@@ -111,15 +111,15 @@ public class Parser {
 
 	private Iterator<XMLElement> createXMLTagItterator(String document) {
 		return new Iterator<>() {
-			private String tagRegex = "(?<tag><[\\w|/][^<]+?>)";
-			private String commentRegex = "(<!--.*?-->)";
-			private String beforeTagRegex = ".*?(?=".concat(tagRegex).concat(")");
+			private final String tagRegex = "(?<tag><[\\w|/][^<]+?>)";
+			private final String commentRegex = "(<!--.*?-->)";
+			private final String beforeTagRegex = ".*?(?=".concat(tagRegex).concat(")");
 
 			private String text = document;
 
-			private Pattern tagPattern = Pattern.compile(tagRegex, Pattern.DOTALL);
-			private Pattern commentPattern = Pattern.compile(commentRegex, Pattern.DOTALL);
-			private Pattern beforeTagPattern = Pattern.compile(beforeTagRegex, Pattern.DOTALL);
+			private final Pattern tagPattern = Pattern.compile(tagRegex, Pattern.DOTALL);
+			private final Pattern commentPattern = Pattern.compile(commentRegex, Pattern.DOTALL);
+			private final Pattern beforeTagPattern = Pattern.compile(beforeTagRegex, Pattern.DOTALL);
 
 			@Override
 			public boolean hasNext() {

@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Display;
 
 public class JavaHyperlink extends AbstractHyperlink {
 
-	private IResource fResource;
+	private final IResource fResource;
 
 	public JavaHyperlink(IRegion region, String clazz, IResource res) {
 		super(region, clazz);

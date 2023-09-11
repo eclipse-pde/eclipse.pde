@@ -19,7 +19,7 @@ import org.eclipse.pde.internal.ui.editor.schema.SchemaEditor;
 
 public class SchemaHyperlink extends AbstractHyperlink {
 
-	private IResource fResource;
+	private final IResource fResource;
 
 	public SchemaHyperlink(IRegion region, String schema, IResource res) {
 		super(region, schema);

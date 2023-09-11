@@ -67,7 +67,7 @@ public class CapturedEventFilters {
 
 	private List filters;
 
-	private java.util.List<CapturedEventFilter> rawFilters;
+	private final java.util.List<CapturedEventFilter> rawFilters;
 
 	private final Clipboard clipboard;
 

@@ -27,7 +27,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
  */
 public class CompositeApiTypeContainer extends AbstractApiTypeContainer {
 
-	private List<IApiTypeContainer> fContainers;
+	private final List<IApiTypeContainer> fContainers;
 
 	/**
 	 * Constructs a composite container on the given list of containers.

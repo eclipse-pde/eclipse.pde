@@ -43,12 +43,12 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 	/**
 	 * Component element
 	 */
-	private Element fComponent;
+	private final Element fComponent;
 
 	/**
 	 * XML doc being generated
 	 */
-	private Document fDoc;
+	private final Document fDoc;
 
 	/**
 	 * Current package node being created
@@ -63,12 +63,12 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 	/**
 	 * The stack of current type node being visited
 	 */
-	private Stack<Element> fTypeStack;
+	private final Stack<Element> fTypeStack;
 
 	/**
 	 * Set of package names already visited (to avoid re-visiting same package)
 	 */
-	private Set<String> fVisitedPackages;
+	private final Set<String> fVisitedPackages;
 
 	/**
 	 * Constructs a new visitor for the given component.

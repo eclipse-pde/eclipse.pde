@@ -45,11 +45,11 @@ import aQute.bnd.osgi.resource.ResourceUtils.IdentityCapability;
 
 public class SelectRepositoryContentPage extends WizardPage implements IEditBundleContainerPage {
 
-	private EditRepositoryContainerPage repositoryPage;
+	private final EditRepositoryContainerPage repositoryPage;
 	private String lastLocation;
 	private CheckboxTableViewer viewer;
 	private Collection<Requirement> requirements;
-	private Set<Resource> selected = ConcurrentHashMap.newKeySet();
+	private final Set<Resource> selected = ConcurrentHashMap.newKeySet();
 
 	protected SelectRepositoryContentPage(EditRepositoryContainerPage repositoryPage) {
 		super("SelectRepositoryContentPage"); //$NON-NLS-1$

@@ -52,11 +52,11 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 
 	private Button fAllFeaturesButton;
 
-	private ISiteModel fModel;
+	private final ISiteModel fModel;
 
 	private Button fSelectedFeaturesButton;
 
-	private ISiteFeature[] fSiteFeatures;
+	private final ISiteFeature[] fSiteFeatures;
 
 	/**
 	 *

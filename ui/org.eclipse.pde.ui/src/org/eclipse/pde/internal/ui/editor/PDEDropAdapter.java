@@ -21,9 +21,9 @@ import org.eclipse.swt.dnd.TransferData;
 
 public class PDEDropAdapter extends ViewerDropAdapter {
 
-	private IPDEDropParticipant fDropParticipant;
+	private final IPDEDropParticipant fDropParticipant;
 
-	private IPDESourceParticipant fSourceParticipant;
+	private final IPDESourceParticipant fSourceParticipant;
 
 	private int fLastValidOperation;
 

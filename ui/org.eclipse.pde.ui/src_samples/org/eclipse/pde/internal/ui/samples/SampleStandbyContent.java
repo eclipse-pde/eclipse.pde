@@ -62,7 +62,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	private String launchTarget;
 	private FormText descText;
 	private FormText instText;
-	private ILaunchShortcut defaultShortcut;
+	private final ILaunchShortcut defaultShortcut;
 	private IConfigurationElement sample;
 	// cached input.
 	private String input;

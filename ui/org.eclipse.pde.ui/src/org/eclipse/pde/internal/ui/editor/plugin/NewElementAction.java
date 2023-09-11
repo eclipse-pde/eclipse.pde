@@ -30,9 +30,9 @@ import org.eclipse.pde.internal.ui.editor.contentassist.XMLInsertionComputer;
 public class NewElementAction extends Action {
 	public static final String UNKNOWN_ELEMENT_TAG = PDEUIMessages.NewElementAction_generic;
 
-	private ISchemaElement elementInfo;
+	private final ISchemaElement elementInfo;
 
-	private IPluginParent parent;
+	private final IPluginParent parent;
 
 	public NewElementAction(ISchemaElement elementInfo, IPluginParent parent) {
 		this.elementInfo = elementInfo;

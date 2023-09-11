@@ -25,8 +25,8 @@ import org.eclipse.ui.dialogs.ISelectionStatusValidator;
  */
 public class JarSelectionValidator implements ISelectionStatusValidator {
 
-	private Class<?>[] fAcceptedTypes;
-	private boolean fAllowMultipleSelection;
+	private final Class<?>[] fAcceptedTypes;
+	private final boolean fAllowMultipleSelection;
 
 	/**
 	 * @param acceptedTypes The types accepted by the validator

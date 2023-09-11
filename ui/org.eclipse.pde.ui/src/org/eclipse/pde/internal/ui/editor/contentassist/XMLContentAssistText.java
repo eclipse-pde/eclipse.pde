@@ -24,9 +24,9 @@ import org.eclipse.jface.text.IDocument;
  */
 public class XMLContentAssistText {
 
-	private String fText;
+	private final String fText;
 
-	private int fStartOffset;
+	private final int fStartOffset;
 
 	private XMLContentAssistText(String text, int startOffset) {
 		fText = text;

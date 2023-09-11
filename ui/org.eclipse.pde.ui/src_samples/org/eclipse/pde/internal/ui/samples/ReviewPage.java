@@ -28,7 +28,7 @@ import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.widgets.ScrolledFormText;
 
 public class ReviewPage extends WizardPage {
-	private SampleWizard wizard;
+	private final SampleWizard wizard;
 	private ScrolledFormText formText;
 
 	public ReviewPage(SampleWizard wizard) {

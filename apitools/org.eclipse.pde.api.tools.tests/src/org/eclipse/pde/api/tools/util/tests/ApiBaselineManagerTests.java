@@ -178,9 +178,9 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 		}
 	}
 
-	private IPath SRC_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-source").append("a").append("b").append("c"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-	private IPath PLUGIN_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-plugins"); //$NON-NLS-1$
-	private IApiBaselineManager fPMmanager = ApiPlugin.getDefault().getApiBaselineManager();
+	private final IPath SRC_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-source").append("a").append("b").append("c"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	private final IPath PLUGIN_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test-plugins"); //$NON-NLS-1$
+	private final IApiBaselineManager fPMmanager = ApiPlugin.getDefault().getApiBaselineManager();
 	private final String TESTING_PACKAGE = "a.b.c"; //$NON-NLS-1$
 
 	/**

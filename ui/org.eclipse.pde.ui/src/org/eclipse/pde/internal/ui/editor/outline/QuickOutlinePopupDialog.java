@@ -56,9 +56,9 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 
 	private TreeViewer fTreeViewer;
 
-	private IOutlineContentCreator fOutlineContentCreator;
+	private final IOutlineContentCreator fOutlineContentCreator;
 
-	private IOutlineSelectionHandler fOutlineSelectionHandler;
+	private final IOutlineSelectionHandler fOutlineSelectionHandler;
 
 	private Text fFilterText;
 

@@ -35,7 +35,7 @@ public class ApiField extends ApiMember implements IApiField {
 	/**
 	 * Constant value
 	 */
-	private Object fValue;
+	private final Object fValue;
 
 	private IFieldDescriptor fHandle;
 

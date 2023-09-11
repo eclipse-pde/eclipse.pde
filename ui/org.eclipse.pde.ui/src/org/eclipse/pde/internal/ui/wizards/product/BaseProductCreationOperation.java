@@ -59,7 +59,7 @@ import org.eclipse.ui.part.ISetSelectionTarget;
 
 public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 
-	private IFile fFile;
+	private final IFile fFile;
 
 	public BaseProductCreationOperation(IFile file) {
 		fFile = file;

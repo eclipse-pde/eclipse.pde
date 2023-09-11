@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Group;
 public class SoftwareInstallBlock {
 
 	private Button fGenerateProfileButton;
-	private AbstractLauncherTab fTab;
+	private final AbstractLauncherTab fTab;
 
 	/**
 	 * Constructor

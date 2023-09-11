@@ -20,7 +20,7 @@ import org.eclipse.jface.text.IDocumentListener;
 
 public class TargedDefinitionSetupParticipant implements IDocumentSetupParticipant {
 
-	private TargetDefinitionBufferListener bufferListener;
+	private final TargetDefinitionBufferListener bufferListener;
 
 	public TargedDefinitionSetupParticipant() {
 		bufferListener = new TargetDefinitionBufferListener();

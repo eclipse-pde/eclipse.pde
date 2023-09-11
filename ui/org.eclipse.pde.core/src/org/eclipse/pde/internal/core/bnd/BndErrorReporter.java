@@ -30,7 +30,7 @@ import aQute.service.reporter.Report.Location;
 public class BndErrorReporter extends ErrorReporter {
 
 	private BndDocument bndDocument;
-	private Report report;
+	private final Report report;
 
 	public BndErrorReporter(IProject project, Report report) {
 		super(project.getFile(BndProject.INSTRUCTIONS_FILE));

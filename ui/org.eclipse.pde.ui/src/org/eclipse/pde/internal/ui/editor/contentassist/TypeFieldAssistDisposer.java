@@ -25,9 +25,9 @@ import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
  */
 public class TypeFieldAssistDisposer {
 
-	private ContentAssistCommandAdapter fAdapter;
+	private final ContentAssistCommandAdapter fAdapter;
 
-	private TypeContentProposalListener fListener;
+	private final TypeContentProposalListener fListener;
 
 	/**
 	 *

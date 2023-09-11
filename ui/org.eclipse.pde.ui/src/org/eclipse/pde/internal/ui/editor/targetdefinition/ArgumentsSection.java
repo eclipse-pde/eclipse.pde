@@ -49,8 +49,8 @@ public class ArgumentsSection extends SectionPart {
 	private CTabFolder fTabFolder;
 	private FormEntry fProgramArguments;
 	private FormEntry fVMArguments;
-	private Image fImage;
-	private TargetEditor fEditor;
+	private final Image fImage;
+	private final TargetEditor fEditor;
 
 	public ArgumentsSection(FormPage page, Composite parent) {
 		super(parent, page.getManagedForm().getToolkit(), Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);

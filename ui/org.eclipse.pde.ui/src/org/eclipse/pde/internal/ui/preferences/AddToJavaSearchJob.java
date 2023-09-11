@@ -43,7 +43,7 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 
 	private IPluginModelBase[] fBundles;
 	private boolean fAdd;
-	private ITargetDefinition fTargetDefinition;
+	private final ITargetDefinition fTargetDefinition;
 
 	/**
 	 * Adds/Removes the target bundles to/from Java search

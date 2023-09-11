@@ -84,7 +84,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	 */
 	private static List<IClasspathContributor> fClasspathContributors = null;
 
-	private IProject project;
+	private final IProject project;
 
 	/**
 	 * Constructor for RequiredPluginsClasspathContainer.

@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Control;
  */
 @Deprecated
 public class ChoiceOption extends TemplateOption {
-	private String[][] choices;
+	private final String[][] choices;
 	private Control labelControl;
 	private Button[] buttons;
 	private boolean blockListener;

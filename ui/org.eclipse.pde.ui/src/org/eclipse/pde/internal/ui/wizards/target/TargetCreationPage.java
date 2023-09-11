@@ -51,7 +51,7 @@ public class TargetCreationPage extends WizardSelectionPage {
 	private Combo fTargets;
 	private String[] fTargetIds;
 	private String templateTargetId;
-	private ITargetDefinition[] fTargetDefs = new ITargetDefinition[4];
+	private final ITargetDefinition[] fTargetDefs = new ITargetDefinition[4];
 
 	public TargetCreationPage(String pageName) {
 		super(pageName);

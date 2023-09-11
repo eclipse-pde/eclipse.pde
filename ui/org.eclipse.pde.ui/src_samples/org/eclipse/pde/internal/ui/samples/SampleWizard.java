@@ -40,10 +40,10 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.ide.IDE;
 
 public class SampleWizard extends Wizard implements INewWizard, IExecutableExtension {
-	private IConfigurationElement[] samples;
+	private final IConfigurationElement[] samples;
 	private IConfigurationElement selection;
-	private ProjectNamesPage namesPage;
-	private ReviewPage lastPage;
+	private final ProjectNamesPage namesPage;
+	private final ReviewPage lastPage;
 
 	private boolean sampleEditorNeeded = true;
 	private boolean switchPerspective = true;

@@ -24,9 +24,9 @@ import org.eclipse.pde.internal.ui.wizards.NewWizard;
 
 public class NewExtensionPointWizard extends NewWizard {
 	private NewExtensionPointMainPage mainPage;
-	private IPluginModelBase model;
-	private IProject project;
-	private IPluginExtensionPoint point;
+	private final IPluginModelBase model;
+	private final IProject project;
+	private final IPluginExtensionPoint point;
 	private ManifestEditor editor;
 
 	public NewExtensionPointWizard(IProject project, IPluginModelBase model, ManifestEditor editor) {

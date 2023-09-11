@@ -31,7 +31,7 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 	private int cursor = -1;
 	private IAction undoAction;
 	private IAction redoAction;
-	private PDEFormEditor editor;
+	private final PDEFormEditor editor;
 
 	public ModelUndoManager(PDEFormEditor editor) {
 		this.editor = editor;

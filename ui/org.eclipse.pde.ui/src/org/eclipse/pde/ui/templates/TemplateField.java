@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Label;
  * @since 2.0
  */
 public abstract class TemplateField {
-	private BaseOptionTemplateSection section;
+	private final BaseOptionTemplateSection section;
 	private String label;
 
 	/**

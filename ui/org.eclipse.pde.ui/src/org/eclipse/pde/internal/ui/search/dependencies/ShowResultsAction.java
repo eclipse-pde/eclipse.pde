@@ -24,9 +24,9 @@ import org.eclipse.ui.dialogs.ListDialog;
 
 public class ShowResultsAction extends Action {
 
-	private IPluginModelBase fModel;
+	private final IPluginModelBase fModel;
 	Object[] fUnusedImports;
-	private boolean fReadOnly;
+	private final boolean fReadOnly;
 
 	public ShowResultsAction(IPluginModelBase model, Object[] unused, boolean readOnly) {
 		fModel = model;

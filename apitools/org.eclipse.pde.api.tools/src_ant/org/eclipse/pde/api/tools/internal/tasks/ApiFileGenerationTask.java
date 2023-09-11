@@ -21,7 +21,7 @@ import org.eclipse.pde.api.tools.internal.APIFileGenerator;
  */
 public class ApiFileGenerationTask extends Task/* APIFileGenerator */ {
 
-	private APIFileGenerator apiFileGenerator;
+	private final APIFileGenerator apiFileGenerator;
 
 	public ApiFileGenerationTask() {
 		this.apiFileGenerator = new APIFileGenerator();

@@ -43,10 +43,10 @@ public class JavaAttributeWizard extends Wizard {
 
 	private static String STORE_SECTION = "JavaAttributeWizard"; //$NON-NLS-1$
 
-	private String fClassName;
-	private IProject fProject;
-	private ISchemaAttribute fAttInfo;
-	private IPluginModelBase fModel;
+	private final String fClassName;
+	private final IProject fProject;
+	private final ISchemaAttribute fAttInfo;
+	private final IPluginModelBase fModel;
 	protected NewTypeWizardPage fMainPage;
 
 	public JavaAttributeWizard(JavaAttributeValue value) {

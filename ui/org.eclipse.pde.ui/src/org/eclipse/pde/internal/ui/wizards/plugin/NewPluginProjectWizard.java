@@ -46,7 +46,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	public static final String DEF_TEMPLATE_ID = "template-id"; //$NON-NLS-1$
 
 	private IConfigurationElement fConfig;
-	private PluginFieldData fPluginData;
+	private final PluginFieldData fPluginData;
 	private IProjectProvider fProjectProvider;
 	protected NewProjectCreationPage fMainPage;
 	protected PluginContentPage fContentPage;

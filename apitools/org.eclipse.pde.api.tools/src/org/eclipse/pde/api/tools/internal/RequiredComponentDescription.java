@@ -23,10 +23,10 @@ import org.eclipse.pde.api.tools.internal.provisional.IVersionRange;
  */
 public class RequiredComponentDescription implements IRequiredComponentDescription {
 
-	private String fId;
-	private boolean fIsOptional;
-	private boolean fIsExprted;
-	private IVersionRange fRange;
+	private final String fId;
+	private final boolean fIsOptional;
+	private final boolean fIsExprted;
+	private final IVersionRange fRange;
 
 	/**
 	 * Constructs a new required component description based on the given

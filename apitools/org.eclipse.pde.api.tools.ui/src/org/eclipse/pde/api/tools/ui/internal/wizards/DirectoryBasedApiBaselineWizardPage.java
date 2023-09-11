@@ -70,7 +70,7 @@ public class DirectoryBasedApiBaselineWizardPage extends ApiBaselineWizardPage {
 	 * from which to read plug-ins.
 	 */
 	class ReloadOperation implements IRunnableWithProgress {
-		private String location, name;
+		private final String location, name;
 
 		/**
 		 * Constructor

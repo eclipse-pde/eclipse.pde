@@ -37,7 +37,7 @@ import org.eclipse.text.edits.TextEdit;
 
 public class CreateManifestOperation implements IRunnableWithProgress {
 
-	private IPluginModelBase fModel;
+	private final IPluginModelBase fModel;
 
 	public CreateManifestOperation(IPluginModelBase model) {
 		fModel = model;

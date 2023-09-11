@@ -59,7 +59,7 @@ public class BndBuilder extends IncrementalProjectBuilder {
 		return true;
 	};
 
-	private Map<IProject, Job> buildJobMap = new ConcurrentHashMap<>();
+	private final Map<IProject, Job> buildJobMap = new ConcurrentHashMap<>();
 
 	public static final String BUILDER_ID = "org.eclipse.pde.BndBuilder";//$NON-NLS-1$
 
@@ -97,8 +97,8 @@ public class BndBuilder extends IncrementalProjectBuilder {
 
 	private static final class BndBuild implements ICoreRunnable {
 
-		private IProject project;
-		private Job oldJob;
+		private final IProject project;
+		private final Job oldJob;
 
 		public BndBuild(IProject project, Job oldJob) {
 			this.project = project;

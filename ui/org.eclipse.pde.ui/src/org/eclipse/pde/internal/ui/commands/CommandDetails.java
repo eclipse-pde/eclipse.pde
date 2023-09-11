@@ -71,8 +71,8 @@ public class CommandDetails {
 	private final ArrayList<ValuesParameterControl> fValueParamList = new ArrayList<>();
 	private final ArrayList<TextParameterControl> fTextParamList = new ArrayList<>();
 
-	private CommandComposerPart fCCP;
-	private FormToolkit fToolkit;
+	private final CommandComposerPart fCCP;
+	private final FormToolkit fToolkit;
 	private Command fSelectedCommand;
 	private ParameterizedCommand fPreSel;
 

@@ -55,11 +55,11 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class DocSection extends PDESection {
-	private IDocument fDocument;
-	private XMLConfiguration fSourceConfiguration;
+	private final IDocument fDocument;
+	private final XMLConfiguration fSourceConfiguration;
 	private SourceViewer fSourceViewer;
 	private CTabFolder fTabFolder;
-	private ISchema fSchema;
+	private final ISchema fSchema;
 	private Object fElement;
 	private boolean fIgnoreChange;
 

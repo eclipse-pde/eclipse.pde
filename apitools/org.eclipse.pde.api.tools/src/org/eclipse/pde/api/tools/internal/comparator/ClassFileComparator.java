@@ -108,7 +108,7 @@ public class ClassFileComparator {
 
 	private IApiType type2 = null;
 
-	private int visibilityModifiers;
+	private final int visibilityModifiers;
 	private int currentDescriptorRestrictions;
 	private int initialDescriptorRestrictions;
 	private MultiStatus status = null;

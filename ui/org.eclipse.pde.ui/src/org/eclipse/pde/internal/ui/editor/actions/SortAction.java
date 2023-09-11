@@ -24,11 +24,11 @@ public class SortAction extends Action {
 
 	private boolean fSorted;
 
-	private StructuredViewer fViewer;
+	private final StructuredViewer fViewer;
 
 	private ViewerComparator fComparator;
 
-	private ViewerComparator fDefaultComparator;
+	private final ViewerComparator fDefaultComparator;
 
 	public SortAction(StructuredViewer viewer, String tooltipText, ViewerComparator sorter, ViewerComparator defaultSorter, IPropertyChangeListener listener) {
 

@@ -42,31 +42,31 @@ import org.osgi.framework.ServiceReference;
 
 public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implements ILabelProvider {
 
-	private Image fPluginImage;
-	private Image fActivePluginImage;
-	private Image fUnresolvedPluginImage;
-	private Image fLibraryImage;
-	private Image fRuntimeImage;
-	private Image fGenericTagImage;
-	private Image fGenericAttrImage;
-	private Image fExtensionImage;
-	private Image fExtensionsImage;
-	private Image fExtensionPointImage;
-	private Image fExtensionPointsImage;
-	private Image fRequiresImage;
-	private Image fExpReqPluginImage;
-	private Image fReqPluginImage;
-	private Image fPluginsImage;
-	private Image fLocationImage;
-	private Image fExporterImage;
-	private Image fImporterImage;
-	private Image fServiceImage;
-	private Image fPropertyImage;
-	private Image fServicePropertyImage;
-	private Image fFragmentImage;
-	private Image fPackageImage;
-	private Image fRemoteServiceProxyImage;
-	private RegistryBrowser fRegistryBrowser;
+	private final Image fPluginImage;
+	private final Image fActivePluginImage;
+	private final Image fUnresolvedPluginImage;
+	private final Image fLibraryImage;
+	private final Image fRuntimeImage;
+	private final Image fGenericTagImage;
+	private final Image fGenericAttrImage;
+	private final Image fExtensionImage;
+	private final Image fExtensionsImage;
+	private final Image fExtensionPointImage;
+	private final Image fExtensionPointsImage;
+	private final Image fRequiresImage;
+	private final Image fExpReqPluginImage;
+	private final Image fReqPluginImage;
+	private final Image fPluginsImage;
+	private final Image fLocationImage;
+	private final Image fExporterImage;
+	private final Image fImporterImage;
+	private final Image fServiceImage;
+	private final Image fPropertyImage;
+	private final Image fServicePropertyImage;
+	private final Image fFragmentImage;
+	private final Image fPackageImage;
+	private final Image fRemoteServiceProxyImage;
+	private final RegistryBrowser fRegistryBrowser;
 
 	public RegistryBrowserLabelProvider(RegistryBrowser browser) {
 		fRegistryBrowser = browser;

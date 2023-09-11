@@ -9,8 +9,8 @@ import org.eclipse.swt.widgets.Text;
 
 public class TextPopupDialog extends PopupDialog {
 
-	private String content;
-	private boolean contentEditable;
+	private final String content;
+	private final boolean contentEditable;
 
 	public TextPopupDialog(Shell shell, String title, String content, boolean editable, String infoText) {
 		super(shell, SWT.RESIZE | SWT.ON_TOP, true, true, true, false, false, title, infoText);

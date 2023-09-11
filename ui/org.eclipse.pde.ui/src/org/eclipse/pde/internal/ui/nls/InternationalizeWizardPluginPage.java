@@ -101,7 +101,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	private Button fRemoveAllButton;
 
 	// Used to store the plug-ins
-	private InternationalizeModelTable<IPluginModelBase> fInternationalizeModelTable;
+	private final InternationalizeModelTable<IPluginModelBase> fInternationalizeModelTable;
 
 	private Button overwriteOption;
 	private Button individualFragments;

@@ -44,5 +44,5 @@ public class TracingComponentColumnLabelProvider extends ColumnLabelProvider {
 	 * The column index. One of {@link TracingConstants#LABEL_COLUMN_INDEX} or
 	 * {@link TracingConstants#VALUE_COLUMN_INDEX}
 	 */
-	private int columnIndex;
+	private final int columnIndex;
 }

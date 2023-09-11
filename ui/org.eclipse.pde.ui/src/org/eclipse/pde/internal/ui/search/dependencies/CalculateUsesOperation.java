@@ -51,8 +51,8 @@ import org.osgi.framework.Constants;
 
 public class CalculateUsesOperation extends WorkspaceModifyOperation {
 
-	private IProject fProject;
-	private IBundlePluginModelBase fModel;
+	private final IProject fProject;
+	private final IBundlePluginModelBase fModel;
 
 	public CalculateUsesOperation(IProject project, IBundlePluginModelBase model) {
 		fProject = project;

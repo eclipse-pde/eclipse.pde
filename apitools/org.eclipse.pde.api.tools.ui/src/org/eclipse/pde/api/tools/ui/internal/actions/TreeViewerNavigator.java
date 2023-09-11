@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.TreeItem;
  * Navigation in the tree viewer.
  */
 class TreeViewerNavigator {
-	private TreeViewer fViewer;
+	private final TreeViewer fViewer;
 
 	public TreeViewerNavigator(TreeViewer viewer) {
 		fViewer = viewer;

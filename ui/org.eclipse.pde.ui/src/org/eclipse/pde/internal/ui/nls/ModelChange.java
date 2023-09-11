@@ -33,8 +33,8 @@ public class ModelChange {
 	private ModelChangeFile fXMLCoupling;
 	private ModelChangeFile fMFCoupling;
 
-	private IPluginModelBase fParent;
-	private boolean fPreSelected;
+	private final IPluginModelBase fParent;
+	private final boolean fPreSelected;
 
 	private String fBundleLocalization;
 	private Properties fProperties;

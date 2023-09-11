@@ -860,7 +860,7 @@ public class FeatureBlock {
 
 	private ILaunchConfiguration fLaunchConfig;
 	private ButtonSelectionListener fListener;
-	private AbstractLauncherTab fTab;
+	private final AbstractLauncherTab fTab;
 	private CachedCheckboxTreeViewer fTree;
 
 	private ViewerFilter fSelectedOnlyFilter;

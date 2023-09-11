@@ -80,7 +80,7 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 	private Link fDSImplementationClassHyperlink;
 	private Button fDSImplementationClassButton;
 
-	private IStructuredSelection fSelection;
+	private final IStructuredSelection fSelection;
 
 	public DSFileWizardPage(IStructuredSelection selection) {
 		super(F_PAGE_NAME, selection);

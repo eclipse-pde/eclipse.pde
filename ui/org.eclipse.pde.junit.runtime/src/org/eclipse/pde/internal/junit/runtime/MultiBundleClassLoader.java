@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.osgi.framework.Bundle;
 
 class MultiBundleClassLoader extends ClassLoader {
-	private List<Bundle> bundleList;
+	private final List<Bundle> bundleList;
 
 	public MultiBundleClassLoader(List<Bundle> platformEngineBundles) {
 		super(null); // never delegate to system classloader, only load classes via given Bundles

@@ -479,8 +479,8 @@ public class SourceLocationManager implements ICoreConstants {
 
 	private static final class OrderedPluginSourcePathLocator implements Comparable<OrderedPluginSourcePathLocator> {
 
-		private IPluginSourcePathLocator locator;
-		private LocatorComplexity complexity;
+		private final IPluginSourcePathLocator locator;
+		private final LocatorComplexity complexity;
 
 		OrderedPluginSourcePathLocator(IPluginSourcePathLocator locator, LocatorComplexity complexity) {
 			this.locator = locator;

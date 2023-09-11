@@ -25,9 +25,9 @@ import org.eclipse.pde.internal.ui.elements.ElementList;
 public class ExtensionEditorWizard extends Wizard {
 	public static final String PLUGIN_POINT = "newExtension"; //$NON-NLS-1$
 	private ExtensionEditorSelectionPage pointPage;
-	private IPluginModelBase model;
-	private IProject project;
-	private IStructuredSelection selection;
+	private final IPluginModelBase model;
+	private final IProject project;
+	private final IStructuredSelection selection;
 	private ElementList wizards;
 
 	public ExtensionEditorWizard(IProject project, IPluginModelBase model, IStructuredSelection selection) {

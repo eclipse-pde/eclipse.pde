@@ -26,7 +26,7 @@ public abstract class NamedElementDescriptorImpl extends ElementDescriptorImpl {
 	/**
 	 * element name
 	 */
-	private String fName;
+	private final String fName;
 
 	/**
 	 * Constructs an element descriptor with the given name and parent.

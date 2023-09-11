@@ -23,8 +23,8 @@ import org.eclipse.swt.dnd.TransferData;
 
 public class ElementSectionDropAdapter extends ViewerDropAdapter {
 	private TransferData fCurrentTransfer;
-	private ElementSection fSsection;
-	private ElementSectionDragAdapter fDragAdapter;
+	private final ElementSection fSsection;
+	private final ElementSectionDragAdapter fDragAdapter;
 
 	public ElementSectionDropAdapter(ElementSectionDragAdapter dragAdapter, ElementSection section) {
 		super(section.getTreeViewer());

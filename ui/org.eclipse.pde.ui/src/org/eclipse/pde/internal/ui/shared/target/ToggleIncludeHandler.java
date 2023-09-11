@@ -33,10 +33,10 @@ import org.eclipse.pde.ui.target.ITargetLocationHandler;
 
 public class ToggleIncludeHandler<DescriptorType> implements ITargetLocationHandler {
 
-	private int uiMode;
-	private Function<ITargetDefinition, DescriptorType[]> descriptorAccessor;
-	private Function<DescriptorType, NameVersionDescriptor> mapper;
-	private Class<DescriptorType> type;
+	private final int uiMode;
+	private final Function<ITargetDefinition, DescriptorType[]> descriptorAccessor;
+	private final Function<DescriptorType, NameVersionDescriptor> mapper;
+	private final Class<DescriptorType> type;
 
 	public ToggleIncludeHandler(Class<DescriptorType> type, int uiMode,
 			Function<ITargetDefinition, DescriptorType[]> descriptorAccessor,

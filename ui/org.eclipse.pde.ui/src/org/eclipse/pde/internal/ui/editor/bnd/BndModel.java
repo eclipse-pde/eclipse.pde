@@ -30,7 +30,7 @@ import aQute.bnd.build.model.BndEditModel;
  */
 public class BndModel extends BndEditModel implements IBaseModel, IModelChangeProvider {
 
-	private BndDocument bndDocument;
+	private final BndDocument bndDocument;
 	private volatile boolean valid;
 	private volatile boolean disposed;
 

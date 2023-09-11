@@ -33,7 +33,7 @@ public class ResourceApiTypeRoot extends AbstractApiTypeRoot {
 	/**
 	 * Corresponding file
 	 */
-	private IFile fFile;
+	private final IFile fFile;
 
 	// when class file is changed, the object is changed too
 	// can store the contents in the class field for optimisation.

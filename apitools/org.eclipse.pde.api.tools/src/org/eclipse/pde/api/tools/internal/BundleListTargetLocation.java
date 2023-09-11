@@ -24,7 +24,7 @@ import org.eclipse.pde.core.target.TargetFeature;
 
 public class BundleListTargetLocation implements ITargetLocation {
 
-	private TargetBundle[] bundles;
+	private final TargetBundle[] bundles;
 
 	public BundleListTargetLocation(TargetBundle[] bundles) {
 		this.bundles = bundles;

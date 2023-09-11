@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.ua.core.icheatsheet.comp.ICompCSTaskGroup;
 
 public class CompCSModelFactory implements ICompCSModelFactory {
 
-	private ICompCSModel fModel;
+	private final ICompCSModel fModel;
 
 	/**
 	 * @param model

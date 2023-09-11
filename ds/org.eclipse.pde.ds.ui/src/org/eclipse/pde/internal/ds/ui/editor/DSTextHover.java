@@ -27,7 +27,7 @@ import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
 
 public class DSTextHover extends PDETextHover {
 
-	private PDESourcePage fSourcePage;
+	private final PDESourcePage fSourcePage;
 
 	public DSTextHover(PDESourcePage sourcePage) {
 		fSourcePage = sourcePage;

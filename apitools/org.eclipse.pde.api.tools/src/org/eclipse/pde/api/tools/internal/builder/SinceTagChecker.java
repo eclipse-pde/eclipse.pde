@@ -47,7 +47,7 @@ public class SinceTagChecker extends ASTVisitor {
 	private static final int HAS_JAVA_DOC = 0x04;
 	private static final int HAS_NO_COMMENT = 0x10;
 
-	private int nameStart;
+	private final int nameStart;
 	int bits;
 	private String sinceVersion;
 

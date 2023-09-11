@@ -48,8 +48,8 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 	private IPluginModelBase[] fSelected;
 	private IPluginModelBase[] fUnmigrated;
 	private CheckboxTableViewer pluginListViewer;
-	private TablePart tablePart;
-	private LibraryPluginFieldData fData;
+	private final TablePart tablePart;
+	private final LibraryPluginFieldData fData;
 
 	public class BuildpathContentProvider implements IStructuredContentProvider {
 		@Override

@@ -18,9 +18,9 @@ public enum Operator {
 			false), Contains(Messages.Operator_Contains, true), NotContains(Messages.Operator_NotContains, false), StartsWith(Messages.Operator_StartsWith,
 					true), NotStartsWith(Messages.Operator_NotStartsWith, false);
 
-	private String text;
+	private final String text;
 
-	private boolean positive;
+	private final boolean positive;
 
 	private Operator(String text, boolean positive) {
 		this.text = text;

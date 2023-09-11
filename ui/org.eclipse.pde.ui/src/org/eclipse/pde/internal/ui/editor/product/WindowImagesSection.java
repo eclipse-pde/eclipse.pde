@@ -54,7 +54,7 @@ public class WindowImagesSection extends PDESection {
 
 	private static final int[][] F_ICON_DIMENSIONS = new int[][] { {16, 16}, {32, 32}, {48, 48}, {64, 64}, {128, 128}, {256, 256}};
 	private static final String[] F_ICON_LABELS = new String[] {PDEUIMessages.WindowImagesSection_16, PDEUIMessages.WindowImagesSection_32, PDEUIMessages.WindowImagesSection_48, PDEUIMessages.WindowImagesSection_64, PDEUIMessages.WindowImagesSection_128, PDEUIMessages.WindowImagesSection_256};
-	private FormEntry[] fImages = new FormEntry[F_ICON_LABELS.length];
+	private final FormEntry[] fImages = new FormEntry[F_ICON_LABELS.length];
 
 	public WindowImagesSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);

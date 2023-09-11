@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
 
 public abstract class PDEHyperlinkDetector implements IHyperlinkDetector {
 
-	private PDESourcePage fSourcePage;
+	private final PDESourcePage fSourcePage;
 
 	public PDEHyperlinkDetector(PDESourcePage page) {
 		fSourcePage = page;

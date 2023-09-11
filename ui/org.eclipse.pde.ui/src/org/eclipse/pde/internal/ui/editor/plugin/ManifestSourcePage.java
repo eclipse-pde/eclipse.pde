@@ -53,16 +53,16 @@ import org.eclipse.ui.actions.ActionContext;
 
 public class ManifestSourcePage extends XMLSourcePage {
 
-	private Object fLibraries = new Object();
-	private Object fImports = new Object();
-	private Object fExtensionPoints = new Object();
-	private Object fExtensions = new Object();
-	private ExtensionAttributePointDectector fDetector;
-	private PluginSearchActionGroup fActionGroup;
+	private final Object fLibraries = new Object();
+	private final Object fImports = new Object();
+	private final Object fExtensionPoints = new Object();
+	private final Object fExtensions = new Object();
+	private final ExtensionAttributePointDectector fDetector;
+	private final PluginSearchActionGroup fActionGroup;
 	private PDERefactoringAction fRenameAction;
 
 	class OutlineLabelProvider extends LabelProvider {
-		private PDELabelProvider fProvider;
+		private final PDELabelProvider fProvider;
 
 		public OutlineLabelProvider() {
 			fProvider = PDEPlugin.getDefault().getLabelProvider();

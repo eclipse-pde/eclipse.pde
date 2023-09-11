@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Item;
  * mostly overrides the specified drop behaviour.
  */
 public class TocDropAdapter extends ViewerDropAdapter {
-	private TocTreeSection fSection;
+	private final TocTreeSection fSection;
 
 	/**
 	 * Constant describing the position of the cursor relative

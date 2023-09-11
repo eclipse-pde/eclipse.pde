@@ -22,7 +22,7 @@ import org.eclipse.ui.testing.TestableObject;
  */
 public class PlatformUITestHarness implements ITestHarness {
 
-	private TestableObject fTestableObject;
+	private final TestableObject fTestableObject;
 	private final boolean fRunTestsInSeparateThread;
 
 	/**

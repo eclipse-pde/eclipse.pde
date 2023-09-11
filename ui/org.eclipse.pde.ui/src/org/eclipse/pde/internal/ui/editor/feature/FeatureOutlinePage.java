@@ -74,7 +74,7 @@ public class FeatureOutlinePage extends FormOutlinePage {
 		}
 	}
 
-	private NamedElement fDiscoveryUrls;
+	private final NamedElement fDiscoveryUrls;
 
 	public FeatureOutlinePage(PDEFormEditor editor) {
 		super(editor);

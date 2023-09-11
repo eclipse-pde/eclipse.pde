@@ -48,7 +48,7 @@ import org.eclipse.ui.IURIEditorInput;
 
 public class CategoryInputContext extends XMLInputContext {
 	public static final String CONTEXT_ID = "category-context"; //$NON-NLS-1$
-	private boolean storageModel = false;
+	private final boolean storageModel = false;
 
 	/**
 	 * @param editor

@@ -55,7 +55,7 @@ public class UpdateUnitVersionsCommandTests extends AbstractTargetEditorTest {
 		confirmVersionUpdates(expected);
 	}
 
-	private ICommandService service = PlatformUI.getWorkbench().getService(ICommandService.class);
+	private final ICommandService service = PlatformUI.getWorkbench().getService(ICommandService.class);
 
 	private Map<String, String> getVersionsForIdsFromTargetFile(String targetFile) {
 		Map<String, String> units = new HashMap<>();

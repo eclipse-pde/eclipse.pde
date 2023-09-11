@@ -27,7 +27,7 @@ import org.eclipse.ui.ide.IDE;
 
 public class ResourceHyperlink extends AbstractHyperlink {
 
-	private IResource fResource;
+	private final IResource fResource;
 
 	public ResourceHyperlink(IRegion region, String element, IResource res) {
 		super(region, element);

@@ -26,7 +26,7 @@ import org.eclipse.ui.progress.UIJob;
 
 public class RegistryBrowserModelChangeListener implements ModelChangeListener {
 
-	private RegistryBrowser fRegistryBrowser;
+	private final RegistryBrowser fRegistryBrowser;
 
 	public RegistryBrowserModelChangeListener(RegistryBrowser registryBrowser) {
 		fRegistryBrowser = registryBrowser;

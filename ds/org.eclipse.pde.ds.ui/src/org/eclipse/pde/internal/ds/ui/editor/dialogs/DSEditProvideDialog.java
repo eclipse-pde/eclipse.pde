@@ -50,9 +50,9 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class DSEditProvideDialog extends FormDialog {
 
-	private IDSProvide fProvide;
+	private final IDSProvide fProvide;
 	private FormEntry fInterfaceEntry;
-	private DSProvideSection fProvideSection;
+	private final DSProvideSection fProvideSection;
 
 	public DSEditProvideDialog(Shell parentShell, IDSProvide provide,
 			DSProvideSection provideSection) {

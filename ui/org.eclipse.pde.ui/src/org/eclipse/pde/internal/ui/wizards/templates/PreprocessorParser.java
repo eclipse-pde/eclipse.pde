@@ -43,7 +43,7 @@ public class PreprocessorParser {
 
 	private IVariableProvider provider;
 	private String line;
-	private Stack<RootEntry> exprStack;
+	private final Stack<RootEntry> exprStack;
 	private int loc;
 	private String tvalue;
 

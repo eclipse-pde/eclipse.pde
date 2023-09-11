@@ -33,11 +33,11 @@ import org.eclipse.ui.part.IPageSite;
  */
 public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingParticipant, ISortableContentOutlinePage {
 
-	private IEditingModel fModel;
-	private IBaseLabelProvider fLabelProvider;
-	private IContentProvider fContentProvider;
-	private ViewerComparator fDefaultComparator;
-	private ViewerComparator fViewerComparator;
+	private final IEditingModel fModel;
+	private final IBaseLabelProvider fLabelProvider;
+	private final IContentProvider fContentProvider;
+	private final ViewerComparator fDefaultComparator;
+	private final ViewerComparator fViewerComparator;
 	private boolean sorted;
 	TreeViewer viewer;
 
@@ -46,7 +46,7 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	 * org.eclipse.ui.views.contentoutline.ContentOutlinePage.selectionChangedListeners
 	 * from our parent
 	 */
-	private ArrayList<ISelectionChangedListener> fListenerList;
+	private final ArrayList<ISelectionChangedListener> fListenerList;
 
 	public SourceOutlinePage(PDEFormEditor editor, IEditingModel model, IBaseLabelProvider lProvider, IContentProvider cProvider, ViewerComparator defaultComparator, ViewerComparator comparator) {
 		super(editor);

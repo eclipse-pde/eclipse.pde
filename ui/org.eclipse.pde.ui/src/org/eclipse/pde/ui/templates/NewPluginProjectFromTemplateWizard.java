@@ -77,7 +77,7 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 	 */
 	public static final String TAG_WIZARD = "wizard"; //$NON-NLS-1$
 
-	private AbstractFieldData fPluginData;
+	private final AbstractFieldData fPluginData;
 	private NewProjectCreationPage fProjectPage;
 	private PluginContentPage fContentPage;
 	private IPluginContentWizard fTemplateWizard;

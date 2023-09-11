@@ -43,7 +43,7 @@ import org.eclipse.ui.dialogs.FilteredItemsSelectionDialog;
 public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 
 	private static final String DIALOG_SETTINGS = "org.eclipse.pde.ui.dialogs.FeatureSelectionDialog"; //$NON-NLS-1$
-	private IFeatureModel[] fModels;
+	private final IFeatureModel[] fModels;
 	private FeatureSearchItemsFilter filter;
 
 	private final class FeatureDetailsLabelProvider extends LabelProvider {

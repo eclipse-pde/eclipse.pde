@@ -61,16 +61,16 @@ import org.eclipse.ui.forms.widgets.ScrolledPageBook;
 
 public class TracingBlock {
 
-	private TracingTab fTab;
+	private final TracingTab fTab;
 	private Button fTracingCheck;
 	private CheckboxTableViewer fPluginViewer;
 	private IPluginModelBase[] fTraceableModels;
-	private Properties fMasterOptions = new Properties();
+	private final Properties fMasterOptions = new Properties();
 	private Button fSelectAllButton;
 	private Button fDeselectAllButton;
 	private Button fRestoreSelectedDefaultButton;
 	private Button fRestoreDefaultButton;
-	private Hashtable<IPluginModelBase, TracingPropertySource> fPropertySources = new Hashtable<>();
+	private final Hashtable<IPluginModelBase, TracingPropertySource> fPropertySources = new Hashtable<>();
 	private FormToolkit fToolkit;
 	private ScrolledPageBook fPageBook;
 

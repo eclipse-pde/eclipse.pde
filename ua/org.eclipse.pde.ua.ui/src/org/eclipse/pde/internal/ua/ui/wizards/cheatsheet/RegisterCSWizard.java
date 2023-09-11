@@ -31,7 +31,7 @@ public class RegisterCSWizard extends Wizard implements INewWizard {
 
 	private RegisterCSWizardPage fMainPage;
 
-	private IModel fModel;
+	private final IModel fModel;
 
 	public RegisterCSWizard(IModel model) {
 		fModel = model;

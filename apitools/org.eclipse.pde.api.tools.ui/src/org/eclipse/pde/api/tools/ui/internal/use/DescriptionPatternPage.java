@@ -36,7 +36,7 @@ public class DescriptionPatternPage extends UsePatternPage {
 
 	static final String PAGE_NAME = "description"; //$NON-NLS-1$
 
-	private int kind = -1;
+	private final int kind = -1;
 	private Button kbutton = null;
 	private Text patterntext = null;
 	private String pattern = null;

@@ -33,10 +33,10 @@ import org.eclipse.ui.texteditor.SelectMarkerRulerAction;
 public class PDESelectAnnotationRulerAction extends SelectMarkerRulerAction {
 
 	private boolean fIsEditable;
-	private ITextEditor fTextEditor;
+	private final ITextEditor fTextEditor;
 	private Position fPosition;
-	private ResourceBundle fBundle;
-	private String fPrefix;
+	private final ResourceBundle fBundle;
+	private final String fPrefix;
 
 	public PDESelectAnnotationRulerAction(ResourceBundle bundle, String prefix, ITextEditor editor, IVerticalRulerInfo ruler) {
 		super(bundle, prefix, editor, ruler);

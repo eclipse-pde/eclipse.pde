@@ -60,7 +60,7 @@ public class EnvironmentSection extends SectionPart {
 	private TreeSet<String> fArchChoices;
 	private boolean LOCALES_INITIALIZED = false;
 
-	private TargetEditor fEditor;
+	private final TargetEditor fEditor;
 
 	public EnvironmentSection(FormPage page, Composite parent) {
 		super(parent, page.getManagedForm().getToolkit(), Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);

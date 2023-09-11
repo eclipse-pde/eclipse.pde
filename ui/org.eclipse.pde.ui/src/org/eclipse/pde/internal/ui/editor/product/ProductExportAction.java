@@ -29,9 +29,9 @@ import org.eclipse.ui.PlatformUI;
 
 public class ProductExportAction extends Action {
 
-	private IProject fProject;
+	private final IProject fProject;
 
-	private IStructuredSelection fSelection;
+	private final IStructuredSelection fSelection;
 
 	public ProductExportAction(PDEFormEditor editor) {
 		IResource resource = null;

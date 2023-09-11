@@ -55,7 +55,7 @@ public class ArchiveApiTypeContainer extends ApiElement implements IApiTypeConta
 	 */
 	static class ArchiveApiTypeRoot extends AbstractApiTypeRoot implements Comparable<Object> {
 
-		private String fTypeName;
+		private final String fTypeName;
 		private byte[] fContents = null;
 
 		/**

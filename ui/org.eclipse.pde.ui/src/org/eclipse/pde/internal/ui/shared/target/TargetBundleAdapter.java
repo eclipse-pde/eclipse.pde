@@ -23,7 +23,7 @@ import org.eclipse.pde.ui.target.ITargetLocationHandler;
 
 public class TargetBundleAdapter implements IAdapterFactory {
 
-	private ToggleIncludeHandler<TargetBundle> handler = new ToggleIncludeHandler<>(TargetBundle.class,
+	private final ToggleIncludeHandler<TargetBundle> handler = new ToggleIncludeHandler<>(TargetBundle.class,
 			TargetDefinition.MODE_PLUGIN, ITargetDefinition::getAllBundles,
 			TargetBundleAdapter::asNameVersionDescriptor);
 

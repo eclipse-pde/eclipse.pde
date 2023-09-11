@@ -18,8 +18,8 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
 
 public class JavaAttributeValue extends ResourceAttributeValue {
-	private ISchemaAttribute attInfo;
-	private IPluginModelBase model;
+	private final ISchemaAttribute attInfo;
+	private final IPluginModelBase model;
 
 	public JavaAttributeValue(IProject project, IPluginModelBase model, ISchemaAttribute attInfo, String className) {
 		super(project, className);

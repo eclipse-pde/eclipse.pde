@@ -24,7 +24,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class CollapseAllAction extends Action {
 
-	private TreeViewer fViewer;
+	private final TreeViewer fViewer;
 
 	public CollapseAllAction(TreeViewer viewer) {
 		setText(ActionMessages.CollapseAllAction_label);

@@ -30,9 +30,9 @@ public class JavaDocCommentReader extends SingleCharReader {
 
 	private int fCurrPos;
 
-	private int fStartPos;
+	private final int fStartPos;
 
-	private int fEndPos;
+	private final int fEndPos;
 
 	private boolean fWasNewLine;
 

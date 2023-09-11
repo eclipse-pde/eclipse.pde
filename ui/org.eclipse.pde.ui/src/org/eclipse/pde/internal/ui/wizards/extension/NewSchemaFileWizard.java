@@ -29,8 +29,8 @@ import org.eclipse.ui.IWorkbench;
 public class NewSchemaFileWizard extends Wizard implements INewWizard {
 	private NewSchemaFileMainPage mainPage;
 	private IContainer container;
-	private IPluginExtensionPoint point;
-	private boolean isPluginIdFinal;
+	private final IPluginExtensionPoint point;
+	private final boolean isPluginIdFinal;
 
 	public NewSchemaFileWizard() {
 		this(null, null, false);

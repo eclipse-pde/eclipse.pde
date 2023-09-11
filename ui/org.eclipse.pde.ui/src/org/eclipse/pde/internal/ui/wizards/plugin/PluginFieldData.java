@@ -27,7 +27,7 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	private boolean fRCPAppPlugin = false;
 	private boolean fSetupAPITooling = false;
 	private boolean fE4Plugin = false;
-	private ArrayList<ITemplateSection> templates = new ArrayList<>();
+	private final ArrayList<ITemplateSection> templates = new ArrayList<>();
 
 	@Override
 	public String getClassname() {

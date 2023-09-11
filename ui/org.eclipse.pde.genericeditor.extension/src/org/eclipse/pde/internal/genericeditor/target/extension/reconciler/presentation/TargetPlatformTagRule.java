@@ -52,7 +52,7 @@ public class TargetPlatformTagRule extends WordRule {
 			WS_TAG, ARCH_TAG, NL_TAG, DEPENDENCIES_TAG, DEPENDENCY_TAG, VERSION_TAG, TYPE_TAG, GROUP_ID_TAG,
 			ARTIFACT_ID_TAG };
 
-	private IToken tagToken = new Token(
+	private final IToken tagToken = new Token(
 			new TextAttribute(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry()
 					.get(IGETEColorConstants.P_TAG)));
 

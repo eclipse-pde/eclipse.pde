@@ -45,7 +45,7 @@ public class ProductExportWizard extends BaseExportWizard {
 	private WorkspaceProductModel fProductModel;
 	private CrossPlatformExportPage fPage2;
 	private ProductExportWizardPage fPage;
-	private IProject fProject;
+	private final IProject fProject;
 
 	public ProductExportWizard() {
 		this(null);

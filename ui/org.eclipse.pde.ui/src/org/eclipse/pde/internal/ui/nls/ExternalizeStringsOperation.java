@@ -54,10 +54,10 @@ import org.osgi.framework.Constants;
 
 public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 
-	private Object[] fChangeFiles;
-	private CompositeChange fParentChange;
-	private HashMap<String, CompositeChange> fCompositeChanges;
-	private HashMap<IFile, TextFileChange> fFileChanges;
+	private final Object[] fChangeFiles;
+	private final CompositeChange fParentChange;
+	private final HashMap<String, CompositeChange> fCompositeChanges;
+	private final HashMap<IFile, TextFileChange> fFileChanges;
 
 	public ExternalizeStringsOperation(Object[] changeFiles, CompositeChange parentChange) {
 		fChangeFiles = changeFiles;

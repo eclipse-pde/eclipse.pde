@@ -110,7 +110,7 @@ public class ApiDescriptionProcessor {
 		/**
 		 * Members collected from current type.
 		 */
-		private List<IElementDescriptor> members = new ArrayList<>();
+		private final List<IElementDescriptor> members = new ArrayList<>();
 
 		/**
 		 * List of exception statuses that occurred, or <code>null</code> if
@@ -212,7 +212,7 @@ public class ApiDescriptionProcessor {
 		private List<IElementDescriptor> apis = null;
 		private IApiDescription description = null;
 		private ASTRewrite rewrite = null;
-		private Stack<Integer> typeStack;
+		private final Stack<Integer> typeStack;
 
 		/**
 		 * Constructor

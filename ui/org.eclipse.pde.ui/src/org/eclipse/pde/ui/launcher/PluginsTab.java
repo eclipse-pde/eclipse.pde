@@ -52,13 +52,13 @@ import org.eclipse.ui.PlatformUI;
  */
 public class PluginsTab extends AbstractLauncherTab {
 
-	private Image fImage;
+	private final Image fImage;
 
 	private Combo fSelectionCombo;
-	private BlockAdapter fBlock;
+	private final BlockAdapter fBlock;
 	private Combo fDefaultAutoStart;
 	private Spinner fDefaultStartLevel;
-	private Listener fListener;
+	private final Listener fListener;
 
 	private static final int DEFAULT_SELECTION = 0;
 	private static final int PLUGIN_SELECTION = 1;

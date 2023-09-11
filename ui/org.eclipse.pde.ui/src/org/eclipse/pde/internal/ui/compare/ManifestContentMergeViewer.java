@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Composite;
 public class ManifestContentMergeViewer extends TextMergeViewer {
 
 	private IColorManager fColorManager;
-	private Set<ManifestConfiguration> manifestConfigurations;
+	private final Set<ManifestConfiguration> manifestConfigurations;
 
 	public ManifestContentMergeViewer(Composite parent, CompareConfiguration configuration) {
 		super(parent, SWT.LEFT_TO_RIGHT, configuration);

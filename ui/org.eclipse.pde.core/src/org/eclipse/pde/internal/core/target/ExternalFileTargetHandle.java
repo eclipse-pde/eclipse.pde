@@ -51,7 +51,7 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 	}
 
 	private final URI fURI;
-	private File fFile;
+	private final File fFile;
 
 	/**
 	 * Constructs a new target handle to the remote file, based on its URI.

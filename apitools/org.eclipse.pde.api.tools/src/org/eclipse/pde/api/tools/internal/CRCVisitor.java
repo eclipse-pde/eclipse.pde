@@ -27,7 +27,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
  */
 public class CRCVisitor extends ApiDescriptionVisitor {
 
-	private CRC32 fCrc = new CRC32();
+	private final CRC32 fCrc = new CRC32();
 
 	@Override
 	public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {

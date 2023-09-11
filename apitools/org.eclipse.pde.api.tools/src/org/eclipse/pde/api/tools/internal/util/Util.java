@@ -165,7 +165,7 @@ public final class Util {
 	 */
 	private static final class BuildJob extends Job {
 		private final IProject[] fProjects;
-		private int fBuildType;
+		private final int fBuildType;
 
 		/**
 		 * Constructor

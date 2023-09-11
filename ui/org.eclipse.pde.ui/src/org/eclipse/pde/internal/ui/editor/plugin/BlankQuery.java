@@ -24,7 +24,7 @@ import org.eclipse.search.ui.ISearchResult;
 
 public class BlankQuery implements ISearchQuery {
 
-	private PackageObject fObject;
+	private final PackageObject fObject;
 
 	BlankQuery(PackageObject object) {
 		fObject = object;

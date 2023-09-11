@@ -31,12 +31,12 @@ public class AlternateSourceLocations extends SourceLocationManager {
 	/**
 	 * All models to consider as source locations.
 	 */
-	private IPluginModelBase[] models;
+	private final IPluginModelBase[] models;
 
 	/**
 	 * Resolved bundles corresponding to models
 	 */
-	private TargetBundle[] bundles;
+	private final TargetBundle[] bundles;
 
 	/**
 	 * List of source locations that reference root folders containing

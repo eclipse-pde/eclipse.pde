@@ -24,7 +24,7 @@ public abstract class TextValidator extends AbstractControlValidator {
 
 	private ModifyListener fModifyListener;
 
-	private boolean fAutoValidate;
+	private final boolean fAutoValidate;
 
 	private String fCurrentText;
 

@@ -47,7 +47,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 public class SchemaFormPage extends PDEFormPage implements IModelChangedListener {
 	public static final String PAGE_ID = "form"; //$NON-NLS-1$
 	private ElementSection fSection;
-	private SchemaBlock fBlock;
+	private final SchemaBlock fBlock;
 	private DetailsPart fDetailsPart;
 	private ImageHyperlink fImageHyperlinkPreviewRefDoc;
 	private ShowDescriptionAction fPreviewAction;

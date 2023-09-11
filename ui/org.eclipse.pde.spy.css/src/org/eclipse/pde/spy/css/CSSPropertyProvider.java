@@ -23,9 +23,9 @@ import org.w3c.dom.css.CSSValue;
 @SuppressWarnings("restriction")
 public class CSSPropertyProvider {
 
-	private String propertyName;
-	private CSSStylableElement element;
-	private CSSEngine engine;
+	private final String propertyName;
+	private final CSSStylableElement element;
+	private final CSSEngine engine;
 
 	public CSSPropertyProvider(String propertyName, CSSStylableElement element, CSSEngine engine) {
 		this.propertyName = propertyName;

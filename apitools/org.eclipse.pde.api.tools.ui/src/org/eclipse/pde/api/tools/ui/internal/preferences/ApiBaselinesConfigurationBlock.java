@@ -66,7 +66,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	 */
 	protected static class ControlData {
 		Key key;
-		private String[] values;
+		private final String[] values;
 
 		/**
 		 * Constructor
@@ -110,8 +110,8 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	 */
 	protected static class Key {
 
-		private String qualifier;
-		private String key;
+		private final String qualifier;
+		private final String key;
 
 		/**
 		 * Constructor
@@ -237,7 +237,7 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Default selection listener for controls on the page
 	 */
-	private SelectionListener selectionlistener = new SelectionAdapter() {
+	private final SelectionListener selectionlistener = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			if (e.widget instanceof Combo) {
@@ -254,11 +254,11 @@ public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	 * Listing of all of the {@link Combo}s added to the block
 	 */
 
-	private ArrayList<Combo> fCombos = new ArrayList<>();
+	private final ArrayList<Combo> fCombos = new ArrayList<>();
 	/**
 	 * Listing of the label in the block
 	 */
-	private ArrayList<Label> fLabels = new ArrayList<>();
+	private final ArrayList<Label> fLabels = new ArrayList<>();
 
 	/**
 	 * The context of settings locations to search for values in

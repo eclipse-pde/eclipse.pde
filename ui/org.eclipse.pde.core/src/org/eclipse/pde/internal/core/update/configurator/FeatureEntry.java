@@ -21,13 +21,13 @@ import java.net.URL;
  */
 @SuppressWarnings("deprecation")
 class FeatureEntry implements IConfigurationConstants {
-	private String id;
-	private String version;
-	private String pluginVersion;
-	private String application;
-	private URL[] root;
-	private boolean primary;
-	private String pluginIdentifier;
+	private final String id;
+	private final String version;
+	private final String pluginVersion;
+	private final String application;
+	private final URL[] root;
+	private final boolean primary;
+	private final String pluginIdentifier;
 	private String url;
 	private SiteEntry site;
 

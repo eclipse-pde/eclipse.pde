@@ -32,8 +32,8 @@ public class ConvertedProjectWizard extends NewWizard {
 	private static final String STORE_SECTION = "ConvertedProjectWizard"; //$NON-NLS-1$
 
 	private ConvertedProjectsPage mainPage;
-	private Vector<IProject> selected;
-	private IProject[] fUnconverted;
+	private final Vector<IProject> selected;
+	private final IProject[] fUnconverted;
 
 	public ConvertedProjectWizard(IProject[] projects, Vector<IProject> initialSelection) {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_CONVJPPRJ_WIZ);

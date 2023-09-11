@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 public class ProjectNamesPage extends WizardPage {
-	private SampleWizard wizard;
+	private final SampleWizard wizard;
 	private Composite container;
 
 	public ProjectNamesPage(SampleWizard wizard) {

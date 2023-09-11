@@ -47,7 +47,7 @@ public abstract class AbstractRepository extends Job {
 
 	protected List<ImageElement> mElementsCache = new LinkedList<>();
 
-	private IImageTarget mTarget;
+	private final IImageTarget mTarget;
 
 	public AbstractRepository(IImageTarget target) {
 		super(PDEUIMessages.AbstractRepository_ScanForUI);

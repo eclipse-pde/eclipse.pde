@@ -196,7 +196,7 @@ public class TargetReferenceBundleContainerAdapterFactory implements IAdapterFac
 	 *
 	 */
 	public static final class TargetLocationWrapper {
-		private Object wrappedItem;
+		private final Object wrappedItem;
 
 		public TargetLocationWrapper(Object location) {
 			this.wrappedItem = location;

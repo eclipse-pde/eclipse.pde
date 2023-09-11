@@ -40,7 +40,7 @@ public class EditorPreferencePage extends PreferencePage implements IWorkbenchPr
 
 	private XMLSyntaxColorTab fXMLTab;
 	private ManifestSyntaxColorTab fManifestTab;
-	private ColorManager fColorManager;
+	private final ColorManager fColorManager;
 
 	public EditorPreferencePage() {
 		setDescription(PDEUIMessages.EditorPreferencePage_colorSettings);

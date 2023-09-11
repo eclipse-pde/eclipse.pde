@@ -42,7 +42,7 @@ public class SimpleCSDefinitionPage extends PDEFormPage implements
 
 	public static final String PAGE_ID = "simpleCSPage"; //$NON-NLS-1$
 
-	private SimpleCSBlock fBlock;
+	private final SimpleCSBlock fBlock;
 	private boolean fStale;
 
 	public SimpleCSDefinitionPage(FormEditor editor) {

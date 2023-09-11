@@ -54,7 +54,7 @@ public class ShowAllPreferencesHandler {
 
 	private class PrefereneGatherer implements IPreferenceNodeVisitor {
 
-		private Map<String, PreferenceNodeEntry> preferenceEntries;
+		private final Map<String, PreferenceNodeEntry> preferenceEntries;
 
 		public PrefereneGatherer(Map<String, PreferenceNodeEntry> preferenceEntries) {
 			this.preferenceEntries = preferenceEntries;

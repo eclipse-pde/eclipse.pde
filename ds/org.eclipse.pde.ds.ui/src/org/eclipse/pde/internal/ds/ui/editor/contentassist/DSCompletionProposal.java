@@ -27,9 +27,9 @@ import org.eclipse.swt.graphics.Point;
 
 public class DSCompletionProposal implements ICompletionProposal {
 
-	private IDSObject fObject;
-	private int fStartOffset;
-	private int fLength;
+	private final IDSObject fObject;
+	private final int fStartOffset;
+	private final int fLength;
 
 	public DSCompletionProposal(IDSObject object, int startOffset) {
 		this(object, startOffset, 0);

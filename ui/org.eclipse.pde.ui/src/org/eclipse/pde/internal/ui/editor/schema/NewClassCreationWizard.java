@@ -28,7 +28,7 @@ import org.eclipse.pde.internal.ui.util.TextUtil;
 
 public class NewClassCreationWizard extends JavaAttributeWizard {
 
-	private boolean fIsInterface;
+	private final boolean fIsInterface;
 
 	private IPackageFragment packageName = null;
 	private String className = null;

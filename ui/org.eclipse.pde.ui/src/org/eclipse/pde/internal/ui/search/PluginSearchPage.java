@@ -79,11 +79,11 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 
 	private Button caseSensitive;
 	private ISearchPageContainer container;
-	private Button[] externalScopeButtons = new Button[3];
+	private final Button[] externalScopeButtons = new Button[3];
 	private boolean firstTime = true;
-	private Button[] limitToButtons = new Button[3];
+	private final Button[] limitToButtons = new Button[3];
 	private Combo patternCombo;
-	private Button[] searchForButtons = new Button[3];
+	private final Button[] searchForButtons = new Button[3];
 
 	@Override
 	public void createControl(Composite parent) {

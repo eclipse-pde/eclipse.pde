@@ -31,7 +31,7 @@ public class HistoryAction extends Action {
 	 * Image descriptor for an image.
 	 */
 	public class ImageImageDescriptor extends ImageDescriptor {
-		private Image fImage;
+		private final Image fImage;
 
 		/**
 		 * Constructor for ImagImageDescriptor.
@@ -57,9 +57,9 @@ public class HistoryAction extends Action {
 		}
 	}
 
-	private String fElement;
+	private final String fElement;
 
-	private DependenciesView fView;
+	private final DependenciesView fView;
 
 	public HistoryAction(DependenciesView view, String element) {
 		super();
