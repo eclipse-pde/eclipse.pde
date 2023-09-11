@@ -36,8 +36,8 @@ import org.osgi.framework.Version;
  **/
 public class FindReferencesAction extends BaseSearchAction {
 
-	private Object fSelectedObject;
-	private String fPluginID;
+	private final Object fSelectedObject;
+	private final String fPluginID;
 
 	/**
 	 * Creates a new find references action to find references to the given object. The object should

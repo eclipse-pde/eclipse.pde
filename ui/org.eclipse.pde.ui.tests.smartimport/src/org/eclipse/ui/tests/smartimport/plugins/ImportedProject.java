@@ -22,9 +22,9 @@ import java.util.stream.Collectors;
  */
 public class ImportedProject {
 
-	private String projectName;
-	private List<String> importedAs;
-	private String relativePath;
+	private final String projectName;
+	private final List<String> importedAs;
+	private final String relativePath;
 
 	public ImportedProject(String projectName, String relativePath) {
 		this.projectName = projectName;

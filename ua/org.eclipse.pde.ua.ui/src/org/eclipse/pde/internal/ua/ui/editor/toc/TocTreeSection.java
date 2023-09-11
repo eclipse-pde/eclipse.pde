@@ -130,15 +130,15 @@ public class TocTreeSection extends TreeSection {
 	private CollapseAction fCollapseAction;
 
 	// The actions that will add each type of TOC object
-	private TocAddTopicAction fAddTopicAction;
-	private TocAddLinkAction fAddLinkAction;
-	private TocAddAnchorAction fAddAnchorAction;
+	private final TocAddTopicAction fAddTopicAction;
+	private final TocAddLinkAction fAddLinkAction;
+	private final TocAddAnchorAction fAddAnchorAction;
 
 	// The object removal action
-	private TocRemoveObjectAction fRemoveObjectAction;
+	private final TocRemoveObjectAction fRemoveObjectAction;
 
 	// The action for opening a link from the context menu
-	private TocOpenLinkAction fOpenLinkAction;
+	private final TocOpenLinkAction fOpenLinkAction;
 
 	// The adapter that will listen for drag events in the tree
 	private TocDragAdapter fDragAdapter;

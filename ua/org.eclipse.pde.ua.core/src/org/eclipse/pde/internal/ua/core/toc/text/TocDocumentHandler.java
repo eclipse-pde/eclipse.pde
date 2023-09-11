@@ -22,7 +22,7 @@ import org.xml.sax.SAXParseException;
 
 public class TocDocumentHandler extends NodeDocumentHandler {
 
-	private TocModel fModel;
+	private final TocModel fModel;
 
 	/**
 	 * @param reconciling

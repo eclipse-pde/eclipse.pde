@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class CreateFeaturePatchOperation extends AbstractCreateFeatureOperation {
 
-	private IFeatureModel fFeatureModel;
+	private final IFeatureModel fFeatureModel;
 
 	public CreateFeaturePatchOperation(IProject project, IPath location, FeatureData featureData, IFeatureModel featureModel, Shell shell) {
 		super(project, location, featureData, shell);

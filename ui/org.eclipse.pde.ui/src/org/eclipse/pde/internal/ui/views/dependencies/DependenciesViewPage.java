@@ -84,9 +84,9 @@ public abstract class DependenciesViewPage extends Page {
 
 	protected PDERefactoringAction fRefactorAction;
 
-	private IPropertyChangeListener fPropertyListener;
+	private final IPropertyChangeListener fPropertyListener;
 
-	private DependenciesView fView;
+	private final DependenciesView fView;
 
 	protected StructuredViewer fViewer;
 
@@ -96,7 +96,7 @@ public abstract class DependenciesViewPage extends Page {
 
 	protected Action fHideOptionalFilterAction;
 
-	private FragmentFilter fHideFragmentFilter = new FragmentFilter();
+	private final FragmentFilter fHideFragmentFilter = new FragmentFilter();
 
 	private static final String HIDE_FRAGMENTS = "hideFrags"; //$NON-NLS-1$
 

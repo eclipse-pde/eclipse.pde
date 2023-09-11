@@ -31,11 +31,11 @@ import org.eclipse.ui.forms.widgets.Form;
  */
 public class CompCSGroupValidator {
 
-	private Form fForm;
+	private final Form fForm;
 
-	private HashSet<ICompCSTaskGroup> fGroups;
+	private final HashSet<ICompCSTaskGroup> fGroups;
 
-	private String fErrorCategory;
+	private final String fErrorCategory;
 
 	public CompCSGroupValidator(ICompCS cheatsheet, Form form, String errorCategory) {
 		fForm = form;

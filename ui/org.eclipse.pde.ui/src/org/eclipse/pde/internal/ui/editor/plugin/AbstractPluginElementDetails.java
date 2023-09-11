@@ -24,7 +24,7 @@ import org.eclipse.ui.actions.ActionFactory;
 
 public abstract class AbstractPluginElementDetails extends PDEDetails {
 
-	private PDESection fMasterSection;
+	private final PDESection fMasterSection;
 
 	public AbstractPluginElementDetails(PDESection masterSection) {
 		fMasterSection = masterSection;

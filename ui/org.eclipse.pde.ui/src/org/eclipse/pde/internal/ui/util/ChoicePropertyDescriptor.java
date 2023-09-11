@@ -24,7 +24,7 @@ public class ChoicePropertyDescriptor extends PropertyDescriptor {
 	/**
 	 * The list of possible values to display in the combo box
 	 */
-	private String[] values;
+	private final String[] values;
 
 	/**
 	 * Creates an property descriptor with the given id, display name, and list

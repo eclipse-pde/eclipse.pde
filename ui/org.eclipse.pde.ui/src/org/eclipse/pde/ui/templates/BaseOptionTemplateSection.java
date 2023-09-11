@@ -38,7 +38,7 @@ import org.eclipse.pde.ui.IFieldData;
  */
 
 public abstract class BaseOptionTemplateSection extends AbstractTemplateSection {
-	private Hashtable<String, TemplateOption> options = new Hashtable<>();
+	private final Hashtable<String, TemplateOption> options = new Hashtable<>();
 
 	/**
 	 * Adds a boolean option with a provided name, label and initial value.

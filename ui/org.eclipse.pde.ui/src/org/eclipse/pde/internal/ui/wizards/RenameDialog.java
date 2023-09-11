@@ -39,7 +39,7 @@ public class RenameDialog extends SelectionStatusDialog {
 	private String newName;
 	private Text text;
 	private IStatus status;
-	private boolean isCaseSensitive;
+	private final boolean isCaseSensitive;
 	private IInputValidator fValidator;
 
 	/**

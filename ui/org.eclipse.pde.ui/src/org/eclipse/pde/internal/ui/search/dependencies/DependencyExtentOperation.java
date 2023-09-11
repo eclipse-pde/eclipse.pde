@@ -74,10 +74,10 @@ public class DependencyExtentOperation {
 		}
 	}
 
-	private DependencyExtentSearchResult fSearchResult;
-	private String fImportID;
-	private IPluginModelBase fModel;
-	private IProject fProject;
+	private final DependencyExtentSearchResult fSearchResult;
+	private final String fImportID;
+	private final IPluginModelBase fModel;
+	private final IProject fProject;
 
 	public DependencyExtentOperation(IProject project, String importID, ISearchResult searchResult) {
 		fSearchResult = (DependencyExtentSearchResult) searchResult;

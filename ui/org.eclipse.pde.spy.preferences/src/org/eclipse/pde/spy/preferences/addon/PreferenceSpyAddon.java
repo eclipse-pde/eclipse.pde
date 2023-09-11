@@ -50,12 +50,12 @@ public class PreferenceSpyAddon {
 	@Inject
 	private IEventBroker eventBroker;
 
-	private IEclipsePreferences bundleDefaultsScopePreferences = BundleDefaultsScope.INSTANCE.getNode("");
-	private IEclipsePreferences configurationScopePreferences = ConfigurationScope.INSTANCE.getNode("");
-	private IEclipsePreferences defaultScopePreferences = DefaultScope.INSTANCE.getNode("");
-	private IEclipsePreferences instanceScopePreferences = InstanceScope.INSTANCE.getNode("");
+	private final IEclipsePreferences bundleDefaultsScopePreferences = BundleDefaultsScope.INSTANCE.getNode("");
+	private final IEclipsePreferences configurationScopePreferences = ConfigurationScope.INSTANCE.getNode("");
+	private final IEclipsePreferences defaultScopePreferences = DefaultScope.INSTANCE.getNode("");
+	private final IEclipsePreferences instanceScopePreferences = InstanceScope.INSTANCE.getNode("");
 
-	private ChangedPreferenceListener preferenceChangedListener = new ChangedPreferenceListener();
+	private final ChangedPreferenceListener preferenceChangedListener = new ChangedPreferenceListener();
 
 	@Inject
 	@Optional

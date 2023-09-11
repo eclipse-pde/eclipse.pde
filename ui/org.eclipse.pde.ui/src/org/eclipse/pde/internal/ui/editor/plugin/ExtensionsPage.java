@@ -45,7 +45,7 @@ public class ExtensionsPage extends PDEFormPage {
 	public static final String PAGE_ID = "extensions"; //$NON-NLS-1$
 
 	private ExtensionsSection fSection;
-	private ExtensionsBlock fBlock;
+	private final ExtensionsBlock fBlock;
 
 	public class ExtensionsBlock extends PDEMasterDetailsBlock implements IDetailsPageProvider {
 

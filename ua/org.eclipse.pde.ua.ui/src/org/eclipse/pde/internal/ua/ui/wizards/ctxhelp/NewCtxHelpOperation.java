@@ -42,7 +42,7 @@ import org.eclipse.ui.part.ISetSelectionTarget;
  */
 public class NewCtxHelpOperation extends WorkspaceModifyOperation {
 
-	private IFile fFile;
+	private final IFile fFile;
 
 	public NewCtxHelpOperation(IFile file) {
 		fFile = file;

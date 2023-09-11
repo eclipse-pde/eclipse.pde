@@ -25,11 +25,11 @@ public class SkippedComponent implements IApiElement {
 	/**
 	 * the id of of the skipped component
 	 */
-	private String componentid;
+	private final String componentid;
 	/**
 	 * The version of the component
 	 */
-	private String version;
+	private final String version;
 	/**
 	 * the set of resolution errors barring the component from being scanned
 	 */

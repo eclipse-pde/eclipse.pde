@@ -57,7 +57,7 @@ public abstract class AbstractCreateFeatureOperation extends WorkspaceModifyOper
 	protected IProject fProject;
 	protected IPath fLocation;
 	protected FeatureData fFeatureData;
-	private Shell fShell;
+	private final Shell fShell;
 
 	public AbstractCreateFeatureOperation(IProject project, IPath location, FeatureData featureData, Shell shell) {
 		fProject = project;

@@ -27,7 +27,7 @@ import org.eclipse.swt.graphics.Font;
 public class PreferenceMapLabelProvider extends ObservableMapLabelProvider implements IFontProvider {
 
 	private LocalResourceManager resourceManager;
-	private FontDescriptor fontDescriptor;
+	private final FontDescriptor fontDescriptor;
 
 
 	public PreferenceMapLabelProvider(FontDescriptor fontDescriptor, IObservableMap<Object,Object>[] attributeMaps) {

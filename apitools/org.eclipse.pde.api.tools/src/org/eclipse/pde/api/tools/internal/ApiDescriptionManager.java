@@ -71,7 +71,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 	/**
 	 * Maps Java projects to API descriptions
 	 */
-	private Map<IJavaProject, IApiDescription> fDescriptions = new HashMap<>();
+	private final Map<IJavaProject, IApiDescription> fDescriptions = new HashMap<>();
 
 	/**
 	 * Path to the local directory where API descriptions are cached per

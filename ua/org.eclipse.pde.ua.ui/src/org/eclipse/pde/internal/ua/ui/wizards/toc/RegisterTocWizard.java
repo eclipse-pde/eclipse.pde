@@ -29,7 +29,7 @@ public class RegisterTocWizard extends Wizard implements INewWizard {
 
 	private RegisterTocWizardPage fMainPage;
 
-	private IModel fModel;
+	private final IModel fModel;
 
 	public RegisterTocWizard(IModel model) {
 		fModel = model;

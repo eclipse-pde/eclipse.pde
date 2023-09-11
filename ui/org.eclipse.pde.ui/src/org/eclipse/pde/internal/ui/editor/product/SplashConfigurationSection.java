@@ -62,15 +62,15 @@ public class SplashConfigurationSection extends PDESection {
 
 	private Button fAddBarButton;
 	// spinners controlling the progress bar geometry
-	private Spinner[] fBarSpinners = new Spinner[4];
+	private final Spinner[] fBarSpinners = new Spinner[4];
 	// all swt controls under the progress bar checkbox
-	private Control[] fBarControls = new Control[8];
+	private final Control[] fBarControls = new Control[8];
 
 	private Button fAddMessageButton;
 	// spinners controlling the progress message geometry
-	private Spinner[] fMessageSpinners = new Spinner[4];
+	private final Spinner[] fMessageSpinners = new Spinner[4];
 	// all swt controls under the progress message checkbox
-	private Control[] fMessageControls = new Control[10];
+	private final Control[] fMessageControls = new Control[10];
 
 	private Section fSection;
 

@@ -217,7 +217,7 @@ public class NLSFragmentGenerator {
 		}
 	}
 
-	private Object OVERWRITE = new Object();
+	private final Object OVERWRITE = new Object();
 
 	private Map<String, Object> promptForOverwrite(List<IPluginModelBase> plugins, List<Locale> locales) {
 		Map<String, Object> overwrites = new HashMap<>();

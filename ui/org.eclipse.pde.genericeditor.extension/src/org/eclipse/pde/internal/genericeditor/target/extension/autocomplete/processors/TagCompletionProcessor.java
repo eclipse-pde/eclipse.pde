@@ -72,8 +72,8 @@ public class TagCompletionProcessor extends DelegateProcessor {
 		allowedDuplicatesTags.add(DependencyNode.class);
 	}
 
-	private String searchTerm;
-	private int offset;
+	private final String searchTerm;
+	private final int offset;
 
 	public TagCompletionProcessor(String searchTerm, String acKey, int offset) {
 		this.searchTerm = searchTerm;

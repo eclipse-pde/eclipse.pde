@@ -115,7 +115,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 		}
 
 		private int yesToAll = 0;
-		private int[] RETURNCODES = {IReplaceQuery.YES, IReplaceQuery.YES, IReplaceQuery.NO, IReplaceQuery.NO, IReplaceQuery.CANCEL};
+		private final int[] RETURNCODES = {IReplaceQuery.YES, IReplaceQuery.YES, IReplaceQuery.NO, IReplaceQuery.NO, IReplaceQuery.CANCEL};
 
 		@Override
 		public int doQuery(IProject project) {

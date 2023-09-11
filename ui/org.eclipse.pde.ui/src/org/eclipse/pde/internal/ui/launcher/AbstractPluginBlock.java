@@ -137,7 +137,7 @@ public abstract class AbstractPluginBlock {
 	 * if none set.
 	 */
 	protected ILaunchConfiguration fLaunchConfig;
-	private Listener fListener = new Listener();
+	private final Listener fListener = new Listener();
 
 	private Label fCounter;
 
@@ -152,7 +152,7 @@ public abstract class AbstractPluginBlock {
 	private PluginStatusDialog fDialog;
 
 	class PluginModelNameBuffer {
-		private Set<String> nameSet;
+		private final Set<String> nameSet;
 
 		PluginModelNameBuffer() {
 			super();

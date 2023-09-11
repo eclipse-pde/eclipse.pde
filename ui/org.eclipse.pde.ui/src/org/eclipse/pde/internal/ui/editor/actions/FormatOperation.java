@@ -37,7 +37,7 @@ import org.eclipse.ui.IFileEditorInput;
 
 public class FormatOperation implements IRunnableWithProgress {
 
-	private Object[] fObjects;
+	private final Object[] fObjects;
 
 	public FormatOperation(Object[] objects) {
 		fObjects = objects;

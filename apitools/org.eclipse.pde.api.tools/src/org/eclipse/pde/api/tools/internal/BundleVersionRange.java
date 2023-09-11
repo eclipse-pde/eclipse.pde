@@ -24,7 +24,7 @@ import org.osgi.framework.Version;
  */
 public class BundleVersionRange implements IVersionRange {
 
-	private VersionRange fRange;
+	private final VersionRange fRange;
 
 	/**
 	 * Constructs a new version range based on the given required bundle version

@@ -215,12 +215,12 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 
 	private static final DependencyLoop[] NO_LOOPS = new DependencyLoop[0];
 
-	private Map<IPageBookViewPage, IWorkbenchPart> fPagesToParts;
-	private Map<IWorkbenchPart, IPageBookViewPage> fPartsToPages;
+	private final Map<IPageBookViewPage, IWorkbenchPart> fPagesToParts;
+	private final Map<IWorkbenchPart, IPageBookViewPage> fPartsToPages;
 
 	private Object fInput;
 
-	private PDEPreferencesManager fPreferences = PDEPlugin.getDefault().getPreferenceManager();
+	private final PDEPreferencesManager fPreferences = PDEPlugin.getDefault().getPreferenceManager();
 
 	private ShowCalleesAction fShowCallees;
 	private ShowCallersAction fShowCallers;
@@ -229,7 +229,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	private ShowLoopsAction fShowLoops;
 
 	// history of input elements (as Strings). No duplicates
-	private List<String> fInputHistory;
+	private final List<String> fInputHistory;
 
 	private DependencyLoop[] fLoops;
 

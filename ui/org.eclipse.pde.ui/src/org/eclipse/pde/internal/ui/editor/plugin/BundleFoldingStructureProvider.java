@@ -30,7 +30,7 @@ import org.osgi.framework.Constants;
 
 public class BundleFoldingStructureProvider extends AbstractFoldingStructureProvider {
 
-	private Map<Position, IManifestHeader> fPositionToElement = new HashMap<>();
+	private final Map<Position, IManifestHeader> fPositionToElement = new HashMap<>();
 
 	public BundleFoldingStructureProvider(PDESourcePage editor, IEditingModel model) {
 		super(editor, model);

@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 
 public class FileExtensionFilter extends ViewerFilter {
 
-	private String fTargetExtension;
+	private final String fTargetExtension;
 
 	public FileExtensionFilter(String targetExtension) {
 		fTargetExtension = targetExtension;

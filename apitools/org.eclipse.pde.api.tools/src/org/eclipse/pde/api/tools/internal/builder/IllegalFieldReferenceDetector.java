@@ -43,16 +43,16 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	 * Map of {@link org.eclipse.pde.api.tools.internal.model.MethodKey} to
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor}
 	 */
-	private Map<MethodKey, IFieldDescriptor> fIllegalFields = new HashMap<>();
+	private final Map<MethodKey, IFieldDescriptor> fIllegalFields = new HashMap<>();
 
-	private Map<String, String> fIllegalTypes = new HashMap<>();
+	private final Map<String, String> fIllegalTypes = new HashMap<>();
 
 	/**
 	 * Map of
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor}
 	 * to associated component IDs
 	 */
-	private Map<IFieldDescriptor, String> fFieldComponents = new HashMap<>();
+	private final Map<IFieldDescriptor, String> fFieldComponents = new HashMap<>();
 
 	/**
 	 * Adds the given field as not to be referenced

@@ -59,13 +59,13 @@ import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 
 public class GetNonExternalizedStringsOperation implements IRunnableWithProgress {
 
-	private ISelection fSelection;
+	private final ISelection fSelection;
 	private ArrayList<Object> fSelectedModels;
 	private ModelChangeTable fModelChangeTable;
 	private boolean fCanceled;
 
 	//Azure: To indicate that only selected plug-ins under <code>fSelection</code> are to be externalized.
-	private boolean fExternalizeSelectedPluginsOnly;
+	private final boolean fExternalizeSelectedPluginsOnly;
 
 	public GetNonExternalizedStringsOperation(ISelection selection, boolean externalizeSelectedPluginsOnly) {
 		fSelection = selection;

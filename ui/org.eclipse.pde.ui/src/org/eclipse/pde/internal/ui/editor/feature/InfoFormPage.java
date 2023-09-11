@@ -32,7 +32,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  */
 public class InfoFormPage extends PDEFormPage {
 	public static final String PAGE_ID = "info"; //$NON-NLS-1$
-	private IColorManager colorManager = ColorManager.getDefault();
+	private final IColorManager colorManager = ColorManager.getDefault();
 	private InfoSection infoSection;
 
 	/**

@@ -26,7 +26,7 @@ public class OverlayIcon extends CompositeImageDescriptor {
 	private Point fSize = null;
 
 	private ImageDescriptor fBase;
-	private ImageDescriptor[][] fOverlays;
+	private final ImageDescriptor[][] fOverlays;
 
 	public OverlayIcon(ImageDescriptor base, ImageDescriptor[][] overlays) {
 		fBase = base;

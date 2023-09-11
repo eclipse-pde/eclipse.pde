@@ -53,7 +53,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	private InternationalizeWizardLocalePage page2;
 
 	//Contains the list of plug-ins to be internationalized
-	private InternationalizeModelTable<IPluginModelBase> fInternationalizePluginModelTable;
+	private final InternationalizeModelTable<IPluginModelBase> fInternationalizePluginModelTable;
 
 	//Contains the list of locales
 	private InternationalizeModelTable<Locale> fInternationalizeLocaleModelTable;

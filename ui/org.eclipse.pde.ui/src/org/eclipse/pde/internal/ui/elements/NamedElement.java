@@ -18,9 +18,9 @@ import org.eclipse.swt.graphics.Image;
 public class NamedElement extends DefaultElement {
 	protected Image image;
 
-	private String name;
+	private final String name;
 
-	private IPDEElement parent;
+	private final IPDEElement parent;
 
 	public NamedElement(String name) {
 		this(name, null, null);

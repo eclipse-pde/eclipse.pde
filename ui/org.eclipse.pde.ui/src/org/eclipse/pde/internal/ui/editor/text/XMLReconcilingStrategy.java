@@ -46,7 +46,7 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 	private class SpellingProblemCollector implements ISpellingProblemCollector {
 
 		/** Annotation model. */
-		private IAnnotationModel fAnnotationModel;
+		private final IAnnotationModel fAnnotationModel;
 
 		/** Annotations to add. */
 		private Map<SpellingAnnotation, Position> fAddAnnotations;

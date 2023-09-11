@@ -29,7 +29,7 @@ import org.eclipse.pde.internal.genericeditor.target.extension.model.UnitNode;
  */
 public class UpdateJob extends Job {
 
-	private LocationNode node;
+	private final LocationNode node;
 
 	public UpdateJob(LocationNode node) {
 		super(Messages.UpdateJob_P2DataFetch + node.getRepositoryLocation());

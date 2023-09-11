@@ -93,8 +93,8 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 		}
 	}
 
-	private PlatformPart fPlatformPart;
-	private IFeatureModel fModel;
+	private final PlatformPart fPlatformPart;
+	private final IFeatureModel fModel;
 
 	public CrossPlatformExportPage(String pageName, IFeatureModel model) {
 		super(pageName);

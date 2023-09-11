@@ -20,8 +20,8 @@ import org.osgi.framework.ServiceReference;
 
 public class ServiceName extends ModelObject implements Comparable<ServiceName> {
 
-	private String[] classes;
-	private ServiceReference<?> reference;
+	private final String[] classes;
+	private final ServiceReference<?> reference;
 
 	public ServiceName(String[] classes, ServiceReference<?> ref) {
 		this.classes = classes;

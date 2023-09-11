@@ -86,11 +86,11 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 	private CollapseAction fCollapseAction;
 
-	private CompCSRemoveTaskObjectAction fRemoveTaskObjectAction;
+	private final CompCSRemoveTaskObjectAction fRemoveTaskObjectAction;
 
-	private CompCSAddGroupAction fAddGroupAction;
+	private final CompCSAddGroupAction fAddGroupAction;
 
-	private CompCSAddTaskAction fAddTaskAction;
+	private final CompCSAddTaskAction fAddTaskAction;
 
 	private CompCSGroupValidator fGroupValidator;
 

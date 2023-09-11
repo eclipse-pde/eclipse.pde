@@ -55,9 +55,9 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 
 	private Section fSection;
 	private SchemaDtdDetailsSection fDtdSection = null;
-	private ElementSection fElementSection;
-	private boolean fShowDTD;
-	private boolean fShowDescription;
+	private final ElementSection fElementSection;
+	private final boolean fShowDTD;
+	private final boolean fShowDescription;
 	private Spinner fMinOccurSpinner;
 	private Spinner fMaxOccurSpinner;
 	private Button fUnboundSelect;

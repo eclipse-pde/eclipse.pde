@@ -46,8 +46,8 @@ public class ProgramBlock {
 	private Button fProductButton;
 	private Combo fProductCombo;
 	private Button fApplicationButton;
-	private AbstractLauncherTab fTab;
-	private Listener fListener = new Listener();
+	private final AbstractLauncherTab fTab;
+	private final Listener fListener = new Listener();
 	private ControlDecoration fProductComboDecoration;
 
 	class Listener extends SelectionAdapter implements ModifyListener {

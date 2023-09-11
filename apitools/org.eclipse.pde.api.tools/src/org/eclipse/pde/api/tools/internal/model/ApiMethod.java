@@ -41,7 +41,7 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 	private static final String INIT = "<init>"; //$NON-NLS-1$
 	private static final String CLINIT = "<clinit>"; //$NON-NLS-1$
 
-	private String[] fExceptions;
+	private final String[] fExceptions;
 	private String fDefaultValue;
 
 	private IMethodDescriptor fHandle;

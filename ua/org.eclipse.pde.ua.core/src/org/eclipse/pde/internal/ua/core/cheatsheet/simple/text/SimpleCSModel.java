@@ -28,7 +28,7 @@ public class SimpleCSModel extends XMLEditingModel implements ISimpleCSModel {
 
 	private SimpleCSDocumentHandler fHandler;
 
-	private SimpleCSDocumentFactory fFactory;
+	private final SimpleCSDocumentFactory fFactory;
 
 	private ISimpleCS fSimpleCS;
 

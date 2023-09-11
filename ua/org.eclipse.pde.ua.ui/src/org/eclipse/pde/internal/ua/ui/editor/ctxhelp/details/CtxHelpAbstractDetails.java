@@ -42,9 +42,9 @@ public abstract class CtxHelpAbstractDetails extends PDEDetails {
 	 */
 	private static final int NUM_COLUMNS = 3;
 
-	private CtxHelpTreeSection fMasterSection;
+	private final CtxHelpTreeSection fMasterSection;
 	private Section fMainSection;
-	private String fContextID;
+	private final String fContextID;
 
 	public CtxHelpAbstractDetails(CtxHelpTreeSection masterSection, String contextID) {
 		fMasterSection = masterSection;

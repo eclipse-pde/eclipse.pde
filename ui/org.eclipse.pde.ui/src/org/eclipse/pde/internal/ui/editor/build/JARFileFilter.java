@@ -28,7 +28,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 
 public class JARFileFilter extends ViewerFilter {
 	private final static String jarExt = "jar"; //$NON-NLS-1$
-	private Set<IPath> fPaths;
+	private final Set<IPath> fPaths;
 
 	public JARFileFilter() {
 		fPaths = new HashSet<>();

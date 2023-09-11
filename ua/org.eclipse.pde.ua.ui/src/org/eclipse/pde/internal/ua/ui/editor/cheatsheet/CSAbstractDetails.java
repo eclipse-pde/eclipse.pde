@@ -26,9 +26,9 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public abstract class CSAbstractDetails extends PDEDetails implements ICSDetails {
 
-	private ICSMaster fMasterSection;
+	private final ICSMaster fMasterSection;
 
-	private String fContextID;
+	private final String fContextID;
 
 	public CSAbstractDetails(ICSMaster masterSection, String contextID) {
 		fMasterSection = masterSection;

@@ -61,7 +61,7 @@ public class SourceInformationProvider implements IInformationProvider, IInforma
 		update();
 	}
 
-	private IInformationControlCreator fPresenterControlCreator;
+	private final IInformationControlCreator fPresenterControlCreator;
 
 	public SourceInformationProvider(PDESourcePage editor, IInformationControlCreator creator, int impType) {
 		fSourcePage = editor;

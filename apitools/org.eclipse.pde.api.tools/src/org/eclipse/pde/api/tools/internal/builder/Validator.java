@@ -52,7 +52,7 @@ public abstract class Validator extends ASTVisitor {
 	/**
 	 * Type stack that tracks types as the visitor descends
 	 */
-	private Stack<Item> fStack = new Stack<>();
+	private final Stack<Item> fStack = new Stack<>();
 	/**
 	 * The compilation unit we are scanning
 	 */

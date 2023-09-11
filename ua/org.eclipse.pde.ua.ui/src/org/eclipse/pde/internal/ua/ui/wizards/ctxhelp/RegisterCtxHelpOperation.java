@@ -72,10 +72,10 @@ public class RegisterCtxHelpOperation extends WorkspaceModifyOperation {
 	public static final String CTX_HELP_ATTR_FILE = "file"; //$NON-NLS-1$
 	public final static String CTX_HELP_ATTR_PLUGIN = "plugin"; //$NON-NLS-1$
 
-	private Shell fShell;
-	private String fPluginText;
-	private IProject fProject;
-	private String fResourceString;
+	private final Shell fShell;
+	private final String fPluginText;
+	private final IProject fProject;
+	private final String fResourceString;
 
 	public RegisterCtxHelpOperation(Shell shell, IModel model, String pluginText) {
 		fPluginText = pluginText;

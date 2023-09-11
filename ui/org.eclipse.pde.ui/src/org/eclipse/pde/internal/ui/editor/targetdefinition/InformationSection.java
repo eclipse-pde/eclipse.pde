@@ -37,10 +37,10 @@ import org.eclipse.ui.forms.widgets.Section;
 public class InformationSection extends SectionPart {
 
 	private Text fNameText;
-	private TargetEditor fEditor;
+	private final TargetEditor fEditor;
 
 	private TextValidator fNameTextValidator;
-	private FormPage fPage;
+	private final FormPage fPage;
 
 	public InformationSection(FormPage page, Composite parent) {
 		super(parent, page.getManagedForm().getToolkit(), ExpandableComposite.TITLE_BAR);

@@ -54,12 +54,12 @@ public class ConvertedProjectsPage extends WizardPage {
 	/**
 	 * Items to select when the table is created, based off what the user had selected when opening the wizard
 	 */
-	private IProject[] fInitialSelection;
+	private final IProject[] fInitialSelection;
 
 	/**
 	 * All items to put in the table, consists of all unconverted projects in the workspace
 	 */
-	private IProject[] fAllUnconvertedProjects;
+	private final IProject[] fAllUnconvertedProjects;
 
 	/**
 	 * Label provider for the table

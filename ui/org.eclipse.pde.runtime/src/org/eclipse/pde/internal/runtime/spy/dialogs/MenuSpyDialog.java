@@ -36,8 +36,8 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class MenuSpyDialog extends PopupDialog {
 
-	private Event event;
-	private Point fAnchor;
+	private final Event event;
+	private final Point fAnchor;
 	private Composite composite;
 	private SpyFormToolkit toolkit;
 

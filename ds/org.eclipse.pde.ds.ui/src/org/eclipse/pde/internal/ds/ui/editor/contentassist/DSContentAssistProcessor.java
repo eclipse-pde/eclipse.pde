@@ -46,7 +46,7 @@ public class DSContentAssistProcessor extends TypePackageCompletionProcessor
 		implements IContentAssistProcessor, ICompletionListener {
 	protected boolean fAssistSessionStarted;
 
-	private PDESourcePage fSourcePage;
+	private final PDESourcePage fSourcePage;
 
 	private IDocumentRange fRange;
 

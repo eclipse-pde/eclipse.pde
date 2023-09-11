@@ -33,7 +33,7 @@ import org.eclipse.ui.forms.widgets.Section;
 public class LocationsSection extends SectionPart {
 
 	private TargetLocationsGroup fContainerGroup;
-	private TargetEditor fEditor;
+	private final TargetEditor fEditor;
 
 	public LocationsSection(FormPage page, Composite parent) {
 		super(parent, page.getManagedForm().getToolkit(), Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);

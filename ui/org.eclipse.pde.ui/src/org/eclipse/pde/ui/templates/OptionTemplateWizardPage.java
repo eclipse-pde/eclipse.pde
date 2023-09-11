@@ -34,9 +34,9 @@ import org.eclipse.ui.PlatformUI;
  */
 
 public class OptionTemplateWizardPage extends WizardPage {
-	private BaseOptionTemplateSection section;
-	private List<TemplateOption> options;
-	private String helpContextId;
+	private final BaseOptionTemplateSection section;
+	private final List<TemplateOption> options;
+	private final String helpContextId;
 
 	/**
 	 * The constructor.

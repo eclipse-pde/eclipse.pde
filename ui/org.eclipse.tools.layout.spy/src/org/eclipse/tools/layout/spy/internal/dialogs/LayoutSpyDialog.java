@@ -90,8 +90,8 @@ public class LayoutSpyDialog {
 	private Shell overlay;
 
 	// Model
-	private WritableValue<@Nullable Composite> parentControl = new WritableValue<>(null, null);
-	private WritableValue<Boolean> controlSelectorOpen = new WritableValue<>(Boolean.FALSE, null);
+	private final WritableValue<@Nullable Composite> parentControl = new WritableValue<>(null, null);
+	private final WritableValue<Boolean> controlSelectorOpen = new WritableValue<>(Boolean.FALSE, null);
 	private ComputedList<Control> listContents;
 	private IViewerObservableValue<@Nullable Control> selectedChild;
 	private final Color parentRectangleColor = new Color(255, 0, 0);

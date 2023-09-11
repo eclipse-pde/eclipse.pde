@@ -20,7 +20,7 @@ import org.eclipse.pde.internal.ui.refactoring.PDERefactor;
 
 public class ExternalizeStringsWizard extends RefactoringWizard {
 	private ExternalizeStringsWizardPage page1;
-	private ModelChangeTable fModelChangeTable;
+	private final ModelChangeTable fModelChangeTable;
 
 	public ExternalizeStringsWizard(ModelChangeTable changeTable, PDERefactor refactoring) {
 		super(refactoring, WIZARD_BASED_USER_INTERFACE);

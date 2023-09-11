@@ -66,9 +66,9 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	private static final String STARTUP_CLASSLOADER = "org.eclipse.equinox.launcher.Main$StartupClassLoader"; //$NON-NLS-1$
 	private static final String OSGI_FRAMEWORK_PLUGIN = "org.eclipse.osgi"; //$NON-NLS-1$
 
-	private Object fElement;
+	private final Object fElement;
 	private Object fResult;
-	private PDESourceLookupDirector fDirector;
+	private final PDESourceLookupDirector fDirector;
 
 	public PDESourceLookupQuery(PDESourceLookupDirector director, Object object) {
 		fElement = object;

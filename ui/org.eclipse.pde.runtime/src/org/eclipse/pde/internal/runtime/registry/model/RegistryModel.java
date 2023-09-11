@@ -33,7 +33,7 @@ import org.osgi.framework.Version;
  */
 public class RegistryModel {
 
-	private BackendChangeListener backendListener = new BackendChangeListener() {
+	private final BackendChangeListener backendListener = new BackendChangeListener() {
 		@Override
 		public void addBundle(Bundle adapter) {
 			adapter.setModel(RegistryModel.this);
@@ -213,12 +213,12 @@ public class RegistryModel {
 		}
 	};
 
-	private List<ModelChangeListener> listeners = new ArrayList<>();
-	private Map<Long, Bundle> bundles;
-	private Map<Long, ServiceRegistration> services;
-	private Map<String, ExtensionPoint> extensionPoints;
-	private Set<ServiceName> serviceNames;
-	private Map<String, Set<Bundle>> fragments;
+	private final List<ModelChangeListener> listeners = new ArrayList<>();
+	private final Map<Long, Bundle> bundles;
+	private final Map<Long, ServiceRegistration> services;
+	private final Map<String, ExtensionPoint> extensionPoints;
+	private final Set<ServiceName> serviceNames;
+	private final Map<String, Set<Bundle>> fragments;
 
 	protected RegistryBackend backend;
 

@@ -41,7 +41,7 @@ public class JavaSearchActionGroup extends ActionGroup {
 
 	class JavaSearchAction extends Action {
 
-		private boolean add;
+		private final boolean add;
 
 		public JavaSearchAction(boolean add) {
 			this.add = add;

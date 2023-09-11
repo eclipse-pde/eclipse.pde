@@ -35,8 +35,8 @@ public class ModelChangeElement {
 	private int fOffset = 0;
 	private int fLength = 0;
 	private boolean fExternalized = true;
-	private ModelChange fParent;
-	private Object fUnderlying;
+	private final ModelChange fParent;
+	private final Object fUnderlying;
 
 	public ModelChangeElement(ModelChange parent, Object incoming) {
 		fParent = parent;

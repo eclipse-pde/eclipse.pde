@@ -35,7 +35,7 @@ import org.eclipse.pde.internal.ui.editor.text.TranslationHyperlink;
 
 public class BundleHyperlinkDetector implements IHyperlinkDetector {
 
-	private PDESourcePage fSourcePage;
+	private final PDESourcePage fSourcePage;
 
 	public BundleHyperlinkDetector(PDESourcePage page) {
 		fSourcePage = page;

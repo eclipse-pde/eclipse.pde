@@ -35,7 +35,7 @@ import org.eclipse.pde.internal.ua.core.cheatsheet.simple.ISimpleCSSubItem;
 public class SimpleCSDocumentFactory extends DocumentNodeFactory implements
 		ISimpleCSModelFactory {
 
-	private SimpleCSModel fModel;
+	private final SimpleCSModel fModel;
 
 	/**
 	 * @param model

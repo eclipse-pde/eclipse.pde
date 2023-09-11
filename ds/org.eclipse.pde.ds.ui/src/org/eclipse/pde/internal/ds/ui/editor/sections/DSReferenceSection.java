@@ -75,7 +75,7 @@ public class DSReferenceSection extends TableSection implements
 
 	class ReferenceLabelProvider extends StyledCellLabelProvider {
 
-		private DSLabelProvider labelProvider = new DSLabelProvider();
+		private final DSLabelProvider labelProvider = new DSLabelProvider();
 
 		@Override
 		public void update(ViewerCell cell) {

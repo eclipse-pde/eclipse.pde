@@ -33,9 +33,9 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.ui.templates.PluginReference;
 
 public class PluginClassCodeGenerator {
-	private PluginFieldData fPluginData;
-	private IProject fProject;
-	private String fQualifiedClassName;
+	private final PluginFieldData fPluginData;
+	private final IProject fProject;
+	private final String fQualifiedClassName;
 
 	public PluginClassCodeGenerator(IProject project, String qualifiedClassName, PluginFieldData data, boolean generateTemplate) {
 		fProject = project;

@@ -39,7 +39,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
  */
 public class InternationalizeOperation implements IRunnableWithProgress {
 
-	private ISelection fSelection;
+	private final ISelection fSelection;
 	private ArrayList<Object> fSelectedModels;
 	private InternationalizeModelTable<IPluginModelBase> fModelPluginTable;
 	private boolean fCanceled;

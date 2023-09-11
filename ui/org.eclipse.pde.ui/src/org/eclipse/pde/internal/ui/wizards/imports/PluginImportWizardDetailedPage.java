@@ -86,7 +86,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private ViewerFilter fRepositoryFilter;
 	// fSelected is used to track the selection in a hash set so we can efficiently
 	// filter selected items out of the available item list
-	private Set<Object> fSelected;
+	private final Set<Object> fSelected;
 	// this job is used to delay the full filter refresh for 200 milliseconds in case the user is still typing
 	private WorkbenchJob fFilterJob;
 	private Button fAddButton;
@@ -149,7 +149,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	 *
 	 */
 	private static class VersionFilter extends ViewerFilter {
-		private HashMap<String, Version> versions = new HashMap<>();
+		private final HashMap<String, Version> versions = new HashMap<>();
 
 		public void setModel(IPluginModelBase[] plugins) {
 			if (plugins != null && plugins.length > 0) {

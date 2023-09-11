@@ -30,7 +30,7 @@ import org.eclipse.pde.internal.ui.editor.text.ResourceHyperlink;
 
 public class BuildHyperlinkDetector implements IHyperlinkDetector {
 
-	private PDESourcePage fSourcePage;
+	private final PDESourcePage fSourcePage;
 
 	public BuildHyperlinkDetector(PDESourcePage page) {
 		fSourcePage = page;

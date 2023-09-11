@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class RepositoryDialog extends StatusDialog {
 	private Text fLocation;
-	private String fRepoURL;
+	private final String fRepoURL;
 	private String fLocationStr;
 
 	/**

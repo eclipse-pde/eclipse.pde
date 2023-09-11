@@ -37,7 +37,7 @@ public class CompCSPage extends PDEFormPage implements IModelChangedListener {
 
 	public static final String PAGE_ID = "compCSPage"; //$NON-NLS-1$
 
-	private CompCSBlock fBlock;
+	private final CompCSBlock fBlock;
 
 	public CompCSPage(FormEditor editor) {
 		super(editor, PAGE_ID, Messages.CompCSPage_definition);

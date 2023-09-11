@@ -56,12 +56,12 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 
 	private SelectAllAction fSelectAllAction;
 
-	private Hashtable<String, Action> fGlobalActions = new Hashtable<>();
+	private final Hashtable<String, Action> fGlobalActions = new Hashtable<>();
 
 	private ISharedImages fSharedImages;
 
 	class GlobalAction extends Action implements IUpdate {
-		private String id;
+		private final String id;
 
 		public GlobalAction(String id) {
 			this.id = id;

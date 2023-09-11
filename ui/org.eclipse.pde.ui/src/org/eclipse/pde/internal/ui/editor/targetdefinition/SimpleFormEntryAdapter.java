@@ -25,7 +25,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
  */
 public class SimpleFormEntryAdapter implements IFormEntryListener {
 
-	private AbstractFormPart fFormPart;
+	private final AbstractFormPart fFormPart;
 
 	public SimpleFormEntryAdapter(AbstractFormPart formPart) {
 		fFormPart = formPart;

@@ -48,7 +48,7 @@ public class LinkSection extends PDESection {
 	private Button moreButton;
 	private String morePageId;
 	private int linkNumberLimit = 20;
-	private LinkHandler linkHandler;
+	private final LinkHandler linkHandler;
 
 	class LinkHandler implements IHyperlinkListener {
 		@Override

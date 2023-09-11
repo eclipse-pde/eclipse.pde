@@ -144,7 +144,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	private PDEFormEditor fEditor;
 	private Control fControl;
 	private int fIndex;
-	private String fId;
+	private final String fId;
 	private InputContext fInputContext;
 	private ISortableContentOutlinePage fOutlinePage;
 	private ISelectionChangedListener fOutlineSelectionChangedListener;

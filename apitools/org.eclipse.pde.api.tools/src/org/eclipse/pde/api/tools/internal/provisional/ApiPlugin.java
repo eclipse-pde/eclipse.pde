@@ -350,7 +350,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 * A set of listeners that want to participate in the saving life-cycle of
 	 * the workbench via this plug-in
 	 */
-	private ListenerList<ISaveParticipant> savelisteners = new ListenerList<>();
+	private final ListenerList<ISaveParticipant> savelisteners = new ListenerList<>();
 
 	/**
 	 * This is used to log resolution errors only once per session

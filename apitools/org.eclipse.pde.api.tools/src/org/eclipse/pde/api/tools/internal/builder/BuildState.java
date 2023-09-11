@@ -61,8 +61,8 @@ public class BuildState {
 	private static final String[] NO_REEXPORTED_COMPONENTS = new String[0];
 	private static final int VERSION = 33;
 
-	private Map<String, Set<IDelta>> compatibleChanges;
-	private Map<String, Set<IDelta>> breakingChanges;
+	private final Map<String, Set<IDelta>> compatibleChanges;
+	private final Map<String, Set<IDelta>> breakingChanges;
 	/**
 	 * Map of the last saved state of the manifest file
 	 *

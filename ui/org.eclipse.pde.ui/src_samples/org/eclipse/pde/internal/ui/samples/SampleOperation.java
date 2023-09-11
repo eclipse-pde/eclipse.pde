@@ -48,13 +48,13 @@ import org.osgi.framework.Bundle;
 public class SampleOperation implements IRunnableWithProgress {
 	private static final String SAMPLE_PROPERTIES = "sample.properties"; //$NON-NLS-1$
 
-	private IConfigurationElement sample;
+	private final IConfigurationElement sample;
 
-	private String[] projectNames;
+	private final String[] projectNames;
 
 	private IFile sampleManifest;
 
-	private IOverwriteQuery query;
+	private final IOverwriteQuery query;
 
 	private boolean yesToAll;
 

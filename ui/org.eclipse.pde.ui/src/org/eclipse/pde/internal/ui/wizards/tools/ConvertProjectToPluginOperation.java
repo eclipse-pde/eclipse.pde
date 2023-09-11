@@ -65,8 +65,8 @@ import org.osgi.framework.Constants;
  */
 public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 
-	private IProject[] projectsToConvert;
-	private boolean enableApiAnalysis;
+	private final IProject[] projectsToConvert;
+	private final boolean enableApiAnalysis;
 
 	private String fLibraryName;
 	private String[] fSrcEntries;

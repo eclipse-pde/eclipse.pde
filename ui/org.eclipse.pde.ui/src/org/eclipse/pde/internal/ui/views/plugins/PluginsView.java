@@ -126,7 +126,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	private static final String SHOW_EXDISABLED = "showDisabledExternal"; //$NON-NLS-1$
 	private TreeViewer fTreeViewer;
 	private DrillDownAdapter fDrillDownAdapter;
-	private IPropertyChangeListener fPropertyListener;
+	private final IPropertyChangeListener fPropertyListener;
 	private Action fOpenAction;
 	private Action fHideExtDisabledFilterAction;
 	private Action fHideExtEnabledFilterAction;
@@ -141,10 +141,10 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	private Action fSelectAllAction;
 	private PDERefactoringAction fRefactorAction;
 	private CollapseAllAction fCollapseAllAction;
-	private DisabledFilter fHideExtEnabledFilter = new DisabledFilter(true);
-	private DisabledFilter fHideExtDisabledFilter = new DisabledFilter(false);
-	private WorkspaceFilter fHideWorkspaceFilter = new WorkspaceFilter();
-	private JavaFilter fJavaFilter = new JavaFilter();
+	private final DisabledFilter fHideExtEnabledFilter = new DisabledFilter(true);
+	private final DisabledFilter fHideExtDisabledFilter = new DisabledFilter(false);
+	private final WorkspaceFilter fHideWorkspaceFilter = new WorkspaceFilter();
+	private final JavaFilter fJavaFilter = new JavaFilter();
 	private CopyToClipboardAction fCopyAction;
 	private Clipboard fClipboard;
 	private Object fRoot = null;

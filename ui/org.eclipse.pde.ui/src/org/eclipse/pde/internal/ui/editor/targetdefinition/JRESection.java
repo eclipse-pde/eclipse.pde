@@ -53,7 +53,7 @@ public class JRESection extends SectionPart {
 	private TreeSet<String> fExecEnvChoices;
 	private boolean fBlockChanges;
 	private Button fConfigureJREButton;
-	private TargetEditor fEditor;
+	private final TargetEditor fEditor;
 
 	private static String JRE_PREF_PAGE_ID = "org.eclipse.jdt.debug.ui.preferences.VMPreferencePage"; //$NON-NLS-1$
 	private static String EE_PREF_PAGE_ID = "org.eclipse.jdt.debug.ui.jreProfiles"; //$NON-NLS-1$

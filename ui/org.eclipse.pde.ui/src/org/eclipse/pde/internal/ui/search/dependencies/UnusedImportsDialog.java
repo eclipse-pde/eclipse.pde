@@ -35,9 +35,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 public class UnusedImportsDialog extends TrayDialog {
-	private IPluginModelBase model;
-	private Object[] unused;
-	private WizardCheckboxTablePart checkboxTablePart;
+	private final IPluginModelBase model;
+	private final Object[] unused;
+	private final WizardCheckboxTablePart checkboxTablePart;
 	private CheckboxTableViewer choiceViewer;
 
 	static class Comparator extends PluginComparator {

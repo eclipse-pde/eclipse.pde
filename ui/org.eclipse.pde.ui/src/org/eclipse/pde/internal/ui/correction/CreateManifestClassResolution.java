@@ -27,7 +27,7 @@ import org.eclipse.pde.internal.ui.util.TextUtil;
 
 public class CreateManifestClassResolution extends AbstractManifestMarkerResolution {
 
-	private String fHeader;
+	private final String fHeader;
 
 	public CreateManifestClassResolution(int type, String headerName, IMarker marker) {
 		super(type, marker);

@@ -31,7 +31,7 @@ public class CompositeApiImageDescriptor extends CompositeImageDescriptor {
 	public static final int WARNING = 0x0002;
 
 	private Image fOriginalImage = null;
-	private int fFlags;
+	private final int fFlags;
 	private Point fSize;
 
 	/**

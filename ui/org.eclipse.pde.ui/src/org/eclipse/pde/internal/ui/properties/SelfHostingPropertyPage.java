@@ -51,7 +51,7 @@ import org.osgi.service.prefs.Preferences;
 
 public class SelfHostingPropertyPage extends PropertyPage {
 
-	private Image fImage;
+	private final Image fImage;
 	private CheckboxTableViewer fViewer;
 
 	class ContentProvider implements IStructuredContentProvider {

@@ -25,7 +25,7 @@ import org.osgi.framework.Constants;
 
 public class AddSingletonToSymbolicName extends AbstractManifestMarkerResolution {
 
-	private boolean fisDirective;
+	private final boolean fisDirective;
 
 	public AddSingletonToSymbolicName(int type, boolean directive, IMarker marker) {
 		super(type, marker);

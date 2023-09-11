@@ -42,7 +42,7 @@ public class NewArchiveDialog extends StatusDialog {
 
 	private ISiteArchive fSiteArchive;
 
-	private ISiteModel fSiteModel;
+	private final ISiteModel fSiteModel;
 
 	private Text fUrlText;
 

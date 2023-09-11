@@ -86,7 +86,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 
 	class EELabelProvider extends LabelProvider {
 
-		private Image fImage;
+		private final Image fImage;
 
 		public EELabelProvider() {
 			fImage = PDEPluginImages.DESC_JAVA_LIB_OBJ.createImage();

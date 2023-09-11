@@ -26,7 +26,7 @@ import org.eclipse.pde.core.target.ITargetLocation;
  */
 public class AddBundleContainerWizard extends Wizard {
 
-	private ITargetDefinition fTarget;
+	private final ITargetDefinition fTarget;
 
 	public AddBundleContainerWizard(ITargetDefinition target) {
 		fTarget = target;

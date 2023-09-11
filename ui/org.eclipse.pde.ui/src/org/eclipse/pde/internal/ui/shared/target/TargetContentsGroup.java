@@ -134,13 +134,13 @@ public class TargetContentsGroup {
 	/**
 	 * Cached list of all bundles, used to quickly obtain bundle counts.
 	 */
-	private List<TargetBundle> fAllBundles = new ArrayList<>();
+	private final List<TargetBundle> fAllBundles = new ArrayList<>();
 
 	private int fGrouping;
 	private static final int GROUP_BY_NONE = 0;
 	private static final int GROUP_BY_FILE_LOC = 1;
 	private static final int GROUP_BY_CONTAINER = 2;
-	private ListenerList<ITargetChangedListener> fChangeListeners = new ListenerList<>();
+	private final ListenerList<ITargetChangedListener> fChangeListeners = new ListenerList<>();
 
 	/**
 	 * Creates this part using the form toolkit and adds it to the given composite.

@@ -258,7 +258,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 		return new AbstractClassResolutionCollector() {
 
 			// the list of package names for which an import package resolution has been created
-			private Set<String> addedImportPackageResolutions = new HashSet<>();
+			private final Set<String> addedImportPackageResolutions = new HashSet<>();
 
 			boolean isDone = false;
 

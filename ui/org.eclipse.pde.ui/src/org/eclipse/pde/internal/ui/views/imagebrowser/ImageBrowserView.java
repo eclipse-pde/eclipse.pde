@@ -112,7 +112,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	private Text txtReference;
 	private Spinner spinMaxImages;
 
-	private List<Image> displayedImages = new ArrayList<>();
+	private final List<Image> displayedImages = new ArrayList<>();
 
 	private AbstractRepository repository;
 

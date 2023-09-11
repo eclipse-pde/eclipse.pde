@@ -42,11 +42,11 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
 public class PluginsLabelProvider extends LabelProvider {
-	private PDELabelProvider sharedProvider;
+	private final PDELabelProvider sharedProvider;
 
-	private Image projectImage;
+	private final Image projectImage;
 
-	private Image folderImage;
+	private final Image folderImage;
 
 	/**
 	 * Constructor for PluginsLabelProvider.

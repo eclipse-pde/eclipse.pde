@@ -32,7 +32,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 public class CommandComposerDialog extends FormDialog {
 
-	private CommandComposerPart fCCP;
+	private final CommandComposerPart fCCP;
 	private ParameterizedCommand fPC;
 	private Button fOKButton;
 

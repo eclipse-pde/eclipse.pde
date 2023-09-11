@@ -137,7 +137,7 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 		}
 	}
 
-	private List<IPluginModelBase> fPluginProjectList;
+	private final List<IPluginModelBase> fPluginProjectList;
 	private FilteredCheckboxTree fFilteredTree;
 	private CachedCheckboxTreeViewer fCheckboxTreeViewer;
 

@@ -41,8 +41,8 @@ public class UnusedApiProblemFilterTests extends UsageTest {
 	private static final String BEFORE = "before"; //$NON-NLS-1$
 	private static final String AFTER = "after"; //$NON-NLS-1$
 
-	private IPath fRootPath = super.getTestSourcePath().append("filters"); //$NON-NLS-1$
-	private IPath fFiltersPath = IPath.fromOSString("/usagetests/.settings/.api_filters"); //$NON-NLS-1$
+	private final IPath fRootPath = super.getTestSourcePath().append("filters"); //$NON-NLS-1$
+	private final IPath fFiltersPath = IPath.fromOSString("/usagetests/.settings/.api_filters"); //$NON-NLS-1$
 
 	public UnusedApiProblemFilterTests(String name) {
 		super(name);

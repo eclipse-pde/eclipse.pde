@@ -42,9 +42,9 @@ import org.eclipse.ui.PlatformUI;
  */
 public class OSGiSettingsTab extends AbstractLauncherTab {
 
-	private JREBlock fJREBlock;
-	private ConfigurationAreaBlock fConfigurationBlock;
-	private Image fImage;
+	private final JREBlock fJREBlock;
+	private final ConfigurationAreaBlock fConfigurationBlock;
+	private final Image fImage;
 	private boolean fInitializing = false;
 
 	/**

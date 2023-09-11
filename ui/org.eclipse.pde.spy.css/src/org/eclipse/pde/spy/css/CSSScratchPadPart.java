@@ -53,7 +53,7 @@ public class CSSScratchPadPart {
 	/**
 	 * Collection of buttons created by the <code>createButton</code> method.
 	 */
-	private HashMap<Integer, Button> buttons = new HashMap<>();
+	private final HashMap<Integer, Button> buttons = new HashMap<>();
 
 	private Text cssText;
 	private Text exceptions;

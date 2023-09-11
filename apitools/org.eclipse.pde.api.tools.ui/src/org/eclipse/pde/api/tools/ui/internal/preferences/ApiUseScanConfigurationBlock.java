@@ -48,7 +48,7 @@ public class ApiUseScanConfigurationBlock {
 	 */
 	protected static class ControlData {
 		Key key;
-		private String[] values;
+		private final String[] values;
 
 		/**
 		 * Constructor
@@ -92,8 +92,8 @@ public class ApiUseScanConfigurationBlock {
 	 */
 	protected static class Key {
 
-		private String qualifier;
-		private String key;
+		private final String qualifier;
+		private final String key;
 
 		/**
 		 * Constructor
@@ -222,7 +222,7 @@ public class ApiUseScanConfigurationBlock {
 	/**
 	 * Default selection listener for controls on the page
 	 */
-	private SelectionListener selectionlistener = new SelectionAdapter() {
+	private final SelectionListener selectionlistener = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			if (e.widget instanceof Combo) {

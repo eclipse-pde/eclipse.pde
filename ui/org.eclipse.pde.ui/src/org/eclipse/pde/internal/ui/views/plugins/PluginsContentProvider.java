@@ -40,8 +40,8 @@ import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
 public class PluginsContentProvider implements ITreeContentProvider {
 
-	private PluginsView fView;
-	private StandardJavaElementContentProvider fJavaProvider;
+	private final PluginsView fView;
+	private final StandardJavaElementContentProvider fJavaProvider;
 	private DeferredTreeContentManager fManager = null;
 
 	/**

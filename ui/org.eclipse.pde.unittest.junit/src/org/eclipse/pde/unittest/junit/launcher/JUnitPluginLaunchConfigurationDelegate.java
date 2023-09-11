@@ -905,7 +905,7 @@ public class JUnitPluginLaunchConfigurationDelegate extends AbstractJavaLaunchCo
 
 	private static class ClasspathLocalizer {
 
-		private boolean fInDevelopmentMode;
+		private final boolean fInDevelopmentMode;
 
 		public ClasspathLocalizer(boolean inDevelopmentMode) {
 			fInDevelopmentMode = inDevelopmentMode;

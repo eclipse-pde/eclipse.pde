@@ -64,7 +64,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	private static final String UPDATE_SITE = "http://www.eclipse.org/pde/samples/site.xml"; //$NON-NLS-1$
 	private String sampleId;
 
-	private ProvisioningUI provUI;
+	private final ProvisioningUI provUI;
 
 	/**
 	 *

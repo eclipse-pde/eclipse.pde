@@ -38,7 +38,7 @@ import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 
 public class OSGiAnnotationsASTVisitor extends ASTVisitor {
 
-	private CompilationUnit unit;
+	private final CompilationUnit unit;
 
 	public OSGiAnnotationsASTVisitor(CompilationUnit compilationUnit) {
 		this.unit = compilationUnit;

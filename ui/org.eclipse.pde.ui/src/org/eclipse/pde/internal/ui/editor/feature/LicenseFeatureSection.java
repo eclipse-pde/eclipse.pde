@@ -73,8 +73,8 @@ public class LicenseFeatureSection extends PDESection {
 	private Text fLicenseFeatureVersionText;
 	private Text fUrlText;
 	private SourceViewer fSourceViewer;
-	private SourceViewerConfiguration fSourceConfiguration;
-	private IDocument fDocument;
+	private final SourceViewerConfiguration fSourceConfiguration;
+	private final IDocument fDocument;
 	private boolean fIgnoreChange;
 	private Button fSharedLicenseButton;
 	private Button fLocalLicenseButton;

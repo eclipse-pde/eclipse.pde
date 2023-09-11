@@ -24,9 +24,9 @@ public class NewCommandKeyEvent extends EventObject {
 
 	private static final long serialVersionUID = 1L;
 
-	private String fKey;
+	private final String fKey;
 
-	private String fValue;
+	private final String fValue;
 
 	/**
 	 * @param source

@@ -52,10 +52,10 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 
 	private Text fPluginText;
 	private Text fIntroIdText;
-	private TreeSet<String> fIntroIds;
-	private IProduct fProduct;
+	private final TreeSet<String> fIntroIds;
+	private final IProduct fProduct;
 
-	private ModifyListener fListener = e -> validatePage();
+	private final ModifyListener fListener = e -> validatePage();
 
 	public ProductIntroWizardPage(String pageName, IProduct product) {
 		super(pageName);

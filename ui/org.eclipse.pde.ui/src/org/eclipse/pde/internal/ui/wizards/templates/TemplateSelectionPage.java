@@ -48,7 +48,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class TemplateSelectionPage extends WizardPage {
-	private ITemplateSection[] fCandidates;
+	private final ITemplateSection[] fCandidates;
 	private ArrayList<WizardPage> fVisiblePages;
 	private WizardCheckboxTablePart fTablePart;
 	private FormBrowser fDescriptionBrowser;

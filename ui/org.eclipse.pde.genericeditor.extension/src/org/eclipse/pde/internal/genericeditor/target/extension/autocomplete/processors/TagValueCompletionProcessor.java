@@ -41,9 +41,9 @@ public class TagValueCompletionProcessor extends DelegateProcessor {
 		tagTextValues.put(ITargetConstants.NL_TAG, getLocales());
 	}
 
-	private String searchTerm;
-	private String acKey;
-	private int offset;
+	private final String searchTerm;
+	private final String acKey;
+	private final int offset;
 
 	public TagValueCompletionProcessor(String searchTerm, String acKey, int offset) {
 		this.searchTerm = searchTerm;

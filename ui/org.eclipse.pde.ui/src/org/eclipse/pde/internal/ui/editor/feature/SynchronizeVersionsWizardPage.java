@@ -57,11 +57,11 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 	public static final int USE_PLUGINS_AT_BUILD = 0;
 	public static final int USE_FEATURE = 1;
 	public static final int USE_PLUGINS = 2;
-	private FeatureEditor fFeatureEditor;
+	private final FeatureEditor fFeatureEditor;
 	private Button fUsePluginsAtBuildButton;
 	private Button fUseComponentButton;
 	private Button fUsePluginsButton;
-	private boolean fIsForceVersionEnabled;
+	private final boolean fIsForceVersionEnabled;
 
 	private static final String PREFIX = PDEPlugin.getPluginId() + ".synchronizeVersions."; //$NON-NLS-1$
 	private static final String PROP_SYNCHRO_MODE = PREFIX + "mode"; //$NON-NLS-1$

@@ -27,8 +27,8 @@ import java.util.List;
  *
  */
 public class InternationalizeModelTable<T> {
-	private List<T> fModels;
-	private List<T> fPreSelected; // Models preselected by the user
+	private final List<T> fModels;
+	private final List<T> fPreSelected; // Models preselected by the user
 
 	public InternationalizeModelTable() {
 		fModels = new ArrayList<>();

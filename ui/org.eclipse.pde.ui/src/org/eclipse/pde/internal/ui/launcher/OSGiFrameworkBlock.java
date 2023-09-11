@@ -39,12 +39,12 @@ public class OSGiFrameworkBlock {
 
 	private Combo fDefaultAutoStart;
 	private Spinner fDefaultStartLevel;
-	private IConfigurationElement[] fConfigElements;
+	private final IConfigurationElement[] fConfigElements;
 	private Combo fLauncherCombo;
-	private Listener fListener;
-	private AbstractLauncherTab fTab;
+	private final Listener fListener;
+	private final AbstractLauncherTab fTab;
 	private Combo fLaunchWithCombo;
-	private BlockAdapter fBlock;
+	private final BlockAdapter fBlock;
 
 	class Listener extends SelectionAdapter implements ModifyListener {
 

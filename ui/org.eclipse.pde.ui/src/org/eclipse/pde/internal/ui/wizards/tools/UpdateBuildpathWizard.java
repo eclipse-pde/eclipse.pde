@@ -24,8 +24,8 @@ import org.eclipse.ui.PlatformUI;
 
 public class UpdateBuildpathWizard extends Wizard {
 	private UpdateBuildpathWizardPage page1;
-	private IPluginModelBase[] fSelected;
-	private IPluginModelBase[] fUnupdated;
+	private final IPluginModelBase[] fSelected;
+	private final IPluginModelBase[] fUnupdated;
 	private static final String STORE_SECTION = "UpdateBuildpathWizard"; //$NON-NLS-1$
 
 	public UpdateBuildpathWizard(IPluginModelBase[] models, IPluginModelBase[] selected) {

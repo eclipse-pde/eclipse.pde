@@ -36,10 +36,10 @@ import org.eclipse.swt.widgets.Tree;
 
 public abstract class WizardTreeSelectionPage extends BaseWizardSelectionPage {
 	private TreeViewer categoryTreeViewer;
-	private String baseCategory;
+	private final String baseCategory;
 	protected TableViewer wizardSelectionViewer;
 
-	private WizardCollectionElement wizardCategories;
+	private final WizardCollectionElement wizardCategories;
 
 	public WizardTreeSelectionPage(WizardCollectionElement categories, String baseCategory, String message) {
 		super("NewExtension", message); //$NON-NLS-1$

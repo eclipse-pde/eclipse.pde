@@ -57,7 +57,7 @@ import org.junit.Test;
  */
 public class ApiDescriptionTests {
 
-	private IApiDescription fManifest = buildManifest();
+	private final IApiDescription fManifest = buildManifest();
 
 	/**
 	 * Wraps an element with its API description

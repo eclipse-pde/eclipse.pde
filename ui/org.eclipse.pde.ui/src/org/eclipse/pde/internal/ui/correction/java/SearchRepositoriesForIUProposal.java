@@ -37,7 +37,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 
 public class SearchRepositoriesForIUProposal implements IJavaCompletionProposal {
 
-	private String fPackageName;
+	private final String fPackageName;
 
 	public SearchRepositoriesForIUProposal(String packageName) {
 		fPackageName = packageName;

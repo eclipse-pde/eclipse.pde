@@ -91,7 +91,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	class ConsumerReportVisitor extends UseScanVisitor {
 		Consumer consumer;
 		Map<String, Producer> producers = new HashMap<>();
-		private IComponentDescriptor consumerDescriptor;
+		private final IComponentDescriptor consumerDescriptor;
 		private Producer currentProducer;
 		private Type2 currenttype = null;
 		private Member currentmember = null;

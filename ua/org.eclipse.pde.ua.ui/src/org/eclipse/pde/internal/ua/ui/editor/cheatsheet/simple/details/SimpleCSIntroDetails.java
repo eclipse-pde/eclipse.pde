@@ -44,7 +44,7 @@ public class SimpleCSIntroDetails extends CSAbstractDetails {
 
 	private Section fMainSection;
 
-	private SimpleCSHelpDetails fHelpSection;
+	private final SimpleCSHelpDetails fHelpSection;
 
 	private boolean fBlockEvents;
 

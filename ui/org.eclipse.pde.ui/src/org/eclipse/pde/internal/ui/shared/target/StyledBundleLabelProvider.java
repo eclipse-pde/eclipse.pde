@@ -61,7 +61,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	private boolean fShowVersion = true;
 	private boolean fAppendResolvedVariables = false;
 	@SuppressWarnings("restriction")
-	private org.eclipse.equinox.internal.p2.metadata.TranslationSupport fTranslations = org.eclipse.equinox.internal.p2.metadata.TranslationSupport
+	private final org.eclipse.equinox.internal.p2.metadata.TranslationSupport fTranslations = org.eclipse.equinox.internal.p2.metadata.TranslationSupport
 			.getInstance();
 
 	/**

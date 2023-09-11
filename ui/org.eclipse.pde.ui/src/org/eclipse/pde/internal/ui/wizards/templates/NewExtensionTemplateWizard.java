@@ -49,7 +49,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  */
 
 public class NewExtensionTemplateWizard extends Wizard implements IExtensionWizard {
-	private ITemplateSection fSection;
+	private final ITemplateSection fSection;
 	private IProject fProject;
 	private IPluginModelBase fModel;
 	private boolean fUpdatedDependencies;

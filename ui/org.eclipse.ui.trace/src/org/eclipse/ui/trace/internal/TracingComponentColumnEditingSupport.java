@@ -141,7 +141,7 @@ public class TracingComponentColumnEditingSupport extends EditingSupport {
 	 * The column index of the editors. One of {@link TracingConstants#LABEL_COLUMN_INDEX} or
 	 * {@link TracingConstants#VALUE_COLUMN_INDEX}
 	 */
-	private int columnIndex;
+	private final int columnIndex;
 
 	/**
 	 * The {@link CellEditor} for the value column

@@ -37,8 +37,8 @@ import org.eclipse.ui.part.ISetSelectionTarget;
 
 public class TocOperation extends WorkspaceModifyOperation {
 
-	private IFile fFile;
-	private String fTocName;
+	private final IFile fFile;
+	private final String fTocName;
 
 	public TocOperation(IFile file, String tocName) {
 		fFile = file;

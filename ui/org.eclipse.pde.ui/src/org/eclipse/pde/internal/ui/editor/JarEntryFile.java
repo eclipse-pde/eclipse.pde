@@ -26,8 +26,8 @@ import org.eclipse.core.runtime.Status;
 
 public class JarEntryFile extends PlatformObject implements IStorage {
 
-	private ZipFile fZipFile;
-	private String fEntryName;
+	private final ZipFile fZipFile;
+	private final String fEntryName;
 
 	public JarEntryFile(ZipFile zipFile, String entryName) {
 		fZipFile = zipFile;

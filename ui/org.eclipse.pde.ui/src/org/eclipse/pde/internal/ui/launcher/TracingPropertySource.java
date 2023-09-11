@@ -35,23 +35,23 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class TracingPropertySource {
-	private IPluginModelBase fModel;
+	private final IPluginModelBase fModel;
 	private Vector<PropertyEditor> fDescriptors;
-	private Hashtable<String, String> fTemplate;
-	private Hashtable<String, Object> fValues;
+	private final Hashtable<String, String> fTemplate;
+	private final Hashtable<String, Object> fValues;
 	private static final String[] fBooleanChoices = {"false", "true"}; //$NON-NLS-1$ //$NON-NLS-2$
-	private Properties fMasterOptions;
+	private final Properties fMasterOptions;
 	private boolean fModified;
 
 	// the flag fChanged is used to determine whether the model's content page
 	// should be recreated
 	private boolean fChanged;
-	private TracingBlock fBlock;
+	private final TracingBlock fBlock;
 
 	private abstract class PropertyEditor {
-		private String key;
-		private String label;
-		private String comment;
+		private final String key;
+		private final String label;
+		private final String comment;
 
 		public PropertyEditor(String key, String label, String comment) {
 			this.key = key;

@@ -53,8 +53,8 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class DSEditPropertiesDialog extends FormDialog {
 
-	private IDSProperties fProperties;
-	private DSPropertiesSection fPropertiesSection;
+	private final IDSProperties fProperties;
+	private final DSPropertiesSection fPropertiesSection;
 	private FormEntry fEntry;
 
 	public DSEditPropertiesDialog(Shell parentShell,

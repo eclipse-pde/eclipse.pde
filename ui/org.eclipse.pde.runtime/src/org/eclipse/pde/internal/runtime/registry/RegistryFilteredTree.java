@@ -22,7 +22,7 @@ import org.eclipse.ui.dialogs.PatternFilter;
 
 public class RegistryFilteredTree extends FilteredTree {
 
-	private RegistryBrowser browser;
+	private final RegistryBrowser browser;
 
 	public RegistryFilteredTree(RegistryBrowser browser, Composite parent, int treeStyle, PatternFilter filter) {
 		super(parent, treeStyle, filter, true, true);

@@ -25,8 +25,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
-	private IPluginModelBase fModel;
-	private IPluginExtensionPoint fPoint;
+	private final IPluginModelBase fModel;
+	private final IPluginExtensionPoint fPoint;
 
 	public NewExtensionPointMainPage(IProject project, IPluginModelBase model) {
 		this(project, model, null);

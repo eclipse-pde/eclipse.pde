@@ -35,7 +35,7 @@ public class PDEProjectionViewer extends ProjectionViewer {
 
 	private IInformationPresenter fOutlinePresenter;
 
-	private boolean fIsQuickOutlineEnabled;
+	private final boolean fIsQuickOutlineEnabled;
 
 	/**
 	 * @param parent

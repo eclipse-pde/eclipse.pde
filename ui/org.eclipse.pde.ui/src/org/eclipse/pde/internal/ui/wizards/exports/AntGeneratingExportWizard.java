@@ -182,7 +182,7 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 	}
 
 	protected class AntErrorDialog extends MessageDialog {
-		private File fLogLocation;
+		private final File fLogLocation;
 
 		public AntErrorDialog(File logLocation) {
 			super(PlatformUI.getWorkbench().getDisplay().getActiveShell(), PDECoreMessages.FeatureBasedExportOperation_ProblemDuringExport, null, null, MessageDialog.ERROR, new String[] {IDialogConstants.OK_LABEL}, 0);

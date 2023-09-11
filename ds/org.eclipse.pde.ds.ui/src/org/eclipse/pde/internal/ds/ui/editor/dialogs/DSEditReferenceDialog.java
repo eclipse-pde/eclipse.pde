@@ -54,7 +54,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class DSEditReferenceDialog extends FormDialog {
 
-	private IDSReference fReference;
+	private final IDSReference fReference;
 	private FormEntry fNameEntry;
 	private FormEntry fInterfaceEntry;
 	private FormEntry fBindEntry;
@@ -64,7 +64,7 @@ public class DSEditReferenceDialog extends FormDialog {
 	private Label fLabelCardinality;
 	private ComboPart fPolicy;
 	private Label fLabelPolicy;
-	private DSReferenceSection fReferenceSection;
+	private final DSReferenceSection fReferenceSection;
 
 	public DSEditReferenceDialog(Shell parentShell, IDSReference reference,
 			DSReferenceSection referenceSection) {

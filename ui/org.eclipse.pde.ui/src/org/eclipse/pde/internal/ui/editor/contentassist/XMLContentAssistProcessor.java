@@ -108,7 +108,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	private static final String F_STR_EXT_PT = "extension-point"; //$NON-NLS-1$
 	private static final String F_STR_EXT = "extension"; //$NON-NLS-1$
 
-	private PDESourcePage fSourcePage;
+	private final PDESourcePage fSourcePage;
 	private final Image[] fImages = new Image[F_TOTAL_TYPES];
 	// TODO add a listener to add/remove extension points as they are added/removed from working models
 	private IDocumentRange fRange;

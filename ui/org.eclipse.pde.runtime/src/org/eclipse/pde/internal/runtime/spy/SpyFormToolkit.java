@@ -64,7 +64,7 @@ public class SpyFormToolkit extends FormToolkit {
 
 	private class SpyHyperlinkAdapter extends HyperlinkAdapter {
 
-		private PopupDialog fDialog;
+		private final PopupDialog fDialog;
 
 		public SpyHyperlinkAdapter(PopupDialog dialog) {
 			this.fDialog = dialog;
@@ -88,7 +88,7 @@ public class SpyFormToolkit extends FormToolkit {
 
 	private static class SaveImageAction extends Action {
 
-		private Image image;
+		private final Image image;
 
 		public SaveImageAction(Image image) {
 			this.image = image;
@@ -127,8 +127,8 @@ public class SpyFormToolkit extends FormToolkit {
 		}
 	}
 
-	private Map<String, Bundle> bundleClassByName = new HashMap<>();
-	private PopupDialog dialog;
+	private final Map<String, Bundle> bundleClassByName = new HashMap<>();
+	private final PopupDialog dialog;
 	private static String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$
 
 	public SpyFormToolkit(PopupDialog dialog) {

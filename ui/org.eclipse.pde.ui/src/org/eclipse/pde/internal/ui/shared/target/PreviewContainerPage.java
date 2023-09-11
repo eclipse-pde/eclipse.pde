@@ -34,8 +34,8 @@ import org.eclipse.ui.PlatformUI;
  */
 public class PreviewContainerPage extends WizardPage {
 
-	private ITargetDefinition fTarget;
-	private EditDirectoryContainerPage fPage1;
+	private final ITargetDefinition fTarget;
+	private final EditDirectoryContainerPage fPage1;
 	protected TableViewer fPreviewTable;
 	protected Object fInput;
 

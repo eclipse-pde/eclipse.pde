@@ -54,8 +54,8 @@ public abstract class SyntaxColorTab {
 	private ColorSelector fColorSelector;
 
 	class ColorElement {
-		private String fDisplayName;
-		private String fColorKey;
+		private final String fDisplayName;
+		private final String fColorKey;
 		private RGB fColorValue;
 		private boolean fBold;
 		private boolean fItalic;

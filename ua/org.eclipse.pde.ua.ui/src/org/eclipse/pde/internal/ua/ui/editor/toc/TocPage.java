@@ -43,7 +43,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 public class TocPage extends PDEFormPage implements IModelChangedListener {
 	public static final String PAGE_ID = "tocPage"; //$NON-NLS-1$
 
-	private TocBlock fBlock;
+	private final TocBlock fBlock;
 
 	public TocPage(FormEditor editor) {
 		super(editor, PAGE_ID, TocMessages.TocPage_title);

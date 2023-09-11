@@ -28,7 +28,7 @@ public class TocModel extends XMLEditingModel {
 
 	private TocDocumentHandler fHandler;
 
-	private TocDocumentFactory fFactory;
+	private final TocDocumentFactory fFactory;
 
 	private Toc fToc;
 

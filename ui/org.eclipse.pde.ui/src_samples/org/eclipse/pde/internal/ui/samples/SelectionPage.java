@@ -34,9 +34,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 public class SelectionPage extends WizardPage {
-	private TablePart part;
+	private final TablePart part;
 	private Text desc;
-	private SampleWizard wizard;
+	private final SampleWizard wizard;
 
 	class SelectionPart extends TablePart {
 		public SelectionPart() {
@@ -67,7 +67,7 @@ public class SelectionPage extends WizardPage {
 	}
 
 	static class SampleLabelProvider extends LabelProvider {
-		private Image image;
+		private final Image image;
 
 		public SampleLabelProvider() {
 			image = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_NEWEXP_TOOL);

@@ -41,7 +41,7 @@ class ConfigurationParser extends DefaultHandler implements IConfigurationConsta
 
 	private static final String URL_PROPERTY = "org.eclipse.update.resolution_url"; //$NON-NLS-1$
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	private SAXParser parser;
+	private final SAXParser parser;
 
 	private URL currentSiteURL;
 	private Configuration config;

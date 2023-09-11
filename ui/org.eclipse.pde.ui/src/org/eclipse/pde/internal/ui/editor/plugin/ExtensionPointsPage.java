@@ -41,7 +41,7 @@ public class ExtensionPointsPage extends PDEFormPage {
 	public static final String PAGE_ID = "ex-points"; //$NON-NLS-1$
 
 	private ExtensionPointsSection fExtensionPointsSection;
-	private ExtensionPointsBlock fBlock;
+	private final ExtensionPointsBlock fBlock;
 
 	public class ExtensionPointsBlock extends PDEMasterDetailsBlock {
 

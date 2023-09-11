@@ -34,9 +34,9 @@ import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Version;
 
 public class DependenciesLabelProvider extends LabelProvider {
-	private PDELabelProvider fSharedProvider;
+	private final PDELabelProvider fSharedProvider;
 
-	private boolean fShowReexport;
+	private final boolean fShowReexport;
 
 	/**
 	 * Constructor for PluginsLabelProvider.

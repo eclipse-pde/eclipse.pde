@@ -43,10 +43,10 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ISetSelectionTarget;
 
 public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
-	private Display fDisplay;
-	private IProject fProject;
-	private IPath fPath;
-	private String fWebLocation;
+	private final Display fDisplay;
+	private final IProject fProject;
+	private final IPath fPath;
+	private final String fWebLocation;
 
 	public NewSiteProjectCreationOperation(Display display, IProject project, IPath path, String webLocation) {
 		fDisplay = display;

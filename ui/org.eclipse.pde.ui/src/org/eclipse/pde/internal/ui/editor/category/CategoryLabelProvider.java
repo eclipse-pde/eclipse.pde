@@ -31,12 +31,12 @@ import org.eclipse.ui.forms.editor.IFormPage;
 
 class CategoryLabelProvider extends LabelProvider {
 
-	private PDELabelProvider fSharedProvider;
+	private final PDELabelProvider fSharedProvider;
 
 	private Image fSiteFeatureImage;
 	private Image fMissingSiteFeatureImage;
-	private Image fSiteBundleImage;
-	private Image fMissingSiteBundleImage;
+	private final Image fSiteBundleImage;
+	private final Image fMissingSiteBundleImage;
 	private Image fPageImage;
 	private Image fCatDefImage;
 

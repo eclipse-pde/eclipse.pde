@@ -25,7 +25,7 @@ import org.eclipse.ui.PlatformUI;
  * Simple tag matcher
  */
 public class GeneralTagRule implements IRule {
-	private IToken tagToken = new Token(new TextAttribute(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme()
+	private final IToken tagToken = new Token(new TextAttribute(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme()
 			.getColorRegistry().get(IGETEColorConstants.P_TAG)));
 
 	@Override

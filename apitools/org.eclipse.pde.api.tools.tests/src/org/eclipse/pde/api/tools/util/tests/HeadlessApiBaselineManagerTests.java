@@ -34,7 +34,7 @@ import org.junit.Test;
  */
 public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 
-	private ApiBaselineManager fManager = ApiBaselineManager.getManager();
+	private final ApiBaselineManager fManager = ApiBaselineManager.getManager();
 
 	@Override
 	@After

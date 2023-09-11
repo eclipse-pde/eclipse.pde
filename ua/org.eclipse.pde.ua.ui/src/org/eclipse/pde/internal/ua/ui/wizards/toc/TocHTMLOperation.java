@@ -24,7 +24,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class TocHTMLOperation extends WorkspaceModifyOperation {
 
-	private IFile fFile;
+	private final IFile fFile;
 
 	private static byte[] getHTMLContent() throws CoreException {
 		String indent = "   "; //$NON-NLS-1$

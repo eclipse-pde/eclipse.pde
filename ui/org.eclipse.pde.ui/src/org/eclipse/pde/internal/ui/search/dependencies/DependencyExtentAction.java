@@ -20,9 +20,9 @@ import org.eclipse.search.ui.NewSearchUI;
 
 public class DependencyExtentAction extends Action {
 
-	private IProject fProject;
+	private final IProject fProject;
 
-	private String fImportID;
+	private final String fImportID;
 
 	public DependencyExtentAction(IProject project, String importID) {
 		fProject = project;

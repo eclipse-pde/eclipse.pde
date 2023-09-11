@@ -36,7 +36,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 public class NodeFinder extends ASTVisitor {
 
 	private BodyDeclaration declaration;
-	private int position;
+	private final int position;
 
 	/**
 	 * Constructor

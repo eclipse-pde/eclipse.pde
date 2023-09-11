@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.Composite;
 
 public class BlockAdapter {
 
-	private AbstractPluginBlock fPluginBlock;
-	private FeatureBlock fFeatureBlock;
+	private final AbstractPluginBlock fPluginBlock;
+	private final FeatureBlock fFeatureBlock;
 	private StackLayout fLayout;
 	private Composite fPluginBlockComposite;
 	private Composite fFeatureBlockComposite;

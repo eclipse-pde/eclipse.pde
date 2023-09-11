@@ -34,7 +34,7 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 
 	private NewProjectCreationPage fMainPage;
 	private ContentPage fContentPage;
-	private FragmentFieldData fFragmentData;
+	private final FragmentFieldData fFragmentData;
 	private IProjectProvider fProjectProvider;
 	private IConfigurationElement fConfig;
 

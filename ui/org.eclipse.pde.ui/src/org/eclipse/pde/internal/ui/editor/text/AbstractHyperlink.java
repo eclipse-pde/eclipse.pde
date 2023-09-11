@@ -19,7 +19,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlink;
 public abstract class AbstractHyperlink implements IHyperlink {
 
 	protected String fElement;
-	private IRegion fRegion;
+	private final IRegion fRegion;
 
 	public AbstractHyperlink(IRegion region, String element) {
 		fRegion = region;

@@ -28,7 +28,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 	protected static final int F_CAT_CONTENT = 0; // category grouped content
 	protected static final int F_CON_CONTENT = 1; // context grouped content
 
-	private ICommandService fComServ;
+	private final ICommandService fComServ;
 	private TreeMap<Category, ArrayList<Command>> fCatMap; // mapping of commands to category
 	private Viewer fViewer;
 	private int fCurContent = F_CAT_CONTENT;

@@ -32,11 +32,11 @@ import org.eclipse.pde.internal.core.PDECore;
 public class CompCSWorkspaceModel extends CompCSModel implements
 		IWorkspaceModel {
 
-	private IFile fFile;
+	private final IFile fFile;
 
 	private boolean fDirty;
 
-	private boolean fEditable;
+	private final boolean fEditable;
 
 	private static final long serialVersionUID = 1L;
 

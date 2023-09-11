@@ -23,15 +23,15 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescrip
  */
 public class ReferenceDescriptor implements IReferenceDescriptor {
 
-	private IMemberDescriptor origin;
-	private IMemberDescriptor target;
-	private IComponentDescriptor from;
-	private IComponentDescriptor to;
+	private final IMemberDescriptor origin;
+	private final IMemberDescriptor target;
+	private final IComponentDescriptor from;
+	private final IComponentDescriptor to;
 
-	private int line;
-	private int kind;
-	private int flags;
-	private int visibility;
+	private final int line;
+	private final int kind;
+	private final int flags;
+	private final int visibility;
 	private String[] messages = null;
 
 	public ReferenceDescriptor(IComponentDescriptor from, IMemberDescriptor origin, int line, IComponentDescriptor to, IMemberDescriptor target, int kind, int flags, int vis, String[] messages) {

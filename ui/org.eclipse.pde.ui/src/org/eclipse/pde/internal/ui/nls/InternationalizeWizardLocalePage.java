@@ -81,9 +81,9 @@ public class InternationalizeWizardLocalePage extends InternationalizationWizard
 	private Button fRemoveButton;
 	private Button fRemoveAllButton;
 
-	private InternationalizeModelTable<Locale> fInternationalizeModelTable;
+	private final InternationalizeModelTable<Locale> fInternationalizeModelTable;
 
-	private ILabelProvider fLabelProvider = PDEPlugin.getDefault().getLabelProvider();
+	private final ILabelProvider fLabelProvider = PDEPlugin.getDefault().getLabelProvider();
 
 	private static class ContentProvider implements IStructuredContentProvider {
 		@Override

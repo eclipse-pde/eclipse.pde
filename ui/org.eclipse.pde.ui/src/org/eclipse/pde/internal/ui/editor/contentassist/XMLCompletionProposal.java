@@ -66,13 +66,13 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 
 	private static final String F_DEF_ATTR_INDENT = "      "; //$NON-NLS-1$
 
-	private ISchemaObject fSchemaObject;
-	private IDocumentRange fRange;
+	private final ISchemaObject fSchemaObject;
+	private final IDocumentRange fRange;
 	private int fOffset;
 	private int fLen;
 	private int fSelOffset;
 	private int fSelLen;
-	private XMLContentAssistProcessor fProcessor;
+	private final XMLContentAssistProcessor fProcessor;
 	private String fAddInfo;
 	private IInformationControlCreator fCreator;
 

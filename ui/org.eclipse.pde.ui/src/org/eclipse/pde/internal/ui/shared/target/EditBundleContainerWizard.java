@@ -32,8 +32,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
  */
 public class EditBundleContainerWizard extends Wizard {
 
-	private ITargetDefinition fTarget;
-	private ITargetLocation fContainer;
+	private final ITargetDefinition fTarget;
+	private final ITargetLocation fContainer;
 	private IEditBundleContainerPage fPage;
 
 	public EditBundleContainerWizard(ITargetDefinition target, ITargetLocation container) {

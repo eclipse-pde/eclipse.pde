@@ -44,11 +44,11 @@ import org.eclipse.ui.PlatformUI;
  */
 public class ConfigurationTab extends AbstractLauncherTab implements IPDELauncherConstants {
 
-	private ConfigurationAreaBlock fConfigurationArea;
-	private ConfigurationTemplateBlock fTemplateArea;
-	private SoftwareInstallBlock fSoftwareInstallArea;
-	private Image fImage;
-	private boolean fJUnitConfig;
+	private final ConfigurationAreaBlock fConfigurationArea;
+	private final ConfigurationTemplateBlock fTemplateArea;
+	private final SoftwareInstallBlock fSoftwareInstallArea;
+	private final Image fImage;
+	private final boolean fJUnitConfig;
 
 	/**
 	 * Constructor.  Equivalent to ConfigurationTab(false).

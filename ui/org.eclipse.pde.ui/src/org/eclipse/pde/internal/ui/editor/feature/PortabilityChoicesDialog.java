@@ -39,9 +39,9 @@ import org.eclipse.ui.PlatformUI;
 
 public class PortabilityChoicesDialog extends TrayDialog {
 	private String value;
-	private Choice[] choices;
+	private final Choice[] choices;
 	private CheckboxTableViewer choiceViewer;
-	private WizardCheckboxTablePart checkboxTablePart;
+	private final WizardCheckboxTablePart checkboxTablePart;
 
 	class ContentProvider implements IStructuredContentProvider {
 		@Override

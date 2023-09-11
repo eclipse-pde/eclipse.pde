@@ -33,8 +33,8 @@ import org.eclipse.ui.part.PageBookView;
 public class TargetStateView extends PageBookView {
 
 	public static final String VIEW_ID = "org.eclipse.pde.ui.TargetPlatformState"; //$NON-NLS-1$
-	private Map<IPageBookViewPage, IWorkbenchPart> fPagesToParts;
-	private Map<IWorkbenchPart, IPageBookViewPage> fPartsToPages;
+	private final Map<IPageBookViewPage, IWorkbenchPart> fPagesToParts;
+	private final Map<IWorkbenchPart, IPageBookViewPage> fPartsToPages;
 	private IWorkbenchPart fPartState;
 
 	static class DummyPart implements IWorkbenchPart {

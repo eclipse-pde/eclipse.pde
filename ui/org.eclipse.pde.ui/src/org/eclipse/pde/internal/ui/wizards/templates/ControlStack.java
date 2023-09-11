@@ -18,8 +18,8 @@ import java.util.Stack;
 import org.eclipse.pde.ui.templates.IVariableProvider;
 
 public class ControlStack {
-	private Stack<Entry> stack;
-	private PreprocessorParser parser;
+	private final Stack<Entry> stack;
+	private final PreprocessorParser parser;
 
 	static class Entry {
 		boolean value;

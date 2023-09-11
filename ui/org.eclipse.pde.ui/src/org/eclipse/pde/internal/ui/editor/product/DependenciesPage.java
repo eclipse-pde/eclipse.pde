@@ -40,7 +40,7 @@ public class DependenciesPage extends PDEFormPage {
 	static final Map<ProductType, String> TYPE_2_ID = Map.of( //
 			ProductType.BUNDLES, PLUGIN_ID, ProductType.FEATURES, FEATURE_ID, ProductType.MIXED, MIXED_ID);
 
-	private ProductType fProductType;
+	private final ProductType fProductType;
 	private PluginSection fPluginSection = null;
 
 	public DependenciesPage(FormEditor editor, ProductType productType) {

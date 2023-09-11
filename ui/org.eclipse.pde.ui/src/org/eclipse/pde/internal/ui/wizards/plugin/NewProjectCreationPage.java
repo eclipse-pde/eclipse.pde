@@ -44,16 +44,16 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	protected Button fJavaButton;
-	private boolean fFragment;
+	private final boolean fFragment;
 	protected Label fSourceLabel;
 	protected Text fSourceText;
 	protected Label fOutputlabel;
 	protected Text fOutputText;
-	private AbstractFieldData fData;
+	private final AbstractFieldData fData;
 	protected Button fEclipseButton;
 	protected Combo fOSGiCombo;
 	protected Button fOSGIButton;
-	private IStructuredSelection fSelection;
+	private final IStructuredSelection fSelection;
 
 	private static final String S_OSGI_PROJECT = "osgiProject"; //$NON-NLS-1$
 	private static final String S_FRAMEWORK_TYPE = "frameworkType"; //$NON-NLS-1$

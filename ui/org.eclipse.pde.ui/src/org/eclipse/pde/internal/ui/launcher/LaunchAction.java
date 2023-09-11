@@ -102,10 +102,10 @@ public class LaunchAction extends Action {
 		return BundleLauncherHelper.getMergedBundleMap(config, false).keySet();
 	}
 
-	private IProduct fProduct;
-	private String fMode;
-	private IPath fPath;
-	private Map<String, IPluginConfiguration> fPluginConfigurations;
+	private final IProduct fProduct;
+	private final String fMode;
+	private final IPath fPath;
+	private final Map<String, IPluginConfiguration> fPluginConfigurations;
 
 	public LaunchAction(IProduct product, IPath path, String mode) {
 		fProduct = product;

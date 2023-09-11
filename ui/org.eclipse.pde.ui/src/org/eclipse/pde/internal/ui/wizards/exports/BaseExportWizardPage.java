@@ -56,7 +56,7 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 
 	protected ExportPart fExportPart;
-	private IStructuredSelection fSelection;
+	private final IStructuredSelection fSelection;
 	protected ExportDestinationTab fDestinationTab;
 	protected ExportOptionsTab fOptionsTab;
 	protected JARSigningTab fJARSiginingTab;

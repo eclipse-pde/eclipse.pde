@@ -55,7 +55,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 
 	private Map<ITargetLocation, Object[]> fAllArguments;
 	private String[] fArguments;
-	private ITargetDefinition fTarget;
+	private final ITargetDefinition fTarget;
 
 	public ArgumentsFromContainerSelectionDialog(Shell shell, ITargetDefinition target) {
 		super(shell);

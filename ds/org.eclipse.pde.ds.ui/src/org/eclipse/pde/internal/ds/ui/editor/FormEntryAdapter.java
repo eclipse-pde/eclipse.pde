@@ -25,7 +25,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 
 public class FormEntryAdapter implements IFormEntryListener {
-	private IContextPart contextPart;
+	private final IContextPart contextPart;
 	protected IActionBars actionBars;
 
 	public FormEntryAdapter(IContextPart contextPart) {

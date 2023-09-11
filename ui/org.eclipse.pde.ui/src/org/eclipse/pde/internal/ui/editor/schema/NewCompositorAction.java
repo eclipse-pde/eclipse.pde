@@ -26,9 +26,9 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class NewCompositorAction extends Action {
-	private ISchemaElement source;
-	private Object object;
-	private int kind;
+	private final ISchemaElement source;
+	private final Object object;
+	private final int kind;
 
 	public NewCompositorAction(ISchemaElement source, Object object, int kind) {
 		this.source = source;

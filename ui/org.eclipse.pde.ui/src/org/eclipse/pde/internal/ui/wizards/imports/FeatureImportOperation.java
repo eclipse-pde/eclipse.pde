@@ -69,12 +69,12 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		int doQuery(IProject project);
 	}
 
-	private IFeatureModel[] fModels;
-	private boolean fBinary;
-	private IPath fTargetPath;
+	private final IFeatureModel[] fModels;
+	private final boolean fBinary;
+	private final IPath fTargetPath;
 
-	private IWorkspaceRoot fRoot;
-	private IReplaceQuery fReplaceQuery;
+	private final IWorkspaceRoot fRoot;
+	private final IReplaceQuery fReplaceQuery;
 
 	/**
 	 *

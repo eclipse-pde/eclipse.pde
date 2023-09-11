@@ -14,8 +14,8 @@
 package org.eclipse.pde.internal.ui.editor.feature;
 
 public class Choice {
-	private String label;
-	private String value;
+	private final String label;
+	private final String value;
 
 	public Choice(String value, String label) {
 		this.value = value;

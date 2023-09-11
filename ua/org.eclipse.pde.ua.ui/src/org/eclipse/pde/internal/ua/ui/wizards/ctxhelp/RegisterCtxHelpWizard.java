@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Text;
 public class RegisterCtxHelpWizard extends Wizard {
 
 	private RegisterCtxHelpWizardPage fMainPage;
-	private IModel fWizModel;
+	private final IModel fWizModel;
 
 	public RegisterCtxHelpWizard(IModel model) {
 		fWizModel = model;

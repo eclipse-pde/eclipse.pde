@@ -28,7 +28,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 public abstract class PDESection extends SectionPart implements IContextPart, IAdaptable {
 
-	private PDEFormPage fPage;
+	private final PDEFormPage fPage;
 
 	public PDESection(PDEFormPage page, Composite parent, int style) {
 		this(page, parent, style, true);

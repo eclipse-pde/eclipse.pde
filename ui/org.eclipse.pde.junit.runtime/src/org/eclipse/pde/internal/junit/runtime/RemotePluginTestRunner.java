@@ -38,7 +38,7 @@ public class RemotePluginTestRunner extends RemoteTestRunner {
 	private ClassLoader fLoaderClassLoader;
 
 	static class BundleClassLoader extends ClassLoader {
-		private Bundle bundle;
+		private final Bundle bundle;
 
 		public BundleClassLoader(Bundle target) {
 			this.bundle = target;

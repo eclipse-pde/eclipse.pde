@@ -53,7 +53,7 @@ public class ProductConfigurationSection {
 	private Text fProductRootText;
 	private Combo fProductCombo;
 
-	private ProductExportWizardPage fPage;
+	private final ProductExportWizardPage fPage;
 
 	public ProductConfigurationSection(ProductExportWizardPage page) {
 		fPage = page;

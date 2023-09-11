@@ -37,7 +37,7 @@ public class ClasspathContainerInitializer extends org.eclipse.jdt.core.Classpat
 
 	static class ClasspathContainer implements IClasspathContainer {
 
-		private IPath fPath;
+		private final IPath fPath;
 
 		/**
 		 * Constructs a new container for the given path.

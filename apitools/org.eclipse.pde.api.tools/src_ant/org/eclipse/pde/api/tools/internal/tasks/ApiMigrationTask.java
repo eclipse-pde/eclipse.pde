@@ -42,7 +42,7 @@ public final class ApiMigrationTask extends CommonUtilsTask {
 	/**
 	 * Set of project names that were not searched
 	 */
-	private TreeSet<SkippedComponent> notsearched = null;
+	private final TreeSet<SkippedComponent> notsearched = null;
 	/**
 	 * The regex pattern to use to compose the scope
 	 */

@@ -20,7 +20,7 @@ import org.eclipse.pde.internal.core.text.NodeDocumentHandler;
 
 public class SimpleCSDocumentHandler extends NodeDocumentHandler {
 
-	private SimpleCSModel fModel;
+	private final SimpleCSModel fModel;
 
 	/**
 	 * @param reconciling
