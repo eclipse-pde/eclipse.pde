@@ -43,9 +43,9 @@ public class PDESourceViewer {
 
 	private SourceViewer fViewer;
 
-	private PDEFormPage fPage;
+	private final PDEFormPage fPage;
 
-	private IDocument fDocument;
+	private final IDocument fDocument;
 
 	public PDESourceViewer(PDEFormPage page) {
 		// Create the underlying document

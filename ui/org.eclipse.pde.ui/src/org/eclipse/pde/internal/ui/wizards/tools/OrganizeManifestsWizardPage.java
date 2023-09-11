@@ -65,7 +65,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	private Button[] fTopLevelButtons; // used for setting page complete state
 
 	private OrganizeManifestsProcessor fProcessor;
-	private Set<IProject> fCustomProjects;
+	private final Set<IProject> fCustomProjects;
 
 	private static String title = PDEUIMessages.OrganizeManifestsWizardPage_title;
 

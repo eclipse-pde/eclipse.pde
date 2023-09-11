@@ -27,7 +27,7 @@ import org.eclipse.pde.internal.core.text.NodeDocumentHandler;
  */
 public class DSDocumentHandler extends NodeDocumentHandler {
 
-	private DSModel fModel;
+	private final DSModel fModel;
 
 	public DSDocumentHandler(DSModel model, boolean reconciling) {
 		super(reconciling, (IDocumentNodeFactory) model.getFactory());

@@ -31,7 +31,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescri
  */
 public class CompositeApiDescription implements IApiDescription {
 
-	private IApiDescription[] fDescriptions;
+	private final IApiDescription[] fDescriptions;
 
 	/**
 	 * Constructs a composite API description out of the given descriptions.

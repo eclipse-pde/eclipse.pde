@@ -75,9 +75,9 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * Modified files for each build so that we can undo the changes
 	 * incrementally rather than recreating the workspace for each test.
 	 */
-	private List<IPath> fAdded = new ArrayList<>();
-	private List<IPath> fChanged = new ArrayList<>();
-	private List<IPath> fRemoved = new ArrayList<>();
+	private final List<IPath> fAdded = new ArrayList<>();
+	private final List<IPath> fChanged = new ArrayList<>();
+	private final List<IPath> fRemoved = new ArrayList<>();
 
 	public ApiTestingEnvironment() throws Exception {
 		super();

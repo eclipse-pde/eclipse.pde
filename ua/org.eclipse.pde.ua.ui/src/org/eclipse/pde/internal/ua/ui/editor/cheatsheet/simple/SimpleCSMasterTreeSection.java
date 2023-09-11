@@ -83,15 +83,15 @@ public class SimpleCSMasterTreeSection extends TreeSection implements ICSMaster 
 
 	private ISimpleCSModel fModel;
 
-	private SimpleCSAddStepAction fAddStepAction;
+	private final SimpleCSAddStepAction fAddStepAction;
 
-	private SimpleCSRemoveStepAction fRemoveStepAction;
+	private final SimpleCSRemoveStepAction fRemoveStepAction;
 
-	private SimpleCSRemoveSubStepAction fRemoveSubStepAction;
+	private final SimpleCSRemoveSubStepAction fRemoveSubStepAction;
 
-	private SimpleCSAddSubStepAction fAddSubStepAction;
+	private final SimpleCSAddSubStepAction fAddSubStepAction;
 
-	private SimpleCSRemoveRunObjectAction fRemoveRunObjectAction;
+	private final SimpleCSRemoveRunObjectAction fRemoveRunObjectAction;
 
 	private CollapseAction fCollapseAction;
 

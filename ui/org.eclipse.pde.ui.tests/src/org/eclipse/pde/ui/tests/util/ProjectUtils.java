@@ -72,7 +72,7 @@ public class ProjectUtils {
 	 * Used to create projects
 	 */
 	static class TestProjectProvider implements IProjectProvider {
-		private String fProjectName;
+		private final String fProjectName;
 
 		TestProjectProvider(String projectName) {
 			fProjectName = projectName;

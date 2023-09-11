@@ -235,7 +235,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		return Status.error(message, exception);
 	}
 
-	private ISessionListener sessionListener = new ISessionListener() {
+	private final ISessionListener sessionListener = new ISessionListener() {
 		@Override
 		public void sessionAdded(ISession addedSession) {
 			Display.getDefault().asyncExec(() -> showAPIToolingView());

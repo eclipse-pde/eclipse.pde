@@ -61,7 +61,7 @@ import org.eclipse.ui.forms.widgets.Section;
 public class CommandList {
 
 	protected class CommandTreeLabelProvider extends LabelProvider {
-		private HashMap<Object, Image> fImgMap = new HashMap<>();
+		private final HashMap<Object, Image> fImgMap = new HashMap<>();
 		private Image fDefaultImage;
 
 		@Override
@@ -169,12 +169,12 @@ public class CommandList {
 
 	}
 
-	private CommandComposerPart fCCP;
-	private FormToolkit fToolkit;
+	private final CommandComposerPart fCCP;
+	private final FormToolkit fToolkit;
 	private Text fFilterText;
 	private TreeViewer fTreeViewer;
 	private CommandTreeContentProvider fContentProvider;
-	private ICommandImageService fComImgServ;
+	private final ICommandImageService fComImgServ;
 
 	public CommandList(CommandComposerPart cv, Composite parent) {
 		fCCP = cv;

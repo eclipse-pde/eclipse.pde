@@ -22,7 +22,7 @@ import org.eclipse.swt.graphics.Point;
  * An OverlayIcon consists of a main icon and several adornments.
  */
 public class ImageOverlayIcon extends AbstractOverlayIcon {
-	private Image base;
+	private final Image base;
 
 	public ImageOverlayIcon(Image base, ImageDescriptor[][] overlays) {
 		this(base, overlays, null);

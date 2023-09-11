@@ -34,7 +34,7 @@ public class RegistryBrowserContentProvider implements ITreeContentProvider {
 
 	public boolean isInExtensionSet;
 
-	private RegistryBrowser fRegistryBrowser;
+	private final RegistryBrowser fRegistryBrowser;
 
 	public RegistryBrowserContentProvider(RegistryBrowser registryBrowser) {
 		fRegistryBrowser = registryBrowser;

@@ -23,8 +23,8 @@ import org.eclipse.swt.graphics.Image;
 
 public class ModelChangeLabelProvider extends PDELabelProvider {
 
-	private Image manifestImage;
-	private Image xmlImage;
+	private final Image manifestImage;
+	private final Image xmlImage;
 
 	public ModelChangeLabelProvider() {
 		xmlImage = PDEPluginImages.DESC_PLUGIN_MF_OBJ.createImage();

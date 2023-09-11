@@ -22,9 +22,9 @@ import org.eclipse.ui.progress.IProgressConstants;
 
 public class UnusedDependenciesAction extends Action {
 
-	private IPluginModelBase fModel;
+	private final IPluginModelBase fModel;
 
-	private boolean fReadOnly;
+	private final boolean fReadOnly;
 
 	public UnusedDependenciesAction(IPluginModelBase model, boolean readOnly) {
 		fModel = model;

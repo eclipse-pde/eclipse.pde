@@ -27,7 +27,7 @@ import org.eclipse.pde.internal.ui.editor.PDESourcePage;
  */
 public class PDESourceInfoProvider implements IInformationProvider, IInformationProviderExtension {
 
-	private PDESourcePage fSourcePage;
+	private final PDESourcePage fSourcePage;
 
 	public PDESourceInfoProvider(PDESourcePage sourcePage) {
 		fSourcePage = sourcePage;

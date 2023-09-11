@@ -91,8 +91,8 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	 * Provides data information for created controls
 	 */
 	protected static class ControlData {
-		private Key key;
-		private String[] values;
+		private final Key key;
+		private final String[] values;
 
 		/**
 		 * Constructor
@@ -136,8 +136,8 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	 */
 	public static class Key {
 
-		private String qualifier;
-		private String key;
+		private final String qualifier;
+		private final String key;
 
 		/**
 		 * Constructor
@@ -596,7 +596,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Default selection listener for controls on the page
 	 */
-	private SelectionListener selectionlistener = new SelectionAdapter() {
+	private final SelectionListener selectionlistener = new SelectionAdapter() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Widget widget = e.widget;
@@ -695,22 +695,22 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Listing of all of the {@link ExpandableComposite}s in the block
 	 */
-	private ArrayList<ExpandableComposite> fExpComps = new ArrayList<>();
+	private final ArrayList<ExpandableComposite> fExpComps = new ArrayList<>();
 
 	/**
 	 * Listing of all of the {@link Combo}s added to the block
 	 */
-	private ArrayList<Combo> fCombos = new ArrayList<>();
+	private final ArrayList<Combo> fCombos = new ArrayList<>();
 
 	/**
 	 * Map of combo and label
 	 */
-	private HashMap<Combo, Label> fComboLabelMap = new HashMap<>();
+	private final HashMap<Combo, Label> fComboLabelMap = new HashMap<>();
 
 	/**
 	 * Listing of all of the {@link Button} with SWT.check added to the block
 	 */
-	private ArrayList<Button> fCheckBoxes = new ArrayList<>();
+	private final ArrayList<Button> fCheckBoxes = new ArrayList<>();
 
 	/**
 	 * Control used inside the system library ee group

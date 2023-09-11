@@ -29,7 +29,7 @@ public class HistoryDropDownAction extends Action implements IMenuCreator {
 
 	private Menu fMenu;
 
-	private DependenciesView fView;
+	private final DependenciesView fView;
 
 	public HistoryDropDownAction(DependenciesView view) {
 		fView = view;

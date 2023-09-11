@@ -40,12 +40,12 @@ public class TypeScope extends ApiElement implements IApiTypeContainer {
 	/**
 	 * Associated component
 	 */
-	private IApiComponent fComponent;
+	private final IApiComponent fComponent;
 
 	/**
 	 * Map of package names to associated type descriptors
 	 */
-	private Map<String, Set<IReferenceTypeDescriptor>> fPackageToTypes;
+	private final Map<String, Set<IReferenceTypeDescriptor>> fPackageToTypes;
 
 	/**
 	 * Constructs a new class file container/search scope on the given types.

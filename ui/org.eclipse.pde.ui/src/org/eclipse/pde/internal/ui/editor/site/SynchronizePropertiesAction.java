@@ -22,9 +22,9 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class SynchronizePropertiesAction extends Action {
-	private ISiteModel fModel;
+	private final ISiteModel fModel;
 
-	private ISiteFeature[] fSiteFeatures;
+	private final ISiteFeature[] fSiteFeatures;
 
 	public SynchronizePropertiesAction(ISiteFeature[] siteFeatures, ISiteModel model) {
 		setText(PDEUIMessages.SynchronizePropertiesAction_label);

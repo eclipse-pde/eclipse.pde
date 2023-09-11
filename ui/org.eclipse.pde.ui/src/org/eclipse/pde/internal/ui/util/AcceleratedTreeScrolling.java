@@ -24,8 +24,8 @@ import org.eclipse.swt.widgets.TreeItem;
  */
 public class AcceleratedTreeScrolling implements MouseWheelListener {
 
-	private Tree fTree;
-	private int fSkipLines;
+	private final Tree fTree;
+	private final int fSkipLines;
 
 	/**
 	 *  Accelerated mouse wheel scrolling during which the MOD1 (Ctrl) key modifier has been pressed

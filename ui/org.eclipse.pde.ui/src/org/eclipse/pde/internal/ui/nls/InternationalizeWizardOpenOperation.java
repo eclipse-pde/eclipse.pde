@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class InternationalizeWizardOpenOperation {
 
-	private InternationalizeWizard fWizard;
+	private final InternationalizeWizard fWizard;
 
 	public InternationalizeWizardOpenOperation(InternationalizeWizard wizard) {
 		Assert.isNotNull(wizard);

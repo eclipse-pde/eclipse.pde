@@ -29,7 +29,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class CopyLocationAction extends Action {
 
-	private StructuredViewer fViewer;
+	private final StructuredViewer fViewer;
 
 	private String fLocation;
 

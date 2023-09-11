@@ -60,7 +60,7 @@ public class JARSigningTab {
 
 	private Label fPasswordLabel;
 	private Text fPasswordText;
-	private BaseExportWizardPage fPage;
+	private final BaseExportWizardPage fPage;
 	private Button fBrowseButton;
 
 	public JARSigningTab(BaseExportWizardPage page) {

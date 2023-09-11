@@ -43,7 +43,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 	private static final String S_EXPORT_METADATA = "p2metadata"; //$NON-NLS-1$
 
 	private Button fSyncButton;
-	private IStructuredSelection fSelection;
+	private final IStructuredSelection fSelection;
 	private ProductDestinationGroup fExportGroup;
 	private ProductConfigurationSection fConfigurationGroup;
 	private Button fExportSourceButton;

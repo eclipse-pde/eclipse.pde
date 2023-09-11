@@ -31,7 +31,7 @@ public class PluginSearchQuery implements ISearchQuery {
 
 	private SearchResult fSearchResult;
 
-	private PluginSearchInput fSearchInput;
+	private final PluginSearchInput fSearchInput;
 
 	public PluginSearchQuery(PluginSearchInput input) {
 		fSearchInput = input;

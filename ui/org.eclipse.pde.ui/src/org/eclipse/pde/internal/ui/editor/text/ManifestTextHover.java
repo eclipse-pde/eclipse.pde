@@ -35,8 +35,8 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
 
 public class ManifestTextHover extends PDETextHover {
 
-	private PDESourcePage fSourcePage;
-	private IJavaProject fJP;
+	private final PDESourcePage fSourcePage;
+	private final IJavaProject fJP;
 
 	public ManifestTextHover(PDESourcePage sourcePage) {
 		fSourcePage = sourcePage;

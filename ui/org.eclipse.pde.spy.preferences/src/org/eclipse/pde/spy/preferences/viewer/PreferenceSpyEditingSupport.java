@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 
 public class PreferenceSpyEditingSupport extends EditingSupport {
 
-	private Fields field;
+	private final Fields field;
 
 	public PreferenceSpyEditingSupport(ColumnViewer viewer, Fields field) {
 		super(viewer);

@@ -29,15 +29,15 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 
 	private boolean fEnabled;
 
-	private IManagedForm fManagedForm;
+	private final IManagedForm fManagedForm;
 
-	private Control fControl;
+	private final Control fControl;
 
 	private String fMessagePrefix;
 
 	private boolean fIsValid;
 
-	private IProject fProject;
+	private final IProject fProject;
 
 	/**
 	 * @param managedForm

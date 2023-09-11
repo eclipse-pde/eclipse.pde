@@ -886,7 +886,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * Whether to extract references to elements within the classfile being
 	 * scanned.
 	 */
-	private boolean fIncludeLocalRefs = false;
+	private final boolean fIncludeLocalRefs = false;
 
 	/**
 	 * Bit mask of {@link ReferenceModifiers} to extract.
@@ -921,7 +921,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * Current field being visited, or <code>null</code> (when not within a
 	 * field).
 	 */
-	private ClassFileSignatureVisitor signaturevisitor = new ClassFileSignatureVisitor();
+	private final ClassFileSignatureVisitor signaturevisitor = new ClassFileSignatureVisitor();
 	static int TYPE = 0, FIELD = 1, METHOD = 2;
 
 	/**
@@ -930,7 +930,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	 *
 	 * @since 1.0.600
 	 */
-	private ClassFileFieldVisitor fieldvisitor = new ClassFileFieldVisitor();
+	private final ClassFileFieldVisitor fieldvisitor = new ClassFileFieldVisitor();
 
 	/**
 	 * Constructor

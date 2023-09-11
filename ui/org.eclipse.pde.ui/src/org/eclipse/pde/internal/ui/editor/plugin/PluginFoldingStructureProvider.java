@@ -30,7 +30,7 @@ import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 
 public class PluginFoldingStructureProvider extends AbstractFoldingStructureProvider {
 
-	private Map<Position, IDocumentElementNode> fPositionToElement = new HashMap<>();
+	private final Map<Position, IDocumentElementNode> fPositionToElement = new HashMap<>();
 
 	public PluginFoldingStructureProvider(PDESourcePage editor, IEditingModel model) {
 		super(editor, model);

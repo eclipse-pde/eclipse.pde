@@ -94,7 +94,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 
 	private static final String SOURCE_PREFIX = "source."; //$NON-NLS-1$
 
-	private LibraryPluginFieldData fData;
+	private final LibraryPluginFieldData fData;
 
 	public NewLibraryPluginCreationOperation(LibraryPluginFieldData data, IProjectProvider provider, IPluginContentWizard contentWizard) {
 		super(data, provider, contentWizard);

@@ -31,7 +31,7 @@ public class SimpleCSCommandManager {
 
 	private static SimpleCSCommandManager fPinstance;
 
-	private Map<String, String> fCommandMap;
+	private final Map<String, String> fCommandMap;
 
 	private boolean fBlockEvents;
 

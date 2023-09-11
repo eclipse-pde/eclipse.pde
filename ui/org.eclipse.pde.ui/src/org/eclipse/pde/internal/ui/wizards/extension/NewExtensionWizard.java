@@ -26,9 +26,9 @@ import org.eclipse.pde.internal.ui.wizards.WizardElement;
 public class NewExtensionWizard extends NewWizard {
 	public static final String PLUGIN_POINT = "newExtension"; //$NON-NLS-1$
 	private PointSelectionPage fPointPage;
-	private IPluginModelBase fModel;
-	private IProject fProject;
-	private ManifestEditor fEditor;
+	private final IPluginModelBase fModel;
+	private final IProject fProject;
+	private final ManifestEditor fEditor;
 	private WizardCollectionElement fWizardCollection;
 
 	public NewExtensionWizard(IProject project, IPluginModelBase model, ManifestEditor editor) {

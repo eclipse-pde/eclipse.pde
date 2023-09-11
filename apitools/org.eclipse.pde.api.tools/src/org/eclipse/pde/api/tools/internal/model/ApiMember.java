@@ -29,8 +29,8 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 public abstract class ApiMember extends ApiElement implements IApiMember {
 
 	private int fFlags = -1;
-	private String fSignature;
-	private String fGenericSignature;
+	private final String fSignature;
+	private final String fGenericSignature;
 
 	/**
 	 * Constructs a member enclosed by the given type with the specified name,

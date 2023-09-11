@@ -24,9 +24,9 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 public class SynchronizePropertiesWizard extends Wizard {
 	private SynchronizePropertiesWizardPage fMainPage;
 
-	private ISiteModel fModel;
+	private final ISiteModel fModel;
 
-	private ISiteFeature[] fSiteFeatures;
+	private final ISiteFeature[] fSiteFeatures;
 
 	public SynchronizePropertiesWizard(ISiteFeature[] siteFeatures, ISiteModel model) {
 		super();

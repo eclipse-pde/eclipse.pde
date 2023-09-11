@@ -57,8 +57,8 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 
 	protected String fIntroId;
 	private Shell fShell;
-	private IProduct fProduct;
-	private IProject fProject;
+	private final IProduct fProduct;
+	private final IProject fProject;
 	private static final String INTRO_POINT = "org.eclipse.ui.intro"; //$NON-NLS-1$
 	private static final String INTRO_CONFIG_POINT = "org.eclipse.ui.intro.config"; //$NON-NLS-1$
 	private static final String INTRO_CLASS = "org.eclipse.ui.intro.config.CustomizableIntroPart"; //$NON-NLS-1$

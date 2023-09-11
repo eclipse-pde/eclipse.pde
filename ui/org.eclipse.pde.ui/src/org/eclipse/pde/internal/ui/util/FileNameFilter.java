@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 
 public class FileNameFilter extends ViewerFilter {
 
-	private String fTargetName;
+	private final String fTargetName;
 
 	public FileNameFilter(String targetName) {
 		fTargetName = targetName;

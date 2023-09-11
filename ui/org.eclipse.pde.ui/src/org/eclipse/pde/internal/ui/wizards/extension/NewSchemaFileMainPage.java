@@ -29,8 +29,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
-	private IPluginExtensionPoint fPoint;
-	private boolean isPluginIdFinal;
+	private final IPluginExtensionPoint fPoint;
+	private final boolean isPluginIdFinal;
 
 	public NewSchemaFileMainPage(IContainer container) {
 		this(container, null, false);

@@ -62,7 +62,7 @@ public class URLSection extends TableSection {
 
 	private Action fDeleteAction;
 
-	private Image fUrlImage;
+	private final Image fUrlImage;
 
 	static class URLContentProvider implements IStructuredContentProvider {
 		@Override

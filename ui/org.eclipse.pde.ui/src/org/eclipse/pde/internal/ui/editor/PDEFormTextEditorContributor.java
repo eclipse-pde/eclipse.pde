@@ -45,7 +45,7 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 	private FormatAction fFormatAction;
 	private RetargetTextEditorAction fContentAssist;
 
-	private TextEditorActionContributor fSourceContributor;
+	private final TextEditorActionContributor fSourceContributor;
 	private SubActionBars fSourceActionBars;
 
 	class PDETextEditorActionContributor extends TextEditorActionContributor {

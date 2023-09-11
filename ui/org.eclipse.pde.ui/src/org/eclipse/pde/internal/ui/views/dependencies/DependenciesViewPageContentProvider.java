@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.core.PluginModelDelta;
 
 public class DependenciesViewPageContentProvider implements IContentProvider, IPluginModelListener {
 
-	private DependenciesView fView;
+	private final DependenciesView fView;
 
 	private StructuredViewer fViewer;
 

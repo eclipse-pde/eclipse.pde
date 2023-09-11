@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class PluginContentFromTemplatePage extends PluginContentPage {
 
-	private WizardElement fTemplateWizard;
+	private final WizardElement fTemplateWizard;
 
 	public PluginContentFromTemplatePage(String pageName, IProjectProvider provider, NewProjectCreationPage page, AbstractFieldData data, WizardElement templateWizard) {
 		super(pageName, provider, page, data);

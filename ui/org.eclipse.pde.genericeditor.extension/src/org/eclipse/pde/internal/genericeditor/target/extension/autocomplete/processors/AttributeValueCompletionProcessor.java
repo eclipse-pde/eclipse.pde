@@ -39,9 +39,9 @@ import org.osgi.framework.Version;
  */
 public class AttributeValueCompletionProcessor extends DelegateProcessor {
 
-	private String searchTerm;
-	private String acKey;
-	private int offset;
+	private final String searchTerm;
+	private final String acKey;
+	private final int offset;
 
 	public AttributeValueCompletionProcessor(String searchTerm, String acKey, int offset) {
 		this.searchTerm = searchTerm;

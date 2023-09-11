@@ -34,7 +34,7 @@ public class BlankField extends TemplateOption {
 	}
 
 	private Label fblankLabel;
-	private int fheight;
+	private final int fheight;
 
 	/**
 	 * The default constructor.

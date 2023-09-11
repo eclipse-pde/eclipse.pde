@@ -126,11 +126,11 @@ public class PropertiesSection extends TableSection {
 		private Combo fOS;
 		private Combo fArch;
 		private IConfigurationProperty fEdit;
-		private Set<IConfigurationProperty> fExistingProperties;
+		private final Set<IConfigurationProperty> fExistingProperties;
 
-		private String[] COMBO_OSLABELS = new String[] { PDEUIMessages.PropertiesSection_All, Platform.OS_LINUX,
+		private final String[] COMBO_OSLABELS = new String[] { PDEUIMessages.PropertiesSection_All, Platform.OS_LINUX,
 				Platform.OS_MACOSX, Platform.OS_WIN32 };
-		private String[] COMBO_ARCHLABELS = new String[] { PDEUIMessages.PropertiesSection_All, Platform.ARCH_X86,
+		private final String[] COMBO_ARCHLABELS = new String[] { PDEUIMessages.PropertiesSection_All, Platform.ARCH_X86,
 				Platform.ARCH_X86_64 };
 
 		public PropertyDialog(Shell shell, IConfigurationProperty property,

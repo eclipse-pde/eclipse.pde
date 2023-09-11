@@ -29,7 +29,7 @@ import org.xml.sax.SAXParseException;
  */
 public class CtxHelpDocumentHandler extends NodeDocumentHandler {
 
-	private CtxHelpModel fModel;
+	private final CtxHelpModel fModel;
 
 	public CtxHelpDocumentHandler(CtxHelpModel model, boolean reconciling) {
 		super(reconciling, model.getFactory());

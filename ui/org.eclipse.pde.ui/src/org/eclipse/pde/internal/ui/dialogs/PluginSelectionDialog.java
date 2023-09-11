@@ -53,7 +53,7 @@ import org.osgi.framework.Constants;
 public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 
 	private static final String DIALOG_SETTINGS = "org.eclipse.pde.ui.dialogs.PluginSelectionDialog"; //$NON-NLS-1$
-	private IPluginModelBase[] fModels;
+	private final IPluginModelBase[] fModels;
 	String originalPattern;
 
 	private class PluginSearchItemsFilter extends ItemsFilter {

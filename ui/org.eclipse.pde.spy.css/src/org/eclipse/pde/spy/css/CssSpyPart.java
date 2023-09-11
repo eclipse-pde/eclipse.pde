@@ -149,8 +149,8 @@ public class CssSpyPart {
 	private TableViewer cssPropertiesViewer;
 	private Text cssRules;
 
-	private List<Shell> highlights = new LinkedList<>();
-	private List<Region> highlightRegions = new LinkedList<>();
+	private final List<Shell> highlights = new LinkedList<>();
+	private final List<Region> highlightRegions = new LinkedList<>();
 	private Text cssSearchBox;
 	private Button showUnsetProperties;
 	private Button showCssFragment;

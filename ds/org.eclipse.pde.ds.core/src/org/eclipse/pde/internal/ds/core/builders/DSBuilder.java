@@ -44,7 +44,7 @@ public class DSBuilder extends IncrementalProjectBuilder {
 	private static IProject[] EMPTY_LIST = new IProject[0];
 
 	class ResourceVisitor implements IResourceVisitor {
-		private IProgressMonitor monitor;
+		private final IProgressMonitor monitor;
 
 		public ResourceVisitor(IProgressMonitor monitor) {
 			this.monitor = monitor;
@@ -75,7 +75,7 @@ public class DSBuilder extends IncrementalProjectBuilder {
 	}
 
 	class DeltaVisitor implements IResourceDeltaVisitor {
-		private IProgressMonitor monitor;
+		private final IProgressMonitor monitor;
 
 		public DeltaVisitor(IProgressMonitor monitor) {
 			this.monitor = monitor;

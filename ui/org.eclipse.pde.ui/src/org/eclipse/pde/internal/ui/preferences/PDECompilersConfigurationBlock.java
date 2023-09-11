@@ -88,8 +88,8 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 * Provides data information for created controls
 	 */
 	protected static class ControlData {
-		private Key key;
-		private String[] values;
+		private final Key key;
+		private final String[] values;
 
 		/**
 		 * Constructor
@@ -131,8 +131,8 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 */
 	public static class Key {
 
-		private String qualifier;
-		private String key;
+		private final String qualifier;
+		private final String key;
 
 		/**
 		 * Constructor
@@ -320,16 +320,16 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 * Map of controls to the tab they appear on. Allows for optimizing which builders
 	 * are used if changes are made
 	 */
-	private HashMap<Integer, HashSet<Control>> fControlMap = new HashMap<>(3);
+	private final HashMap<Integer, HashSet<Control>> fControlMap = new HashMap<>(3);
 	/**
 	 * Map of combo and label
 	 */
-	private HashMap<Combo, Label> fComboLabelMap = new HashMap<>();
+	private final HashMap<Combo, Label> fComboLabelMap = new HashMap<>();
 
 	/**
 	 * Listing of all of the {@link ExpandableComposite}s in the block
 	 */
-	private ArrayList<ExpandableComposite> fExpComps = new ArrayList<>();
+	private final ArrayList<ExpandableComposite> fExpComps = new ArrayList<>();
 
 	/**
 	 * Flag used to know if the page needs saving or not
@@ -344,7 +344,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Set of builders to use when building if there are changes
 	 */
-	private HashSet<String> fBuilders = new HashSet<>(4);
+	private final HashSet<String> fBuilders = new HashSet<>(4);
 
 	/**
 	 * The parent this block has been added to
@@ -357,7 +357,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Default selection listener for combo and check controls
 	 */
-	private SelectionListener selectionlistener = widgetSelectedAdapter(e -> {
+	private final SelectionListener selectionlistener = widgetSelectedAdapter(e -> {
 		if (e.widget instanceof Combo) {
 			Combo combo = (Combo) e.widget;
 			ControlData data = (ControlData) combo.getData();
@@ -379,7 +379,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Default modify listener for text controls
 	 */
-	private ModifyListener modifylistener = e -> {
+	private final ModifyListener modifylistener = e -> {
 		if (e.widget instanceof Text) {
 			Text text = (Text) e.widget;
 			ControlData data = (ControlData) text.getData();

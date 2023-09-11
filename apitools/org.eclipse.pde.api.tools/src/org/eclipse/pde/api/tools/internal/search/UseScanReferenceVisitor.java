@@ -27,12 +27,12 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
  *
  */
 public class UseScanReferenceVisitor extends UseScanVisitor {
-	private IApiComponent fLookupAPIComponent;
+	private final IApiComponent fLookupAPIComponent;
 	private List<String> fLookupMemberTypes;
 	private String fCurrentReferencedMemberRootType;
 	private IComponentDescriptor fCurrentComponent;
 	private IComponentDescriptor fReferencingComponent;
-	private IReferenceCollection fReferences;
+	private final IReferenceCollection fReferences;
 	private IMemberDescriptor fCurrentReferencedMember;
 
 	public UseScanReferenceVisitor(IApiComponent component, String[] lookupTypes, IReferenceCollection references) {

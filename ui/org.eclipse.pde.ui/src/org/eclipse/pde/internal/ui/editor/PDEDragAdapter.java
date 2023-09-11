@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Tree;
 
 public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant {
 
-	private IPDEDragParticipant fParticipant;
+	private final IPDEDragParticipant fParticipant;
 
 	// Needs to be static to allow dragging objects from one viewer to another
 	private static Object[] fSourceObjects;

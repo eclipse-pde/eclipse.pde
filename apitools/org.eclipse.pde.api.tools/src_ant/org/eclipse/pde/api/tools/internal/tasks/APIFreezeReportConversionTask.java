@@ -46,17 +46,17 @@ public class APIFreezeReportConversionTask extends Task {
 		private String[] arguments;
 		private List<String> argumentsList;
 		private String componentID;
-		private boolean debug;
+		private final boolean debug;
 		private int flags;
 		private String key;
 		private String kind;
-		private Map<String, List<Entry>> map;
+		private final Map<String, List<Entry>> map;
 		private String typename;
 		private int elementType;
 		/**
 		 * String component id to ArrayList of String resolver error messages
 		 */
-		private Map<String, List<String>> resolverErrors;
+		private final Map<String, List<String>> resolverErrors;
 		private boolean isResolverSection;
 
 		public ConverterDefaultHandler(boolean debug) {

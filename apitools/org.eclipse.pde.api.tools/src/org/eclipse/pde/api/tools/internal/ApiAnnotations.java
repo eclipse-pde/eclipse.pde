@@ -28,7 +28,7 @@ public class ApiAnnotations implements IApiAnnotations {
 	public static final int RESTRICTIONS_MASK = 0x01F0;
 	public static final int OFFSET_VISIBILITY = 0;
 	public static final int OFFSET_RESTRICTIONS = 4;
-	private int bits;
+	private final int bits;
 	boolean isExact;
 
 	public ApiAnnotations(int visibility, int restrictions) {

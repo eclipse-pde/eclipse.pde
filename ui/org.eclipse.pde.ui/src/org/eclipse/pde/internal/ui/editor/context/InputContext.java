@@ -67,7 +67,7 @@ import org.eclipse.ui.texteditor.IElementStateListener;
  */
 public abstract class InputContext {
 
-	private PDEFormEditor fEditor;
+	private final PDEFormEditor fEditor;
 	private IEditorInput fEditorInput;
 	private IBaseModel fModel;
 	private IModelChangedListener fModelListener;

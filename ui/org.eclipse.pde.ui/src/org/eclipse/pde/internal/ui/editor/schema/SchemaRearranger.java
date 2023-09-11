@@ -33,7 +33,7 @@ import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 
 public class SchemaRearranger {
 
-	private Schema fSchema;
+	private final Schema fSchema;
 
 	public SchemaRearranger(Schema schema) {
 		fSchema = schema;

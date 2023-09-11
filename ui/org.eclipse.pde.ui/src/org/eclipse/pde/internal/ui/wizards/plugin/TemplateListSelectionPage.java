@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
 public class TemplateListSelectionPage extends WizardListSelectionPage {
-	private ContentPage fContentPage;
+	private final ContentPage fContentPage;
 	private Button fUseTemplate;
 	private String fInitialTemplateId;
 

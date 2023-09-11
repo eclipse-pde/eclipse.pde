@@ -57,7 +57,7 @@ import org.osgi.framework.Constants;
 public class BundleInputContext extends UTF8InputContext {
 	public static final String CONTEXT_ID = "bundle-context"; //$NON-NLS-1$
 
-	private HashMap<IDocumentKey, TextEdit> fOperationTable = new HashMap<>();
+	private final HashMap<IDocumentKey, TextEdit> fOperationTable = new HashMap<>();
 
 	/**
 	 * @param editor

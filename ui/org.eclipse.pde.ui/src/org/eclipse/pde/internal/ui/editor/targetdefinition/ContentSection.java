@@ -33,7 +33,7 @@ import org.eclipse.ui.forms.widgets.Section;
 public class ContentSection extends SectionPart {
 
 	private TargetContentsGroup fContentGroup;
-	private TargetEditor fEditor;
+	private final TargetEditor fEditor;
 
 	public ContentSection(FormPage page, Composite parent) {
 		super(parent, page.getManagedForm().getToolkit(), Section.DESCRIPTION | ExpandableComposite.TITLE_BAR);

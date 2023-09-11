@@ -29,15 +29,15 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 
 	public static final char F_DOT = '.';
 
-	private IProject fProject;
+	private final IProject fProject;
 
-	private int fTypeScope;
+	private final int fTypeScope;
 
 	private ArrayList<Object> fInitialContentProposals;
 
 	private String fInitialContent;
 
-	private Comparator<Object> fComparator;
+	private final Comparator<Object> fComparator;
 
 	public TypeContentProposalProvider(IProject project, int scope) {
 		fProject = project;

@@ -16,7 +16,7 @@ package org.eclipse.pde.spy.event.internal.model;
 public enum SpecialValue {
 	Null(""), EmptyString(""), NameAndValue("%s=%s"); //$NON-NLS-3$ //$NON-NLS-1$ //$NON-NLS-1$ //$NON-NLS-1$
 
-	private String text;
+	private final String text;
 
 	private SpecialValue(String text) {
 		this.text = text;

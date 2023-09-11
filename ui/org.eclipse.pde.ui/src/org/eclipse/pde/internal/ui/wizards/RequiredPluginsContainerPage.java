@@ -49,9 +49,9 @@ import org.eclipse.ui.ide.IDE;
 public class RequiredPluginsContainerPage extends WizardPage implements IClasspathContainerPage, IClasspathContainerPageExtension {
 	private IClasspathEntry entry;
 	private TableViewer viewer;
-	private Image projectImage;
-	private Image libraryImage;
-	private Image slibraryImage;
+	private final Image projectImage;
+	private final Image libraryImage;
+	private final Image slibraryImage;
 	private IClasspathEntry[] realEntries;
 	private IJavaProject javaProject;
 

@@ -22,9 +22,9 @@ public class CollapseAction extends Action {
 
 	private AbstractTreeViewer fTreeViewer;
 
-	private Object fTreeObject;
+	private final Object fTreeObject;
 
-	private int fExpandToLevel;
+	private final int fExpandToLevel;
 
 	/**
 	 * @param viewer

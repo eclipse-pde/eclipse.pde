@@ -21,9 +21,9 @@ import org.eclipse.pde.internal.core.schema.SchemaElementReference;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 
 public class NewReferenceAction extends Action {
-	private Object object;
+	private final Object object;
 
-	private ISchemaElement referencedElement;
+	private final ISchemaElement referencedElement;
 
 	public NewReferenceAction(ISchemaElement source, Object object, ISchemaElement referencedElement) {
 		this.object = object;

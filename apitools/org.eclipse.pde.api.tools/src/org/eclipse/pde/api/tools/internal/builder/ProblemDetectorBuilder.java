@@ -78,7 +78,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	/**
 	 * Cache of non-API package names visited
 	 */
-	private Set<String> fNonApiPackageNames = new HashSet<>();
+	private final Set<String> fNonApiPackageNames = new HashSet<>();
 
 	/**
 	 * The owning {@link IApiComponent} of this builder

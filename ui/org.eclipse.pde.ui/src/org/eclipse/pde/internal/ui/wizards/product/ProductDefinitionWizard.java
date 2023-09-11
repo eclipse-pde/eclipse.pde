@@ -27,7 +27,7 @@ public class ProductDefinitionWizard extends Wizard {
 	private String fProductId;
 	private String fPluginId;
 	private String fApplication;
-	private IProduct fProduct;
+	private final IProduct fProduct;
 
 	public ProductDefinitionWizard(IProduct product) {
 		fProduct = product;

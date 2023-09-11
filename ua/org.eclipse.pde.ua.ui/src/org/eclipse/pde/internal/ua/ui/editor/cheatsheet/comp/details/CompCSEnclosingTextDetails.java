@@ -72,9 +72,9 @@ public class CompCSEnclosingTextDetails extends CSAbstractSubDetails {
 
 	private String fTaskObjectLabelName;
 
-	private CompCSIntroductionTextListener fIntroductionListener;
+	private final CompCSIntroductionTextListener fIntroductionListener;
 
-	private CompCSConclusionTextListener fConclusionListener;
+	private final CompCSConclusionTextListener fConclusionListener;
 
 	public CompCSEnclosingTextDetails(int type, ICSMaster section) {
 		super(section, CompCSInputContext.CONTEXT_ID);

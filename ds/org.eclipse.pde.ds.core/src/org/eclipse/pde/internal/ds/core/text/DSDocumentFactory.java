@@ -36,7 +36,7 @@ import org.eclipse.pde.internal.ds.core.IDSService;
  */
 public class DSDocumentFactory extends DocumentNodeFactory implements
 		IDSDocumentFactory {
-	private DSModel fModel;
+	private final DSModel fModel;
 
 	public DSDocumentFactory(DSModel model) {
 		fModel = model;

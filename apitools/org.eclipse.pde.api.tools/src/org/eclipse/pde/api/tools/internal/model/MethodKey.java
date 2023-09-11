@@ -19,9 +19,9 @@ package org.eclipse.pde.api.tools.internal.model;
  * @since 1.1
  */
 public class MethodKey {
-	private String fSelector;
-	private String fSig;
-	private String fTypename;
+	private final String fSelector;
+	private final String fSig;
+	private final String fTypename;
 	private boolean fConsiderTypename = false;
 
 	/**

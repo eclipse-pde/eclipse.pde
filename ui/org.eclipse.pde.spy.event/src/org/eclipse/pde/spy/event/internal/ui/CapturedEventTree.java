@@ -59,9 +59,9 @@ import org.eclipse.swt.widgets.TreeItem;
 public class CapturedEventTree extends TreeViewer {
 	private ICapturedEventTreeListener listener;
 
-	private WritableList<CapturedEvent> capturedEvents;
+	private final WritableList<CapturedEvent> capturedEvents;
 
-	private Clipboard clipboard;
+	private final Clipboard clipboard;
 
 	private TreeItemCursor treeItemCursor;
 

@@ -42,7 +42,7 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 	/**
 	 * Root directory of the {@link IApiTypeContainer}
 	 */
-	private IContainer fRoot;
+	private final IContainer fRoot;
 	private String[] fPackageNames = null;
 
 	/**

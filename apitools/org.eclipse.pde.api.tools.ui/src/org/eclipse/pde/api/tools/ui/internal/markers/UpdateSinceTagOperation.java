@@ -43,10 +43,10 @@ import org.eclipse.text.edits.TextEdit;
 
 public class UpdateSinceTagOperation {
 
-	private IMarker fMarker;
+	private final IMarker fMarker;
 	private IMarker[] otherIMarkers;
-	private int sinceTagType;
-	private String sinceTagVersion;
+	private final int sinceTagType;
+	private final String sinceTagVersion;
 
 	public UpdateSinceTagOperation(IMarker marker, IMarker[] otherMarkers, int sinceTagType, String sinceTagVersion) {
 		this.fMarker = marker;

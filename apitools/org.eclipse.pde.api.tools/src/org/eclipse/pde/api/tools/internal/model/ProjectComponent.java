@@ -75,7 +75,7 @@ public class ProjectComponent extends BundleComponent {
 	/**
 	 * Associated Java project
 	 */
-	private IJavaProject fProject;
+	private final IJavaProject fProject;
 
 	/**
 	 * Associated IPluginModelBase object

@@ -26,12 +26,12 @@ public class ProductIntroWizard extends Wizard {
 
 	private ProductDefinitonWizardPage fProductDefinitionPage;
 	private ProductIntroWizardPage fNewIntroPage;
-	private boolean fNeedNewProduct;
+	private final boolean fNeedNewProduct;
 	private String fIntroId;
 	private String fProductId;
 	private String fPluginId;
 	private String fApplication;
-	private IProduct fProduct;
+	private final IProduct fProduct;
 
 	public ProductIntroWizard(IProduct product, boolean needNewProduct) {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_DEFCON_WIZ);

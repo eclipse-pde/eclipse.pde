@@ -62,8 +62,8 @@ public class TargetPlatformPresentationReconciler extends PresentationReconciler
 		}
 	}
 
-	private UpdatableDefaultDamagerRepairer dr;
-	private InvalidatingListener listener;
+	private final UpdatableDefaultDamagerRepairer dr;
+	private final InvalidatingListener listener;
 
 	public TargetPlatformPresentationReconciler() {
 		dr = new UpdatableDefaultDamagerRepairer(new RuleBasedScanner());

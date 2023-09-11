@@ -22,7 +22,7 @@ import org.eclipse.ui.PartInitException;
 
 public class OpenPluginReferencesAction extends Action {
 
-	private IPluginModelBase fModel;
+	private final IPluginModelBase fModel;
 
 	public OpenPluginReferencesAction(IPluginModelBase base) {
 		fModel = base;

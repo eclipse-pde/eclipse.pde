@@ -78,8 +78,8 @@ public class IUContentProvider implements ITreeContentProvider {
 	 * in the tree.
 	 */
 	public static class IUWrapper {
-		private IInstallableUnit fIU;
-		private IUBundleContainer fParent;
+		private final IInstallableUnit fIU;
+		private final IUBundleContainer fParent;
 
 		public IUWrapper(IInstallableUnit unit, IUBundleContainer parent) {
 			fIU = unit;

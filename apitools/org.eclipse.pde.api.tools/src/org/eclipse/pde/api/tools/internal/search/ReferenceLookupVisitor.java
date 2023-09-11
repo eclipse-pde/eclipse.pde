@@ -49,7 +49,7 @@ import org.w3c.dom.Element;
  */
 public class ReferenceLookupVisitor extends UseScanVisitor {
 
-	private IApiBaseline baseline;
+	private final IApiBaseline baseline;
 	private IComponentDescriptor targetComponent;
 	private IComponentDescriptor referencingComponent;
 	private IApiComponent currComponent;
@@ -57,9 +57,9 @@ public class ReferenceLookupVisitor extends UseScanVisitor {
 	private IMemberDescriptor targetMember;
 	private IReferenceTypeDescriptor targetType;
 	private IApiType currType;
-	private List<IComponentDescriptor> missingComponents = new ArrayList<>();
-	private List<IComponentDescriptor> skippedComponents = new ArrayList<>();
-	private String location;
+	private final List<IComponentDescriptor> missingComponents = new ArrayList<>();
+	private final List<IComponentDescriptor> skippedComponents = new ArrayList<>();
+	private final String location;
 	private List<IReferenceDescriptor> unresolved = null;
 	private String analysisScope = null;
 	private String targetScope = null;

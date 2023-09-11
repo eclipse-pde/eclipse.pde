@@ -115,19 +115,19 @@ import org.xml.sax.SAXException;
  */
 public class TargetEditor extends FormEditor {
 
-	private List<IManagedForm> fManagedFormPages = new ArrayList<>(2);
+	private final List<IManagedForm> fManagedFormPages = new ArrayList<>(2);
 	private ExtensionBasedTextEditor fTextualEditor;
 	private int fSourceTabIndex;
 	private IDocument fTargetDocument;
 	private IDocumentListener fTargetDocumentListener;
 
-	private InputHandler fInputHandler = new InputHandler();
+	private final InputHandler fInputHandler = new InputHandler();
 	private TargetChangedListener fTargetChangedListener;
 	private boolean fDirty;
 
 	private ImageHyperlink fLoadHyperlink;
 
-	private EventHandler fEventHandler = this::handleBrokerEvent;
+	private final EventHandler fEventHandler = this::handleBrokerEvent;
 
 	@Override
 	protected FormToolkit createToolkit(Display display) {
@@ -590,7 +590,7 @@ public class TargetEditor extends FormEditor {
 	class TargetChangedListener implements ITargetChangedListener {
 		private TargetLocationsGroup fLocationTree;
 		private TargetContentsGroup fContentTree;
-		private Object fJobFamily = new Object();
+		private final Object fJobFamily = new Object();
 
 		public void setLocationTree(TargetLocationsGroup locationTree) {
 			fLocationTree = locationTree;

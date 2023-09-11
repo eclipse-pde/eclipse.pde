@@ -43,7 +43,7 @@ public class SimpleCSSubItemDetails extends CSAbstractDetails {
 
 	private Section fMainSection;
 
-	private SimpleCSCommandDetails fCommandSection;
+	private final SimpleCSCommandDetails fCommandSection;
 
 	public SimpleCSSubItemDetails(ICSMaster masterTreeSection) {
 		super(masterTreeSection, SimpleCSInputContext.CONTEXT_ID);

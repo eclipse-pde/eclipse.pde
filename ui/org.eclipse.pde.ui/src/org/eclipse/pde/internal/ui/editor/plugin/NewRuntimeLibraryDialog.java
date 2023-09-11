@@ -36,10 +36,10 @@ import org.eclipse.ui.dialogs.SelectionStatusDialog;
 
 public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 	private Text libraryText;
-	private IPluginLibrary[] libraries;
-	private DuplicateStatusValidator validator;
+	private final IPluginLibrary[] libraries;
+	private final DuplicateStatusValidator validator;
 	private String libraryName;
-	private Set<IPath> librarySet;
+	private final Set<IPath> librarySet;
 
 	class DuplicateStatusValidator {
 		public IStatus validate(String text) {

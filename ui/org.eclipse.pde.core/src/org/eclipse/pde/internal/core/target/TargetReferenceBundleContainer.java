@@ -34,7 +34,7 @@ public class TargetReferenceBundleContainer extends AbstractBundleContainer {
 
 	public static final String TYPE = "Target"; //$NON-NLS-1$
 
-	private String uri;
+	private final String uri;
 
 	private volatile ITargetDefinition targetDefinition;
 

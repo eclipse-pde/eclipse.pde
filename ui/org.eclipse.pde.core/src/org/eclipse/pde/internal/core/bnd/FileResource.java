@@ -40,7 +40,7 @@ import aQute.bnd.osgi.Resource;
  */
 public class FileResource implements Resource {
 
-	private IFile file;
+	private final IFile file;
 
 	private String extra;
 

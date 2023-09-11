@@ -30,8 +30,8 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 public class DependencyExtentQuery implements ISearchQuery {
 
 	private ISearchResult fSearchResult;
-	private IProject fProject;
-	private String fImportID;
+	private final IProject fProject;
+	private final String fImportID;
 
 	public DependencyExtentQuery(IProject project, String importID) {
 		fProject = project;

@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.TableItem;
 public abstract class WizardListSelectionPage extends BaseWizardSelectionPage implements IExecutableExtension {
 	protected TableViewer wizardSelectionViewer;
 	protected ElementList wizardElements;
-	private WizardSelectedAction doubleClickAction = new WizardSelectedAction();
+	private final WizardSelectedAction doubleClickAction = new WizardSelectedAction();
 
 	private class WizardSelectedAction extends Action {
 		public WizardSelectedAction() {

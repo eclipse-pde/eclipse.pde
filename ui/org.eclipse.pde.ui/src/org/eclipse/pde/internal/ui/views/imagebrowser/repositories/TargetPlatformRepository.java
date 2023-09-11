@@ -38,7 +38,7 @@ import org.eclipse.ui.PlatformUI;
 public class TargetPlatformRepository extends AbstractRepository {
 
 	private List<TargetBundle> fBundles = null;
-	private boolean fUseCurrent;
+	private final boolean fUseCurrent;
 
 	/**
 	 * Creates a new target platform repository.  If useCurrent is <code>true</code>

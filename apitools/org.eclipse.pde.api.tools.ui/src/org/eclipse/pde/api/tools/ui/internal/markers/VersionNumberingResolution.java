@@ -35,7 +35,7 @@ import org.eclipse.ui.IMarkerResolution2;
 public class VersionNumberingResolution implements IMarkerResolution2 {
 	String newVersionValue;
 	// major or minor version
-	private int kind;
+	private final int kind;
 	private String description;
 
 	public VersionNumberingResolution(IMarker marker) {

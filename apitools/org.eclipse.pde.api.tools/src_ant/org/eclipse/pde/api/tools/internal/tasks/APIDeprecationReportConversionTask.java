@@ -45,11 +45,11 @@ public class APIDeprecationReportConversionTask extends Task {
 		private String[] arguments;
 		private List<String> argumentsList;
 		private String componentID;
-		private boolean debug;
+		private final boolean debug;
 		private int flags;
 		private String key;
 		private String kind;
-		private Map<String, List<Entry>> map;
+		private final Map<String, List<Entry>> map;
 		private String typename;
 		private int elementType;
 

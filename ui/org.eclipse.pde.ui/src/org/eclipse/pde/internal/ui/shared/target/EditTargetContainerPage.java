@@ -80,7 +80,7 @@ public class EditTargetContainerPage extends WizardPage implements IEditBundleCo
 	 */
 	private static final String SETTINGS_LOCATION_3 = "location3"; //$NON-NLS-1$
 
-	private ITargetDefinition targetDefinition;
+	private final ITargetDefinition targetDefinition;
 
 	public EditTargetContainerPage(ITargetDefinition targetDefinition, TargetReferenceBundleContainer container) {
 		super("EditTargetContainerPage"); //$NON-NLS-1$

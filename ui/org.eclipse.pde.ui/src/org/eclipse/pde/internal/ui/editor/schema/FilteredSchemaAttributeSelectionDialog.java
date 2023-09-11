@@ -55,8 +55,8 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 	private static final String DIALOG_SETTINGS = "org.eclipse.pde.ui.dialogs.FilteredSchemaAttributeSelectionDialog"; //$NON-NLS-1$
 	private static final String S_OPTIONAL_ATTRIBUTES = "showOptionalAttributes"; //$NON-NLS-1$
 
-	private Action optionalAttributesAction = new ShowOptionalAttributesAction();
-	private OptionalAttributesFilter optionalAttributesFilter = new OptionalAttributesFilter();
+	private final Action optionalAttributesAction = new ShowOptionalAttributesAction();
+	private final OptionalAttributesFilter optionalAttributesFilter = new OptionalAttributesFilter();
 	private final SchemaListLabelProvider listLabelProvider = new SchemaListLabelProvider();
 	private final SchemaDetailsLabelProvider detailsLabelProvider = new SchemaDetailsLabelProvider();
 

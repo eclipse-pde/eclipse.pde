@@ -62,8 +62,8 @@ import org.eclipse.ui.part.ISetSelectionTarget;
 public class DSCreationOperation extends WorkspaceModifyOperation {
 
 	protected IFile fFile;
-	private String fComponentName;
-	private String fImplementationClass;
+	private final String fComponentName;
+	private final String fImplementationClass;
 
 	private static final String DS_MANIFEST_KEY = "Service-Component"; //$NON-NLS-1$
 

@@ -67,7 +67,7 @@ public class ProjectApiDescription extends ApiDescription {
 	/**
 	 * Associated Java project
 	 */
-	private IJavaProject fProject;
+	private final IJavaProject fProject;
 
 	/**
 	 * Time stamp at which package information was created

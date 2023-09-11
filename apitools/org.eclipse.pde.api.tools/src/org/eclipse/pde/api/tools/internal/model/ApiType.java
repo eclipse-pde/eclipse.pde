@@ -52,7 +52,7 @@ public class ApiType extends ApiMember implements IApiType {
 
 	private String fSuperclassName;
 	private String[] fSuperInterfaceNames;
-	private String fEnclosingTypeName;
+	private final String fEnclosingTypeName;
 	private String fSimpleName;
 
 	private static final IApiMethod[] EMPTY_METHODS = new IApiMethod[0];
@@ -98,7 +98,7 @@ public class ApiType extends ApiMember implements IApiType {
 	/**
 	 * The storage this type structure originated from
 	 */
-	private IApiTypeRoot fStorage;
+	private final IApiTypeRoot fStorage;
 
 	/**
 	 * The signature of the enclosing method if this is a local type

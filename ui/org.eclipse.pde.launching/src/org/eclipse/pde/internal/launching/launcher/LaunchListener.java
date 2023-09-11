@@ -37,7 +37,7 @@ import org.eclipse.pde.internal.launching.PDEMessages;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 
 public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
-	private ArrayList<ILaunch> managedLaunches;
+	private final ArrayList<ILaunch> managedLaunches;
 
 	public LaunchListener() {
 		managedLaunches = new ArrayList<>();

@@ -28,7 +28,7 @@ public class MethodDescriptorImpl extends MemberDescriptorImpl implements IMetho
 	/**
 	 * Method signature
 	 */
-	private String fSignature;
+	private final String fSignature;
 
 	/**
 	 * Constructs a method descriptor.

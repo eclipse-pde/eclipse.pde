@@ -37,12 +37,12 @@ import org.osgi.framework.Constants;
 public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration {
 
 	private IAnnotationHover fAnnotationHover;
-	private BasePDEScanner fPropertyKeyScanner;
-	private BasePDEScanner fPropertyValueScanner;
+	private final BasePDEScanner fPropertyKeyScanner;
+	private final BasePDEScanner fPropertyValueScanner;
 	private ContentAssistant fContentAssistant;
 	private ManifestContentAssistProcessor fContentAssistantProcessor;
 	private ManifestTextHover fTextHover;
-	private String fDocumentPartitioning;
+	private final String fDocumentPartitioning;
 
 	class ManifestHeaderScanner extends BasePDEScanner {
 

@@ -19,13 +19,13 @@ import org.eclipse.swt.graphics.Image;
 
 public class TypeContentProposal implements IContentProposal {
 
-	private String fLabel;
+	private final String fLabel;
 
-	private String fContent;
+	private final String fContent;
 
-	private String fDescription;
+	private final String fDescription;
 
-	private Image fImage;
+	private final Image fImage;
 
 	public TypeContentProposal(String label, String content, String description, Image image) {
 		fLabel = label;

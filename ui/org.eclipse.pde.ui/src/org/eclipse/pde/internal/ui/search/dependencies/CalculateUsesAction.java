@@ -33,8 +33,8 @@ import org.eclipse.ui.progress.IProgressConstants;
 
 public class CalculateUsesAction extends Action {
 
-	private IProject fProject;
-	private IBundlePluginModelBase fModel;
+	private final IProject fProject;
+	private final IBundlePluginModelBase fModel;
 
 	public CalculateUsesAction(IProject project, IBundlePluginModelBase model) {
 		fProject = project;

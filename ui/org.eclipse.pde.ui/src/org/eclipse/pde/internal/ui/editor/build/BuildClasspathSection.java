@@ -78,8 +78,8 @@ public class BuildClasspathSection extends TableSection {
 	 */
 	static class ElementSelectionValidator implements ISelectionStatusValidator {
 
-		private Class<?>[] fAcceptedTypes;
-		private boolean fAllowMultipleSelection;
+		private final Class<?>[] fAcceptedTypes;
+		private final boolean fAllowMultipleSelection;
 
 		/**
 		 * @param acceptedTypes The types accepted by the validator

@@ -81,8 +81,8 @@ public class JavaResolutionFactory {
 	 */
 	private static abstract class AbstractManifestChange extends Change {
 
-		private Object fChangeObject;
-		private IProject fProject;
+		private final Object fChangeObject;
+		private final IProject fProject;
 		private CompilationUnit fCompilationUnit;
 		private String fQualifiedTypeToImport;
 

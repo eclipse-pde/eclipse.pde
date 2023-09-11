@@ -67,7 +67,7 @@ public class TagValidator extends Validator {
 	/**
 	 * A collection of annotation names so we can detect multiple usage
 	 */
-	private Set<String> fProcessedAnnotations = new HashSet<>();
+	private final Set<String> fProcessedAnnotations = new HashSet<>();
 
 	/**
 	 * Constructor

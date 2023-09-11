@@ -53,13 +53,13 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements IExecuta
 	private NewLibraryPluginCreationPage fMainPage;
 	private NewLibraryPluginCreationUpdateRefPage fUpdatePage;
 
-	private LibraryPluginFieldData fPluginData;
+	private final LibraryPluginFieldData fPluginData;
 
 	private IProjectProvider fProjectProvider;
 
-	private Collection<?> fInitialJarPaths;
+	private final Collection<?> fInitialJarPaths;
 
-	private Collection<?> fInitialSelection;
+	private final Collection<?> fInitialSelection;
 
 	public NewLibraryPluginProjectWizard(Collection<?> initialJarPaths, Collection<?> initialSelection) {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_JAR_TO_PLUGIN_WIZ);

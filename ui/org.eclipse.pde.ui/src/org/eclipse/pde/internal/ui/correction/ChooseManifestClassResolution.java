@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.ui.util.PDEJavaHelperUI;
 
 public class ChooseManifestClassResolution extends AbstractManifestMarkerResolution {
 
-	private String fHeader;
+	private final String fHeader;
 
 	public ChooseManifestClassResolution(int type, String headerName, IMarker marker) {
 		super(type, marker);

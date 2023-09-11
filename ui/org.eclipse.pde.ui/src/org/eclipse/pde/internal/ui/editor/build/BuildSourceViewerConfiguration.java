@@ -94,7 +94,7 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 
 	private class SingleTokenJavaScanner extends AbstractJavaScanner {
 
-		private String fProperty;
+		private final String fProperty;
 
 		public SingleTokenJavaScanner(String property) {
 			fProperty = property;

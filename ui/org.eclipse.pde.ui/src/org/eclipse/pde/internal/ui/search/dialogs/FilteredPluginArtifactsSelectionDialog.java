@@ -82,22 +82,22 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	private static final int TYPE_EXPORTED_PACKAGE = 3;
 	private static final int TYPE_FEATURE = 4;
 
-	private Action extensionsAction = new ExtensionsAction();
-	private Action extensionPointsAction = new ExtensionPointsAction();
-	private Action exportedPackagesAction = new ExportedPackagesAction();
-	private Action featuresAction = new FeaturesAction();
-	private ExtensionsFilter extensionsFilter = new ExtensionsFilter();
-	private ExtensionPointsFilter extensionPointsFilter = new ExtensionPointsFilter();
-	private ExportedPackagesFilter exportedPackagesFilter = new ExportedPackagesFilter();
-	private FeaturesFilter featuresFilter = new FeaturesFilter();
+	private final Action extensionsAction = new ExtensionsAction();
+	private final Action extensionPointsAction = new ExtensionPointsAction();
+	private final Action exportedPackagesAction = new ExportedPackagesAction();
+	private final Action featuresAction = new FeaturesAction();
+	private final ExtensionsFilter extensionsFilter = new ExtensionsFilter();
+	private final ExtensionPointsFilter extensionPointsFilter = new ExtensionPointsFilter();
+	private final ExportedPackagesFilter exportedPackagesFilter = new ExportedPackagesFilter();
+	private final FeaturesFilter featuresFilter = new FeaturesFilter();
 
-	private SearchLabelProvider searchLabelProvider = new SearchLabelProvider();
-	private ILabelProvider detailsLabelProvider = new DetailedLabelProvider();
+	private final SearchLabelProvider searchLabelProvider = new SearchLabelProvider();
+	private final ILabelProvider detailsLabelProvider = new DetailedLabelProvider();
 
 	private class SearchLabelProvider extends LabelProvider implements ILabelDecorator, IStyledLabelProvider {
 
 		private BoldStylerProvider boldStylerProvider;
-		private StyledStringHighlighter styledStringHighlighter = new StyledStringHighlighter();
+		private final StyledStringHighlighter styledStringHighlighter = new StyledStringHighlighter();
 
 		@Override
 		public Image getImage(Object element) {

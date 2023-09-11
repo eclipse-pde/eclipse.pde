@@ -34,8 +34,8 @@ import org.eclipse.pde.internal.core.text.IEditingModel;
 
 public abstract class AbstractFoldingStructureProvider implements IFoldingStructureProvider, IModelChangedListener {
 
-	private PDESourcePage fEditor;
-	private IEditingModel fModel;
+	private final PDESourcePage fEditor;
+	private final IEditingModel fModel;
 
 	public AbstractFoldingStructureProvider(PDESourcePage editor, IEditingModel model) {
 		this.fEditor = editor;

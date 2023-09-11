@@ -19,7 +19,7 @@ import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class SynchronizeVersionsWizard extends Wizard {
-	private FeatureEditor featureEditor;
+	private final FeatureEditor featureEditor;
 	private SynchronizeVersionsWizardPage mainPage;
 
 	public SynchronizeVersionsWizard(FeatureEditor featureEditor) {

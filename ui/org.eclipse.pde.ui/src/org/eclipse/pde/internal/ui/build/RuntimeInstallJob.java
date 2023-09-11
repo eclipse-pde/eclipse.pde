@@ -58,8 +58,8 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
  */
 public class RuntimeInstallJob extends Job {
 
-	private FeatureExportInfo fInfo;
-	private ProvisioningUI ui;
+	private final FeatureExportInfo fInfo;
+	private final ProvisioningUI ui;
 
 	/**
 	 * Creates a new job that will install exported plug-ins.  For a

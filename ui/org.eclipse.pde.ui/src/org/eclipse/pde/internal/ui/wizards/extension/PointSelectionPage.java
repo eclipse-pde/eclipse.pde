@@ -119,20 +119,20 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	private TableViewer fPointListViewer;
 	private TableViewer fTemplateViewer;
 
-	private IPluginModelBase fModel;
+	private final IPluginModelBase fModel;
 	private Button fFilterCheck;
 	private IPluginExtensionPoint fCurrentPoint;
-	private Set<String> fAvailableImports;
-	private IProject fProject;
+	private final Set<String> fAvailableImports;
+	private final IProject fProject;
 	private Label fTemplateLabel;
 	private ExtensionTreeSelectionPage fWizardsPage;
 
 	private IPluginExtension fNewExtension;
-	private WizardCollectionElement fTemplateCollection;
-	private WizardCollectionElement fWizardCollection;
-	private NewExtensionWizard fWizard;
+	private final WizardCollectionElement fTemplateCollection;
+	private final WizardCollectionElement fWizardCollection;
+	private final NewExtensionWizard fWizard;
 	private Text fFilterText;
-	private WildcardFilter fWildCardFilter;
+	private final WildcardFilter fWildCardFilter;
 	private Text fPointDescription;
 	private Link fDescLink;
 	private Browser fPointDescBrowser;

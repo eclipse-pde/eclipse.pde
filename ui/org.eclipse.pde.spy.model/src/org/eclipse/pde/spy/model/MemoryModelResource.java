@@ -29,8 +29,8 @@ import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 
 @SuppressWarnings("restriction")
 public class MemoryModelResource implements IModelResource {
-	private WritableList<Object> list = new WritableList<>();
-	private EditingDomain editingDomain;
+	private final WritableList<Object> list = new WritableList<>();
+	private final EditingDomain editingDomain;
 
 	public MemoryModelResource(MApplication application) {
 		list.add(application);

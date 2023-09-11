@@ -93,17 +93,17 @@ public class TemplateFileGenerator implements IVariableProvider {
 	 */
 	public static final String KEY_PACKAGE_NAME = "packageName"; //$NON-NLS-1$
 
-	private IProject fProject;
+	private final IProject fProject;
 
-	private IPluginModelBase fModel;
+	private final IPluginModelBase fModel;
 
-	private String fPluginID;
+	private final String fPluginID;
 
-	private String fPackage;
+	private final String fPackage;
 
-	private String fClass;
+	private final String fClass;
 
-	private String fTemplate;
+	private final String fTemplate;
 
 	/**
 	 * @param project

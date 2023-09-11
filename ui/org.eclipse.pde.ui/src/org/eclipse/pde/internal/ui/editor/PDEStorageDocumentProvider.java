@@ -33,7 +33,7 @@ import org.eclipse.ui.editors.text.StorageDocumentProvider;
 
 public class PDEStorageDocumentProvider extends StorageDocumentProvider {
 
-	private IDocumentSetupParticipant fSetupParticipant;
+	private final IDocumentSetupParticipant fSetupParticipant;
 
 	public PDEStorageDocumentProvider(IDocumentSetupParticipant participant) {
 		fSetupParticipant = participant;

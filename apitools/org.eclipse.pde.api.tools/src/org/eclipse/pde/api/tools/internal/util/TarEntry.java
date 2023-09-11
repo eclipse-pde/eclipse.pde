@@ -17,7 +17,7 @@ package org.eclipse.pde.api.tools.internal.util;
  * Representation of a file in a tar archive.
  */
 public class TarEntry implements Cloneable {
-	private String name;
+	private final String name;
 	private long mode, time, size;
 	private int type;
 	int filepos;

@@ -43,7 +43,7 @@ import org.osgi.framework.Constants;
 
 public abstract class BaseManifestOperation implements IRunnableWithProgress {
 
-	private Shell fShell;
+	private final Shell fShell;
 	protected String fPluginId;
 
 	public BaseManifestOperation(Shell shell, String pluginId) {

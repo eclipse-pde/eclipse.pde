@@ -76,7 +76,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		}
 	}
 
-	private IPluginModelBase fModel;
+	private final IPluginModelBase fModel;
 	private ArrayList<Object> fList;
 
 	public GatherUnusedDependenciesOperation(IPluginModelBase model) {

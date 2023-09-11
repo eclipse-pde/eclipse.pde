@@ -343,7 +343,7 @@ public class TarFile implements Closeable {
 		}
 	}
 
-	private File file;
+	private final File file;
 	TarInputStream entryEnumerationStream;
 	TarEntry curEntry;
 	private TarInputStream entryStream;

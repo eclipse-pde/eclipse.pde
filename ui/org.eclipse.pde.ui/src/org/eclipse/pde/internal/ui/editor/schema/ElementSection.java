@@ -74,8 +74,8 @@ import org.eclipse.ui.forms.widgets.Section;
 public class ElementSection extends TreeSection {
 	private TreeViewer fTreeViewer;
 	private Schema fSchema;
-	private NewElementAction fNewElementAction = new NewElementAction();
-	private NewAttributeAction fNewAttributeAction = new NewAttributeAction();
+	private final NewElementAction fNewElementAction = new NewElementAction();
+	private final NewAttributeAction fNewAttributeAction = new NewAttributeAction();
 	private Clipboard fClipboard;
 	private SchemaRearranger fRearranger;
 	private CollapseAction fCollapseAction;

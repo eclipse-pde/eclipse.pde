@@ -61,7 +61,7 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 	}
 
 	TreeViewer fTreeViewer;
-	private OptionalFilter fHideOptionalFilter = new OptionalFilter();
+	private final OptionalFilter fHideOptionalFilter = new OptionalFilter();
 
 	public DependenciesViewTreePage(DependenciesView view, ITreeContentProvider contentProvider) {
 		super(view, contentProvider);

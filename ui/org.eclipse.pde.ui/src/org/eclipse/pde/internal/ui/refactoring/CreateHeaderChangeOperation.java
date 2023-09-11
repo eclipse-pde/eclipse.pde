@@ -45,10 +45,10 @@ import org.eclipse.text.edits.TextEdit;
 
 public class CreateHeaderChangeOperation implements IWorkspaceRunnable {
 
-	private IPluginModelBase fBase;
-	private String fHeaderKey;
-	private String fOldValue;
-	private String fNewValue;
+	private final IPluginModelBase fBase;
+	private final String fHeaderKey;
+	private final String fOldValue;
+	private final String fNewValue;
 	private TextFileChange fChange;
 
 	public CreateHeaderChangeOperation(IPluginModelBase base, String headerKey, String oldValue, String newValue) {

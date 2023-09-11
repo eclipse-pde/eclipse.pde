@@ -31,7 +31,7 @@ import org.eclipse.ui.dialogs.FilteredList.FilterMatcher;
 
 public class ConditionalListSelectionDialog extends ElementListSelectionDialog {
 
-	private String fButtonText;
+	private final String fButtonText;
 	private Object[] fElements;
 	private Object[] fConditionalElements;
 

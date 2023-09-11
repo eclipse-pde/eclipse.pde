@@ -99,15 +99,15 @@ import aQute.bnd.build.model.BndEditModel;
 import aQute.bnd.properties.Document;
 
 public class NewProjectCreationOperation extends WorkspaceModifyOperation {
-	private IPluginContentWizard fContentWizard;
+	private final IPluginContentWizard fContentWizard;
 
-	private IFieldData fData;
+	private final IFieldData fData;
 
 	private PluginClassCodeGenerator fGenerator;
 
 	private WorkspacePluginModelBase fModel;
 
-	private IProjectProvider fProjectProvider;
+	private final IProjectProvider fProjectProvider;
 
 	private boolean fResult;
 

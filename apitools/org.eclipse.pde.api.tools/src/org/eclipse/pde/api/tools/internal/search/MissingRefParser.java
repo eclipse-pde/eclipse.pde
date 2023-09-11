@@ -47,8 +47,8 @@ class MissingRefParser extends UseScanParser {
 		private int charstart;
 		private int charend;
 		private int id;
-		private List<String> messageargs = new ArrayList<>();
-		private Map<String, String> extraargs = new HashMap<>();
+		private final List<String> messageargs = new ArrayList<>();
+		private final Map<String, String> extraargs = new HashMap<>();
 
 		@Override
 		public void startDocument() throws SAXException {

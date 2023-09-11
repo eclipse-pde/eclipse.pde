@@ -35,23 +35,23 @@ import org.eclipse.pde.internal.genericeditor.target.extension.model.ITargetCons
  */
 public class AttributeNameCompletionProcessor extends DelegateProcessor {
 
-	private String searchTerm;
-	private String acKey;
-	private int offset;
-	private String text;
+	private final String searchTerm;
+	private final String acKey;
+	private final int offset;
+	private final String text;
 
 	private static final String ATTRIBUTE_NAME_FIND = "(?:\\s*(\\w*)\\s*=\\s*\".*?\")";// $NON-NLS-1$
 	private static final Pattern ATT_NAME_PATTERN = Pattern.compile(ATTRIBUTE_NAME_FIND);
 
-	private String[] target = new String[] { ITargetConstants.TARGET_NAME_ATTR, ITargetConstants.TARGET_SEQ_NO_ATTR };
-	private String[] locations = new String[] {};
-	private String[] location = new String[] { ITargetConstants.LOCATION_INCLUDE_PLATFORMS_ATTR,
+	private final String[] target = new String[] { ITargetConstants.TARGET_NAME_ATTR, ITargetConstants.TARGET_SEQ_NO_ATTR };
+	private final String[] locations = new String[] {};
+	private final String[] location = new String[] { ITargetConstants.LOCATION_INCLUDE_PLATFORMS_ATTR,
 			ITargetConstants.LOCATION_INCLUDE_CONFIG_PHASE_ATTR, ITargetConstants.LOCATION_INCLUDE_MODE_ATTR,
 			ITargetConstants.LOCATION_INCLUDE_SOURCE_ATTR, ITargetConstants.LOCATION_TYPE_ATTR };
-	private String[] unit = new String[] { ITargetConstants.UNIT_ID_ATTR, ITargetConstants.UNIT_VERSION_ATTR };
-	private String[] repository = new String[] { ITargetConstants.REPOSITORY_LOCATION_ATTR };
-	private String[] targetJRE = new String[] { ITargetConstants.TARGET_JRE_PATH_ATTR };
-	private Map<String, String[]> completionMap = new HashMap<>();
+	private final String[] unit = new String[] { ITargetConstants.UNIT_ID_ATTR, ITargetConstants.UNIT_VERSION_ATTR };
+	private final String[] repository = new String[] { ITargetConstants.REPOSITORY_LOCATION_ATTR };
+	private final String[] targetJRE = new String[] { ITargetConstants.TARGET_JRE_PATH_ATTR };
+	private final Map<String, String[]> completionMap = new HashMap<>();
 
 	public AttributeNameCompletionProcessor(String searchTerm, String acKey, int offset, String text) {
 		this.searchTerm = searchTerm;

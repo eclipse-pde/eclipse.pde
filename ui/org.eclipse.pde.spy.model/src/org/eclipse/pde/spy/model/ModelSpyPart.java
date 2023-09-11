@@ -25,8 +25,8 @@ import org.eclipse.e4.ui.model.application.MApplication;
 @SuppressWarnings("restriction")
 public class ModelSpyPart {
 
-	private ApplicationModelEditor instance;
-	private IEclipseContext childContext;
+	private final ApplicationModelEditor instance;
+	private final IEclipseContext childContext;
 
 	@Inject
 	public ModelSpyPart(IEclipseContext context, MApplication application) {

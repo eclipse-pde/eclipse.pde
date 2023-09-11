@@ -25,7 +25,7 @@ import org.eclipse.swt.graphics.Point;
 
 public abstract class WizardNode implements IWizardNode {
 	private IWizard wizard;
-	private WizardSelectionPage parentWizardPage;
+	private final WizardSelectionPage parentWizardPage;
 	protected WizardElement wizardElement;
 
 	public WizardNode(WizardSelectionPage parentPage, WizardElement element) {

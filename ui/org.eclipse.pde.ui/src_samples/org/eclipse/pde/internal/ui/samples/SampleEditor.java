@@ -64,7 +64,7 @@ public class SampleEditor extends EditorPart {
 	private ScrolledForm form;
 	private FormText descText;
 	private FormText instText;
-	private ILaunchShortcut defaultShortcut;
+	private final ILaunchShortcut defaultShortcut;
 	private InputFileListener inputFileListener;
 
 	class InputFileListener implements IResourceChangeListener, IResourceDeltaVisitor {

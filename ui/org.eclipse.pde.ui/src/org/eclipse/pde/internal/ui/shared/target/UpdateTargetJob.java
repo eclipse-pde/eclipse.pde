@@ -46,7 +46,7 @@ public class UpdateTargetJob extends Job {
 
 	public static final String JOB_FAMILY_ID = "UpdateTargetJob"; //$NON-NLS-1$
 
-	private List<IJobFunction> toUpdate;
+	private final List<IJobFunction> toUpdate;
 
 	/**
 	 * Schedules a new update job that will update all target locations in the

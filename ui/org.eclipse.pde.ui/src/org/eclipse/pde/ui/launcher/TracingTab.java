@@ -41,8 +41,8 @@ import org.eclipse.ui.PlatformUI;
  */
 public class TracingTab extends AbstractLauncherTab {
 
-	private Image fImage;
-	private TracingBlock fTracingBlock;
+	private final Image fImage;
+	private final TracingBlock fTracingBlock;
 
 	/**
 	 * Constructor

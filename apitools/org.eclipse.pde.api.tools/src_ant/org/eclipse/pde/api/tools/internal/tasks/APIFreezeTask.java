@@ -64,7 +64,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 	 * store the resolver errors of components. Maps String component IDs to an
 	 * array of ResolverErrors.
 	 */
-	private Map<String, ResolverError[]> resolverErrors = new HashMap<>();
+	private final Map<String, ResolverError[]> resolverErrors = new HashMap<>();
 
 	@Override
 	public void execute() throws BuildException {

@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 
 public class FileExtensionsFilter extends ViewerFilter {
 
-	private HashSet<String> fExtensions;
+	private final HashSet<String> fExtensions;
 
 	public FileExtensionsFilter() {
 		fExtensions = new HashSet<>();

@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
 
 public class ToggleLink {
-	private Link link;
+	private final Link link;
 
 	private ClickListener listener;
 

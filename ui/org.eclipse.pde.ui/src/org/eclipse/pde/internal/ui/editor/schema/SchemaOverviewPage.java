@@ -38,7 +38,7 @@ public class SchemaOverviewPage extends PDEFormPage {
 
 	public static final String PAGE_ID = "overview"; //$NON-NLS-1$
 
-	private IColorManager fColorManager = ColorManager.getDefault();
+	private final IColorManager fColorManager = ColorManager.getDefault();
 
 	private ImageHyperlink fImageHyperlinkPreviewRefDoc;
 

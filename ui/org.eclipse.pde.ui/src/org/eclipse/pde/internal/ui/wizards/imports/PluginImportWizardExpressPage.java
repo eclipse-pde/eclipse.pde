@@ -54,7 +54,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 
 	private TablePart fTablePart;
-	private IStructuredSelection fInitialSelection;
+	private final IStructuredSelection fInitialSelection;
 	private Label fCounterLabel;
 
 	static class PluginContentProvider implements IStructuredContentProvider {

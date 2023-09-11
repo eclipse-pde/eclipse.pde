@@ -43,7 +43,7 @@ public class PDEConfigureProblemSeverityAction extends Action {
 
 	private final String fOptionId;
 
-	private int tab;
+	private final int tab;
 
 
 	public PDEConfigureProblemSeverityAction(IJavaProject project, String optionId, int t) {

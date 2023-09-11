@@ -18,7 +18,7 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 public class Category {
-	private IConfigurationElement config;
+	private final IConfigurationElement config;
 	private String[] parentCategoryPath;
 	public static final String ATT_ID = "id"; //$NON-NLS-1$
 	public static final String ATT_CATEGORY = "parentCategory"; //$NON-NLS-1$

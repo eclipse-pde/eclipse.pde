@@ -44,8 +44,8 @@ import org.eclipse.ui.PlatformUI;
  */
 public class BundlesTab extends AbstractLauncherTab {
 
-	private Image fImage;
-	private BlockAdapter fBlock;
+	private final Image fImage;
+	private final BlockAdapter fBlock;
 	OSGiFrameworkBlock fFrameworkBlock;
 
 	private static final int PLUGIN_SELECTION = 1;

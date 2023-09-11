@@ -39,7 +39,7 @@ import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 
 public class PluginXMLTextHover extends PDETextHover {
 
-	private PDESourcePage fSourcePage;
+	private final PDESourcePage fSourcePage;
 
 	public PluginXMLTextHover(PDESourcePage sourcePage) {
 		fSourcePage = sourcePage;

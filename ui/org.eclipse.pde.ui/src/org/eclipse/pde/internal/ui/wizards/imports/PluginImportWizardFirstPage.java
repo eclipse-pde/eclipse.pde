@@ -133,12 +133,12 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	/**
 	 * Map of bundle importer extension id to associated wizard page
 	 */
-	private Map<String, IScmUrlImportWizardPage> importIdToWizardPage = new HashMap<>();
+	private final Map<String, IScmUrlImportWizardPage> importIdToWizardPage = new HashMap<>();
 
 	/**
 	 * Array of next wizard pages (in order)
 	 */
-	private List<IScmUrlImportWizardPage> nextPages = new ArrayList<>();
+	private final List<IScmUrlImportWizardPage> nextPages = new ArrayList<>();
 
 	public PluginImportWizardFirstPage(String name) {
 		super(name);

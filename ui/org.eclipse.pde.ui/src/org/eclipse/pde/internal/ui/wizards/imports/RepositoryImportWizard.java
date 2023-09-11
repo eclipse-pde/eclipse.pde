@@ -47,12 +47,12 @@ public class RepositoryImportWizard extends Wizard {
 	/**
 	 * Map of import delegates to import descriptions as provided by the {@link BundleProjectService}
 	 */
-	private Map<IBundleImporter, ScmUrlImportDescription[]> fImportMap;
+	private final Map<IBundleImporter, ScmUrlImportDescription[]> fImportMap;
 
 	/**
 	 * Map of importer identifier to associated wizard import page
 	 */
-	private Map<String, IScmUrlImportWizardPage> fIdToPages = new HashMap<>();
+	private final Map<String, IScmUrlImportWizardPage> fIdToPages = new HashMap<>();
 
 	private static final String STORE_SECTION = "RepositoryImportWizard"; //$NON-NLS-1$
 

@@ -33,7 +33,7 @@ import org.eclipse.swt.dnd.TextTransfer;
  */
 public class TocDragAdapter implements DragSourceListener {
 	//The TOC Tree Section being dragged from
-	private TocTreeSection fSection;
+	private final TocTreeSection fSection;
 	//The dragged items
 	private ArrayList<TocObject> fDraggedItems;
 

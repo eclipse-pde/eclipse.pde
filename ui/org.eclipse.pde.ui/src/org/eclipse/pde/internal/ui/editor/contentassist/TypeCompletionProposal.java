@@ -33,8 +33,8 @@ import org.eclipse.swt.graphics.Point;
 public class TypeCompletionProposal extends AbstractJavaCompletionProposal implements ICompletionProposalExtension4 {
 
 	private static final class PDETypeProposalInfo extends ProposalInfo {
-		private IJavaProject fJavaProject;
-		private String fTypeName;
+		private final IJavaProject fJavaProject;
+		private final String fTypeName;
 
 		/**
 		 * Creates a new proposal info.

@@ -43,7 +43,7 @@ public class TargetPlatformAttributeRule extends WordRule {
 			LOCATION_INCLUDE_PLATFORMS_ATTR, LOCATION_INCLUDE_MODE_ATTR, LOCATION_TYPE_ATTR, REPOSITORY_LOCATION_ATTR,
 			TARGET_JRE_PATH_ATTR, TARGET_SEQ_NO_ATTR, LOCATION_INCLUDE_CONFIG_PHASE_ATTR, LOCATION_INCLUDE_SOURCE_ATTR,
 			INCLUDE_DEPENDENCY_DEPTH, INCLUDE_DEPENDENCY_SCOPES, MISSING_MANIFEST };
-	private IToken attributeToken = new Token(
+	private final IToken attributeToken = new Token(
 			new TextAttribute(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry()
 					.get(IGETEColorConstants.P_ATTRIBUTE)));
 

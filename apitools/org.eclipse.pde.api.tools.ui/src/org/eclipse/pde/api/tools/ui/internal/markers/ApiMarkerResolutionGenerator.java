@@ -47,7 +47,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 	 */
 	private final IMarkerResolution[] NO_RESOLUTIONS = new IMarkerResolution[0];
 
-	private DefaultApiProfileResolution profileResolution = new DefaultApiProfileResolution();
+	private final DefaultApiProfileResolution profileResolution = new DefaultApiProfileResolution();
 
 	@Override
 	public IMarkerResolution[] getResolutions(IMarker marker) {

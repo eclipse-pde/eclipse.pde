@@ -27,7 +27,7 @@ import org.eclipse.pde.internal.ui.wizards.plugin.NewProjectCreationOperation;
 import org.osgi.framework.Constants;
 
 public class AddAutomaticModuleResolution extends AbstractManifestMarkerResolution {
-	private IMarker mark;
+	private final IMarker mark;
 
 	public AddAutomaticModuleResolution(int type, IMarker marker) {
 		super(type, marker);

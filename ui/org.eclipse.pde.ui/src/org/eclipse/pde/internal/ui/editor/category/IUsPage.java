@@ -40,7 +40,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 public class IUsPage extends PDEFormPage {
 	public static final String PAGE_ID = "ius"; //$NON-NLS-1$
 	private CategorySection fCategorySection;
-	private SiteFeaturesBlock fBlock;
+	private final SiteFeaturesBlock fBlock;
 
 	public class SiteFeaturesBlock extends PDEMasterDetailsBlock {
 		public SiteFeaturesBlock() {

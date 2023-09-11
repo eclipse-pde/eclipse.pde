@@ -26,15 +26,15 @@ import org.eclipse.swt.graphics.Point;
 public class TargetCompletionProposal implements ICompletionProposal, ICompletionProposalExtension6 {
 
 	/** The string to be displayed in the completion proposal pop up. */
-	private StyledString fDisplayString;
+	private final StyledString fDisplayString;
 	/** The replacement string. */
-	private String fReplacementString;
+	private final String fReplacementString;
 	/** The replacement offset. */
-	private int fReplacementOffset;
+	private final int fReplacementOffset;
 	/** The replacement length. */
-	private int fReplacementLength;
+	private final int fReplacementLength;
 	/** The cursor position after this proposal has been applied. */
-	private int fCursorPosition;
+	private final int fCursorPosition;
 
 	/**
 	 * Creates a new completion proposal. All fields are initialized based on the

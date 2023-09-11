@@ -24,7 +24,7 @@ import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
  */
 public class ExpandAllAction extends Action {
 
-	private TreeViewer fViewer;
+	private final TreeViewer fViewer;
 
 	public ExpandAllAction(TreeViewer viewer) {
 		setText(ActionMessages.ExpandAllAction_label);

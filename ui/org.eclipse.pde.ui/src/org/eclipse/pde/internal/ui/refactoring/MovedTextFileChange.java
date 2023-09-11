@@ -32,7 +32,7 @@ import org.eclipse.ltk.core.refactoring.TextFileChange;
 
 public class MovedTextFileChange extends TextFileChange {
 
-	private IFile fCurrentFile;
+	private final IFile fCurrentFile;
 
 	public MovedTextFileChange(String name, IFile newFile, IFile currentFile) {
 		super(name, newFile);

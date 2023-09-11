@@ -190,7 +190,7 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 	 * Represents an action that will launch a PDE launch shortcut extension
 	 */
 	public static abstract class LauncherAction extends Action {
-		private IConfigurationElement configElement;
+		private final IConfigurationElement configElement;
 
 		public LauncherAction(IConfigurationElement configurationElement) {
 			super();

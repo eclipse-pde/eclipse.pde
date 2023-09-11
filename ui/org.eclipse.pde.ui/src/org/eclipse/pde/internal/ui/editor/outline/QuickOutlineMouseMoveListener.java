@@ -30,7 +30,7 @@ public class QuickOutlineMouseMoveListener implements MouseMoveListener {
 
 	private TreeItem fLastItem;
 
-	private TreeViewer fTreeViewer;
+	private final TreeViewer fTreeViewer;
 
 	/**
 	 *

@@ -35,8 +35,8 @@ import org.osgi.framework.Constants;
 
 public class FindReferenceOperation implements IWorkspaceRunnable {
 
-	private BundleDescription fDesc;
-	private String fNewId;
+	private final BundleDescription fDesc;
+	private final String fNewId;
 	private Change[] fChanges;
 
 	public FindReferenceOperation(BundleDescription desc, String newId) {

@@ -97,7 +97,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	/**
 	 * The parent target definition
 	 */
-	private ITargetDefinition fTarget;
+	private final ITargetDefinition fTarget;
 
 	private RepositorySelectionGroup fRepoSelector;
 	private AvailableIUGroup fAvailableIUGroup;
@@ -111,7 +111,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	private Button fIncludeSourceButton;
 	private Button fConfigurePhaseButton;
 	private Text fDetailsText;
-	private ProvisioningUI profileUI;
+	private final ProvisioningUI profileUI;
 	private Thread refreshThread;
 
 	/**

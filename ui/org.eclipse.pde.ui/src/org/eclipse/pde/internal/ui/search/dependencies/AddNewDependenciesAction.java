@@ -48,8 +48,8 @@ public class AddNewDependenciesAction extends Action {
 		}
 	}
 
-	private IProject fProject;
-	private IBundlePluginModelBase fBase;
+	private final IProject fProject;
+	private final IBundlePluginModelBase fBase;
 
 	public AddNewDependenciesAction(IProject project, IBundlePluginModelBase base) {
 		fProject = project;

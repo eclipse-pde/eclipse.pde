@@ -114,7 +114,7 @@ public class BundleComponent extends Component {
 	/**
 	 * Root location of component in the file system
 	 */
-	private String fLocation;
+	private final String fLocation;
 
 	/**
 	 * Underlying bundle description (OSGi model of a bundle)
@@ -140,12 +140,12 @@ public class BundleComponent extends Component {
 	 * Flag to know if this component is a binary bundle in the workspace i.e.
 	 * an imported binary bundle
 	 */
-	private boolean fWorkspaceBinary;
+	private final boolean fWorkspaceBinary;
 
 	/**
 	 * The id of this component
 	 */
-	private long fBundleId;
+	private final long fBundleId;
 
 	/**
 	 * Constructs a new API component from the specified location in the file

@@ -39,7 +39,7 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 	public static final String VALUE_PERSPECTIVE_NAME = "RCP Perspective"; //$NON-NLS-1$
 	public static final String VALUE_APPLICATION_ID = "application"; //$NON-NLS-1$
 
-	private Bundle bundle = FrameworkUtil.getBundle(PDETemplateSection.class);
+	private final Bundle bundle = FrameworkUtil.getBundle(PDETemplateSection.class);
 
 	@Override
 	protected ResourceBundle getPluginResourceBundle() {

@@ -36,7 +36,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ISetSelectionTarget;
 
 public class NewCategoryCreationOperation extends WorkspaceModifyOperation {
-	private Display fDisplay;
+	private final Display fDisplay;
 	private final IPath fPath;
 	private final String fFileName;
 

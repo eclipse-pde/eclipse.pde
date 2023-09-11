@@ -173,7 +173,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	private BuildState buildstate = null;
 
-	private ConcurrentLinkedQueue<Runnable> markersQueue = new ConcurrentLinkedQueue<>();
+	private final ConcurrentLinkedQueue<Runnable> markersQueue = new ConcurrentLinkedQueue<>();
 
 	/**
 	 * Bug 549838:  In case auto-building on a API tools settings change  is not desired,
@@ -545,10 +545,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 
 	public class ApiAnalysisJob extends Job {
 
-		private boolean fullBuild;
-		private IApiBaseline wbaseline;
-		private IProject[] projects;
-		private IProject project;
+		private final boolean fullBuild;
+		private final IApiBaseline wbaseline;
+		private final IProject[] projects;
+		private final IProject project;
 
 		public ApiAnalysisJob(String name, IProject project, boolean fullBuild, IApiBaseline wbaseline,
 				IProject[] projects) {

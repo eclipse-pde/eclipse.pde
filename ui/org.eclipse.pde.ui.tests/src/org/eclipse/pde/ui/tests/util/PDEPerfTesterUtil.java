@@ -19,7 +19,7 @@ import java.io.Writer;
 
 public class PDEPerfTesterUtil {
 
-	private String fTag;
+	private final String fTag;
 
 	private long fDuration;
 

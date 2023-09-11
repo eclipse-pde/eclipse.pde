@@ -29,7 +29,7 @@ import org.eclipse.ui.actions.ActionFactory;
 
 class CopyTreeSelectionAction extends Action {
 
-	private Tree fTree;
+	private final Tree fTree;
 
 	public CopyTreeSelectionAction(Tree tree) {
 		fTree = tree;

@@ -23,8 +23,8 @@ import java.util.HashMap;
 @SuppressWarnings("deprecation")
 class Configuration implements IConfigurationConstants {
 
-	private HashMap<String, SiteEntry> sites = new HashMap<>();
-	private HashMap<String, URL> platformURLs = new HashMap<>();
+	private final HashMap<String, SiteEntry> sites = new HashMap<>();
+	private final HashMap<String, URL> platformURLs = new HashMap<>();
 	private Date date;
 	private long lastModified; // needed to account for file system limitations
 	private URL url;

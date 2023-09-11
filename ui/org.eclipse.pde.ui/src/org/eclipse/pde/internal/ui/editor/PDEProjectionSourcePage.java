@@ -40,8 +40,8 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 
 	private ProjectionSupport fProjectionSupport;
 	private IFoldingStructureProvider fFoldingStructureProvider;
-	private IColorManager fColorManager;
-	private ChangeAwareSourceViewerConfiguration fConfiguration;
+	private final IColorManager fColorManager;
+	private final ChangeAwareSourceViewerConfiguration fConfiguration;
 
 	public PDEProjectionSourcePage(PDEFormEditor editor, String id, String title) {
 		super(editor, id, title);

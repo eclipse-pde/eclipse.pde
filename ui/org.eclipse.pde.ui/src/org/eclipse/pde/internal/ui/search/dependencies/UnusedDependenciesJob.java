@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.Display;
 
 public class UnusedDependenciesJob extends Job {
 
-	private IPluginModelBase fModel;
-	private boolean fReadOnly;
+	private final IPluginModelBase fModel;
+	private final boolean fReadOnly;
 
 	public UnusedDependenciesJob(String name, IPluginModelBase model, boolean readOnly) {
 		super(name);

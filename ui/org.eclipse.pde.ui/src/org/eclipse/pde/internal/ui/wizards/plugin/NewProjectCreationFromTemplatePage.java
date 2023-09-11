@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class NewProjectCreationFromTemplatePage extends NewProjectCreationPage {
 
-	private WizardElement fTemplateWizard;
+	private final WizardElement fTemplateWizard;
 
 	public NewProjectCreationFromTemplatePage(String pageName, AbstractFieldData data, IStructuredSelection selection, WizardElement templateWizard) {
 		super(pageName, data, false, selection);

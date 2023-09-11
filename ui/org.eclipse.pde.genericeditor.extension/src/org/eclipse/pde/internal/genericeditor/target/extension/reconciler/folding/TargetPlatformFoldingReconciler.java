@@ -20,7 +20,7 @@ import org.eclipse.jface.text.source.projection.ProjectionViewer;
 
 public class TargetPlatformFoldingReconciler extends Reconciler {
 
-	private FoldingReconcilerStrategy fStrategy;
+	private final FoldingReconcilerStrategy fStrategy;
 
 	public TargetPlatformFoldingReconciler() {
 		fStrategy = new FoldingReconcilerStrategy();

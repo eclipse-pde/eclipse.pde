@@ -29,7 +29,7 @@ import org.eclipse.pde.internal.core.iproduct.IProductModelFactory;
 
 public class ProductFromExtensionOperation extends BaseProductCreationOperation {
 
-	private String fId;
+	private final String fId;
 
 	public ProductFromExtensionOperation(IFile file, String productId) {
 		super(file);

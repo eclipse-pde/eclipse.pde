@@ -67,7 +67,7 @@ import org.eclipse.ui.forms.widgets.Section;
 public class ImplicitDependenciesSection extends SectionPart {
 
 	private TableViewer fViewer;
-	private TargetEditor fEditor;
+	private final TargetEditor fEditor;
 	private Button fAdd;
 	private Button fRemove;
 	private Button fRemoveAll;

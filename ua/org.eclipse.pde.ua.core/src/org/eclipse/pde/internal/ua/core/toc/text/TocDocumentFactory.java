@@ -20,7 +20,7 @@ import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.ua.core.toc.ITocConstants;
 
 public class TocDocumentFactory extends DocumentNodeFactory {
-	private TocModel fModel;
+	private final TocModel fModel;
 
 	public TocDocumentFactory(TocModel model) {
 		fModel = model;

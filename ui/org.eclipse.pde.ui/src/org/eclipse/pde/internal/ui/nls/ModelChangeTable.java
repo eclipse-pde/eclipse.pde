@@ -23,8 +23,8 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class ModelChangeTable {
 
-	private Map<IPluginModelBase, ModelChange> fChangeTable = new LinkedHashMap<>();
-	private ArrayList<ModelChange> fPreSelected = new ArrayList<>();
+	private final Map<IPluginModelBase, ModelChange> fChangeTable = new LinkedHashMap<>();
+	private final ArrayList<ModelChange> fPreSelected = new ArrayList<>();
 
 	public void addToChangeTable(IPluginModelBase model, IFile file, Object change, boolean selected) {
 		if (change == null)

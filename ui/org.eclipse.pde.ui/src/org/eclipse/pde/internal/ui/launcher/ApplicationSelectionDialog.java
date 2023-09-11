@@ -32,9 +32,9 @@ import org.eclipse.ui.PlatformUI;
 
 public class ApplicationSelectionDialog extends TrayDialog {
 
-	private String fMode;
+	private final String fMode;
 	private Combo applicationCombo;
-	private String[] fApplicationNames;
+	private final String[] fApplicationNames;
 	private String fSelectedApplication;
 
 	public ApplicationSelectionDialog(Shell parentShell, String[] applicationNames, String mode) {

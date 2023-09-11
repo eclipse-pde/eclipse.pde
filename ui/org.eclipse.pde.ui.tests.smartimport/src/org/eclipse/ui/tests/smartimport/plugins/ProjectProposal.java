@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class ProjectProposal {
 
 	private String folder;
-	private List<String> importAsList;
+	private final List<String> importAsList;
 
 	public ProjectProposal(String folder) {
 		this.folder = folder;

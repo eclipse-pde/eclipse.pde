@@ -18,7 +18,7 @@ public enum ItemToFilter {
 			Messages.ItemToFilter_NameAndValue), ParameterValue(Messages.ItemToFilter_SomeParameterValue), Publisher(
 					Messages.ItemToFilter_EventPublisher), ChangedElement(Messages.ItemToFilter_ChangedElement);
 
-	private String text;
+	private final String text;
 
 	private ItemToFilter(String text) {
 		this.text = text;

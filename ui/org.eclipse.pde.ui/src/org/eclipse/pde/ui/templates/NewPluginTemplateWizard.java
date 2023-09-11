@@ -26,7 +26,7 @@ package org.eclipse.pde.ui.templates;
  * @since 2.0
  */
 public abstract class NewPluginTemplateWizard extends AbstractNewPluginTemplateWizard {
-	private ITemplateSection[] sections;
+	private final ITemplateSection[] sections;
 
 	/**
 	 * Creates a new template wizard.

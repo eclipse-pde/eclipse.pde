@@ -42,7 +42,7 @@ public class Feature extends VersionableObject implements IFeature {
 	private final Vector<IFeatureData> fData = new Vector<>();
 	private final Vector<IFeatureChild> fChildren = new Vector<>();
 	private final Vector<IFeaturePlugin> fPlugins = new Vector<>();
-	private Vector<IFeatureImport> fImports = new Vector<>();
+	private final Vector<IFeatureImport> fImports = new Vector<>();
 	private String fOs;
 	private String fWs;
 	private String fNl;

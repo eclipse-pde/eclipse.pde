@@ -53,12 +53,12 @@ public class ExportDialog extends Dialog {
 	/**
 	 * The title of the dialog.
 	 */
-	private String title;
+	private final String title;
 
 	/**
 	 * The message to display, or <code>null</code> if none.
 	 */
-	private String message;
+	private final String message;
 
 	/**
 	 * The input value; the empty string by default.
@@ -68,7 +68,7 @@ public class ExportDialog extends Dialog {
 	/**
 	 * The input validator, or <code>null</code> if none.
 	 */
-	private IInputValidator validator;
+	private final IInputValidator validator;
 
 	/**
 	 * Ok button widget.

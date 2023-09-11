@@ -110,7 +110,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 */
 	static class ResourceProxyVisitor implements IResourceProxyVisitor {
 
-		private List<IResource> fList;
+		private final List<IResource> fList;
 
 		protected ResourceProxyVisitor(List<IResource> list) {
 			fList = list;

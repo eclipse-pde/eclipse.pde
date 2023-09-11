@@ -27,7 +27,7 @@ import org.eclipse.pde.internal.ua.core.ctxhelp.ICtxHelpConstants;
  * @see CtxHelpDocumentHandler
  */
 public class CtxHelpDocumentFactory extends DocumentNodeFactory {
-	private CtxHelpModel fModel;
+	private final CtxHelpModel fModel;
 
 	public CtxHelpDocumentFactory(CtxHelpModel model) {
 		fModel = model;

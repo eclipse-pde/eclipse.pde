@@ -28,7 +28,7 @@ public abstract class MemberDescriptorImpl extends NamedElementDescriptorImpl im
 	/**
 	 * parent element or <code>null</code>
 	 */
-	private IElementDescriptor fParent;
+	private final IElementDescriptor fParent;
 
 	/**
 	 * Constructs a member with the given name and parent

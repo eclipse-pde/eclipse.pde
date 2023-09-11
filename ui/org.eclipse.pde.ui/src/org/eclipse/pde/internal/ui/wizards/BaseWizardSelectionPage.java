@@ -24,8 +24,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 public abstract class BaseWizardSelectionPage extends WizardSelectionPage implements ISelectionChangedListener {
-	private String label;
-	private FormBrowser descriptionBrowser;
+	private final String label;
+	private final FormBrowser descriptionBrowser;
 
 	public BaseWizardSelectionPage(String name, String label) {
 		super(name);

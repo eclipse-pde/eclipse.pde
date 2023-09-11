@@ -49,7 +49,7 @@ public abstract class AbstractIllegalTypeReference extends AbstractProblemDetect
 	 * Map of fully qualified type names to associated component IDs that
 	 * represent illegal references
 	 */
-	private Map<String, String> fIllegalTypes = new HashMap<>();
+	private final Map<String, String> fIllegalTypes = new HashMap<>();
 
 	/**
 	 * Adds the given type as not to be extended.

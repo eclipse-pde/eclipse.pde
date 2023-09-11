@@ -21,8 +21,8 @@ import org.eclipse.swt.graphics.Point;
 
 public class InstallableUnitProposal extends TargetCompletionProposal {
 
-	private String completionString;
-	private int offset;
+	private final String completionString;
+	private final int offset;
 
 	public InstallableUnitProposal(StyledString completionString, int offset, int length) {
 		super(completionString.toString(), completionString.length() + length, offset, length, completionString);

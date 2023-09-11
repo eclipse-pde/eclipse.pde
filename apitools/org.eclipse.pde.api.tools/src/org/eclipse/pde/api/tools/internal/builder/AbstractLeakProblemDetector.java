@@ -33,7 +33,7 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
  */
 public abstract class AbstractLeakProblemDetector extends AbstractProblemDetector {
 
-	private Set<String> fNonApiPackageNames;
+	private final Set<String> fNonApiPackageNames;
 
 	public AbstractLeakProblemDetector(Set<String> nonApiPackageNames) {
 		fNonApiPackageNames = nonApiPackageNames;

@@ -36,7 +36,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public final class BuildJob extends Job {
 	private final IProject[] fProjects;
-	private int fBuildType;
+	private final int fBuildType;
 
 	private static final String API_TOOL_PLUGIN_ID = "org.eclipse.pde.api.tools"; //$NON-NLS-1$
 	private static final String API_TOOL_NATURE = "org.eclipse.pde.api.tools.apiAnalysisNature"; //$NON-NLS-1$

@@ -33,7 +33,7 @@ public class ExportPackageAnnotationProcessor implements OSGiAnnotationProcessor
 
 	private boolean exportPackage = false;
 	private Optional<String> version = Optional.empty();
-	private String packageName;
+	private final String packageName;
 
 	public ExportPackageAnnotationProcessor(String packageName) {
 		this.packageName = packageName;

@@ -50,7 +50,7 @@ import org.eclipse.swt.graphics.Image;
 public abstract class TypePackageCompletionProcessor implements IContentAssistProcessor {
 
 	private String fErrorMessage;
-	private SearchEngine fSearchEngine;
+	private final SearchEngine fSearchEngine;
 	private Comparator<ICompletionProposal> fComparator;
 
 	abstract static class ProposalGenerator {

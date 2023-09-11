@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 
 public class WizardCollectionComparator extends ViewerComparator {
-	private String baseCategory;
+	private final String baseCategory;
 
 	public WizardCollectionComparator(String baseCategory) {
 		this.baseCategory = baseCategory;

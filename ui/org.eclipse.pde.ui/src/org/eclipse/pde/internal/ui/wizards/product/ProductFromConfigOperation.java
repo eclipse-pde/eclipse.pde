@@ -45,7 +45,7 @@ import org.eclipse.pde.launching.IPDELauncherConstants;
  */
 public class ProductFromConfigOperation extends BaseProductCreationOperation {
 
-	private ILaunchConfiguration fLaunchConfiguration;
+	private final ILaunchConfiguration fLaunchConfiguration;
 
 	public ProductFromConfigOperation(IFile file, ILaunchConfiguration config) {
 		super(file);

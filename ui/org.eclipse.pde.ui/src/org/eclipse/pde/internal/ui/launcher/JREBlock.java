@@ -52,8 +52,8 @@ import org.eclipse.swt.widgets.Text;
 
 public class JREBlock {
 
-	private AbstractLauncherTab fTab;
-	private Listener fListener = new Listener();
+	private final AbstractLauncherTab fTab;
+	private final Listener fListener = new Listener();
 	private Button fJavawButton;
 	private Button fJavaButton;
 	private Button fJreButton;

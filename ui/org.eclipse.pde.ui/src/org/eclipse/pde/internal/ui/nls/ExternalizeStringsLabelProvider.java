@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class ExternalizeStringsLabelProvider extends LabelProvider implements ITableLabelProvider, IFontProvider {
 
-	private FontRegistry fFontRegistry;
+	private final FontRegistry fFontRegistry;
 
 	public ExternalizeStringsLabelProvider() {
 		fFontRegistry = JFaceResources.getFontRegistry();

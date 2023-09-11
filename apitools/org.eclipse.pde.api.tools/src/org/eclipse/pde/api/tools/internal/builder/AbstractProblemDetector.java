@@ -139,7 +139,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	/**
 	 * List of potential {@link IReference} problems
 	 */
-	private List<IReference> fPotentialProblems = new LinkedList<>();
+	private final List<IReference> fPotentialProblems = new LinkedList<>();
 
 	/**
 	 * Retains the reference for further analysis.

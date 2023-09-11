@@ -24,7 +24,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class HistoryListAction extends Action {
 
-	private DependenciesView fView;
+	private final DependenciesView fView;
 
 	public HistoryListAction(DependenciesView view) {
 		fView = view;

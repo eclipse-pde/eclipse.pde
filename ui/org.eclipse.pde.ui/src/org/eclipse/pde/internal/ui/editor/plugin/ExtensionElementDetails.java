@@ -53,8 +53,8 @@ import org.eclipse.ui.forms.widgets.SharedScrolledComposite;
 
 public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	private IPluginElement input;
-	private ISchemaElement schemaElement;
-	private ArrayList<ExtensionAttributeRow> rows;
+	private final ISchemaElement schemaElement;
+	private final ArrayList<ExtensionAttributeRow> rows;
 	private Section section;
 
 	/**

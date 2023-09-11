@@ -39,7 +39,7 @@ public class JNLPTab {
 	private Text fVersionText;
 	private Button fButton;
 
-	private BaseExportWizardPage fPage;
+	private final BaseExportWizardPage fPage;
 
 	public JNLPTab(BaseExportWizardPage page) {
 		fPage = page;

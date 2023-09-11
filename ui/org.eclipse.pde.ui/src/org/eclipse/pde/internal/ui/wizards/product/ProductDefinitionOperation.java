@@ -55,9 +55,9 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 
 	private static final String APPLICATION_CSS = "applicationCSS"; //$NON-NLS-1$
 
-	private String fProductId;
-	private String fApplication;
-	private IProduct fProduct;
+	private final String fProductId;
+	private final String fApplication;
+	private final IProduct fProduct;
 
 	protected IProject fProject;
 

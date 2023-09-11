@@ -27,9 +27,9 @@ import org.eclipse.pde.internal.core.util.XMLComponentRegistry;
 
 public class VirtualSchemaObject implements ISchemaObject {
 
-	private String fName;
+	private final String fName;
 
-	private Object fDescription;
+	private final Object fDescription;
 
 	private int fType;
 
