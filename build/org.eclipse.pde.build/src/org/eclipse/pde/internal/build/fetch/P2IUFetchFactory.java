@@ -161,7 +161,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 		String sourceRepository = (String) entryInfos.get(KEY_REPOSITORY);
 
 		if (!iusToFetchBySource.containsKey(sourceRepository)) {
-			iusToFetchBySource.put(sourceRepository, new ArrayList<IUFetchInfo>());
+			iusToFetchBySource.put(sourceRepository, new ArrayList<>());
 		}
 
 		IUFetchInfo iuFetchInfo = new IUFetchInfo((String) entryInfos.get(KEY_ID), (String) entryInfos.get(KEY_VERSION));

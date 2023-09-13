@@ -49,7 +49,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 	public void initialize(String directoryName, String feature, Config configurationInformation, Collection<BundleDescription> elementList, Collection<BuildTimeFeature> featureList, Collection<BuildTimeFeature> allFeaturesList, Collection<BuildTimeFeature> rootProviders) throws CoreException {
 		/* package scripts require the root file providers for creating the file archive, but don't want them for other rootfile
 		 * stuff done by the assembly scripts, so keep them separate here */
-		super.initialize(directoryName, feature, configurationInformation, elementList, featureList, allFeaturesList, new ArrayList<BuildTimeFeature>(0));
+		super.initialize(directoryName, feature, configurationInformation, elementList, featureList, allFeaturesList, new ArrayList<>(0));
 		if (rootProviders != null) {
 			archiveRootProviders = rootProviders;
 		} else {
@@ -59,7 +59,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 
 	@Override
 	protected Collection<BuildTimeFeature> getArchiveRootFileProviders() {
-		if (archiveRootProviders.size() > 0)
+		if (!archiveRootProviders.isEmpty())
 			return archiveRootProviders;
 		return super.getArchiveRootFileProviders();
 	}
