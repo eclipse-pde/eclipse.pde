@@ -14,19 +14,16 @@
 package org.eclipse.ui.tests.smartimport;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.tests.smartimport.plugins.ImportedProject;
-import org.eclipse.ui.tests.smartimport.plugins.ProjectProposal;
 
 public class PlainEclipseProjectTest extends ProjectTestTemplate {
+
+	private static final String PLAIN_ECLIPSE_PROJECT = "PlainEclipseProject";
 
 	@Override
 	File getProjectPath() {
@@ -34,33 +31,14 @@ public class PlainEclipseProjectTest extends ProjectTestTemplate {
 	}
 
 	@Override
-	List<ProjectProposal> getExpectedProposals() {
-		ArrayList<ProjectProposal> returnList = new ArrayList<>();
-		ProjectProposal projectProposal = new ProjectProposal("PlainEclipseProject");
-		projectProposal.addImportAs("Eclipse project");
-		returnList.add(projectProposal);
-		return returnList;
+	IProject getProject() {
+		return ResourcesPlugin.getWorkspace().getRoot().getProject(PLAIN_ECLIPSE_PROJECT);
 	}
 
 	@Override
-	List<ImportedProject> getExpectedImportedProjects() {
-		ArrayList<ImportedProject> returnList = new ArrayList<>();
-		ImportedProject project = new ImportedProject("PlainEclipseProject", "");
-		project.addImportedAs("Eclipse project");
-		returnList.add(project);
-		return returnList;
+	void checkImportedProject() throws CoreException {
+		IProject project = getProject();
+		String[] natureIds = project.getDescription().getNatureIds();
+		assertEquals("This project should not have any nature", 0, natureIds.length);
 	}
-
-	@Override
-	void checkImportedProject() {
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("PlainEclipseProject");
-		try {
-			String[] natureIds = project.getDescription().getNatureIds();
-			assertEquals("This project should not have any nature", 0, natureIds.length);
-		} catch (CoreException e) {
-			e.printStackTrace();
-			fail();
-		}
-	}
-
 }
