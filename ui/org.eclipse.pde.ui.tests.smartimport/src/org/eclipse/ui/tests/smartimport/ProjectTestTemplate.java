@@ -13,111 +13,59 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.smartimport;
 
-import static java.util.Collections.emptyList;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.util.Iterator;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.eclipse.reddeer.common.logging.Logger;
-import org.eclipse.reddeer.common.matcher.RegexMatcher;
-import org.eclipse.reddeer.common.wait.AbstractWait;
-import org.eclipse.reddeer.common.wait.TimePeriod;
-import org.eclipse.reddeer.common.wait.WaitUntil;
-import org.eclipse.reddeer.eclipse.core.resources.DefaultProject;
-import org.eclipse.reddeer.eclipse.core.resources.Project;
-import org.eclipse.reddeer.eclipse.ui.navigator.resources.ProjectExplorer;
-import org.eclipse.reddeer.eclipse.ui.problems.Problem;
-import org.eclipse.reddeer.eclipse.ui.views.log.LogMessage;
-import org.eclipse.reddeer.eclipse.ui.views.log.LogView;
-import org.eclipse.reddeer.eclipse.ui.views.markers.ProblemsView;
-import org.eclipse.reddeer.eclipse.ui.views.markers.ProblemsView.ProblemType;
-import org.eclipse.reddeer.swt.condition.ControlIsEnabled;
-import org.eclipse.reddeer.swt.impl.button.FinishButton;
-import org.eclipse.reddeer.workbench.handler.WorkbenchShellHandler;
-import org.eclipse.ui.tests.smartimport.plugins.ImportedProject;
-import org.eclipse.ui.tests.smartimport.plugins.ProjectProposal;
-import org.eclipse.ui.tests.smartimport.plugins.SmartImportRootWizardPage;
-import org.eclipse.ui.tests.smartimport.plugins.SmartImportWizard;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.wizards.datatransfer.SmartImportJob;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public abstract class ProjectTestTemplate {
 
-	public static final String IGNORED_ERRORS_PROPERTY = "ignored.errors.regexp";
-	private static final Logger LOG = new Logger(ProjectTestTemplate.class);
-
-	private String ignoredErrorsRegExp = "Current Eclipse instance does not support software installation.";
-
 	public ProjectTestTemplate() {
-		String extraPattern = System.getProperty(IGNORED_ERRORS_PROPERTY);
-
-		if (extraPattern != null && !extraPattern.isEmpty()) {
-			ignoredErrorsRegExp = ignoredErrorsRegExp + "|" + extraPattern;
-		}
 	}
 
 	@After
-	public void cleanup() {
-		WorkbenchShellHandler.getInstance().closeAllNonWorbenchShells();
-		for (Project p : getProjects()) {
-			p.delete(false);
+	public void cleanup() throws CoreException, FileNotFoundException, IOException {
+		for (IProject p : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+			p.delete(true, new NullProgressMonitor());
 		}
 		// empty error log
-
-		LogView logView = new LogView();
-		logView.open();
-		logView.deleteLog();
-	}
-
-	private List<DefaultProject> getProjects() {
-		try {
-			ProjectExplorer explorer = new ProjectExplorer();
-			explorer.open();
-			return explorer.getProjects();
-		} catch (NullPointerException e) {
-			// TODO: remove workaround when
-			// https://github.com/eclipse/reddeer/issues/2005 is fixed
-			LOG.error("https://github.com/eclipse/reddeer/issues/2005", e);
-			return emptyList();
-		}
+		new FileWriter(Platform.getLogFileLocation().toFile(), false).close();
 	}
 
 	@BeforeClass
 	public static void setupClass() {
-		AbstractWait.sleep(TimePeriod.DEFAULT);
-		LogView logView = new LogView();
-		logView.open();
-		logView.deleteLog();
+		// empty error log
+		try {
+			new FileWriter(Platform.getLogFileLocation().toFile(), false).close();
+		} catch (IOException e) {
+			// ignore
+		}
 	}
 
 	@Test
-	public void testImport() {
-		SmartImportWizard easymportWizard = new SmartImportWizard();
-		easymportWizard.open();
-		SmartImportRootWizardPage selectImportRootWizardPage = new SmartImportRootWizardPage(easymportWizard);
-		String path = getProjectPath().getAbsolutePath();
-		selectImportRootWizardPage.selectDirectory(path);
-		selectImportRootWizardPage.setSearchForNestedProjects(true);
-		selectImportRootWizardPage.setDetectAndConfigureNatures(true);
-		new WaitUntil(new ControlIsEnabled(new FinishButton()), TimePeriod.LONG);
-
-		// check proposals
-		List<ProjectProposal> allProjectProposals = selectImportRootWizardPage.getAllProjectProposals();
-		List<ProjectProposal> expectedProposals = getExpectedProposals();
-		assertEquals(expectedProposals.size(), allProjectProposals.size());
-		for (ProjectProposal projectProposal : allProjectProposals) {
-			if (!expectedProposals.contains(projectProposal)) {
-				fail("Expected proposals: " + expectedProposals.toString() + ", actual proposals: "
-						+ allProjectProposals.toString());
-			}
-		}
-		easymportWizard.finish();
+	@SuppressWarnings("restriction")
+	public void testImport() throws CoreException, InterruptedException, IOException {
+		SmartImportJob job = new SmartImportJob(getProjectPath(), null, true, false);
+		job.run(new NullProgressMonitor());
+		job.join();
 
 		// check imported project
 		checkErrorLog();
@@ -126,52 +74,36 @@ public abstract class ProjectTestTemplate {
 		checkImportedProject();
 	}
 
-	private void checkErrorLog() {
-		LogView logView = new LogView();
-		logView.open();
-		List<LogMessage> errorMessages = logView.getErrorMessages();
-
-		RegexMatcher matcher = new RegexMatcher(ignoredErrorsRegExp);
-		int ignoredErrors = 0;
-
-		Iterator<LogMessage> iterator = errorMessages.iterator();
-
-		while (iterator.hasNext()) {
-			LogMessage logMessage = iterator.next();
-
-			if (matcher.matches(logMessage.getMessage())) {
-				LOG.info("Ignoring error message: " + logMessage.getMessage());
-				iterator.remove();
-				// Increase exceptedErrors if log contains error which can be
-				// ignored.
-				ignoredErrors++;
-			}
-		}
-
-		assertTrue("There are unexpected errors in error log: " + errorMessages,
-				((errorMessages.size() - ignoredErrors) <= 0));
+	private void checkErrorLog() throws IOException {
+		String log = Files.readString(Platform.getLogFileLocation().toFile().toPath());
+		assertTrue(log.isEmpty());
 	}
 
-	private void checkProblemsView() {
-		ProblemsView problemsView = new ProblemsView();
-		problemsView.open();
-		List<Problem> problems = problemsView.getProblems(ProblemType.ERROR);
-		assertTrue("There should be no errors in imported project: " + System.lineSeparator()
-				+ problems.stream().map(String::valueOf).collect(Collectors.joining(System.lineSeparator())),
-				problems.isEmpty());
+	private void checkProblemsView() throws CoreException {
+		IProject project = getProject();
+		IMarker[] problems = project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+		List<IMarker> errorMarkers = Arrays.asList(problems).stream().filter(m -> {
+			try {
+				return m.getAttribute(IMarker.SEVERITY).equals(IMarker.SEVERITY_ERROR);
+			} catch (CoreException e) {
+				return false;
+			}
+		}).toList();
+		assertTrue(
+				"There should be no errors in imported project: " + System.lineSeparator() + errorMarkers.stream()
+						.map(String::valueOf).collect(Collectors.joining(System.lineSeparator())),
+				errorMarkers.isEmpty());
 
 	}
 
 	abstract File getProjectPath();
 
-	abstract List<ProjectProposal> getExpectedProposals();
-
-	abstract List<ImportedProject> getExpectedImportedProjects();
+	abstract IProject getProject();
 
 	/**
 	 * Checks whether the project was imported correctly.
 	 *
 	 */
-	abstract void checkImportedProject();
+	abstract void checkImportedProject() throws CoreException;
 
 }

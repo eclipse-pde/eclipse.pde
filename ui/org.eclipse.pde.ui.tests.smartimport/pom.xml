@@ -37,7 +37,7 @@
 					<testSuite>org.eclipse.ui.tests.smartimport</testSuite>
 					<testClass>org.eclipse.ui.tests.smartimport.AllTests</testClass>
 					<!-- THE FOLLOWING LINE MUST NOT BE BROKEN BY AUTOFORMATTING -->
-					<argLine>${tycho.test.jvmArgs} ${platformSystemProperties} -Drd.logLevel=off</argLine>
+					<argLine>${tycho.test.jvmArgs} ${platformSystemProperties}</argLine>
 					<includes>
 						<include>**/*Test.class</include>
 					</includes>
