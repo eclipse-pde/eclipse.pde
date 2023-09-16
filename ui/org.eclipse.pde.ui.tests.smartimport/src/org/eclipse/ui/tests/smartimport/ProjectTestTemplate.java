@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2020 Red Hat, Inc. and others.
+ * Copyright (c) 2018, 2023 Red Hat, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,74 +13,107 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.smartimport;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.assertj.core.api.Condition;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.internal.wizards.datatransfer.SmartImportJob;
+import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.junit.After;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
-public abstract class ProjectTestTemplate {
+@RunWith(Parameterized.class)
+public class ProjectTestTemplate {
 
-	public ProjectTestTemplate() {
+	@Parameters(name = "{0}")
+	public static Object[][] projects() {
+		return new Object[][] { //
+				{ "JavaEclipseProject", List.of("org.eclipse.jdt.core.javanature") }, //
+				{ "FeatureProject", List.of("org.eclipse.pde.FeatureNature") }, //
+				{ "PlainEclipseProject", List.of() }, //
+				{ "PlainJavaProject", List.of("org.eclipse.jdt.core.javanature") }, //
+		};
+	}
+
+	@ClassRule
+	public static TemporaryFolder workingDirectory = new TemporaryFolder();
+
+	@Parameter(0)
+	public String projectName;
+	@Parameter(1)
+	public List<String> expectedNatures;
+
+	@BeforeClass
+	public static void setupClass() throws Exception {
+		// Copy imported projects to temp-directory to not pollute this project
+		Path source = Path.of("resources").toRealPath();
+		Path target = workingDirectory.getRoot().toPath();
+		try (Stream<Path> files = Files.walk(source).filter(Files::isRegularFile)) {
+			for (Path file : (Iterable<Path>) files::iterator) {
+				Path targetFile = target.resolve(source.relativize(file));
+				Files.createDirectories(targetFile.getParent());
+				Files.copy(file, targetFile);
+			}
+		}
+		Files.writeString(getErrorLogFile(), ""); // empty error log
+		ProjectUtils.deleteAllWorkspaceProjects();
 	}
 
 	@After
-	public void cleanup() throws CoreException, FileNotFoundException, IOException {
-		for (IProject p : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-			p.delete(true, new NullProgressMonitor());
-		}
-		// empty error log
-		new FileWriter(Platform.getLogFileLocation().toFile(), false).close();
+	public void cleanup() throws IOException, CoreException {
+		Files.writeString(getErrorLogFile(), ""); // empty error log
+		ProjectUtils.deleteAllWorkspaceProjects();
 	}
 
-	@BeforeClass
-	public static void setupClass() {
-		// empty error log
-		try {
-			new FileWriter(Platform.getLogFileLocation().toFile(), false).close();
-		} catch (IOException e) {
-			// ignore
-		}
+	private static Path getErrorLogFile() {
+		return Platform.getLogFileLocation().toFile().toPath();
 	}
 
 	@Test
 	@SuppressWarnings("restriction")
-	public void testImport() throws CoreException, InterruptedException, IOException {
-		SmartImportJob job = new SmartImportJob(getProjectPath(), null, true, false);
+	public void testImport() throws CoreException, InterruptedException {
+		File projectPath = new File(workingDirectory.getRoot(), projectName);
+
+		var job = new org.eclipse.ui.internal.wizards.datatransfer.SmartImportJob(projectPath, null, true, false);
 		job.run(new NullProgressMonitor());
 		job.join();
 
 		// check imported project
-		checkErrorLog();
-		checkProblemsView();
+		assertThat(getErrorLogFile()).isEmptyFile();
+		IWorkspaceRoot workspace = ResourcesPlugin.getWorkspace().getRoot();
+		assertThat(workspace.getProjects()).hasSize(1).allMatch(p -> p.getName().equals(projectName));
+		IProject project = workspace.getProject(projectName);
+		checkProblemsView(project);
 
-		checkImportedProject();
+		assertThat(project).satisfies(new Condition<>(IProject::isOpen, "is open"));
+
+		assertThat(project.getDescription().getNatureIds()).containsExactlyElementsOf(expectedNatures);
 	}
 
-	private void checkErrorLog() throws IOException {
-		String log = Files.readString(Platform.getLogFileLocation().toFile().toPath());
-		assertTrue(log.isEmpty());
-	}
-
-	private void checkProblemsView() throws CoreException {
-		IProject project = getProject();
+	private void checkProblemsView(IProject project) throws CoreException {
 		IMarker[] problems = project.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 		List<IMarker> errorMarkers = Arrays.asList(problems).stream().filter(m -> {
 			try {
@@ -95,15 +128,5 @@ public abstract class ProjectTestTemplate {
 				errorMarkers.isEmpty());
 
 	}
-
-	abstract File getProjectPath();
-
-	abstract IProject getProject();
-
-	/**
-	 * Checks whether the project was imported correctly.
-	 *
-	 */
-	abstract void checkImportedProject() throws CoreException;
 
 }

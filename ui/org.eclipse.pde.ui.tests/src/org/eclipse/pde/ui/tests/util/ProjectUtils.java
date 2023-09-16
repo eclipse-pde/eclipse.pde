@@ -234,9 +234,9 @@ public class ProjectUtils {
 	 */
 	public static final TestRule DELETE_ALL_WORKSPACE_PROJECTS_BEFORE_AND_AFTER = TestUtils.getThrowingTestRule( //
 			() -> { // Clean-up garbage of other test-classes
-				ProjectUtils.deleteWorkspaceProjects(Set.of());
+				deleteAllWorkspaceProjects();
 				return null;
-			}, o -> deleteWorkspaceProjects(Set.of()));
+			}, o -> deleteAllWorkspaceProjects());
 
 	/**
 	 * An (intended) {@link org.junit.Rule} that deletes the projects from the
@@ -257,6 +257,10 @@ public class ProjectUtils {
 	public static final TestRule DELETE_CREATED_WORKSPACE_PROJECTS_AFTER = TestUtils.getThrowingTestRule( //
 			() -> Set.of(ResourcesPlugin.getWorkspace().getRoot().getProjects()), //
 			projectsBefore -> deleteWorkspaceProjects(projectsBefore));
+
+	public static void deleteAllWorkspaceProjects() throws CoreException {
+		deleteWorkspaceProjects(Set.of());
+	}
 
 	private static void deleteWorkspaceProjects(Set<IProject> retainedProjects) throws CoreException {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
