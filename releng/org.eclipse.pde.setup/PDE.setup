@@ -156,15 +156,6 @@
             url="https://download.eclipse.org/cbi/updates/license"/>
         <repository
             url="https://download.eclipse.org/tools/orbit/downloads/latest-R"/>
-        <repository
-            url="https://download.eclipse.org/tools/orbit/downloads/drops/R20201118194144/repository">
-          <annotation>
-            <detail
-                key="justification">
-              <value>This is here because we need a repository that contains org.json for the reddeer dependency</value>
-            </detail>
-          </annotation>
-        </repository>
       </repositoryList>
     </targlet>
   </setupTask>
