@@ -16,9 +16,16 @@ package org.eclipse.pde.ui.tests;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.StackWalker.Option;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -29,6 +36,7 @@ import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -46,6 +54,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Provides a default {@link #tearDown()} implementation to delete all
@@ -53,6 +63,8 @@ import org.junit.rules.TestName;
  *
  */
 public abstract class PDETestCase {
+
+	private static final StackWalker STACK_WALKER = StackWalker.getInstance(Option.RETAIN_CLASS_REFERENCE);
 
 	private static boolean welcomeClosed;
 	@Rule
@@ -147,6 +159,39 @@ public abstract class PDETestCase {
 			}
 		} catch (URISyntaxException e) {
 			throw new IllegalStateException(e);
+		}
+	}
+
+	/**
+	 * Copies the content of the specified directory from the callers bundle to
+	 * the specified specified target directory and restores the relative
+	 * structure within the given directory.
+	 * <p>
+	 * This method works for bundles in directory and jar shape and is therefore
+	 * suitable for tests that run in Eclipse I-builds too (where the
+	 * Test-Plugins are executed as jars).
+	 * </p>
+	 *
+	 * @param rootPath
+	 *            the path of the directory to copy from this bundle
+	 * @param targetRoot
+	 *            the target directory
+	 */
+	public static void copyFromThisBundleInto(String rootPath, Path targetRoot)
+			throws IOException, URISyntaxException {
+		Class<?> caller = STACK_WALKER.getCallerClass();
+		Bundle bundle = FrameworkUtil.getBundle(caller);
+		URI rootEntry = bundle.getEntry(rootPath).toURI();
+		List<URL> entries = Collections.list(bundle.findEntries(rootPath, null, true));
+		for (URL entry : entries) {
+			String relativePath = URIUtil.makeRelative(entry.toURI(), rootEntry).toString();
+			if (!relativePath.endsWith("/")) {
+				Path targetPath = targetRoot.resolve(relativePath);
+				Files.createDirectories(targetPath.getParent());
+				try (InputStream is = entry.openStream()) {
+					Files.copy(is, targetPath, StandardCopyOption.REPLACE_EXISTING);
+				}
+			}
 		}
 	}
 }
