@@ -23,7 +23,6 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.assertj.core.api.Condition;
 import org.eclipse.core.resources.IMarker;
@@ -34,6 +33,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.junit.After;
 import org.junit.BeforeClass;
@@ -46,7 +46,7 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class ProjectTestTemplate {
+public class ProjectSmartImportTest {
 
 	@Parameters(name = "{0}")
 	public static Object[][] projects() {
@@ -69,15 +69,8 @@ public class ProjectTestTemplate {
 	@BeforeClass
 	public static void setupClass() throws Exception {
 		// Copy imported projects to temp-directory to not pollute this project
-		Path source = Path.of("resources").toRealPath();
-		Path target = workingDirectory.getRoot().toPath();
-		try (Stream<Path> files = Files.walk(source).filter(Files::isRegularFile)) {
-			for (Path file : (Iterable<Path>) files::iterator) {
-				Path targetFile = target.resolve(source.relativize(file));
-				Files.createDirectories(targetFile.getParent());
-				Files.copy(file, targetFile);
-			}
-		}
+		// and have it unzipped for I-build tests
+		PDETestCase.copyFromThisBundleInto("tests/smartImport", workingDirectory.getRoot().toPath());
 		Files.writeString(getErrorLogFile(), ""); // empty error log
 		ProjectUtils.deleteAllWorkspaceProjects();
 	}
@@ -93,7 +86,6 @@ public class ProjectTestTemplate {
 	}
 
 	@Test
-	@SuppressWarnings("restriction")
 	public void testImport() throws CoreException, InterruptedException {
 		File projectPath = new File(workingDirectory.getRoot(), projectName);
 
