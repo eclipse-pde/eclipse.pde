@@ -35,6 +35,7 @@ import org.eclipse.pde.ui.tests.runtime.AllPDERuntimeTests;
 import org.eclipse.pde.ui.tests.target.AllTargetTests;
 import org.eclipse.pde.ui.tests.views.log.AllLogViewTests;
 import org.eclipse.pde.ui.tests.wizards.AllNewProjectTests;
+import org.eclipse.ui.tests.smartimport.ProjectSmartImportTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -62,7 +63,8 @@ import org.junit.runners.Suite.SuiteClasses;
 	DynamicPluginProjectReferencesTest.class, //
 	ClasspathResolutionTest.class, //
 	BundleErrorReporterTest.class, //
-	AllPDECoreTests.class //
+	AllPDECoreTests.class, //
+	ProjectSmartImportTest.class, //
 })
 public class AllPDETests {
 
