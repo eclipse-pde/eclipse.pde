@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2017 IBM Corporation and others.
+ *  Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -17,9 +17,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-
 @RunWith(Suite.class)
-@SuiteClasses({ ImportWithLinksTestCase.class, ImportAsBinaryTestCase.class, ImportAsSourceTestCase.class,
+@SuiteClasses({ //
+	BaseImportTestCase.class, //
 
 	// Temporarily disabled until git migration is complete and we have access to a
 	// stable cvs repo (bug 355873)
