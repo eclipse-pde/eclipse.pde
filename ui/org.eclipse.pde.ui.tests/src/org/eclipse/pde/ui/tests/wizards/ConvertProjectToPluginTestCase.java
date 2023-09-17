@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2017 IBM Corporation and others.
+ *  Copyright (c) 2007, 2023 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -27,6 +27,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.wizards.tools.ConvertProjectToPluginOperation;
@@ -43,7 +44,7 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 	private static String PROJECT_NAME_1 = "Foo";
 	private static String PROJECT_NAME_2 = "Bar";
 
-	private final static String API_TOOLS_NATURE = "org.eclipse.pde.api.tools.apiAnalysisNature";
+	private final static String API_TOOLS_NATURE = ApiPlugin.NATURE_ID;
 
 	/**
 	 * Test the conversion of a single simple project.
