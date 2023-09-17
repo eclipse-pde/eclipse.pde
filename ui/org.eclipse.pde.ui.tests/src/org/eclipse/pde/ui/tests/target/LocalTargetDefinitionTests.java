@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -55,7 +55,9 @@ import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
+import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.pde.ui.tests.PDETestsPlugin;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.osgi.framework.ServiceReference;
 
@@ -68,6 +70,11 @@ import org.osgi.framework.ServiceReference;
  * @since 3.5
  */
 public class LocalTargetDefinitionTests extends AbstractTargetTest {
+
+	@BeforeClass
+	public static void requireStandaloneEclipseSDKEnvironment() {
+		PDETestCase.assumeRunningInStandaloneEclipseSDK();
+	}
 
 	public static final NameVersionDescriptor MULTI_VERSION_LOW_DESCRIPTION = new NameVersionDescriptor(
 			"a.typical.bundle", "1.0.0.200907071058");

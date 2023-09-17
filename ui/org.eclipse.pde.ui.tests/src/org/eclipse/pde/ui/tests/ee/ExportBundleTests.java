@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2017 IBM Corporation and others.
+ * Copyright (c) 2008, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -41,12 +41,18 @@ import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.pde.ui.tests.runtime.TestUtils;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * Tests exporting bundles.
  */
 public class ExportBundleTests extends PDETestCase {
+
+	@BeforeClass
+	public static void requireStandaloneEclipseSDKEnvironment() {
+		PDETestCase.assumeRunningInStandaloneEclipseSDK();
+	}
 
 	private static final IPath EXPORT_PATH = PDETestsPlugin.getDefault().getStateLocation().append(".export");
 

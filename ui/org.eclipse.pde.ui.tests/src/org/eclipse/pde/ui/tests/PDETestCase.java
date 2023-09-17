@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,12 @@
 package org.eclipse.pde.ui.tests;
 
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
+
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -22,6 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -129,6 +136,17 @@ public abstract class PDETestCase {
 			if (intro != null) {
 				welcomeClosed = im.closeIntro(intro);
 			}
+		}
+	}
+
+	public static void assumeRunningInStandaloneEclipseSDK() {
+		try {
+			Path location = Path.of(Platform.getInstallLocation().getURL().toURI());
+			for (String directory : List.of("plugins", "features")) {
+				assumeTrue("Not running in a standalone Eclipse SDK", Files.isDirectory(location.resolve(directory)));
+			}
+		} catch (URISyntaxException e) {
+			throw new IllegalStateException(e);
 		}
 	}
 }
