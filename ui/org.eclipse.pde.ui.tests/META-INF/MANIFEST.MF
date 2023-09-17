@@ -40,7 +40,8 @@ Require-Bundle: org.eclipse.pde.ui,
  org.eclipse.pde.genericeditor.extension,
  org.eclipse.equinox.simpleconfigurator.manipulator;bundle-version="2.1.300",
  org.eclipse.platform,
- org.eclipse.ui.ide.application
+ org.eclipse.ui.ide.application,
+ org.eclipse.pde.api.tools
 Import-Package: javax.annotation;version="[1.3.0,2.0.0)",
  javax.inject;version="[1.0.0,2.0.0)",
  org.assertj.core.api;version="3.14.0",
