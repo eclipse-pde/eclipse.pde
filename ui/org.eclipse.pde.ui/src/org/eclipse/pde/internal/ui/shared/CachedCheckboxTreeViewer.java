@@ -161,7 +161,7 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 
 	@Override
 	public void setCheckedElements(Object[] elements) {
-		super.setCheckedElements(elements);
+
 		if (checkState == null) {
 			checkState = new HashSet<>();
 		} else {
@@ -180,6 +180,7 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 				}
 			}
 		}
+		super.setCheckedElements(elements);
 	}
 
 	@Override

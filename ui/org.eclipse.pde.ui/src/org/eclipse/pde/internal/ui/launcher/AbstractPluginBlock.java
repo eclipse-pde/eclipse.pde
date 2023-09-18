@@ -1113,12 +1113,12 @@ public abstract class AbstractPluginBlock {
 	}
 
 	protected final void initializePluginsState(Map<IPluginModelBase, String> selectedPlugins) {
+		fPluginTreeViewer.setCheckedElements(selectedPlugins.keySet().toArray());
 		for (Entry<IPluginModelBase, String> entry : selectedPlugins.entrySet()) {
 			IPluginModelBase model = entry.getKey();
 			setText(model, entry.getValue());
 		}
 
-		fPluginTreeViewer.setCheckedElements(selectedPlugins.keySet().toArray());
 		countSelectedModels();
 		resetGroup(fWorkspacePlugins);
 		resetGroup(fExternalPlugins);
