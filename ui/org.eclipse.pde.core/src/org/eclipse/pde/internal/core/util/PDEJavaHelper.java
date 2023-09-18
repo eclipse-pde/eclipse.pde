@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.ListIterator;
+import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -246,12 +247,16 @@ public class PDEJavaHelper {
 				// else model is in folder form, try to find model's libraries on filesystem
 			} else {
 				IPluginLibrary[] libs = base.getPluginBase().getLibraries();
+				Map<IPath, IPackageFragmentRoot> rootsByPath = null;
 				for (IPluginLibrary lib : libs) {
 					if (IPluginLibrary.RESOURCE.equals(lib.getType())) {
 						continue;
 					}
 					String libName = ClasspathUtilCore.expandLibraryName(lib.getName());
-					IPackageFragmentRoot root = jp.findPackageFragmentRoot(path.append(libName));
+					if (rootsByPath == null) {
+						rootsByPath = getRootsByPath(jp);
+					}
+					IPackageFragmentRoot root = rootsByPath.get(path.append(libName));
 					if (root != null) {
 						IPackageFragment frag = root.getPackageFragment(packageName);
 						if (frag.exists()) {
@@ -263,6 +268,17 @@ public class PDEJavaHelper {
 		} catch (JavaModelException e) {
 		}
 		return searchWorkspaceForPackage(packageName, base);
+	}
+
+	private static Map<IPath, IPackageFragmentRoot> getRootsByPath(IJavaProject jp) throws JavaModelException {
+		Map<IPath, IPackageFragmentRoot> rootsByPath = new HashMap<>();
+		for (IPackageFragmentRoot classpathRoot : jp.getAllPackageFragmentRoots()) {
+			IPath classRootPath = classpathRoot.getPath();
+			if (classRootPath != null) {
+				rootsByPath.put(classRootPath, classpathRoot);
+			}
+		}
+		return rootsByPath;
 	}
 
 	private static IPackageFragment searchWorkspaceForPackage(String packageName, IPluginModelBase base) {
@@ -286,9 +302,13 @@ public class PDEJavaHelper {
 					continue;
 				}
 				IJavaProject jp = JavaCore.create(projects[i]);
+				Map<IPath, IPackageFragmentRoot> rootsByPath = null;
 				ListIterator<IPath> li = libPaths.listIterator();
 				while (li.hasNext()) {
-					IPackageFragmentRoot root = jp.findPackageFragmentRoot(li.next());
+					if (rootsByPath == null) {
+						rootsByPath = getRootsByPath(jp);
+					}
+					IPackageFragmentRoot root = rootsByPath.get(li.next());
 					if (root != null) {
 						IPackageFragment frag = root.getPackageFragment(packageName);
 						if (frag.exists()) {
