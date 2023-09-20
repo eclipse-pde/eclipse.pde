@@ -33,7 +33,7 @@ public class TarFile implements Closeable {
 		private int nextEntry = 0;
 		private int nextEOF = 0;
 		private int filepos = 0;
-		private int bytesread = 0;
+		private long bytesread = 0;
 		private TarEntry firstEntry = null;
 		private String longLinkName = null;
 
@@ -90,7 +90,7 @@ public class TarFile implements Closeable {
 		 * @throws IOException
 		 */
 		boolean skipToEntry(TarEntry entry) throws TarException, IOException {
-			int bytestoskip = entry.filepos - bytesread;
+			long bytestoskip = entry.filepos - bytesread;
 			if (bytestoskip < 0) {
 				return false;
 			}
