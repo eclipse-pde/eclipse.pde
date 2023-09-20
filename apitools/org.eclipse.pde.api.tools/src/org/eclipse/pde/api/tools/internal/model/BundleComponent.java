@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -388,12 +389,11 @@ public class BundleComponent extends Component {
 		// build a composite description
 		ArrayList<IApiDescription> descriptions = new ArrayList<>(fragments.length);
 		descriptions.add(createLocalApiDescription());
-		IApiComponent component = null;
 		for (BundleDescription fragment : fragments) {
 			if (!fragment.isResolved()) {
 				continue;
 			}
-			component = getBaseline().getApiComponent(fragment.getSymbolicName());
+			IApiComponent component = getBaseline().getApiComponent(fragment.getSymbolicName());
 			if (component != null) {
 				descriptions.add(component.getApiDescription());
 			} else {
@@ -437,9 +437,8 @@ public class BundleComponent extends Component {
 	protected Set<String> getLocalPackageNames() throws CoreException {
 		Set<String> names = new HashSet<>();
 		IApiTypeContainer[] containers = getApiTypeContainers();
-		IApiComponent comp = null;
 		for (IApiTypeContainer container : containers) {
-			comp = (IApiComponent) container.getAncestor(IApiElement.COMPONENT);
+			IApiComponent comp = (IApiComponent) container.getAncestor(IApiElement.COMPONENT);
 			if (comp != null && comp.getSymbolicName().equals(getSymbolicName())) {
 				String[] packageNames = container.getPackageNames();
 				Collections.addAll(names, packageNames);
@@ -566,12 +565,11 @@ public class BundleComponent extends Component {
 		}
 		if (considerFragments) {
 			BundleDescription[] fragments = getBundleDescription().getFragments();
-			IApiComponent component = null;
 			for (BundleDescription fragment : fragments) {
 				if (!fragment.isResolved()) {
 					continue;
 				}
-				component = getBaseline().getApiComponent(fragment.getSymbolicName());
+				IApiComponent component = getBaseline().getApiComponent(fragment.getSymbolicName());
 				if (component != null) {
 					// force initialization of the fragment so we can
 					// retrieve its class file containers
@@ -582,7 +580,6 @@ public class BundleComponent extends Component {
 		}
 		Iterator<IApiComponent> iterator = all.iterator();
 		Set<String> entryNames = new HashSet<>(5);
-		BundleComponent other = null;
 		while (iterator.hasNext()) {
 			BundleComponent component = (BundleComponent) iterator.next();
 			Map<String, String> manifest = component.getManifest();
@@ -600,7 +597,7 @@ public class BundleComponent extends Component {
 						IApiTypeContainer container = component.createApiTypeContainer(path);
 						if (container == null) {
 							for (IApiComponent iApiComponent : all) {
-								other = (BundleComponent) iApiComponent;
+								BundleComponent other = (BundleComponent) iApiComponent;
 								if (other != component) {
 									container = other.createApiTypeContainer(path);
 								}
@@ -642,7 +639,7 @@ public class BundleComponent extends Component {
 	 */
 	protected static String[] getClasspathEntries(Map<String, String> manifest) throws BundleException {
 		ManifestElement[] classpath = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, manifest.get(Constants.BUNDLE_CLASSPATH));
-		String elements[] = null;
+		String elements[];
 		if (classpath == null) {
 			// default classpath is '.'
 			elements = new String[] { "." }; //$NON-NLS-1$
@@ -682,14 +679,12 @@ public class BundleComponent extends Component {
 				}
 			} else {
 				// bundle is jar'd
-				ZipFile zip = null;
-				try {
-					if (path.equals(".")) { //$NON-NLS-1$
-						return new ArchiveApiTypeContainer(this, fLocation);
-					} else {
-						// classpath element can be jar or folder
-						// https://bugs.eclipse.org/bugs/show_bug.cgi?id=279729
-						zip = new ZipFile(fLocation);
+				if (path.equals(".")) { //$NON-NLS-1$
+					return new ArchiveApiTypeContainer(this, fLocation);
+				} else {
+					// classpath element can be jar or folder
+					// https://bugs.eclipse.org/bugs/show_bug.cgi?id=279729
+					try (ZipFile zip = new ZipFile(fLocation)) {
 						ZipEntry entry = zip.getEntry(path);
 						if (entry != null) {
 							if (entry.isDirectory()) {
@@ -710,10 +705,6 @@ public class BundleComponent extends Component {
 								}
 							}
 						}
-					}
-				} finally {
-					if (zip != null) {
-						zip.close();
 					}
 				}
 			}
@@ -738,16 +729,18 @@ public class BundleComponent extends Component {
 	static void extractDirectory(ZipFile zip, String pathprefix, File parent) throws IOException, CoreException {
 		Enumeration<? extends ZipEntry> entries = zip.entries();
 		String prefix = (pathprefix == null ? Util.EMPTY_STRING : pathprefix);
-		ZipEntry entry = null;
-		File file = null;
 		while (entries.hasMoreElements()) {
-			entry = entries.nextElement();
-			if (entry.getName().startsWith(prefix)) {
+			ZipEntry entry = entries.nextElement();
+			String name = entry.getName();
+			if (name.startsWith(prefix)) {
 				String parentDirCanonicalPath = parent.getCanonicalPath();
-				file = new File(parent, entry.getName());
+				File file = new File(parent, name);
+				if (!file.toPath().normalize().startsWith(parent.toPath().normalize())) {
+					throw new ZipException("Bad zip entry: " + name); //$NON-NLS-1$
+				}
 				String destCanonicalPath = file.getCanonicalPath();
 				if (!destCanonicalPath.startsWith(parentDirCanonicalPath + File.separator)) {
-					throw new CoreException(Status.error(MessageFormat.format("Entry is outside of the target dir: : {0}", entry.getName()))); //$NON-NLS-1$
+					throw new CoreException(Status.error(MessageFormat.format("Entry is outside of the target dir: : {0}", name))); //$NON-NLS-1$
 				}
 				if (entry.isDirectory()) {
 					file.mkdir();
@@ -770,41 +763,21 @@ public class BundleComponent extends Component {
 	 * @throws IOException
 	 */
 	static File extractEntry(ZipFile zip, ZipEntry entry, File parent) throws IOException {
-		InputStream inputStream = null;
-		File file;
-		FileOutputStream outputStream = null;
-		try {
-			inputStream = zip.getInputStream(entry);
-			file = new File(parent, entry.getName());
+		try (InputStream inputStream = zip.getInputStream(entry)) {
+			String name = entry.getName();
+			File file = new File(parent, name);
+			if (!file.toPath().normalize().startsWith(parent.toPath().normalize())) {
+				throw new ZipException("Bad zip entry: " + name); //$NON-NLS-1$
+			}
 			File lparent = file.getParentFile();
 			if (!lparent.exists()) {
 				lparent.mkdirs();
 			}
-			outputStream = new FileOutputStream(file);
-			byte[] bytes = new byte[8096];
-			while (inputStream.available() > 0) {
-				int read = inputStream.read(bytes);
-				if (read > 0) {
-					outputStream.write(bytes, 0, read);
-				}
+			try (FileOutputStream outputStream = new FileOutputStream(file)) {
+				inputStream.transferTo(outputStream);
 			}
-		} finally {
-			if (inputStream != null) {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					ApiPlugin.log(e);
-				}
-			}
-			if (outputStream != null) {
-				try {
-					outputStream.close();
-				} catch (IOException e) {
-					ApiPlugin.log(e);
-				}
-			}
+			return file;
 		}
-		return file;
 	}
 
 	public static void closingZipFileAndStream(InputStream stream, ZipFile jarFile) {
@@ -872,7 +845,7 @@ public class BundleComponent extends Component {
 	protected static String loadApiDescription(File bundleLocation) throws IOException {
 		ZipFile jarFile = null;
 		InputStream stream = null;
-		String contents = null;
+		String contents;
 		try {
 			String extension = IPath.fromOSString(bundleLocation.getName()).getFileExtension();
 			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
@@ -951,10 +924,8 @@ public class BundleComponent extends Component {
 	@Override
 	public String getVersion() {
 		init();
-		// remove the qualifier
-		StringBuilder buffer = new StringBuilder();
-		buffer.append(fVersion.getMajor()).append('.').append(fVersion.getMinor()).append('.').append(fVersion.getMicro());
-		return String.valueOf(buffer);
+		// without the qualifier
+		return fVersion.getMajor() + "." + fVersion.getMinor() + "." + fVersion.getMicro(); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	@Override
