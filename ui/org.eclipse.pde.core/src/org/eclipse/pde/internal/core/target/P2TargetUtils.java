@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1008,14 +1009,17 @@ public class P2TargetUtils {
 		}
 
 		int repoCount = repos.length;
-		SubMonitor subMonitor = SubMonitor.convert(monitor, repoCount);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, repoCount * 2);
 
-
+		Set<IRepositoryReference> seen = new HashSet<>();
 		List<IMetadataRepository> result = new ArrayList<>(repoCount);
+		List<IMetadataRepository> additional = new ArrayList<>();
 		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
 		for (int i = 0; i < repoCount; ++i) {
 			try {
-				result.add(manager.loadRepository(repos[i], subMonitor.split(1)));
+				IMetadataRepository repository = manager.loadRepository(repos[i], subMonitor.split(1));
+				result.add(repository);
+				addReferences(repository, additional, seen, manager, subMonitor.split(1));
 			} catch (ProvisionException e) {
 				repoStatus.add(e.getStatus());
 			}
@@ -1024,10 +1028,31 @@ public class P2TargetUtils {
 		if (result.size() != repos.length) {
 			throw new CoreException(repoStatus);
 		}
+		result.addAll(additional);
 		if (result.size() == 1) {
 			return result.get(0);
 		}
-		return QueryUtil.compoundQueryable(result);
+		return QueryUtil.compoundQueryable(new LinkedHashSet<>(result));
+	}
+
+	private static void addReferences(IMetadataRepository repository, List<IMetadataRepository> result,
+			Set<IRepositoryReference> seen, IMetadataRepositoryManager manager, IProgressMonitor monitor) {
+		Collection<IRepositoryReference> references = repository.getReferences();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, references.size() * 2);
+		for (IRepositoryReference reference : references) {
+			if (reference.getType() == IRepository.TYPE_METADATA && seen.add(reference)) {
+				try {
+					IMetadataRepository referencedRepository = manager.loadRepository(reference.getLocation(),
+							subMonitor.split(1));
+					result.add(referencedRepository);
+					addReferences(referencedRepository, result, seen, manager, subMonitor.split(1));
+				} catch (ProvisionException e) {
+					//if reference can't be loaded just ignore it here but log the error just in case the user wants to act on this
+					PDECore.log(e);
+				}
+			}
+		}
+
 	}
 
 	/**
@@ -1056,6 +1081,7 @@ public class P2TargetUtils {
 		}
 
 		ProvisioningContext context = new ProvisioningContext(getAgent());
+		context.setProperty(ProvisioningContext.FOLLOW_REPOSITORY_REFERENCES, Boolean.toString(true));
 		context.setMetadataRepositories(getMetadataRepositories(target));
 		context.setArtifactRepositories(getArtifactRepositories(target));
 
@@ -1279,6 +1305,7 @@ public class P2TargetUtils {
 		ProvisioningContext context = new ProvisioningContext(getAgent());
 		context.setMetadataRepositories(repositories);
 		context.setArtifactRepositories(getArtifactRepositories(target));
+		context.setProperty(ProvisioningContext.FOLLOW_REPOSITORY_REFERENCES, Boolean.toString(true));
 		IProvisioningPlan plan = engine.createPlan(fProfile, context);
 		setPlanProperties(plan, target, TargetDefinitionPersistenceHelper.MODE_SLICER);
 
