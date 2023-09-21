@@ -1,3 +1,16 @@
+/*******************************************************************************
+ *  Copyright (c) 2023, 2023 Michael Haubenwallner and others.
+ *
+ *  This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License 2.0
+ *  which accompanies this distribution, and is available at
+ *  https://www.eclipse.org/legal/epl-2.0/
+ *
+ *  SPDX-License-Identifier: EPL-2.0
+ *
+ *  Contributors:
+ *     Michael Haubenwallner - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.ui.tests.classpathupdater;
 
 import static org.junit.Assert.assertEquals;
@@ -5,6 +18,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -12,6 +26,7 @@ import java.util.function.Predicate;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -163,8 +178,7 @@ public class ClasspathUpdaterTest {
 
 	private void runUpdateClasspathJob() throws InterruptedException {
 		IPluginModelBase model = PluginRegistry.findModel(project.getProject());
-		UpdateClasspathJob job = new UpdateClasspathJob(new IPluginModelBase[] { model });
-		job.schedule();
+		Job job = UpdateClasspathJob.scheduleFor(List.of(model), false);
 		job.join();
 		assertTrue("Update Classpath Job failed", job.getResult().isOK());
 	}
