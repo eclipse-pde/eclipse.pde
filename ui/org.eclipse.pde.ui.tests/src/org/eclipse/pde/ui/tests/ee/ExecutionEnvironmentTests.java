@@ -19,6 +19,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Hashtable;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -257,10 +258,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 
 			// updating class path should increase severity to warning
 			IPluginModelBase model = PluginRegistry.findModel(project.getProject());
-			UpdateClasspathJob job = new UpdateClasspathJob(new IPluginModelBase[] { model });
-			job.schedule();
-			job.join();
-
+			UpdateClasspathJob.scheduleFor(List.of(model), false).join();
 			// re-validate options
 			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_2);
 			validateOption(project, JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_3);
@@ -305,9 +303,7 @@ public class ExecutionEnvironmentTests extends PDETestCase {
 
 			// updating class path should increase severity to warning
 			IPluginModelBase model = PluginRegistry.findModel(project.getProject());
-			UpdateClasspathJob job = new UpdateClasspathJob(new IPluginModelBase[] { model });
-			job.schedule();
-			job.join();
+			UpdateClasspathJob.scheduleFor(List.of(model), false).join();
 
 			// re-validate options
 			validateOption(project, JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, JavaCore.VERSION_1_2);

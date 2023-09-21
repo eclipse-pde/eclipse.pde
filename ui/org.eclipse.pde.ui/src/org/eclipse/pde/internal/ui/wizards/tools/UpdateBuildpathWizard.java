@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2015 IBM Corporation and others.
+ *  Copyright (c) 2000, 2023 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
-import org.eclipse.core.runtime.jobs.Job;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -48,16 +50,13 @@ public class UpdateBuildpathWizard extends Wizard {
 
 	@Override
 	public boolean performFinish() {
-		if (!PlatformUI.getWorkbench().saveAllEditors(true))
+		if (!PlatformUI.getWorkbench().saveAllEditors(true)) {
 			return false;
-
+		}
 		Object[] finalSelected = page1.getSelected();
 		page1.storeSettings();
-		IPluginModelBase[] modelArray = new IPluginModelBase[finalSelected.length];
-		System.arraycopy(finalSelected, 0, modelArray, 0, finalSelected.length);
-		Job j = new UpdateClasspathJob(modelArray);
-		j.setUser(true);
-		j.schedule();
+		List<IPluginModelBase> modelArray = Arrays.stream(finalSelected).map(IPluginModelBase.class::cast).toList();
+		UpdateClasspathJob.scheduleFor(modelArray, true);
 		return true;
 	}
 
