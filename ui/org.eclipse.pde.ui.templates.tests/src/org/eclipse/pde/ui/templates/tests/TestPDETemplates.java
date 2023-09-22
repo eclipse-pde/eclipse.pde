@@ -115,7 +115,7 @@ public class TestPDETemplates {
 		data.setHasBundleStructure(true);
 		data.setSourceFolderName("src");
 		data.setOutputFolderName("bin");
-		data.setExecutionEnvironment("JavaSE-1.8");
+		data.setExecutionEnvironment("JavaSE-17");
 		String version = System.getProperty("java.specification.version"); //$NON-NLS-1$
 		int ver = -1;
 		try {
