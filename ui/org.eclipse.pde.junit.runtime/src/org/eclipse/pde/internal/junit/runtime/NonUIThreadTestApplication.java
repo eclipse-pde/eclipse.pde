@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2023 EclipseSource Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.junit.runtime;
 
+import java.util.Objects;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -20,7 +22,10 @@ import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-import org.junit.Assert;
+import org.eclipse.ui.testing.TestableObject;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 /**
  * A Workbench that runs a test suite specified in the
@@ -32,27 +37,23 @@ public class NonUIThreadTestApplication implements IApplication {
 
 	protected IApplication fApplication;
 	protected Object fTestHarness;
+	protected boolean runInUIThreadAndRequirePlatformUI = false;
+	protected String defaultApplicationId = DEFAULT_HEADLESSAPP;
 
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 
 		String appId = getApplicationToRun(args);
-		IApplication app = getApplication(appId);
-		Assert.assertNotNull(app);
+		IApplication app = Objects.requireNonNull(getApplication(appId));
 
-		if (!DEFAULT_HEADLESSAPP.equals(appId)) {
+		if (runInUIThreadAndRequirePlatformUI || !DEFAULT_HEADLESSAPP.equals(appId)) {
 			// this means we are running a different application, which potentially can be UI application;
 			// non-ui thread test app can also mean we are running UI tests but outside the UI thread;
 			// this is a pattern used by SWT bot and worked before; we continue to support this
 			// (see bug 340906 for details)
 			installPlatformUITestHarness();
 		}
-
-		return runApp(app, context);
-	}
-
-	protected Object runApp(IApplication app, IApplicationContext context) throws Exception {
 		fApplication = app;
 		return fApplication.start(context);
 	}
@@ -66,27 +67,53 @@ public class NonUIThreadTestApplication implements IApplication {
 	 *
 	 * @throws Exception
 	 */
-	private void installPlatformUITestHarness() throws Exception {
-		Object testableObject = PDEJUnitRuntimePlugin.getDefault().getTestableObject();
+	private void installPlatformUITestHarness() throws ReflectiveOperationException {
+		Object testableObject = getRegisteredTestableObject();
 		if (testableObject == null) {
-			try {
+			try { // If the service doesn't return a testable object ask PlatformUI directly
 				Class<?> platformUIClass = Class.forName("org.eclipse.ui.PlatformUI", true, getClass().getClassLoader()); //$NON-NLS-1$
 				testableObject = platformUIClass.getMethod("getTestableObject").invoke(null); //$NON-NLS-1$
-			} catch (ClassNotFoundException e) {
-				// PlatformUI is not available
+			} catch (ClassNotFoundException e) { // PlatformUI is not available
+				if (runInUIThreadAndRequirePlatformUI) {
+					throw e;
+				}
 			}
 		}
 		if (testableObject != null) {
-			fTestHarness = new PlatformUITestHarness(testableObject, true);
+			fTestHarness = new PlatformUITestHarness(testableObject, !runInUIThreadAndRequirePlatformUI);
 		}
+	}
+
+	/**
+	 * Returns a {@link TestableObject} provided by a TestableObject service or {@code null} if no implementation can be found.
+	 * The TestableObject is used to hook tests into the application lifecycle.
+	 * <p>
+	 * It is recommended the testable object is obtained via service instead Workbench#getWorkbenchTestable() to avoid
+	 * the tests having a dependency on the Workbench.
+	 * </p>
+	 * @return TestableObject provided via service or {@code null}
+	 */
+	private static Object getRegisteredTestableObject() {
+		BundleContext context = FrameworkUtil.getBundle(NonUIThreadTestApplication.class).getBundleContext();
+		ServiceReference<?> reference = context.getServiceReference("org.eclipse.ui.testing.TestableObject"); //$NON-NLS-1$
+		if (reference != null) {
+			try {
+				return context.getService(reference);
+			} finally {
+				context.ungetService(reference);
+			}
+		}
+		return null;
 	}
 
 	@Override
 	public void stop() {
-		if (fApplication != null)
+		if (fApplication != null) {
 			fApplication.stop();
-		if (fTestHarness != null)
+		}
+		if (fTestHarness != null) {
 			fTestHarness = null;
+		}
 	}
 
 	/*
@@ -98,8 +125,7 @@ public class NonUIThreadTestApplication implements IApplication {
 		// If no application is specified, the 3.0 default workbench application
 		// is returned.
 		IExtension extension = Platform.getExtensionRegistry().getExtension(Platform.PI_RUNTIME, Platform.PT_APPLICATIONS, appId);
-
-		Assert.assertNotNull(extension);
+		Objects.requireNonNull(extension);
 
 		// If the extension does not have the correct grammar, return null.
 		// Otherwise, return the application object.
@@ -108,8 +134,9 @@ public class NonUIThreadTestApplication implements IApplication {
 			IConfigurationElement[] runs = elements[0].getChildren("run"); //$NON-NLS-1$
 			if (runs.length > 0) {
 				Object runnable = runs[0].createExecutableExtension("class"); //$NON-NLS-1$
-				if (runnable instanceof IApplication)
+				if (runnable instanceof IApplication) {
 					return (IApplication) runnable;
+				}
 			}
 		}
 		return null;
@@ -125,18 +152,12 @@ public class NonUIThreadTestApplication implements IApplication {
 	 *
 	 */
 	private String getApplicationToRun(String[] args) {
-		for (int i = 0; i < args.length; i++) {
-			if (args[i].equals("-testApplication") && i < args.length - 1) //$NON-NLS-1$
-				return args[i + 1];
+		String testApp = RemotePluginTestRunner.getArgumentValue(args, "-testApplication"); //$NON-NLS-1$
+		if (testApp != null) {
+			return testApp;
 		}
 		IProduct product = Platform.getProduct();
-		if (product != null)
-			return product.getApplication();
-		return getDefaultApplicationId();
-	}
-
-	protected String getDefaultApplicationId() {
-		return DEFAULT_HEADLESSAPP;
+		return product != null ? product.getApplication() : defaultApplicationId;
 	}
 
 }
