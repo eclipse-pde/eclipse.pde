@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2018 IBM Corporation and others.
+ *  Copyright (c) 2018, 2023 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -36,8 +36,9 @@ class MultiBundleClassLoader extends ClassLoader {
 		for (Bundle temp : bundleList) {
 			try {
 				Class<?> c = temp.loadClass(name);
-				if (c != null)
+				if (c != null) {
 					return c;
+				}
 			} catch (ClassNotFoundException e) {
 			}
 		}
@@ -46,9 +47,8 @@ class MultiBundleClassLoader extends ClassLoader {
 
 	@Override
 	protected URL findResource(String name) {
-		URL url = null;
 		for (Bundle temp : bundleList) {
-			url = temp.getResource(name);
+			URL url = temp.getResource(name);
 			if (url != null) {
 				try {
 					return FileLocator.resolve(url);
@@ -57,7 +57,7 @@ class MultiBundleClassLoader extends ClassLoader {
 				}
 			}
 		}
-		return url;
+		return null;
 	}
 
 	@Override
