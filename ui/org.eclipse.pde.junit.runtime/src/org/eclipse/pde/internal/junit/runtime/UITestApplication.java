@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,36 +14,17 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.junit.runtime;
 
-import org.eclipse.equinox.app.IApplication;
-import org.eclipse.equinox.app.IApplicationContext;
-import org.eclipse.ui.PlatformUI;
-
 /**
  * A Workbench that runs a test suite specified in the
  * command line arguments.
  */
 public class UITestApplication extends NonUIThreadTestApplication {
 
-	private static final String DEFAULT_APP_3_0 = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
-
-	@Override
-	protected String getDefaultApplicationId() {
+	public UITestApplication() {
+		// Unlike in NonUIThreadTestApplication if the platform dependency is not available we will fail the launch
+		this.runInUIThreadAndRequirePlatformUI = true;
 		// In 3.0, the default is the "org.eclipse.ui.ide.worbench" application.
-		return DEFAULT_APP_3_0;
+		this.defaultApplicationId = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 	}
 
-	@Override
-	protected Object runApp(IApplication app, IApplicationContext context) throws Exception {
-		// Get the testable object from the service
-		Object testableObject = PDEJUnitRuntimePlugin.getDefault().getTestableObject();
-		// If the service doesn't return a testable object ask PlatformUI directly
-		// Unlike in NonUIThreadTestApplication if the platform dependency is not available we will fail here
-		if (testableObject == null) {
-			testableObject = PlatformUI.getTestableObject();
-		}
-		fTestHarness = new PlatformUITestHarness(testableObject, false);
-
-		// continue application launch
-		return super.runApp(app, context);
-	}
 }
