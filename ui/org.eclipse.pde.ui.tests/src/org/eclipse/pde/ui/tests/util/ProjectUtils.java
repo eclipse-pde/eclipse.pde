@@ -369,7 +369,6 @@ public class ProjectUtils {
 		IFeaturePlugin featurePlugin = feature.getModel().getFactory().createPlugin();
 		featurePlugin.setId(id);
 		featurePlugin.setVersion(version);
-		featurePlugin.setUnpack(false);
 		feature.addPlugins(new IFeaturePlugin[] { featurePlugin });
 		return featurePlugin;
 	}

@@ -26,24 +26,11 @@ public interface IFeatureEntry extends IFeatureObject, IIdentifiable, IEnvironme
 	String P_NL = "p_nl"; //$NON-NLS-1$
 	String P_ARCH = "p_arch"; //$NON-NLS-1$
 	String P_FILTER = "p_filter"; //$NON-NLS-1$
-	String P_DOWNLOAD_SIZE = "p_download_size"; //$NON-NLS-1$
-	String P_INSTALL_SIZE = "p_install_size"; //$NON-NLS-1$
 
 	/**
 	 * Returns an LDAP filter that must be satisfied for this entry
 	 */
 	String getFilter();
-
-	/**
-	 * 	Returns estimated download size of this plug-in.
-	 */
-	long getDownloadSize();
-
-	/**
-	 * Returns estimated size of this plug-in when installed.
-	 */
-	long getInstallSize();
-
 	/**
 	 * Sets an LDAP filter on this plugin
 	 */
@@ -52,10 +39,4 @@ public interface IFeatureEntry extends IFeatureObject, IIdentifiable, IEnvironme
 	/**
 	 * 	Sets the estimated download size of this plug-in.
 	 */
-	void setDownloadSize(long size) throws CoreException;
-
-	/**
-	 * Sets the estimated size of this plug-in when installed.
-	 */
-	void setInstallSize(long size) throws CoreException;
 }

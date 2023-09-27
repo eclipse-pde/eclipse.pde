@@ -31,7 +31,6 @@ import org.eclipse.pde.internal.core.builders.IncrementalErrorReporter.VirtualMa
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -110,12 +109,11 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			assertAttributeDefined(plugin, "id", CompilerFlags.ERROR); //$NON-NLS-1$
 			assertAttributeDefined(plugin, "version", CompilerFlags.ERROR); //$NON-NLS-1$
 			NamedNodeMap attributes = plugin.getAttributes();
-			boolean isFragment = plugin.getAttribute("fragment").equals("true"); //$NON-NLS-1$ //$NON-NLS-2$
 			for (int j = 0; j < attributes.getLength(); j++) {
 				Attr attr = (Attr) attributes.item(j);
 				String name = attr.getName();
 				if (name.equals("id")) { //$NON-NLS-1$
-					validatePluginExists(plugin, attr, isFragment);
+					validatePluginExists(plugin, attr);
 				} else if (name.equals("version")) { //$NON-NLS-1$
 					validateVersionAttribute(plugin, attr);
 					validateVersion(plugin, attr);
@@ -153,7 +151,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			} else if (plugin != null && feature != null) {
 				reportExclusiveAttributes(element, "plugin", "feature", CompilerFlags.ERROR); //$NON-NLS-1$//$NON-NLS-2$
 			} else if (plugin != null) {
-				validatePluginExists(element, plugin, false);
+				validatePluginExists(element, plugin);
 			} else if (feature != null) {
 				validateFeatureExists(element, feature);
 			}
@@ -382,7 +380,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			if (name.equals("primary")) { //$NON-NLS-1$
 				reportDeprecatedAttribute(element, (Attr) attributes.item(i));
 			} else if (name.equals("plugin")) { //$NON-NLS-1$
-				validatePluginExists(element, (Attr) attributes.item(i), false);
+				validatePluginExists(element, (Attr) attributes.item(i));
 			}
 		}
 	}
@@ -405,12 +403,12 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 		return true;
 	}
 
-	private void validatePluginExists(Element element, Attr attr, boolean isFragment) {
+	private void validatePluginExists(Element element, Attr attr) {
 		String id = attr.getValue();
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.F_UNRESOLVED_PLUGINS);
 		if (severity != CompilerFlags.IGNORE) {
 			IPluginModelBase model = PluginRegistry.findModel(id);
-			if (model == null || !model.isEnabled() || (isFragment && !model.isFragmentModel()) || (!isFragment && model.isFragmentModel())) {
+			if (model == null || !model.isEnabled() || model.isFragmentModel()) {
 				VirtualMarker marker = report(NLS.bind(PDECoreMessages.Builders_Feature_reference, id), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_OTHER);
 				addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.F_UNRESOLVED_PLUGINS);
 			}
@@ -459,12 +457,6 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 					addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.F_UNRESOLVED_PLUGINS);
 				}
 			}
-		}
-
-		if ("true".equals(unpack) && !CoreUtility.guessUnpack(pModel.getBundleDescription())) {//$NON-NLS-1$
-			String message = NLS.bind(PDECoreMessages.Builders_Feature_missingUnpackFalse, (new String[] {parent.getAttribute("id"), "unpack=\"false\""})); //$NON-NLS-1$ //$NON-NLS-2$
-			VirtualMarker marker = report(message, getLine(parent), severity, PDEMarkerFactory.CAT_OTHER);
-			addMarkerAttribute(marker, PDEMarkerFactory.compilerKey,  CompilerFlags.F_UNRESOLVED_PLUGINS);
 		}
 	}
 

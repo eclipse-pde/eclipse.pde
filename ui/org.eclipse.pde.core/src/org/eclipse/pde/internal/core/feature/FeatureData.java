@@ -29,8 +29,6 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 	private String nl;
 	private String arch;
 	private String filter;
-	private long downloadSize;
-	private long installSize;
 
 	public FeatureData() {
 	}
@@ -42,8 +40,6 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 		ws = null;
 		nl = null;
 		arch = null;
-		downloadSize = 0;
-		installSize = 0;
 	}
 
 	@Override
@@ -64,8 +60,6 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 		nl = getNodeAttribute(node, "nl"); //$NON-NLS-1$
 		arch = getNodeAttribute(node, "arch"); //$NON-NLS-1$
 		filter = getNodeAttribute(node, "filter"); //$NON-NLS-1$
-		downloadSize = getIntegerAttribute(node, "download-size"); //$NON-NLS-1$
-		installSize = getIntegerAttribute(node, "install-size"); //$NON-NLS-1$
 	}
 
 	protected void writeAttributes(String indent2, PrintWriter writer) {
@@ -75,10 +69,6 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 		writeAttribute("nl", getNL(), indent2, writer); //$NON-NLS-1$
 		writeAttribute("arch", getArch(), indent2, writer); //$NON-NLS-1$
 		writeAttribute("filter", getFilter(), indent2, writer); //$NON-NLS-1$
-		writer.println();
-		writer.print(indent2 + "download-size=\"" + getDownloadSize() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.println();
-		writer.print(indent2 + "install-size=\"" + getInstallSize() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private void writeAttribute(String attribute, String value, String indent2, PrintWriter writer) {
@@ -205,48 +195,6 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 		firePropertyChanged(P_FILTER, oldValue, filter);
 	}
 
-	/**
-	 * Gets the downloadSize.
-	 * @return Returns a int
-	 */
-	@Override
-	public long getDownloadSize() {
-		return downloadSize;
-	}
-
-	/**
-	 * Sets the downloadSize.
-	 * @param downloadSize The downloadSize to set
-	 */
-	@Override
-	public void setDownloadSize(long downloadSize) throws CoreException {
-		ensureModelEditable();
-		Object oldValue = Long.valueOf(this.downloadSize);
-		this.downloadSize = downloadSize;
-		firePropertyChanged(P_DOWNLOAD_SIZE, oldValue, Long.valueOf(downloadSize));
-	}
-
-	/**
-	 * Gets the installSize.
-	 * @return Returns a int
-	 */
-	@Override
-	public long getInstallSize() {
-		return installSize;
-	}
-
-	/**
-	 * Sets the installSize.
-	 * @param installSize The installSize to set
-	 */
-	@Override
-	public void setInstallSize(long installSize) throws CoreException {
-		ensureModelEditable();
-		Object oldValue = Long.valueOf(this.installSize);
-		this.installSize = installSize;
-		firePropertyChanged(P_INSTALL_SIZE, oldValue, Long.valueOf(installSize));
-	}
-
 	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		switch (name) {
@@ -261,12 +209,6 @@ public class FeatureData extends IdentifiableObject implements IFeatureData {
 			break;
 		case P_ARCH:
 			setArch((String) newValue);
-			break;
-		case P_DOWNLOAD_SIZE:
-			setDownloadSize(newValue != null ? ((Integer) newValue).intValue() : 0);
-			break;
-		case P_INSTALL_SIZE:
-			setInstallSize(newValue != null ? ((Integer) newValue).intValue() : 0);
 			break;
 		default:
 			super.restoreProperty(name, oldValue, newValue);
