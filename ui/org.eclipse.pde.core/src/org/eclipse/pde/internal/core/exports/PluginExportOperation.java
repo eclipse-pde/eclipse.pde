@@ -20,8 +20,6 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.w3c.dom.Element;
 
 public class PluginExportOperation extends FeatureBasedExportOperation {
 
@@ -61,10 +59,4 @@ public class PluginExportOperation extends FeatureBasedExportOperation {
 		// always include plug-ins, even ones with environment conflicts
 		return true;
 	}
-
-	@Override
-	protected void setAdditionalAttributes(Element plugin, BundleDescription bundle) {
-		plugin.setAttribute("unpack", Boolean.toString(CoreUtility.guessUnpack(bundle))); //$NON-NLS-1$
-	}
-
 }

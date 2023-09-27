@@ -41,10 +41,7 @@ public class FeatureDataTestCase {
 	public void testSerialization() throws Exception {
 		String expected = String.format("<data%n" +
 				FEATURE_INDENT + "id=\"id.1\"%n" + FEATURE_INDENT + "os=\"win32\"%n" + FEATURE_INDENT
-				+ "arch=\"x86_64\"%n" + FEATURE_INDENT
-				+ "download-size=\"1000\"%n" +
-				FEATURE_INDENT + "install-size=\"0\"/>%n"
-				);
+				+ "arch=\"x86_64\"/>%n");
 		FeatureData data = newFeatureData();
 		String actual = toXml(data);
 		assertEquals(expected, actual);
@@ -54,16 +51,13 @@ public class FeatureDataTestCase {
 		assertEquals(data.getOS(), data2.getOS());
 		assertEquals(data.getArch(), data2.getArch());
 		assertEquals(data.getFilter(), data2.getFilter());
-		assertEquals(data.getDownloadSize(), data2.getDownloadSize());
 	}
 
 	@Test
 	public void testSerializationWithLdapFilter() throws CoreException {
 		String expected = String.format("<data%n" + FEATURE_INDENT + "id=\"id.1\"%n" + FEATURE_INDENT + "os=\"win32\"%n"
 				+ FEATURE_INDENT + "arch=\"x86_64\"%n" + FEATURE_INDENT
-				+ "filter=\"(&amp; (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86))\"%n" + FEATURE_INDENT
-				+ "download-size=\"1000\"%n" + FEATURE_INDENT
-				+ "install-size=\"0\"/>%n");
+				+ "filter=\"(&amp; (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86))\"/>%n");
 		FeatureData data = newFeatureData();
 		data.setFilter("(& (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86))");
 		String actual = toXml(data);
@@ -79,7 +73,6 @@ public class FeatureDataTestCase {
 		data.setLabel("Feature1");
 		data.setArch("x86_64");
 		data.setOS("win32");
-		data.setDownloadSize(1000);
 		return data;
 	}
 
