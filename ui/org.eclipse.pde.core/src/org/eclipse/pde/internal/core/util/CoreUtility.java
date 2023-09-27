@@ -30,27 +30,12 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.HostSpecification;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.build.IPDEBuildConstants;
-import org.eclipse.pde.internal.core.FeatureModelManager;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundleModel;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 
 public class CoreUtility {
 
@@ -160,79 +145,6 @@ public class CoreUtility {
 
 			subMon.done();
 		}
-	}
-
-	public static boolean guessUnpack(BundleDescription bundle) {
-		if (bundle == null) {
-			return true;
-		}
-
-		if (new File(bundle.getLocation()).isFile()) {
-			return false;
-		}
-
-		// at this point always make sure launcher fragments are flat; or else you will have launching problems
-		HostSpecification host = bundle.getHost();
-		if (host != null && host.getName().equals(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER)) {
-			return true;
-		}
-
-		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
-		IContainer container = root.getContainerForLocation(IPath.fromOSString(bundle.getLocation()));
-		if (container == null) {
-			return true;
-		}
-
-		if (container instanceof IProject) {
-			try {
-				if (!((IProject) container).hasNature(JavaCore.NATURE_ID)) {
-					return true;
-				}
-			} catch (CoreException e) {
-				PDECore.logException(e);
-			}
-		}
-
-		IPluginModelBase model = PluginRegistry.findModel(bundle);
-		if (model == null) {
-			return true;
-		}
-
-		// check bundle header
-		if (model instanceof IBundlePluginModelBase) {
-			IBundleModel bundleModel = ((IBundlePluginModelBase) model).getBundleModel();
-			if (bundleModel != null) {
-				IBundle b = bundleModel.getBundle();
-				String header = b.getHeader(ICoreConstants.ECLIPSE_BUNDLE_SHAPE);
-				if (header != null) {
-					return ICoreConstants.SHAPE_DIR.equals(header);
-				}
-			}
-		}
-
-		// check features
-		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
-		IFeatureModel[] models = manager.getModels();
-		for (IFeatureModel featureModel : models) {
-			IFeaturePlugin[] plugins = featureModel.getFeature().getPlugins();
-			for (IFeaturePlugin featurePlugin : plugins) {
-				if (featurePlugin.getId().equals(bundle.getSymbolicName())) {
-					return featurePlugin.isUnpack();
-				}
-			}
-		}
-
-		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-		if (libraries.length == 0) {
-			return false;
-		}
-
-		for (IPluginLibrary library : libraries) {
-			if (library.getName().equals(".")) { //$NON-NLS-1$
-				return false;
-			}
-		}
-		return true;
 	}
 
 	public static boolean jarContainsResource(File file, String resource, boolean directory) {

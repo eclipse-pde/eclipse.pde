@@ -45,7 +45,6 @@ import org.eclipse.pde.internal.core.feature.FeaturePlugin;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
-import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
@@ -221,7 +220,6 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 			fplugin.loadFrom(candidate.getPluginBase());
 			fplugin.setVersion(ICoreConstants.DEFAULT_VERSION);
-			fplugin.setUnpack(CoreUtility.guessUnpack(candidate.getBundleDescription()));
 			added[i] = fplugin;
 		}
 		feature.addPlugins(added);

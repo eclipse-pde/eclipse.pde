@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -30,7 +28,6 @@ import org.eclipse.pde.internal.ui.editor.PDESection;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
@@ -44,14 +41,6 @@ public class PluginDetailsSection extends PDESection implements IPartSelectionLi
 	private FormEntry fNameText;
 
 	private FormEntry fVersionText;
-
-	private FormEntry fdownloadSizeText;
-
-	private FormEntry fInstallSizeText;
-
-	private Button fUnpackButton;
-
-	private boolean fBlockNotification;
 
 	public PluginDetailsSection(PDEFormPage page, Composite parent) {
 		this(page, parent, PDEUIMessages.SiteEditor_PluginDetailsSection_title, PDEUIMessages.SiteEditor_PluginDetailsSection_desc, SWT.NULL);
@@ -67,16 +56,12 @@ public class PluginDetailsSection extends PDESection implements IPartSelectionLi
 	@Override
 	public void cancelEdit() {
 		fVersionText.cancelEdit();
-		fdownloadSizeText.cancelEdit();
-		fInstallSizeText.cancelEdit();
 		super.cancelEdit();
 	}
 
 	@Override
 	public void commit(boolean onSave) {
 		fVersionText.commit();
-		fdownloadSizeText.commit();
-		fInstallSizeText.commit();
 		super.commit(onSave);
 	}
 
@@ -110,52 +95,6 @@ public class PluginDetailsSection extends PDESection implements IPartSelectionLi
 		});
 		limitTextWidth(fVersionText);
 		fVersionText.setEditable(isEditable());
-
-		fdownloadSizeText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_PluginDetailsSection_downloadSize, null, false);
-		fdownloadSizeText.setFormEntryListener(new FormEntryAdapter(this) {
-
-			@Override
-			public void textValueChanged(FormEntry text) {
-				if (fInput != null)
-					try {
-						fInput.setDownloadSize(getLong(text.getValue()));
-					} catch (CoreException e) {
-						PDEPlugin.logException(e);
-					}
-			}
-		});
-		limitTextWidth(fdownloadSizeText);
-		fdownloadSizeText.setEditable(isEditable());
-
-		fInstallSizeText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_PluginDetailsSection_installSize, null, false);
-		fInstallSizeText.setFormEntryListener(new FormEntryAdapter(this) {
-
-			@Override
-			public void textValueChanged(FormEntry text) {
-				if (fInput != null)
-					try {
-						fInput.setInstallSize(getLong(text.getValue()));
-					} catch (CoreException e) {
-						PDEPlugin.logException(e);
-					}
-			}
-		});
-		limitTextWidth(fInstallSizeText);
-		fInstallSizeText.setEditable(isEditable());
-
-		fUnpackButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_PluginDetailsSection_unpack, SWT.CHECK);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
-		fUnpackButton.setLayoutData(gd);
-		fUnpackButton.addSelectionListener(widgetSelectedAdapter(e -> {
-			try {
-				if (!fBlockNotification)
-					fInput.setUnpack(fUnpackButton.getSelection());
-			} catch (CoreException ex) {
-				PDEPlugin.logException(ex);
-			}
-		}));
-
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 	}
@@ -207,45 +146,16 @@ public class PluginDetailsSection extends PDESection implements IPartSelectionLi
 		update();
 	}
 
-	@Override
-	public void setFocus() {
-		if (fdownloadSizeText != null)
-			fdownloadSizeText.getText().setFocus();
-	}
-
 	private void update() {
 		if (fInput != null) {
 			fNameText.setValue(fInput.getLabel());
 			fVersionText.setValue(fInput.getVersion(), true);
-			fdownloadSizeText.setValue(fInput.getDownloadSize() >= 0 ? "" + fInput.getDownloadSize() : null, true); //$NON-NLS-1$
-			fInstallSizeText.setValue(fInput.getInstallSize() >= 0 ? "" + fInput.getInstallSize() : null, true); //$NON-NLS-1$
-			fBlockNotification = true;
-			fUnpackButton.setSelection(fInput.isUnpack());
-			fBlockNotification = false;
 
 		} else {
 			fNameText.setValue(null);
 			fVersionText.setValue(null, true);
-			fdownloadSizeText.setValue(null, true);
-			fInstallSizeText.setValue(null, true);
-			fBlockNotification = true;
-			fUnpackButton.setSelection(true);
-			fBlockNotification = false;
 		}
 		boolean editable = fInput != null && isEditable();
 		fVersionText.setEditable(editable);
-		fdownloadSizeText.setEditable(editable);
-		fInstallSizeText.setEditable(editable);
-		fUnpackButton.setEnabled(editable);
-	}
-
-	private long getLong(String svalue) {
-		if (svalue == null)
-			return 0;
-		try {
-			return Long.parseLong(svalue);
-		} catch (NumberFormatException e) {
-			return 0;
-		}
 	}
 }
