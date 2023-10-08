@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - supply the manifest as a string if requested
  *******************************************************************************/
 package org.eclipse.pde.core.target;
 
@@ -18,6 +19,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -171,7 +174,22 @@ public class TargetBundle {
 		}
 		Map<String, String> manifest = ManifestUtils.loadManifest(file);
 		try {
-			fInfo = new BundleInfo(file.toURI());
+			fInfo = new BundleInfo(file.toURI()) {
+				private String manifestString;
+
+				@Override
+				public String getManifest() {
+					if (manifestString == null) {
+						try {
+							StringWriter writer = new StringWriter();
+							ManifestUtils.writeManifest(manifest, writer);
+							manifestString = writer.toString();
+						} catch (IOException e) {
+						}
+					}
+					return manifestString;
+				}
+			};
 			// Attempt to retrieve additional bundle information from the manifest
 			String header = manifest.get(Constants.BUNDLE_SYMBOLICNAME);
 			if (header != null) {
