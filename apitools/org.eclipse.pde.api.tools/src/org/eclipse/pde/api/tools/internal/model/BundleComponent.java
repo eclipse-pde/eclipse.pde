@@ -149,6 +149,11 @@ public class BundleComponent extends Component {
 	private final long fBundleId;
 
 	/**
+	 * Tracks where/wehn the component was disposed to give better error message
+	 */
+	private volatile RuntimeException disposeSource;
+
+	/**
 	 * Constructs a new API component from the specified location in the file
 	 * system in the given baseline.
 	 *
@@ -183,6 +188,7 @@ public class BundleComponent extends Component {
 			synchronized (this) {
 				fManifest = null;
 				fBundleDescription = null;
+				disposeSource = new RuntimeException("Component was disposed here"); //$NON-NLS-1$
 			}
 		}
 	}
@@ -275,7 +281,7 @@ public class BundleComponent extends Component {
 	 *
 	 * @throws CoreException on failure
 	 */
-	protected void init() {
+	protected void init() throws CoreException {
 		if (isDisposed() || fBundleDescription != null) {
 			return;
 		}
@@ -283,9 +289,9 @@ public class BundleComponent extends Component {
 			try {
 				Map<String, String> manifest = getManifest();
 				if (manifest == null) {
-					ApiPlugin.log(Status.error("Unable to find a manifest for the component from: " + fLocation, //$NON-NLS-1$
+					throw new CoreException(
+							Status.error("Unable to find a manifest for the component from: " + fLocation, //$NON-NLS-1$
 							null));
-					return;
 				}
 				BundleDescription bundleDescription = getBundleDescription(manifest, fLocation, fBundleId);
 				fSymbolicName = bundleDescription.getSymbolicName();
@@ -293,10 +299,9 @@ public class BundleComponent extends Component {
 				setName(manifest.get(Constants.BUNDLE_NAME));
 				fBundleDescription = bundleDescription;
 			} catch (BundleException e) {
-				ApiPlugin.log(Status.error("Unable to create API component from specified location: " + fLocation, //$NON-NLS-1$
+				throw new CoreException(
+						Status.error("Unable to create API component from specified location: " + fLocation, //$NON-NLS-1$
 						e));
-			} catch (CoreException ce) {
-				ApiPlugin.log(ce);
 			}
 			// compact manifest after initialization - only keep used headers
 			doManifestCompaction();
@@ -906,7 +911,11 @@ public class BundleComponent extends Component {
 
 	@Override
 	public final String getSymbolicName() {
-		init();
+		try {
+			init();
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
 		return fSymbolicName;
 	}
 
@@ -923,14 +932,26 @@ public class BundleComponent extends Component {
 
 	@Override
 	public String getVersion() {
-		init();
+		try {
+			init();
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
+		Version version = fVersion;
+		if (version== null) {
+			return null;
+		}
 		// without the qualifier
-		return fVersion.getMajor() + "." + fVersion.getMinor() + "." + fVersion.getMicro(); //$NON-NLS-1$//$NON-NLS-2$
+		return version.getMajor() + "." + version.getMinor() + "." + version.getMicro(); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	@Override
 	public String getName() {
-		init();
+		try {
+			init();
+		} catch (CoreException e) {
+			ApiPlugin.log(e);
+		}
 		return super.getName();
 	}
 
@@ -951,13 +972,14 @@ public class BundleComponent extends Component {
 
 	@Override
 	public String toString() {
-		if (fBundleDescription != null) {
+		BundleDescription description = fBundleDescription;
+		if (description != null) {
 			try {
 				StringBuilder buffer = new StringBuilder();
-				buffer.append(fBundleDescription.toString());
+				buffer.append(description.toString());
 				buffer.append(" - "); //$NON-NLS-1$
 				buffer.append("[fragment: ").append(isFragment()).append("] "); //$NON-NLS-1$ //$NON-NLS-2$
-				buffer.append("[host: ").append(fBundleDescription.getFragments().length > 0).append("] "); //$NON-NLS-1$ //$NON-NLS-2$
+				buffer.append("[host: ").append(description.getFragments().length > 0).append("] "); //$NON-NLS-1$ //$NON-NLS-2$
 				buffer.append("[system bundle: ").append(isSystemComponent()).append("] "); //$NON-NLS-1$ //$NON-NLS-2$
 				buffer.append("[source bundle: ").append(isSourceComponent()).append("] "); //$NON-NLS-1$ //$NON-NLS-2$
 				buffer.append("[dev bundle: ").append(fWorkspaceBinary).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1207,7 +1229,7 @@ public class BundleComponent extends Component {
 	 */
 	protected void baselineDisposed(IApiBaseline baseline) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
-				NLS.bind(Messages.BundleApiComponent_baseline_disposed, getName(), baseline.getName()), null));
+				NLS.bind(Messages.BundleApiComponent_baseline_disposed, getName(), baseline.getName()), disposeSource));
 	}
 
 }
