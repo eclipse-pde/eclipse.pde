@@ -42,6 +42,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -59,6 +61,7 @@ import org.eclipse.pde.api.tools.builder.tests.usage.UsageTest;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionXmlCreator;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.IApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
@@ -338,7 +341,13 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * @param baselineLocation local file system directory to host exported
 	 *            component
 	 */
-	protected void exportApiComponent(IProject project, IApiComponent apiComponent, IPath baselineLocation) throws Exception {
+	protected static void exportApiComponent(IProject project, IApiComponent apiComponent, IPath baselineLocation)
+			throws Exception {
+		// create API Description, this should be the first step because
+		// otherwise we might trigger a resource change that maybe invalidates
+		// our component before we can process it!
+		String xml = componentToXml(apiComponent);
+		// now we have the xml and can go on...
 		File root = baselineLocation.toFile();
 		File componentDir = new File(root, project.getName());
 		componentDir.mkdirs();
@@ -358,15 +367,18 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		// copy over .class files
 		IFolder output = project.getFolder("bin"); //$NON-NLS-1$
 		FileUtils.copyFolder(output, componentDir);
-		// API Description
-		ApiDescriptionXmlCreator visitor = new ApiDescriptionXmlCreator(apiComponent);
-		apiComponent.getApiDescription().accept(visitor, null);
-		String xml = visitor.getXML();
+		// copy description
 		File desc = new File(componentDir, ".api_description"); //$NON-NLS-1$
 		desc.createNewFile();
 		try (FileOutputStream stream = new FileOutputStream(desc)) {
 			stream.write(xml.getBytes(StandardCharsets.UTF_8));
 		}
+	}
+
+	private static String componentToXml(IApiComponent apiComponent) throws CoreException {
+		ApiDescriptionXmlCreator visitor = new ApiDescriptionXmlCreator(apiComponent);
+		apiComponent.getApiDescription().accept(visitor, null);
+		return visitor.getXML();
 	}
 
 	/**
@@ -1208,5 +1220,35 @@ public abstract class ApiBuilderTest extends BuilderTests {
 			contents.append("    resource: " + marker.getResource().getFullPath()); //$NON-NLS-1$
 		}
 		return contents.toString();
+	}
+
+	protected static void exportProjects(IApiBaselineManager manager, IProject[] projects, IPath baselineLocation)
+			throws Exception {
+		for (IProject currentProject : projects) {
+			exportComponent(manager, baselineLocation, currentProject, 3);
+		}
+	}
+
+	private static void exportComponent(IApiBaselineManager manager, IPath baselineLocation, IProject currentProject,
+			int retry) throws Exception {
+		IApiComponent component = manager.getWorkspaceComponent(currentProject.getName());
+		assertNotNull("The project was not found in the workspace baseline: " + currentProject.getName(), //$NON-NLS-1$
+				component);
+		try {
+			exportApiComponent(currentProject, component, baselineLocation);
+		} catch (Exception e) {
+			if (retry == 0 || !component.isDisposed()) {
+				throw e;
+			}
+			// if the component is disposed we have the unlucky situation that
+			// while we try to export the component the basline was disposed, we
+			// can simply retry the operation here...
+			IJobManager jobManager = Job.getJobManager();
+			while (!jobManager.isIdle()) {
+				Thread.onSpinWait();
+			}
+
+			exportComponent(manager, baselineLocation, currentProject, retry - 1);
+		}
 	}
 }
