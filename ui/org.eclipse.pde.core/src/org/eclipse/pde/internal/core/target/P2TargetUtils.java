@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
@@ -1084,6 +1085,7 @@ public class P2TargetUtils {
 		context.setProperty(ProvisioningContext.FOLLOW_REPOSITORY_REFERENCES, Boolean.toString(true));
 		context.setMetadataRepositories(getMetadataRepositories(target).toArray(URI[]::new));
 		context.setArtifactRepositories(getArtifactRepositories(target).toArray(URI[]::new));
+		context.setExtraInstallableUnits(getAdditionalProvisionIUs(target));
 
 		IProvisioningPlan plan = planner.getProvisioningPlan(request, context, subMonitor.split(20));
 		IStatus status = plan.getStatus();
@@ -1550,6 +1552,30 @@ public class P2TargetUtils {
 			if (container instanceof TargetReferenceBundleContainer targetRefContainer) {
 				ITargetDefinition referencedTargetDefinition = targetRefContainer.getTargetDefinition();
 				result.addAll(getMetadataRepositories(referencedTargetDefinition));
+			}
+		}
+		return result;
+	}
+
+	private List<IInstallableUnit> getAdditionalProvisionIUs(ITargetDefinition target) throws CoreException {
+		List<IInstallableUnit> result = new ArrayList<>();
+		ITargetLocation[] containers = target.getTargetLocations();
+		if (containers != null) {
+			for (ITargetLocation container : containers) {
+				if (container instanceof IUBundleContainer) {
+					// this is already handled by getMetadataRepositories(..)
+					continue;
+				}
+				if (container instanceof TargetReferenceBundleContainer targetRefContainer) {
+					ITargetDefinition referencedTargetDefinition = targetRefContainer.getTargetDefinition();
+					result.addAll(getAdditionalProvisionIUs(referencedTargetDefinition));
+					continue;
+				}
+				if (!container.isResolved()) {
+					container.resolve(target, new NullProgressMonitor());
+				}
+				InstallableUnitGenerator.generateInstallableUnits(container.getBundles(), container.getFeatures())
+						.forEach(result::add);
 			}
 		}
 		return result;
