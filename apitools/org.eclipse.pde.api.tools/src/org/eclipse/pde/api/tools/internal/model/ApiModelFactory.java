@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -115,35 +115,18 @@ public class ApiModelFactory {
 		if (location == null) {
 			return null;
 		}
-		BundleComponent component = null;
-		if (isBinaryProject(location)) {
-			component = new BundleComponent(baseline, location, getBundleID());
-		} else {
+		BundleComponent component;
+		IResource resource = model.getUnderlyingResource();
+		IProject project = resource != null ? resource.getProject() : null;
+		if (project != null && project.exists() && !Util.isBinaryProject(project)) {
 			component = new ProjectComponent(baseline, location, model, getBundleID());
+		} else {
+			component = new BundleComponent(baseline, location, getBundleID());
 		}
 		if (component.isValidBundle()) {
 			return component;
 		}
 		return null;
-	}
-
-	/**
-	 * Returns if the specified location is an imported binary project.
-	 * <p>
-	 * We accept projects that are plug-ins even if not API enabled (i.e. with
-	 * API nature), as we still need them to make a complete API baseline
-	 * without resolution errors.
-	 * </p>
-	 *
-	 * @param location
-	 * @return true if the location is an imported binary project, false
-	 *         otherwise
-	 * @throws CoreException
-	 */
-	private static boolean isBinaryProject(String location) throws CoreException {
-		IPath path = IPath.fromOSString(location);
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment());
-		return project != null && (!project.exists() || Util.isBinaryProject(project));
 	}
 
 	/**
