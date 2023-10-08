@@ -343,11 +343,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		// create the API baseline
 		IProject[] projects = getEnv().getWorkspace().getRoot().getProjects();
 		IPath baselineLocation = ApiTestsPlugin.getDefault().getStateLocation().append(referenceBaselineLocation);
-		for (IProject currentProject : projects) {
-			IApiComponent component = manager.getWorkspaceComponent(currentProject.getName());
-			assertNotNull("The project was not found in the workspace baseline: " + currentProject.getName(), component); //$NON-NLS-1$
-			exportApiComponent(currentProject, component, baselineLocation);
-		}
+		exportProjects(manager, projects, baselineLocation);
 		this.baseline = ApiModelFactory.newApiBaseline(API_BASELINE);
 		int length = projects.length;
 		IApiComponent[] components = new IApiComponent[length];
