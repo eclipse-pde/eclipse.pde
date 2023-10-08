@@ -154,12 +154,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 		IProject[] projects = getEnv().getWorkspace().getRoot().getProjects();
 		int length = projects.length;
 		IPath baselineLocation = ApiTestsPlugin.getDefault().getStateLocation().append(referenceBaselineLocation);
-		for (int i = 0; i < length; i++) {
-			IProject currentProject = projects[i];
-			IApiComponent apiComponent = manager.getWorkspaceComponent(currentProject.getName());
-			assertNotNull("The project was not found in the workspace baseline: " + currentProject.getName(), apiComponent); //$NON-NLS-1$
-			exportApiComponent(currentProject, apiComponent, baselineLocation);
-		}
+		exportProjects(manager, projects, baselineLocation);
 		this.baseline = ApiModelFactory.newApiBaseline(API_BASELINE);
 		IApiComponent[] components = new IApiComponent[length];
 		for (int i = 0; i < length; i++) {
