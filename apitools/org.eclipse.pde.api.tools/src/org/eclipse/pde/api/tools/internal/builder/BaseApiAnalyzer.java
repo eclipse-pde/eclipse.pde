@@ -185,7 +185,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	public void analyzeComponent(final BuildState state, final IApiFilterStore filterStore, final Properties preferences, final IApiBaseline baseline, final IApiComponent component, final IBuildContext context, IProgressMonitor monitor) {
 		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 6);
 		try {
-			fJavaProject = getJavaProject(component);
+			this.fJavaProject = getJavaProject(component);
 			this.fFilterStore = filterStore;
 			this.fPreferences = preferences;
 			if (!ignoreUnusedProblemFilterCheck()) {
@@ -2665,7 +2665,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param component API component
 	 * @return Java project or <code>null</code>
 	 */
-	private IJavaProject getJavaProject(IApiComponent component) {
+	protected IJavaProject getJavaProject(IApiComponent component) {
 		if (component instanceof ProjectComponent pp) {
 			return pp.getJavaProject();
 		}
