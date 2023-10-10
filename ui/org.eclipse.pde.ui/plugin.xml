@@ -1471,6 +1471,9 @@
           <editorOnboardingCommand
                 id="org.eclipse.ui.window.quickAccess">
           </editorOnboardingCommand>
+          <editorOnboardingCommand
+               id="org.eclipse.jdt.ui.navigate.open.type">
+         </editorOnboardingCommand>  
       </perspectiveExtension>
     </extension>
     <extension
