@@ -167,6 +167,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	private void updateRuntimeDependency() {
 		boolean depends = fEclipseButton.getSelection();
 		fOSGiCombo.setEnabled(!depends);
+		useAutomaticMetadata.setSelection(!depends);
 		useAutomaticMetadata.setEnabled(!depends);
 	}
 
