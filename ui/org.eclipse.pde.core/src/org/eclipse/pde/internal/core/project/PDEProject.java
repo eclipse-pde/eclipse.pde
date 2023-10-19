@@ -60,6 +60,9 @@ public class PDEProject {
 		if (node != null) {
 			String string = node.get(BUNDLE_ROOT_PATH, null);
 			if (string != null) {
+				if (string.isBlank()) {
+					return project;
+				}
 				IPath path = IPath.fromPortableString(string);
 				return project.getFolder(path);
 			}
