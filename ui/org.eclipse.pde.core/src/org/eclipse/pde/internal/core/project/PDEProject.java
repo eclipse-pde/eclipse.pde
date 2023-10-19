@@ -68,13 +68,10 @@ public class PDEProject {
 			}
 		}
 		if (BndProject.isBndProject(project)) {
-
 			try {
-				if (project.hasNature(JavaCore.NATURE_ID)) {
-					IJavaProject javaProject = JavaCore.create(project);
-					IPath outputLocation = javaProject.getOutputLocation();
-					IWorkspaceRoot workspaceRoot = project.getWorkspace().getRoot();
-					return workspaceRoot.getFolder(outputLocation);
+				IFolder outputFolder = getJavaOutputFolder(project);
+				if (outputFolder != null) {
+					return outputFolder;
 				}
 			} catch (CoreException e) {
 				// can't determine the bundle root then from java settings!
@@ -82,6 +79,16 @@ public class PDEProject {
 			}
 		}
 		return project;
+	}
+
+	public static IFolder getJavaOutputFolder(IProject project) throws CoreException {
+		if (project.hasNature(JavaCore.NATURE_ID)) {
+			IJavaProject javaProject = JavaCore.create(project);
+			IPath outputLocation = javaProject.getOutputLocation();
+			IWorkspaceRoot workspaceRoot = project.getWorkspace().getRoot();
+			return workspaceRoot.getFolder(outputLocation);
+		}
+		return null;
 	}
 
 	/**

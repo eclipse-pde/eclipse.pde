@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -38,10 +39,11 @@ import aQute.bnd.osgi.Resource;
 public class ProjectJar extends Jar {
 
 	private final IContainer outputFolder;
+	private IFile manifestFile;
 
 	public ProjectJar(IProject project, Predicate<IResource> filter) throws CoreException {
 		super(project.getName());
-		outputFolder = PDEProject.getBundleRoot(project);
+		outputFolder = PDEProject.getJavaOutputFolder(project);
 		FileResource.addResources(this, outputFolder, filter);
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			IJavaProject javaProject = JavaCore.create(project);
@@ -57,12 +59,53 @@ public class ProjectJar extends Jar {
 				}
 			}
 		}
+		manifestFile = PDEProject.getManifest(project);
 	}
 
 	@Override
 	public void setManifest(Manifest manifest) {
 		super.setManifest(manifest);
-		putResource(JarFile.MANIFEST_NAME, new ManifestResource(manifest));
+		ManifestResource resource = new ManifestResource(manifest);
+		// We must handle this with a little care here, first we put it as a
+		// resource, what will make other parts of BND find it and copy it to
+		// the output location(so it can be found when using the output as a
+		// classpath)
+		putResource(JarFile.MANIFEST_NAME, resource);
+		// but we also need to make sure if BUNDLE_ROOT != output location
+		// another copy for PDE and other things that expect it at the bundle
+		// root...
+		IFile file = outputFolder.getFile(IPath.fromOSString(JarFile.MANIFEST_NAME));
+		if (!file.getFullPath().equals(manifestFile.getFullPath())) {
+			// bundle root is currently not where we store it...
+			if (manifestFile.exists()) {
+				try (InputStream stream = resource.openInputStream()) {
+					manifestFile.setContents(stream, true, false, null);
+				} catch (RuntimeException e) {
+					throw e;
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			} else {
+				try {
+					mkdirs(manifestFile);
+				} catch (CoreException e) {
+					throw new RuntimeException(e);
+				}
+				try (InputStream stream = resource.openInputStream()) {
+					manifestFile.create(stream, true, null);
+				} catch (RuntimeException e) {
+					throw e;
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+			try {
+				manifestFile.setDerived(true, new NullProgressMonitor());
+			} catch (CoreException e) {
+				// if only that don't work just go on...
+			}
+		}
+
 	}
 
 	@Override
@@ -102,6 +145,11 @@ public class ProjectJar extends Jar {
 				folder.create(true, true, null);
 			}
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "Project" + super.toString(); //$NON-NLS-1$
 	}
 
 }
