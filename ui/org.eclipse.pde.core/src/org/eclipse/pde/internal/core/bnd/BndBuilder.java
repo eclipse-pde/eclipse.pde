@@ -14,6 +14,7 @@
 package org.eclipse.pde.internal.core.bnd;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -131,7 +132,25 @@ public class BndBuilder extends IncrementalProjectBuilder {
 			if (monitor.isCanceled()) {
 				return;
 			}
-			try (Project bnd = bndProject.get(); ProjectBuilder builder = new ProjectBuilder(bnd)) {
+			try (Project bnd = bndProject.get(); ProjectBuilder builder = new ProjectBuilder(bnd) {
+				@Override
+				public void addClasspath(aQute.bnd.osgi.Jar jar) {
+					try {
+						// If the output exits, the ProjectBuilder adds the
+						// output as a classpath jar, this on the other hand
+						// later confuses BND because it thinks there is a
+						// splitpackage and tries to copy the class into the jar
+						// again...
+						if (Objects.equals(jar.getSource(), bnd.getOutput())) {
+							jar.close();
+							return;
+						}
+					} catch (Exception e) {
+						// can't do anything useful...
+					}
+					super.addClasspath(jar);
+				}
+			}) {
 				builder.setBase(bnd.getBase());
 				ProjectJar jar = new ProjectJar(project, CLASS_FILTER);
 				builder.setJar(jar);
