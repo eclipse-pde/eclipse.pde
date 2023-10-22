@@ -26,6 +26,7 @@ import java.util.function.Predicate;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -180,7 +181,8 @@ public class ClasspathUpdaterTest {
 		IPluginModelBase model = PluginRegistry.findModel(project.getProject());
 		Job job = UpdateClasspathJob.scheduleFor(List.of(model), false);
 		job.join();
-		assertTrue("Update Classpath Job failed", job.getResult().isOK());
+		IStatus result = job.getResult();
+		assertTrue("Update Classpath Job failed: " + result, result.isOK());
 	}
 
 	private <T> void assertClasspathAttribute(String entryName, String attrName, T expectedValue,
