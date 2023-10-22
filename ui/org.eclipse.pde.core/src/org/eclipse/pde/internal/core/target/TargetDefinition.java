@@ -363,92 +363,67 @@ public class TargetDefinition implements ITargetDefinition {
 
 	@Override
 	public IStatus resolve(IProgressMonitor monitor) {
-		ITargetLocation[] containers = getTargetLocations();
-		int num = 0;
-		// keep a map of synchronizer and number of containers it synchronizes
-		HashMap<P2TargetUtils, Integer> synchronizerNumContainerMap = new HashMap<>();
-		if (containers != null) {
-			num = containers.length;
-			for (ITargetLocation element : containers) {
-				P2TargetUtils synchronizer = element.getAdapter(P2TargetUtils.class);
-				if (synchronizer != null) {
-					if (!synchronizerNumContainerMap.containsKey(synchronizer)) {
-						synchronizerNumContainerMap.put(synchronizer, Integer.valueOf(1));
-					}
-					else{
-						Integer numberIU = synchronizerNumContainerMap.get(synchronizer);
-						synchronizerNumContainerMap.put(synchronizer, Integer.valueOf(numberIU + 1));
-					}
-				}
-			}
+		ITargetLocation[] targetLocations = getTargetLocations();
+		if (targetLocations == null || targetLocations.length == 0) {
+			// if we do not do anything, we can't do anything wrong...
+			return fResolutionStatus = Status.OK_STATUS;
 		}
 		fResolutionStatus = null;
-		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.TargetDefinition_1, num * 100);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.TargetDefinition_1, targetLocations.length * 100);
 		try {
 			MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetDefinition_2, null);
-			Set<P2TargetUtils> seen = new HashSet<>();
-			if (containers != null) {
-				// clear all previous maps
-				P2TargetUtils.fgTargetArtifactRepo.clear();
-				P2TargetUtils.fgArtifactKeyRepoFile.clear();
-				// Process synchronizers first, then perform resolves against the individual
-				// containers. A synchronizer may be shared among several containers, do we
-				// keep track of the synchronizers processed.
-				for (ITargetLocation container : containers) {
+			Map<P2TargetUtils, List<ITargetLocation>> synchronizers = new HashMap<>();
+			// clear all previous maps
+			P2TargetUtils.fgTargetArtifactRepo.clear();
+			P2TargetUtils.fgArtifactKeyRepoFile.clear();
+			for (ITargetLocation location : targetLocations) {
+				subMonitor.checkCanceled();
+				subMonitor.subTask(Messages.TargetDefinition_4);
+				P2TargetUtils synchronizer = location.getAdapter(P2TargetUtils.class);
+				if (synchronizer == null) {
+					// a usual target definition location
+					IStatus s = location.resolve(this, subMonitor.split(100));
+					if (!s.isOK()) {
+						status.add(s);
+					}
+				} else {
+					// has to be performed later on in a separate batch
+					synchronizers.computeIfAbsent(synchronizer, nil -> new ArrayList<>()).add(location);
+				}
+			}
+			if (!synchronizers.isEmpty()) {
+				List<ITargetLocation> delayedLocations = synchronizers.values().stream().flatMap(Collection::stream)
+						.toList();
+				subMonitor.setWorkRemaining(synchronizers.size() * 100 + delayedLocations.size());
+				for (Entry<P2TargetUtils, List<ITargetLocation>> entry : synchronizers.entrySet()) {
 					subMonitor.checkCanceled();
-					subMonitor.subTask(Messages.TargetDefinition_4);
-					P2TargetUtils synchronizer = container.getAdapter(P2TargetUtils.class);
-					if (synchronizer != null && !seen.contains(synchronizer)) {
-						seen.add(synchronizer);
-						try {
-							synchronizer.synchronize(this,
-									subMonitor.split(synchronizerNumContainerMap.get(synchronizer).intValue() * 95));
-							IStatus containerStatus = container.getStatus();
-							if (containerStatus != null && !containerStatus.isOK()) {
-								status.add(containerStatus);
-							}
-						} catch (CoreException e) {
-							PDECore.log(e.getStatus());
-							status.add(e.getStatus());
-						}
+					try {
+						entry.getKey().synchronize(this, subMonitor.split(100));
+						entry.getValue().stream().map(loc -> loc.getStatus()).filter(Objects::nonNull)
+								.filter(s -> !s.isOK()).forEach(status::add);
+					} catch (CoreException e) {
+						PDECore.log(e.getStatus());
+						status.add(e.getStatus());
 					}
 				}
-				synchronizerNumContainerMap.clear();
-				if (!status.isOK()) {
-					fResolutionStatus = status;
-					return fResolutionStatus;
-				}
-				for (ITargetLocation container : containers) {
+				for (ITargetLocation location : delayedLocations) {
 					subMonitor.checkCanceled();
-					subMonitor.subTask(Messages.TargetDefinition_4);
-					P2TargetUtils synchronizer = container.getAdapter(P2TargetUtils.class);
-					int totalWork = 5;
-					if (synchronizer == null) {
-						totalWork = 100;
-					}
-					IStatus s = container.resolve(this, subMonitor.split(totalWork));
+					IStatus s = location.resolve(this, subMonitor.split(1));
 					if (!s.isOK()) {
 						status.add(s);
 					}
 				}
 			}
 			if (status.isOK()) {
-				fResolutionStatus = Status.OK_STATUS;
-				return fResolutionStatus;
+				return fResolutionStatus = Status.OK_STATUS;
 			}
-			subMonitor.checkCanceled();
-			fResolutionStatus = status;
-			return fResolutionStatus;
+			return fResolutionStatus = status;
 		} catch (OperationCanceledException e) {
 			return Status.CANCEL_STATUS;
 		} finally {
 			// keep a list of resolved targets with key as handle
 			TargetPlatformHelper.addTargetDefinitionMap(this);
-
 			subMonitor.done();
-			if (monitor != null) {
-				monitor.done();
-			}
 		}
 	}
 
