@@ -86,7 +86,7 @@ public class TargetReferenceBundleContainer extends AbstractBundleContainer {
 		return uri;
 	}
 
-	private synchronized ITargetDefinition getTargetDefinition() throws CoreException {
+	synchronized ITargetDefinition getTargetDefinition() throws CoreException {
 		// only synchronize here, we just want to make sure not two threads are
 		// loading the target in parallel but not block the targetDefinition or
 		// reload operation as these might be called from the UI
