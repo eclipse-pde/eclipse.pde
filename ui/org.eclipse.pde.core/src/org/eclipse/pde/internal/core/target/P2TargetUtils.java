@@ -1082,8 +1082,8 @@ public class P2TargetUtils {
 
 		ProvisioningContext context = new ProvisioningContext(getAgent());
 		context.setProperty(ProvisioningContext.FOLLOW_REPOSITORY_REFERENCES, Boolean.toString(true));
-		context.setMetadataRepositories(getMetadataRepositories(target));
-		context.setArtifactRepositories(getArtifactRepositories(target));
+		context.setMetadataRepositories(getMetadataRepositories(target).toArray(URI[]::new));
+		context.setArtifactRepositories(getArtifactRepositories(target).toArray(URI[]::new));
 
 		IProvisioningPlan plan = planner.getProvisioningPlan(request, context, subMonitor.split(20));
 		IStatus status = plan.getStatus();
@@ -1273,12 +1273,12 @@ public class P2TargetUtils {
 		// resolve IUs
 		IInstallableUnit[] units = getRootIUs(target, subMonitor.split(40));
 
-		URI[] repositories = getMetadataRepositories(target);
-		int repoCount = repositories.length;
-		if (repoCount == 0) {
+		Collection<URI> repositories = getMetadataRepositories(target);
+		if (repositories.isEmpty()) {
 			return;
 		}
-		IQueryable<IInstallableUnit> allMetadata = getQueryableMetadata(repositories, subMonitor.split(5));
+		URI[] uris = repositories.toArray(URI[]::new);
+		IQueryable<IInstallableUnit> allMetadata = getQueryableMetadata(uris, subMonitor.split(5));
 
 		// do an initial slice to add everything the user requested
 		IQueryResult<IInstallableUnit> queryResult = slice(units, allMetadata, target, subMonitor.split(5));
@@ -1303,8 +1303,8 @@ public class P2TargetUtils {
 
 		IEngine engine = getEngine();
 		ProvisioningContext context = new ProvisioningContext(getAgent());
-		context.setMetadataRepositories(repositories);
-		context.setArtifactRepositories(getArtifactRepositories(target));
+		context.setMetadataRepositories(uris);
+		context.setArtifactRepositories(getArtifactRepositories(target).toArray(URI[]::new));
 		context.setProperty(ProvisioningContext.FOLLOW_REPOSITORY_REFERENCES, Boolean.toString(true));
 		IProvisioningPlan plan = engine.createPlan(fProfile, context);
 		setPlanProperties(plan, target, TargetDefinitionPersistenceHelper.MODE_SLICER);
@@ -1392,7 +1392,7 @@ public class P2TargetUtils {
 	 * @return URI's of repositories to use when getting artifacts
 	 * @exception CoreException
 	 */
-	private URI[] getArtifactRepositories(ITargetDefinition target) throws CoreException {
+	private Collection<URI> getArtifactRepositories(ITargetDefinition target) throws CoreException {
 		Set<URI> result = new HashSet<>();
 		ITargetLocation[] containers = target.getTargetLocations();
 		if (containers == null) {
@@ -1407,6 +1407,10 @@ public class P2TargetUtils {
 				}
 				result.addAll(Arrays.asList(repos));
 			}
+			if (container instanceof TargetReferenceBundleContainer targetRefContainer) {
+				ITargetDefinition referencedTargetDefinition = targetRefContainer.getTargetDefinition();
+				result.addAll(getArtifactRepositories(referencedTargetDefinition));
+			}
 		}
 		if (useAdditionalLocalArtifacts()) {
 			// get all the artifact repos we know in the manager currently
@@ -1416,7 +1420,7 @@ public class P2TargetUtils {
 			findProfileRepos(result);
 			findWorkspaceRepos(result);
 		}
-		return result.toArray(new URI[result.size()]);
+		return result;
 	}
 
 	/**
@@ -1528,7 +1532,7 @@ public class P2TargetUtils {
 	 * @return URI's of repositories to use when resolving bundles
 	 * @exception CoreException
 	 */
-	private URI[] getMetadataRepositories(ITargetDefinition target) throws CoreException {
+	private Collection<URI> getMetadataRepositories(ITargetDefinition target) throws CoreException {
 		Set<URI> result = new HashSet<>();
 		ITargetLocation[] containers = target.getTargetLocations();
 		if (containers == null) {
@@ -1536,15 +1540,19 @@ public class P2TargetUtils {
 		}
 		IMetadataRepositoryManager manager = getRepoManager();
 		for (ITargetLocation container : containers) {
-			if (container instanceof IUBundleContainer) {
-				URI[] repos = ((IUBundleContainer) container).getRepositories();
+			if (container instanceof IUBundleContainer iuContainer) {
+				URI[] repos = iuContainer.getRepositories();
 				if (repos == null) {
 					repos = manager.getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL);
 				}
 				result.addAll(Arrays.asList(repos));
 			}
+			if (container instanceof TargetReferenceBundleContainer targetRefContainer) {
+				ITargetDefinition referencedTargetDefinition = targetRefContainer.getTargetDefinition();
+				result.addAll(getMetadataRepositories(referencedTargetDefinition));
+			}
 		}
-		return result.toArray(new URI[result.size()]);
+		return result;
 	}
 
 	private static final String NATIVE_ARTIFACTS = "nativeArtifacts"; //$NON-NLS-1$
