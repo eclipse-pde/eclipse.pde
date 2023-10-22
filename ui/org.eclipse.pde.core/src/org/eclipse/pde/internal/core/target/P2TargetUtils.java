@@ -1361,7 +1361,7 @@ public class P2TargetUtils {
 			props.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
 			slicer = new PermissiveSlicer(allMetadata, props, true, false, false, true, false);
 		}
-		IQueryable<IInstallableUnit> slice = slicer.slice(units, subMonitor.split(50));
+		IQueryable<IInstallableUnit> slice = slicer.slice(Arrays.asList(units), subMonitor.split(50));
 		IStatus sliceStatus = slicer.getStatus();
 		// If the slicer encounters an error, stop the operation
 		if (sliceStatus.getSeverity() == IStatus.ERROR) {

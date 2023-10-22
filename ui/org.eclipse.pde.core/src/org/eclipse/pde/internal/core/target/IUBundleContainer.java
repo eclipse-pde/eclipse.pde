@@ -318,7 +318,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		boolean onlyStrict = !fSynchronizer.getIncludeAllRequired();
 		IProfile metadata = fSynchronizer.getProfile();
 		PermissiveSlicer slicer = new PermissiveSlicer(metadata, new HashMap<>(), true, false, true, onlyStrict, false);
-		IQueryable<IInstallableUnit> slice = slicer.slice(fUnits, new NullProgressMonitor());
+		IQueryable<IInstallableUnit> slice = slicer.slice(Arrays.asList(fUnits), new NullProgressMonitor());
 
 		if (slicer.getStatus().getSeverity() == IStatus.ERROR) {
 			// If the slicer has an error, report it instead of returning an empty set
