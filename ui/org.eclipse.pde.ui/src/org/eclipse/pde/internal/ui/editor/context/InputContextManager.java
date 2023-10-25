@@ -201,6 +201,9 @@ public abstract class InputContextManager implements IResourceChangeListener {
 	}
 
 	public void monitorFile(IFile file) {
+		if (file == null) {
+			return;
+		}
 		monitoredFiles.add(file);
 	}
 
