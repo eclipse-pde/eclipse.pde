@@ -207,13 +207,18 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	}
 
 	protected ISortableContentOutlinePage createOutlinePage() {
-		SourceOutlinePage sourceOutlinePage = new SourceOutlinePage(fEditor, (IEditingModel) getInputContext().getModel(), createOutlineLabelProvider(), createOutlineContentProvider(), createDefaultOutlineComparator(), createOutlineComparator());
-		fOutlinePage = sourceOutlinePage;
-		fOutlineSelectionChangedListener = this::updateSelection;
-		fOutlinePage.addSelectionChangedListener(fOutlineSelectionChangedListener);
-		getSelectionProvider().addSelectionChangedListener(sourceOutlinePage);
-		fEditorSelectionChangedListener = new PDESourcePageChangedListener();
-		fEditorSelectionChangedListener.install(getSelectionProvider());
+		IBaseModel model = getInputContext().getModel();
+		if (model instanceof IEditingModel editModel) {
+			SourceOutlinePage sourceOutlinePage = new SourceOutlinePage(fEditor, editModel,
+					createOutlineLabelProvider(), createOutlineContentProvider(), createDefaultOutlineComparator(),
+					createOutlineComparator());
+			fOutlinePage = sourceOutlinePage;
+			fOutlineSelectionChangedListener = this::updateSelection;
+			fOutlinePage.addSelectionChangedListener(fOutlineSelectionChangedListener);
+			getSelectionProvider().addSelectionChangedListener(sourceOutlinePage);
+			fEditorSelectionChangedListener = new PDESourcePageChangedListener();
+			fEditorSelectionChangedListener.install(getSelectionProvider());
+		}
 		return fOutlinePage;
 	}
 
