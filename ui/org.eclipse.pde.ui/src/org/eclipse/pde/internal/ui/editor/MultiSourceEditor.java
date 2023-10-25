@@ -15,6 +15,7 @@ package org.eclipse.pde.internal.ui.editor;
 
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.IFormPage;
 
@@ -23,12 +24,14 @@ public abstract class MultiSourceEditor extends PDEFormEditor {
 		InputContext context = fInputContextManager.findContext(contextId);
 		if (context == null)
 			return;
-		PDESourcePage sourcePage;
+		IEditorPart sourcePage;
 		// Don't duplicate
 		if (findPage(contextId) != null)
 			return;
 		sourcePage = createSourcePage(this, contextId, context.getInput().getName(), context.getId());
-		sourcePage.setInputContext(context);
+		if (sourcePage instanceof PDESourcePage pdeSourcePage) {
+			pdeSourcePage.setInputContext(context);
+		}
 		try {
 			addPage(sourcePage, context.getInput());
 		} catch (PartInitException e) {
@@ -49,7 +52,7 @@ public abstract class MultiSourceEditor extends PDEFormEditor {
 		}
 	}
 
-	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
+	protected IEditorPart createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		return new GenericSourcePage(editor, title, name);
 	}
 }

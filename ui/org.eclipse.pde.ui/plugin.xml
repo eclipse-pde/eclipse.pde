@@ -2475,4 +2475,11 @@
 			</enablement>
          </commonWizard>
       </extension>
+      <extension
+            point="org.eclipse.ui.genericeditor.contentAssistProcessors">
+         <contentAssistProcessor
+               class="org.eclipse.pde.internal.ui.editor.bnd.BndAutoCompleteProcessor"
+               contentType="org.eclipse.pde.bndInstructions">
+         </contentAssistProcessor>
+      </extension>
 </plugin>

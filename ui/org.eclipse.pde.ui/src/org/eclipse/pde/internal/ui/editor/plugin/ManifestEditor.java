@@ -75,7 +75,6 @@ import org.eclipse.pde.internal.ui.editor.JarEntryEditorInput;
 import org.eclipse.pde.internal.ui.editor.JarEntryFile;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDELauncherFormEditor;
-import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.bnd.BndInputContext;
 import org.eclipse.pde.internal.ui.editor.bnd.BndSourcePage;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
@@ -656,7 +655,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	}
 
 	@Override
-	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
+	protected IEditorPart createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		if (contextId.equals(PluginInputContext.CONTEXT_ID))
 			return new ManifestSourcePage(editor, title, name);
 		if (contextId.equals(BuildInputContext.CONTEXT_ID))

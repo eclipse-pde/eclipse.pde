@@ -13,62 +13,101 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.bnd;
 
-import org.eclipse.jface.text.DefaultInformationControl;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.contentassist.ContentAssistant;
-import org.eclipse.jface.text.contentassist.IContentAssistant;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.editor.GenericSourcePage;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.editor.FormEditor;
+import org.eclipse.ui.forms.editor.IFormPage;
+import org.eclipse.ui.ide.IDE;
 
-public class BndSourcePage extends GenericSourcePage {
+@SuppressWarnings("restriction")
+public class BndSourcePage extends org.eclipse.ui.internal.genericeditor.ExtensionBasedTextEditor implements IFormPage {
+
+	private FormEditor editor;
+	private boolean active;
+	private int index;
+	private String id;
+	private Control fControl;
 
 	public BndSourcePage(PDEFormEditor editor, String id, String title) {
-		super(editor, id, title);
-		setSourceViewerConfiguration(new SourceViewerConfiguration() {
-			private ContentAssistant fContentAssistant;
-
-			@Override
-			public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
-				if (isEditable()) {
-					if (fContentAssistant == null) {
-						// Initialize in SWT thread before using in background
-						// thread:
-						PDEPluginImages.get(null);
-						fContentAssistant = new ContentAssistant(true);
-						fContentAssistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-						fContentAssistant.setContentAssistProcessor(new BndAutoCompleteProcessor(),
-								IDocument.DEFAULT_CONTENT_TYPE);
-						fContentAssistant.enableAutoInsert(true);
-						fContentAssistant
-								.setInformationControlCreator(parent -> new DefaultInformationControl(parent, false));
-						fContentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
-						fContentAssistant.enableAutoActivation(true);
-					}
-					return fContentAssistant;
-				}
-				return null;
-			}
-		});
+		this.id = id;
 	}
 
 	@Override
-	public ILabelProvider createOutlineLabelProvider() {
+	public void initialize(FormEditor editor) {
+		this.editor = editor;
+	}
+
+	@Override
+	public FormEditor getEditor() {
+		return editor;
+	}
+
+	@Override
+	public IManagedForm getManagedForm() {
 		return null;
 	}
 
 	@Override
-	public ITreeContentProvider createOutlineContentProvider() {
-		return null;
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	@Override
-	public void updateSelection(Object object) {
-
+	public boolean isActive() {
+		return active;
 	}
+
+	@Override
+	public boolean canLeaveThePage() {
+		return true;
+	}
+
+	@Override
+	public Control getPartControl() {
+		return fControl;
+	}
+
+	@Override
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		Control[] children = parent.getChildren();
+		fControl = children[children.length - 1];
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(fControl, IHelpContextIds.MANIFEST_SOURCE_PAGE);
+	}
+
+	@Override
+	public String getId() {
+		return id;
+	}
+
+	@Override
+	public int getIndex() {
+		return index;
+	}
+
+	@Override
+	public void setIndex(int index) {
+		this.index = index;
+	}
+
+	@Override
+	public boolean isEditor() {
+		return true;
+	}
+
+	@Override
+	public boolean selectReveal(Object object) {
+		if (object instanceof IMarker) {
+			IDE.gotoMarker(this, (IMarker) object);
+			return true;
+		}
+		return false;
+	}
+
 
 }
