@@ -59,6 +59,7 @@ import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
+import org.eclipse.ui.forms.editor.IFormPage;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
@@ -156,8 +157,8 @@ public abstract class PDEFormPage extends FormPage {
 	public void contextMenuAboutToShow(IMenuManager menu) {
 	}
 
-	protected Control getFocusControl() {
-		IManagedForm form = getManagedForm();
+	protected static Control getFocusControl(IFormPage page) {
+		IManagedForm form = page.getManagedForm();
 		if (form == null)
 			return null;
 		Control control = form.getForm();
@@ -170,14 +171,14 @@ public abstract class PDEFormPage extends FormPage {
 		return focusControl;
 	}
 
-	public boolean performGlobalAction(String actionId) {
-		Control focusControl = getFocusControl();
+	public static boolean performGlobalAction(String actionId, IFormPage formPage) {
+		Control focusControl = getFocusControl(formPage);
 		if (focusControl == null)
 			return false;
 
 		if (canPerformDirectly(actionId, focusControl))
 			return true;
-		AbstractFormPart focusPart = getFocusSection();
+		AbstractFormPart focusPart = getFocusSection(formPage);
 		if (focusPart != null) {
 			if (focusPart instanceof PDESection)
 				return ((PDESection) focusPart).doGlobalAction(actionId);
@@ -188,7 +189,7 @@ public abstract class PDEFormPage extends FormPage {
 	}
 
 	public boolean canPaste(Clipboard clipboard) {
-		AbstractFormPart focusPart = getFocusSection();
+		AbstractFormPart focusPart = getFocusSection(this);
 		if (focusPart != null) {
 			if (focusPart instanceof PDESection) {
 				return ((PDESection) focusPart).canPaste(clipboard);
@@ -201,7 +202,7 @@ public abstract class PDEFormPage extends FormPage {
 	}
 
 	public boolean canCopy(ISelection selection) {
-		AbstractFormPart focusPart = getFocusSection();
+		AbstractFormPart focusPart = getFocusSection(this);
 		if (focusPart != null) {
 			if (focusPart instanceof PDESection) {
 				return ((PDESection) focusPart).canCopy(selection);
@@ -214,7 +215,7 @@ public abstract class PDEFormPage extends FormPage {
 	}
 
 	public boolean canCut(ISelection selection) {
-		AbstractFormPart focusPart = getFocusSection();
+		AbstractFormPart focusPart = getFocusSection(this);
 		if (focusPart != null) {
 			if (focusPart instanceof PDESection) {
 				return ((PDESection) focusPart).canCut(selection);
@@ -226,8 +227,8 @@ public abstract class PDEFormPage extends FormPage {
 		return false;
 	}
 
-	private AbstractFormPart getFocusSection() {
-		Control focusControl = getFocusControl();
+	private static AbstractFormPart getFocusSection(IFormPage page) {
+		Control focusControl = getFocusControl(page);
 		if (focusControl == null)
 			return null;
 		Composite parent = focusControl.getParent();
@@ -243,7 +244,15 @@ public abstract class PDEFormPage extends FormPage {
 		return targetPart;
 	}
 
-	protected boolean canPerformDirectly(String id, Control control) {
+	protected static boolean canPerformDirectly(String id, IFormPage page) {
+		Control focusControl = getFocusControl(page);
+		if (focusControl == null) {
+			return false;
+		}
+		return canPerformDirectly(id, focusControl);
+	}
+
+	protected static boolean canPerformDirectly(String id, Control control) {
 		if (control instanceof Text text) {
 			if (id.equals(ActionFactory.CUT.getId())) {
 				text.cut();

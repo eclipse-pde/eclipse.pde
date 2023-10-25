@@ -31,6 +31,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -44,6 +45,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ErrorEditorPart;
 import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
 import org.junit.Before;
 import org.junit.Test;
@@ -137,7 +139,17 @@ public class ManifestEditorSpellCheckTestCase extends XMLModelTestCase {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 		}
-
+		if (fEditor instanceof ErrorEditorPart errorpart) {
+			IStatus error = errorpart.getError();
+			if (error == null) {
+				fail("failed to open editor");
+			}
+			Throwable exception = error.getException();
+			if (exception != null) {
+				throw new AssertionError("fail to open editor", exception);
+			}
+			fail(error.toString());
+		}
 		PDEFormEditor editor = (PDEFormEditor) fEditor;
 		editor.setActivePage(PluginInputContext.CONTEXT_ID);
 	}

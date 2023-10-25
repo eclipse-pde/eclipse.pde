@@ -375,7 +375,7 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 			return;
 		try {
 			ManifestEditor manifestEditor = (ManifestEditor) getEditor();
-			manifestEditor.addExtensionTabs();
+			manifestEditor.addExtensionTabs(3);
 			manifestEditor.setShowExtensions(true);
 			manifestEditor.setActivePage(activePageId);
 		} catch (PartInitException | BackingStoreException e) {
