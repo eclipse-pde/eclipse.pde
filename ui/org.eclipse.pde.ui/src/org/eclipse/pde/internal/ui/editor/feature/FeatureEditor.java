@@ -47,7 +47,6 @@ import org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage;
 import org.eclipse.pde.internal.ui.editor.MultiSourceEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
-import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.editor.build.BuildSourcePage;
@@ -312,7 +311,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	}
 
 	@Override
-	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
+	protected IEditorPart createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		if (contextId.equals(FeatureInputContext.CONTEXT_ID))
 			return new FeatureSourcePage(editor, title, name);
 		if (contextId.equals(BuildInputContext.CONTEXT_ID))
