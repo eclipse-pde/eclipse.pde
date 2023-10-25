@@ -112,7 +112,7 @@ public class FileResource implements Resource {
 			return;
 		}
 		for (IResource resource : container.members()) {
-			if (filter == null || filter.test(container)) {
+			if (filter == null || filter.test(resource)) {
 				if (resource instanceof IFile) {
 					IPath projectRelativePath = resource.getProjectRelativePath();
 					String relativePath = projectRelativePath.toString();

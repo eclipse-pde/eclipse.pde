@@ -14,6 +14,8 @@
 package org.eclipse.pde.internal.core.bnd;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -27,9 +29,11 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.project.PDEProject;
 
 import aQute.bnd.osgi.Jar;
@@ -38,13 +42,29 @@ import aQute.bnd.osgi.Resource;
 
 public class ProjectJar extends Jar {
 
+	public static final QualifiedName GENERATED_PROPERTY = new QualifiedName(PDECore.PLUGIN_ID, "bndgenerated"); //$NON-NLS-1$
+
 	private final IContainer outputFolder;
 	private IFile manifestFile;
+	private final Map<String, IFile> orphanFilesMap = new HashMap<>();
 
 	public ProjectJar(IProject project, Predicate<IResource> filter) throws CoreException {
 		super(project.getName());
 		outputFolder = PDEProject.getJavaOutputFolder(project);
-		FileResource.addResources(this, outputFolder, filter);
+		Predicate<IResource> resourceScanner = r -> {
+			if (r instanceof IFile f) {
+				try {
+					String path = r.getPersistentProperty(GENERATED_PROPERTY);
+					if (path != null) {
+						orphanFilesMap.put(path, f);
+					}
+				} catch (CoreException e) {
+					// can't use that the ...
+				}
+			}
+			return filter.test(r);
+		};
+		FileResource.addResources(this, outputFolder, resourceScanner);
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			IJavaProject javaProject = JavaCore.create(project);
 			IWorkspaceRoot workspaceRoot = project.getWorkspace().getRoot();
@@ -54,7 +74,7 @@ public class ProjectJar extends Jar {
 					IPath location = cp.getOutputLocation();
 					if (location != null) {
 						IFolder otherOutputFolder = workspaceRoot.getFolder(location);
-						FileResource.addResources(this, otherOutputFolder, filter);
+						FileResource.addResources(this, otherOutputFolder, resourceScanner);
 					}
 				}
 			}
@@ -127,11 +147,13 @@ public class ProjectJar extends Jar {
 					file.create(stream, true, null);
 				}
 			}
+			file.setPersistentProperty(GENERATED_PROPERTY, path);
 		} catch (RuntimeException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+		orphanFilesMap.remove(path);
 		return super.putResource(path, new FileResource(file), overwrite);
 	}
 
@@ -150,6 +172,22 @@ public class ProjectJar extends Jar {
 	@Override
 	public String toString() {
 		return "Project" + super.toString(); //$NON-NLS-1$
+	}
+
+	@Override
+	public void close() {
+		cleanup();
+		super.close();
+	}
+
+	private void cleanup() {
+		for (IFile file : orphanFilesMap.values()) {
+			try {
+				file.delete(true, null);
+			} catch (Exception e) {
+				// must wait for next clean then...
+			}
+		}
 	}
 
 }
