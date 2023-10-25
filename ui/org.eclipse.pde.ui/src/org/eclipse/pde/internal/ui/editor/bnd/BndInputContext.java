@@ -31,6 +31,7 @@ import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.IEditorInput;
 
 public class BndInputContext extends InputContext implements IInputContextListener, IModelChangedListener {
+	public static final String BND_PARTITION = "___bnd_partition"; //$NON-NLS-1$
 	public static final String CONTEXT_ID = "bnd-context"; //$NON-NLS-1$
 
 	public BndInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
@@ -71,7 +72,7 @@ public class BndInputContext extends InputContext implements IInputContextListen
 
 	@Override
 	protected String getPartitionName() {
-		return "___bnd_partition"; //$NON-NLS-1$
+		return BND_PARTITION;
 	}
 
 	@Override
