@@ -77,6 +77,7 @@ import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDELauncherFormEditor;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 import org.eclipse.pde.internal.ui.editor.bnd.BndInputContext;
+import org.eclipse.pde.internal.ui.editor.bnd.BndSourcePage;
 import org.eclipse.pde.internal.ui.editor.build.BuildInputContext;
 import org.eclipse.pde.internal.ui.editor.build.BuildPage;
 import org.eclipse.pde.internal.ui.editor.build.BuildSourcePage;
@@ -662,6 +663,9 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			return new BuildSourcePage(editor, title, name);
 		if (contextId.equals(BundleInputContext.CONTEXT_ID))
 			return new BundleSourcePage(editor, title, name);
+		if (contextId.equals(BndInputContext.CONTEXT_ID)) {
+			return new BndSourcePage(editor, contextId, title);
+		}
 		return super.createSourcePage(editor, title, name, contextId);
 	}
 
