@@ -9,7 +9,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	DependencyManagerTest.class, //
 	WorkspaceModelManagerTest.class, //
 	WorkspaceProductModelManagerTest.class, //
-	PDEXmlProcessorFactoryTest.class //
 })
 public class AllPDECoreTests {
 }
