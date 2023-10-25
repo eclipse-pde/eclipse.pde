@@ -33,12 +33,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.service.resolver.BaseDescription;
 import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IIdentifiable;
 import org.eclipse.pde.core.build.IBuild;
@@ -238,33 +236,28 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 			manifestFile = container.getFile(ICoreConstants.MANIFEST_PATH);
 		} else if (name.endsWith(BndProject.INSTRUCTIONS_FILE_EXTENSION)) {
 			IProject project = file.getProject();
-			manifestFile = PDEProject.getManifest(project);
-			buildFile = PDEProject.getBuildProperties(project);
-			pluginFile = PDEProject.getPluginXml(project);
 			if (name.equalsIgnoreCase(BndProject.INSTRUCTIONS_FILE)) {
-				IEditorInput in = new FileEditorInput(file);
-				BndInputContext bndInputContext = new BndInputContext(this, in, true);
-				manager.putContext(in, bndInputContext);
-				manager.monitorFile(file);
-				manager.addInputContextListener(bndInputContext);
+				manifestFile = PDEProject.getManifest(project);
+				buildFile = PDEProject.getBuildProperties(project);
+				pluginFile = PDEProject.getPluginXml(project);
 			}
+			IEditorInput in = new FileEditorInput(file);
+			BndInputContext bndInputContext = new BndInputContext(this, in, true);
+			manager.putContext(in, bndInputContext);
+			manager.monitorFile(file);
+			manager.addInputContextListener(bndInputContext);
 		}
-		if (manifestFile == null) {
-			MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OpenPluginManifestsAction_title,
-					NLS.bind(PDEUIMessages.OpenManifestsAction_cannotOpenThisFile, name));
-			return;
-		}
-		if (manifestFile.exists()) {
+		if (manifestFile != null && manifestFile.exists()) {
 			IEditorInput in = new FileEditorInput(manifestFile);
 			manager.putContext(in, new BundleInputContext(this, in, file == manifestFile));
 		}
 		manager.monitorFile(manifestFile);
-		if (pluginFile.exists()) {
+		if (pluginFile != null && pluginFile.exists()) {
 			FileEditorInput in = new FileEditorInput(pluginFile);
 			manager.putContext(in, new PluginInputContext(this, in, file == pluginFile, fragment));
 		}
 		manager.monitorFile(pluginFile);
-		if (buildFile.exists()) {
+		if (buildFile != null && buildFile.exists()) {
 			FileEditorInput in = new FileEditorInput(buildFile);
 			manager.putContext(in, new BuildInputContext(this, in, false));
 		}
@@ -400,12 +393,14 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	private void updateFirstThreePages() {
 		try {
 			int index = getActivePage();
-			removePage(0);
-			removePage(0);
-			removePage(0);
-			addPage(0, new RuntimePage(this));
-			addPage(0, new DependenciesPage(this));
-			addPage(0, new OverviewPage(this));
+			removePage(RuntimePage.PAGE_ID);
+			removePage(DependenciesPage.PAGE_ID);
+			removePage(OverviewPage.PAGE_ID);
+			if (fInputContextManager.hasContext(BundleInputContext.CONTEXT_ID)) {
+				addPage(0, new RuntimePage(this));
+				addPage(0, new DependenciesPage(this));
+				addPage(0, new OverviewPage(this));
+			}
 			setActivePage(index);
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
@@ -526,11 +521,17 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	@Override
 	protected void addEditorPages() {
 		try {
-			addPage(new OverviewPage(this));
-			addPage(new DependenciesPage(this));
-			addPage(new RuntimePage(this));
+			int extTabPosition;
+			if (fInputContextManager.hasContext(BundleInputContext.CONTEXT_ID)) {
+				addPage(new OverviewPage(this));
+				addPage(new DependenciesPage(this));
+				addPage(new RuntimePage(this));
+				extTabPosition = 3;
+			} else {
+				extTabPosition = 0;
+			}
 			if (showExtensionTabs()) {
-				addExtensionTabs();
+				addExtensionTabs(extTabPosition);
 			}
 			if (fInputContextManager.hasContext(BuildInputContext.CONTEXT_ID))
 				addPage(new BuildPage(this));
@@ -771,9 +772,9 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		return fEquinox;
 	}
 
-	protected void addExtensionTabs() throws PartInitException {
-		addPage(3, new ExtensionPointsPage(this));
-		addPage(3, new ExtensionsPage(this));
+	protected void addExtensionTabs(int extTabPosition) throws PartInitException {
+		addPage(extTabPosition, new ExtensionPointsPage(this));
+		addPage(extTabPosition, new ExtensionsPage(this));
 	}
 
 	protected void setShowExtensions(boolean show) throws BackingStoreException {

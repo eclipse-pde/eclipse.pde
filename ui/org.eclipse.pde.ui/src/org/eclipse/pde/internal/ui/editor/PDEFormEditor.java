@@ -776,23 +776,21 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	protected void performGlobalAction(String id) {
 		// preserve selection
 		ISelection selection = getSelection();
-		boolean handled = ((PDEFormPage) getActivePageInstance()).performGlobalAction(id);
-		if (!handled) {
-			IFormPage page = getActivePageInstance();
-			if (page instanceof PDEFormPage) {
-				if (id.equals(ActionFactory.UNDO.getId())) {
-					fInputContextManager.undo();
-					return;
-				}
-				if (id.equals(ActionFactory.REDO.getId())) {
-					fInputContextManager.redo();
-					return;
-				}
-				if (id.equals(ActionFactory.CUT.getId()) || id.equals(ActionFactory.COPY.getId())) {
-					copyToClipboard(selection);
-					return;
-				}
-			}
+		IFormPage page = getActivePageInstance();
+		if (PDEFormPage.performGlobalAction(id, page)) {
+			return;
+		}
+		if (id.equals(ActionFactory.UNDO.getId())) {
+			fInputContextManager.undo();
+			return;
+		}
+		if (id.equals(ActionFactory.REDO.getId())) {
+			fInputContextManager.redo();
+			return;
+		}
+		if (id.equals(ActionFactory.CUT.getId()) || id.equals(ActionFactory.COPY.getId())) {
+			copyToClipboard(selection);
+			return;
 		}
 	}
 
