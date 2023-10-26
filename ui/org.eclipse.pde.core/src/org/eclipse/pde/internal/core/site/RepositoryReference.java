@@ -25,9 +25,11 @@ public class RepositoryReference extends SiteObject implements IRepositoryRefere
 	private static final long serialVersionUID = 1L;
 
 	public static final String P_LOCATION = "location"; //$NON-NLS-1$
+	public static final String P_NAME = "name"; //$NON-NLS-1$
 	public static final String P_ENABLED = "enabled"; //$NON-NLS-1$
 
 	private String fURL;
+	private String fName;
 	private boolean fEnabled = true; // enabled unless specified otherwise
 
 	public RepositoryReference() {
@@ -48,6 +50,19 @@ public class RepositoryReference extends SiteObject implements IRepositoryRefere
 	}
 
 	@Override
+	public String getName() {
+		return fName;
+	}
+
+	@Override
+	public void setName(String name) throws CoreException {
+		String old = fName;
+		fName = name;
+		ensureModelEditable();
+		firePropertyChanged(P_NAME, old, fName);
+	}
+
+	@Override
 	public boolean getEnabled() {
 		return fEnabled;
 	}
@@ -65,6 +80,7 @@ public class RepositoryReference extends SiteObject implements IRepositoryRefere
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
 			fURL = element.getAttribute("location"); //$NON-NLS-1$
+			fName = element.getAttribute("name"); //$NON-NLS-1$
 			fEnabled = Boolean.parseBoolean(element.getAttribute(P_ENABLED));
 		}
 	}
@@ -73,6 +89,9 @@ public class RepositoryReference extends SiteObject implements IRepositoryRefere
 	public void write(String indent, PrintWriter writer) {
 		if (isURLDefined()) {
 			writer.print(indent + "<repository-reference location=\"" + fURL + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			if (fName != null) {
+				writer.print(" name=\"" + fName + "\""); //$NON-NLS-1$//$NON-NLS-2$
+			}
 			writer.print(" enabled=\"" + fEnabled + "\""); //$NON-NLS-1$//$NON-NLS-2$
 			writer.println(" />"); //$NON-NLS-1$
 		}
