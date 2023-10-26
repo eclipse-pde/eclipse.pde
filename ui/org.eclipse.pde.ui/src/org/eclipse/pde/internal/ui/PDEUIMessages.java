@@ -3071,12 +3071,15 @@ public class PDEUIMessages extends NLS {
 	public static String UpdatesSection_description;
 	public static String UpdatesSection_RepositoryDialogTitle;
 	public static String UpdatesSection_Location;
+	public static String UpdatesSection_Name;
 	public static String UpdatesSection_ErrorLocationNoName;
 	public static String UpdatesSection_ErrorInvalidURL;
 	public static String UpdatesSection_LocationColumn;
 
 	public static String UpdatesSection_LocationMessage;
 	public static String UpdatesSection_EnabledColumn;
+
+	public static String UpdatesSection_NameColumn;
 
 	public static String CustomizationPage_title;
 

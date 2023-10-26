@@ -26,9 +26,11 @@ public class RepositoryInfo extends ProductObject implements IRepositoryInfo {
 	private static final long serialVersionUID = 1L;
 
 	public static final String P_LOCATION = "location"; //$NON-NLS-1$
+	public static final String P_NAME = "name"; //$NON-NLS-1$
 	public static final String P_ENABLED = "enabled"; //$NON-NLS-1$
 
 	private String fURL;
+	private String fName;
 	private boolean fEnabled = true; // enabled unless specified otherwise
 
 	public RepositoryInfo(IProductModel model) {
@@ -50,6 +52,20 @@ public class RepositoryInfo extends ProductObject implements IRepositoryInfo {
 	}
 
 	@Override
+	public String getName() {
+		return fName;
+	}
+
+	@Override
+	public void setName(String name) {
+		String old = fName;
+		fName = name;
+		if (isEditable()) {
+			firePropertyChanged(P_NAME, old, fName);
+		}
+	}
+
+	@Override
 	public boolean getEnabled() {
 		return fEnabled;
 	}
@@ -58,7 +74,7 @@ public class RepositoryInfo extends ProductObject implements IRepositoryInfo {
 	public void setEnabled(boolean enabled) {
 		boolean old = fEnabled;
 		fEnabled = enabled;
-		if (isEditable()) {
+		if (isEditable() && old != fEnabled) {
 			firePropertyChanged(P_ENABLED, old, fEnabled);
 		}
 	}
@@ -68,15 +84,18 @@ public class RepositoryInfo extends ProductObject implements IRepositoryInfo {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element) node;
 			fURL = element.getAttribute("location"); //$NON-NLS-1$
+			fName = element.getAttribute("name"); //$NON-NLS-1$
 			fEnabled = Boolean.parseBoolean(element.getAttribute(P_ENABLED));
 		}
 	}
-
 
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		if (isURLDefined()) {
 			writer.print(indent + "<repository location=\"" + fURL + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			if (fName != null) {
+				writer.print(" name=\"" + fName + "\""); //$NON-NLS-1$//$NON-NLS-2$
+			}
 			writer.print(" enabled=\"" + fEnabled + "\""); //$NON-NLS-1$//$NON-NLS-2$
 			writer.println(" />"); //$NON-NLS-1$
 		}
@@ -99,7 +118,7 @@ public class RepositoryInfo extends ProductObject implements IRepositoryInfo {
 		if (!(obj instanceof RepositoryInfo other)) {
 			return false;
 		}
-		return Objects.equals(fURL, other.fURL);
+		return Objects.equals(fURL, other.fURL) && Objects.equals(fName, other.fName);
 	}
 
 }

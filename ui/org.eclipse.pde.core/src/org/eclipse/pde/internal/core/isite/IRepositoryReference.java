@@ -25,4 +25,8 @@ public interface IRepositoryReference extends ISiteObject {
 
 	void setURL(String url) throws CoreException;
 
+	String getName();
+
+	void setName(String name) throws CoreException;
+
 }
