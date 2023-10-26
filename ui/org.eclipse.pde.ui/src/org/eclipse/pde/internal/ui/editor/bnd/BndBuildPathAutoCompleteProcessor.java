@@ -33,7 +33,7 @@ import aQute.bnd.osgi.Constants;
 import aQute.bnd.properties.LineType;
 import aQute.bnd.properties.PropertiesLineReader;
 
-public class BndAutoCompleteProcessor implements IContentAssistProcessor {
+public class BndBuildPathAutoCompleteProcessor implements IContentAssistProcessor {
 
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {

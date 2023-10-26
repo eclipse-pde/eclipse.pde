@@ -13,7 +13,7 @@
  *     Neil Bartlett <njbartlett@gmail.com> - ongoing enhancements
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
  *******************************************************************************/
-package bndtools.editor.completion;
+package org.eclipse.pde.internal.ui.bndtools;
 
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IRule;
