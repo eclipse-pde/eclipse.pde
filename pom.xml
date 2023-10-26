@@ -37,6 +37,7 @@
     <module>build</module>
     <module>features</module>
     <module>org.eclipse.pde.doc.user</module>
+    <module>repository</module>
   </modules>
 
   <!--

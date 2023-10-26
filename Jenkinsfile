@@ -27,10 +27,11 @@ pipeline {
 			}
 			post {
 				always {
-					archiveArtifacts(allowEmptyArchive: true, artifacts: '*.log, \
-						*/target/work/data/.metadata/*.log, \
-						*/tests/target/work/data/.metadata/*.log, \
-						apiAnalyzer-workspace/.metadata/*.log')
+					archiveArtifacts(allowEmptyArchive: true, artifacts: '*.log,\
+						*/target/work/data/.metadata/*.log,\
+						*/tests/target/work/data/.metadata/*.log,\
+						apiAnalyzer-workspace/.metadata/*.log,\
+						repository/target/repository/**')
 					junit '**/target/surefire-reports/*.xml'
 					discoverGitReferenceBuild referenceJob: 'eclipse.pde/master'
 					recordIssues publishAllIssues: true, tools: [java(), mavenConsole(), javaDoc()], qualityGates: [[threshold: 1, type: 'NEW', unstable: true]]
