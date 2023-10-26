@@ -16,6 +16,7 @@ package org.eclipse.pde.ui.launcher;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -80,7 +81,13 @@ public class TracingTab extends AbstractLauncherTab {
 
 	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
-		fTracingBlock.initializeFrom(config);
+		// the heavy lifting occurs in #activated(...)
+	}
+
+	@Override
+	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog) {
+		super.setLaunchConfigurationDialog(dialog);
+		fTracingBlock.setRunnableContext(dialog);
 	}
 
 	@Override
