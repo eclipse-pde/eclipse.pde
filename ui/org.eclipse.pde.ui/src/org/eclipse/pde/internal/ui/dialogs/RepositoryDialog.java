@@ -44,8 +44,10 @@ import org.eclipse.swt.widgets.Text;
  */
 public class RepositoryDialog extends StatusDialog {
 	private Text fLocation;
+	private Text fName;
 	private final String fRepoURL;
-	private String fLocationStr;
+	private final String fNameStr;
+	private RepositoryResult result;
 
 	/**
 	 * @param shell
@@ -53,35 +55,43 @@ public class RepositoryDialog extends StatusDialog {
 	 * @param repoURL
 	 *            The initial value of the URL, which may be null
 	 */
-	public RepositoryDialog(Shell shell, String repoURL) {
+	public RepositoryDialog(Shell shell, String repoURL, String name) {
 		super(shell);
 		fRepoURL = repoURL;
+		fNameStr = name;
 	}
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
 		((GridLayout) comp.getLayout()).numColumns = 2;
+		WidgetFactory.label(SWT.NONE).text(PDEUIMessages.UpdatesSection_Name).create(comp);
+		fName = WidgetFactory.text(SWT.BORDER).create(comp);
 		WidgetFactory.label(SWT.NONE).text(PDEUIMessages.UpdatesSection_Location).create(comp);
 		fLocation = WidgetFactory.text(SWT.BORDER).create(comp);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
 		fLocation.setLayoutData(data);
+		fName.setLayoutData(data);
 		DropTarget target = new DropTarget(fLocation, DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK);
 		target.setTransfer(new Transfer[] { URLTransfer.getInstance(), FileTransfer.getInstance() });
 		target.addDropListener(new TextURLDropAdapter(fLocation, true));
 		fLocation.addModifyListener(e -> validate());
+		fName.addModifyListener(e -> validate());
 
 		if (fRepoURL != null) {
 			fLocation.setText(fRepoURL);
+		}
+		if (fNameStr != null) {
+			fName.setText(fNameStr);
 		}
 		validate();
 		return comp;
 	}
 
 	protected void validate() {
-		fLocationStr = fLocation.getText().trim();
-		updateStatus(isValidURL(fLocationStr));
+		result = new RepositoryResult(fName.getText(), fLocation.getText());
+		updateStatus(isValidURL(result.url()));
 	}
 
 	private IStatus isValidURL(String location) {
@@ -116,8 +126,15 @@ public class RepositoryDialog extends StatusDialog {
 	 *
 	 * @return the repository URL
 	 */
-	public String getResult() {
-		return fLocationStr;
+	public RepositoryResult getResult() {
+		return result;
+	}
+
+	public record RepositoryResult(String name, String url) {
+		public RepositoryResult {
+			name = name == null || name.isBlank() ? null : name.strip();
+			url = url.strip();
+		}
 	}
 
 }

@@ -35,6 +35,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.dialogs.RepositoryDialog;
+import org.eclipse.pde.internal.ui.dialogs.RepositoryDialog.RepositoryResult;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
@@ -75,20 +76,21 @@ public class UpdatesSection extends TableSection {
 	private class LabelProvider extends PDELabelProvider {
 		@Override
 		public Image getColumnImage(Object obj, int index) {
-			if (index == 0)
+			if (index == 1) {
 				return get(PDEPluginImages.DESC_REPOSITORY_OBJ);
+			}
 			return null;
 		}
 
 		@Override
 		public String getColumnText(Object obj, int index) {
 			IRepositoryInfo repo = (IRepositoryInfo) obj;
-			return switch (index)
-				{
-				case 0 -> repo.getURL();
-				case 1 -> Boolean.toString(repo.getEnabled());
+			return switch (index) {
+				case 0 -> repo.getName();
+				case 1 -> repo.getURL();
+				case 2 -> Boolean.toString(repo.getEnabled());
 				default -> null;
-				};
+			};
 		}
 
 	}
@@ -126,13 +128,17 @@ public class UpdatesSection extends TableSection {
 
 		final Table table = fRepositoryTable.getTable();
 
+		final TableColumn nameColumn = new TableColumn(table, SWT.LEFT);
+		nameColumn.setText(PDEUIMessages.UpdatesSection_NameColumn);
+		nameColumn.setWidth(120);
+
 		final TableColumn locationColumn = new TableColumn(table, SWT.LEFT);
 		locationColumn.setText(PDEUIMessages.UpdatesSection_LocationColumn);
-		locationColumn.setWidth(240);
+		locationColumn.setWidth(200);
 
 		final TableColumn enabledColumn = new TableColumn(table, SWT.LEFT);
 		enabledColumn.setText(PDEUIMessages.UpdatesSection_EnabledColumn);
-		enabledColumn.setWidth(120);
+		enabledColumn.setWidth(80);
 
 		GridData data = (GridData) tablePart.getControl().getLayoutData();
 		data.minimumWidth = 200;
@@ -152,8 +158,9 @@ public class UpdatesSection extends TableSection {
 			@Override
 			public void controlResized(ControlEvent e) {
 				int size = table.getSize().x;
-				locationColumn.setWidth(size / 6 * 5);
-				enabledColumn.setWidth(size / 6 * 1);
+				nameColumn.setWidth(size / 7 * 2);
+				locationColumn.setWidth(size / 7 * 4);
+				enabledColumn.setWidth(size / 7 * 1);
 			}
 
 		});
@@ -209,26 +216,29 @@ public class UpdatesSection extends TableSection {
 		clearEditors();
 		if (!selection.isEmpty()) {
 			IRepositoryInfo repoInfo = (IRepositoryInfo) selection.toArray()[0];
-			RepositoryDialog dialog = getRepositoryDialog(repoInfo.getURL());
+			RepositoryDialog dialog = getRepositoryDialog(repoInfo.getURL(), repoInfo.getName());
 			if (dialog.open() == Window.OK) {
 				updateModel(repoInfo, dialog.getResult());
 			}
 		}
 	}
 
-	private RepositoryDialog getRepositoryDialog(String repoURL) {
-		RepositoryDialog dialog = new RepositoryDialog(PDEPlugin.getActiveWorkbenchShell(), repoURL);
+	private RepositoryDialog getRepositoryDialog(String repoURL, String name) {
+		RepositoryDialog dialog = new RepositoryDialog(PDEPlugin.getActiveWorkbenchShell(), repoURL, name);
 		dialog.setTitle(PDEUIMessages.UpdatesSection_RepositoryDialogTitle);
 		return dialog;
 	}
 
-	private void updateModel(IRepositoryInfo pRepositoryInfo, String pURL) {
+	private void updateModel(IRepositoryInfo pRepositoryInfo, RepositoryResult result) {
 		if (pRepositoryInfo != null) {
 			getProduct().removeRepositories(new IRepositoryInfo[] { pRepositoryInfo });
 		}
 		IProductModelFactory factory = getModel().getFactory();
 		IRepositoryInfo repo = factory.createRepositoryInfo();
-		repo.setURL(pURL.trim());
+		if (result.name() != null) {
+			repo.setName(result.name());
+		}
+		repo.setURL(result.url());
 		repo.setEnabled(true);
 		getProduct().addRepositories(new IRepositoryInfo[] { repo });
 		fRepositoryTable.refresh();
@@ -258,7 +268,7 @@ public class UpdatesSection extends TableSection {
 
 	private void handleAdd() {
 		clearEditors();
-		RepositoryDialog dialog = getRepositoryDialog(null);
+		RepositoryDialog dialog = getRepositoryDialog(null, null);
 		if (dialog.open() == Window.OK) {
 			updateModel(null, dialog.getResult());
 		}
@@ -348,13 +358,13 @@ public class UpdatesSection extends TableSection {
 			final IRepositoryInfo repo = (IRepositoryInfo) selection.getFirstElement();
 			final CCombo combo = new CCombo(table, SWT.BORDER | SWT.READ_ONLY);
 			combo.setItems(new String[] { Boolean.toString(true), Boolean.toString(false) });
-			combo.setText(item.getText(1));
+			combo.setText(item.getText(2));
 			combo.pack();
 			combo.addSelectionListener(widgetSelectedAdapter(e -> {
-				item.setText(1, combo.getText());
+				item.setText(2, combo.getText());
 				repo.setEnabled(Boolean.parseBoolean(combo.getText()));
 			}));
-			fEnabledColumnEditor.setEditor(combo, item, 1);
+			fEnabledColumnEditor.setEditor(combo, item, 2);
 		}
 	}
 }

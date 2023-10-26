@@ -23,4 +23,8 @@ public interface IRepositoryInfo extends IProductObject {
 
 	void setURL(String url);
 
+	String getName();
+
+	void setName(String name);
+
 }
