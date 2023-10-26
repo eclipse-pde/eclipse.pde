@@ -24,16 +24,16 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 
@@ -44,8 +44,8 @@ public class TracingOptionsManager {
 		super();
 	}
 
-	public Map<String, String> getTemplateTable(String pluginId) {
-		Map<String, String> tracingTemplate = getTracingTemplate();
+	public Map<String, String> getTemplateTable(String pluginId, IProgressMonitor monitor) {
+		Map<String, String> tracingTemplate = getTracingTemplate(monitor);
 		Map<String, String> defaults = new HashMap<>();
 		tracingTemplate.forEach((key, value) -> {
 			if (belongsTo(key, pluginId)) {
@@ -60,9 +60,9 @@ public class TracingOptionsManager {
 		return pluginId.equalsIgnoreCase(firstSegment);
 	}
 
-	public Map<String, String> getTracingOptions(Map<String, String> storedOptions) {
+	public Map<String, String> getTracingOptions(Map<String, String> storedOptions, IProgressMonitor monitor) {
 		// Start with the fresh template from plugins
-		Map<String, String> defaults = getTracingTemplateCopy();
+		Map<String, String> defaults = getTracingTemplateCopy(monitor);
 		if (storedOptions != null) {
 			// Load stored values, but only for existing keys
 			storedOptions.forEach((key, value) -> {
@@ -74,21 +74,29 @@ public class TracingOptionsManager {
 		return defaults;
 	}
 
-	public Map<String, String> getTracingTemplateCopy() {
-		return new HashMap<>(getTracingTemplate());
+	public Map<String, String> getTracingTemplateCopy(IProgressMonitor monitor) {
+		return new HashMap<>(getTracingTemplate(monitor));
 	}
 
-	private synchronized Map<String, String> getTracingTemplate() {
-		if (template == null) {
-			Map<String, String> temp = new HashMap<>();
-			IPluginModelBase[] models = PluginRegistry.getAllModels();
-			Arrays.stream(models).map(TracingOptionsManager::getOptions).filter(Objects::nonNull).forEach(p -> {
-				@SuppressWarnings({ "rawtypes", "unchecked" })
-				Map<String, String> entries = (Map) p;
-				temp.putAll(entries); // All entries are of String/String
-			});
-			template = temp;
+	private synchronized Map<String, String> getTracingTemplate(IProgressMonitor monitor) {
+		if (template != null) {
+			return template;
 		}
+
+		Map<String, String> temp = new HashMap<>();
+		IPluginModelBase[] models = PluginRegistry.getAllModels();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, models.length);
+
+		for (IPluginModelBase model : models) {
+			subMonitor.split(1);
+			Properties options = TracingOptionsManager.getOptions(model);
+			if (options != null) {
+				@SuppressWarnings({ "rawtypes", "unchecked" })
+				Map<String, String> entries = (Map) options;
+				temp.putAll(entries); // All entries are of String/String
+			}
+		}
+		template = temp;
 		return template;
 	}
 
@@ -129,7 +137,7 @@ public class TracingOptionsManager {
 	}
 
 	public void save(Path file, Map<String, String> map, Set<String> selected) {
-		Map<String, String> properties = getTracingOptions(map);
+		Map<String, String> properties = getTracingOptions(map, null);
 		properties.keySet().removeIf(key -> {
 			IPath path = IPath.fromOSString(key);
 			return path.segmentCount() < 1 || !selected.contains(path.segment(0));
@@ -138,7 +146,7 @@ public class TracingOptionsManager {
 	}
 
 	public void save(Path file, Map<String, String> map) {
-		saveOptions(file, getTracingOptions(map));
+		saveOptions(file, getTracingOptions(map, null));
 	}
 
 	private static Properties getOptions(IPluginModelBase model) {
