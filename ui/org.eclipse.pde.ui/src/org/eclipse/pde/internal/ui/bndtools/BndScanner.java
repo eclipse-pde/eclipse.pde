@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2023 bndtools project.
+ * Copyright (c) 2011, 2023 bndtools project and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,29 +15,48 @@
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
  *     Amit Kumar Mondal <admin@amitinside.com> - ongoing enhancements
  *     Peter Kriens <Peter.Kriens@aQute.biz> - ongoing enhancements
+ *     Christoph Läubrich - incline code from BndSourceViewerConfiguration regarding colors, adjust to eclipse coding conventions
  *******************************************************************************/
-package bndtools.editor.completion;
+package org.eclipse.pde.internal.ui.bndtools;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.eclipse.jdt.ui.text.IColorManager;
+import org.eclipse.jdt.ui.text.IJavaColorConstants;
+import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.Token;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.RGB;
 
 import aQute.bnd.help.Syntax;
 import aQute.bnd.osgi.Constants;
 
 public class BndScanner extends RuleBasedScanner {
-	BndSourceViewerConfiguration	bsvc;
 	final Set<String>				instructions;
 	final Set<String>				directives	= new HashSet<>();
+	private Token T_DEFAULT;
+	private Token T_KEY;
+	private Token T_ERROR;
+	private Token T_COMMENT;
+	private Token T_INSTRUCTION;
+	private Token T_OPTION;
 
-	public BndScanner(BndSourceViewerConfiguration manager) {
-		bsvc = manager;
+	public BndScanner(IColorManager colorManager) {
+		T_DEFAULT = new Token(new TextAttribute(colorManager.getColor(IJavaColorConstants.JAVA_DEFAULT)));
+		T_KEY = new Token(new TextAttribute(colorManager.getColor(IJavaColorConstants.JAVADOC_LINK), null, SWT.NONE));
+		T_ERROR = new Token(new TextAttribute(colorManager.getColor(IJavaColorConstants.JAVA_KEYWORD),
+				colorManager.getColor(new RGB(255, 0, 0)), SWT.BOLD));
+		T_COMMENT = new Token(new TextAttribute(colorManager.getColor(IJavaColorConstants.JAVA_SINGLE_LINE_COMMENT)));
+		T_INSTRUCTION = new Token(
+				new TextAttribute(colorManager.getColor(IJavaColorConstants.JAVADOC_KEYWORD), null, SWT.BOLD));
+		T_OPTION = new Token(
+				new TextAttribute(colorManager.getColor(IJavaColorConstants.JAVADOC_LINK), null, SWT.BOLD));
 		instructions = Syntax.HELP.values()
 			.stream()
 			.map(Syntax::getHeader)
@@ -55,7 +74,7 @@ public class BndScanner extends RuleBasedScanner {
 		};
 
 		setRules(rules);
-		setDefaultReturnToken(bsvc.T_DEFAULT);
+		setDefaultReturnToken(T_DEFAULT);
 	}
 
 	IToken comment(ICharacterScanner scanner) {
@@ -76,13 +95,12 @@ public class BndScanner extends RuleBasedScanner {
 					n++;
 
 					if (c == '\n' || c == '\r' || c == ICharacterScanner.EOF)
-						return bsvc.T_COMMENT;
+						return T_COMMENT;
 				}
-			} else {
-				while (n-- > 0)
-					scanner.unread();
-				return Token.UNDEFINED;
 			}
+			while (n-- > 0)
+				scanner.unread();
+			return Token.UNDEFINED;
 		}
 	}
 
@@ -124,14 +142,14 @@ public class BndScanner extends RuleBasedScanner {
 		String key = sb.toString();
 
 		if (Constants.options.contains(key)) {
-			return bsvc.T_OPTION;
+			return T_OPTION;
 		}
 
 		if (instructions.contains(key)) {
-			return bsvc.T_INSTRUCTION;
+			return T_INSTRUCTION;
 		}
 
-		return bsvc.T_KEY;
+		return T_KEY;
 	}
 
 	IToken error(ICharacterScanner scanner) {
@@ -145,7 +163,7 @@ public class BndScanner extends RuleBasedScanner {
 					c = scanner.read();
 				}
 				scanner.unread();
-				return bsvc.T_ERROR;
+				return T_ERROR;
 			}
 		}
 		while (n-- > 0)
