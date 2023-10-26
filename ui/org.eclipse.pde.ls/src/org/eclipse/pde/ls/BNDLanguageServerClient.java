@@ -15,10 +15,11 @@ package org.eclipse.pde.ls;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.eclipse.lsp4e.server.StreamConnectionProvider;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
@@ -28,8 +29,8 @@ import org.eclipse.pde.ls.bnd.BNDLanguageServer;
 
 public class BNDLanguageServerClient implements StreamConnectionProvider {
 
-	private PipedInputStream input;
-	private PipedOutputStream output;
+	private InputStream input;
+	private OutputStream output;
 	private Future<Void> listening;
 
 	@Override
@@ -51,12 +52,12 @@ public class BNDLanguageServerClient implements StreamConnectionProvider {
 	public void start() throws IOException {
 		System.out.println("BNDLanguageServerClient.start()");
 		BNDLanguageServer server = new BNDLanguageServer();
-		PipedOutputStream pipedOutputStream = new PipedOutputStream();
-		PipedInputStream pipedInputStream = new PipedInputStream();
-		Launcher<LanguageClient> launcher = LSPLauncher.createServerLauncher(server, pipedInputStream,
-				pipedOutputStream);
-		input = new PipedInputStream(pipedOutputStream);
-		output = new PipedOutputStream(pipedInputStream);
+		LinkedBlockingQueue<Integer> inqueue = new LinkedBlockingQueue<>(10 * 1024 * 104);
+		LinkedBlockingQueue<Integer> outqueue = new LinkedBlockingQueue<>(10 * 1024 * 104);
+		Launcher<LanguageClient> launcher = LSPLauncher.createServerLauncher(server, new QueueInputStream(inqueue),
+				new QueueOutputStream(outqueue));
+		input = new QueueInputStream(outqueue);
+		output = new QueueOutputStream(inqueue);
 		listening = launcher.startListening();
 	}
 
@@ -73,6 +74,71 @@ public class BNDLanguageServerClient implements StreamConnectionProvider {
 			output.close();
 		} catch (IOException e) {
 		}
+	}
+
+	private static final class QueueInputStream extends InputStream {
+
+		private final BlockingQueue<Integer> byteSource;
+		private boolean closed;
+
+		public QueueInputStream(BlockingQueue<Integer> byteSource) {
+			this.byteSource = byteSource;
+		}
+
+		@Override
+		public int read() throws IOException {
+			if (closed) {
+				return -1;
+			}
+			try {
+				Integer take = byteSource.take();
+				if (take < 0) {
+					closed = true;
+				}
+				return take;
+			} catch (InterruptedException e) {
+				throw new InterruptedIOException();
+			}
+		}
+
+		@Override
+		public void close() throws IOException {
+			closed = true;
+		}
+
+	}
+
+	private static final class QueueOutputStream extends OutputStream {
+
+		private final BlockingQueue<Integer> byteSink;
+		private boolean closed;
+
+		public QueueOutputStream(BlockingQueue<Integer> byteSink) {
+			this.byteSink = byteSink;
+		}
+
+		@Override
+		public void write(int b) throws IOException {
+			if (closed) {
+				throw new IOException("closed");
+			}
+			try {
+				byteSink.put(b);
+			} catch (InterruptedException e) {
+				throw new InterruptedIOException();
+			}
+		}
+
+		@Override
+		public void close() throws IOException {
+			closed = true;
+			try {
+				byteSink.put(-1);
+			} catch (InterruptedException e) {
+				throw new InterruptedIOException();
+			}
+		}
+
 	}
 
 }

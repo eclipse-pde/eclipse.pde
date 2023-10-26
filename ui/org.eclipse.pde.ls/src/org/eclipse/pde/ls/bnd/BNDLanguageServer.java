@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.lsp4j.CompletionOptions;
 import org.eclipse.lsp4j.InitializeParams;
 import org.eclipse.lsp4j.InitializeResult;
+import org.eclipse.lsp4j.SemanticTokenModifiers;
 import org.eclipse.lsp4j.SemanticTokenTypes;
 import org.eclipse.lsp4j.SemanticTokensLegend;
 import org.eclipse.lsp4j.SemanticTokensWithRegistrationOptions;
@@ -56,7 +57,8 @@ public class BNDLanguageServer implements LanguageServer {
 		res.getCapabilities().setTextDocumentSync(TextDocumentSyncKind.Full);
 		res.getCapabilities().setSemanticTokensProvider(
 				new SemanticTokensWithRegistrationOptions(
-						new SemanticTokensLegend(List.of(SemanticTokenTypes.Keyword), List.of()),
+						new SemanticTokensLegend(List.of(SemanticTokenTypes.Property, SemanticTokenTypes.Comment),
+								List.of(SemanticTokenModifiers.Readonly)),
 						Boolean.TRUE));
 		return CompletableFuture.completedFuture(res);
 	}

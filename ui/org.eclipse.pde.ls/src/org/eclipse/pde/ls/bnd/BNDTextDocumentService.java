@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ls.bnd;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -35,6 +36,7 @@ import org.eclipse.lsp4j.services.TextDocumentService;
 import aQute.bnd.help.Syntax;
 import aQute.bnd.properties.Document;
 import aQute.bnd.properties.IDocument;
+import aQute.bnd.properties.IRegion;
 import aQute.bnd.properties.LineType;
 import aQute.bnd.properties.PropertiesLineReader;
 
@@ -76,15 +78,67 @@ public class BNDTextDocumentService implements TextDocumentService {
 	public CompletableFuture<SemanticTokens> semanticTokensFull(SemanticTokensParams params) {
 		System.out.println("BNDTextDocumentService.semanticTokensFull()");
 		return withDocument(params.getTextDocument(), document -> {
-			SemanticTokens tokens = new SemanticTokens();
+
+			int lines = document.getNumberOfLines();
+			List<IRegion> list = new ArrayList<>(lines);
+			for (int i = 0; i < lines; i++) {
+				list.add(document.getLineInformation(i));
+			}
+
 			PropertiesLineReader reader = new PropertiesLineReader(document);
+			List<Token> tokens = new ArrayList<>();
 			LineType type;
 			while ((type = reader.next()) != LineType.eof) {
-				// TODO how to use SemanticTokens ?!?
+				// TODO https://github.com/eclipse/lsp4e/issues/861 woudl be good to encode
+				// type/modifier not by plain int...
+				if (type == LineType.entry) {
+					String key = reader.key();
+					IRegion region = reader.region();
+					tokens.add(new Token(getLine(region, list), 0, key.length(), 0, 0));
+				} else if (type == LineType.comment) {
+					// TODO https://github.com/bndtools/bnd/issues/5843
+					IRegion region = reader.region();
+					tokens.add(new Token(getLine(region, list), 0, region.getLength(), 1, 0));
+				}
 			}
-			// TODO https://github.com/eclipse/lsp4e/issues/861
-			return null;
+			SemanticTokens semanticTokens = new SemanticTokens(new ArrayList<>());
+			List<Integer> data = semanticTokens.getData();
+			int lastLine = 0;
+			int lastStartChar = 0;
+			// See
+			// https://github.com/Microsoft/language-server-protocol/blob/gh-pages/_specifications/specification-3-16.md#textDocument_semanticTokens
+			for (Token token : tokens) {
+				// TODO https://github.com/eclipse/lsp4e/issues/861 can Token record + encoding
+				// probably be part of lsp4j?
+				System.out.println(token);
+				int lineDelta = token.line() - lastLine;
+				data.add(lineDelta);
+				if (lastLine == token.line()) {
+					data.add(token.startChar() - lastStartChar);
+				} else {
+					data.add(token.startChar());
+				}
+				data.add(token.length());
+				data.add(token.tokenType());
+				data.add(token.tokenModifiers());
+				lastLine = token.line();
+				lastStartChar = token.startChar();
+			}
+			return semanticTokens;
 		});
+	}
+
+	private int getLine(IRegion region, List<IRegion> list) {
+		int s = region.getOffset();
+		for (int i = 0; i < list.size(); i++) {
+			IRegion r = list.get(i);
+			int offsetStart = r.getOffset();
+			int offsetEnd = offsetStart + r.getLength();
+			if (s >= offsetStart && s <= offsetEnd) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	@Override
@@ -121,6 +175,9 @@ public class BNDTextDocumentService implements TextDocumentService {
 
 	private static interface DocumentCallable<V> {
 		V call(IDocument document) throws Exception;
+	}
+
+	private static final record Token(int line, int startChar, int length, int tokenType, int tokenModifiers) {
 	}
 
 }
