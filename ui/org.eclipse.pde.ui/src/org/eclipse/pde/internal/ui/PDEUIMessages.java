@@ -1092,6 +1092,7 @@ public class PDEUIMessages extends NLS {
 	public static String TracingTab_AttributeLabel_TracingChecked;
 	public static String TracingTab_AttributeLabel_TracingNone;
 
+	public static String TracingBlock_initializing_tracing_options;
 	public static String TracingBlock_restore_default;
 	public static String TracingBlock_restore_default_selected;
 
