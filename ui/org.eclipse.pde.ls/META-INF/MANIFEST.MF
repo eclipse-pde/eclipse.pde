@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: PDE Language Server
+Bundle-SymbolicName: org.eclipse.pde.ls
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: org.eclipse.pde.ls
+Bundle-RequiredExecutionEnvironment: JavaSE-17
