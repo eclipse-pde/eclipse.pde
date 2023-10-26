@@ -120,6 +120,7 @@ Require-Bundle:
  org.eclipse.equinox.security;bundle-version="[1.4.100,2.0.0)"
 Import-Package: aQute.bnd.build.model;version="[4.2.0,5.0.0)",
  aQute.bnd.header;version="[2.5.0,3.0.0)",
+ aQute.bnd.help;version="2.0.0",
  aQute.bnd.osgi;version="[5.6.0,8.0.0)",
  aQute.bnd.osgi.repository;version="[3.0.0,4.0.0)",
  aQute.bnd.osgi.resource;version="[4.3.0,6.0.0)",

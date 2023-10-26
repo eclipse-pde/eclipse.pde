@@ -2478,8 +2478,22 @@
       <extension
             point="org.eclipse.ui.genericeditor.contentAssistProcessors">
          <contentAssistProcessor
-               class="org.eclipse.pde.internal.ui.editor.bnd.BndAutoCompleteProcessor"
+               class="org.eclipse.pde.internal.ui.editor.bnd.BndBuildPathAutoCompleteProcessor"
                contentType="org.eclipse.pde.bndInstructions">
          </contentAssistProcessor>
+      </extension>
+      <extension
+            point="org.eclipse.ui.genericeditor.contentAssistProcessors">
+         <contentAssistProcessor
+               class="org.eclipse.pde.internal.ui.bndtools.BndCompletionProcessor"
+               contentType="org.eclipse.pde.bndInstructions">
+         </contentAssistProcessor>
+      </extension>
+      <extension
+            point="org.eclipse.ui.genericeditor.presentationReconcilers">
+         <presentationReconciler
+               class="org.eclipse.pde.internal.ui.editor.bnd.BNDPresentationReconciler"
+               contentType="org.eclipse.pde.bndInstructions">
+         </presentationReconciler>
       </extension>
 </plugin>

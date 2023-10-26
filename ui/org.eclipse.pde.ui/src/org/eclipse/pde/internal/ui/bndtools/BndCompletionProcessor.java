@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2022 bndtools project.
+ * Copyright (c) 2011, 2023 bndtools project and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,8 +13,9 @@
  *     Ferry Huberts <ferry.huberts@pelagic.nl> - ongoing enhancements
  *     Neil Bartlett <njbartlett@gmail.com> - ongoing enhancements
  *     BJ Hargrave <bj@bjhargrave.com> - ongoing enhancements
+ *     Christoph Läubrich - adjust to coding conventions, fix missing completions on empty lines
  *******************************************************************************/
-package bndtools.editor.completion;
+package org.eclipse.pde.internal.ui.bndtools;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +23,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ContextInformation;
@@ -34,24 +37,27 @@ import aQute.bnd.help.Syntax;
 
 public class BndCompletionProcessor implements IContentAssistProcessor {
 
-	private static final Pattern PREFIX_PATTERN = Pattern.compile("(\\S+)$");
+	private static final Pattern PREFIX_PATTERN = Pattern.compile("(\\S+)$"); //$NON-NLS-1$
 
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		try {
-			String pre = viewer.getDocument()
-				.get(0, offset);
-			Matcher matcher = PREFIX_PATTERN.matcher(pre);
-			if (matcher.find()) {
-				String prefix = matcher.group(1);
-				ICompletionProposal[] found = proposals(prefix, offset);
-				if (found.length == 1) {
-					found[0].apply(viewer.getDocument());
-					viewer.setSelectedRange(offset + (found[0].getDisplayString()
-						.length() - prefix.length() + 2), 0);
-					return new ICompletionProposal[0];
+			IDocument document = viewer.getDocument();
+			IRegion lineInfo = document.getLineInformationOfOffset(offset);
+			if (lineInfo.getOffset() != offset) {
+				String pre = document.get(0, offset);
+				Matcher matcher = PREFIX_PATTERN.matcher(pre);
+				if (matcher.find()) {
+					String prefix = matcher.group(1);
+					ICompletionProposal[] found = proposals(prefix, offset);
+					if (found.length == 1) {
+						found[0].apply(document);
+						viewer.setSelectedRange(offset + (found[0].getDisplayString().length() - prefix.length() + 2),
+								0);
+						return new ICompletionProposal[0];
+					}
+					return found;
 				}
-				return found;
 			}
 			return proposals(null, offset);
 		} catch (BadLocationException e) {
@@ -79,7 +85,6 @@ public class BndCompletionProcessor implements IContentAssistProcessor {
 
 	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -99,13 +104,11 @@ public class BndCompletionProcessor implements IContentAssistProcessor {
 
 	@Override
 	public IContextInformationValidator getContextInformationValidator() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String getErrorMessage() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
