@@ -1,7 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PDE Language Server
-Bundle-SymbolicName: org.eclipse.pde.ls
+Bundle-SymbolicName: org.eclipse.pde.ls;singleton:=true
 Bundle-Version: 1.0.0.qualifier
+Import-Package: aQute.bnd.help;version="2.0.0",
+ aQute.bnd.properties
+Require-Bundle: org.eclipse.lsp4e;bundle-version="0.18.0",
+ org.eclipse.lsp4j;bundle-version="0.21.1",
+ org.eclipse.lsp4j.jsonrpc;bundle-version="0.21.1"
 Automatic-Module-Name: org.eclipse.pde.ls
 Bundle-RequiredExecutionEnvironment: JavaSE-17
