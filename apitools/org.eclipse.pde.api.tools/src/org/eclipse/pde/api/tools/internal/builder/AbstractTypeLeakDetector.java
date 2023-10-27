@@ -88,10 +88,9 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 					// this is an unexpected condition - the enclosing type is
 					// visible, but it has no annotations - log an error
 					String memberName = member.getName();
-					if (memberName != null) {
-						if (!memberName.startsWith("javax.")) { //$NON-NLS-1$
-							ApiPlugin.log(Status.info(MessageFormat.format(BuilderMessages.AbstractTypeLeakDetector_vis_type_has_no_api_description, memberName)));
-						}
+					if (memberName != null && !memberName.startsWith("javax.") && !memberName.startsWith("jakarta.")) { //$NON-NLS-1$ //$NON-NLS-2$
+						ApiPlugin.log(Status.info(MessageFormat.format(
+								BuilderMessages.AbstractTypeLeakDetector_vis_type_has_no_api_description, memberName)));
 					}
 				} else {
 					// enclosing type is not visible - this is a problem

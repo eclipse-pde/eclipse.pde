@@ -13,8 +13,6 @@
  ******************************************************************************/
 package org.eclipse.pde.spy.model;
 
-import javax.inject.Named;
-
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -28,6 +26,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+
+import jakarta.inject.Named;
 
 @SuppressWarnings("restriction")
 public class OpenLiveDialogHandler {

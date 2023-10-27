@@ -22,8 +22,8 @@ import org.eclipse.pde.ui.templates.ITemplateSection;
 public class E4ApplicationNewWizard extends AbstractE4NewPluginTemplateWizard {
 
 	private static final List<String> PACKAGE_IMPORTS = List.of( //
-			"javax.annotation;version=\"[1.2.0,2.0.0)\"", //$NON-NLS-1$
-			"javax.inject;version=\"[1.0.0,2.0.0)\""); //$NON-NLS-1$
+			"jakarta.annotation;version=\"[2.1.0,3.0.0)\"", //$NON-NLS-1$
+			"jakarta.inject;version=\"[2.0.0,3.0.0)\""); //$NON-NLS-1$
 
 	@Override
 	public void init(IFieldData data) {

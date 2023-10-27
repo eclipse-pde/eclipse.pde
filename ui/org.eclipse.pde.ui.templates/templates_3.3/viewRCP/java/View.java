@@ -2,7 +2,7 @@ package $packageName$;
 
 import java.util.*;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;

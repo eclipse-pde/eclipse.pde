@@ -15,14 +15,14 @@ package org.eclipse.pde.spy.preferences.handler;
 
 import java.util.List;
 
-import javax.inject.Named;
-
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.pde.spy.preferences.constants.PreferenceSpyEventTopics;
 import org.eclipse.pde.spy.preferences.model.PreferenceEntry;
+
+import jakarta.inject.Named;
 
 public class RemoveEntryHandler {
 	@Execute

@@ -84,7 +84,7 @@ public class FeatureBasedLaunchTest extends AbstractLaunchTest {
 	@Test
 	public void testGetMergedBundleMap_autostartLevels() throws Throwable {
 		TargetPlatformUtil.setRunningPlatformAsTarget();
-		String javaxInjectProvider = FrameworkUtil.getBundle(javax.inject.Inject.class).getSymbolicName();
+		String javaxInjectProvider = FrameworkUtil.getBundle(jakarta.inject.Inject.class).getSymbolicName();
 		createFeatureProject(FeatureBasedLaunchTest.class.getName() + "-feature", "1.0.0", f -> {
 			addIncludedPlugin(f, javaxInjectProvider, DEFAULT_VERSION);
 			addIncludedPlugin(f, "org.eclipse.core.runtime", DEFAULT_VERSION);

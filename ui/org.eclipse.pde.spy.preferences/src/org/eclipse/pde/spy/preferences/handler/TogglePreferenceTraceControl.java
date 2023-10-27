@@ -15,10 +15,6 @@ package org.eclipse.pde.spy.preferences.handler;
 
 import static org.eclipse.pde.spy.preferences.handler.ToggleLayoutControl.getImageDescriptor;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.log.Logger;
@@ -32,6 +28,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.osgi.service.prefs.BackingStoreException;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 
 @SuppressWarnings("restriction")
 public class TogglePreferenceTraceControl {

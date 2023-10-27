@@ -19,8 +19,6 @@ package org.eclipse.pde.spy.core;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.ILog;
@@ -41,6 +39,8 @@ import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
+
+import jakarta.inject.Inject;
 
 /** A base class for all spies processors */
 public class SpyProcessor {
