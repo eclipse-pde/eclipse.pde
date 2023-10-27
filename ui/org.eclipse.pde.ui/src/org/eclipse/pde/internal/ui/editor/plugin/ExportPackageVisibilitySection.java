@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -131,7 +132,8 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		EditableTablePart tablePart = getTablePart();
-		tablePart.setEditable(getPage().getModel().isEditable());
+		IBaseModel model = getPage().getModel();
+		tablePart.setEditable(model != null && model.isEditable());
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 		fFriendViewer = tablePart.getTableViewer();
 		fFriendViewer.setContentProvider(new TableContentProvider());
