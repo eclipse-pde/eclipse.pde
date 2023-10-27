@@ -21,6 +21,6 @@ Bundle-Localization: plugin
 Bundle-Vendor: %provider-name
 Service-Component: OSGI-INF/extensionlookup.xml
 Bundle-ActivationPolicy: lazy
-Import-Package: javax.inject;version="[1.0.0,2.0.0)"
+Import-Package: jakarta.inject;version="[2.0.0,3.0.0)"
 Export-Package: org.eclipse.pde.spy.model;x-internal:=true
 Automatic-Module-Name: org.eclipse.pde.spy.model

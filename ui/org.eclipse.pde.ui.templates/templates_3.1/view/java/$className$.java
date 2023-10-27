@@ -16,7 +16,7 @@ import org.eclipse.swt.SWT;
 % if viewType == "treeViewer"
 import org.eclipse.core.runtime.IAdaptable;
 % endif
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 
 /**

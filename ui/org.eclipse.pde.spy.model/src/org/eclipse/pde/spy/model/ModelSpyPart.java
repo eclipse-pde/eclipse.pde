@@ -13,14 +13,14 @@
  ******************************************************************************/
 package org.eclipse.pde.spy.model;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.MApplication;
+
+import jakarta.inject.Inject;
 
 @SuppressWarnings("restriction")
 public class ModelSpyPart {

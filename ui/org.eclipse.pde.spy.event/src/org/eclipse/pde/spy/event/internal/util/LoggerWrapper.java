@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.pde.spy.event.internal.util;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.pde.spy.event.Constants;
+
+import jakarta.inject.Inject;
 
 @SuppressWarnings("restriction")
 @Creatable

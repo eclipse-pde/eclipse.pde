@@ -93,7 +93,7 @@ public class ViewRCPTemplate extends PDETemplateSection {
 			createProductExtension();
 
 		IBundle bundle = ((IBundlePluginModelBase) model).getBundleModel().getBundle();
-		bundle.setHeader(Constants.IMPORT_PACKAGE, "javax.inject;version=\"[1.0.0,2.0.0)\""); //$NON-NLS-1$
+		bundle.setHeader(Constants.IMPORT_PACKAGE, "jakarta.inject;version=\"[2.0.0,3.0.0)\""); //$NON-NLS-1$
 	}
 
 	private void createApplicationExtension() throws CoreException {

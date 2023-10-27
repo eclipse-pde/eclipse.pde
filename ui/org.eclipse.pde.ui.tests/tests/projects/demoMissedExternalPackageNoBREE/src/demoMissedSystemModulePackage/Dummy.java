@@ -1,6 +1,6 @@
 package demoMissedSystemModulePackage;
 
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 
 @Generated
 public class Dummy {
