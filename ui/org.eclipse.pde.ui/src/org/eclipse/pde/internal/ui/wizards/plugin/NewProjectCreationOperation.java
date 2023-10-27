@@ -465,7 +465,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 
 	private boolean isAutomaticMetadata() {
 		if (fData instanceof PluginFieldData d) {
-			return d.isAutomaticMetadataGeneration();
+
+			String framework = d.getOSGiFramework();
+			return d.isAutomaticMetadataGeneration() && framework != null && !ICoreConstants.EQUINOX.equals(framework);
 		}
 		return false;
 	}
