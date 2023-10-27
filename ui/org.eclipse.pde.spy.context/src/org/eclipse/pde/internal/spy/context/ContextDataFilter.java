@@ -18,9 +18,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.core.internal.contexts.Computation;
@@ -29,6 +26,9 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 @SuppressWarnings("restriction")
 @Creatable

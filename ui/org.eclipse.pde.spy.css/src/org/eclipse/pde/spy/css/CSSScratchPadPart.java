@@ -18,9 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.css.core.dom.ExtendedDocumentCSS;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -42,6 +39,9 @@ import org.eclipse.swt.widgets.Text;
 import org.w3c.css.sac.CSSParseException;
 import org.w3c.dom.stylesheets.StyleSheet;
 import org.w3c.dom.stylesheets.StyleSheetList;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 
 @SuppressWarnings("restriction")
 public class CSSScratchPadPart {

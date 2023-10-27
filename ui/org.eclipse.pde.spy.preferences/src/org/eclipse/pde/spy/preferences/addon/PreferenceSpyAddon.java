@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.spy.preferences.addon;
 
-import javax.inject.Inject;
-
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.preferences.BundleDefaultsScope;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
@@ -30,6 +28,8 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.pde.spy.preferences.constants.PreferenceConstants;
 import org.eclipse.pde.spy.preferences.constants.PreferenceSpyEventTopics;
 import org.osgi.service.prefs.BackingStoreException;
+
+import jakarta.inject.Inject;
 
 /**
  * This model addon is used to register an IPreferenceChangeListener for all

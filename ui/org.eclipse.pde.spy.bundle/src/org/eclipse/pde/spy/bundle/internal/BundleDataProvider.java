@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.spy.bundle.internal;
 
-import javax.inject.Inject;
-
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.pde.spy.bundle.BundleSpyPart;
@@ -23,6 +21,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
+
+import jakarta.inject.Inject;
 
 /**
  * The column Label and content Provider used to display information in context

@@ -66,7 +66,7 @@ public class ClasspathResolutionTest {
 
 	@BeforeClass
 	public static void getJavaxAnnotationProviderBSN() {
-		Bundle bundle = FrameworkUtil.getBundle(javax.annotation.PostConstruct.class);
+		Bundle bundle = FrameworkUtil.getBundle(jakarta.annotation.PostConstruct.class);
 		javaxAnnotationProviderBSN = bundle.getSymbolicName();
 	}
 
@@ -102,8 +102,8 @@ public class ClasspathResolutionTest {
 	public void testImportExternalPreviouslySystemPackageAddsExtraBundle() throws Exception {
 		loadTargetPlatform(javaxAnnotationProviderBSN);
 		IProject project = ProjectUtils.importTestProject("tests/projects/demoMissedExternalPackage");
-		// In Java 11, javax.annotation is not present, so the bundle *must* be
-		// part of classpath
+		// In Java 11, jakarta.annotation is not present, so the bundle *must*
+		// be part of classpath
 		List<String> classpathEntries = getRequiredPluginContainerEntries(project);
 		assertThat(classpathEntries).anyMatch(filename -> filename.contains(javaxAnnotationProviderBSN));
 	}
@@ -115,8 +115,8 @@ public class ClasspathResolutionTest {
 
 		IExecutionEnvironment java11 = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("JavaSE-11");
 		assertThat(JavaRuntime.getVMInstall(JavaCore.create(project))).isIn(Arrays.asList(java11.getCompatibleVMs()));
-		// In Java 11, javax.annotation is not present, so the bundle *must* be
-		// part of classpath, even if no BREE is specified
+		// In Java 11, jakarta.annotation is not present, so the bundle *must*
+		// be part of classpath, even if no BREE is specified
 		List<String> classpathEntries = getRequiredPluginContainerEntries(project);
 		assertThat(classpathEntries).anyMatch(filename -> filename.contains(javaxAnnotationProviderBSN));
 	}
@@ -124,10 +124,10 @@ public class ClasspathResolutionTest {
 	@Test
 	public void testImportSystemPackageDoesntAddExtraBundleJava8() throws Exception {
 		loadTargetPlatform(javaxAnnotationProviderBSN);
-		try (var mocked = mockExtraExtraJRESystemPackages("JavaSE-1.8", List.of("javax.annotation"))) {
+		try (var mocked = mockExtraExtraJRESystemPackages("JavaSE-1.8", List.of("jakarta.annotation"))) {
 			IProject project = ProjectUtils.importTestProject("tests/projects/demoMissedSystemPackageJava8");
-			// In Java 8, javax.annotation is present, so the bundle must *NOT*
-			// be part of classpath
+			// In Java 8, jakarta.annotation is present, so the bundle must
+			// *NOT* be part of classpath
 			List<String> classpathEntries = getRequiredPluginContainerEntries(project);
 			assertThat(classpathEntries).isEmpty();
 		}
@@ -136,12 +136,12 @@ public class ClasspathResolutionTest {
 	@Test
 	public void testImportSystemPackageDoesntAddExtraBundleJava8_osgiEERequirement() throws Exception {
 		loadTargetPlatform(javaxAnnotationProviderBSN);
-		try (var mocked = mockExtraExtraJRESystemPackages("JavaSE-1.8", List.of("javax.annotation"))) {
+		try (var mocked = mockExtraExtraJRESystemPackages("JavaSE-1.8", List.of("jakarta.annotation"))) {
 			IProject project = ProjectUtils
 					.importTestProject("tests/projects/demoMissedSystemPackageJava8OsgiEERequirement");
 			// bundle is build with java 11, but declares java 8 requirement via
 			// Require-Capability
-			// --> javax.annotation bundle must not be on the classpath
+			// --> jakarta.annotation bundle must not be on the classpath
 			List<String> classpathEntries = getRequiredPluginContainerEntries(project);
 			assertThat(classpathEntries).isEmpty();
 		}
