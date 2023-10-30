@@ -13,43 +13,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.ant;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.XMLDefaultHandler;
-import org.eclipse.pde.internal.core.builders.SchemaTransformer;
-import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
-import org.eclipse.pde.internal.core.plugin.ExternalFragmentModel;
-import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
-import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
 import org.eclipse.pde.internal.core.schema.PathSchemaProvider;
-import org.eclipse.pde.internal.core.schema.Schema;
-import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
-import org.eclipse.pde.internal.core.util.HeaderMap;
-import org.osgi.framework.Constants;
+import org.eclipse.pde.internal.core.schema.SchemaToHTMLConverter;
 
 /**
  * Ant task that takes a plug-in and created HTML reference documents for all schema (.exsd) files.
@@ -57,14 +35,12 @@ import org.osgi.framework.Constants;
  */
 public class ConvertSchemaToHTML extends Task {
 
-	private final SchemaTransformer fTransformer = new SchemaTransformer();
 	private String manifest;
 	private String destination;
 	private URL cssURL;
 	private String additionalSearchPaths;
 
 	@Override
-	@SuppressWarnings("restriction")
 	public void execute() throws BuildException {
 		if (destination == null) {
 			throw new BuildException(NLS.bind(PDECoreMessages.Builders_Convert_missingAttribute, "destination")); //$NON-NLS-1$
@@ -75,70 +51,12 @@ public class ConvertSchemaToHTML extends Task {
 		if (!IPath.fromOSString(destination).isValidPath(destination)) {
 			throw new BuildException(NLS.bind(PDECoreMessages.Builders_Convert_illegalValue, "destination")); //$NON-NLS-1$
 		}
-
-		IPluginModelBase model = readManifestFile();
-		if (model == null) {
-			return;
-		}
-
-		String pluginID = model.getPluginBase().getId();
-		if (pluginID == null) {
-			pluginID = getPluginID();
-		}
-
-		List<IPath> searchPaths = getSearchPaths();
-
-		IPluginExtensionPoint[] extPoints = model.getPluginBase().getExtensionPoints();
-		for (IPluginExtensionPoint extPoint : extPoints) {
-			String schemaLocation = extPoint.getSchema();
-
-			if (schemaLocation == null || schemaLocation.equals("")) { //$NON-NLS-1$
-				continue;
-			}
-			Schema schema = null;
-			try {
-				File schemaFile = new File(model.getInstallLocation(), schemaLocation);
-				XMLDefaultHandler handler = new XMLDefaultHandler();
-				org.eclipse.core.internal.runtime.XmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE()
-						.parse(schemaFile, handler);
-				URL url = schemaFile.toURL();
-				SchemaDescriptor desc = new SchemaDescriptor(extPoint.getFullId(), url,
-						new PathSchemaProvider(searchPaths));
-				schema = (Schema) desc.getSchema(false);
-
-				// Check that all included schemas are available
-				ISchemaInclude[] includes = schema.getIncludes();
-				for (ISchemaInclude include : includes) {
-					if (include.getIncludedSchema() == null) {
-						log(NLS.bind(PDECoreMessages.ConvertSchemaToHTML_CannotFindIncludedSchema, include.getLocation(), schemaFile), Project.MSG_ERR);
-					}
-				}
-
-				File directory = IPath.fromOSString(destination).isAbsolute() ? new File(destination) : new File(getProject().getBaseDir(), destination);
-				if (!directory.exists() || !directory.isDirectory()) {
-					if (!directory.mkdirs()) {
-						schema.dispose();
-						return;
-					}
-				}
-
-				String id = extPoint.getId();
-				if (id.indexOf('.') == -1)
-				 {
-					id = pluginID + "." + id; //$NON-NLS-1$
-				}
-				File file = new File(directory, id.replace('.', '_') + ".html"); //$NON-NLS-1$
-				try (PrintWriter out = new PrintWriter(
-						new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8), true)) {
-				fTransformer.transform(schema, out, cssURL, SchemaTransformer.BUILD);
-				}
-			} catch (Exception e) {
-				throw new BuildException(e);
-			} finally {
-				if (schema != null) {
-					schema.dispose();
-				}
-			}
+		SchemaToHTMLConverter converter = new SchemaToHTMLConverter(getProject().getBaseDir(), cssURL);
+		try {
+			converter.generate(manifest, destination, new PathSchemaProvider(getSearchPaths()),
+					err -> log(err, Project.MSG_ERR));
+		} catch (Exception e) {
+			throw new BuildException(e);
 		}
 	}
 
@@ -209,28 +127,6 @@ public class ConvertSchemaToHTML extends Task {
 		cssURL = url;
 	}
 
-	private String getPluginID() {
-		File file = IPath.fromOSString(manifest).isAbsolute() ? new File(manifest) : new File(getProject().getBaseDir(), manifest);
-		File OSGiFile = new File(file.getParentFile(), ICoreConstants.BUNDLE_FILENAME_DESCRIPTOR);
-
-		if (OSGiFile.exists()) {
-			try (FileInputStream manifestStream = new FileInputStream(OSGiFile)) {
-				Map<String, String> headers = ManifestElement.parseBundleManifest(manifestStream, new HeaderMap<>());
-				String value = headers.get(Constants.BUNDLE_SYMBOLICNAME);
-				if (value == null) {
-					return null;
-				}
-				ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, value);
-				if (elements.length > 0) {
-					return elements[0].getValue();
-				}
-			} catch (Exception e1) {
-				System.out.print(e1.getMessage());
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * @return user specified search paths or <code>null</code>
 	 */
@@ -253,40 +149,6 @@ public class ConvertSchemaToHTML extends Task {
 			}
 		}
 		return result;
-	}
-
-	private IPluginModelBase readManifestFile() throws BuildException {
-		File file = IPath.fromOSString(manifest).isAbsolute() ? new File(manifest) : new File(getProject().getBaseDir(), manifest);
-		InputStream stream = null;
-		try {
-			stream = new BufferedInputStream(new FileInputStream(file));
-		} catch (Exception e) {
-			throw new BuildException(e);
-		}
-
-		ExternalPluginModelBase model = null;
-		try {
-			switch (file.getName().toLowerCase(Locale.ENGLISH)) {
-			case ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR:
-				model = new ExternalFragmentModel();
-				break;
-			case ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR:
-				model = new ExternalPluginModel();
-				break;
-			default:
-				stream.close();
-				throw new BuildException(NLS.bind(PDECoreMessages.Builders_Convert_illegalValue, "manifest")); //$NON-NLS-1$
-			}
-
-			String parentPath = file.getParentFile().getAbsolutePath();
-			model.setInstallLocation(parentPath);
-			model.load(stream, false);
-			stream.close();
-		} catch (Exception e) {
-			throw new BuildException(e);
-		}
-
-		return model;
 	}
 
 }
