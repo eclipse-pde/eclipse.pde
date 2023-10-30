@@ -45,6 +45,7 @@ import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
 import org.eclipse.pde.internal.core.plugin.ExternalFragmentModel;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModel;
 import org.eclipse.pde.internal.core.plugin.ExternalPluginModelBase;
+import org.eclipse.pde.internal.core.schema.PathSchemaProvider;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 import org.eclipse.pde.internal.core.util.HeaderMap;
@@ -101,7 +102,8 @@ public class ConvertSchemaToHTML extends Task {
 				org.eclipse.core.internal.runtime.XmlProcessorFactory.createSAXParserWithErrorOnDOCTYPE()
 						.parse(schemaFile, handler);
 				URL url = schemaFile.toURL();
-				SchemaDescriptor desc = new SchemaDescriptor(extPoint.getFullId(), url, searchPaths);
+				SchemaDescriptor desc = new SchemaDescriptor(extPoint.getFullId(), url,
+						new PathSchemaProvider(searchPaths));
 				schema = (Schema) desc.getSchema(false);
 
 				// Check that all included schemas are available

@@ -14,12 +14,8 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
@@ -36,7 +32,7 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 
 	private final boolean fAbbreviated;
 
-	private final List<IPath> fSearchPath;
+	private final SchemaProvider schemaProvider;
 
 	public SchemaInclude(ISchemaObject parent, String location, boolean abbreviated) {
 		this(parent, location, abbreviated, null);
@@ -51,11 +47,11 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 	 * @param abbreviated whether the schema is following the abbreviated syntax
 	 * @param searchPath list of schema relative or absolute paths to look for the included schema, may be <code>null</code>
 	 */
-	public SchemaInclude(ISchemaObject parent, String location, boolean abbreviated, List<IPath> searchPath) {
+	public SchemaInclude(ISchemaObject parent, String location, boolean abbreviated, SchemaProvider schemaProvider) {
 		super(parent, location);
 		fLocation = location;
 		fAbbreviated = abbreviated;
-		fSearchPath = searchPath;
+		this.schemaProvider = schemaProvider;
 	}
 
 	/**
@@ -97,23 +93,9 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 			fIncludedSchema = registry.getIncludedSchema(descriptor, fLocation);
 		} else if (fIncludedSchema == null) {
-			fIncludedSchema = createInternalSchema(descriptor, fLocation);
+			fIncludedSchema = schemaProvider.createSchema(descriptor, fLocation);
 		}
 		return fIncludedSchema;
-	}
-
-	private ISchema createInternalSchema(ISchemaDescriptor desc, String location) {
-		try {
-			URL schemaURL = IncludedSchemaDescriptor.computeURL(desc, location, fSearchPath);
-			if (schemaURL == null) {
-				return null;
-			}
-			Schema ischema = new Schema(null, schemaURL, fAbbreviated);
-			ischema.load();
-			return ischema;
-		} catch (MalformedURLException e) {
-			return null;
-		}
 	}
 
 	@Override
