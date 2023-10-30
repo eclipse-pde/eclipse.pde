@@ -23,13 +23,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
 import javax.xml.parsers.SAXParser;
 
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -100,7 +98,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private final boolean fAbbreviated;
 
-	private List<IPath> fSearchPath;
+	private SchemaProvider schemaProvider;
 
 	public Schema(String pluginId, String pointId, String name, boolean abbreviated) {
 		fPluginID = pluginId;
@@ -865,7 +863,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private void processInclude(Node node) {
 		String location = getAttribute(node, "schemaLocation"); //$NON-NLS-1$
-		SchemaInclude include = new SchemaInclude(this, location, fAbbreviated, fSearchPath);
+		SchemaInclude include = new SchemaInclude(this, location, fAbbreviated, schemaProvider);
 		if (fIncludes == null) {
 			fIncludes = new Vector<>();
 		}
@@ -1010,14 +1008,13 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 
 	/**
-	 * Sets a list of additional schema relative or absolute paths to search when
-	 * trying to find an included schema.  Must be set before {@link #load()} is
+	 * Sets a provider of additional schema to search when trying to find an included schema.  Must be set before {@link #load()} is
 	 * called.
 	 *
-	 * @param searchPath the list of paths to search for included schema or <code>null</code> for no additional paths
+	 * @param provider the list of paths to search for included schema or <code>null</code> for no additional paths
 	 */
-	public void setSearchPath(List<IPath> searchPath) {
-		fSearchPath = searchPath;
+	public void setSchemaProvider(SchemaProvider provider) {
+		schemaProvider = provider;
 	}
 
 	@Override
