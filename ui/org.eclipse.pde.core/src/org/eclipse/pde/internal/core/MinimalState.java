@@ -105,6 +105,14 @@ public class MinimalState {
 		BundleDescription desc = model.getBundleDescription();
 		long bundleId = desc == null || !update ? -1 : desc.getBundleId();
 		try {
+			if (model.getInstallLocation() == null) {
+				// This exception should help diagnosing the problem. If this
+				// exception wasn't thrown then the code would throw a NPE in
+				// the next line anyway.
+				throw new IllegalArgumentException(
+						"The plugin '" + model + "' was not created from a resource in the file system"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+
 			File bundleLocation = new File(model.getInstallLocation());
 			BundleDescription newDesc = addBundle(bundleLocation, bundleId,
 					loadWorkspaceBundleManifest(bundleLocation, model.getUnderlyingResource()));
