@@ -39,13 +39,19 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 	}
 
 	/**
-	 * Creates a new schema include describing an included schema at the given location. An optional
-	 * search path may be provided to assist in finding the included schema.
+	 * Creates a new schema include describing an included schema at the given
+	 * location. An optional search path may be provided to assist in finding
+	 * the included schema.
 	 *
-	 * @param parent parent object, should be the schema containing this include
-	 * @param location the string location from the schema xml
-	 * @param abbreviated whether the schema is following the abbreviated syntax
-	 * @param searchPath list of schema relative or absolute paths to look for the included schema, may be <code>null</code>
+	 * @param parent
+	 *            parent object, should be the schema containing this include
+	 * @param location
+	 *            the string location from the schema xml
+	 * @param abbreviated
+	 *            whether the schema is following the abbreviated syntax
+	 * @param schemaProvider
+	 *            Provider to look for the included schema, may be
+	 *            <code>null</code>
 	 */
 	public SchemaInclude(ISchemaObject parent, String location, boolean abbreviated, SchemaProvider schemaProvider) {
 		super(parent, location);
@@ -92,7 +98,7 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 		if (fAbbreviated) {
 			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
 			fIncludedSchema = registry.getIncludedSchema(descriptor, fLocation);
-		} else if (fIncludedSchema == null) {
+		} else if (fIncludedSchema == null && schemaProvider != null) {
 			fIncludedSchema = schemaProvider.createSchema(descriptor, fLocation);
 		}
 		return fIncludedSchema;
