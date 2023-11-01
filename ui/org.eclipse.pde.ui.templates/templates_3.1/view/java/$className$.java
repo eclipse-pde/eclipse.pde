@@ -217,7 +217,7 @@ public class $className$ extends ViewPart {
 		
 %if viewType == "tableViewer"
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
-		viewer.setInput(new String[] { "One", "Two", "Three" });
+		viewer.setInput(List.of("One", "Two", "Three"));
 %else
 	viewer.setContentProvider(new ViewContentProvider());
 	viewer.setInput(getViewSite());
