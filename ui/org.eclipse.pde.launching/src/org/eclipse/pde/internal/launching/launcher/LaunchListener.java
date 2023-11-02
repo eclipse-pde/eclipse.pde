@@ -170,7 +170,7 @@ public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
 	 * It's ".metadala/.log", file with most recent timestamp ending with ".log"
 	 * in configuration location or null if none found.
 	 *
-	 * @returns log file or null
+	 * @return log file or null
 	 * @since 3.4
 	 */
 	public static File getMostRecentLogFile(ILaunchConfiguration configuration) throws CoreException {
