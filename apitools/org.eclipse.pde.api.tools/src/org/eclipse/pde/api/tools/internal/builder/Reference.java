@@ -458,7 +458,7 @@ public class Reference implements IReference {
 	 * @param typeName referenced type name
 	 * @param methodName referenced method name
 	 * @param methodSignature referenced method signature
-	 * @returns whether the lookup succeeded
+	 * @return whether the lookup succeeded
 	 * @throws CoreException if something goes terribly wrong
 	 */
 	private boolean resolveVirtualMethod(IApiType type, String methodName, String methodSignature) throws CoreException {
@@ -563,7 +563,7 @@ public class Reference implements IReference {
 	 * @param typeName referenced type name
 	 * @param methodName referenced method name
 	 * @param methodSignature referenced method signature
-	 * @returns whether the lookup succeeded
+	 * @return whether the lookup succeeded
 	 * @throws CoreException if something goes terribly wrong
 	 */
 	private boolean resolveMethod(IApiComponent sourceComponent, IApiType type, String methodName, String methodSignature) throws CoreException {
