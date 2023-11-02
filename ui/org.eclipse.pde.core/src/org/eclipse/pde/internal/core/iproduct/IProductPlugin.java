@@ -23,17 +23,4 @@ public interface IProductPlugin extends IProductObject {
 	String getVersion();
 
 	void setVersion(String version);
-
-	/**
-	 * @return whether this product plug-in is a fragment. <code>false</code> by default.
-	 * @see #setFragment(boolean)
-	 */
-	boolean isFragment();
-
-	/**
-	 * Sets whether this product plug-in is a fragment. <code>false</code> by default.
-	 * @param isFragment whether this product is a fragment
-	 * @see #isFragment()
-	 */
-	void setFragment(boolean isFragment);
 }
