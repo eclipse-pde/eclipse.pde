@@ -172,21 +172,33 @@ public class ProductEditor extends PDELauncherFormEditor {
 	public void contributeToToolbar(IToolBarManager manager) {
 		contributeLaunchersToToolbar(manager);
 		manager.add(getExportAction());
-		IBaseModel model = getAggregateModel();
-		if (model == null) {
-			return;
+		if (getAggregateModel() instanceof IProductModel productModel) {
+			productModel.addModelChangedListener(e -> {
+				if (IProduct.P_TYPE.equals(e.getChangedProperty())) {
+					setExportActionState();
+				}
+			});
+			manager.add(new ProductValidateAction(productModel.getProduct()));
 		}
-		IProduct product = ((IProductModel) model).getProduct();
-		manager.add(new ProductValidateAction(product));
 	}
 
 	private ProductExportAction getExportAction() {
 		if (fExportAction == null) {
 			fExportAction = new ProductExportAction(this);
-			fExportAction.setToolTipText(PDEUIMessages.ProductEditor_exportTooltip);
 			fExportAction.setImageDescriptor(PDEPluginImages.DESC_EXPORT_PRODUCT_TOOL);
+			setExportActionState();
 		}
 		return fExportAction;
+	}
+
+	private void setExportActionState() {
+		if (getAggregateModel() instanceof IProductModel productModel) {
+			boolean isMixed = productModel.getProduct().getType() == ProductType.MIXED;
+			fExportAction.setEnabled(!isMixed);
+			fExportAction.setToolTipText(isMixed //
+					? PDEUIMessages.ProductEditor_exportTooltip_mixed
+					: PDEUIMessages.ProductEditor_exportTooltip);
+		}
 	}
 
 	@Override
