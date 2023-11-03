@@ -87,6 +87,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		IConfigurationFileInfo info = factory.createConfigFileInfo();
 		info.setUse(null, "default"); //$NON-NLS-1$
 		product.setConfigurationFileInfo(info);
+		product.setVersion("1.0.0.qualifier"); //$NON-NLS-1$
 		// preset some common VM args for macosx (bug 174232 comment #4)
 		IArgumentsInfo args = factory.createLauncherArguments();
 		args.setVMArguments("-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts", IArgumentsInfo.L_ARGS_MACOS); //$NON-NLS-1$
