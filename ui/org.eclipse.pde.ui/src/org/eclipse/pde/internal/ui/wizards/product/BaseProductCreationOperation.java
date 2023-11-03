@@ -46,7 +46,6 @@ import org.eclipse.pde.internal.core.product.SplashInfo;
 import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
 import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -67,11 +66,8 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 
 	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
-		monitor.beginTask(PDEUIMessages.BaseProductCreationOperation_taskName, 2);
 		createContent();
-		monitor.worked(1);
 		openFile();
-		monitor.done();
 	}
 
 	private void createContent() {
