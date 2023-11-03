@@ -19,6 +19,10 @@
 <!-- Extensions -->
    <extension
          point="org.eclipse.ui.commands">
+      <category
+            id="org.eclipse.pde.runtime.spy.commands.category"
+            name="%spy-category.name">
+      </category>
       <command
             categoryId="org.eclipse.pde.runtime.spy.commands.category"
             description="%spy-layout-command.description"
