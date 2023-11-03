@@ -70,7 +70,7 @@ public class ConditionalListSelectionDialog extends ElementListSelectionDialog {
 		super.setElements(elements);
 		fElements = elements;
 	}
-	
+
 	@Override
 	protected void updateOkState() {
 		super.updateOkState();
