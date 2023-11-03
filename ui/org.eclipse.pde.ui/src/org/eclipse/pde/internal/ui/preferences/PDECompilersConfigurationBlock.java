@@ -529,7 +529,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 375;
 		fTabFolder.setLayoutData(gd);
-		
+
 		Composite main = (fTabFolder == null ? fMainComp : fTabFolder);
 		//plugins page
 		createPage(CompilerFlags.PLUGIN_FLAGS, main, PDEUIMessages.CompilersConfigurationBlock_plugins,
