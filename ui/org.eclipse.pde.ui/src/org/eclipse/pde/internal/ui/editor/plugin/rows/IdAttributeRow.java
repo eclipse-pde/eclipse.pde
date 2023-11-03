@@ -51,7 +51,7 @@ public class IdAttributeRow extends ButtonAttributeRow {
 			if (element instanceof Map.Entry) {
 				@SuppressWarnings("unchecked") // filled from corresponding map
 				Entry<String, IConfigurationElement> entry = (Entry<String, IConfigurationElement>) element;
-				String text = entry.getKey();
+				StringBuilder text = new StringBuilder().append(entry.getKey());
 				IConfigurationElement value = entry.getValue();
 				String name = value.getAttribute("name"); //$NON-NLS-1$
 				if (name == null) {
@@ -69,12 +69,12 @@ public class IdAttributeRow extends ButtonAttributeRow {
 				}
 
 				if (name != null) {
-					text += " - " + name; //$NON-NLS-1$
+					text.append(" - ").append(name); //$NON-NLS-1$
 				}
 				if (contributor != null) {
-					text += " [" + contributor + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+					text.append(" [").append(contributor).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				return text;
+				return text.toString();
 			}
 			return super.getText(element);
 		}

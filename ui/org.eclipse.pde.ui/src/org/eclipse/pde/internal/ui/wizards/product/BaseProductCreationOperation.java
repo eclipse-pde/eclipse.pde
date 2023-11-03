@@ -225,7 +225,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 				if (slinfo[0].equals("default")) { //$NON-NLS-1$
 					slinfo[0] = "0"; //$NON-NLS-1$
 				}
-				configuration.setStartLevel(Integer.valueOf(slinfo[0]).intValue());
+				configuration.setStartLevel(Integer.parseInt(slinfo[0]));
 				configuration.setAutoStart(slinfo[1].equals("true")); //$NON-NLS-1$
 				configurations.add(configuration);
 			}

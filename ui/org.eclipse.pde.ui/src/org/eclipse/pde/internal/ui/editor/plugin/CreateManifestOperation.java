@@ -84,10 +84,10 @@ public class CreateManifestOperation implements IRunnableWithProgress {
 	private TextEdit editRootElement(String elementName, FindReplaceDocumentAdapter adapter, IDocument doc, int offset) throws BadLocationException {
 		IRegion region = adapter.find(0, "<" + elementName + "[^>]*", true, true, false, true); //$NON-NLS-1$ //$NON-NLS-2$
 		if (region != null) {
-			String replacementString = "<" + elementName; //$NON-NLS-1$
+			StringBuilder replacementString = new StringBuilder("<").append(elementName); //$NON-NLS-1$
 			if (doc.getChar(region.getOffset() + region.getLength()) == '/')
-				replacementString += "/"; //$NON-NLS-1$
-			return new ReplaceEdit(region.getOffset(), region.getLength(), replacementString);
+				replacementString.append("/"); //$NON-NLS-1$
+			return new ReplaceEdit(region.getOffset(), region.getLength(), replacementString.toString());
 		}
 		return null;
 	}

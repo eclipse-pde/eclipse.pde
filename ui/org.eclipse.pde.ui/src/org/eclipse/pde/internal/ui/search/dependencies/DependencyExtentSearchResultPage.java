@@ -75,8 +75,8 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 				return ((IPluginExtension) element).getPoint();
 
 			if (element instanceof IJavaElement javaElement) {
-				String text = super.getText(javaElement) + " - " //$NON-NLS-1$
-						+ javaElement.getAncestor(IJavaElement.PACKAGE_FRAGMENT).getElementName();
+				StringBuilder text = new StringBuilder().append(super.getText(javaElement)).append(" - " //$NON-NLS-1$
+).append(javaElement.getAncestor(IJavaElement.PACKAGE_FRAGMENT).getElementName());
 				if (!(javaElement instanceof IType)) {
 					IJavaElement ancestor = javaElement.getAncestor(IJavaElement.TYPE);
 					if (ancestor == null)
@@ -84,9 +84,9 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 					if (ancestor == null)
 						ancestor = javaElement.getAncestor(IJavaElement.COMPILATION_UNIT);
 					if (ancestor != null)
-						text += "." + ancestor.getElementName(); //$NON-NLS-1$
+						text.append(".").append(ancestor.getElementName()); //$NON-NLS-1$
 				}
-				return text;
+				return text.toString();
 			}
 			return super.getText(element);
 		}

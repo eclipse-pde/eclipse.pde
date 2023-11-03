@@ -219,12 +219,12 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		fSectionElementDetails = fToolkit.createSection(parent, section_style);
 		fSectionElementDetails.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		fSectionElementDetails.setText(PDEUIMessages.ExtensionElementDetails_title);
-		String description = PDEUIMessages.ExtensionElementBodyTextDetails_sectionDescElementGeneral;
+		StringBuilder description = new StringBuilder().append(PDEUIMessages.ExtensionElementBodyTextDetails_sectionDescElementGeneral);
 		if (fSchemaElement != null && fSchemaElement.isDeprecated()) {
-			description += "\n\n"; //$NON-NLS-1$
-			description += NLS.bind(PDEUIMessages.ElementIsDeprecated, fSchemaElement.getName());
+			description.append("\n\n"); //$NON-NLS-1$
+			description.append(NLS.bind(PDEUIMessages.ElementIsDeprecated, fSchemaElement.getName()));
 		}
-		fSectionElementDetails.setDescription(description);
+		fSectionElementDetails.setDescription(description.toString());
 		fSectionElementDetails.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		int layout_style = GridData.FILL_HORIZONTAL;
 		GridData data = new GridData(layout_style);

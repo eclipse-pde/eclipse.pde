@@ -312,19 +312,19 @@ public class NLSFragmentGenerator {
 			oldVersion = oldVersion.substring(0, oldVersion.lastIndexOf(PERIOD));
 		}
 
-		String newVersion = LEFT_SQUARE_BRACKET + oldVersion + ',';
+		StringBuilder newVersion = new StringBuilder(LEFT_SQUARE_BRACKET).append(oldVersion).append(',');
 		String oldMinor = oldVersion.substring(oldVersion.indexOf(PERIOD) + 1, oldVersion.lastIndexOf(PERIOD));
 
 		if (oldMinor.compareTo(MAX_MINOR) == 0) {
 			String major = Integer.toString(Integer.parseInt(oldVersion.substring(0, oldVersion.indexOf(PERIOD))) + 1);
-			newVersion += major + PERIOD + MIN_MINOR + PERIOD + ZERO + RIGHT_PARENTHESIS;
+			newVersion.append(major).append(PERIOD).append(MIN_MINOR).append(PERIOD).append(ZERO).append(RIGHT_PARENTHESIS);
 		} else {
 			String major = oldVersion.substring(0, oldVersion.indexOf(PERIOD));
 			String newMinor = Integer.toString(Integer.parseInt(oldMinor) + 1);
-			newVersion += major + PERIOD + newMinor + PERIOD + ZERO + RIGHT_PARENTHESIS;
+			newVersion.append(major).append(PERIOD).append(newMinor).append(PERIOD).append(ZERO).append(RIGHT_PARENTHESIS);
 		}
 
-		return newVersion;
+		return newVersion.toString();
 	}
 
 	/**

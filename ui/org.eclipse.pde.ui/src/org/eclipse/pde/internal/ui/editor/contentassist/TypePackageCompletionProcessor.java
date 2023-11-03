@@ -134,11 +134,11 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 						pName = completion.substring(0, period);
 					}
 					Image image = isInterface ? PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_INTERFACE) : PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_CLASS);
-					String label = cName;
+					StringBuilder label = new StringBuilder().append(cName);
 					if (pName != null)
-						label = label + " - " + pName; //$NON-NLS-1$
+						label.append(" - ").append(pName); //$NON-NLS-1$
 					String typeName = String.valueOf(Signature.toCharArray(Signature.getTypeErasure(proposal.getSignature())));
-					addProposalToCollection(c, startOffset, length, label, completion, image, project, typeName);
+					addProposalToCollection(c, startOffset, length, label.toString(), completion, image, project, typeName);
 				}
 			}
 
@@ -214,14 +214,14 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 					// Accept search results from the JDT SearchEngine
 					String cName = new String(simpleTypeName);
 					String pName = new String(packageName);
-					String label = cName;
+					StringBuilder label = new StringBuilder().append(cName);
 					String replaceString = cName;
 					if (pName.length() > 0) {
-						label = label + " - " + pName; //$NON-NLS-1$
+						label.append(" - ").append(pName); //$NON-NLS-1$
 						replaceString = pName + "." + replaceString; //$NON-NLS-1$
 					}
 					Image image = (Flags.isInterface(modifiers)) ? PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_INTERFACE) : PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_CLASS);
-					addProposalToCollection(c, startOffset, length, label, replaceString, image, project, replaceString);
+					addProposalToCollection(c, startOffset, length, label.toString(), replaceString, image, project, replaceString);
 				}
 			};
 			// Note:  Do not use the search() method, its performance is

@@ -493,15 +493,15 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		}
 		if (!selection.isEmpty()) {
 			if (isShowInApplicable()) {
-				String showInLabel = PDEUIMessages.PluginsView_showIn;
+				StringBuilder showInLabel = new StringBuilder().append(PDEUIMessages.PluginsView_showIn);
 				IBindingService bindingService = PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 				if (bindingService != null) {
 					String keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU);
 					if (keyBinding != null) {
-						showInLabel += '\t' + keyBinding;
+						showInLabel.append('\t').append(keyBinding);
 					}
 				}
-				IMenuManager showInMenu = new MenuManager(showInLabel);
+				IMenuManager showInMenu = new MenuManager(showInLabel.toString());
 				showInMenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getViewSite().getWorkbenchWindow()));
 
 				manager.add(showInMenu);
